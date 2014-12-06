@@ -4,11 +4,16 @@ package eu.coderate.accurest.util
  * @author Jakub Kubrynski
  */
 class NamesUtil {
-	static String afterLastDot(String string) {
-		if (string?.indexOf('.') > -1) {
-			return string.substring(string.lastIndexOf('.')+1)
+
+	static String afterLast(String string, String separator) {
+		if (string?.indexOf(separator) > -1) {
+			return string.substring(string.lastIndexOf(separator)+1)
 		}
 		return string
+	}
+
+	static String afterLastDot(String string) {
+		return afterLast(string, '.')
 	}
 
 	static String uncapitalize(String className) {

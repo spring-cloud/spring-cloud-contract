@@ -1,5 +1,6 @@
 package eu.coderate.accurest
 
+import eu.coderate.accurest.builder.ClassBuilder
 import eu.coderate.accurest.util.NamesUtil
 
 import static eu.coderate.accurest.builder.ClassBuilder.createClass
@@ -24,26 +25,37 @@ class TestGenerator {
 
 	public String generate() {
 		StringBuilder builder = new StringBuilder()
-		List<String> files = new File(mocksBaseDirectory).list()
-		files.each {
-			builder << addClass(NamesUtil.capitalize(NamesUtil.toLastDot(it)))
+		List<File> files = new File(mocksBaseDirectory).listFiles()
+		files.grep({ File file -> file.isDirectory() && containsStubs(file) }).each {
+			builder << addClass(it)
 		}
 		return builder
 	}
 
-	private String addClass(String className) {
-		createClass(className, basePackageForTests, baseClassForTests)
+	boolean containsStubs(File file) {
+		return file.list(new FilenameFilter() {
+			@Override
+			boolean accept(File dir, String name) {
+				return "json".equalsIgnoreCase(NamesUtil.afterLastDot(name))
+			}
+		}).size() > 0
+	}
+
+	private String addClass(File directory) {
+		ClassBuilder clazz = createClass(NamesUtil.capitalize(NamesUtil.afterLast(directory.path, '/')), basePackageForTests, baseClassForTests)
 				.addImport('org.junit.Test')
 				.addImport('org.junit.Rule')
 				.addStaticImport('org.hamcrest.Matchers.*')
 				.addStaticImport('com.jayway.restassured.RestAssured.*')
 				.addStaticImport('com.jayway.restassured.matcher.RestAssuredMatchers.*')
 				.addRule('com.test.MyRule')
-				.addMethod(createVoidMethod('shouldInvokeService'))
-				.build()
+		directory.listFiles().each {
+			clazz.addMethod(createVoidMethod(it))
+		}
+		return clazz.build()
 	}
 
 	public static void main(String[] args) {
-		print new TestGenerator("wiremocks", 'io.test', 'com.test.BaseClass', "").generate()
+		print new TestGenerator("", 'io.test', 'com.test.BaseClass', "").generate()
 	}
 }
