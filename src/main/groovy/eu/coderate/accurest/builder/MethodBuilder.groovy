@@ -9,24 +9,22 @@ import groovy.json.JsonSlurper
 class MethodBuilder {
 
 	private final String methodName
-	private final String returnType
 	private final Map stubContent
 
-	private MethodBuilder(String returnType, String methodName, Map stubContent) {
+	private MethodBuilder(String methodName, Map stubContent) {
 		this.stubContent = stubContent
-		this.returnType = returnType
 		this.methodName = methodName
 	}
 
-	static MethodBuilder createVoidMethod(File stubsFile) {
+	static MethodBuilder createTestMethod(File stubsFile) {
 		Map stubContent = new JsonSlurper().parse(stubsFile)
 		String methodName = NamesUtil.uncapitalize(NamesUtil.toLastDot(NamesUtil.afterLast(stubsFile.path, File.separator)))
-		return new MethodBuilder("void", methodName, stubContent)
+		return new MethodBuilder(methodName, stubContent)
 	}
 
 	void appendTo(BlockBuilder blockBuilder) {
 		blockBuilder.addLine('@Test')
-		blockBuilder.addLine("public $returnType $methodName() {")
+		blockBuilder.addLine("public void $methodName() {")
 		new MethodBodyBuilder(stubContent).appendTo(blockBuilder)
 		blockBuilder.addLine('}')
 	}

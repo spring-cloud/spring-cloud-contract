@@ -4,7 +4,7 @@ import eu.coderate.accurest.builder.ClassBuilder
 import eu.coderate.accurest.util.NamesUtil
 
 import static eu.coderate.accurest.builder.ClassBuilder.createClass
-import static eu.coderate.accurest.builder.MethodBuilder.createVoidMethod
+import static eu.coderate.accurest.builder.MethodBuilder.createTestMethod
 
 /**
  * @author Jakub Kubrynski
@@ -50,7 +50,7 @@ class TestGenerator {
 				.addStaticImport('com.jayway.restassured.matcher.RestAssuredMatchers.*')
 				.addRule('com.test.MyRule')
 		directory.listFiles().each {
-			clazz.addMethod(createVoidMethod(it))
+			clazz.addMethod(createTestMethod(it))
 		}
 		return clazz.build()
 	}
