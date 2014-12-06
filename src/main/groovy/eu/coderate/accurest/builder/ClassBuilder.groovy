@@ -19,7 +19,7 @@ class ClassBuilder {
 		if (baseClass) {
 			imports << baseClass
 		}
-		this.baseClass = NamesUtil.getName(baseClass)
+		this.baseClass = NamesUtil.afterLastDot(baseClass)
 		this.packageName = packageName
 		this.className = className
 	}
@@ -49,7 +49,7 @@ class ClassBuilder {
 
 	ClassBuilder addRule(String ruleClass) {
 		imports << ruleClass
-		rules << NamesUtil.getName(ruleClass)
+		rules << NamesUtil.afterLastDot(ruleClass)
 		return this
 	}
 
@@ -78,7 +78,7 @@ class ClassBuilder {
 		clazz.startBlock()
 		rules.sort().each {
 			clazz.addLine("@Rule")
-			clazz.addLine("public " + it + " " + NamesUtil.fieldName(it) + " = new $it();")
+			clazz.addLine("public " + it + " " + NamesUtil.uncapitalize(it) + " = new $it();")
 		}
 		clazz.endBlock()
 		clazz.addEmptyLine()

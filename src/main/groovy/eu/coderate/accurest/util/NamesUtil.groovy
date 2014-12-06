@@ -4,19 +4,33 @@ package eu.coderate.accurest.util
  * @author Jakub Kubrynski
  */
 class NamesUtil {
-	static String getName(String qualifiedName) {
-		if (qualifiedName?.indexOf('.') > -1) {
-			return qualifiedName.substring(qualifiedName.lastIndexOf('.')+1)
+	static String afterLastDot(String string) {
+		if (string?.indexOf('.') > -1) {
+			return string.substring(string.lastIndexOf('.')+1)
 		}
-		return qualifiedName
+		return string
 	}
 
-	static String fieldName(String className) {
-		if (className) {
+	static String uncapitalize(String className) {
+		if (!className) {
 			return className
 		}
-		String name = getName(className)
-		String firstChar = name.charAt(0).toLowerCase() as String
-		return firstChar + name.substring(1)
+		String firstChar = className.charAt(0).toLowerCase() as String
+		return firstChar + className.substring(1)
+	}
+
+	static String capitalize(String className) {
+		if (!className) {
+			return className
+		}
+		String firstChar = className.charAt(0).toUpperCase() as String
+		return firstChar + className.substring(1)
+	}
+
+	static String toLastDot(String string) {
+		if (string?.indexOf('.') > -1) {
+			return string.substring(0, string.lastIndexOf('.'))
+		}
+		return string
 	}
 }
