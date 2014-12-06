@@ -1,4 +1,4 @@
-package eu.coderate.ck.builder
+package eu.coderate.accurest.builder
 
 import groovy.transform.PackageScope
 
