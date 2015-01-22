@@ -1,6 +1,7 @@
 package eu.coderate.accurest
 
 import eu.coderate.accurest.builder.ClassBuilder
+import eu.coderate.accurest.builder.Lang
 import eu.coderate.accurest.util.NamesUtil
 
 import static eu.coderate.accurest.builder.ClassBuilder.createClass
@@ -15,12 +16,18 @@ class TestGenerator {
 	private final String basePackageForTests
 	private final String baseClassForTests
 	private final String ruleClassForTests
+	private final Lang lang
 
-	TestGenerator(String mocksBaseDirectory, String basePackageForTests, String baseClassForTests, String ruleClassForTests) {
+	TestGenerator(String mocksBaseDirectory, String basePackageForTests, String baseClassForTests, String ruleClassForTests, Lang lang) {
 		this.mocksBaseDirectory = getClass().getClassLoader().getResource(mocksBaseDirectory).path
 		this.basePackageForTests = basePackageForTests
-		this.baseClassForTests = baseClassForTests
+		if (lang == Lang.GROOVY && !baseClassForTests) {
+			this.baseClassForTests = 'spock.lang.Specification'
+		} else {
+			this.baseClassForTests = baseClassForTests
+		}
 		this.ruleClassForTests = ruleClassForTests
+		this.lang = lang
 	}
 
 	public String generate() {
@@ -42,20 +49,26 @@ class TestGenerator {
 	}
 
 	private String addClass(File directory) {
-		ClassBuilder clazz = createClass(NamesUtil.capitalize(NamesUtil.afterLast(directory.path, '/')), basePackageForTests, baseClassForTests)
-				.addImport('org.junit.Test')
-				.addImport('org.junit.Rule')
-				.addStaticImport('org.hamcrest.Matchers.*')
+		ClassBuilder clazz = createClass(NamesUtil.capitalize(NamesUtil.afterLast(directory.path, '/')), basePackageForTests, baseClassForTests, lang)
 				.addStaticImport('com.jayway.restassured.RestAssured.*')
-				.addStaticImport('com.jayway.restassured.matcher.RestAssuredMatchers.*')
-				.addRule('com.test.MyRule')
+				.addImport('java.util.regex.Pattern')
+
+		if (lang == Lang.JAVA) {
+			clazz.addImport('org.junit.Test')
+		}
+
+		if (ruleClassForTests) {
+			clazz.addImport('org.junit.Rule')
+					.addRule(ruleClassForTests)
+		}
+
 		directory.listFiles().each {
-			clazz.addMethod(createTestMethod(it))
+			clazz.addMethod(createTestMethod(it, lang))
 		}
 		return clazz.build()
 	}
 
 	public static void main(String[] args) {
-		print new TestGenerator("", 'io.test', 'com.test.BaseClass', "").generate()
+		print new TestGenerator('stubs', 'io.test', '', '', Lang.GROOVY).generate()
 	}
 }

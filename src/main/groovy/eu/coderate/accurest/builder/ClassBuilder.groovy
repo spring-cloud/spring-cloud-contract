@@ -14,22 +14,33 @@ class ClassBuilder {
 	private final List<String> staticImports = []
 	private final List<String> rules = []
 	private final List<MethodBuilder> methods = []
+	private final String modifier
+	private final String suffix
 
-	private ClassBuilder(String className, String packageName, String baseClass) {
+	private ClassBuilder(String className, String packageName, String baseClass, Lang lang) {
 		if (baseClass) {
 			imports << baseClass
 		}
 		this.baseClass = NamesUtil.afterLastDot(baseClass)
 		this.packageName = packageName
 		this.className = className
+		switch (lang) {
+			case Lang.JAVA:
+				modifier = "public "
+				suffix = ";"
+				break
+			case Lang.GROOVY:
+				modifier = ""
+				suffix = ""
+		}
 	}
 
-	static ClassBuilder createClass(String className, String packageName) {
-		return createClass(className, packageName, null)
+	static ClassBuilder createClass(String className, String packageName, Lang lang) {
+		return createClass(className, packageName, null, lang)
 	}
 
-	static ClassBuilder createClass(String className, String packageName, String baseClass) {
-		return new ClassBuilder(className, packageName, baseClass)
+	static ClassBuilder createClass(String className, String packageName, String baseClass, Lang lang) {
+		return new ClassBuilder(className, packageName, baseClass, lang)
 	}
 
 	ClassBuilder addImport(String importToAdd) {
@@ -54,21 +65,25 @@ class ClassBuilder {
 	}
 
 	String build() {
-		BlockBuilder clazz = new BlockBuilder("  ")
-			.addLine("package $packageName;")
+		BlockBuilder clazz = new BlockBuilder("\t")
+			.addLine("package $packageName" + suffix)
 			.addEmptyLine()
 
 		imports.sort().each {
-			clazz.addLine("import $it;")
+			clazz.addLine("import $it" + suffix)
 		}
-		clazz.addEmptyLine()
+		if (!imports.empty) {
+			clazz.addEmptyLine()
+		}
 
 		staticImports.sort().each {
-			clazz.addLine("static import $it;")
+			clazz.addLine("import static $it" + suffix)
 		}
-		clazz.addEmptyLine()
+		if (!staticImports.empty) {
+			clazz.addEmptyLine()
+		}
 
-		def classLine = "public class $className"
+		def classLine = modifier + "class $className"
 		if (baseClass) {
 			classLine += " extends $baseClass"
 		}
@@ -78,10 +93,12 @@ class ClassBuilder {
 		clazz.startBlock()
 		rules.sort().each {
 			clazz.addLine("@Rule")
-			clazz.addLine("public " + it + " " + NamesUtil.uncapitalize(it) + " = new $it();")
+			clazz.addLine("public " + it + " " + NamesUtil.uncapitalize(it) + " = new $it()" + suffix)
 		}
 		clazz.endBlock()
-		clazz.addEmptyLine()
+		if (!rules.empty) {
+			clazz.addEmptyLine()
+		}
 
 		methods.each {
 			clazz.addBlock(it)
