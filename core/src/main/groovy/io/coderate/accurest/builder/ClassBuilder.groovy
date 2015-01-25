@@ -1,6 +1,6 @@
-package eu.coderate.accurest.builder
+package io.coderate.accurest.builder
 
-import eu.coderate.accurest.util.NamesUtil
+import io.coderate.accurest.util.NamesUtil
 
 /**
  * @author Jakub Kubrynski
@@ -17,7 +17,7 @@ class ClassBuilder {
 	private final String modifier
 	private final String suffix
 
-	private ClassBuilder(String className, String packageName, String baseClass, Lang lang) {
+	private ClassBuilder(String className, String packageName, String baseClass, TestFramework lang) {
 		if (baseClass) {
 			imports << baseClass
 		}
@@ -25,21 +25,21 @@ class ClassBuilder {
 		this.packageName = packageName
 		this.className = className
 		switch (lang) {
-			case Lang.JAVA:
+			case TestFramework.JUNIT:
 				modifier = "public "
 				suffix = ";"
 				break
-			case Lang.GROOVY:
+			case TestFramework.SPOCK:
 				modifier = ""
 				suffix = ""
 		}
 	}
 
-	static ClassBuilder createClass(String className, String packageName, Lang lang) {
+	static ClassBuilder createClass(String className, String packageName, TestFramework lang) {
 		return createClass(className, packageName, null, lang)
 	}
 
-	static ClassBuilder createClass(String className, String packageName, String baseClass, Lang lang) {
+	static ClassBuilder createClass(String className, String packageName, String baseClass, TestFramework lang) {
 		return new ClassBuilder(className, packageName, baseClass, lang)
 	}
 

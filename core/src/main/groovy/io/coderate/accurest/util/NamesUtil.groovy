@@ -1,4 +1,4 @@
-package eu.coderate.accurest.util
+package io.coderate.accurest.util
 
 /**
  * @author Jakub Kubrynski
@@ -37,5 +37,9 @@ class NamesUtil {
 			return string.substring(0, string.lastIndexOf('.'))
 		}
 		return string
+	}
+
+	static String packageToDirectory(String packageName) {
+		return packageName.replaceAll('\\.', File.separator)
 	}
 }
