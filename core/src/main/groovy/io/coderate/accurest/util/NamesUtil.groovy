@@ -7,7 +7,7 @@ class NamesUtil {
 
 	static String afterLast(String string, String separator) {
 		if (string?.indexOf(separator) > -1) {
-			return string.substring(string.lastIndexOf(separator)+1)
+			return string.substring(string.lastIndexOf(separator) + 1)
 		}
 		return string
 	}
@@ -16,7 +16,7 @@ class NamesUtil {
 		return afterLast(string, '.')
 	}
 
-	static String uncapitalize(String className) {
+	static String camelCase(String className) {
 		if (!className) {
 			return className
 		}

@@ -9,24 +9,44 @@ import org.gradle.api.Project
  */
 class AccurestGradlePlugin implements Plugin<Project> {
 
+	private static final String TASK_NAME = 'generateAccurest'
+
+	private static final Class IDEA_PLUGIN_CLASS = org.gradle.plugins.ide.idea.IdeaPlugin
+
 	@Override
 	void apply(Project project) {
-		project.extensions.create('accurest', AccurestPluginExtension)
-		project.task('generateAccurest') << {
-			AccurestPluginExtension accurest = project.accurest
+		AccurestPluginExtension extension = project.extensions.create('accurest', AccurestPluginExtension)
+
+		project.compileTestGroovy.dependsOn(TASK_NAME)
+
+		project.task(TASK_NAME) << {
 			project.logger.info("Accurest Plugin: Invoking test sources generation")
 
-//			project.sourceSets.test.allSource.class.getDeclaredMethods().each {println it.name}
+			project.sourceSets.test.groovy {
+				srcDir extension.generatedTestSourcesDir
+			}
 
 			try {
-				TestGenerator generator = new TestGenerator(project.projectDir.path + '/src/test/resources/' + accurest.stubsBaseDirectory, accurest.basePackageForTests,
-						accurest.baseClassForTests, accurest.ruleClassForTests,
-						accurest.targetFramework, project.buildDir.path + '/' + accurest.generatedTestSourcesDir)
+				TestGenerator generator = new TestGenerator(project.projectDir.path + '/src/test/resources/' + extension.stubsBaseDirectory, extension.basePackageForTests,
+						extension.baseClassForTests, extension.ruleClassForTests,
+						extension.targetFramework, extension.generatedTestSourcesDir)
 				generator.generate()
 			} catch (IllegalStateException e) {
 				project.logger.error("Accurest Plugin: {}", e.getMessage())
 			}
 		}
+
+		project.afterEvaluate {
+			def hasIdea = project.plugins.findPlugin(IDEA_PLUGIN_CLASS)
+			if (hasIdea) {
+				project.idea {
+					module {
+						testSourceDirs += new File(extension.generatedTestSourcesDir)
+					}
+				}
+			}
+		}
+
 	}
 
 }

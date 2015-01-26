@@ -7,9 +7,11 @@
         "equalTo": "text/plain"
       }
     },
-    "bodyPatterns" : [ {
-      "matches" : "{\"client\":\"1234\"}"
-    } ]
+    "bodyPatterns": [
+      {
+        "matches": "{\"client\":\"1234\"}"
+      }
+    ]
   },
   "response": {
     "status": 400

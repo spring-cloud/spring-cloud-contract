@@ -1,42 +1,47 @@
 subprojects {
-  apply plugin: 'groovy'
-  apply plugin: 'maven-publish'
+	apply plugin: 'groovy'
+	apply plugin: 'maven-publish'
 
-  group = 'io.codearte.accurest'
-  version = '1.0.0-SNAPSHOT'
+	group = 'io.codearte.accurest'
+	version = '1.0.0-SNAPSHOT'
 
-  sourceCompatibility = 1.7
-  targetCompatibility = 1.7
+	sourceCompatibility = 1.7
+	targetCompatibility = 1.7
 
-  repositories {
-    mavenLocal()
-    mavenCentral()
-  }
+	repositories {
+		mavenLocal()
+		mavenCentral()
+	}
 
-  dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.3.6'
-    testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
-  }
+	dependencies {
+		compile 'org.codehaus.groovy:groovy-all:2.3.6'
+		testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
+	}
 
-  publishing {
-    publications {
-      maven(MavenPublication) {
-        groupId 'io.codearte.accurest'
-        version '1.0.0-SNAPSHOT'
+	publishing {
+		publications {
+			maven(MavenPublication) {
+				groupId 'io.codearte.accurest'
+				version '1.0.0-SNAPSHOT'
 
-        from components.java
-      }
-    }
-  }
+				from components.java
+			}
+		}
+	}
+}
+
+project(':core') {
+	dependencies {
+	}
 }
 
 project(':gradle-plugin') {
-  dependencies {
-    compile project(':core')
-    compile gradleApi()
-  }
+	dependencies {
+		compile project(':core')
+		compile gradleApi()
+	}
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '2.2.1'
+	gradleVersion = '2.2.1'
 }

@@ -9,5 +9,5 @@ class AccurestPluginExtension {
 	String basePackageForTests = 'io.codearte.accurest.tests'
 	String baseClassForTests
 	String ruleClassForTests
-	String generatedTestSourcesDir = "generated-test-sources"
+	String generatedTestSourcesDir = 'build/generated-sources/accurest'
 }

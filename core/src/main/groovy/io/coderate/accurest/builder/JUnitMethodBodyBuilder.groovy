@@ -3,7 +3,7 @@ package io.coderate.accurest.builder
 /**
  * @author Jakub Kubrynski
  */
-class JavaMethodBodyBuilder {
+class JUnitMethodBodyBuilder {
 /*
 	given()
 	.contentType("application/json")

@@ -66,8 +66,8 @@ class ClassBuilder {
 
 	String build() {
 		BlockBuilder clazz = new BlockBuilder("\t")
-			.addLine("package $packageName" + suffix)
-			.addEmptyLine()
+				.addLine("package $packageName" + suffix)
+				.addEmptyLine()
 
 		imports.sort().each {
 			clazz.addLine("import $it" + suffix)
@@ -93,7 +93,7 @@ class ClassBuilder {
 		clazz.startBlock()
 		rules.sort().each {
 			clazz.addLine("@Rule")
-			clazz.addLine("public " + it + " " + NamesUtil.uncapitalize(it) + " = new $it()" + suffix)
+			clazz.addLine("public " + it + " " + NamesUtil.camelCase(it) + " = new $it()" + suffix)
 		}
 		clazz.endBlock()
 		if (!rules.empty) {

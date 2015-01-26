@@ -1,7 +1,7 @@
 package io.coderate.accurest.builder
 
 import io.coderate.accurest.util.NamesUtil
-import groovy.json.JsonSlurper
+import io.coderate.accurest.util.StubMappingConverter
 
 /**
  * @author Jakub Kubrynski
@@ -19,8 +19,8 @@ class MethodBuilder {
 	}
 
 	static MethodBuilder createTestMethod(File stubsFile, TestFramework lang) {
-		Map stubContent = new JsonSlurper().parse(stubsFile)
-		String methodName = NamesUtil.uncapitalize(NamesUtil.toLastDot(NamesUtil.afterLast(stubsFile.path, File.separator)))
+		Map stubContent = StubMappingConverter.toStubMappingOnServerSide(stubsFile)
+		String methodName = NamesUtil.camelCase(NamesUtil.toLastDot(NamesUtil.afterLast(stubsFile.path, File.separator)))
 		return new MethodBuilder(methodName, stubContent, lang)
 	}
 
