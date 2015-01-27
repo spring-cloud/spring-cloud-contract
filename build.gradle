@@ -1,11 +1,12 @@
 ext {
-	projectVersion = '0.1.0-SNAPSHOT'
+	projectVersion = '0.1.0'
 	projectGroup = 'io.codearte.accurest'
 }
 
 subprojects {
 	apply plugin: 'groovy'
 	apply plugin: 'maven-publish'
+	apply from: "$rootDir/release.gradle"
 
 	group = projectGroup
 	version = projectVersion
@@ -36,8 +37,6 @@ subprojects {
 }
 
 project(':core') {
-	dependencies {
-	}
 }
 
 project(':gradle-plugin') {
