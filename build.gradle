@@ -1,5 +1,5 @@
 ext {
-	projectVersion = '0.2.0-SNAPSHOT'
+	projectVersion = '0.2.0'
 	projectGroup = 'io.codearte.accurest'
 }
 
@@ -20,7 +20,7 @@ subprojects {
 	}
 
 	dependencies {
-		compile 'org.codehaus.groovy:groovy-all:2.3.6'
+		compile localGroovy()
 		testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
 	}
 
