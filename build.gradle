@@ -36,12 +36,12 @@ subprojects {
 	}
 }
 
-project(':core') {
+project(':accurest-core') {
 }
 
-project(':gradle-plugin') {
+project(':accurest-gradle-plugin') {
 	dependencies {
-		compile project(':core')
+		compile project(':accurest-core')
 		compile gradleApi()
 	}
 }

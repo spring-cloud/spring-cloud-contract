@@ -1,2 +1,2 @@
-include "core", "gradle-plugin"
+include "accurest-core", "accurest-gradle-plugin"
 rootProject.name = "accurest"
