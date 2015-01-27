@@ -1,5 +1,6 @@
 package io.coderate.accurest.builder
 
+import io.coderate.accurest.config.TestFramework
 import io.coderate.accurest.util.NamesUtil
 import io.coderate.accurest.util.StubMappingConverter
 

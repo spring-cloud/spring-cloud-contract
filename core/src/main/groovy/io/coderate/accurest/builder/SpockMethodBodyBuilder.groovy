@@ -40,7 +40,14 @@ class SpockMethodBodyBuilder {
 			blockBuilder.addLine("response.header('$it.key') == '$it.value'")
 		}
 		if (stubDefinition.response.body) {
-			blockBuilder.addLine("Pattern.compile('$stubDefinition.response.body', Pattern.DOTALL).matcher(response.body.asString()).matches()")
+			blockBuilder.addLine('def responseBody = new JsonSlurper().parseText(response.body.asString())')
+			new groovy.json.JsonSlurper().parseText(stubDefinition.response.body).each {
+				def value = it.value
+				if (value instanceof String) {
+					value = '"' + value + '"'
+				}
+				blockBuilder.addLine('responseBody.' + it.key + ' == ' + value)
+			}
 		}
 		blockBuilder.endBlock()
 

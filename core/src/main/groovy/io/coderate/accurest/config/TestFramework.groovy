@@ -1,10 +1,8 @@
-package io.coderate.accurest.builder
+package io.coderate.accurest.config
 
 /**
  * @author Jakub Kubrynski
  */
 enum TestFramework {
-
 	JUNIT, SPOCK
-
 }

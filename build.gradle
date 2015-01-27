@@ -1,9 +1,14 @@
+ext {
+	projectVersion = '0.1.0-SNAPSHOT'
+	projectGroup = 'io.codearte.accurest'
+}
+
 subprojects {
 	apply plugin: 'groovy'
 	apply plugin: 'maven-publish'
 
-	group = 'io.codearte.accurest'
-	version = '1.0.0-SNAPSHOT'
+	group = projectGroup
+	version = projectVersion
 
 	sourceCompatibility = 1.7
 	targetCompatibility = 1.7
@@ -21,8 +26,8 @@ subprojects {
 	publishing {
 		publications {
 			maven(MavenPublication) {
-				groupId 'io.codearte.accurest'
-				version '1.0.0-SNAPSHOT'
+				groupId projectGroup
+				version projectVersion
 
 				from components.java
 			}

@@ -1,7 +1,8 @@
 package io.coderate.accurest
 
 import io.coderate.accurest.builder.ClassBuilder
-import io.coderate.accurest.builder.TestFramework
+import io.coderate.accurest.config.TestFramework
+import io.coderate.accurest.config.TestMode
 import io.coderate.accurest.util.NamesUtil
 
 import java.nio.file.Files
@@ -21,10 +22,11 @@ class TestGenerator {
 	private final String ruleClassForTests
 	private final TestFramework lang
 	private final String targetDirectory
+	private final TestMode testMode
 
 	TestGenerator(String stubsBaseDirectory, String basePackageForTests, String baseClassForTests,
-	              String ruleClassForTests, String testFramework, String targetDirectory) {
-//		URL stubsResource = getClass().getClassLoader().getResource(stubsBaseDirectory)
+	              String ruleClassForTests, TestFramework testFramework, TestMode testMode, String targetDirectory) {
+		this.testMode = testMode
 		this.targetDirectory = targetDirectory
 		File stubsResource = new File(stubsBaseDirectory)
 		if (stubsResource == null) {
@@ -38,7 +40,7 @@ class TestGenerator {
 			this.baseClassForTests = baseClassForTests
 		}
 		this.ruleClassForTests = ruleClassForTests
-		this.lang = testFramework == 'Spock' ? TestFramework.SPOCK : TestFramework.JUNIT
+		this.lang = testFramework
 	}
 
 	public String generate() {
@@ -49,7 +51,6 @@ class TestGenerator {
 			def testBaseDir = Paths.get(targetDirectory, NamesUtil.packageToDirectory(basePackageForTests))
 			Files.createDirectories(testBaseDir)
 			Files.write(Paths.get(testBaseDir.toString(), NamesUtil.capitalize(it.name) + getTestClassExtension()), addClass(it).bytes)
-			println testBaseDir
 		}
 		return builder
 	}
@@ -69,11 +70,17 @@ class TestGenerator {
 
 	private String addClass(File directory) {
 		ClassBuilder clazz = createClass(NamesUtil.capitalize(NamesUtil.afterLast(directory.path, '/')), basePackageForTests, baseClassForTests, lang)
-				.addStaticImport('com.jayway.restassured.RestAssured.*')
-				.addImport('java.util.regex.Pattern')
+
+		if (testMode == TestMode.MOCKMVC) {
+			clazz.addStaticImport('com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.*')
+		} else {
+			clazz.addStaticImport('com.jayway.restassured.RestAssured.*')
+		}
 
 		if (lang == TestFramework.JUNIT) {
 			clazz.addImport('org.junit.Test')
+		} else {
+			clazz.addImport('groovy.json.JsonSlurper')
 		}
 
 		if (ruleClassForTests) {
@@ -88,6 +95,6 @@ class TestGenerator {
 	}
 
 	public static void main(String[] args) {
-		print new TestGenerator('stubs', 'io.test', '', '', 'Spock').generate()
+		print new TestGenerator('/home/devel/projects/codearte/accurest/core/src/main/resources/stubs', 'io.test', '', '', TestFramework.SPOCK, TestMode.MOCKMVC, "").generate()
 	}
 }

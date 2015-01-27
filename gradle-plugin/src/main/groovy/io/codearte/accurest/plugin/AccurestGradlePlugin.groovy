@@ -27,9 +27,11 @@ class AccurestGradlePlugin implements Plugin<Project> {
 			}
 
 			try {
-				TestGenerator generator = new TestGenerator(project.projectDir.path + '/src/test/resources/' + extension.stubsBaseDirectory, extension.basePackageForTests,
-						extension.baseClassForTests, extension.ruleClassForTests,
-						extension.targetFramework, extension.generatedTestSourcesDir)
+				String resourceDirectory = project.projectDir.path + '/src/test/resources/' + extension.stubsBaseDirectory
+				TestGenerator generator = new TestGenerator(resourceDirectory,
+						extension.basePackageForTests, extension.baseClassForTests, extension.ruleClassForTests,
+						extension.targetFramework, extension.testMode,
+						extension.generatedTestSourcesDir)
 				generator.generate()
 			} catch (IllegalStateException e) {
 				project.logger.error("Accurest Plugin: {}", e.getMessage())
