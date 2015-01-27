@@ -27,6 +27,16 @@ class BlockBuilder {
 		return this
 	}
 
+	BlockBuilder indent() {
+		startBlock().startBlock()
+		return this
+	}
+
+	BlockBuilder unindent() {
+		endBlock().endBlock()
+		return this
+	}
+
 	BlockBuilder addLine(String line) {
 		addIndentation()
 		builder << "$line\n"
@@ -38,7 +48,7 @@ class BlockBuilder {
 		return this
 	}
 
-	void addIndentation() {
+	private void addIndentation() {
 		indents.times {
 			builder << spacer
 		}

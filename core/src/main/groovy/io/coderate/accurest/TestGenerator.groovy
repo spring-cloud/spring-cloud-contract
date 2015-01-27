@@ -43,16 +43,13 @@ class TestGenerator {
 		this.lang = testFramework
 	}
 
-	public String generate() {
-		StringBuilder builder = new StringBuilder()
+	public void generate() {
 		List<File> files = new File(stubsBaseDirectory).listFiles()
 		files.grep({ File file -> file.isDirectory() && containsStubs(file) }).each {
-			builder << addClass(it)
 			def testBaseDir = Paths.get(targetDirectory, NamesUtil.packageToDirectory(basePackageForTests))
 			Files.createDirectories(testBaseDir)
 			Files.write(Paths.get(testBaseDir.toString(), NamesUtil.capitalize(it.name) + getTestClassExtension()), addClass(it).bytes)
 		}
-		return builder
 	}
 
 	private String getTestClassExtension() {
@@ -95,6 +92,6 @@ class TestGenerator {
 	}
 
 	public static void main(String[] args) {
-		print new TestGenerator('/home/devel/projects/codearte/accurest/core/src/main/resources/stubs', 'io.test', '', '', TestFramework.SPOCK, TestMode.MOCKMVC, "").generate()
+		new TestGenerator('/home/devel/projects/codearte/accurest/core/src/main/resources/stubs', 'io.test', '', '', TestFramework.SPOCK, TestMode.MOCKMVC, "").generate()
 	}
 }

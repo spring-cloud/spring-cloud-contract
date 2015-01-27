@@ -67,24 +67,24 @@ class ClassBuilder {
 
 	String build() {
 		BlockBuilder clazz = new BlockBuilder("\t")
-				.addLine("package $packageName" + suffix)
+				.addLine("package $packageName$suffix")
 				.addEmptyLine()
 
 		imports.sort().each {
-			clazz.addLine("import $it" + suffix)
+			clazz.addLine("import $it$suffix")
 		}
 		if (!imports.empty) {
 			clazz.addEmptyLine()
 		}
 
 		staticImports.sort().each {
-			clazz.addLine("import static $it" + suffix)
+			clazz.addLine("import static $it$suffix")
 		}
 		if (!staticImports.empty) {
 			clazz.addEmptyLine()
 		}
 
-		def classLine = modifier + "class $className"
+		def classLine = "${modifier}class $className"
 		if (baseClass) {
 			classLine += " extends $baseClass"
 		}
@@ -94,7 +94,7 @@ class ClassBuilder {
 		clazz.startBlock()
 		rules.sort().each {
 			clazz.addLine("@Rule")
-			clazz.addLine("public " + it + " " + NamesUtil.camelCase(it) + " = new $it()" + suffix)
+			clazz.addLine("public $it ${NamesUtil.camelCase(it)} = new $it()$suffix")
 		}
 		clazz.endBlock()
 		if (!rules.empty) {

@@ -5,7 +5,7 @@
   },
   "response": {
     "status": 200,
-    "body": "{\"loanApplicationStatus\":\"LOAN_APPLIED\",\"loanApplicationId\":123123123}",
+    "body": "{\"loanApplicationStatus\":\"LOAN_APPLIED\",\"loanApplicationId\":\"${123123123:$anyInt($it)}\"}",
     "headers": {
       "Content-Type": "text/plain"
     }

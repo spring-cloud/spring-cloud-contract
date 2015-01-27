@@ -1,5 +1,6 @@
 package io.coderate.accurest.util
 
+import groovy.json.JsonException
 import groovy.json.JsonSlurper
 
 import java.util.regex.Pattern
@@ -9,28 +10,30 @@ import java.util.regex.Pattern
  */
 class StubMappingConverter {
 
-	private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile(/^\$\{(.*)\}:\$\{(.*)\}$/)
+	private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile(/^\$\{(.*):(.*)\}$/)
 	public static final int SERVER_SIDE_GROUP = 2
 
 	static Map toStubMappingOnServerSide(File stubMapping) {
 		def json = new JsonSlurper().parse(stubMapping)
-		convertPlaceholders(json as Map, { String value ->
+		return convertPlaceholders(json as Map, { String value ->
 			getGroupFromMatchingPattern(value)
 		})
-		return json
 	}
 
-	private static void convertPlaceholders(Map map, Closure closure) {
-		map.each {
-			if (it instanceof Map.Entry) {
-				Map.Entry entry = it as Map.Entry
-				if (entry.value instanceof String) {
-					String value = entry.value as String
-					entry.value = closure(value)
-				} else if (entry.value instanceof Map) {
-					convertPlaceholders(entry.value as Map, closure)
-				}
+	private static Map convertPlaceholders(Map map, Closure closure) {
+		return map.collectEntries { key, value -> [ key, transformValue(value, closure) ] }
+	}
+
+	static def transformValue(def value, Closure closure) {
+		if (value instanceof String) {
+			try {
+				def json = new JsonSlurper().parseText(value as String) as Map
+				return convertPlaceholders(json, closure)
+			} catch (JsonException ignore) {
+				return closure(value)
 			}
+		} else if (value instanceof Map) {
+			return convertPlaceholders(value as Map, closure)
 		}
 	}
 
