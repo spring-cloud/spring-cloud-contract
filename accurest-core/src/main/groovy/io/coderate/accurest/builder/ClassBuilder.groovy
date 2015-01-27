@@ -1,5 +1,6 @@
 package io.coderate.accurest.builder
 
+import io.coderate.accurest.config.AccurestConfigProperties
 import io.coderate.accurest.config.TestFramework
 import io.coderate.accurest.util.NamesUtil
 
@@ -36,12 +37,14 @@ class ClassBuilder {
 		}
 	}
 
-	static ClassBuilder createClass(String className, String packageName, TestFramework lang) {
-		return createClass(className, packageName, null, lang)
-	}
-
-	static ClassBuilder createClass(String className, String packageName, String baseClass, TestFramework lang) {
-		return new ClassBuilder(className, packageName, baseClass, lang)
+	static ClassBuilder createClass(String className, AccurestConfigProperties properties) {
+		String baseClassForTests
+		if (properties.targetFramework == TestFramework.SPOCK && !properties.baseClassForTests) {
+			baseClassForTests = 'spock.lang.Specification'
+		} else {
+			baseClassForTests = properties.baseClassForTests
+		}
+		return new ClassBuilder(className, properties.basePackageForTests, baseClassForTests, properties.targetFramework)
 	}
 
 	ClassBuilder addImport(String importToAdd) {

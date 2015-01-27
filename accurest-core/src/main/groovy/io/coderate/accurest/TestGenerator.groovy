@@ -1,6 +1,7 @@
 package io.coderate.accurest
 
 import io.coderate.accurest.builder.ClassBuilder
+import io.coderate.accurest.config.AccurestConfigProperties
 import io.coderate.accurest.config.TestFramework
 import io.coderate.accurest.config.TestMode
 import io.coderate.accurest.util.NamesUtil
@@ -16,44 +17,31 @@ import static io.coderate.accurest.builder.MethodBuilder.createTestMethod
  */
 class TestGenerator {
 
-	private final String stubsBaseDirectory
-	private final String basePackageForTests
-	private final String baseClassForTests
-	private final String ruleClassForTests
-	private final TestFramework lang
 	private final String targetDirectory
-	private final TestMode testMode
+	private final AccurestConfigProperties configProperties
+	private final String stubsBaseDirectory
 
-	TestGenerator(String stubsBaseDirectory, String basePackageForTests, String baseClassForTests,
-	              String ruleClassForTests, TestFramework testFramework, TestMode testMode, String targetDirectory) {
-		this.testMode = testMode
-		this.targetDirectory = targetDirectory
-		File stubsResource = new File(stubsBaseDirectory)
+	TestGenerator(AccurestConfigProperties accurestConfigProperties) {
+		this.configProperties = accurestConfigProperties
+		this.targetDirectory = accurestConfigProperties.generatedTestSourcesDir
+		File stubsResource = new File(accurestConfigProperties.stubsBaseDirectory)
 		if (stubsResource == null) {
-			throw new IllegalStateException("Stubs directory not found under " + stubsBaseDirectory)
+			throw new IllegalStateException("Stubs directory not found under " + accurestConfigProperties.stubsBaseDirectory)
 		}
 		this.stubsBaseDirectory = stubsResource.path
-		this.basePackageForTests = basePackageForTests
-		if (testFramework == 'Spock' && !baseClassForTests) {
-			this.baseClassForTests = 'spock.lang.Specification'
-		} else {
-			this.baseClassForTests = baseClassForTests
-		}
-		this.ruleClassForTests = ruleClassForTests
-		this.lang = testFramework
 	}
 
 	public void generate() {
 		List<File> files = new File(stubsBaseDirectory).listFiles()
 		files.grep({ File file -> file.isDirectory() && containsStubs(file) }).each {
-			def testBaseDir = Paths.get(targetDirectory, NamesUtil.packageToDirectory(basePackageForTests))
+			def testBaseDir = Paths.get(targetDirectory, NamesUtil.packageToDirectory(configProperties.basePackageForTests))
 			Files.createDirectories(testBaseDir)
 			Files.write(Paths.get(testBaseDir.toString(), NamesUtil.capitalize(it.name) + getTestClassExtension()), addClass(it).bytes)
 		}
 	}
 
 	private String getTestClassExtension() {
-		return lang == TestFramework.SPOCK ? '.groovy' : '.java'
+		return configProperties.targetFramework == TestFramework.SPOCK ? '.groovy' : '.java'
 	}
 
 	boolean containsStubs(File file) {
@@ -66,32 +54,46 @@ class TestGenerator {
 	}
 
 	private String addClass(File directory) {
-		ClassBuilder clazz = createClass(NamesUtil.capitalize(NamesUtil.afterLast(directory.path, '/')), basePackageForTests, baseClassForTests, lang)
+		ClassBuilder clazz = createClass(NamesUtil.capitalize(NamesUtil.afterLast(directory.path, '/')), configProperties)
 
-		if (testMode == TestMode.MOCKMVC) {
+		if (configProperties.imports) {
+			configProperties.imports.each {
+				clazz.addImport(it)
+			}
+		}
+
+		if (configProperties.staticImports) {
+			configProperties.staticImports.each {
+				clazz.addStaticImport(it)
+			}
+		}
+
+		if (configProperties.testMode == TestMode.MOCKMVC) {
 			clazz.addStaticImport('com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.*')
 		} else {
 			clazz.addStaticImport('com.jayway.restassured.RestAssured.*')
 		}
 
-		if (lang == TestFramework.JUNIT) {
+		if (configProperties.targetFramework == TestFramework.JUNIT) {
 			clazz.addImport('org.junit.Test')
 		} else {
 			clazz.addImport('groovy.json.JsonSlurper')
 		}
 
-		if (ruleClassForTests) {
+		if (configProperties.ruleClassForTests) {
 			clazz.addImport('org.junit.Rule')
-					.addRule(ruleClassForTests)
+					.addRule(configProperties.ruleClassForTests)
 		}
 
 		directory.listFiles().each {
-			clazz.addMethod(createTestMethod(it, lang))
+			clazz.addMethod(createTestMethod(it, configProperties.targetFramework))
 		}
 		return clazz.build()
 	}
 
 	public static void main(String[] args) {
-		new TestGenerator('/home/devel/projects/codearte/accurest/accurest-core/src/main/resources/stubs', 'io.test', '', '', TestFramework.SPOCK, TestMode.MOCKMVC, "").generate()
+		AccurestConfigProperties properties = new AccurestConfigProperties(stubsBaseDirectory: '/home/devel/projects/codearte/accurest/accurest-core/src/main/resources/stubs',
+		targetFramework: TestFramework.SPOCK, testMode: TestMode.MOCKMVC, basePackageForTests: 'io.test', staticImports: ['com.pupablada.Test.*'], imports: ['org.innapypa.Test'])
+		new TestGenerator(properties).generate()
 	}
 }

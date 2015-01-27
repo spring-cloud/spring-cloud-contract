@@ -1,6 +1,7 @@
 package io.codearte.accurest.plugin
 
 import io.coderate.accurest.TestGenerator
+import io.coderate.accurest.config.AccurestConfigProperties
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -15,7 +16,7 @@ class AccurestGradlePlugin implements Plugin<Project> {
 
 	@Override
 	void apply(Project project) {
-		AccurestPluginExtension extension = project.extensions.create('accurest', AccurestPluginExtension)
+		AccurestConfigProperties extension = project.extensions.create('accurest', AccurestConfigProperties)
 
 		project.compileTestGroovy.dependsOn(TASK_NAME)
 
@@ -27,11 +28,8 @@ class AccurestGradlePlugin implements Plugin<Project> {
 			}
 
 			try {
-				String resourceDirectory = project.projectDir.path + '/src/test/resources/' + extension.stubsBaseDirectory
-				TestGenerator generator = new TestGenerator(resourceDirectory,
-						extension.basePackageForTests, extension.baseClassForTests, extension.ruleClassForTests,
-						extension.targetFramework, extension.testMode,
-						extension.generatedTestSourcesDir)
+				extension.stubsBaseDirectory = project.projectDir.path + '/src/test/resources/' + extension.stubsBaseDirectory
+				TestGenerator generator = new TestGenerator(extension)
 				generator.generate()
 			} catch (IllegalStateException e) {
 				project.logger.error("Accurest Plugin: {}", e.getMessage())
