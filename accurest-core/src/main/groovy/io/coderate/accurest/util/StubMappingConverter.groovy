@@ -21,20 +21,29 @@ class StubMappingConverter {
 	}
 
 	private static Map convertPlaceholders(Map map, Closure closure) {
-		return map.collectEntries { key, value -> [ key, transformValue(value, closure) ] }
+		return map.collectEntries {
+			key, value ->
+				[key, transformValue(value, closure)]
+		}
 	}
 
 	static def transformValue(def value, Closure closure) {
 		if (value instanceof String) {
 			try {
-				def json = new JsonSlurper().parseText(value as String) as Map
-				return convertPlaceholders(json, closure)
+				def json = new JsonSlurper().parseText(value as String)
+				if (json instanceof Map) {
+					return convertPlaceholders(json, closure)
+				}
 			} catch (JsonException ignore) {
 				return closure(value)
 			}
 		} else if (value instanceof Map) {
 			return convertPlaceholders(value as Map, closure)
+		} else if (value instanceof List) {
+			return value.collect({ transformValue(it, closure) })
 		}
+
+		return value
 	}
 
 	private static Object getGroupFromMatchingPattern(String value) {

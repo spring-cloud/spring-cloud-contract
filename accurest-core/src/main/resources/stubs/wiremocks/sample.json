@@ -1,13 +1,23 @@
 {
   "request": {
-    "method": "GET",
-    "url": "/some"
+    "method": "PUT",
+    "url": "/loanApplication",
+    "headers": {
+      "Content-Type": {
+        "equalTo": "application/vnd.loanapplicationservice.v1+json"
+      }
+    },
+    "bodyPatterns": [
+      {
+        "matches": "{\"client\":{\"pesel\":\"1234567890\"},\"loanApplicationId\":123123123,\"amount\":123.123}"
+      }
+    ]
   },
   "response": {
     "status": 200,
     "body": "{\"loanApplicationStatus\":\"LOAN_APPLIED\",\"loanApplicationId\":\"${123123123:$anyInt($it)}\"}",
     "headers": {
-      "Content-Type": "text/plain"
+      "Content-Type": "application/vnd.loanapplicationservice.v1+json"
     }
   }
 }

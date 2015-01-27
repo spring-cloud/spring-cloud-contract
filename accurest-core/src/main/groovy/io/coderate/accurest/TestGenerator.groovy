@@ -92,6 +92,6 @@ class TestGenerator {
 	}
 
 	public static void main(String[] args) {
-		new TestGenerator('/home/devel/projects/codearte/accurest/core/src/main/resources/stubs', 'io.test', '', '', TestFramework.SPOCK, TestMode.MOCKMVC, "").generate()
+		new TestGenerator('/home/devel/projects/codearte/accurest/accurest-core/src/main/resources/stubs', 'io.test', '', '', TestFramework.SPOCK, TestMode.MOCKMVC, "").generate()
 	}
 }

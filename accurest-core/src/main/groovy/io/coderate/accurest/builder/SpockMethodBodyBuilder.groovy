@@ -1,5 +1,6 @@
 package io.coderate.accurest.builder
 
+import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 
 /**
@@ -22,7 +23,7 @@ class SpockMethodBodyBuilder {
 			blockBuilder.addLine(".header('$it.key', '$it.value.equalTo')")
 		}
 		if (stubDefinition.request.bodyPatterns) {
-			blockBuilder.addLine(".body('${stubDefinition.request.bodyPatterns[0].matches}')")
+			blockBuilder.addLine(".body('${JsonOutput.toJson(stubDefinition.request.bodyPatterns[0].matches)}')")
 		}
 
 		blockBuilder.unindent().endBlock().addEmptyLine()
@@ -51,7 +52,7 @@ class SpockMethodBodyBuilder {
 						blockBuilder.addLine("responseBody.$it.key == \"$value\"")
 					}
 				} else {
-					blockBuilder.addLine("responseBody.$it.key == $value")
+					blockBuilder.addLine("responseBody.$it == $value")
 				}
 			}
 		}
