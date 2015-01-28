@@ -6,7 +6,10 @@ ext {
 subprojects {
 	apply plugin: 'groovy'
 	apply plugin: 'maven-publish'
-	apply from: "$rootDir/release.gradle"
+
+	if (!projectVersion.contains('SNAPSHOT')) {
+		apply from: "$rootDir/release.gradle"
+	}
 
 	group = projectGroup
 	version = projectVersion
