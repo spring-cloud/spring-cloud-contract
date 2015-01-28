@@ -23,7 +23,9 @@ class SpockMethodBodyBuilder {
 			blockBuilder.addLine(".header('$it.key', '$it.value.equalTo')")
 		}
 		if (stubDefinition.request.bodyPatterns) {
-			blockBuilder.addLine(".body('${JsonOutput.toJson(stubDefinition.request.bodyPatterns[0].matches)}')")
+			String matches = stubDefinition.request.bodyPatterns[0].matches
+			matches = matches.replaceAll('\\\\', '');
+			blockBuilder.addLine(".body('${JsonOutput.toJson(matches)}')")
 		}
 
 		blockBuilder.unindent().endBlock().addEmptyLine()

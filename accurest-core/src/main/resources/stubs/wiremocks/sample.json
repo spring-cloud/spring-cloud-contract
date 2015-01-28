@@ -9,7 +9,7 @@
     },
     "bodyPatterns": [
       {
-        "matches": "{\"client\":{\"pesel\":\"1234567890\"},\"loanApplicationId\":123123123,\"amount\":123.123}"
+      "matches": "\\{\"clientPesel\":\"1234567890\",\"loanAmount\":123.123\\}"
       }
     ]
   },
