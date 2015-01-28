@@ -24,7 +24,6 @@ class AccurestGradlePlugin implements Plugin<Project> {
 			project.logger.info("Accurest Plugin: Invoking test sources generation")
 
 			extension.stubsBaseDirectory = project.projectDir.path + File.separator + extension.stubsBaseDirectory
-			extension.generatedTestSourcesDir = buildGeneratedSourcesDir(project, extension)
 
 			project.sourceSets.test.groovy {
 				srcDir extension.generatedTestSourcesDir
@@ -43,7 +42,7 @@ class AccurestGradlePlugin implements Plugin<Project> {
 			if (hasIdea) {
 				project.idea {
 					module {
-						testSourceDirs += new File(buildGeneratedSourcesDir(project, extension))
+						testSourceDirs += new File(extension.generatedTestSourcesDir)
 					}
 				}
 			}
@@ -51,14 +50,5 @@ class AccurestGradlePlugin implements Plugin<Project> {
 
 	}
 
-	private String buildGeneratedSourcesDir(Project project, def extension) {
-		String moduleDir
-		if (project.getParent()) {
-			moduleDir = project.name + File.separator + extension.generatedTestSourcesDir
-		} else {
-			moduleDir = extension.generatedTestSourcesDir
-		}
-		moduleDir
-	}
 
 }

@@ -7,7 +7,9 @@ import io.coderate.accurest.config.TestMode
 import io.coderate.accurest.util.NamesUtil
 
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
+import java.nio.file.StandardOpenOption
 
 import static ClassBuilder.createClass
 import static io.coderate.accurest.builder.MethodBuilder.createTestMethod
@@ -46,8 +48,9 @@ class TestGenerator {
 				if (containsStubs(it)) {
 					def testBaseDir = Paths.get(targetDirectory, NamesUtil.packageToDirectory(packageName))
 					Files.createDirectories(testBaseDir)
-					Files.write(Paths.get(testBaseDir.toString(), capitalize(it.name) + getTestClassExtension()),
-							buildClass(it, packageName).bytes)
+					def classPath = Paths.get(testBaseDir.toString(), capitalize(it.name) + getTestClassExtension()).toAbsolutePath()
+					def classBytes = buildClass(it, packageName).bytes
+					Files.write(classPath, classBytes, StandardOpenOption.CREATE)
 				}
 			}
 		}
