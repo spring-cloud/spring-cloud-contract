@@ -25,7 +25,7 @@ class SpockMethodBodyBuilder {
 		if (stubDefinition.request.bodyPatterns) {
 			String matches = stubDefinition.request.bodyPatterns[0].matches
 			matches = matches.replaceAll('\\\\', '');
-			blockBuilder.addLine(".body('${JsonOutput.toJson(matches)}')")
+			blockBuilder.addLine(".body('$matches')")
 		}
 
 		blockBuilder.unindent().endBlock().addEmptyLine()

@@ -50,7 +50,7 @@ class TestGenerator {
 					Files.createDirectories(testBaseDir)
 					def classPath = Paths.get(testBaseDir.toString(), capitalize(it.name) + getTestClassExtension()).toAbsolutePath()
 					def classBytes = buildClass(it, packageName).bytes
-					Files.write(classPath, classBytes, StandardOpenOption.CREATE)
+					Files.write(classPath, classBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
 				}
 			}
 		}
