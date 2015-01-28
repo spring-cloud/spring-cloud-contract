@@ -52,7 +52,7 @@ class SpockMethodBodyBuilder {
 						blockBuilder.addLine("responseBody.$it.key == \"$value\"")
 					}
 				} else {
-					blockBuilder.addLine("responseBody.$it == $value")
+					blockBuilder.addLine("responseBody.$it.key == $value")
 				}
 			}
 		}

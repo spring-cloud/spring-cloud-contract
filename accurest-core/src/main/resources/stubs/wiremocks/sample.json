@@ -15,7 +15,7 @@
   },
   "response": {
     "status": 200,
-    "body": "{\"loanApplicationStatus\":\"LOAN_APPLIED\",\"loanApplicationId\":\"${123123123:$anyInt($it)}\"}",
+    "body": "{\"loanApplicationStatus\":\"LOAN_APPLIED\",\"loanApplicationId\":\"${123123123:$anyInt($it)}\",\"rejectionReason\":null}",
     "headers": {
       "Content-Type": "application/vnd.loanapplicationservice.v1+json"
     }
