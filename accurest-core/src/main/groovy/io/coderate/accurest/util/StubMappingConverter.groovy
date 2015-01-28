@@ -28,9 +28,9 @@ class StubMappingConverter {
 	}
 
 	static def transformValue(def value, Closure closure) {
-		if (value instanceof String) {
+		if (value instanceof String && value) {
 			try {
-				def json = new JsonSlurper().parseText(value as String)
+				def json = new JsonSlurper().parseText(value)
 				if (json instanceof Map) {
 					return convertPlaceholders(json, closure)
 				}
