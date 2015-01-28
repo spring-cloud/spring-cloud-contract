@@ -11,6 +11,8 @@ import java.nio.file.Paths
 
 import static ClassBuilder.createClass
 import static io.coderate.accurest.builder.MethodBuilder.createTestMethod
+import static io.coderate.accurest.util.NamesUtil.afterLast
+import static io.coderate.accurest.util.NamesUtil.capitalize
 
 /**
  * @author Jakub Kubrynski
@@ -32,11 +34,22 @@ class TestGenerator {
 	}
 
 	public void generate() {
-		List<File> files = new File(stubsBaseDirectory).listFiles()
-		files.grep({ File file -> file.isDirectory() && containsStubs(file) }).each {
-			def testBaseDir = Paths.get(targetDirectory, NamesUtil.packageToDirectory(configProperties.basePackageForTests))
-			Files.createDirectories(testBaseDir)
-			Files.write(Paths.get(testBaseDir.toString(), NamesUtil.capitalize(it.name) + getTestClassExtension()), addClass(it).bytes)
+		generateTestClasses(new File(stubsBaseDirectory), configProperties.basePackageForTests)
+	}
+
+	protected void generateTestClasses(File baseFile, String packageName) {
+		List<File> files = baseFile.listFiles()
+
+		files.each {
+			if (it.isDirectory()) {
+				generateTestClasses(it, "$packageName.$it.name")
+				if (containsStubs(it)) {
+					def testBaseDir = Paths.get(targetDirectory, NamesUtil.packageToDirectory(packageName))
+					Files.createDirectories(testBaseDir)
+					Files.write(Paths.get(testBaseDir.toString(), capitalize(it.name) + getTestClassExtension()),
+							buildClass(it, packageName).bytes)
+				}
+			}
 		}
 	}
 
@@ -53,8 +66,8 @@ class TestGenerator {
 		}).size() > 0
 	}
 
-	private String addClass(File directory) {
-		ClassBuilder clazz = createClass(NamesUtil.capitalize(NamesUtil.afterLast(directory.path, '/')), configProperties)
+	private String buildClass(File directory, String classPackage) {
+		ClassBuilder clazz = createClass(capitalize(afterLast(directory.path, '/')), classPackage, configProperties)
 
 		if (configProperties.imports) {
 			configProperties.imports.each {
@@ -85,7 +98,7 @@ class TestGenerator {
 					.addRule(configProperties.ruleClassForTests)
 		}
 
-		directory.listFiles().each {
+		directory.listFiles().grep({ File file -> !file.isDirectory()}).each {
 			clazz.addMethod(createTestMethod(it, configProperties.targetFramework))
 		}
 		return clazz.build()
@@ -93,7 +106,7 @@ class TestGenerator {
 
 	public static void main(String[] args) {
 		AccurestConfigProperties properties = new AccurestConfigProperties(stubsBaseDirectory: '/home/devel/projects/codearte/accurest/accurest-core/src/main/resources/stubs',
-		targetFramework: TestFramework.SPOCK, testMode: TestMode.MOCKMVC, basePackageForTests: 'io.test', staticImports: ['com.pupablada.Test.*'], imports: ['org.innapypa.Test'])
+				targetFramework: TestFramework.SPOCK, testMode: TestMode.MOCKMVC, basePackageForTests: 'io.test', staticImports: ['com.pupablada.Test.*'], imports: ['org.innapypa.Test'])
 		new TestGenerator(properties).generate()
 	}
 }

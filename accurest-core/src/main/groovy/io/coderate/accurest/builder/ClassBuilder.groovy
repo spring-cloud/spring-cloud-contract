@@ -37,14 +37,14 @@ class ClassBuilder {
 		}
 	}
 
-	static ClassBuilder createClass(String className, AccurestConfigProperties properties) {
+	static ClassBuilder createClass(String className, String classPackage, AccurestConfigProperties properties) {
 		String baseClassForTests
 		if (properties.targetFramework == TestFramework.SPOCK && !properties.baseClassForTests) {
 			baseClassForTests = 'spock.lang.Specification'
 		} else {
 			baseClassForTests = properties.baseClassForTests
 		}
-		return new ClassBuilder(className, properties.basePackageForTests, baseClassForTests, properties.targetFramework)
+		return new ClassBuilder(className, classPackage, baseClassForTests, properties.targetFramework)
 	}
 
 	ClassBuilder addImport(String importToAdd) {

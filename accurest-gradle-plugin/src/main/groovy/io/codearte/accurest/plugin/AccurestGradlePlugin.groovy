@@ -17,7 +17,7 @@ class AccurestGradlePlugin implements Plugin<Project> {
 	@Override
 	void apply(Project project) {
 		AccurestConfigProperties extension = project.extensions.create('accurest', AccurestConfigProperties)
-		extension.stubsBaseDirectory = project.projectDir.path + '/src/test/resources/' + extension.stubsBaseDirectory
+		extension.stubsBaseDirectory = project.projectDir.path + File.separator + extension.stubsBaseDirectory
 		extension.generatedTestSourcesDir = buildGeneratedSourcesDir(project, extension)
 
 		project.compileTestGroovy.dependsOn(TASK_NAME)
