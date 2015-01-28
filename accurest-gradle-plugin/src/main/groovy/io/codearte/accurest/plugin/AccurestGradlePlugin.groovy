@@ -17,6 +17,8 @@ class AccurestGradlePlugin implements Plugin<Project> {
 	@Override
 	void apply(Project project) {
 		AccurestConfigProperties extension = project.extensions.create('accurest', AccurestConfigProperties)
+		extension.stubsBaseDirectory = project.projectDir.path + '/src/test/resources/' + extension.stubsBaseDirectory
+		extension.generatedTestSourcesDir = buildGeneratedSourcesDir(project, extension)
 
 		project.compileTestGroovy.dependsOn(TASK_NAME)
 
@@ -28,7 +30,6 @@ class AccurestGradlePlugin implements Plugin<Project> {
 			}
 
 			try {
-				extension.stubsBaseDirectory = project.projectDir.path + '/src/test/resources/' + extension.stubsBaseDirectory
 				TestGenerator generator = new TestGenerator(extension)
 				generator.generate()
 			} catch (IllegalStateException e) {
@@ -47,6 +48,16 @@ class AccurestGradlePlugin implements Plugin<Project> {
 			}
 		}
 
+	}
+
+	private String buildGeneratedSourcesDir(Project project, def extension) {
+		String moduleDir
+		if (project.getParent()) {
+			moduleDir = project.name + File.separator + extension.generatedTestSourcesDir
+		} else {
+			moduleDir = extension.generatedTestSourcesDir
+		}
+		moduleDir
 	}
 
 }
