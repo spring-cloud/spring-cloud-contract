@@ -1,5 +1,6 @@
 package io.codearte.accurest.plugin
 
+import io.coderate.accurest.AccurestException
 import io.coderate.accurest.TestGenerator
 import io.coderate.accurest.config.AccurestConfigProperties
 import org.gradle.api.Plugin
@@ -24,19 +25,20 @@ class AccurestGradlePlugin implements Plugin<Project> {
 			project.logger.info("Accurest Plugin: Invoking test sources generation")
 
 			extension.stubsBaseDirectory = project.projectDir.path + File.separator + extension.stubsBaseDirectory
-			extension.generatedTestSourcesDir = buildGeneratedSourcesDir(project, extension)
 
 			project.sourceSets.test.groovy {
 				project.logger.info("Registering $extension.generatedTestSourcesDir as test source directory")
 				srcDir extension.generatedTestSourcesDir
 			}
 
+			extension.generatedTestSourcesDir = buildGeneratedSourcesDir(project, extension)
+
 			try {
 				TestGenerator generator = new TestGenerator(extension)
 				int generatedClasses = generator.generate()
 				project.logger.info("Generated {} test classes", generatedClasses)
-			} catch (IllegalStateException e) {
-				project.logger.error("Accurest Plugin: {}", e.getMessage())
+			} catch (AccurestException e) {
+				project.logger.error("Accurest Plugin exception: {}", e.getMessage())
 			}
 		}
 
