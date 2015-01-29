@@ -32,7 +32,7 @@ class TestGenerator {
 		this.targetDirectory = accurestConfigProperties.generatedTestSourcesDir
 		File stubsResource = new File(accurestConfigProperties.stubsBaseDirectory)
 		if (stubsResource == null) {
-			throw new IllegalStateException("Stubs directory not found under " + accurestConfigProperties.stubsBaseDirectory)
+			throw new AccurestException("Stubs directory not found under " + accurestConfigProperties.stubsBaseDirectory)
 		}
 		this.stubsBaseDirectory = stubsResource.path
 	}
