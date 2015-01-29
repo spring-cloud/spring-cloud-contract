@@ -10,6 +10,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
+import java.util.concurrent.atomic.AtomicInteger
 
 import static ClassBuilder.createClass
 import static io.coderate.accurest.builder.MethodBuilder.createTestMethod
@@ -24,6 +25,7 @@ class TestGenerator {
 	private final String targetDirectory
 	private final AccurestConfigProperties configProperties
 	private final String stubsBaseDirectory
+	private AtomicInteger counter = new AtomicInteger()
 
 	TestGenerator(AccurestConfigProperties accurestConfigProperties) {
 		this.configProperties = accurestConfigProperties
@@ -35,8 +37,9 @@ class TestGenerator {
 		this.stubsBaseDirectory = stubsResource.path
 	}
 
-	public void generate() {
+	public int generate() {
 		generateTestClasses(new File(stubsBaseDirectory), configProperties.basePackageForTests)
+		return counter.get()
 	}
 
 	protected void generateTestClasses(File baseFile, String packageName) {
@@ -51,6 +54,7 @@ class TestGenerator {
 					def classPath = Paths.get(testBaseDir.toString(), capitalize(it.name) + getTestClassExtension()).toAbsolutePath()
 					def classBytes = buildClass(it, packageName).bytes
 					Files.write(classPath, classBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
+					counter.incrementAndGet()
 				}
 			}
 		}

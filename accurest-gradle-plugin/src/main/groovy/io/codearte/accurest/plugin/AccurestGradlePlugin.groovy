@@ -27,12 +27,14 @@ class AccurestGradlePlugin implements Plugin<Project> {
 			extension.generatedTestSourcesDir = buildGeneratedSourcesDir(project, extension)
 
 			project.sourceSets.test.groovy {
+				project.logger.info("Registering $extension.generatedTestSourcesDir as test source directory")
 				srcDir extension.generatedTestSourcesDir
 			}
 
 			try {
 				TestGenerator generator = new TestGenerator(extension)
-				generator.generate()
+				int generatedClasses = generator.generate()
+				project.logger.info("Generated {} test classes", generatedClasses)
 			} catch (IllegalStateException e) {
 				project.logger.error("Accurest Plugin: {}", e.getMessage())
 			}
