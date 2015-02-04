@@ -1,4 +1,4 @@
-package io.coderate.accurest.dsl
+package io.coderate.accurest.dsl.internal
 
 import groovy.transform.TypeChecked
 import io.coderate.accurest.dsl.internal.Headers

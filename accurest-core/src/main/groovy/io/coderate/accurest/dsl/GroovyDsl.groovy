@@ -1,6 +1,7 @@
 package io.coderate.accurest.dsl
 
 import groovy.transform.TypeChecked
+import io.coderate.accurest.dsl.internal.Request
 import io.coderate.accurest.dsl.internal.Response
 
 @TypeChecked

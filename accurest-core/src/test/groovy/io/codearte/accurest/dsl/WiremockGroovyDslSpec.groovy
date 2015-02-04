@@ -2,7 +2,7 @@ package io.codearte.accurest.dsl
 
 import groovy.json.JsonSlurper
 import io.coderate.accurest.dsl.GroovyDsl
-import io.coderate.accurest.dsl.WiremockStubStrategy
+import io.coderate.accurest.dsl.WiremockRequestStubStrategy
 import spock.lang.Ignore
 import spock.lang.Specification
 
@@ -61,7 +61,7 @@ class WiremockGroovyDslSpec extends Specification {
                 }
             }
         when:
-            String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+            String wiremockStub = new WiremockRequestStubStrategy(groovyDsl).toWiremockClientStub()
         then:
             new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
     {
@@ -81,7 +81,7 @@ class WiremockGroovyDslSpec extends Specification {
                 }
             }
         when:
-            String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+            String wiremockStub = new WiremockRequestStubStrategy(groovyDsl).toWiremockClientStub()
         then:
             new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
     {
@@ -103,7 +103,7 @@ class WiremockGroovyDslSpec extends Specification {
                 }
             }
         when:
-            String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+            String wiremockStub = new WiremockRequestStubStrategy(groovyDsl).toWiremockClientStub()
         then:
             new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
     {
@@ -125,7 +125,7 @@ class WiremockGroovyDslSpec extends Specification {
                 }
             }
         when:
-            String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockServerStub()
+            String wiremockStub = new WiremockRequestStubStrategy(groovyDsl).toWiremockServerStub()
         then:
             new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
     {
@@ -144,7 +144,7 @@ class WiremockGroovyDslSpec extends Specification {
                 }
             }
         when:
-            String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+            String wiremockStub = new WiremockRequestStubStrategy(groovyDsl).toWiremockClientStub()
         then:
             new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
     {
@@ -163,7 +163,7 @@ class WiremockGroovyDslSpec extends Specification {
                 }
             }
         when:
-            String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockServerStub()
+            String wiremockStub = new WiremockRequestStubStrategy(groovyDsl).toWiremockServerStub()
         then:
             new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
     {
@@ -196,7 +196,7 @@ class WiremockGroovyDslSpec extends Specification {
                 }
             }
         when:
-            String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+            String wiremockStub = new WiremockRequestStubStrategy(groovyDsl).toWiremockClientStub()
         then:
             new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
     {
@@ -242,7 +242,7 @@ class WiremockGroovyDslSpec extends Specification {
                 }
             }
         when:
-            String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockServerStub()
+            String wiremockStub = new WiremockRequestStubStrategy(groovyDsl).toWiremockServerStub()
         then:
             new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
     {
