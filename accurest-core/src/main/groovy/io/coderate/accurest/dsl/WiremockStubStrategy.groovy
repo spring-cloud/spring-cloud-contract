@@ -2,6 +2,9 @@ package io.coderate.accurest.dsl
 
 import groovy.json.JsonOutput
 import groovy.transform.CompileStatic
+import io.coderate.accurest.dsl.internal.CustomizableProperty
+import io.coderate.accurest.dsl.internal.Headers
+import io.coderate.accurest.dsl.internal.WithValuePattern
 
 @CompileStatic
 class WiremockStubStrategy {
@@ -14,7 +17,6 @@ class WiremockStubStrategy {
 
     String toWiremockClientStub() {
         return JsonOutput.toJson(buildClientRequest(request))
-
     }
 
     String toWiremockServerStub() {
@@ -41,36 +43,36 @@ class WiremockStubStrategy {
                           headers   : buildHeaders()].findAll { it.value }]
     }
 
-    private Map buildClientHeadersSection(Request.Headers headers) {
+    private Map buildClientHeadersSection(Headers headers) {
         return createHeadersSection(headers) {
-            Map.Entry<String, Request.WithValuePattern> entry -> [(entry.key): buildClientHeaderFromValuePattern(entry.value)]
+            Map.Entry<String, WithValuePattern> entry -> [(entry.key): buildClientHeaderFromValuePattern(entry.value)]
         }
     }
 
-    private Map buildServerHeadersSection(Request.Headers headers) {
+    private Map buildServerHeadersSection(Headers headers) {
         return createHeadersSection(headers) {
-            Map.Entry<String, Request.WithValuePattern> entry -> [(entry.key): buildServerHeaderFromValuePattern(entry.value)]
+            Map.Entry<String, WithValuePattern> entry -> [(entry.key): buildServerHeaderFromValuePattern(entry.value)]
         }
     }
 
-    private Map createHeadersSection(Request.Headers headers, Closure closure) {
+    private Map createHeadersSection(Headers headers, Closure closure) {
         return headers?.entries()?.collectEntries(closure)
     }
 
 
-    private Map buildClientHeaderFromValuePattern(Request.WithValuePattern valuePattern) {
+    private Map buildClientHeaderFromValuePattern(WithValuePattern valuePattern) {
         return getValuePatternSection(valuePattern)
                 .findAll { it.value }
                 .collectEntries { [(it.key): it.value.toClientSide()] }
     }
 
-    private Map buildServerHeaderFromValuePattern(Request.WithValuePattern valuePattern) {
+    private Map buildServerHeaderFromValuePattern(WithValuePattern valuePattern) {
         return getValuePatternSection(valuePattern)
                 .findAll { it.value }
                 .collectEntries { [(it.key): it.value.toServerSide()] }
     }
 
-    private Map<String, Request.CustomizableProperty> getValuePatternSection(Request.WithValuePattern valuePattern) {
+    private Map<String, CustomizableProperty> getValuePatternSection(WithValuePattern valuePattern) {
         return [equalToJson    : valuePattern.equalToJson,
                 equalToXml     : valuePattern.equalToXml,
                 matchesXPath   : valuePattern.matchesXPath,
@@ -82,5 +84,4 @@ class WiremockStubStrategy {
                 absent         : valuePattern.absent,
                 matchesJsonPath: valuePattern.matchesJsonPath]
     }
-
 }
