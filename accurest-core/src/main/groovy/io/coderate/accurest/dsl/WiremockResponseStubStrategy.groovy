@@ -14,11 +14,19 @@ class WiremockResponseStubStrategy extends BaseWiremockStubStrategy {
     }
 
     String toWiremockClientStub() {
-        return JsonOutput.toJson(buildClientRequest(response))
+        return JsonOutput.toJson(buildClientResponse(response))
     }
 
-    private Map buildClientRequest(Response response) {
+    private Map buildClientResponse(Response response) {
         return getResponseSection(response, { "TODO" }, { buildClientHeadersSection(response.headers) })
+    }
+
+    String toWiremockServerStub() {
+        return JsonOutput.toJson(buildServerResponse(response))
+    }
+
+    private Map buildServerResponse(Response response) {
+        return getResponseSection(response, { "TODO" }, { buildServerHeadersSection(response.headers) })
     }
 
     private Map<String, Map<String, Object>> getResponseSection(Response response, Closure<String> buildUrlPattern, Closure<Map> buildHeaders) {

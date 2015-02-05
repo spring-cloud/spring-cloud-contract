@@ -266,5 +266,9 @@ class WiremockGroovyDslSpec extends Specification {
     ''')
     }
 
+    @Ignore("Not implemented yet")
+    def "should generate stub with request body matching for server side"() {}
 
+    @Ignore("Not implemented yet")
+    def "should generate stub with request query parameter matching for server side"() {}
 }
