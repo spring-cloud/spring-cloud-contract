@@ -8,19 +8,25 @@ import io.coderate.accurest.dsl.internal.WithValuePattern
 @CompileStatic
 abstract class BaseWiremockStubStrategy {
     protected Map buildClientHeadersSection(Headers headers) {
-        return createHeadersSection(headers) {
-            Map.Entry<String, WithValuePattern> entry -> [(entry.key): buildClientHeaderFromValuePattern(entry.value)]
+        if (!headers) {
+            return null
         }
+        return withAssertionHeaders(headers) {
+            Map.Entry<String, WithValuePattern> entry -> [(entry.key): buildClientHeaderFromValuePattern(entry.value)]
+        } <<  headers?.valueHeaders()
     }
 
     protected Map buildServerHeadersSection(Headers headers) {
-        return createHeadersSection(headers) {
-            Map.Entry<String, WithValuePattern> entry -> [(entry.key): buildServerHeaderFromValuePattern(entry.value)]
+        if (!headers) {
+            return null
         }
+        return withAssertionHeaders(headers) {
+            Map.Entry<String, WithValuePattern> entry -> [(entry.key): buildServerHeaderFromValuePattern(entry.value)]
+        } << headers.valueHeaders()
     }
 
-    private Map createHeadersSection(Headers headers, Closure closure) {
-        return headers?.entries()?.collectEntries(closure)
+    private Map withAssertionHeaders(Headers headers, Closure closure) {
+        return headers?.assertionEntries()?.collectEntries(closure)
     }
 
     private Map buildClientHeaderFromValuePattern(WithValuePattern valuePattern) {

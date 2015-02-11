@@ -3,40 +3,38 @@ package io.codearte.accurest.dsl
 import groovy.json.JsonSlurper
 import io.coderate.accurest.dsl.GroovyDsl
 import io.coderate.accurest.dsl.WiremockRequestStubStrategy
+import io.coderate.accurest.dsl.WiremockStubStrategy
 import spock.lang.Ignore
 import spock.lang.Specification
 
 class WiremockGroovyDslSpec extends Specification {
 
-    // TODO: add alias instead of placeholder
-    @Ignore
-    def 'should convert groovy dsl stub to wiremock stub'() {
+    def 'should convert groovy dsl stub to wiremock stub for the client side'() {
         given:
-        GroovyDsl dsl = GroovyDsl.make {
-            request {
-                method('GET')
-                urlPattern {
-                    client('/[0-9]{2}')
-                    server('/12')
+            GroovyDsl groovyDsl = GroovyDsl.make {
+                request {
+                    method('GET')
+                    urlPattern {
+                        client('/[0-9]{2}')
+                        server('/12')
+                    }
+                }
+                response {
+                    status(200)
+                    body (
+                        id : property(client: '123', server: { regex('[0-9]+') } ),
+                        name: 'Jan',
+                        created : $(client: '2014-02-02 12:23:43',  server: { currentDate(it) })
+                    )
+                    headers {
+                        header('Content-Type': 'text/plain')
+                    }
                 }
             }
-            response {
-                status(200)
-                body {
-                    withPlaceholder(client: '2015-01-14', server: '$anyInt($it)')
-                    withTemplate('''
-                        {
-                              "date" : "$placeholder0"
-                        }
-                       ''')
-                }
-                headers {
-                    Content-Type('text/plain')
-                }
-            }
-        }
-        expect:
-        dsl.toWiremockClientStub() == '''
+        when:
+            String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+        then:
+            new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
 {
     "request": {
         "method": "GET",
@@ -44,13 +42,63 @@ class WiremockGroovyDslSpec extends Specification {
     },
     "response": {
         "status": 200,
-        "body": "2015-01-14",
+        "body": {
+            "id": "123",
+            "name": "Jan",
+            "created" : "2014-02-02 12:23:43"
+        },
         "headers": {
             "Content-Type": "text/plain"
         }
     }
 }
-'''
+''')
+    }
+
+    def 'should convert groovy dsl stub to wiremock stub for the server side'() {
+        given:
+            GroovyDsl groovyDsl = GroovyDsl.make {
+                request {
+                    method('GET')
+                    urlPattern {
+                        client('/[0-9]{2}')
+                        server('/12')
+                    }
+                }
+                response {
+                    status(200)
+                    body (
+                        id : property(client: '123', server: '321' ),
+                        name: 'Jan',
+                        created : $(client: '2014-02-02 12:23:43',  server: '1999-01-01 01:23:45')
+                    )
+                    headers {
+                        header('Content-Type': 'text/plain')
+                    }
+                }
+            }
+        when:
+            String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockServerStub()
+        then:
+            new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+{
+    "request": {
+        "method": "GET",
+        "urlPattern": "/12"
+    },
+    "response": {
+        "status": 200,
+        "body": {
+            "id": "321",
+            "name": "Jan",
+            "created" : "1999-01-01 01:23:45"
+        },
+        "headers": {
+            "Content-Type": "text/plain"
+        }
+    }
+}
+''')
     }
 
     def "should generate stub with GET"() {
@@ -60,14 +108,10 @@ class WiremockGroovyDslSpec extends Specification {
                     method("GET")
                 }
             }
-        when:
-            String wiremockStub = new WiremockRequestStubStrategy(groovyDsl).toWiremockClientStub()
-        then:
-            new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+        expect:
+            new WiremockRequestStubStrategy(groovyDsl).buildClientRequestContent() == new JsonSlurper().parseText('''
     {
-        "request":{
-            "method":"GET"
-        }
+        "method":"GET"
     }
     ''')
     }
@@ -80,15 +124,11 @@ class WiremockGroovyDslSpec extends Specification {
                     url("/sth")
                 }
             }
-        when:
-            String wiremockStub = new WiremockRequestStubStrategy(groovyDsl).toWiremockClientStub()
-        then:
-            new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+        expect:
+        new WiremockRequestStubStrategy(groovyDsl).buildClientRequestContent() == new JsonSlurper().parseText('''
     {
-        "request":{
-            "method":"GET",
-            "url":"/sth"
-        }
+        "method":"GET",
+        "url":"/sth"
     }
     ''')
     }
@@ -102,14 +142,10 @@ class WiremockGroovyDslSpec extends Specification {
                     }
                 }
             }
-        when:
-            String wiremockStub = new WiremockRequestStubStrategy(groovyDsl).toWiremockClientStub()
-        then:
-            new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+        expect:
+            new WiremockRequestStubStrategy(groovyDsl).buildClientRequestContent() == new JsonSlurper().parseText('''
     {
-        "request":{
-            "urlPattern":"/^[0-9]{2}$"
-        }
+        "urlPattern":"/^[0-9]{2}$"
     }
     ''')
     }
@@ -124,14 +160,10 @@ class WiremockGroovyDslSpec extends Specification {
                     }
                 }
             }
-        when:
-            String wiremockStub = new WiremockRequestStubStrategy(groovyDsl).toWiremockServerStub()
-        then:
-            new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+        expect:
+            new WiremockRequestStubStrategy(groovyDsl).buildServerRequestContent() == new JsonSlurper().parseText('''
     {
-        "request":{
-            "urlPattern":"/12"
-        }
+        "urlPattern":"/12"
     }
     ''')
     }
@@ -143,14 +175,10 @@ class WiremockGroovyDslSpec extends Specification {
                     urlPath ('/12')
                 }
             }
-        when:
-            String wiremockStub = new WiremockRequestStubStrategy(groovyDsl).toWiremockClientStub()
-        then:
-            new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+        expect:
+            new WiremockRequestStubStrategy(groovyDsl).buildClientRequestContent() == new JsonSlurper().parseText('''
     {
-        "request":{
-            "urlPath":"/12"
-        }
+        "urlPath":"/12"
     }
     ''')
     }
@@ -162,14 +190,10 @@ class WiremockGroovyDslSpec extends Specification {
                     urlPath ('/12')
                 }
             }
-        when:
-            String wiremockStub = new WiremockRequestStubStrategy(groovyDsl).toWiremockServerStub()
-        then:
-            new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+        expect:
+         new WiremockRequestStubStrategy(groovyDsl).buildClientRequestContent() == new JsonSlurper().parseText('''
     {
-        "request":{
-            "urlPath":"/12"
-        }
+        "urlPath":"/12"
     }
     ''')
     }
@@ -195,25 +219,21 @@ class WiremockGroovyDslSpec extends Specification {
                     }
                 }
             }
-        when:
-            String wiremockStub = new WiremockRequestStubStrategy(groovyDsl).toWiremockClientStub()
-        then:
-            new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+        expect:
+            new WiremockRequestStubStrategy(groovyDsl).buildClientRequestContent() == new JsonSlurper().parseText('''
     {
-        "request":{
-            "headers": {
-                "Content-Type": {
-                    "equalTo": "text/xml"
-                },
-                "Accept": {
-                    "matches": "text/.*"
-                },
-                "etag": {
-                    "doesNotMatch": "abcd.*"
-                },
-                "X-Custom-Header": {
-                    "contains": "2134"
-                }
+        "headers": {
+            "Content-Type": {
+                "equalTo": "text/xml"
+            },
+            "Accept": {
+                "matches": "text/.*"
+            },
+            "etag": {
+                "doesNotMatch": "abcd.*"
+            },
+            "X-Custom-Header": {
+                "contains": "2134"
             }
         }
     }
@@ -241,25 +261,21 @@ class WiremockGroovyDslSpec extends Specification {
                     }
                 }
             }
-        when:
-            String wiremockStub = new WiremockRequestStubStrategy(groovyDsl).toWiremockServerStub()
-        then:
-            new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+        expect:
+            new WiremockRequestStubStrategy(groovyDsl).buildServerRequestContent() == new JsonSlurper().parseText('''
     {
-        "request":{
-            "headers": {
-                "Content-Type": {
-                    "equalTo": "text/xml"
-                },
-                "Accept": {
-                    "matches": "text/plain"
-                },
-                "etag": {
-                    "doesNotMatch": "abcdef"
-                },
-                "X-Custom-Header": {
-                    "contains": "121345"
-                }
+        "headers": {
+            "Content-Type": {
+                "equalTo": "text/xml"
+            },
+            "Accept": {
+                "matches": "text/plain"
+            },
+            "etag": {
+                "doesNotMatch": "abcdef"
+            },
+            "X-Custom-Header": {
+                "contains": "121345"
             }
         }
     }

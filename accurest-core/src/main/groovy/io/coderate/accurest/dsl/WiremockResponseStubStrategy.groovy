@@ -1,37 +1,35 @@
 package io.coderate.accurest.dsl
 
-import groovy.json.JsonOutput
 import groovy.transform.CompileStatic
+import groovy.transform.PackageScope
 import io.coderate.accurest.dsl.internal.Response
 
 @CompileStatic
+@PackageScope
 class WiremockResponseStubStrategy extends BaseWiremockStubStrategy {
 
-    Response response
+    private final Response response
 
-    WiremockResponseStubStrategy(GroovyDsl groovyDsl) { //TODO: Or Response?
+    WiremockResponseStubStrategy(GroovyDsl groovyDsl) {
         this.response = groovyDsl.response
     }
 
-    String toWiremockClientStub() {
-        return JsonOutput.toJson(buildClientResponse(response))
+    @PackageScope Map buildClientResponseContent() {
+        return buildResponseContent(response,
+                { response.getBody().forClientSide() },
+                { buildClientHeadersSection(response.headers) })
     }
 
-    private Map buildClientResponse(Response response) {
-        return getResponseSection(response, { "TODO" }, { buildClientHeadersSection(response.headers) })
+    @PackageScope Map buildServerResponseContent() {
+        return buildResponseContent(response,
+                { response.getBody().forServerSide() },
+                { buildServerHeadersSection(response.headers) })
     }
 
-    String toWiremockServerStub() {
-        return JsonOutput.toJson(buildServerResponse(response))
+    private Map<String, Object> buildResponseContent(Response response, Closure<Map<String, Object>> buildBody, Closure<Map> buildHeaders) {
+        return [status : response.status,
+                body   : buildBody(),
+                headers: buildHeaders()].findAll { it.value }
     }
 
-    private Map buildServerResponse(Response response) {
-        return getResponseSection(response, { "TODO" }, { buildServerHeadersSection(response.headers) })
-    }
-
-    private Map<String, Map<String, Object>> getResponseSection(Response response, Closure<String> buildUrlPattern, Closure<Map> buildHeaders) {
-        return [response: [status : response.status,
-                           headers: buildHeaders()]
-                .findAll { it.value }]
-    }
 }

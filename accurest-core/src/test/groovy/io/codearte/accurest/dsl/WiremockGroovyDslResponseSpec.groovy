@@ -3,7 +3,6 @@ package io.codearte.accurest.dsl
 import groovy.json.JsonSlurper
 import io.coderate.accurest.dsl.GroovyDsl
 import io.coderate.accurest.dsl.WiremockResponseStubStrategy
-import spock.lang.Ignore
 import spock.lang.Specification
 
 class WiremockGroovyDslResponseSpec extends Specification {
@@ -15,25 +14,19 @@ class WiremockGroovyDslResponseSpec extends Specification {
                     status 200
                 }
             }
-        when:
-            String wiremockStub = new WiremockResponseStubStrategy(dsl)."toWiremock${side}Stub"()
-        then:
-            new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText(expectedStub)
+        expect:
+            new WiremockResponseStubStrategy(dsl)."build${side}ResponseContent"() == new JsonSlurper().parseText(expectedStub)
         where:
             side << ['Client', 'Server']
             expectedStub << ['''
     {
-        "response": {
-            "status": 200
-        }
+        "status": 200
     }
     ''',
 
     '''
     {
-        "response": {
-            "status": 200
-        }
+        "status": 200
     }
     ''']
     }
@@ -43,49 +36,69 @@ class WiremockGroovyDslResponseSpec extends Specification {
             GroovyDsl dsl = GroovyDsl.make {
                 response {
                     headers {
-                        header('Content-Type').equalTo('text/xml')
+                        header('Content-Type').matches {
+                            client('text/xml')
+                            server('text/*')
+                        }
                     }
                     status 200
                 }
             }
-        when:
-            String wiremockStub = new WiremockResponseStubStrategy(dsl).toWiremockClientStub()
-        then:
-            new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+        expect:
+            new WiremockResponseStubStrategy(dsl).buildClientResponseContent() == new JsonSlurper().parseText('''
     {
-        "response": {
             "headers": {
                 "Content-Type": {
-                    "equalTo": "text/xml"
+                    "matches": "text/xml"
                 },
             },
             "status": 200
-        }
     }
     ''')
     }
 
-    @Ignore("Not implemented yet")
     def 'should generate headers for response for server side'() {
         given:
             GroovyDsl dsl = GroovyDsl.make {
                 response {
                     status 200
                     headers {
-                        header('Content-Type').equalTo('text/xml')
+                        header('Content-Type').matches {
+                            client('text/xml')
+                            server('text/*')
+                        }
                     }
                 }
             }
-        when:
-            String wiremockStub = new WiremockResponseStubStrategy(dsl).toWiremockClientStub()
-        then:
-            new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+        expect:
+            new WiremockResponseStubStrategy(dsl).buildServerResponseContent() == new JsonSlurper().parseText('''
     {
-        "response": {
-            "status": 200,
-            "headers":
-                "Content-Type": "text/xml"
+        "status": 200,
+        "headers": {
+                "Content-Type": {
+                    "matches": "text/*"
+                }
+        }
+    }
+    ''')
+    }
+
+    def 'should generate an exact header for response for both sides '() {
+        given:
+            GroovyDsl dsl = GroovyDsl.make {
+                response {
+                    status 200
+                    headers {
+                        header 'Content-Type': 'text/xml'
+                    }
+                }
             }
+        expect:
+            new WiremockResponseStubStrategy(dsl).buildServerResponseContent() == new JsonSlurper().parseText('''
+    {
+        "status": 200,
+        "headers": {
+                "Content-Type": "text/xml"
         }
     }
     ''')
