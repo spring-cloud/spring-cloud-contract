@@ -4,11 +4,11 @@ import static io.coderate.accurest.dsl.internal.DelegateHelper.delegateToClosure
 
 class WithValuePattern {
 
-    NoOpCustomizableProperty<String> equalToJson
-    NoOpCustomizableProperty<String> equalToXml
+    SingleTypeCustomizableProperty<String> equalToJson
+    SingleTypeCustomizableProperty<String> equalToXml
     StringCustomizableProperty matchesXPath
-    NoOpCustomizableProperty<JSONCompareMode> jsonCompareMode
-    NoOpCustomizableProperty<String> equalTo
+    SingleTypeCustomizableProperty<JSONCompareMode> jsonCompareMode
+    SingleTypeCustomizableProperty<String> equalTo
     StringCustomizableProperty contains
     StringCustomizableProperty matches
     StringCustomizableProperty doesNotMatch
@@ -20,7 +20,7 @@ class WithValuePattern {
 //        }
 //
     void equalTo(String equalTo) {
-        this.equalTo = new NoOpCustomizableProperty(equalTo)
+        this.equalTo = new SingleTypeCustomizableProperty(equalTo)
     }
 
 //        void equalToXml(String equalToXml) {

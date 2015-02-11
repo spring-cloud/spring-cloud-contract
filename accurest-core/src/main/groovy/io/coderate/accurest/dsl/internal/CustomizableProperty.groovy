@@ -26,8 +26,8 @@ class CustomizableProperty<T, V> {
 class StringCustomizableProperty extends CustomizableProperty<String, String> {
 }
 
-class NoOpCustomizableProperty<T> extends CustomizableProperty<T, T> {
-    NoOpCustomizableProperty(T value) {
+class SingleTypeCustomizableProperty<T> extends CustomizableProperty<T, T> {
+    SingleTypeCustomizableProperty(T value) {
         client(value)
         server(value)
     }

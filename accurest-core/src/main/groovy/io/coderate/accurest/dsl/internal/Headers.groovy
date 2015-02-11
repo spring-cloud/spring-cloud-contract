@@ -11,7 +11,6 @@ class Headers {
     }
 
     Set<Map.Entry<String, WithValuePattern>> entries() {
-        //TODO: Make it immutable
-        return headers.entrySet()
+        return Collections.unmodifiableSet(headers.entrySet())
     }
 }
