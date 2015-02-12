@@ -1,2 +1,3 @@
-include "accurest-core", "accurest-gradle-plugin"
+include "accurest-core", "accurest-gradle-plugin", 'accurest-converters'
 rootProject.name = "accurest"
+
