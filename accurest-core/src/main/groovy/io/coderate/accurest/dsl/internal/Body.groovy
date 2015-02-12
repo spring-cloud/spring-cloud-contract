@@ -15,10 +15,14 @@ class Body {
     }
 
     Map<String, Object> forClientSide() {
-        return body.collectEntries { Map.Entry<String, DslProperty> entry -> [(entry.key) : entry.value.clientValue] } as Map<String, Object>
+        return body.collectEntries {
+            Map.Entry<String, DslProperty> entry -> [(entry.key) : entry.value.clientValue]
+        } as Map<String, Object>
     }
 
     Map<String, Object> forServerSide() {
-        return body.collectEntries { Map.Entry<String, DslProperty> entry -> [(entry.key) : entry.value.serverValue] } as Map<String, Object>
+        return body.collectEntries {
+            Map.Entry<String, DslProperty> entry -> [(entry.key) : entry.value.serverValue]
+        } as Map<String, Object>
     }
 }
