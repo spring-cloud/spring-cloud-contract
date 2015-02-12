@@ -3,8 +3,6 @@ package io.coderate.accurest.dsl.internal
 import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
 
-import static io.coderate.accurest.dsl.internal.DelegateHelper.delegateToClosure
-
 @TypeChecked
 class Response extends Common {
 
@@ -31,7 +29,8 @@ class Response extends Common {
 
     void headers(@DelegatesTo(Headers) Closure closure) {
         this.headers = new Headers()
-        delegateToClosure(closure, headers)
+        closure.delegate = headers
+        closure()
     }
 
     void body(Map<String, Object> body) {

@@ -2,8 +2,6 @@ package io.coderate.accurest.dsl.internal
 import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
 
-import static io.coderate.accurest.dsl.internal.DelegateHelper.delegateToClosure
-
 @TypeChecked
 class Request extends Common {
 
@@ -49,9 +47,9 @@ class Request extends Common {
     }
 
     void headers(@DelegatesTo(Headers) Closure closure) {
-        Headers headers = new Headers()
-        this.headers = headers
-        delegateToClosure(closure, headers)
+        this.headers = new Headers()
+        closure.delegate = headers
+        closure()
     }
 
     void urlPath(String urlPath) {

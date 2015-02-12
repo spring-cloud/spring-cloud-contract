@@ -18,15 +18,13 @@ class GroovyDsl {
     }
 
     void request(@DelegatesTo(Request) Closure closure) {
-        Request request = new Request()
-        this.request = request
+        this.request = new Request()
         closure.delegate = request
         closure()
     }
 
     void response(@DelegatesTo(Response) Closure closure) {
-        Response response = new Response()
-        this.response = response
+        this.response = new Response()
         closure.delegate = response
         closure()
     }

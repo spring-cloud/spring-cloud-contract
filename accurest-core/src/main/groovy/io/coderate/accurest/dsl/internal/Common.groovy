@@ -39,7 +39,7 @@ class Common {
     }
 
     DslProperty $(ServerDslProperty server, ClientDslProperty client) {
-        return value(client, server)
+        return value(server, client)
     }
 
     ClientDslProperty client(Object clientValue) {
@@ -49,5 +49,4 @@ class Common {
     ServerDslProperty server(Object serverValue) {
         return new ServerDslProperty(serverValue)
     }
-
 }

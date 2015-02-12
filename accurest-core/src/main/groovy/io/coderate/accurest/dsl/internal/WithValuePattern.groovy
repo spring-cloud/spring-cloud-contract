@@ -94,6 +94,4 @@ class WithValuePattern {
     void matchesJsonPath(DslProperty matchesJsonPath) {
         this.matchesJsonPath = matchesJsonPath
     }
-
-
 }
