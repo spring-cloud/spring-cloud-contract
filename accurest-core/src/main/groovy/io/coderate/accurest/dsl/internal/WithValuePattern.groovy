@@ -1,7 +1,12 @@
 package io.coderate.accurest.dsl.internal
+
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 import groovy.transform.TypeChecked
 
 @TypeChecked
+@EqualsAndHashCode(includeFields = true)
+@ToString(includePackage = false)
 class WithValuePattern {
 
     DslProperty<String> equalTo

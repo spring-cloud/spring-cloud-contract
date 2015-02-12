@@ -1,5 +1,10 @@
 package io.coderate.accurest.dsl.internal
 
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
+
+@EqualsAndHashCode(includeFields = true)
+@ToString(includePackage = false)
 class Headers {
 
     private Map<String, WithValuePattern> assertionHeaders = [:]

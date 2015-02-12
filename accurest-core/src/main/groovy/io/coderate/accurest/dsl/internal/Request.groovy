@@ -1,8 +1,12 @@
 package io.coderate.accurest.dsl.internal
 import groovy.transform.CompileStatic
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 import groovy.transform.TypeChecked
 
 @TypeChecked
+@EqualsAndHashCode(includeFields = true)
+@ToString(includePackage = false)
 class Request extends Common {
 
     DslProperty method
@@ -62,6 +66,8 @@ class Request extends Common {
 }
 
 @CompileStatic
+@EqualsAndHashCode(includeFields = true)
+@ToString(includePackage = false)
 class ServerRequest extends Request {
     ServerRequest(Request request) {
         super(request)
@@ -69,6 +75,8 @@ class ServerRequest extends Request {
 }
 
 @CompileStatic
+@EqualsAndHashCode(includeFields = true)
+@ToString(includePackage = false)
 class ClientRequest extends Request {
     ClientRequest(Request request) {
         super(request)
