@@ -2,17 +2,17 @@ package io.coderate.accurest.dsl.internal
 import groovy.transform.CompileStatic
 
 @CompileStatic
-class DslProperty {
+class DslProperty<T> {
 
-    final Object clientValue
-    final Object serverValue
+    final T clientValue
+    final T serverValue
 
-    DslProperty(Object clientValue, Object serverValue) {
+    DslProperty(T clientValue, T serverValue) {
         this.clientValue = clientValue
         this.serverValue = serverValue
     }
 
-    DslProperty(Object singleValue) {
+    DslProperty(T singleValue) {
         this.clientValue = singleValue
         this.serverValue = singleValue
     }

@@ -14,20 +14,24 @@ class WiremockGroovyDslSpec extends Specification {
             GroovyDsl groovyDsl = GroovyDsl.make {
                 request {
                     method('GET')
-                    urlPattern {
-                        client('/[0-9]{2}')
-                        server('/12')
-                    }
+                    urlPattern $(client('/[0-9]{2}'), server('/12'))
                 }
                 response {
-                    status(200)
+                    status 200
                     body (
-                        id : property(client: '123', server: { regex('[0-9]+') } ),
+                        id : value(
+                                client('123'),
+                                server({ regex('[0-9]+') })
+                        ),
+                        surname : $(
+                                client('Kowalsky'),
+                                server('Lewandowski')
+                        ),
                         name: 'Jan',
-                        created : $(client: '2014-02-02 12:23:43',  server: { currentDate(it) })
+                        created : $(client('2014-02-02 12:23:43'), server({ currentDate(it) }))
                     )
                     headers {
-                        header('Content-Type': 'text/plain')
+                        header 'Content-Type': 'text/plain'
                     }
                 }
             }
@@ -44,6 +48,7 @@ class WiremockGroovyDslSpec extends Specification {
         "status": 200,
         "body": {
             "id": "123",
+            "surname": "Kowalsky",
             "name": "Jan",
             "created" : "2014-02-02 12:23:43"
         },
@@ -60,17 +65,21 @@ class WiremockGroovyDslSpec extends Specification {
             GroovyDsl groovyDsl = GroovyDsl.make {
                 request {
                     method('GET')
-                    urlPattern {
-                        client('/[0-9]{2}')
-                        server('/12')
-                    }
+                    urlPattern $(client('/[0-9]{2}'), server('/12'))
                 }
                 response {
                     status(200)
                     body (
-                        id : property(client: '123', server: '321' ),
-                        name: 'Jan',
-                        created : $(client: '2014-02-02 12:23:43',  server: '1999-01-01 01:23:45')
+                            id : value(
+                                    client('123'),
+                                    server('321')
+                            ),
+                            surname : $(
+                                    client('Kowalsky'),
+                                    server('Lewandowski')
+                            ),
+                            name: 'Jan',
+                            created : $(client('2014-02-02 12:23:43'), server('1999-01-01 01:23:45'))
                     )
                     headers {
                         header('Content-Type': 'text/plain')
@@ -90,6 +99,7 @@ class WiremockGroovyDslSpec extends Specification {
         "status": 200,
         "body": {
             "id": "321",
+            "surname": "Lewandowski",
             "name": "Jan",
             "created" : "1999-01-01 01:23:45"
         },
@@ -137,9 +147,10 @@ class WiremockGroovyDslSpec extends Specification {
         given:
             GroovyDsl groovyDsl = GroovyDsl.make {
                 request {
-                    urlPattern {
-                        client('/^[0-9]{2}$')
-                    }
+                    urlPattern $(
+                            client('/^[0-9]{2}$'),
+                            server('/12')
+                    )
                 }
             }
         expect:
@@ -154,10 +165,10 @@ class WiremockGroovyDslSpec extends Specification {
         given:
             GroovyDsl groovyDsl = GroovyDsl.make {
                 request {
-                    urlPattern {
-                        client('/^[0-9]{2}$')
-                        server('/12')
-                    }
+                    urlPattern $(
+                            client('/[0-9]{2}'),
+                            server('/12')
+                    )
                 }
             }
         expect:
@@ -204,18 +215,18 @@ class WiremockGroovyDslSpec extends Specification {
                 request {
                     headers {
                         header('Content-Type').equalTo('text/xml')
-                        header('Accept').matches {
-                            client('text/.*')
+                        header('Accept').matches $(
+                            client('text/.*'),
                             server('text/plain')
-                        }
-                        header('etag').doesNotMatch {
-                            client('abcd.*')
+                        )
+                        header('etag').doesNotMatch $(
+                            client('abcd.*'),
                             server('abcdef')
-                        }
-                        header('X-Custom-Header').contains {
-                            client('2134')
+                        )
+                        header('X-Custom-Header').contains $(
+                            client('2134'),
                             server('121345')
-                        }
+                        )
                     }
                 }
             }
@@ -246,18 +257,18 @@ class WiremockGroovyDslSpec extends Specification {
                 request {
                     headers {
                         header('Content-Type').equalTo('text/xml')
-                        header('Accept').matches {
-                            client('text/.*')
+                        header('Accept').matches $(
+                            client('text/.*'),
                             server('text/plain')
-                        }
-                        header('etag').doesNotMatch {
-                            client('abcd.*')
+                        )
+                        header('etag').doesNotMatch $(
+                            client('abcd.*'),
                             server('abcdef')
-                        }
-                        header('X-Custom-Header').contains {
-                            client('2134')
+                        )
+                        header('X-Custom-Header').contains $(
+                            client('2134'),
                             server('121345')
-                        }
+                        )
                     }
                 }
             }

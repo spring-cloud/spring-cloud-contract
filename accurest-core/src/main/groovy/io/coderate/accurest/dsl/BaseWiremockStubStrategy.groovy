@@ -1,7 +1,6 @@
 package io.coderate.accurest.dsl
-
 import groovy.transform.CompileStatic
-import io.coderate.accurest.dsl.internal.CustomizableProperty
+import io.coderate.accurest.dsl.internal.DslProperty
 import io.coderate.accurest.dsl.internal.Headers
 import io.coderate.accurest.dsl.internal.WithValuePattern
 
@@ -32,16 +31,16 @@ abstract class BaseWiremockStubStrategy {
     private Map buildClientHeaderFromValuePattern(WithValuePattern valuePattern) {
         return getValuePatternSection(valuePattern)
                 .findAll { it.value }
-                .collectEntries { [(it.key): it.value.toClientSide()] }
+                .collectEntries { [(it.key): it.value.clientValue] }
     }
 
     private Map buildServerHeaderFromValuePattern(WithValuePattern valuePattern) {
         return getValuePatternSection(valuePattern)
                 .findAll { it.value }
-                .collectEntries { [(it.key): it.value.toServerSide()] }
+                .collectEntries { [(it.key): it.value.serverValue] }
     }
 
-    private Map<String, CustomizableProperty> getValuePatternSection(WithValuePattern valuePattern) {
+    private Map<String, DslProperty> getValuePatternSection(WithValuePattern valuePattern) {
         return [equalToJson    : valuePattern.equalToJson,
                 equalToXml     : valuePattern.equalToXml,
                 matchesXPath   : valuePattern.matchesXPath,

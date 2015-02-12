@@ -36,10 +36,7 @@ class WiremockGroovyDslResponseSpec extends Specification {
             GroovyDsl dsl = GroovyDsl.make {
                 response {
                     headers {
-                        header('Content-Type').matches {
-                            client('text/xml')
-                            server('text/*')
-                        }
+                        header('Content-Type').matches $(client('text/xml'), server('text/*'))
                     }
                     status 200
                 }
@@ -63,10 +60,7 @@ class WiremockGroovyDslResponseSpec extends Specification {
                 response {
                     status 200
                     headers {
-                        header('Content-Type').matches {
-                            client('text/xml')
-                            server('text/*')
-                        }
+                        header('Content-Type').matches $(client('text/xml'), server('text/*'))
                     }
                 }
             }

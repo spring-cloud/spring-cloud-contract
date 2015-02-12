@@ -1,21 +1,32 @@
 package io.coderate.accurest.dsl.internal
 
+import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
 
 import static io.coderate.accurest.dsl.internal.DelegateHelper.delegateToClosure
 
 @TypeChecked
-class Response {
+class Response extends Common {
 
-    private static final String CLIENT_PROP_KEY = 'client'
-    private static final String SERVER_PROP_KEY = 'server'
-
-    private int status
+    private DslProperty status
     private Headers headers
     private Body body = new Body()
 
+    Response() {
+    }
+
+    Response(Response response) {
+        this.status = response.status
+        this.headers = response.headers
+        this.body = response.body
+    }
+
     void status(int status) {
-        this.status = status
+        this.status = toDslProperty(status)
+    }
+
+    void status(DslProperty status) {
+        this.status = toDslProperty(status)
     }
 
     void headers(@DelegatesTo(Headers) Closure closure) {
@@ -27,30 +38,29 @@ class Response {
         this.body = new Body(convertObjectsToDslProperties(body))
     }
 
-    private Map<String, DslProperty> convertObjectsToDslProperties(Map<String, Object> body) {
-        return body.collectEntries {
-            Map.Entry<String, Object> entry ->
-                [(entry.key): entry.value instanceof DslProperty ? entry.value : new DslProperty(entry.value)]
-        } as Map<String, DslProperty>
-    }
-
-    DslProperty property(Map<String, Object> properties) {
-        return new DslProperty(properties[CLIENT_PROP_KEY], properties[SERVER_PROP_KEY])
-    }
-
-    DslProperty $(Map<String, Object> properties) {
-        return property(properties)
-    }
-
     Body getBody() {
         return body
     }
 
-    int getStatus() {
+    DslProperty getStatus() {
         return status
     }
 
     Headers getHeaders() {
         return headers
+    }
+}
+
+@CompileStatic
+class ServerResponse extends Response {
+    ServerResponse(Response request) {
+        super(request)
+    }
+}
+
+@CompileStatic
+class ClientResponse extends Response {
+    ClientResponse(Response request) {
+        super(request)
     }
 }

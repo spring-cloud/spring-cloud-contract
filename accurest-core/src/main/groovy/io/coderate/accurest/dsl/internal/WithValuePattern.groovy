@@ -1,51 +1,99 @@
 package io.coderate.accurest.dsl.internal
+import groovy.transform.TypeChecked
 
-import static io.coderate.accurest.dsl.internal.DelegateHelper.delegateToClosure
-
+@TypeChecked
 class WithValuePattern {
 
-    SingleTypeCustomizableProperty<String> equalToJson
-    SingleTypeCustomizableProperty<String> equalToXml
-    StringCustomizableProperty matchesXPath
-    SingleTypeCustomizableProperty<JSONCompareMode> jsonCompareMode
-    SingleTypeCustomizableProperty<String> equalTo
-    StringCustomizableProperty contains
-    StringCustomizableProperty matches
-    StringCustomizableProperty doesNotMatch
-    CustomizableProperty<Boolean, Boolean> absent
-    StringCustomizableProperty matchesJsonPath
+    DslProperty<String> equalTo
+    DslProperty<String> equalToJson
+    DslProperty<String> equalToXml
+    DslProperty<String> matchesXPath
+    DslProperty<JSONCompareMode> jsonCompareMode
+    DslProperty<String> contains
+    DslProperty<String> matches
+    DslProperty<String> doesNotMatch
+    DslProperty<String> absent
+    DslProperty<String> matchesJsonPath
 
-//        void equalToJson(String equalToJson) {
-//            this.equalToJson = equalToJson
-//        }
-//
     void equalTo(String equalTo) {
-        this.equalTo = new SingleTypeCustomizableProperty(equalTo)
+        this.equalTo = new DslProperty<String>(equalTo)
     }
 
-//        void equalToXml(String equalToXml) {
-//            this.equalToXml = equalToXml
-//        }
-
-    void matches(@DelegatesTo(StringCustomizableProperty) Closure closure) {
-        StringCustomizableProperty placeholderHaving = new StringCustomizableProperty()
-        this.matches = placeholderHaving
-        delegateToClosure(closure, placeholderHaving)
+    void equalTo(DslProperty equalTo) {
+        this.equalTo = equalTo
     }
 
-    void doesNotMatch(@DelegatesTo(StringCustomizableProperty) Closure closure) {
-        StringCustomizableProperty placeholderHaving = new StringCustomizableProperty()
-        this.doesNotMatch = placeholderHaving
-        delegateToClosure(closure, placeholderHaving)
+    void equalToJson(String equalToJson) {
+        this.equalToJson = new DslProperty<String>(equalToJson)
     }
 
-    void contains(@DelegatesTo(StringCustomizableProperty) Closure closure) {
-        StringCustomizableProperty placeholderHaving = new StringCustomizableProperty()
-        this.contains = placeholderHaving
-        delegateToClosure(closure, placeholderHaving)
+    void equalToJson(DslProperty equalToJson) {
+        this.equalToJson = equalToJson
     }
 
-//        void jsonCompareMode(JSONCompareMode jsonCompareMode) {
-//            this.jsonCompareMode = jsonCompareMode
-//        }
+    void equalToXml(String equalToXml) {
+        this.equalToXml = new DslProperty<String>(equalToXml)
+    }
+
+    void equalToXml(DslProperty equalToXml) {
+        this.equalToXml = equalToXml
+    }
+
+    void matchesXPath(String matchesXPath) {
+        this.matchesXPath = new DslProperty<String>(matchesXPath)
+    }
+
+    void matchesXPath(DslProperty matchesXPath) {
+        this.matchesXPath = matchesXPath
+    }
+
+    void jsonCompareMode(JSONCompareMode jsonCompareMode) {
+        this.jsonCompareMode = new DslProperty<JSONCompareMode>(jsonCompareMode)
+    }
+
+    void jsonCompareMode(DslProperty jsonCompareMode) {
+        this.jsonCompareMode = jsonCompareMode
+    }
+
+    void contains(String contains) {
+        this.contains = new DslProperty<String>(contains)
+    }
+
+    void contains(DslProperty contains) {
+        this.contains = contains
+    }
+
+    void matches(String matches) {
+        this.matches = new DslProperty<String>(matches)
+    }
+
+    void matches(DslProperty matches) {
+        this.matches = matches
+    }
+
+    void doesNotMatch(String doesNotMatch) {
+        this.doesNotMatch = new DslProperty<String>(doesNotMatch)
+    }
+
+    void doesNotMatch(DslProperty doesNotMatch) {
+        this.doesNotMatch = doesNotMatch
+    }
+
+    void absent(String absent) {
+        this.absent = new DslProperty<String>(absent)
+    }
+
+    void absent(DslProperty absent) {
+        this.absent = absent
+    }
+
+    void matchesJsonPath(String matchesJsonPath) {
+        this.matchesJsonPath = new DslProperty<String>(matchesJsonPath)
+    }
+
+    void matchesJsonPath(DslProperty matchesJsonPath) {
+        this.matchesJsonPath = matchesJsonPath
+    }
+
+
 }

@@ -2,7 +2,9 @@ package io.coderate.accurest.dsl
 
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+import io.coderate.accurest.dsl.internal.ClientResponse
 import io.coderate.accurest.dsl.internal.Response
+import io.coderate.accurest.dsl.internal.ServerResponse
 
 @CompileStatic
 @PackageScope
@@ -15,21 +17,23 @@ class WiremockResponseStubStrategy extends BaseWiremockStubStrategy {
     }
 
     @PackageScope Map buildClientResponseContent() {
-        return buildResponseContent(response,
-                { response.getBody().forClientSide() },
-                { buildClientHeadersSection(response.headers) })
+        return buildResponseContent(new ClientResponse(response))
     }
 
     @PackageScope Map buildServerResponseContent() {
-        return buildResponseContent(response,
-                { response.getBody().forServerSide() },
-                { buildServerHeadersSection(response.headers) })
+        return buildResponseContent(new ServerResponse(response))
     }
 
-    private Map<String, Object> buildResponseContent(Response response, Closure<Map<String, Object>> buildBody, Closure<Map> buildHeaders) {
-        return [status : response.status,
-                body   : buildBody(),
-                headers: buildHeaders()].findAll { it.value }
+    private Map<String, Object> buildResponseContent(ClientResponse response) {
+        return [status : response?.status?.clientValue,
+                body   : response?.getBody()?.forClientSide(),
+                headers: buildClientHeadersSection(response.headers)].findAll { it.value }
+    }
+
+    private Map<String, Object> buildResponseContent(ServerResponse response) {
+        return [status : response?.status?.serverValue,
+                body   : response?.getBody()?.forServerSide(),
+                headers: buildServerHeadersSection(response.headers)].findAll { it.value }
     }
 
 }
