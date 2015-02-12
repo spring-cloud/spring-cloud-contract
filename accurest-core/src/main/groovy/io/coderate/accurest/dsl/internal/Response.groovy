@@ -1,11 +1,15 @@
 package io.coderate.accurest.dsl.internal
 
 import groovy.transform.CompileStatic
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 import groovy.transform.TypeChecked
 
 import static io.coderate.accurest.dsl.internal.DelegateHelper.delegateToClosure
 
 @TypeChecked
+@EqualsAndHashCode(includeFields = true)
+@ToString(includePackage = false, includeFields = true)
 class Response extends Common {
 
     private DslProperty status
@@ -52,6 +56,8 @@ class Response extends Common {
 }
 
 @CompileStatic
+@EqualsAndHashCode(includeFields = true)
+@ToString(includePackage = false)
 class ServerResponse extends Response {
     ServerResponse(Response request) {
         super(request)
@@ -59,6 +65,8 @@ class ServerResponse extends Response {
 }
 
 @CompileStatic
+@EqualsAndHashCode(includeFields = true)
+@ToString(includePackage = false)
 class ClientResponse extends Response {
     ClientResponse(Response request) {
         super(request)

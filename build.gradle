@@ -44,6 +44,12 @@ subprojects {
 project(':accurest-core') {
 }
 
+project(':accurest-converters') {
+	dependencies {
+		compile project(':accurest-core')
+	}
+}
+
 project(':accurest-gradle-plugin') {
 	dependencies {
 		compile project(':accurest-core')
