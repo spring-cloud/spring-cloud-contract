@@ -11,7 +11,18 @@ class WiremockToDslConverterSpec extends Specification {
 {
     "request": {
         "method": "GET",
-        "urlPattern": "/[0-9]{2}"
+        "urlPattern": "/[0-9]{2}",
+        "headers" : {
+            "Accept": {
+                "matches": "text/.*"
+            },
+            "etag": {
+                "doesNotMatch": "abcd.*"
+            },
+            "X-Custom-Header": {
+                "contains": "2134"
+            }
+        }
     },
     "response": {
         "status": 200,
@@ -22,7 +33,7 @@ class WiremockToDslConverterSpec extends Specification {
             "created" : "2014-02-02 12:23:43"
         },
         "headers": {
-            "Content-Type": "text/plain"
+            "Content-Type": "text/plain",
         }
     }
 }
@@ -32,6 +43,11 @@ class WiremockToDslConverterSpec extends Specification {
                 request {
                     method 'GET'
                     urlPattern '/[0-9]{2}'
+                    headers {
+                        header('Accept').matches('text/.*')
+                        header('etag').doesNotMatch('abcd.*')
+                        header('X-Custom-Header').contains('2134')
+                    }
                 }
                 response {
                     status 200
@@ -43,6 +59,7 @@ class WiremockToDslConverterSpec extends Specification {
                     )
                     headers {
                         header 'Content-Type': 'text/plain'
+
                     }
                 }
             }
