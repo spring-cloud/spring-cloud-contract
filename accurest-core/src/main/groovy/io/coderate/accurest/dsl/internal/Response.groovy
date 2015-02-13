@@ -41,6 +41,14 @@ class Response extends Common {
         this.body = new Body(convertObjectsToDslProperties(body))
     }
 
+    void body(List body) {
+        this.body = new Body(convertObjectsToDslProperties(body))
+    }
+
+    void body(Object bodyAsValue) {
+        this.body = new Body(bodyAsValue)
+    }
+
     Body getBody() {
         return body
     }
