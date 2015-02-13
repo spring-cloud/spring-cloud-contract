@@ -4,37 +4,64 @@ import groovy.json.JsonSlurper
 import io.coderate.accurest.dsl.GroovyDsl
 
 class WiremockToDslConverter {
-    static GroovyDsl fromWiremockStub(String wiremockStringStub) {
+    static String fromWiremockStub(String wiremockStringStub) {
+        return new WiremockToDslConverter().convertFromWiremockStub(wiremockStringStub)
+    }
+
+    private String convertFromWiremockStub(String wiremockStringStub) {
         Object wiremockStub = new JsonSlurper().parseText(wiremockStringStub)
-        def wiremockRequest = wiremockStub.request
-        def wiremockResponse = wiremockStub.response
-        return GroovyDsl.make {
+        def request = wiremockStub.request
+        def response = wiremockStub.response
+        return """\
             request {
-                wiremockRequest.method ? method(wiremockRequest.method as String) : null
-                wiremockRequest.url ? url(wiremockRequest.url as String) : null
-                wiremockRequest.urlPattern ? urlPattern(wiremockRequest.urlPattern as String) : null
-                wiremockRequest.urlPath ? urlPath(wiremockRequest.urlPath as String) : null
-                wiremockRequest.headers ? headers {
-                    wiremockRequest.headers.each {
-                        def assertion = it.value
-                        String headerName = it.key as String
-                        def entry = assertion.entrySet().first()
-                        header(headerName)."$entry.key"(entry.value)
-                    }
-                } : null
+                ${request.method ? "method '$request.method'" : ""}
+                ${request.url ? "url '$request.url'" : ""}
+                ${request.urlPattern ? "urlPattern '$request.urlPattern'" : ""}
+                ${request.urlPath ? "urlPath '$request.urlPath'" : ""}
+                ${request.headers ? """headers {
+                    ${request.headers.collect {
+            def assertion = it.value
+            String headerName = it.key as String
+            def entry = assertion.entrySet().first()
+            """header('$headerName').$entry.key('$entry.value')\n"""
+        }.join('')
+        }
+                }
+                """ : ""}
             }
             response {
-                status wiremockResponse.status ? wiremockResponse.status as Integer : null
-                wiremockResponse.body ? body(
-                        wiremockResponse.body as Map
-                ) : null
-                wiremockResponse.headers ? headers {
-                    wiremockResponse.headers.each {
-                        header([(it.key): it.value])
+                ${response.status ? "status $response.status" : ""}
+                ${response.body ? "body( ${response.body.entrySet().collectAll(withQuotedStringElements()).inject([:], appendToMap())})" : ""}
+                ${response.headers ? """headers {
+                     ${response.headers.collect { "header('$it.key': '${it.value}')\n" }.join('')}
                     }
-                } : null
+                """ : ""}
             }
-        }
+        """
+    }
+
+    private Closure withQuotedStringElements() {
+        return { [(it.key): convert(it.value)] }
+    }
+
+    private Closure appendToMap() {
+        return { acc, el -> acc << el }
+    }
+
+    private Object convert(Object element) {
+        return element
+    }
+
+    private Object convert(String element) {
+        return """ "$element" """
+    }
+
+    private Object convert(List element) {
+        return element.collect { convert(it) }
+    }
+
+    private Object convert(Map element) {
+        return element.collectEntries { [(it.key) : convert(it.value)] }
     }
 
     static int main(String[] args) {

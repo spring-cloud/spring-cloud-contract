@@ -4,7 +4,7 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
 @EqualsAndHashCode(includeFields = true)
-@ToString(includePackage = false)
+@ToString(includePackage = false, includeFields = true, ignoreNulls = true)
 class Headers {
 
     private Map<String, WithValuePattern> assertionHeaders = [:]
@@ -28,4 +28,5 @@ class Headers {
     Set<Map.Entry<String, WithValuePattern>> assertionEntries() {
         return Collections.unmodifiableSet(assertionHeaders.entrySet())
     }
+
 }
