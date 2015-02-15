@@ -51,13 +51,18 @@ class TestGenerator {
 				if (containsStubs(it)) {
 					def testBaseDir = Paths.get(targetDirectory, NamesUtil.packageToDirectory(packageName))
 					Files.createDirectories(testBaseDir)
-					def classPath = Paths.get(testBaseDir.toString(), capitalize(it.name) + getTestClassExtension()).toAbsolutePath()
+					def classPath = Paths.get(testBaseDir.toString(), capitalize(it.name) + getTestClassSuffix() + getTestClassExtension())
+							.toAbsolutePath()
 					def classBytes = buildClass(it, packageName).bytes
 					Files.write(classPath, classBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
 					counter.incrementAndGet()
 				}
 			}
 		}
+	}
+
+	private String getTestClassSuffix() {
+		return configProperties.targetFramework == TestFramework.SPOCK ? 'Spec' : 'Test'
 	}
 
 	private String getTestClassExtension() {
