@@ -18,8 +18,26 @@ class Common {
         } as Map<String, DslProperty>
     }
 
+    List convertObjectsToDslProperties(List body) {
+        return body.collect {
+            Object element -> toDslProperty(element)
+        } as List
+    }
+
     DslProperty toDslProperty(Object property) {
         return new DslProperty(property)
+    }
+
+    DslProperty toDslProperty(Map property) {
+        return new DslProperty(property.collectEntries {
+            [(it.key) : toDslProperty(it.value)]
+        })
+    }
+
+    DslProperty toDslProperty(List property) {
+        return new DslProperty(property.collect {
+            toDslProperty(it)
+        })
     }
 
     DslProperty toDslProperty(DslProperty property) {

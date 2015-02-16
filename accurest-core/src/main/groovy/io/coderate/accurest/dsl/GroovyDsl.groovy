@@ -8,7 +8,7 @@ import io.coderate.accurest.dsl.internal.Response
 
 @TypeChecked
 @EqualsAndHashCode(includeFields = true)
-@ToString(includePackage = false)
+@ToString(includeFields = true, includePackage = false)
 class GroovyDsl {
 
     Request request
@@ -32,4 +32,5 @@ class GroovyDsl {
         closure.delegate = response
         closure()
     }
+
 }

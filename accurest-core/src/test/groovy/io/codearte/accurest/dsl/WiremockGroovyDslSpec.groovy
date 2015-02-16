@@ -60,6 +60,102 @@ class WiremockGroovyDslSpec extends Specification {
 ''')
     }
 
+    def 'should convert groovy dsl stub with Body as String to wiremock stub for the client side'() {
+        given:
+            GroovyDsl groovyDsl = GroovyDsl.make {
+                request {
+                    method('GET')
+                    urlPattern $(client('/[0-9]{2}'), server('/12'))
+                }
+                response {
+                    status 200
+                    body ("""\
+                            {
+                                "id": "${value(client('123'),server('321'))}",
+                                "surname": "${value(client('Kowalsky'),server('Lewandowski'))}",
+                                "name": "Jan",
+                                "created" : "${$(client('2014-02-02 12:23:43'), server('2999-09-09 01:23:45'))}"
+                            }
+                        """
+                    )
+                    headers {
+                        header 'Content-Type': 'text/plain'
+                    }
+                }
+            }
+        when:
+            String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+        then:
+            new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+{
+    "request": {
+        "method": "GET",
+        "urlPattern": "/[0-9]{2}"
+    },
+    "response": {
+        "status": 200,
+        "body": {
+            "id": "123",
+            "surname": "Kowalsky",
+            "name": "Jan",
+            "created" : "2014-02-02 12:23:43"
+        },
+        "headers": {
+            "Content-Type": "text/plain"
+        }
+    }
+}
+''')
+    }
+
+    def 'should convert groovy dsl stub with Body as String to wiremock stub for the server side'() {
+        given:
+            GroovyDsl groovyDsl = GroovyDsl.make {
+                request {
+                    method('GET')
+                    urlPattern $(client('/[0-9]{2}'), server('/12'))
+                }
+                response {
+                    status 200
+                    body ("""\
+                            {
+                                "id": "${value(client('123'),server('321'))}",
+                                "surname": "${value(client('Kowalsky'),server('Lewandowski'))}",
+                                "name": "Jan",
+                                "created" : "${$(client('2014-02-02 12:23:43'), server('2999-09-09 01:23:45'))}"
+                            }
+                        """
+                    )
+                    headers {
+                        header 'Content-Type': 'text/plain'
+                    }
+                }
+            }
+        when:
+            String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockServerStub()
+        then:
+            new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+{
+    "request": {
+        "method": "GET",
+        "urlPattern": "/12"
+    },
+    "response": {
+        "status": 200,
+        "body": {
+            "id": "321",
+            "surname": "Lewandowski",
+            "name": "Jan",
+            "created" : "2999-09-09 01:23:45"
+        },
+        "headers": {
+            "Content-Type": "text/plain"
+        }
+    }
+}
+''')
+    }
+
     def 'should convert groovy dsl stub to wiremock stub for the server side'() {
         given:
             GroovyDsl groovyDsl = GroovyDsl.make {

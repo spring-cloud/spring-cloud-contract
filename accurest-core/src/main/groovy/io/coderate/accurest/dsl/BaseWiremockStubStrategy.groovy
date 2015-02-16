@@ -12,7 +12,7 @@ abstract class BaseWiremockStubStrategy {
         }
         return withAssertionHeaders(headers) {
             Map.Entry<String, WithValuePattern> entry -> [(entry.key): buildClientHeaderFromValuePattern(entry.value)]
-        } <<  headers?.valueHeaders()
+        } <<  headers.valueHeaders()
     }
 
     protected Map buildServerHeadersSection(Headers headers) {
