@@ -90,7 +90,7 @@ class WiremockToDslConverterSpec extends Specification {
     },
     "response": {
         "status": 200,
-        "body": "{\"status\": \"OK\"}",
+        "body": "{\\"status\\": \\"OK\\"}",
         "headers": {
             "Content-Type": "application/json"
         }
@@ -108,9 +108,9 @@ class WiremockToDslConverterSpec extends Specification {
                 }
                 response {
                     status 200
-                    body (
-                            status : "OK"
-                    )
+                    body ("""{
+    "status": "OK"
+}""")
                     headers {
                         header 'Content-Type': 'application/json'
 
@@ -215,7 +215,7 @@ class WiremockToDslConverterSpec extends Specification {
                     body ([
                         [a: 1, c: '3'],
                         'b',
-                        'c'
+                        'a'
                     ])
                     headers {
                         header 'Content-Type': 'application/json'
@@ -263,20 +263,28 @@ class WiremockToDslConverterSpec extends Specification {
                 }
                 response {
                     status 200
-                    body ([
-                            [amount:1.01,
-                             name: "Name" ,
-                             info: [title:"title1",
-                                    payload:null],
-                             booleanvalue:true,
-                             user:null],
-                            [amount:2.01,
-                             name: "Name2" ,
-                             info: [title:"title2",
-                                    payload:null],
-                             booleanvalue:true,
-                             user:null]
-                    ])
+                    body ("""[
+    {
+        "amount": 1.01,
+        "name": "Name",
+        "info": {
+            "title": "title1",
+            "payload": null
+        },
+        "booleanvalue": true,
+        "user": null
+    },
+    {
+        "amount": 2.01,
+        "name": "Name2",
+        "info": {
+            "title": "title2",
+            "payload": null
+        },
+        "booleanvalue": true,
+        "user": null
+    }
+]""")
                 }
             }
         when:

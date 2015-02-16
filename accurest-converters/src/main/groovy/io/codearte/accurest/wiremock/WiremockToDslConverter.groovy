@@ -1,7 +1,10 @@
 package io.codearte.accurest.wiremock
-
 import groovy.io.FileType
+import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+import groovy.xml.XmlUtil
+
+import static org.apache.commons.lang3.StringEscapeUtils.escapeJava
 
 class WiremockToDslConverter {
     static String fromWiremockStub(String wiremockStringStub) {
@@ -14,16 +17,16 @@ class WiremockToDslConverter {
         def response = wiremockStub.response
         return """\
             request {
-                ${request.method ? "method '''$request.method'''" : ""}
-                ${request.url ? "url '''$request.url'''" : ""}
-                ${request.urlPattern ? "urlPattern '''$request.urlPattern'''" : ""}
-                ${request.urlPath ? "urlPath '''$request.urlPath'''" : ""}
+                ${request.method ? "method \"\"\"$request.method\"\"\"" : ""}
+                ${request.url ? "url \"\"\"$request.url\"\"\"" : ""}
+                ${request.urlPattern ? "urlPattern \"\"\"${escapeJava(request.urlPattern)}\"\"\"" : ""}
+                ${request.urlPath ? "urlPath \"\"\"$request.urlPath\"\"\"" : ""}
                 ${request.headers ? """headers {
                     ${request.headers.collect {
                         def assertion = it.value
                         String headerName = it.key as String
                         def entry = assertion.entrySet().first()
-                        """header('''$headerName''').$entry.key('''$entry.value''')\n"""
+                        """header(\"\"\"$headerName\"\"\").$entry.key(\"\"\"${escapeJava(entry.value)}\"\"\")\n"""
                     }.join('')
         }
                 }
@@ -54,10 +57,20 @@ class WiremockToDslConverter {
 
     private Object buildBody(String responseBody) {
         try {
-            return buildBody(new JsonSlurper().parseText(responseBody))
-        } catch (Exception e) {
-            return """'''$responseBody'''"""
+            def json = new JsonSlurper().parseText(responseBody)
+            return wrapWithMultilineGString(JsonOutput.prettyPrint(responseBody))
+        } catch (Exception jsonException) {
+            try {
+                def xml = new XmlSlurper().parseText(responseBody)
+                return wrapWithMultilineGString(XmlUtil.serialize(responseBody))
+            } catch (Exception xmlException) {
+                return wrapWithMultilineGString(responseBody)
+            }
         }
+    }
+
+    private String wrapWithMultilineGString(String string) {
+        return """\"\"\"$string\"\"\""""
     }
 
     private Closure withQuotedMapStringElements() {
@@ -90,7 +103,7 @@ class WiremockToDslConverter {
         if (element =~ /^".*"$/) {
             return element
         }
-        return """'''$element'''"""
+        return """\"\"\"${escapeJava(element)}\"\"\""""
     }
 
     private Object convert(List element) {
