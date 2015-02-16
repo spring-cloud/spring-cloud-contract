@@ -10,6 +10,7 @@ class AccurestConfigProperties {
 	String basePackageForTests = 'io.codearte.accurest.tests'
 	String baseClassForTests
 	String ruleClassForTests
+	List<String> ignoredFiles = []
 	String generatedTestSourcesDir = 'build/generated-sources/accurest'
 	String[] imports = []
 	String[] staticImports = []

@@ -1,124 +1,76 @@
 package io.coderate.accurest
 
-import io.coderate.accurest.builder.ClassBuilder
+import groovy.transform.PackageScope
 import io.coderate.accurest.config.AccurestConfigProperties
-import io.coderate.accurest.config.TestFramework
-import io.coderate.accurest.config.TestMode
-import io.coderate.accurest.util.NamesUtil
+import org.codehaus.plexus.util.DirectoryScanner
 
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.nio.file.StandardOpenOption
 import java.util.concurrent.atomic.AtomicInteger
 
-import static ClassBuilder.createClass
-import static io.coderate.accurest.builder.MethodBuilder.createTestMethod
 import static io.coderate.accurest.util.NamesUtil.afterLast
-import static io.coderate.accurest.util.NamesUtil.capitalize
 
 /**
  * @author Jakub Kubrynski
  */
 class TestGenerator {
 
-	private final String targetDirectory
-	private final AccurestConfigProperties configProperties
-	private final String stubsBaseDirectory
-	private AtomicInteger counter = new AtomicInteger()
+    private final AccurestConfigProperties configProperties
+    private final String stubsBaseDirectory
+    private AtomicInteger counter = new AtomicInteger()
+    private SingleTestGenerator generator
+    private FileSaver saver
+    private DirectoryScanner directoryScanner
 
-	TestGenerator(AccurestConfigProperties accurestConfigProperties) {
-		this.configProperties = accurestConfigProperties
-		this.targetDirectory = accurestConfigProperties.generatedTestSourcesDir
-		File stubsResource = new File(accurestConfigProperties.stubsBaseDirectory)
-		if (stubsResource == null) {
-			throw new AccurestException("Stubs directory not found under " + accurestConfigProperties.stubsBaseDirectory)
-		}
-		this.stubsBaseDirectory = stubsResource.path
-	}
+    TestGenerator(AccurestConfigProperties accurestConfigProperties) {
+        this(accurestConfigProperties, new SingleTestGenerator(accurestConfigProperties), new FileSaver(accurestConfigProperties.generatedTestSourcesDir, accurestConfigProperties.targetFramework))
+    }
 
-	public int generate() {
-		generateTestClasses(new File(stubsBaseDirectory), configProperties.basePackageForTests)
-		return counter.get()
-	}
+    TestGenerator(AccurestConfigProperties configProperties, SingleTestGenerator generator, FileSaver saver) {
+        this.configProperties = configProperties
+        File stubsResource = new File(configProperties.stubsBaseDirectory)
+        if (stubsResource == null) {
+            throw new AccurestException("Stubs directory not found under " + configProperties.stubsBaseDirectory)
+        }
+        this.stubsBaseDirectory = stubsResource.path
+        this.generator = generator
+        this.saver = saver
+        this.directoryScanner = new DirectoryScanner()
+        directoryScanner.setExcludes(configProperties.getIgnoredFiles() as String[])
+        directoryScanner.setBasedir(configProperties.stubsBaseDirectory)
+    }
 
-	protected void generateTestClasses(File baseFile, String packageName) {
-		List<File> files = baseFile.listFiles()
+    int generate() {
+        generateTestClasses(configProperties.basePackageForTests)
+        return counter.get()
+    }
 
-		files.each {
-			if (it.isDirectory()) {
-				generateTestClasses(it, "$packageName.$it.name")
-				if (containsStubs(it)) {
-					def testBaseDir = Paths.get(targetDirectory, NamesUtil.packageToDirectory(packageName))
-					Files.createDirectories(testBaseDir)
-					def classPath = Paths.get(testBaseDir.toString(), capitalize(it.name) + getTestClassSuffix() + getTestClassExtension())
-							.toAbsolutePath()
-					def classBytes = buildClass(it, packageName).bytes
-					Files.write(classPath, classBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
-					counter.incrementAndGet()
-				}
-			}
-		}
-	}
+    @PackageScope
+    void generateTestClasses(final String packageName) {
+        directoryScanner.scan()
+        directoryScanner.getIncludedDirectories()
+                .each { String includedDirectoryRelativePath ->
+            processIncludedDirectory(includedDirectoryRelativePath, packageName)
 
-	private String getTestClassSuffix() {
-		return configProperties.targetFramework == TestFramework.SPOCK ? 'Spec' : 'Test'
-	}
+        }
+    }
 
-	private String getTestClassExtension() {
-		return configProperties.targetFramework == TestFramework.SPOCK ? '.groovy' : '.java'
-	}
+    private void processIncludedDirectory(
+            final String includedDirectoryRelativePath, final String packageNameForClass) {
+        if (!includedDirectoryRelativePath.isEmpty()) {
+            List<File> filesToClass = directoryScanner.includedFiles.
+                    grep { String includedFile ->
+                        return includedFile.matches(includedDirectoryRelativePath + File.separator + "[A-Za-z0-9]*\\.json")
+                    }
+            .collect {
+                return new File(stubsBaseDirectory + File.separator + it)
+            }
+            if (filesToClass.size()) {
+                def className = afterLast(includedDirectoryRelativePath, File.separator)
+                def classBytes = generator.buildClass(filesToClass, className, packageNameForClass).bytes
+                saver.saveClassFile(className, packageNameForClass, classBytes)
+                counter.incrementAndGet()
+            }
+        }
+    }
 
-	boolean containsStubs(File file) {
-		return file.list(new FilenameFilter() {
-			@Override
-			boolean accept(File dir, String name) {
-				return "json".equalsIgnoreCase(NamesUtil.afterLastDot(name))
-			}
-		}).size() > 0
-	}
 
-	private String buildClass(File directory, String classPackage) {
-		ClassBuilder clazz = createClass(capitalize(afterLast(directory.path, '/')), classPackage, configProperties)
-
-		if (configProperties.imports) {
-			configProperties.imports.each {
-				clazz.addImport(it)
-			}
-		}
-
-		if (configProperties.staticImports) {
-			configProperties.staticImports.each {
-				clazz.addStaticImport(it)
-			}
-		}
-
-		if (configProperties.testMode == TestMode.MOCKMVC) {
-			clazz.addStaticImport('com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.*')
-		} else {
-			clazz.addStaticImport('com.jayway.restassured.RestAssured.*')
-		}
-
-		if (configProperties.targetFramework == TestFramework.JUNIT) {
-			clazz.addImport('org.junit.Test')
-		} else {
-			clazz.addImport('groovy.json.JsonSlurper')
-		}
-
-		if (configProperties.ruleClassForTests) {
-			clazz.addImport('org.junit.Rule')
-					.addRule(configProperties.ruleClassForTests)
-		}
-
-		directory.listFiles().grep({ File file -> !file.isDirectory()}).each {
-			clazz.addMethod(createTestMethod(it, configProperties.targetFramework))
-		}
-		return clazz.build()
-	}
-
-	public static void main(String[] args) {
-		AccurestConfigProperties properties = new AccurestConfigProperties(stubsBaseDirectory: '/home/devel/projects/codearte/accurest/accurest-core/src/main/resources/stubs',
-				targetFramework: TestFramework.SPOCK, testMode: TestMode.MOCKMVC, basePackageForTests: 'io.test', staticImports: ['com.pupablada.Test.*'], imports: ['org.innapypa.Test'])
-		new TestGenerator(properties).generate()
-	}
 }
