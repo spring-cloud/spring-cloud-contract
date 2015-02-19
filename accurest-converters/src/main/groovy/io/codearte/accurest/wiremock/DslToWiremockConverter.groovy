@@ -1,7 +1,9 @@
 package io.codearte.accurest.wiremock
 
+import groovy.transform.CompileStatic
 import io.coderate.accurest.dsl.GroovyDsl
 
+@CompileStatic
 abstract class DslToWiremockConverter implements SingleFileConverter {
 
     @Override
@@ -10,7 +12,7 @@ abstract class DslToWiremockConverter implements SingleFileConverter {
     }
 
     @Override
-    String getOutputFileNameForInputFileName(String inputFileName) {
+    String generateOutputFileNameForInput(String inputFileName) {
         return inputFileName.replaceAll('.groovy', '.json')
     }
 
