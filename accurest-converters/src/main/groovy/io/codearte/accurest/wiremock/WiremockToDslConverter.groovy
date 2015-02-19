@@ -1,4 +1,5 @@
 package io.codearte.accurest.wiremock
+
 import groovy.io.FileType
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
