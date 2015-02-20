@@ -14,4 +14,6 @@ class AccurestConfigProperties {
 	String generatedTestSourcesDir = 'build/generated-sources/accurest'
 	String[] imports = []
 	String[] staticImports = []
+	File groovyDslDir
+	File generatedWiremockClientStubsDir
 }

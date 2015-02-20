@@ -1,5 +1,5 @@
 ext {
-	projectVersion = '0.3.0-SNAPSHOT'
+	projectVersion = '0.3.1-SNAPSHOT'
 	projectGroup = 'io.codearte.accurest'
 }
 
@@ -65,6 +65,7 @@ project(':accurest-converters') {
 project(':accurest-gradle-plugin') {
 	dependencies {
 		compile project(':accurest-core')
+		compile project(':accurest-converters')
 		compile gradleApi()
 	}
 }
