@@ -6,7 +6,8 @@ io.coderate.accurest.dsl.GroovyDsl.make {
 		}
 		body("""\
           {
-            "name": "Jan"
+            "name": "Jan",
+            "id": "${value(client('abc'), server('def'))}",
           }
           """
 		)
@@ -16,10 +17,12 @@ io.coderate.accurest.dsl.GroovyDsl.make {
 		status 200
 		body("""\
           {
-            "name": "Jan"
+            "name": "Jan",
+            "id": "${value(client('123'), server('321'))}",
+						"surname": "${value(client('Kowalsky'), server('$checkIfSurnameValid($value)'))}"
           }
           """
-				)
+		)
 		headers {
 			header 'Content-Type': 'text/plain'
 		}

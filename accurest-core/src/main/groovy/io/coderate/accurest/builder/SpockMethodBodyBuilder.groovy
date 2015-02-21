@@ -44,6 +44,8 @@ class SpockMethodBodyBuilder {
 			blockBuilder.addLine("response.header('$it.key') == '$it.value'")
 		}
 		if (stubDefinition.response.body) {
+			blockBuilder.endBlock()
+			blockBuilder.addLine('and:').startBlock()
 			blockBuilder.addLine('def responseBody = new JsonSlurper().parseText(response.body.asString())')
 			stubDefinition.response.body.serverValue.each {
 				def value = it.value
