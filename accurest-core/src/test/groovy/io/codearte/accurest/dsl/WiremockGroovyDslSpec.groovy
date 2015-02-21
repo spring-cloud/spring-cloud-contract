@@ -108,6 +108,48 @@ class WiremockGroovyDslSpec extends Specification {
 ''')
 	}
 
+	def 'should convert groovy dsl stub with simple Body as String to wiremock stub for the client side'() {
+		given:
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				request {
+					method('GET')
+					urlPattern $(client('/[0-9]{2}'), server('/12'))
+				}
+				response {
+					status 200
+					body("""\
+                            {
+                                "name": "Jan"
+                            }
+                        """
+					)
+					headers {
+						header 'Content-Type': 'text/plain'
+					}
+				}
+			}
+		when:
+			String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+		then:
+			new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+{
+    "request": {
+        "method": "GET",
+        "urlPattern": "/[0-9]{2}"
+    },
+    "response": {
+        "status": 200,
+        "body": {
+            "name": "Jan"
+        },
+        "headers": {
+            "Content-Type": "text/plain"
+        }
+    }
+}
+''')
+	}
+
 	def 'should convert groovy dsl stub with Body as String to wiremock stub for the server side'() {
 		given:
 			GroovyDsl groovyDsl = GroovyDsl.make {

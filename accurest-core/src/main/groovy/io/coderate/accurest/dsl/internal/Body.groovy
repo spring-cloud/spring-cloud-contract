@@ -26,7 +26,7 @@ class Body {
 	}
 
 	Body(Object bodyAsValue) {
-		this.bodyAsValue = new DslProperty(bodyAsValue)
+		this("${bodyAsValue}")
 	}
 
 	Body(GString bodyAsValue) {
