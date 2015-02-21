@@ -26,14 +26,14 @@ class TestGenerator {
 
 	TestGenerator(AccurestConfigProperties configProperties, SingleTestGenerator generator, FileSaver saver) {
 		this.configProperties = configProperties
-		if (configProperties.stubsBaseDirectory == null) {
-			throw new AccurestException("Stubs directory not found under " + configProperties.stubsBaseDirectory)
+		if (configProperties.contractsDslDir == null) {
+			throw new AccurestException("Stubs directory not found under " + configProperties.contractsDslDir)
 		}
 		this.generator = generator
 		this.saver = saver
 		this.directoryScanner = new DirectoryScanner()
 		directoryScanner.setExcludes(configProperties.getIgnoredFiles() as String[])
-		directoryScanner.setBasedir(configProperties.stubsBaseDirectory)
+		directoryScanner.setBasedir(configProperties.contractsDslDir)
 	}
 
 	int generate() {
@@ -59,7 +59,7 @@ class TestGenerator {
 						return includedFile.matches(includedDirectoryRelativePath + File.separator + "[A-Za-z0-9]*\\.groovy")
 					}
 			.collect {
-				return new File(configProperties.stubsBaseDirectory, it)
+				return new File(configProperties.contractsDslDir, it)
 			}
 			if (filesToClass.size()) {
 				def className = afterLast(includedDirectoryRelativePath, File.separator)

@@ -43,7 +43,7 @@ class AccurestGradlePlugin implements Plugin<Project> {
 	void setConfigurationDefaults(AccurestConfigProperties extension) {
 		extension.with {
 			generatedTestSourcesDir = project.file("${project.buildDir}/generated-sources/accurest")
-			stubsBaseDirectory = project.file("${project.rootDir}/src/test/resources/stubs") //TODO: Use sourceset
+			contractsDslDir = project.file("${project.rootDir}/src/test/resources/stubs") //TODO: Use sourceset
 			basePackageForTests = 'io.codearte.accurest.tests'
 		}
 	}
@@ -61,8 +61,8 @@ class AccurestGradlePlugin implements Plugin<Project> {
 		Task task = project.tasks.create(DSL_TO_WIREMOCK_CLIENT_TASK_NAME, GenerateWiremockClientStubsFromDslTask)
 		task.description = "Generate Wiremock client stubs from GroovyDSL"
 		task.conventionMapping.with {
-			groovyDslDir = { extension.groovyDslDir }
-			generatedWiremockClientStubsDir = { extension.generatedWiremockClientStubsDir }
+			groovyDslDir = { extension.contractsDslDir }
+			generatedWiremockClientStubsDir = { extension.stubsOutputDir }
 		}
 	}
 }

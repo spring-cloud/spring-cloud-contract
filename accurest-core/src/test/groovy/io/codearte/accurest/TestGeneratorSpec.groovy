@@ -4,7 +4,6 @@ import io.coderate.accurest.FileSaver
 import io.coderate.accurest.SingleTestGenerator
 import io.coderate.accurest.TestGenerator
 import io.coderate.accurest.config.AccurestConfigProperties
-import spock.lang.Ignore
 import spock.lang.Specification
 
 class TestGeneratorSpec extends Specification {
@@ -15,7 +14,7 @@ class TestGeneratorSpec extends Specification {
 		given:
 			File resource = new File(this.getClass().getResource("/directory/with/stubs/stubsRepositoryIndicator").toURI())
 			AccurestConfigProperties properties = new AccurestConfigProperties()
-			properties.stubsBaseDirectory = resource.parentFile
+			properties.contractsDslDir = resource.parentFile
 			TestGenerator testGenerator = new TestGenerator(properties, classGenerator, Stub(FileSaver))
 		when:
 			testGenerator.generateTestClasses("com.ofg")
@@ -28,7 +27,7 @@ class TestGeneratorSpec extends Specification {
 			File resource = new File(this.getClass().getResource("/directory/with/stubs/stubsRepositoryIndicator").toURI())
 			AccurestConfigProperties properties = new AccurestConfigProperties()
 			properties.ignoredFiles << "**/other/**"
-			properties.stubsBaseDirectory = resource.parentFile
+			properties.contractsDslDir = resource.parentFile
 			TestGenerator testGenerator = new TestGenerator(properties, classGenerator, Stub(FileSaver))
 		when:
 			testGenerator.generateTestClasses("com.ofg")
@@ -41,7 +40,7 @@ class TestGeneratorSpec extends Specification {
 			File resource = new File(this.getClass().getResource("/directory/with/stubs/stubsRepositoryIndicator").toURI())
 			AccurestConfigProperties properties = new AccurestConfigProperties()
 			properties.ignoredFiles << "**/other.groovy"
-			properties.stubsBaseDirectory = resource.parentFile
+			properties.contractsDslDir = resource.parentFile
 			TestGenerator testGenerator = new TestGenerator(properties, classGenerator, Stub(FileSaver))
 			classGenerator.buildClass(_, _, _) >> "sample"
 		when:
