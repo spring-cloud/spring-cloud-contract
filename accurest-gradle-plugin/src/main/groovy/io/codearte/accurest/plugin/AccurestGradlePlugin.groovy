@@ -54,6 +54,7 @@ class AccurestGradlePlugin implements Plugin<Project> {
 		task.description = "Generate server tests from GroovyDSL"
 		task.group = GROUP_NAME
 		task.conventionMapping.with {
+			contractsDslDir = { extension.contractsDslDir }
 			generatedTestSourcesDir = { extension.generatedTestSourcesDir }
 			configProperties = { extension }
 		}
