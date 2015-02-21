@@ -14,6 +14,7 @@ class AccurestGradlePlugin implements Plugin<Project> {
 	private static final String DSL_TO_WIREMOCK_CLIENT_TASK_NAME = 'generateWiremockClientStubs'
 
 	private static final Class IDEA_PLUGIN_CLASS = org.gradle.plugins.ide.idea.IdeaPlugin
+	private static final String GROUP_NAME = "Verification"
 
 	private Project project
 
@@ -51,6 +52,7 @@ class AccurestGradlePlugin implements Plugin<Project> {
 	private void createGenerateTestsTask(AccurestConfigProperties extension) {
 		Task task = project.tasks.create(GENERATE_SERVER_TESTS_TASK_NAME, GenerateServerTestsTask)
 		task.description = "Generate server tests from GroovyDSL"
+		task.group = GROUP_NAME
 		task.conventionMapping.with {
 			generatedTestSourcesDir = { extension.generatedTestSourcesDir }
 			configProperties = { extension }
@@ -60,6 +62,7 @@ class AccurestGradlePlugin implements Plugin<Project> {
 	private void createAndConfigureGenerateWiremockClientStubsFromDslTask(AccurestConfigProperties extension) {
 		Task task = project.tasks.create(DSL_TO_WIREMOCK_CLIENT_TASK_NAME, GenerateWiremockClientStubsFromDslTask)
 		task.description = "Generate Wiremock client stubs from GroovyDSL"
+		task.group = GROUP_NAME
 		task.conventionMapping.with {
 			groovyDslDir = { extension.contractsDslDir }
 			generatedWiremockClientStubsDir = { extension.stubsOutputDir }
