@@ -33,13 +33,13 @@ class Body {
 		this.bodyAsValue = new DslProperty(getClientValue(bodyAsValue), getServerValue(bodyAsValue))
 	}
 
-	private Map getClientValue(GString bodyAsValue) {
+	private def getClientValue(GString bodyAsValue) {
 		GString clientGString = new GStringImpl(bodyAsValue.values.clone(), bodyAsValue.strings.clone())
 		Object[] clientValues = bodyAsValue.values.collect { it instanceof DslProperty ? it.clientValue : it } as Object[]
 		return new JsonSlurper().parseText(new GStringImpl(clientValues, clientGString.strings).toString())
 	}
 
-	private Map getServerValue(GString bodyAsValue) {
+	private def getServerValue(GString bodyAsValue) {
 		GString clientGString = new GStringImpl(bodyAsValue.values.clone(), bodyAsValue.strings.clone())
 		Object[] serverValues = bodyAsValue.values.collect { it instanceof DslProperty ? it.serverValue : it } as Object[]
 		return new JsonSlurper().parseText(new GStringImpl(serverValues, clientGString.strings).toString())
