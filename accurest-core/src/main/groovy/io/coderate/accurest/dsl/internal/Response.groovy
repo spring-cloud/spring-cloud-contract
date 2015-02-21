@@ -12,7 +12,7 @@ class Response extends Common {
 
 	private DslProperty status
 	private Headers headers
-	private Body body = new Body()
+	private Body body
 
 	Response() {
 	}

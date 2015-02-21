@@ -9,17 +9,14 @@ import org.codehaus.groovy.runtime.GStringImpl
 @EqualsAndHashCode(includeFields = true)
 class Body extends DslProperty {
 
-	Body() {
-		super(null)
+	Body(Map<String, DslProperty> body) {
+		super(extractValue(body, {it.clientValue}), extractValue(body, {it.serverValue}))
 	}
 
-	Body(Map<String, DslProperty> body) {
-		super(body.collectEntries { Map.Entry<String, DslProperty> entry ->
-			[(entry.key): entry.value.clientValue]
-		} as Map<String, Object>,
-				body.collectEntries { Map.Entry<String, DslProperty> entry ->
-					[(entry.key): entry.value.serverValue]
-				} as Map<String, Object>)
+	private static Map<String, Object> extractValue(Map<String, DslProperty> body, Closure valueProvider) {
+		body.collectEntries { Map.Entry<String, DslProperty> entry ->
+			[(entry.key): valueProvider(entry.value)]
+		} as Map<String, Object>
 	}
 
 	Body(List bodyAsList) {
@@ -31,23 +28,17 @@ class Body extends DslProperty {
 	}
 
 	Body(GString bodyAsValue) {
-		super(extractClientValue(bodyAsValue), extractServerValue(bodyAsValue))
+		super(extractValue(bodyAsValue, {it.clientValue}), extractValue(bodyAsValue, {it.serverValue}))
 	}
 
 	Body(DslProperty bodyAsValue) {
 		super(bodyAsValue.clientValue, bodyAsValue.serverValue)
 	}
 
-	private static def extractClientValue(GString bodyAsValue) {
+	private static Object extractValue(GString bodyAsValue, Closure valueProvider) {
 		GString clientGString = new GStringImpl(bodyAsValue.values.clone(), bodyAsValue.strings.clone())
-		Object[] clientValues = bodyAsValue.values.collect { it instanceof DslProperty ? it.clientValue : it } as Object[]
+		Object[] clientValues = bodyAsValue.values.collect { it instanceof DslProperty ? valueProvider(it) : it } as Object[]
 		return new JsonSlurper().parseText(new GStringImpl(clientValues, clientGString.strings).toString())
-	}
-
-	private static def extractServerValue(GString bodyAsValue) {
-		GString clientGString = new GStringImpl(bodyAsValue.values.clone(), bodyAsValue.strings.clone())
-		Object[] serverValues = bodyAsValue.values.collect { it instanceof DslProperty ? it.serverValue : it } as Object[]
-		return new JsonSlurper().parseText(new GStringImpl(serverValues, clientGString.strings).toString())
 	}
 	
 }
