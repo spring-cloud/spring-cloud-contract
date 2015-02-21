@@ -11,26 +11,26 @@ import io.coderate.accurest.dsl.internal.Response
 @ToString(includeFields = true, includePackage = false)
 class GroovyDsl {
 
-    Request request
-    Response response
+	Request request
+	Response response
 
-    static GroovyDsl make(Closure closure) {
-        GroovyDsl dsl = new GroovyDsl()
-        closure.delegate = dsl
-        closure()
-        return dsl
-    }
+	static GroovyDsl make(Closure closure) {
+		GroovyDsl dsl = new GroovyDsl()
+		closure.delegate = dsl
+		closure()
+		return dsl
+	}
 
-    void request(@DelegatesTo(Request) Closure closure) {
-        this.request = new Request()
-        closure.delegate = request
-        closure()
-    }
+	void request(@DelegatesTo(Request) Closure closure) {
+		this.request = new Request()
+		closure.delegate = request
+		closure()
+	}
 
-    void response(@DelegatesTo(Response) Closure closure) {
-        this.response = new Response()
-        closure.delegate = response
-        closure()
-    }
+	void response(@DelegatesTo(Response) Closure closure) {
+		this.response = new Response()
+		closure.delegate = response
+		closure()
+	}
 
 }

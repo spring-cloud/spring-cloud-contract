@@ -13,28 +13,28 @@ import static io.coderate.accurest.util.NamesUtil.capitalize
 @CompileStatic
 class FileSaver {
 
-    File targetDirectory
-    TestFramework framework
+	File targetDirectory
+	TestFramework framework
 
-    FileSaver(File targetDirectory, TestFramework framework) {
-        this.targetDirectory = targetDirectory
-        this.framework = framework
-    }
+	FileSaver(File targetDirectory, TestFramework framework) {
+		this.targetDirectory = targetDirectory
+		this.framework = framework
+	}
 
-    void saveClassFile(String fileName, String packageName, byte[] classBytes) {
+	void saveClassFile(String fileName, String packageName, byte[] classBytes) {
 
-        def testBaseDir = Paths.get(targetDirectory.absolutePath, NamesUtil.packageToDirectory(packageName))
-        Files.createDirectories(testBaseDir)
-        def classPath = Paths.get(testBaseDir.toString(), capitalize(fileName) + getTestClassSuffix() + getTestClassExtension())
-                .toAbsolutePath()
-        Files.write(classPath, classBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
-    }
+		def testBaseDir = Paths.get(targetDirectory.absolutePath, NamesUtil.packageToDirectory(packageName))
+		Files.createDirectories(testBaseDir)
+		def classPath = Paths.get(testBaseDir.toString(), capitalize(fileName) + getTestClassSuffix() + getTestClassExtension())
+				.toAbsolutePath()
+		Files.write(classPath, classBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
+	}
 
-    private String getTestClassSuffix() {
-        return framework == TestFramework.SPOCK ? 'Spec' : 'Test'
-    }
+	private String getTestClassSuffix() {
+		return framework == TestFramework.SPOCK ? 'Spec' : 'Test'
+	}
 
-    private String getTestClassExtension() {
-        return framework == TestFramework.SPOCK ? '.groovy' : '.java'
-    }
+	private String getTestClassExtension() {
+		return framework == TestFramework.SPOCK ? '.groovy' : '.java'
+	}
 }

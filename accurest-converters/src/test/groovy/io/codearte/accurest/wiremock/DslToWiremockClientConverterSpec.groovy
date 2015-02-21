@@ -5,11 +5,11 @@ import spock.lang.Specification
 
 class DslToWiremockClientConverterSpec extends Specification {
 
-    def "should convert DSL file to Wiremock JSON"() {
-        given:
-            def converter = new DslToWiremockClientConverter()
-        and:
-            String dslBody = """
+	def "should convert DSL file to Wiremock JSON"() {
+		given:
+			def converter = new DslToWiremockClientConverter()
+		and:
+			String dslBody = """
                 io.coderate.accurest.dsl.GroovyDsl.make {
                     request {
                         method('PUT')
@@ -20,10 +20,10 @@ class DslToWiremockClientConverterSpec extends Specification {
                     }
                 }
 """
-        when:
-            String json = converter.convertContent(dslBody)
-        then:
-            new JsonSlurper().parseText(json) == new JsonSlurper().parseText("""
+		when:
+			String json = converter.convertContent(dslBody)
+		then:
+			new JsonSlurper().parseText(json) == new JsonSlurper().parseText("""
 {"request":{"method":"PUT","urlPattern":"/[0-9]{2}"},"response":{"status":200}}""")
-    }
+	}
 }

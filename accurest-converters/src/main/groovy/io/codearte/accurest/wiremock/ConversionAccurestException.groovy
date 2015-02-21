@@ -6,7 +6,7 @@ import io.coderate.accurest.AccurestException
 @CompileStatic
 class ConversionAccurestException extends AccurestException {
 
-    ConversionAccurestException(String message, Throwable cause) {
-        super(message, cause)
-    }
+	ConversionAccurestException(String message, Throwable cause) {
+		super(message, cause)
+	}
 }

@@ -11,8 +11,10 @@ import org.gradle.api.tasks.TaskAction
 
 class GenerateServerTestsTask extends DefaultTask {
 
-	@InputDirectory File groovyDslDir
-	@OutputDirectory File generatedTestSourcesDir
+	@InputDirectory
+	File groovyDslDir
+	@OutputDirectory
+	File generatedTestSourcesDir
 
 	//TODO: How to deal with @Input*, @Output* and that domain object?
 	AccurestConfigProperties configProperties

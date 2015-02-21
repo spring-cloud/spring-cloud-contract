@@ -7,26 +7,26 @@ import groovy.transform.ToString
 @ToString(includePackage = false, includeFields = true, ignoreNulls = true)
 class Headers {
 
-    private Map<String, WithValuePattern> assertionHeaders = [:]
-    private Map<String, String> valueHeaders = [:]
+	private Map<String, WithValuePattern> assertionHeaders = [:]
+	private Map<String, String> valueHeaders = [:]
 
-    WithValuePattern header(String headerName) {
-        WithValuePattern withValuePattern = new WithValuePattern()
-        assertionHeaders[headerName] = withValuePattern
-        return withValuePattern
-    }
+	WithValuePattern header(String headerName) {
+		WithValuePattern withValuePattern = new WithValuePattern()
+		assertionHeaders[headerName] = withValuePattern
+		return withValuePattern
+	}
 
-    void header(Map<String, String> singleHeader) {
-        Map.Entry<String, String> first = singleHeader.entrySet().first()
-        valueHeaders[first?.key] = first?.value
-    }
+	void header(Map<String, String> singleHeader) {
+		Map.Entry<String, String> first = singleHeader.entrySet().first()
+		valueHeaders[first?.key] = first?.value
+	}
 
-    Map<String, String> valueHeaders() {
-        return Collections.unmodifiableMap(valueHeaders)
-    }
+	Map<String, String> valueHeaders() {
+		return Collections.unmodifiableMap(valueHeaders)
+	}
 
-    Set<Map.Entry<String, WithValuePattern>> assertionEntries() {
-        return Collections.unmodifiableSet(assertionHeaders.entrySet())
-    }
+	Set<Map.Entry<String, WithValuePattern>> assertionEntries() {
+		return Collections.unmodifiableSet(assertionHeaders.entrySet())
+	}
 
 }

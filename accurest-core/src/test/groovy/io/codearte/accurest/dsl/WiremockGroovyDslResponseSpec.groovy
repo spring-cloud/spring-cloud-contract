@@ -7,42 +7,42 @@ import spock.lang.Specification
 
 class WiremockGroovyDslResponseSpec extends Specification {
 
-    def 'should generate response without body for #side side'() {
-        given:
-            GroovyDsl dsl = GroovyDsl.make {
-                response {
-                    status 200
-                }
-            }
-        expect:
-            new WiremockResponseStubStrategy(dsl)."build${side}ResponseContent"() == new JsonSlurper().parseText(expectedStub)
-        where:
-            side << ['Client', 'Server']
-            expectedStub << ['''
+	def 'should generate response without body for #side side'() {
+		given:
+			GroovyDsl dsl = GroovyDsl.make {
+				response {
+					status 200
+				}
+			}
+		expect:
+			new WiremockResponseStubStrategy(dsl)."build${side}ResponseContent"() == new JsonSlurper().parseText(expectedStub)
+		where:
+			side << ['Client', 'Server']
+			expectedStub << ['''
     {
         "status": 200
     }
     ''',
 
-    '''
+			                 '''
     {
         "status": 200
     }
     ''']
-    }
+	}
 
-    def 'should generate headers for response for client side'() {
-        given:
-            GroovyDsl dsl = GroovyDsl.make {
-                response {
-                    headers {
-                        header('Content-Type').matches $(client('text/xml'), server('text/*'))
-                    }
-                    status 200
-                }
-            }
-        expect:
-            new WiremockResponseStubStrategy(dsl).buildClientResponseContent() == new JsonSlurper().parseText('''
+	def 'should generate headers for response for client side'() {
+		given:
+			GroovyDsl dsl = GroovyDsl.make {
+				response {
+					headers {
+						header('Content-Type').matches $(client('text/xml'), server('text/*'))
+					}
+					status 200
+				}
+			}
+		expect:
+			new WiremockResponseStubStrategy(dsl).buildClientResponseContent() == new JsonSlurper().parseText('''
     {
             "headers": {
                 "Content-Type": {
@@ -52,20 +52,20 @@ class WiremockGroovyDslResponseSpec extends Specification {
             "status": 200
     }
     ''')
-    }
+	}
 
-    def 'should generate headers for response for server side'() {
-        given:
-            GroovyDsl dsl = GroovyDsl.make {
-                response {
-                    status 200
-                    headers {
-                        header('Content-Type').matches $(client('text/xml'), server('text/*'))
-                    }
-                }
-            }
-        expect:
-            new WiremockResponseStubStrategy(dsl).buildServerResponseContent() == new JsonSlurper().parseText('''
+	def 'should generate headers for response for server side'() {
+		given:
+			GroovyDsl dsl = GroovyDsl.make {
+				response {
+					status 200
+					headers {
+						header('Content-Type').matches $(client('text/xml'), server('text/*'))
+					}
+				}
+			}
+		expect:
+			new WiremockResponseStubStrategy(dsl).buildServerResponseContent() == new JsonSlurper().parseText('''
     {
         "status": 200,
         "headers": {
@@ -75,20 +75,20 @@ class WiremockGroovyDslResponseSpec extends Specification {
         }
     }
     ''')
-    }
+	}
 
-    def 'should generate an exact header for response for both sides '() {
-        given:
-            GroovyDsl dsl = GroovyDsl.make {
-                response {
-                    status 200
-                    headers {
-                        header 'Content-Type': 'text/xml'
-                    }
-                }
-            }
-        expect:
-            new WiremockResponseStubStrategy(dsl).buildServerResponseContent() == new JsonSlurper().parseText('''
+	def 'should generate an exact header for response for both sides '() {
+		given:
+			GroovyDsl dsl = GroovyDsl.make {
+				response {
+					status 200
+					headers {
+						header 'Content-Type': 'text/xml'
+					}
+				}
+			}
+		expect:
+			new WiremockResponseStubStrategy(dsl).buildServerResponseContent() == new JsonSlurper().parseText('''
     {
         "status": 200,
         "headers": {
@@ -96,5 +96,5 @@ class WiremockGroovyDslResponseSpec extends Specification {
         }
     }
     ''')
-    }
+	}
 }

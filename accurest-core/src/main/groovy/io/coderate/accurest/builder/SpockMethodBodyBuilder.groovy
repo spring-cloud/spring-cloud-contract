@@ -1,6 +1,5 @@
 package io.coderate.accurest.builder
 
-import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 
 /**

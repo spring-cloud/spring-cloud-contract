@@ -9,16 +9,16 @@ import groovy.transform.ToString
 @ToString(includePackage = false)
 class DslProperty<T> {
 
-    final T clientValue
-    final T serverValue
+	final T clientValue
+	final T serverValue
 
-    DslProperty(T clientValue, T serverValue) {
-        this.clientValue = clientValue
-        this.serverValue = serverValue
-    }
+	DslProperty(T clientValue, T serverValue) {
+		this.clientValue = clientValue
+		this.serverValue = serverValue
+	}
 
-    DslProperty(T singleValue) {
-        this.clientValue = singleValue
-        this.serverValue = singleValue
-    }
+	DslProperty(T singleValue) {
+		this.clientValue = singleValue
+		this.serverValue = singleValue
+	}
 }

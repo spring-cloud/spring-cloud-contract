@@ -9,8 +9,10 @@ import org.gradle.api.tasks.TaskAction
 //TODO: Implement as an incremental task: https://gradle.org/docs/current/userguide/custom_tasks.html#incremental_tasks ?
 class GenerateWiremockClientStubsFromDslTask extends DefaultTask {
 
-	@InputDirectory File groovyDslDir
-	@InputDirectory File generatedWiremockClientStubsDir
+	@InputDirectory
+	File groovyDslDir
+	@InputDirectory
+	File generatedWiremockClientStubsDir
 
 	@TaskAction
 	void generate() {

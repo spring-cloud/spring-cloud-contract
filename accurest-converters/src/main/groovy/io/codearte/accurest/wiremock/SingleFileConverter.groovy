@@ -5,9 +5,9 @@ import groovy.transform.CompileStatic
 @CompileStatic
 interface SingleFileConverter {
 
-    boolean canHandleFileName(String fileName)
+	boolean canHandleFileName(String fileName)
 
-    String convertContent(String content)
+	String convertContent(String content)
 
-    String generateOutputFileNameForInput(String inputFileName)
+	String generateOutputFileNameForInput(String inputFileName)
 }

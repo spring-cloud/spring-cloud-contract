@@ -10,7 +10,7 @@ class TestGeneratorSpec extends Specification {
 
 	private SingleTestGenerator classGenerator = Mock(SingleTestGenerator)
 
-    def "should find all .json files and generate 3 classes for them"() {
+	def "should find all .json files and generate 3 classes for them"() {
 		given:
 			File resource = new File(this.getClass().getResource("/directory/with/stubs/stubsRepositoryIndicator").toURI())
 			AccurestConfigProperties properties = new AccurestConfigProperties()
@@ -22,7 +22,7 @@ class TestGeneratorSpec extends Specification {
 			3 * classGenerator.buildClass(_, _, _) >> "qwerty"
 	}
 
-    def "should filter other directory"() {
+	def "should filter other directory"() {
 		given:
 			File resource = new File(this.getClass().getResource("/directory/with/stubs/stubsRepositoryIndicator").toURI())
 			AccurestConfigProperties properties = new AccurestConfigProperties()
@@ -35,7 +35,7 @@ class TestGeneratorSpec extends Specification {
 			1 * classGenerator.buildClass(_, 'different', _) >> "qwerty"
 	}
 
-    def "should ignore file"() {
+	def "should ignore file"() {
 		given:
 			File resource = new File(this.getClass().getResource("/directory/with/stubs/stubsRepositoryIndicator").toURI())
 			AccurestConfigProperties properties = new AccurestConfigProperties()

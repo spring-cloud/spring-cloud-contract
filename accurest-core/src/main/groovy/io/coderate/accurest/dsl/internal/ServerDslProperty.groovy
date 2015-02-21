@@ -9,7 +9,7 @@ import groovy.transform.ToString
 @ToString(includePackage = false)
 class ServerDslProperty extends DslProperty {
 
-    ServerDslProperty(Object singleValue) {
-        super(singleValue)
-    }
+	ServerDslProperty(Object singleValue) {
+		super(singleValue)
+	}
 }

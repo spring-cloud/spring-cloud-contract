@@ -11,7 +11,7 @@ class MainTest {
 				stubsBaseDirectory: '/home/devel/projects/codearte/accurest/accurest-core/src/main/resources/stubs',
 				generatedTestSourcesDir: '/tmp/accurest',
 				targetFramework: TestFramework.SPOCK, testMode: TestMode.MOCKMVC, basePackageForTests: 'io.test',
-                staticImports: ['com.pupablada.Test.*'], imports: ['org.innapypa.Test'], ignoredFiles: ["**/other"])
+				staticImports: ['com.pupablada.Test.*'], imports: ['org.innapypa.Test'], ignoredFiles: ["**/other"])
 		println new TestGenerator(properties).generate()
 	}
 }

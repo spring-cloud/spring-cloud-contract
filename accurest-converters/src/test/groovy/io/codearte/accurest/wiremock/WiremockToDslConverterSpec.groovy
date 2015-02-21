@@ -5,9 +5,9 @@ import spock.lang.Specification
 
 class WiremockToDslConverterSpec extends Specification {
 
-    def 'should produce a Groovy DSL from Wiremock stub'() {
-        given:
-            String wiremockStub = '''\
+	def 'should produce a Groovy DSL from Wiremock stub'() {
+		given:
+			String wiremockStub = '''\
 {
     "request": {
         "method": "GET",
@@ -40,44 +40,44 @@ class WiremockToDslConverterSpec extends Specification {
     }
 }
 '''
-        and:
-            GroovyDsl expectedGroovyDsl = GroovyDsl.make {
-                                                            request {
-                                                                method 'GET'
-                                                                urlPattern '/[0-9]{2}'
-                                                                headers {
-                                                                    header('Accept').matches('text/.*')
-                                                                    header('etag').doesNotMatch('abcd.*')
-                                                                    header('X-Custom-Header').contains('2134')
-                                                                }
-                                                            }
-                                                            response {
-                                                                status 200
-                                                                body (
-                                                                        id : [value: '132'],
-                                                                        surname : 'Kowalsky',
-                                                                        name: 'Jan',
-                                                                        created : '2014-02-02 12:23:43'
-                                                                )
-                                                                headers {
-                                                                    header 'Content-Type': 'text/plain'
+		and:
+			GroovyDsl expectedGroovyDsl = GroovyDsl.make {
+				request {
+					method 'GET'
+					urlPattern '/[0-9]{2}'
+					headers {
+						header('Accept').matches('text/.*')
+						header('etag').doesNotMatch('abcd.*')
+						header('X-Custom-Header').contains('2134')
+					}
+				}
+				response {
+					status 200
+					body(
+							id: [value: '132'],
+							surname: 'Kowalsky',
+							name: 'Jan',
+							created: '2014-02-02 12:23:43'
+					)
+					headers {
+						header 'Content-Type': 'text/plain'
 
-                                                                }
-                                                            }
-                                                        }
-        when:
-            String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
-        then:
-            new GroovyShell(this.class.classLoader).evaluate(
-            """ io.coderate.accurest.dsl.GroovyDsl.make {
+					}
+				}
+			}
+		when:
+			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
+		then:
+			new GroovyShell(this.class.classLoader).evaluate(
+					""" io.coderate.accurest.dsl.GroovyDsl.make {
                 $groovyDsl
             }""") == expectedGroovyDsl
-    }
+	}
 
 
-    def 'should convert Wiremock stub with body containing simple JSON'() {
-        given:
-            String wiremockStub = '''\
+	def 'should convert Wiremock stub with body containing simple JSON'() {
+		given:
+			String wiremockStub = '''\
 {
     "request": {
         "method": "DELETE",
@@ -97,38 +97,38 @@ class WiremockToDslConverterSpec extends Specification {
     }
 }
 '''
-        and:
-            GroovyDsl expectedGroovyDsl = GroovyDsl.make {
-                request {
-                    method 'DELETE'
-                    urlPattern '/credit-card-verification-data/[0-9]+'
-                    headers {
-                        header('Content-Type').equalTo('application/vnd.mymoid-adapter.v2+json; charset=UTF-8')
-                    }
-                }
-                response {
-                    status 200
-                    body ("""{
+		and:
+			GroovyDsl expectedGroovyDsl = GroovyDsl.make {
+				request {
+					method 'DELETE'
+					urlPattern '/credit-card-verification-data/[0-9]+'
+					headers {
+						header('Content-Type').equalTo('application/vnd.mymoid-adapter.v2+json; charset=UTF-8')
+					}
+				}
+				response {
+					status 200
+					body("""{
     "status": "OK"
 }""")
-                    headers {
-                        header 'Content-Type': 'application/json'
+					headers {
+						header 'Content-Type': 'application/json'
 
-                    }
-                }
-            }
-        when:
-            String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
-        then:
-            new GroovyShell(this.class.classLoader).evaluate(
-                    """ io.coderate.accurest.dsl.GroovyDsl.make {
+					}
+				}
+			}
+		when:
+			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
+		then:
+			new GroovyShell(this.class.classLoader).evaluate(
+					""" io.coderate.accurest.dsl.GroovyDsl.make {
                 $groovyDsl
             }""") == expectedGroovyDsl
-    }
+	}
 
-    def 'should convert Wiremock stub with body containing integer'() {
-        given:
-            String wiremockStub = '''\
+	def 'should convert Wiremock stub with body containing integer'() {
+		given:
+			String wiremockStub = '''\
 {
   "request": {
     "method": "POST",
@@ -148,36 +148,36 @@ class WiremockToDslConverterSpec extends Specification {
   }
 }
 '''
-        and:
-            GroovyDsl expectedGroovyDsl = GroovyDsl.make {
-                request {
-                    method 'POST'
-                    url '/charge/count'
-                    headers {
-                        header('Content-Type').equalTo('application/vnd.creditcard-reporter.v1+json')
-                    }
-                }
-                response {
-                    status 200
-                    body ( 200 )
-                    headers {
-                        header 'Content-Type': 'application/json'
+		and:
+			GroovyDsl expectedGroovyDsl = GroovyDsl.make {
+				request {
+					method 'POST'
+					url '/charge/count'
+					headers {
+						header('Content-Type').equalTo('application/vnd.creditcard-reporter.v1+json')
+					}
+				}
+				response {
+					status 200
+					body(200)
+					headers {
+						header 'Content-Type': 'application/json'
 
-                    }
-                }
-            }
-        when:
-            String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
-        then:
-            new GroovyShell(this.class.classLoader).evaluate(
-                    """ io.coderate.accurest.dsl.GroovyDsl.make {
+					}
+				}
+			}
+		when:
+			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
+		then:
+			new GroovyShell(this.class.classLoader).evaluate(
+					""" io.coderate.accurest.dsl.GroovyDsl.make {
                 $groovyDsl
             }""") == expectedGroovyDsl
-    }
+	}
 
-    def 'should convert Wiremock stub with body as a list'() {
-        given:
-            String wiremockStub = '''\
+	def 'should convert Wiremock stub with body as a list'() {
+		given:
+			String wiremockStub = '''\
 {
   "request": {
     "method": "POST",
@@ -201,41 +201,41 @@ class WiremockToDslConverterSpec extends Specification {
   }
 }
 '''
-        and:
-            GroovyDsl expectedGroovyDsl = GroovyDsl.make {
-                request {
-                    method 'POST'
-                    url '/charge/count'
-                    headers {
-                        header('Content-Type').equalTo('application/vnd.creditcard-reporter.v1+json')
-                    }
-                }
-                response {
-                    status 200
-                    body ([
-                        [a: 1, c: '3'],
-                        'b',
-                        'a'
-                    ])
-                    headers {
-                        header 'Content-Type': 'application/json'
+		and:
+			GroovyDsl expectedGroovyDsl = GroovyDsl.make {
+				request {
+					method 'POST'
+					url '/charge/count'
+					headers {
+						header('Content-Type').equalTo('application/vnd.creditcard-reporter.v1+json')
+					}
+				}
+				response {
+					status 200
+					body([
+							[a: 1, c: '3'],
+							'b',
+							'a'
+					])
+					headers {
+						header 'Content-Type': 'application/json'
 
-                    }
-                }
-            }
-        when:
-            String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
-        then:
-            new GroovyShell(this.class.classLoader).evaluate(
-                    """ io.coderate.accurest.dsl.GroovyDsl.make {
+					}
+				}
+			}
+		when:
+			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
+		then:
+			new GroovyShell(this.class.classLoader).evaluate(
+					""" io.coderate.accurest.dsl.GroovyDsl.make {
                 $groovyDsl
             }""") == expectedGroovyDsl
-    }
+	}
 
 
-    def 'should convert Wiremock stub with body containing a nested list'() {
-        given:
-            String wiremockStub = '''\
+	def 'should convert Wiremock stub with body containing a nested list'() {
+		given:
+			String wiremockStub = '''\
 {
   "request": {
     "method": "POST",
@@ -252,18 +252,18 @@ class WiremockToDslConverterSpec extends Specification {
     }
 }
 '''
-        and:
-            GroovyDsl expectedGroovyDsl = GroovyDsl.make {
-                request {
-                    method 'POST'
-                    url '/charge/search?pageNumber=0&size=2147483647'
-                    headers {
-                        header('Content-Type').equalTo('application/vnd.creditcard-reporter.v1+json')
-                    }
-                }
-                response {
-                    status 200
-                    body ("""[
+		and:
+			GroovyDsl expectedGroovyDsl = GroovyDsl.make {
+				request {
+					method 'POST'
+					url '/charge/search?pageNumber=0&size=2147483647'
+					headers {
+						header('Content-Type').equalTo('application/vnd.creditcard-reporter.v1+json')
+					}
+				}
+				response {
+					status 200
+					body("""[
     {
         "amount": 1.01,
         "name": "Name",
@@ -285,15 +285,15 @@ class WiremockToDslConverterSpec extends Specification {
         "user": null
     }
 ]""")
-                }
-            }
-        when:
-            String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
-        then:
-            new GroovyShell(this.class.classLoader).evaluate(
-                    """ io.coderate.accurest.dsl.GroovyDsl.make {
+				}
+			}
+		when:
+			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
+		then:
+			new GroovyShell(this.class.classLoader).evaluate(
+					""" io.coderate.accurest.dsl.GroovyDsl.make {
                 $groovyDsl
             }""") == expectedGroovyDsl
-    }
+	}
 
 }
