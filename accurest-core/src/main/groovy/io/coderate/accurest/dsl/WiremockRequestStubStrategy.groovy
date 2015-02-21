@@ -1,13 +1,17 @@
 package io.coderate.accurest.dsl
-
-import groovy.transform.CompileStatic
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 import groovy.transform.PackageScope
+import groovy.transform.TypeChecked
+import groovy.xml.XmlUtil
 import io.coderate.accurest.dsl.internal.ClientRequest
 import io.coderate.accurest.dsl.internal.Request
 
 import java.util.regex.Pattern
 
-@CompileStatic
+import static groovy.json.StringEscapeUtils.escapeJava
+
+@TypeChecked
 @PackageScope
 class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 
@@ -35,7 +39,26 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 
 	private Map<String, Object> appendBody(ClientRequest clientRequest) {
 		Object body = clientRequest?.body?.clientValue
-		return body != null ? [body: [equalTo: body]] : [:]
+		return body != null ? [body: [equalTo: parseBody(body)]] : [:]
+	}
+
+	private String parseBody(Object responseBodyObject) {
+		String responseBody = responseBodyObject as String
+		try {
+			def json = new JsonSlurper().parseText(responseBody)
+			return escapeJava(JsonOutput.toJson(responseBody))
+		} catch (Exception jsonException) {
+			try {
+				def xml = new XmlSlurper().parseText(responseBody)
+				return escapeJava(XmlUtil.serialize(responseBody))
+			} catch (Exception xmlException) {
+				return escapeJava(responseBody)
+			}
+		}
+	}
+
+	private String parseBody(Map responseBody) {
+		return JsonOutput.toJson(responseBody)
 	}
 
 }
