@@ -7,9 +7,11 @@ import io.coderate.accurest.config.TestMode
 
 class MainTest {
 	public static void main(String[] args) {
-		AccurestConfigProperties properties = new AccurestConfigProperties(stubsBaseDirectory: '/home/devel/workspace/accurest/accurest-core/src/main/resources/stubs',
+		AccurestConfigProperties properties = new AccurestConfigProperties(
+				stubsBaseDirectory: '/home/devel/projects/codearte/accurest/accurest-core/src/main/resources/stubs',
+				generatedTestSourcesDir: '/tmp/accurest',
 				targetFramework: TestFramework.SPOCK, testMode: TestMode.MOCKMVC, basePackageForTests: 'io.test',
-                staticImports: ['com.pupablada.Test.*'], imports: ['org.innapypa.Test'], ignoredFiles: ["**/different/some.json", "**/other"])
+                staticImports: ['com.pupablada.Test.*'], imports: ['org.innapypa.Test'], ignoredFiles: ["**/other"])
 		println new TestGenerator(properties).generate()
 	}
 }

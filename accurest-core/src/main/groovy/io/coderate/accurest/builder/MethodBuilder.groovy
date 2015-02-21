@@ -26,14 +26,10 @@ class MethodBuilder {
 	}
 
 	void appendTo(BlockBuilder blockBuilder) {
-		String modifier
 		if (lang == TestFramework.JUNIT) {
 			blockBuilder.addLine('@Test')
-			modifier = "public void "
-		} else {
-			modifier = "def "
 		}
-		blockBuilder.addLine(modifier + "$methodName() {")
+		blockBuilder.addLine(lang.methodModifier + "$methodName() {")
 		new SpockMethodBodyBuilder(stubContent).appendTo(blockBuilder)
 		blockBuilder.addLine('}')
 	}

@@ -5,11 +5,13 @@ import io.coderate.accurest.TestGenerator
 import io.coderate.accurest.config.AccurestConfigProperties
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
 class GenerateServerTestsTask extends DefaultTask {
 
+	@InputDirectory File groovyDslDir
 	@OutputDirectory File generatedTestSourcesDir
 
 	//TODO: How to deal with @Input*, @Output* and that domain object?

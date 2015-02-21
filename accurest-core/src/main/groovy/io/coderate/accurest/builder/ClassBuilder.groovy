@@ -16,25 +16,16 @@ class ClassBuilder {
 	private final List<String> staticImports = []
 	private final List<String> rules = []
 	private final List<MethodBuilder> methods = []
-	private final String modifier
-	private final String suffix
+	private final TestFramework lang
 
 	private ClassBuilder(String className, String packageName, String baseClass, TestFramework lang) {
+		this.lang = lang
 		if (baseClass) {
 			imports << baseClass
 		}
 		this.baseClass = NamesUtil.afterLastDot(baseClass)
 		this.packageName = packageName
 		this.className = className
-		switch (lang) {
-			case TestFramework.JUNIT:
-				modifier = "public "
-				suffix = ";"
-				break
-			case TestFramework.SPOCK:
-				modifier = ""
-				suffix = ""
-		}
 	}
 
 	static ClassBuilder createClass(String className, String classPackage, AccurestConfigProperties properties) {
@@ -70,24 +61,24 @@ class ClassBuilder {
 
 	String build() {
 		BlockBuilder clazz = new BlockBuilder("\t")
-				.addLine("package $packageName$suffix")
+				.addLine("package $packageName$lang.lineSuffix")
 				.addEmptyLine()
 
 		imports.sort().each {
-			clazz.addLine("import $it$suffix")
+			clazz.addLine("import $it$lang.lineSuffix")
 		}
 		if (!imports.empty) {
 			clazz.addEmptyLine()
 		}
 
 		staticImports.sort().each {
-			clazz.addLine("import static $it$suffix")
+			clazz.addLine("import static $it$lang.lineSuffix")
 		}
 		if (!staticImports.empty) {
 			clazz.addEmptyLine()
 		}
 
-		def classLine = "${modifier}class $className"
+		def classLine = "${lang.classModifier}class $className"
 		if (baseClass) {
 			classLine += " extends $baseClass"
 		}
@@ -97,7 +88,7 @@ class ClassBuilder {
 		clazz.startBlock()
 		rules.sort().each {
 			clazz.addLine("@Rule")
-			clazz.addLine("public $it ${NamesUtil.camelCase(it)} = new $it()$suffix")
+			clazz.addLine("public $it ${NamesUtil.camelCase(it)} = new $it()$lang.lineSuffix")
 		}
 		clazz.endBlock()
 		if (!rules.empty) {
