@@ -1,14 +1,14 @@
 package io.coderate.accurest.builder
 
+import groovy.util.logging.Slf4j
 import io.coderate.accurest.config.TestFramework
 import io.coderate.accurest.dsl.GroovyDsl
-import io.coderate.accurest.dsl.WiremockStubStrategy
 import io.coderate.accurest.util.NamesUtil
-import io.coderate.accurest.util.StubMappingConverter
 
 /**
  * @author Jakub Kubrynski
  */
+@Slf4j
 class MethodBuilder {
 
 	private final String methodName
@@ -23,6 +23,7 @@ class MethodBuilder {
 
 	static MethodBuilder createTestMethod(File stubsFile, TestFramework lang) {
 		GroovyDsl stubContent = new GroovyShell(this.classLoader).evaluate(stubsFile)
+		log.debug("Stub content Groovy DSL [$stubContent]")
 		String methodName = NamesUtil.camelCase(NamesUtil.toLastDot(NamesUtil.afterLast(stubsFile.path, File.separator)))
 		return new MethodBuilder(methodName, stubContent, lang)
 	}

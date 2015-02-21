@@ -5,7 +5,7 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import org.codehaus.groovy.runtime.GStringImpl
 
-@ToString(includePackage = false, includeFields = true)
+@ToString(includePackage = false, includeFields = true, includeNames = true)
 @EqualsAndHashCode(includeFields = true)
 class Body extends DslProperty {
 

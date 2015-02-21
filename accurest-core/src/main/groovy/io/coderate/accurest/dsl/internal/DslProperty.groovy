@@ -6,7 +6,7 @@ import groovy.transform.ToString
 
 @CompileStatic
 @EqualsAndHashCode(includeFields = true)
-@ToString(includePackage = false)
+@ToString(includePackage = false, includeNames = true)
 class DslProperty<T> {
 
 	final T clientValue

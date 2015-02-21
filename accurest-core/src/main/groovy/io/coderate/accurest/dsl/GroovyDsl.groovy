@@ -8,7 +8,7 @@ import io.coderate.accurest.dsl.internal.Response
 
 @TypeChecked
 @EqualsAndHashCode(includeFields = true)
-@ToString(includeFields = true, includePackage = false)
+@ToString(includeFields = true, includePackage = false, includeNames = true)
 class GroovyDsl {
 
 	Request request

@@ -4,7 +4,7 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
 @EqualsAndHashCode(includeFields = true)
-@ToString(includePackage = false, includeFields = true, ignoreNulls = true)
+@ToString(includePackage = false, includeFields = true, ignoreNulls = true, includeNames = true)
 class Headers {
 
 	private Map<String, WithValuePattern> assertionHeaders = [:]
