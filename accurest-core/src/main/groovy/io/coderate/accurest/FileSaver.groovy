@@ -25,16 +25,9 @@ class FileSaver {
 
 		def testBaseDir = Paths.get(targetDirectory.absolutePath, NamesUtil.packageToDirectory(packageName))
 		Files.createDirectories(testBaseDir)
-		def classPath = Paths.get(testBaseDir.toString(), capitalize(fileName) + getTestClassSuffix() + getTestClassExtension())
+		def classPath = Paths.get(testBaseDir.toString(), capitalize(fileName) + framework.classNameSuffix + framework.classExtension)
 				.toAbsolutePath()
 		Files.write(classPath, classBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
 	}
 
-	private String getTestClassSuffix() {
-		return framework == TestFramework.SPOCK ? 'Spec' : 'Test'
-	}
-
-	private String getTestClassExtension() {
-		return framework == TestFramework.SPOCK ? '.groovy' : '.java'
-	}
 }
