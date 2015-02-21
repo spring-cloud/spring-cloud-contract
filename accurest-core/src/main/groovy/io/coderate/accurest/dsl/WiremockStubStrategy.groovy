@@ -18,9 +18,4 @@ class WiremockStubStrategy {
 		return JsonOutput.prettyPrint(JsonOutput.toJson([request : wiremockRequestStubStrategy.buildClientRequestContent(),
 		                                                 response: wiremockResponseStubStrategy.buildClientResponseContent()]))
 	}
-
-	String toWiremockServerStub() {
-		return JsonOutput.prettyPrint(JsonOutput.toJson([request : wiremockRequestStubStrategy.buildServerRequestContent(),
-		                                                 response: wiremockResponseStubStrategy.buildServerResponseContent()]))
-	}
 }

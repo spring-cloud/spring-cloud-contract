@@ -21,11 +21,6 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 		return buildRequestContent(new ClientRequest(request))
 	}
 
-	@PackageScope
-	Map buildServerRequestContent() {
-		return buildRequestContent(new ServerRequest(request))
-	}
-
 	private Map<String, Object> buildRequestContent(ClientRequest request) {
 		return [method    : request?.method?.clientValue,
 		        url       : request?.url?.clientValue,
@@ -36,13 +31,4 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 		].findAll { it.value }
 	}
 
-	private Map<String, Object> buildRequestContent(ServerRequest request) {
-		return [method    : request?.method?.serverValue,
-		        url       : request?.url?.serverValue,
-		        urlPattern: request?.urlPattern?.serverValue,
-		        urlPath   : request?.urlPath?.serverValue,
-		        headers   : buildServerHeadersSection(request.headers),
-		        body      : request?.body?.serverValue
-		].findAll { it.value }
-	}
 }

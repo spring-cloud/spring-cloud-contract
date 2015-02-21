@@ -21,21 +21,9 @@ class WiremockResponseStubStrategy extends BaseWiremockStubStrategy {
 		return buildResponseContent(new ClientResponse(response))
 	}
 
-	@PackageScope
-	Map buildServerResponseContent() {
-		return buildResponseContent(new ServerResponse(response))
-	}
-
 	private Map<String, Object> buildResponseContent(ClientResponse response) {
 		return [status : response?.status?.clientValue,
 		        body   : response?.body?.clientValue,
 		        headers: buildClientHeadersSection(response.headers)].findAll { it.value }
 	}
-
-	private Map<String, Object> buildResponseContent(ServerResponse response) {
-		return [status : response?.status?.serverValue,
-		        body   : response?.body?.serverValue,
-		        headers: buildServerHeadersSection(response.headers)].findAll { it.value }
-	}
-
 }
