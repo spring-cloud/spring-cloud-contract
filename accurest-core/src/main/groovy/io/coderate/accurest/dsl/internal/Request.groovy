@@ -15,6 +15,7 @@ class Request extends Common {
 	DslProperty urlPattern
 	DslProperty urlPath
 	Headers headers
+	Body body
 
 	Request() {
 	}
@@ -25,6 +26,7 @@ class Request extends Common {
 		this.urlPattern = request.urlPattern
 		this.urlPath = request.urlPath
 		this.headers = request.headers
+		this.body = request.body
 	}
 
 	void method(String method) {
@@ -63,6 +65,22 @@ class Request extends Common {
 
 	void urlPath(DslProperty urlPath) {
 		this.urlPath = toDslProperty(urlPath)
+	}
+
+	void body(Map<String, Object> body) {
+		this.body = new Body(convertObjectsToDslProperties(body))
+	}
+
+	void body(List body) {
+		this.body = new Body(convertObjectsToDslProperties(body))
+	}
+
+	void body(Object bodyAsValue) {
+		this.body = new Body(bodyAsValue)
+	}
+
+	Body getBody() {
+		return body
 	}
 }
 

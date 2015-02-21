@@ -114,6 +114,12 @@ class WiremockGroovyDslSpec extends Specification {
 				request {
 					method('GET')
 					urlPattern $(client('/[0-9]{2}'), server('/12'))
+					body("""\
+                            {
+                                "name": "Jan"
+                            }
+                        """
+					)
 				}
 				response {
 					status 200
@@ -135,7 +141,10 @@ class WiremockGroovyDslSpec extends Specification {
 {
     "request": {
         "method": "GET",
-        "urlPattern": "/[0-9]{2}"
+        "urlPattern": "/[0-9]{2}",
+        "body": {
+            "name": "Jan"
+        }
     },
     "response": {
         "status": 200,
