@@ -55,8 +55,8 @@ class Body {
         } else if(bodyAsList) {
             bodyAsList.collect { it.clientValue }
         }
-        return body.collectEntries {
-            Map.Entry<String, DslProperty> entry -> [(entry.key) : entry.value.clientValue]
+        return body.collectEntries { Map.Entry<String, DslProperty> entry ->
+            [(entry.key) : entry.value.clientValue]
         } as Map<String, Object>
     }
 
@@ -66,8 +66,8 @@ class Body {
         } else if(bodyAsList) {
             bodyAsList.collect { it.serverValue }
         }
-        return body.collectEntries {
-            Map.Entry<String, DslProperty> entry -> [(entry.key) : entry.value.serverValue]
+        return body.collectEntries { Map.Entry<String, DslProperty> entry ->
+            [(entry.key) : entry.value.serverValue]
         } as Map<String, Object>
     }
 }

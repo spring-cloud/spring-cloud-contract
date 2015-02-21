@@ -13,18 +13,17 @@ import static io.coderate.accurest.util.NamesUtil.capitalize
 @CompileStatic
 class FileSaver {
 
-
-    String targetDirectory
+    File targetDirectory
     TestFramework framework
 
-    FileSaver(String targetDirectory, TestFramework framework) {
+    FileSaver(File targetDirectory, TestFramework framework) {
         this.targetDirectory = targetDirectory
         this.framework = framework
     }
 
     void saveClassFile(String fileName, String packageName, byte[] classBytes) {
 
-        def testBaseDir = Paths.get(targetDirectory, NamesUtil.packageToDirectory(packageName))
+        def testBaseDir = Paths.get(targetDirectory.absolutePath, NamesUtil.packageToDirectory(packageName))
         Files.createDirectories(testBaseDir)
         def classPath = Paths.get(testBaseDir.toString(), capitalize(fileName) + getTestClassSuffix() + getTestClassExtension())
                 .toAbsolutePath()

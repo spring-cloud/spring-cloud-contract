@@ -6,12 +6,14 @@ package io.coderate.accurest.config
 class AccurestConfigProperties {
 	TestFramework targetFramework = TestFramework.SPOCK
 	TestMode testMode = TestMode.MOCKMVC
-	String stubsBaseDirectory = 'src/test/resources/stubs'
-	String basePackageForTests = 'io.codearte.accurest.tests'
+	File stubsBaseDirectory
+	String basePackageForTests
 	String baseClassForTests
 	String ruleClassForTests
 	List<String> ignoredFiles = []
-	String generatedTestSourcesDir = 'build/generated-sources/accurest'
+	File generatedTestSourcesDir
 	String[] imports = []
 	String[] staticImports = []
+	File groovyDslDir
+	File generatedWiremockClientStubsDir
 }

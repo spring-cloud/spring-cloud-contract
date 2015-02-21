@@ -5,8 +5,11 @@ package io.coderate.accurest
  */
 class AccurestException extends RuntimeException {
 
-	def AccurestException(String message) {
+	AccurestException(String message) {
 		super(message)
 	}
 
+	AccurestException(String message, Throwable cause) {
+		super(message, cause)
+	}
 }
