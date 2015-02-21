@@ -28,13 +28,13 @@ class WiremockResponseStubStrategy extends BaseWiremockStubStrategy {
 
 	private Map<String, Object> buildResponseContent(ClientResponse response) {
 		return [status : response?.status?.clientValue,
-		        body   : response?.body?.forClientSide(),
+		        body   : response?.body?.clientValue,
 		        headers: buildClientHeadersSection(response.headers)].findAll { it.value }
 	}
 
 	private Map<String, Object> buildResponseContent(ServerResponse response) {
 		return [status : response?.status?.serverValue,
-		        body   : response?.body?.forServerSide(),
+		        body   : response?.body?.serverValue,
 		        headers: buildServerHeadersSection(response.headers)].findAll { it.value }
 	}
 

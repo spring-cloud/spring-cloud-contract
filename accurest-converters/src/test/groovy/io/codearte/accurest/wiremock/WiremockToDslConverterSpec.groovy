@@ -219,7 +219,6 @@ class WiremockToDslConverterSpec extends Specification {
 					])
 					headers {
 						header 'Content-Type': 'application/json'
-
 					}
 				}
 			}

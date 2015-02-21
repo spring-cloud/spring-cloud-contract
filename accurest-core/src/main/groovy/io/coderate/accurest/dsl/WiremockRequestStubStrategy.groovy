@@ -32,7 +32,7 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 		        urlPattern: request?.urlPattern?.clientValue,
 		        urlPath   : request?.urlPath?.clientValue,
 		        headers   : buildClientHeadersSection(request.headers),
-		        body      : request?.body?.forClientSide()
+		        body      : request?.body?.clientValue
 		].findAll { it.value }
 	}
 
@@ -42,7 +42,7 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 		        urlPattern: request?.urlPattern?.serverValue,
 		        urlPath   : request?.urlPath?.serverValue,
 		        headers   : buildServerHeadersSection(request.headers),
-		        body      : request?.body?.forServerSide()
+		        body      : request?.body?.serverValue
 		].findAll { it.value }
 	}
 }

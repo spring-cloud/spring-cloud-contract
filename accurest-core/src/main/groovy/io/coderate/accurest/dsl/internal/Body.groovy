@@ -7,22 +7,23 @@ import org.codehaus.groovy.runtime.GStringImpl
 
 @ToString(includePackage = false, includeFields = true)
 @EqualsAndHashCode(includeFields = true)
-class Body {
-
-	private Map<String, DslProperty> body
-	private DslProperty bodyAsValue
-	private List<DslProperty> bodyAsList
+class Body extends DslProperty {
 
 	Body() {
-		this.body = [:]
+		super(null)
 	}
 
 	Body(Map<String, DslProperty> body) {
-		this.body = body
+		super(body.collectEntries { Map.Entry<String, DslProperty> entry ->
+			[(entry.key): entry.value.clientValue]
+		} as Map<String, Object>,
+				body.collectEntries { Map.Entry<String, DslProperty> entry ->
+					[(entry.key): entry.value.serverValue]
+				} as Map<String, Object>)
 	}
 
 	Body(List bodyAsList) {
-		this.bodyAsList = bodyAsList
+		super(bodyAsList.collect { it.clientValue }, bodyAsList.collect { it.serverValue })
 	}
 
 	Body(Object bodyAsValue) {
@@ -30,44 +31,23 @@ class Body {
 	}
 
 	Body(GString bodyAsValue) {
-		this.bodyAsValue = new DslProperty(getClientValue(bodyAsValue), getServerValue(bodyAsValue))
+		super(extractClientValue(bodyAsValue), extractServerValue(bodyAsValue))
 	}
 
-	private def getClientValue(GString bodyAsValue) {
+	Body(DslProperty bodyAsValue) {
+		super(bodyAsValue.clientValue, bodyAsValue.serverValue)
+	}
+
+	private static def extractClientValue(GString bodyAsValue) {
 		GString clientGString = new GStringImpl(bodyAsValue.values.clone(), bodyAsValue.strings.clone())
 		Object[] clientValues = bodyAsValue.values.collect { it instanceof DslProperty ? it.clientValue : it } as Object[]
 		return new JsonSlurper().parseText(new GStringImpl(clientValues, clientGString.strings).toString())
 	}
 
-	private def getServerValue(GString bodyAsValue) {
+	private static def extractServerValue(GString bodyAsValue) {
 		GString clientGString = new GStringImpl(bodyAsValue.values.clone(), bodyAsValue.strings.clone())
 		Object[] serverValues = bodyAsValue.values.collect { it instanceof DslProperty ? it.serverValue : it } as Object[]
 		return new JsonSlurper().parseText(new GStringImpl(serverValues, clientGString.strings).toString())
 	}
-
-	Body(DslProperty bodyAsValue) {
-		this.bodyAsValue = bodyAsValue
-	}
-
-	Object forClientSide() {
-		if (bodyAsValue) {
-			return bodyAsValue.clientValue
-		} else if (bodyAsList) {
-			bodyAsList.collect { it.clientValue }
-		}
-		return body.collectEntries { Map.Entry<String, DslProperty> entry ->
-			[(entry.key): entry.value.clientValue]
-		} as Map<String, Object>
-	}
-
-	Object forServerSide() {
-		if (bodyAsValue) {
-			return bodyAsValue.serverValue
-		} else if (bodyAsList) {
-			bodyAsList.collect { it.serverValue }
-		}
-		return body.collectEntries { Map.Entry<String, DslProperty> entry ->
-			[(entry.key): entry.value.serverValue]
-		} as Map<String, Object>
-	}
+	
 }
