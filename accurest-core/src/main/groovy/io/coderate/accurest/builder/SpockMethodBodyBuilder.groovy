@@ -1,15 +1,18 @@
 package io.coderate.accurest.builder
 
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 import groovy.transform.PackageScope
+import io.coderate.accurest.dsl.GroovyDsl
 
 /**
  * @author Jakub Kubrynski
  */
 @PackageScope
 class SpockMethodBodyBuilder {
-	private final Map stubDefinition
+	private final GroovyDsl stubDefinition
 
-	SpockMethodBodyBuilder(Map stubDefinition) {
+	SpockMethodBodyBuilder(GroovyDsl stubDefinition) {
 		this.stubDefinition = stubDefinition
 	}
 
@@ -18,12 +21,11 @@ class SpockMethodBodyBuilder {
 		blockBuilder.addLine('given:').startBlock()
 		blockBuilder.addLine('def request = given()')
 		blockBuilder.indent()
-		stubDefinition.request.headers.each {
-			blockBuilder.addLine(".header('$it.key', '$it.value.equalTo')")
+		stubDefinition.request.headers.valueHeaders().each {
+			blockBuilder.addLine(".header('$it.key', '$it.value')")
 		}
-		if (stubDefinition.request.bodyPatterns) {
-			String matches = stubDefinition.request.bodyPatterns[0].matches
-			matches = matches.replaceAll('\\\\', '');
+		if (stubDefinition.request.body) {
+			String matches = new JsonOutput().toJson(stubDefinition.request.body.serverValue)
 			blockBuilder.addLine(".body('$matches')")
 		}
 
@@ -32,28 +34,28 @@ class SpockMethodBodyBuilder {
 		blockBuilder.addLine('when:').startBlock()
 		blockBuilder.addLine('def response = given().spec(request)')
 		blockBuilder.indent()
-		blockBuilder.addLine(".${stubDefinition.request.method.toLowerCase()}(\"$stubDefinition.request.url\")")
+		blockBuilder.addLine(".${stubDefinition.request.method.serverValue.toLowerCase()}(\"$stubDefinition.request.urlPattern.serverValue\")")
 		blockBuilder.unindent().endBlock().addEmptyLine()
 
 		blockBuilder.addLine('then:').startBlock()
-		blockBuilder.addLine("response.statusCode == $stubDefinition.response.status")
+		blockBuilder.addLine("response.statusCode == $stubDefinition.response.status.serverValue")
 
-		stubDefinition.response.headers.each {
+		stubDefinition.response.headers?.valueHeaders().each {
 			blockBuilder.addLine("response.header('$it.key') == '$it.value'")
 		}
 		if (stubDefinition.response.body) {
 			blockBuilder.addLine('def responseBody = new JsonSlurper().parseText(response.body.asString())')
-			stubDefinition.response.body.each {
+			stubDefinition.response.body.serverValue.each {
 				def value = it.value
 				if (value instanceof String) {
 					if (value.startsWith('$')) {
-						value = value.substring(1).replaceAll('\\$it', "responseBody.$it.key")
+						value = value.substring(1).replaceAll('\\$value', "responseBody.$it.key")
 						blockBuilder.addLine(value)
 					} else {
-						blockBuilder.addLine("responseBody.$it.key == \"$value\"")
+						blockBuilder.addLine("responseBody.$it.key == \"${value}\"")
 					}
 				} else {
-					blockBuilder.addLine("responseBody.$it.key == $value")
+					blockBuilder.addLine("responseBody.$it.key == ${value}")
 				}
 			}
 		}

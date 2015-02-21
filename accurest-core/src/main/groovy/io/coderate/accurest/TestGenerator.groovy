@@ -56,7 +56,7 @@ class TestGenerator {
 		if (!includedDirectoryRelativePath.isEmpty()) {
 			List<File> filesToClass = directoryScanner.includedFiles.
 					grep { String includedFile ->
-						return includedFile.matches(includedDirectoryRelativePath + File.separator + "[A-Za-z0-9]*\\.json")
+						return includedFile.matches(includedDirectoryRelativePath + File.separator + "[A-Za-z0-9]*\\.groovy")
 					}
 			.collect {
 				return new File(configProperties.stubsBaseDirectory, it)
