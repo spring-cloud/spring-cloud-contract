@@ -12,7 +12,7 @@ import org.gradle.api.tasks.TaskAction
 class GenerateServerTestsTask extends DefaultTask {
 
 	@InputDirectory
-	File groovyDslDir
+	File contractsDslDir
 	@OutputDirectory
 	File generatedTestSourcesDir
 

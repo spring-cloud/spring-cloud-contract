@@ -10,17 +10,17 @@ import org.gradle.api.tasks.TaskAction
 class GenerateWiremockClientStubsFromDslTask extends DefaultTask {
 
 	@InputDirectory
-	File groovyDslDir
+	File contractsDslDir
 	@InputDirectory
-	File generatedWiremockClientStubsDir
+	File stubsOutputDir
 
 	@TaskAction
 	void generate() {
 		project.logger.info("Accurest Plugin: Invoking GroovyDSL to Wiremock client stubs conversion")
-		project.logger.debug("From '${getGroovyDslDir()}' to '${getGeneratedWiremockClientStubsDir()}'")
+		project.logger.debug("From '${getContractsDslDir()}' to '${getStubsOutputDir()}'")
 
-		RecursiveFilesConverter converter = new RecursiveFilesConverter(new DslToWiremockClientConverter(), getGroovyDslDir(),
-				getGeneratedWiremockClientStubsDir())
+		RecursiveFilesConverter converter = new RecursiveFilesConverter(new DslToWiremockClientConverter(), getContractsDslDir(),
+				getStubsOutputDir())
 		converter.processFiles()
 	}
 }

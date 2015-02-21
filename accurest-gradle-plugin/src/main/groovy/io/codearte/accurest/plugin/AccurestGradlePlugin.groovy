@@ -64,8 +64,8 @@ class AccurestGradlePlugin implements Plugin<Project> {
 		task.description = "Generate Wiremock client stubs from GroovyDSL"
 		task.group = GROUP_NAME
 		task.conventionMapping.with {
-			groovyDslDir = { extension.contractsDslDir }
-			generatedWiremockClientStubsDir = { extension.stubsOutputDir }
+			contractsDslDir = { extension.contractsDslDir }
+			stubsOutputDir = { extension.stubsOutputDir }
 		}
 	}
 }
