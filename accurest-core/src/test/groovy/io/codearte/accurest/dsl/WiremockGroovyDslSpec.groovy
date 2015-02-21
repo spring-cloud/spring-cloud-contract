@@ -141,7 +141,9 @@ class WiremockGroovyDslSpec extends Specification {
         "method": "GET",
         "urlPattern": "/[0-9]{2}",
         "body": {
-            "name": "Jan"
+			"equalTo": {
+				"name": "Jan"
+			}
         }
     },
     "response": {

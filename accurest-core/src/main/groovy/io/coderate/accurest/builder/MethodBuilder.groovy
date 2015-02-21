@@ -22,6 +22,7 @@ class MethodBuilder {
 	}
 
 	static MethodBuilder createTestMethod(File stubsFile, TestFramework lang) {
+		log.debug("Stub content from file [${stubsFile.text}]")
 		GroovyDsl stubContent = new GroovyShell(this.classLoader).evaluate(stubsFile)
 		log.debug("Stub content Groovy DSL [$stubContent]")
 		String methodName = NamesUtil.camelCase(NamesUtil.toLastDot(NamesUtil.afterLast(stubsFile.path, File.separator)))
