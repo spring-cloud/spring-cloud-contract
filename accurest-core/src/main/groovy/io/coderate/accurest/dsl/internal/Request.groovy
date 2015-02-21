@@ -1,5 +1,4 @@
 package io.coderate.accurest.dsl.internal
-
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
@@ -7,13 +6,11 @@ import groovy.transform.TypeChecked
 
 @TypeChecked
 @EqualsAndHashCode(includeFields = true)
-@ToString(includePackage = false)
+@ToString(includePackage = false, includeNames = true)
 class Request extends Common {
 
 	DslProperty method
-	DslProperty url
-	DslProperty urlPattern
-	DslProperty urlPath
+	Url url
 	Headers headers
 	Body body
 
@@ -23,8 +20,6 @@ class Request extends Common {
 	Request(Request request) {
 		this.method = request.method
 		this.url = request.url
-		this.urlPattern = request.urlPattern
-		this.urlPath = request.urlPath
 		this.headers = request.headers
 		this.body = request.body
 	}
@@ -38,33 +33,17 @@ class Request extends Common {
 	}
 
 	void url(String url) {
-		this.url = toDslProperty(url)
+		this.url = new Url(url)
 	}
 
 	void url(DslProperty url) {
-		this.url = toDslProperty(url)
-	}
-
-	void urlPattern(String urlPattern) {
-		this.urlPattern = toDslProperty(urlPattern)
-	}
-
-	void urlPattern(DslProperty urlPattern) {
-		this.urlPattern = toDslProperty(urlPattern)
+		this.url = new Url(url)
 	}
 
 	void headers(@DelegatesTo(Headers) Closure closure) {
 		this.headers = new Headers()
 		closure.delegate = headers
 		closure()
-	}
-
-	void urlPath(String urlPath) {
-		this.urlPath = toDslProperty(urlPath)
-	}
-
-	void urlPath(DslProperty urlPath) {
-		this.urlPath = toDslProperty(urlPath)
 	}
 
 	void body(Map<String, Object> body) {

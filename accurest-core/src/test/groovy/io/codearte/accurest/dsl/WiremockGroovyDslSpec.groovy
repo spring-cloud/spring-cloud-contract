@@ -1,10 +1,8 @@
 package io.codearte.accurest.dsl
-
 import groovy.json.JsonSlurper
 import io.coderate.accurest.dsl.GroovyDsl
 import io.coderate.accurest.dsl.WiremockRequestStubStrategy
 import io.coderate.accurest.dsl.WiremockStubStrategy
-import spock.lang.Ignore
 import spock.lang.Specification
 
 class WiremockGroovyDslSpec extends Specification {
@@ -14,7 +12,7 @@ class WiremockGroovyDslSpec extends Specification {
 			GroovyDsl groovyDsl = GroovyDsl.make {
 				request {
 					method('GET')
-					urlPattern $(client('/[0-9]{2}'), server('/12'))
+					url $(client(~/\/[0-9]{2}/), server('/12'))
 				}
 				response {
 					status 200
@@ -65,7 +63,7 @@ class WiremockGroovyDslSpec extends Specification {
 			GroovyDsl groovyDsl = GroovyDsl.make {
 				request {
 					method('GET')
-					urlPattern $(client('/[0-9]{2}'), server('/12'))
+					url $(client(~/\/[0-9]{2}/), server('/12'))
 				}
 				response {
 					status 200
@@ -113,7 +111,7 @@ class WiremockGroovyDslSpec extends Specification {
 			GroovyDsl groovyDsl = GroovyDsl.make {
 				request {
 					method('GET')
-					urlPattern $(client('/[0-9]{2}'), server('/12'))
+					url $(client(~/\/[0-9]{2}/), server('/12'))
 					body("""\
                             {
                                 "name": "Jan"
@@ -195,8 +193,8 @@ class WiremockGroovyDslSpec extends Specification {
 		given:
 			GroovyDsl groovyDsl = GroovyDsl.make {
 				request {
-					urlPattern $(
-							client('/^[0-9]{2}$'),
+					url $(
+							client(~/\/^[0-9]{2}$/),
 							server('/12')
 					)
 				}
@@ -205,21 +203,6 @@ class WiremockGroovyDslSpec extends Specification {
 			new WiremockRequestStubStrategy(groovyDsl).buildClientRequestContent() == new JsonSlurper().parseText('''
     {
         "urlPattern":"/^[0-9]{2}$"
-    }
-    ''')
-	}
-
-	def "should generate stub with urlPath for client side"() {
-		given:
-			GroovyDsl groovyDsl = GroovyDsl.make {
-				request {
-					urlPath('/12')
-				}
-			}
-		expect:
-			new WiremockRequestStubStrategy(groovyDsl).buildClientRequestContent() == new JsonSlurper().parseText('''
-    {
-        "urlPath":"/12"
     }
     ''')
 	}

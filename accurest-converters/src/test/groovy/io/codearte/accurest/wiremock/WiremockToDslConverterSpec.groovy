@@ -11,7 +11,7 @@ class WiremockToDslConverterSpec extends Specification {
 {
     "request": {
         "method": "GET",
-        "urlPattern": "/[0-9]{2}",
+        "url": "/path",
         "headers" : {
             "Accept": {
                 "matches": "text/.*"
@@ -44,7 +44,7 @@ class WiremockToDslConverterSpec extends Specification {
 			GroovyDsl expectedGroovyDsl = GroovyDsl.make {
 				request {
 					method 'GET'
-					urlPattern '/[0-9]{2}'
+					url '/path'
 					headers {
 						header('Accept').matches('text/.*')
 						header('etag').doesNotMatch('abcd.*')
@@ -101,7 +101,7 @@ class WiremockToDslConverterSpec extends Specification {
 			GroovyDsl expectedGroovyDsl = GroovyDsl.make {
 				request {
 					method 'DELETE'
-					urlPattern '/credit-card-verification-data/[0-9]+'
+					url $(client(~/\/credit-card-verification-data\/[0-9]+/), server(''))
 					headers {
 						header('Content-Type').equalTo('application/vnd.mymoid-adapter.v2+json; charset=UTF-8')
 					}

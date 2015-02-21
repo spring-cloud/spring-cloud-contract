@@ -1,10 +1,7 @@
 package io.coderate.accurest.builder
-
 import groovy.json.JsonOutput
-import groovy.json.JsonSlurper
 import groovy.transform.PackageScope
 import io.coderate.accurest.dsl.GroovyDsl
-
 /**
  * @author Jakub Kubrynski
  */
@@ -34,7 +31,7 @@ class SpockMethodBodyBuilder {
 		blockBuilder.addLine('when:').startBlock()
 		blockBuilder.addLine('def response = given().spec(request)')
 		blockBuilder.indent()
-		blockBuilder.addLine(".${stubDefinition.request.method.serverValue.toLowerCase()}(\"$stubDefinition.request.urlPattern.serverValue\")")
+		blockBuilder.addLine(".${stubDefinition.request.method.	serverValue.toLowerCase()}(\"$stubDefinition.request.url.serverValue\")")
 		blockBuilder.unindent().endBlock().addEmptyLine()
 
 		blockBuilder.addLine('then:').startBlock()

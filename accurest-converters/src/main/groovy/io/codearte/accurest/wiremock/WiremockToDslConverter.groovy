@@ -20,8 +20,8 @@ class WiremockToDslConverter {
             request {
                 ${request.method ? "method \"\"\"$request.method\"\"\"" : ""}
                 ${request.url ? "url \"\"\"$request.url\"\"\"" : ""}
-                ${request.urlPattern ? "urlPattern \"\"\"${escapeJava(request.urlPattern)}\"\"\"" : ""}
-                ${request.urlPath ? "urlPath \"\"\"$request.urlPath\"\"\"" : ""}
+                ${request.urlPattern ? "url \$(client(java.util.regex.Pattern.compile('${escapeJava(request.urlPattern)}')), server(''))" : ""}
+                ${request.urlPath ? "url \"\"\"$request.urlPath\"\"\"" : ""}
                 ${
 			request.headers ? """headers {
                     ${

@@ -13,7 +13,7 @@ class DslToWiremockClientConverterSpec extends Specification {
                 io.coderate.accurest.dsl.GroovyDsl.make {
                     request {
                         method('PUT')
-                        urlPattern \$(client('/[0-9]{2}'), server('/12'))
+                        url \$(client(~/\\/[0-9]{2}/), server('/12'))
                     }
                     response {
                         status 200
