@@ -16,9 +16,6 @@ class WiremockToDslConverterSpec extends Specification {
             "Accept": {
                 "matches": "text/.*"
             },
-            "etag": {
-                "doesNotMatch": "abcd.*"
-            },
             "X-Custom-Header": {
                 "contains": "2134"
             }
@@ -46,9 +43,15 @@ class WiremockToDslConverterSpec extends Specification {
 					method 'GET'
 					url '/path'
 					headers {
-						header('Accept').matches('text/.*')
-						header('etag').doesNotMatch('abcd.*')
-						header('X-Custom-Header').contains('2134')
+						header('Accept': $(
+								client(regex('text/.*')),
+								server('text/plain')
+						))
+						header('X-Custom-Header': $(
+								client(regex('^.*2134.*$')),
+								server('121345')
+						))
+
 					}
 				}
 				response {
@@ -103,7 +106,7 @@ class WiremockToDslConverterSpec extends Specification {
 					method 'DELETE'
 					url $(client(~/\/credit-card-verification-data\/[0-9]+/), server(''))
 					headers {
-						header('Content-Type').equalTo('application/vnd.mymoid-adapter.v2+json; charset=UTF-8')
+						header('Content-Type': 'application/vnd.mymoid-adapter.v2+json; charset=UTF-8')
 					}
 				}
 				response {
@@ -154,7 +157,7 @@ class WiremockToDslConverterSpec extends Specification {
 					method 'POST'
 					url '/charge/count'
 					headers {
-						header('Content-Type').equalTo('application/vnd.creditcard-reporter.v1+json')
+						header('Content-Type': 'application/vnd.creditcard-reporter.v1+json')
 					}
 				}
 				response {
@@ -207,7 +210,7 @@ class WiremockToDslConverterSpec extends Specification {
 					method 'POST'
 					url '/charge/count'
 					headers {
-						header('Content-Type').equalTo('application/vnd.creditcard-reporter.v1+json')
+						header('Content-Type': 'application/vnd.creditcard-reporter.v1+json')
 					}
 				}
 				response {
@@ -257,7 +260,7 @@ class WiremockToDslConverterSpec extends Specification {
 					method 'POST'
 					url '/charge/search?pageNumber=0&size=2147483647'
 					headers {
-						header('Content-Type').equalTo('application/vnd.creditcard-reporter.v1+json')
+						header('Content-Type': 'application/vnd.creditcard-reporter.v1+json')
 					}
 				}
 				response {

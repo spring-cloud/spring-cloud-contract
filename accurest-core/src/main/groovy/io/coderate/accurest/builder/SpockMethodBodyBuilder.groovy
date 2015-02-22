@@ -18,8 +18,8 @@ class SpockMethodBodyBuilder {
 		blockBuilder.addLine('given:').startBlock()
 		blockBuilder.addLine('def request = given()')
 		blockBuilder.indent()
-		stubDefinition.request.headers.valueHeaders().each {
-			blockBuilder.addLine(".header('$it.key', '$it.value')")
+		stubDefinition.request.headers.headers.collectEntries { [(it.name): it.serverValue] }.each { Map.Entry entry ->
+			blockBuilder.addLine(".header('${entry.key}', '${entry.value}')")
 		}
 		if (stubDefinition.request.body) {
 			String matches = new JsonOutput().toJson(stubDefinition.request.body.serverValue)
@@ -31,14 +31,14 @@ class SpockMethodBodyBuilder {
 		blockBuilder.addLine('when:').startBlock()
 		blockBuilder.addLine('def response = given().spec(request)')
 		blockBuilder.indent()
-		blockBuilder.addLine(".${stubDefinition.request.method.	serverValue.toLowerCase()}(\"$stubDefinition.request.url.serverValue\")")
+		blockBuilder.addLine(".${stubDefinition.request.method.serverValue.toLowerCase()}(\"$stubDefinition.request.url.serverValue\")")
 		blockBuilder.unindent().endBlock().addEmptyLine()
 
 		blockBuilder.addLine('then:').startBlock()
 		blockBuilder.addLine("response.statusCode == $stubDefinition.response.status.serverValue")
 
-		stubDefinition.response.headers?.valueHeaders().each {
-			blockBuilder.addLine("response.header('$it.key') == '$it.value'")
+		stubDefinition.response.headers?.headers?.collectEntries { [(it.name): it.serverValue] }?.each { Map.Entry entry ->
+			blockBuilder.addLine("response.header('$entry.key') == '$entry.value'")
 		}
 		if (stubDefinition.response.body) {
 			blockBuilder.endBlock()

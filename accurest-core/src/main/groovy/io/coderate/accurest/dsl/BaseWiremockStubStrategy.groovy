@@ -1,56 +1,41 @@
 package io.coderate.accurest.dsl
 
-import groovy.transform.CompileStatic
-import io.coderate.accurest.dsl.internal.DslProperty
+import groovy.transform.TypeChecked
+import io.coderate.accurest.dsl.internal.Header
 import io.coderate.accurest.dsl.internal.Headers
-import io.coderate.accurest.dsl.internal.WithValuePattern
 
-@CompileStatic
+import java.util.regex.Pattern
+
+@TypeChecked
 abstract class BaseWiremockStubStrategy {
-	protected Map buildClientHeadersSection(Headers headers) {
+	protected Map buildClientRequestHeadersSection(Headers headers) {
 		if (!headers) {
 			return null
 		}
-		return withAssertionHeaders(headers) {
-			Map.Entry<String, WithValuePattern> entry -> [(entry.key): buildClientHeaderFromValuePattern(entry.value)]
-		} << headers.valueHeaders()
+		return headers.headers.collectEntries { Header entry ->
+			parseHeader(entry.name, entry.clientValue)
+		}
 	}
 
-	protected Map buildServerHeadersSection(Headers headers) {
+	protected Map buildClientResponseHeadersSection(Headers headers) {
 		if (!headers) {
 			return null
 		}
-		return withAssertionHeaders(headers) {
-			Map.Entry<String, WithValuePattern> entry -> [(entry.key): buildServerHeaderFromValuePattern(entry.value)]
-		} << headers.valueHeaders()
+		return headers.headers.collectEntries { Header entry ->
+			[(entry.name) : entry.clientValue]
+		}
 	}
 
-	private Map withAssertionHeaders(Headers headers, Closure closure) {
-		return headers?.assertionEntries()?.collectEntries(closure)
+	protected Map parseHeader(String entryKey, Object entry) {
+		return [(entryKey): [equalTo : entry]]
 	}
 
-	private Map buildClientHeaderFromValuePattern(WithValuePattern valuePattern) {
-		return getValuePatternSection(valuePattern)
-				.findAll { it.value }
-				.collectEntries { [(it.key): it.value.clientValue] }
+	protected Map parseHeader(String entryKey, String entry) {
+		return [(entryKey): [equalTo : entry]]
 	}
 
-	private Map buildServerHeaderFromValuePattern(WithValuePattern valuePattern) {
-		return getValuePatternSection(valuePattern)
-				.findAll { it.value }
-				.collectEntries { [(it.key): it.value.serverValue] }
+	protected Map parseHeader(String entryKey, Pattern entry) {
+		return [(entryKey): [matches : entry.pattern()]]
 	}
 
-	private Map<String, DslProperty> getValuePatternSection(WithValuePattern valuePattern) {
-		return [equalToJson    : valuePattern.equalToJson,
-		        equalToXml     : valuePattern.equalToXml,
-		        matchesXPath   : valuePattern.matchesXPath,
-		        jsonCompareMode: valuePattern.jsonCompareMode,
-		        equalTo        : valuePattern.equalTo,
-		        contains       : valuePattern.contains,
-		        matches        : valuePattern.matches,
-		        doesNotMatch   : valuePattern.doesNotMatch,
-		        absent         : valuePattern.absent,
-		        matchesJsonPath: valuePattern.matchesJsonPath]
-	}
 }

@@ -1,5 +1,4 @@
 package io.codearte.accurest.wiremock
-
 import groovy.io.FileType
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
@@ -29,7 +28,7 @@ class WiremockToDslConverter {
 					def assertion = it.value
 					String headerName = it.key as String
 					def entry = assertion.entrySet().first()
-					"""header(\"\"\"$headerName\"\"\").$entry.key(\"\"\"${escapeJava(entry.value)}\"\"\")\n"""
+					"""header(\"\"\"$headerName\"\"\", ${buildHeader(entry.key, entry.value)})\n"""
 				}.join('')
 			}
                 }
@@ -47,6 +46,15 @@ class WiremockToDslConverter {
 		}
             }
         """
+	}
+
+	private String buildHeader(String method, Object value) {
+		switch (method) {
+			case 'equalTo':
+				return wrapWithMultilineGString(value)
+			default:
+				return "regex(${wrapWithMultilineGString(escapeJava(value as String))})"
+		}
 	}
 
 	private Object buildBody(Map responseBody) {

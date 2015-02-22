@@ -212,19 +212,15 @@ class WiremockGroovyDslSpec extends Specification {
 			GroovyDsl groovyDsl = GroovyDsl.make {
 				request {
 					headers {
-						header('Content-Type').equalTo('text/xml')
-						header('Accept').matches $(
-								client('text/.*'),
+						header('Content-Type': 'text/xml')
+						header('Accept': $(
+								client(regex('text/.*')),
 								server('text/plain')
-						)
-						header('etag').doesNotMatch $(
-								client('abcd.*'),
-								server('abcdef')
-						)
-						header('X-Custom-Header').contains $(
-								client('2134'),
+						))
+						header('X-Custom-Header': $(
+								client(regex('^.*2134.*$')),
 								server('121345')
-						)
+						))
 					}
 				}
 			}
@@ -238,11 +234,8 @@ class WiremockGroovyDslSpec extends Specification {
             "Accept": {
                 "matches": "text/.*"
             },
-            "etag": {
-                "doesNotMatch": "abcd.*"
-            },
             "X-Custom-Header": {
-                "contains": "2134"
+                "matches": "^.*2134.*$"
             }
         }
     }

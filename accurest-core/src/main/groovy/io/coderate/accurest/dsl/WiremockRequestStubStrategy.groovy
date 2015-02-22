@@ -28,7 +28,7 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 
 	private Map<String, Object> buildRequestContent(ClientRequest request) {
 		return ([method    : request?.method?.clientValue,
-		        headers   : buildClientHeadersSection(request.headers)
+		        headers   : buildClientRequestHeadersSection(request.headers)
 		] << appendUrl(request) << appendBody(request)).findAll { it.value }
 	}
 

@@ -35,7 +35,7 @@ class WiremockGroovyDslResponseSpec extends Specification {
 			GroovyDsl dsl = GroovyDsl.make {
 				response {
 					headers {
-						header('Content-Type').matches $(client('text/xml'), server('text/*'))
+						header 'Content-Type', $(client('text/xml'), server('text/*'))
 					}
 					status 200
 				}
@@ -44,9 +44,7 @@ class WiremockGroovyDslResponseSpec extends Specification {
 			new WiremockResponseStubStrategy(dsl).buildClientResponseContent() == new JsonSlurper().parseText('''
     {
             "headers": {
-                "Content-Type": {
-                    "matches": "text/xml"
-                },
+                "Content-Type": "text/xml"
             },
             "status": 200
     }
