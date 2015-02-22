@@ -3,6 +3,8 @@ package io.coderate.accurest.dsl.internal
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 
+import java.util.regex.Pattern
+
 /**
  * @TypeChecked instead of @CompileStatic due to usage of double dispatch.
  * Double dispatch doesn't work if you're using @CompileStatic
@@ -58,6 +60,10 @@ class Common {
 
 	DslProperty $(ServerDslProperty server, ClientDslProperty client) {
 		return value(server, client)
+	}
+
+	Pattern regex(String regex) {
+		return Pattern.compile(regex)
 	}
 
 	ClientDslProperty client(Object clientValue) {
