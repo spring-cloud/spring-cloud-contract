@@ -57,6 +57,10 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 		}
 	}
 
+	private String parseBody(List responseBody) {
+		return JsonOutput.toJson(responseBody)
+	}
+
 	private String parseBody(Map responseBody) {
 		return JsonOutput.toJson(responseBody)
 	}
