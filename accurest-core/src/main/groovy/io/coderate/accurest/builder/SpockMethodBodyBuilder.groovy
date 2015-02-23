@@ -45,21 +45,28 @@ class SpockMethodBodyBuilder {
 			blockBuilder.addLine('and:').startBlock()
 			blockBuilder.addLine('def responseBody = new JsonSlurper().parseText(response.body.asString())')
 			stubDefinition.response.body.serverValue.each {
-				def value = it.value
-				if (value instanceof String) {
-					if (value.startsWith('$')) {
-						value = value.substring(1).replaceAll('\\$value', "responseBody.$it.key")
-						blockBuilder.addLine(value)
-					} else {
-						blockBuilder.addLine("responseBody.$it.key == \"${value}\"")
-					}
-				} else {
-					blockBuilder.addLine("responseBody.$it.key == ${value}")
-				}
+				processBodyElement(blockBuilder, "", it)
 			}
 		}
 		blockBuilder.endBlock()
 
 		blockBuilder.endBlock()
+	}
+
+	private void processBodyElement(BlockBuilder blockBuilder, String rootProperty, def element) {
+		def value = element.value
+		String property = rootProperty + "." + element.key
+		if (value instanceof String) {
+			if (value.startsWith('$')) {
+				value = value.substring(1).replaceAll('\\$value', "responseBody$property")
+				blockBuilder.addLine(value)
+			} else {
+				blockBuilder.addLine("responseBody$property == \"${value}\"")
+			}
+		} else if (value instanceof Map) {
+			value.each { entry -> processBodyElement(blockBuilder, property, entry) }
+		} else {
+			blockBuilder.addLine("responseBody$property == ${value}")
+		}
 	}
 }
