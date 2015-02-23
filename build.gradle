@@ -1,5 +1,5 @@
 ext {
-	projectVersion = '0.4.2'
+	projectVersion = '0.4.3-SNAPSHOT'
 	projectGroup = 'io.codearte.accurest'
 }
 
