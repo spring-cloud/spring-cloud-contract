@@ -43,6 +43,8 @@ subprojects {
 			}
 		}
 	}
+
+	uploadArchives.dependsOn { check }
 }
 
 project(':accurest-core') {
@@ -67,7 +69,24 @@ project(':accurest-gradle-plugin') {
 		compile project(':accurest-core')
 		compile project(':accurest-converters')
 		compile gradleApi()
+
+		testCompile('com.netflix.nebula:nebula-test:2.2.0') {
+			exclude(group: 'org.spockframework')
+		}
 	}
+
+	test {
+		exclude '**/*FunctionalSpec.*'
+	}
+	task funcTest(type: Test) {
+		include '**/*FunctionalSpec.*'
+
+		reports.html {
+			destination = file("${reporting.baseDir}/funcTests")
+		}
+	}
+
+	uploadArchives.dependsOn { funcTest }
 }
 
 task wrapper(type: Wrapper) {
