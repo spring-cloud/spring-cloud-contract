@@ -9,15 +9,21 @@ import groovy.transform.TypeChecked
 @TypeChecked
 class Headers {
 
-	Set<Header> headers = []
+	Set<Header> entries = []
 
 	void header(Map<String, Object> singleHeader) {
 		Map.Entry<String, Object> first = singleHeader.entrySet().first()
-		headers << new Header(first?.key, first?.value)
+		entries << new Header(first?.key, first?.value)
 	}
 
 	void header(String headerKey, Object headerValue) {
-		headers << new Header(headerKey, headerValue)
+		entries << new Header(headerKey, headerValue)
+	}
+
+	void collect(Closure closure) {
+		entries?.each {
+			header -> closure(header)
+		}
 	}
 
 }

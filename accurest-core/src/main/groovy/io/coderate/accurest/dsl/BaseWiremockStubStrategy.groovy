@@ -12,7 +12,7 @@ abstract class BaseWiremockStubStrategy {
 		if (!headers) {
 			return null
 		}
-		return headers.headers.collectEntries { Header entry ->
+		return headers.entries.collectEntries { Header entry ->
 			parseHeader(entry.name, entry.clientValue)
 		}
 	}
@@ -21,7 +21,7 @@ abstract class BaseWiremockStubStrategy {
 		if (!headers) {
 			return null
 		}
-		return headers.headers.collectEntries { Header entry ->
+		return headers.entries.collectEntries { Header entry ->
 			[(entry.name) : entry.clientValue]
 		}
 	}

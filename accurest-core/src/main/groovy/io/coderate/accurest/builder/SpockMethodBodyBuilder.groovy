@@ -2,6 +2,8 @@ package io.coderate.accurest.builder
 import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import io.coderate.accurest.dsl.GroovyDsl
+import io.coderate.accurest.dsl.internal.Header
+
 /**
  * @author Jakub Kubrynski
  */
@@ -18,8 +20,8 @@ class SpockMethodBodyBuilder {
 		blockBuilder.addLine('given:').startBlock()
 		blockBuilder.addLine('def request = given()')
 		blockBuilder.indent()
-		stubDefinition.request.headers.headers.collectEntries { [(it.name): it.serverValue] }.each { Map.Entry entry ->
-			blockBuilder.addLine(".header('${entry.key}', '${entry.value}')")
+		stubDefinition.request.headers?.collect { Header header ->
+			blockBuilder.addLine(".header('${header.name}', '${header.serverValue}')")
 		}
 		if (stubDefinition.request.body) {
 			String matches = new JsonOutput().toJson(stubDefinition.request.body.serverValue)
@@ -37,8 +39,8 @@ class SpockMethodBodyBuilder {
 		blockBuilder.addLine('then:').startBlock()
 		blockBuilder.addLine("response.statusCode == $stubDefinition.response.status.serverValue")
 
-		stubDefinition.response.headers?.headers?.collectEntries { [(it.name): it.serverValue] }?.each { Map.Entry entry ->
-			blockBuilder.addLine("response.header('$entry.key') == '$entry.value'")
+		stubDefinition.response.headers?.collect { Header header ->
+			blockBuilder.addLine("response.header('$header.name') == '$header.serverValue'")
 		}
 		if (stubDefinition.response.body) {
 			blockBuilder.endBlock()
