@@ -28,8 +28,7 @@ class FileSaver {
 
 		Path testBaseDir = Paths.get(targetDirectory.absolutePath, NamesUtil.packageToDirectory(packageName))
 		Files.createDirectories(testBaseDir)
-		Path classPath = Paths.get(testBaseDir.toString(), capitalize(fileName) + framework.classNameSuffix + framework.classExtension)
-				.toAbsolutePath()
+		Path classPath = Paths.get(testBaseDir.toString(), capitalize(fileName) + framework.classExtension).toAbsolutePath()
 		log.info("Creating new class file [$classPath]")
 		Files.write(classPath, classBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
 	}

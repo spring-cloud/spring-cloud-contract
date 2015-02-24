@@ -13,7 +13,7 @@ class BasicFunctionalSpec extends IntegrationSpec {
 		then:
 			fileExists('build.gradle')
 		when:
-			def result = runTasksSuccessfully('check')
+			def result = runTasksSuccessfully('clean', 'check') //clean to remove accidental output when importing SimpleBoot into Idea
 		then:
 			result.wasExecuted(":generateWiremockClientStubs")
 			result.wasExecuted(":generateAccurest")
@@ -25,7 +25,7 @@ class BasicFunctionalSpec extends IntegrationSpec {
 			fileExists("build/production/bootSimple-stubs/repository/mappings/pairId/colleratePlacesFromTweet.json")
 
 		and: "generated tests executed"
-			fileExists("build/test-results/TEST-accurest.PairId.xml")
+			fileExists("build/test-results/TEST-accurest.PairIdSpec.xml")
 	}
 
 	def "should generate valid client json stubs for simple input"() {

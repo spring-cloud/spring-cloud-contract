@@ -32,7 +32,7 @@ class TestGeneratorSpec extends Specification {
 		when:
 			testGenerator.generateTestClasses("com.ofg")
 		then:
-			1 * classGenerator.buildClass(_, 'different', _) >> "qwerty"
+			1 * classGenerator.buildClass(_, 'differentSpec', _) >> "qwerty"
 	}
 
 	def "should ignore file"() {
@@ -46,6 +46,6 @@ class TestGeneratorSpec extends Specification {
 		when:
 			testGenerator.generateTestClasses("com.ofg")
 		then:
-			1 * classGenerator.buildClass({ it.size() == 1 }, 'other', _) >> "sample.groovy"
+			1 * classGenerator.buildClass({ it.size() == 1 }, 'otherSpec', _) >> "sample.groovy"
 	}
 }

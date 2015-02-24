@@ -62,7 +62,7 @@ class TestGenerator {
 				return new File(configProperties.contractsDslDir, it)
 			}
 			if (filesToClass.size()) {
-				def className = afterLast(includedDirectoryRelativePath, File.separator)
+				def className = afterLast(includedDirectoryRelativePath, File.separator) + configProperties.targetFramework.classNameSuffix
 				def classBytes = generator.buildClass(filesToClass, className, packageNameForClass).bytes
 				saver.saveClassFile(className, packageNameForClass, classBytes)
 				counter.incrementAndGet()
