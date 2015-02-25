@@ -56,7 +56,7 @@ class TestGenerator {
 		if (!includedDirectoryRelativePath.isEmpty()) {
 			List<File> filesToClass = directoryScanner.includedFiles.
 					grep { String includedFile ->
-						return includedFile.matches(includedDirectoryRelativePath + File.separator + "[A-Za-z0-9]*\\.groovy")
+						return normalizePath(includedFile).matches(normalizePath(includedDirectoryRelativePath + File.separator) + "[A-Za-z0-9]*\\.groovy")
 					}
 			.collect {
 				return new File(configProperties.contractsDslDir, it)
@@ -69,4 +69,8 @@ class TestGenerator {
 			}
 		}
 	}
+    
+    private String normalizePath(String path) {
+        return path.replaceAll(/\\+/, '/')
+    }
 }

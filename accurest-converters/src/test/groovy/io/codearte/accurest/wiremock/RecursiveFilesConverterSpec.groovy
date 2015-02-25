@@ -11,8 +11,7 @@ import java.nio.file.Paths
 
 class RecursiveFilesConverterSpec extends Specification {
 
-	private static
-	final Set<String> EXPECTED_TARGET_FILES = ["dslRoot.json", "dir1/dsl1.json", "dir1/dsl1b.json", "dir2/dsl2.json"]
+	private static final Set<Path> EXPECTED_TARGET_FILES = [Paths.get("dslRoot.json"), Paths.get("dir1/dsl1.json"), Paths.get("dir1/dsl1b.json"), Paths.get("dir2/dsl2.json")]
 
 	@Rule
 	public TemporaryFolder tmpFolder = new TemporaryFolder();
@@ -56,12 +55,11 @@ class RecursiveFilesConverterSpec extends Specification {
 			e.cause?.message == "Test conversion error"
 	}
 
-	private
-	static Set<String> getRelativePathsForFilesInDirectory(Collection<File> createdFiles, File targetRootDirectory) {
+	private static Set<Path> getRelativePathsForFilesInDirectory(Collection<File> createdFiles, File targetRootDirectory) {
 		Path rootSourcePath = Paths.get(targetRootDirectory.toURI())
-		Set<String> relativizedCreatedFiles = createdFiles.collect { File file ->
-			rootSourcePath.relativize(Paths.get(file.toURI())).toString()
+		Set<Path> relativizedCreatedFiles = createdFiles.collect { File file ->
+			rootSourcePath.relativize(Paths.get(file.toURI()))
 		}
-		relativizedCreatedFiles
+		return relativizedCreatedFiles
 	}
 }
