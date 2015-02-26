@@ -2,6 +2,7 @@ package io.coderate.accurest
 
 import groovy.transform.PackageScope
 import io.coderate.accurest.config.AccurestConfigProperties
+import org.apache.commons.io.FilenameUtils
 import org.codehaus.plexus.util.DirectoryScanner
 
 import java.util.concurrent.atomic.AtomicInteger
@@ -71,6 +72,6 @@ class TestGenerator {
 	}
     
     private String normalizePath(String path) {
-        return path.replaceAll(/\\+/, '/')
+        return FilenameUtils.normalize(path, true)
     }
 }
