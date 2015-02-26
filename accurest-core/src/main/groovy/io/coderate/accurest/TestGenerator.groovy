@@ -1,13 +1,12 @@
 package io.coderate.accurest
-
 import groovy.transform.PackageScope
 import io.coderate.accurest.config.AccurestConfigProperties
+import org.apache.commons.io.FilenameUtils
 import org.codehaus.plexus.util.DirectoryScanner
 
 import java.util.concurrent.atomic.AtomicInteger
 
 import static io.coderate.accurest.util.NamesUtil.afterLast
-
 /**
  * @author Jakub Kubrynski
  */
@@ -71,6 +70,6 @@ class TestGenerator {
 	}
     
     private String normalizePath(String path) {
-        return path.replaceAll(/\\+/, '/')
+        return FilenameUtils.separatorsToUnix(path)
     }
 }
