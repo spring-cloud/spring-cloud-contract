@@ -1,18 +1,38 @@
-ext {
-	projectVersion = '0.4.4-SNAPSHOT'
-	projectGroup = 'io.codearte.accurest'
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath "pl.allegro.tech.build:axion-release-plugin:1.2.0"
+	}
+}
+
+apply plugin: "pl.allegro.tech.build.axion-release"
+
+scmVersion {
+	tag { prefix = "accurest" }
+	createReleaseCommit = true
+	releaseCommitMessage { version, position -> "Release version: ${version}\n\n[ci skip]" }
+	hooks {
+		pre "fileUpdate", [file       : "README.md",
+						   pattern    : { v, p -> /'io\.codearte\.accurest:accurest-gradle-plugin:.*'/ },
+						   replacement: { v, p -> "'io.codearte.accurest:accurest-gradle-plugin:$v'" }]
+	}
+}
+
+allprojects {
+	project.version = scmVersion.version
 }
 
 subprojects {
 	apply plugin: 'groovy'
 	apply plugin: 'maven-publish'
 
-	if (!projectVersion.contains('SNAPSHOT')) {
+	if (!version.contains('SNAPSHOT')) {
 		apply from: "$rootDir/release.gradle"
 	}
 
-	group = projectGroup
-	version = projectVersion
+	group = 'io.codearte.accurest'
 
 	sourceCompatibility = 1.7
 	targetCompatibility = 1.7
@@ -36,9 +56,6 @@ subprojects {
 	publishing {
 		publications {
 			maven(MavenPublication) {
-				groupId projectGroup
-				version projectVersion
-
 				from components.java
 			}
 		}
