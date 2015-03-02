@@ -184,7 +184,7 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'io.codearte.accurest:accurest-gradle-plugin:0.3.0'
+		classpath 'io.codearte.accurest:accurest-gradle-plugin:0.4.3'
 	}
 }
 
