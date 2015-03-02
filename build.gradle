@@ -29,7 +29,7 @@ subprojects {
 	apply plugin: 'maven-publish'
 
 	if (!version.contains('SNAPSHOT')) {
-		apply from: "$rootDir/release.gradle"
+		apply from: "$rootDir/gradle/release.gradle"
 	}
 
 	group = 'io.codearte.accurest'
