@@ -57,6 +57,17 @@ subprojects {
 		publications {
 			maven(MavenPublication) {
 				from components.java
+				pom.withXml {
+					//#89 - workaround to not to have only runtime dependencies in generated pom.xml
+					//Known limitation in maven-publish - - http://forums.gradle.org/gradle/topics/maven_publish_plugin_generated_pom_making_dependency_scope_runtime#reply_14120711
+					asNode().dependencies.'*'.findAll() {
+						it.scope.text() == 'runtime' && project.configurations.compile.allDependencies.find { dep ->
+							dep.name == it.artifactId.text()
+						}
+					}.each() {
+						it.scope*.value = 'compile'
+					}
+				}
 			}
 		}
 	}
