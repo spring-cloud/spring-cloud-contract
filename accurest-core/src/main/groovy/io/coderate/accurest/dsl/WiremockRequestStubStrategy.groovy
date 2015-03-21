@@ -39,7 +39,7 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 
 	private Map<String, Object> appendBody(ClientRequest clientRequest) {
 		Object body = clientRequest?.body?.clientValue
-		return body != null ? [body: [equalTo: parseBody(body)]] : [:]
+		return body != null ? [bodyPatterns: [equalTo: parseBody(body)]] : [:]
 	}
 
 	private String parseBody(Object responseBodyObject) {

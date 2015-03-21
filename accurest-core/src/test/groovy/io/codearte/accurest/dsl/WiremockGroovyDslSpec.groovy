@@ -140,7 +140,7 @@ class WiremockGroovyDslSpec extends Specification {
     "request": {
         "method": "GET",
         "urlPattern": "/[0-9]{2}",
-        "body": {
+        "bodyPatterns": {
 			"equalTo":"{\\"name\\":\\"Jan\\"}"
         }
     },
