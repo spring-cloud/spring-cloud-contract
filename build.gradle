@@ -3,7 +3,7 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath "pl.allegro.tech.build:axion-release-plugin:1.2.0"
+		classpath "pl.allegro.tech.build:axion-release-plugin:1.2.2"
 	}
 }
 
