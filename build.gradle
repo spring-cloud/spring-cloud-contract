@@ -4,10 +4,17 @@ buildscript {
 	}
 	dependencies {
 		classpath "pl.allegro.tech.build:axion-release-plugin:1.2.2"
+		classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.1"
 	}
 }
 
 apply plugin: "pl.allegro.tech.build.axion-release"
+apply plugin: 'io.codearte.nexus-staging'
+
+nexusStaging {
+	packageGroup = "io.codearte"
+	stagingProfileId = '93c08fdebde1ff'
+}
 
 scmVersion {
 	tag { prefix = "accurest" }
