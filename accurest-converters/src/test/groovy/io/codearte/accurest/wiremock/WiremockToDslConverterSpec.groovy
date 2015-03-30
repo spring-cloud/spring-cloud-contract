@@ -23,14 +23,7 @@ class WiremockToDslConverterSpec extends Specification {
     },
     "response": {
         "status": 200,
-        "body": {
-            "id": {
-                "value": "132"
-            },
-            "surname": "Kowalsky",
-            "name": "Jan",
-            "created" : "2014-02-02 12:23:43"
-        },
+        "body": "{ \\"id\\": { \\"value\\": \\"132\\" }, \\"surname\\": \\"Kowalsky\\", \\"name\\": \\"Jan\\", \\"created\\": \\"2014-02-02 12:23:43\\" }",
         "headers": {
             "Content-Type": "text/plain",
         }
@@ -193,11 +186,7 @@ class WiremockToDslConverterSpec extends Specification {
   },
   "response": {
     "status": 200,
-    "body": [
-        {"a":1, "c":"3"},
-        "b",
-        "a"
-        ],
+    "body": "[ {\\"a\\":1, \\"c\\":\\"3\\"}, \\"b\\", \\"a\\" ]",
     "headers": {
       "Content-Type": "application/json"
     }

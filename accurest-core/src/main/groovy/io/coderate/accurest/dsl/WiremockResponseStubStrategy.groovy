@@ -1,10 +1,10 @@
 package io.coderate.accurest.dsl
-import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+import groovy.transform.TypeChecked
 import io.coderate.accurest.dsl.internal.ClientResponse
 import io.coderate.accurest.dsl.internal.Response
 
-@CompileStatic
+@TypeChecked
 @PackageScope
 class WiremockResponseStubStrategy extends BaseWiremockStubStrategy {
 
@@ -20,8 +20,13 @@ class WiremockResponseStubStrategy extends BaseWiremockStubStrategy {
 	}
 
 	private Map<String, Object> buildResponseContent(ClientResponse response) {
-		return [status : response?.status?.clientValue,
-		        body   : response?.body?.clientValue,
-		        headers: buildClientResponseHeadersSection(response.headers)].findAll { it.value }
+		return ([status : response?.status?.clientValue,
+		        headers: buildClientResponseHeadersSection(response.headers)
+        ] << appendBody(response)).findAll { it.value }
 	}
+
+    private Map<String, Object> appendBody(ClientResponse response) {
+        Object body = response?.body?.clientValue
+        return body != null ? [body: parseBody(body)] : [:]
+    }
 }

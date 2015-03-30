@@ -44,12 +44,7 @@ class WiremockGroovyDslSpec extends Specification {
     },
     "response": {
         "status": 200,
-        "body": {
-            "id": "123",
-            "surname": "Kowalsky",
-            "name": "Jan",
-            "created" : "2014-02-02 12:23:43"
-        },
+        "body": "{\\"id\\":\\"123\\",\\"surname\\":\\"Kowalsky\\",\\"name\\":\\"Jan\\",\\"created\\":\\"2014-02-02 12:23:43\\"}",
         "headers": {
             "Content-Type": "text/plain"
         }
@@ -92,12 +87,7 @@ class WiremockGroovyDslSpec extends Specification {
     },
     "response": {
         "status": 200,
-        "body": {
-            "id": "123",
-            "surname": "Kowalsky",
-            "name": "Jan",
-            "created" : "2014-02-02 12:23:43"
-        },
+        "body": "{\\"created\\":\\"2014-02-02 12:23:43\\",\\"id\\":\\"123\\",\\"name\\":\\"Jan\\",\\"surname\\":\\"Kowalsky\\"}",
         "headers": {
             "Content-Type": "text/plain"
         }
@@ -140,15 +130,15 @@ class WiremockGroovyDslSpec extends Specification {
     "request": {
         "method": "GET",
         "urlPattern": "/[0-9]{2}",
-        "bodyPatterns": {
-			"equalTo":"{\\"name\\":\\"Jan\\"}"
-        }
+        "bodyPatterns": [
+            {
+                "equalTo":"{\\"name\\":\\"Jan\\"}"
+            }
+        ]
     },
     "response": {
         "status": 200,
-        "body": {
-            "name": "Jan"
-        },
+        "body": "{\\"name\\":\\"Jan\\"}",
         "headers": {
             "Content-Type": "text/plain"
         }
