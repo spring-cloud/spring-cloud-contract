@@ -1,5 +1,8 @@
 Accurate REST
 =============
+
+[![Build Status](https://travis-ci.org/Codearte/accurest.svg?branch=master)](https://travis-ci.org/Codearte/accurest) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.codearte.accurest/accurest-gradle-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.codearte.accurest/accurest-gradle-plugin)
+
 Consumer Driven Contracts verifier for Java
 
 Just to make long story short - AccuREST is a tool for Consumer Driven Contract (CDC) development. AccuREST ships easy DSL for describing REST contracts for JVM-based applications. The contract DSL is used by AccuREST for two things:
