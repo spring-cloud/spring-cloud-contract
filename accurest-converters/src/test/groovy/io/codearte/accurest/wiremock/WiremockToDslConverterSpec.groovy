@@ -1,6 +1,6 @@
 package io.codearte.accurest.wiremock
 
-import io.coderate.accurest.dsl.GroovyDsl
+import io.codearte.accurest.dsl.GroovyDsl
 import spock.lang.Specification
 
 class WiremockToDslConverterSpec extends Specification {
@@ -65,7 +65,7 @@ class WiremockToDslConverterSpec extends Specification {
 			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
 		then:
 			new GroovyShell(this.class.classLoader).evaluate(
-					""" io.coderate.accurest.dsl.GroovyDsl.make {
+					""" io.codearte.accurest.dsl.GroovyDsl.make {
                 $groovyDsl
             }""") == expectedGroovyDsl
 	}
@@ -117,7 +117,7 @@ class WiremockToDslConverterSpec extends Specification {
 			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
 		then:
 			new GroovyShell(this.class.classLoader).evaluate(
-					""" io.coderate.accurest.dsl.GroovyDsl.make {
+					""" io.codearte.accurest.dsl.GroovyDsl.make {
                 $groovyDsl
             }""") == expectedGroovyDsl
 	}
@@ -166,7 +166,7 @@ class WiremockToDslConverterSpec extends Specification {
 			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
 		then:
 			new GroovyShell(this.class.classLoader).evaluate(
-					""" io.coderate.accurest.dsl.GroovyDsl.make {
+					""" io.codearte.accurest.dsl.GroovyDsl.make {
                 $groovyDsl
             }""") == expectedGroovyDsl
 	}
@@ -218,7 +218,7 @@ class WiremockToDslConverterSpec extends Specification {
 			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
 		then:
 			new GroovyShell(this.class.classLoader).evaluate(
-					""" io.coderate.accurest.dsl.GroovyDsl.make {
+					""" io.codearte.accurest.dsl.GroovyDsl.make {
                 $groovyDsl
             }""") == expectedGroovyDsl
 	}
@@ -282,7 +282,7 @@ class WiremockToDslConverterSpec extends Specification {
 			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
 		then:
 			new GroovyShell(this.class.classLoader).evaluate(
-					""" io.coderate.accurest.dsl.GroovyDsl.make {
+					""" io.codearte.accurest.dsl.GroovyDsl.make {
                 $groovyDsl
             }""") == expectedGroovyDsl
 	}

@@ -1,8 +1,5 @@
 package io.codearte.accurest.dsl
 import groovy.json.JsonSlurper
-import io.coderate.accurest.dsl.GroovyDsl
-import io.coderate.accurest.dsl.WiremockRequestStubStrategy
-import io.coderate.accurest.dsl.WiremockStubStrategy
 import spock.lang.Specification
 
 class WiremockGroovyDslSpec extends Specification {

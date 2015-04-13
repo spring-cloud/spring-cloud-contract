@@ -1,9 +1,6 @@
 package io.codearte.accurest
 
-import io.coderate.accurest.FileSaver
-import io.coderate.accurest.SingleTestGenerator
-import io.coderate.accurest.TestGenerator
-import io.coderate.accurest.config.AccurestConfigProperties
+import io.codearte.accurest.config.AccurestConfigProperties
 import spock.lang.Specification
 
 class GeneratorScannerSpec extends Specification {

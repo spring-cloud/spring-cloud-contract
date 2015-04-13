@@ -10,7 +10,7 @@ class DslToWiremockClientConverterSpec extends Specification {
 			def converter = new DslToWiremockClientConverter()
 		and:
 			String dslBody = """
-                io.coderate.accurest.dsl.GroovyDsl.make {
+                io.codearte.accurest.dsl.GroovyDsl.make {
                     request {
                         method('PUT')
                         url \$(client(~/\\/[0-9]{2}/), server('/12'))
@@ -33,7 +33,7 @@ class DslToWiremockClientConverterSpec extends Specification {
 			def converter = new DslToWiremockClientConverter()
 		and:
 			String dslBody = """
-                io.coderate.accurest.dsl.GroovyDsl.make {
+                io.codearte.accurest.dsl.GroovyDsl.make {
 					request {
 						method 'PUT'
 						url '/api/12'

@@ -1,9 +1,8 @@
 package io.codearte.accurest
 
-import io.coderate.accurest.TestGenerator
-import io.coderate.accurest.config.AccurestConfigProperties
-import io.coderate.accurest.config.TestFramework
-import io.coderate.accurest.config.TestMode
+import io.codearte.accurest.config.AccurestConfigProperties
+import io.codearte.accurest.config.TestFramework
+import io.codearte.accurest.config.TestMode
 
 class MainTest {
 	public static void main(String[] args) {
