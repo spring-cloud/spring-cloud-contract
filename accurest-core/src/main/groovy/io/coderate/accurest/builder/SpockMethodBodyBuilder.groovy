@@ -1,4 +1,5 @@
 package io.coderate.accurest.builder
+
 import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import io.coderate.accurest.dsl.GroovyDsl
@@ -46,8 +47,11 @@ class SpockMethodBodyBuilder {
 			blockBuilder.endBlock()
 			blockBuilder.addLine('and:').startBlock()
 			blockBuilder.addLine('def responseBody = new JsonSlurper().parseText(response.body.asString())')
-			stubDefinition.response.body.serverValue.each {
-				processBodyElement(blockBuilder, "", it)
+			def responseBody = stubDefinition.response.body.serverValue
+			if (responseBody instanceof List) {
+				processArrayElements(responseBody, "", blockBuilder)
+			} else {
+				processMapElement(responseBody, blockBuilder, "")
 			}
 		}
 		blockBuilder.endBlock()
@@ -66,9 +70,24 @@ class SpockMethodBodyBuilder {
 				blockBuilder.addLine("responseBody$property == \"${value}\"")
 			}
 		} else if (value instanceof Map) {
-			value.each { entry -> processBodyElement(blockBuilder, property, entry) }
+			processMapElement(value, blockBuilder, property)
+		} else if (value instanceof List) {
+			processArrayElements(value, property, blockBuilder)
 		} else {
 			blockBuilder.addLine("responseBody$property == ${value}")
+		}
+	}
+
+	private void processMapElement(def value, BlockBuilder blockBuilder, String property) {
+		value.each { entry -> processBodyElement(blockBuilder, property, entry) }
+	}
+
+	private void processArrayElements(List responseBody, String property, BlockBuilder blockBuilder) {
+		responseBody.eachWithIndex {
+			listElement, listIndex ->
+				listElement.each {
+					entry -> processBodyElement(blockBuilder, property + "[$listIndex]", entry)
+				}
 		}
 	}
 }

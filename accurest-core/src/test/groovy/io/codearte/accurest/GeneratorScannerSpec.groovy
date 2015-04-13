@@ -6,7 +6,7 @@ import io.coderate.accurest.TestGenerator
 import io.coderate.accurest.config.AccurestConfigProperties
 import spock.lang.Specification
 
-class TestGeneratorSpec extends Specification {
+class GeneratorScannerSpec extends Specification {
 
 	private SingleTestGenerator classGenerator = Mock(SingleTestGenerator)
 
