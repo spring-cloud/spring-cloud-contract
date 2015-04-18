@@ -3,6 +3,7 @@ import groovy.io.FileType
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.xml.XmlUtil
+import io.codearte.accurest.dsl.GroovyDsl
 
 import static org.apache.commons.lang3.StringEscapeUtils.escapeJava
 
@@ -153,7 +154,7 @@ class WiremockToDslConverter {
 
 	static String wrapWithFactoryMethod(String dslFromWiremockStub) {
 		return """\
-io.coderate.accurest.dsl.GroovyDsl.make {
+${GroovyDsl.name}.make {
     $dslFromWiremockStub
 }
 """
