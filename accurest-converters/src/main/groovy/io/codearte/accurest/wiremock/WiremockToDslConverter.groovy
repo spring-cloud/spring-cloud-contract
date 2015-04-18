@@ -139,14 +139,23 @@ class WiremockToDslConverter {
 				if (!it.name.endsWith('json')) {
 					return
 				}
-				String wiremockStub = fromWiremockStub(it.text)
+				String dslFromWiremockStub = fromWiremockStub(it.text)
+				String dslWrappedWithFactoryMethod = wrapWithFactoryMethod(dslFromWiremockStub)
 				File newGroovyFile = new File(it.parent, it.name.replaceAll('json', 'groovy'))
 				println("Creating new groovy file [$newGroovyFile.path]")
-				newGroovyFile.text = wiremockStub
+				newGroovyFile.text = dslWrappedWithFactoryMethod
 			} catch (Exception e) {
 				System.err.println(e)
 			}
 
 		}
+	}
+
+	static String wrapWithFactoryMethod(String dslFromWiremockStub) {
+		return """\
+io.coderate.accurest.dsl.GroovyDsl.make {
+    $dslFromWiremockStub
+}
+"""
 	}
 }
