@@ -111,13 +111,12 @@ class WiremockGroovyDslSpec extends Specification {
 			GroovyDsl groovyDsl = GroovyDsl.make {
 				request {
 					method('GET')
-					url $(client(~/\/[0-9]{2}/), server('/12'))
-					body("""\
-                            {
-                                "name": "Jan"
-                            }
-                        """
-					)
+					url $(client(regex('/[0-9]{2}')), server('/12'))
+					body """
+						{
+							"name": "Jan"
+						}
+						"""
 				}
 				response {
 					status 200
@@ -156,6 +155,58 @@ class WiremockGroovyDslSpec extends Specification {
 }
 ''')
 	}
+
+
+	def 'should convert groovy dsl stub with regexp Body as String to wiremock stub for the client side'() {
+		given:
+		GroovyDsl groovyDsl = GroovyDsl.make {
+			request {
+				method('GET')
+				url $(client(regex('/[0-9]{2}')), server('/12'))
+				body """
+						{
+							"personalId": "${value(client(regex('^[0-9]{11}$')), server('57593728525'))}"
+						}
+						"""
+			}
+			response {
+				status 200
+				body("""\
+                            {
+                                "name": "Jan"
+                            }
+                     """
+				)
+				headers {
+					header 'Content-Type': 'text/plain'
+				}
+			}
+		}
+		when:
+		String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+		then:
+		new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+{
+    "request": {
+        "method": "GET",
+        "urlPattern": "/[0-9]{2}",
+        "bodyPatterns": {
+			"matches":"{\\"personalId\\":\\"^[0-9]{11}$\\"}"
+        }
+    },
+    "response": {
+        "status": 200,
+        "body": {
+            "name": "Jan"
+        },
+        "headers": {
+            "Content-Type": "text/plain"
+        }
+    }
+}
+''')
+	}
+
 
 	def "should generate stub with GET"() {
 		given:
