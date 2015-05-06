@@ -1,4 +1,4 @@
-io.coderate.accurest.dsl.GroovyDsl.make {
+io.codearte.accurest.dsl.GroovyDsl.make {
 	request {
 		method('PUT')
 		headers {

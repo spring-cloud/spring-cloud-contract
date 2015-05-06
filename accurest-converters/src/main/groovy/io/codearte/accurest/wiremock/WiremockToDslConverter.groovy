@@ -3,6 +3,7 @@ import groovy.io.FileType
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.xml.XmlUtil
+import io.codearte.accurest.dsl.GroovyDsl
 
 import static org.apache.commons.lang3.StringEscapeUtils.escapeJava
 
@@ -139,14 +140,23 @@ class WiremockToDslConverter {
 				if (!it.name.endsWith('json')) {
 					return
 				}
-				String wiremockStub = fromWiremockStub(it.text)
+				String dslFromWiremockStub = fromWiremockStub(it.text)
+				String dslWrappedWithFactoryMethod = wrapWithFactoryMethod(dslFromWiremockStub)
 				File newGroovyFile = new File(it.parent, it.name.replaceAll('json', 'groovy'))
 				println("Creating new groovy file [$newGroovyFile.path]")
-				newGroovyFile.text = wiremockStub
+				newGroovyFile.text = dslWrappedWithFactoryMethod
 			} catch (Exception e) {
 				System.err.println(e)
 			}
 
 		}
+	}
+
+	static String wrapWithFactoryMethod(String dslFromWiremockStub) {
+		return """\
+${GroovyDsl.name}.make {
+    $dslFromWiremockStub
+}
+"""
 	}
 }

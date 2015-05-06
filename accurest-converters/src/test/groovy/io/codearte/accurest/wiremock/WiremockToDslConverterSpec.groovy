@@ -1,6 +1,6 @@
 package io.codearte.accurest.wiremock
 
-import io.coderate.accurest.dsl.GroovyDsl
+import io.codearte.accurest.dsl.GroovyDsl
 import spock.lang.Specification
 
 class WiremockToDslConverterSpec extends Specification {
@@ -23,14 +23,7 @@ class WiremockToDslConverterSpec extends Specification {
     },
     "response": {
         "status": 200,
-        "body": {
-            "id": {
-                "value": "132"
-            },
-            "surname": "Kowalsky",
-            "name": "Jan",
-            "created" : "2014-02-02 12:23:43"
-        },
+        "body": "{ \\"id\\": { \\"value\\": \\"132\\" }, \\"surname\\": \\"Kowalsky\\", \\"name\\": \\"Jan\\", \\"created\\": \\"2014-02-02 12:23:43\\" }",
         "headers": {
             "Content-Type": "text/plain",
         }
@@ -72,7 +65,7 @@ class WiremockToDslConverterSpec extends Specification {
 			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
 		then:
 			new GroovyShell(this.class.classLoader).evaluate(
-					""" io.coderate.accurest.dsl.GroovyDsl.make {
+					""" io.codearte.accurest.dsl.GroovyDsl.make {
                 $groovyDsl
             }""") == expectedGroovyDsl
 	}
@@ -124,7 +117,7 @@ class WiremockToDslConverterSpec extends Specification {
 			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
 		then:
 			new GroovyShell(this.class.classLoader).evaluate(
-					""" io.coderate.accurest.dsl.GroovyDsl.make {
+					""" io.codearte.accurest.dsl.GroovyDsl.make {
                 $groovyDsl
             }""") == expectedGroovyDsl
 	}
@@ -173,7 +166,7 @@ class WiremockToDslConverterSpec extends Specification {
 			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
 		then:
 			new GroovyShell(this.class.classLoader).evaluate(
-					""" io.coderate.accurest.dsl.GroovyDsl.make {
+					""" io.codearte.accurest.dsl.GroovyDsl.make {
                 $groovyDsl
             }""") == expectedGroovyDsl
 	}
@@ -193,11 +186,7 @@ class WiremockToDslConverterSpec extends Specification {
   },
   "response": {
     "status": 200,
-    "body": [
-        {"a":1, "c":"3"},
-        "b",
-        "a"
-        ],
+    "body": "[ {\\"a\\":1, \\"c\\":\\"3\\"}, \\"b\\", \\"a\\" ]",
     "headers": {
       "Content-Type": "application/json"
     }
@@ -229,7 +218,7 @@ class WiremockToDslConverterSpec extends Specification {
 			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
 		then:
 			new GroovyShell(this.class.classLoader).evaluate(
-					""" io.coderate.accurest.dsl.GroovyDsl.make {
+					""" io.codearte.accurest.dsl.GroovyDsl.make {
                 $groovyDsl
             }""") == expectedGroovyDsl
 	}
@@ -293,7 +282,7 @@ class WiremockToDslConverterSpec extends Specification {
 			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
 		then:
 			new GroovyShell(this.class.classLoader).evaluate(
-					""" io.coderate.accurest.dsl.GroovyDsl.make {
+					""" io.codearte.accurest.dsl.GroovyDsl.make {
                 $groovyDsl
             }""") == expectedGroovyDsl
 	}

@@ -1,7 +1,7 @@
 package io.codearte.accurest.wiremock
 
 import groovy.transform.CompileStatic
-import io.coderate.accurest.AccurestException
+import io.codearte.accurest.AccurestException
 
 @CompileStatic
 class ConversionAccurestException extends AccurestException {

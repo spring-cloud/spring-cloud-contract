@@ -1,6 +1,6 @@
 package io.codearte.accurest.plugin
 
-import io.coderate.accurest.config.AccurestConfigProperties
+import io.codearte.accurest.config.AccurestConfigProperties
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
