@@ -1,13 +1,10 @@
 package io.codearte.accurest.dsl
-
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import io.codearte.accurest.dsl.internal.ClientRequest
 import io.codearte.accurest.dsl.internal.Request
 
 import java.util.regex.Pattern
-
-import static groovy.json.StringEscapeUtils.escapeJava
 
 @TypeChecked
 @PackageScope
@@ -41,10 +38,10 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 			return [:]
 		}
 		if (containsRegex(body)) {
-			return [bodyPatterns: [matches: parseBody(body)]]
+			return [bodyPatterns: [[matches: parseBody(body)]]]
 		}
 
-		return [bodyPatterns: [equalTo: parseBody(body)]]
+		return [bodyPatterns: [[equalTo: parseBody(body)]]]
 	}
 
 	boolean containsRegex(Object bodyObject) {

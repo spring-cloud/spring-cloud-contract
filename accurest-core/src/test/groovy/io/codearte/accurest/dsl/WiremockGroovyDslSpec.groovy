@@ -1,8 +1,7 @@
 package io.codearte.accurest.dsl
 import groovy.json.JsonSlurper
-import spock.lang.Specification
 
-class WiremockGroovyDslSpec extends Specification {
+class WiremockGroovyDslSpec extends WiremockSpec {
 
 	def 'should convert groovy dsl stub to wiremock stub for the client side'() {
 		given:
@@ -48,6 +47,8 @@ class WiremockGroovyDslSpec extends Specification {
     }
 }
 ''')
+		and:
+			stubMappingIsValidWiremockStub(wiremockStub)
 	}
 
 	def 'should convert groovy dsl stub with Body as String to wiremock stub for the client side'() {
@@ -91,6 +92,8 @@ class WiremockGroovyDslSpec extends Specification {
     }
 }
 ''')
+		and:
+			stubMappingIsValidWiremockStub(wiremockStub)
 	}
 
 	def 'should convert groovy dsl stub with simple Body as String to wiremock stub for the client side'() {
@@ -141,12 +144,14 @@ class WiremockGroovyDslSpec extends Specification {
     }
 }
 ''')
+		and:
+			stubMappingIsValidWiremockStub(wiremockStub)
 	}
 
 
 	def 'should convert groovy dsl stub with regexp Body as String to wiremock stub for the client side'() {
 		given:
-		GroovyDsl groovyDsl = GroovyDsl.make {
+			GroovyDsl groovyDsl = GroovyDsl.make {
 			request {
 				method('GET')
 				url $(client(regex('/[0-9]{2}')), server('/12'))
@@ -170,28 +175,30 @@ class WiremockGroovyDslSpec extends Specification {
 			}
 		}
 		when:
-		String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+			String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
 		then:
-		new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+			new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
 {
     "request": {
         "method": "GET",
         "urlPattern": "/[0-9]{2}",
-        "bodyPatterns": {
-			"matches":"{\\"personalId\\":\\"^[0-9]{11}$\\"}"
-        }
+        "bodyPatterns": [
+        	{
+				"matches":"{\\"personalId\\":\\"^[0-9]{11}$\\"}"
+        	}
+        ]
     },
     "response": {
         "status": 200,
-        "body": {
-            "name": "Jan"
-        },
+        "body": "{\\"name\\":\\"Jan\\"}",
         "headers": {
             "Content-Type": "text/plain"
         }
     }
 }
 ''')
+		and:
+			stubMappingIsValidWiremockStub(wiremockStub)
 	}
 
 
