@@ -39,11 +39,23 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 
 	private Map<String, Object> appendBody(ClientRequest clientRequest) {
 		Object body = clientRequest?.body?.clientValue
-		return body != null ? [bodyPatterns: [equalTo: parseBody(body)]] : [:]
+		if (body == null) {
+			return [:]
+		}
+		if (containsRegex(body)) {
+			return [bodyPatterns: [matches: parseBody(body)]]
+		}
+
+		return [bodyPatterns: [equalTo: parseBody(body)]]
 	}
 
-	private String parseBody(Object responseBodyObject) {
-		String responseBody = responseBodyObject as String
+	boolean containsRegex(Object bodyObject) {
+		String bodyString = bodyObject as String
+		return (bodyString =~ /\^.*\$/).find()
+	}
+
+	private String parseBody(Object bodyObject) {
+		String responseBody = bodyObject as String
 		try {
 			def json = new JsonSlurper().parseText(responseBody)
 			return escapeJava(JsonOutput.toJson(responseBody))
