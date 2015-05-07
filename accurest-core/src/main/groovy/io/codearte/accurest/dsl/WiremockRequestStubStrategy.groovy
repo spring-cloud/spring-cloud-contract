@@ -1,5 +1,4 @@
 package io.codearte.accurest.dsl
-
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import io.codearte.accurest.dsl.internal.ClientRequest
@@ -35,6 +34,19 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 
 	private Map<String, Object> appendBody(ClientRequest clientRequest) {
 		Object body = clientRequest?.body?.clientValue
-		return body != null ? [bodyPatterns: [[equalTo: parseBody(body)]]] : [:]
+		if (body == null) {
+			return [:]
+		}
+		if (containsRegex(body)) {
+			return [bodyPatterns: [[matches: parseBody(body)]]]
+		}
+
+		return [bodyPatterns: [[equalTo: parseBody(body)]]]
 	}
+
+	boolean containsRegex(Object bodyObject) {
+		String bodyString = bodyObject as String
+		return (bodyString =~ /\^.*\$/).find()
+	}
+
 }
