@@ -66,6 +66,10 @@ class Common {
 		return Pattern.compile(regex)
 	}
 
+	ExecutionProperty execute(String commandToExecute) {
+		return new ExecutionProperty(commandToExecute)
+	}
+
 	ClientDslProperty client(Object clientValue) {
 		return new ClientDslProperty(clientValue)
 	}

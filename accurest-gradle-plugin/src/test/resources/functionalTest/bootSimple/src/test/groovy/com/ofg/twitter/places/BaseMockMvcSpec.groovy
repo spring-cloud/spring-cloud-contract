@@ -9,4 +9,8 @@ abstract class BaseMockMvcSpec extends Specification {
     def setup() {
         RestAssuredMockMvc.standaloneSetup(new PairIdController())
     }
+
+    void isProperCorrelationId(Integer correlationId) {
+        assert correlationId == 123456
+    }
 }
