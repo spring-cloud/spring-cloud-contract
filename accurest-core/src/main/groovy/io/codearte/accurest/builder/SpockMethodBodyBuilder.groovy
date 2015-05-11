@@ -5,6 +5,8 @@ import groovy.transform.PackageScope
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.internal.Header
 
+import java.util.regex.Pattern
+
 /**
  * @author Jakub Kubrynski
  */
@@ -73,6 +75,8 @@ class SpockMethodBodyBuilder {
 			processMapElement(value, blockBuilder, property)
 		} else if (value instanceof List) {
 			processArrayElements(value, property, blockBuilder)
+		} else if (value instanceof Pattern) {
+			blockBuilder.addLine("responseBody$property ==~ java.util.regex.Pattern.compile('${value}')")
 		} else {
 			blockBuilder.addLine("responseBody$property == ${value}")
 		}
@@ -89,5 +93,8 @@ class SpockMethodBodyBuilder {
 					entry -> processBodyElement(blockBuilder, property + "[$listIndex]", entry)
 				}
 		}
+	}
+	private void processClosure(Closure value, BlockBuilder blockBuilder, String property) {
+		blockBuilder.addLine()
 	}
 }
