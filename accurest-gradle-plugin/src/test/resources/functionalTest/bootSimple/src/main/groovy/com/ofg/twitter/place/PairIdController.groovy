@@ -28,7 +28,8 @@ class PairIdController {
         }
         return """
             {
-                "path" : "/api/$pairId"
+                "path" : "/api/$pairId",
+                "correlationId" : 123456
             }
         """
     }
