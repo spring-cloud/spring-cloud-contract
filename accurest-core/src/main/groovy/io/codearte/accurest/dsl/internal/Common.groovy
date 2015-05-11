@@ -66,6 +66,10 @@ class Common {
 		return Pattern.compile(regex)
 	}
 
+	MethodProperty execute(String closureDefinition) {
+		return new MethodProperty(closureDefinition)
+	}
+
 	ClientDslProperty client(Object clientValue) {
 		return new ClientDslProperty(clientValue)
 	}
