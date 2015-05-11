@@ -13,7 +13,8 @@ io.codearte.accurest.dsl.GroovyDsl.make {
     }
     response {
         body (
-             path: $(client('/api/12'), server(regex('^/api/[0-9]{2}$')))
+             path: $(client('/api/12'), server(regex('^/api/[0-9]{2}$'))),
+             correlationId: $(client('1223456'), server(execute('isProperCorrelationId($it)')))
         )
         status 200
     }

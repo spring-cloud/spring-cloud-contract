@@ -3,6 +3,7 @@ package io.codearte.accurest.builder
 import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import io.codearte.accurest.dsl.GroovyDsl
+import io.codearte.accurest.dsl.internal.ExecutionProperty
 import io.codearte.accurest.dsl.internal.Header
 
 import java.util.regex.Pattern
@@ -77,6 +78,9 @@ class SpockMethodBodyBuilder {
 			processArrayElements(value, property, blockBuilder)
 		} else if (value instanceof Pattern) {
 			blockBuilder.addLine("responseBody$property ==~ java.util.regex.Pattern.compile('${value}')")
+		} else if (value instanceof ExecutionProperty) {
+			ExecutionProperty exec = (ExecutionProperty) value
+			blockBuilder.addLine("${exec.insertValue("responseBody$property")}")
 		} else {
 			blockBuilder.addLine("responseBody$property == ${value}")
 		}
