@@ -6,13 +6,13 @@ import groovy.transform.ToString
 import groovy.transform.TypeChecked
 
 @TypeChecked
-@EqualsAndHashCode(includeFields = true)
+@EqualsAndHashCode
 @ToString(includePackage = false, includeFields = true)
 class Response extends Common {
 
-	private DslProperty status
-	private Headers headers
-	private Body body
+	DslProperty status
+	Headers headers
+	Body body
 
 	Response() {
 	}
@@ -49,21 +49,10 @@ class Response extends Common {
 		this.body = new Body(bodyAsValue)
 	}
 
-	Body getBody() {
-		return body
-	}
-
-	DslProperty getStatus() {
-		return status
-	}
-
-	Headers getHeaders() {
-		return headers
-	}
 }
 
 @CompileStatic
-@EqualsAndHashCode(includeFields = true)
+@EqualsAndHashCode
 @ToString(includePackage = false)
 class ServerResponse extends Response {
 	ServerResponse(Response request) {
@@ -72,7 +61,7 @@ class ServerResponse extends Response {
 }
 
 @CompileStatic
-@EqualsAndHashCode(includeFields = true)
+@EqualsAndHashCode
 @ToString(includePackage = false)
 class ClientResponse extends Response {
 	ClientResponse(Response request) {

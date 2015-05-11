@@ -71,7 +71,7 @@ class WiremockToDslConverterSpec extends Specification {
 	}
 
 
-	def 'should convert Wiremock stub with body containing simple JSON'() {
+	def 'should convert Wiremock stub with response body containing simple JSON'() {
 		given:
 			String wiremockStub = '''\
 {
@@ -122,7 +122,7 @@ class WiremockToDslConverterSpec extends Specification {
             }""") == expectedGroovyDsl
 	}
 
-	def 'should convert Wiremock stub with body containing integer'() {
+	def 'should convert Wiremock stub with response body containing integer'() {
 		given:
 			String wiremockStub = '''\
 {
@@ -171,7 +171,7 @@ class WiremockToDslConverterSpec extends Specification {
             }""") == expectedGroovyDsl
 	}
 
-	def 'should convert Wiremock stub with body as a list'() {
+	def 'should convert Wiremock stub with response body as a list'() {
 		given:
 			String wiremockStub = '''\
 {
@@ -224,7 +224,7 @@ class WiremockToDslConverterSpec extends Specification {
 	}
 
 
-	def 'should convert Wiremock stub with body containing a nested list'() {
+	def 'should convert Wiremock stub with response body containing a nested list'() {
 		given:
 			String wiremockStub = '''\
 {
@@ -285,6 +285,82 @@ class WiremockToDslConverterSpec extends Specification {
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
                 $groovyDsl
             }""") == expectedGroovyDsl
+	}
+
+	def 'should convert Wiremock stub with request body checking equality to Json'() {
+		given:
+			String wiremockStub = '''\
+{
+  "request": {
+    "method": "POST",
+    "url": "/test",
+    "bodyPatterns": {
+        "equalTo": "{\\"property1\\":\\"abc\\",\\"property2\\":\\"2017-01\\",\\"property3\\":\\"666\\",\\"property4\\":1428566412}"
+    }
+  },
+  "response": {
+    "status": 200
+    }
+}
+'''
+		and:
+			GroovyDsl expectedGroovyDsl = GroovyDsl.make {
+				request {
+					method 'POST'
+					url '/test'
+					body ('''{"property1":"abc","property2":"2017-01","property3":"666","property4":1428566412}''')
+				}
+				response {
+					status 200
+				}
+			}
+		when:
+			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
+		then:
+			GroovyDsl evaluatedGroovyDsl = new GroovyShell(this.class.classLoader).evaluate(
+					""" io.codearte.accurest.dsl.GroovyDsl.make {
+                $groovyDsl
+            }""")
+		and:
+			evaluatedGroovyDsl == expectedGroovyDsl
+	}
+
+	def 'should convert Wiremock stub with request body checking matching to Json'() {
+		given:
+			String wiremockStub = '''\
+{
+  "request": {
+    "method": "POST",
+    "url": "/test",
+    "bodyPatterns": {
+        "matches": "[0-9]{5}"
+    }
+  },
+  "response": {
+    "status": 200
+    }
+}
+'''
+		and:
+			GroovyDsl expectedGroovyDsl = GroovyDsl.make {
+				request {
+					method 'POST'
+					url '/test'
+					body $(client(~/[0-9]{5}/), server(''))
+				}
+				response {
+					status 200
+				}
+			}
+		when:
+			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
+		then:
+			GroovyDsl evaluatedGroovyDsl = new GroovyShell(this.class.classLoader).evaluate(
+					""" io.codearte.accurest.dsl.GroovyDsl.make {
+                $groovyDsl
+            }""")
+		and:
+			evaluatedGroovyDsl == expectedGroovyDsl
 	}
 
 }
