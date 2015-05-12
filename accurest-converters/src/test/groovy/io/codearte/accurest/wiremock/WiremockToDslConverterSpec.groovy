@@ -102,7 +102,7 @@ class WiremockToDslConverterSpec extends Specification {
 			GroovyDsl expectedGroovyDsl = GroovyDsl.make {
 				request {
 					method 'DELETE'
-					url $(client(~/\/credit-card-verification-data\/[0-9]+/), server(''))
+					url $(client(~/\/credit-card-verification-data\/[0-9]+/), server('/credit-card-verification-data/1'))
 					headers {
 						header('Content-Type': 'application/vnd.mymoid-adapter.v2+json; charset=UTF-8')
 					}
@@ -361,7 +361,7 @@ class WiremockToDslConverterSpec extends Specification {
 				request {
 					method 'POST'
 					url '/test'
-					body $(client(~/[0-9]{5}/), server(''))
+					body $(client(~/[0-9]{5}/), server('12345'))
 				}
 				response {
 					status 200
@@ -482,7 +482,7 @@ class WiremockToDslConverterSpec extends Specification {
 				request {
 					method 'POST'
 					url '/test'
-					body $(client(~/[0-9]{2}/), server(''))
+					body $(client(~/[0-9]{2}/), server('12'))
 				}
 				response {
 					status 200
