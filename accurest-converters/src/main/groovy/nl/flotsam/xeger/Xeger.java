@@ -14,6 +14,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * The class is bundled together with our code because it has not been
+ * released to any central repository.
+ *
  */
 package nl.flotsam.xeger;
 
