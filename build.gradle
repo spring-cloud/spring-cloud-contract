@@ -98,6 +98,7 @@ project(':accurest-converters') {
 		compile project(':accurest-core')
 		compile 'org.apache.commons:commons-lang3:3.3.2'
 		compile 'commons-io:commons-io:[2.4,)'
+		testCompile 'com.github.tomakehurst:wiremock:1.53'
 	}
 }
 
