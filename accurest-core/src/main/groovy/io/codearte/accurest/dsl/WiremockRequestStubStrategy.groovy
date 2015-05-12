@@ -3,6 +3,7 @@ import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import io.codearte.accurest.dsl.internal.ClientRequest
 import io.codearte.accurest.dsl.internal.Request
+import io.codearte.accurest.util.JsonConverter
 
 import java.util.regex.Pattern
 
@@ -38,15 +39,18 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 			return [:]
 		}
 		if (containsRegex(body)) {
-			return [bodyPatterns: [[matches: parseBody(body)]]]
+			return [bodyPatterns: [[matches: parseBody(JsonConverter.transformValues(body, { it.toString() }))]]]
 		}
-
 		return [bodyPatterns: [[equalTo: parseBody(body)]]]
 	}
 
 	boolean containsRegex(Object bodyObject) {
 		String bodyString = bodyObject as String
 		return (bodyString =~ /\^.*\$/).find()
+	}
+
+	boolean containsRegex(Map map) {
+		return map.values().any { it instanceof Pattern }
 	}
 
 }
