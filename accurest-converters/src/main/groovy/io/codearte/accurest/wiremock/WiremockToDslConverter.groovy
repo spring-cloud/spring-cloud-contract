@@ -16,6 +16,7 @@ class WiremockToDslConverter {
 		Object wiremockStub = new JsonSlurper().parseText(wiremockStringStub)
 		def request = wiremockStub.request
 		def response = wiremockStub.response
+		def bodyPatterns = request.bodyPatterns
 		return """\
             request {
                 ${request.method ? "method \"\"\"$request.method\"\"\"" : ""}
@@ -23,18 +24,20 @@ class WiremockToDslConverter {
                 ${request.urlPattern ? "url \$(client(regex('${escapeJava(request.urlPattern)}')), server(''))" : ""}
                 ${request.urlPath ? "url \"\"\"$request.urlPath\"\"\"" : ""}
                 ${
-			request.headers ? """headers {
-                    ${
-				request.headers.collect {
-					def assertion = it.value
-					String headerName = it.key as String
-					def entry = assertion.entrySet().first()
-					"""header(\"\"\"$headerName\"\"\", ${buildHeader(entry.key, entry.value)})\n"""
-				}.join('')
-			}
-                }
-                """ : ""
-		}
+					request.headers ? """headers {
+							${
+						request.headers.collect {
+							def assertion = it.value
+							String headerName = it.key as String
+							def entry = assertion.entrySet().first()
+							"""header(\"\"\"$headerName\"\"\", ${buildHeader(entry.key, entry.value)})\n"""
+						}.join('')
+					}
+						}
+						""" : ""
+				}
+				${bodyPatterns?.equalTo ? "body('''${bodyPatterns.equalTo}''')" : '' }
+				${bodyPatterns?.matches ? "body \$(client(regex('${escapeJava(bodyPatterns.matches)}')), server(''))" : ""}
             }
             response {
                 ${response.status ? "status $response.status" : ""}
