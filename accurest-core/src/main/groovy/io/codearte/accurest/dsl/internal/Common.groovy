@@ -80,12 +80,12 @@ class Common {
 		return new ServerDslProperty(serverValue)
 	}
 
-	void assertThatSidesMatch(Pattern firstSide, Object secondSide) {
+	void assertThatSidesMatch(Pattern firstSide, String secondSide) {
 		assert secondSide ==~ firstSide
 	}
 
-	void assertThatSidesMatch(Object firstSide, Pattern secondSide) {
-		assert secondSide ==~ firstSide
+	void assertThatSidesMatch(String firstSide, Pattern secondSide) {
+		assert firstSide ==~ secondSide
 	}
 
 	void assertThatSidesMatch(Object firstSide, Object secondSide) {
