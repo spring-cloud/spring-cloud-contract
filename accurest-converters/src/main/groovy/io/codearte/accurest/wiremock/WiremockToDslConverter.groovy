@@ -36,8 +36,8 @@ class WiremockToDslConverter {
 						}
 						""" : ""
 				}
-				${bodyPatterns?.equalTo?.every { it } ? "body('''${bodyPatterns.equalTo[0]}''')" : ''}
-				${bodyPatterns?.equalToJson?.every { it } ? "body('''${bodyPatterns.equalToJson[0]}''')" : ''}
+				${bodyPatterns?.equalTo?.every { it } ? "body(\"\"\"${bodyPatterns.equalTo[0]}\"\"\")" : ''}
+				${bodyPatterns?.equalToJson?.every { it } ? "body(\"\"\"${bodyPatterns.equalToJson[0]}\"\"\")" : ''}
 				${bodyPatterns?.matches?.every { it } ? "body \$(client(regex('${escapeJava(bodyPatterns.matches[0])}')), server(''))" : ""}
 			}
 			response {
