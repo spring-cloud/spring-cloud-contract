@@ -16,37 +16,41 @@ class WiremockToDslConverter {
 		Object wiremockStub = new JsonSlurper().parseText(wiremockStringStub)
 		def request = wiremockStub.request
 		def response = wiremockStub.response
+		def bodyPatterns = request.bodyPatterns
 		return """\
-            request {
-                ${request.method ? "method \"\"\"$request.method\"\"\"" : ""}
-                ${request.url ? "url \"\"\"$request.url\"\"\"" : ""}
-                ${request.urlPattern ? "url \$(client(regex('${escapeJava(request.urlPattern)}')), server(''))" : ""}
-                ${request.urlPath ? "url \"\"\"$request.urlPath\"\"\"" : ""}
-                ${
-			request.headers ? """headers {
-                    ${
-				request.headers.collect {
-					def assertion = it.value
-					String headerName = it.key as String
-					def entry = assertion.entrySet().first()
-					"""header(\"\"\"$headerName\"\"\", ${buildHeader(entry.key, entry.value)})\n"""
-				}.join('')
+			request {
+				${request.method ? "method \"\"\"$request.method\"\"\"" : ""}
+				${request.url ? "url \"\"\"$request.url\"\"\"" : ""}
+				${request.urlPattern ? "url \$(client(regex('${escapeJava(request.urlPattern)}')), server(''))" : ""}
+				${request.urlPath ? "url \"\"\"$request.urlPath\"\"\"" : ""}
+				${
+					request.headers ? """headers {
+							${
+						request.headers.collect {
+							def assertion = it.value
+							String headerName = it.key as String
+							def entry = assertion.entrySet().first()
+							"""header(\"\"\"$headerName\"\"\", ${buildHeader(entry.key, entry.value)})\n"""
+						}.join('')
+					}
+						}
+						""" : ""
+				}
+				${bodyPatterns?.equalTo?.every { it } ? "body('''${bodyPatterns.equalTo[0]}''')" : ''}
+				${bodyPatterns?.equalToJson?.every { it } ? "body('''${bodyPatterns.equalToJson[0]}''')" : ''}
+				${bodyPatterns?.matches?.every { it } ? "body \$(client(regex('${escapeJava(bodyPatterns.matches[0])}')), server(''))" : ""}
 			}
-                }
-                """ : ""
-		}
-            }
-            response {
-                ${response.status ? "status $response.status" : ""}
-                ${response.body ? "body( ${buildBody(response.body)})" : ""}
-                ${
+			response {
+				${response.status ? "status $response.status" : ""}
+				${response.body ? "body( ${buildBody(response.body)})" : ""}
+				${
 			response.headers ? """headers {
-                     ${response.headers.collect { "header('$it.key': '${it.value}')\n" }.join('')}
-                    }
-                """ : ""
+					 ${response.headers.collect { "header('$it.key': '${it.value}')\n" }.join('')}
+					}
+				""" : ""
 		}
-            }
-        """
+			}
+		"""
 	}
 
 	private String buildHeader(String method, Object value) {
@@ -155,7 +159,7 @@ class WiremockToDslConverter {
 	static String wrapWithFactoryMethod(String dslFromWiremockStub) {
 		return """\
 ${GroovyDsl.name}.make {
-    $dslFromWiremockStub
+	$dslFromWiremockStub
 }
 """
 	}

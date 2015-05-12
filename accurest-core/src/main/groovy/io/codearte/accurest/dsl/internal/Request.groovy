@@ -5,7 +5,7 @@ import groovy.transform.ToString
 import groovy.transform.TypeChecked
 
 @TypeChecked
-@EqualsAndHashCode(includeFields = true)
+@EqualsAndHashCode
 @ToString(includePackage = false, includeNames = true)
 class Request extends Common {
 
@@ -64,7 +64,7 @@ class Request extends Common {
 }
 
 @CompileStatic
-@EqualsAndHashCode(includeFields = true)
+@EqualsAndHashCode
 @ToString(includePackage = false)
 class ServerRequest extends Request {
 	ServerRequest(Request request) {
@@ -73,7 +73,7 @@ class ServerRequest extends Request {
 }
 
 @CompileStatic
-@EqualsAndHashCode(includeFields = true)
+@EqualsAndHashCode
 @ToString(includePackage = false)
 class ClientRequest extends Request {
 	ClientRequest(Request request) {
