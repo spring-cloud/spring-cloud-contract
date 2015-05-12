@@ -239,7 +239,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 			GroovyDsl groovyDsl = GroovyDsl.make {
 				request {
 					url $(
-							client(~/\/^[0-9]{2}$/),
+							client(~/^\/[0-9]{2}$/),
 							server('/12')
 					)
 				}
@@ -247,7 +247,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 		expect:
 			new WiremockRequestStubStrategy(groovyDsl).buildClientRequestContent() == new JsonSlurper().parseText('''
     {
-        "urlPattern":"/^[0-9]{2}$"
+        "urlPattern":"^/[0-9]{2}$"
     }
     ''')
 	}

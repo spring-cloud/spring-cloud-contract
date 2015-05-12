@@ -123,8 +123,8 @@ class SpockMethodBuilderSpec extends Specification {
 					body(
 							property1: "a",
 							property2: value(
-									client(''),
-									server(regex('\\\\d{3}'))
+									client('123'),
+									server(regex('[0-9]{3}'))
 							)
 					)
 					headers {
@@ -140,7 +140,7 @@ class SpockMethodBuilderSpec extends Specification {
 			builder.appendTo(blockBuilder)
 		then:
 			blockBuilder.toString().contains("responseBody.property1 == \"a\"")
-			blockBuilder.toString().contains("responseBody.property2 ==~ java.util.regex.Pattern.compile('\\\\d{3}')")
+			blockBuilder.toString().contains("responseBody.property2 ==~ java.util.regex.Pattern.compile('[0-9]{3}')")
 	}
 
 	def "should generate regex assertions for string objects in response body"() {

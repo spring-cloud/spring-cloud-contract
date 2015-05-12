@@ -4,6 +4,7 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.xml.XmlUtil
 import io.codearte.accurest.dsl.GroovyDsl
+import nl.flotsam.xeger.Xeger
 
 import static org.apache.commons.lang3.StringEscapeUtils.escapeJava
 
@@ -17,11 +18,12 @@ class WiremockToDslConverter {
 		def request = wiremockStub.request
 		def response = wiremockStub.response
 		def bodyPatterns = request.bodyPatterns
+		String urlPattern = request.urlPattern
 		return """\
 			request {
 				${request.method ? "method \"\"\"$request.method\"\"\"" : ""}
 				${request.url ? "url \"\"\"$request.url\"\"\"" : ""}
-				${request.urlPattern ? "url \$(client(regex('${escapeJava(request.urlPattern)}')), server(''))" : ""}
+				${urlPattern ? "url \$(client(regex('${escapeJava(urlPattern)}')), server('${new Xeger(escapeJava(urlPattern)).generate()}'))" : ""}
 				${request.urlPath ? "url \"\"\"$request.urlPath\"\"\"" : ""}
 				${
 					request.headers ? """headers {
@@ -36,9 +38,9 @@ class WiremockToDslConverter {
 						}
 						""" : ""
 				}
-				${bodyPatterns?.equalTo?.every { it } ? "body(\"\"\"${bodyPatterns.equalTo[0]}\"\"\")" : ''}
-				${bodyPatterns?.equalToJson?.every { it } ? "body(\"\"\"${bodyPatterns.equalToJson[0]}\"\"\")" : ''}
-				${bodyPatterns?.matches?.every { it } ? "body \$(client(regex('${escapeJava(bodyPatterns.matches[0])}')), server(''))" : ""}
+				${bodyPatterns?.equalTo?.every { it } ? "body('''${bodyPatterns.equalTo[0]}''')" : ''}
+				${bodyPatterns?.equalToJson?.every { it } ? "body('''${bodyPatterns.equalToJson[0]}''')" : ''}
+				${bodyPatterns?.matches?.every { it } ? "body \$(client(regex('${escapeJava(bodyPatterns.matches[0])}')), server('${new Xeger(escapeJava(bodyPatterns.matches[0])).generate()}'))" : ""}
 			}
 			response {
 				${response.status ? "status $response.status" : ""}

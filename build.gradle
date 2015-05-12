@@ -47,6 +47,9 @@ subprojects {
 	repositories {
 		mavenLocal()
 		mavenCentral()
+		maven {
+			url "https://jitpack.io"
+		}
 	}
 
 	//Dependencies in all subprojects - http://solidsoft.wordpress.com/2014/11/13/gradle-tricks-display-dependencies-for-all-subprojects-in-multi-project-build/
@@ -98,6 +101,7 @@ project(':accurest-converters') {
 		compile project(':accurest-core')
 		compile 'org.apache.commons:commons-lang3:3.3.2'
 		compile 'commons-io:commons-io:[2.4,)'
+		compile 'com.github.marcingrzejszczak:xeger:20130128'
 		testCompile 'com.github.tomakehurst:wiremock:1.53'
 	}
 }

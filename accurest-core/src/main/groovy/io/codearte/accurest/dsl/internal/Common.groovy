@@ -47,10 +47,12 @@ class Common {
 	}
 
 	DslProperty value(ClientDslProperty client, ServerDslProperty server) {
+		assertThatSidesMatch(client.clientValue, server.serverValue)
 		return new DslProperty(client.clientValue, server.serverValue)
 	}
 
 	DslProperty value(ServerDslProperty server, ClientDslProperty client) {
+		assertThatSidesMatch(client.clientValue, server.serverValue)
 		return new DslProperty(client.clientValue, server.serverValue)
 	}
 
@@ -76,5 +78,17 @@ class Common {
 
 	ServerDslProperty server(Object serverValue) {
 		return new ServerDslProperty(serverValue)
+	}
+
+	void assertThatSidesMatch(Pattern firstSide, String secondSide) {
+		assert secondSide ==~ firstSide
+	}
+
+	void assertThatSidesMatch(String firstSide, Pattern secondSide) {
+		assert firstSide ==~ secondSide
+	}
+
+	void assertThatSidesMatch(Object firstSide, Object secondSide) {
+		// do nothing
 	}
 }
