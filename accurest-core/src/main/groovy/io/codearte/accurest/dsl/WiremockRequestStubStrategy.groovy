@@ -39,7 +39,9 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 			return [:]
 		}
 		if (containsRegex(body)) {
-			return [bodyPatterns: [[matches: parseBody(JsonConverter.transformValues(body, { it.toString() }))]]]
+			return [bodyPatterns: [[matches: parseBody(JsonConverter.transformValues(body, {
+				it instanceof Pattern ? it.toString() : it
+			}))]]]
 		}
 		return [bodyPatterns: [[equalTo: parseBody(body)]]]
 	}

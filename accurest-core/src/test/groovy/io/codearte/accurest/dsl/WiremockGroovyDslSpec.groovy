@@ -148,7 +148,6 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 			stubMappingIsValidWiremockStub(wiremockStub)
 	}
 
-
 	def 'should convert groovy dsl stub with regexp Body as String to wiremock stub for the client side'() {
 		given:
 			GroovyDsl groovyDsl = GroovyDsl.make {
@@ -194,6 +193,68 @@ class WiremockGroovyDslSpec extends WiremockSpec {
         "headers": {
             "Content-Type": "text/plain"
         }
+    }
+}
+''')
+		and:
+			stubMappingIsValidWiremockStub(wiremockStub)
+	}
+
+	def 'should convert groovy dsl stub with a regexp and an integer in request body'() {
+		given:
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				request {
+					method 'PUT'
+					url '/fraudcheck'
+					body("""
+                        {
+                        "clientPesel":"${value(client(regex('[0-9]{10}')), server('1234567890'))}",
+                        "loanAmount":123.123
+                        }
+                    """
+					)
+					headers {
+						header('Content-Type', 'application/vnd.fraud.v1+json')
+					}
+
+				}
+				response {
+					status 200
+					body(
+							fraudCheckStatus: "OK",
+							rejectionReason: $(client(null), server(execute('assertThatRejectionReasonIsNull($it)')))
+					)
+					headers {
+						header('Content-Type': 'application/vnd.fraud.v1+json')
+					}
+				}
+
+			}
+		when:
+			String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+		then:
+			new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+{
+    "request": {
+        "method": "PUT",
+        "headers": {
+            "Content-Type": {
+                "equalTo": "application/vnd.fraud.v1+json"
+            }
+        },
+        "url": "/fraudcheck",
+        "bodyPatterns": [
+            {
+                "matches": "\\\\{\\"clientPesel\\":\\"[0-9]{10}\\",\\"loanAmount\\":123.123\\\\}"
+            }
+        ]
+    },
+    "response": {
+        "status": 200,
+        "headers": {
+            "Content-Type": "application/vnd.fraud.v1+json"
+        },
+        "body": "{\\"fraudCheckStatus\\":\\"OK\\",\\"rejectionReason\\":null}"
     }
 }
 ''')
