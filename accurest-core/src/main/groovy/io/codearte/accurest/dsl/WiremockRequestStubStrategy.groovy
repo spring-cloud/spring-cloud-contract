@@ -3,9 +3,11 @@ import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import io.codearte.accurest.dsl.internal.ClientRequest
 import io.codearte.accurest.dsl.internal.Request
-import io.codearte.accurest.util.JsonConverter
 
 import java.util.regex.Pattern
+
+import static io.codearte.accurest.dsl.internal.JsonStructureConverter.TEMPORARY_PATTERN_HOLDER
+import static io.codearte.accurest.dsl.internal.JsonStructureConverter.convertJsonStructureToObjectUnderstandingStructure
 
 @TypeChecked
 @PackageScope
@@ -39,11 +41,26 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 			return [:]
 		}
 		if (containsRegex(body)) {
-			return [bodyPatterns: [[matches: parseBody(JsonConverter.transformValues(body, {
-				it instanceof Pattern ? it.toString() : it
-			}))]]]
+			return [bodyPatterns: [[matches: parseBody(convertJsonStructureToObjectUnderstandingStructure(body,
+					{ it instanceof Pattern },
+					{ String json -> json.collect {
+							switch(it) {
+								case ('{'): return '\\{'
+								case ('}'): return '\\}'
+								default: return it
+							}
+						} .join('')
+					},
+					{ LinkedList list, String json ->
+						return json.replaceAll(TEMPORARY_PATTERN_HOLDER, { String a, String[] b -> list.pop() })
+					}
+			))]]]
 		}
 		return [bodyPatterns: [[equalTo: parseBody(body)]]]
+	}
+
+	protected String parseBody(Object body) {
+		return body
 	}
 
 	boolean containsRegex(Object bodyObject) {

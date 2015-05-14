@@ -183,7 +183,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
         "urlPattern": "/[0-9]{2}",
         "bodyPatterns": [
         	{
-				"matches":"{\\"personalId\\":\\"^[0-9]{11}$\\"}"
+				"matches":"\\\\{\\"personalId\\":\\"^[0-9]{11}$\\"\\\\}"
         	}
         ]
     },

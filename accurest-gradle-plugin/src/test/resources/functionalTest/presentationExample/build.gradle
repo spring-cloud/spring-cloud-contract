@@ -1,0 +1,94 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		mavenLocal()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.1.RELEASE")
+		classpath 'io.codearte.accurest:accurest-gradle-plugin:0.6.2'
+	}
+}
+
+ext {
+	spockVersion = '0.7-groovy-2.0'
+	restAssuredVersion = '2.4.0'
+
+	accurestStubsBaseDirectory = 'src/test/resources/stubs'
+}
+
+subprojects {
+	apply plugin: 'groovy'
+
+
+	repositories {
+		mavenCentral()
+		mavenLocal()
+	}
+
+	dependencies {
+		testCompile "org.codehaus.groovy:groovy-all:2.3.7"
+		testCompile "org.spockframework:spock-core:$spockVersion"
+		testCompile("junit:junit:4.12")
+		testCompile('com.github.tomakehurst:wiremock:1.52') {
+			exclude group: 'org.mortbay.jetty', module: 'servlet-api'
+		}
+	}
+}
+
+configure([project(':fraudDetectionService'), project(':loanApplicationService')]) {
+	apply plugin: 'spring-boot'
+	apply plugin: 'accurest'
+
+	ext {
+		wiremockStubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
+		wiremockStubsOutputDir = new File(wiremockStubsOutputDirRoot, 'mappings/')
+	}
+
+	accurest {
+		targetFramework = 'Spock'
+		testMode = 'MockMvc'
+		baseClassForTests = 'com.blogspot.toomuchcoding.MvcSpec'
+		contractsDslDir = file("${project.projectDir.absolutePath}/mappings/")
+		generatedTestSourcesDir = file("${project.buildDir}/generated-sources/")
+		stubsOutputDir = wiremockStubsOutputDir
+	}
+
+	jar {
+		version = '0.0.1'
+	}
+
+	dependencies {
+		compile("org.springframework.boot:spring-boot-starter-web") {
+			exclude module: "spring-boot-starter-tomcat"
+		}
+		compile("org.springframework.boot:spring-boot-starter-jetty")
+		compile("org.springframework.boot:spring-boot-starter-actuator")
+
+		testRuntime "org.spockframework:spock-spring:$spockVersion"
+		testCompile "org.springframework:spring-test"
+		testCompile "com.jayway.restassured:rest-assured:$restAssuredVersion"
+		testCompile "com.jayway.restassured:spring-mock-mvc:$restAssuredVersion"
+	}
+
+	task cleanup(type: Delete) {
+		delete 'src/test/resources/mappings', 'src/test/resources/stubs'
+	}
+
+	clean.dependsOn('cleanup')
+
+}
+
+configure(project(':fraudDetectionService')) {
+	test.dependsOn('generateWiremockClientStubs')
+}
+
+configure(project(':loanApplicationService')) {
+
+	task copyCollaboratorStubs(type: Copy) {
+		File fraudBuildDir = project(':fraudDetectionService').buildDir
+		from(new File(fraudBuildDir, "/production/${project(':fraudDetectionService').name}-stubs/"))
+		into "src/test/resources/"
+	}
+
+	generateAccurest.dependsOn('copyCollaboratorStubs')
+}
