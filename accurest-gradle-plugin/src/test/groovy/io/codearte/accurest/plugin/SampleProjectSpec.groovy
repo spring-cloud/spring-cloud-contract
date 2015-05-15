@@ -4,10 +4,10 @@ import nebula.test.IntegrationSpec
 import spock.lang.Stepwise
 
 @Stepwise
-class PresentationExampleSpec extends IntegrationSpec {
+class SampleProjectSpec extends IntegrationSpec {
 
 	void setup() {
-		copyResources("functionalTest/presentationExample", "")
+		copyResources("functionalTest/sampleProject", "")
 		runTasksSuccessfully('clean')   //delete accidental output when previously importing SimpleBoot into Idea to tweak it
 	}
 
