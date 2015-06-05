@@ -1,4 +1,6 @@
 package io.codearte.accurest.dsl
+
+import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 
 class WiremockGroovyDslSpec extends WiremockSpec {
@@ -313,6 +315,110 @@ class WiremockGroovyDslSpec extends WiremockSpec {
     ''')
 	}
 
+	def "should generate request with urlPath and queryParameters for client side"() {
+		given:
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				request {
+					method 'GET'
+					urlPath($(client("users"), server("items"))) {
+						queryParameters {
+							parameter 'limit': $(client(equalTo("20")), server(containing("10")))
+							parameter 'offset': containing("10")
+							parameter 'filter': "email"
+							parameter 'sort': ~/^[0-9]{10}$/
+							parameter 'search': $(client(notMatching(~/^\/[0-9]{2}$/)), server(containing("10")))
+							parameter 'age': notMatching("^\\w*\$")
+							parameter 'name': matching("Denis.*")
+						}
+					}
+				}
+				response {
+					status 200
+				}
+			}
+		when:
+			def json = toWiremockClientJsonStub(groovyDsl)
+		then:
+			parseJson(json) == parseJson('''
+			{
+				"request": {
+					"method": "GET",
+					"urlPath":"users",
+					"queryParameters": {
+					  "offset": {
+						"contains": "10"
+					  },
+					  "limit": {
+						"equalTo": "20"
+					  },
+					  "filter": {
+						"equalTo": "email"
+					  },
+					  "sort": {
+                        "matches": "^[0-9]{10}$"
+                      },
+                      "search": {
+                        "doesNotMatch": "^/[0-9]{2}$"
+                      },
+                      "age": {
+                        "doesNotMatch": "^\\\\w*$"
+                      },
+                      "name": {
+                        "matches": "Denis.*"
+                      }
+					}
+				},
+				"response": {
+					"status": 200,
+				}
+			}
+			''')
+		and:
+			stubMappingIsValidWiremockStub(json)
+	}
+
+	def "should generate request with url and queryParameters for client side"() {
+		given:
+		GroovyDsl groovyDsl = GroovyDsl.make {
+			request {
+				method 'GET'
+				url(regex(/users\/[0-9]*/)) {
+					queryParameters {
+						parameter 'age': notMatching("^\\w*\$")
+						parameter 'name': matching("Denis.*")
+					}
+				}
+			}
+			response {
+				status 200
+			}
+		}
+		when:
+		def json = toWiremockClientJsonStub(groovyDsl)
+		then:
+		parseJson(json) == parseJson('''
+			{
+				"request": {
+					"method": "GET",
+					"urlPattern": "users/[0-9]*",
+					"queryParameters": {
+                      "age": {
+                        "doesNotMatch": "^\\\\w*$"
+                      },
+                      "name": {
+                        "matches": "Denis.*"
+                      }
+					}
+				},
+				"response": {
+					"status": 200,
+				}
+			}
+			''')
+		and:
+		stubMappingIsValidWiremockStub(json)
+	}
+
 	def "should generate stub with some headers section for client side"() {
 		given:
 			GroovyDsl groovyDsl = GroovyDsl.make {
@@ -346,5 +452,17 @@ class WiremockGroovyDslSpec extends WiremockSpec {
         }
     }
     ''')
+	}
+
+	def toJsonString(value) {
+		new JsonBuilder(value).toPrettyString()
+	}
+
+	def parseJson(json) {
+		new JsonSlurper().parseText(json)
+	}
+
+	def toWiremockClientJsonStub(groovyDsl) {
+		new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
 	}
 }

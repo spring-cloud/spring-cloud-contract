@@ -2,6 +2,9 @@ package io.codearte.accurest.dsl
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import io.codearte.accurest.dsl.internal.ClientRequest
+import io.codearte.accurest.dsl.internal.MatchingStrategy
+import io.codearte.accurest.dsl.internal.QueryParameter
+import io.codearte.accurest.dsl.internal.QueryParameters
 import io.codearte.accurest.dsl.internal.Request
 
 import java.util.regex.Pattern
@@ -27,12 +30,47 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 	private Map<String, Object> buildRequestContent(ClientRequest request) {
 		return ([method    : request?.method?.clientValue,
 		        headers   : buildClientRequestHeadersSection(request.headers)
-		] << appendUrl(request) << appendBody(request)).findAll { it.value }
+		] << appendUrl(request) << appendQueryParameters(request) << appendBody(request)).findAll { it.value }
 	}
 
 	private Map<String, Object> appendUrl(ClientRequest clientRequest) {
-		Object url = clientRequest?.url?.clientValue
-		return url instanceof Pattern ? [urlPattern: ((Pattern)url).pattern()] : [url: url]
+		def urlPath = clientRequest?.urlPath?.clientValue
+		if (urlPath) {
+			return [urlPath: urlPath]
+		}
+		def url = clientRequest?.url?.clientValue
+		return url instanceof Pattern ? [urlPattern: url.pattern()] : [url: url]
+	}
+
+	private Map<String, Object> appendQueryParameters(ClientRequest clientRequest) {
+		def queryParameters = clientRequest?.urlPath?.queryParameters ?: clientRequest?.url?.queryParameters
+		return queryParameters && !queryParameters.parameters.isEmpty() ?
+				[queryParameters: buildUrlPathQueryParameters(queryParameters)] : [:]
+	}
+
+	private Map buildUrlPathQueryParameters(QueryParameters queryParameters) {
+		return queryParameters.parameters.collectEntries { QueryParameter param ->
+			parseQueryParameter(param.name, param.clientValue)
+		}
+	}
+
+	protected Map parseQueryParameter(String name, MatchingStrategy matchingStrategy) {
+		return buildQueryParameter(name, matchingStrategy.clientValue, matchingStrategy.type)
+	}
+
+	protected Map parseQueryParameter(String name, Object value) {
+		return buildQueryParameter(name, value, MatchingStrategy.Type.EQUAL_TO)
+	}
+
+	protected Map parseQueryParameter(String name, Pattern pattern) {
+		return buildQueryParameter(name, pattern.pattern(), MatchingStrategy.Type.MATCHING)
+	}
+
+	private Map buildQueryParameter(String name, Object value, MatchingStrategy.Type type) {
+		if (value instanceof Pattern) {
+			value = value.pattern()
+		}
+		return [(name): [(type.name) : value]]
 	}
 
 	private Map<String, Object> appendBody(ClientRequest clientRequest) {
