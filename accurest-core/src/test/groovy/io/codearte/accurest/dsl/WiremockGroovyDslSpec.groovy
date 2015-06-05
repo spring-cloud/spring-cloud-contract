@@ -343,7 +343,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 			{
 				"request": {
 					"method": "GET",
-					"urlPath":"users",
+					"urlPath": "users",
 					"queryParameters": {
 					  "offset": {
 						"contains": "10"
@@ -375,6 +375,64 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 			''')
 		and:
 			stubMappingIsValidWiremockStub(json)
+	}
+
+	def "should generate request with urlPath for client side"() {
+		given:
+		GroovyDsl groovyDsl = GroovyDsl.make {
+			request {
+				method 'GET'
+				urlPath $(client("boxes"), server("items"))
+			}
+			response {
+				status 200
+			}
+		}
+		when:
+		def json = toWiremockClientJsonStub(groovyDsl)
+		then:
+		parseJson(json) == parseJson('''
+			{
+				"request": {
+					"method": "GET",
+					"urlPath": "boxes"
+				},
+				"response": {
+					"status": 200,
+				}
+			}
+			''')
+		and:
+		stubMappingIsValidWiremockStub(json)
+	}
+
+	def "should generate simple request with urlPath for client side"() {
+		given:
+		GroovyDsl groovyDsl = GroovyDsl.make {
+			request {
+				method 'GET'
+				urlPath "boxes"
+			}
+			response {
+				status 200
+			}
+		}
+		when:
+		def json = toWiremockClientJsonStub(groovyDsl)
+		then:
+		parseJson(json) == parseJson('''
+			{
+				"request": {
+					"method": "GET",
+					"urlPath": "boxes"
+				},
+				"response": {
+					"status": 200,
+				}
+			}
+			''')
+		and:
+		stubMappingIsValidWiremockStub(json)
 	}
 
 	def "should generate request with url and queryParameters for client side"() {
