@@ -7,7 +7,7 @@ import groovy.transform.ToString;
 @EqualsAndHashCode(includeFields = true)
 @ToString(includePackage = false, includeFields = true, ignoreNulls = true, includeNames = true)
 @CompileStatic
-public class QueryParameter extends DslProperty {
+class QueryParameter extends DslProperty {
 
     String name
 

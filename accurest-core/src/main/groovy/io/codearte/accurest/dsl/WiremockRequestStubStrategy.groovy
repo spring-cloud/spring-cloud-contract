@@ -34,42 +34,43 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 	}
 
 	private Map<String, Object> appendUrl(ClientRequest clientRequest) {
-		def urlPath = clientRequest?.urlPath?.clientValue
+		Object urlPath = clientRequest?.urlPath?.clientValue
 		if (urlPath) {
 			return [urlPath: urlPath]
 		}
-		def url = clientRequest?.url?.clientValue
+		Object url = clientRequest?.url?.clientValue
 		return url instanceof Pattern ? [urlPattern: url.pattern()] : [url: url]
 	}
 
 	private Map<String, Object> appendQueryParameters(ClientRequest clientRequest) {
-		def queryParameters = clientRequest?.urlPath?.queryParameters ?: clientRequest?.url?.queryParameters
+		QueryParameters queryParameters = clientRequest?.urlPath?.queryParameters ?: clientRequest?.url?.queryParameters
 		return queryParameters && !queryParameters.parameters.isEmpty() ?
 				[queryParameters: buildUrlPathQueryParameters(queryParameters)] : [:]
 	}
 
-	private Map buildUrlPathQueryParameters(QueryParameters queryParameters) {
+	private Map<String, Object> buildUrlPathQueryParameters(QueryParameters queryParameters) {
 		return queryParameters.parameters.collectEntries { QueryParameter param ->
 			parseQueryParameter(param.name, param.clientValue)
 		}
 	}
 
-	protected Map parseQueryParameter(String name, MatchingStrategy matchingStrategy) {
+	protected Map<String, Object> parseQueryParameter(String name, MatchingStrategy matchingStrategy) {
 		return buildQueryParameter(name, matchingStrategy.clientValue, matchingStrategy.type)
 	}
 
-	protected Map parseQueryParameter(String name, Object value) {
+	protected Map<String, Object> parseQueryParameter(String name, Object value) {
 		return buildQueryParameter(name, value, MatchingStrategy.Type.EQUAL_TO)
 	}
 
-	protected Map parseQueryParameter(String name, Pattern pattern) {
+	protected Map<String, Object> parseQueryParameter(String name, Pattern pattern) {
 		return buildQueryParameter(name, pattern.pattern(), MatchingStrategy.Type.MATCHING)
 	}
 
-	private Map buildQueryParameter(String name, Object value, MatchingStrategy.Type type) {
-		if (value instanceof Pattern) {
-			value = value.pattern()
-		}
+	private Map<String, Object> buildQueryParameter(String name, Pattern pattern, MatchingStrategy.Type type) {
+		return buildQueryParameter(name, pattern.pattern(), type)
+	}
+
+	private Map<String, Object> buildQueryParameter(String name, Object value, MatchingStrategy.Type type) {
 		return [(name): [(type.name) : value]]
 	}
 

@@ -512,15 +512,15 @@ class WiremockGroovyDslSpec extends WiremockSpec {
     ''')
 	}
 
-	def toJsonString(value) {
+	String toJsonString(value) {
 		new JsonBuilder(value).toPrettyString()
 	}
 
-	def parseJson(json) {
+	Object parseJson(json) {
 		new JsonSlurper().parseText(json)
 	}
 
-	def toWiremockClientJsonStub(groovyDsl) {
+	String toWiremockClientJsonStub(groovyDsl) {
 		new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
 	}
 }

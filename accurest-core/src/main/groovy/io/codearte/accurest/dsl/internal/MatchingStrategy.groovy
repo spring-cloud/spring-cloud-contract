@@ -7,7 +7,7 @@ import groovy.transform.ToString;
 @EqualsAndHashCode(includeFields = true)
 @ToString(includePackage = false, includeFields = true, ignoreNulls = true, includeNames = true)
 @CompileStatic
-public class MatchingStrategy extends DslProperty {
+class MatchingStrategy extends DslProperty {
 
     Type type
 
