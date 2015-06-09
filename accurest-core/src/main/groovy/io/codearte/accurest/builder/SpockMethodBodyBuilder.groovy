@@ -5,6 +5,11 @@ import groovy.transform.PackageScope
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.internal.ExecutionProperty
 import io.codearte.accurest.dsl.internal.Header
+import io.codearte.accurest.dsl.internal.MatchingStrategy
+import io.codearte.accurest.dsl.internal.QueryParameter
+import io.codearte.accurest.dsl.internal.Request
+import io.codearte.accurest.dsl.internal.Response
+import io.codearte.accurest.dsl.internal.UrlPath
 
 import java.util.regex.Pattern
 
@@ -20,46 +25,81 @@ class SpockMethodBodyBuilder {
 	}
 
 	void appendTo(BlockBuilder blockBuilder) {
-		blockBuilder.startBlock()
-		blockBuilder.addLine('given:').startBlock()
-		blockBuilder.addLine('def request = given()')
-		blockBuilder.indent()
-		stubDefinition.request.headers?.collect { Header header ->
-			blockBuilder.addLine(".header('${header.name}', '${header.serverValue}')")
-		}
-		if (stubDefinition.request.body) {
-			String matches = new JsonOutput().toJson(stubDefinition.request.body.serverValue)
-			blockBuilder.addLine(".body('$matches')")
-		}
-
-		blockBuilder.unindent().endBlock().addEmptyLine()
-
-		blockBuilder.addLine('when:').startBlock()
-		blockBuilder.addLine('def response = given().spec(request)')
-		blockBuilder.indent()
-		blockBuilder.addLine(".${stubDefinition.request.method.serverValue.toLowerCase()}(\"$stubDefinition.request.url.serverValue\")")
-		blockBuilder.unindent().endBlock().addEmptyLine()
-
-		blockBuilder.addLine('then:').startBlock()
-		blockBuilder.addLine("response.statusCode == $stubDefinition.response.status.serverValue")
-
-		stubDefinition.response.headers?.collect { Header header ->
-			blockBuilder.addLine("response.header('$header.name') == '$header.serverValue'")
-		}
-		if (stubDefinition.response.body) {
-			blockBuilder.endBlock()
-			blockBuilder.addLine('and:').startBlock()
-			blockBuilder.addLine('def responseBody = new JsonSlurper().parseText(response.body.asString())')
-			def responseBody = stubDefinition.response.body.serverValue
-			if (responseBody instanceof List) {
-				processArrayElements(responseBody, "", blockBuilder)
-			} else {
-				processMapElement(responseBody, blockBuilder, "")
+		Request request = stubDefinition.request
+		Response response = stubDefinition.response
+		blockBuilder.with {
+			startBlock()
+			addLine('given:').startBlock()
+			addLine('def request = given()')
+			indent()
+			request.headers?.collect { Header header ->
+				addLine(".header('${header.name}', '${header.serverValue}')")
 			}
-		}
-		blockBuilder.endBlock()
+			if (request.body) {
+				String matches = new JsonOutput().toJson(request.body.serverValue)
+				addLine(".body('$matches')")
+			}
 
-		blockBuilder.endBlock()
+			unindent().endBlock().addEmptyLine()
+
+			addLine('when:').startBlock()
+			addLine('def response = given().spec(request)')
+			indent()
+
+			String url = buildUrl(request)
+			String method = request.method.serverValue.toLowerCase()
+
+			blockBuilder.addLine(/.${method}("$url")/)
+			unindent().endBlock().addEmptyLine()
+
+			addLine('then:').startBlock()
+			addLine("response.statusCode == $response.status.serverValue")
+
+			response.headers?.collect { Header header ->
+				addLine("response.header('$header.name') == '$header.serverValue'")
+			}
+			if (response.body) {
+				endBlock()
+				addLine('and:').startBlock()
+				addLine('def responseBody = new JsonSlurper().parseText(response.body.asString())')
+				def responseBody = response.body.serverValue
+				if (responseBody instanceof List) {
+					processArrayElements(responseBody, "", blockBuilder)
+				} else {
+					processMapElement(responseBody, blockBuilder, "")
+				}
+			}
+			endBlock()
+
+			endBlock()
+		}
+	}
+
+	private String buildUrl(Request request) {
+		if (request.url)
+			return request.url.serverValue;
+		if (request.urlPath)
+			return buildUrlFromUrlPath(request.urlPath)
+		throw new IllegalStateException("URL is not set!")
+	}
+
+	private String buildUrlFromUrlPath(UrlPath urlPath) {
+		String params = urlPath.queryParameters.parameters.inject([]) { result, param ->
+			result << "${param.name}=${URLEncoder.encode(resolveParamValue(param).toString(), "UTF8")}"
+		}.join('&')
+		return "$urlPath.serverValue?$params"
+	}
+
+	private String resolveParamValue(QueryParameter param) {
+		resolveParamValue(param.serverValue)
+	}
+
+	private String resolveParamValue(Object value) {
+		value.toString()
+	}
+
+	private String resolveParamValue(MatchingStrategy matchingStrategy) {
+		matchingStrategy.serverValue.toString()
 	}
 
 	private void processBodyElement(BlockBuilder blockBuilder, String rootProperty, def element) {
