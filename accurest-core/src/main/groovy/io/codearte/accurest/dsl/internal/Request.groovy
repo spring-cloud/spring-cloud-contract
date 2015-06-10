@@ -11,6 +11,7 @@ class Request extends Common {
 
 	DslProperty method
 	Url url
+	UrlPath urlPath
 	Headers headers
 	Body body
 
@@ -20,6 +21,7 @@ class Request extends Common {
 	Request(Request request) {
 		this.method = request.method
 		this.url = request.url
+		this.urlPath = request.urlPath
 		this.headers = request.headers
 		this.body = request.body
 	}
@@ -32,12 +34,44 @@ class Request extends Common {
 		this.method = toDslProperty(method)
 	}
 
-	void url(String url) {
+	void url(Object url) {
 		this.url = new Url(url)
 	}
 
 	void url(DslProperty url) {
 		this.url = new Url(url)
+	}
+
+	void url(Object url, @DelegatesTo(UrlPath) Closure closure) {
+		this.url = new Url(url)
+		closure.delegate = this.url
+		closure()
+	}
+
+	void url(DslProperty url, @DelegatesTo(UrlPath) Closure closure) {
+		this.url = new Url(url)
+		closure.delegate = this.url
+		closure()
+	}
+
+	void urlPath(String path) {
+		this.urlPath = new UrlPath(path)
+	}
+
+	void urlPath(DslProperty path) {
+		this.urlPath = new UrlPath(path)
+	}
+
+	void urlPath(String path, @DelegatesTo(UrlPath) Closure closure) {
+		this.urlPath = new UrlPath(path)
+		closure.delegate = urlPath
+		closure()
+	}
+
+	void urlPath(DslProperty path, @DelegatesTo(UrlPath) Closure closure) {
+		this.urlPath = new UrlPath(path)
+		closure.delegate = urlPath
+		closure()
 	}
 
 	void headers(@DelegatesTo(Headers) Closure closure) {
