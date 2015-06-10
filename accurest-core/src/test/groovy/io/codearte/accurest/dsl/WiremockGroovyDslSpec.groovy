@@ -453,7 +453,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 		}
 		then:
 			def e = thrown(IllegalStateException)
-			e.message.contains "Url can't be a pattern"
+			e.message.contains "Url can't be a pattern for the server side"
 	}
 
 	def "should not allow regexp in query parameter for server value"() {
@@ -473,7 +473,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
             }
 		then:
             def e = thrown(IllegalStateException)
-            e.message.contains "Query parameter 'age' can't be a pattern"
+            e.message.contains "Query parameter 'age' can't be a pattern for the server side"
 	}
 
 	def "should not allow query parameter unresolvable for a server value"() {
@@ -494,7 +494,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
             }
 		then:
             def e = thrown(IllegalStateException)
-            e.message.contains "Query parameter 'age' can't be of matching type: NOT_MATCHING"
+            e.message.contains "Query parameter 'age' can't be of a matching type: NOT_MATCHING for the server side"
 	}
 
 	def "should generate request with url and queryParameters for client side"() {

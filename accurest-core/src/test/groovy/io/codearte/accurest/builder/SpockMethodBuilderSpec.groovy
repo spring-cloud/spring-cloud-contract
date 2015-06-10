@@ -171,40 +171,40 @@ class SpockMethodBuilderSpec extends Specification {
 
 	def "should generate a call with an url path and query parameters"() {
 		given:
-		GroovyDsl contractDsl = GroovyDsl.make {
-			request {
-				method 'GET'
-				urlPath('/users') {
-					queryParameters {
-						parameter 'limit': $(client(equalTo("20")), server(equalTo("10")))
-						parameter 'offset': $(client(containing("20")), server(equalTo("20")))
-						parameter 'filter': "email"
-						parameter 'sort': equalTo("name")
-						parameter 'search': $(client(notMatching(~/^\/[0-9]{2}$/)), server("55"))
-						parameter 'age': $(client(notMatching("^\\w*\$")), server("99"))
-						parameter 'name': $(client(matching("Denis.*")), server("Denis.Stepanov"))
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method 'GET'
+					urlPath('/users') {
+						queryParameters {
+							parameter 'limit': $(client(equalTo("20")), server(equalTo("10")))
+							parameter 'offset': $(client(containing("20")), server(equalTo("20")))
+							parameter 'filter': "email"
+							parameter 'sort': equalTo("name")
+							parameter 'search': $(client(notMatching(~/^\/[0-9]{2}$/)), server("55"))
+							parameter 'age': $(client(notMatching("^\\w*\$")), server("99"))
+							parameter 'name': $(client(matching("Denis.*")), server("Denis.Stepanov"))
+						}
 					}
 				}
-			}
-			response {
-				status 200
-				body """
-				{
-					"property1": "a",
-					"property2": "b"
+				response {
+					status 200
+					body """
+					{
+						"property1": "a",
+						"property2": "b"
+					}
+					"""
 				}
-				"""
 			}
-		}
-		SpockMethodBodyBuilder builder = new SpockMethodBodyBuilder(contractDsl)
-		BlockBuilder blockBuilder = new BlockBuilder(" ")
+			SpockMethodBodyBuilder builder = new SpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
-		builder.appendTo(blockBuilder)
-		def spockTest = blockBuilder.toString()
+			builder.appendTo(blockBuilder)
+			def spockTest = blockBuilder.toString()
 		then:
-		spockTest.contains('get("/users?limit=10&offset=20&filter=email&sort=name&search=55&age=99&name=Denis.Stepanov")')
-		spockTest.contains('responseBody.property1 == "a"')
-		spockTest.contains('responseBody.property2 == "b"')
+			spockTest.contains('get("/users?limit=10&offset=20&filter=email&sort=name&search=55&age=99&name=Denis.Stepanov")')
+			spockTest.contains('responseBody.property1 == "a"')
+			spockTest.contains('responseBody.property2 == "b"')
 	}
 
 }
