@@ -19,6 +19,8 @@ class Body extends DslProperty {
 	private static final Pattern TEMPORARY_PATTERN_HOLDER = Pattern.compile('REGEXP>>(.*)<<')
 	private static final String JSON_VALUE_PATTERN_FOR_REGEX = 'REGEXP>>%s<<'
 
+	boolean containsPattern
+
 	Body(Map<String, DslProperty> body) {
 		super(extractValue(body, {it.clientValue}), extractValue(body, {it.serverValue}))
 	}
@@ -39,10 +41,16 @@ class Body extends DslProperty {
 
 	Body(GString bodyAsValue) {
 		super(extractValue(bodyAsValue, {it.clientValue}), extractValue(bodyAsValue, {it.serverValue}))
+		containsPattern = containsPattern(bodyAsValue)
 	}
 
 	Body(DslProperty bodyAsValue) {
 		super(bodyAsValue.clientValue, bodyAsValue.serverValue)
+	}
+
+	private boolean containsPattern(GString bodyAsValue) {
+		return bodyAsValue.values.collect { it instanceof DslProperty ? it.clientValue : it }
+				.find { it instanceof Pattern }
 	}
 
 	/**
