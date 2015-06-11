@@ -80,26 +80,24 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 			return [:]
 		}
 		if (clientRequest.body?.containsPattern) {
-			return [bodyPatterns: [[matches: escapeBodyForJson(body)]]]
+			return [bodyPatterns: parseMatchesBody(body)]
 		}
 		return [bodyPatterns: [[(getMatchType()): parseBody(body)]]]
 	}
 
-	private Object escapeBodyForJson(Object body) {
-		return parseBody(convertJsonStructureToObjectUnderstandingStructure(body,
-				{ it instanceof Pattern },
-				{ String json -> json.collect {
-					switch(it) {
-						case ('{'): return '\\{'
-						case ('}'): return '\\}'
-						default: return it
-					}
-				} .join('')
-				},
-				{ LinkedList list, String json ->
-					return json.replaceAll(TEMPORARY_PATTERN_HOLDER, { String a, String[] b -> list.pop() })
+	private Object parseMatchesBody(def responseBodyObject) {
+		def regexList = new ArrayList<>()
+		responseBodyObject.each { k, v ->
+			if (v instanceof List) {
+				v.each {
+					regexList.addAll(parseMatchesBody((Map<String, Object>)it))
 				}
-		))
+			} else {
+				String regex = ".*${k}\":.?\"${v}\".*"
+				regexList.add([matches: regex]);
+			}
+		}
+		return regexList
 	}
 
 	private String getMatchType() {

@@ -161,7 +161,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 					}
 					body """
 							{
-								"name": "Jan"
+								"name": "${value(client('Jan'), server('Honza'))}"
 							}
 							"""
 				}
@@ -270,22 +270,20 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 		then:
 			new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
 {
-    "request": {
-        "method": "GET",
-        "urlPattern": "/[0-9]{2}",
-        "bodyPatterns": [
-        	{
-				"matches":"\\\\{\\"personalId\\":\\"^[0-9]{11}$\\"\\\\}"
-        	}
-        ]
-    },
-    "response": {
-        "status": 200,
-        "body": "{\\"name\\":\\"Jan\\"}",
-        "headers": {
-            "Content-Type": "text/plain"
-        }
-    }
+	"request": {
+		"method": "GET",
+		"urlPattern": "/[0-9]{2}",
+		"bodyPatterns": [
+			{"matches": ".*personalId\\":.?\\"^[0-9]{11}$\\".*"}
+		]
+	},
+	"response": {
+		"status": 200,
+		"body": "{\\"name\\":\\"Jan\\"}",
+		"headers": {
+			"Content-Type": "text/plain"
+		}
+	}
 }
 ''')
 		and:
@@ -336,9 +334,8 @@ class WiremockGroovyDslSpec extends WiremockSpec {
         },
         "url": "/fraudcheck",
         "bodyPatterns": [
-            {
-                "matches": "\\\\{\\"clientPesel\\":\\"[0-9]{10}\\",\\"loanAmount\\":123.123\\\\}"
-            }
+			{"matches": ".*clientPesel\\":.?\\"[0-9]{10}\\".*"},
+			{"matches": ".*loanAmount\\":.?\\"123.123\\".*"}
         ]
     },
     "response": {
@@ -658,10 +655,78 @@ class WiremockGroovyDslSpec extends WiremockSpec {
             },
             "X-Custom-Header": {
                 "matches": "^.*2134.*$"
-            }
-        }
-    }
-    ''')
+			}
+		}
+	}
+	''')
+	}
+
+	def 'should convert groovy dsl stub with rich tree Body as String to wiremock stub for the client side'() {
+		given:
+		GroovyDsl groovyDsl = GroovyDsl.make {
+			request {
+				method('GET')
+				url $(client(~/\/[0-9]{2}/), server('/12'))
+				body """\
+					{
+					  "personalId": "${value(client(regex('[0-9]{11}')), server('57593728525'))}",
+					  "firstName": "${value(client(regex('.*')), server('Bruce'))}",
+					  "lastName": "${value(client(regex('.*')), server('Lee'))}",
+					  "birthDate": "${value(client(regex('[0-9]{4}-[0-9]{2}-[0-9]{2}')), server('1985-12-12'))}",
+					  "errors": [
+								{
+								  "propertyName": "${value(client(regex('[0-9]{2}')), server('04'))}",
+								  "providerValue": "Test"
+								},
+								{
+								  "propertyName": "${value(client(regex('[0-9]{2}')), server('08'))}",
+								  "providerValue": "Test"
+								}
+							  ]
+					}
+					"""
+			}
+			response {
+				status 200
+				body("""\
+							{
+								"name": "Jan"
+							}
+						"""
+				)
+				headers {
+					header 'Content-Type': 'text/plain'
+				}
+			}
+		}
+		when:
+		String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+		then:
+		new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+		{
+			"request": {
+						"method": "GET",
+						"urlPattern": "/[0-9]{2}",
+						"bodyPatterns": [
+										{"matches": ".*birthDate\\":.?\\"[0-9]{4}-[0-9]{2}-[0-9]{2}\\".*"},
+										{"matches": ".*propertyName\\":.?\\"[0-9]{2}\\".*"},
+										{"matches": ".*providerValue\\":.?\\"Test\\".*"},
+										{"matches": ".*propertyName\\":.?\\"[0-9]{2}\\".*"},
+										{"matches": ".*providerValue\\":.?\\"Test\\".*"},
+										{"matches": ".*firstName\\":.?\\".*\\".*"},
+										{"matches": ".*lastName\\":.?\\".*\\".*"},
+										{"matches": ".*personalId\\":.?\\"[0-9]{11}\\".*"}
+										]
+						},
+			"response": {
+						"status": 200,
+						"body": "{\\"name\\":\\"Jan\\"}",
+						"headers": {
+									"Content-Type": "text/plain"
+									}
+						}
+		}
+		''')
 	}
 
 	String toJsonString(value) {
