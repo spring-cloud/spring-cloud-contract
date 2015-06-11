@@ -1,5 +1,6 @@
 package io.codearte.accurest.dsl.internal
 
+import groovy.json.JsonException
 import groovy.json.JsonSlurper
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
@@ -8,6 +9,8 @@ import org.codehaus.groovy.runtime.GStringImpl
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+
+import static org.apache.commons.lang3.StringEscapeUtils.escapeXml11
 
 @ToString(includePackage = false, includeFields = true, includeNames = true)
 @EqualsAndHashCode(includeFields = true)
@@ -55,13 +58,49 @@ class Body extends DslProperty {
 	 * @return JSON structure with replaced client / server side parts
 	 */
 	private static Object extractValue(GString bodyAsValue, Closure valueProvider) {
-		GString gString = new GStringImpl(bodyAsValue.values.clone(), bodyAsValue.strings.clone())
-		Object[] values = bodyAsValue.values.collect { it instanceof DslProperty ? valueProvider(it) : it } as Object[]
-		Object[] valuesWithRegexpsAsTransformedStrings = values.collect {
-			it instanceof Pattern ? String.format(JSON_VALUE_PATTERN_FOR_REGEX, it.toString())  : it
-		} as Object[]
-		def parsedJson = new JsonSlurper().parseText(new GStringImpl(valuesWithRegexpsAsTransformedStrings, gString.strings))
+		try {
+			return extractValueForJSON(bodyAsValue, valueProvider)
+		} catch(JsonException e) {
+			// Not a JSON format
+			return extractValueForXML(bodyAsValue, valueProvider)
+		}
+		return bodyAsValue
+	}
+
+	private static Object extractValueForJSON(GString bodyAsValue, Closure valueProvider) {
+		GString transformedString = new GStringImpl(
+				bodyAsValue.values.collect { transformJSONStringValue(it, valueProvider) } as Object[],
+				bodyAsValue.strings.clone()
+		)
+		def parsedJson = new JsonSlurper().parseText(transformedString)
 		return convertAllTemporaryRegexPlaceholdersBackToPatterns(parsedJson)
+	}
+
+	private static GStringImpl extractValueForXML(GString bodyAsValue, Closure valueProvider) {
+		return new GStringImpl(
+				bodyAsValue.values.collect { transformXMLStringValue(it, valueProvider) } as Object[],
+				bodyAsValue.strings.clone()
+		)
+	}
+
+	private static String transformJSONStringValue(Object obj, Closure valueProvider) {
+		return obj.toString()
+	}
+
+	private static String transformJSONStringValue(DslProperty dslProperty, Closure valueProvider) {
+		return transformJSONStringValue(valueProvider(dslProperty), valueProvider)
+	}
+
+	private static String transformJSONStringValue(Pattern pattern, Closure valueProvider) {
+		return String.format(JSON_VALUE_PATTERN_FOR_REGEX, pattern.pattern())
+	}
+
+	private static String transformXMLStringValue(Object obj, Closure valueProvider) {
+		return escapeXml11(obj.toString())
+	}
+
+	private static String transformXMLStringValue(DslProperty dslProperty, Closure valueProvider) {
+		return transformXMLStringValue(valueProvider(dslProperty), valueProvider)
 	}
 
 	private static Object convertAllTemporaryRegexPlaceholdersBackToPatterns(parsedJson) {
