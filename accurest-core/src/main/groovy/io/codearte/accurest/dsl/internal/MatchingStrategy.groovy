@@ -9,26 +9,39 @@ import groovy.transform.ToString;
 @CompileStatic
 class MatchingStrategy extends DslProperty {
 
-    Type type
+	Type type
+	JSONCompareMode jsonCompareMode
 
-    MatchingStrategy(Object value, Type type) {
-        super(value)
-        this.type = type
-    }
+	MatchingStrategy(Object value, Type type) {
+		this(value, type, null)
+	}
 
-    MatchingStrategy(DslProperty value, Type type) {
-        super(value.clientValue, value.serverValue)
-        this.type = type
-    }
+	MatchingStrategy(Object value, Type type, JSONCompareMode jsonCompareMode) {
+		super(value)
+		this.type = type
+		this.jsonCompareMode = jsonCompareMode
+	}
 
-    enum Type {
-        EQUAL_TO("equalTo"), CONTAINS("contains"), MATCHING("matches"), NOT_MATCHING("doesNotMatch")
+	MatchingStrategy(DslProperty value, Type type) {
+		this(value, type, null)
+	}
 
-        final String name
+	MatchingStrategy(DslProperty value, Type type, JSONCompareMode jsonCompareMode) {
+		super(value.clientValue, value.serverValue)
+		this.type = type
+		this.jsonCompareMode = jsonCompareMode
+	}
 
-        Type(name) {
-            this.name = name
-        }
-    }
+	enum Type {
+
+		EQUAL_TO("equalTo"), CONTAINS("contains"), MATCHING("matches"), NOT_MATCHING("doesNotMatch"),
+		EQUAL_TO_JSON("equalToJson"), EQUAL_TO_XML("equalToXml")
+
+		final String name
+
+		Type(name) {
+			this.name = name
+		}
+	}
 
 }

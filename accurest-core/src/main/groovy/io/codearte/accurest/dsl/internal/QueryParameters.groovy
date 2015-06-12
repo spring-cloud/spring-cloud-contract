@@ -20,20 +20,4 @@ class QueryParameters  {
         parameters << new QueryParameter(parameterName, parameterValue)
     }
 
-    MatchingStrategy equalTo(Object value) {
-        return new MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO)
-    }
-
-    MatchingStrategy containing(Object value) {
-        return new MatchingStrategy(value, MatchingStrategy.Type.CONTAINS)
-    }
-
-    MatchingStrategy matching(Object value) {
-        return new MatchingStrategy(value, MatchingStrategy.Type.MATCHING)
-    }
-
-    MatchingStrategy notMatching(Object value) {
-        return new MatchingStrategy(value, MatchingStrategy.Type.NOT_MATCHING)
-    }
-
 }

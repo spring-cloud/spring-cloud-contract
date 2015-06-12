@@ -52,7 +52,7 @@ class BasicFunctionalSpec extends IntegrationSpec {
         },
         "url": "/api/12",
         "bodyPatterns": [
-            { "equalTo": "[{\\"text\\":\\"Gonna see you at Warsaw\\"}]" }
+            { "equalToJson": "[{\\"text\\":\\"Gonna see you at Warsaw\\"}]" }
         ]
     },
     "response": {

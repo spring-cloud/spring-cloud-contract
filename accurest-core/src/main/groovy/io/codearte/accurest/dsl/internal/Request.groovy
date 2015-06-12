@@ -3,6 +3,7 @@ import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
+import groovy.xml.MarkupBuilder
 
 @TypeChecked
 @EqualsAndHashCode
@@ -88,6 +89,10 @@ class Request extends Common {
 		this.body = new Body(convertObjectsToDslProperties(body))
 	}
 
+	void body(DslProperty dslProperty) {
+		this.body = new Body(dslProperty)
+	}
+
 	void body(Object bodyAsValue) {
 		this.body = new Body(bodyAsValue)
 	}
@@ -95,6 +100,51 @@ class Request extends Common {
 	Body getBody() {
 		return body
 	}
+
+	MatchingStrategy equalTo(Object value) {
+		return new MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO)
+	}
+
+	MatchingStrategy containing(Object value) {
+		return new MatchingStrategy(value, MatchingStrategy.Type.CONTAINS)
+	}
+
+	MatchingStrategy matching(Object value) {
+		return new MatchingStrategy(value, MatchingStrategy.Type.MATCHING)
+	}
+
+	MatchingStrategy notMatching(Object value) {
+		return new MatchingStrategy(value, MatchingStrategy.Type.NOT_MATCHING)
+	}
+
+	MatchingStrategy equalToXml(Object value) {
+		return new MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO_XML)
+	}
+
+	MatchingStrategy equalToJson(Object value) {
+		return new MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO_JSON)
+	}
+
+	MatchingStrategy equalToJson(Object value, JSONCompareMode jsonCompareMode) {
+		return new MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO_JSON)
+	}
+
+	MatchingStrategy equalToJsonStrictly(Object value) {
+		return new MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO_JSON, JSONCompareMode.STRICT)
+	}
+
+	MatchingStrategy equalToJsonLeniently(Object value) {
+		return new MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO_JSON, JSONCompareMode.LENIENT)
+	}
+
+	MatchingStrategy equalToJsonNonExtensibly(Object value) {
+		return new MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO_JSON, JSONCompareMode.NON_EXTENSIBLE)
+	}
+
+	MatchingStrategy equalToJsonWithStrictOrder(Object value) {
+		return new MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO_JSON, JSONCompareMode.STRICT_ORDER)
+	}
+
 }
 
 @CompileStatic
