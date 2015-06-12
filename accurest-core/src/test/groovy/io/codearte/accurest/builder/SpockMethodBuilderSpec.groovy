@@ -1,6 +1,7 @@
 package io.codearte.accurest.builder
 
 import io.codearte.accurest.dsl.GroovyDsl
+import spock.lang.Issue
 import spock.lang.Specification
 
 /**
@@ -30,6 +31,35 @@ class SpockMethodBuilderSpec extends Specification {
 		then:
 			blockBuilder.toString().contains("responseBody.property1 == \"a\"")
 			blockBuilder.toString().contains("responseBody.property2 == \"b\"")
+	}
+
+	@Issue("#79")
+	def "should generate assertions for simple response body constructed from map"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method "GET"
+					url "test"
+				}
+				response {
+					status 200
+					body (
+							property1: 'a',
+							property2: [
+							        [a: 'sth'],
+							        [b: 'sthElse']
+							]
+					)
+				}
+			}
+			SpockMethodBodyBuilder builder = new SpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			blockBuilder.toString().contains("responseBody.property1 == \"a\"")
+			blockBuilder.toString().contains("responseBody.property2[0].a == \"sth\"")
+			blockBuilder.toString().contains("responseBody.property2[1].b == \"sthElse\"")
 	}
 
 	def "should generate assertions for array in response body"() {
