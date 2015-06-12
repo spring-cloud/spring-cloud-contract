@@ -2,7 +2,6 @@ package io.codearte.accurest.dsl
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import io.codearte.accurest.dsl.internal.ClientRequest
-import io.codearte.accurest.dsl.internal.Header
 import io.codearte.accurest.dsl.internal.MatchingStrategy
 import io.codearte.accurest.dsl.internal.QueryParameter
 import io.codearte.accurest.dsl.internal.QueryParameters
@@ -96,19 +95,7 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 					}
 			))]]]
 		}
-
-		return [bodyPatterns: [[(getCompareType()): parseBody(body)]]]
-	}
-
-	private String getCompareType() {
-		Header contentType = request.headers?.entries.find { it.name == "Content-Type" }
-		if (contentType && contentType.clientValue.toString().endsWith("json")) {
-			return "equalToJson"
-		}
-		if (contentType && contentType.clientValue.toString().endsWith("xml")) {
-			return "equalToXml"
-		}
-		return "equalTo"
+		return [bodyPatterns: [[equalTo: parseBody(body)]]]
 	}
 
 	protected String parseBody(Object body) {
