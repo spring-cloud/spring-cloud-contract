@@ -40,6 +40,6 @@ class NamesUtil {
 	}
 
 	static String packageToDirectory(String packageName) {
-		return packageName.replaceAll('\\.', File.separator)
+		return packageName.replace('.' as char, File.separatorChar)
 	}
 }
