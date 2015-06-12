@@ -2,6 +2,7 @@ package io.codearte.accurest.dsl
 
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
+import spock.lang.Issue
 
 class WiremockGroovyDslSpec extends WiremockSpec {
 
@@ -46,6 +47,53 @@ class WiremockGroovyDslSpec extends WiremockSpec {
         "headers": {
             "Content-Type": "text/plain"
         }
+    }
+}
+''')
+		and:
+			stubMappingIsValidWiremockStub(wiremockStub)
+	}
+
+	@Issue("#79")
+	def 'should convert groovy dsl stub to wiremock stub for the client side with a body containing a map'() {
+		given:
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				request {
+					method 'GET'
+					url '/ingredients'
+					headers {
+						header 'Content-Type': 'application/vnd.pl.devoxx.aggregatr.v1+json'
+					}
+				}
+				response {
+					status 200
+					body(
+							ingredients: [
+									[type: 'MALT', quantity: 100],
+									[type: 'WATER', quantity: 200],
+									[type: 'HOP', quantity: 300],
+									[type: 'YIEST', quantity: 400]
+							]
+					)
+				}
+			}
+		when:
+			String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+		then:
+			new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+{
+    "request": {
+        "method": "GET",
+        "headers": {
+            "Content-Type": {
+                "equalTo": "application/vnd.pl.devoxx.aggregatr.v1+json"
+            }
+        },
+        "url": "/ingredients"
+    },
+    "response": {
+        "status": 200,
+        "body": "{\\"ingredients\\":[{\\"type\\":\\"MALT\\",\\"quantity\\":100},{\\"type\\":\\"WATER\\",\\"quantity\\":200},{\\"type\\":\\"HOP\\",\\"quantity\\":300},{\\"type\\":\\"YIEST\\",\\"quantity\\":400}]}"
     }
 }
 ''')

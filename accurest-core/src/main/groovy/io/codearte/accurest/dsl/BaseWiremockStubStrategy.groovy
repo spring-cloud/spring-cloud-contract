@@ -3,8 +3,10 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.transform.TypeChecked
 import groovy.xml.XmlUtil
+import io.codearte.accurest.dsl.internal.DslProperty
 import io.codearte.accurest.dsl.internal.Header
 import io.codearte.accurest.dsl.internal.Headers
+import io.codearte.accurest.util.JsonConverter
 
 import java.util.regex.Pattern
 
@@ -12,6 +14,11 @@ import static groovy.json.StringEscapeUtils.escapeJava
 
 @TypeChecked
 abstract class BaseWiremockStubStrategy {
+
+	private static Closure transform = {
+		it instanceof DslProperty ? JsonConverter.transformValues(it.clientValue, transform) : it
+	}
+
 	protected Map buildClientRequestHeadersSection(Headers headers) {
 		if (!headers) {
 			return null
@@ -62,6 +69,7 @@ abstract class BaseWiremockStubStrategy {
     }
 
     protected String parseBody(Map body) {
-        return JsonOutput.toJson(body)
+		def transformedMap = JsonConverter.transformValues(body, transform)
+        return JsonOutput.toJson(transformedMap)
     }
 }

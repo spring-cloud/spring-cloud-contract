@@ -3,6 +3,7 @@ package io.codearte.accurest.builder
 import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import io.codearte.accurest.dsl.GroovyDsl
+import io.codearte.accurest.dsl.internal.DslProperty
 import io.codearte.accurest.dsl.internal.ExecutionProperty
 import io.codearte.accurest.dsl.internal.Header
 import io.codearte.accurest.dsl.internal.MatchingStrategy
@@ -12,7 +13,6 @@ import io.codearte.accurest.dsl.internal.Response
 import io.codearte.accurest.dsl.internal.UrlPath
 
 import java.util.regex.Pattern
-
 /**
  * @author Jakub Kubrynski
  */
@@ -102,9 +102,7 @@ class SpockMethodBodyBuilder {
 		matchingStrategy.serverValue.toString()
 	}
 
-	private void processBodyElement(BlockBuilder blockBuilder, String rootProperty, def element) {
-		def value = element.value
-		String property = rootProperty + "." + element.key
+	private void processBodyElement(BlockBuilder blockBuilder, String property, def value) {
 		if (value instanceof String) {
 			if (value.startsWith('$')) {
 				value = value.substring(1).replaceAll('\\$value', "responseBody$property")
@@ -114,10 +112,14 @@ class SpockMethodBodyBuilder {
 			}
 		} else if (value instanceof Map) {
 			processMapElement(value, blockBuilder, property)
+		}else if (value instanceof Map.Entry) {
+			processEntryElement(blockBuilder, property, value)
 		} else if (value instanceof List) {
 			processArrayElements(value, property, blockBuilder)
 		} else if (value instanceof Pattern) {
 			blockBuilder.addLine("responseBody$property ==~ java.util.regex.Pattern.compile('${value}')")
+		} else if (value instanceof DslProperty) {
+			processBodyElement(blockBuilder, property, value.serverValue)
 		} else if (value instanceof ExecutionProperty) {
 			ExecutionProperty exec = (ExecutionProperty) value
 			blockBuilder.addLine("${exec.insertValue("responseBody$property")}")
@@ -127,18 +129,20 @@ class SpockMethodBodyBuilder {
 	}
 
 	private void processMapElement(def value, BlockBuilder blockBuilder, String property) {
-		value.each { entry -> processBodyElement(blockBuilder, property, entry) }
+		value.each { entry -> processEntryElement(blockBuilder, property, entry) }
+	}
+
+	private def processEntryElement(BlockBuilder blockBuilder, String property, def entry) {
+		return processBodyElement(blockBuilder, property + "." + entry.key, entry.value)
 	}
 
 	private void processArrayElements(List responseBody, String property, BlockBuilder blockBuilder) {
 		responseBody.eachWithIndex {
 			listElement, listIndex ->
-				listElement.each {
-					entry -> processBodyElement(blockBuilder, property + "[$listIndex]", entry)
+				listElement.each { entry ->
+					String prop = "$property[$listIndex]" ?: ''
+					processBodyElement(blockBuilder, prop, entry)
 				}
 		}
-	}
-	private void processClosure(Closure value, BlockBuilder blockBuilder, String property) {
-		blockBuilder.addLine()
 	}
 }
