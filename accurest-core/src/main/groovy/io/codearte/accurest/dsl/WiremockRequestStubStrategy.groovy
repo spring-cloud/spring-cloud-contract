@@ -2,6 +2,7 @@ package io.codearte.accurest.dsl
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import io.codearte.accurest.dsl.internal.ClientRequest
+import io.codearte.accurest.dsl.internal.Header
 import io.codearte.accurest.dsl.internal.MatchingStrategy
 import io.codearte.accurest.dsl.internal.QueryParameter
 import io.codearte.accurest.dsl.internal.QueryParameters
@@ -79,35 +80,32 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 		if (body == null) {
 			return [:]
 		}
-		if (clientRequest.body?.containsPattern) {
-			return [bodyPatterns: [[matches: escapeBodyForJson(body)]]]
-		}
-		return [bodyPatterns: [[(getMatchType()): parseBody(body)]]]
-	}
-
-	private Object escapeBodyForJson(Object body) {
-		return parseBody(convertJsonStructureToObjectUnderstandingStructure(body,
-				{ it instanceof Pattern },
-				{ String json -> json.collect {
-					switch(it) {
-						case ('{'): return '\\{'
-						case ('}'): return '\\}'
-						default: return it
+		if (containsRegex(body)) {
+			return [bodyPatterns: [[matches: parseBody(convertJsonStructureToObjectUnderstandingStructure(body,
+					{ it instanceof Pattern },
+					{ String json -> json.collect {
+							switch(it) {
+								case ('{'): return '\\{'
+								case ('}'): return '\\}'
+								default: return it
+							}
+						} .join('')
+					},
+					{ LinkedList list, String json ->
+						return json.replaceAll(TEMPORARY_PATTERN_HOLDER, { String a, String[] b -> list.pop() })
 					}
-				} .join('')
-				},
-				{ LinkedList list, String json ->
-					return json.replaceAll(TEMPORARY_PATTERN_HOLDER, { String a, String[] b -> list.pop() })
-				}
-		))
+			))]]]
+		}
+
+		return [bodyPatterns: [[(getCompareType()): parseBody(body)]]]
 	}
 
-	private String getMatchType() {
-		String content = request.headers?.entries.find { it.name == "Content-Type" } ?.clientValue?.toString()
-		if (content?.endsWith("json")) {
+	private String getCompareType() {
+		Header contentType = request.headers?.entries.find { it.name == "Content-Type" }
+		if (contentType && contentType.clientValue.toString().endsWith("json")) {
 			return "equalToJson"
 		}
-		if (content?.endsWith("xml")) {
+		if (contentType && contentType.clientValue.toString().endsWith("xml")) {
 			return "equalToXml"
 		}
 		return "equalTo"
@@ -115,6 +113,15 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 
 	protected String parseBody(Object body) {
 		return body
+	}
+
+	boolean containsRegex(Object bodyObject) {
+		String bodyString = bodyObject as String
+		return (bodyString =~ /\^.*\$/).find()
+	}
+
+	boolean containsRegex(Map map) {
+		return map.values().any { it instanceof Pattern }
 	}
 
 }
