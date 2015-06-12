@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 import java.util.regex.Pattern
 
-abstract class WiremockSpec extends Specification {
+class WiremockSpec extends Specification {
 
     void stubMappingIsValidWiremockStub(String mappingDefinition) {
         StubMapping stubMapping = StubMapping.buildFrom(mappingDefinition)
