@@ -12,6 +12,7 @@ import io.codearte.accurest.dsl.internal.Request
 import io.codearte.accurest.dsl.internal.Response
 import io.codearte.accurest.dsl.internal.UrlPath
 import io.codearte.accurest.util.ContentType
+import io.codearte.accurest.util.JsonConverter
 
 import java.util.regex.Pattern
 
@@ -42,10 +43,7 @@ class SpockMethodBodyBuilder {
 				addLine(".header('${header.name}', '${header.serverValue}')")
 			}
 			if (request.body) {
-				Object bodyValue = request.body.serverValue
-				if (bodyValue instanceof GString) {
-					bodyValue = extractValue(bodyValue, {DslProperty dslProperty -> dslProperty.serverValue})
-				}
+				Object bodyValue = extractServerValueFromBody(request.body.serverValue)
 				String matches = new JsonOutput().toJson(bodyValue)
 				addLine(".body('$matches')")
 			}
@@ -95,6 +93,15 @@ class SpockMethodBodyBuilder {
 
 			endBlock()
 		}
+	}
+
+	private Object extractServerValueFromBody(bodyValue) {
+		if (bodyValue instanceof GString) {
+			bodyValue = extractValue(bodyValue, { DslProperty dslProperty -> dslProperty.serverValue })
+		} else {
+			bodyValue = JsonConverter.transformValues(bodyValue, { it instanceof DslProperty ? it.serverValue : it })
+		}
+		return bodyValue
 	}
 
 	private String buildUrl(Request request) {

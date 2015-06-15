@@ -2,6 +2,7 @@ package io.codearte.accurest.util
 import groovy.json.JsonException
 import groovy.json.JsonSlurper
 import groovy.transform.TypeChecked
+import groovy.util.logging.Slf4j
 import io.codearte.accurest.dsl.internal.DslProperty
 import io.codearte.accurest.dsl.internal.Headers
 import io.codearte.accurest.dsl.internal.MatchingStrategy
@@ -14,6 +15,7 @@ import static org.apache.commons.lang3.StringEscapeUtils.escapeJson
 import static org.apache.commons.lang3.StringEscapeUtils.escapeXml11
 
 @TypeChecked
+@Slf4j
 class ContentUtils {
 
 	private static final Pattern TEMPORARY_PATTERN_HOLDER = Pattern.compile('REGEXP>>(.*)<<')
@@ -40,12 +42,19 @@ class ContentUtils {
 		}
 		// else Brute force :(
 		try {
+			log.debug("No content type provided so trying to parse as JSON")
 			return extractValueForJSON(bodyAsValue, valueProvider)
 		} catch(JsonException e) {
 			// Not a JSON format
-			return extractValueForXML(bodyAsValue, valueProvider)
+			log.debug("Failed to parse as JSON - trying to parse as XML", e)
+			try {
+				return extractValueForXML(bodyAsValue, valueProvider)
+			} catch (Exception exception) {
+				log.debug("No content type provided and failed to parse as XML - returning the value back to the user", exception)
+				return bodyAsValue
+			}
 		}
-		return bodyAsValue
+
 	}
 
 	public static Object extractValue(GString bodyAsValue, Closure valueProvider) {
