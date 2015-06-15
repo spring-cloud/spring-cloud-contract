@@ -34,7 +34,7 @@ class SpockMethodBuilderSpec extends Specification {
 	}
 
 	@Issue("#79")
-	def "should generate assertions for simple response body constructed from map"() {
+	def "should generate assertions for simple response body constructed from map with a list"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
 				request {
@@ -60,6 +60,29 @@ class SpockMethodBuilderSpec extends Specification {
 			blockBuilder.toString().contains("responseBody.property1 == \"a\"")
 			blockBuilder.toString().contains("responseBody.property2[0].a == \"sth\"")
 			blockBuilder.toString().contains("responseBody.property2[1].b == \"sthElse\"")
+	}
+
+	@Issue("#82")
+	def "should generate proper request when body constructed from map with a list"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method "GET"
+					url "test"
+					body (
+							items: ['HOP']
+					)
+				}
+				response {
+					status 200
+				}
+			}
+			SpockMethodBodyBuilder builder = new SpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			blockBuilder.toString().contains(".body('{\"items\":[\"HOP\"]}')")
 	}
 
 	def "should generate assertions for array in response body"() {
@@ -236,5 +259,4 @@ class SpockMethodBuilderSpec extends Specification {
 			spockTest.contains('responseBody.property1 == "a"')
 			spockTest.contains('responseBody.property2 == "b"')
 	}
-
 }
