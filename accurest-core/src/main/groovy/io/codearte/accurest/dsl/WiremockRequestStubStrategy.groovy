@@ -1,16 +1,23 @@
 package io.codearte.accurest.dsl
+
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
+import io.codearte.accurest.dsl.internal.Body
 import io.codearte.accurest.dsl.internal.ClientRequest
+import io.codearte.accurest.dsl.internal.DslProperty
 import io.codearte.accurest.dsl.internal.MatchingStrategy
 import io.codearte.accurest.dsl.internal.QueryParameter
 import io.codearte.accurest.dsl.internal.QueryParameters
 import io.codearte.accurest.dsl.internal.Request
+import io.codearte.accurest.util.ContentType
 
 import java.util.regex.Pattern
 
-import static io.codearte.accurest.dsl.internal.JsonStructureConverter.TEMPORARY_PATTERN_HOLDER
-import static io.codearte.accurest.dsl.internal.JsonStructureConverter.convertJsonStructureToObjectUnderstandingStructure
+import static io.codearte.accurest.util.ContentUtils.extractValue
+import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromHeader
+import static io.codearte.accurest.util.ContentUtils.getEqualsTypeFromContentType
+import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromContent
+import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromMatchingStrategy
 
 @TypeChecked
 @PackageScope
@@ -29,7 +36,7 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 
 	private Map<String, Object> buildRequestContent(ClientRequest request) {
 		return ([method    : request?.method?.clientValue,
-		        headers   : buildClientRequestHeadersSection(request.headers)
+				headers   : buildClientRequestHeadersSection(request.headers)
 		] << appendUrl(request) << appendQueryParameters(request) << appendBody(request)).findAll { it.value }
 	}
 
@@ -75,40 +82,69 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 	}
 
 	private Map<String, Object> appendBody(ClientRequest clientRequest) {
-		Object body = clientRequest?.body?.clientValue
-		if (body == null) {
-			return [:]
+		return clientRequest.body? appendBody(clientRequest.body) : [:]
+	}
+
+	private Map<String, Object> appendBody(Body body) {
+		return [bodyPatterns: (appendBodyPatterns(body.clientValue))]
+	}
+
+	private List<Map<String, Object>> appendBodyPatterns(MatchingStrategy matchingStrategy) {
+		return [appendBodyPattern(matchingStrategy)]
+	}
+
+	private List<Map<String, Object>> appendBodyPatterns(List<MatchingStrategy> matchingStrategies) {
+		return matchingStrategies.collect { appendBodyPattern(it) }
+	}
+
+	private List<Map<String, Object>> appendBodyPatterns(GString gString) {
+		if (containsPattern(gString)) {
+			Object value = extractValue(gString, { DslProperty dslProperty -> dslProperty.clientValue })
+			return appendBodyPatterns(extractReqexpMatching(value))
 		}
-		if (containsRegex(body)) {
-			return [bodyPatterns: [[matches: parseBody(convertJsonStructureToObjectUnderstandingStructure(body,
-					{ it instanceof Pattern },
-					{ String json -> json.collect {
-							switch(it) {
-								case ('{'): return '\\{'
-								case ('}'): return '\\}'
-								default: return it
-							}
-						} .join('')
-					},
-					{ LinkedList list, String json ->
-						return json.replaceAll(TEMPORARY_PATTERN_HOLDER, { String a, String[] b -> list.pop() })
-					}
-			))]]]
+		return appendBodyPatterns(new MatchingStrategy(gString, getEqualsTypeFromContentTypeHeader()))
+	}
+
+	private List<Map<String, Object>> appendBodyPatterns(Object bodyValue) {
+		return appendBodyPatterns(new MatchingStrategy(bodyValue, MatchingStrategy.Type.EQUAL_TO))
+	}
+
+	private Map<String, Object> appendBodyPattern(MatchingStrategy matchingStrategy) {
+		MatchingStrategy.Type type = matchingStrategy.type
+		Object value= matchingStrategy.clientValue
+		ContentType contentType = recognizeContentTypeFromMatchingStrategy(type)
+		if (contentType == ContentType.UNKNOWN && type == MatchingStrategy.Type.EQUAL_TO) {
+			contentType = recognizeContentTypeFromContent(value)
+			type = getEqualsTypeFromContentType(contentType)
 		}
-		return [bodyPatterns: [[equalTo: parseBody(body)]]]
+		Map<String, ? extends Object> result = [(type.name): parseBody(value, contentType)]
+		if (type == MatchingStrategy.Type.EQUAL_TO_JSON && matchingStrategy.jsonCompareMode) {
+			return result << [jsonCompareMode : (matchingStrategy.jsonCompareMode.toString())]
+		}
+		return result
 	}
 
-	protected String parseBody(Object body) {
-		return body
+	private boolean containsPattern(GString bodyAsValue) {
+		return bodyAsValue.values.collect { it instanceof DslProperty ? it.clientValue : it }
+								 .find { it instanceof Pattern }
 	}
 
-	boolean containsRegex(Object bodyObject) {
-		String bodyString = bodyObject as String
-		return (bodyString =~ /\^.*\$/).find()
+	private List<MatchingStrategy> extractReqexpMatching(Object responseBodyObject) {
+		def matchingStrategies = new ArrayList<MatchingStrategy>()
+		responseBodyObject.each { k, v ->
+			if (v instanceof List) {
+				v.each {
+					matchingStrategies.addAll(extractReqexpMatching((Map<String, Object>)it))
+				}
+			} else {
+				matchingStrategies.add(new MatchingStrategy(/.*${k}":.?"?${v}"?.*/, MatchingStrategy.Type.MATCHING))
+			}
+		}
+		return matchingStrategies
 	}
 
-	boolean containsRegex(Map map) {
-		return map.values().any { it instanceof Pattern }
+	private MatchingStrategy.Type getEqualsTypeFromContentTypeHeader() {
+		return getEqualsTypeFromContentType(recognizeContentTypeFromHeader(request.headers))
 	}
 
 }

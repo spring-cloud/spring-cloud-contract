@@ -11,8 +11,14 @@ import io.codearte.accurest.dsl.internal.QueryParameter
 import io.codearte.accurest.dsl.internal.Request
 import io.codearte.accurest.dsl.internal.Response
 import io.codearte.accurest.dsl.internal.UrlPath
+import io.codearte.accurest.util.ContentType
 
 import java.util.regex.Pattern
+
+import static io.codearte.accurest.util.ContentUtils.extractValue
+import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromHeader
+import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromContent
+
 /**
  * @author Jakub Kubrynski
  */
@@ -36,7 +42,11 @@ class SpockMethodBodyBuilder {
 				addLine(".header('${header.name}', '${header.serverValue}')")
 			}
 			if (request.body) {
-				String matches = new JsonOutput().toJson(request.body.serverValue)
+				Object bodyValue = request.body.serverValue
+				if (bodyValue instanceof GString) {
+					bodyValue = extractValue(bodyValue, {DslProperty dslProperty -> dslProperty.serverValue})
+				}
+				String matches = new JsonOutput().toJson(bodyValue)
 				addLine(".body('$matches')")
 			}
 
@@ -61,12 +71,24 @@ class SpockMethodBodyBuilder {
 			if (response.body) {
 				endBlock()
 				addLine('and:').startBlock()
-				addLine('def responseBody = new JsonSlurper().parseText(response.body.asString())')
 				def responseBody = response.body.serverValue
-				if (responseBody instanceof List) {
-					processArrayElements(responseBody, "", blockBuilder)
-				} else {
-					processMapElement(responseBody, blockBuilder, "")
+				ContentType contentType = recognizeContentTypeFromHeader(response.headers)
+				if (contentType == ContentType.UNKNOWN) {
+					contentType = recognizeContentTypeFromContent(responseBody)
+				}
+				if (responseBody instanceof GString) {
+					responseBody = extractValue(responseBody, contentType, { DslProperty dslProperty -> dslProperty.serverValue })
+				}
+				if (contentType == ContentType.JSON) {
+					addLine('def responseBody = new JsonSlurper().parseText(response.body.asString())')
+					if (responseBody instanceof List) {
+						processArrayElements(responseBody, "", blockBuilder)
+					} else {
+						processMapElement(responseBody, blockBuilder, "")
+					}
+				} else if (contentType == ContentType.XML) {
+					addLine('def responseBody = new XmlSlurper().parseText(response.body.asString())')
+					// TODO xml validation
 				}
 			}
 			endBlock()

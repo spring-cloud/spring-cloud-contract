@@ -181,7 +181,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
         "urlPattern": "/[0-9]{2}",
         "bodyPatterns": [
             {
-                "equalTo":"{\\"name\\":\\"Jan\\"}"
+                "equalToJson":"{\\"name\\":\\"Jan\\"}"
             }
         ]
     },
@@ -196,6 +196,314 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 ''')
 		and:
 			stubMappingIsValidWiremockStub(wiremockStub)
+	}
+
+	def 'should use equalToJson when body match is defined as map'() {
+		given:
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				request {
+					method('GET')
+					url $(client(~/\/[0-9]{2}/), server('/12'))
+					body(
+							id: value(
+									client('123'),
+									server({ regex('[0-9]+') })
+							),
+							surname: $(
+									client('Kowalsky'),
+									server('Lewandowski')
+							),
+							name: 'Jan',
+							created: $(client('2014-02-02 12:23:43'), server({ currentDate(it) }))
+					)
+				}
+				response {
+					status 200
+				}
+			}
+		when:
+			String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+		then:
+			new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+			{
+				"request": {
+					"method": "GET",
+					"urlPattern": "/[0-9]{2}",
+					"bodyPatterns": [
+						{
+							"equalToJson": "{\\"id\\":\\"123\\",\\"surname\\":\\"Kowalsky\\",\\"name\\":\\"Jan\\",\\"created\\":\\"2014-02-02 12:23:43\\"}"
+						}
+					]
+				},
+				"response": {
+					"status": 200,
+				}
+			}
+			''')
+		and:
+		stubMappingIsValidWiremockStub(wiremockStub)
+	}
+
+	def 'should use equalToJson when content type ends with json'() {
+		given:
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				request {
+					method 'GET'
+					url "/users"
+					headers {
+						header "Content-Type", "customtype/json"
+					}
+					body """
+							{
+								"name": "Jan"
+							}
+							"""
+				}
+				response {
+					status 200
+				}
+			}
+		when:
+			String json = toWiremockClientJsonStub(groovyDsl)
+		then:
+			parseJson(json) == parseJson('''
+			{
+				"request": {
+					"method": "GET",
+					"url": "/users",
+				    "headers": {
+                        "Content-Type": {
+                            "equalTo": "customtype/json"
+                        }
+                    },
+					"bodyPatterns": [
+						{
+							"equalToJson":"{\\"name\\":\\"Jan\\"}"
+						}
+					]
+				},
+				"response": {
+					"status": 200
+				}
+			}
+			''')
+		and:
+			stubMappingIsValidWiremockStub(json)
+	}
+
+	def 'should use equalToXml when content type ends with xml'() {
+		given:
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				request {
+					method 'GET'
+					url "/users"
+					headers {
+						header "Content-Type", "customtype/xml"
+					}
+					body """<name>${value(client('Jozo'), server('Denis'))}</name><jobId>${value(client("<test>"), server('1234567890'))}</jobId>"""
+				}
+				response {
+					status 200
+				}
+			}
+		when:
+			String json = toWiremockClientJsonStub(groovyDsl)
+		then:
+			parseJson(json) == parseJson('''
+				{
+					"request": {
+						"method": "GET",
+						"url": "/users",
+						"headers": {
+							"Content-Type": {
+								"equalTo": "customtype/xml"
+							}
+						},
+						"bodyPatterns": [
+							{
+								"equalToXml":"<name>Jozo</name><jobId>&lt;test&gt;</jobId>"
+							}
+						]
+					},
+					"response": {
+						"status": 200
+					}
+				}
+				''')
+		and:
+			stubMappingIsValidWiremockStub(json)
+	}
+
+	def 'should use equalToXml when content type is parsable xml'() {
+		given:
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				request {
+					method 'GET'
+					url "/users"
+					body """<user><name>${value(client('Jozo'), server('Denis'))}</name><jobId>${value(client("<test>"), server('1234567890'))}</jobId></user>"""
+				}
+				response {
+					status 200
+				}
+			}
+		when:
+			String json = toWiremockClientJsonStub(groovyDsl)
+		then:
+			parseJson(json) == parseJson('''
+					{
+						"request": {
+							"method": "GET",
+							"url": "/users",
+							"bodyPatterns": [
+								{
+									"equalToXml":"<user><name>Jozo</name><jobId>&lt;test&gt;</jobId></user>"
+								}
+							]
+						},
+						"response": {
+							"status": 200
+						}
+					}
+					''')
+		and:
+			stubMappingIsValidWiremockStub(json)
+	}
+
+	def 'should support xml as a response body'() {
+		given:
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				request {
+					method 'GET'
+					url "/users"
+				}
+				response {
+					status 200
+					body """<user><name>${value(client('Jozo'), server('Denis'))}</name><jobId>${value(client("<test>"), server('1234567890'))}</jobId></user>"""
+				}
+			}
+		when:
+			String json = toWiremockClientJsonStub(groovyDsl)
+		then:
+			parseJson(json) == parseJson('''
+						{
+							"request": {
+								"method": "GET",
+								"url": "/users"
+							},
+							"response": {
+								"status": 200,
+								"body":"<user><name>Jozo</name><jobId>&lt;test&gt;</jobId></user>"
+							}
+						}
+						''')
+		and:
+			stubMappingIsValidWiremockStub(json)
+	}
+
+	def 'should use equalToJson compare mode'() {
+		given:
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				request {
+					method 'GET'
+					url "/users"
+					body equalToJsonWithStrictOrder('''{"name":"Jan"}''')
+				}
+				response {
+					status 200
+				}
+			}
+		when:
+			String json = toWiremockClientJsonStub(groovyDsl)
+		then:
+			parseJson(json) == parseJson('''
+			{
+				"request": {
+					"method": "GET",
+					"url": "/users",
+					"bodyPatterns": [
+						{
+							"equalToJson":"{\\"name\\":\\"Jan\\"}",
+							"jsonCompareMode":"STRICT_ORDER"
+						}
+					]
+				},
+				"response": {
+					"status": 200
+				}
+			}
+			''')
+		and:
+			stubMappingIsValidWiremockStub(json)
+	}
+
+	def 'should use equalToJson'() {
+		given:
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				request {
+					method 'GET'
+					url "/users"
+					body equalToJson('''{"name":"Jan"}''')
+				}
+				response {
+					status 200
+				}
+			}
+		when:
+			String json = toWiremockClientJsonStub(groovyDsl)
+		then:
+			parseJson(json) == parseJson('''
+				{
+					"request": {
+						"method": "GET",
+						"url": "/users",
+						"bodyPatterns": [
+							{
+								"equalToJson":"{\\"name\\":\\"Jan\\"}"
+							}
+						]
+					},
+					"response": {
+						"status": 200
+					}
+				}
+				''')
+		and:
+			stubMappingIsValidWiremockStub(json)
+	}
+
+	def 'should use equalToXml'() {
+		given:
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				request {
+					method 'GET'
+					url "/users"
+					body equalToXml("""<name>${value(client('Jozo'), server('Denis'))}</name><jobId>${value(client("<test>"), server('1234567890'))}</jobId>""")
+				}
+				response {
+					status 200
+				}
+			}
+		when:
+			String json = toWiremockClientJsonStub(groovyDsl)
+		then:
+			parseJson(json) == parseJson('''
+					{
+						"request": {
+							"method": "GET",
+							"url": "/users",
+							"bodyPatterns": [
+								{
+									"equalToXml":"<name>Jozo</name><jobId>&lt;test&gt;</jobId>"
+								}
+							]
+						},
+						"response": {
+							"status": 200
+						}
+					}
+					''')
+		and:
+			stubMappingIsValidWiremockStub(json)
 	}
 
 	def 'should convert groovy dsl stub with regexp Body as String to wiremock stub for the client side'() {
@@ -232,9 +540,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
         "method": "GET",
         "urlPattern": "/[0-9]{2}",
         "bodyPatterns": [
-        	{
-				"matches":"\\\\{\\"personalId\\":\\"^[0-9]{11}$\\"\\\\}"
-        	}
+			{"matches": ".*personalId\\":.?\\"?^[0-9]{11}$\\"?.*"}
         ]
     },
     "response": {
@@ -294,9 +600,8 @@ class WiremockGroovyDslSpec extends WiremockSpec {
         },
         "url": "/fraudcheck",
         "bodyPatterns": [
-            {
-                "matches": "\\\\{\\"clientPesel\\":\\"[0-9]{10}\\",\\"loanAmount\\":123.123\\\\}"
-            }
+			{"matches": ".*clientPesel\\":.?\\"?[0-9]{10}\\"?.*"},
+			{"matches": ".*loanAmount\\":.?\\"?123.123\\"?.*"}
         ]
     },
     "response": {
@@ -427,78 +732,78 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 
 	def "should generate request with urlPath for client side"() {
 		given:
-		GroovyDsl groovyDsl = GroovyDsl.make {
-			request {
-				method 'GET'
-				urlPath $(client("boxes"), server("items"))
-			}
-			response {
-				status 200
-			}
-		}
-		when:
-		def json = toWiremockClientJsonStub(groovyDsl)
-		then:
-		parseJson(json) == parseJson('''
-			{
-				"request": {
-					"method": "GET",
-					"urlPath": "boxes"
-				},
-				"response": {
-					"status": 200,
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				request {
+					method 'GET'
+					urlPath $(client("boxes"), server("items"))
+				}
+				response {
+					status 200
 				}
 			}
-			''')
+		when:
+			def json = toWiremockClientJsonStub(groovyDsl)
+		then:
+			parseJson(json) == parseJson('''
+				{
+					"request": {
+						"method": "GET",
+						"urlPath": "boxes"
+					},
+					"response": {
+						"status": 200,
+					}
+				}
+				''')
 		and:
-		stubMappingIsValidWiremockStub(json)
+			stubMappingIsValidWiremockStub(json)
 	}
 
 	def "should generate simple request with urlPath for client side"() {
 		given:
-		GroovyDsl groovyDsl = GroovyDsl.make {
-			request {
-				method 'GET'
-				urlPath "boxes"
-			}
-			response {
-				status 200
-			}
-		}
-		when:
-		def json = toWiremockClientJsonStub(groovyDsl)
-		then:
-		parseJson(json) == parseJson('''
-			{
-				"request": {
-					"method": "GET",
-					"urlPath": "boxes"
-				},
-				"response": {
-					"status": 200,
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				request {
+					method 'GET'
+					urlPath "boxes"
+				}
+				response {
+					status 200
 				}
 			}
-			''')
+		when:
+			def json = toWiremockClientJsonStub(groovyDsl)
+		then:
+			parseJson(json) == parseJson('''
+				{
+					"request": {
+						"method": "GET",
+						"urlPath": "boxes"
+					},
+					"response": {
+						"status": 200,
+					}
+				}
+				''')
 		and:
-		stubMappingIsValidWiremockStub(json)
+			stubMappingIsValidWiremockStub(json)
 	}
 
 	def "should not allow regexp in url for server value"() {
 		when:
-		GroovyDsl.make {
-			request {
-				method 'GET'
-				url(regex(/users\/[0-9]*/)) {
-					queryParameters {
-						parameter 'age': notMatching("^\\w*\$")
-						parameter 'name': matching("Denis.*")
+			GroovyDsl.make {
+				request {
+					method 'GET'
+					url(regex(/users\/[0-9]*/)) {
+						queryParameters {
+							parameter 'age': notMatching("^\\w*\$")
+							parameter 'name': matching("Denis.*")
+						}
 					}
 				}
+				response {
+					status 200
+				}
 			}
-			response {
-				status 200
-			}
-		}
 		then:
 			def e = thrown(IllegalStateException)
 			e.message.contains "Url can't be a pattern for the server side"
@@ -547,44 +852,44 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 
 	def "should generate request with url and queryParameters for client side"() {
 		given:
-		GroovyDsl groovyDsl = GroovyDsl.make {
-			request {
-				method 'GET'
-				url($(client(regex(/users\/[0-9]*/)), server("users/123"))) {
-					queryParameters {
-						parameter 'age': $(client(notMatching("^\\w*\$")), server(10))
-						parameter 'name': $(client(matching("Denis.*")), server("Denis"))
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				request {
+					method 'GET'
+					url($(client(regex(/users\/[0-9]*/)), server("users/123"))) {
+						queryParameters {
+							parameter 'age': $(client(notMatching("^\\w*\$")), server(10))
+							parameter 'name': $(client(matching("Denis.*")), server("Denis"))
+						}
 					}
 				}
+				response {
+					status 200
+				}
 			}
-			response {
-				status 200
-			}
-		}
 		when:
-		def json = toWiremockClientJsonStub(groovyDsl)
+			def json = toWiremockClientJsonStub(groovyDsl)
 		then:
-		parseJson(json) == parseJson('''
-			{
-				"request": {
-					"method": "GET",
-					"urlPattern": "users/[0-9]*",
-					"queryParameters": {
-                      "age": {
-                        "doesNotMatch": "^\\\\w*$"
-                      },
-                      "name": {
-                        "matches": "Denis.*"
-                      }
+			parseJson(json) == parseJson('''
+				{
+					"request": {
+						"method": "GET",
+						"urlPattern": "users/[0-9]*",
+						"queryParameters": {
+						  "age": {
+							"doesNotMatch": "^\\\\w*$"
+						  },
+						  "name": {
+							"matches": "Denis.*"
+						  }
+						}
+					},
+					"response": {
+						"status": 200,
 					}
-				},
-				"response": {
-					"status": 200,
 				}
-			}
-			''')
+				''')
 		and:
-		stubMappingIsValidWiremockStub(json)
+			stubMappingIsValidWiremockStub(json)
 	}
 
 	def "should generate stub with some headers section for client side"() {
@@ -620,6 +925,74 @@ class WiremockGroovyDslSpec extends WiremockSpec {
         }
     }
     ''')
+	}
+
+	def 'should convert groovy dsl stub with rich tree Body as String to wiremock stub for the client side'() {
+		given:
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				request {
+					method('GET')
+					url $(client(~/\/[0-9]{2}/), server('/12'))
+					body """\
+						{
+						  "personalId": "${value(client(regex('[0-9]{11}')), server('57593728525'))}",
+						  "firstName": "${value(client(regex('.*')), server('Bruce'))}",
+						  "lastName": "${value(client(regex('.*')), server('Lee'))}",
+						  "birthDate": "${value(client(regex('[0-9]{4}-[0-9]{2}-[0-9]{2}')), server('1985-12-12'))}",
+						  "errors": [
+									{
+									  "propertyName": "${value(client(regex('[0-9]{2}')), server('04'))}",
+									  "providerValue": "Test"
+									},
+									{
+									  "propertyName": "${value(client(regex('[0-9]{2}')), server('08'))}",
+									  "providerValue": "Test"
+									}
+								  ]
+						}
+						"""
+				}
+				response {
+					status 200
+					body("""\
+								{
+									"name": "Jan"
+								}
+							"""
+					)
+					headers {
+						header 'Content-Type': 'text/plain'
+					}
+				}
+			}
+		when:
+			String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+		then:
+			new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+			{
+				"request": {
+							"method": "GET",
+							"urlPattern": "/[0-9]{2}",
+							"bodyPatterns": [
+											{"matches": ".*birthDate\\":.?\\"?[0-9]{4}-[0-9]{2}-[0-9]{2}\\"?.*"},
+											{"matches": ".*propertyName\\":.?\\"?[0-9]{2}\\"?.*"},
+											{"matches": ".*providerValue\\":.?\\"?Test\\"?.*"},
+											{"matches": ".*propertyName\\":.?\\"?[0-9]{2}\\"?.*"},
+											{"matches": ".*providerValue\\":.?\\"?Test\\"?.*"},
+											{"matches": ".*firstName\\":.?\\"?.*\\"?.*"},
+											{"matches": ".*lastName\\":.?\\"?.*\\"?.*"},
+											{"matches": ".*personalId\\":.?\\"?[0-9]{11}\\"?.*"}
+											]
+							},
+				"response": {
+							"status": 200,
+							"body": "{\\"name\\":\\"Jan\\"}",
+							"headers": {
+										"Content-Type": "text/plain"
+										}
+							}
+			}
+			''')
 	}
 
 	String toJsonString(value) {
