@@ -125,26 +125,6 @@ class Request extends Common {
 		return new MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO_JSON)
 	}
 
-	MatchingStrategy equalToJson(Object value, JSONCompareMode jsonCompareMode) {
-		return new MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO_JSON)
-	}
-
-	MatchingStrategy equalToJsonStrictly(Object value) {
-		return new MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO_JSON, JSONCompareMode.STRICT)
-	}
-
-	MatchingStrategy equalToJsonLeniently(Object value) {
-		return new MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO_JSON, JSONCompareMode.LENIENT)
-	}
-
-	MatchingStrategy equalToJsonNonExtensibly(Object value) {
-		return new MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO_JSON, JSONCompareMode.NON_EXTENSIBLE)
-	}
-
-	MatchingStrategy equalToJsonWithStrictOrder(Object value) {
-		return new MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO_JSON, JSONCompareMode.STRICT_ORDER)
-	}
-
 }
 
 @CompileStatic

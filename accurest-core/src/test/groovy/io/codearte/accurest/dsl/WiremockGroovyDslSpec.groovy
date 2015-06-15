@@ -400,42 +400,6 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 			stubMappingIsValidWiremockStub(json)
 	}
 
-	def 'should use equalToJson compare mode'() {
-		given:
-			GroovyDsl groovyDsl = GroovyDsl.make {
-				request {
-					method 'GET'
-					url "/users"
-					body equalToJsonWithStrictOrder('''{"name":"Jan"}''')
-				}
-				response {
-					status 200
-				}
-			}
-		when:
-			String json = toWiremockClientJsonStub(groovyDsl)
-		then:
-			parseJson(json) == parseJson('''
-			{
-				"request": {
-					"method": "GET",
-					"url": "/users",
-					"bodyPatterns": [
-						{
-							"equalToJson":"{\\"name\\":\\"Jan\\"}",
-							"jsonCompareMode":"STRICT_ORDER"
-						}
-					]
-				},
-				"response": {
-					"status": 200
-				}
-			}
-			''')
-		and:
-			stubMappingIsValidWiremockStub(json)
-	}
-
 	def 'should use equalToJson'() {
 		given:
 			GroovyDsl groovyDsl = GroovyDsl.make {
