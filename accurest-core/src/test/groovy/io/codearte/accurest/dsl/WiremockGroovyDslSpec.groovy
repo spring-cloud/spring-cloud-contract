@@ -101,6 +101,55 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 			stubMappingIsValidWiremockStub(wiremockStub)
 	}
 
+	@Issue("#86")
+	def 'should convert groovy dsl stub with GString and regexp'() {
+		given:
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				request {
+					method('POST')
+					url('/ws/payments')
+					headers {
+						header("Content-Type": 'application/x-www-form-urlencoded')
+					}
+					body("""paymentType=INCOMING&transferType=BANK&amount=${value(client(regex('[0-9]{3}\\.[0-9]{2}')), server(500.00))}&bookingDate=${value(client(regex('[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])')), server('2015-05-18'))}""")
+				}
+				response {
+					status 204
+					body(
+							paymentId: value(client('4'), server(regex('[1-9][0-9]*'))),
+							foundExistingPayment: false
+					)
+				}
+			}
+		when:
+			String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+		then:
+			new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+{
+    "request": {
+        "method": "POST",
+        "headers": {
+            "Content-Type": {
+                "equalTo": "application/x-www-form-urlencoded"
+            }
+        },
+        "url": "/ws/payments",
+        "bodyPatterns": [
+            {
+                "matches": "paymentType=INCOMING&transferType=BANK&amount=[0-9]{3}\\\\.[0-9]{2}&bookingDate=[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])"
+            }
+        ]
+    },
+    "response": {
+        "status": 204,
+        "body": "{\\"paymentId\\":\\"4\\",\\"foundExistingPayment\\":false}"
+    }
+}
+''')
+		and:
+			stubMappingIsValidWiremockStub(wiremockStub)
+	}
+
 	def 'should convert groovy dsl stub with Body as String to wiremock stub for the client side'() {
 		given:
 			GroovyDsl groovyDsl = GroovyDsl.make {
