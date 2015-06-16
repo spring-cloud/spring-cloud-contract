@@ -131,13 +131,17 @@ class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
 
 	private List<MatchingStrategy> extractReqexpMatching(Object responseBodyObject) {
 		def matchingStrategies = new ArrayList<MatchingStrategy>()
-		responseBodyObject.each { k, v ->
-			if (v instanceof List) {
-				v.each {
-					matchingStrategies.addAll(extractReqexpMatching((Map<String, Object>)it))
+		if (responseBodyObject instanceof GString) {
+			return [new MatchingStrategy(responseBodyObject, MatchingStrategy.Type.MATCHING)]
+		} else if (responseBodyObject instanceof Map) {
+			responseBodyObject.each { k, v ->
+				if (v instanceof List) {
+					v.each {
+						matchingStrategies.addAll(extractReqexpMatching((Map<String, Object>)it))
+					}
+				} else {
+					matchingStrategies.add(new MatchingStrategy(/.*${k}":.?"?${v}"?.*/, MatchingStrategy.Type.MATCHING))
 				}
-			} else {
-				matchingStrategies.add(new MatchingStrategy(/.*${k}":.?"?${v}"?.*/, MatchingStrategy.Type.MATCHING))
 			}
 		}
 		return matchingStrategies
