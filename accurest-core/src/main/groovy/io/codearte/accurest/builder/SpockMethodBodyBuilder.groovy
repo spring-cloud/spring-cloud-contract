@@ -17,8 +17,8 @@ import io.codearte.accurest.util.JsonConverter
 import java.util.regex.Pattern
 
 import static io.codearte.accurest.util.ContentUtils.extractValue
-import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromHeader
 import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromContent
+import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromHeader
 
 /**
  * @author Jakub Kubrynski
@@ -44,7 +44,7 @@ class SpockMethodBodyBuilder {
 			}
 			if (request.body) {
 				Object bodyValue = extractServerValueFromBody(request.body.serverValue)
-				String matches = new JsonOutput().toJson(bodyValue)
+				String matches = trimRepeatedQuotes(new JsonOutput().toJson(bodyValue))
 				addLine(".body('$matches')")
 			}
 
@@ -95,6 +95,13 @@ class SpockMethodBodyBuilder {
 		}
 	}
 
+	private String trimRepeatedQuotes(String toTrim) {
+		if (toTrim.startsWith('"')) {
+			return toTrim.replaceAll('"', '')
+		}
+		return toTrim
+	}
+
 	private Object extractServerValueFromBody(bodyValue) {
 		if (bodyValue instanceof GString) {
 			bodyValue = extractValue(bodyValue, { DslProperty dslProperty -> dslProperty.serverValue })
@@ -141,7 +148,7 @@ class SpockMethodBodyBuilder {
 			}
 		} else if (value instanceof Map) {
 			processMapElement(value, blockBuilder, property)
-		}else if (value instanceof Map.Entry) {
+		} else if (value instanceof Map.Entry) {
 			processEntryElement(blockBuilder, property, value)
 		} else if (value instanceof List) {
 			processArrayElements(value, property, blockBuilder)

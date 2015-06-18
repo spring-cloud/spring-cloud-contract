@@ -43,11 +43,11 @@ class SpockMethodBuilderSpec extends Specification {
 				}
 				response {
 					status 200
-					body (
+					body(
 							property1: 'a',
 							property2: [
-							        [a: 'sth'],
-							        [b: 'sthElse']
+									[a: 'sth'],
+									[b: 'sthElse']
 							]
 					)
 				}
@@ -69,7 +69,7 @@ class SpockMethodBuilderSpec extends Specification {
 				request {
 					method "GET"
 					url "test"
-					body (
+					body(
 							items: ['HOP']
 					)
 				}
@@ -83,6 +83,29 @@ class SpockMethodBuilderSpec extends Specification {
 			builder.appendTo(blockBuilder)
 		then:
 			blockBuilder.toString().contains(".body('{\"items\":[\"HOP\"]}')")
+	}
+
+	@Issue("#88")
+	def "should generate proper request when body constructed from GString"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method "GET"
+					url "test"
+					body(
+							"property1=VAL1"
+					)
+				}
+				response {
+					status 200
+				}
+			}
+			SpockMethodBodyBuilder builder = new SpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			blockBuilder.toString().contains(".body('property1=VAL1')")
 	}
 
 	def "should generate assertions for array in response body"() {
@@ -205,7 +228,7 @@ class SpockMethodBuilderSpec extends Specification {
 				}
 				response {
 					status 200
-					body( """{"property1":"a","property2":"${value(client('123'), server(regex('[0-9]{3}')))}"}""")
+					body("""{"property1":"a","property2":"${value(client('123'), server(regex('[0-9]{3}')))}"}""")
 					headers {
 						header('Content-Type': 'application/json')
 
@@ -259,4 +282,6 @@ class SpockMethodBuilderSpec extends Specification {
 			spockTest.contains('responseBody.property1 == "a"')
 			spockTest.contains('responseBody.property2 == "b"')
 	}
+
+
 }
