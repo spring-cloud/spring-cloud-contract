@@ -95,7 +95,7 @@ class SpockMethodBodyBuilder {
 		}
 	}
 
-	static String trimRepeatedQuotes(String toTrim) {
+	private String trimRepeatedQuotes(String toTrim) {
 		if (toTrim.startsWith('"')) {
 			return toTrim.replaceAll('"', '')
 		}
