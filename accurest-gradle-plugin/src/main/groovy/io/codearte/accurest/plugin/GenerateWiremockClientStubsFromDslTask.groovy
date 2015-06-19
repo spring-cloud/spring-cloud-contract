@@ -17,8 +17,8 @@ class GenerateWiremockClientStubsFromDslTask extends ConventionTask {
 
 	@TaskAction
 	void generate() {
-		project.logger.info("Accurest Plugin: Invoking GroovyDSL to Wiremock client stubs conversion")
-		project.logger.debug("From '${getContractsDslDir()}' to '${getStubsOutputDir()}'")
+		logger.info("Accurest Plugin: Invoking GroovyDSL to Wiremock client stubs conversion")
+		logger.debug("From '${getContractsDslDir()}' to '${getStubsOutputDir()}'")
 
 		RecursiveFilesConverter converter = new RecursiveFilesConverter(new DslToWiremockClientConverter(), getContractsDslDir(),
 				getStubsOutputDir())
