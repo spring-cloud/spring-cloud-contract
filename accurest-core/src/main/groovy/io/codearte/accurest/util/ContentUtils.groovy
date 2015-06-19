@@ -51,10 +51,17 @@ class ContentUtils {
 				return extractValueForXML(bodyAsValue, valueProvider)
 			} catch (Exception exception) {
 				log.debug("No content type provided and failed to parse as XML - returning the value back to the user", exception)
-				return bodyAsValue
+				return extractValueForGString(bodyAsValue, valueProvider)
 			}
 		}
 
+	}
+
+	private static GStringImpl extractValueForGString(GString bodyAsValue, Closure valueProvider) {
+		return new GStringImpl(
+				bodyAsValue.values.collect { it instanceof DslProperty ? valueProvider(it) : it } as String[],
+				bodyAsValue.strings.clone() as String[]
+		)
 	}
 
 	public static Object extractValue(GString bodyAsValue, Closure valueProvider) {
