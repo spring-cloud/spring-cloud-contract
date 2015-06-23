@@ -260,6 +260,8 @@ class SpockMethodBuilderSpec extends Specification {
 							parameter 'age': $(client(notMatching("^\\w*\$")), server("99"))
 							parameter 'name': $(client(matching("Denis.*")), server("Denis.Stepanov"))
 							parameter 'email': "bob@email.com"
+							parameter 'hello': $(client(matching("Denis.*")), server(absent()))
+							parameter 'hello': absent()
 						}
 					}
 				}

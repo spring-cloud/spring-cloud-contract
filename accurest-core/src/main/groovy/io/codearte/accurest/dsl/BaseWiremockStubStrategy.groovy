@@ -53,6 +53,10 @@ abstract class BaseWiremockStubStrategy {
 		return parseBody(value.toString(), contentType)
 	}
 
+	public Boolean parseBody(Boolean value, ContentType contentType) {
+		return value
+	}
+
 	public String parseBody(Map map, ContentType contentType) {
 		def transformedMap = transformValues(map, transform)
 		return parseBody(toJson(transformedMap), contentType)

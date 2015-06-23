@@ -695,6 +695,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 							parameter 'search': $(client(notMatching(~/^\/[0-9]{2}$/)), server("10"))
 							parameter 'age': $(client(notMatching("^\\w*\$")), server(10))
 							parameter 'name': $(client(matching("Denis.*")), server("Denis"))
+							parameter 'credit': absent()
 						}
 					}
 				}
@@ -731,6 +732,9 @@ class WiremockGroovyDslSpec extends WiremockSpec {
                       },
                       "name": {
                         "matches": "Denis.*"
+                      },
+                      "credit": {
+                      	 "absent": true
                       }
 					}
 				},
@@ -861,6 +865,56 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 		then:
             def e = thrown(IllegalStateException)
             e.message.contains "Query parameter 'age' can't be of a matching type: NOT_MATCHING for the server side"
+	}
+
+	def "should not allow query parameter with a different absent variation for server/client"() {
+		when:
+			GroovyDsl.make dsl
+		then:
+			def e = thrown(IllegalStateException)
+			e.message.contains "Absent cannot only be used only on one side"
+		where:
+			dsl << [
+			   {
+					request {
+						method 'GET'
+						urlPath("users") {
+							queryParameters {
+								parameter 'name': $(client(absent()), server(""))
+							}
+						}
+					}
+					response {
+						status 200
+					}
+				},
+				{
+					request {
+						method 'GET'
+						urlPath("users") {
+							queryParameters {
+								parameter 'name': $(client(""), server(absent()))
+							}
+						}
+					}
+					response {
+						status 200
+					}
+				},
+				{
+					request {
+						method 'GET'
+						urlPath("users") {
+							queryParameters {
+								parameter 'name': $(client(absent()), server(matching("abc")))
+							}
+						}
+					}
+					response {
+						status 200
+					}
+				}
+			]
 	}
 
 	def "should generate request with url and queryParameters for client side"() {

@@ -120,10 +120,24 @@ class SpockMethodBodyBuilder {
 	}
 
 	private String buildUrlFromUrlPath(UrlPath urlPath) {
-		String params = urlPath.queryParameters.parameters.inject([]) { result, param ->
+		String params = urlPath.queryParameters.parameters
+				.findAll(this.&allowedQueryParameter)
+				.inject([]) { result, param ->
 			result << "${param.name}=${resolveParamValue(param).toString()}"
 		}.join('&')
 		return "$urlPath.serverValue?$params"
+	}
+
+	private boolean allowedQueryParameter(QueryParameter param) {
+		return allowedQueryParameter(param.serverValue)
+	}
+
+	private boolean allowedQueryParameter(MatchingStrategy matchingStrategy) {
+		return matchingStrategy.type != MatchingStrategy.Type.ABSENT
+	}
+
+	private boolean allowedQueryParameter(Object o) {
+		return true
 	}
 
 	private String resolveParamValue(QueryParameter param) {

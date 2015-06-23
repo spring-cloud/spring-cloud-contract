@@ -6,6 +6,9 @@ import io.codearte.accurest.dsl.internal.MatchingStrategy
 
 import java.util.regex.Pattern
 
+import static io.codearte.accurest.dsl.internal.MatchingStrategy.Type.ABSENT
+import static io.codearte.accurest.dsl.internal.MatchingStrategy.Type.EQUAL_TO
+
 @TypeChecked
 class ValidateUtils {
 
@@ -23,8 +26,10 @@ class ValidateUtils {
         throw new IllegalStateException("$msg can't be a pattern for the server side")
     }
 
+    static List ALLOWED_MATCHING_TYPES_ON_SERVER_SIDE = [EQUAL_TO, ABSENT]
+
     static void validateServerValue(MatchingStrategy matchingStrategy, String msg) {
-        if (matchingStrategy.type != MatchingStrategy.Type.EQUAL_TO) {
+        if (!ALLOWED_MATCHING_TYPES_ON_SERVER_SIDE.contains(matchingStrategy.type)) {
             throw new IllegalStateException("$msg can't be of a matching type: $matchingStrategy.type for the server side")
         }
         validateServerValue(matchingStrategy.serverValue, msg)

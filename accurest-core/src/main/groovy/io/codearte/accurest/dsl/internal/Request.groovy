@@ -125,6 +125,10 @@ class Request extends Common {
 		return new MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO_JSON)
 	}
 
+	MatchingStrategy absent() {
+		return new MatchingStrategy(true, MatchingStrategy.Type.ABSENT)
+	}
+
 }
 
 @CompileStatic
