@@ -259,6 +259,7 @@ class SpockMethodBuilderSpec extends Specification {
 							parameter 'search': $(client(notMatching(~/^\/[0-9]{2}$/)), server("55"))
 							parameter 'age': $(client(notMatching("^\\w*\$")), server("99"))
 							parameter 'name': $(client(matching("Denis.*")), server("Denis.Stepanov"))
+							parameter 'email': "bob@email.com"
 						}
 					}
 				}
@@ -278,7 +279,7 @@ class SpockMethodBuilderSpec extends Specification {
 			builder.appendTo(blockBuilder)
 			def spockTest = blockBuilder.toString()
 		then:
-			spockTest.contains('get("/users?limit=10&offset=20&filter=email&sort=name&search=55&age=99&name=Denis.Stepanov")')
+			spockTest.contains('get("/users?limit=10&offset=20&filter=email&sort=name&search=55&age=99&name=Denis.Stepanov&email=bob@email.com")')
 			spockTest.contains('responseBody.property1 == "a"')
 			spockTest.contains('responseBody.property2 == "b"')
 	}

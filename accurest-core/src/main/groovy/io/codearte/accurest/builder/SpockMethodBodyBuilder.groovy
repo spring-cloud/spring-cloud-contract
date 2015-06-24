@@ -121,7 +121,7 @@ class SpockMethodBodyBuilder {
 
 	private String buildUrlFromUrlPath(UrlPath urlPath) {
 		String params = urlPath.queryParameters.parameters.inject([]) { result, param ->
-			result << "${param.name}=${URLEncoder.encode(resolveParamValue(param).toString(), "UTF8")}"
+			result << "${param.name}=${resolveParamValue(param).toString()}"
 		}.join('&')
 		return "$urlPath.serverValue?$params"
 	}
