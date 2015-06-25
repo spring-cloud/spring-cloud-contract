@@ -8,7 +8,7 @@ Consumer Driven Contracts verifier for Java
 
 Just to make long story short - AccuREST is a tool for Consumer Driven Contract (CDC) development. AccuREST ships easy DSL for describing REST contracts for JVM-based applications. The contract DSL is used by AccuREST for two things:
 
-generating Wiremock's JSON stub definitions, allowing rapid development of the consumer side,
+generating WireMock's JSON stub definitions, allowing rapid development of the consumer side,
 generating Spock's acceptance tests for the server - to verify if your API implementation is compliant with the contract.
 By using AccuREST you can move TDD to an architecture level.
 

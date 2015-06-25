@@ -8,15 +8,15 @@ import nl.flotsam.xeger.Xeger
 
 import static org.apache.commons.lang3.StringEscapeUtils.escapeJava
 
-class WiremockToDslConverter {
-	static String fromWiremockStub(String wiremockStringStub) {
-		return new WiremockToDslConverter().convertFromWiremockStub(wiremockStringStub)
+class WireMockToDslConverter {
+	static String fromWireMockStub(String wireMockStringStub) {
+		return new WireMockToDslConverter().convertFromWireMockStub(wireMockStringStub)
 	}
 
-	private String convertFromWiremockStub(String wiremockStringStub) {
-		Object wiremockStub = new JsonSlurper().parseText(wiremockStringStub)
-		def request = wiremockStub.request
-		def response = wiremockStub.response
+	private String convertFromWireMockStub(String wireMockStringStub) {
+		Object wireMockStub = new JsonSlurper().parseText(wireMockStringStub)
+		def request = wireMockStub.request
+		def response = wireMockStub.response
 		def bodyPatterns = request.bodyPatterns
 		String urlPattern = request.urlPattern
 		return """\
@@ -146,8 +146,8 @@ class WiremockToDslConverter {
 				if (!it.name.endsWith('json')) {
 					return
 				}
-				String dslFromWiremockStub = fromWiremockStub(it.text)
-				String dslWrappedWithFactoryMethod = wrapWithFactoryMethod(dslFromWiremockStub)
+				String dslFromWireMockStub = fromWireMockStub(it.text)
+				String dslWrappedWithFactoryMethod = wrapWithFactoryMethod(dslFromWireMockStub)
 				File newGroovyFile = new File(it.parent, it.name.replaceAll('json', 'groovy'))
 				println("Creating new groovy file [$newGroovyFile.path]")
 				newGroovyFile.text = dslWrappedWithFactoryMethod
@@ -158,10 +158,10 @@ class WiremockToDslConverter {
 		}
 	}
 
-	static String wrapWithFactoryMethod(String dslFromWiremockStub) {
+	static String wrapWithFactoryMethod(String dslFromWireMockStub) {
 		return """\
 ${GroovyDsl.name}.make {
-	$dslFromWiremockStub
+	$dslFromWireMockStub
 }
 """
 	}

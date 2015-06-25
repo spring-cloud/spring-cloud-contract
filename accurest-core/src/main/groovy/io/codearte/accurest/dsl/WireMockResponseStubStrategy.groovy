@@ -11,12 +11,12 @@ import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromHea
 
 @TypeChecked
 @PackageScope
-class WiremockResponseStubStrategy extends BaseWiremockStubStrategy {
+class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 
 	private final Request request
 	private final Response response
 
-	WiremockResponseStubStrategy(GroovyDsl groovyDsl) {
+	WireMockResponseStubStrategy(GroovyDsl groovyDsl) {
 		this.response = groovyDsl.response
 		this.request = groovyDsl.request
 	}

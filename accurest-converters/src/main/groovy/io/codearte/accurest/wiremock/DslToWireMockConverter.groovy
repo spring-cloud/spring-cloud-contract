@@ -4,7 +4,7 @@ import groovy.transform.CompileStatic
 import io.codearte.accurest.dsl.GroovyDsl
 
 @CompileStatic
-abstract class DslToWiremockConverter implements SingleFileConverter {
+abstract class DslToWireMockConverter implements SingleFileConverter {
 
 	@Override
 	boolean canHandleFileName(String fileName) {

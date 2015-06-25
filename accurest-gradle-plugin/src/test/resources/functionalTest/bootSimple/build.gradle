@@ -12,8 +12,8 @@ apply plugin: 'accurest'
 
 ext {
     contractsDir = file("${project.rootDir}/repository/mappings/com/ofg/twitter-places-analyzer")
-    wiremockStubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
-    wiremockStubsOutputDir = new File(wiremockStubsOutputDirRoot, 'repository/mappings/')
+    wireMockStubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
+    wireMockStubsOutputDir = new File(wireMockStubsOutputDirRoot, 'repository/mappings/')
 }
 
 configurations {
@@ -59,16 +59,16 @@ accurest {
     basePackageForTests = 'accurest'
     contractsDslDir = contractsDir
 //    generatedTestSourcesDir = file("${project.rootDir}/src/test/groovy/")
-    stubsOutputDir = wiremockStubsOutputDir
+    stubsOutputDir = wireMockStubsOutputDir
 }
 
 //TODO: Put it into the plugin
-task createWiremockStubsOutputDir << {
-    wiremockStubsOutputDir.mkdirs()
+task createWireMockStubsOutputDir << {
+    wireMockStubsOutputDir.mkdirs()
 }
 
-generateWiremockClientStubs.dependsOn { createWiremockStubsOutputDir }
-generateAccurest.dependsOn generateWiremockClientStubs
+generateWireMockClientStubs.dependsOn { createWireMockStubsOutputDir }
+generateAccurest.dependsOn generateWireMockClientStubs
 
 wrapper {
     gradleVersion '2.2.1'

@@ -40,8 +40,8 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 	apply plugin: 'accurest'
 
 	ext {
-		wiremockStubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
-		wiremockStubsOutputDir = new File(wiremockStubsOutputDirRoot, 'mappings/')
+		wireMockStubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
+		wireMockStubsOutputDir = new File(wireMockStubsOutputDirRoot, 'mappings/')
 	}
 
 	accurest {
@@ -50,7 +50,7 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 		baseClassForTests = 'com.blogspot.toomuchcoding.MvcSpec'
 		contractsDslDir = file("${project.projectDir.absolutePath}/mappings/")
 		generatedTestSourcesDir = file("${project.buildDir}/generated-sources/")
-		stubsOutputDir = wiremockStubsOutputDir
+		stubsOutputDir = wireMockStubsOutputDir
 	}
 
 	jar {
@@ -79,7 +79,7 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 }
 
 configure(project(':fraudDetectionService')) {
-	test.dependsOn('generateWiremockClientStubs')
+	test.dependsOn('generateWireMockClientStubs')
 }
 
 configure(project(':loanApplicationService')) {
@@ -92,3 +92,4 @@ configure(project(':loanApplicationService')) {
 
 	generateAccurest.dependsOn('copyCollaboratorStubs')
 }
+
