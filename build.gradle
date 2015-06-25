@@ -1,6 +1,7 @@
 buildscript {
 	repositories {
 		mavenCentral()
+		mavenLocal()
 	}
 	dependencies {
 		classpath "pl.allegro.tech.build:axion-release-plugin:1.2.2"

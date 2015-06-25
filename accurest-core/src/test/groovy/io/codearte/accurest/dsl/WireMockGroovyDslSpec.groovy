@@ -4,9 +4,9 @@ import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import spock.lang.Issue
 
-class WiremockGroovyDslSpec extends WiremockSpec {
+class WireMockGroovyDslSpec extends WireMockSpec {
 
-	def 'should convert groovy dsl stub to wiremock stub for the client side'() {
+	def 'should convert groovy dsl stub to wireMock stub for the client side'() {
 		given:
 			GroovyDsl groovyDsl = GroovyDsl.make {
 				request {
@@ -33,9 +33,9 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		when:
-			String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-			new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
 {
     "request": {
         "method": "GET",
@@ -51,11 +51,11 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 }
 ''')
 		and:
-			stubMappingIsValidWiremockStub(wiremockStub)
+			stubMappingIsValidWireMockStub(wireMockStub)
 	}
 
 	@Issue("#79")
-	def 'should convert groovy dsl stub to wiremock stub for the client side with a body containing a map'() {
+	def 'should convert groovy dsl stub to wireMock stub for the client side with a body containing a map'() {
 		given:
 			GroovyDsl groovyDsl = GroovyDsl.make {
 				request {
@@ -78,9 +78,9 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		when:
-			String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-			new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
 {
     "request": {
         "method": "GET",
@@ -98,7 +98,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 }
 ''')
 		and:
-			stubMappingIsValidWiremockStub(wiremockStub)
+			stubMappingIsValidWireMockStub(wireMockStub)
 	}
 
 	@Issue("#86")
@@ -122,9 +122,9 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		when:
-			String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-			new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
 {
     "request": {
         "method": "POST",
@@ -147,10 +147,10 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 }
 ''')
 		and:
-			stubMappingIsValidWiremockStub(wiremockStub)
+			stubMappingIsValidWireMockStub(wireMockStub)
 	}
 
-	def 'should convert groovy dsl stub with Body as String to wiremock stub for the client side'() {
+	def 'should convert groovy dsl stub with Body as String to wireMock stub for the client side'() {
 		given:
 			GroovyDsl groovyDsl = GroovyDsl.make {
 				request {
@@ -174,9 +174,9 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		when:
-			String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-			new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
 {
     "request": {
         "method": "GET",
@@ -192,10 +192,10 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 }
 ''')
 		and:
-			stubMappingIsValidWiremockStub(wiremockStub)
+			stubMappingIsValidWireMockStub(wireMockStub)
 	}
 
-	def 'should convert groovy dsl stub with simple Body as String to wiremock stub for the client side'() {
+	def 'should convert groovy dsl stub with simple Body as String to wireMock stub for the client side'() {
 		given:
 			GroovyDsl groovyDsl = GroovyDsl.make {
 				request {
@@ -221,9 +221,9 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		when:
-			String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-			new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
 {
     "request": {
         "method": "GET",
@@ -244,7 +244,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 }
 ''')
 		and:
-			stubMappingIsValidWiremockStub(wiremockStub)
+			stubMappingIsValidWireMockStub(wireMockStub)
 	}
 
 	def 'should use equalToJson when body match is defined as map'() {
@@ -271,9 +271,9 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		when:
-			String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-			new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
 			{
 				"request": {
 					"method": "GET",
@@ -290,7 +290,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 			}
 			''')
 		and:
-		stubMappingIsValidWiremockStub(wiremockStub)
+		stubMappingIsValidWireMockStub(wireMockStub)
 	}
 
 	def 'should use equalToJson when content type ends with json'() {
@@ -313,7 +313,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		when:
-			String json = toWiremockClientJsonStub(groovyDsl)
+			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
 			parseJson(json) == parseJson('''
 			{
@@ -337,7 +337,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 			}
 			''')
 		and:
-			stubMappingIsValidWiremockStub(json)
+			stubMappingIsValidWireMockStub(json)
 	}
 
 	def 'should use equalToXml when content type ends with xml'() {
@@ -356,7 +356,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		when:
-			String json = toWiremockClientJsonStub(groovyDsl)
+			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
 			parseJson(json) == parseJson('''
 				{
@@ -380,7 +380,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 				''')
 		and:
-			stubMappingIsValidWiremockStub(json)
+			stubMappingIsValidWireMockStub(json)
 	}
 
 	def 'should use equalToXml when content type is parsable xml'() {
@@ -396,7 +396,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		when:
-			String json = toWiremockClientJsonStub(groovyDsl)
+			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
 			parseJson(json) == parseJson('''
 					{
@@ -415,7 +415,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 					}
 					''')
 		and:
-			stubMappingIsValidWiremockStub(json)
+			stubMappingIsValidWireMockStub(json)
 	}
 
 	def 'should support xml as a response body'() {
@@ -431,7 +431,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		when:
-			String json = toWiremockClientJsonStub(groovyDsl)
+			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
 			parseJson(json) == parseJson('''
 						{
@@ -446,7 +446,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 						}
 						''')
 		and:
-			stubMappingIsValidWiremockStub(json)
+			stubMappingIsValidWireMockStub(json)
 	}
 
 	def 'should use equalToJson'() {
@@ -462,7 +462,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		when:
-			String json = toWiremockClientJsonStub(groovyDsl)
+			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
 			parseJson(json) == parseJson('''
 				{
@@ -481,7 +481,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 				''')
 		and:
-			stubMappingIsValidWiremockStub(json)
+			stubMappingIsValidWireMockStub(json)
 	}
 
 	def 'should use equalToXml'() {
@@ -497,7 +497,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		when:
-			String json = toWiremockClientJsonStub(groovyDsl)
+			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
 			parseJson(json) == parseJson('''
 					{
@@ -516,10 +516,10 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 					}
 					''')
 		and:
-			stubMappingIsValidWiremockStub(json)
+			stubMappingIsValidWireMockStub(json)
 	}
 
-	def 'should convert groovy dsl stub with regexp Body as String to wiremock stub for the client side'() {
+	def 'should convert groovy dsl stub with regexp Body as String to wireMock stub for the client side'() {
 		given:
 			GroovyDsl groovyDsl = GroovyDsl.make {
 			request {
@@ -545,9 +545,9 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 			}
 		}
 		when:
-			String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-			new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
 {
     "request": {
         "method": "GET",
@@ -566,7 +566,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 }
 ''')
 		and:
-			stubMappingIsValidWiremockStub(wiremockStub)
+			stubMappingIsValidWireMockStub(wireMockStub)
 	}
 
 	def 'should convert groovy dsl stub with a regexp and an integer in request body'() {
@@ -600,9 +600,9 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 
 			}
 		when:
-			String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-			new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
 {
     "request": {
         "method": "PUT",
@@ -626,7 +626,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 }
 ''')
 		and:
-			stubMappingIsValidWiremockStub(wiremockStub)
+			stubMappingIsValidWireMockStub(wireMockStub)
 	}
 
 
@@ -638,7 +638,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		expect:
-			new WiremockRequestStubStrategy(groovyDsl).buildClientRequestContent() == new JsonSlurper().parseText('''
+			new WireMockRequestStubStrategy(groovyDsl).buildClientRequestContent() == new JsonSlurper().parseText('''
     {
         "method":"GET"
     }
@@ -654,7 +654,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		expect:
-			new WiremockRequestStubStrategy(groovyDsl).buildClientRequestContent() == new JsonSlurper().parseText('''
+			new WireMockRequestStubStrategy(groovyDsl).buildClientRequestContent() == new JsonSlurper().parseText('''
     {
         "method":"GET",
         "url":"/sth"
@@ -673,7 +673,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		expect:
-			new WiremockRequestStubStrategy(groovyDsl).buildClientRequestContent() == new JsonSlurper().parseText('''
+			new WireMockRequestStubStrategy(groovyDsl).buildClientRequestContent() == new JsonSlurper().parseText('''
     {
         "urlPattern":"^/[0-9]{2}$"
     }
@@ -703,7 +703,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		when:
-			def json = toWiremockClientJsonStub(groovyDsl)
+			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
 			parseJson(json) == parseJson('''
 			{
@@ -743,7 +743,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 			}
 			''')
 		and:
-			stubMappingIsValidWiremockStub(json)
+			stubMappingIsValidWireMockStub(json)
 	}
 
 	def "should generate request with urlPath for client side"() {
@@ -758,7 +758,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		when:
-			def json = toWiremockClientJsonStub(groovyDsl)
+			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
 			parseJson(json) == parseJson('''
 				{
@@ -772,7 +772,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 				''')
 		and:
-			stubMappingIsValidWiremockStub(json)
+			stubMappingIsValidWireMockStub(json)
 	}
 
 	def "should generate simple request with urlPath for client side"() {
@@ -787,7 +787,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		when:
-			def json = toWiremockClientJsonStub(groovyDsl)
+			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
 			parseJson(json) == parseJson('''
 				{
@@ -801,7 +801,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 				''')
 		and:
-			stubMappingIsValidWiremockStub(json)
+			stubMappingIsValidWireMockStub(json)
 	}
 
 	def "should not allow regexp in url for server value"() {
@@ -933,7 +933,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		when:
-			def json = toWiremockClientJsonStub(groovyDsl)
+			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
 			parseJson(json) == parseJson('''
 				{
@@ -955,7 +955,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 				''')
 		and:
-			stubMappingIsValidWiremockStub(json)
+			stubMappingIsValidWireMockStub(json)
 	}
 
 	def "should generate stub with some headers section for client side"() {
@@ -976,7 +976,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		expect:
-			new WiremockRequestStubStrategy(groovyDsl).buildClientRequestContent() == new JsonSlurper().parseText('''
+			new WireMockRequestStubStrategy(groovyDsl).buildClientRequestContent() == new JsonSlurper().parseText('''
     {
         "headers": {
             "Content-Type": {
@@ -993,7 +993,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
     ''')
 	}
 
-	def 'should convert groovy dsl stub with rich tree Body as String to wiremock stub for the client side'() {
+	def 'should convert groovy dsl stub with rich tree Body as String to wireMock stub for the client side'() {
 		given:
 			GroovyDsl groovyDsl = GroovyDsl.make {
 				request {
@@ -1032,9 +1032,9 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		when:
-			String wiremockStub = new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-			new JsonSlurper().parseText(wiremockStub) == new JsonSlurper().parseText('''
+			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
 			{
 				"request": {
 							"method": "GET",
@@ -1083,7 +1083,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				}
 			}
 		when:
-			def json = toWiremockClientJsonStub(groovyDsl)
+			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
 			parseJson(json) == parseJson('''
 				{
@@ -1115,7 +1115,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 		new JsonSlurper().parseText(json)
 	}
 
-	String toWiremockClientJsonStub(groovyDsl) {
-		new WiremockStubStrategy(groovyDsl).toWiremockClientStub()
+	String toWireMockClientJsonStub(groovyDsl) {
+		new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 	}
 }

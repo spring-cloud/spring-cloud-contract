@@ -3,7 +3,7 @@ package io.codearte.accurest.dsl
 import groovy.json.JsonSlurper
 import spock.lang.Specification
 
-class WiremockGroovyDslResponseSpec extends Specification {
+class WireMockGroovyDslResponseSpec extends Specification {
 
 	def 'should generate response without body for client side'() {
 		given:
@@ -13,7 +13,7 @@ class WiremockGroovyDslResponseSpec extends Specification {
 				}
 			}
 		expect:
-			new WiremockResponseStubStrategy(dsl).buildClientResponseContent() == new JsonSlurper().parseText(expectedStub)
+			new WireMockResponseStubStrategy(dsl).buildClientResponseContent() == new JsonSlurper().parseText(expectedStub)
 		where:
 			expectedStub << ['''
     {
@@ -39,7 +39,7 @@ class WiremockGroovyDslResponseSpec extends Specification {
 				}
 			}
 		expect:
-			new WiremockResponseStubStrategy(dsl).buildClientResponseContent() == new JsonSlurper().parseText('''
+			new WireMockResponseStubStrategy(dsl).buildClientResponseContent() == new JsonSlurper().parseText('''
     {
             "headers": {
                 "Content-Type": "text/xml"

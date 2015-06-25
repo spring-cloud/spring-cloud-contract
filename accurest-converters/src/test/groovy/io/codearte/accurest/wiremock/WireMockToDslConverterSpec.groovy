@@ -4,11 +4,11 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import io.codearte.accurest.dsl.GroovyDsl
 import spock.lang.Specification
 
-class WiremockToDslConverterSpec extends Specification {
+class WireMockToDslConverterSpec extends Specification {
 
-	def 'should produce a Groovy DSL from Wiremock stub'() {
+	def 'should produce a Groovy DSL from WireMock stub'() {
 		given:
-			String wiremockStub = '''\
+			String wireMockStub = '''\
 {
 	"request": {
 		"method": "GET",
@@ -32,7 +32,7 @@ class WiremockToDslConverterSpec extends Specification {
 }
 '''
 		and:
-			stubMappingIsValidWiremockStub(wiremockStub)
+			stubMappingIsValidWireMockStub(wireMockStub)
 		and:
 			GroovyDsl expectedGroovyDsl = GroovyDsl.make {
 				request {
@@ -65,7 +65,7 @@ class WiremockToDslConverterSpec extends Specification {
 				}
 			}
 		when:
-			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
+			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
 			new GroovyShell(this.class.classLoader).evaluate(
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
@@ -74,9 +74,9 @@ class WiremockToDslConverterSpec extends Specification {
 	}
 
 
-	def 'should convert Wiremock stub with response body containing simple JSON'() {
+	def 'should convert WireMock stub with response body containing simple JSON'() {
 		given:
-			String wiremockStub = '''\
+			String wireMockStub = '''\
 {
 	"request": {
 		"method": "DELETE",
@@ -97,7 +97,7 @@ class WiremockToDslConverterSpec extends Specification {
 }
 '''
 		and:
-			stubMappingIsValidWiremockStub(wiremockStub)
+			stubMappingIsValidWireMockStub(wireMockStub)
 		and:
 			GroovyDsl expectedGroovyDsl = GroovyDsl.make {
 				request {
@@ -119,7 +119,7 @@ class WiremockToDslConverterSpec extends Specification {
 				}
 			}
 		when:
-			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
+			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
 			new GroovyShell(this.class.classLoader).evaluate(
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
@@ -127,9 +127,9 @@ class WiremockToDslConverterSpec extends Specification {
 			}""") == expectedGroovyDsl
 	}
 
-	def 'should convert Wiremock stub with response body containing integer'() {
+	def 'should convert WireMock stub with response body containing integer'() {
 		given:
-			String wiremockStub = '''\
+			String wireMockStub = '''\
 {
   "request": {
 	"method": "POST",
@@ -150,7 +150,7 @@ class WiremockToDslConverterSpec extends Specification {
 }
 '''
 		and:
-			stubMappingIsValidWiremockStub(wiremockStub)
+			stubMappingIsValidWireMockStub(wireMockStub)
 		and:
 			GroovyDsl expectedGroovyDsl = GroovyDsl.make {
 				request {
@@ -170,7 +170,7 @@ class WiremockToDslConverterSpec extends Specification {
 				}
 			}
 		when:
-			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
+			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
 			new GroovyShell(this.class.classLoader).evaluate(
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
@@ -178,9 +178,9 @@ class WiremockToDslConverterSpec extends Specification {
 			}""") == expectedGroovyDsl
 	}
 
-	def 'should convert Wiremock stub with response body as a list'() {
+	def 'should convert WireMock stub with response body as a list'() {
 		given:
-			String wiremockStub = '''\
+			String wireMockStub = '''\
 {
   "request": {
 	"method": "POST",
@@ -201,7 +201,7 @@ class WiremockToDslConverterSpec extends Specification {
 }
 '''
 		and:
-			stubMappingIsValidWiremockStub(wiremockStub)
+			stubMappingIsValidWireMockStub(wireMockStub)
 		and:
 			GroovyDsl expectedGroovyDsl = GroovyDsl.make {
 				request {
@@ -224,7 +224,7 @@ class WiremockToDslConverterSpec extends Specification {
 				}
 			}
 		when:
-			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
+			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
 			new GroovyShell(this.class.classLoader).evaluate(
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
@@ -233,9 +233,9 @@ class WiremockToDslConverterSpec extends Specification {
 	}
 
 
-	def 'should convert Wiremock stub with response body containing a nested list'() {
+	def 'should convert WireMock stub with response body containing a nested list'() {
 		given:
-			String wiremockStub = '''\
+			String wireMockStub = '''\
 {
   "request": {
 	"method": "POST",
@@ -253,7 +253,7 @@ class WiremockToDslConverterSpec extends Specification {
 }
 '''
 		and:
-			stubMappingIsValidWiremockStub(wiremockStub)
+			stubMappingIsValidWireMockStub(wireMockStub)
 		and:
 			GroovyDsl expectedGroovyDsl = GroovyDsl.make {
 				request {
@@ -290,7 +290,7 @@ class WiremockToDslConverterSpec extends Specification {
 				}
 			}
 		when:
-			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
+			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
 			new GroovyShell(this.class.classLoader).evaluate(
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
@@ -298,9 +298,9 @@ class WiremockToDslConverterSpec extends Specification {
 			}""") == expectedGroovyDsl
 	}
 
-	def 'should convert Wiremock stub with request body checking equality to Json'() {
+	def 'should convert WireMock stub with request body checking equality to Json'() {
 		given:
-			String wiremockStub = '''\
+			String wireMockStub = '''\
 {
   "request": {
 	"method": "POST",
@@ -315,7 +315,7 @@ class WiremockToDslConverterSpec extends Specification {
 }
 '''
 		and:
-			stubMappingIsValidWiremockStub(wiremockStub)
+			stubMappingIsValidWireMockStub(wireMockStub)
 		and:
 			GroovyDsl expectedGroovyDsl = GroovyDsl.make {
 				request {
@@ -328,7 +328,7 @@ class WiremockToDslConverterSpec extends Specification {
 				}
 			}
 		when:
-			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
+			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
 			GroovyDsl evaluatedGroovyDsl = new GroovyShell(this.class.classLoader).evaluate(
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
@@ -338,9 +338,9 @@ class WiremockToDslConverterSpec extends Specification {
 			evaluatedGroovyDsl == expectedGroovyDsl
 	}
 
-	def 'should convert Wiremock stub with request body checking matching to Json'() {
+	def 'should convert WireMock stub with request body checking matching to Json'() {
 		given:
-			String wiremockStub = '''\
+			String wireMockStub = '''\
 {
   "request": {
 	"method": "POST",
@@ -355,7 +355,7 @@ class WiremockToDslConverterSpec extends Specification {
 }
 '''
 		and:
-			stubMappingIsValidWiremockStub(wiremockStub)
+			stubMappingIsValidWireMockStub(wireMockStub)
 		and:
 			GroovyDsl expectedGroovyDsl = GroovyDsl.make {
 				request {
@@ -368,7 +368,7 @@ class WiremockToDslConverterSpec extends Specification {
 				}
 			}
 		when:
-			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
+			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
 			GroovyDsl evaluatedGroovyDsl = new GroovyShell(this.class.classLoader).evaluate(
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
@@ -378,9 +378,9 @@ class WiremockToDslConverterSpec extends Specification {
 			evaluatedGroovyDsl == expectedGroovyDsl
 	}
 
-	def 'should convert Wiremock stub with request body with equalToJson'() {
+	def 'should convert WireMock stub with request body with equalToJson'() {
 		given:
-			String wiremockStub = '''\
+			String wireMockStub = '''\
 {
   "request" : {
 	"url" : "/test",
@@ -396,7 +396,7 @@ class WiremockToDslConverterSpec extends Specification {
 }
 '''
 		and:
-			stubMappingIsValidWiremockStub(wiremockStub)
+			stubMappingIsValidWireMockStub(wireMockStub)
 		and:
 			GroovyDsl expectedGroovyDsl = GroovyDsl.make {
 				request {
@@ -409,7 +409,7 @@ class WiremockToDslConverterSpec extends Specification {
 				}
 			}
 		when:
-			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
+			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
 			GroovyDsl evaluatedGroovyDsl = new GroovyShell(this.class.classLoader).evaluate(
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
@@ -419,9 +419,9 @@ class WiremockToDslConverterSpec extends Specification {
 			evaluatedGroovyDsl == expectedGroovyDsl
 	}
 
-	def 'should convert Wiremock stub with request body with equalTo'() {
+	def 'should convert WireMock stub with request body with equalTo'() {
 		given:
-			String wiremockStub = '''\
+			String wireMockStub = '''\
 			{
 			  "request" : {
 				"url" : "/test",
@@ -436,7 +436,7 @@ class WiremockToDslConverterSpec extends Specification {
 			}
 			'''
 		and:
-			stubMappingIsValidWiremockStub(wiremockStub)
+			stubMappingIsValidWireMockStub(wireMockStub)
 		and:
 			GroovyDsl expectedGroovyDsl = GroovyDsl.make {
 				request {
@@ -449,7 +449,7 @@ class WiremockToDslConverterSpec extends Specification {
 				}
 			}
 		when:
-			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
+			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
 			GroovyDsl evaluatedGroovyDsl = new GroovyShell(this.class.classLoader).evaluate(
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
@@ -459,9 +459,9 @@ class WiremockToDslConverterSpec extends Specification {
 			evaluatedGroovyDsl == expectedGroovyDsl
 	}
 
-	def 'should convert Wiremock stub with request body with matches'() {
+	def 'should convert WireMock stub with request body with matches'() {
 		given:
-			String wiremockStub = '''\
+			String wireMockStub = '''\
 			{
 			  "request" : {
 				"url" : "/test",
@@ -476,7 +476,7 @@ class WiremockToDslConverterSpec extends Specification {
 			}
 			'''
 		and:
-			stubMappingIsValidWiremockStub(wiremockStub)
+			stubMappingIsValidWireMockStub(wireMockStub)
 		and:
 			GroovyDsl expectedGroovyDsl = GroovyDsl.make {
 				request {
@@ -489,7 +489,7 @@ class WiremockToDslConverterSpec extends Specification {
 				}
 			}
 		when:
-			String groovyDsl = WiremockToDslConverter.fromWiremockStub(wiremockStub)
+			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
 			GroovyDsl evaluatedGroovyDsl = new GroovyShell(this.class.classLoader).evaluate(
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
@@ -499,7 +499,7 @@ class WiremockToDslConverterSpec extends Specification {
 			evaluatedGroovyDsl == expectedGroovyDsl
 	}
 
-	void stubMappingIsValidWiremockStub(String mappingDefinition) {
+	void stubMappingIsValidWireMockStub(String mappingDefinition) {
 		StubMapping.buildFrom(mappingDefinition)
 	}
 

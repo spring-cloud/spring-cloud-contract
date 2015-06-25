@@ -3,11 +3,11 @@ package io.codearte.accurest.wiremock
 import groovy.json.JsonSlurper
 import spock.lang.Specification
 
-class DslToWiremockClientConverterSpec extends Specification {
+class DslToWireMockClientConverterSpec extends Specification {
 
-	def "should convert DSL file to Wiremock JSON"() {
+	def "should convert DSL file to WireMock JSON"() {
 		given:
-			def converter = new DslToWiremockClientConverter()
+			def converter = new DslToWireMockClientConverter()
 		and:
 			String dslBody = """
                 io.codearte.accurest.dsl.GroovyDsl.make {
@@ -28,9 +28,9 @@ class DslToWiremockClientConverterSpec extends Specification {
 	}
 
 
-	def "should convert DSL file with a nested list to Wiremock JSON"() {
+	def "should convert DSL file with a nested list to WireMock JSON"() {
 		given:
-			def converter = new DslToWiremockClientConverter()
+			def converter = new DslToWireMockClientConverter()
 		and:
 			String dslBody = """
                 io.codearte.accurest.dsl.GroovyDsl.make {

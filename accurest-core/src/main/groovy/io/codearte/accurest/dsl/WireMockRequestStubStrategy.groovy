@@ -21,11 +21,11 @@ import static io.codearte.accurest.util.RegexpBuilders.buildJSONRegexpMatch
 
 @TypeChecked
 @PackageScope
-class WiremockRequestStubStrategy extends BaseWiremockStubStrategy {
+class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 
 	private final Request request
 
-	WiremockRequestStubStrategy(GroovyDsl groovyDsl) {
+	WireMockRequestStubStrategy(GroovyDsl groovyDsl) {
 		this.request = groovyDsl.request
 	}
 

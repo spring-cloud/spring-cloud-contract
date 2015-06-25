@@ -13,7 +13,7 @@ import static io.codearte.accurest.util.ContentUtils.extractValue
 import static io.codearte.accurest.util.JsonConverter.transformValues
 
 @TypeChecked
-abstract class BaseWiremockStubStrategy {
+abstract class BaseWireMockStubStrategy {
 
 	private static Closure transform = {
 		it instanceof DslProperty ? transformValues(it.clientValue, transform) : it
