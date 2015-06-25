@@ -553,7 +553,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
         "method": "GET",
         "urlPattern": "/[0-9]{2}",
         "bodyPatterns": [
-			{"matches": ".*personalId\\":.?\\"?^[0-9]{11}$\\"?.*"}
+			{"matches": "\\\\s*\\\\{\\\\s*\\\"personalId\\\"\\\\s*:\\\\s*\\\"?^[0-9]{11}$\\\"?\\\\s*\\\\}\\\\s*"}
         ]
     },
     "response": {
@@ -613,8 +613,7 @@ class WiremockGroovyDslSpec extends WiremockSpec {
         },
         "url": "/fraudcheck",
         "bodyPatterns": [
-			{"matches": ".*clientPesel\\":.?\\"?[0-9]{10}\\"?.*"},
-			{"matches": ".*loanAmount\\":.?\\"?123.123\\"?.*"}
+			{"matches": "\\\\s*\\\\{\\\\s*\\"clientPesel\\"\\\\s*:\\\\s*\\"?[0-9]{10}\\"?\\\\s*,\\\\s*\\"loanAmount\\"\\\\s*:\\\\s*\\"?123.123\\"?\\\\s*\\\\}\\\\s*"}
         ]
     },
     "response": {
@@ -986,17 +985,11 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 				"request": {
 							"method": "GET",
 							"urlPattern": "/[0-9]{2}",
-							"bodyPatterns": [
-											{"matches": ".*birthDate\\":.?\\"?[0-9]{4}-[0-9]{2}-[0-9]{2}\\"?.*"},
-											{"matches": ".*propertyName\\":.?\\"?[0-9]{2}\\"?.*"},
-											{"matches": ".*providerValue\\":.?\\"?Test\\"?.*"},
-											{"matches": ".*propertyName\\":.?\\"?[0-9]{2}\\"?.*"},
-											{"matches": ".*providerValue\\":.?\\"?Test\\"?.*"},
-											{"matches": ".*firstName\\":.?\\"?.*\\"?.*"},
-											{"matches": ".*lastName\\":.?\\"?.*\\"?.*"},
-											{"matches": ".*personalId\\":.?\\"?[0-9]{11}\\"?.*"}
-											]
-							},
+						    "bodyPatterns": [
+							     {
+								    "matches": "\\\\s*\\\\{\\\\s*\\"birthDate\\"\\\\s*:\\\\s*\\"?[0-9]{4}-[0-9]{2}-[0-9]{2}\\"?\\\\s*,\\\\s*\\"errors\\"\\\\s*:\\\\s*\\\\[\\\\s*\\\\{\\\\s*\\"propertyName\\"\\\\s*:\\\\s*\\"?[0-9]{2}\\"?\\\\s*,\\\\s*\\"providerValue\\"\\\\s*:\\\\s*\\"?Test\\"?\\\\s*\\\\}\\\\s*,\\\\s*\\\\{\\\\s*\\"propertyName\\"\\\\s*:\\\\s*\\"?[0-9]{2}\\"?\\\\s*,\\\\s*\\"providerValue\\"\\\\s*:\\\\s*\\"?Test\\"?\\\\s*\\\\}\\\\s*\\\\]\\\\s*,\\\\s*\\"firstName\\"\\\\s*:\\\\s*\\"?.*\\"?\\\\s*,\\\\s*\\"lastName\\"\\\\s*:\\\\s*\\"?.*\\"?\\\\s*,\\\\s*\\"personalId\\"\\\\s*:\\\\s*\\"?[0-9]{11}\\"?\\\\s*\\\\}\\\\s*"
+							     }
+						     ] },
 				"response": {
 							"status": 200,
 							"body": "{\\"name\\":\\"Jan\\"}",
@@ -1006,6 +999,58 @@ class WiremockGroovyDslSpec extends WiremockSpec {
 							}
 			}
 			''')
+	}
+
+	def 'should use regexp matches when request body match is defined using a map with a pattern'() {
+		given:
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				request {
+					method 'POST'
+					url '/reissue-payment-order'
+					body(
+							loanNumber: "999997001",
+							amount: value(client(regex('[0-9.]+')), server('100.00')),
+							currency: "DKK",
+							applicationName: value(client(regex('.*')), server("Auto-Repayments")),
+							username: value(client(regex('.*')), server("scheduler")),
+							cardId: 1
+					)
+				}
+				response {
+					status 200
+					body '''
+						{
+						"status": "OK"
+						}
+					'''
+					headers {
+						header 'Content-Type': 'application/json'
+					}
+				}
+			}
+		when:
+			def json = toWiremockClientJsonStub(groovyDsl)
+		then:
+			parseJson(json) == parseJson('''
+				{
+					"request": {
+								"method": "POST",
+								"url": "/reissue-payment-order",
+								"bodyPatterns": [
+									{
+									   "matches": "\\\\s*\\\\{\\\\s*\\"loanNumber\\"\\\\s*:\\\\s*\\"?999997001\\"?\\\\s*,\\\\s*\\"amount\\"\\\\s*:\\\\s*\\"?[0-9.]+\\"?\\\\s*,\\\\s*\\"currency\\"\\\\s*:\\\\s*\\"?DKK\\"?\\\\s*,\\\\s*\\"applicationName\\"\\\\s*:\\\\s*\\"?.*\\"?\\\\s*,\\\\s*\\"username\\"\\\\s*:\\\\s*\\"?.*\\"?\\\\s*,\\\\s*\\"cardId\\"\\\\s*:\\\\s*\\"?1\\"?\\\\s*\\\\}\\\\s*"
+									}
+								]
+								},
+					"response": {
+								"status": 200,
+								"body": "{\\"status\\":\\"OK\\"}",
+								"headers": {
+											"Content-Type": "application/json"
+											}
+								}
+				}
+				''')
 	}
 
 	String toJsonString(value) {
