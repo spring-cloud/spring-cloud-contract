@@ -1,9 +1,8 @@
 Accurate REST
 =============
 
-[![Join the chat at https://gitter.im/Codearte/accurest](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Codearte/accurest?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 [![Build Status](https://travis-ci.org/Codearte/accurest.svg?branch=master)](https://travis-ci.org/Codearte/accurest) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.codearte.accurest/accurest-gradle-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.codearte.accurest/accurest-gradle-plugin)
+[![Join the chat at https://gitter.im/Codearte/accurest](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Codearte/accurest?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Consumer Driven Contracts verifier for Java
 
