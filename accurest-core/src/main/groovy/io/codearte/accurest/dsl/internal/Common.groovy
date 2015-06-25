@@ -88,6 +88,28 @@ class Common {
 		assert firstSide ==~ secondSide
 	}
 
+	void assertThatSidesMatch(MatchingStrategy firstSide, MatchingStrategy secondSide) {
+		if (firstSide.type == MatchingStrategy.Type.ABSENT && secondSide != MatchingStrategy.Type.ABSENT) {
+			throwAbsentError()
+		}
+	}
+
+	void assertThatSidesMatch(MatchingStrategy firstSide, Object secondSide) {
+		if (firstSide.type == MatchingStrategy.Type.ABSENT) {
+			throwAbsentError()
+		}
+	}
+
+	void assertThatSidesMatch(Object firstSide, MatchingStrategy secondSide) {
+		if (secondSide.type == MatchingStrategy.Type.ABSENT) {
+			throwAbsentError()
+		}
+	}
+
+	private void throwAbsentError() {
+		throw new IllegalStateException("Absent cannot only be used only on one side")
+	}
+
 	void assertThatSidesMatch(Object firstSide, Object secondSide) {
 		// do nothing
 	}
