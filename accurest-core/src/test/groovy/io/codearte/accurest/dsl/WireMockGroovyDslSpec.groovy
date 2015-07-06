@@ -111,7 +111,11 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 					headers {
 						header("Content-Type": 'application/x-www-form-urlencoded')
 					}
-					body("""paymentType=INCOMING&transferType=BANK&amount=${value(client(regex('[0-9]{3}\\.[0-9]{2}')), server(500.00))}&bookingDate=${value(client(regex('[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])')), server('2015-05-18'))}""")
+					body("""paymentType=INCOMING&transferType=BANK&amount=${
+						value(client(regex('[0-9]{3}\\.[0-9]{2}')), server(500.00))
+					}&bookingDate=${
+						value(client(regex('[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])')), server('2015-05-18'))
+					}""")
 				}
 				response {
 					status 204
@@ -290,7 +294,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 			}
 			''')
 		and:
-		stubMappingIsValidWireMockStub(wireMockStub)
+			stubMappingIsValidWireMockStub(wireMockStub)
 	}
 
 	def 'should use equalToJson when content type ends with json'() {
@@ -349,7 +353,9 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 					headers {
 						header "Content-Type", "customtype/xml"
 					}
-					body """<name>${value(client('Jozo'), server('Denis'))}</name><jobId>${value(client("<test>"), server('1234567890'))}</jobId>"""
+					body """<name>${value(client('Jozo'), server('Denis'))}</name><jobId>${
+						value(client("<test>"), server('1234567890'))
+					}</jobId>"""
 				}
 				response {
 					status 200
@@ -389,7 +395,9 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 				request {
 					method 'GET'
 					url "/users"
-					body """<user><name>${value(client('Jozo'), server('Denis'))}</name><jobId>${value(client("<test>"), server('1234567890'))}</jobId></user>"""
+					body """<user><name>${value(client('Jozo'), server('Denis'))}</name><jobId>${
+						value(client("<test>"), server('1234567890'))
+					}</jobId></user>"""
 				}
 				response {
 					status 200
@@ -427,7 +435,9 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 				}
 				response {
 					status 200
-					body """<user><name>${value(client('Jozo'), server('Denis'))}</name><jobId>${value(client("<test>"), server('1234567890'))}</jobId></user>"""
+					body """<user><name>${value(client('Jozo'), server('Denis'))}</name><jobId>${
+						value(client("<test>"), server('1234567890'))
+					}</jobId></user>"""
 				}
 			}
 		when:
@@ -490,7 +500,9 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 				request {
 					method 'GET'
 					url "/users"
-					body equalToXml("""<name>${value(client('Jozo'), server('Denis'))}</name><jobId>${value(client("<test>"), server('1234567890'))}</jobId>""")
+					body equalToXml("""<name>${value(client('Jozo'), server('Denis'))}</name><jobId>${
+						value(client("<test>"), server('1234567890'))
+					}</jobId>""")
 				}
 				response {
 					status 200
@@ -522,28 +534,28 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 	def 'should convert groovy dsl stub with regexp Body as String to wireMock stub for the client side'() {
 		given:
 			GroovyDsl groovyDsl = GroovyDsl.make {
-			request {
-				method('GET')
-				url $(client(regex('/[0-9]{2}')), server('/12'))
-				body """
+				request {
+					method('GET')
+					url $(client(regex('/[0-9]{2}')), server('/12'))
+					body """
 						{
 							"personalId": "${value(client(regex('^[0-9]{11}$')), server('57593728525'))}"
 						}
 						"""
-			}
-			response {
-				status 200
-				body("""\
+				}
+				response {
+					status 200
+					body("""\
                             {
                                 "name": "Jan"
                             }
                      """
-				)
-				headers {
-					header 'Content-Type': 'text/plain'
+					)
+					headers {
+						header 'Content-Type': 'text/plain'
+					}
 				}
 			}
-		}
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
@@ -827,43 +839,43 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 
 	def "should not allow regexp in query parameter for server value"() {
 		when:
-            GroovyDsl.make {
-                request {
-                    method 'GET'
-                    url("abc") {
-                        queryParameters {
-                            parameter 'age': $(client(notMatching("^\\w*\$")), server(regex(".*")))
-                        }
-                    }
-                }
-                response {
-                    status 200
-                }
-            }
+			GroovyDsl.make {
+				request {
+					method 'GET'
+					url("abc") {
+						queryParameters {
+							parameter 'age': $(client(notMatching("^\\w*\$")), server(regex(".*")))
+						}
+					}
+				}
+				response {
+					status 200
+				}
+			}
 		then:
-            def e = thrown(IllegalStateException)
-            e.message.contains "Query parameter 'age' can't be a pattern for the server side"
+			def e = thrown(IllegalStateException)
+			e.message.contains "Query parameter 'age' can't be a pattern for the server side"
 	}
 
 	def "should not allow query parameter unresolvable for a server value"() {
 		when:
-            GroovyDsl.make {
-                request {
-                    method 'GET'
-                    urlPath("users") {
-                        queryParameters {
-                            parameter 'age': notMatching("^\\w*\$")
-                            parameter 'name': matching("Denis.*")
-                        }
-                    }
-                }
-                response {
-                    status 200
-                }
-            }
+			GroovyDsl.make {
+				request {
+					method 'GET'
+					urlPath("users") {
+						queryParameters {
+							parameter 'age': notMatching("^\\w*\$")
+							parameter 'name': matching("Denis.*")
+						}
+					}
+				}
+				response {
+					status 200
+				}
+			}
 		then:
-            def e = thrown(IllegalStateException)
-            e.message.contains "Query parameter 'age' can't be of a matching type: NOT_MATCHING for the server side"
+			def e = thrown(IllegalStateException)
+			e.message.contains "Query parameter 'age' can't be of a matching type: NOT_MATCHING for the server side"
 	}
 
 	def "should not allow query parameter with a different absent variation for server/client"() {
@@ -874,45 +886,45 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 			e.message.contains "Absent cannot only be used only on one side"
 		where:
 			dsl << [
-			   {
-					request {
-						method 'GET'
-						urlPath("users") {
-							queryParameters {
-								parameter 'name': $(client(absent()), server(""))
+					{
+						request {
+							method 'GET'
+							urlPath("users") {
+								queryParameters {
+									parameter 'name': $(client(absent()), server(""))
+								}
 							}
 						}
-					}
-					response {
-						status 200
-					}
-				},
-				{
-					request {
-						method 'GET'
-						urlPath("users") {
-							queryParameters {
-								parameter 'name': $(client(""), server(absent()))
+						response {
+							status 200
+						}
+					},
+					{
+						request {
+							method 'GET'
+							urlPath("users") {
+								queryParameters {
+									parameter 'name': $(client(""), server(absent()))
+								}
 							}
 						}
-					}
-					response {
-						status 200
-					}
-				},
-				{
-					request {
-						method 'GET'
-						urlPath("users") {
-							queryParameters {
-								parameter 'name': $(client(absent()), server(matching("abc")))
+						response {
+							status 200
+						}
+					},
+					{
+						request {
+							method 'GET'
+							urlPath("users") {
+								queryParameters {
+									parameter 'name': $(client(absent()), server(matching("abc")))
+								}
 							}
 						}
+						response {
+							status 200
+						}
 					}
-					response {
-						status 200
-					}
-				}
 			]
 	}
 
@@ -1105,6 +1117,39 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 								}
 				}
 				''')
+	}
+
+	def "should generate stub for empty body"() {
+		given:
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				request {
+					method('POST')
+					url("test")
+					body("")
+				}
+				response {
+					status 406
+				}
+			}
+		when:
+			def json = toWireMockClientJsonStub(groovyDsl)
+		then:
+			parseJson(json) == parseJson('''
+			{
+        "request": {
+          "method": "POST",
+          "url": "test",
+          "bodyPatterns": [
+            {
+                "equalTo": ""
+            }
+          ]
+        },
+        "response": {
+          "status": 406
+        }
+			}
+''')
 	}
 
 	String toJsonString(value) {

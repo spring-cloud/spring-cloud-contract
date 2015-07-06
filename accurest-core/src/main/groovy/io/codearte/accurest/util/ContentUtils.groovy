@@ -34,6 +34,9 @@ class ContentUtils {
 	 * @return JSON structure with replaced client / server side parts
 	 */
 	public static Object extractValue(GString bodyAsValue, ContentType contentType, Closure valueProvider) {
+		if (bodyAsValue.isEmpty()){
+			return bodyAsValue
+		}
 		if (contentType == ContentType.JSON) {
 			return extractValueForJSON(bodyAsValue, valueProvider)
 		}
@@ -164,6 +167,9 @@ class ContentUtils {
 	}
 
 	public static boolean isJsonType(GString gstring) {
+		if (gstring.isEmpty()) {
+			return false
+		}
 		GString stringWithoutValues = new GStringImpl(
 				gstring.values.collect({
 					it instanceof String || it instanceof GString ? it.toString() : escapeJson(it.toString())

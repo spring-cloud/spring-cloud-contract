@@ -286,5 +286,24 @@ class SpockMethodBuilderSpec extends Specification {
 			spockTest.contains('responseBody.property2 == "b"')
 	}
 
-
+	def "should generate test for empty body"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method('POST')
+					url("/ws/payments")
+					body("")
+				}
+				response {
+					status 406
+				}
+			}
+			SpockMethodBodyBuilder builder = new SpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def spockTest = blockBuilder.toString()
+		then:
+			spockTest.contains(".body('')")
+	}
 }
