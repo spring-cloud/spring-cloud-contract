@@ -7,7 +7,7 @@ import spock.lang.Specification
 /**
  * @author Jakub Kubrynski
  */
-class SpockMethodBuilderSpec extends Specification {
+class MockMvcSpockMethodBuilderSpec extends Specification {
 
 	def "should generate assertions for simple response body"() {
 		given:
@@ -24,7 +24,7 @@ class SpockMethodBuilderSpec extends Specification {
 }"""
 				}
 			}
-			SpockMethodBodyBuilder builder = new SpockMethodBodyBuilder(contractDsl)
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -52,7 +52,7 @@ class SpockMethodBuilderSpec extends Specification {
 					)
 				}
 			}
-			SpockMethodBodyBuilder builder = new SpockMethodBodyBuilder(contractDsl)
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -77,7 +77,7 @@ class SpockMethodBuilderSpec extends Specification {
 					status 200
 				}
 			}
-			SpockMethodBodyBuilder builder = new SpockMethodBodyBuilder(contractDsl)
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -100,7 +100,7 @@ class SpockMethodBuilderSpec extends Specification {
 					status 200
 				}
 			}
-			SpockMethodBodyBuilder builder = new SpockMethodBodyBuilder(contractDsl)
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -126,7 +126,7 @@ class SpockMethodBuilderSpec extends Specification {
 }]"""
 				}
 			}
-			SpockMethodBodyBuilder builder = new SpockMethodBodyBuilder(contractDsl)
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -152,7 +152,7 @@ class SpockMethodBuilderSpec extends Specification {
 }"""
 				}
 			}
-			SpockMethodBodyBuilder builder = new SpockMethodBodyBuilder(contractDsl)
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -178,7 +178,7 @@ class SpockMethodBuilderSpec extends Specification {
 '''
 				}
 			}
-			SpockMethodBodyBuilder builder = new SpockMethodBodyBuilder(contractDsl)
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -210,7 +210,7 @@ class SpockMethodBuilderSpec extends Specification {
 
 				}
 			}
-			SpockMethodBodyBuilder builder = new SpockMethodBodyBuilder(contractDsl)
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -236,7 +236,7 @@ class SpockMethodBuilderSpec extends Specification {
 
 				}
 			}
-			SpockMethodBodyBuilder builder = new SpockMethodBodyBuilder(contractDsl)
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -275,7 +275,7 @@ class SpockMethodBuilderSpec extends Specification {
 					"""
 				}
 			}
-			SpockMethodBodyBuilder builder = new SpockMethodBodyBuilder(contractDsl)
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -298,7 +298,7 @@ class SpockMethodBuilderSpec extends Specification {
 					status 406
 				}
 			}
-			SpockMethodBodyBuilder builder = new SpockMethodBodyBuilder(contractDsl)
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)

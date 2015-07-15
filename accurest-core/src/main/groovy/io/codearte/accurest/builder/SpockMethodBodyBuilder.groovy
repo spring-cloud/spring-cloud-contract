@@ -1,16 +1,14 @@
 package io.codearte.accurest.builder
-
 import groovy.json.JsonOutput
 import groovy.transform.PackageScope
+import groovy.transform.TypeChecked
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.internal.DslProperty
 import io.codearte.accurest.dsl.internal.ExecutionProperty
-import io.codearte.accurest.dsl.internal.Header
 import io.codearte.accurest.dsl.internal.MatchingStrategy
 import io.codearte.accurest.dsl.internal.QueryParameter
 import io.codearte.accurest.dsl.internal.Request
 import io.codearte.accurest.dsl.internal.Response
-import io.codearte.accurest.dsl.internal.UrlPath
 import io.codearte.accurest.util.ContentType
 import io.codearte.accurest.util.JsonConverter
 
@@ -24,85 +22,95 @@ import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromHea
  * @author Jakub Kubrynski
  */
 @PackageScope
-class SpockMethodBodyBuilder {
-	private final GroovyDsl stubDefinition
+@TypeChecked
+abstract class SpockMethodBodyBuilder {
+
+	protected final Request request
+	protected final Response response
 
 	SpockMethodBodyBuilder(GroovyDsl stubDefinition) {
-		this.stubDefinition = stubDefinition
+		this.request = stubDefinition.request
+		this.response = stubDefinition.response
 	}
 
 	void appendTo(BlockBuilder blockBuilder) {
-		Request request = stubDefinition.request
-		Response response = stubDefinition.response
-		blockBuilder.with {
-			startBlock()
-			addLine('given:').startBlock()
-			addLine('def request = given()')
-			indent()
-			request.headers?.collect { Header header ->
-				addLine(".header('${header.name}', '${header.serverValue}')")
-			}
-			if (request.body) {
-				Object bodyValue = extractServerValueFromBody(request.body.serverValue)
-				String matches = trimRepeatedQuotes(new JsonOutput().toJson(bodyValue))
-				addLine(".body('$matches')")
-			}
+		blockBuilder.startBlock()
 
-			unindent().endBlock().addEmptyLine()
+		givenBlock(blockBuilder)
+		whenBlock(blockBuilder)
+		thenBlock(blockBuilder)
 
-			addLine('when:').startBlock()
-			addLine('def response = given().spec(request)')
-			indent()
+		blockBuilder.endBlock()
+	}
 
-			String url = buildUrl(request)
-			String method = request.method.serverValue.toLowerCase()
+	protected void thenBlock(BlockBuilder bb) {
+		bb.addLine('then:')
+		bb.startBlock()
+		then(bb)
+		bb.endBlock()
+	}
 
-			blockBuilder.addLine(/.${method}("$url")/)
-			unindent().endBlock().addEmptyLine()
+	protected void whenBlock(BlockBuilder bb) {
+		bb.addLine('when:')
+		bb.startBlock()
+		when(bb)
+		bb.endBlock().addEmptyLine()
+	}
 
-			addLine('then:').startBlock()
-			addLine("response.statusCode == $response.status.serverValue")
+	protected void givenBlock(BlockBuilder bb) {
+		bb.addLine('given:')
+		bb.startBlock()
+		given(bb)
+		bb.endBlock().addEmptyLine()
+	}
 
-			response.headers?.collect { Header header ->
-				addLine("response.header('$header.name') == '$header.serverValue'")
-			}
-			if (response.body) {
-				endBlock()
-				addLine('and:').startBlock()
-				def responseBody = response.body.serverValue
-				ContentType contentType = recognizeContentTypeFromHeader(response.headers)
-				if (contentType == ContentType.UNKNOWN) {
-					contentType = recognizeContentTypeFromContent(responseBody)
-				}
-				if (responseBody instanceof GString) {
-					responseBody = extractValue(responseBody, contentType, { DslProperty dslProperty -> dslProperty.serverValue })
-				}
-				if (contentType == ContentType.JSON) {
-					addLine('def responseBody = new JsonSlurper().parseText(response.body.asString())')
-					if (responseBody instanceof List) {
-						processArrayElements(responseBody, "", blockBuilder)
-					} else {
-						processMapElement(responseBody, blockBuilder, "")
-					}
-				} else if (contentType == ContentType.XML) {
-					addLine('def responseBody = new XmlSlurper().parseText(response.body.asString())')
-					// TODO xml validation
-				}
-			}
-			endBlock()
+	protected void given(BlockBuilder bb) {}
 
-			endBlock()
+	protected abstract void when(BlockBuilder bb)
+
+	protected abstract void validateResponseCodeBlock(BlockBuilder bb)
+
+	protected abstract void validateResponseHeadersBlock(BlockBuilder bb)
+
+	protected abstract String getResponseAsString()
+
+	protected void then(BlockBuilder bb) {
+		validateResponseCodeBlock(bb)
+		if (response.headers) {
+			validateResponseHeadersBlock(bb)
+		}
+		if (response.body) {
+			bb.endBlock()
+			bb.addLine('and:').startBlock()
+			validateResponseBodyBlock(bb)
 		}
 	}
 
-	private String trimRepeatedQuotes(String toTrim) {
-		if (toTrim.startsWith('"')) {
-			return toTrim.replaceAll('"', '')
+	protected void validateResponseBodyBlock(BlockBuilder bb) {
+		def responseBody = response.body.serverValue
+		ContentType contentType = getResponseContentType()
+		if (responseBody instanceof GString) {
+			responseBody = extractValue(responseBody, contentType, { DslProperty dslProperty -> dslProperty.serverValue })
 		}
-		return toTrim
+		if (contentType == ContentType.JSON) {
+			bb.addLine("def responseBody = new JsonSlurper().parseText($responseAsString)")
+			processBodyElement(bb, "", responseBody)
+		} else if (contentType == ContentType.XML) {
+			bb.addLine("def responseBody = new XmlSlurper().parseText($responseAsString)")
+			// TODO xml validation
+		}
 	}
 
-	private Object extractServerValueFromBody(bodyValue) {
+	protected String getBodyAsString() {
+		Object bodyValue = extractServerValueFromBody(request.body.serverValue)
+		return trimRepeatedQuotes(new JsonOutput().toJson(bodyValue))
+	}
+
+	protected String trimRepeatedQuotes(String toTrim) {
+		return toTrim.startsWith('"') ? toTrim.replaceAll('"', '') : toTrim
+	}
+
+	protected Object extractServerValueFromBody(bodyValue) {
 		if (bodyValue instanceof GString) {
 			bodyValue = extractValue(bodyValue, { DslProperty dslProperty -> dslProperty.serverValue })
 		} else {
@@ -111,88 +119,86 @@ class SpockMethodBodyBuilder {
 		return bodyValue
 	}
 
-	private String buildUrl(Request request) {
-		if (request.url)
-			return request.url.serverValue;
-		if (request.urlPath)
-			return buildUrlFromUrlPath(request.urlPath)
-		throw new IllegalStateException("URL is not set!")
-	}
-
-	private String buildUrlFromUrlPath(UrlPath urlPath) {
-		String params = urlPath.queryParameters.parameters
-				.findAll(this.&allowedQueryParameter)
-				.inject([]) { result, param ->
-			result << "${param.name}=${resolveParamValue(param).toString()}"
-		}.join('&')
-		return "$urlPath.serverValue?$params"
-	}
-
-	private boolean allowedQueryParameter(QueryParameter param) {
+	protected boolean allowedQueryParameter(QueryParameter param) {
 		return allowedQueryParameter(param.serverValue)
 	}
 
-	private boolean allowedQueryParameter(MatchingStrategy matchingStrategy) {
+	protected boolean allowedQueryParameter(MatchingStrategy matchingStrategy) {
 		return matchingStrategy.type != MatchingStrategy.Type.ABSENT
 	}
 
-	private boolean allowedQueryParameter(Object o) {
+	protected boolean allowedQueryParameter(Object o) {
 		return true
 	}
 
-	private String resolveParamValue(QueryParameter param) {
-		resolveParamValue(param.serverValue)
+	protected String resolveParamValue(QueryParameter param) {
+		return resolveParamValue(param.serverValue)
 	}
 
-	private String resolveParamValue(Object value) {
-		value.toString()
+	protected String resolveParamValue(Object value) {
+		return value.toString()
 	}
 
-	private String resolveParamValue(MatchingStrategy matchingStrategy) {
-		matchingStrategy.serverValue.toString()
+	protected String resolveParamValue(MatchingStrategy matchingStrategy) {
+		return matchingStrategy.serverValue.toString()
 	}
 
-	private void processBodyElement(BlockBuilder blockBuilder, String property, def value) {
-		if (value instanceof String) {
-			if (value.startsWith('$')) {
-				value = value.substring(1).replaceAll('\\$value', "responseBody$property")
-				blockBuilder.addLine(value)
-			} else {
-				blockBuilder.addLine("responseBody$property == \"${value}\"")
-			}
-		} else if (value instanceof Map) {
-			processMapElement(value, blockBuilder, property)
-		} else if (value instanceof Map.Entry) {
-			processEntryElement(blockBuilder, property, value)
-		} else if (value instanceof List) {
-			processArrayElements(value, property, blockBuilder)
-		} else if (value instanceof Pattern) {
-			blockBuilder.addLine("responseBody$property ==~ java.util.regex.Pattern.compile('${value}')")
-		} else if (value instanceof DslProperty) {
-			processBodyElement(blockBuilder, property, value.serverValue)
-		} else if (value instanceof ExecutionProperty) {
-			ExecutionProperty exec = (ExecutionProperty) value
-			blockBuilder.addLine("${exec.insertValue("responseBody$property")}")
+	protected void processBodyElement(BlockBuilder blockBuilder, String property, Object value) {
+		blockBuilder.addLine("responseBody$property == ${value}")
+	}
+
+	protected void processBodyElement(BlockBuilder blockBuilder, String property, String value) {
+		if (value.startsWith('$')) {
+			value = value.substring(1).replaceAll('\\$value', "responseBody$property")
+			blockBuilder.addLine(value)
 		} else {
-			blockBuilder.addLine("responseBody$property == ${value}")
+			blockBuilder.addLine("responseBody$property == \"${value}\"")
 		}
 	}
 
-	private void processMapElement(def value, BlockBuilder blockBuilder, String property) {
-		value.each { entry -> processEntryElement(blockBuilder, property, entry) }
+	protected void processBodyElement(BlockBuilder blockBuilder, String property, Pattern pattern) {
+		blockBuilder.addLine("responseBody$property ==~ java.util.regex.Pattern.compile('${pattern.pattern()}')")
 	}
 
-	private def processEntryElement(BlockBuilder blockBuilder, String property, def entry) {
-		return processBodyElement(blockBuilder, property + "." + entry.key, entry.value)
+	protected void processBodyElement(BlockBuilder blockBuilder, String property, DslProperty dslProperty) {
+		processBodyElement(blockBuilder, property, dslProperty.serverValue)
 	}
 
-	private void processArrayElements(List responseBody, String property, BlockBuilder blockBuilder) {
-		responseBody.eachWithIndex {
-			listElement, listIndex ->
-				listElement.each { entry ->
-					String prop = "$property[$listIndex]" ?: ''
-					processBodyElement(blockBuilder, prop, entry)
-				}
+	protected void processBodyElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
+		blockBuilder.addLine("${exec.insertValue("responseBody$property")}")
+	}
+
+	protected void processBodyElement(BlockBuilder blockBuilder, String property, Map.Entry entry) {
+		processBodyElement(blockBuilder, property + "." + entry.key, entry.value)
+	}
+
+	protected void processBodyElement(BlockBuilder blockBuilder, String property, Map map) {
+		map.each {
+			processBodyElement(blockBuilder, property, it)
 		}
 	}
+
+	protected void processBodyElement(BlockBuilder blockBuilder, String property, List list) {
+		list.eachWithIndex { listElement, listIndex ->
+			String prop = "$property[$listIndex]" ?: ''
+			processBodyElement(blockBuilder, prop, listElement)
+		}
+	}
+
+	protected ContentType getRequestContentType() {
+		ContentType contentType = recognizeContentTypeFromHeader(request.headers)
+		if (contentType == ContentType.UNKNOWN) {
+			contentType = recognizeContentTypeFromContent(request.body.serverValue)
+		}
+		return contentType
+	}
+
+	protected ContentType getResponseContentType() {
+		ContentType contentType = recognizeContentTypeFromHeader(response.headers)
+		if (contentType == ContentType.UNKNOWN) {
+			contentType = recognizeContentTypeFromContent(response.body.serverValue)
+		}
+		return contentType
+	}
+
 }
