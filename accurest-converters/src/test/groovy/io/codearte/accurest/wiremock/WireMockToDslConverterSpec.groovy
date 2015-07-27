@@ -24,7 +24,7 @@ class WireMockToDslConverterSpec extends Specification {
 	},
 	"response": {
 		"status": 200,
-		"body": "{ \\"id\\": { \\"value\\": \\"132\\" }, \\"surname\\": \\"Kowalsky\\", \\"name\\": \\"Jan\\", \\"created\\": \\"2014-02-02 12:23:43\\" }",
+		"body": '{"id": { "value": "132" }, "surname": "Kowalsky", "name": "Jan", "created": "2014-02-02 12:23:43" }',
 		"headers": {
 			"Content-Type": "text/plain"
 		}
@@ -74,7 +74,7 @@ class WireMockToDslConverterSpec extends Specification {
 	}
 
 
-	def 'should convert WireMock stub with response body containing simple JSON'() {
+	def 'should convert WireMock stub with response body containing JSON with escaped double quotes'() {
 		given:
 			String wireMockStub = '''\
 {
@@ -193,7 +193,7 @@ class WireMockToDslConverterSpec extends Specification {
   },
   "response": {
 	"status": 200,
-	"body": "[ {\\"a\\":1, \\"c\\":\\"3\\"}, \\"b\\", \\"a\\" ]",
+	"body": '[ {"a":1, "c":"3"}, "b", "a" ]',
 	"headers": {
 	  "Content-Type": "application/json"
 	}
@@ -232,7 +232,6 @@ class WireMockToDslConverterSpec extends Specification {
 			}""") == expectedGroovyDsl
 	}
 
-
 	def 'should convert WireMock stub with response body containing a nested list'() {
 		given:
 			String wireMockStub = '''\
@@ -248,7 +247,7 @@ class WireMockToDslConverterSpec extends Specification {
   },
   "response": {
 	"status": 200,
-	"body":"[{\\"amount\\":1.01,\\"name\\":\\"Name\\",\\"info\\":{\\"title\\":\\"title1\\",\\"payload\\":null},\\"booleanvalue\\":true,\\"user\\":null},{\\"amount\\":2.01,\\"name\\":\\"Name2\\",\\"info\\":{\\"title\\":\\"title2\\",\\"payload\\":null},\\"booleanvalue\\":true,\\"user\\":null}]"
+	"body": '[{"amount":1.01, "name":"Name", "info":{"title":"title1", "payload":null}, "booleanvalue":true, "user":null}, {"amount":2.01, "name":"Name2", "info":{"title":"title2", "payload":null}, "booleanvalue":true, "user":null}]'
 	}
 }
 '''
@@ -306,7 +305,7 @@ class WireMockToDslConverterSpec extends Specification {
 	"method": "POST",
 	"url": "/test",
 	"bodyPatterns": [{
-		"equalTo": "{\\"property1\\":\\"abc\\",\\"property2\\":\\"2017-01\\",\\"property3\\":\\"666\\",\\"property4\\":1428566412}"
+		"equalTo": '{"property1":"abc", "property2":"2017-01", "property3":"666", "property4":1428566412}'
 	}]
   },
   "response": {
@@ -386,7 +385,7 @@ class WireMockToDslConverterSpec extends Specification {
 	"url" : "/test",
 	"method" : "POST",
 	"bodyPatterns" : [ {
-	  "equalToJson" : "{\\"pan\\":\\"4855141150107894\\",\\"expirationDate\\":\\"2017-01\\",\\"dcvx\\":\\"178\\"}",
+	  "equalToJson" : '{"pan":"4855141150107894", "expirationDate":"2017-01", "dcvx":"178"}',
 	  "jsonCompareMode" : "LENIENT"
 	} ]
   },
@@ -427,7 +426,7 @@ class WireMockToDslConverterSpec extends Specification {
 				"url" : "/test",
 				"method" : "POST",
 				"bodyPatterns" : [ {
-				  "equalTo" : "{\\"pan\\":\\"4855141150107894\\",\\"expirationDate\\":\\"2017-01\\",\\"dcvx\\":\\"178\\"}"
+				  "equalTo" : '{"pan":"4855141150107894", "expirationDate":"2017-01", "dcvx":"178"}'
 				} ]
 			  },
 			  "response" : {
@@ -502,5 +501,4 @@ class WireMockToDslConverterSpec extends Specification {
 	void stubMappingIsValidWireMockStub(String mappingDefinition) {
 		StubMapping.buildFrom(mappingDefinition)
 	}
-
 }
