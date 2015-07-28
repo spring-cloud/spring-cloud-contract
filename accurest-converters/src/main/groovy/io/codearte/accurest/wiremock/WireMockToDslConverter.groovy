@@ -1,6 +1,8 @@
 package io.codearte.accurest.wiremock
+
 import groovy.io.FileType
 import groovy.json.JsonOutput
+import groovy.json.JsonParserType
 import groovy.json.JsonSlurper
 import groovy.xml.XmlUtil
 import io.codearte.accurest.dsl.GroovyDsl
@@ -14,7 +16,7 @@ class WireMockToDslConverter {
 	}
 
 	private String convertFromWireMockStub(String wireMockStringStub) {
-		Object wireMockStub = new JsonSlurper().parseText(wireMockStringStub)
+		Object wireMockStub = parseStubDefinition(wireMockStringStub)
 		def request = wireMockStub.request
 		def response = wireMockStub.response
 		def bodyPatterns = request.bodyPatterns
@@ -53,6 +55,10 @@ class WireMockToDslConverter {
 		}
 			}
 		"""
+	}
+
+	private Object parseStubDefinition(String wireMockStringStub) {
+		new JsonSlurper().setType(JsonParserType.LAX).parseText(wireMockStringStub)
 	}
 
 	private String buildHeader(String method, Object value) {
