@@ -33,7 +33,7 @@ class RecursiveFilesConverter {
 				File newGroovyFile = createTargetFileWithProperName(absoluteTargetPath, sourceFile)
 				newGroovyFile.text = convertedContent
 			} catch (Exception e) {
-				throw new ConversionAccurestException("Unable to convertion of ${sourceFile.name}", e)
+				throw new ConversionAccurestException("Unable to make convertion of ${sourceFile.name}", e)
 			}
 		}
 	}
