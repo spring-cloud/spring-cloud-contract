@@ -81,8 +81,10 @@ class SpockMethodBodyBuilder {
 					addLine('def responseBody = new JsonSlurper().parseText(response.body.asString())')
 					if (responseBody instanceof List) {
 						processArrayElements(responseBody, "", blockBuilder)
-					} else {
+					} else if (responseBody instanceof Map) {
 						processMapElement(responseBody, blockBuilder, "")
+					} else {
+						processBodyElement(blockBuilder, '', responseBody)
 					}
 				} else if (contentType == ContentType.XML) {
 					addLine('def responseBody = new XmlSlurper().parseText(response.body.asString())')
