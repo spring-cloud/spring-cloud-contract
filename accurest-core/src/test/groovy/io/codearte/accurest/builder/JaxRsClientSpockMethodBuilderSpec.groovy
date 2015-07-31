@@ -359,4 +359,26 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 		then:
 			spockTest.contains("entity('', 'application/octet-stream')")
 	}
+
+	def "should generate test for String in response body"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method "POST"
+					url "test"
+				}
+				response {
+					status 200
+					body "test"
+				}
+			}
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def spockTest = blockBuilder.toString()
+		then:
+			spockTest.contains('def responseBody = (response.body.asString())')
+			spockTest.contains('responseBody == "test"')
+	}
 }
