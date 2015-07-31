@@ -1,0 +1,2 @@
+include ':fraudDetectionService'
+include ':loanApplicationService'
