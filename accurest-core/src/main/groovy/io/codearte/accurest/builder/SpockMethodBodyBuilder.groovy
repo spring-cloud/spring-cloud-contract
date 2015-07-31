@@ -98,6 +98,9 @@ abstract class SpockMethodBodyBuilder {
 		} else if (contentType == ContentType.XML) {
 			bb.addLine("def responseBody = new XmlSlurper().parseText($responseAsString)")
 			// TODO xml validation
+		}   else {
+			bb.addLine("def responseBody = ($responseAsString)")
+			processBodyElement(bb, "", responseBody)
 		}
 	}
 
