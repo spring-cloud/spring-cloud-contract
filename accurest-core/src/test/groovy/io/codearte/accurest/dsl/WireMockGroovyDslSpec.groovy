@@ -1152,6 +1152,35 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 ''')
 	}
 
+    def "should generate stub with priority"() {
+        given:
+            GroovyDsl groovyDsl = GroovyDsl.make {
+                priority 9
+                request {
+                    method('POST')
+                    url("test")
+                }
+                response {
+                    status 406
+                }
+            }
+        when:
+            def json = toWireMockClientJsonStub(groovyDsl)
+        then:
+            parseJson(json) == parseJson('''
+			    {
+                    "priority": 9,
+                    "request": {
+                        "method": "POST",
+                        "url": "test"
+                    },
+                    "response": {
+                        "status": 406
+                    }
+			    }
+            ''')
+    }
+
 	String toJsonString(value) {
 		new JsonBuilder(value).toPrettyString()
 	}

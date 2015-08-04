@@ -17,11 +17,13 @@ class WireMockToDslConverter {
 
 	private String convertFromWireMockStub(String wireMockStringStub) {
 		Object wireMockStub = parseStubDefinition(wireMockStringStub)
+		Integer priority = wireMockStub.priority
 		def request = wireMockStub.request
 		def response = wireMockStub.response
 		def bodyPatterns = request.bodyPatterns
 		String urlPattern = request.urlPattern
 		return """\
+			${priority ? "priority ${priority}" : ''}
 			request {
 				${request.method ? "method \"\"\"$request.method\"\"\"" : ""}
 				${request.url ? "url \"\"\"$request.url\"\"\"" : ""}

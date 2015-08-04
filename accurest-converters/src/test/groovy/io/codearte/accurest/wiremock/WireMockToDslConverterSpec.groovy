@@ -498,6 +498,44 @@ class WireMockToDslConverterSpec extends Specification {
 			evaluatedGroovyDsl == expectedGroovyDsl
 	}
 
+	def 'should convert WireMock stub with priorities'() {
+		given:
+			String wireMockStub = '''\
+			{
+			  "priority" : 2,
+			  "request" : {
+				"url" : "/test",
+				"method" : "POST"
+			  },
+			  "response" : {
+				"status" : 200
+			  }
+			}
+			'''
+		and:
+			stubMappingIsValidWireMockStub(wireMockStub)
+		and:
+			GroovyDsl expectedGroovyDsl = GroovyDsl.make {
+				priority 2
+				request {
+					method 'POST'
+					url '/test'
+				}
+				response {
+					status 200
+				}
+			}
+		when:
+			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
+		then:
+			GroovyDsl evaluatedGroovyDsl = new GroovyShell(this.class.classLoader).evaluate(
+					""" io.codearte.accurest.dsl.GroovyDsl.make {
+					$groovyDsl
+				}""")
+		and:
+			evaluatedGroovyDsl == expectedGroovyDsl
+	}
+
 	void stubMappingIsValidWireMockStub(String mappingDefinition) {
 		StubMapping.buildFrom(mappingDefinition)
 	}
