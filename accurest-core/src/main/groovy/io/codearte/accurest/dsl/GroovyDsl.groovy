@@ -23,7 +23,7 @@ class GroovyDsl {
 	}
 
 	void priority(int priority) {
-		this.priority = new Integer(priority)
+		this.priority = priority
 	}
 
 	void request(@DelegatesTo(Request) Closure closure) {
