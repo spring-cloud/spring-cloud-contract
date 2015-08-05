@@ -328,4 +328,37 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 			spockTest.contains('def responseBody = (response.body.asString())')
 			spockTest.contains('responseBody == "test"')
 	}
+
+	@Issue('113')
+	def "should generate regex test for String in response header"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method 'POST'
+					url $(client(regex('/partners/[0-9]+/users')), server('/partners/1000/users'))
+					headers { header 'Content-Type': 'application/json' }
+					body(
+							first_name: 'John',
+							last_name: 'Smith',
+							personal_id: '12345678901',
+							phone_number: '500500500',
+							invitation_token: '00fec7141bb94793bfe7ae1d0f39bda0',
+							password: 'john'
+					)
+				}
+				response {
+					status 201
+					headers {
+						header 'Location': $(client('http://localhost/partners/1000/users/1001'), server(regex('http://localhost/partners/[0-9]+/users/[0-9]+')))
+					}
+				}
+			}
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def spockTest = blockBuilder.toString()
+		then:
+			spockTest.contains('''response.header('Location') ==~ java.util.regex.Pattern.compile('http://localhost/partners/[0-9]+/users/[0-9]+')''')
+	}
 }
