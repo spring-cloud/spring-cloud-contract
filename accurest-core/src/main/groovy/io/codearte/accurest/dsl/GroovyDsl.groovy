@@ -11,6 +11,7 @@ import io.codearte.accurest.dsl.internal.Response
 @ToString(includeFields = true, includePackage = false, includeNames = true)
 class GroovyDsl {
 
+	Integer priority
 	Request request
 	Response response
 
@@ -19,6 +20,10 @@ class GroovyDsl {
 		closure.delegate = dsl
 		closure()
 		return dsl
+	}
+
+	void priority(int priority) {
+		this.priority = new Integer(priority)
 	}
 
 	void request(@DelegatesTo(Request) Closure closure) {
