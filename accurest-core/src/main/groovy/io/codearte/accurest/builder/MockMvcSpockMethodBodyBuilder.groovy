@@ -9,6 +9,8 @@ import io.codearte.accurest.dsl.internal.QueryParameter
 import io.codearte.accurest.dsl.internal.Request
 import io.codearte.accurest.dsl.internal.UrlPath
 
+import java.util.regex.Pattern
+
 @PackageScope
 @TypeChecked
 class MockMvcSpockMethodBodyBuilder extends SpockMethodBodyBuilder {
@@ -46,8 +48,16 @@ class MockMvcSpockMethodBodyBuilder extends SpockMethodBodyBuilder {
 
     protected void validateResponseHeadersBlock(BlockBuilder bb) {
         response.headers?.collect { Header header ->
-            bb.addLine("response.header('$header.name') == '$header.serverValue'")
+            bb.addLine("response.header('$header.name') ${convertHeaderComparison(header.serverValue)}")
         }
+    }
+
+    private String convertHeaderComparison(Object headerValue) {
+        return " == '$headerValue'"
+    }
+
+    private String convertHeaderComparison(Pattern headerValue) {
+        return "==~ java.util.regex.Pattern.compile('$headerValue')"
     }
 
     @Override
