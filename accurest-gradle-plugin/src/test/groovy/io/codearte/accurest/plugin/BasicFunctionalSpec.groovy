@@ -43,7 +43,7 @@ class BasicFunctionalSpec extends IntegrationSpec {
 			def generatedClientJsonStub = file(GENERATED_CLIENT_JSON_STUB).text
 			new JsonSlurper().parseText(generatedClientJsonStub) == new JsonSlurper().parseText("""
 {
-    "priority: 2",
+    "priority": 2,
     "request": {
         "method": "PUT",
         "headers": {
