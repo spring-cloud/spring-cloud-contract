@@ -24,11 +24,13 @@ class RegexPatternsSpec extends Specification {
 		expect:
 			shouldMatch == Pattern.compile(regexPatterns.hostname()).matcher(textToMatch).matches()
 		where:
-			textToMatch            || shouldMatch
-			'https://asd.com'      || true
-			'https://asd.com:8080' || true
-			'https://asd.com/asd'  || false
-			'asd.com'              || false
+			textToMatch              || shouldMatch
+			'https://asd.com'        || true
+			'https://asd.com:8080'   || true
+			'https://localhost'      || true
+			'https://localhost:8080' || true
+			'https://asd.com/asd'    || false
+			'asd.com'                || false
 	}
 
 	@Unroll
