@@ -13,6 +13,8 @@ import java.util.regex.Pattern
 @PackageScope
 class Common {
 
+	@Delegate private final RegexPatterns regexPatterns = new RegexPatterns()
+
 	Map<String, DslProperty> convertObjectsToDslProperties(Map<String, Object> body) {
 		return body.collectEntries {
 			Map.Entry<String, Object> entry ->
@@ -80,12 +82,12 @@ class Common {
 		return new ServerDslProperty(serverValue)
 	}
 
-	void assertThatSidesMatch(Pattern firstSide, String secondSide) {
-		assert secondSide ==~ firstSide
+	void assertThatSidesMatch(Pattern pattern, String value) {
+		assert value ==~ pattern
 	}
 
-	void assertThatSidesMatch(String firstSide, Pattern secondSide) {
-		assert firstSide ==~ secondSide
+	void assertThatSidesMatch(String value, Pattern pattern) {
+		assert value ==~ pattern
 	}
 
 	void assertThatSidesMatch(MatchingStrategy firstSide, MatchingStrategy secondSide) {
