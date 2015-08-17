@@ -1181,18 +1181,6 @@ class WireMockGroovyDslSpec extends WireMockSpec {
             ''')
     }
 
-	String toJsonString(value) {
-		new JsonBuilder(value).toPrettyString()
-	}
-
-	Object parseJson(json) {
-		new JsonSlurper().parseText(json)
-	}
-
-	String toWireMockClientJsonStub(groovyDsl) {
-		new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
-	}
-
 	@Issue("#121")
 	def 'should generate stub with empty list as a value of a field'() {
 		given:
@@ -1200,7 +1188,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 				request {
 					method('POST')
 					body(
-						values: []
+							values: []
 					)
 				}
 				response {
@@ -1227,5 +1215,17 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 			''')
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
+	}
+
+	String toJsonString(value) {
+		new JsonBuilder(value).toPrettyString()
+	}
+
+	Object parseJson(json) {
+		new JsonSlurper().parseText(json)
+	}
+
+	String toWireMockClientJsonStub(groovyDsl) {
+		new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 	}
 }
