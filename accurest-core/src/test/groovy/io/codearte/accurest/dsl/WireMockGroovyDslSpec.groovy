@@ -1181,6 +1181,42 @@ class WireMockGroovyDslSpec extends WireMockSpec {
             ''')
     }
 
+	@Issue("#121")
+	def 'should generate stub with empty list as a value of a field'() {
+		given:
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				request {
+					method('POST')
+					body(
+							values: []
+					)
+				}
+				response {
+					status 200
+				}
+			}
+		when:
+			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
+		then:
+			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
+				{
+					"request": {
+						"method": "POST",
+						"bodyPatterns": [
+							{
+								"equalToJson": "{\\"values\\":[]}"
+							}
+						]
+					},
+					"response": {
+						"status": 200
+					}
+				}
+			''')
+		and:
+			stubMappingIsValidWireMockStub(wireMockStub)
+	}
+
 	String toJsonString(value) {
 		new JsonBuilder(value).toPrettyString()
 	}
