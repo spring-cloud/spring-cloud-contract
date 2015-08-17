@@ -139,7 +139,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	}
 
 	private boolean containsPattern(Collection collection) {
-		return collection.collect(this.&containsPattern).inject { a, b -> a || b }
+		return collection.collect(this.&containsPattern).inject('') { a, b -> a || b }
 	}
 
 	private boolean containsPattern(Object[] objects) {
