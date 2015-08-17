@@ -1193,6 +1193,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 	}
 
+	@Issue("#121")
 	def 'should generate stub with empty list as a value of a field'() {
 		given:
 			GroovyDsl groovyDsl = GroovyDsl.make {
