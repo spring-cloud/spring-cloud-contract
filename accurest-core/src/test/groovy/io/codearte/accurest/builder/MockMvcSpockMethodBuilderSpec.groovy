@@ -3,13 +3,15 @@ package io.codearte.accurest.builder
 import io.codearte.accurest.dsl.GroovyDsl
 import spock.lang.Issue
 import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author Jakub Kubrynski
  */
 class MockMvcSpockMethodBuilderSpec extends Specification {
 
-	def "should generate assertions for simple response body"() {
+	@Unroll
+	def "should generate assertions for simple response body for [#spockMethodBuilder]"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
 				request {
@@ -24,13 +26,13 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 }"""
 				}
 			}
-			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			SpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("responseBody.property1 == \"a\"")
-			blockBuilder.toString().contains("responseBody.property2 == \"b\"")
+			blockBuilder.toString().contains("responseBody.property1 == '''a'''")
+			blockBuilder.toString().contains("responseBody.property2 == '''b'''")
 	}
 
 	@Issue("#79")
@@ -52,14 +54,14 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 					)
 				}
 			}
-			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			SpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("responseBody.property1 == \"a\"")
-			blockBuilder.toString().contains("responseBody.property2[0].a == \"sth\"")
-			blockBuilder.toString().contains("responseBody.property2[1].b == \"sthElse\"")
+			blockBuilder.toString().contains("responseBody.property1 == '''a'''")
+			blockBuilder.toString().contains("responseBody.property2[0].a == '''sth'''")
+			blockBuilder.toString().contains("responseBody.property2[1].b == '''sthElse'''")
 	}
 
 	@Issue("#82")
@@ -77,7 +79,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 					status 200
 				}
 			}
-			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			SpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -100,7 +102,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 					status 200
 				}
 			}
-			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			SpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -126,13 +128,13 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 }]"""
 				}
 			}
-			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			SpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("responseBody[0].property1 == \"a\"")
-			blockBuilder.toString().contains("responseBody[1].property2 == \"b\"")
+			blockBuilder.toString().contains("responseBody[0].property1 == '''a'''")
+			blockBuilder.toString().contains("responseBody[1].property2 == '''b'''")
 	}
 
 	def "should generate assertions for array inside response body element"() {
@@ -152,13 +154,13 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 }"""
 				}
 			}
-			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			SpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("responseBody.property1[0].property2 == \"test1\"")
-			blockBuilder.toString().contains("responseBody.property1[1].property3 == \"test2\"")
+			blockBuilder.toString().contains("responseBody.property1[0].property2 == '''test1'''")
+			blockBuilder.toString().contains("responseBody.property1[1].property3 == '''test2'''")
 	}
 
 	def "should generate assertions for nested objects in response body"() {
@@ -178,13 +180,13 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 '''
 				}
 			}
-			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			SpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("responseBody.property1 == \"a\"")
-			blockBuilder.toString().contains("responseBody.property2.property3 == \"b\"")
+			blockBuilder.toString().contains("responseBody.property1 == '''a'''")
+			blockBuilder.toString().contains("responseBody.property2.property3 == '''b'''")
 	}
 
 	def "should generate regex assertions for map objects in response body"() {
@@ -210,12 +212,12 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 
 				}
 			}
-			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			SpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("responseBody.property1 == \"a\"")
+			blockBuilder.toString().contains("responseBody.property1 == '''a'''")
 			blockBuilder.toString().contains("responseBody.property2 ==~ java.util.regex.Pattern.compile('[0-9]{3}')")
 	}
 
@@ -236,13 +238,14 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 
 				}
 			}
-			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			SpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("responseBody.property1 == \"a\"")
+			blockBuilder.toString().contains("responseBody.property1 == '''a'''")
 			blockBuilder.toString().contains("responseBody.property2 ==~ java.util.regex.Pattern.compile('[0-9]{3}')")
+
 	}
 
 	def "should generate a call with an url path and query parameters"() {
@@ -275,15 +278,15 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 					"""
 				}
 			}
-			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			SpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
 			def spockTest = blockBuilder.toString()
 		then:
 			spockTest.contains('get("/users?limit=10&offset=20&filter=email&sort=name&search=55&age=99&name=Denis.Stepanov&email=bob@email.com")')
-			spockTest.contains('responseBody.property1 == "a"')
-			spockTest.contains('responseBody.property2 == "b"')
+			spockTest.contains("responseBody.property1 == '''a'''")
+			spockTest.contains("responseBody.property2 == '''b'''")
 	}
 
 	def "should generate test for empty body"() {
@@ -298,7 +301,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 					status 406
 				}
 			}
-			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			SpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -319,14 +322,14 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 					body "test"
 				}
 			}
-			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			SpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
 			def spockTest = blockBuilder.toString()
 		then:
 			spockTest.contains('def responseBody = (response.body.asString())')
-			spockTest.contains('responseBody == "test"')
+			spockTest.contains("responseBody == '''test'''")
 	}
 
 	@Issue('113')
@@ -353,7 +356,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 					}
 				}
 			}
-			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			SpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -386,12 +389,40 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 					}
 				}
 			}
-			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			SpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
 			def spockTest = blockBuilder.toString()
 		then:
 			spockTest.contains('''response.header('Location') ==~ java.util.regex.Pattern.compile('^((http[s]?|ftp):\\/)\\/?([^:\\/\\s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+')''')
+	}
+
+	@Issue('124')
+	def "should create proper response body matching for multiline strings"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+
+				request {
+					method 'POST'
+					url '/invitations'
+				}
+
+				response {
+					status 422
+					body(
+							message: "First line\n" +
+									" Second line"
+					)
+				}
+			}
+			SpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def spockTest = blockBuilder.toString()
+		then:
+			spockTest.contains("""responseBody.message == '''First line
+ Second line'''""")
 	}
 }

@@ -26,8 +26,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("responseBody.property1 == \"a\"")
-			blockBuilder.toString().contains("responseBody.property2 == \"b\"")
+			blockBuilder.toString().contains("responseBody.property1 == '''a'''")
+			blockBuilder.toString().contains("responseBody.property2 == '''b'''")
 	}
 
 	@Issue("#79")
@@ -54,9 +54,9 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("responseBody.property1 == \"a\"")
-			blockBuilder.toString().contains("responseBody.property2[0].a == \"sth\"")
-			blockBuilder.toString().contains("responseBody.property2[1].b == \"sthElse\"")
+			blockBuilder.toString().contains("responseBody.property1 == '''a'''")
+			blockBuilder.toString().contains("responseBody.property2[0].a == '''sth'''")
+			blockBuilder.toString().contains("responseBody.property2[1].b == '''sthElse'''")
 	}
 
 	@Issue("#82")
@@ -128,8 +128,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("responseBody[0].property1 == \"a\"")
-			blockBuilder.toString().contains("responseBody[1].property2 == \"b\"")
+			blockBuilder.toString().contains("responseBody[0].property1 == '''a'''")
+			blockBuilder.toString().contains("responseBody[1].property2 == '''b'''")
 	}
 
 	def "should generate assertions for array inside response body element"() {
@@ -154,8 +154,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("responseBody.property1[0].property2 == \"test1\"")
-			blockBuilder.toString().contains("responseBody.property1[1].property3 == \"test2\"")
+			blockBuilder.toString().contains("responseBody.property1[0].property2 == '''test1'''")
+			blockBuilder.toString().contains("responseBody.property1[1].property3 == '''test2'''")
 	}
 
 	def "should generate assertions for nested objects in response body"() {
@@ -180,8 +180,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("responseBody.property1 == \"a\"")
-			blockBuilder.toString().contains("responseBody.property2.property3 == \"b\"")
+			blockBuilder.toString().contains("responseBody.property1 == '''a'''")
+			blockBuilder.toString().contains("responseBody.property2.property3 == '''b'''")
 	}
 
 	def "should generate regex assertions for map objects in response body"() {
@@ -212,7 +212,7 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("responseBody.property1 == \"a\"")
+			blockBuilder.toString().contains("responseBody.property1 == '''a'''")
 			blockBuilder.toString().contains("responseBody.property2 ==~ java.util.regex.Pattern.compile('[0-9]{3}')")
 	}
 
@@ -238,7 +238,7 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("responseBody.property1 == \"a\"")
+			blockBuilder.toString().contains("responseBody.property1 == '''a'''")
 			blockBuilder.toString().contains("responseBody.property2 ==~ java.util.regex.Pattern.compile('[0-9]{3}')")
 	}
 
@@ -335,8 +335,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 			spockTest.contains("queryParam('age', '99'")
 			spockTest.contains("queryParam('name', 'Denis.Stepanov'")
 			spockTest.contains("queryParam('email', 'bob@email.com'")
-			spockTest.contains('responseBody.property1 == "a"')
-			spockTest.contains('responseBody.property2 == "b"')
+			spockTest.contains("responseBody.property1 == '''a'''")
+			spockTest.contains("responseBody.property2 == '''b'''")
 	}
 
 	def "should generate test for empty body"() {
@@ -372,13 +372,12 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 					body "test"
 				}
 			}
-			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			JaxRsClientSpockMethodBodyBuilder builder = new JaxRsClientSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
 			def spockTest = blockBuilder.toString()
 		then:
-			spockTest.contains('def responseBody = (response.body.asString())')
-			spockTest.contains('responseBody == "test"')
+			spockTest.contains("responseBody == '''test'''")
 	}
 }
