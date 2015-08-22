@@ -34,7 +34,7 @@ class MatchingStrategy extends DslProperty {
 
 	enum Type {
 
-		EQUAL_TO("equalTo"), CONTAINS("contains"), MATCHING("matches"), NOT_MATCHING("doesNotMatch"),
+		EQUAL_TO("equalTo"), CONTAINS("containing"), MATCHING("matches"), NOT_MATCHING("doesNotMatch"),
 		EQUAL_TO_JSON("equalToJson"), EQUAL_TO_XML("equalToXml"), ABSENT("absent")
 
 		final String name

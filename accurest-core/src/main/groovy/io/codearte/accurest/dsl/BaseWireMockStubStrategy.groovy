@@ -10,7 +10,7 @@ import io.codearte.accurest.util.ContentType
 import java.util.regex.Pattern
 
 import static io.codearte.accurest.util.ContentUtils.extractValue
-import static io.codearte.accurest.util.JsonConverter.transformValues
+import static io.codearte.accurest.util.MapConverter.transformValues
 
 @TypeChecked
 abstract class BaseWireMockStubStrategy {

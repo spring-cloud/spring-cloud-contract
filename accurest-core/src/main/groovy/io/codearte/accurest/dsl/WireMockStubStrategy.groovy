@@ -1,6 +1,8 @@
 package io.codearte.accurest.dsl
 
-import groovy.json.JsonOutput
+import com.github.tomakehurst.wiremock.http.ResponseDefinition
+import com.github.tomakehurst.wiremock.matching.RequestPattern
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 
@@ -19,11 +21,14 @@ class WireMockStubStrategy {
 
 	@CompileDynamic
 	String toWireMockClientStub() {
-		def wiremockStubDefinition = [request : wireMockRequestStubStrategy.buildClientRequestContent(),
-									  response: wireMockResponseStubStrategy.buildClientResponseContent()]
+		StubMapping stubMapping = new StubMapping()
+		RequestPattern request = wireMockRequestStubStrategy.buildClientRequestContent()
+		ResponseDefinition response = wireMockResponseStubStrategy.buildClientResponseContent()
 		if (priority) {
-			wiremockStubDefinition.priority = priority
+			stubMapping.priority = priority
 		}
-		return JsonOutput.prettyPrint(JsonOutput.toJson(wiremockStubDefinition))
+		stubMapping.request = request
+		stubMapping.response = response
+		return StubMapping.buildJsonStringFor(stubMapping)
 	}
 }

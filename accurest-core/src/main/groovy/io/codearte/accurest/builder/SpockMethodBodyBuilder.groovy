@@ -3,21 +3,13 @@ import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import io.codearte.accurest.dsl.GroovyDsl
-import io.codearte.accurest.dsl.internal.DslProperty
-import io.codearte.accurest.dsl.internal.ExecutionProperty
-import io.codearte.accurest.dsl.internal.MatchingStrategy
-import io.codearte.accurest.dsl.internal.QueryParameter
-import io.codearte.accurest.dsl.internal.Request
-import io.codearte.accurest.dsl.internal.Response
+import io.codearte.accurest.dsl.internal.*
 import io.codearte.accurest.util.ContentType
-import io.codearte.accurest.util.JsonConverter
+import io.codearte.accurest.util.MapConverter
+import io.codearte.accurest.util.JsonPathJsonConverter
+import io.codearte.accurest.util.JsonPaths
 
-import java.util.regex.Pattern
-
-import static io.codearte.accurest.util.ContentUtils.extractValue
-import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromContent
-import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromHeader
-
+import static io.codearte.accurest.util.ContentUtils.*
 /**
  * @author Jakub Kubrynski
  */
@@ -93,16 +85,33 @@ abstract class SpockMethodBodyBuilder {
 			responseBody = extractValue(responseBody, contentType, { DslProperty dslProperty -> dslProperty.serverValue })
 		}
 		if (contentType == ContentType.JSON) {
-			bb.addLine("def responseBody = new JsonSlurper().parseText($responseAsString)")
+			appendJsonPath(bb, responseAsString)
+			JsonPaths jsonPaths = JsonPathJsonConverter.transformToJsonPathWithTestsSideValues(responseBody)
+			jsonPaths.each {
+				it.buildJsonPathComparison('parsedJson').each {
+					bb.addLine(it)
+				}
+			}
 			processBodyElement(bb, "", responseBody)
 		} else if (contentType == ContentType.XML) {
 			bb.addLine("def responseBody = new XmlSlurper().parseText($responseAsString)")
 			// TODO xml validation
 		}   else {
 			bb.addLine("def responseBody = ($responseAsString)")
-			processBodyElement(bb, "", responseBody)
+			processText(bb, "", responseBody as String)
 		}
 	}
+
+	protected void processText(BlockBuilder blockBuilder, String property, String value) {
+		if (value.startsWith('$')) {
+			value = value.substring(1).replaceAll('\\$value', "responseBody$property")
+			blockBuilder.addLine(value)
+		} else {
+			blockBuilder.addLine("responseBody$property == \"${value}\"")
+		}
+	}
+
+	protected String
 
 	protected String getBodyAsString() {
 		Object bodyValue = extractServerValueFromBody(request.body.serverValue)
@@ -117,7 +126,7 @@ abstract class SpockMethodBodyBuilder {
 		if (bodyValue instanceof GString) {
 			bodyValue = extractValue(bodyValue, { DslProperty dslProperty -> dslProperty.serverValue })
 		} else {
-			bodyValue = JsonConverter.transformValues(bodyValue, { it instanceof DslProperty ? it.serverValue : it })
+			bodyValue = MapConverter.transformValues(bodyValue, { it instanceof DslProperty ? it.serverValue : it })
 		}
 		return bodyValue
 	}
@@ -147,28 +156,15 @@ abstract class SpockMethodBodyBuilder {
 	}
 
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, Object value) {
-		blockBuilder.addLine("responseBody$property == ${value}")
+
 	}
 
-	protected void processBodyElement(BlockBuilder blockBuilder, String property, String value) {
-		if (value.startsWith('$')) {
-			value = value.substring(1).replaceAll('\\$value', "responseBody$property")
-			blockBuilder.addLine(value)
-		} else {
-			blockBuilder.addLine("responseBody$property == '''${value}'''")
-		}
-	}
-
-	protected void processBodyElement(BlockBuilder blockBuilder, String property, Pattern pattern) {
-		blockBuilder.addLine("responseBody$property ==~ java.util.regex.Pattern.compile('${pattern.pattern()}')")
-	}
-
-	protected void processBodyElement(BlockBuilder blockBuilder, String property, DslProperty dslProperty) {
-		processBodyElement(blockBuilder, property, dslProperty.serverValue)
+	protected void appendJsonPath(BlockBuilder blockBuilder, String json) {
+		blockBuilder.addLine("DocumentContext parsedJson = JsonPath.parse($json)")
 	}
 
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
-		blockBuilder.addLine("${exec.insertValue("responseBody$property")}")
+		blockBuilder.addLine("${exec.insertValue("parsedJson.read('\\\$$property')")}")
 	}
 
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, Map.Entry entry) {

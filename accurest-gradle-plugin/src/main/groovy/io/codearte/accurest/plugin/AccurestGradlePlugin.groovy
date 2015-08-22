@@ -4,6 +4,7 @@ import io.codearte.accurest.config.AccurestConfigProperties
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.DependencyResolveDetails
 
 /**
  * @author Jakub Kubrynski
@@ -29,6 +30,21 @@ class AccurestGradlePlugin implements Plugin<Project> {
 		createGenerateTestsTask(extension)
 		createAndConfigureGenerateWireMockClientStubsFromDslTask(extension)
 		deprecatedCreateAndConfigureGenerateWiremockClientStubsFromDslTask()
+		project.dependencies.add("testCompile", "io.codearte.accurest:accurest-core:+")
+		project.dependencies.add("testCompile", "com.blogspot.toomuchcoding:wiremock:0.0.1")
+		project.repositories { jcenter() }
+		project.configurations {
+			all {
+				resolutionStrategy {
+					eachDependency { DependencyResolveDetails details ->
+						if (details.requested.group == 'com.github.tomakehurst' && details.requested.name == "wiremock") {
+							details.useTarget("com.blogspot.toomuchcoding:wiremock:0.0.1")
+						}
+					}
+				}
+			}
+		}
+
 
 		project.afterEvaluate {
 			def hasIdea = project.plugins.findPlugin(IDEA_PLUGIN_CLASS)
