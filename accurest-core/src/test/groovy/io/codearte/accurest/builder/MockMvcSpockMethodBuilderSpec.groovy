@@ -329,6 +329,37 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 			spockTest.contains('responseBody == "test"')
 	}
 
+	@Issue("#127")
+	def 'should use "stub" as an alias for "client"'() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method "GET"
+					url "test"
+				}
+				response {
+					status 200
+					body(
+							property: value(
+									stub(123),
+									test(123)
+							)
+					)
+					headers {
+						header('Content-Type': 'application/json')
+
+					}
+
+				}
+			}
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			blockBuilder.toString().contains("responseBody.property == 123")
+	}
+
 	@Issue('113')
 	def "should generate regex test for String in response header"() {
 		given:
