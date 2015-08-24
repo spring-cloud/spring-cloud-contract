@@ -1181,6 +1181,42 @@ class WireMockGroovyDslSpec extends WireMockSpec {
             ''')
     }
 
+	@Issue("#127")
+	def 'should use "test" as an alias for "server"'() {
+		given:
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				request {
+					method('POST')
+					body(
+							property: value(stub("value"), test("value"))
+					)
+				}
+				response {
+					status 200
+				}
+			}
+		when:
+			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
+		then:
+			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
+        {
+          "request": {
+            "method": "POST",
+            "bodyPatterns": [
+              {
+                "equalToJson": "{\\"property\\":\\"value\\"}"
+              }
+            ]
+          },
+          "response": {
+            "status": 200
+          }
+        }
+      ''')
+		and:
+			stubMappingIsValidWireMockStub(wireMockStub)
+	}
+
 	@Issue("#121")
 	def 'should generate stub with empty list as a value of a field'() {
 		given:

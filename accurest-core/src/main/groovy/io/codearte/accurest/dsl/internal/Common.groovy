@@ -78,7 +78,15 @@ class Common {
 		return new ClientDslProperty(clientValue)
 	}
 
+	ClientDslProperty stub(Object clientValue) {
+		return new ClientDslProperty(clientValue)
+	}
+
 	ServerDslProperty server(Object serverValue) {
+		return new ServerDslProperty(serverValue)
+	}
+
+	ServerDslProperty test(Object serverValue) {
 		return new ServerDslProperty(serverValue)
 	}
 
