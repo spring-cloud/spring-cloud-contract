@@ -155,7 +155,7 @@ abstract class SpockMethodBodyBuilder {
 			value = value.substring(1).replaceAll('\\$value', "responseBody$property")
 			blockBuilder.addLine(value)
 		} else {
-			blockBuilder.addLine("responseBody$property == \"${value}\"")
+			blockBuilder.addLine("responseBody$property == '''${value}'''")
 		}
 	}
 
