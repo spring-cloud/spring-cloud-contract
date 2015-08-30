@@ -1,4 +1,5 @@
 package io.codearte.accurest.plugin
+
 import io.codearte.accurest.config.AccurestConfigProperties
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -29,9 +30,11 @@ class AccurestGradlePlugin implements Plugin<Project> {
 		createGenerateTestsTask(extension)
 		createAndConfigureGenerateWireMockClientStubsFromDslTask(extension)
 		deprecatedCreateAndConfigureGenerateWiremockClientStubsFromDslTask()
+		project.dependencies.add("testCompile", "io.codearte.accurest:accurest-core:+")
+		project.dependencies.add("testCompile", "com.blogspot.toomuchcoding:wiremock:0.0.1")
+		project.repositories { jcenter() }
 		project.configurations {
 			all {
-				exclude group: 'org.glassfish.jersey.jetty', module: 'jetty-server'
 				resolutionStrategy {
 					eachDependency { DependencyResolveDetails details ->
 						if (details.requested.group == 'com.github.tomakehurst' && details.requested.name == "wiremock") {
@@ -41,6 +44,7 @@ class AccurestGradlePlugin implements Plugin<Project> {
 				}
 			}
 		}
+
 
 		project.afterEvaluate {
 			def hasIdea = project.plugins.findPlugin(IDEA_PLUGIN_CLASS)

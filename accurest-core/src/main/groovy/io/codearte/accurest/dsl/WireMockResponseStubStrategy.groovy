@@ -25,29 +25,30 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 
 	@PackageScope
 	ResponseDefinition buildClientResponseContent() {
-		int status = response.status.clientValue as Integer
-		HttpHeaders httpHeaders = getHttpHeaders()
-		String body = getBody()
-		return new ResponseDefinition(status, body as String, null, null, null, httpHeaders, null, null, null, null, null)
+		ResponseDefinition responseDefinition = new ResponseDefinition()
+		responseDefinition.setStatus(response.status.clientValue as Integer)
+		appendHeaders(responseDefinition)
+		appendBody(responseDefinition)
+		return responseDefinition
 	}
 
-	private HttpHeaders getHttpHeaders() {
+	private void appendHeaders(ResponseDefinition responseDefinition) {
 		if(!(response.headers)) {
-			return null
+			return
 		}
-		return new HttpHeaders(response.headers.entries?.collect { new HttpHeader(it.name, it.clientValue.toString()) })
+		responseDefinition.setHeaders(new HttpHeaders(response.headers.entries?.collect { new HttpHeader(it.name, it.clientValue.toString()) }))
 	}
 
-	private String getBody() {
+	private void appendBody(ResponseDefinition responseDefinition) {
 		if (!response.body) {
-			return null
+			return
 		}
 		Object body = response.body.clientValue
 		ContentType contentType = recognizeContentTypeFromHeader(response.headers)
 		if (contentType == ContentType.UNKNOWN) {
 			contentType = recognizeContentTypeFromContent(body)
 		}
-		return parseBody(body, contentType)
+		responseDefinition.setBody(parseBody(body, contentType))
 	}
 
 
