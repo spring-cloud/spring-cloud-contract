@@ -37,3 +37,4 @@ modifyPom {
 }
 
 uploadArchives.dependsOn { check }
+
