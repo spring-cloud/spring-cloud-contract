@@ -28,6 +28,11 @@ modifyPom {
 				name 'Jakub Kubrynski'
 				email 'jk ATT codearte DOTT io'
 			}
+			developer {
+				id 'marcingrzejszczak'
+				name 'Marcin Grzejszczak'
+				email 'marcin ATT grzejszczak DOTT pl'
+			}
 		}
 	}
 }
