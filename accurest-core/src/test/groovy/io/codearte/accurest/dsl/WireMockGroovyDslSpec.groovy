@@ -1,7 +1,8 @@
 package io.codearte.accurest.dsl
+
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
-import org.skyscreamer.jsonassert.JSONAssert
+import io.codearte.accurest.util.AssertionUtil
 import spock.lang.Issue
 
 class WireMockGroovyDslSpec extends WireMockSpec {
@@ -35,7 +36,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-			JSONAssert.assertEquals('''
+			AssertionUtil.assertThatJsonsAreEqual('''
 			{
 			  "request" : {
 				"urlPattern" : "/[0-9]{2}",
@@ -49,7 +50,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 				}
 			  }
 			}
-			''', wireMockStub, false)
+			''', wireMockStub)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
@@ -80,7 +81,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-		JSONAssert.assertEquals('''
+		AssertionUtil.assertThatJsonsAreEqual('''
 {
   "request" : {
     "url" : "/ingredients",
@@ -96,7 +97,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
     "body" : "{\\"ingredients\\":[{\\"type\\":\\"MALT\\",\\"quantity\\":100},{\\"type\\":\\"WATER\\",\\"quantity\\":200},{\\"type\\":\\"HOP\\",\\"quantity\\":300},{\\"type\\":\\"YIEST\\",\\"quantity\\":400}]}"
   }
 }
-''', wireMockStub, false)
+''', wireMockStub)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
@@ -128,7 +129,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-		JSONAssert.assertEquals('''
+		AssertionUtil.assertThatJsonsAreEqual('''
 {
     "request": {
         "method": "POST",
@@ -149,7 +150,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
         "body": "{\\"paymentId\\":\\"4\\",\\"foundExistingPayment\\":false}"
     }
 }
-''', wireMockStub, false)
+''', wireMockStub)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
@@ -180,7 +181,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-		JSONAssert.assertEquals(('''
+		AssertionUtil.assertThatJsonsAreEqual(('''
 {
   "request" : {
     "urlPattern" : "/[0-9]{2}",
@@ -194,7 +195,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
     }
   }
 }
-'''), wireMockStub, false)
+'''), wireMockStub)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
@@ -227,7 +228,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-		JSONAssert.assertEquals('''
+		AssertionUtil.assertThatJsonsAreEqual('''
 {
   "request" : {
     "urlPattern" : "/[0-9]{2}",
@@ -244,7 +245,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
     }
   }
 }
-''', wireMockStub, false)
+''', wireMockStub)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
@@ -275,7 +276,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-		JSONAssert.assertEquals(('''
+		AssertionUtil.assertThatJsonsAreEqual(('''
 {
   "request" : {
     "urlPattern" : "/[0-9]{2}",
@@ -294,7 +295,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
     "status" : 200
   }
 }
-			'''), wireMockStub, false)
+			'''), wireMockStub)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
@@ -321,7 +322,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
-		JSONAssert.assertEquals(('''
+		AssertionUtil.assertThatJsonsAreEqual(('''
 {
   "request" : {
     "url" : "/users",
@@ -339,7 +340,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
     "status" : 200
   }
 }
-			'''), json, false)
+			'''), json)
 		and:
 			stubMappingIsValidWireMockStub(json)
 	}
@@ -364,7 +365,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
-		JSONAssert.assertEquals(('''
+		AssertionUtil.assertThatJsonsAreEqual(('''
 				{
 					"request": {
 						"method": "GET",
@@ -384,7 +385,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 						"status": 200
 					}
 				}
-				'''), json, false)
+				'''), json)
 		and:
 			stubMappingIsValidWireMockStub(json)
 	}
@@ -406,7 +407,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
-		JSONAssert.assertEquals(('''
+		AssertionUtil.assertThatJsonsAreEqual(('''
 					{
 						"request": {
 							"method": "GET",
@@ -421,7 +422,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 							"status": 200
 						}
 					}
-					'''), json, false)
+					'''), json)
 		and:
 			stubMappingIsValidWireMockStub(json)
 	}
@@ -443,7 +444,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
-		JSONAssert.assertEquals(('''
+		AssertionUtil.assertThatJsonsAreEqual(('''
 						{
 							"request": {
 								"method": "GET",
@@ -454,7 +455,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 								"body":"<user><name>Jozo</name><jobId>&lt;test&gt;</jobId></user>"
 							}
 						}
-						'''), json, false)
+						'''), json)
 		and:
 			stubMappingIsValidWireMockStub(json)
 	}
@@ -474,7 +475,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
-		JSONAssert.assertEquals(('''
+		AssertionUtil.assertThatJsonsAreEqual(('''
 				{
 					"request": {
 						"method": "GET",
@@ -489,7 +490,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 						"status": 200
 					}
 				}
-				'''), json, false)
+				'''), json)
 		and:
 			stubMappingIsValidWireMockStub(json)
 	}
@@ -511,7 +512,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
-		JSONAssert.assertEquals(('''
+		AssertionUtil.assertThatJsonsAreEqual(('''
 					{
 						"request": {
 							"method": "GET",
@@ -526,7 +527,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 							"status": 200
 						}
 					}
-					'''), json, false)
+					'''), json)
 		and:
 			stubMappingIsValidWireMockStub(json)
 	}
@@ -559,7 +560,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-		JSONAssert.assertEquals(('''
+		AssertionUtil.assertThatJsonsAreEqual(('''
 {
   "request" : {
     "urlPattern" : "/[0-9]{2}",
@@ -576,7 +577,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
     }
   }
 }
-'''), wireMockStub, false)
+'''), wireMockStub)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
@@ -614,7 +615,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-		JSONAssert.assertEquals(('''
+		AssertionUtil.assertThatJsonsAreEqual(('''
 {
   "request" : {
     "url" : "/fraudcheck",
@@ -638,7 +639,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
     }
   }
 }
-'''), wireMockStub, false)
+'''), wireMockStub)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
@@ -668,7 +669,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
-		JSONAssert.assertEquals(('''
+		AssertionUtil.assertThatJsonsAreEqual(('''
 			{
 				"request": {
 					"method": "GET",
@@ -704,7 +705,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 					"status": 200,
 				}
 			}
-			'''), json, false)
+			'''), json)
 		and:
 			stubMappingIsValidWireMockStub(json)
 	}
@@ -723,7 +724,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
-		JSONAssert.assertEquals(('''
+		AssertionUtil.assertThatJsonsAreEqual(('''
 				{
 					"request": {
 						"method": "GET",
@@ -733,7 +734,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 						"status": 200,
 					}
 				}
-				'''), json, false)
+				'''), json)
 		and:
 			stubMappingIsValidWireMockStub(json)
 	}
@@ -752,7 +753,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
-		JSONAssert.assertEquals(('''
+		AssertionUtil.assertThatJsonsAreEqual(('''
 				{
 					"request": {
 						"method": "GET",
@@ -762,7 +763,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 						"status": 200,
 					}
 				}
-				'''), json, false)
+				'''), json)
 		and:
 			stubMappingIsValidWireMockStub(json)
 	}
@@ -898,7 +899,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
-		JSONAssert.assertEquals(('''
+		AssertionUtil.assertThatJsonsAreEqual(('''
 				{
 					"request": {
 						"method": "GET",
@@ -916,7 +917,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 						"status": 200,
 					}
 				}
-				'''), json, false)
+				'''), json)
 		and:
 			stubMappingIsValidWireMockStub(json)
 	}
@@ -962,7 +963,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-		JSONAssert.assertEquals(('''
+		AssertionUtil.assertThatJsonsAreEqual(('''
 {
   "request" : {
     "urlPattern" : "/[0-9]{2}",
@@ -993,7 +994,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
     }
   }
 }
-			'''), wireMockStub, false)
+			'''), wireMockStub)
 	}
 
 	def 'should use regexp matches when request body match is defined using a map with a pattern'() {
@@ -1026,7 +1027,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
-		JSONAssert.assertEquals(('''
+		AssertionUtil.assertThatJsonsAreEqual(('''
 {
   "request" : {
     "url" : "/reissue-payment-order",
@@ -1053,7 +1054,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
     }
   }
 }
-				'''), json, false)
+				'''), json)
 	}
 
 	def "should generate stub for empty body"() {
@@ -1071,7 +1072,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
-		JSONAssert.assertEquals(('''
+		AssertionUtil.assertThatJsonsAreEqual(('''
 			{
         "request": {
           "method": "POST",
@@ -1086,7 +1087,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
           "status": 406
         }
 			}
-'''), json, false)
+'''), json)
 	}
 
     def "should generate stub with priority"() {
@@ -1104,7 +1105,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
         when:
             def json = toWireMockClientJsonStub(groovyDsl)
         then:
-		JSONAssert.assertEquals(('''
+		AssertionUtil.assertThatJsonsAreEqual(('''
 			    {
                     "priority": 9,
                     "request": {
@@ -1115,7 +1116,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
                         "status": 406
                     }
 			    }
-            '''), json, false)
+            '''), json)
     }
 
 	@Issue("#127")
@@ -1135,7 +1136,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-		JSONAssert.assertEquals(('''
+		AssertionUtil.assertThatJsonsAreEqual(('''
 {
   "request" : {
     "method" : "POST",
@@ -1147,7 +1148,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
     "status" : 200
   }
 }
-            '''), wireMockStub, false)
+            '''), wireMockStub)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
@@ -1169,7 +1170,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-		JSONAssert.assertEquals(('''
+		AssertionUtil.assertThatJsonsAreEqual(('''
 				{
 					"request": {
 						"method": "POST",
@@ -1183,7 +1184,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 						"status": 200
 					}
 				}
-			'''), wireMockStub, false)
+			'''), wireMockStub)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
