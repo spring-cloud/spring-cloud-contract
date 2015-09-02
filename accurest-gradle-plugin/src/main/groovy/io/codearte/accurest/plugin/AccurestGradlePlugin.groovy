@@ -30,7 +30,6 @@ class AccurestGradlePlugin implements Plugin<Project> {
 		createGenerateTestsTask(extension)
 		createAndConfigureGenerateWireMockClientStubsFromDslTask(extension)
 		deprecatedCreateAndConfigureGenerateWiremockClientStubsFromDslTask()
-		project.dependencies.add("testCompile", "io.codearte.accurest:accurest-core:+")
 		project.dependencies.add("testCompile", "com.blogspot.toomuchcoding:wiremock:0.0.1")
 		project.repositories { jcenter() }
 		project.configurations {
