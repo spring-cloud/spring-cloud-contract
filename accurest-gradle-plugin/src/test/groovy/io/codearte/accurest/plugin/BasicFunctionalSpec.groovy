@@ -1,6 +1,6 @@
 package io.codearte.accurest.plugin
 
-import groovy.json.JsonSlurper
+import io.codearte.accurest.util.AssertionUtil
 import nebula.test.IntegrationSpec
 import spock.lang.Stepwise
 
@@ -41,26 +41,26 @@ class BasicFunctionalSpec extends IntegrationSpec {
 			runTasksSuccessfully('generateWireMockClientStubs')
 		then:
 			def generatedClientJsonStub = file(GENERATED_CLIENT_JSON_STUB).text
-			new JsonSlurper().parseText(generatedClientJsonStub) == new JsonSlurper().parseText("""
-{
-    "priority": 2,
-    "request": {
-        "method": "PUT",
-        "headers": {
-            "Content-Type": {
-                "equalTo": "application/json"
-            }
-        },
-        "url": "/api/12",
-        "bodyPatterns": [
-            { "equalToJson": "[{\\"text\\":\\"Gonna see you at Warsaw\\"}]" }
-        ]
-    },
-    "response": {
-        "status": 200
-    }
-}
-""")
+			AssertionUtil.assertThatJsonsAreEqual("""
+	{
+	  "request" : {
+		"url" : "/api/12",
+		"method" : "PUT",
+		"bodyPatterns" : [ {
+		  "matchesJsonPath" : "\$[*][?(@.text == 'Gonna see you at Warsaw')]"
+		} ],
+		"headers" : {
+		  "Content-Type" : {
+			"equalTo" : "application/json"
+		  }
+		}
+	  },
+	  "response" : {
+		"status" : 200
+	  },
+	  "priority" : 2
+	}
+	""", generatedClientJsonStub)
 	}
 
 	def "tasks should be up-to-date when appropriate"() {
