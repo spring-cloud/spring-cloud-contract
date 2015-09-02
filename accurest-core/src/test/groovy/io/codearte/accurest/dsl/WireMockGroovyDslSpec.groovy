@@ -1,7 +1,7 @@
 package io.codearte.accurest.dsl
-
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
+import org.skyscreamer.jsonassert.JSONAssert
 import spock.lang.Issue
 
 class WireMockGroovyDslSpec extends WireMockSpec {
@@ -35,21 +35,21 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
-{
-    "request": {
-        "method": "GET",
-        "urlPattern": "/[0-9]{2}"
-    },
-    "response": {
-        "status": 200,
-        "body": "{\\"id\\":\\"123\\",\\"surname\\":\\"Kowalsky\\",\\"name\\":\\"Jan\\",\\"created\\":\\"2014-02-02 12:23:43\\"}",
-        "headers": {
-            "Content-Type": "text/plain"
-        }
-    }
-}
-''')
+			JSONAssert.assertEquals('''
+			{
+			  "request" : {
+				"urlPattern" : "/[0-9]{2}",
+				"method" : "GET"
+			  },
+			  "response" : {
+				"status" : 200,
+				"body" : "{\\"id\\":\\"123\\",\\"surname\\":\\"Kowalsky\\",\\"name\\":\\"Jan\\",\\"created\\":\\"2014-02-02 12:23:43\\"}",
+				"headers" : {
+				  "Content-Type" : "text/plain"
+				}
+			  }
+			}
+			''', wireMockStub, false)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
@@ -80,23 +80,23 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
+		JSONAssert.assertEquals('''
 {
-    "request": {
-        "method": "GET",
-        "headers": {
-            "Content-Type": {
-                "equalTo": "application/vnd.pl.devoxx.aggregatr.v1+json"
-            }
-        },
-        "url": "/ingredients"
-    },
-    "response": {
-        "status": 200,
-        "body": "{\\"ingredients\\":[{\\"type\\":\\"MALT\\",\\"quantity\\":100},{\\"type\\":\\"WATER\\",\\"quantity\\":200},{\\"type\\":\\"HOP\\",\\"quantity\\":300},{\\"type\\":\\"YIEST\\",\\"quantity\\":400}]}"
+  "request" : {
+    "url" : "/ingredients",
+    "method" : "GET",
+    "headers" : {
+      "Content-Type" : {
+        "equalTo" : "application/vnd.pl.devoxx.aggregatr.v1+json"
+      }
     }
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\\"ingredients\\":[{\\"type\\":\\"MALT\\",\\"quantity\\":100},{\\"type\\":\\"WATER\\",\\"quantity\\":200},{\\"type\\":\\"HOP\\",\\"quantity\\":300},{\\"type\\":\\"YIEST\\",\\"quantity\\":400}]}"
+  }
 }
-''')
+''', wireMockStub, false)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
@@ -128,7 +128,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
+		JSONAssert.assertEquals('''
 {
     "request": {
         "method": "POST",
@@ -149,7 +149,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
         "body": "{\\"paymentId\\":\\"4\\",\\"foundExistingPayment\\":false}"
     }
 }
-''')
+''', wireMockStub, false)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
@@ -180,21 +180,21 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
+		JSONAssert.assertEquals(('''
 {
-    "request": {
-        "method": "GET",
-        "urlPattern": "/[0-9]{2}"
-    },
-    "response": {
-        "status": 200,
-        "body": "{\\"created\\":\\"2014-02-02 12:23:43\\",\\"id\\":\\"123\\",\\"name\\":\\"Jan\\",\\"surname\\":\\"Kowalsky\\"}",
-        "headers": {
-            "Content-Type": "text/plain"
-        }
+  "request" : {
+    "urlPattern" : "/[0-9]{2}",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\\"created\\":\\"2014-02-02 12:23:43\\",\\"id\\":\\"123\\",\\"name\\":\\"Jan\\",\\"surname\\":\\"Kowalsky\\"}",
+    "headers" : {
+      "Content-Type" : "text/plain"
     }
+  }
 }
-''')
+'''), wireMockStub, false)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
@@ -227,26 +227,24 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
+		JSONAssert.assertEquals('''
 {
-    "request": {
-        "method": "GET",
-        "urlPattern": "/[0-9]{2}",
-        "bodyPatterns": [
-            {
-                "equalToJson":"{\\"name\\":\\"Jan\\"}"
-            }
-        ]
-    },
-    "response": {
-        "status": 200,
-        "body": "{\\"name\\":\\"Jan\\"}",
-        "headers": {
-            "Content-Type": "text/plain"
-        }
+  "request" : {
+    "urlPattern" : "/[0-9]{2}",
+    "method" : "GET",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[?(@.name == 'Jan')]"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\\"name\\":\\"Jan\\"}",
+    "headers" : {
+      "Content-Type" : "text/plain"
     }
+  }
 }
-''')
+''', wireMockStub, false)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
@@ -277,22 +275,26 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
-			{
-				"request": {
-					"method": "GET",
-					"urlPattern": "/[0-9]{2}",
-					"bodyPatterns": [
-						{
-							"equalToJson": "{\\"id\\":\\"123\\",\\"surname\\":\\"Kowalsky\\",\\"name\\":\\"Jan\\",\\"created\\":\\"2014-02-02 12:23:43\\"}"
-						}
-					]
-				},
-				"response": {
-					"status": 200,
-				}
-			}
-			''')
+		JSONAssert.assertEquals(('''
+{
+  "request" : {
+    "urlPattern" : "/[0-9]{2}",
+    "method" : "GET",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[?(@.created == '2014-02-02 12:23:43')]"
+    }, {
+      "matchesJsonPath" : "$[?(@.surname == 'Kowalsky')]"
+    }, {
+      "matchesJsonPath" : "$[?(@.name == 'Jan')]"
+    }, {
+      "matchesJsonPath" : "$[?(@.id == '123')]"
+    } ]
+  },
+  "response" : {
+    "status" : 200
+  }
+}
+			'''), wireMockStub, false)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
@@ -319,27 +321,25 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
-			parseJson(json) == parseJson('''
-			{
-				"request": {
-					"method": "GET",
-					"url": "/users",
-				    "headers": {
-                        "Content-Type": {
-                            "equalTo": "customtype/json"
-                        }
-                    },
-					"bodyPatterns": [
-						{
-							"equalToJson":"{\\"name\\":\\"Jan\\"}"
-						}
-					]
-				},
-				"response": {
-					"status": 200
-				}
-			}
-			''')
+		JSONAssert.assertEquals(('''
+{
+  "request" : {
+    "url" : "/users",
+    "method" : "GET",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[?(@.name == 'Jan')]"
+    } ],
+    "headers" : {
+      "Content-Type" : {
+        "equalTo" : "customtype/json"
+      }
+    }
+  },
+  "response" : {
+    "status" : 200
+  }
+}
+			'''), json, false)
 		and:
 			stubMappingIsValidWireMockStub(json)
 	}
@@ -364,7 +364,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
-			parseJson(json) == parseJson('''
+		JSONAssert.assertEquals(('''
 				{
 					"request": {
 						"method": "GET",
@@ -384,7 +384,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 						"status": 200
 					}
 				}
-				''')
+				'''), json, false)
 		and:
 			stubMappingIsValidWireMockStub(json)
 	}
@@ -406,7 +406,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
-			parseJson(json) == parseJson('''
+		JSONAssert.assertEquals(('''
 					{
 						"request": {
 							"method": "GET",
@@ -421,7 +421,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 							"status": 200
 						}
 					}
-					''')
+					'''), json, false)
 		and:
 			stubMappingIsValidWireMockStub(json)
 	}
@@ -443,7 +443,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
-			parseJson(json) == parseJson('''
+		JSONAssert.assertEquals(('''
 						{
 							"request": {
 								"method": "GET",
@@ -454,7 +454,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 								"body":"<user><name>Jozo</name><jobId>&lt;test&gt;</jobId></user>"
 							}
 						}
-						''')
+						'''), json, false)
 		and:
 			stubMappingIsValidWireMockStub(json)
 	}
@@ -474,7 +474,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
-			parseJson(json) == parseJson('''
+		JSONAssert.assertEquals(('''
 				{
 					"request": {
 						"method": "GET",
@@ -489,7 +489,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 						"status": 200
 					}
 				}
-				''')
+				'''), json, false)
 		and:
 			stubMappingIsValidWireMockStub(json)
 	}
@@ -511,7 +511,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
-			parseJson(json) == parseJson('''
+		JSONAssert.assertEquals(('''
 					{
 						"request": {
 							"method": "GET",
@@ -526,7 +526,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 							"status": 200
 						}
 					}
-					''')
+					'''), json, false)
 		and:
 			stubMappingIsValidWireMockStub(json)
 	}
@@ -559,24 +559,24 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
+		JSONAssert.assertEquals(('''
 {
-    "request": {
-        "method": "GET",
-        "urlPattern": "/[0-9]{2}",
-        "bodyPatterns": [
-			{"matches": "\\\\s*\\\\{\\\\s*\\\"personalId\\\"\\\\s*:\\\\s*\\\"?^[0-9]{11}$\\\"?\\\\s*\\\\}\\\\s*"}
-        ]
-    },
-    "response": {
-        "status": 200,
-        "body": "{\\"name\\":\\"Jan\\"}",
-        "headers": {
-            "Content-Type": "text/plain"
-        }
+  "request" : {
+    "urlPattern" : "/[0-9]{2}",
+    "method" : "GET",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[?(@.personalId =~ /^[0-9]{11}$/)]"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\\"name\\":\\"Jan\\"}",
+    "headers" : {
+      "Content-Type" : "text/plain"
     }
+  }
 }
-''')
+'''), wireMockStub, false)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
@@ -614,82 +614,33 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
+		JSONAssert.assertEquals(('''
 {
-    "request": {
-        "method": "PUT",
-        "headers": {
-            "Content-Type": {
-                "equalTo": "application/vnd.fraud.v1+json"
-            }
-        },
-        "url": "/fraudcheck",
-        "bodyPatterns": [
-			{"matches": "\\\\s*\\\\{\\\\s*\\"clientPesel\\"\\\\s*:\\\\s*\\"?[0-9]{10}\\"?\\\\s*,\\\\s*\\"loanAmount\\"\\\\s*:\\\\s*\\"?123.123\\"?\\\\s*\\\\}\\\\s*"}
-        ]
-    },
-    "response": {
-        "status": 200,
-        "headers": {
-            "Content-Type": "application/vnd.fraud.v1+json"
-        },
-        "body": "{\\"fraudCheckStatus\\":\\"OK\\",\\"rejectionReason\\":null}"
+  "request" : {
+    "url" : "/fraudcheck",
+    "method" : "PUT",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[?(@.loanAmount == 123.123)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.clientPesel =~ /[0-9]{10}/)]"
+    } ],
+    "headers" : {
+      "Content-Type" : {
+        "equalTo" : "application/vnd.fraud.v1+json"
+      }
     }
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\\"fraudCheckStatus\\":\\"OK\\",\\"rejectionReason\\":null}",
+    "headers" : {
+      "Content-Type" : "application/vnd.fraud.v1+json"
+    }
+  }
 }
-''')
+'''), wireMockStub, false)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
-	}
-
-
-	def "should generate stub with GET"() {
-		given:
-			GroovyDsl groovyDsl = GroovyDsl.make {
-				request {
-					method("GET")
-				}
-			}
-		expect:
-			new WireMockRequestStubStrategy(groovyDsl).buildClientRequestContent() == new JsonSlurper().parseText('''
-    {
-        "method":"GET"
-    }
-    ''')
-	}
-
-	def "should generate request when two elements are provided "() {
-		given:
-			GroovyDsl groovyDsl = GroovyDsl.make {
-				request {
-					method("GET")
-					url("/sth")
-				}
-			}
-		expect:
-			new WireMockRequestStubStrategy(groovyDsl).buildClientRequestContent() == new JsonSlurper().parseText('''
-    {
-        "method":"GET",
-        "url":"/sth"
-    }
-    ''')
-	}
-
-	def "should generate request with urlPattern for client side"() {
-		given:
-			GroovyDsl groovyDsl = GroovyDsl.make {
-				request {
-					url $(
-							client(~/^\/[0-9]{2}$/),
-							server('/12')
-					)
-				}
-			}
-		expect:
-			new WireMockRequestStubStrategy(groovyDsl).buildClientRequestContent() == new JsonSlurper().parseText('''
-    {
-        "urlPattern":"^/[0-9]{2}$"
-    }
-    ''')
 	}
 
 	def "should generate request with urlPath and queryParameters for client side"() {
@@ -717,7 +668,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
-			parseJson(json) == parseJson('''
+		JSONAssert.assertEquals(('''
 			{
 				"request": {
 					"method": "GET",
@@ -753,7 +704,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 					"status": 200,
 				}
 			}
-			''')
+			'''), json, false)
 		and:
 			stubMappingIsValidWireMockStub(json)
 	}
@@ -772,7 +723,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
-			parseJson(json) == parseJson('''
+		JSONAssert.assertEquals(('''
 				{
 					"request": {
 						"method": "GET",
@@ -782,7 +733,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 						"status": 200,
 					}
 				}
-				''')
+				'''), json, false)
 		and:
 			stubMappingIsValidWireMockStub(json)
 	}
@@ -801,7 +752,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
-			parseJson(json) == parseJson('''
+		JSONAssert.assertEquals(('''
 				{
 					"request": {
 						"method": "GET",
@@ -811,7 +762,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 						"status": 200,
 					}
 				}
-				''')
+				'''), json, false)
 		and:
 			stubMappingIsValidWireMockStub(json)
 	}
@@ -947,7 +898,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
-			parseJson(json) == parseJson('''
+		JSONAssert.assertEquals(('''
 				{
 					"request": {
 						"method": "GET",
@@ -965,44 +916,9 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 						"status": 200,
 					}
 				}
-				''')
+				'''), json, false)
 		and:
 			stubMappingIsValidWireMockStub(json)
-	}
-
-	def "should generate stub with some headers section for client side"() {
-		given:
-			GroovyDsl groovyDsl = GroovyDsl.make {
-				request {
-					headers {
-						header('Content-Type': 'text/xml')
-						header('Accept': $(
-								client(regex('text/.*')),
-								server('text/plain')
-						))
-						header('X-Custom-Header': $(
-								client(regex('^.*2134.*$')),
-								server('121345')
-						))
-					}
-				}
-			}
-		expect:
-			new WireMockRequestStubStrategy(groovyDsl).buildClientRequestContent() == new JsonSlurper().parseText('''
-    {
-        "headers": {
-            "Content-Type": {
-                "equalTo": "text/xml"
-            },
-            "Accept": {
-                "matches": "text/.*"
-            },
-            "X-Custom-Header": {
-                "matches": "^.*2134.*$"
-            }
-        }
-    }
-    ''')
 	}
 
 	def 'should convert groovy dsl stub with rich tree Body as String to wireMock stub for the client side'() {
@@ -1046,25 +962,38 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
-			{
-				"request": {
-							"method": "GET",
-							"urlPattern": "/[0-9]{2}",
-						    "bodyPatterns": [
-							     {
-								    "matches": "\\\\s*\\\\{\\\\s*\\"birthDate\\"\\\\s*:\\\\s*\\"?[0-9]{4}-[0-9]{2}-[0-9]{2}\\"?\\\\s*,\\\\s*\\"errors\\"\\\\s*:\\\\s*\\\\[\\\\s*\\\\{\\\\s*\\"propertyName\\"\\\\s*:\\\\s*\\"?[0-9]{2}\\"?\\\\s*,\\\\s*\\"providerValue\\"\\\\s*:\\\\s*\\"?Test\\"?\\\\s*\\\\}\\\\s*,\\\\s*\\\\{\\\\s*\\"propertyName\\"\\\\s*:\\\\s*\\"?[0-9]{2}\\"?\\\\s*,\\\\s*\\"providerValue\\"\\\\s*:\\\\s*\\"?Test\\"?\\\\s*\\\\}\\\\s*\\\\]\\\\s*,\\\\s*\\"firstName\\"\\\\s*:\\\\s*\\"?.*\\"?\\\\s*,\\\\s*\\"lastName\\"\\\\s*:\\\\s*\\"?.*\\"?\\\\s*,\\\\s*\\"personalId\\"\\\\s*:\\\\s*\\"?[0-9]{11}\\"?\\\\s*\\\\}\\\\s*"
-							     }
-						     ] },
-				"response": {
-							"status": 200,
-							"body": "{\\"name\\":\\"Jan\\"}",
-							"headers": {
-										"Content-Type": "text/plain"
-										}
-							}
-			}
-			''')
+		JSONAssert.assertEquals(('''
+{
+  "request" : {
+    "urlPattern" : "/[0-9]{2}",
+    "method" : "GET",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$.errors[*][?(@.propertyName =~ /[0-9]{2}/)]"
+    }, {
+      "matchesJsonPath" : "$.errors[*][?(@.providerValue == 'Test')]"
+    }, {
+      "matchesJsonPath" : "$.errors[*][?(@.providerValue == 'Test')]"
+    }, {
+      "matchesJsonPath" : "$[?(@.lastName =~ /.*/)]"
+    }, {
+      "matchesJsonPath" : "$.errors[*][?(@.propertyName =~ /[0-9]{2}/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.birthDate =~ /[0-9]{4}-[0-9]{2}-[0-9]{2}/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.personalId =~ /[0-9]{11}/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.firstName =~ /.*/)]"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\\"name\\":\\"Jan\\"}",
+    "headers" : {
+      "Content-Type" : "text/plain"
+    }
+  }
+}
+			'''), wireMockStub, false)
 	}
 
 	def 'should use regexp matches when request body match is defined using a map with a pattern'() {
@@ -1097,26 +1026,34 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
-			parseJson(json) == parseJson('''
-				{
-					"request": {
-								"method": "POST",
-								"url": "/reissue-payment-order",
-								"bodyPatterns": [
-									{
-									   "matches": "\\\\s*\\\\{\\\\s*\\"loanNumber\\"\\\\s*:\\\\s*\\"?999997001\\"?\\\\s*,\\\\s*\\"amount\\"\\\\s*:\\\\s*\\"?[0-9.]+\\"?\\\\s*,\\\\s*\\"currency\\"\\\\s*:\\\\s*\\"?DKK\\"?\\\\s*,\\\\s*\\"applicationName\\"\\\\s*:\\\\s*\\"?.*\\"?\\\\s*,\\\\s*\\"username\\"\\\\s*:\\\\s*\\"?.*\\"?\\\\s*,\\\\s*\\"cardId\\"\\\\s*:\\\\s*\\"?1\\"?\\\\s*\\\\}\\\\s*"
-									}
-								]
-								},
-					"response": {
-								"status": 200,
-								"body": "{\\"status\\":\\"OK\\"}",
-								"headers": {
-											"Content-Type": "application/json"
-											}
-								}
-				}
-				''')
+		JSONAssert.assertEquals(('''
+{
+  "request" : {
+    "url" : "/reissue-payment-order",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[?(@.loanNumber == '999997001')]"
+    }, {
+      "matchesJsonPath" : "$[?(@.username =~ /.*/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.amount =~ /[0-9.]+/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.cardId == 1)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.currency == 'DKK')]"
+    }, {
+      "matchesJsonPath" : "$[?(@.applicationName =~ /.*/)]"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\\"status\\":\\"OK\\"}",
+    "headers" : {
+      "Content-Type" : "application/json"
+    }
+  }
+}
+				'''), json, false)
 	}
 
 	def "should generate stub for empty body"() {
@@ -1134,7 +1071,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
-			parseJson(json) == parseJson('''
+		JSONAssert.assertEquals(('''
 			{
         "request": {
           "method": "POST",
@@ -1149,7 +1086,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
           "status": 406
         }
 			}
-''')
+'''), json, false)
 	}
 
     def "should generate stub with priority"() {
@@ -1167,7 +1104,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
         when:
             def json = toWireMockClientJsonStub(groovyDsl)
         then:
-            parseJson(json) == parseJson('''
+		JSONAssert.assertEquals(('''
 			    {
                     "priority": 9,
                     "request": {
@@ -1178,7 +1115,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
                         "status": 406
                     }
 			    }
-            ''')
+            '''), json, false)
     }
 
 	@Issue("#127")
@@ -1198,21 +1135,19 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
-        {
-          "request": {
-            "method": "POST",
-            "bodyPatterns": [
-              {
-                "equalToJson": "{\\"property\\":\\"value\\"}"
-              }
-            ]
-          },
-          "response": {
-            "status": 200
-          }
-        }
-      ''')
+		JSONAssert.assertEquals(('''
+{
+  "request" : {
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[?(@.property == 'value')]"
+    } ]
+  },
+  "response" : {
+    "status" : 200
+  }
+}
+            '''), wireMockStub, false)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
@@ -1234,7 +1169,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 		when:
 			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 		then:
-			new JsonSlurper().parseText(wireMockStub) == new JsonSlurper().parseText('''
+		JSONAssert.assertEquals(('''
 				{
 					"request": {
 						"method": "POST",
@@ -1248,7 +1183,7 @@ class WireMockGroovyDslSpec extends WireMockSpec {
 						"status": 200
 					}
 				}
-			''')
+			'''), wireMockStub, false)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}

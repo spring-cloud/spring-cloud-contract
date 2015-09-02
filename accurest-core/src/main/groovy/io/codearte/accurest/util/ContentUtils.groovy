@@ -1,5 +1,6 @@
 package io.codearte.accurest.util
 import groovy.json.JsonException
+import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.transform.TypeChecked
 import groovy.util.logging.Slf4j
@@ -17,6 +18,10 @@ import static org.apache.commons.lang3.StringEscapeUtils.escapeXml11
 @TypeChecked
 @Slf4j
 class ContentUtils {
+
+	public static final Closure GET_STUB_SIDE = {
+		it instanceof DslProperty ? it.clientValue : it
+	}
 
 	private static final Pattern TEMPORARY_PATTERN_HOLDER = Pattern.compile('REGEXP>>(.*)<<')
 	private static final String JSON_VALUE_PATTERN_FOR_REGEX = 'REGEXP>>%s<<'
@@ -57,7 +62,57 @@ class ContentUtils {
 				return extractValueForGString(bodyAsValue, valueProvider)
 			}
 		}
+	}
 
+	public static ContentType getClientContentType(GString bodyAsValue) {
+		try {
+			extractValueForJSON(bodyAsValue, GET_STUB_SIDE)
+			return ContentType.JSON
+		} catch(JsonException e) {
+			try {
+				new XmlSlurper().parseText(extractValueForXML(bodyAsValue, GET_STUB_SIDE).toString())
+				return ContentType.XML
+			} catch (Exception exception) {
+				extractValueForGString(bodyAsValue, GET_STUB_SIDE)
+				return ContentType.UNKNOWN
+			}
+		}
+	}
+
+	public static ContentType getClientContentType(String bodyAsValue) {
+		try {
+			new JsonSlurper().parseText(bodyAsValue)
+			return ContentType.JSON
+		} catch(JsonException e) {
+			try {
+				new XmlSlurper().parseText(bodyAsValue)
+				return ContentType.XML
+			} catch (Exception exception) {
+				return ContentType.UNKNOWN
+			}
+		}
+	}
+
+	public static ContentType getClientContentType(Object bodyAsValue) {
+		return ContentType.UNKNOWN
+	}
+
+	public static ContentType getClientContentType(Map bodyAsValue) {
+		try {
+			JsonOutput.toJson(bodyAsValue)
+			return ContentType.JSON
+		} catch (Exception ignore) {
+			return ContentType.UNKNOWN
+		}
+	}
+
+	public static ContentType getClientContentType(List bodyAsValue) {
+		try {
+			JsonOutput.toJson(bodyAsValue)
+			return ContentType.JSON
+		} catch (Exception ignore) {
+			return ContentType.UNKNOWN
+		}
 	}
 
 	private static GStringImpl extractValueForGString(GString bodyAsValue, Closure valueProvider) {
@@ -108,7 +163,7 @@ class ContentUtils {
 	}
 
 	private static Object convertAllTemporaryRegexPlaceholdersBackToPatterns(parsedJson) {
-		JsonConverter.transformValues(parsedJson, { Object value ->
+		MapConverter.transformValues(parsedJson, { Object value ->
 			if (value instanceof String) {
 				String string = (String) value
 				Matcher matcher = TEMPORARY_PATTERN_HOLDER.matcher(string)

@@ -1,9 +1,15 @@
 language: java
+sudo: false
 
 jdk:
  - oraclejdk7
  - openjdk7
  - oraclejdk8
+
+cache:
+  directories:
+  - $HOME/.gradle
+  - $HOME/.m2
 
 install: ./gradlew assemble
 script: ./gradlew check --stacktrace --info --continue

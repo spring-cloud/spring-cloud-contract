@@ -2,7 +2,7 @@ package io.codearte.accurest.dsl.internal
 
 import groovy.json.JsonOutput
 import groovy.transform.CompileStatic
-import io.codearte.accurest.util.JsonConverter
+import io.codearte.accurest.util.MapConverter
 
 import java.util.regex.Pattern
 
@@ -17,7 +17,7 @@ class JsonStructureConverter {
 															Closure<String> performAdditionalLogicOnSerializedJson,
 															Closure convertSerializedJsonToSth) {
 		LinkedList<Object> queue = new LinkedList<>()
-		def transformedJson = JsonConverter.transformValues(parsedJson, {
+		def transformedJson = MapConverter.transformValues(parsedJson, {
 			if(retrievePlaceholders(it)) {
 				queue.push(it)
 				return TEMPORARY_PLACEHOLDER
