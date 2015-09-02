@@ -12,4 +12,4 @@ cache:
   - $HOME/.m2
 
 install: ./gradlew assemble
-script: ./gradlew check --stacktrace --info --continue
+script: ./gradlew check funcTest --stacktrace --info --continue
