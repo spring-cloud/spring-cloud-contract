@@ -1,64 +1,40 @@
-apply plugin: 'maven'
-apply plugin: 'signing'
+apply plugin: 'com.bmuschko.nexus'
+apply plugin: 'io.codearte.nexus-staging'
 
-task javadocJar(type: Jar) {
-	classifier = 'javadoc'
-	from javadoc
-}
+modifyPom {
+	project {
+		name "$project.name"
+		packaging 'jar'
+		description 'RESTful Contract Verifier'
+		url 'https://github.com/Codearte/accurest'
+		inceptionYear '2014'
 
-task sourcesJar(type: Jar) {
-	classifier = 'sources'
-	from sourceSets.main.allSource
-}
+		scm {
+			connection 'scm:git:git@github.com:Codearte/accurest.git'
+			developerConnection 'scm:git:git@github.com:Codearte/accurest.git'
+			url 'https://github.com/Codearte/accurest'
+		}
 
-artifacts {
-	archives javadocJar, sourcesJar
-}
-
-signing {
-	sign configurations.archives
-}
-
-uploadArchives {
-	repositories {
-		mavenDeployer {
-			beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-				authentication(userName: nexusUsername, password: nexusPassword)
+		licenses {
+			license {
+				name 'The Apache License, Version 2.0'
+				url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
 			}
+		}
 
-			snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-				authentication(userName: nexusUsername, password: nexusPassword)
-			}
-
-			pom.project {
-				name "$project.name"
-				packaging 'jar'
-				description 'RESTful Contract Verifier'
-				url 'http://codearte.github.io/accurest'
-
-				scm {
-					connection 'scm:git:git@github.com:Codearte/accurest.git'
-					developerConnection 'scm:git:git@github.com:Codearte/accurest.git'
-					url 'https://github.com/Codearte/accurest'
-				}
-
-				licenses {
-					license {
-						name 'The Apache License, Version 2.0'
-						url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-					}
-				}
-
-				developers {
-					developer {
-						id 'jkubrynski'
-						name 'Jakub Kubrynski'
-						email 'jk ATT codearte DOTT io'
-					}
-				}
+		developers {
+			developer {
+				id 'jkubrynski'
+				name 'Jakub Kubrynski'
+				email 'jk ATT codearte DOTT io'
 			}
 		}
 	}
+}
+
+uploadArchives.dependsOn { check }
+
+nexusStaging {
+	packageGroup = "io.codearte"
+	stagingProfileId = '93c08fdebde1ff'
 }
