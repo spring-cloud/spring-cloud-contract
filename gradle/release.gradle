@@ -1,5 +1,4 @@
 apply plugin: 'com.bmuschko.nexus'
-apply plugin: 'io.codearte.nexus-staging'
 
 modifyPom {
 	project {
@@ -38,8 +37,3 @@ modifyPom {
 }
 
 uploadArchives.dependsOn { check }
-
-nexusStaging {
-	packageGroup = "io.codearte"
-	stagingProfileId = '93c08fdebde1ff'
-}

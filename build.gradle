@@ -27,6 +27,13 @@ allprojects {
 	project.version = scmVersion.version
 }
 
+apply plugin: 'io.codearte.nexus-staging'
+
+nexusStaging {
+	packageGroup = "io.codearte"
+	stagingProfileId = '93c08fdebde1ff'
+}
+
 subprojects {
 	apply plugin: 'groovy'
 	apply from: "$rootDir/gradle/release.gradle"
