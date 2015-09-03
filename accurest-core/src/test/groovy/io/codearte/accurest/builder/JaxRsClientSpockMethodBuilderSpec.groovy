@@ -18,8 +18,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 				response {
 					status 200
 					body """{
-    "property1": "a",
-    "property2": "b"
+	"property1": "a",
+	"property2": "b"
 }"""
 				}
 			}
@@ -126,10 +126,10 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 					status 200
 					body """[
 {
-    "property1": "a"
+	"property1": "a"
 },
 {
-    "property2": "b"
+	"property2": "b"
 }]"""
 				}
 			}
@@ -154,10 +154,10 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 				response {
 					status 200
 					body """{
-    "property1": [
-    { "property2": "test1"},
-    { "property3": "test2"}
-    ]
+	"property1": [
+	{ "property2": "test1"},
+	{ "property3": "test2"}
+	]
 }"""
 				}
 			}
@@ -183,8 +183,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 					status 200
 					body '''\
 {
-    "property1": "a",
-    "property2": {"property3": "b"}
+	"property1": "a",
+	"property2": {"property3": "b"}
 }
 '''
 				}

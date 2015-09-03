@@ -21,8 +21,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 				response {
 					status 200
 					body """{
-    "property1": "a",
-    "property2": "b"
+	"property1": "a",
+	"property2": "b"
 }"""
 				}
 			}
@@ -129,10 +129,10 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 					status 200
 					body """[
 {
-    "property1": "a"
+	"property1": "a"
 },
 {
-    "property2": "b"
+	"property2": "b"
 }]"""
 				}
 			}
@@ -157,10 +157,10 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 				response {
 					status 200
 					body """{
-    "property1": [
-    { "property2": "test1"},
-    { "property3": "test2"}
-    ]
+	"property1": [
+	{ "property2": "test1"},
+	{ "property3": "test2"}
+	]
 }"""
 				}
 			}
@@ -186,8 +186,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 					status 200
 					body '''\
 {
-    "property1": "a",
-    "property2": {"property3": "b"}
+	"property1": "a",
+	"property2": {"property3": "b"}
 }
 '''
 				}

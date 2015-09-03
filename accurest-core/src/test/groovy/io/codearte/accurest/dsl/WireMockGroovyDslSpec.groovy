@@ -85,17 +85,17 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		AssertionUtil.assertThatJsonsAreEqual('''
 {
   "request" : {
-    "url" : "/ingredients",
-    "method" : "GET",
-    "headers" : {
-      "Content-Type" : {
-        "equalTo" : "application/vnd.pl.devoxx.aggregatr.v1+json"
-      }
-    }
+	"url" : "/ingredients",
+	"method" : "GET",
+	"headers" : {
+	  "Content-Type" : {
+		"equalTo" : "application/vnd.pl.devoxx.aggregatr.v1+json"
+	  }
+	}
   },
   "response" : {
-    "status" : 200,
-    "body" : "{\\"ingredients\\":[{\\"type\\":\\"MALT\\",\\"quantity\\":100},{\\"type\\":\\"WATER\\",\\"quantity\\":200},{\\"type\\":\\"HOP\\",\\"quantity\\":300},{\\"type\\":\\"YIEST\\",\\"quantity\\":400}]}"
+	"status" : 200,
+	"body" : "{\\"ingredients\\":[{\\"type\\":\\"MALT\\",\\"quantity\\":100},{\\"type\\":\\"WATER\\",\\"quantity\\":200},{\\"type\\":\\"HOP\\",\\"quantity\\":300},{\\"type\\":\\"YIEST\\",\\"quantity\\":400}]}"
   }
 }
 ''', wireMockStub)
@@ -132,24 +132,24 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		then:
 		AssertionUtil.assertThatJsonsAreEqual('''
 {
-    "request": {
-        "method": "POST",
-        "headers": {
-            "Content-Type": {
-                "equalTo": "application/x-www-form-urlencoded"
-            }
-        },
-        "url": "/ws/payments",
-        "bodyPatterns": [
-            {
-                "matches": "paymentType=INCOMING&transferType=BANK&amount=[0-9]{3}\\\\.[0-9]{2}&bookingDate=[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])"
-            }
-        ]
-    },
-    "response": {
-        "status": 204,
-        "body": "{\\"paymentId\\":\\"4\\",\\"foundExistingPayment\\":false}"
-    }
+	"request": {
+		"method": "POST",
+		"headers": {
+			"Content-Type": {
+				"equalTo": "application/x-www-form-urlencoded"
+			}
+		},
+		"url": "/ws/payments",
+		"bodyPatterns": [
+			{
+				"matches": "paymentType=INCOMING&transferType=BANK&amount=[0-9]{3}\\\\.[0-9]{2}&bookingDate=[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])"
+			}
+		]
+	},
+	"response": {
+		"status": 204,
+		"body": "{\\"paymentId\\":\\"4\\",\\"foundExistingPayment\\":false}"
+	}
 }
 ''', wireMockStub)
 		and:
@@ -166,13 +166,13 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				response {
 					status 200
 					body("""\
-                            {
-                                "id": "${value(client('123'), server('321'))}",
-                                "surname": "${value(client('Kowalsky'), server('Lewandowski'))}",
-                                "name": "Jan",
-                                "created" : "${$(client('2014-02-02 12:23:43'), server('2999-09-09 01:23:45'))}"
-                            }
-                        """
+							{
+								"id": "${value(client('123'), server('321'))}",
+								"surname": "${value(client('Kowalsky'), server('Lewandowski'))}",
+								"name": "Jan",
+								"created" : "${$(client('2014-02-02 12:23:43'), server('2999-09-09 01:23:45'))}"
+							}
+						"""
 					)
 					headers {
 						header 'Content-Type': 'text/plain'
@@ -185,15 +185,15 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		AssertionUtil.assertThatJsonsAreEqual(('''
 {
   "request" : {
-    "urlPattern" : "/[0-9]{2}",
-    "method" : "GET"
+	"urlPattern" : "/[0-9]{2}",
+	"method" : "GET"
   },
   "response" : {
-    "status" : 200,
-    "body" : "{\\"created\\":\\"2014-02-02 12:23:43\\",\\"id\\":\\"123\\",\\"name\\":\\"Jan\\",\\"surname\\":\\"Kowalsky\\"}",
-    "headers" : {
-      "Content-Type" : "text/plain"
-    }
+	"status" : 200,
+	"body" : "{\\"created\\":\\"2014-02-02 12:23:43\\",\\"id\\":\\"123\\",\\"name\\":\\"Jan\\",\\"surname\\":\\"Kowalsky\\"}",
+	"headers" : {
+	  "Content-Type" : "text/plain"
+	}
   }
 }
 '''), wireMockStub)
@@ -216,10 +216,10 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				response {
 					status 200
 					body("""\
-                            {
-                                "name": "Jan"
-                            }
-                        """
+							{
+								"name": "Jan"
+							}
+						"""
 					)
 					headers {
 						header 'Content-Type': 'text/plain'
@@ -232,18 +232,18 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		AssertionUtil.assertThatJsonsAreEqual('''
 {
   "request" : {
-    "urlPattern" : "/[0-9]{2}",
-    "method" : "GET",
-    "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[?(@.name == 'Jan')]"
-    } ]
+	"urlPattern" : "/[0-9]{2}",
+	"method" : "GET",
+	"bodyPatterns" : [ {
+	  "matchesJsonPath" : "$[?(@.name == 'Jan')]"
+	} ]
   },
   "response" : {
-    "status" : 200,
-    "body" : "{\\"name\\":\\"Jan\\"}",
-    "headers" : {
-      "Content-Type" : "text/plain"
-    }
+	"status" : 200,
+	"body" : "{\\"name\\":\\"Jan\\"}",
+	"headers" : {
+	  "Content-Type" : "text/plain"
+	}
   }
 }
 ''', wireMockStub)
@@ -280,20 +280,20 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		AssertionUtil.assertThatJsonsAreEqual(('''
 {
   "request" : {
-    "urlPattern" : "/[0-9]{2}",
-    "method" : "GET",
-    "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[?(@.created == '2014-02-02 12:23:43')]"
-    }, {
-      "matchesJsonPath" : "$[?(@.surname == 'Kowalsky')]"
-    }, {
-      "matchesJsonPath" : "$[?(@.name == 'Jan')]"
-    }, {
-      "matchesJsonPath" : "$[?(@.id == '123')]"
-    } ]
+	"urlPattern" : "/[0-9]{2}",
+	"method" : "GET",
+	"bodyPatterns" : [ {
+	  "matchesJsonPath" : "$[?(@.created == '2014-02-02 12:23:43')]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.surname == 'Kowalsky')]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.name == 'Jan')]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.id == '123')]"
+	} ]
   },
   "response" : {
-    "status" : 200
+	"status" : 200
   }
 }
 			'''), wireMockStub)
@@ -326,19 +326,19 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		AssertionUtil.assertThatJsonsAreEqual(('''
 {
   "request" : {
-    "url" : "/users",
-    "method" : "GET",
-    "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[?(@.name == 'Jan')]"
-    } ],
-    "headers" : {
-      "Content-Type" : {
-        "equalTo" : "customtype/json"
-      }
-    }
+	"url" : "/users",
+	"method" : "GET",
+	"bodyPatterns" : [ {
+	  "matchesJsonPath" : "$[?(@.name == 'Jan')]"
+	} ],
+	"headers" : {
+	  "Content-Type" : {
+		"equalTo" : "customtype/json"
+	  }
+	}
   },
   "response" : {
-    "status" : 200
+	"status" : 200
   }
 }
 			'''), json)
@@ -548,10 +548,10 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				response {
 					status 200
 					body("""\
-                            {
-                                "name": "Jan"
-                            }
-                     """
+							{
+								"name": "Jan"
+							}
+					 """
 					)
 					headers {
 						header 'Content-Type': 'text/plain'
@@ -564,18 +564,18 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		AssertionUtil.assertThatJsonsAreEqual(('''
 {
   "request" : {
-    "urlPattern" : "/[0-9]{2}",
-    "method" : "GET",
-    "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[?(@.personalId =~ /^[0-9]{11}$/)]"
-    } ]
+	"urlPattern" : "/[0-9]{2}",
+	"method" : "GET",
+	"bodyPatterns" : [ {
+	  "matchesJsonPath" : "$[?(@.personalId =~ /^[0-9]{11}$/)]"
+	} ]
   },
   "response" : {
-    "status" : 200,
-    "body" : "{\\"name\\":\\"Jan\\"}",
-    "headers" : {
-      "Content-Type" : "text/plain"
-    }
+	"status" : 200,
+	"body" : "{\\"name\\":\\"Jan\\"}",
+	"headers" : {
+	  "Content-Type" : "text/plain"
+	}
   }
 }
 '''), wireMockStub)
@@ -590,11 +590,11 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					method 'PUT'
 					url '/fraudcheck'
 					body("""
-                        {
-                        "clientPesel":"${value(client(regex('[0-9]{10}')), server('1234567890'))}",
-                        "loanAmount":123.123
-                        }
-                    """
+						{
+						"clientPesel":"${value(client(regex('[0-9]{10}')), server('1234567890'))}",
+						"loanAmount":123.123
+						}
+					"""
 					)
 					headers {
 						header('Content-Type', 'application/vnd.fraud.v1+json')
@@ -619,25 +619,25 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		AssertionUtil.assertThatJsonsAreEqual(('''
 {
   "request" : {
-    "url" : "/fraudcheck",
-    "method" : "PUT",
-    "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[?(@.loanAmount == 123.123)]"
-    }, {
-      "matchesJsonPath" : "$[?(@.clientPesel =~ /[0-9]{10}/)]"
-    } ],
-    "headers" : {
-      "Content-Type" : {
-        "equalTo" : "application/vnd.fraud.v1+json"
-      }
-    }
+	"url" : "/fraudcheck",
+	"method" : "PUT",
+	"bodyPatterns" : [ {
+	  "matchesJsonPath" : "$[?(@.loanAmount == 123.123)]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.clientPesel =~ /[0-9]{10}/)]"
+	} ],
+	"headers" : {
+	  "Content-Type" : {
+		"equalTo" : "application/vnd.fraud.v1+json"
+	  }
+	}
   },
   "response" : {
-    "status" : 200,
-    "body" : "{\\"fraudCheckStatus\\":\\"OK\\",\\"rejectionReason\\":null}",
-    "headers" : {
-      "Content-Type" : "application/vnd.fraud.v1+json"
-    }
+	"status" : 200,
+	"body" : "{\\"fraudCheckStatus\\":\\"OK\\",\\"rejectionReason\\":null}",
+	"headers" : {
+	  "Content-Type" : "application/vnd.fraud.v1+json"
+	}
   }
 }
 '''), wireMockStub)
@@ -686,20 +686,20 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						"equalTo": "email"
 					  },
 					  "sort": {
-                        "matches": "^[0-9]{10}$"
-                      },
-                      "search": {
-                        "doesNotMatch": "^/[0-9]{2}$"
-                      },
-                      "age": {
-                        "doesNotMatch": "^\\\\w*$"
-                      },
-                      "name": {
-                        "matches": "Denis.*"
-                      },
-                      "credit": {
-                      	 "absent": true
-                      }
+						"matches": "^[0-9]{10}$"
+					  },
+					  "search": {
+						"doesNotMatch": "^/[0-9]{2}$"
+					  },
+					  "age": {
+						"doesNotMatch": "^\\\\w*$"
+					  },
+					  "name": {
+						"matches": "Denis.*"
+					  },
+					  "credit": {
+					  	 "absent": true
+					  }
 					}
 				},
 				"response": {
@@ -967,32 +967,32 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		AssertionUtil.assertThatJsonsAreEqual(('''
 {
   "request" : {
-    "urlPattern" : "/[0-9]{2}",
-    "method" : "GET",
-    "bodyPatterns" : [ {
-      "matchesJsonPath" : "$.errors[*][?(@.propertyName =~ /[0-9]{2}/)]"
-    }, {
-      "matchesJsonPath" : "$.errors[*][?(@.providerValue == 'Test')]"
-    }, {
-      "matchesJsonPath" : "$.errors[*][?(@.providerValue == 'Test')]"
-    }, {
-      "matchesJsonPath" : "$[?(@.lastName =~ /.*/)]"
-    }, {
-      "matchesJsonPath" : "$.errors[*][?(@.propertyName =~ /[0-9]{2}/)]"
-    }, {
-      "matchesJsonPath" : "$[?(@.birthDate =~ /[0-9]{4}-[0-9]{2}-[0-9]{2}/)]"
-    }, {
-      "matchesJsonPath" : "$[?(@.personalId =~ /[0-9]{11}/)]"
-    }, {
-      "matchesJsonPath" : "$[?(@.firstName =~ /.*/)]"
-    } ]
+	"urlPattern" : "/[0-9]{2}",
+	"method" : "GET",
+	"bodyPatterns" : [ {
+	  "matchesJsonPath" : "$.errors[*][?(@.propertyName =~ /[0-9]{2}/)]"
+	}, {
+	  "matchesJsonPath" : "$.errors[*][?(@.providerValue == 'Test')]"
+	}, {
+	  "matchesJsonPath" : "$.errors[*][?(@.providerValue == 'Test')]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.lastName =~ /.*/)]"
+	}, {
+	  "matchesJsonPath" : "$.errors[*][?(@.propertyName =~ /[0-9]{2}/)]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.birthDate =~ /[0-9]{4}-[0-9]{2}-[0-9]{2}/)]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.personalId =~ /[0-9]{11}/)]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.firstName =~ /.*/)]"
+	} ]
   },
   "response" : {
-    "status" : 200,
-    "body" : "{\\"name\\":\\"Jan\\"}",
-    "headers" : {
-      "Content-Type" : "text/plain"
-    }
+	"status" : 200,
+	"body" : "{\\"name\\":\\"Jan\\"}",
+	"headers" : {
+	  "Content-Type" : "text/plain"
+	}
   }
 }
 			'''), wireMockStub)
@@ -1031,28 +1031,28 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		AssertionUtil.assertThatJsonsAreEqual(('''
 {
   "request" : {
-    "url" : "/reissue-payment-order",
-    "method" : "POST",
-    "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[?(@.loanNumber == '999997001')]"
-    }, {
-      "matchesJsonPath" : "$[?(@.username =~ /.*/)]"
-    }, {
-      "matchesJsonPath" : "$[?(@.amount =~ /[0-9.]+/)]"
-    }, {
-      "matchesJsonPath" : "$[?(@.cardId == 1)]"
-    }, {
-      "matchesJsonPath" : "$[?(@.currency == 'DKK')]"
-    }, {
-      "matchesJsonPath" : "$[?(@.applicationName =~ /.*/)]"
-    } ]
+	"url" : "/reissue-payment-order",
+	"method" : "POST",
+	"bodyPatterns" : [ {
+	  "matchesJsonPath" : "$[?(@.loanNumber == '999997001')]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.username =~ /.*/)]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.amount =~ /[0-9.]+/)]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.cardId == 1)]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.currency == 'DKK')]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.applicationName =~ /.*/)]"
+	} ]
   },
   "response" : {
-    "status" : 200,
-    "body" : "{\\"status\\":\\"OK\\"}",
-    "headers" : {
-      "Content-Type" : "application/json"
-    }
+	"status" : 200,
+	"body" : "{\\"status\\":\\"OK\\"}",
+	"headers" : {
+	  "Content-Type" : "application/json"
+	}
   }
 }
 				'''), json)
@@ -1075,50 +1075,50 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		then:
 		AssertionUtil.assertThatJsonsAreEqual(('''
 			{
-        "request": {
-          "method": "POST",
-          "url": "test",
-          "bodyPatterns": [
-            {
-                "equalTo": ""
-            }
-          ]
-        },
-        "response": {
-          "status": 406
-        }
+		"request": {
+		  "method": "POST",
+		  "url": "test",
+		  "bodyPatterns": [
+			{
+				"equalTo": ""
+			}
+		  ]
+		},
+		"response": {
+		  "status": 406
+		}
 			}
 '''), json)
 	}
 
-    def "should generate stub with priority"() {
-        given:
-            GroovyDsl groovyDsl = GroovyDsl.make {
-                priority 9
-                request {
-                    method('POST')
-                    url("test")
-                }
-                response {
-                    status 406
-                }
-            }
-        when:
-            def json = toWireMockClientJsonStub(groovyDsl)
-        then:
+	def "should generate stub with priority"() {
+		given:
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				priority 9
+				request {
+					method('POST')
+					url("test")
+				}
+				response {
+					status 406
+				}
+			}
+		when:
+			def json = toWireMockClientJsonStub(groovyDsl)
+		then:
 		AssertionUtil.assertThatJsonsAreEqual(('''
-			    {
-                    "priority": 9,
-                    "request": {
-                        "method": "POST",
-                        "url": "test"
-                    },
-                    "response": {
-                        "status": 406
-                    }
-			    }
-            '''), json)
-    }
+				{
+					"priority": 9,
+					"request": {
+						"method": "POST",
+						"url": "test"
+					},
+					"response": {
+						"status": 406
+					}
+				}
+			'''), json)
+	}
 
 	@Issue("#127")
 	def 'should use "test" as an alias for "server"'() {
@@ -1140,16 +1140,16 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		AssertionUtil.assertThatJsonsAreEqual(('''
 {
   "request" : {
-    "method" : "POST",
-    "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[?(@.property == 'value')]"
-    } ]
+	"method" : "POST",
+	"bodyPatterns" : [ {
+	  "matchesJsonPath" : "$[?(@.property == 'value')]"
+	} ]
   },
   "response" : {
-    "status" : 200
+	"status" : 200
   }
 }
-            '''), wireMockStub)
+			'''), wireMockStub)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}

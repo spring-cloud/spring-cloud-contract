@@ -5,15 +5,15 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class ExecutionProperty {
 
-    private static final String PLACEHOLDER_VALUE = '\\$it'
+	private static final String PLACEHOLDER_VALUE = '\\$it'
 
-    final String executionCommand
+	final String executionCommand
 
-    ExecutionProperty(String executionCommand) {
-        this.executionCommand = executionCommand
-    }
+	ExecutionProperty(String executionCommand) {
+		this.executionCommand = executionCommand
+	}
 
-    String insertValue(String valueToInsert) {
-        return executionCommand.replaceAll(PLACEHOLDER_VALUE, valueToInsert)
-    }
+	String insertValue(String valueToInsert) {
+		return executionCommand.replaceAll(PLACEHOLDER_VALUE, valueToInsert)
+	}
 }
