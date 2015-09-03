@@ -68,8 +68,8 @@ class TestGenerator {
 			}
 		}
 	}
-    
-    private String normalizePath(String path) {
-        return FilenameUtils.separatorsToUnix(path)
-    }
+
+	private String normalizePath(String path) {
+		return FilenameUtils.separatorsToUnix(path)
+	}
 }

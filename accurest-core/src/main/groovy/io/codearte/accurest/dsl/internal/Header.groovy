@@ -8,16 +8,16 @@ import groovy.transform.ToString
 @CompileStatic
 class Header extends DslProperty {
 
-    String name
+	String name
 
-    Header(String name, DslProperty dslProperty) {
-        super(dslProperty.clientValue, dslProperty.serverValue)
-        this.name = name
-    }
+	Header(String name, DslProperty dslProperty) {
+		super(dslProperty.clientValue, dslProperty.serverValue)
+		this.name = name
+	}
 
-    Header(String name, Object value) {
-        super(value)
-        this.name = name
-    }
+	Header(String name, Object value) {
+		super(value)
+		this.name = name
+	}
 
 }

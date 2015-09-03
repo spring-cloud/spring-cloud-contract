@@ -43,4 +43,22 @@ class MapConverter {
 		}
 	}
 
+	static Object getClientOrServerSideValues(json, boolean clientSide) {
+		return transformValues(json) {
+			if (it instanceof DslProperty) {
+				DslProperty dslProperty = ((DslProperty) it)
+				return clientSide ?
+						getClientOrServerSideValues(dslProperty.clientValue, clientSide) : getClientOrServerSideValues(dslProperty.serverValue, clientSide)
+			} else if (it instanceof GString) {
+				return ContentUtils.extractValue(it , null, {
+					if (it instanceof DslProperty) {
+						return clientSide ?
+								getClientOrServerSideValues((it as DslProperty).clientValue, clientSide) : getClientOrServerSideValues((it as DslProperty).serverValue, clientSide)
+					}
+					return it
+				})
+			}
+			return it
+		}
+	}
 }

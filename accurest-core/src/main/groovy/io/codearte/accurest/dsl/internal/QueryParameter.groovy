@@ -11,24 +11,24 @@ import static io.codearte.accurest.util.ValidateUtils.validateServerValueIsAvail
 @CompileStatic
 class QueryParameter extends DslProperty {
 
-    String name
+	String name
 
-    QueryParameter(String name, DslProperty dslProperty) {
-        super(dslProperty.clientValue, dslProperty.serverValue)
-        validateServerValueIsAvailable(dslProperty.serverValue, "Query parameter '$name'")
-        this.name = name
-    }
+	QueryParameter(String name, DslProperty dslProperty) {
+		super(dslProperty.clientValue, dslProperty.serverValue)
+		validateServerValueIsAvailable(dslProperty.serverValue, "Query parameter '$name'")
+		this.name = name
+	}
 
-    QueryParameter(String name, MatchingStrategy matchingStrategy) {
-        super(matchingStrategy)
-        validateServerValueIsAvailable(matchingStrategy, "Query parameter '$name'")
-        this.name = name
-    }
+	QueryParameter(String name, MatchingStrategy matchingStrategy) {
+		super(matchingStrategy)
+		validateServerValueIsAvailable(matchingStrategy, "Query parameter '$name'")
+		this.name = name
+	}
 
-    QueryParameter(String name, Object value) {
-        super(value)
-        validateServerValueIsAvailable(value, "Query parameter '$name'")
-        this.name = name
-    }
+	QueryParameter(String name, Object value) {
+		super(value)
+		validateServerValueIsAvailable(value, "Query parameter '$name'")
+		this.name = name
+	}
 
 }

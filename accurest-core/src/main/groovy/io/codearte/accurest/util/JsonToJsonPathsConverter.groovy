@@ -1,14 +1,13 @@
 package io.codearte.accurest.util
 
 import groovy.json.JsonSlurper
-import io.codearte.accurest.dsl.internal.DslProperty
 import io.codearte.accurest.dsl.internal.ExecutionProperty
 
 import java.util.regex.Pattern
 /**
  * @author Marcin Grzejszczak
  */
-class JsonPathJsonConverter {
+class JsonToJsonPathsConverter {
 
 	private static final Boolean SERVER_SIDE = false
 	private static final Boolean CLIENT_SIDE = true
@@ -29,7 +28,7 @@ class JsonPathJsonConverter {
 			return new JsonPaths()
 		}
 		JsonPaths pathsAndValues = [] as Set
-		Object convertedJson = getClientOrServerSideValues(json, clientSide)
+		Object convertedJson = MapConverter.getClientOrServerSideValues(json, clientSide)
 		traverseRecursivelyForKey(convertedJson, ROOT_JSON_PATH_ELEMENT) { String key, Object value ->
 			if (value instanceof ExecutionProperty) {
 				return
@@ -38,18 +37,6 @@ class JsonPathJsonConverter {
 			pathsAndValues.add(entry)
 		}
 		return pathsAndValues
-	}
-
-	private static Object getClientOrServerSideValues(json, boolean clientSide) {
-		return MapConverter.transformValues(json) {
-			boolean dslProp = it instanceof DslProperty
-			if (dslProp) {
-				DslProperty dslProperty = ((DslProperty) it)
-				return clientSide ?
-						getClientOrServerSideValues(dslProperty.clientValue, clientSide) : getClientOrServerSideValues(dslProperty.serverValue, clientSide)
-			}
-			return it
-		}
 	}
 
 	protected static def traverseRecursively(Class parentType, String key, def value, Closure closure) {
@@ -142,6 +129,8 @@ class JsonPathJsonConverter {
 	protected static String compareWith(Object value) {
 		if (value instanceof Pattern) {
 			return """=~ /${(value as Pattern).pattern()}/"""
+		} else if (value instanceof GString) {
+			return """=~ /${RegexpBuilders.buildGStringRegexpForTestSide(value)}/"""
 		}
 		return """== ${potentiallyWrappedWithQuotesValue(value)}"""
 	}

@@ -6,6 +6,8 @@ import io.codearte.accurest.dsl.internal.DslProperty
 import io.codearte.accurest.dsl.internal.Header
 import io.codearte.accurest.dsl.internal.Headers
 import io.codearte.accurest.util.ContentType
+import io.codearte.accurest.util.ContentUtils
+import io.codearte.accurest.util.MapConverter
 
 import java.util.regex.Pattern
 
@@ -14,6 +16,12 @@ import static io.codearte.accurest.util.MapConverter.transformValues
 
 @TypeChecked
 abstract class BaseWireMockStubStrategy {
+
+	private static final Boolean STUB_SIDE = true
+
+	protected getStubSideValue(Object object) {
+		return MapConverter.getClientOrServerSideValues(object, STUB_SIDE)
+	}
 
 	private static Closure transform = {
 		it instanceof DslProperty ? transformValues(it.clientValue, transform) : it
@@ -58,7 +66,7 @@ abstract class BaseWireMockStubStrategy {
 	}
 
 	public String parseBody(Map map, ContentType contentType) {
-		def transformedMap = transformValues(map, transform)
+		def transformedMap = MapConverter.getClientOrServerSideValues(map, true)
 		return parseBody(toJson(transformedMap), contentType)
 	}
 
@@ -82,4 +90,14 @@ abstract class BaseWireMockStubStrategy {
 		return new JsonBuilder(value).toString()
 	}
 
+	protected ContentType tryToGetContentType(Object body, Headers headers) {
+		ContentType contentType = ContentUtils.recognizeContentTypeFromHeader(headers)
+		if (contentType == ContentType.UNKNOWN) {
+			if (!body) {
+				return ContentType.UNKNOWN
+			}
+			return ContentUtils.getClientContentType(body)
+		}
+		return contentType
+	}
 }

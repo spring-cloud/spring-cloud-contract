@@ -9,12 +9,12 @@ import groovy.transform.ToString;
 @CompileStatic
 class UrlPath extends Url {
 
-    UrlPath(String path) {
-        super(path)
-    }
+	UrlPath(String path) {
+		super(path)
+	}
 
-    UrlPath(DslProperty path) {
-        super(path)
-    }
+	UrlPath(DslProperty path) {
+		super(path)
+	}
 
 }

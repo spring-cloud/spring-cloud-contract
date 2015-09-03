@@ -1,10 +1,12 @@
 package io.codearte.accurest.builder
 
 import io.codearte.accurest.dsl.GroovyDsl
+import io.codearte.accurest.dsl.WireMockStubStrategy
+import io.codearte.accurest.dsl.WireMockStubVerifier
 import spock.lang.Issue
 import spock.lang.Specification
 
-class JaxRsClientSpockMethodBuilderSpec extends Specification {
+class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMockStubVerifier {
 
 	def "should generate assertions for simple response body"() {
 		given:
@@ -16,8 +18,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 				response {
 					status 200
 					body """{
-    "property1": "a",
-    "property2": "b"
+	"property1": "a",
+	"property2": "b"
 }"""
 				}
 			}
@@ -28,6 +30,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 		then:
 			blockBuilder.toString().contains("\$[?(@.property1 == 'a')]")
 			blockBuilder.toString().contains("\$[?(@.property2 == 'b')]")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	@Issue("#79")
@@ -57,6 +61,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 			blockBuilder.toString().contains("\$[?(@.property1 == 'a')]")
 			blockBuilder.toString().contains("\$.property2[*][?(@.a == 'sth')]")
 			blockBuilder.toString().contains("\$.property2[*][?(@.b == 'sthElse')]")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	@Issue("#82")
@@ -80,6 +86,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 			builder.appendTo(blockBuilder)
 		then:
 			blockBuilder.toString().contains("entity('{\"items\":[\"HOP\"]}', 'application/json')")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	@Issue("#88")
@@ -103,6 +111,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 			builder.appendTo(blockBuilder)
 		then:
 			blockBuilder.toString().contains("entity('property1=VAL1', 'application/octet-stream')")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate assertions for array in response body"() {
@@ -116,10 +126,10 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 					status 200
 					body """[
 {
-    "property1": "a"
+	"property1": "a"
 },
 {
-    "property2": "b"
+	"property2": "b"
 }]"""
 				}
 			}
@@ -130,6 +140,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 		then:
 			blockBuilder.toString().contains("\$[*][?(@.property1 == 'a')]")
 			blockBuilder.toString().contains("\$[*][?(@.property2 == 'b')]")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate assertions for array inside response body element"() {
@@ -142,10 +154,10 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 				response {
 					status 200
 					body """{
-    "property1": [
-    { "property2": "test1"},
-    { "property3": "test2"}
-    ]
+	"property1": [
+	{ "property2": "test1"},
+	{ "property3": "test2"}
+	]
 }"""
 				}
 			}
@@ -156,6 +168,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 		then:
 			blockBuilder.toString().contains("\$.property1[*][?(@.property3 == 'test2')]")
 			blockBuilder.toString().contains("\$.property1[*][?(@.property2 == 'test1')]")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate assertions for nested objects in response body"() {
@@ -169,8 +183,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 					status 200
 					body '''\
 {
-    "property1": "a",
-    "property2": {"property3": "b"}
+	"property1": "a",
+	"property2": {"property3": "b"}
 }
 '''
 				}
@@ -182,6 +196,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 		then:
 			blockBuilder.toString().contains("\$.property2[?(@.property3 == 'b')]")
 			blockBuilder.toString().contains("\$[?(@.property1 == 'a')]")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate regex assertions for map objects in response body"() {
@@ -214,6 +230,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 		then:
 			blockBuilder.toString().contains("\$[?(@.property2 =~ /[0-9]{3}/)]")
 			blockBuilder.toString().contains("\$[?(@.property1 == 'a')]")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate regex assertions for string objects in response body"() {
@@ -240,6 +258,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 		then:
 			blockBuilder.toString().contains("\$[?(@.property2 =~ /[0-9]{3}/)]")
 			blockBuilder.toString().contains("\$[?(@.property1 == 'a')]")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	def "should ignore 'Accept' header and use 'request' method"() {
@@ -262,6 +282,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 			builder.appendTo(blockBuilder)
 		then:
 			blockBuilder.toString().contains("request('text/plain')")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	def "should ignore 'Content-Type' header and use 'entity' method"() {
@@ -288,7 +310,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 			blockBuilder.toString().contains("entity('', 'text/plain')")
 			blockBuilder.toString().contains("header('Timer', '123')")
 			!blockBuilder.toString().contains("header('Content-Type'")
-
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate a call with an url path and query parameters"() {
@@ -337,6 +360,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 			spockTest.contains("queryParam('email', 'bob@email.com'")
 			spockTest.contains('$[?(@.property2 == \'b\')]')
 			spockTest.contains('$[?(@.property1 == \'a\')]')
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate test for empty body"() {
@@ -358,6 +383,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 			def spockTest = blockBuilder.toString()
 		then:
 			spockTest.contains("entity('', 'application/octet-stream')")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate test for String in response body"() {
@@ -380,6 +407,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification {
 		then:
 			spockTest.contains('def responseBody = (response.body.asString())')
 			spockTest.contains('responseBody == "test"')
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 }

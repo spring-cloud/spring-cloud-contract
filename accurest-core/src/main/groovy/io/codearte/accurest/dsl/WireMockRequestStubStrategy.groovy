@@ -9,14 +9,14 @@ import groovy.transform.TypeCheckingMode
 import io.codearte.accurest.dsl.internal.*
 import io.codearte.accurest.util.ContentType
 import io.codearte.accurest.util.ContentUtils
-import io.codearte.accurest.util.JsonPathJsonConverter
+import io.codearte.accurest.util.JsonToJsonPathsConverter
 import io.codearte.accurest.util.JsonPaths
 import io.codearte.accurest.util.MapConverter
 
 import java.util.regex.Pattern
 
 import static io.codearte.accurest.util.ContentUtils.*
-import static io.codearte.accurest.util.RegexpBuilders.buildGStringRegexpMatch
+import static io.codearte.accurest.util.RegexpBuilders.buildGStringRegexpForStubSide
 import static io.codearte.accurest.util.RegexpBuilders.buildJSONRegexpMatch
 
 @TypeChecked
@@ -51,9 +51,9 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		if (!request.body) {
 			return
 		}
-		ContentType contentType = tryToGetContentType()
+		ContentType contentType = tryToGetContentType(request.body.clientValue, request.headers)
 		if (contentType == ContentType.JSON) {
-			JsonPaths values = JsonPathJsonConverter.transformToJsonPathWithStubsSideValues(getMatchingStrategyFromBody(request.body)?.clientValue)
+			JsonPaths values = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValues(getMatchingStrategyFromBody(request.body)?.clientValue)
 			if (values.empty) {
 				requestPattern.bodyPatterns = [new ValuePattern(jsonCompareMode: org.skyscreamer.jsonassert.JSONCompareMode.LENIENT,
 						equalToJson: JsonOutput.toJson(getMatchingStrategy(request.body.clientValue).clientValue) ) ]
@@ -70,17 +70,6 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 	}
 
-	private ContentType tryToGetContentType() {
-		ContentType contentType = recognizeContentTypeFromHeader(request.headers)
-		if (contentType == ContentType.UNKNOWN) {
-			if (!request.body.clientValue) {
-				return ContentType.UNKNOWN
-			}
-			return ContentUtils.getClientContentType(request.body.clientValue)
-		}
-		return contentType
-	}
-
 	private void appendHeaders(RequestPattern requestPattern) {
 		if(!request.headers) {
 			return
@@ -93,17 +82,28 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	private void appendUrl(RequestPattern requestPattern) {
 		Object urlPath = request?.urlPath?.clientValue
 		if (urlPath) {
-			requestPattern.setUrlPath(urlPath.toString())
+			requestPattern.setUrlPath(getStubSideValue(urlPath.toString()).toString())
 		}
 		if(!request.url) {
 			return
 		}
-		Object url = request?.url?.clientValue
+		Object url = getUrlIfGstring(request?.url?.clientValue)
 		if(url instanceof Pattern) {
 			requestPattern.setUrlPattern(url.pattern())
 		} else {
 			requestPattern.setUrl(url.toString())
 		}
+	}
+
+	private Object getUrlIfGstring(Object clientSide) {
+		if (clientSide instanceof GString) {
+			if (clientSide.values.any { getStubSideValue(it) instanceof Pattern }) {
+				return Pattern.compile(getStubSideValue(clientSide).toString())
+			} else {
+				return getStubSideValue(clientSide).toString()
+			}
+		}
+		return clientSide
 	}
 
 	private void appendQueryParameters(RequestPattern requestPattern) {
@@ -183,7 +183,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			case ContentType.JSON:
 				return new MatchingStrategy(buildJSONRegexpMatch(value), MatchingStrategy.Type.MATCHING)
 			case ContentType.UNKNOWN:
-				return new MatchingStrategy(buildGStringRegexpMatch(value), MatchingStrategy.Type.MATCHING)
+				return new MatchingStrategy(buildGStringRegexpForStubSide(value), MatchingStrategy.Type.MATCHING)
 			case ContentType.XML:
 				throw new IllegalStateException("XML pattern matching is not implemented yet")
 		}
