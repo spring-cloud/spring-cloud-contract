@@ -1,7 +1,6 @@
 package io.codearte.accurest.util
 
 import groovy.json.JsonSlurper
-import io.codearte.accurest.dsl.internal.DslProperty
 import io.codearte.accurest.dsl.internal.ExecutionProperty
 
 import java.util.regex.Pattern
@@ -29,7 +28,7 @@ class JsonToJsonPathsConverter {
 			return new JsonPaths()
 		}
 		JsonPaths pathsAndValues = [] as Set
-		Object convertedJson = getClientOrServerSideValues(json, clientSide)
+		Object convertedJson = MapConverter.getClientOrServerSideValues(json, clientSide)
 		traverseRecursivelyForKey(convertedJson, ROOT_JSON_PATH_ELEMENT) { String key, Object value ->
 			if (value instanceof ExecutionProperty) {
 				return
@@ -38,25 +37,6 @@ class JsonToJsonPathsConverter {
 			pathsAndValues.add(entry)
 		}
 		return pathsAndValues
-	}
-
-	private static Object getClientOrServerSideValues(json, boolean clientSide) {
-		return MapConverter.transformValues(json) {
-			if (it instanceof DslProperty) {
-				DslProperty dslProperty = ((DslProperty) it)
-				return clientSide ?
-						getClientOrServerSideValues(dslProperty.clientValue, clientSide) : getClientOrServerSideValues(dslProperty.serverValue, clientSide)
-			} else if (it instanceof GString) {
-				return ContentUtils.extractValue(it , null, {
-					if (it instanceof DslProperty) {
-						return clientSide ?
-								getClientOrServerSideValues((it as DslProperty).clientValue, clientSide) : getClientOrServerSideValues((it as DslProperty).serverValue, clientSide)
-					}
-					return it
-				})
-			}
-			return it
-		}
 	}
 
 	protected static def traverseRecursively(Class parentType, String key, def value, Closure closure) {

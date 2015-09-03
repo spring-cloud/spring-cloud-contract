@@ -17,6 +17,8 @@ import static io.codearte.accurest.util.ContentUtils.*
 @TypeChecked
 abstract class SpockMethodBodyBuilder {
 
+	private static final Boolean TEST_SIDE = false
+
 	protected final Request request
 	protected final Response response
 
@@ -200,4 +202,7 @@ abstract class SpockMethodBodyBuilder {
 		return contentType
 	}
 
+	protected String getTestSideValue(Object object) {
+		return MapConverter.getClientOrServerSideValues(object, TEST_SIDE).toString()
+	}
 }

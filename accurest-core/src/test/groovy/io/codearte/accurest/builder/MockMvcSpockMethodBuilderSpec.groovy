@@ -1,13 +1,15 @@
 package io.codearte.accurest.builder
 
 import io.codearte.accurest.dsl.GroovyDsl
+import io.codearte.accurest.dsl.WireMockStubStrategy
+import io.codearte.accurest.dsl.WireMockStubVerifier
 import spock.lang.Issue
 import spock.lang.Specification
 
 /**
  * @author Jakub Kubrynski
  */
-class MockMvcSpockMethodBuilderSpec extends Specification {
+class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStubVerifier {
 
 	def "should generate assertions for simple response body"() {
 		given:
@@ -31,6 +33,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 		then:
 			blockBuilder.toString().contains("\$[?(@.property1 == 'a')]")
 			blockBuilder.toString().contains("\$[?(@.property2 == 'b')]")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	@Issue("#79")
@@ -60,6 +64,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 			blockBuilder.toString().contains("\$[?(@.property1 == 'a')]")
 			blockBuilder.toString().contains("\$.property2[*][?(@.a == 'sth')]")
 			blockBuilder.toString().contains("\$.property2[*][?(@.b == 'sthElse')]")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	@Issue("#82")
@@ -83,6 +89,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 			builder.appendTo(blockBuilder)
 		then:
 			blockBuilder.toString().contains(".body('{\"items\":[\"HOP\"]}')")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	@Issue("#88")
@@ -106,6 +114,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 			builder.appendTo(blockBuilder)
 		then:
 			blockBuilder.toString().contains(".body('property1=VAL1')")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate assertions for array in response body"() {
@@ -133,6 +143,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 		then:
 			blockBuilder.toString().contains("\$[*][?(@.property1 == 'a')]")
 			blockBuilder.toString().contains("\$[*][?(@.property2 == 'b')]")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate assertions for array inside response body element"() {
@@ -159,6 +171,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 		then:
 			blockBuilder.toString().contains("\$.property1[*][?(@.property3 == 'test2')]")
 			blockBuilder.toString().contains("\$.property1[*][?(@.property2 == 'test1')]")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate assertions for nested objects in response body"() {
@@ -185,6 +199,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 		then:
 			blockBuilder.toString().contains("\$.property2[?(@.property3 == 'b')]")
 			blockBuilder.toString().contains("\$[?(@.property1 == 'a')]")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate regex assertions for map objects in response body"() {
@@ -217,6 +233,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 		then:
 			blockBuilder.toString().contains("\$[?(@.property2 =~ /[0-9]{3}/)]")
 			blockBuilder.toString().contains("\$[?(@.property1 == 'a')]")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate regex assertions for string objects in response body"() {
@@ -243,6 +261,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 		then:
 			blockBuilder.toString().contains("\$[?(@.property2 =~ /[0-9]{3}/)]")
 			blockBuilder.toString().contains("\$[?(@.property1 == 'a')]")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate a call with an url path and query parameters"() {
@@ -284,6 +304,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 			spockTest.contains('get("/users?limit=10&offset=20&filter=email&sort=name&search=55&age=99&name=Denis.Stepanov&email=bob@email.com")')
 			spockTest.contains('$[?(@.property2 == \'b\')]')
 			spockTest.contains('$[?(@.property1 == \'a\')]')
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate test for empty body"() {
@@ -305,6 +327,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 			def spockTest = blockBuilder.toString()
 		then:
 			spockTest.contains(".body('')")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate test for String in response body"() {
@@ -327,6 +351,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 		then:
 			spockTest.contains('def responseBody = (response.body.asString())')
 			spockTest.contains('responseBody == "test"')
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	@Issue('113')
@@ -360,6 +386,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 			def spockTest = blockBuilder.toString()
 		then:
 			spockTest.contains('''response.header('Location') ==~ java.util.regex.Pattern.compile('http://localhost/partners/[0-9]+/users/[0-9]+')''')
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	@Issue('115')
@@ -393,6 +421,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 			def spockTest = blockBuilder.toString()
 		then:
 			spockTest.contains('''response.header('Location') ==~ java.util.regex.Pattern.compile('^((http[s]?|ftp):\\/)\\/?([^:\\/\\s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+')''')
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	def "should work with more complex stuff and jsonpaths"() {
@@ -428,6 +458,37 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 		then:
 			spockTest.contains('''$.errors[*][?(@.property == 'bank_account_number')]''')
 			spockTest.contains('''$.errors[*][?(@.message == 'incorrect_format')]''')
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+	}
+
+	def "should work properly with GString url"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+
+				request {
+					method 'PUT'
+					url "/partners/${value(client(regex('^[0-9]*$')), server('11'))}/agents/11/customers/09665703Z"
+					headers {
+						header 'Content-Type': 'application/json'
+					}
+					body(
+							first_name: 'Josef',
+					)
+				}
+				response {
+					status 422
+				}
+			}
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def spockTest = blockBuilder.toString()
+		then:
+			spockTest.contains('''/partners/11/agents/11/customers/09665703Z''')
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
 	def "should resolve properties in GString with regular expression"() {

@@ -1,5 +1,4 @@
 package io.codearte.accurest.builder
-
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
@@ -23,7 +22,7 @@ class MockMvcSpockMethodBodyBuilder extends SpockMethodBodyBuilder {
         bb.addLine('def request = given()')
         bb.indent()
         request.headers?.collect { Header header ->
-            bb.addLine(".header('${header.name}', '${header.serverValue}')")
+            bb.addLine(".header('${getTestSideValue(header.name)}', '${getTestSideValue(header.serverValue)}')")
         }
         if (request.body) {
             bb.addLine(".body('$bodyAsString')")
@@ -67,9 +66,9 @@ class MockMvcSpockMethodBodyBuilder extends SpockMethodBodyBuilder {
 
     protected String buildUrl(Request request) {
         if (request.url)
-            return request.url.serverValue;
+            return getTestSideValue(request.url.serverValue)
         if (request.urlPath)
-            return buildUrlFromUrlPath(request.urlPath)
+            return getTestSideValue(buildUrlFromUrlPath(request.urlPath))
         throw new IllegalStateException("URL is not set!")
     }
 
