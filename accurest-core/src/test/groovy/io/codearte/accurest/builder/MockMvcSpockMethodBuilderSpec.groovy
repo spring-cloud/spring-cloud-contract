@@ -429,4 +429,39 @@ class MockMvcSpockMethodBuilderSpec extends Specification {
 			spockTest.contains('''$.errors[*][?(@.property == 'bank_account_number')]''')
 			spockTest.contains('''$.errors[*][?(@.message == 'incorrect_format')]''')
 	}
+
+	def "should resolve properties in GString with regular expression"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				priority 1
+				request {
+					method 'POST'
+					url '/users/password'
+					headers {
+						header 'Content-Type': 'application/json'
+					}
+					body(
+							email: $(client(regex(email())), server('not.existing@user.com')),
+							callback_url: $(client(regex(hostname())), server('http://partners.com'))
+					)
+				}
+				response {
+					status 404
+					headers {
+						header 'Content-Type': 'application/json'
+					}
+					body(
+							code: 4,
+							message: "User not found by email = [${value(server(regex(email())), client('not.existing@user.com'))}]"
+					)
+				}
+			}
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def spockTest = blockBuilder.toString()
+		then:
+			spockTest.contains('''$[?(@.message =~ /User not found by email = \\\\[[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4}\\\\]/)]''')
+	}
 }

@@ -9,14 +9,14 @@ import groovy.transform.TypeCheckingMode
 import io.codearte.accurest.dsl.internal.*
 import io.codearte.accurest.util.ContentType
 import io.codearte.accurest.util.ContentUtils
-import io.codearte.accurest.util.JsonPathJsonConverter
+import io.codearte.accurest.util.JsonToJsonPathsConverter
 import io.codearte.accurest.util.JsonPaths
 import io.codearte.accurest.util.MapConverter
 
 import java.util.regex.Pattern
 
 import static io.codearte.accurest.util.ContentUtils.*
-import static io.codearte.accurest.util.RegexpBuilders.buildGStringRegexpMatch
+import static io.codearte.accurest.util.RegexpBuilders.buildGStringRegexpForStubSide
 import static io.codearte.accurest.util.RegexpBuilders.buildJSONRegexpMatch
 
 @TypeChecked
@@ -53,7 +53,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 		ContentType contentType = tryToGetContentType()
 		if (contentType == ContentType.JSON) {
-			JsonPaths values = JsonPathJsonConverter.transformToJsonPathWithStubsSideValues(getMatchingStrategyFromBody(request.body)?.clientValue)
+			JsonPaths values = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValues(getMatchingStrategyFromBody(request.body)?.clientValue)
 			if (values.empty) {
 				requestPattern.bodyPatterns = [new ValuePattern(jsonCompareMode: org.skyscreamer.jsonassert.JSONCompareMode.LENIENT,
 						equalToJson: JsonOutput.toJson(getMatchingStrategy(request.body.clientValue).clientValue) ) ]
@@ -183,7 +183,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			case ContentType.JSON:
 				return new MatchingStrategy(buildJSONRegexpMatch(value), MatchingStrategy.Type.MATCHING)
 			case ContentType.UNKNOWN:
-				return new MatchingStrategy(buildGStringRegexpMatch(value), MatchingStrategy.Type.MATCHING)
+				return new MatchingStrategy(buildGStringRegexpForStubSide(value), MatchingStrategy.Type.MATCHING)
 			case ContentType.XML:
 				throw new IllegalStateException("XML pattern matching is not implemented yet")
 		}

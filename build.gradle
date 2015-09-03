@@ -24,7 +24,8 @@ scmVersion {
 }
 
 allprojects {
-	project.version = scmVersion.version
+	//project.version = scmVersion.version
+	project.version = '0.9.1-SNAPSHOT'
 }
 
 apply plugin: 'io.codearte.nexus-staging'

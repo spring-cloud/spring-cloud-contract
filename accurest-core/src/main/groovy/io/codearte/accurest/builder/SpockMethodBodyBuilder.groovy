@@ -6,7 +6,7 @@ import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.internal.*
 import io.codearte.accurest.util.ContentType
 import io.codearte.accurest.util.MapConverter
-import io.codearte.accurest.util.JsonPathJsonConverter
+import io.codearte.accurest.util.JsonToJsonPathsConverter
 import io.codearte.accurest.util.JsonPaths
 
 import static io.codearte.accurest.util.ContentUtils.*
@@ -86,7 +86,7 @@ abstract class SpockMethodBodyBuilder {
 		}
 		if (contentType == ContentType.JSON) {
 			appendJsonPath(bb, responseAsString)
-			JsonPaths jsonPaths = JsonPathJsonConverter.transformToJsonPathWithTestsSideValues(responseBody)
+			JsonPaths jsonPaths = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(responseBody)
 			jsonPaths.each {
 				it.buildJsonPathComparison('parsedJson').each {
 					bb.addLine(it)

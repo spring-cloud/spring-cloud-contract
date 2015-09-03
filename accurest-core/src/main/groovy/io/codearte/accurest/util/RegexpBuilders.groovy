@@ -10,29 +10,48 @@ import static org.apache.commons.lang3.StringEscapeUtils.escapeJson
 
 public class RegexpBuilders {
 
-	public static String buildGStringRegexpMatch(GString gString) {
+	public static String buildGStringRegexpForStubSide(GString gString) {
 		new GStringImpl(
-				gString.values.collect(this.&buildGStringRegexpMatch) as Object[],
+				gString.values.collect(this.&buildGStringRegexpForStubSide) as Object[],
 				gString.strings.collect(this.&escapeSpecialRegexChars) as String[]
 		)
 	}
 
-	public static String buildGStringRegexpMatch(Pattern pattern) {
+	public static String buildGStringRegexpForStubSide(Pattern pattern) {
 		return pattern.pattern()
 	}
 
-	public static String buildGStringRegexpMatch(DslProperty dslProperty) {
-		return buildGStringRegexpMatch(dslProperty.clientValue)
+	public static String buildGStringRegexpForStubSide(DslProperty dslProperty) {
+		return buildGStringRegexpForStubSide(dslProperty.clientValue)
 	}
 
-	public static String buildGStringRegexpMatch(Object o) {
+	public static String buildGStringRegexpForStubSide(Object o) {
 		return escapeSpecialRegexChars(o.toString())
+	}
+
+	public static String buildGStringRegexpForTestSide(GString gString) {
+		new GStringImpl(
+				gString.values.collect(this.&buildGStringRegexpForTestSide) as Object[],
+				gString.strings.collect(this.&escapeSpecialRegexChars) as String[]
+		)
+	}
+
+	public static String buildGStringRegexpForTestSide(Pattern pattern) {
+		return pattern.pattern()
+	}
+
+	public static String buildGStringRegexpForTestSide(DslProperty dslProperty) {
+		return buildGStringRegexpForTestSide(dslProperty.clientValue)
+	}
+
+	public static String buildGStringRegexpForTestSide(Object o) {
+		return o.toString().replaceAll('\\\\', '\\\\\\\\')
 	}
 
 	private final static Pattern SPECIAL_REGEX_CHARS = Pattern.compile('[{}()\\[\\].+*?^$\\\\|]')
 
 	private static String escapeSpecialRegexChars(String str) {
-		return SPECIAL_REGEX_CHARS.matcher(str).replaceAll('\\\\$0')
+		return SPECIAL_REGEX_CHARS.matcher(str).replaceAll('\\\\\\\\$0')
 	}
 
 	private final static String WS = /\s*/

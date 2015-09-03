@@ -8,7 +8,7 @@ import java.util.regex.Pattern
 /**
  * @author Marcin Grzejszczak
  */
-class JsonPathJsonConverter {
+class JsonToJsonPathsConverter {
 
 	private static final Boolean SERVER_SIDE = false
 	private static final Boolean CLIENT_SIDE = true
@@ -42,11 +42,18 @@ class JsonPathJsonConverter {
 
 	private static Object getClientOrServerSideValues(json, boolean clientSide) {
 		return MapConverter.transformValues(json) {
-			boolean dslProp = it instanceof DslProperty
-			if (dslProp) {
+			if (it instanceof DslProperty) {
 				DslProperty dslProperty = ((DslProperty) it)
 				return clientSide ?
 						getClientOrServerSideValues(dslProperty.clientValue, clientSide) : getClientOrServerSideValues(dslProperty.serverValue, clientSide)
+			} else if (it instanceof GString) {
+				return ContentUtils.extractValue(it , null, {
+					if (it instanceof DslProperty) {
+						return clientSide ?
+								getClientOrServerSideValues((it as DslProperty).clientValue, clientSide) : getClientOrServerSideValues((it as DslProperty).serverValue, clientSide)
+					}
+					return it
+				})
 			}
 			return it
 		}
@@ -142,6 +149,8 @@ class JsonPathJsonConverter {
 	protected static String compareWith(Object value) {
 		if (value instanceof Pattern) {
 			return """=~ /${(value as Pattern).pattern()}/"""
+		} else if (value instanceof GString) {
+			return """=~ /${RegexpBuilders.buildGStringRegexpForTestSide(value)}/"""
 		}
 		return """== ${potentiallyWrappedWithQuotesValue(value)}"""
 	}
