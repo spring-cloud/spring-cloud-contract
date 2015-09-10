@@ -1,4 +1,6 @@
 package io.codearte.accurest.dsl
+
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.github.tomakehurst.wiremock.http.HttpHeader
 import com.github.tomakehurst.wiremock.http.HttpHeaders
 import com.github.tomakehurst.wiremock.http.ResponseDefinition
@@ -25,30 +27,30 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 
 	@PackageScope
 	ResponseDefinition buildClientResponseContent() {
-		ResponseDefinition responseDefinition = new ResponseDefinition()
-		responseDefinition.setStatus(response.status.clientValue as Integer)
-		appendHeaders(responseDefinition)
-		appendBody(responseDefinition)
-		return responseDefinition
+		ResponseDefinitionBuilder builder = new ResponseDefinitionBuilder()
+				.withStatus(response.status.clientValue as Integer)
+		appendHeaders(builder)
+		appendBody(builder)
+		return builder.build()
 	}
 
-	private void appendHeaders(ResponseDefinition responseDefinition) {
-		if(!(response.headers)) {
-			return
+	private void appendHeaders(ResponseDefinitionBuilder builder) {
+		if (response.headers) {
+			builder.withHeaders(new HttpHeaders(response.headers.entries?.collect {
+				new HttpHeader(it.name, it.clientValue.toString())
+			}))
 		}
-		responseDefinition.setHeaders(new HttpHeaders(response.headers.entries?.collect { new HttpHeader(it.name, it.clientValue.toString()) }))
 	}
 
-	private void appendBody(ResponseDefinition responseDefinition) {
-		if (!response.body) {
-			return
+	private void appendBody(ResponseDefinitionBuilder builder) {
+		if (response.body) {
+			Object body = response.body.clientValue
+			ContentType contentType = recognizeContentTypeFromHeader(response.headers)
+			if (contentType == ContentType.UNKNOWN) {
+				contentType = recognizeContentTypeFromContent(body)
+			}
+			builder.withBody(parseBody(body, contentType))
 		}
-		Object body = response.body.clientValue
-		ContentType contentType = recognizeContentTypeFromHeader(response.headers)
-		if (contentType == ContentType.UNKNOWN) {
-			contentType = recognizeContentTypeFromContent(body)
-		}
-		responseDefinition.setBody(parseBody(body, contentType))
 	}
 
 
