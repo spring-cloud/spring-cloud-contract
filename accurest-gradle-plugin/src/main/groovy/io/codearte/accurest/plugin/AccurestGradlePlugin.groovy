@@ -30,20 +30,7 @@ class AccurestGradlePlugin implements Plugin<Project> {
 		createGenerateTestsTask(extension)
 		createAndConfigureGenerateWireMockClientStubsFromDslTask(extension)
 		deprecatedCreateAndConfigureGenerateWiremockClientStubsFromDslTask()
-		project.dependencies.add("testCompile", "com.blogspot.toomuchcoding:wiremock:0.0.1")
-		project.repositories { jcenter() }
-		project.configurations {
-			all {
-				resolutionStrategy {
-					eachDependency { DependencyResolveDetails details ->
-						if (details.requested.group == 'com.github.tomakehurst' && details.requested.name == "wiremock") {
-							details.useTarget("com.blogspot.toomuchcoding:wiremock:0.0.1")
-						}
-					}
-				}
-			}
-		}
-
+		project.dependencies.add("testCompile", "com.github.tomakehurst:wiremock:2.0.2-beta")
 
 		project.afterEvaluate {
 			def hasIdea = project.plugins.findPlugin(IDEA_PLUGIN_CLASS)
