@@ -1,4 +1,5 @@
 package io.codearte.accurest.builder
+
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
@@ -74,12 +75,15 @@ class MockMvcSpockMethodBodyBuilder extends SpockMethodBodyBuilder {
 
 	@TypeChecked(TypeCheckingMode.SKIP)
 	protected String buildUrlFromUrlPath(UrlPath urlPath) {
-		String params = urlPath.queryParameters.parameters
-				.findAll(this.&allowedQueryParameter)
-				.inject([] as List<String>) { List<String> result, QueryParameter param ->
-						result << "${param.name}=${resolveParamValue(param).toString()}"
-					}
-				.join('&')
+		String params = ""
+		if (urlPath.queryParameters) {
+			params = urlPath.queryParameters.parameters
+					.findAll(this.&allowedQueryParameter)
+					.inject([] as List<String>) { List<String> result, QueryParameter param ->
+				result << "${param.name}=${resolveParamValue(param).toString()}"
+			}
+			.join('&')
+		}
 		return "$urlPath.serverValue?$params"
 	}
 
