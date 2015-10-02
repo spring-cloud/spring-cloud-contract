@@ -131,7 +131,7 @@ class ContentUtils {
 				bodyAsValue.values.collect { transformJSONStringValue(it, valueProvider) } as String[],
 				bodyAsValue.strings.clone() as String[]
 		)
-		def parsedJson = new JsonSlurper().parseText(transformedString.toString())
+		def parsedJson = new JsonSlurper().parseText(transformedString.toString().replace('\\', '\\\\'))
 		return convertAllTemporaryRegexPlaceholdersBackToPatterns(parsedJson)
 	}
 
@@ -166,7 +166,7 @@ class ContentUtils {
 		MapConverter.transformValues(parsedJson, { Object value ->
 			if (value instanceof String) {
 				String string = (String) value
-				Matcher matcher = TEMPORARY_PATTERN_HOLDER.matcher(string)
+				Matcher matcher = TEMPORARY_PATTERN_HOLDER.matcher(string.trim())
 				if (matcher.matches()) {
 					List val = matcher[0] as List
 					String pattern = val[1]
