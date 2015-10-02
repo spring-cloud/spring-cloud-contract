@@ -17,8 +17,7 @@ class JsonPathEntry {
 		if (optionalSuffix) {
 			return ["!${parsedJsonVariable}.read('''${jsonPath}''', JSONArray).empty"]
 		} else if (traversesOverCollections()) {
-			return ["${parsedJsonVariable}.read('''${jsonPath}''', JSONArray).size() == 1",
-					"${parsedJsonVariable}.read('''${jsonPath}''', JSONArray).get(0) ${operator()} ${potentiallyWrappedWithQuotesValue()}"]
+			return ["${parsedJsonVariable}.read('''${jsonPath}''', JSONArray).get(0) ${operator()} ${potentiallyWrappedWithQuotesValue()}"]
 		}
 		return ["${parsedJsonVariable}.read('''${jsonPath}''') ${operator()} ${potentiallyWrappedWithQuotesValue()}"]
 	}
