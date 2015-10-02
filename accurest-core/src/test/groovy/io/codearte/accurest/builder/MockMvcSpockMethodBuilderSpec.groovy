@@ -239,6 +239,35 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 
 	def "should generate regex assertions for string objects in response body"() {
 		given:
+		GroovyDsl contractDsl = GroovyDsl.make {
+			request {
+				method "GET"
+				url "test"
+			}
+			response {
+				status 200
+				body("""{"property1":"a","property2":"${value(client('123'), server(regex('[0-9]{3}')))}"}""")
+				headers {
+					header('Content-Type': 'application/json')
+
+				}
+
+			}
+		}
+		MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+		BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+		builder.appendTo(blockBuilder)
+		then:
+		blockBuilder.toString().contains("\$[?(@.property2 =~ /[0-9]{3}/)]")
+		blockBuilder.toString().contains("\$[?(@.property1 == 'a')]")
+		and:
+		stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+	}
+
+	@Issue(["#126", "#143"])
+	def "should generate escaped regex assertions for string objects in response body"() {
+		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
 				request {
 					method "GET"
@@ -246,12 +275,10 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 				}
 				response {
 					status 200
-					body("""{"property1":"a","property2":"${value(client('123'), server(regex('[0-9]{3}')))}"}""")
+					body("""{"property":"  ${value(client('123'), server(regex('\\d+')))}"}""")
 					headers {
 						header('Content-Type': 'application/json')
-
 					}
-
 				}
 			}
 			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
@@ -259,8 +286,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("\$[?(@.property2 =~ /[0-9]{3}/)]")
-			blockBuilder.toString().contains("\$[?(@.property1 == 'a')]")
+			blockBuilder.toString().contains("\$[?(@.property =~ /\\d+/)]")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
