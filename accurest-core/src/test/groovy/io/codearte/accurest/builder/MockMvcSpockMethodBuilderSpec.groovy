@@ -551,4 +551,47 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		then:
 			spockTest.contains('''$[?(@.message =~ /User not found by email = \\\\[[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4}\\\\]/)]''')
 	}
+
+	@Issue('72')
+	def "should make the execute method work"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method """PUT"""
+					url """/fraudcheck"""
+					body("""
+                        {
+                        "clientPesel":"${value(client(regex('[0-9]{10}')), server('1234567890'))}",
+                        "loanAmount":123.123
+                        }
+                    """
+					)
+					headers {
+						header("""Content-Type""", """application/vnd.fraud.v1+json""")
+
+					}
+
+				}
+				response {
+					status 200
+					body( """{
+    "fraudCheckStatus": "OK",
+    "rejectionReason": ${value(client(null), server(execute('assertThatRejectionReasonIsNull($it)')))}
+}""")
+					headers {
+						header('Content-Type': 'application/vnd.fraud.v1+json')
+
+					}
+
+				}
+
+			}
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def spockTest = blockBuilder.toString()
+		then:
+			spockTest.contains('''assertThatRejectionReasonIsNull(parsedJson.read('$.rejectionReason'))''')
+	}
 }

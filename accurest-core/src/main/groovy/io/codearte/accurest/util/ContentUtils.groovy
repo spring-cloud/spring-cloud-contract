@@ -5,6 +5,7 @@ import groovy.json.JsonSlurper
 import groovy.transform.TypeChecked
 import groovy.util.logging.Slf4j
 import io.codearte.accurest.dsl.internal.DslProperty
+import io.codearte.accurest.dsl.internal.ExecutionProperty
 import io.codearte.accurest.dsl.internal.Headers
 import io.codearte.accurest.dsl.internal.MatchingStrategy
 import org.codehaus.groovy.runtime.GStringImpl
@@ -24,7 +25,9 @@ class ContentUtils {
 	}
 
 	private static final Pattern TEMPORARY_PATTERN_HOLDER = Pattern.compile('REGEXP>>(.*)<<')
+	private static final Pattern TEMPORARY_EXECUTION_PATTERN_HOLDER = Pattern.compile('EXECUTION>>(.*)<<')
 	private static final String JSON_VALUE_PATTERN_FOR_REGEX = 'REGEXP>>%s<<'
+	private static final String JSON_VALUE_PATTERN_FOR_EXECUTION = '"EXECUTION>>%s<<"'
 
 	/**
 	 * Due to the fact that we allow users to have a body with GString and different values inside
@@ -154,6 +157,10 @@ class ContentUtils {
 		return String.format(JSON_VALUE_PATTERN_FOR_REGEX, pattern.pattern())
 	}
 
+	private static String transformJSONStringValue(ExecutionProperty property, Closure valueProvider) {
+		return String.format(JSON_VALUE_PATTERN_FOR_EXECUTION, property.executionCommand)
+	}
+
 	private static String transformXMLStringValue(Object obj, Closure valueProvider) {
 		return escapeXml11(obj.toString())
 	}
@@ -166,16 +173,26 @@ class ContentUtils {
 		MapConverter.transformValues(parsedJson, { Object value ->
 			if (value instanceof String) {
 				String string = (String) value
-				Matcher matcher = TEMPORARY_PATTERN_HOLDER.matcher(string.trim())
-				if (matcher.matches()) {
-					List val = matcher[0] as List
-					String pattern = val[1]
-					return Pattern.compile(pattern)
-				}
-				return value
+				return returnParsedObject(string)
 			}
 			return value
 		})
+	}
+
+	static Object returnParsedObject(String string) {
+		Matcher matcher = TEMPORARY_PATTERN_HOLDER.matcher(string.trim())
+		if (matcher.matches()) {
+			List val = matcher[0] as List
+			String pattern = val[1]
+			return Pattern.compile(pattern)
+		}
+		Matcher executionMatcher = TEMPORARY_EXECUTION_PATTERN_HOLDER.matcher(string.trim())
+		if (executionMatcher.matches()) {
+			List val = executionMatcher[0] as List
+			String pattern = val[1]
+			return new ExecutionProperty(pattern)
+		}
+		return string
 	}
 
 	public static ContentType recognizeContentTypeFromHeader(Headers headers) {
