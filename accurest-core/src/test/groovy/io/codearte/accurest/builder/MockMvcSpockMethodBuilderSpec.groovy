@@ -552,6 +552,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			spockTest.contains('''$[?(@.message =~ /User not found by email = \\\\[[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4}\\\\]/)]''')
 	}
 
+	@Issue('42')
 	def "should omit an optional field from body resolution"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -591,6 +592,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			!spockTest.contains('''Optional''')
 	}
 
+	@Issue('42')
 	def "should omit an optional field from body resolution with GString"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {

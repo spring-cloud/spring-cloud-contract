@@ -1293,6 +1293,128 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
 
+	@Issue('42')
+	def 'should generate stub without optional parameters with GString'() {
+		given:
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				priority 1
+				request {
+					method 'POST'
+					url '/users/password'
+					headers {
+						header 'Content-Type': 'application/json'
+					}
+					body(
+							""" {
+								"email" : "${value(optional())}",
+								"callback_url" : "${value(client(regex(hostname())), server('http://partners.com'))}"
+								}
+							"""
+					)
+				}
+				response {
+					status 404
+					headers {
+						header 'Content-Type': 'application/json'
+					}
+					body(
+							""" {
+								"code" : "${value(optional())}",
+								"message" : "User not found by email = [${value(server(regex(email())), client('not.existing@user.com'))}]"
+								}
+							"""
+					)
+				}
+			}
+		when:
+			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
+		then:
+		AssertionUtil.assertThatJsonsAreEqual(('''
+			{
+	  "request" : {
+		"url" : "/users/password",
+		"method" : "POST",
+		"bodyPatterns" : [ {
+		  "matchesJsonPath" : "$[?(@.callback_url =~ /((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?/)]"
+		} ],
+		"headers" : {
+		  "Content-Type" : {
+			"equalTo" : "application/json"
+		  }
+		}
+	  },
+	  "response" : {
+		"status" : 404,
+		"body" : "{\\"message\\":\\"User not found by email = [not.existing@user.com]\\"}",
+		"headers" : {
+		  "Content-Type" : "application/json"
+		}
+	  },
+	  "priority" : 1
+	}
+			'''), wireMockStub)
+		and:
+			stubMappingIsValidWireMockStub(wireMockStub)
+	}
+
+	@Issue('42')
+	def 'should generate stub without optional parameters'() {
+		given:
+			GroovyDsl groovyDsl = GroovyDsl.make {
+				priority 1
+				request {
+					method 'POST'
+					url '/users/password'
+					headers {
+						header 'Content-Type': 'application/json'
+					}
+					body(
+							email: optional(),
+							callback_url: $(client(regex(hostname())), server('http://partners.com'))
+					)
+				}
+				response {
+					status 404
+					headers {
+						header 'Content-Type': 'application/json'
+					}
+					body(
+							code: optional(),
+							message: "User not found by email = [${value(server(regex(email())), client('not.existing@user.com'))}]"
+					)
+				}
+			}
+		when:
+			String wireMockStub = new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
+		then:
+		AssertionUtil.assertThatJsonsAreEqual(('''
+			{
+	  "request" : {
+		"url" : "/users/password",
+		"method" : "POST",
+		"bodyPatterns" : [ {
+		  "matchesJsonPath" : "$[?(@.callback_url =~ /((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?/)]"
+		} ],
+		"headers" : {
+		  "Content-Type" : {
+			"equalTo" : "application/json"
+		  }
+		}
+	  },
+	  "response" : {
+		"status" : 404,
+		"body" : "{\\"message\\":\\"User not found by email = [not.existing@user.com]\\"}",
+		"headers" : {
+		  "Content-Type" : "application/json"
+		}
+	  },
+	  "priority" : 1
+	}
+			'''), wireMockStub)
+		and:
+			stubMappingIsValidWireMockStub(wireMockStub)
+	}
+
 	String toJsonString(value) {
 		new JsonBuilder(value).toPrettyString()
 	}
