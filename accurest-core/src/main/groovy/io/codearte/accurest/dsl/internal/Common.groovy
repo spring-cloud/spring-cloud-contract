@@ -16,16 +16,20 @@ class Common {
 	@Delegate private final RegexPatterns regexPatterns = new RegexPatterns()
 
 	Map<String, DslProperty> convertObjectsToDslProperties(Map<String, Object> body) {
-		return body.collectEntries {
+		return (body.collectEntries {
 			Map.Entry<String, Object> entry ->
 				[(entry.key): toDslProperty(entry.value)]
-		} as Map<String, DslProperty>
+		} as Map<String, DslProperty>).findAll {
+			!(it.value.clientValue instanceof Optional || it.value.serverValue instanceof Optional)
+		}
 	}
 
-	List convertObjectsToDslProperties(List body) {
-		return body.collect {
+	Collection convertObjectsToDslProperties(List body) {
+		return (body.collect {
 			Object element -> toDslProperty(element)
-		} as List
+		} as List).findAll {
+			!(it instanceof Optional)
+		}
 	}
 
 	DslProperty toDslProperty(Object property) {
@@ -51,6 +55,10 @@ class Common {
 	DslProperty value(ClientDslProperty client, ServerDslProperty server) {
 		assertThatSidesMatch(client.clientValue, server.serverValue)
 		return new DslProperty(client.clientValue, server.serverValue)
+	}
+
+	DslProperty value(Object value) {
+		return new DslProperty(value)
 	}
 
 	DslProperty value(ServerDslProperty server, ClientDslProperty client) {
@@ -88,6 +96,10 @@ class Common {
 
 	ServerDslProperty test(Object serverValue) {
 		return new ServerDslProperty(serverValue)
+	}
+
+	Optional optional() {
+		return new Optional()
 	}
 
 	void assertThatSidesMatch(Pattern pattern, String value) {

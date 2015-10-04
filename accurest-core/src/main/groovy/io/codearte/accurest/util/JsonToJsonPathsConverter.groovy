@@ -30,7 +30,7 @@ class JsonToJsonPathsConverter {
 		JsonPaths pathsAndValues = [] as Set
 		Object convertedJson = MapConverter.getClientOrServerSideValues(json, clientSide)
 		traverseRecursivelyForKey(convertedJson, ROOT_JSON_PATH_ELEMENT) { String key, Object value ->
-			if (value instanceof ExecutionProperty) {
+			if (value instanceof ExecutionProperty || value instanceof io.codearte.accurest.dsl.internal.Optional) {
 				return
 			}
 			JsonPathEntry entry = getValueToInsert(key, value)

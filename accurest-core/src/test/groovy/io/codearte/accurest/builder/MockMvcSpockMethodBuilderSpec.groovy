@@ -552,6 +552,90 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			spockTest.contains('''$[?(@.message =~ /User not found by email = \\\\[[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4}\\\\]/)]''')
 	}
 
+	def "should omit an optional field from body resolution"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				priority 1
+				request {
+					method 'POST'
+					url '/users/password'
+					headers {
+						header 'Content-Type': 'application/json'
+					}
+					body(
+							email: optional(),
+							callback_url: $(client(regex(hostname())), server('http://partners.com'))
+					)
+				}
+				response {
+					status 404
+					headers {
+						header 'Content-Type': 'application/json'
+					}
+					body(
+							code: optional(),
+							message: "User not found by email = [${value(server(regex(email())), client('not.existing@user.com'))}]"
+					)
+				}
+			}
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def spockTest = blockBuilder.toString()
+		then:
+			!spockTest.contains('''body('{"email":''')
+			!spockTest.contains('''parsedJson.read(\'\'\'$[?(@.email''')
+			!spockTest.contains('''REGEXP''')
+			!spockTest.contains('''OPTIONAL''')
+			!spockTest.contains('''Optional''')
+	}
+
+	def "should omit an optional field from body resolution with GString"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				priority 1
+				request {
+					method 'POST'
+					url '/users/password'
+					headers {
+						header 'Content-Type': 'application/json'
+					}
+					body(
+							""" {
+								"email" : "${value(optional())}",
+								"callback_url" : "${value(client(regex(hostname())), server('http://partners.com'))}"
+								}
+							"""
+					)
+				}
+				response {
+					status 404
+					headers {
+						header 'Content-Type': 'application/json'
+					}
+					body(
+							""" {
+								"code" : "${value(optional())}",
+								"message" : "User not found by email = [${value(server(regex(email())), client('not.existing@user.com'))}]"
+								}
+							"""
+					)
+				}
+			}
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def spockTest = blockBuilder.toString()
+		then:
+			!spockTest.contains('''body('{"email":''')
+			!spockTest.contains('''parsedJson.read(\'\'\'$[?(@.code''')
+			!spockTest.contains('''REGEXP''')
+			!spockTest.contains('''OPTIONAL''')
+			!spockTest.contains('''Optional''')
+	}
+
 	@Issue('72')
 	def "should make the execute method work"() {
 		given:
