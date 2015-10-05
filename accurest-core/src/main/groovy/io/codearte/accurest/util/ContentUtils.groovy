@@ -179,6 +179,30 @@ class ContentUtils {
 		})
 	}
 
+	/**
+	 * <p>
+	 *     If you wonder why there is val[1] without null-check then take a look at this:
+	 * </p>
+	 * <p>
+	 *     Example:
+	 * </p>
+	 * <p>
+	 *     Our string equals: {@code EXECUTION>>assertThatRejectionReasonIsNull($it)<<}
+	 *     The matcher matches this group with the pattern {@code EXECUTION>>(.*)<<}
+	 * </p>
+	 * <p>
+	 * So {@code executionMatcher[0]} returns 2 elements:
+	 *     <ul>
+	 *         <li> index0: EXECUTION>>assertThatRejectionReasonIsNull($it)<< </li>
+	 *         <li> index1: assertThatRejectionReasonIsNull($it)<< </li>
+	 *     </ul>
+	 * </p>
+	 * <p>
+	 *    Thus one can safely write {@code executionMatcher[0][1]} to retrieve the matched group
+	 * </p>
+	 * @param string to match the regexps against
+	 * @return object converted from temporary holders
+	 */
 	static Object returnParsedObject(String string) {
 		Matcher matcher = TEMPORARY_PATTERN_HOLDER.matcher(string.trim())
 		if (matcher.matches()) {
