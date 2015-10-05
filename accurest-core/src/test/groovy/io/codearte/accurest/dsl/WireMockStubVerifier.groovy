@@ -10,7 +10,7 @@ trait WireMockStubVerifier {
 		stubMapping.request.bodyPatterns.findAll { it.matches }.every {
 			Pattern.compile(it.matches)
 		}
-		assert !mappingDefinition.contains('DslProperty')
+		assert !mappingDefinition.contains('io.codearte.accurest.dsl.internal')
 	}
 
 }

@@ -1,9 +1,6 @@
 package io.codearte.accurest.util
-
 import groovy.json.JsonSlurper
 import io.codearte.accurest.dsl.internal.DslProperty
-import io.codearte.accurest.dsl.internal.Optional
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -41,8 +38,6 @@ class MapConverter {
 		return map.collectEntries {
 			key, value ->
 				[key, transformValues(value, closure)]
-		}.findAll {
-			!(it.value instanceof Optional)
 		}
 	}
 

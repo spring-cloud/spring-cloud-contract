@@ -1,9 +1,9 @@
 package io.codearte.accurest.util
-
+import java.util.regex.Pattern
 import groovy.json.JsonSlurper
 import io.codearte.accurest.dsl.internal.ExecutionProperty
+import io.codearte.accurest.dsl.internal.OptionalProperty
 
-import java.util.regex.Pattern
 /**
  * @author Marcin Grzejszczak
  */
@@ -30,7 +30,7 @@ class JsonToJsonPathsConverter {
 		JsonPaths pathsAndValues = [] as Set
 		Object convertedJson = MapConverter.getClientOrServerSideValues(json, clientSide)
 		traverseRecursivelyForKey(convertedJson, ROOT_JSON_PATH_ELEMENT) { String key, Object value ->
-			if (value instanceof ExecutionProperty || value instanceof io.codearte.accurest.dsl.internal.Optional) {
+			if (value instanceof ExecutionProperty) {
 				return
 			}
 			JsonPathEntry entry = getValueToInsert(key, value)
@@ -128,11 +128,17 @@ class JsonToJsonPathsConverter {
 
 	protected static String compareWith(Object value) {
 		if (value instanceof Pattern) {
-			return """=~ /${(value as Pattern).pattern()}/"""
+			return patternComparison((value as Pattern).pattern())
+		} else if (value instanceof OptionalProperty) {
+			return patternComparison((value as OptionalProperty).optionalPattern())
 		} else if (value instanceof GString) {
 			return """=~ /${RegexpBuilders.buildGStringRegexpForTestSide(value)}/"""
 		}
 		return """== ${potentiallyWrappedWithQuotesValue(value)}"""
+	}
+
+	protected static String patternComparison(String pattern){
+		return """=~ /$pattern/"""
 	}
 
 	protected static String potentiallyWrappedWithQuotesValue(Object value) {

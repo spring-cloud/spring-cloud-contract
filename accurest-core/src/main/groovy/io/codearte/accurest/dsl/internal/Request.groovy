@@ -3,7 +3,6 @@ import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
-import groovy.xml.MarkupBuilder
 
 @TypeChecked
 @EqualsAndHashCode
@@ -127,6 +126,10 @@ class Request extends Common {
 
 	MatchingStrategy absent() {
 		return new MatchingStrategy(true, MatchingStrategy.Type.ABSENT)
+	}
+
+	void assertThatSidesMatch(Object stubSide, OptionalProperty testSide) {
+		throw new IllegalStateException("Optional can be used only for the stub side of the request!")
 	}
 
 }
