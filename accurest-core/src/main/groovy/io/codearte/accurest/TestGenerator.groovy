@@ -4,6 +4,7 @@ import io.codearte.accurest.config.AccurestConfigProperties
 import org.apache.commons.io.FilenameUtils
 import org.codehaus.plexus.util.DirectoryScanner
 
+import java.nio.charset.StandardCharsets
 import java.util.concurrent.atomic.AtomicInteger
 
 import static io.codearte.accurest.util.NamesUtil.afterLast
@@ -62,7 +63,7 @@ class TestGenerator {
 			}
 			if (filesToClass.size()) {
 				def className = afterLast(includedDirectoryRelativePath, File.separator) + configProperties.targetFramework.classNameSuffix
-				def classBytes = generator.buildClass(filesToClass, className, packageNameForClass).bytes
+				def classBytes = generator.buildClass(filesToClass, className, packageNameForClass).getBytes(StandardCharsets.UTF_8)
 				saver.saveClassFile(className, packageNameForClass, classBytes)
 				counter.incrementAndGet()
 			}
