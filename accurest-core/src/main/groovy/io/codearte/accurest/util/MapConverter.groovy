@@ -1,8 +1,6 @@
 package io.codearte.accurest.util
-
 import groovy.json.JsonSlurper
 import io.codearte.accurest.dsl.internal.DslProperty
-
 /**
  * @author Marcin Grzejszczak
  */

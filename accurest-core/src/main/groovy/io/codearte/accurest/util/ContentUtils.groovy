@@ -8,6 +8,7 @@ import io.codearte.accurest.dsl.internal.DslProperty
 import io.codearte.accurest.dsl.internal.ExecutionProperty
 import io.codearte.accurest.dsl.internal.Headers
 import io.codearte.accurest.dsl.internal.MatchingStrategy
+import io.codearte.accurest.dsl.internal.OptionalProperty
 import org.codehaus.groovy.runtime.GStringImpl
 
 import java.util.regex.Matcher
@@ -24,9 +25,11 @@ class ContentUtils {
 		it instanceof DslProperty ? it.clientValue : it
 	}
 
-	private static final Pattern TEMPORARY_PATTERN_HOLDER = Pattern.compile('REGEXP>>(.*)<<')
+	private static final Pattern TEMPORARY_PATTERN_HOLDER = Pattern.compile('.*REGEXP>>(.*)<<.*')
 	private static final Pattern TEMPORARY_EXECUTION_PATTERN_HOLDER = Pattern.compile('EXECUTION>>(.*)<<')
+	private static final Pattern TEMPORARY_OPTIONAL_PATTERN_HOLDER = Pattern.compile('OPTIONAL>>(.*)<<')
 	private static final String JSON_VALUE_PATTERN_FOR_REGEX = 'REGEXP>>%s<<'
+	private static final String JSON_VALUE_PATTERN_FOR_OPTIONAL = 'OPTIONAL>>%s<<'
 	private static final String JSON_VALUE_PATTERN_FOR_EXECUTION = '"EXECUTION>>%s<<"'
 
 	/**
@@ -157,6 +160,10 @@ class ContentUtils {
 		return String.format(JSON_VALUE_PATTERN_FOR_REGEX, pattern.pattern())
 	}
 
+	private static String transformJSONStringValue(OptionalProperty optional, Closure valueProvider) {
+		return String.format(JSON_VALUE_PATTERN_FOR_OPTIONAL, optional.value)
+	}
+
 	private static String transformJSONStringValue(ExecutionProperty property, Closure valueProvider) {
 		return String.format(JSON_VALUE_PATTERN_FOR_EXECUTION, property.executionCommand)
 	}
@@ -206,17 +213,23 @@ class ContentUtils {
 	static Object returnParsedObject(String string) {
 		Matcher matcher = TEMPORARY_PATTERN_HOLDER.matcher(string.trim())
 		if (matcher.matches()) {
-			List val = matcher[0] as List
-			String pattern = val[1]
-			return Pattern.compile(pattern)
+			return Pattern.compile(patternFromMatchingGroup(matcher))
 		}
 		Matcher executionMatcher = TEMPORARY_EXECUTION_PATTERN_HOLDER.matcher(string.trim())
 		if (executionMatcher.matches()) {
-			List val = executionMatcher[0] as List
-			String pattern = val[1]
-			return new ExecutionProperty(pattern)
+			return new ExecutionProperty(patternFromMatchingGroup(executionMatcher))
+		}
+		Matcher optionalMatcher = TEMPORARY_OPTIONAL_PATTERN_HOLDER.matcher(string.trim())
+		if (optionalMatcher.matches()) {
+			String patternToMatch = patternFromMatchingGroup(optionalMatcher)
+			return Pattern.compile(new OptionalProperty(patternToMatch).optionalPattern())
 		}
 		return string
+	}
+
+	private static String patternFromMatchingGroup(Matcher matcher) {
+		List val = matcher[0] as List
+		return val[1]
 	}
 
 	public static ContentType recognizeContentTypeFromHeader(Headers headers) {

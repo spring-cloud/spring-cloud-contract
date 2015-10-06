@@ -5,6 +5,7 @@ import groovy.json.JsonSlurper
 import io.codearte.accurest.util.AssertionUtil
 import spock.lang.Issue
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifier {
 
@@ -1291,6 +1292,99 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			'''), wireMockStub)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
+	}
+
+	@Issue('42')
+	@Unroll
+	def 'should generate stub without optional parameters'() {
+		when:
+			String wireMockStub = new WireMockStubStrategy(contractDsl).toWireMockClientStub()
+		then:
+		AssertionUtil.assertThatJsonsAreEqual(('''
+			{
+			  "request" : {
+				"url" : "/users/password",
+				"method" : "POST",
+				"bodyPatterns" : [ {
+				  "matchesJsonPath" : "$[?(@.callback_url =~ /((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?/)]"
+				}, {
+				  "matchesJsonPath" : "$[?(@.email =~ /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4})?/)]"
+				} ],
+				"headers" : {
+				  "Content-Type" : {
+					"equalTo" : "application/json"
+				  }
+				}
+			  },
+			  "response" : {
+				"status" : 404,
+				"body" : "{\\"code\\":\\"123123\\",\\"message\\":\\"User not found by email = [not.existing@user.com]\\"}",
+				"headers" : {
+				  "Content-Type" : "application/json"
+				}
+			  },
+			  "priority" : 1
+			}
+			'''), wireMockStub)
+		and:
+			stubMappingIsValidWireMockStub(wireMockStub)
+		where:
+		contractDsl << [
+				GroovyDsl.make {
+					priority 1
+					request {
+						method 'POST'
+						url '/users/password'
+						headers {
+							header 'Content-Type': 'application/json'
+						}
+						body(
+								email: $(stub(optional(regex(email()))), test('abc@abc.com')),
+								callback_url: $(stub(regex(hostname())), test('http://partners.com'))
+						)
+					}
+					response {
+						status 404
+						headers {
+							header 'Content-Type': 'application/json'
+						}
+						body(
+								code: $(stub("123123"), test(optional("123123"))),
+								message: "User not found by email = [${value(test(regex(email())), stub('not.existing@user.com'))}]"
+						)
+					}
+				},
+				GroovyDsl.make {
+					priority 1
+					request {
+						method 'POST'
+						url '/users/password'
+						headers {
+							header 'Content-Type': 'application/json'
+						}
+						body(
+								""" {
+								"email" : "${value(stub(optional(regex(email()))), test('abc@abc.com'))}",
+								"callback_url" : "${value(client(regex(hostname())), server('http://partners.com'))}"
+								}
+							"""
+						)
+					}
+					response {
+						status 404
+						headers {
+							header 'Content-Type': 'application/json'
+						}
+						body(
+								""" {
+								"code" : "${value(stub(123123), test(optional(123123)))}",
+								"message" : "User not found by email = [${value(server(regex(email())), client('not.existing@user.com'))}]"
+								}
+							"""
+						)
+					}
+				}
+		]
 	}
 
 	String toJsonString(value) {

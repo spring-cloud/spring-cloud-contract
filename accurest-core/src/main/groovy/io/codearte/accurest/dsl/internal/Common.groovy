@@ -22,10 +22,10 @@ class Common {
 		} as Map<String, DslProperty>
 	}
 
-	List convertObjectsToDslProperties(List body) {
-		return body.collect {
+	Collection convertObjectsToDslProperties(List body) {
+		return (body.collect {
 			Object element -> toDslProperty(element)
-		} as List
+		} as List)
 	}
 
 	DslProperty toDslProperty(Object property) {
@@ -53,6 +53,10 @@ class Common {
 		return new DslProperty(client.clientValue, server.serverValue)
 	}
 
+	DslProperty value(Object value) {
+		return new DslProperty(value)
+	}
+
 	DslProperty value(ServerDslProperty server, ClientDslProperty client) {
 		assertThatSidesMatch(client.clientValue, server.serverValue)
 		return new DslProperty(client.clientValue, server.serverValue)
@@ -68,6 +72,10 @@ class Common {
 
 	Pattern regex(String regex) {
 		return Pattern.compile(regex)
+	}
+
+	OptionalProperty optional(Object object) {
+		return new OptionalProperty(object)
 	}
 
 	ExecutionProperty execute(String commandToExecute) {
@@ -88,6 +96,10 @@ class Common {
 
 	ServerDslProperty test(Object serverValue) {
 		return new ServerDslProperty(serverValue)
+	}
+
+	void assertThatSidesMatch(OptionalProperty stubSide, Object testSide) {
+		assert testSide ==~ Pattern.compile(stubSide.optionalPattern())
 	}
 
 	void assertThatSidesMatch(Pattern pattern, String value) {

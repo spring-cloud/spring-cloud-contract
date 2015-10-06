@@ -5,6 +5,7 @@ import io.codearte.accurest.dsl.WireMockStubStrategy
 import io.codearte.accurest.dsl.WireMockStubVerifier
 import spock.lang.Issue
 import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author Jakub Kubrynski
@@ -550,6 +551,80 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			def spockTest = blockBuilder.toString()
 		then:
 			spockTest.contains('''$[?(@.message =~ /User not found by email = \\\\[[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4}\\\\]/)]''')
+	}
+
+	@Issue('42')
+	@Unroll
+	def "should not omit the optional field in the test creation"() {
+		given:
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def spockTest = blockBuilder.toString()
+		then:
+			spockTest.contains('''"email":"abc@abc.com"''')
+			spockTest.contains('''parsedJson.read(\'\'\'$[?(@.code =~ /(123123)?/)]''')
+			!spockTest.contains('''REGEXP''')
+			!spockTest.contains('''OPTIONAL''')
+			!spockTest.contains('''OptionalProperty''')
+		where:
+		contractDsl << [
+				GroovyDsl.make {
+					priority 1
+					request {
+						method 'POST'
+						url '/users/password'
+						headers {
+							header 'Content-Type': 'application/json'
+						}
+						body(
+								email: $(stub(optional(regex(email()))), test('abc@abc.com')),
+								callback_url: $(stub(regex(hostname())), test('http://partners.com'))
+						)
+					}
+					response {
+						status 404
+						headers {
+							header 'Content-Type': 'application/json'
+						}
+						body(
+								code: value(stub("123123"), test(optional("123123"))),
+								message: "User not found by email = [${value(test(regex(email())), stub('not.existing@user.com'))}]"
+						)
+					}
+				},
+				GroovyDsl.make {
+					priority 1
+					request {
+						method 'POST'
+						url '/users/password'
+						headers {
+							header 'Content-Type': 'application/json'
+						}
+						body(
+								""" {
+								"email" : "${value(stub(optional(regex(email()))), test('abc@abc.com'))}",
+								"callback_url" : "${value(client(regex(hostname())), server('http://partners.com'))}"
+								}
+							"""
+						)
+					}
+					response {
+						status 404
+						headers {
+							header 'Content-Type': 'application/json'
+						}
+						body(
+								""" {
+								"code" : "${value(stub(123123), test(optional(123123)))}",
+								"message" : "User not found by email = [${value(server(regex(email())), client('not.existing@user.com'))}]"
+								}
+							"""
+						)
+					}
+				}
+		]
 	}
 
 	@Issue('72')
