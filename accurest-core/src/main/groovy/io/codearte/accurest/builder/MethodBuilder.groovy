@@ -6,7 +6,6 @@ import io.codearte.accurest.config.TestFramework
 import io.codearte.accurest.config.TestMode
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.util.NamesUtil
-import org.codehaus.groovy.control.CompilerConfiguration
 
 /**
  * @author Jakub Kubrynski
@@ -26,7 +25,7 @@ class MethodBuilder {
 
 	static MethodBuilder createTestMethod(File stubsFile, AccurestConfigProperties configProperties) {
 		log.debug("Stub content from file [${stubsFile.text}]")
-		GroovyDsl stubContent = new GroovyShell(this.classLoader, new Binding(), new CompilerConfiguration(sourceEncoding:'UTF-8')).evaluate(stubsFile)
+		GroovyDsl stubContent = new GroovyShell(this.classLoader).evaluate(stubsFile)
 		log.debug("Stub content Groovy DSL [$stubContent]")
 		String methodName = NamesUtil.camelCase(NamesUtil.toLastDot(NamesUtil.afterLast(stubsFile.path, File.separator)))
 		return new MethodBuilder(methodName, stubContent, configProperties)
