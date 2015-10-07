@@ -1,5 +1,7 @@
 package io.codearte.accurest.builder
+
 import groovy.json.JsonOutput
+import groovy.json.StringEscapeUtils
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import io.codearte.accurest.dsl.GroovyDsl
@@ -117,7 +119,13 @@ abstract class SpockMethodBodyBuilder {
 
 	protected String getBodyAsString() {
 		Object bodyValue = extractServerValueFromBody(request.body.serverValue)
-		return trimRepeatedQuotes(new JsonOutput().toJson(bodyValue))
+		String json = new JsonOutput().toJson(bodyValue)
+		json = convertUnicodeEscapes(json)
+		return trimRepeatedQuotes(json)
+	}
+
+	protected String convertUnicodeEscapes(String json) {
+		return StringEscapeUtils.unescapeJavaScript(json)
 	}
 
 	protected String trimRepeatedQuotes(String toTrim) {

@@ -7,6 +7,8 @@ import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import java.util.regex.Pattern
+
 /**
  * @author Jakub Kubrynski
  */
@@ -669,4 +671,39 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		then:
 			spockTest.contains('''assertThatRejectionReasonIsNull(parsedJson.read('$.rejectionReason'))''')
 	}
+
+	def "shouldn't generate unicode escape characters"() {
+		given:
+			Pattern ONLY_ALPHA_UNICODE = Pattern.compile(/[\p{L}]*/)
+
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method "PUT"
+					url "/v1/payments/e86df6f693de4b35ae648464c5b0dc09/енев"
+					headers {
+						header('Content-Type': 'application/json')
+					}
+					body(
+							client: [
+									first_name: $(stub(ONLY_ALPHA_UNICODE), test('Пенева')),
+									last_name : $(stub(ONLY_ALPHA_UNICODE), test('Пенева'))
+							]
+					)
+				}
+				response {
+					status 200
+					headers {
+						header('Content-Type': 'application/json')
+					}
+				}
+			}
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def spockTest = blockBuilder.toString()
+		then:
+			!spockTest.contains("\\u041f")
+	}
+
 }
