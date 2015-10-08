@@ -7,6 +7,8 @@ import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import java.util.regex.Pattern
+
 /**
  * @author Jakub Kubrynski
  */
@@ -669,4 +671,68 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		then:
 			spockTest.contains('''assertThatRejectionReasonIsNull(parsedJson.read('$.rejectionReason'))''')
 	}
+
+	def "should support inner map and list definitions"() {
+		given:
+
+			Pattern PHONE_NUMBER = Pattern.compile(/[+\w]*/)
+			Pattern ANYSTRING = Pattern.compile(/.*/)
+			Pattern NUMBERS = Pattern.compile(/[\d\.]*/)
+			Pattern DATETIME = ANYSTRING
+
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method "PUT"
+					url "/v1/payments/e86df6f693de4b35ae648464c5b0dc09/client_data"
+					headers {
+						header('Content-Type': 'application/json')
+					}
+					body(
+							client: [
+									first_name: $(stub(regex(onlyAlphaUnicode())), test('Denis')),
+									last_name: $(stub(regex(onlyAlphaUnicode())), test('FakeName')),
+									email: $(stub(regex(email())), test('fakemail@fakegmail.com')),
+									fax: $(stub(PHONE_NUMBER), test('+xx001213214')),
+									phone: $(stub(PHONE_NUMBER), test('2223311')),
+									data_of_birth: $(stub(DATETIME), test('2002-10-22T00:00:00Z'))
+							],
+							client_id_card: [
+									id: $(stub(ANYSTRING), test('ABC12345')),
+									date_of_issue: $(stub(ANYSTRING), test('2002-10-02T00:00:00Z')),
+									address: [
+											street: $(stub(ANYSTRING), test('Light Street')),
+											city: $(stub(ANYSTRING), test('Fire')),
+											region: $(stub(ANYSTRING), test('Skys')),
+											country: $(stub(ANYSTRING), test('HG')),
+											zip: $(stub(NUMBERS), test('658965'))
+									]
+							],
+							incomes_and_expenses: [
+									monthly_income: $(stub(NUMBERS), test('0.0')),
+									monthly_loan_repayments: $(stub(NUMBERS), test('100')),
+									monthly_living_expenses: $(stub(NUMBERS), test('22'))
+							],
+							additional_info: [
+									allow_to_contact: $(stub(optional(regex(anyBoolean()))), test('true'))
+							]
+					)
+				}
+				response {
+					status 200
+					headers {
+						header('Content-Type': 'application/json')
+					}
+				}
+			}
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def spockTest = blockBuilder.toString()
+		then:
+			spockTest.contains '"street":"Light Street"'
+			!spockTest.contains("clientValue")
+			!spockTest.contains("cursor")
+	}
+
 }
