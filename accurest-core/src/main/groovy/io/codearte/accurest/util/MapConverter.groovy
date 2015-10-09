@@ -20,13 +20,27 @@ class MapConverter {
 					return convert(json, closure)
 				}
 			} catch (Exception ignore) {
-				return closure(value)
 			}
+			return extractValue(value, closure);
 		} else if (value instanceof Map) {
 			return convert(value as Map, closure)
 		} else if (value instanceof List) {
 			return value.collect({ transformValues(it, closure) })
 		}
+		return transformValue(closure, value)
+	}
+
+	protected static Object transformValue(Closure closure, Object value) {
+		return extractValue(value, { Object val->
+			Object newValue = closure(val)
+			if (newValue instanceof Map || newValue instanceof List || newValue instanceof String && value) {
+				return transformValues(newValue, closure)
+			}
+			return newValue;
+		})
+	}
+
+	private static extractValue(Object value, Closure closure) {
 		try {
 			return closure(value)
 		} catch (Exception ignore) {
