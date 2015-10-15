@@ -13,3 +13,9 @@ generating Spock's acceptance tests for the server - to verify if your API imple
 2. moving TDD to an architecture level.
 
 For more information please go to the [Wiki](https://github.com/Codearte/accurest/wiki/1.-Introduction)
+
+## Requirements
+
+### Wiremock
+
+In order to use Accurest with Wiremock you have to have __Wiremock in version at least 2.0.0-beta__ . Of course the higher the better :)
