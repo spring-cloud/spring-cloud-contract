@@ -8,6 +8,8 @@ import groovy.xml.XmlUtil
 import io.codearte.accurest.dsl.GroovyDsl
 import nl.flotsam.xeger.Xeger
 
+import java.nio.charset.StandardCharsets
+
 import static org.apache.commons.lang3.StringEscapeUtils.escapeJava
 
 class WireMockToDslConverter {
@@ -154,11 +156,11 @@ class WireMockToDslConverter {
 				if (!it.name.endsWith('json')) {
 					return
 				}
-				String dslFromWireMockStub = fromWireMockStub(it.text)
+				String dslFromWireMockStub = fromWireMockStub(it.getText(StandardCharsets.UTF_8.toString()))
 				String dslWrappedWithFactoryMethod = wrapWithFactoryMethod(dslFromWireMockStub)
 				File newGroovyFile = new File(it.parent, it.name.replaceAll('json', 'groovy'))
 				println("Creating new groovy file [$newGroovyFile.path]")
-				newGroovyFile.text = dslWrappedWithFactoryMethod
+				newGroovyFile.setText(dslWrappedWithFactoryMethod, StandardCharsets.UTF_8.toString())
 			} catch (Exception e) {
 				System.err.println(e)
 			}
