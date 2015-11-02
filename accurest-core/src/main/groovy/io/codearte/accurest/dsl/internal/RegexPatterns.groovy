@@ -20,6 +20,10 @@ class RegexPatterns {
 		return ONLY_ALPHA_UNICODE.pattern()
 	}
 
+	String number() {
+		return NUMBER.pattern()
+	}
+
 	String anyBoolean() {
 		return TRUE_OR_FALSE.pattern()
 	}
@@ -38,9 +42,5 @@ class RegexPatterns {
 
 	String url() {
 		return URL.pattern()
-	}
-
-	String number() {
-		return NUMBER.pattern()
 	}
 }
