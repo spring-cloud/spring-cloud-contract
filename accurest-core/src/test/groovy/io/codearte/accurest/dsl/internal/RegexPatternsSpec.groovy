@@ -52,4 +52,17 @@ class RegexPatternsSpec extends Specification {
 			'ftp://asd.com:9090/asd/a?a=b' || true
 			'a.b.'                         || false
 	}
+
+	@Unroll
+	def "should generate a regex for a number [#textToMatch] that is a match [#shouldMatch]"() {
+		expect:
+			shouldMatch == Pattern.compile(regexPatterns.number()).matcher(textToMatch).matches()
+		where:
+			textToMatch || shouldMatch
+			'1'         || true
+			'1.0'       || true
+			'0.1'       || true
+			'.1'        || true
+			'1.'        || false
+	}
 }
