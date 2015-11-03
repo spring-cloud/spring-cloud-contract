@@ -16,7 +16,7 @@ class GeneratorScannerSpec extends Specification {
 		when:
 			testGenerator.generateTestClasses("com.ofg")
 		then:
-			3 * classGenerator.buildClass(_, _, _) >> "qwerty"
+			5 * classGenerator.buildClass(_, _, _) >> "qwerty"
 	}
 
 	def "should filter other directory"() {
@@ -30,6 +30,7 @@ class GeneratorScannerSpec extends Specification {
 			testGenerator.generateTestClasses("com.ofg")
 		then:
 			1 * classGenerator.buildClass(_, 'differentSpec', _) >> "qwerty"
+			2 * classGenerator.buildClass(_, 'exceptionsSpec', _) >> "qwerty"
 	}
 
 	def "should ignore file"() {
@@ -45,4 +46,17 @@ class GeneratorScannerSpec extends Specification {
 		then:
 			1 * classGenerator.buildClass({ it.size() == 1 }, 'otherSpec', _) >> "sample.groovy"
 	}
+
+    def "should create class with full package"() {
+        given:
+        AccurestConfigProperties properties = new AccurestConfigProperties()
+        properties.contractsDslDir = new File(this.getClass().getResource("/directory/with/stubs/package").toURI())
+        TestGenerator testGenerator = new TestGenerator(properties, classGenerator, Stub(FileSaver))
+        when:
+        testGenerator.generateTestClasses("com.ofg")
+        then:
+        1 * classGenerator.buildClass(_, 'exceptionsSpec', 'com.ofg.v1') >> "spec1"
+        1 * classGenerator.buildClass(_, 'exceptionsSpec', 'com.ofg.v2') >> "spec2"
+    }
+
 }
