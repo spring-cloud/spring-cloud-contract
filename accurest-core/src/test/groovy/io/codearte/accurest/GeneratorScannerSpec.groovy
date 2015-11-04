@@ -49,14 +49,14 @@ class GeneratorScannerSpec extends Specification {
 
     def "should create class with full package"() {
         given:
-        AccurestConfigProperties properties = new AccurestConfigProperties()
-        properties.contractsDslDir = new File(this.getClass().getResource("/directory/with/stubs/package").toURI())
-        TestGenerator testGenerator = new TestGenerator(properties, classGenerator, Stub(FileSaver))
+			AccurestConfigProperties properties = new AccurestConfigProperties()
+			properties.contractsDslDir = new File(this.getClass().getResource("/directory/with/stubs/package").toURI())
+			TestGenerator testGenerator = new TestGenerator(properties, classGenerator, Stub(FileSaver))
         when:
-        testGenerator.generateTestClasses("com.ofg")
+        	testGenerator.generateTestClasses("com.ofg")
         then:
-        1 * classGenerator.buildClass(_, 'exceptionsSpec', 'com.ofg.v1') >> "spec1"
-        1 * classGenerator.buildClass(_, 'exceptionsSpec', 'com.ofg.v2') >> "spec2"
+			1 * classGenerator.buildClass(_, 'exceptionsSpec', 'com.ofg.v1') >> "spec1"
+			1 * classGenerator.buildClass(_, 'exceptionsSpec', 'com.ofg.v2') >> "spec2"
     }
 
 }
