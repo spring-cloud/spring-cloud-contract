@@ -4,6 +4,7 @@ import io.codearte.accurest.config.AccurestConfigProperties
 import org.apache.commons.io.FilenameUtils
 import org.codehaus.plexus.util.DirectoryScanner
 
+import java.nio.charset.StandardCharsets
 import java.util.concurrent.atomic.AtomicInteger
 
 import static io.codearte.accurest.util.NamesUtil.afterLast
@@ -66,19 +67,19 @@ class TestGenerator {
 			if (filesToClass.size()) {
 				def className = afterLast(includedDirectoryRelativePath, File.separator) + configProperties.targetFramework.classNameSuffix
 				def packageName = buildPackage(packageNameForClass, includedDirectoryRelativePath)
-				def classBytes = generator.buildClass(filesToClass, className, packageName).bytes
+				def classBytes = generator.buildClass(filesToClass, className, packageName).getBytes(StandardCharsets.UTF_8)
 				saver.saveClassFile(className, packageName, classBytes)
 				counter.incrementAndGet()
 			}
 		}
 	}
 
-    private static String buildPackage(final String packageNameForClass, final String includedDirectoryRelativePath) {
-        String directory = beforeLast(includedDirectoryRelativePath, File.separator)
-        return "$packageNameForClass.${directoryToPackage(directory)}"
-    }
+	private static String buildPackage(final String packageNameForClass, final String includedDirectoryRelativePath) {
+		String directory = beforeLast(includedDirectoryRelativePath, File.separator)
+		return "$packageNameForClass.${directoryToPackage(directory)}"
+	}
 
-    private static String normalizePath(String path) {
-        return FilenameUtils.separatorsToUnix(path)
-    }
+	private static String normalizePath(String path) {
+		return FilenameUtils.separatorsToUnix(path)
+	}
 }

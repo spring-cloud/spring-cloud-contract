@@ -1,6 +1,6 @@
 package io.codearte.accurest.plugin
 
-import groovy.json.JsonSlurper
+import io.codearte.accurest.util.AssertionUtil
 import nebula.test.IntegrationSpec
 import spock.lang.Stepwise
 
@@ -23,7 +23,7 @@ class BasicFunctionalSpec extends IntegrationSpec {
 		when:
 			def result = runTasksSuccessfully('check')
 		then:
-			result.wasExecuted(":generateWiremockClientStubs")
+			result.wasExecuted(":generateWireMockClientStubs")
 			result.wasExecuted(":generateAccurest")
 
 		and: "tests generated"
@@ -38,28 +38,29 @@ class BasicFunctionalSpec extends IntegrationSpec {
 
 	def "should generate valid client json stubs for simple input"() {
 		when:
-			runTasksSuccessfully('generateWiremockClientStubs')
+			runTasksSuccessfully('generateWireMockClientStubs')
 		then:
 			def generatedClientJsonStub = file(GENERATED_CLIENT_JSON_STUB).text
-			new JsonSlurper().parseText(generatedClientJsonStub) == new JsonSlurper().parseText("""
-{
-    "request": {
-        "method": "PUT",
-        "headers": {
-            "Content-Type": {
-                "equalTo": "application/json"
-            }
-        },
-        "url": "/api/12",
-        "bodyPatterns": [
-            { "equalTo": "[{\\"text\\":\\"Gonna see you at Warsaw\\"}]" }
-        ]
-    },
-    "response": {
-        "status": 200
-    }
-}
-""")
+			AssertionUtil.assertThatJsonsAreEqual("""
+	{
+	  "request" : {
+		"url" : "/api/12",
+		"method" : "PUT",
+		"bodyPatterns" : [ {
+		  "matchesJsonPath" : "\$[*][?(@.text == 'Gonna see you at Warsaw')]"
+		} ],
+		"headers" : {
+		  "Content-Type" : {
+			"equalTo" : "application/json"
+		  }
+		}
+	  },
+	  "response" : {
+		"status" : 200
+	  },
+	  "priority" : 2
+	}
+	""", generatedClientJsonStub)
 	}
 
 	def "tasks should be up-to-date when appropriate"() {
@@ -67,16 +68,16 @@ class BasicFunctionalSpec extends IntegrationSpec {
 			assert !fileExists(GENERATED_CLIENT_JSON_STUB)
 			assert !fileExists(TEST_EXECUTION_XML_REPORT)
 		when:
-			runTasksSuccessfully('generateWiremockClientStubs', 'generateAccurest')
+			runTasksSuccessfully('generateWireMockClientStubs', 'generateAccurest')
 		then:
 			fileExists(GENERATED_CLIENT_JSON_STUB)
 			fileExists(GENERATED_TEST)
 
 		when: "running generation without change inputs"
-			def secondExecutionResult = runTasksSuccessfully('generateWiremockClientStubs', 'generateAccurest')
+			def secondExecutionResult = runTasksSuccessfully('generateWireMockClientStubs', 'generateAccurest')
 
 		then: "tasks should be up-to-date"
-			secondExecutionResult.wasUpToDate(":generateWiremockClientStubs")
+			secondExecutionResult.wasUpToDate(":generateWireMockClientStubs")
 			secondExecutionResult.wasUpToDate(":generateAccurest")
 
 		when: "inputs changed"
@@ -84,10 +85,10 @@ class BasicFunctionalSpec extends IntegrationSpec {
 			groovyDslFile.text = groovyDslFile.text.replace("200", "599")
 
 		and: "tasks run"
-			def thirdExecutionResult = runTasksSuccessfully('generateWiremockClientStubs', 'generateAccurest')
+			def thirdExecutionResult = runTasksSuccessfully('generateWireMockClientStubs', 'generateAccurest')
 
 		then: "tasks should be reexecuted"
-			thirdExecutionResult.wasExecuted(":generateWiremockClientStubs")
+			thirdExecutionResult.wasExecuted(":generateWireMockClientStubs")
 			thirdExecutionResult.wasExecuted(":generateAccurest")
 
 		and: "changes visible in generate files"

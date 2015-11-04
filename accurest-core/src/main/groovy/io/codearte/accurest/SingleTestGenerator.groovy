@@ -11,6 +11,7 @@ import static io.codearte.accurest.builder.MethodBuilder.createTestMethod
 import static io.codearte.accurest.util.NamesUtil.capitalize
 
 class SingleTestGenerator {
+
 	private final AccurestConfigProperties configProperties
 
 	SingleTestGenerator(AccurestConfigProperties configProperties) {
@@ -34,7 +35,9 @@ class SingleTestGenerator {
 			}
 		}
 
-		if (configProperties.testMode == TestMode.MOCKMVC) {
+		if (configProperties.testMode == TestMode.JAXRSCLIENT) {
+			clazz.addStaticImport('javax.ws.rs.client.Entity.*')
+		} else if (configProperties.testMode == TestMode.MOCKMVC) {
 			clazz.addStaticImport('com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.*')
 		} else {
 			clazz.addStaticImport('com.jayway.restassured.RestAssured.*')
@@ -47,14 +50,23 @@ class SingleTestGenerator {
 		}
 
 		if (configProperties.ruleClassForTests) {
+
 			clazz.addImport('org.junit.Rule')
-					.addRule(configProperties.ruleClassForTests)
+			.addRule(configProperties.ruleClassForTests)
 		}
 
+		addJsonPathRelatedImports(clazz)
+
 		listOfFiles.each {
-			clazz.addMethod(createTestMethod(it, configProperties.targetFramework))
+			clazz.addMethod(createTestMethod(it, configProperties))
 		}
 		return clazz.build()
+	}
+
+	private ClassBuilder addJsonPathRelatedImports(ClassBuilder clazz) {
+		clazz.addImport(['com.jayway.jsonpath.DocumentContext',
+						 'com.jayway.jsonpath.JsonPath',
+						 'net.minidev.json.JSONArray'])
 	}
 
 }

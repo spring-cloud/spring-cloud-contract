@@ -7,10 +7,11 @@ import io.codearte.accurest.dsl.internal.Request
 import io.codearte.accurest.dsl.internal.Response
 
 @TypeChecked
-@EqualsAndHashCode(includeFields = true)
+@EqualsAndHashCode
 @ToString(includeFields = true, includePackage = false, includeNames = true)
 class GroovyDsl {
 
+	Integer priority
 	Request request
 	Response response
 
@@ -19,6 +20,10 @@ class GroovyDsl {
 		closure.delegate = dsl
 		closure()
 		return dsl
+	}
+
+	void priority(int priority) {
+		this.priority = priority
 	}
 
 	void request(@DelegatesTo(Request) Closure closure) {

@@ -16,21 +16,21 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT
 @TypeChecked
 class PairIdController {
 
-    @RequestMapping(
-            value = '{pairId}',
-            method = PUT,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    String getPlacesFromTweets(@PathVariable long pairId, @RequestBody List<com.ofg.twitter.place.Tweet> tweets) {
-        log.info("Inside PairIdController, doing very important logic")
-        if (tweets?.text != ["Gonna see you at Warsaw"]) {
-            throw new IllegalArgumentException("Wrong text in tweet: ${tweets?.text}")
-        }
-        return """
-            {
-                "path" : "/api/$pairId",
-                "correlationId" : 123456
-            }
-        """
-    }
+	@RequestMapping(
+			value = '{pairId}',
+			method = PUT,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	String getPlacesFromTweets(@PathVariable long pairId, @RequestBody List<com.ofg.twitter.place.Tweet> tweets) {
+		log.info("Inside PairIdController, doing very important logic")
+		if (tweets?.text != ["Gonna see you at Warsaw"]) {
+			throw new IllegalArgumentException("Wrong text in tweet: ${tweets?.text}")
+		}
+		return """
+			{
+				"path" : "/api/$pairId",
+				"correlationId" : 123456
+			}
+		"""
+	}
 }

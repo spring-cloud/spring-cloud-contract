@@ -5,12 +5,13 @@ import groovy.transform.ToString
 import groovy.transform.TypeChecked
 
 @TypeChecked
-@EqualsAndHashCode(includeFields = true)
+@EqualsAndHashCode
 @ToString(includePackage = false, includeNames = true)
 class Request extends Common {
 
 	DslProperty method
 	Url url
+	UrlPath urlPath
 	Headers headers
 	Body body
 
@@ -20,6 +21,7 @@ class Request extends Common {
 	Request(Request request) {
 		this.method = request.method
 		this.url = request.url
+		this.urlPath = request.urlPath
 		this.headers = request.headers
 		this.body = request.body
 	}
@@ -32,12 +34,44 @@ class Request extends Common {
 		this.method = toDslProperty(method)
 	}
 
-	void url(String url) {
+	void url(Object url) {
 		this.url = new Url(url)
 	}
 
 	void url(DslProperty url) {
 		this.url = new Url(url)
+	}
+
+	void url(Object url, @DelegatesTo(UrlPath) Closure closure) {
+		this.url = new Url(url)
+		closure.delegate = this.url
+		closure()
+	}
+
+	void url(DslProperty url, @DelegatesTo(UrlPath) Closure closure) {
+		this.url = new Url(url)
+		closure.delegate = this.url
+		closure()
+	}
+
+	void urlPath(String path) {
+		this.urlPath = new UrlPath(path)
+	}
+
+	void urlPath(DslProperty path) {
+		this.urlPath = new UrlPath(path)
+	}
+
+	void urlPath(String path, @DelegatesTo(UrlPath) Closure closure) {
+		this.urlPath = new UrlPath(path)
+		closure.delegate = urlPath
+		closure()
+	}
+
+	void urlPath(DslProperty path, @DelegatesTo(UrlPath) Closure closure) {
+		this.urlPath = new UrlPath(path)
+		closure.delegate = urlPath
+		closure()
 	}
 
 	void headers(@DelegatesTo(Headers) Closure closure) {
@@ -54,6 +88,10 @@ class Request extends Common {
 		this.body = new Body(convertObjectsToDslProperties(body))
 	}
 
+	void body(DslProperty dslProperty) {
+		this.body = new Body(dslProperty)
+	}
+
 	void body(Object bodyAsValue) {
 		this.body = new Body(bodyAsValue)
 	}
@@ -61,10 +99,43 @@ class Request extends Common {
 	Body getBody() {
 		return body
 	}
+
+	MatchingStrategy equalTo(Object value) {
+		return new MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO)
+	}
+
+	MatchingStrategy containing(Object value) {
+		return new MatchingStrategy(value, MatchingStrategy.Type.CONTAINS)
+	}
+
+	MatchingStrategy matching(Object value) {
+		return new MatchingStrategy(value, MatchingStrategy.Type.MATCHING)
+	}
+
+	MatchingStrategy notMatching(Object value) {
+		return new MatchingStrategy(value, MatchingStrategy.Type.NOT_MATCHING)
+	}
+
+	MatchingStrategy equalToXml(Object value) {
+		return new MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO_XML)
+	}
+
+	MatchingStrategy equalToJson(Object value) {
+		return new MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO_JSON)
+	}
+
+	MatchingStrategy absent() {
+		return new MatchingStrategy(true, MatchingStrategy.Type.ABSENT)
+	}
+
+	void assertThatSidesMatch(Object stubSide, OptionalProperty testSide) {
+		throw new IllegalStateException("Optional can be used only for the stub side of the request!")
+	}
+
 }
 
 @CompileStatic
-@EqualsAndHashCode(includeFields = true)
+@EqualsAndHashCode
 @ToString(includePackage = false)
 class ServerRequest extends Request {
 	ServerRequest(Request request) {
@@ -73,7 +144,7 @@ class ServerRequest extends Request {
 }
 
 @CompileStatic
-@EqualsAndHashCode(includeFields = true)
+@EqualsAndHashCode
 @ToString(includePackage = false)
 class ClientRequest extends Request {
 	ClientRequest(Request request) {

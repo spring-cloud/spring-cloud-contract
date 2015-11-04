@@ -4,6 +4,7 @@ import groovy.io.FileType
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
+import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -28,12 +29,12 @@ class RecursiveFilesConverter {
 				if (!singleFileConverter.canHandleFileName(sourceFile.name)) {
 					return
 				}
-				String convertedContent = singleFileConverter.convertContent(sourceFile.text)
+				String convertedContent = singleFileConverter.convertContent(sourceFile.getText(StandardCharsets.UTF_8.toString()))
 				Path absoluteTargetPath = createAndReturnTargetDirectory(sourceFile)
 				File newGroovyFile = createTargetFileWithProperName(absoluteTargetPath, sourceFile)
-				newGroovyFile.text = convertedContent
+				newGroovyFile.setText(convertedContent, StandardCharsets.UTF_8.toString())
 			} catch (Exception e) {
-				throw new ConversionAccurestException("Unable to convertion of ${sourceFile.name}", e)
+				throw new ConversionAccurestException("Unable to make convertion of ${sourceFile.name}", e)
 			}
 		}
 	}

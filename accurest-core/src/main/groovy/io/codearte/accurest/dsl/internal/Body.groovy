@@ -1,16 +1,16 @@
 package io.codearte.accurest.dsl.internal
 
-import groovy.json.JsonSlurper
+import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
-import org.codehaus.groovy.runtime.GStringImpl
 
 @ToString(includePackage = false, includeFields = true, includeNames = true)
 @EqualsAndHashCode(includeFields = true)
+@CompileStatic
 class Body extends DslProperty {
 
 	Body(Map<String, DslProperty> body) {
-		super(extractValue(body, {it.clientValue}), extractValue(body, {it.serverValue}))
+		super(extractValue(body, { DslProperty p -> p.clientValue}), extractValue(body, {DslProperty p -> p.serverValue}))
 	}
 
 	private static Map<String, Object> extractValue(Map<String, DslProperty> body, Closure valueProvider) {
@@ -19,8 +19,8 @@ class Body extends DslProperty {
 		} as Map<String, Object>
 	}
 
-	Body(List bodyAsList) {
-		super(bodyAsList.collect { it.clientValue }, bodyAsList.collect { it.serverValue })
+	Body(List<DslProperty> bodyAsList) {
+		super(bodyAsList.collect { DslProperty p -> p.clientValue }, bodyAsList.collect { DslProperty p -> p.serverValue })
 	}
 
 	Body(Object bodyAsValue) {
@@ -28,17 +28,16 @@ class Body extends DslProperty {
 	}
 
 	Body(GString bodyAsValue) {
-		super(extractValue(bodyAsValue, {it.clientValue}), extractValue(bodyAsValue, {it.serverValue}))
+		super(bodyAsValue, bodyAsValue)
 	}
 
 	Body(DslProperty bodyAsValue) {
 		super(bodyAsValue.clientValue, bodyAsValue.serverValue)
 	}
 
-	private static Object extractValue(GString bodyAsValue, Closure valueProvider) {
-		GString clientGString = new GStringImpl(bodyAsValue.values.clone(), bodyAsValue.strings.clone())
-		Object[] clientValues = bodyAsValue.values.collect { it instanceof DslProperty ? valueProvider(it) : it } as Object[]
-		return new JsonSlurper().parseText(new GStringImpl(clientValues, clientGString.strings).toString())
+	Body(MatchingStrategy matchingStrategy) {
+		super(matchingStrategy, matchingStrategy)
 	}
-	
+
+
 }

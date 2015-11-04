@@ -4,6 +4,7 @@ import io.codearte.accurest.config.AccurestConfigProperties
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.DependencyResolveDetails
 
 /**
  * @author Jakub Kubrynski
@@ -11,7 +12,7 @@ import org.gradle.api.Task
 class AccurestGradlePlugin implements Plugin<Project> {
 
 	private static final String GENERATE_SERVER_TESTS_TASK_NAME = 'generateAccurest'
-	private static final String DSL_TO_WIREMOCK_CLIENT_TASK_NAME = 'generateWiremockClientStubs'
+	private static final String DSL_TO_WIREMOCK_CLIENT_TASK_NAME = 'generateWireMockClientStubs'
 
 	private static final Class IDEA_PLUGIN_CLASS = org.gradle.plugins.ide.idea.IdeaPlugin
 	private static final String GROUP_NAME = "Verification"
@@ -27,7 +28,9 @@ class AccurestGradlePlugin implements Plugin<Project> {
 
 		setConfigurationDefaults(extension)
 		createGenerateTestsTask(extension)
-		createAndConfigureGenerateWiremockClientStubsFromDslTask(extension)
+		createAndConfigureGenerateWireMockClientStubsFromDslTask(extension)
+		deprecatedCreateAndConfigureGenerateWiremockClientStubsFromDslTask()
+		project.dependencies.add("testCompile", "com.github.tomakehurst:wiremock:2.0.5-beta")
 
 		project.afterEvaluate {
 			def hasIdea = project.plugins.findPlugin(IDEA_PLUGIN_CLASS)
@@ -60,13 +63,21 @@ class AccurestGradlePlugin implements Plugin<Project> {
 		}
 	}
 
-	private void createAndConfigureGenerateWiremockClientStubsFromDslTask(AccurestConfigProperties extension) {
-		Task task = project.tasks.create(DSL_TO_WIREMOCK_CLIENT_TASK_NAME, GenerateWiremockClientStubsFromDslTask)
-		task.description = "Generate Wiremock client stubs from GroovyDSL"
+	private void createAndConfigureGenerateWireMockClientStubsFromDslTask(AccurestConfigProperties extension) {
+		Task task = project.tasks.create(DSL_TO_WIREMOCK_CLIENT_TASK_NAME, GenerateWireMockClientStubsFromDslTask)
+		task.description = "Generate WireMock client stubs from GroovyDSL"
 		task.group = GROUP_NAME
 		task.conventionMapping.with {
 			contractsDslDir = { extension.contractsDslDir }
 			stubsOutputDir = { extension.stubsOutputDir }
 		}
+	}
+
+	private void deprecatedCreateAndConfigureGenerateWiremockClientStubsFromDslTask() {
+		Task task = project.tasks.create('generateWiremockClientStubs')
+		task.dependsOn('generateWireMockClientStubs')
+		task.description = "DEPRECATED - Generates WireMock client stubs. - DEPRECATED - use 'generateWireMockClientStubs' task"
+		task.group = GROUP_NAME
+		task.doFirst {logger.warn("DEPRECATION WARNING. Task 'generateWiremockClientStubs' is deprecated. Use 'generateWireMockClientStubs' task instead.")}
 	}
 }

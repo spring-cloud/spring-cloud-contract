@@ -11,13 +11,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class AcceptanceSpec extends Specification {
 
-    def "should have controller up and running"() {
-        given:
-            MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new PairIdController()).build()
-        expect:
-            mockMvc.perform(put("/api/${1}").
-                    contentType(MediaType.APPLICATION_JSON).
-                    content("""[{"text":"Gonna see you at Warsaw"}]""")).
-                    andExpect(status().isOk())
-    }
+	def "should have controller up and running"() {
+		given:
+			MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new PairIdController()).build()
+		expect:
+			mockMvc.perform(put("/api/${1}").
+					contentType(MediaType.APPLICATION_JSON).
+					content("""[{"text":"Gonna see you at Warsaw"}]""")).
+					andExpect(status().isOk())
+	}
 }

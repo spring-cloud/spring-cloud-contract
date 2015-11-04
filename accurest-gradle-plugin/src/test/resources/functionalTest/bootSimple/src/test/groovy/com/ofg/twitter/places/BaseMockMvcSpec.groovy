@@ -6,11 +6,11 @@ import spock.lang.Specification
 
 abstract class BaseMockMvcSpec extends Specification {
 
-    def setup() {
-        RestAssuredMockMvc.standaloneSetup(new PairIdController())
-    }
+	def setup() {
+		RestAssuredMockMvc.standaloneSetup(new PairIdController())
+	}
 
-    void isProperCorrelationId(Integer correlationId) {
-        assert correlationId == 123456
-    }
+	void isProperCorrelationId(Integer correlationId) {
+		assert correlationId == 123456
+	}
 }
