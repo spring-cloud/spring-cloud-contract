@@ -8,6 +8,9 @@ import java.nio.charset.StandardCharsets
 import java.util.concurrent.atomic.AtomicInteger
 
 import static io.codearte.accurest.util.NamesUtil.afterLast
+import static io.codearte.accurest.util.NamesUtil.beforeLast
+import static io.codearte.accurest.util.NamesUtil.directoryToPackage
+
 /**
  * @author Jakub Kubrynski
  */
@@ -63,14 +66,20 @@ class TestGenerator {
 			}
 			if (filesToClass.size()) {
 				def className = afterLast(includedDirectoryRelativePath, File.separator) + configProperties.targetFramework.classNameSuffix
-				def classBytes = generator.buildClass(filesToClass, className, packageNameForClass).getBytes(StandardCharsets.UTF_8)
-				saver.saveClassFile(className, packageNameForClass, classBytes)
+				def packageName = buildPackage(packageNameForClass, includedDirectoryRelativePath)
+				def classBytes = generator.buildClass(filesToClass, className, packageName).getBytes(StandardCharsets.UTF_8)
+				saver.saveClassFile(className, packageName, classBytes)
 				counter.incrementAndGet()
 			}
 		}
 	}
 
-	private String normalizePath(String path) {
+	private static String buildPackage(final String packageNameForClass, final String includedDirectoryRelativePath) {
+		String directory = beforeLast(includedDirectoryRelativePath, File.separator)
+        return !directory.empty ? "$packageNameForClass.${directoryToPackage(directory)}" : packageNameForClass
+    }
+
+	private static String normalizePath(String path) {
 		return FilenameUtils.separatorsToUnix(path)
 	}
 }

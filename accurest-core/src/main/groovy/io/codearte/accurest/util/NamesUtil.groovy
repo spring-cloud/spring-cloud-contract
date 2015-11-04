@@ -5,6 +5,13 @@ package io.codearte.accurest.util
  */
 class NamesUtil {
 
+    static String beforeLast(String string, String separator) {
+        if (string?.indexOf(separator) > -1) {
+            return string.substring(0, string.lastIndexOf(separator))
+        }
+        return ''
+    }
+
 	static String afterLast(String string, String separator) {
 		if (string?.indexOf(separator) > -1) {
 			return string.substring(string.lastIndexOf(separator) + 1)
@@ -42,4 +49,8 @@ class NamesUtil {
 	static String packageToDirectory(String packageName) {
 		return packageName.replace('.' as char, File.separatorChar)
 	}
+
+    static String directoryToPackage(String directory) {
+        return directory.replace(File.separator, '.')
+    }
 }
