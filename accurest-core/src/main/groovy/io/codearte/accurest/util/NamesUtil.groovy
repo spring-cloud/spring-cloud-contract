@@ -9,7 +9,7 @@ class NamesUtil {
         if (string?.indexOf(separator) > -1) {
             return string.substring(0, string.lastIndexOf(separator))
         }
-        return string
+        return ''
     }
 
 	static String afterLast(String string, String separator) {

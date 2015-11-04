@@ -76,8 +76,8 @@ class TestGenerator {
 
 	private static String buildPackage(final String packageNameForClass, final String includedDirectoryRelativePath) {
 		String directory = beforeLast(includedDirectoryRelativePath, File.separator)
-		return "$packageNameForClass.${directoryToPackage(directory)}"
-	}
+        return !directory.empty ? "$packageNameForClass.${directoryToPackage(directory)}" : packageNameForClass
+    }
 
 	private static String normalizePath(String path) {
 		return FilenameUtils.separatorsToUnix(path)

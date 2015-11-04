@@ -7,7 +7,7 @@ class GeneratorScannerSpec extends Specification {
 
 	private SingleTestGenerator classGenerator = Mock(SingleTestGenerator)
 
-	def "should find all .json files and generate 3 classes for them"() {
+	def "should find all .json files and generate 6 classes for them"() {
 		given:
 			File resource = new File(this.getClass().getResource("/directory/with/stubs/stubsRepositoryIndicator").toURI())
 			AccurestConfigProperties properties = new AccurestConfigProperties()
@@ -16,7 +16,7 @@ class GeneratorScannerSpec extends Specification {
 		when:
 			testGenerator.generateTestClasses("com.ofg")
 		then:
-			5 * classGenerator.buildClass(_, _, _) >> "qwerty"
+			6 * classGenerator.buildClass(_, _, _) >> "qwerty"
 	}
 
 	def "should filter other directory"() {
@@ -30,7 +30,7 @@ class GeneratorScannerSpec extends Specification {
 			testGenerator.generateTestClasses("com.ofg")
 		then:
 			1 * classGenerator.buildClass(_, 'differentSpec', _) >> "qwerty"
-			2 * classGenerator.buildClass(_, 'exceptionsSpec', _) >> "qwerty"
+			3 * classGenerator.buildClass(_, 'exceptionsSpec', _) >> "qwerty"
 	}
 
 	def "should ignore file"() {
@@ -55,6 +55,7 @@ class GeneratorScannerSpec extends Specification {
         when:
         	testGenerator.generateTestClasses("com.ofg")
         then:
+			1 * classGenerator.buildClass(_, 'exceptionsSpec', 'com.ofg') >> "spec"
 			1 * classGenerator.buildClass(_, 'exceptionsSpec', 'com.ofg.v1') >> "spec1"
 			1 * classGenerator.buildClass(_, 'exceptionsSpec', 'com.ofg.v2') >> "spec2"
     }
