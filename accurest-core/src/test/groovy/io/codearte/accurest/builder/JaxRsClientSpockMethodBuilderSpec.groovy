@@ -450,14 +450,43 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 					body "test"
 				}
 			}
-			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			JaxRsClientSpockMethodBodyBuilder builder = new JaxRsClientSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
 			def spockTest = blockBuilder.toString()
 		then:
-			spockTest.contains('def responseBody = (response.body.asString())')
+			spockTest.contains('String responseAsString = response.readEntity(String)')
 			spockTest.contains('responseBody == "test"')
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+	}
+
+	@Issue('#171')
+	def "should generate test with uppercase method name"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method "get"
+					url "/v1/some_cool_requests/e86df6f693de4b35ae648464c5b0dc08"
+				}
+				response {
+					status 200
+					headers {
+						header('Content-Type': 'application/json;charset=UTF-8')
+					}
+					body """
+{"id":"789fgh","other_data":1268}
+"""
+				}
+			}
+			JaxRsClientSpockMethodBodyBuilder builder = new JaxRsClientSpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def spockTest = blockBuilder.toString()
+		then:
+			spockTest.contains(".method('GET')")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}

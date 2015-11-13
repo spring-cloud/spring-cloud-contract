@@ -66,9 +66,9 @@ class JaxRsClientSpockMethodBodyBuilder extends SpockMethodBodyBuilder {
 		String method = request.method.serverValue.toString().toLowerCase()
 		if (request.body) {
 			String contentType = getHeader('Content-Type') ?: getRequestContentType().mimeType
-			bb.addLine(".method('$method', entity('$bodyAsString', '$contentType'))")
+			bb.addLine(".method('${method.toUpperCase()}', entity('$bodyAsString', '$contentType'))")
 		} else {
-			bb.addLine(".method('$method')")
+			bb.addLine(".method('${method.toUpperCase()}')")
 		}
 	}
 
