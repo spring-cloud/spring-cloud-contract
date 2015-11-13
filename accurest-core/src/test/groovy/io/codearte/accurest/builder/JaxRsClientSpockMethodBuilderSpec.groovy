@@ -364,6 +364,57 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
+	@Issue('#169')
+	def "should generate a call with an url path and query parameters with url containing a pattern"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method 'GET'
+					url($(stub(regex('/foo/[0-9]+')), test('/foo/123456'))){
+						queryParameters {
+							parameter 'limit': $(client(equalTo("20")), server(equalTo("10")))
+							parameter 'offset': $(client(containing("20")), server(equalTo("20")))
+							parameter 'filter': "email"
+							parameter 'sort': equalTo("name")
+							parameter 'search': $(client(notMatching(~/^\/[0-9]{2}$/)), server("55"))
+							parameter 'age': $(client(notMatching("^\\w*\$")), server("99"))
+							parameter 'name': $(client(matching("Denis.*")), server("Denis.Stepanov"))
+							parameter 'email': "bob@email.com"
+							parameter 'hello': $(client(matching("Denis.*")), server(absent()))
+							parameter 'hello': absent()
+						}
+					}
+				}
+				response {
+					status 200
+					body """
+					{
+						"property1": "a",
+						"property2": "b"
+					}
+					"""
+				}
+			}
+			JaxRsClientSpockMethodBodyBuilder builder = new JaxRsClientSpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def spockTest = blockBuilder.toString()
+		then:
+			spockTest.contains("queryParam('limit', '10'")
+			spockTest.contains("queryParam('offset', '20'")
+			spockTest.contains("queryParam('filter', 'email'")
+			spockTest.contains("queryParam('sort', 'name'")
+			spockTest.contains("queryParam('search', '55'")
+			spockTest.contains("queryParam('age', '99'")
+			spockTest.contains("queryParam('name', 'Denis.Stepanov'")
+			spockTest.contains("queryParam('email', 'bob@email.com'")
+			spockTest.contains('$[?(@.property2 == \'b\')]')
+			spockTest.contains('$[?(@.property1 == \'a\')]')
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+	}
+
 	def "should generate test for empty body"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
