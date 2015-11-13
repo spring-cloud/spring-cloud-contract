@@ -17,10 +17,8 @@ import static io.codearte.accurest.util.MapConverter.transformValues
 @TypeChecked
 abstract class BaseWireMockStubStrategy {
 
-	private static final Boolean STUB_SIDE = true
-
 	protected getStubSideValue(Object object) {
-		return MapConverter.getClientOrServerSideValues(object, STUB_SIDE)
+		return MapConverter.getStubSideValues(object)
 	}
 
 	private static Closure transform = {
@@ -66,7 +64,7 @@ abstract class BaseWireMockStubStrategy {
 	}
 
 	public String parseBody(Map map, ContentType contentType) {
-		def transformedMap = MapConverter.getClientOrServerSideValues(map, true)
+		def transformedMap = MapConverter.getStubSideValues(map)
 		return parseBody(toJson(transformedMap), contentType)
 	}
 
