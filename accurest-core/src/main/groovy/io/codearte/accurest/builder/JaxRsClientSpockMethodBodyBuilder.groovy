@@ -1,10 +1,10 @@
 package io.codearte.accurest.builder
-
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.internal.Header
 import io.codearte.accurest.dsl.internal.QueryParameter
+import io.codearte.accurest.dsl.internal.QueryParameters
 
 @PackageScope
 @TypeChecked
@@ -46,11 +46,19 @@ class JaxRsClientSpockMethodBodyBuilder extends SpockMethodBodyBuilder {
 	protected void appendUrlPathAndQueryParameters(BlockBuilder bb) {
 		if (request.url) {
 			bb.addLine(".path('$request.url.serverValue')")
+			appendQueryParams(request.url.queryParameters, bb)
 		} else if (request.urlPath) {
 			bb.addLine(".path('$request.urlPath.serverValue')")
-			request.urlPath.queryParameters?.parameters.findAll(this.&allowedQueryParameter).each { QueryParameter param ->
-				bb.addLine(".queryParam('$param.name', '${resolveParamValue(param).toString()}')")
-			}
+			appendQueryParams(request.urlPath.queryParameters, bb)
+		}
+	}
+
+	private void appendQueryParams(QueryParameters queryParameters, BlockBuilder bb) {
+		if (!queryParameters?.parameters) {
+			return
+		}
+		queryParameters.parameters.findAll(this.&allowedQueryParameter).each { QueryParameter param ->
+			bb.addLine(".queryParam('$param.name', '${resolveParamValue(param).toString()}')")
 		}
 	}
 
