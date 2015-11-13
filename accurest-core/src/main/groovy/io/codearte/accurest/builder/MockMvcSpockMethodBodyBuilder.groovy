@@ -1,5 +1,6 @@
 package io.codearte.accurest.builder
 
+import java.util.regex.Pattern
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
@@ -7,9 +8,8 @@ import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.internal.Header
 import io.codearte.accurest.dsl.internal.QueryParameter
 import io.codearte.accurest.dsl.internal.Request
-import io.codearte.accurest.dsl.internal.UrlPath
-
-import java.util.regex.Pattern
+import io.codearte.accurest.dsl.internal.Url
+import io.codearte.accurest.util.MapConverter
 
 @PackageScope
 @TypeChecked
@@ -67,24 +67,27 @@ class MockMvcSpockMethodBodyBuilder extends SpockMethodBodyBuilder {
 
 	protected String buildUrl(Request request) {
 		if (request.url)
-			return getTestSideValue(request.url.serverValue)
+			return getTestSideValue(buildUrlFromUrlPath(request.url))
 		if (request.urlPath)
 			return getTestSideValue(buildUrlFromUrlPath(request.urlPath))
 		throw new IllegalStateException("URL is not set!")
 	}
 
 	@TypeChecked(TypeCheckingMode.SKIP)
-	protected String buildUrlFromUrlPath(UrlPath urlPath) {
-		String params = ""
-		if (urlPath.queryParameters) {
-			params = urlPath.queryParameters.parameters
+	protected String buildUrlFromUrlPath(Url url) {
+		if (hasQueryParams(url)) {
+			String params = url.queryParameters.parameters
 					.findAll(this.&allowedQueryParameter)
 					.inject([] as List<String>) { List<String> result, QueryParameter param ->
 				result << "${param.name}=${resolveParamValue(param).toString()}"
 			}
 			.join('&')
+			return "${MapConverter.getTestSideValues(url.serverValue)}?$params"
 		}
-		return "$urlPath.serverValue?$params"
+		return MapConverter.getTestSideValues(url.serverValue)
 	}
 
+	private boolean hasQueryParams(Url url) {
+		return url.queryParameters
+	}
 }

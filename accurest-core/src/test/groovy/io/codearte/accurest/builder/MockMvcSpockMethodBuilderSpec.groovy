@@ -337,6 +337,50 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
+	@Issue('#169')
+	def "should generate a call with an url path and query parameters with url containing a pattern"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method 'GET'
+					url($(stub(regex('/foo/[0-9]+')), test('/foo/123456'))){
+						queryParameters {
+							parameter 'limit': $(client(equalTo("20")), server(equalTo("10")))
+							parameter 'offset': $(client(containing("20")), server(equalTo("20")))
+							parameter 'filter': "email"
+							parameter 'sort': equalTo("name")
+							parameter 'search': $(client(notMatching(~/^\/[0-9]{2}$/)), server("55"))
+							parameter 'age': $(client(notMatching("^\\w*\$")), server("99"))
+							parameter 'name': $(client(matching("Denis.*")), server("Denis.Stepanov"))
+							parameter 'email': "bob@email.com"
+							parameter 'hello': $(client(matching("Denis.*")), server(absent()))
+							parameter 'hello': absent()
+						}
+					}
+				}
+				response {
+					status 200
+					body """
+					{
+						"property1": "a",
+						"property2": "b"
+					}
+					"""
+				}
+			}
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def spockTest = blockBuilder.toString()
+		then:
+			spockTest.contains('get("/foo/123456?limit=10&offset=20&filter=email&sort=name&search=55&age=99&name=Denis.Stepanov&email=bob@email.com")')
+			spockTest.contains('$[?(@.property2 == \'b\')]')
+			spockTest.contains('$[?(@.property1 == \'a\')]')
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+	}
+
 	def "should generate test for empty body"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {

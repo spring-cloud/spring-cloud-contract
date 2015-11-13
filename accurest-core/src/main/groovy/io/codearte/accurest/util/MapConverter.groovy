@@ -6,6 +6,10 @@ import io.codearte.accurest.dsl.internal.DslProperty
  */
 class MapConverter {
 
+
+	public static final boolean STUB_SIDE = true
+	public static final boolean TEST_SIDE = false
+
 	static def transformToClientValues(def value) {
 		return transformValues(value) {
 			it instanceof DslProperty ? it.clientValue : it
@@ -72,5 +76,13 @@ class MapConverter {
 			}
 			return it
 		}
+	}
+
+	static Object getStubSideValues(json) {
+		return getClientOrServerSideValues(json, STUB_SIDE)
+	}
+
+	static Object getTestSideValues(json) {
+		return getClientOrServerSideValues(json, TEST_SIDE)
 	}
 }
