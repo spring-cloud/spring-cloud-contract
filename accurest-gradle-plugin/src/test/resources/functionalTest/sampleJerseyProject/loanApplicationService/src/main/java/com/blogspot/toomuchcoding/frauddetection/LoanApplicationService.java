@@ -21,6 +21,8 @@ public class LoanApplicationService {
 
 	private final RestTemplate restTemplate;
 
+	private Integer port = 8080;
+
 	public LoanApplicationService() {
 		this.restTemplate = new RestTemplate();
 	}
@@ -41,7 +43,7 @@ public class LoanApplicationService {
 		httpHeaders.add(HttpHeaders.CONTENT_TYPE, FRAUD_SERVICE_JSON_VERSION_1);
 
 		ResponseEntity<FraudServiceResponse> response =
-				restTemplate.exchange("http://localhost:8080/fraudcheck", HttpMethod.PUT,
+				restTemplate.exchange("http://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
 						new HttpEntity<>(request, httpHeaders),
 						FraudServiceResponse.class);
 
@@ -57,6 +59,10 @@ public class LoanApplicationService {
 		}
 
 		return new LoanApplicationResult(applicationStatus, response.getRejectionReason());
+	}
+
+	public void setPort(Integer port) {
+		this.port = port;
 	}
 
 }
