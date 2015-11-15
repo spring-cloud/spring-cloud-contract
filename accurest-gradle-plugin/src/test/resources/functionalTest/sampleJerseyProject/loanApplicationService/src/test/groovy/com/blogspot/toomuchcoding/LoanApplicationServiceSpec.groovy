@@ -17,7 +17,7 @@ import spock.lang.Specification
 @ContextConfiguration(loader = SpringApplicationContextLoader, classes = Application)
 class LoanApplicationServiceSpec extends Specification {
 
-	public static Integer port = org.springframework.util.SocketUtils.findAvailableTcpPort()
+	public static int port = org.springframework.util.SocketUtils.findAvailableTcpPort()
 
 	@ClassRule
 	@Shared

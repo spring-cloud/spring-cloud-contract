@@ -21,7 +21,7 @@ public class LoanApplicationService {
 
 	private final RestTemplate restTemplate;
 
-	private Integer port = 8080;
+	private int port = 8080;
 
 	public LoanApplicationService() {
 		this.restTemplate = new RestTemplate();
@@ -61,7 +61,7 @@ public class LoanApplicationService {
 		return new LoanApplicationResult(applicationStatus, response.getRejectionReason());
 	}
 
-	public void setPort(Integer port) {
+	public void setPort(int port) {
 		this.port = port;
 	}
 
