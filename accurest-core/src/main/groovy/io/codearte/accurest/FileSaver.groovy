@@ -9,7 +9,9 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 
+import static io.codearte.accurest.util.NamesUtil.beforeLast
 import static io.codearte.accurest.util.NamesUtil.capitalize
+import static io.codearte.accurest.util.NamesUtil.packageToDirectory
 
 @CompileStatic
 @Slf4j
@@ -23,9 +25,10 @@ class FileSaver {
 		this.framework = framework
 	}
 
-	void saveClassFile(String fileName, String includedDirectoryRelativePath, byte[] classBytes) {
+	void saveClassFile(String fileName, String basePackageClass, String includedDirectoryRelativePath, byte[] classBytes) {
 
-		Path testBaseDir = Paths.get(targetDirectory.absolutePath, includedDirectoryRelativePath)
+		Path testBaseDir = Paths.get(targetDirectory.absolutePath, packageToDirectory(basePackageClass),
+				beforeLast(includedDirectoryRelativePath, File.separator))
 		Files.createDirectories(testBaseDir)
 		Path classPath = Paths.get(testBaseDir.toString(), capitalize(fileName) + framework.classExtension).toAbsolutePath()
 		log.info("Creating new class file [$classPath]")
