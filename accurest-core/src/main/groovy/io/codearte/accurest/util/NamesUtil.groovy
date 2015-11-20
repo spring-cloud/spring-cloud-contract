@@ -46,11 +46,7 @@ class NamesUtil {
 		return string
 	}
 
-	static String packageToDirectory(String packageName) {
-		return packageName.replace('.' as char, File.separatorChar)
-	}
-
     static String directoryToPackage(String directory) {
-        return directory.replace(File.separator, '.')
+        return directory.replace(File.separator, '.').replace('-', '_')
     }
 }

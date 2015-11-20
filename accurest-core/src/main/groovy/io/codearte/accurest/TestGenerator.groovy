@@ -1,4 +1,5 @@
 package io.codearte.accurest
+
 import groovy.transform.PackageScope
 import io.codearte.accurest.config.AccurestConfigProperties
 import org.apache.commons.io.FilenameUtils
@@ -7,9 +8,7 @@ import org.codehaus.plexus.util.DirectoryScanner
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.atomic.AtomicInteger
 
-import static io.codearte.accurest.util.NamesUtil.afterLast
-import static io.codearte.accurest.util.NamesUtil.beforeLast
-import static io.codearte.accurest.util.NamesUtil.directoryToPackage
+import static io.codearte.accurest.util.NamesUtil.*
 
 /**
  * @author Jakub Kubrynski
@@ -45,17 +44,17 @@ class TestGenerator {
 	}
 
 	@PackageScope
-	void generateTestClasses(final String packageName) {
+	void generateTestClasses(final String basePackageName) {
 		directoryScanner.scan()
 		directoryScanner.getIncludedDirectories()
 				.each { String includedDirectoryRelativePath ->
-			processIncludedDirectory(includedDirectoryRelativePath, packageName)
+			processIncludedDirectory(includedDirectoryRelativePath, basePackageName)
 
 		}
 	}
 
 	private void processIncludedDirectory(
-			final String includedDirectoryRelativePath, final String packageNameForClass) {
+			final String includedDirectoryRelativePath, final String basePackageNameForClass) {
 		if (!includedDirectoryRelativePath.isEmpty()) {
 			List<File> filesToClass = directoryScanner.includedFiles.
 					grep { String includedFile ->
@@ -66,9 +65,9 @@ class TestGenerator {
 			}
 			if (filesToClass.size()) {
 				def className = afterLast(includedDirectoryRelativePath, File.separator) + configProperties.targetFramework.classNameSuffix
-				def packageName = buildPackage(packageNameForClass, includedDirectoryRelativePath)
+				def packageName = buildPackage(basePackageNameForClass, includedDirectoryRelativePath)
 				def classBytes = generator.buildClass(filesToClass, className, packageName).getBytes(StandardCharsets.UTF_8)
-				saver.saveClassFile(className, packageName, classBytes)
+				saver.saveClassFile(className, includedDirectoryRelativePath, classBytes)
 				counter.incrementAndGet()
 			}
 		}
