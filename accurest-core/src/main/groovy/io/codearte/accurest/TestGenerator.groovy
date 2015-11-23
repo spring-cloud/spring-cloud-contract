@@ -67,7 +67,7 @@ class TestGenerator {
 				def className = afterLast(includedDirectoryRelativePath, File.separator) + configProperties.targetFramework.classNameSuffix
 				def packageName = buildPackage(basePackageNameForClass, includedDirectoryRelativePath)
 				def classBytes = generator.buildClass(filesToClass, className, packageName).getBytes(StandardCharsets.UTF_8)
-				saver.saveClassFile(className, basePackageNameForClass, includedDirectoryRelativePath, classBytes)
+				saver.saveClassFile(className, basePackageNameForClass, convertIllegalPackageChars(includedDirectoryRelativePath), classBytes)
 				counter.incrementAndGet()
 			}
 		}
@@ -75,7 +75,7 @@ class TestGenerator {
 
 	private static String buildPackage(final String packageNameForClass, final String includedDirectoryRelativePath) {
 		String directory = beforeLast(includedDirectoryRelativePath, File.separator)
-		return !directory.empty ? "$packageNameForClass.${directoryToPackage(directory)}" : packageNameForClass
+		return !directory.empty ? "$packageNameForClass.${directoryToPackage(convertIllegalPackageChars(directory))}" : packageNameForClass
 	}
 
 	private static String normalizePath(String path) {

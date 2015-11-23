@@ -7,10 +7,10 @@ import spock.lang.Stepwise
 @Stepwise
 class BasicFunctionalSpec extends IntegrationSpec {
 
-	private static final String GENERATED_TEST = "build//generated-sources//accurest//accurest//PairIdSpec.groovy"
-	private static final String GENERATED_CLIENT_JSON_STUB = "build//production//bootSimple-stubs//repository//mappings//pairId//collerate_PlacesFrom_Tweet.json"
+	private static final String GENERATED_TEST = "build//generated-sources//accurest//accurest//twitter_places_analyzer//PairIdSpec.groovy"
+	private static final String GENERATED_CLIENT_JSON_STUB = "build//production//bootSimple-stubs//repository//mappings//twitter-places-analyzer//pairId//collerate_PlacesFrom_Tweet.json"
 	private static final String GROOVY_DSL_CONTRACT = "repository//mappings//com//ofg//twitter-places-analyzer//pairId//collerate_PlacesFrom_Tweet.groovy"
-	private static final String TEST_EXECUTION_XML_REPORT = "build/test-results/TEST-accurest.PairIdSpec.xml"
+	private static final String TEST_EXECUTION_XML_REPORT = "build/test-results/TEST-accurest.twitter_places_analyzer.PairIdSpec.xml"
 
 	void setup() {
 		copyResources("functionalTest/bootSimple", "")

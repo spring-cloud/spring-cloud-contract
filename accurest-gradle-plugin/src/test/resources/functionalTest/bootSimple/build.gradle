@@ -8,7 +8,7 @@ apply plugin: 'groovy'
 apply plugin: 'accurest'
 
 ext {
-	contractsDir = file("${project.rootDir}/repository/mappings/com/ofg/twitter-places-analyzer")
+	contractsDir = file("${project.rootDir}/repository/mappings/com/ofg")
 	wireMockStubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
 	wireMockStubsOutputDir = new File(wireMockStubsOutputDirRoot, 'repository/mappings/')
 }
