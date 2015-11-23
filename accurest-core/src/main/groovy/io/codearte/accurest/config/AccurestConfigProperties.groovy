@@ -7,6 +7,7 @@ class AccurestConfigProperties {
 	TestMode testMode = TestMode.MOCKMVC
 	String basePackageForTests
 	String baseClassForTests
+	String nameSuffixForTests
 	String ruleClassForTests
 	List<String> ignoredFiles = []
 	String[] imports = []

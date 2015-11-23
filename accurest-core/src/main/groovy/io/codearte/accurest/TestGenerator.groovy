@@ -64,13 +64,17 @@ class TestGenerator {
 				return new File(configProperties.contractsDslDir, it)
 			}
 			if (filesToClass.size()) {
-				def className = afterLast(includedDirectoryRelativePath, File.separator) + configProperties.targetFramework.classNameSuffix
+				def className = afterLast(includedDirectoryRelativePath, File.separator) + resolveNameSuffix()
 				def packageName = buildPackage(basePackageNameForClass, includedDirectoryRelativePath)
 				def classBytes = generator.buildClass(filesToClass, className, packageName).getBytes(StandardCharsets.UTF_8)
 				saver.saveClassFile(className, basePackageNameForClass, convertIllegalPackageChars(includedDirectoryRelativePath), classBytes)
 				counter.incrementAndGet()
 			}
 		}
+	}
+
+	private String resolveNameSuffix() {
+		return configProperties.nameSuffixForTests ?: configProperties.targetFramework.classNameSuffix
 	}
 
 	private static String buildPackage(final String packageNameForClass, final String includedDirectoryRelativePath) {
