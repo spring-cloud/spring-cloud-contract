@@ -3,6 +3,7 @@ package io.codearte.accurest.builder
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.WireMockStubStrategy
 import io.codearte.accurest.dsl.WireMockStubVerifier
+import org.codehaus.groovy.control.CompilationFailedException
 import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -91,7 +92,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains(".body('{\"items\":[\"HOP\"]}')")
+			blockBuilder.toString().contains(".body('''{\"items\":[\"HOP\"]}''')")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
@@ -116,7 +117,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains(".body('property1=VAL1')")
+			blockBuilder.toString().contains(".body('''property1=VAL1''')")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
@@ -399,7 +400,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			builder.appendTo(blockBuilder)
 			def spockTest = blockBuilder.toString()
 		then:
-			spockTest.contains(".body('')")
+			spockTest.contains(".body('''''')")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
@@ -812,6 +813,31 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			def spockTest = blockBuilder.toString()
 		then:
 			!spockTest.contains("\\u041f")
+	}
+
+	@Issue('177')
+	def "should generate proper test code when having multiline body"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method "PUT"
+					url "/multiline"
+					body('''hello,
+World.''')
+				}
+				response {
+					status 200
+				}
+			}
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.given(blockBuilder)
+			def spockTest = blockBuilder.toString()
+			new GroovyShell(this.class.classLoader).evaluate("""import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.*
+$spockTest""")
+		then:
+			notThrown(CompilationFailedException)
 	}
 
 }
