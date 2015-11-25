@@ -1,15 +1,12 @@
 package io.codearte.accurest.builder
-
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.WireMockStubStrategy
 import io.codearte.accurest.dsl.WireMockStubVerifier
-import org.codehaus.groovy.control.CompilationFailedException
 import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.util.regex.Pattern
-
 /**
  * @author Jakub Kubrynski
  */
@@ -834,10 +831,9 @@ World.''')
 		when:
 			builder.given(blockBuilder)
 			def spockTest = blockBuilder.toString()
-			new GroovyShell(this.class.classLoader).evaluate("""import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.*
-$spockTest""")
 		then:
-			notThrown(CompilationFailedException)
+			spockTest.contains("""'''hello,
+World.'''""")
 	}
 
 }
