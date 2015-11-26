@@ -26,7 +26,7 @@ class MockMvcSpockMethodBodyBuilder extends SpockMethodBodyBuilder {
 			bb.addLine(".header('${getTestSideValue(header.name)}', '${getTestSideValue(header.serverValue)}')")
 		}
 		if (request.body) {
-			bb.addLine(".body('$bodyAsString')")
+			bb.addLine(".body('''$bodyAsString''')")
 		}
 		bb.unindent()
 	}
