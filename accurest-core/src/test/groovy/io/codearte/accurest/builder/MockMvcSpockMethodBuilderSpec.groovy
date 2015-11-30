@@ -836,4 +836,29 @@ World.''')
 World.'''""")
 	}
 
+	def "should generate proper test code when having multipart parameters"(){
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method "PUT"
+					url "/multipart"
+					multipart(
+							formParameter: value(client(regex('".+"')), server('"formParameterValue"')),
+							someBooleanParameter: value(client(regex('(true|false)')), server('true')),
+							file: named(value(client(regex('.+')), server('filename.csv')), value(client(regex('.+')), server('file content')))
+					)
+				}
+				response {
+					status 200
+				}
+			}
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.given(blockBuilder)
+			def spockTest = blockBuilder.toString()
+		then:
+			spockTest.contains('.multiPart')
+	}
+
 }

@@ -122,6 +122,18 @@ abstract class SpockMethodBodyBuilder {
 		return trimRepeatedQuotes(json)
 	}
 
+	protected String getFileContentAsString() {
+		return request.multipart.serverValue //TODO replace to working extraction
+	}
+
+	protected String getFilenameAsString() {
+		return request.multipart.serverValue //TODO replace to working extraction
+	}
+
+	protected String getFileAsString() {
+		return request.multipart.serverValue //TODO replace to working extraction
+	}
+
 	protected String convertUnicodeEscapes(String json) {
 		return StringEscapeUtils.unescapeJavaScript(json)
 	}

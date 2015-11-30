@@ -14,6 +14,7 @@ class Request extends Common {
 	UrlPath urlPath
 	Headers headers
 	Body body
+	Multipart multipart
 
 	Request() {
 	}
@@ -24,6 +25,7 @@ class Request extends Common {
 		this.urlPath = request.urlPath
 		this.headers = request.headers
 		this.body = request.body
+		this.multipart = request.multipart
 	}
 
 	void method(String method) {
@@ -98,6 +100,26 @@ class Request extends Common {
 
 	Body getBody() {
 		return body
+	}
+
+	void multipart(Map<String, Object> body) {
+		this.multipart = new Multipart(convertObjectsToDslProperties(body))
+	}
+
+	void multipart(List multipartAsList) {
+		this.multipart = new Multipart(convertObjectsToDslProperties(multipartAsList))
+	}
+
+	void multipart(DslProperty dslProperty) {
+		this.multipart = new Multipart(dslProperty)
+	}
+
+	void multipart(Object multipartAsValue) {
+		this.multipart = new Multipart(multipartAsValue)
+	}
+
+	Multipart getMultipart() {
+		return multipart
 	}
 
 	MatchingStrategy equalTo(Object value) {
