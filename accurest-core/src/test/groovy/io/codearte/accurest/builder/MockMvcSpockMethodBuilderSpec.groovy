@@ -1,4 +1,5 @@
 package io.codearte.accurest.builder
+
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.WireMockStubStrategy
 import io.codearte.accurest.dsl.WireMockStubVerifier
@@ -7,6 +8,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.util.regex.Pattern
+
 /**
  * @author Jakub Kubrynski
  */
@@ -860,5 +862,33 @@ World.'''""")
 		then:
 			spockTest.contains('.multiPart')
 	}
+
+    def "should generate proper test code when having multipart parameters with named as map"() {
+        given:
+            GroovyDsl contractDsl = GroovyDsl.make {
+                request {
+                    method "PUT"
+                    url "/multipart"
+                    multipart(
+                            formParameter: value(client(regex('".+"')), server('"formParameterValue"')),
+                            someBooleanParameter: value(client(regex('(true|false)')), server('true')),
+                            file: named(
+                                    name: value(client(regex('.+')), server('filename.csv')),
+                                    content: value(client(regex('.+')), server('file content')))
+                    )
+                }
+                response {
+                    status 200
+                }
+            }
+            MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+            BlockBuilder blockBuilder = new BlockBuilder(" ")
+        when:
+            builder.given(blockBuilder)
+            def spockTest = blockBuilder.toString()
+        then:
+            spockTest.contains('.multiPart')
+    }
+
 
 }

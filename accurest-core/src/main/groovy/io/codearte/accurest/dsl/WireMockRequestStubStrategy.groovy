@@ -6,16 +6,25 @@ import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
-import io.codearte.accurest.dsl.internal.*
+import io.codearte.accurest.dsl.internal.Body
+import io.codearte.accurest.dsl.internal.DslProperty
+import io.codearte.accurest.dsl.internal.MatchingStrategy
+import io.codearte.accurest.dsl.internal.NamedProperty
+import io.codearte.accurest.dsl.internal.QueryParameters
+import io.codearte.accurest.dsl.internal.RegexPatterns
+import io.codearte.accurest.dsl.internal.Request
 import io.codearte.accurest.util.ContentType
 import io.codearte.accurest.util.ContentUtils
-import io.codearte.accurest.util.JsonToJsonPathsConverter
 import io.codearte.accurest.util.JsonPaths
+import io.codearte.accurest.util.JsonToJsonPathsConverter
 import io.codearte.accurest.util.MapConverter
 
 import java.util.regex.Pattern
 
-import static io.codearte.accurest.util.ContentUtils.*
+import static io.codearte.accurest.util.ContentUtils.getEqualsTypeFromContentType
+import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromContent
+import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromHeader
+import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromMatchingStrategy
 import static io.codearte.accurest.util.RegexpBuilders.buildGStringRegexpForStubSide
 import static io.codearte.accurest.util.RegexpBuilders.buildJSONRegexpMatch
 
@@ -37,6 +46,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		appendUrl(requestPattern)
 		appendQueryParameters(requestPattern)
 		appendBody(requestPattern)
+		appendMultipart(requestPattern)
 		return requestPattern
 	}
 
@@ -67,6 +77,22 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 				requestPattern.bodyPatterns = [convertToValuePattern(matchingStrategy)]
 		} else {
 			requestPattern.bodyPatterns = [convertToValuePattern(getMatchingStrategy(request.body.clientValue))]
+		}
+	}
+	
+	private void appendMultipart(RequestPattern requestPattern) {
+		if (!request.multipart) {
+			return
+		}
+		
+		if (request.multipart.clientValue instanceof Map) {
+			List<ValuePattern> multipartPatterns = (request.multipart.clientValue as Map).collect { 
+				(it.value instanceof NamedProperty 
+				? ValuePattern.matches(RegexPatterns.multipartFile(it.key, (it.value as NamedProperty).name.clientValue, (it.value as NamedProperty).value.clientValue))
+				: ValuePattern.matches(RegexPatterns.multipartParam(it.key, it.value)) )
+			}
+			
+			requestPattern.bodyPatterns ? requestPattern.bodyPatterns.addAll(multipartPatterns) : (requestPattern.bodyPatterns = multipartPatterns)
 		}
 	}
 
