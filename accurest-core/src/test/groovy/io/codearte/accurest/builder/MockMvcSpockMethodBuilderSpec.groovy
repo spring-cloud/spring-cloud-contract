@@ -838,14 +838,18 @@ World.''')
 World.'''""")
 	}
 
+	@Issue('180')
 	def "should generate proper test code when having multipart parameters"(){
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
 				request {
 					method "PUT"
 					url "/multipart"
+					headers {
+						header('content-type', 'multipart/form-data;boundary=AaB03x')
+					}
 					multipart(
-							formParameter: value(client(regex('".+"')), server('"formParameterValue"')),
+							formParameter: value(client(regex('.+')), server('"formParameterValue"')),
 							someBooleanParameter: value(client(regex('(true|false)')), server('true')),
 							file: named(value(client(regex('.+')), server('filename.csv')), value(client(regex('.+')), server('file content')))
 					)
@@ -860,9 +864,13 @@ World.'''""")
 			builder.given(blockBuilder)
 			def spockTest = blockBuilder.toString()
 		then:
-			spockTest.contains('.multiPart')
+			spockTest.contains("""'content-type', 'multipart/form-data;boundary=AaB03x'""")
+			spockTest.contains(""".param('formParameter', '"formParameterValue"'""")
+			spockTest.contains(""".param('someBooleanParameter', 'true')""")
+			spockTest.contains(""".multiPart('file', 'filename.csv', 'file content'.bytes)""")
 	}
 
+	@Issue('180')
     def "should generate proper test code when having multipart parameters with named as map"() {
         given:
             GroovyDsl contractDsl = GroovyDsl.make {

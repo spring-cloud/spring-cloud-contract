@@ -30,7 +30,7 @@ class MockMvcSpockMethodBodyBuilder extends SpockMethodBodyBuilder {
 			bb.addLine(".body('''$bodyAsString''')")
 		}
 		if (request.multipart) {
-			bb.addLine(".multiPart('''$fileAsString''', '''$filenameAsString''', '''$fileContentAsString'''.bytes)")
+			multipartParameters.each { entry -> bb.addLine(getMultipartParameterLine(entry)) }
 		}
 		bb.unindent()
 	}

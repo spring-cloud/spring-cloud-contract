@@ -122,16 +122,15 @@ abstract class SpockMethodBodyBuilder {
 		return trimRepeatedQuotes(json)
 	}
 
-	protected String getFileContentAsString() {
-		return request.multipart.serverValue //TODO replace to working extraction
+	protected Map<String, Object> getMultipartParameters() {
+		return (Map<String, Object>)request.multipart.serverValue
 	}
 
-	protected String getFilenameAsString() {
-		return request.multipart.serverValue //TODO replace to working extraction
-	}
-
-	protected String getFileAsString() {
-		return request.multipart.serverValue //TODO replace to working extraction
+	protected String getMultipartParameterLine(Map.Entry<String, Object> parameter) {
+		if (parameter.value instanceof  NamedProperty) {
+			return ".multiPart(${getMultipartFileParameterContent(parameter.key, (NamedProperty) parameter.value)})"
+		}
+		return ".param('$parameter.key', '$parameter.value')"
 	}
 
 	protected String convertUnicodeEscapes(String json) {
