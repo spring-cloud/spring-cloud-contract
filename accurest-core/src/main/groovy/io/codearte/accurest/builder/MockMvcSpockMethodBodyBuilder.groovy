@@ -1,6 +1,5 @@
 package io.codearte.accurest.builder
 
-import java.util.regex.Pattern
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
@@ -10,6 +9,8 @@ import io.codearte.accurest.dsl.internal.QueryParameter
 import io.codearte.accurest.dsl.internal.Request
 import io.codearte.accurest.dsl.internal.Url
 import io.codearte.accurest.util.MapConverter
+
+import java.util.regex.Pattern
 
 @PackageScope
 @TypeChecked
@@ -27,6 +28,9 @@ class MockMvcSpockMethodBodyBuilder extends SpockMethodBodyBuilder {
 		}
 		if (request.body) {
 			bb.addLine(".body('''$bodyAsString''')")
+		}
+		if (request.multipart) {
+			multipartParameters?.each { Map.Entry<String, Object> entry -> bb.addLine(getMultipartParameterLine(entry)) }
 		}
 		bb.unindent()
 	}

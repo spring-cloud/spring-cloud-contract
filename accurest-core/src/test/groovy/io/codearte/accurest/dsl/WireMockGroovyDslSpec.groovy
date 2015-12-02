@@ -1398,4 +1398,50 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	String toWireMockClientJsonStub(groovyDsl) {
 		new WireMockStubStrategy(groovyDsl).toWireMockClientStub()
 	}
+
+	@Issue('180')
+	@Unroll
+	def 'should generate stub with multipart parameters'() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method "PUT"
+					url "/multipart"
+					multipart(
+							formParameter: value(client(regex('".+"')), server('"formParameterValue"')),
+							someBooleanParameter: value(client(regex('(true|false)')), server('true')),
+							file: named(
+									name: value(client(regex('.+')), server('filename.csv')),
+									content: value(client(regex('.+')), server('file content')))
+					)
+				}
+				response {
+					status 200
+				}
+			}
+		when:
+			String wireMockStub = new WireMockStubStrategy(contractDsl).toWireMockClientStub()
+		then:
+			println wireMockStub
+			AssertionUtil.assertThatJsonsAreEqual(('''
+		{
+		  "request" : {
+			"url" : "/multipart",
+			"method" : "PUT",
+			"bodyPatterns" : [ {
+				"matches" : ".*--(.*)\\r\\nContent-Disposition: form-data; name=\\"formParameter\\"\\r\\n(Content-Type: .*\\r\\n)?(Content-Length: \\\\d+\\r\\n)?\\r\\n\\".+\\"\\r\\n--\\\\1.*"
+    		}, {
+      			"matches" : ".*--(.*)\\r\\nContent-Disposition: form-data; name=\\"someBooleanParameter\\"\\r\\n(Content-Type: .*\\r\\n)?(Content-Length: \\\\d+\\r\\n)?\\r\\n(true|false)\\r\\n--\\\\1.*"
+    		}, {			
+			  "matches" : ".*--(.*)\\r\\nContent-Disposition: form-data; name=\\"file\\"; filename=\\".+\\"\\r\\n(Content-Type: .*\\r\\n)?(Content-Length: \\\\d+\\r\\n)?\\r\\n.+\\r\\n--\\\\1.*"
+			} ]
+		  },
+		  "response" : {
+			"status" : 200
+		  }
+		}
+			'''), wireMockStub)
+		and:
+			stubMappingIsValidWireMockStub(wireMockStub)
+	}
 }

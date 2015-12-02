@@ -8,6 +8,7 @@ import io.codearte.accurest.dsl.internal.DslProperty
 import io.codearte.accurest.dsl.internal.ExecutionProperty
 import io.codearte.accurest.dsl.internal.Headers
 import io.codearte.accurest.dsl.internal.MatchingStrategy
+import io.codearte.accurest.dsl.internal.NamedProperty
 import io.codearte.accurest.dsl.internal.OptionalProperty
 import org.codehaus.groovy.runtime.GStringImpl
 
@@ -318,6 +319,10 @@ class ContentUtils {
 				return ContentType.JSON
 		}
 		return ContentType.UNKNOWN
+	}
+
+	static String getMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
+		return "'$propertyName', '$propertyValue.name.serverValue', '$propertyValue.value.serverValue'.bytes"
 	}
 
 }

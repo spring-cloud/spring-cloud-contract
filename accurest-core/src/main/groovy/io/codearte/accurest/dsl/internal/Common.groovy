@@ -48,6 +48,14 @@ class Common {
 		return property
 	}
 
+	NamedProperty named(DslProperty name, DslProperty value){
+		return new NamedProperty(name, value)
+	}
+
+	NamedProperty named(Map<String, DslProperty> namedMap){
+		return new NamedProperty(namedMap)
+	}
+
 	DslProperty value(ClientDslProperty client, ServerDslProperty server) {
 		assertThatSidesMatch(client.clientValue, server.serverValue)
 		return new DslProperty(client.clientValue, server.serverValue)
