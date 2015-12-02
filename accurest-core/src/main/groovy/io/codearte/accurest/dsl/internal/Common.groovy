@@ -53,7 +53,7 @@ class Common {
 	}
 
 	NamedProperty named(Map<String, DslProperty> namedMap){
-		return new NamedProperty(namedMap.get('name'), namedMap.get('content'))
+		return new NamedProperty(namedMap)
 	}
 
 	DslProperty value(ClientDslProperty client, ServerDslProperty server) {

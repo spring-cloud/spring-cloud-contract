@@ -14,7 +14,7 @@ class Multipart extends DslProperty {
     }
 
     private static Map<String, Object> extractValue(Map<String, DslProperty> multipart, Closure valueProvider) {
-        multipart.collectEntries { Map.Entry<String, DslProperty> entry ->
+        return multipart.collectEntries { Map.Entry<String, DslProperty> entry ->
             [(entry.key): valueProvider(entry.value)]
         } as Map<String, Object>
     }

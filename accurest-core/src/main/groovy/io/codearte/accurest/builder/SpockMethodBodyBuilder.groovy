@@ -123,7 +123,7 @@ abstract class SpockMethodBodyBuilder {
 	}
 
 	protected Map<String, Object> getMultipartParameters() {
-		return (Map<String, Object>)request.multipart.serverValue
+		return (Map<String, Object>)request?.multipart?.serverValue
 	}
 
 	protected String getMultipartParameterLine(Map.Entry<String, Object> parameter) {

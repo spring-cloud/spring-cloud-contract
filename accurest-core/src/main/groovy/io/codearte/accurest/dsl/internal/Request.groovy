@@ -118,10 +118,6 @@ class Request extends Common {
 		this.multipart = new Multipart(multipartAsValue)
 	}
 
-	Multipart getMultipart() {
-		return multipart
-	}
-
 	MatchingStrategy equalTo(Object value) {
 		return new MatchingStrategy(value, MatchingStrategy.Type.EQUAL_TO)
 	}

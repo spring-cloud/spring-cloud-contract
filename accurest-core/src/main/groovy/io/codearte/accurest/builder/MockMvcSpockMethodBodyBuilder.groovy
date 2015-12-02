@@ -30,7 +30,7 @@ class MockMvcSpockMethodBodyBuilder extends SpockMethodBodyBuilder {
 			bb.addLine(".body('''$bodyAsString''')")
 		}
 		if (request.multipart) {
-			multipartParameters.each { entry -> bb.addLine(getMultipartParameterLine(entry)) }
+			multipartParameters?.each { Map.Entry<String, Object> entry -> bb.addLine(getMultipartParameterLine(entry)) }
 		}
 		bb.unindent()
 	}
