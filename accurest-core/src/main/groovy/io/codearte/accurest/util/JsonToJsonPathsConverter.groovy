@@ -93,7 +93,7 @@ class JsonToJsonPathsConverter {
 
 	private static Map convertWithKey(Class parentType, String parentKey, Map map, Closure closureToExecute) {
 		return map.collectEntries {
-			String entrykey, value ->
+			Object entrykey, value ->
 				[entrykey, traverseRecursively(parentType, "${parentKey}.${entrykey}", value, closureToExecute)]
 		}
 	}

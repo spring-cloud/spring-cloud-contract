@@ -119,6 +119,21 @@ class JsonToJsonPathsConverterSpec extends Specification {
 			assertThatJsonPathsInMapAreValid(json, pathAndValues)
 		}
 
+	def "should convert numbers map"() {
+		given:
+			String json = ''' {
+                     "extensions": {"7":28.00,"14":41.00,"30":60.00}
+                     }
+ '''
+		when:
+			JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
+		then:
+			pathAndValues['''$.extensions[?(@.7 == 28)]'''] == 28.0
+			pathAndValues['''$.extensions[?(@.14 == 41)]'''] == 41.0
+			pathAndValues['''$.extensions[?(@.30 == 60)]'''] == 60.0
+		and:
+			assertThatJsonPathsInMapAreValid(json, pathAndValues)
+	}
 
 	def 'should convert a json with a list of errors'() {
 		given:
