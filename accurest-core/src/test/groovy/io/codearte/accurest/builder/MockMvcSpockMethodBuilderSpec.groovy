@@ -121,6 +121,35 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
+	@Issue("185")
+	def "should generate assertions for a response body containing map with integers as keys"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method "GET"
+					url "test"
+				}
+				response {
+					status 200
+					body(
+							property: [
+									14: 0.0,
+									7 : 0.0
+							]
+					)
+				}
+			}
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			blockBuilder.toString().contains("\$.property[?(@.7 == 0.0)]")
+			blockBuilder.toString().contains("\$.property[?(@.14 == 0.0)]")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+	}
+
 	def "should generate assertions for array in response body"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
