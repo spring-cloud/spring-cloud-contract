@@ -142,7 +142,19 @@ class JsonToJsonPathsConverter {
 	}
 
 	protected static String potentiallyWrappedWithQuotesValue(Object value) {
-		return value instanceof Number ? value : "'$value'"
+		return isNumber(value) || isBoolean(value) || isNull(value) ? value : "'$value'"
+	}
+
+	private static boolean isNull(value) {
+		value == null
+	}
+
+	private static boolean isBoolean(value) {
+		value instanceof Boolean
+	}
+
+	private static boolean isNumber(value) {
+		value instanceof Number
 	}
 
 }
