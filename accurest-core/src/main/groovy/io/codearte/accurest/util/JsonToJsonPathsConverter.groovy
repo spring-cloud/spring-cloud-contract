@@ -146,15 +146,15 @@ class JsonToJsonPathsConverter {
 	}
 
 	private static boolean isNull(value) {
-		value == null
+		return value == null
 	}
 
 	private static boolean isBoolean(value) {
-		value instanceof Boolean
+		return value instanceof Boolean
 	}
 
 	private static boolean isNumber(value) {
-		value instanceof Number
+		return value instanceof Number
 	}
 
 }
