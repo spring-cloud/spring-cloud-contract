@@ -34,6 +34,35 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
 	}
 
+	@Issue("#187")
+	def "should generate assertions for null and boolean values"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method "GET"
+					url "test"
+				}
+				response {
+					status 200
+					body """{
+	"property1": "true",
+	"property2": null,
+	"property3": false
+}"""
+				}
+			}
+			JaxRsClientSpockMethodBodyBuilder builder = new JaxRsClientSpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			blockBuilder.toString().contains("\$[?(@.property1 == 'true')]")
+			blockBuilder.toString().contains("\$[?(@.property2 == null)]")
+			blockBuilder.toString().contains("\$[?(@.property3 == false)]")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+	}
+
 	@Issue("#79")
 	def "should generate assertions for simple response body constructed from map with a list"() {
 		given:
