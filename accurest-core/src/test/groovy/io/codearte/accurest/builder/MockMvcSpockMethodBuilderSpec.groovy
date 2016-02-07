@@ -3,6 +3,7 @@ package io.codearte.accurest.builder
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.WireMockStubStrategy
 import io.codearte.accurest.dsl.WireMockStubVerifier
+import io.codearte.accurest.file.Contract
 import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -37,7 +38,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			blockBuilder.toString().contains("\$[?(@.property1 == 'a')]")
 			blockBuilder.toString().contains("\$[?(@.property2 == 'b')]")
 		and:
-			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	@Issue("#187")
@@ -66,7 +67,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			blockBuilder.toString().contains("\$[?(@.property2 == null)]")
 			blockBuilder.toString().contains("\$[?(@.property3 == false)]")
 		and:
-			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	@Issue("#79")
@@ -97,7 +98,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			blockBuilder.toString().contains("\$.property2[*][?(@.a == 'sth')]")
 			blockBuilder.toString().contains("\$.property2[*][?(@.b == 'sthElse')]")
 		and:
-			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	@Issue("#82")
@@ -122,7 +123,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		then:
 			blockBuilder.toString().contains(".body('''{\"items\":[\"HOP\"]}''')")
 		and:
-			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	@Issue("#88")
@@ -147,7 +148,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		then:
 			blockBuilder.toString().contains(".body('''property1=VAL1''')")
 		and:
-			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	@Issue("185")
@@ -176,7 +177,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			blockBuilder.toString().contains("\$.property[?(@.7 == 0.0)]")
 			blockBuilder.toString().contains("\$.property[?(@.14 == 0.0)]")
 		and:
-			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate assertions for array in response body"() {
@@ -205,7 +206,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			blockBuilder.toString().contains("\$[*][?(@.property1 == 'a')]")
 			blockBuilder.toString().contains("\$[*][?(@.property2 == 'b')]")
 		and:
-			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate assertions for array inside response body element"() {
@@ -233,7 +234,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			blockBuilder.toString().contains("\$.property1[*][?(@.property3 == 'test2')]")
 			blockBuilder.toString().contains("\$.property1[*][?(@.property2 == 'test1')]")
 		and:
-			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate assertions for nested objects in response body"() {
@@ -261,7 +262,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			blockBuilder.toString().contains("\$.property2[?(@.property3 == 'b')]")
 			blockBuilder.toString().contains("\$[?(@.property1 == 'a')]")
 		and:
-			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate regex assertions for map objects in response body"() {
@@ -295,7 +296,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			blockBuilder.toString().contains("\$[?(@.property2 =~ /[0-9]{3}/)]")
 			blockBuilder.toString().contains("\$[?(@.property1 == 'a')]")
 		and:
-			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate regex assertions for string objects in response body"() {
@@ -323,7 +324,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		blockBuilder.toString().contains("\$[?(@.property2 =~ /[0-9]{3}/)]")
 		blockBuilder.toString().contains("\$[?(@.property1 == 'a')]")
 		and:
-		stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+		stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	@Issue(["#126", "#143"])
@@ -349,7 +350,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		then:
 			blockBuilder.toString().contains("\$[?(@.property =~ /\\d+/)]")
 		and:
-			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate a call with an url path and query parameters"() {
@@ -392,7 +393,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			spockTest.contains('$[?(@.property2 == \'b\')]')
 			spockTest.contains('$[?(@.property1 == \'a\')]')
 		and:
-			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	@Issue('#169')
@@ -436,7 +437,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			spockTest.contains('$[?(@.property2 == \'b\')]')
 			spockTest.contains('$[?(@.property1 == \'a\')]')
 		and:
-			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate test for empty body"() {
@@ -459,7 +460,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		then:
 			spockTest.contains(".body('''''')")
 		and:
-			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate test for String in response body"() {
@@ -483,7 +484,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			spockTest.contains('def responseBody = (response.body.asString())')
 			spockTest.contains('responseBody == "test"')
 		and:
-			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	@Issue('113')
@@ -518,7 +519,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		then:
 			spockTest.contains('''response.header('Location') ==~ java.util.regex.Pattern.compile('http://localhost/partners/[0-9]+/users/[0-9]+')''')
 		and:
-			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	@Issue('115')
@@ -553,7 +554,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		then:
 			spockTest.contains('''response.header('Location') ==~ java.util.regex.Pattern.compile('^((http[s]?|ftp):\\/)\\/?([^:\\/\\s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+')''')
 		and:
-			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	def "should work with more complex stuff and jsonpaths"() {
@@ -590,7 +591,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			spockTest.contains('''$.errors[*][?(@.property == 'bank_account_number')]''')
 			spockTest.contains('''$.errors[*][?(@.message == 'incorrect_format')]''')
 		and:
-			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	def "should work properly with GString url"() {
@@ -619,7 +620,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		then:
 			spockTest.contains('''/partners/11/agents/11/customers/09665703Z''')
 		and:
-			stubMappingIsValidWireMockStub(new WireMockStubStrategy(contractDsl).toWireMockClientStub())
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	def "should resolve properties in GString with regular expression"() {

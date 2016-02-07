@@ -1,6 +1,7 @@
 package io.codearte.accurest.file
 
 import com.google.common.collect.ArrayListMultimap
+import com.google.common.collect.ListMultimap
 import com.google.common.collect.Multimap
 import org.apache.commons.io.FilenameUtils
 
@@ -8,13 +9,15 @@ import java.nio.file.FileSystem
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.PathMatcher
+import java.util.regex.Pattern
 
 /**
  * @author Jakub Kubrynski
  */
 class ContractFileScanner {
 
-	private final String MATCH_PREFIX = "glob:"
+	private static final String MATCH_PREFIX = "glob:"
+	private static final Pattern SCENARIO_STEP_FILENAME_PATTERN = Pattern.compile("[0-9]+_.*")
 	private final File baseDir
 	private final Set<PathMatcher> excludeMatchers
 	private final Set<PathMatcher> ignoreMatchers
@@ -32,24 +35,35 @@ class ContractFileScanner {
 		}) as Set
 	}
 
-	Multimap<Path, Contract> findContracts() {
-		Multimap<Path, Contract> result = ArrayListMultimap.create()
+	ListMultimap<Path, Contract> findContracts() {
+		ListMultimap<Path, Contract> result = ArrayListMultimap.create()
 		appendRecursively(baseDir, result)
 		return result
 	}
 
-	private void appendRecursively(File baseDir, Multimap<Path, Contract> result) {
-		for (File file : baseDir.listFiles()) {
-			if (matchesPattern(file, excludeMatchers)) {
-				break;
-			}
-			if (isContractFile(file)) {
-				Path path = file.toPath()
-				result.put(file.parentFile.toPath(), new Contract(path, matchesPattern(file, ignoreMatchers)))
-			} else {
-				appendRecursively(file, result)
+	private void appendRecursively(File baseDir, ListMultimap<Path, Contract> result) {
+		File[] files = baseDir.listFiles()
+		if (!files) {
+			return;
+		}
+		files.sort().eachWithIndex { File file, int index ->
+			if (!matchesPattern(file, excludeMatchers)) {
+				if (isContractFile(file)) {
+					Path path = file.toPath()
+					Integer order = null
+					if (hasScenarioFilenamePattern(path)) {
+						order = index
+					}
+					result.put(file.parentFile.toPath(), new Contract(path, matchesPattern(file, ignoreMatchers), files.size(), order))
+				} else {
+					appendRecursively(file, result)
+				}
 			}
 		}
+	}
+
+	private boolean hasScenarioFilenamePattern(Path path) {
+		SCENARIO_STEP_FILENAME_PATTERN.matcher(path.fileName.toString()).matches()
 	}
 
 	boolean matchesPattern(File file, Set<PathMatcher> excludeMatchers) {

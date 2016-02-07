@@ -1,7 +1,6 @@
 package io.codearte.accurest.wiremock
 
-import com.google.common.collect.Multimap
-import groovy.io.FileType
+import com.google.common.collect.ListMultimap
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import io.codearte.accurest.config.AccurestConfigProperties
@@ -27,19 +26,21 @@ class RecursiveFilesConverter {
 
 	void processFiles() {
 		ContractFileScanner scanner = new ContractFileScanner(properties.contractsDslDir, properties.excludedFiles as Set, [] as Set)
-		Multimap<Path, Contract> contracts = scanner.findContracts()
-		contracts.values().each { Contract contract ->
-			File sourceFile = contract.path.toFile()
-			try {
-				if (!singleFileConverter.canHandleFileName(sourceFile.name)) {
-					return
+		ListMultimap<Path, Contract> contracts = scanner.findContracts()
+		contracts.asMap().entrySet().each { entry ->
+			entry.value.each { Contract contract ->
+				File sourceFile = contract.path.toFile()
+				try {
+					if (!singleFileConverter.canHandleFileName(sourceFile.name)) {
+						return
+					}
+					String convertedContent = singleFileConverter.convertContent(entry.key.last().toString(), contract)
+					Path absoluteTargetPath = createAndReturnTargetDirectory(sourceFile)
+					File newGroovyFile = createTargetFileWithProperName(absoluteTargetPath, sourceFile)
+					newGroovyFile.setText(convertedContent, StandardCharsets.UTF_8.toString())
+				} catch (Exception e) {
+					throw new ConversionAccurestException("Unable to make convertion of ${sourceFile.name}", e)
 				}
-				String convertedContent = singleFileConverter.convertContent(sourceFile.getText(StandardCharsets.UTF_8.toString()))
-				Path absoluteTargetPath = createAndReturnTargetDirectory(sourceFile)
-				File newGroovyFile = createTargetFileWithProperName(absoluteTargetPath, sourceFile)
-				newGroovyFile.setText(convertedContent, StandardCharsets.UTF_8.toString())
-			} catch (Exception e) {
-				throw new ConversionAccurestException("Unable to make convertion of ${sourceFile.name}", e)
 			}
 		}
 	}

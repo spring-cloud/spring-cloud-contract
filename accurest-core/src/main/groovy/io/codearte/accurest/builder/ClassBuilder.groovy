@@ -16,6 +16,7 @@ class ClassBuilder {
 	private final List<String> staticImports = []
 	private final List<String> rules = []
 	private final List<MethodBuilder> methods = []
+	private final List<String> classLevelAnnotations = []
 	private final TestFramework lang
 
 	private ClassBuilder(String className, String packageName, String baseClass, TestFramework lang) {
@@ -83,6 +84,10 @@ class ClassBuilder {
 			clazz.addEmptyLine()
 		}
 
+		classLevelAnnotations.sort().each {
+			clazz.addLine(it)
+		}
+
 		def classLine = "${lang.classModifier}class $className"
 		if (baseClass) {
 			classLine += " extends $baseClass"
@@ -106,5 +111,9 @@ class ClassBuilder {
 
 		clazz.addLine('}')
 		clazz.toString()
+	}
+
+	void addClassLevelAnnotation(String annotation) {
+		classLevelAnnotations << annotation
 	}
 }

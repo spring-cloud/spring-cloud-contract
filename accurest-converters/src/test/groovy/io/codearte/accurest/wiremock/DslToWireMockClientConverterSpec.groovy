@@ -1,15 +1,22 @@
 package io.codearte.accurest.wiremock
 
+import io.codearte.accurest.file.Contract
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 import org.skyscreamer.jsonassert.JSONAssert
 import spock.lang.Specification
 
 class DslToWireMockClientConverterSpec extends Specification {
 
+	@Rule
+	public TemporaryFolder tmpFolder = new TemporaryFolder();
+
 	def "should convert DSL file to WireMock JSON"() {
 		given:
 			def converter = new DslToWireMockClientConverter()
 		and:
-			String dslBody = """
+			File file = tmpFolder.newFile("dsl1.groovy")
+			file.write("""
 				io.codearte.accurest.dsl.GroovyDsl.make {
 					request {
 						method('PUT')
@@ -19,9 +26,9 @@ class DslToWireMockClientConverterSpec extends Specification {
 						status 200
 					}
 				}
-"""
+""")
 		when:
-			String json = converter.convertContent(dslBody)
+			String json = converter.convertContent("Test", new Contract(file.toPath(), false, 0, null))
 		then:
 		JSONAssert.assertEquals('''
 {"request":{"method":"PUT","urlPattern":"/[0-9]{2}"},"response":{"status":200}}
@@ -33,7 +40,8 @@ class DslToWireMockClientConverterSpec extends Specification {
 		given:
 			def converter = new DslToWireMockClientConverter()
 		and:
-			String dslBody = """
+			File file = tmpFolder.newFile("dsl2.groovy")
+			file.write("""
 				io.codearte.accurest.dsl.GroovyDsl.make {
 					request {
 						method 'PUT'
@@ -77,9 +85,9 @@ class DslToWireMockClientConverterSpec extends Specification {
 						status 200
 					}
 				}
-"""
+""")
 		when:
-			String json = converter.convertContent(dslBody)
+			String json = converter.convertContent("Test", new Contract(file.toPath(), false, 0, null))
 		then:
 		JSONAssert.assertEquals('''
 {
