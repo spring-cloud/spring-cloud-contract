@@ -5,6 +5,7 @@ import io.codearte.accurest.builder.ClassBuilder
 import io.codearte.accurest.config.AccurestConfigProperties
 import io.codearte.accurest.config.TestFramework
 import io.codearte.accurest.config.TestMode
+import io.codearte.accurest.file.Contract
 
 import static io.codearte.accurest.builder.ClassBuilder.createClass
 import static io.codearte.accurest.builder.MethodBuilder.createTestMethod
@@ -19,7 +20,7 @@ class SingleTestGenerator {
 	}
 
 	@PackageScope
-	String buildClass(List<File> listOfFiles, String className, String classPackage) {
+	String buildClass(Collection<Contract> listOfFiles, String className, String classPackage) {
 		ClassBuilder clazz = createClass(capitalize(className), classPackage,
 				configProperties)
 
@@ -27,6 +28,10 @@ class SingleTestGenerator {
 			configProperties.imports.each {
 				clazz.addImport(it)
 			}
+		}
+
+		if (listOfFiles.ignored.find {it}) {
+			clazz.addImport("org.junit.Ignore")
 		}
 
 		if (configProperties.staticImports) {
@@ -50,9 +55,7 @@ class SingleTestGenerator {
 		}
 
 		if (configProperties.ruleClassForTests) {
-
-			clazz.addImport('org.junit.Rule')
-			.addRule(configProperties.ruleClassForTests)
+			clazz.addImport('org.junit.Rule').addRule(configProperties.ruleClassForTests)
 		}
 
 		addJsonPathRelatedImports(clazz)
