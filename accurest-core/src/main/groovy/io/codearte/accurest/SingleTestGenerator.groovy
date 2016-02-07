@@ -40,7 +40,7 @@ class SingleTestGenerator {
 		}
 
 		if (isScenarioClass(listOfFiles)) {
-			clazz.addImport(configProperties.targetFramework.getOrderClass())
+			clazz.addImport(configProperties.targetFramework.getOrderAnnotationImport())
 			clazz.addClassLevelAnnotation(configProperties.targetFramework.getOrderAnnotation())
 		}
 

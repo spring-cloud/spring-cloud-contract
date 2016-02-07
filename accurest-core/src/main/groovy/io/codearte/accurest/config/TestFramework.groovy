@@ -52,8 +52,8 @@ enum TestFramework {
 		return ignoreClass
 	}
 
-	String getOrderClass() {
-		return orderClass
+	String getOrderAnnotationImport() {
+		return orderAnnotationImport
 	}
 
 	String getOrderAnnotation() {
