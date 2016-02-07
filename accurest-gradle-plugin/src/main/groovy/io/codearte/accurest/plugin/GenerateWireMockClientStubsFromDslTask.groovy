@@ -1,5 +1,6 @@
 package io.codearte.accurest.plugin
 
+import io.codearte.accurest.config.AccurestConfigProperties
 import io.codearte.accurest.wiremock.DslToWireMockClientConverter
 import io.codearte.accurest.wiremock.RecursiveFilesConverter
 import org.gradle.api.internal.ConventionTask
@@ -15,13 +16,14 @@ class GenerateWireMockClientStubsFromDslTask extends ConventionTask {
 	@OutputDirectory
 	File stubsOutputDir
 
+	AccurestConfigProperties configProperties
+
 	@TaskAction
 	void generate() {
 		logger.info("Accurest Plugin: Invoking GroovyDSL to WireMock client stubs conversion")
 		logger.debug("From '${getContractsDslDir()}' to '${getStubsOutputDir()}'")
 
-		RecursiveFilesConverter converter = new RecursiveFilesConverter(new DslToWireMockClientConverter(), getContractsDslDir(),
-				getStubsOutputDir())
+		RecursiveFilesConverter converter = new RecursiveFilesConverter(new DslToWireMockClientConverter(), getConfigProperties())
 		converter.processFiles()
 	}
 }

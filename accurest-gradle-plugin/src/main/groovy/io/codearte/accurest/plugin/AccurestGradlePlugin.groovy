@@ -70,6 +70,7 @@ class AccurestGradlePlugin implements Plugin<Project> {
 		task.conventionMapping.with {
 			contractsDslDir = { extension.contractsDslDir }
 			stubsOutputDir = { extension.stubsOutputDir }
+			configProperties = { extension }
 		}
 	}
 
