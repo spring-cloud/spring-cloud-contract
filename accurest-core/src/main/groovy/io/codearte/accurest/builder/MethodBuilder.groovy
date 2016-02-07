@@ -5,6 +5,7 @@ import io.codearte.accurest.config.AccurestConfigProperties
 import io.codearte.accurest.config.TestFramework
 import io.codearte.accurest.config.TestMode
 import io.codearte.accurest.dsl.GroovyDsl
+import io.codearte.accurest.file.Contract
 import io.codearte.accurest.util.NamesUtil
 import org.codehaus.groovy.control.CompilerConfiguration
 
@@ -17,24 +18,30 @@ class MethodBuilder {
 	private final String methodName
 	private final GroovyDsl stubContent
 	private final AccurestConfigProperties configProperties
+	private final boolean ignored
 
-	private MethodBuilder(String methodName, GroovyDsl stubContent, AccurestConfigProperties configProperties) {
+	private MethodBuilder(String methodName, GroovyDsl stubContent, AccurestConfigProperties configProperties, boolean ignored) {
+		this.ignored = ignored
 		this.stubContent = stubContent
 		this.methodName = methodName
 		this.configProperties = configProperties
 	}
 
-	static MethodBuilder createTestMethod(File stubsFile, AccurestConfigProperties configProperties) {
+	static MethodBuilder createTestMethod(Contract contract, AccurestConfigProperties configProperties) {
+		File stubsFile = contract.path.toFile()
 		log.debug("Stub content from file [${stubsFile.text}]")
 		GroovyDsl stubContent = new GroovyShell(this.classLoader, new Binding(), new CompilerConfiguration(sourceEncoding:'UTF-8')).evaluate(stubsFile)
 		log.debug("Stub content Groovy DSL [$stubContent]")
 		String methodName = NamesUtil.camelCase(NamesUtil.toLastDot(NamesUtil.afterLast(stubsFile.path, File.separator)))
-		return new MethodBuilder(methodName, stubContent, configProperties)
+		return new MethodBuilder(methodName, stubContent, configProperties, contract.ignored)
 	}
 
 	void appendTo(BlockBuilder blockBuilder) {
 		if (configProperties.targetFramework == TestFramework.JUNIT) {
 			blockBuilder.addLine('@Test')
+		}
+		if (ignored) {
+			blockBuilder.addLine('@Ignore')
 		}
 		blockBuilder.addLine(configProperties.targetFramework.methodModifier + "$methodName() {")
 		getMethodBodyBuilder().appendTo(blockBuilder)

@@ -10,7 +10,7 @@ class MainTest {
 				contractsDslDir: new File('/home/devel/projects/codearte/accurest/accurest-core/src/test/resources/dsl'),
 				generatedTestSourcesDir: new File('/tmp/accurest'),
 				targetFramework: TestFramework.SPOCK, testMode: TestMode.MOCKMVC, basePackageForTests: 'io.test',
-				staticImports: ['com.pupablada.Test.*'], imports: ['org.innapypa.Test'], ignoredFiles: ["**/other"])
+				staticImports: ['com.pupablada.Test.*'], imports: ['org.innapypa.Test'], excludedFiles: ["**/other"])
 		println new TestGenerator(properties).generate()
 	}
 }

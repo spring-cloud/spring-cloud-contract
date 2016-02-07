@@ -1,14 +1,20 @@
 package io.codearte.accurest
 
+import com.google.common.collect.Multimap
 import groovy.transform.PackageScope
 import io.codearte.accurest.config.AccurestConfigProperties
-import org.apache.commons.io.FilenameUtils
-import org.codehaus.plexus.util.DirectoryScanner
+import io.codearte.accurest.file.Contract
+import io.codearte.accurest.file.ContractFileScanner
+import org.apache.commons.lang3.StringUtils
 
 import java.nio.charset.StandardCharsets
+import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicInteger
 
-import static io.codearte.accurest.util.NamesUtil.*
+import static io.codearte.accurest.util.NamesUtil.afterLast
+import static io.codearte.accurest.util.NamesUtil.beforeLast
+import static io.codearte.accurest.util.NamesUtil.convertIllegalPackageChars
+import static io.codearte.accurest.util.NamesUtil.directoryToPackage
 
 /**
  * @author Jakub Kubrynski
@@ -16,10 +22,12 @@ import static io.codearte.accurest.util.NamesUtil.*
 class TestGenerator {
 
 	private final AccurestConfigProperties configProperties
+	private final String DEFAULT_CLASS_PREFIX = "Accurest"
+
 	private AtomicInteger counter = new AtomicInteger()
 	private SingleTestGenerator generator
 	private FileSaver saver
-	private DirectoryScanner directoryScanner
+	private ContractFileScanner contractFileScanner
 
 	TestGenerator(AccurestConfigProperties accurestConfigProperties) {
 		this(accurestConfigProperties, new SingleTestGenerator(accurestConfigProperties),
@@ -33,9 +41,9 @@ class TestGenerator {
 		}
 		this.generator = generator
 		this.saver = saver
-		this.directoryScanner = new DirectoryScanner()
-		directoryScanner.setExcludes(configProperties.getIgnoredFiles() as String[])
-		directoryScanner.setBasedir(configProperties.contractsDslDir)
+		contractFileScanner = new ContractFileScanner(configProperties.contractsDslDir,
+				configProperties.excludedFiles as Set,
+				configProperties.ignoredFiles as Set)
 	}
 
 	int generate() {
@@ -45,31 +53,28 @@ class TestGenerator {
 
 	@PackageScope
 	void generateTestClasses(final String basePackageName) {
-		directoryScanner.scan()
-		directoryScanner.getIncludedDirectories()
-				.each { String includedDirectoryRelativePath ->
-			processIncludedDirectory(includedDirectoryRelativePath, basePackageName)
-
+		Multimap<Path, Contract> contracts = contractFileScanner.findContracts()
+		contracts.asMap().entrySet().each {
+			Map.Entry<Path, Collection<Contract>> entry -> processIncludedDirectory(relativizeContractPath(entry), entry.getValue(), basePackageName)
 		}
 	}
 
+	private String relativizeContractPath(Map.Entry<Path, Collection<Path>> entry) {
+		Path relativePath = configProperties.contractsDslDir.toPath().relativize(entry.getKey())
+		if (StringUtils.isBlank(relativePath.toString())) {
+			return DEFAULT_CLASS_PREFIX
+		}
+		return relativePath.toString()
+	}
+
 	private void processIncludedDirectory(
-			final String includedDirectoryRelativePath, final String basePackageNameForClass) {
-		if (!includedDirectoryRelativePath.isEmpty()) {
-			List<File> filesToClass = directoryScanner.includedFiles.
-					grep { String includedFile ->
-						return normalizePath(includedFile).matches(normalizePath(includedDirectoryRelativePath + File.separator) + "[A-Za-z0-9_]*\\.groovy")
-					}
-			.collect {
-				return new File(configProperties.contractsDslDir, it)
-			}
-			if (filesToClass.size()) {
-				def className = afterLast(includedDirectoryRelativePath, File.separator) + resolveNameSuffix()
-				def packageName = buildPackage(basePackageNameForClass, includedDirectoryRelativePath)
-				def classBytes = generator.buildClass(filesToClass, className, packageName).getBytes(StandardCharsets.UTF_8)
-				saver.saveClassFile(className, basePackageNameForClass, convertIllegalPackageChars(includedDirectoryRelativePath), classBytes)
-				counter.incrementAndGet()
-			}
+			final String includedDirectoryRelativePath, Collection<Contract> contracts, final String basePackageNameForClass) {
+		if (contracts.size()) {
+			def className = afterLast(includedDirectoryRelativePath.toString(), File.separator) + resolveNameSuffix()
+			def packageName = buildPackage(basePackageNameForClass, includedDirectoryRelativePath)
+			def classBytes = generator.buildClass(contracts, className, packageName).getBytes(StandardCharsets.UTF_8)
+			saver.saveClassFile(className, basePackageNameForClass, convertIllegalPackageChars(includedDirectoryRelativePath.toString()), classBytes)
+			counter.incrementAndGet()
 		}
 	}
 
@@ -82,7 +87,4 @@ class TestGenerator {
 		return !directory.empty ? "$packageNameForClass.${directoryToPackage(convertIllegalPackageChars(directory))}" : packageNameForClass
 	}
 
-	private static String normalizePath(String path) {
-		return FilenameUtils.separatorsToUnix(path)
-	}
 }
