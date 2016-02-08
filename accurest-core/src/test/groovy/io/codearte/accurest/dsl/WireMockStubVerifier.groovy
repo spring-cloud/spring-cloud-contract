@@ -1,4 +1,5 @@
 package io.codearte.accurest.dsl
+
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 
 import java.util.regex.Pattern

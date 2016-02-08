@@ -43,7 +43,7 @@ class MethodBuilder {
 		if (ignored) {
 			blockBuilder.addLine('@Ignore')
 		}
-		blockBuilder.addLine(configProperties.targetFramework.methodModifier + "$methodName() {")
+		blockBuilder.addLine(configProperties.targetFramework.methodModifier + "validate_$methodName() {")
 		getMethodBodyBuilder().appendTo(blockBuilder)
 		blockBuilder.addLine('}')
 	}

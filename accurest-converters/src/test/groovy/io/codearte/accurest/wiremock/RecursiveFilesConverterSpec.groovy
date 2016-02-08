@@ -73,7 +73,7 @@ class RecursiveFilesConverterSpec extends Specification {
 		and:
 			def singleFileConverterStub = Stub(SingleFileConverter)
 			singleFileConverterStub.canHandleFileName(_) >> { true }
-			singleFileConverterStub.convertContent(_) >> { throw new NullPointerException("Test conversion error") }
+			singleFileConverterStub.convertContent(_, _) >> { throw new NullPointerException("Test conversion error") }
 			singleFileConverterStub.generateOutputFileNameForInput(_) >> { String inputFileName -> "${inputFileName}2" }
 			AccurestConfigProperties properties = new AccurestConfigProperties()
 			properties.contractsDslDir = tmpFolder.root

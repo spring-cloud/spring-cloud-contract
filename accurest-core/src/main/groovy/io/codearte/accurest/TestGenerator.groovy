@@ -1,6 +1,6 @@
 package io.codearte.accurest
 
-import com.google.common.collect.Multimap
+import com.google.common.collect.ListMultimap
 import groovy.transform.PackageScope
 import io.codearte.accurest.config.AccurestConfigProperties
 import io.codearte.accurest.file.Contract
@@ -53,7 +53,7 @@ class TestGenerator {
 
 	@PackageScope
 	void generateTestClasses(final String basePackageName) {
-		Multimap<Path, Contract> contracts = contractFileScanner.findContracts()
+		ListMultimap<Path, Contract> contracts = contractFileScanner.findContracts()
 		contracts.asMap().entrySet().each {
 			Map.Entry<Path, Collection<Contract>> entry -> processIncludedDirectory(relativizeContractPath(entry), entry.getValue(), basePackageName)
 		}

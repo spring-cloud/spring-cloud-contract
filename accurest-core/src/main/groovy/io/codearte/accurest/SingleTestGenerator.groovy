@@ -21,8 +21,7 @@ class SingleTestGenerator {
 
 	@PackageScope
 	String buildClass(Collection<Contract> listOfFiles, String className, String classPackage) {
-		ClassBuilder clazz = createClass(capitalize(className), classPackage,
-				configProperties)
+		ClassBuilder clazz = createClass(capitalize(className), classPackage, configProperties)
 
 		if (configProperties.imports) {
 			configProperties.imports.each {
@@ -30,14 +29,19 @@ class SingleTestGenerator {
 			}
 		}
 
-		if (listOfFiles.ignored.find {it}) {
-			clazz.addImport("org.junit.Ignore")
+		if (listOfFiles.ignored.find { it }) {
+			clazz.addImport(configProperties.targetFramework.getIgnoreClass())
 		}
 
 		if (configProperties.staticImports) {
 			configProperties.staticImports.each {
 				clazz.addStaticImport(it)
 			}
+		}
+
+		if (isScenarioClass(listOfFiles)) {
+			clazz.addImport(configProperties.targetFramework.getOrderAnnotationImport())
+			clazz.addClassLevelAnnotation(configProperties.targetFramework.getOrderAnnotation())
 		}
 
 		if (configProperties.testMode == TestMode.JAXRSCLIENT) {
@@ -66,10 +70,14 @@ class SingleTestGenerator {
 		return clazz.build()
 	}
 
+	private boolean isScenarioClass(Collection<Contract> listOfFiles) {
+		listOfFiles.find({ it.order != null }) != null
+	}
+
 	private ClassBuilder addJsonPathRelatedImports(ClassBuilder clazz) {
 		clazz.addImport(['com.jayway.jsonpath.DocumentContext',
-						 'com.jayway.jsonpath.JsonPath',
-						 'net.minidev.json.JSONArray'])
+		                 'com.jayway.jsonpath.JsonPath',
+		                 'net.minidev.json.JSONArray'])
 	}
 
 }
