@@ -1,6 +1,7 @@
 package io.codearte.accurest
 
 import groovy.transform.PackageScope
+import groovy.util.logging.Slf4j
 import io.codearte.accurest.builder.ClassBuilder
 import io.codearte.accurest.config.AccurestConfigProperties
 import io.codearte.accurest.config.TestFramework
@@ -11,7 +12,11 @@ import static io.codearte.accurest.builder.ClassBuilder.createClass
 import static io.codearte.accurest.builder.MethodBuilder.createTestMethod
 import static io.codearte.accurest.util.NamesUtil.capitalize
 
+@Slf4j
 class SingleTestGenerator {
+
+	private static final String JSON_ASSERT_STATIC_IMPORT = 'com.blogspot.toomuchcoding.jsonassert.JsonAssertion.assertThat'
+	private static final String JSON_ASSERT_CLASS = 'com.blogspot.toomuchcoding.jsonassert.JsonAssertion'
 
 	private final AccurestConfigProperties configProperties
 
@@ -76,8 +81,20 @@ class SingleTestGenerator {
 
 	private ClassBuilder addJsonPathRelatedImports(ClassBuilder clazz) {
 		clazz.addImport(['com.jayway.jsonpath.DocumentContext',
-		                 'com.jayway.jsonpath.JsonPath',
-		                 'net.minidev.json.JSONArray'])
+		                 'com.jayway.jsonpath.JsonPath'])
+		if (jsonAssertPresent()) {
+			clazz.addStaticImport(JSON_ASSERT_STATIC_IMPORT)
+		}
+	}
+
+	private static boolean jsonAssertPresent() {
+		try {
+			Class.forName(JSON_ASSERT_CLASS)
+			return true
+		} catch (ClassNotFoundException e) {
+			log.debug("JsonAssert is not present on classpath. Will not add a static import")
+			return false
+		}
 	}
 
 }

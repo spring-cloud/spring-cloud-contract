@@ -35,6 +35,11 @@ class AccurestConfigProperties {
 	String ruleClassForTests
 
 	/**
+	 * Which version of JSON Assert (com.blogspot.toomuchcoding:jsonassert) to use
+	 */
+	String jsonAssertVersion = "+"
+
+	/**
 	 * Patterns that should not be taken into account for processing
 	 */
 	List<String> excludedFiles = []

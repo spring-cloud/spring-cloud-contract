@@ -26,4 +26,15 @@ class Headers {
 		}
 	}
 
+	boolean equals(o) {
+		if (this.is(o)) return true
+		if (getClass() != o.class) return false
+		Headers headers = (Headers) o
+		if (entries != headers.entries) return false
+		return true
+	}
+
+	int hashCode() {
+		return entries.hashCode()
+	}
 }
