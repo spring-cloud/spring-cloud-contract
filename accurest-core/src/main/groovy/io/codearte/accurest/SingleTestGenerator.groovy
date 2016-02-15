@@ -92,7 +92,7 @@ class SingleTestGenerator {
 			Class.forName(JSON_ASSERT_CLASS)
 			return true
 		} catch (ClassNotFoundException e) {
-			log.debug("JsonAssert is not present on classpath. Will not add a static import")
+			log.debug("JsonAssert is not present on classpath. Will not add a static import.")
 			return false
 		}
 	}

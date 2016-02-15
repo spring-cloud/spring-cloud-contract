@@ -6,7 +6,7 @@ import com.blogspot.toomuchcoding.jsonassert.JsonVerifiable;
  * @author Marcin Grzejszczak
  */
 public interface MethodBufferingJsonVerifiable
-		extends JsonVerifiable, MethodBuffering, MethodBufferingReadyToCheck {
+		extends JsonVerifiable, MethodBuffering {
 	@Override
 	MethodBufferingJsonVerifiable contains(Object value);
 

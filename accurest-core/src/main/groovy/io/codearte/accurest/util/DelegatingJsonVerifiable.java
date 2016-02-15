@@ -32,11 +32,19 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 				value.toString();
 	}
 
+	private void appendMethodWithValue(String methodName, Object value) {
+		methodsBuffer.append(".").append(methodName).append("(").append(value)
+				.append(")");
+	}
+
+	private void appendMethodWithQuotedValue(String methodName, Object value) {
+		appendMethodWithValue(methodName, wrapValueWithQuotes(value));
+	}
+
 	@Override
 	public MethodBufferingJsonVerifiable contains(Object value) {
 		DelegatingJsonVerifiable verifiable = new FinishedDelegatingJsonVerifiable(delegate.contains(value), methodsBuffer);
-		verifiable.methodsBuffer.append(".contains(").append(wrapValueWithQuotes(value))
-				.append(")");
+		verifiable.appendMethodWithQuotedValue("contains", value);
 		if (isAssertingAValueInArray()) {
 			verifiable.methodsBuffer.append(".value()");
 		}
@@ -48,11 +56,9 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 		Object valueToPut = value instanceof ShouldTraverse ? ((ShouldTraverse) value).value : value;
 		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(delegate.field(valueToPut), methodsBuffer);
 		if (delegate.isIteratingOverArray() && !(value instanceof ShouldTraverse)) {
-			verifiable.methodsBuffer.append(".contains(").append(wrapValueWithQuotes(valueToPut))
-					.append(")");
+			verifiable.appendMethodWithQuotedValue("contains", valueToPut);
 		} else {
-			verifiable.methodsBuffer.append(".field(").append(wrapValueWithQuotes(valueToPut))
-					.append(")");
+			verifiable.appendMethodWithQuotedValue("field", valueToPut);
 		}
 		return verifiable;
 	}
@@ -60,16 +66,14 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 	@Override
 	public MethodBufferingJsonVerifiable array(Object value) {
 		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(delegate.array(value), methodsBuffer);
-		verifiable.methodsBuffer.append(".array(").append(wrapValueWithQuotes(value))
-				.append(")");
+		verifiable.appendMethodWithQuotedValue("array", value);
 		return verifiable;
 	}
 
 	@Override
 	public MethodBufferingJsonVerifiable arrayField(Object value) {
 		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(delegate.field(value).arrayField(), methodsBuffer);
-		verifiable.methodsBuffer.append(".array(").append(wrapValueWithQuotes(value))
-				.append(")");
+		verifiable.appendMethodWithQuotedValue("array", value);
 		return verifiable;
 	}
 
@@ -96,8 +100,7 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 		if (delegate.isAssertingAValueInArray()) {
 			readyToCheck.methodsBuffer.append(".value()");
 		} else {
-			readyToCheck.methodsBuffer.append(".isEqualTo(")
-					.append(wrapValueWithQuotes(value)).append(")");
+			readyToCheck.appendMethodWithQuotedValue("isEqualTo", value);
 		}
 		return readyToCheck;
 	}
@@ -116,8 +119,7 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 		if (delegate.isAssertingAValueInArray()) {
 			readyToCheck.methodsBuffer.append(".value()");
 		} else {
-			readyToCheck.methodsBuffer.append(".isEqualTo(").append(String.valueOf(value))
-					.append(")");
+			readyToCheck.appendMethodWithValue("isEqualTo", String.valueOf(value));
 		}
 		return readyToCheck;
 	}
@@ -135,8 +137,7 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 		if (delegate.isAssertingAValueInArray()) {
 			readyToCheck.methodsBuffer.append(".value()");
 		} else {
-			readyToCheck.methodsBuffer.append(".matches(").append(wrapValueWithQuotes(value))
-					.append(")");
+			readyToCheck.appendMethodWithQuotedValue("matches", value);
 		}
 		return readyToCheck;
 	}
@@ -147,8 +148,7 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 		if (delegate.isAssertingAValueInArray()) {
 			readyToCheck.methodsBuffer.append(".value()");
 		} else {
-			readyToCheck.methodsBuffer.append(".isEqualTo(").append(String.valueOf(value))
-					.append(")");
+			readyToCheck.appendMethodWithValue("isEqualTo", String.valueOf(value));
 		}
 		return readyToCheck;
 	}
