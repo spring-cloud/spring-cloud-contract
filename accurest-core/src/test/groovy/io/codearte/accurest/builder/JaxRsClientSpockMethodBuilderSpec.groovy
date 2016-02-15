@@ -29,8 +29,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("\$[?(@.property1 == 'a')]")
-			blockBuilder.toString().contains("\$[?(@.property2 == 'b')]")
+			blockBuilder.toString().contains("""assertThat(parsedJson).field("property1").isEqualTo("a")""")
+			blockBuilder.toString().contains("""assertThat(parsedJson).field("property2").isEqualTo("b")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -57,9 +57,9 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("\$[?(@.property1 == 'true')]")
-			blockBuilder.toString().contains("\$[?(@.property2 == null)]")
-			blockBuilder.toString().contains("\$[?(@.property3 == false)]")
+			blockBuilder.toString().contains("""assertThat(parsedJson).field("property3").isEqualTo(false)""")
+			blockBuilder.toString().contains("""assertThat(parsedJson).field("property2").isNull()""")
+			blockBuilder.toString().contains("""assertThat(parsedJson).field("property1").isEqualTo("true")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -88,9 +88,9 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("\$[?(@.property1 == 'a')]")
-			blockBuilder.toString().contains("\$.property2[*][?(@.a == 'sth')]")
-			blockBuilder.toString().contains("\$.property2[*][?(@.b == 'sthElse')]")
+			blockBuilder.toString().contains("""assertThat(parsedJson).field("property1").isEqualTo("a")""")
+			blockBuilder.toString().contains("""assertThat(parsedJson).array("property2").contains("a").isEqualTo("sth")""")
+			blockBuilder.toString().contains("""assertThat(parsedJson).array("property2").contains("b").isEqualTo("sthElse")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -115,7 +115,7 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("entity('{\"items\":[\"HOP\"]}', 'application/json')")
+			blockBuilder.toString().contains("""entity('{\"items\":[\"HOP\"]}', 'application/json')""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -140,7 +140,7 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("entity('property1=VAL1', 'application/octet-stream')")
+			blockBuilder.toString().contains("""entity('property1=VAL1', 'application/octet-stream')""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -168,8 +168,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("\$[*][?(@.property1 == 'a')]")
-			blockBuilder.toString().contains("\$[*][?(@.property2 == 'b')]")
+			blockBuilder.toString().contains("""assertThat(parsedJson).array().contains("property1").isEqualTo("a")""")
+			blockBuilder.toString().contains("""assertThat(parsedJson).array().contains("property2").isEqualTo("b")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -196,8 +196,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("\$.property1[*][?(@.property3 == 'test2')]")
-			blockBuilder.toString().contains("\$.property1[*][?(@.property2 == 'test1')]")
+			blockBuilder.toString().contains("""assertThat(parsedJson).array("property1").contains("property2").isEqualTo("test1")""")
+			blockBuilder.toString().contains("""assertThat(parsedJson).array("property1").contains("property3").isEqualTo("test2")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -224,8 +224,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("\$.property2[?(@.property3 == 'b')]")
-			blockBuilder.toString().contains("\$[?(@.property1 == 'a')]")
+			blockBuilder.toString().contains("""assertThat(parsedJson).field("property2").field("property3").isEqualTo("b")""")
+			blockBuilder.toString().contains("""assertThat(parsedJson).field("property1").isEqualTo("a")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -258,15 +258,15 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("\$[?(@.property2 =~ /[0-9]{3}/)]")
-			blockBuilder.toString().contains("\$[?(@.property1 == 'a')]")
+			blockBuilder.toString().contains("""assertThat(parsedJson).field("property2").matches("[0-9]{3}")""")
+			blockBuilder.toString().contains("""assertThat(parsedJson).field("property1").isEqualTo("a")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate regex assertions for string objects in response body"() {
 		given:
-			GroovyDsl contractDsl = GroovyDsl.make {
+		GroovyDsl contractDsl = GroovyDsl.make {
 				request {
 					method "GET"
 					url "test"
@@ -286,8 +286,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("\$[?(@.property2 =~ /[0-9]{3}/)]")
-			blockBuilder.toString().contains("\$[?(@.property1 == 'a')]")
+			blockBuilder.toString().contains("""assertThat(parsedJson).field("property2").matches("[0-9]{3}")""")
+			blockBuilder.toString().contains("""assertThat(parsedJson).field("property1").isEqualTo("a")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -337,9 +337,9 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("entity('', 'text/plain')")
-			blockBuilder.toString().contains("header('Timer', '123')")
-			!blockBuilder.toString().contains("header('Content-Type'")
+			blockBuilder.toString().contains("""entity('', 'text/plain')""")
+			blockBuilder.toString().contains("""header('Timer', '123')""")
+			!blockBuilder.toString().contains("""header('Content-Type'""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -388,8 +388,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 			spockTest.contains("queryParam('age', '99'")
 			spockTest.contains("queryParam('name', 'Denis.Stepanov'")
 			spockTest.contains("queryParam('email', 'bob@email.com'")
-			spockTest.contains('$[?(@.property2 == \'b\')]')
-			spockTest.contains('$[?(@.property1 == \'a\')]')
+			spockTest.contains("""assertThat(parsedJson).field("property1").isEqualTo("a")""")
+			spockTest.contains("""assertThat(parsedJson).field("property2").isEqualTo("b")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -439,8 +439,8 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 			spockTest.contains("queryParam('age', '99'")
 			spockTest.contains("queryParam('name', 'Denis.Stepanov'")
 			spockTest.contains("queryParam('email', 'bob@email.com'")
-			spockTest.contains('$[?(@.property2 == \'b\')]')
-			spockTest.contains('$[?(@.property1 == \'a\')]')
+			spockTest.contains("""assertThat(parsedJson).field("property1").isEqualTo("a")""")
+			spockTest.contains("""assertThat(parsedJson).field("property2").isEqualTo("b")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -486,7 +486,7 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 			builder.appendTo(blockBuilder)
 			def spockTest = blockBuilder.toString()
 		then:
-			spockTest.contains('String responseAsString = response.readEntity(String)')
+			spockTest.contains("String responseAsString = response.readEntity(String)")
 			spockTest.contains('responseBody == "test"')
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())

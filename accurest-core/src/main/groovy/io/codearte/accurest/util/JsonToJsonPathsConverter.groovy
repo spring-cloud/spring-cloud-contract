@@ -1,9 +1,12 @@
 package io.codearte.accurest.util
-import java.util.regex.Pattern
+
+import com.blogspot.toomuchcoding.jsonassert.JsonAssertion
+import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import io.codearte.accurest.dsl.internal.ExecutionProperty
 import io.codearte.accurest.dsl.internal.OptionalProperty
 
+import java.util.regex.Pattern
 /**
  * @author Marcin Grzejszczak
  */
@@ -11,9 +14,6 @@ class JsonToJsonPathsConverter {
 
 	private static final Boolean SERVER_SIDE = false
 	private static final Boolean CLIENT_SIDE = true
-
-	public static final String ROOT_JSON_PATH_ELEMENT = '$'
-	public static final String ALL_ELEMENTS = "[*]"
 
 	public static JsonPaths transformToJsonPathWithTestsSideValues(def json) {
 		return transformToJsonPathWithValues(json, SERVER_SIDE)
@@ -29,17 +29,19 @@ class JsonToJsonPathsConverter {
 		}
 		JsonPaths pathsAndValues = [] as Set
 		Object convertedJson = MapConverter.getClientOrServerSideValues(json, clientSide)
-		traverseRecursivelyForKey(convertedJson, ROOT_JSON_PATH_ELEMENT) { String key, Object value ->
-			if (value instanceof ExecutionProperty) {
+		MethodBufferingJsonVerifiable methodBufferingJsonPathVerifiable =
+				new DelegatingJsonVerifiable(JsonAssertion.assertThat(JsonOutput.toJson(convertedJson)).withoutThrowingException())
+		traverseRecursivelyForKey(convertedJson, methodBufferingJsonPathVerifiable)
+				 { MethodBufferingJsonVerifiable key, Object value ->
+			if (value instanceof ExecutionProperty || !(key instanceof FinishedDelegatingJsonVerifiable)) {
 				return
 			}
-			JsonPathEntry entry = getValueToInsert(key, value)
-			pathsAndValues.add(entry)
+			pathsAndValues.add(key)
 		}
 		return pathsAndValues
 	}
 
-	protected static def traverseRecursively(Class parentType, String key, def value, Closure closure) {
+	protected static def traverseRecursively(Class parentType, MethodBufferingJsonVerifiable key, def value, Closure closure) {
 		if (value instanceof String && value) {
 			try {
 				def json = new JsonSlurper().parseText(value)
@@ -47,7 +49,7 @@ class JsonToJsonPathsConverter {
 					return convertWithKey(parentType, key, json, closure)
 				}
 			} catch (Exception ignore) {
-				return closure(key, value)
+				return runClosure(closure, key, value)
 			}
 		} else if (isAnEntryWithNonCollectionLikeValue(value)) {
 			return convertWithKey(List, key, value as Map, closure)
@@ -56,16 +58,49 @@ class JsonToJsonPathsConverter {
 		} else if (value instanceof Map) {
 			return convertWithKey(Map, key, value as Map, closure)
 		} else if (value instanceof List) {
+			MethodBufferingJsonVerifiable jsonPathVerifiable = createAsserterFromList(key, value)
 			value.each { def element ->
-				traverseRecursively(List, "$key[*]", element, closure)
+				traverseRecursively(List, createAsserterFromListElement(jsonPathVerifiable, element),
+						element, closure)
 			}
 			return value
+		} else if (key.isIteratingOverArray()) {
+			traverseRecursively(Object, key.arrayField().contains(value), value, closure)
 		}
 		try {
-			return closure(key, value)
+			return runClosure(closure, key, value)
 		} catch (Exception ignore) {
 			return value
 		}
+	}
+
+	private static MethodBufferingJsonVerifiable createAsserterFromList(MethodBufferingJsonVerifiable key, List value) {
+		if (key.isIteratingOverNamelessArray()) {
+			return key.array()
+		} else if (key.isIteratingOverArray() && isAnEntryWithLists(value)) {
+			if (!value.every { listContainsOnlyPrimitives(it as List)} ) {
+				return key.array()
+			} else {
+				return key.iterationPassingArray()
+			}
+		} else if (key.isIteratingOverArray()) {
+			return key.iterationPassingArray()
+		}
+		return key
+	}
+
+	private static MethodBufferingJsonVerifiable createAsserterFromListElement(MethodBufferingJsonVerifiable jsonPathVerifiable, def element) {
+		if (jsonPathVerifiable.isAssertingAValueInArray()) {
+			return jsonPathVerifiable.contains(element)
+		}
+		return jsonPathVerifiable
+	}
+
+	private static def runClosure(Closure closure, MethodBufferingJsonVerifiable key, def value) {
+		if (key.isAssertingAValueInArray()) {
+			return closure(valueToAsserter(key, value), value)
+		}
+		return closure(key, value)
 	}
 
 	private static boolean isAnEntryWithNonCollectionLikeValue(def value) {
@@ -87,74 +122,52 @@ class JsonToJsonPathsConverter {
 		}
 		Map valueAsMap = ((Map) value)
 		return valueAsMap.entrySet().every { Map.Entry entry ->
-			[String, Number].any { entry.value.getClass().isAssignableFrom(it) }
+			[String, Number, Boolean].any { it.isAssignableFrom(entry.value.getClass()) }
 		}
 	}
 
-	private static Map convertWithKey(Class parentType, String parentKey, Map map, Closure closureToExecute) {
+	private static boolean listContainsOnlyPrimitives(List list) {
+		return list.every { def element ->
+			[String, Number, Boolean].any {
+				it.isAssignableFrom(element.getClass())
+			}
+		}
+	}
+	private static boolean isAnEntryWithLists(def value) {
+		if (!(value instanceof Iterable)) {
+			return false
+		}
+		return value.every { def entry ->
+			entry instanceof List
+		}
+	}
+
+	private static Map convertWithKey(Class parentType, MethodBufferingJsonVerifiable parentKey, Map map, Closure closureToExecute) {
 		return map.collectEntries {
 			Object entrykey, value ->
-				[entrykey, traverseRecursively(parentType, "${parentKey}.${entrykey}", value, closureToExecute)]
+				[entrykey, traverseRecursively(parentType,
+							value instanceof List ? listContainsOnlyPrimitives(value) ?
+									parentKey.arrayField(entrykey) :
+									parentKey.array(entrykey) :
+							value instanceof Map ? parentKey.field(new ShouldTraverse(entrykey)) :
+									valueToAsserter(parentKey.field(entrykey), value)
+							, value, closureToExecute)]
 		}
 	}
 
-	private static void traverseRecursivelyForKey(def json, String rootKey, Closure closure) {
+	private static void traverseRecursivelyForKey(def json, MethodBufferingJsonVerifiable rootKey, Closure closure) {
 		traverseRecursively(Map, rootKey, json, closure)
 	}
 
-	private static JsonPathEntry getValueToInsert(String key, Object value) {
-		return convertToListElementFiltering(key, value)
-	}
-
-	protected static JsonPathEntry convertToListElementFiltering(String key, Object value) {
-		if (key.endsWith(ALL_ELEMENTS)) {
-			int lastAllElements = key.lastIndexOf(ALL_ELEMENTS)
-			String keyWithoutAllElements = key.substring(0, lastAllElements)
-			return JsonPathEntry.simple("""$keyWithoutAllElements[?(@ ${compareWith(value)})]""".toString(), value)
-		}
-		return getKeyForTraversalOfListWithNonPrimitiveTypes(key, value)
-	}
-
-	private static JsonPathEntry getKeyForTraversalOfListWithNonPrimitiveTypes(String key, Object value) {
-		int lastDot = key.lastIndexOf('.')
-		String keyWithoutLastElement = key.substring(0, lastDot)
-		String lastElement = key.substring(lastDot + 1).replaceAll(~/\[\*\]/, "")
-		return new JsonPathEntry(
-				"""$keyWithoutLastElement[?(@.$lastElement ${compareWith(value)})]""".toString(),
-				lastElement,
-				value
-		)
-	}
-
-	protected static String compareWith(Object value) {
+	protected static MethodBufferingJsonVerifiable valueToAsserter(MethodBufferingJsonVerifiable key, Object value) {
 		if (value instanceof Pattern) {
-			return patternComparison((value as Pattern).pattern())
+			return key.matches((value as Pattern).pattern())
 		} else if (value instanceof OptionalProperty) {
-			return patternComparison((value as OptionalProperty).optionalPattern())
+			return key.matches((value as OptionalProperty).optionalPattern())
 		} else if (value instanceof GString) {
-			return """=~ /${RegexpBuilders.buildGStringRegexpForTestSide(value)}/"""
+			return key.matches(RegexpBuilders.buildGStringRegexpForTestSide(value))
 		}
-		return """== ${potentiallyWrappedWithQuotesValue(value)}"""
-	}
-
-	protected static String patternComparison(String pattern){
-		return """=~ /$pattern/"""
-	}
-
-	protected static String potentiallyWrappedWithQuotesValue(Object value) {
-		return isNumber(value) || isBoolean(value) || isNull(value) ? value : "'$value'"
-	}
-
-	private static boolean isNull(value) {
-		return value == null
-	}
-
-	private static boolean isBoolean(value) {
-		return value instanceof Boolean
-	}
-
-	private static boolean isNumber(value) {
-		return value instanceof Number
+		return key.isEqualTo(value)
 	}
 
 }
