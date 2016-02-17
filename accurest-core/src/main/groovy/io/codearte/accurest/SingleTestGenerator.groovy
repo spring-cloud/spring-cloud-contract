@@ -59,8 +59,6 @@ class SingleTestGenerator {
 
 		if (configProperties.targetFramework == TestFramework.JUNIT) {
 			clazz.addImport('org.junit.Test')
-		} else {
-			clazz.addImport('groovy.json.JsonSlurper')
 		}
 
 		if (configProperties.ruleClassForTests) {
