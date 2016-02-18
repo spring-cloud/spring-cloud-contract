@@ -62,4 +62,19 @@ abstract class JUnitMethodBodyBuilder extends MethodBodyBuilder {
 	protected String convertUnicodeEscapesIfRequired(String json) {
 		return json             // TODO: verify if that's fine or escapeJava required
 	}
+
+	@Override
+	protected void processBodyElement(BlockBuilder blockBuilder, String property, Map.Entry entry) {
+		processBodyElement(blockBuilder, property + """.get(\\\"$entry.key\\\")""", entry.value)
+	}
+
+	@Override
+	protected String getParsedXmlResponseBodyString(String responseString) {
+		return "Object responseBody = new XmlSlurper().parseText($responseString);"
+	}
+
+	@Override
+	protected String getSimpleResponseBodyString(String responseString) {
+		return "Object responseBody = ($responseString);"
+	}
 }

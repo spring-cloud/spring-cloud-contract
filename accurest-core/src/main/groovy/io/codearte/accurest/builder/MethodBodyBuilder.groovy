@@ -61,6 +61,10 @@ abstract class MethodBodyBuilder {
 
 	protected abstract String convertUnicodeEscapesIfRequired(String json)
 
+	protected abstract String getParsedXmlResponseBodyString(String responseString)
+
+	protected abstract String getSimpleResponseBodyString(String responseString)
+
 	void appendTo(BlockBuilder blockBuilder) {
 		blockBuilder.startBlock()
 
@@ -118,10 +122,10 @@ abstract class MethodBodyBuilder {
 			}
 			processBodyElement(bb, "", responseBody)
 		} else if (contentType == ContentType.XML) {
-			bb.addLine("def responseBody = new XmlSlurper().parseText($responseAsString)")
+			bb.addLine(getParsedXmlResponseBodyString(responseAsString))
 			// TODO xml validation
 		}   else {
-			bb.addLine("def responseBody = ($responseAsString)")
+			bb.addLine(getSimpleResponseBodyString(responseAsString))
 			processText(bb, "", responseBody as String)
 		}
 	}

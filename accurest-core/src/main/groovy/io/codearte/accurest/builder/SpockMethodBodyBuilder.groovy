@@ -67,7 +67,18 @@ abstract class SpockMethodBodyBuilder extends MethodBodyBuilder {
 		"$property[$listIndex]" ?: ''
 	}
 
+	@Override
 	protected String convertUnicodeEscapesIfRequired(String json) {
 		return StringEscapeUtils.unescapeJavaScript(json)
+	}
+
+	@Override
+	protected String getParsedXmlResponseBodyString(String responseString) {
+		return "def responseBody = new XmlSlurper().parseText($responseAsString)"
+	}
+
+	@Override
+	protected String getSimpleResponseBodyString(String responseString) {
+		return "def responseBody = ($responseAsString)"
 	}
 }
