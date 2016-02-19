@@ -152,7 +152,7 @@ abstract class MethodBodyBuilder {
 			appendJsonPath(bb, getResponseAsString())
 			JsonPaths jsonPaths = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(responseBody)
 			jsonPaths.each {
-				bb.addLine("assertThat(parsedJson)" + it.method())
+				bb.addLine("assertThatJson(parsedJson)" + it.method())
 				addColonIfRequired(bb)
 			}
 			processBodyElement(bb, "", responseBody)

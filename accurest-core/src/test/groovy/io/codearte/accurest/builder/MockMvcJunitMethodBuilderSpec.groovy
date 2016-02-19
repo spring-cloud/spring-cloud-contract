@@ -4,7 +4,7 @@ import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.WireMockStubStrategy
 import io.codearte.accurest.dsl.WireMockStubVerifier
 import io.codearte.accurest.file.Contract
-import jdk.nashorn.internal.ir.annotations.Ignore
+import spock.lang.Ignore
 import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -37,8 +37,8 @@ class MockMvcJunitMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains('assertThat(parsedJson).field("property1").isEqualTo("a");')
-			blockBuilder.toString().contains('assertThat(parsedJson).field("property2").isEqualTo("b");')
+			blockBuilder.toString().contains('assertThatJson(parsedJson).field("property1").isEqualTo("a");')
+			blockBuilder.toString().contains('assertThatJson(parsedJson).field("property2").isEqualTo("b");')
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -65,9 +65,9 @@ class MockMvcJunitMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property1").isEqualTo("true");""")
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property2").isNull();""")
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property3").isEqualTo(false);""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("true");""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").isNull();""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property3").isEqualTo(false);""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -96,9 +96,9 @@ class MockMvcJunitMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property1").isEqualTo("a");""")
-			blockBuilder.toString().contains("""assertThat(parsedJson).array("property2").contains("a").isEqualTo("sth");""")
-			blockBuilder.toString().contains("""assertThat(parsedJson).array("property2").contains("b").isEqualTo("sthElse");""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a");""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("a").isEqualTo("sth");""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("b").isEqualTo("sthElse");""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -176,8 +176,8 @@ class MockMvcJunitMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property").field(7).isEqualTo(0.0);""")
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property").field(14).isEqualTo(0.0);""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property").field(7).isEqualTo(0.0);""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property").field(14).isEqualTo(0.0);""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -205,8 +205,8 @@ class MockMvcJunitMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThat(parsedJson).array().contains("property2").isEqualTo("b");""")
-			blockBuilder.toString().contains("""assertThat(parsedJson).array().contains("property1").isEqualTo("a");""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array().contains("property2").isEqualTo("b");""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array().contains("property1").isEqualTo("a");""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -233,8 +233,8 @@ class MockMvcJunitMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThat(parsedJson).array("property1").contains("property2").isEqualTo("test1");""")
-			blockBuilder.toString().contains("""assertThat(parsedJson).array("property1").contains("property3").isEqualTo("test2");""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property1").contains("property2").isEqualTo("test1");""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property1").contains("property3").isEqualTo("test2");""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -261,8 +261,8 @@ class MockMvcJunitMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property2").field("property3").isEqualTo("b");""")
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property1").isEqualTo("a");""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").field("property3").isEqualTo("b");""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a");""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -295,8 +295,8 @@ class MockMvcJunitMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property2").matches("[0-9]{3}");""")
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property1").isEqualTo("a");""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").matches("[0-9]{3}");""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a");""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -324,8 +324,8 @@ class MockMvcJunitMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property2").matches("[0-9]{3}");""")
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property1").isEqualTo("a");""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").matches("[0-9]{3}");""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a");""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -351,7 +351,7 @@ class MockMvcJunitMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property").matches("\\\\d+");""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property").matches("\\\\d+");""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -393,8 +393,8 @@ class MockMvcJunitMethodBuilderSpec extends Specification implements WireMockStu
 			def jUnitTest = blockBuilder.toString()
 		then:
 			jUnitTest.contains('get("/users?limit=10&offset=20&filter=email&sort=name&search=55&age=99&name=Denis.Stepanov&email=bob@email.com")')
-			jUnitTest.contains('assertThat(parsedJson).field("property1").isEqualTo("a")')
-			jUnitTest.contains('assertThat(parsedJson).field("property2").isEqualTo("b")')
+			jUnitTest.contains('assertThatJson(parsedJson).field("property1").isEqualTo("a")')
+			jUnitTest.contains('assertThatJson(parsedJson).field("property2").isEqualTo("b")')
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -437,8 +437,8 @@ class MockMvcJunitMethodBuilderSpec extends Specification implements WireMockStu
 			def jUnitTest = blockBuilder.toString()
 		then:
 			jUnitTest.contains('get("/foo/123456?limit=10&offset=20&filter=email&sort=name&search=55&age=99&name=Denis.Stepanov&email=bob@email.com")')
-			jUnitTest.contains('assertThat(parsedJson).field("property1").isEqualTo("a")')
-			jUnitTest.contains('assertThat(parsedJson).field("property2").isEqualTo("b")')
+			jUnitTest.contains('assertThatJson(parsedJson).field("property1").isEqualTo("a")')
+			jUnitTest.contains('assertThatJson(parsedJson).field("property2").isEqualTo("b")')
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -591,8 +591,8 @@ class MockMvcJunitMethodBuilderSpec extends Specification implements WireMockStu
 			builder.appendTo(blockBuilder)
 			def jUnitTest = blockBuilder.toString()
 		then:
-			jUnitTest.contains("""assertThat(parsedJson).array("errors").contains("property").isEqualTo("bank_account_number");""")
-			jUnitTest.contains("""assertThat(parsedJson).array("errors").contains("message").isEqualTo("incorrect_format");""")
+			jUnitTest.contains("""assertThatJson(parsedJson).array("errors").contains("property").isEqualTo("bank_account_number");""")
+			jUnitTest.contains("""assertThatJson(parsedJson).array("errors").contains("message").isEqualTo("incorrect_format");""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 
@@ -659,7 +659,7 @@ class MockMvcJunitMethodBuilderSpec extends Specification implements WireMockStu
 			builder.appendTo(blockBuilder)
 			def jUnitTest = blockBuilder.toString()
 		then:
-			jUnitTest.contains('''$[?(@.message =~ /User not found by email = \\\\[[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4}\\\\]/)]''')
+			jUnitTest.contains('''assertThatJson(parsedJson).field("message").matches("User not found by email = \\\\\\\\[[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\\\\\.[a-zA-Z]{2,4}\\\\\\\\]");''')
 	}
 
 
@@ -674,7 +674,7 @@ class MockMvcJunitMethodBuilderSpec extends Specification implements WireMockStu
 			def jUnitTest = blockBuilder.toString()
 		then:
 			jUnitTest.contains('\\"email\\":\\"abc@abc.com\\"')
-			jUnitTest.contains('assertThat(parsedJson).field("code").matches("(123123)?");')
+			jUnitTest.contains('assertThatJson(parsedJson).field("code").matches("(123123)?");')
 			!jUnitTest.contains('''REGEXP''')
 			!jUnitTest.contains('''OPTIONAL''')
 			!jUnitTest.contains('''OptionalProperty''')
@@ -940,8 +940,8 @@ World.'''""")
 	}
 
 	@Issue('180')
-	@Ignore
 	//TODO: fix multiparts in JUnit
+	@Ignore
 	def "should generate proper test code when having multipart parameters with named as map"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -968,6 +968,5 @@ World.'''""")
 		then:
 			jUnitTest.contains('.multiPart')
 	}
-
 
 }

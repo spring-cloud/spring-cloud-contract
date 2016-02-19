@@ -9,6 +9,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.util.regex.Pattern
+
 /**
  * @author Jakub Kubrynski
  */
@@ -34,8 +35,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property1").isEqualTo("a")""")
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property2").isEqualTo("b")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").isEqualTo("b")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -62,9 +63,9 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property1").isEqualTo("true")""")
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property2").isNull()""")
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property3").isEqualTo(false)""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("true")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").isNull()""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property3").isEqualTo(false)""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -93,9 +94,9 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property1").isEqualTo("a")""")
-			blockBuilder.toString().contains("""assertThat(parsedJson).array("property2").contains("a").isEqualTo("sth")""")
-			blockBuilder.toString().contains("""assertThat(parsedJson).array("property2").contains("b").isEqualTo("sthElse")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("a").isEqualTo("sth")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("b").isEqualTo("sthElse")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -173,8 +174,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property").field(7).isEqualTo(0.0)""")
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property").field(14).isEqualTo(0.0)""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property").field(7).isEqualTo(0.0)""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property").field(14).isEqualTo(0.0)""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -202,8 +203,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThat(parsedJson).array().contains("property2").isEqualTo("b")""")
-			blockBuilder.toString().contains("""assertThat(parsedJson).array().contains("property1").isEqualTo("a")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array().contains("property2").isEqualTo("b")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array().contains("property1").isEqualTo("a")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -230,8 +231,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThat(parsedJson).array("property1").contains("property2").isEqualTo("test1")""")
-			blockBuilder.toString().contains("""assertThat(parsedJson).array("property1").contains("property3").isEqualTo("test2")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property1").contains("property2").isEqualTo("test1")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property1").contains("property3").isEqualTo("test2")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -258,15 +259,15 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property2").field("property3").isEqualTo("b")""")
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property1").isEqualTo("a")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").field("property3").isEqualTo("b")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate regex assertions for map objects in response body"() {
 		given:
-		GroovyDsl contractDsl = GroovyDsl.make {
+			GroovyDsl contractDsl = GroovyDsl.make {
 				request {
 					method "GET"
 					url "test"
@@ -292,38 +293,38 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property2").matches("[0-9]{3}")""")
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property1").isEqualTo("a")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").matches("[0-9]{3}")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	def "should generate regex assertions for string objects in response body"() {
 		given:
-		GroovyDsl contractDsl = GroovyDsl.make {
-			request {
-				method "GET"
-				url "test"
-			}
-			response {
-				status 200
-				body("""{"property1":"a","property2":"${value(client('123'), server(regex('[0-9]{3}')))}"}""")
-				headers {
-					header('Content-Type': 'application/json')
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method "GET"
+					url "test"
+				}
+				response {
+					status 200
+					body("""{"property1":"a","property2":"${value(client('123'), server(regex('[0-9]{3}')))}"}""")
+					headers {
+						header('Content-Type': 'application/json')
+
+					}
 
 				}
-
 			}
-		}
-		MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
-		BlockBuilder blockBuilder = new BlockBuilder(" ")
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
-		builder.appendTo(blockBuilder)
+			builder.appendTo(blockBuilder)
 		then:
-		blockBuilder.toString().contains("""assertThat(parsedJson).field("property2").matches("[0-9]{3}")""")
-		blockBuilder.toString().contains("""assertThat(parsedJson).field("property1").isEqualTo("a")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").matches("[0-9]{3}")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
 		and:
-		stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 
 	@Issue(["#126", "#143"])
@@ -347,7 +348,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThat(parsedJson).field("property").matches("\\d+")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property").matches("\\\\d+")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -389,8 +390,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			def spockTest = blockBuilder.toString()
 		then:
 			spockTest.contains('get("/users?limit=10&offset=20&filter=email&sort=name&search=55&age=99&name=Denis.Stepanov&email=bob@email.com")')
-			spockTest.contains('assertThat(parsedJson).field("property1").isEqualTo("a")')
-			spockTest.contains('assertThat(parsedJson).field("property2").isEqualTo("b")')
+			spockTest.contains('assertThatJson(parsedJson).field("property1").isEqualTo("a")')
+			spockTest.contains('assertThatJson(parsedJson).field("property2").isEqualTo("b")')
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -401,7 +402,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			GroovyDsl contractDsl = GroovyDsl.make {
 				request {
 					method 'GET'
-					url($(stub(regex('/foo/[0-9]+')), test('/foo/123456'))){
+					url($(stub(regex('/foo/[0-9]+')), test('/foo/123456'))) {
 						queryParameters {
 							parameter 'limit': $(client(equalTo("20")), server(equalTo("10")))
 							parameter 'offset': $(client(containing("20")), server(equalTo("20")))
@@ -433,8 +434,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			def spockTest = blockBuilder.toString()
 		then:
 			spockTest.contains('get("/foo/123456?limit=10&offset=20&filter=email&sort=name&search=55&age=99&name=Denis.Stepanov&email=bob@email.com")')
-			spockTest.contains('assertThat(parsedJson).field("property1").isEqualTo("a")')
-			spockTest.contains('assertThat(parsedJson).field("property2").isEqualTo("b")')
+			spockTest.contains('assertThatJson(parsedJson).field("property1").isEqualTo("a")')
+			spockTest.contains('assertThatJson(parsedJson).field("property2").isEqualTo("b")')
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -587,8 +588,8 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			builder.appendTo(blockBuilder)
 			def spockTest = blockBuilder.toString()
 		then:
-			spockTest.contains("""assertThat(parsedJson).array("errors").contains("property").isEqualTo("bank_account_number")""")
-			spockTest.contains("""assertThat(parsedJson).array("errors").contains("message").isEqualTo("incorrect_format")""")
+			spockTest.contains("""assertThatJson(parsedJson).array("errors").contains("property").isEqualTo("bank_account_number")""")
+			spockTest.contains("""assertThatJson(parsedJson).array("errors").contains("message").isEqualTo("incorrect_format")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
@@ -654,7 +655,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			builder.appendTo(blockBuilder)
 			def spockTest = blockBuilder.toString()
 		then:
-			spockTest.contains("""assertThat(parsedJson).field("message").matches("User not found by email = \\\\[[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4}\\\\]")""")
+			spockTest.contains("""assertThatJson(parsedJson).field("message").matches("User not found by email = \\\\\\\\[[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\\\\\.[a-zA-Z]{2,4}\\\\\\\\]")""")
 	}
 
 	@Issue('42')
@@ -668,67 +669,69 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 			def spockTest = blockBuilder.toString()
 		then:
 			spockTest.contains('''"email":"abc@abc.com"''')
-			spockTest.contains("""assertThat(parsedJson).field("code").matches("(123123)?")""")
+			spockTest.contains("""assertThatJson(parsedJson).field("code").matches("(123123)?")""")
 			!spockTest.contains('''REGEXP''')
 			!spockTest.contains('''OPTIONAL''')
 			!spockTest.contains('''OptionalProperty''')
 		where:
-		contractDsl << [
-				GroovyDsl.make {
-					priority 1
-					request {
-						method 'POST'
-						url '/users/password'
-						headers {
-							header 'Content-Type': 'application/json'
+			contractDsl << [
+					GroovyDsl.make {
+						priority 1
+						request {
+							method 'POST'
+							url '/users/password'
+							headers {
+								header 'Content-Type': 'application/json'
+							}
+							body(
+									email: $(stub(optional(regex(email()))), test('abc@abc.com')),
+									callback_url: $(stub(regex(hostname())), test('http://partners.com'))
+							)
 						}
-						body(
-								email: $(stub(optional(regex(email()))), test('abc@abc.com')),
-								callback_url: $(stub(regex(hostname())), test('http://partners.com'))
-						)
-					}
-					response {
-						status 404
-						headers {
-							header 'Content-Type': 'application/json'
+						response {
+							status 404
+							headers {
+								header 'Content-Type': 'application/json'
+							}
+							body(
+									code: value(stub("123123"), test(optional("123123"))),
+									message: "User not found by email = [${value(test(regex(email())), stub('not.existing@user.com'))}]"
+							)
 						}
-						body(
-								code: value(stub("123123"), test(optional("123123"))),
-								message: "User not found by email = [${value(test(regex(email())), stub('not.existing@user.com'))}]"
-						)
-					}
-				},
-				GroovyDsl.make {
-					priority 1
-					request {
-						method 'POST'
-						url '/users/password'
-						headers {
-							header 'Content-Type': 'application/json'
-						}
-						body(
-								""" {
+					},
+					GroovyDsl.make {
+						priority 1
+						request {
+							method 'POST'
+							url '/users/password'
+							headers {
+								header 'Content-Type': 'application/json'
+							}
+							body(
+									""" {
 								"email" : "${value(stub(optional(regex(email()))), test('abc@abc.com'))}",
 								"callback_url" : "${value(client(regex(hostname())), server('http://partners.com'))}"
 								}
 							"""
-						)
-					}
-					response {
-						status 404
-						headers {
-							header 'Content-Type': 'application/json'
+							)
 						}
-						body(
-								""" {
+						response {
+							status 404
+							headers {
+								header 'Content-Type': 'application/json'
+							}
+							body(
+									""" {
 								"code" : "${value(stub(123123), test(optional(123123)))}",
-								"message" : "User not found by email = [${value(server(regex(email())), client('not.existing@user.com'))}]"
+								"message" : "User not found by email = [${
+										value(server(regex(email())), client('not.existing@user.com'))
+									}]"
 								}
 							"""
-						)
+							)
+						}
 					}
-				}
-		]
+			]
 	}
 
 	@Issue('72')
@@ -753,7 +756,7 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 				}
 				response {
 					status 200
-					body( """{
+					body("""{
     "fraudCheckStatus": "OK",
     "rejectionReason": ${value(client(null), server(execute('assertThatRejectionReasonIsNull($it)')))}
 }""")
@@ -791,26 +794,26 @@ class MockMvcSpockMethodBuilderSpec extends Specification implements WireMockStu
 					}
 					body(
 							client: [
-									first_name: $(stub(regex(onlyAlphaUnicode())), test('Denis')),
-									last_name: $(stub(regex(onlyAlphaUnicode())), test('FakeName')),
-									email: $(stub(regex(email())), test('fakemail@fakegmail.com')),
-									fax: $(stub(PHONE_NUMBER), test('+xx001213214')),
-									phone: $(stub(PHONE_NUMBER), test('2223311')),
+									first_name   : $(stub(regex(onlyAlphaUnicode())), test('Denis')),
+									last_name    : $(stub(regex(onlyAlphaUnicode())), test('FakeName')),
+									email        : $(stub(regex(email())), test('fakemail@fakegmail.com')),
+									fax          : $(stub(PHONE_NUMBER), test('+xx001213214')),
+									phone        : $(stub(PHONE_NUMBER), test('2223311')),
 									data_of_birth: $(stub(DATETIME), test('2002-10-22T00:00:00Z'))
 							],
 							client_id_card: [
-									id: $(stub(ANYSTRING), test('ABC12345')),
+									id           : $(stub(ANYSTRING), test('ABC12345')),
 									date_of_issue: $(stub(ANYSTRING), test('2002-10-02T00:00:00Z')),
-									address: [
-											street: $(stub(ANYSTRING), test('Light Street')),
-											city: $(stub(ANYSTRING), test('Fire')),
-											region: $(stub(ANYSTRING), test('Skys')),
+									address      : [
+											street : $(stub(ANYSTRING), test('Light Street')),
+											city   : $(stub(ANYSTRING), test('Fire')),
+											region : $(stub(ANYSTRING), test('Skys')),
 											country: $(stub(ANYSTRING), test('HG')),
-											zip: $(stub(NUMBERS), test('658965'))
+											zip    : $(stub(NUMBERS), test('658965'))
 									]
 							],
 							incomes_and_expenses: [
-									monthly_income: $(stub(NUMBERS), test('0.0')),
+									monthly_income         : $(stub(NUMBERS), test('0.0')),
 									monthly_loan_repayments: $(stub(NUMBERS), test('100')),
 									monthly_living_expenses: $(stub(NUMBERS), test('22'))
 							],
@@ -897,7 +900,7 @@ World.'''""")
 	}
 
 	@Issue('180')
-	def "should generate proper test code when having multipart parameters"(){
+	def "should generate proper test code when having multipart parameters"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
 				request {
@@ -929,32 +932,32 @@ World.'''""")
 	}
 
 	@Issue('180')
-    def "should generate proper test code when having multipart parameters with named as map"() {
-        given:
-            GroovyDsl contractDsl = GroovyDsl.make {
-                request {
-                    method "PUT"
-                    url "/multipart"
-                    multipart(
-                            formParameter: value(client(regex('".+"')), server('"formParameterValue"')),
-                            someBooleanParameter: value(client(regex('(true|false)')), server('true')),
-                            file: named(
-                                    name: value(client(regex('.+')), server('filename.csv')),
-                                    content: value(client(regex('.+')), server('file content')))
-                    )
-                }
-                response {
-                    status 200
-                }
-            }
-            MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
-            BlockBuilder blockBuilder = new BlockBuilder(" ")
-        when:
-            builder.given(blockBuilder)
-            def spockTest = blockBuilder.toString()
-        then:
-            spockTest.contains('.multiPart')
-    }
+	def "should generate proper test code when having multipart parameters with named as map"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method "PUT"
+					url "/multipart"
+					multipart(
+							formParameter: value(client(regex('".+"')), server('"formParameterValue"')),
+							someBooleanParameter: value(client(regex('(true|false)')), server('true')),
+							file: named(
+									name: value(client(regex('.+')), server('filename.csv')),
+									content: value(client(regex('.+')), server('file content')))
+					)
+				}
+				response {
+					status 200
+				}
+			}
+			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.given(blockBuilder)
+			def spockTest = blockBuilder.toString()
+		then:
+			spockTest.contains('.multiPart')
+	}
 
 
 }
