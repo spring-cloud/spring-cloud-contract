@@ -1,22 +1,15 @@
 package io.codearte.accurest.builder
 
-import groovy.json.JsonOutput
 import groovy.json.StringEscapeUtils
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import io.codearte.accurest.dsl.GroovyDsl
-import io.codearte.accurest.dsl.internal.DslProperty
 import io.codearte.accurest.dsl.internal.ExecutionProperty
-import io.codearte.accurest.dsl.internal.MatchingStrategy
+import io.codearte.accurest.dsl.internal.Header
 import io.codearte.accurest.dsl.internal.NamedProperty
-import io.codearte.accurest.dsl.internal.QueryParameter
-import io.codearte.accurest.util.ContentType
-import io.codearte.accurest.util.MapConverter
+import io.codearte.accurest.dsl.internal.Request
 
-import static io.codearte.accurest.util.ContentUtils.extractValue
 import static io.codearte.accurest.util.ContentUtils.getMultipartFileParameterContent
-import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromContent
-import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromHeader
 
 /**
  * @author Jakub Kubrynski
@@ -58,8 +51,8 @@ abstract class SpockMethodBodyBuilder extends MethodBodyBuilder {
 	}
 
 	@Override
-	protected String addColonIfRequired(String baseString) {
-		return baseString
+	protected BlockBuilder addColonIfRequired(BlockBuilder blockBuilder) {
+		return blockBuilder
 	}
 
 	@Override
@@ -74,11 +67,32 @@ abstract class SpockMethodBodyBuilder extends MethodBodyBuilder {
 
 	@Override
 	protected String getParsedXmlResponseBodyString(String responseString) {
-		return "def responseBody = new XmlSlurper().parseText($responseAsString)"
+		return "def responseBody = new XmlSlurper().parseText($responseString)"
 	}
 
 	@Override
 	protected String getSimpleResponseBodyString(String responseString) {
-		return "def responseBody = ($responseAsString)"
+		return "def responseBody = ($responseString)"
 	}
+
+	@Override
+	protected String getResponseString(Request request) {
+		return 'def response = given().spec(request)'
+	}
+
+	@Override
+	protected String getRequestString() {
+		return 'def request = given()'
+	}
+
+	@Override
+	protected String getHeaderString(Header header) {
+		return ".header('${getTestSideValue(header.name)}', '${getTestSideValue(header.serverValue)}')"
+	}
+
+	@Override
+	protected String getBodyString(String bodyAsString) {
+		return ".body('''$bodyAsString''')"
+	}
+
 }

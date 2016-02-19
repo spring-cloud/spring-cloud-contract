@@ -1,4 +1,5 @@
 package io.codearte.accurest.builder
+
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import io.codearte.accurest.dsl.GroovyDsl
@@ -13,6 +14,9 @@ class JaxRsClientSpockMethodBodyBuilder extends SpockMethodBodyBuilder {
 	JaxRsClientSpockMethodBodyBuilder(GroovyDsl stubDefinition) {
 		super(stubDefinition)
 	}
+
+	@Override
+	protected void given(BlockBuilder bb) {}
 
 	@Override
 	protected void givenBlock(BlockBuilder bb) {

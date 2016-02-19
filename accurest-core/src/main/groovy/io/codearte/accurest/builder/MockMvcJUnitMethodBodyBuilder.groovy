@@ -9,7 +9,7 @@ import java.util.regex.Pattern
  * @author Olga Maciaszek-Sharma
  * @since 2016-02-17
  */
-class MockMvcJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder{
+class MockMvcJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 
 	MockMvcJUnitMethodBodyBuilder(GroovyDsl stubDefinition) {
 		super(stubDefinition)
@@ -28,10 +28,12 @@ class MockMvcJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder{
 	}
 
 	private String createHeaderComparison(Object headerValue) {
-		return "isEqualTo(\"$headerValue\");"
+		String escapedHeader = convertUnicodeEscapesIfRequired("$headerValue")
+		return "isEqualTo(\"$escapedHeader\");"
 	}
 
 	private String createHeaderComparison(Pattern headerValue) {
-		return "matches(\"$headerValue\");"
+		String escapedHeader = convertUnicodeEscapesIfRequired("$headerValue")
+		return "matches(\"$escapedHeader\");"
 	}
 }

@@ -5,6 +5,8 @@ import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.internal.ExecutionProperty
+import io.codearte.accurest.dsl.internal.Header
+import io.codearte.accurest.dsl.internal.Request
 
 /**
  * @author Jakub Kubrynski
@@ -19,13 +21,8 @@ abstract class JUnitMethodBodyBuilder extends MethodBodyBuilder {
 	}
 
 	@Override
-	protected void when(BlockBuilder bb) {
-
-	}
-
-	@Override
 	protected String getResponseAsString() {
-		return null
+		return "response.getBody().asString()"
 	}
 
 	@Override
@@ -34,8 +31,9 @@ abstract class JUnitMethodBodyBuilder extends MethodBodyBuilder {
 	}
 
 	@Override
-	protected String addColonIfRequired(String baseString) {
-		return "$baseString;"
+	protected BlockBuilder addColonIfRequired(BlockBuilder blockBuilder) {
+		blockBuilder.addAtTheEnd(';')
+		return blockBuilder
 	}
 
 	@Override
@@ -60,7 +58,8 @@ abstract class JUnitMethodBodyBuilder extends MethodBodyBuilder {
 
 	@Override
 	protected String convertUnicodeEscapesIfRequired(String json) {
-		return json             // TODO: verify if that's fine or escapeJava required
+		String unescapedJson = StringEscapeUtils.unescapeJavaScript(json)
+		return StringEscapeUtils.escapeJava(unescapedJson)
 	}
 
 	@Override
@@ -76,5 +75,25 @@ abstract class JUnitMethodBodyBuilder extends MethodBodyBuilder {
 	@Override
 	protected String getSimpleResponseBodyString(String responseString) {
 		return "Object responseBody = ($responseString);"
+	}
+
+	@Override
+	protected String getResponseString(Request request) {
+		return 'ResponseOptions response = given().spec(request)'
+	}
+
+	@Override
+	protected String getRequestString() {
+		return 'MockMvcRequestSpecification request = given()'
+	}
+
+	@Override
+	protected String getHeaderString(Header header) {
+		return ".header(\"${getTestSideValue(header.name)}\", \"${getTestSideValue(header.serverValue)}\")"
+	}
+
+	@Override
+	protected String getBodyString(String bodyAsString) {
+		return ".body(\"$bodyAsString\")"
 	}
 }
