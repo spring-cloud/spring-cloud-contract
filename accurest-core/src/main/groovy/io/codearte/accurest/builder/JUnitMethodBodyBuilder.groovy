@@ -6,7 +6,11 @@ import groovy.transform.TypeChecked
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.internal.ExecutionProperty
 import io.codearte.accurest.dsl.internal.Header
+import io.codearte.accurest.dsl.internal.NamedProperty
 import io.codearte.accurest.dsl.internal.Request
+
+import static groovy.json.StringEscapeUtils.escapeJava
+import static io.codearte.accurest.util.ContentUtils.getJavaMultipartFileParameterContent
 
 /**
  * @author Jakub Kubrynski
@@ -42,11 +46,6 @@ abstract class JUnitMethodBodyBuilder extends MethodBodyBuilder {
 	}
 
 	@Override
-	protected String getMultipartParameterLine(Map.Entry<String, Object> parameter) {
-		return null //TODO
-	}
-
-	@Override
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
 		blockBuilder.addLine("${exec.insertValue("parsedJson.read(\"\\\$$property\")")};")
 	}
@@ -59,7 +58,7 @@ abstract class JUnitMethodBodyBuilder extends MethodBodyBuilder {
 	@Override
 	protected String convertUnicodeEscapesIfRequired(String json) {
 		String unescapedJson = StringEscapeUtils.unescapeJavaScript(json)
-		return StringEscapeUtils.escapeJava(unescapedJson)
+		return escapeJava(unescapedJson)
 	}
 
 	@Override
@@ -68,10 +67,10 @@ abstract class JUnitMethodBodyBuilder extends MethodBodyBuilder {
 	}
 
 	private String getMapKeyReferenceString(Map.Entry entry) {
-		if (entry.value instanceof ExecutionProperty){
+		if (entry.value instanceof ExecutionProperty) {
 			return "." + entry.key
 		}
-		return  """.get(\\\"$entry.key\\\")"""
+		return """.get(\\\"$entry.key\\\")"""
 	}
 
 	@Override
@@ -102,5 +101,15 @@ abstract class JUnitMethodBodyBuilder extends MethodBodyBuilder {
 	@Override
 	protected String getBodyString(String bodyAsString) {
 		return ".body(\"$bodyAsString\")"
+	}
+
+	@Override
+	protected String getMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
+		return getJavaMultipartFileParameterContent(propertyName, propertyValue)
+	}
+
+	@Override
+	protected String getParameterString(Map.Entry<String, Object> parameter) {
+		return """.param("${escapeJava(parameter.key)}", "${escapeJava(parameter.value as String)}")"""
 	}
 }

@@ -922,7 +922,7 @@ World.'''""")
 			MockMvcSpockMethodBodyBuilder builder = new MockMvcSpockMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
-			builder.given(blockBuilder)
+			builder.appendTo(blockBuilder)
 			def spockTest = blockBuilder.toString()
 		then:
 			spockTest.contains("""'content-type', 'multipart/form-data;boundary=AaB03x'""")

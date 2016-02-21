@@ -9,7 +9,7 @@ import io.codearte.accurest.dsl.internal.Header
 import io.codearte.accurest.dsl.internal.NamedProperty
 import io.codearte.accurest.dsl.internal.Request
 
-import static io.codearte.accurest.util.ContentUtils.getMultipartFileParameterContent
+import static io.codearte.accurest.util.ContentUtils.getGroovyMultipartFileParameterContent
 
 /**
  * @author Jakub Kubrynski
@@ -25,14 +25,6 @@ abstract class SpockMethodBodyBuilder extends MethodBodyBuilder {
 	@Override
 	protected String getResponseBodyPropertyComparisonString(String property, String value) {
 		return "responseBody$property == \"${value}\""
-	}
-
-	@Override
-	protected String getMultipartParameterLine(Map.Entry<String, Object> parameter) {
-		if (parameter.value instanceof NamedProperty) {
-			return ".multiPart(${getMultipartFileParameterContent(parameter.key, (NamedProperty) parameter.value)})"
-		}
-		return ".param('$parameter.key', '$parameter.value')"
 	}
 
 	@Override
@@ -93,6 +85,16 @@ abstract class SpockMethodBodyBuilder extends MethodBodyBuilder {
 	@Override
 	protected String getBodyString(String bodyAsString) {
 		return ".body('''$bodyAsString''')"
+	}
+
+	@Override
+	protected String getMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
+		return getGroovyMultipartFileParameterContent(propertyName, propertyValue)
+	}
+
+	@Override
+	protected String getParameterString(Map.Entry<String, Object> parameter) {
+		return ".param('$parameter.key', '$parameter.value')"
 	}
 
 }

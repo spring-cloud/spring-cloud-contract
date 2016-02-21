@@ -9,6 +9,7 @@ import io.codearte.accurest.dsl.internal.DslProperty
 import io.codearte.accurest.dsl.internal.ExecutionProperty
 import io.codearte.accurest.dsl.internal.Header
 import io.codearte.accurest.dsl.internal.MatchingStrategy
+import io.codearte.accurest.dsl.internal.NamedProperty
 import io.codearte.accurest.dsl.internal.QueryParameter
 import io.codearte.accurest.dsl.internal.Request
 import io.codearte.accurest.dsl.internal.Response
@@ -19,6 +20,7 @@ import io.codearte.accurest.util.JsonToJsonPathsConverter
 import io.codearte.accurest.util.MapConverter
 
 import static io.codearte.accurest.util.ContentUtils.extractValue
+import static io.codearte.accurest.util.ContentUtils.getGroovyMultipartFileParameterContent
 import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromContent
 import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromHeader
 
@@ -50,8 +52,6 @@ abstract class MethodBodyBuilder {
 
 	protected abstract String getResponseBodyPropertyComparisonString(String property, String value)
 
-	protected abstract String getMultipartParameterLine(Map.Entry<String, Object> parameter)
-
 	protected abstract void processBodyElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec)
 
 	protected abstract void processBodyElement(BlockBuilder blockBuilder, String property, Map.Entry entry)
@@ -71,6 +71,10 @@ abstract class MethodBodyBuilder {
 	protected abstract String getHeaderString(Header header)
 
 	protected abstract String getBodyString(String bodyAsString)
+
+	protected abstract String getMultipartFileParameterContent(String propertyName, NamedProperty propertyValue)
+
+	protected abstract String getParameterString(Map.Entry<String, Object> parameter)
 
 	void appendTo(BlockBuilder blockBuilder) {
 		blockBuilder.startBlock()
@@ -126,7 +130,8 @@ abstract class MethodBodyBuilder {
 		String url = buildUrl(request)
 		String method = request.method.serverValue.toString().toLowerCase()
 
-		bb.addLine(/.${method}("$url");/)
+		bb.addLine(/.${method}("$url")/)
+		addColonIfRequired(bb)
 		bb.unindent()
 	}
 
@@ -275,7 +280,6 @@ abstract class MethodBodyBuilder {
 		throw new IllegalStateException("URL is not set!")
 	}
 
-
 	@TypeChecked(TypeCheckingMode.SKIP)
 	protected String buildUrlFromUrlPath(Url url) {
 		if (hasQueryParams(url)) {
@@ -288,6 +292,13 @@ abstract class MethodBodyBuilder {
 			return "${MapConverter.getTestSideValues(url.serverValue)}?$params"
 		}
 		return MapConverter.getTestSideValues(url.serverValue)
+	}
+
+	protected String getMultipartParameterLine(Map.Entry<String, Object> parameter) {
+		if (parameter.value instanceof NamedProperty) {
+			return ".multiPart(${getMultipartFileParameterContent(parameter.key, (NamedProperty) parameter.value)})"
+		}
+		return getParameterString(parameter)
 	}
 
 

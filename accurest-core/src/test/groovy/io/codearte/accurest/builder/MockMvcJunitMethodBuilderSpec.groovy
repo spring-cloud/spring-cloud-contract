@@ -4,7 +4,6 @@ import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.WireMockStubStrategy
 import io.codearte.accurest.dsl.WireMockStubVerifier
 import io.codearte.accurest.file.Contract
-import spock.lang.Ignore
 import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -904,8 +903,6 @@ World.'''""")
 	}
 
 	@Issue('180')
-	@Ignore
-	//TODO: fix multiparts in JUnit
 	def "should generate proper test code when having multipart parameters"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -931,15 +928,13 @@ World.'''""")
 			builder.given(blockBuilder)
 			def jUnitTest = blockBuilder.toString()
 		then:
-			jUnitTest.contains("""'content-type', 'multipart/form-data;boundary=AaB03x'""")
-			jUnitTest.contains(""".param('formParameter', '"formParameterValue"'""")
-			jUnitTest.contains(""".param('someBooleanParameter', 'true')""")
-			jUnitTest.contains(""".multiPart('file', 'filename.csv', 'file content'.bytes)""")
+			jUnitTest.contains('"content-type", "multipart/form-data;boundary=AaB03x"')
+			jUnitTest.contains('.param("formParameter", "\\"formParameterValue\\"")')
+			jUnitTest.contains('.param("someBooleanParameter", "true")')
+			jUnitTest.contains('.multiPart("file", "filename.csv", "file content".getBytes());')
 	}
 
 	@Issue('180')
-	//TODO: fix multiparts in JUnit
-	@Ignore
 	def "should generate proper test code when having multipart parameters with named as map"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
