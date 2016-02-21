@@ -740,8 +740,6 @@ class MockMvcJunitMethodBuilderSpec extends Specification implements WireMockStu
 	}
 
 	@Issue('72')
-	@Ignore
-	//TODO: fix exec method for jUnit
 	def "should make the execute method work"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -781,7 +779,7 @@ class MockMvcJunitMethodBuilderSpec extends Specification implements WireMockStu
 			builder.appendTo(blockBuilder)
 			def jUnitTest = blockBuilder.toString()
 		then:
-			jUnitTest.contains('''assertThatRejectionReasonIsNull(parsedJson.read('$.rejectionReason'))''')
+			jUnitTest.contains('''assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason"))''')
 	}
 
 	def "should support inner map and list definitions"() {

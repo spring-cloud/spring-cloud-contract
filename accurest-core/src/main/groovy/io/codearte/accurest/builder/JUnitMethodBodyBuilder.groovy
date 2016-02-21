@@ -64,7 +64,14 @@ abstract class JUnitMethodBodyBuilder extends MethodBodyBuilder {
 
 	@Override
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, Map.Entry entry) {
-		processBodyElement(blockBuilder, property + """.get(\\\"$entry.key\\\")""", entry.value)
+		processBodyElement(blockBuilder, property + getMapKeyReferenceString(entry), entry.value)
+	}
+
+	private String getMapKeyReferenceString(Map.Entry entry) {
+		if (entry.value instanceof ExecutionProperty){
+			return "." + entry.key
+		}
+		return  """.get(\\\"$entry.key\\\")"""
 	}
 
 	@Override
