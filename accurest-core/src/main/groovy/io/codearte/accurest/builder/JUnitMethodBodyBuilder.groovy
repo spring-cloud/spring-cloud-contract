@@ -42,7 +42,7 @@ abstract class JUnitMethodBodyBuilder extends MethodBodyBuilder {
 
 	@Override
 	protected String getResponseBodyPropertyComparisonString(String property, String value) {
-		return "assertThat(responseBody${property}).isEqualTo(\"${value}\");"
+		return "assertThat(responseBody${property}).isEqualTo(\"${value}\")"
 	}
 
 	@Override

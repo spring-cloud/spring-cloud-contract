@@ -192,7 +192,6 @@ abstract class MethodBodyBuilder {
 			addColonIfRequired(blockBuilder)
 		} else {
 			blockBuilder.addLine(getResponseBodyPropertyComparisonString(property, value))
-			addColonIfRequired(blockBuilder)
 		}
 	}
 
