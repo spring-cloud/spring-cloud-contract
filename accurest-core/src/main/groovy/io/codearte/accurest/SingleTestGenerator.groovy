@@ -52,6 +52,9 @@ class SingleTestGenerator {
 
 		if (configProperties.testMode == TestMode.JAXRSCLIENT) {
 			clazz.addStaticImport('javax.ws.rs.client.Entity.*')
+			if (configProperties.targetFramework == TestFramework.JUNIT) {
+				clazz.addImport('import javax.ws.rs.core.Response')
+			}
 		} else if (configProperties.testMode == TestMode.MOCKMVC) {
 			clazz.addStaticImport('com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.*')
 		} else {

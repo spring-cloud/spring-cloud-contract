@@ -14,7 +14,7 @@ import java.util.regex.Pattern
 /**
  * @author Jakub Kubrynski
  */
-class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVerifier {
+class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStubVerifier {
 
 	@Shared
 	GroovyDsl dslWithOptionalsInString = GroovyDsl.make {
@@ -103,8 +103,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName           | methodBuilder
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
 	@Issue("#187")
@@ -137,8 +137,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName           | methodBuilder
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
 	@Issue("#79")
@@ -173,8 +173,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName           | methodBuilder
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
 	@Issue("#82")
@@ -203,8 +203,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName           | methodBuilder                                     | bodyString
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | """.body('''{\"items\":[\"HOP\"]}''')"""
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | '.body("{\\"items\\":[\\"HOP\\"]}")'
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | """.body('''{\"items\":[\"HOP\"]}''')"""
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | '.body("{\\"items\\":[\\"HOP\\"]}")'
 	}
 
 	@Issue("#88")
@@ -233,8 +233,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName           | methodBuilder                                     | bodyString
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | """.body('''property1=VAL1''')"""
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | '.body("\\"property1=VAL1\\"")'
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | """.body('''property1=VAL1''')"""
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | '.body("\\"property1=VAL1\\"")'
 	}
 
 	@Issue("185")
@@ -267,8 +267,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName           | methodBuilder
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
 	@Unroll
@@ -301,8 +301,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName           | methodBuilder
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
 	@Unroll
@@ -334,8 +334,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName           | methodBuilder
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
 	@Unroll
@@ -367,8 +367,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName           | methodBuilder
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
 	@Unroll
@@ -404,8 +404,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName           | methodBuilder
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
 	@Unroll
@@ -435,8 +435,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName           | methodBuilder
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
 	@Issue(["#126", "#143"])
@@ -466,8 +466,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName           | methodBuilder
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
 	@Unroll
@@ -514,8 +514,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName           | methodBuilder
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
 	@Issue('#169')
@@ -563,8 +563,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName           | methodBuilder
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
 	@Unroll
@@ -591,8 +591,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName           | methodBuilder                                     | bodyString
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | ".body('''''')"
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | ".body(\"\\\"\\\"\")"
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | ".body('''''')"
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | ".body(\"\\\"\\\"\")"
 	}
 
 	@Unroll
@@ -620,8 +620,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName           | methodBuilder                                     | bodyDefinitionString                                     | bodyEvaluationString
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | 'def responseBody = (response.body.asString())'          | 'responseBody == "test"'
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | 'Object responseBody = (response.getBody().asString());' | 'assertThat(responseBody).isEqualTo("test");'
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | 'def responseBody = (response.body.asString())'          | 'responseBody == "test"'
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | 'Object responseBody = (response.getBody().asString());' | 'assertThat(responseBody).isEqualTo("test");'
 	}
 
 	@Issue('113')
@@ -660,8 +660,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName           | methodBuilder                                     | headerEvaluationString
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | '''response.header('Location') ==~ java.util.regex.Pattern.compile('http://localhost/partners/[0-9]+/users/[0-9]+')'''
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | 'assertThat(response.header("Location")).matches("http://localhost/partners/[0-9]+/users/[0-9]+");'
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | '''response.header('Location') ==~ java.util.regex.Pattern.compile('http://localhost/partners/[0-9]+/users/[0-9]+')'''
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | 'assertThat(response.header("Location")).matches("http://localhost/partners/[0-9]+/users/[0-9]+");'
 	}
 
 	@Issue('115')
@@ -700,8 +700,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName           | methodBuilder                                     | headerEvaluationString
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | '''response.header('Location') ==~ java.util.regex.Pattern.compile('^((http[s]?|ftp):\\/)\\/?([^:\\/\\s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+')'''
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | 'assertThat(response.header("Location")).matches("^((http[s]?|ftp):/)/?([^:/s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+");'
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | '''response.header('Location') ==~ java.util.regex.Pattern.compile('^((http[s]?|ftp):\\/)\\/?([^:\\/\\s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+')'''
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | 'assertThat(response.header("Location")).matches("^((http[s]?|ftp):/)/?([^:/s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+");'
 	}
 
 	@Unroll
@@ -742,8 +742,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName           | methodBuilder
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
 	@Unroll
@@ -776,8 +776,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName           | methodBuilder
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
 	@Unroll
@@ -816,8 +816,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			test.contains("""assertThatJson(parsedJson).field("message").matches("User not found by email = \\\\\\\\[[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\\\\\.[a-zA-Z]{2,4}\\\\\\\\]")""")
 		where:
 			methodBuilderName           | methodBuilder
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
 	@Issue('42')
@@ -898,8 +898,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			test.contains(assertionString)
 		where:
 			methodBuilderName           | methodBuilder                                     | assertionString
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | '''assertThatRejectionReasonIsNull(parsedJson.read('$.rejectionReason'))'''
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | '''assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason"))'''
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | '''assertThatRejectionReasonIsNull(parsedJson.read('$.rejectionReason'))'''
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | '''assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason"))'''
 	}
 
 	@Unroll
@@ -966,8 +966,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			!test.contains("cursor")
 		where:
 			methodBuilderName           | methodBuilder                                     | bodyString
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | '"street":"Light Street"'
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | '\\"street\\":\\"Light Street\\"'
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | '"street":"Light Street"'
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | '\\"street\\":\\"Light Street\\"'
 
 	}
 
@@ -1006,8 +1006,8 @@ class MockMvcMethodBuilderSpec extends Specification implements WireMockStubVeri
 			!test.contains("\\u041f")
 		where:
 			methodBuilderName           | methodBuilder
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
 	@Issue('177')
@@ -1034,9 +1034,9 @@ World.''')
 			test.contains(bodyString)
 		where:
 			methodBuilderName           | methodBuilder                                     | bodyString
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | """'''hello,
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | """'''hello,
 World.'''"""
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | '\\"hello,\\nWorld.\\"'
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | '\\"hello,\\nWorld.\\"'
 	}
 
 	@Issue('180')
@@ -1071,11 +1071,11 @@ World.'''"""
 			}
 		where:
 			methodBuilderName           | methodBuilder                                     | requestStrings
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | ["""'content-type', 'multipart/form-data;boundary=AaB03x'""",
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | ["""'content-type', 'multipart/form-data;boundary=AaB03x'""",
 			                                                                                   """.param('formParameter', '"formParameterValue"'""",
 			                                                                                   """.param('someBooleanParameter', 'true')""",
 			                                                                                   """.multiPart('file', 'filename.csv', 'file content'.bytes)"""]
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | ['"content-type", "multipart/form-data;boundary=AaB03x"',
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | ['"content-type", "multipart/form-data;boundary=AaB03x"',
 			                                                                                   '.param("formParameter", "\\"formParameterValue\\"")',
 			                                                                                   '.param("someBooleanParameter", "true")',
 			                                                                                   '.multiPart("file", "filename.csv", "file content".getBytes());']
@@ -1110,12 +1110,8 @@ World.'''"""
 			test.contains('.multiPart')
 		where:
 			methodBuilderName           | methodBuilder
-			"MockMvcSpockMethodBuilder" | { dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
-			"MockMvcJUnitMethodBuilder" | { dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
-
-	protected void stubMappingIsValidWireMockStub(GroovyDsl contractDsl) {
-		stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
-	}
 }
