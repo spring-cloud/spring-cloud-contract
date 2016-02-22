@@ -1,6 +1,7 @@
 package io.codearte.accurest
 
 import io.codearte.accurest.config.AccurestConfigProperties
+import io.codearte.accurest.config.TestMode
 import io.codearte.accurest.file.Contract
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -67,6 +68,7 @@ class SingleTestGeneratorSpec extends Specification {
 	def "should build JaxRs test class for #testFramework"() {
 		given:
 			AccurestConfigProperties properties = new AccurestConfigProperties();
+			properties.testMode = TestMode.JAXRSCLIENT
 			properties.targetFramework = testFramework
 			Contract contract = new Contract(file.toPath(), true, 1, 2)
 			contract.ignored >> true
@@ -81,8 +83,8 @@ class SingleTestGeneratorSpec extends Specification {
 
 		where:
 			testFramework | classStrings
-			JUNIT         | jUnitClassStrings
-			SPOCK         | spockClassStrings
+			JUNIT         | ['import static javax.ws.rs.client.Entity.*;', 'import javax.ws.rs.core.Response;']
+			SPOCK         | ['import static javax.ws.rs.client.Entity.*;']
 	}
 
 
