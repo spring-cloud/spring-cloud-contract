@@ -8,7 +8,7 @@ import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMockStubVerifier {
+class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStubVerifier {
 
 	@Unroll
 	def "should generate assertions for simple response body with #methodBuilderName"() {
@@ -535,9 +535,9 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
-			def spockTest = blockBuilder.toString()
+			def test = blockBuilder.toString()
 		then:
-			spockTest.contains(bodyString)
+			test.contains(bodyString)
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
@@ -598,9 +598,9 @@ class JaxRsClientSpockMethodBuilderSpec extends Specification implements WireMoc
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
-			def spockTest = blockBuilder.toString()
+			def test = blockBuilder.toString()
 		then:
-			spockTest.contains(methodString)
+			test.contains(methodString)
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:

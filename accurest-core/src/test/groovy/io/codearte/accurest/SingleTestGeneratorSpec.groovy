@@ -42,7 +42,29 @@ class SingleTestGeneratorSpec extends Specification {
 	}
 
 	@Unroll
-	def "should build test class for #testFramework"() {
+	def "should build MockMvc test class for #testFramework"() {
+		given:
+			AccurestConfigProperties properties = new AccurestConfigProperties();
+			properties.targetFramework = testFramework
+			Contract contract = new Contract(file.toPath(), true, 1, 2)
+			contract.ignored >> true
+			contract.order >> 2
+			SingleTestGenerator testGenerator = new SingleTestGenerator(properties)
+
+		when:
+			String clazz = testGenerator.buildClass([contract], "test", "test")
+
+		then:
+			classStrings.forEach({ clazz.contains(it) })
+
+		where:
+			testFramework | classStrings
+			JUNIT         | jUnitClassStrings
+			SPOCK         | spockClassStrings
+	}
+
+	@Unroll
+	def "should build JaxRs test class for #testFramework"() {
 		given:
 			AccurestConfigProperties properties = new AccurestConfigProperties();
 			properties.targetFramework = testFramework
