@@ -20,7 +20,6 @@ import io.codearte.accurest.util.JsonToJsonPathsConverter
 import io.codearte.accurest.util.MapConverter
 
 import static io.codearte.accurest.util.ContentUtils.extractValue
-import static io.codearte.accurest.util.ContentUtils.getGroovyMultipartFileParameterContent
 import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromContent
 import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromHeader
 
@@ -187,12 +186,16 @@ abstract class MethodBodyBuilder {
 
 	protected void processText(BlockBuilder blockBuilder, String property, String value) {
 		if (value.startsWith('$')) {
-			value = value.substring(1).replaceAll('\\$value', "responseBody$property")
+			value = stripFirstChar(value).replaceAll('\\$value', "responseBody$property")
 			blockBuilder.addLine(value)
 			addColonIfRequired(blockBuilder)
 		} else {
 			blockBuilder.addLine(getResponseBodyPropertyComparisonString(property, value))
 		}
+	}
+
+	private String stripFirstChar(String s) {
+		return s.substring(1);
 	}
 
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, Object value) {
@@ -210,7 +213,7 @@ abstract class MethodBodyBuilder {
 	}
 
 	protected String trimRepeatedQuotes(String toTrim) {
-		return toTrim.startsWith('"') ? toTrim.replaceAll('"', '') : toTrim   // TODO: implement for JUnit
+		return toTrim.startsWith('"') ? toTrim.replaceAll('"', '') : toTrim
 	}
 
 	protected Object extractServerValueFromBody(bodyValue) {

@@ -1,8 +1,6 @@
 package com.blogspot.toomuchcoding;
 
-import com.blogspot.toomuchcoding.frauddetection.FraudDetectionController;
 import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc;
-import spock.lang.Specification;
 import org.junit.Before;
 
 public class MvcTest {

@@ -7,7 +7,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 import static java.nio.charset.StandardCharsets.UTF_8
-import static java.nio.charset.StandardCharsets.UTF_8
 
 @Stepwise
 class SampleJerseyProjectSpec extends IntegrationSpec {
@@ -19,7 +18,8 @@ class SampleJerseyProjectSpec extends IntegrationSpec {
 
 	void setup() {
 		copyResources("functionalTest/sampleJerseyProject", "")
-		runTasksSuccessfully('clean')   //delete accidental output when previously importing SimpleBoot into Idea to tweak it
+		runTasksSuccessfully('clean')
+		//delete accidental output when previously importing SimpleBoot into Idea to tweak it
 	}
 
 	def "should pass basic flow for Spock"() {

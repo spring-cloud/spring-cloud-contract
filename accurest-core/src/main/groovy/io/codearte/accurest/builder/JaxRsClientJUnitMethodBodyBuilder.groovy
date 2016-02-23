@@ -1,6 +1,5 @@
 package io.codearte.accurest.builder
 
-import io.codearte.accurest.config.TestFramework
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.internal.Header
 import io.codearte.accurest.dsl.internal.QueryParameter

@@ -1,9 +1,7 @@
 package io.codearte.accurest.builder
 
 import io.codearte.accurest.dsl.GroovyDsl
-import io.codearte.accurest.dsl.WireMockStubStrategy
 import io.codearte.accurest.dsl.WireMockStubVerifier
-import io.codearte.accurest.file.Contract
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification

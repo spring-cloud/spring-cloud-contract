@@ -1,7 +1,6 @@
 package io.codearte.accurest.file
 
 import com.google.common.collect.ListMultimap
-import com.google.common.collect.Multimap
 import spock.lang.Specification
 
 import java.nio.file.Path

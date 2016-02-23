@@ -2,12 +2,10 @@ package io.codearte.accurest.plugin
 
 import nebula.test.IntegrationSpec
 import spock.lang.Stepwise
-import spock.lang.Unroll
 
 import java.nio.file.Files
 import java.nio.file.Path
 
-import static java.nio.charset.StandardCharsets.UTF_8
 import static java.nio.charset.StandardCharsets.UTF_8
 
 @Stepwise

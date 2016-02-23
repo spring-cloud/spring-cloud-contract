@@ -2,7 +2,6 @@ package io.codearte.accurest.file
 
 import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.ListMultimap
-import com.google.common.collect.Multimap
 import org.apache.commons.io.FilenameUtils
 
 import java.nio.file.FileSystem

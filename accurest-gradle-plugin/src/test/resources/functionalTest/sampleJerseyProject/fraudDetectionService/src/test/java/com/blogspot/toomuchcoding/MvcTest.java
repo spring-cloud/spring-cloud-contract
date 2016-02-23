@@ -1,4 +1,5 @@
 package com.blogspot.toomuchcoding;
+
 import com.blogspot.toomuchcoding.frauddetection.Application;
 import com.blogspot.toomuchcoding.frauddetection.FraudRestApplication;
 import org.eclipse.jetty.server.Server;
@@ -14,7 +15,6 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.UriBuilder;
-
 import java.net.URI;
 
 import static org.springframework.util.SocketUtils.findAvailableTcpPort;

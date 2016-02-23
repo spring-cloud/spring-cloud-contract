@@ -3,7 +3,6 @@ package io.codearte.accurest.builder
 import groovy.json.StringEscapeUtils
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
-import io.codearte.accurest.config.TestFramework
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.internal.ExecutionProperty
 import io.codearte.accurest.dsl.internal.Header
