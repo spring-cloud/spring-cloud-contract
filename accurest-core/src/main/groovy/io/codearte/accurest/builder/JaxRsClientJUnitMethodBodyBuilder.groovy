@@ -1,9 +1,12 @@
 package io.codearte.accurest.builder
 
+import io.codearte.accurest.config.TestFramework
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.internal.Header
 import io.codearte.accurest.dsl.internal.QueryParameter
 import io.codearte.accurest.dsl.internal.QueryParameters
+
+import static io.codearte.accurest.config.TestFramework.JUNIT
 
 /**
  * @author Olga Maciaszek-Sharma 
@@ -31,7 +34,7 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 		appendRequestWithRequiredResponseContentType(bb)
 		appendHeaders(bb)
 		appendMethodAndBody(bb)
-		bb.addAtTheEnd(';')
+		bb.addAtTheEnd(JUNIT.lineSuffix)
 
 		bb.unindent()
 

@@ -3,6 +3,7 @@ package io.codearte.accurest.builder
 import groovy.json.StringEscapeUtils
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
+import io.codearte.accurest.config.TestFramework
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.internal.ExecutionProperty
 import io.codearte.accurest.dsl.internal.Header
@@ -10,6 +11,7 @@ import io.codearte.accurest.dsl.internal.NamedProperty
 import io.codearte.accurest.dsl.internal.Request
 
 import static groovy.json.StringEscapeUtils.escapeJava
+import static io.codearte.accurest.config.TestFramework.JUNIT
 import static io.codearte.accurest.util.ContentUtils.getJavaMultipartFileParameterContent
 
 /**
@@ -36,7 +38,7 @@ abstract class JUnitMethodBodyBuilder extends MethodBodyBuilder {
 
 	@Override
 	protected BlockBuilder addColonIfRequired(BlockBuilder blockBuilder) {
-		blockBuilder.addAtTheEnd(';')
+		blockBuilder.addAtTheEnd(JUNIT.lineSuffix)
 		return blockBuilder
 	}
 
