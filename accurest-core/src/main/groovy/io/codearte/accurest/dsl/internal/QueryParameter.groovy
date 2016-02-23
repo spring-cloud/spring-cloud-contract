@@ -1,10 +1,10 @@
-package io.codearte.accurest.dsl.internal;
+package io.codearte.accurest.dsl.internal
 
-import groovy.transform.CompileStatic;
-import groovy.transform.EqualsAndHashCode;
+import groovy.transform.CompileStatic
+import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
-import static io.codearte.accurest.util.ValidateUtils.validateServerValueIsAvailable;
+import static io.codearte.accurest.util.ValidateUtils.validateServerValueIsAvailable
 
 @EqualsAndHashCode(includeFields = true)
 @ToString(includePackage = false, includeFields = true, ignoreNulls = true, includeNames = true)

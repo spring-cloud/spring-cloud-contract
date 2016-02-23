@@ -2,6 +2,8 @@ package io.codearte.accurest.util;
 
 import com.blogspot.toomuchcoding.jsonassert.JsonVerifiable;
 
+import static org.apache.commons.lang3.StringEscapeUtils.escapeJava;
+
 /**
  * @author Marcin Grzejszczak
  */
@@ -11,7 +13,7 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 	private final StringBuffer methodsBuffer;
 
 	DelegatingJsonVerifiable(JsonVerifiable delegate,
-			StringBuffer methodsBuffer) {
+	                         StringBuffer methodsBuffer) {
 		this.delegate = delegate;
 		this.methodsBuffer = new StringBuffer(methodsBuffer.toString());
 	}
@@ -100,7 +102,7 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 		if (delegate.isAssertingAValueInArray()) {
 			readyToCheck.methodsBuffer.append(".value()");
 		} else {
-			readyToCheck.appendMethodWithQuotedValue("isEqualTo", value);
+			readyToCheck.appendMethodWithQuotedValue("isEqualTo", escapeJava(value));
 		}
 		return readyToCheck;
 	}
@@ -137,7 +139,7 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 		if (delegate.isAssertingAValueInArray()) {
 			readyToCheck.methodsBuffer.append(".value()");
 		} else {
-			readyToCheck.appendMethodWithQuotedValue("matches", value);
+			readyToCheck.appendMethodWithQuotedValue("matches", escapeJava(value));
 		}
 		return readyToCheck;
 	}

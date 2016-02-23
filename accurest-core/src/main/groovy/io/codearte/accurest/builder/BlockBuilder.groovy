@@ -62,6 +62,17 @@ class BlockBuilder {
 		return this
 	}
 
+	BlockBuilder addAtTheEnd(String toAdd) {
+		if (builder.charAt(builder.length() - 1) as String == '\n') {
+			builder.replace(builder.length() - 1, builder.length(), toAdd)
+			builder << '\n'
+		} else {
+			builder << toAdd
+		}
+		return this
+	}
+
+
 	@Override
 	String toString() {
 		return builder.toString()

@@ -15,6 +15,7 @@ import org.codehaus.groovy.runtime.GStringImpl
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+import static org.apache.commons.lang3.StringEscapeUtils.escapeJava
 import static org.apache.commons.lang3.StringEscapeUtils.escapeJson
 import static org.apache.commons.lang3.StringEscapeUtils.escapeXml11
 
@@ -321,8 +322,13 @@ class ContentUtils {
 		return ContentType.UNKNOWN
 	}
 
-	static String getMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
+	static String getGroovyMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
 		return "'$propertyName', '$propertyValue.name.serverValue', '$propertyValue.value.serverValue'.bytes"
 	}
+
+	static String getJavaMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
+		return """"${escapeJava(propertyName)}", "${escapeJava(propertyValue.name.serverValue as String)}", "${escapeJava(propertyValue.value.serverValue as String)}".getBytes()"""
+	}
+
 
 }

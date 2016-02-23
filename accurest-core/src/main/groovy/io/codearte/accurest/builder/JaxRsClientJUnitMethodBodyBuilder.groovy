@@ -1,17 +1,19 @@
 package io.codearte.accurest.builder
 
-import groovy.transform.PackageScope
-import groovy.transform.TypeChecked
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.internal.Header
 import io.codearte.accurest.dsl.internal.QueryParameter
 import io.codearte.accurest.dsl.internal.QueryParameters
 
-@PackageScope
-@TypeChecked
-class JaxRsClientSpockMethodBodyBuilder extends SpockMethodBodyBuilder {
+import static io.codearte.accurest.config.TestFramework.JUNIT
 
-	JaxRsClientSpockMethodBodyBuilder(GroovyDsl stubDefinition) {
+/**
+ * @author Olga Maciaszek-Sharma 
+ @since 21.02.16
+ */
+class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
+
+	JaxRsClientJUnitMethodBodyBuilder(GroovyDsl stubDefinition) {
 		super(stubDefinition)
 	}
 
@@ -24,35 +26,27 @@ class JaxRsClientSpockMethodBodyBuilder extends SpockMethodBodyBuilder {
 
 	@Override
 	protected void when(BlockBuilder bb) {
-		bb.addLine("def response = webTarget")
+		bb.addLine("Response response = webTarget")
 		bb.indent()
 
 		appendUrlPathAndQueryParameters(bb)
 		appendRequestWithRequiredResponseContentType(bb)
 		appendHeaders(bb)
 		appendMethodAndBody(bb)
+		bb.addAtTheEnd(JUNIT.lineSuffix)
 
 		bb.unindent()
 
 		bb.addEmptyLine()
-		bb.addLine("String responseAsString = response.readEntity(String)")
-	}
-
-	protected void appendRequestWithRequiredResponseContentType(BlockBuilder bb) {
-		String acceptHeader = getHeader("Accept")
-		if (acceptHeader) {
-			bb.addLine(".request('$acceptHeader')")
-		} else {
-			bb.addLine(".request()")
-		}
+		bb.addLine("String responseAsString = response.readEntity(String.class);")
 	}
 
 	protected void appendUrlPathAndQueryParameters(BlockBuilder bb) {
 		if (request.url) {
-			bb.addLine(".path('$request.url.serverValue')")
+			bb.addLine(".path(\"$request.url.serverValue\")")
 			appendQueryParams(request.url.queryParameters, bb)
 		} else if (request.urlPath) {
-			bb.addLine(".path('$request.urlPath.serverValue')")
+			bb.addLine(".path(\"$request.urlPath.serverValue\")")
 			appendQueryParams(request.urlPath.queryParameters, bb)
 		}
 	}
@@ -62,7 +56,7 @@ class JaxRsClientSpockMethodBodyBuilder extends SpockMethodBodyBuilder {
 			return
 		}
 		queryParameters.parameters.findAll(this.&allowedQueryParameter).each { QueryParameter param ->
-			bb.addLine(".queryParam('$param.name', '${resolveParamValue(param).toString()}')")
+			bb.addLine(".queryParam(\"$param.name\", \"${resolveParamValue(param).toString()}\")")
 		}
 	}
 
@@ -70,33 +64,42 @@ class JaxRsClientSpockMethodBodyBuilder extends SpockMethodBodyBuilder {
 		String method = request.method.serverValue.toString().toLowerCase()
 		if (request.body) {
 			String contentType = getHeader('Content-Type') ?: getRequestContentType().mimeType
-			bb.addLine(".method('${method.toUpperCase()}', entity('$bodyAsString', '$contentType'))")
+			bb.addLine(".method(\"${method.toUpperCase()}\", entity(\"$bodyAsString\", \"$contentType\"))")
 		} else {
-			bb.addLine(".method('${method.toUpperCase()}')")
+			bb.addLine(".method(\"${method.toUpperCase()}\")")
 		}
 	}
 
 	protected appendHeaders(BlockBuilder bb) {
 		request.headers?.collect { Header header ->
-			if (header.name == 'Content-Type' || header.name == 'Accept') return // Particular headers are set via 'request' / 'entity' methods
-			bb.addLine(".header('${header.name}', '${header.serverValue}')")
+			if (header.name == 'Content-Type' || header.name == 'Accept') return
+			bb.addLine(".header(\"${header.name}\", \"${header.serverValue}\")")
 		}
 	}
 
-	protected String getHeader(String name) {
-		return request.headers?.entries.find { it.name == name }?.serverValue
+	protected void appendRequestWithRequiredResponseContentType(BlockBuilder bb) {
+		String acceptHeader = getHeader("Accept")
+		if (acceptHeader) {
+			bb.addLine(".request(\"$acceptHeader\")")
+		} else {
+			bb.addLine(".request()")
+		}
 	}
 
 	@Override
 	protected void validateResponseCodeBlock(BlockBuilder bb) {
-		bb.addLine("response.status == $response.status.serverValue")
+		bb.addLine("assertThat(response.getStatus()).isEqualTo($response.status.serverValue);")
 	}
 
 	@Override
 	protected void validateResponseHeadersBlock(BlockBuilder bb) {
 		response.headers?.collect { Header header ->
-			bb.addLine("response.getHeaderString('$header.name') == '$header.serverValue'")
+			bb.addLine("assertThat(response.getHeaderString(\"$header.name\")).isEqualTo(\"$header.serverValue\");")
 		}
+	}
+
+	protected String getHeader(String name) {
+		return request.headers?.entries.find { it.name == name }?.serverValue
 	}
 
 	@Override

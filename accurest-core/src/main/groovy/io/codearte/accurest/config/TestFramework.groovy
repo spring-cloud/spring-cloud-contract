@@ -4,8 +4,8 @@ package io.codearte.accurest.config
  * @author Jakub Kubrynski
  */
 enum TestFramework {
-	JUNIT("public ", "public void ", ";", ".java", "Test", "org.junit.Ignore", "org.junit.FixMethodOrder", "@FixMethodOrder(MethodSorters.NAME_ASCENDING)"),
-	SPOCK("", "def ", "", ".groovy", "Spec", "spock.lang.Ignore", "spock.lang.Stepwise", "@Stepwise")
+	JUNIT("public ", "public void ", ";", ".java", "Test", "org.junit.Ignore", ["org.junit.FixMethodOrder", "org.junit.runners.MethodSorters"], "@FixMethodOrder(MethodSorters.NAME_ASCENDING)"),
+	SPOCK("", "def ", "", ".groovy", "Spec", "spock.lang.Ignore", ["spock.lang.Stepwise"], "@Stepwise")
 
 	private final String classModifier
 	private final String methodModifier
@@ -13,18 +13,18 @@ enum TestFramework {
 	private final String classExtension;
 	private final String classNameSuffix;
 	private final String ignoreClass
-	private final String orderAnnotationImport
+	private final List<String> orderAnnotationImports
 	private final String orderAnnotation
 
 	TestFramework(String classModifier, String methodModifier, String lineSuffix, String classExtension, String classNameSuffix,
-	              String ignoreClass, String orderAnnotationImport, String orderAnnotation) {
+	              String ignoreClass, List<String> orderAnnotationImports, String orderAnnotation) {
 		this.classModifier = classModifier
 		this.lineSuffix = lineSuffix
 		this.methodModifier = methodModifier
 		this.classExtension = classExtension
 		this.classNameSuffix = classNameSuffix
 		this.ignoreClass = ignoreClass
-		this.orderAnnotationImport = orderAnnotationImport
+		this.orderAnnotationImports = orderAnnotationImports
 		this.orderAnnotation = orderAnnotation
 	}
 
@@ -52,8 +52,8 @@ enum TestFramework {
 		return ignoreClass
 	}
 
-	String getOrderAnnotationImport() {
-		return orderAnnotationImport
+	List<String> getOrderAnnotationImport() {
+		return orderAnnotationImports
 	}
 
 	String getOrderAnnotation() {

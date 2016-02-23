@@ -15,7 +15,7 @@ import static io.codearte.accurest.util.NamesUtil.capitalize
 @Slf4j
 class SingleTestGenerator {
 
-	private static final String JSON_ASSERT_STATIC_IMPORT = 'com.blogspot.toomuchcoding.jsonassert.JsonAssertion.assertThat'
+	private static final String JSON_ASSERT_STATIC_IMPORT = 'com.blogspot.toomuchcoding.jsonassert.JsonAssertion.assertThatJson'
 	private static final String JSON_ASSERT_CLASS = 'com.blogspot.toomuchcoding.jsonassert.JsonAssertion'
 
 	private final AccurestConfigProperties configProperties
@@ -51,6 +51,9 @@ class SingleTestGenerator {
 
 		if (configProperties.testMode == TestMode.JAXRSCLIENT) {
 			clazz.addStaticImport('javax.ws.rs.client.Entity.*')
+			if (configProperties.targetFramework == TestFramework.JUNIT) {
+				clazz.addImport('javax.ws.rs.core.Response')
+			}
 		} else if (configProperties.testMode == TestMode.MOCKMVC) {
 			clazz.addStaticImport('com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.*')
 		} else {
@@ -58,9 +61,12 @@ class SingleTestGenerator {
 		}
 
 		if (configProperties.targetFramework == TestFramework.JUNIT) {
+			if (configProperties.testMode == TestMode.MOCKMVC) {
+				clazz.addImport('com.jayway.restassured.module.mockmvc.specification.MockMvcRequestSpecification')
+				clazz.addImport('com.jayway.restassured.response.ResponseOptions')
+			}
 			clazz.addImport('org.junit.Test')
-		} else {
-			clazz.addImport('groovy.json.JsonSlurper')
+			clazz.addStaticImport('org.assertj.core.api.Assertions.assertThat')
 		}
 
 		if (configProperties.ruleClassForTests) {
