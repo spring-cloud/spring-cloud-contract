@@ -41,7 +41,8 @@ class DslToWireMockClientConverterSpec extends Specification {
 		given:
 			def converter = new DslToWireMockClientConverter()
 		and:
-			String dslBody = """
+			File file = tmpFolder.newFile("dsl-delay.groovy")
+			file.write("""
 				io.codearte.accurest.dsl.GroovyDsl.make {
 					request {
 					}
@@ -50,9 +51,9 @@ class DslToWireMockClientConverterSpec extends Specification {
 						fixedDelayMilliseconds 1000
 					}
 			}
-"""
+""")
 		when:
-			String json = converter.convertContent(dslBody)
+			String json = converter.convertContent("test", new Contract(file.toPath(), false, 0, null))
 		then:
 			JSONAssert.assertEquals('''
 {"request":{},"response":{"status":200,"fixedDelayMilliseconds":1000}}
