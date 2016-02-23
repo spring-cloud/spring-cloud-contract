@@ -483,7 +483,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 			JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(json)
 		then:
 			pathAndValues.find {
-				it.method()== """.field("property2").matches("\\d+")""" &&
+				it.method()== """.field("property2").matches("\\\\d+")""" &&
 				it.jsonPath() == """\$[?(@.property2 =~ /\\d+/)]"""
 			}
 		and:
