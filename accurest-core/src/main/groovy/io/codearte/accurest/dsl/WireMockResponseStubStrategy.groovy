@@ -31,6 +31,7 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 				.withStatus(response.status.clientValue as Integer)
 		appendHeaders(builder)
 		appendBody(builder)
+		appendResponseDelayTime(builder)
 		return builder.build()
 	}
 
@@ -50,6 +51,12 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 				contentType = recognizeContentTypeFromContent(body)
 			}
 			builder.withBody(parseBody(body, contentType))
+		}
+	}
+
+	private void appendResponseDelayTime(ResponseDefinitionBuilder builder) {
+		if (response.delay) {
+			builder.withFixedDelay(response.delay.clientValue as Integer)
 		}
 	}
 

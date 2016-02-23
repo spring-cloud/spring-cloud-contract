@@ -11,6 +11,7 @@ import groovy.transform.TypeChecked
 class Response extends Common {
 
 	DslProperty status
+	DslProperty delay
 	Headers headers
 	Body body
 
@@ -47,6 +48,10 @@ class Response extends Common {
 
 	void body(Object bodyAsValue) {
 		this.body = new Body(bodyAsValue)
+	}
+
+	void fixedDelayMilliseconds(int timeInMilliseconds) {
+		this.delay = toDslProperty(timeInMilliseconds)
 	}
 
 	void assertThatSidesMatch(OptionalProperty stubSide, Object testSide) {

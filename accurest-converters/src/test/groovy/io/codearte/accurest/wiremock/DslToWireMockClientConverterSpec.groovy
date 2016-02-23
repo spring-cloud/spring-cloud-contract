@@ -4,6 +4,7 @@ import io.codearte.accurest.file.Contract
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.skyscreamer.jsonassert.JSONAssert
+import spock.lang.Issue
 import spock.lang.Specification
 
 class DslToWireMockClientConverterSpec extends Specification {
@@ -35,6 +36,28 @@ class DslToWireMockClientConverterSpec extends Specification {
 ''', json, false)
 	}
 
+	@Issue("196")
+	def "should creation of delayed stub responses be possible"() {
+		given:
+			def converter = new DslToWireMockClientConverter()
+		and:
+			String dslBody = """
+				io.codearte.accurest.dsl.GroovyDsl.make {
+					request {
+					}
+					response {
+						status 200
+						fixedDelayMilliseconds 1000
+					}
+			}
+"""
+		when:
+			String json = converter.convertContent(dslBody)
+		then:
+			JSONAssert.assertEquals('''
+{"request":{},"response":{"status":200,"fixedDelayMilliseconds":1000}}
+''', json, false)
+	}
 
 	def "should convert DSL file with a nested list to WireMock JSON"() {
 		given:
