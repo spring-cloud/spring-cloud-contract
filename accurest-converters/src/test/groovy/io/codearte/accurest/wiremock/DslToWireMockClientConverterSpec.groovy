@@ -37,8 +37,6 @@ class DslToWireMockClientConverterSpec extends Specification {
 			String dslBody = """
 				io.codearte.accurest.dsl.GroovyDsl.make {
 					request {
-						method "GET"
-						url "/test"
 					}
 					response {
 						status 200
@@ -50,7 +48,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 			String json = converter.convertContent(dslBody)
 		then:
 			JSONAssert.assertEquals('''
-{"request":{"method":"GET","url":"/test"},"response":{"status":200, "fixedDelayMilliseconds":1000}}
+{"request":{},"response":{"status":200,"fixedDelayMilliseconds":1000}}
 ''', json, false)
 	}
 
