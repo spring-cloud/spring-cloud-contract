@@ -13,6 +13,6 @@ public class MvcTest {
 	}
 
 	public void assertThatRejectionReasonIsNull(Object rejectionReason) {
-		assert rejectionReason== null;
+		assert rejectionReason == null;
 	}
 }
