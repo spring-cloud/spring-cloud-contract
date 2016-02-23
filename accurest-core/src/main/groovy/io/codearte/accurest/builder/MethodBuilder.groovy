@@ -48,8 +48,14 @@ class MethodBuilder {
 		blockBuilder.addLine('}')
 	}
 
-	private SpockMethodBodyBuilder getMethodBodyBuilder() {
+	private MethodBodyBuilder getMethodBodyBuilder() {
+		if (configProperties.testMode == TestMode.MOCKMVC && configProperties.targetFramework == TestFramework.JUNIT){
+				return new MockMvcJUnitMethodBodyBuilder(stubContent)
+		}
 		if (configProperties.testMode == TestMode.JAXRSCLIENT) {
+			if (configProperties.targetFramework == TestFramework.JUNIT){
+				return new JaxRsClientJUnitMethodBodyBuilder(stubContent)
+			}
 			return new JaxRsClientSpockMethodBodyBuilder(stubContent)
 		}
 		return new MockMvcSpockMethodBodyBuilder(stubContent)

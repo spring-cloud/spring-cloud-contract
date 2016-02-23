@@ -62,7 +62,12 @@ class SingleTestGenerator {
 		}
 
 		if (configProperties.targetFramework == TestFramework.JUNIT) {
+			if (configProperties.testMode == TestMode.MOCKMVC) {
+				clazz.addImport('com.jayway.restassured.module.mockmvc.specification.MockMvcRequestSpecification')
+				clazz.addImport('com.jayway.restassured.response.ResponseOptions')
+			}
 			clazz.addImport('org.junit.Test')
+			clazz.addStaticImport('org.assertj.core.api.Assertions.assertThat')
 		}
 
 		if (configProperties.ruleClassForTests) {
