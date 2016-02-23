@@ -15,8 +15,7 @@ import static io.codearte.accurest.util.NamesUtil.capitalize
 @Slf4j
 class SingleTestGenerator {
 
-	private static
-	final String JSON_ASSERT_STATIC_IMPORT = 'com.blogspot.toomuchcoding.jsonassert.JsonAssertion.assertThatJson'
+	private static final String JSON_ASSERT_STATIC_IMPORT = 'com.blogspot.toomuchcoding.jsonassert.JsonAssertion.assertThatJson'
 	private static final String JSON_ASSERT_CLASS = 'com.blogspot.toomuchcoding.jsonassert.JsonAssertion'
 
 	private final AccurestConfigProperties configProperties
