@@ -57,7 +57,7 @@ class SingleTestGeneratorSpec extends Specification {
 			String clazz = testGenerator.buildClass([contract], "test", "test")
 
 		then:
-			classStrings.forEach({ clazz.contains(it) })
+			classStrings.each { clazz.contains(it) }
 
 		where:
 			testFramework | classStrings
@@ -80,7 +80,7 @@ class SingleTestGeneratorSpec extends Specification {
 			String clazz = testGenerator.buildClass([contract], "test", "test")
 
 		then:
-			classStrings.forEach({ clazz.contains(it) })
+			classStrings.each { clazz.contains(it) }
 
 		where:
 			testFramework | classStrings
