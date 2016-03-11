@@ -1,6 +1,6 @@
 package io.codearte.accurest.util
 
-import com.blogspot.toomuchcoding.jsonassert.JsonAssertion
+import com.toomuchcoding.jsonassert.JsonAssertion
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import io.codearte.accurest.dsl.internal.ExecutionProperty

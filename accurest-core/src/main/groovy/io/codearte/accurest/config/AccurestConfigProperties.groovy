@@ -35,7 +35,7 @@ class AccurestConfigProperties {
 	String ruleClassForTests
 
 	/**
-	 * Which version of JSON Assert (com.blogspot.toomuchcoding:jsonassert) to use
+	 * Which version of JSON Assert (com.toomuchcoding.jsonassert:jsonassert) to use
 	 */
 	String jsonAssertVersion = "+"
 

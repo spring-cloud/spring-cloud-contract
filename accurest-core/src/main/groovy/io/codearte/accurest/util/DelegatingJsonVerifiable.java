@@ -1,6 +1,6 @@
 package io.codearte.accurest.util;
 
-import com.blogspot.toomuchcoding.jsonassert.JsonVerifiable;
+import com.toomuchcoding.jsonassert.JsonVerifiable;
 
 import static org.apache.commons.lang3.StringEscapeUtils.escapeJava;
 
