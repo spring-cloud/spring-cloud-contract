@@ -22,7 +22,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					body(
 							id: value(
 									client('123'),
-									server({ regex('[0-9]+') })
+									server(regex('[0-9]+'))
 							),
 							surname: $(
 									client('Kowalsky'),
