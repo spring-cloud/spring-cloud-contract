@@ -3,6 +3,7 @@ package io.codearte.accurest.file
 import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.ListMultimap
 import org.apache.commons.io.FilenameUtils
+import org.apache.commons.lang3.SystemUtils
 
 import java.nio.file.FileSystem
 import java.nio.file.FileSystems
@@ -30,7 +31,11 @@ class ContractFileScanner {
 	private Set<PathMatcher> processPatterns(Set<String> patterns, baseDir) {
 		FileSystem fileSystem = FileSystems.getDefault()
 		return patterns.collect({
-			fileSystem.getPathMatcher(MATCH_PREFIX + baseDir.toString() + File.separator + it)
+			String syntaxAndPattern = MATCH_PREFIX + baseDir.toString() + File.separator + it
+			if (SystemUtils.IS_OS_WINDOWS) {
+				syntaxAndPattern = syntaxAndPattern.replace("\\", "\\\\")
+			}
+			fileSystem.getPathMatcher(syntaxAndPattern)
 		}) as Set
 	}
 
