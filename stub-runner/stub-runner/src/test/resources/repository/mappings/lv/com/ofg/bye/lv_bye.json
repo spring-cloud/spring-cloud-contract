@@ -1,0 +1,13 @@
+{
+    "request": {
+        "method": "GET",
+        "url": "/lv/bye"
+    },
+    "response": {
+        "status": 200,
+        "body": "Another goodbye world!",
+        "headers": {
+            "Content-Type": "text/plain"
+        }
+    }
+}

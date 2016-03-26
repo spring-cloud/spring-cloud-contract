@@ -1,3 +1,8 @@
 include "accurest-core", "accurest-gradle-plugin", 'accurest-converters', 'accurest-testing-utils'
+include ':stub-runner:stub-runner'
+include ':stub-runner:stub-runner-spring'
+include ':stub-runner:stub-runner-junit'
 rootProject.name = "accurest"
 
+//to prevent StackOverflow in Sonar
+project(":stub-runner").name = "stub-runner-root"

@@ -1,6 +1,12 @@
 language: java
 sudo: false
 
+before_install:
+ - "export JAVA_OPTS='-Xmx1024m -XX:MaxPermSize=384m'"
+ - "rm -rf $HOME/.m2/repository/io/codearte/accurest/stubs"
+ - "mkdir $HOME/.m2/repository/io/codearte/accurest/ --parents"
+ - "cp -r stub-runner/stub-runner-spring/src/test/resources/m2repo/repository/io/codearte/accurest/stubs $HOME/.m2/repository/io/codearte/accurest/"
+
 jdk:
  - oraclejdk7
  - openjdk7
@@ -12,4 +18,4 @@ cache:
   - $HOME/.m2
 
 install: ./gradlew assemble
-script: ./gradlew clean check funcTest --stacktrace --info --continue
+script: ./gradlew clean check funcTest --stacktrace --info --continue --parallel

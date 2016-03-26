@@ -19,3 +19,17 @@ For more information please go to the [Wiki](https://github.com/Codearte/accures
 ### Wiremock
 
 In order to use Accurest with Wiremock you have to have __Wiremock in version at least 2.0.0-beta__ . Of course the higher the better :)
+
+## Additional projects
+
+### Stub Runner
+
+Allows you to download WireMock stubs from the provided Maven repository and runs them in WireMock servers.
+
+### Stub Runner JUnit
+
+Stub Runner with JUnit rules
+
+### Stub Runner Spring
+
+Spring Configuration that automatically starts stubs upon Spring Context build up
