@@ -23,7 +23,7 @@ class AccurestRuleSpec extends Specification {
 }
 ```
 
-You can set the default value of the Maven repository by means of system property:
+You can set the default value of the Maven repository by means of a system property:
 
 ```
 -Dstubrunner.stubs.repository.root=http://your.maven.repo.com

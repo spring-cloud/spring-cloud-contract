@@ -44,22 +44,13 @@ You can configure the stub runner by either passing the full arguments list with
 or each parameter separately with a `-P` prefix and without the hyphen `-` in the name of the param
 
 ```
-./gradlew stub-runner-root:stub-runner:run -Pc=pl -Pminp=10000 -Pmaxp=10005
-```
-
-### Defining collaborators' stubs
-
-You can define global stubs under folder corresponding to groupid/artifactid of your collaborator
-
-```
-com/ofg/foo
+./gradlew stub-runner-root:stub-runner:run -Pc=pl -Pminp=10000 -Pmaxp=10005 -Ps=a:b:c,d:e,f:g:h
 ```
 
 By default stub definitions are stored in `mappings` directory inside stub repository.
 
-#### Stubbing collaborators
+#### Stubs
 
-For each collaborator defined in project metadata all collaborator mappings (stubs) available in repository are loaded.
 Stubs are defined in JSON documents, whose syntax is defined in [WireMock documentation](http://wiremock.org/stubbing.html)
 
 Example:
@@ -79,9 +70,7 @@ Example:
 }
 ```
 
-Stub definitions are stored in stub repository under the same path as collaborator fully qualified name.
-Paths (as long it's inside the directory mentioned above) and names of documents containing stub definitions not play any 
-other role than describing stubs' role / purpose.
+In the provided JAR file we're harvesting all JSON files and try to put them inside running WireMock instance.
 
 #### Viewing registered mappings
 
