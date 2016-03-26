@@ -13,8 +13,15 @@
 				<groupId>io.codearte.accurest</groupId>
 				<artifactId>accurest-maven-plugin</artifactId>
 				<version>${it-plugin.version}</version>
+				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generateStubs</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
