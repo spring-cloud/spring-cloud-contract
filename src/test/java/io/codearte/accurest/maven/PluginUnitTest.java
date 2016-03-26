@@ -19,17 +19,24 @@ public class PluginUnitTest {
 	public final TestMavenRuntime maven = new TestMavenRuntime();
 
 	@Test
-	public void shouldGenerateWarlockStubsInDefaultLocation() throws Exception {
+	public void shouldGenerateWiremockStubsInDefaultcLocation() throws Exception {
 		File basedir = resources.getBasedir("basic");
 		maven.executeMojo(basedir, "generateStubs");
 		assertFilesPresent(basedir, "target/mappings/Sample.json");
 	}
 
 	@Test
-	public void shouldGenerateWarlockStubsInSelectedLocation() throws Exception {
+	public void shouldGenerateWiremockStubsInSelectedLocation() throws Exception {
 		File basedir = resources.getBasedir("basic");
 		maven.executeMojo(basedir, "generateStubs", TestMavenRuntime.newParameter("mappingsDir", "foo"));
 		assertFilesPresent(basedir, "target/foo/Sample.json");
 	}
 
+	@Test
+	public void shouldGenerateContractSpecificationInDefaultLocation() throws Exception {
+		File basedir = resources.getBasedir("basic");
+		maven.executeMojo(basedir, "generateSpecs");
+		assertFilesPresent(basedir,
+				"target/generated-sources/accurest/io/codearte/accurest/tests/AccurestSpec.groovy");
+	}
 }

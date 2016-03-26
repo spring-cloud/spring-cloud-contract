@@ -26,30 +26,15 @@ public class GenerateStubsMojo extends AbstractMojo {
 	private String mappingsDir = "mappings";
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		getLog().info("");
-		getLog().info("*** Accurest Maven Plugin ***");
-		getLog().info("");
+		AccurestConfigProperties config = new AccurestConfigProperties();
+		config.setContractsDslDir(new File(baseDir, "/src/test/resources/stubs"));
+		config.setStubsOutputDir(new File(projectBuildDirectory, mappingsDir));
 
-		File stubsOutputDir = new File(projectBuildDirectory, mappingsDir);
-
-		getLog().info("baseDir = " + baseDir);
-		getLog().info("projectBuildDirectory = " + projectBuildDirectory);
-		getLog().info("mappings = " + mappingsDir);
-
-		AccurestConfigProperties configProperties = new AccurestConfigProperties();
-
-		File contractsDslDir = new File(baseDir, "/src/test/resources/stubs");
-
-		configProperties.setContractsDslDir(contractsDslDir);
-		configProperties.setBasePackageForTests("io.codearte.accurest.tests");
-		configProperties.setStubsOutputDir(stubsOutputDir);
 		getLog().info("Accurest Plugin: Invoking GroovyDSL to WireMock client stubs conversion");
-		getLog().info(String.format("From '%s' to '%s'", contractsDslDir, stubsOutputDir));
+		getLog().info(String.format("From '%s' to '%s'", config.getContractsDslDir(), config.getStubsOutputDir()));
 
-		RecursiveFilesConverter converter = new RecursiveFilesConverter(new DslToWireMockClientConverter(),
-				configProperties);
+		RecursiveFilesConverter converter = new RecursiveFilesConverter(new DslToWireMockClientConverter(), config);
 		converter.processFiles();
-
 	}
 
 }

@@ -25,12 +25,19 @@ public class PluginIntegrationTest {
 	}
 
 	@Test
-	public void test() throws Exception {
+	public void shouldCreateStubs() throws Exception {
 		File basedir = resources.getBasedir("basic-with-execution");
 		maven.forProject(basedir)
 				.withCliOption("-X")
 				.execute("package")
-				.assertErrorFreeLog()
 				.assertLogText("Accurest Plugin: Invoking GroovyDSL to WireMock client stubs conversion");
+	}
+
+	@Test
+	public void shouldCreateSpecs() throws Exception {
+		File basedir = resources.getBasedir("basic-with-execution");
+		maven.forProject(basedir)
+				.execute("package")
+				.assertLogText("Accurest Plugin: Invoking test sources generation");
 	}
 }
