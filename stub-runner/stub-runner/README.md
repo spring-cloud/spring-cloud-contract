@@ -47,7 +47,6 @@ or each parameter separately with a `-P` prefix and without the hyphen `-` in th
 ./gradlew stub-runner-root:stub-runner:run -Pc=pl -Pminp=10000 -Pmaxp=10005 -Ps=a:b:c,d:e,f:g:h
 ```
 
-By default stub definitions are stored in `mappings` directory inside stub repository.
 
 #### Stubs
 

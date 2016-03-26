@@ -14,12 +14,15 @@ class AccurestRuleSpec extends Specification {
 			.downloadStub("io.codearte.accurest.stubs:fraudDetectionServer")
 
 	def 'should start WireMock servers'() {
-		expect:
-		rule.findStubUrl('io.codearte.accurest.stubs', 'loanIssuance') != null
-		rule.findStubUrl('loanIssuance') != null
-		rule.findStubUrl('loanIssuance') == rule.findStubUrl('io.codearte.accurest.stubs', 'loanIssuance')
-		rule.findStubUrl('io.codearte.accurest.stubs:fraudDetectionServer') != null
-	}
+        expect: 'WireMocks are running'
+            rule.findStubUrl('io.codearte.accurest.stubs', 'loanIssuance') != null
+            rule.findStubUrl('loanIssuance') != null
+            rule.findStubUrl('loanIssuance') == rule.findStubUrl('io.codearte.accurest.stubs', 'loanIssuance')
+            rule.findStubUrl('io.codearte.accurest.stubs:fraudDetectionServer') != null
+        and: 'Stubs were registered'
+            "${rule.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
+            "${rule.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
+    }
 }
 ```
 
@@ -36,7 +39,7 @@ The list of configurable properties contains:
 | stubrunner.port.range.min | 10000 | Minimal value of a port for a WireMock server |
 | stubrunner.port.range.max | 15000 | Maximum value of a port for a WireMock server |
 | stubrunner.stubs.repository.root |  | Address to your M2 repo (will point to local M2 repo if none is provided) |
-| stubrunner.stubs.repository.root |  | Address to your M2 repo (will point to local M2 repo if none is provided) |
-| stubrunner.work-offline | false | Should try to connect to any repo to download stubs (especially good if there's no internet) |
+| stubrunner.stubs.classifier | stubs | Default classifier for the JARs containing stubs |
+| stubrunner.work-offline | false | Should try to connect to any repo to download stubs (useful if there's no internet) |
 | stubrunner.stubs | | Default comma separated list of stubs to download |
 
