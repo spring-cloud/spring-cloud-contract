@@ -12,10 +12,5 @@ jdk:
  - openjdk7
  - oraclejdk8
 
-cache:
-  directories:
-  - $HOME/.gradle
-  - $HOME/.m2
-
 install: ./gradlew assemble
-script: ./gradlew clean check funcTest --stacktrace --info --continue --parallel
+script: ./gradlew clean check funcTest --stacktrace --info --continue
