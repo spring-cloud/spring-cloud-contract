@@ -34,7 +34,7 @@ public class StubRunnerConfiguration {
 	 * @param workOffline        forces offline work
 	 * @param stubs              comma separated list of stubs presented in Ivy notation
 	 */
-	@Bean(initMethod = "runStubs", destroyMethod = "close")
+	@Bean(destroyMethod = "close")
 	public StubRunning batchStubRunner(
 			@Value("${stubrunner.port.range.min:10000}") Integer minPortValue,
 			@Value("${stubrunner.port.range.max:15000}") Integer maxPortValue,
@@ -42,12 +42,13 @@ public class StubRunnerConfiguration {
 			@Value("${stubrunner.stubs.classifier:stubs}") String stubsSuffix,
 			@Value("${stubrunner.work-offline:false}") boolean workOffline,
 			@Value("${stubrunner.stubs:}") String stubs) throws IOException {
-		StubRunnerOptions stubRunnerOptions = new StubRunnerOptions(minPortValue,
-				maxPortValue, uriStringOrEmpty(stubRepositoryRoot),
+		StubRunnerOptions stubRunnerOptions = new StubRunnerOptions(minPortValue, maxPortValue, uriStringOrEmpty(stubRepositoryRoot),
 				stubRepositoryRoot == null || workOffline, stubsSuffix);
 		Set<StubConfiguration> dependencies = StubsParser.fromString(stubs, stubsSuffix);
-		return new BatchStubRunnerFactory(stubRunnerOptions, dependencies)
-				.buildBatchStubRunner();
+		BatchStubRunner batchStubRunner = new BatchStubRunnerFactory(stubRunnerOptions, dependencies).buildBatchStubRunner();
+		// TODO: Consider running it in a separate thread
+		batchStubRunner.runStubs();
+		return batchStubRunner;
 	}
 
 	private String uriStringOrEmpty(Resource stubRepositoryRoot) throws IOException {

@@ -18,4 +18,9 @@ interface StubFinder {
 	 * @return URL of a running stub or null if not found
 	 */
 	URL findStubUrl(String ivyNotation)
+
+	/**
+	 * Returns all running stubs
+	 */
+	RunningStubs findAllRunningStubs()
 }

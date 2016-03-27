@@ -24,6 +24,10 @@ class StubRunnerExecutorSpec extends Specification {
 		executor.runStubs(repository, stub)
 		then:
 		executor.findStubUrl("group", "artifact") == EXPECTED_STUB_URL
+		and:
+		executor.findAllRunningStubs().isPresent('artifact')
+		executor.findAllRunningStubs().isPresent('group', 'artifact')
+		executor.findAllRunningStubs().isPresent('group:artifact')
 		cleanup:
 		executor.shutdown()
 	}

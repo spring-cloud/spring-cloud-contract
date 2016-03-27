@@ -23,6 +23,10 @@ class StubRunnerConfigurationSpec extends Specification {
 			stubFinder.findStubUrl('loanIssuance') != null
 			stubFinder.findStubUrl('loanIssuance') == stubFinder.findStubUrl('io.codearte.accurest.stubs', 'loanIssuance')
 			stubFinder.findStubUrl('io.codearte.accurest.stubs:fraudDetectionServer') != null
+		and:
+			stubFinder.findAllRunningStubs().isPresent('loanIssuance')
+			stubFinder.findAllRunningStubs().isPresent('io.codearte.accurest.stubs', 'fraudDetectionServer')
+			stubFinder.findAllRunningStubs().isPresent('io.codearte.accurest.stubs:fraudDetectionServer')
 		and: 'Stubs were registered'
 			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
 			"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
@@ -31,7 +35,5 @@ class StubRunnerConfigurationSpec extends Specification {
 	@Configuration
 	@Import(StubRunnerConfiguration)
 	@EnableAutoConfiguration
-	static class Config {
-
-	}
+	static class Config {}
 }

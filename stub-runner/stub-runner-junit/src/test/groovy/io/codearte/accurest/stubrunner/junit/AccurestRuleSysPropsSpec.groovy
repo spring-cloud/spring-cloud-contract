@@ -12,7 +12,7 @@ import spock.util.environment.RestoreSystemProperties
 class AccurestRuleSysPropsSpec extends Specification {
 
 	static {
-		System.properties.setProperty("stubrunner.stubs.repository.root", AccurestRuleSysPropsSpec.getResource("/m2repo").path)
+		System.properties.setProperty("stubrunner.stubs.repository.root", AccurestRuleSysPropsSpec.getResource("/m2repo").toURI().toString())
 		System.properties.setProperty("stubrunner.stubs.classifier", 'classifier that will be overridden')
 	}
 
@@ -29,5 +29,8 @@ class AccurestRuleSysPropsSpec extends Specification {
 		and: 'Stubs were registered'
 			"${rule.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
 			"${rule.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
+		cleanup:
+			System.properties.setProperty("stubrunner.stubs.repository.root", "")
+			System.properties.setProperty("stubrunner.stubs.classifier", 'stubs')
 	}
 }

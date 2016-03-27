@@ -47,6 +47,11 @@ class StubRunnerExecutor implements StubFinder {
 		return findStubUrl(splitString[0], splitString[1])
 	}
 
+	@Override
+	RunningStubs findAllRunningStubs() {
+		return new RunningStubs([(stubServer.stubConfiguration) : stubServer.port])
+	}
+
 	private URL returnStubUrlIfMatches(boolean condition) {
 		return condition ? stubServer.stubUrl : null
 	}

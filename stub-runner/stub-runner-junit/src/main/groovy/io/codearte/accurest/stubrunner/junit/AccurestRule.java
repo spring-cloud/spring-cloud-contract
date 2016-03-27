@@ -14,6 +14,7 @@ import org.junit.runners.model.Statement;
 
 import io.codearte.accurest.stubrunner.BatchStubRunner;
 import io.codearte.accurest.stubrunner.BatchStubRunnerFactory;
+import io.codearte.accurest.stubrunner.RunningStubs;
 import io.codearte.accurest.stubrunner.StubConfiguration;
 import io.codearte.accurest.stubrunner.StubFinder;
 import io.codearte.accurest.stubrunner.StubRunnerOptions;
@@ -154,5 +155,10 @@ public class AccurestRule implements TestRule, StubFinder {
 	@Override
 	public URL findStubUrl(String ivyNotation) {
 		return stubFinder.findStubUrl(ivyNotation);
+	}
+
+	@Override
+	public RunningStubs findAllRunningStubs() {
+		return stubFinder.findAllRunningStubs();
 	}
 }

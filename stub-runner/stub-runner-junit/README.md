@@ -19,6 +19,10 @@ class AccurestRuleSpec extends Specification {
             rule.findStubUrl('loanIssuance') != null
             rule.findStubUrl('loanIssuance') == rule.findStubUrl('io.codearte.accurest.stubs', 'loanIssuance')
             rule.findStubUrl('io.codearte.accurest.stubs:fraudDetectionServer') != null
+        and:
+            rule.findAllRunningStubs().isPresent('loanIssuance')
+            rule.findAllRunningStubs().isPresent('io.codearte.accurest.stubs', 'fraudDetectionServer')
+            rule.findAllRunningStubs().isPresent('io.codearte.accurest.stubs:fraudDetectionServer')
         and: 'Stubs were registered'
             "${rule.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
             "${rule.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'

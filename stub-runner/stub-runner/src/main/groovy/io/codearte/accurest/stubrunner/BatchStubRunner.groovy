@@ -44,6 +44,11 @@ class BatchStubRunner implements StubRunning {
 	}
 
 	@Override
+	RunningStubs findAllRunningStubs() {
+		return new RunningStubs(stubRunners.collect { StubRunner runner -> runner.findAllRunningStubs() })
+	}
+
+	@Override
 	void close() throws IOException {
 		stubRunners.each {
 			it.close()

@@ -46,6 +46,11 @@ class StubRunner implements StubRunning {
 		return findStubUrl(splitString[0], splitString[1])
 	}
 
+	@Override
+	RunningStubs findAllRunningStubs() {
+		return localStubRunner.findAllRunningStubs()
+	}
+
 	private void registerShutdownHook() {
 		Runnable stopAllServers = { this.close() }
 		Runtime.runtime.addShutdownHook(new Thread(stopAllServers))
