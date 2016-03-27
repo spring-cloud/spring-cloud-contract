@@ -1,0 +1,9 @@
+language: java
+
+jdk:
+  - oraclejdk8
+
+script: ./mvnw package
+
+after_success:
+  - ./mvnw clean test jacoco:report coveralls:report
