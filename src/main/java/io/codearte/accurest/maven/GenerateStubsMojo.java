@@ -22,10 +22,10 @@ public class GenerateStubsMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${project.build.directory}")
 	private File projectBuildDirectory;
 
-	@Parameter(property = "mappingsDir", defaultValue = "mappings", required = false)
+	@Parameter(property = "mappingsDir", defaultValue = "mappings")
 	private String mappingsDir;
 
-	@Parameter(property = "contractsDir", defaultValue = "/src/test/resources/stubs", required = false)
+	@Parameter(property = "contractsDir", defaultValue = "/src/test/resources/stubs")
 	private String contractsDir;
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
