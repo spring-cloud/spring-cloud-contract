@@ -16,10 +16,10 @@ import io.codearte.accurest.wiremock.RecursiveFilesConverter;
 @Mojo(name = "generateStubs", defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 public class GenerateStubsMojo extends AbstractMojo {
 
-	@Parameter(defaultValue = "${basedir}")
+	@Parameter(defaultValue = "${basedir}", readonly = true)
 	private File baseDir;
 
-	@Parameter(defaultValue = "${project.build.directory}")
+	@Parameter(defaultValue = "${project.build.directory}", readonly = true)
 	private File projectBuildDirectory;
 
 	@Parameter(property = "mappingsDir", defaultValue = "mappings")

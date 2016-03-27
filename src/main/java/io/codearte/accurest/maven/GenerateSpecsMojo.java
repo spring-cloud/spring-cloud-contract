@@ -18,10 +18,10 @@ import io.codearte.accurest.config.AccurestConfigProperties;
 @Mojo(name = "generateSpecs", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES)
 public class GenerateSpecsMojo extends AbstractMojo {
 
-	@Parameter(defaultValue = "${basedir}")
+	@Parameter(defaultValue = "${basedir}", readonly = true)
 	private File baseDir;
 
-	@Parameter(defaultValue = "${project.build.directory}")
+	@Parameter(defaultValue = "${project.build.directory}", readonly = true)
 	private File projectBuildDirectory;
 
 	@Parameter(property = "contractsDir", defaultValue = "/src/test/resources/stubs")
@@ -44,7 +44,7 @@ public class GenerateSpecsMojo extends AbstractMojo {
 		config.setGeneratedTestSourcesDir(new File(projectBuildDirectory, generatedTestSourcesDir));
 
 		getLog().info("Accurest Plugin: Invoking test sources generation");
-		getLog().info(format("Registering %s as test source directory", config.getGeneratedTestSourcesDir()));
+		getLog().info(format("Using %s as test source directory", config.getGeneratedTestSourcesDir()));
 
 		try {
 			TestGenerator generator = new TestGenerator(config);
