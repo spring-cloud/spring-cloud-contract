@@ -24,10 +24,13 @@ public class GenerateSpecsMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${project.build.directory}")
 	protected File projectBuildDirectory;
 
+	@Parameter(property = "contractsDir", defaultValue = "/src/test/resources/stubs", required = false)
+	private String contractsDir = "/src/test/resources/stubs";
+
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		AccurestConfigProperties config = new AccurestConfigProperties();
 
-		config.setContractsDslDir(new File(baseDir, "/src/test/resources/stubs"));
+		config.setContractsDslDir(new File(baseDir, contractsDir));
 		config.setBasePackageForTests("io.codearte.accurest.tests");
 		config.setGeneratedTestSourcesDir(new File(projectBuildDirectory, "/generated-sources/accurest"));
 

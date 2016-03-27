@@ -33,6 +33,13 @@ public class PluginUnitTest {
 	}
 
 	@Test
+	public void shouldGenerateWiremockStubsInSelectedLocation2() throws Exception {
+		File basedir = resources.getBasedir("customContractsLocation");
+		maven.executeMojo(basedir, "generateStubs", TestMavenRuntime.newParameter("contractsDir", "src/foo"));
+		assertFilesPresent(basedir, "target/mappings/Sample.json");
+	}
+
+	@Test
 	public void shouldGenerateContractSpecificationInDefaultLocation() throws Exception {
 		File basedir = resources.getBasedir("basic");
 		maven.executeMojo(basedir, "generateSpecs");

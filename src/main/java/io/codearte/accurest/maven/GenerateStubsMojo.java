@@ -25,9 +25,12 @@ public class GenerateStubsMojo extends AbstractMojo {
 	@Parameter(property = "mappingsDir", defaultValue = "mappings", required = false)
 	private String mappingsDir = "mappings";
 
+	@Parameter(property = "contractsDir", defaultValue = "/src/test/resources/stubs", required = false)
+	private String contractsDir = "/src/test/resources/stubs";
+
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		AccurestConfigProperties config = new AccurestConfigProperties();
-		config.setContractsDslDir(new File(baseDir, "/src/test/resources/stubs"));
+		config.setContractsDslDir(new File(baseDir, contractsDir));
 		config.setStubsOutputDir(new File(projectBuildDirectory, mappingsDir));
 
 		getLog().info("Accurest Plugin: Invoking GroovyDSL to WireMock client stubs conversion");
