@@ -52,7 +52,6 @@
 				<groupId>io.codearte.accurest</groupId>
 				<artifactId>accurest-maven-plugin</artifactId>
 				<version>${it-plugin.version}</version>
-				<extensions>true</extensions>
 				<executions>
 					<execution>
 						<goals>
