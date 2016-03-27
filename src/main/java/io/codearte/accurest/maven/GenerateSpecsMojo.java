@@ -19,20 +19,26 @@ import io.codearte.accurest.config.AccurestConfigProperties;
 public class GenerateSpecsMojo extends AbstractMojo {
 
 	@Parameter(defaultValue = "${basedir}")
-	protected File baseDir;
+	private File baseDir;
 
 	@Parameter(defaultValue = "${project.build.directory}")
-	protected File projectBuildDirectory;
+	private File projectBuildDirectory;
 
 	@Parameter(property = "contractsDir", defaultValue = "/src/test/resources/stubs", required = false)
-	private String contractsDir = "/src/test/resources/stubs";
+	private String contractsDir;
+
+	@Parameter(property = "generatedTestSourcesDir", defaultValue = "/generated-sources/accurest", required = false)
+	private String generatedTestSourcesDir;
+
+	@Parameter(property = "basePackageForTests", defaultValue = "io.codearte.accurest.tests", required = false)
+	private String basePackageForTests;
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		AccurestConfigProperties config = new AccurestConfigProperties();
 
 		config.setContractsDslDir(new File(baseDir, contractsDir));
-		config.setBasePackageForTests("io.codearte.accurest.tests");
-		config.setGeneratedTestSourcesDir(new File(projectBuildDirectory, "/generated-sources/accurest"));
+		config.setBasePackageForTests(basePackageForTests);
+		config.setGeneratedTestSourcesDir(new File(projectBuildDirectory, generatedTestSourcesDir));
 
 		getLog().info("Accurest Plugin: Invoking test sources generation");
 		getLog().info(format("Registering %s as test source directory", config.getGeneratedTestSourcesDir()));
@@ -40,7 +46,7 @@ public class GenerateSpecsMojo extends AbstractMojo {
 		try {
 			TestGenerator generator = new TestGenerator(config);
 			int generatedClasses = generator.generate();
-			getLog().info(String.format("Generated %s test classes.", generatedClasses));
+			getLog().info(format("Generated %s test classes.", generatedClasses));
 		} catch (AccurestException e) {
 			throw new MojoExecutionException(format("Accurest Plugin exception: %s", e.getMessage()), e);
 		}

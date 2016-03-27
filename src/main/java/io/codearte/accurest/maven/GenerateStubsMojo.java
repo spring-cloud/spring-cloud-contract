@@ -17,16 +17,16 @@ import io.codearte.accurest.wiremock.RecursiveFilesConverter;
 public class GenerateStubsMojo extends AbstractMojo {
 
 	@Parameter(defaultValue = "${basedir}")
-	protected File baseDir;
+	private File baseDir;
 
 	@Parameter(defaultValue = "${project.build.directory}")
-	protected File projectBuildDirectory;
+	private File projectBuildDirectory;
 
 	@Parameter(property = "mappingsDir", defaultValue = "mappings", required = false)
-	private String mappingsDir = "mappings";
+	private String mappingsDir;
 
 	@Parameter(property = "contractsDir", defaultValue = "/src/test/resources/stubs", required = false)
-	private String contractsDir = "/src/test/resources/stubs";
+	private String contractsDir;
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		AccurestConfigProperties config = new AccurestConfigProperties();
