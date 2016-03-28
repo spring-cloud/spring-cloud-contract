@@ -33,7 +33,7 @@ public class GenerateSpecsMojo extends AbstractMojo {
 	@Parameter(property = "basePackageForTests", defaultValue = "io.codearte.accurest.tests")
 	private String basePackageForTests;
 
-	@Parameter(property = "baseClassForTests", required = true)
+	@Parameter(property = "baseClassForTests")
 	private String baseClassForTests;
 
 	public GenerateSpecsMojo() {

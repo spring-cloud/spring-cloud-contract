@@ -60,9 +60,6 @@
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<baseClassForTests>com.ofg.twitter.place.BaseMockMvcSpec</baseClassForTests>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.gmavenplus</groupId>
