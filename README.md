@@ -33,7 +33,7 @@ _generatedTestSourcesDir_ - Generated accurest specifications:
 
     /target/generated-test-sources/accurest
    
-Publishing wiremock stubs (projectF-stubs.jar)
+Publishing wiremock stubs jar
 ---
 
 Project configuration
