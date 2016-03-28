@@ -100,7 +100,7 @@
 				</executions>
 				<configuration>
 					<baseClassForTests>com.ofg.twitter.place.BaseMockMvcSpec</baseClassForTests>
-					<stubs>/src/test/resources/stubs</stubs>
+					<contractsDir>/src/test/resources/stubs</contractsDir>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -111,13 +111,8 @@
 					<execution>
 						<goals>
 							<goal>addSources</goal>
-							<goal>addTestSources</goal>
-							<goal>generateStubs</goal>
 							<goal>compile</goal>
-							<goal>testGenerateStubs</goal>
 							<goal>testCompile</goal>
-							<goal>removeStubs</goal>
-							<goal>removeTestStubs</goal>
 						</goals>
 					</execution>
 				</executions>

@@ -47,6 +47,7 @@ public class PluginIntegrationTest {
 		maven.forProject(basedir)
 				.execute("package")
 				.assertErrorFreeLog()
-				.assertLogText("Accurest Plugin: Invoking test sources generation");
+				.assertLogText("Accurest Plugin: Invoking test sources generation")
+				.assertLogText("Generated 1 test classes.");
 	}
 }
