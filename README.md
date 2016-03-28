@@ -20,3 +20,17 @@ Sample usage
     </executions>
 </plugin>
 ```
+
+
+```
+
+Project default directories
+---
+
+Contract definitions (_contractsDir_):
+
+    /src/test/resources/contracts
+
+Generated accurest specifications (_generatedTestSourcesDir_):
+
+    /target/generated-test-sources/accurest

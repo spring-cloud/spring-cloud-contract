@@ -26,17 +26,17 @@ public class PluginUnitTest {
 	}
 
 	@Test
+	public void shouldGenerateWiremockFromStubsDirectory() throws Exception {
+		File basedir = resources.getBasedir("withStubs");
+		maven.executeMojo(basedir, "generateStubs", TestMavenRuntime.newParameter("contractsDir", "/src/test/resources/stubs"));
+		assertFilesPresent(basedir, "target/mappings/Sample.json");
+	}
+
+	@Test
 	public void shouldGenerateWiremockStubsInSelectedLocation() throws Exception {
 		File basedir = resources.getBasedir("basic");
 		maven.executeMojo(basedir, "generateStubs", TestMavenRuntime.newParameter("mappingsDir", "foo"));
 		assertFilesPresent(basedir, "target/foo/Sample.json");
-	}
-
-	@Test
-	public void shouldGenerateWiremockStubsInSelectedLocation2() throws Exception {
-		File basedir = resources.getBasedir("customContractsLocation");
-		maven.executeMojo(basedir, "generateStubs", TestMavenRuntime.newParameter("contractsDir", "src/foo"));
-		assertFilesPresent(basedir, "target/mappings/Sample.json");
 	}
 
 	@Test

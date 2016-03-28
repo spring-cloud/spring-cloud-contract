@@ -22,11 +22,11 @@ public class GenerateStubsMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${project.build.directory}", readonly = true)
 	private File projectBuildDirectory;
 
+	@Parameter(property = "contractsDir", defaultValue = "/src/test/resources/contracts")
+	private String contractsDir;
+
 	@Parameter(property = "mappingsDir", defaultValue = "mappings")
 	private String mappingsDir;
-
-	@Parameter(property = "contractsDir", defaultValue = "/src/test/resources/stubs")
-	private String contractsDir;
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		AccurestConfigProperties config = new AccurestConfigProperties();

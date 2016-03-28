@@ -24,7 +24,7 @@ public class GenerateSpecsMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${project.build.directory}", readonly = true)
 	private File projectBuildDirectory;
 
-	@Parameter(property = "contractsDir", defaultValue = "/src/test/resources/stubs")
+	@Parameter(property = "contractsDir", defaultValue = "/src/test/resources/contracts")
 	private String contractsDir;
 
 	@Parameter(property = "generatedTestSourcesDir", defaultValue = "/generated-test-sources/accurest")
