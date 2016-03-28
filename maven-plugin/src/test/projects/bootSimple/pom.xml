@@ -21,6 +21,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
+		<accurest.version>${it-plugin.version}</accurest.version>
 	</properties>
 
 	<dependencies>
@@ -28,55 +29,22 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 
-
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
 		</dependency>
-		<!--TODO: Replace this stuff with import accurest-test dependency-->
 
 		<dependency>
-			<groupId>org.spockframework</groupId>
-			<artifactId>spock-core</artifactId>
-			<version>1.0-groovy-2.4</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.jayway.restassured</groupId>
-			<artifactId>rest-assured</artifactId>
-			<version>2.9.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.jayway.restassured</groupId>
-			<artifactId>spring-mock-mvc</artifactId>
-			<version>2.9.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock</artifactId>
-			<version>2.0.4-beta</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.toomuchcoding.jsonassert</groupId>
-			<artifactId>jsonassert</artifactId>
-			<version>0.2.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
-			<version>2.3.0</version>
-			<scope>test</scope>
+			<groupId>io.codearte.accurest</groupId>
+			<artifactId>accurest-test-deps</artifactId>
+			<version>${accurest.version}</version>
+			<type>pom</type>
 		</dependency>
 	</dependencies>
 
@@ -89,7 +57,7 @@
 			<plugin>
 				<groupId>io.codearte.accurest</groupId>
 				<artifactId>accurest-maven-plugin</artifactId>
-				<version>${it-plugin.version}</version>
+				<version>${accurest.version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -142,8 +110,30 @@
 					</includes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.6</version>
+				<dependencies>
+					<dependency>
+						<groupId>io.codearte.accurest</groupId>
+						<artifactId>stubs-assembly-descriptor</artifactId>
+						<version>${accurest.version}</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>stubs</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
-
-
 </project>

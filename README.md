@@ -32,3 +32,49 @@ _contractsDir_ - contract definitions:
 _generatedTestSourcesDir_ - Generated accurest specifications:
 
     /target/generated-test-sources/accurest
+   
+Publishing wiremock stubs (projectF-stubs.jar)
+---
+
+Project configuration
+
+```xml
+<plugin>
+    <groupId>io.codearte.accurest</groupId>
+    <artifactId>accurest-maven-plugin</artifactId>
+    <version>${accurest.version}</version>
+    <executions>
+        <execution>
+            <goals>
+                <goal>generateStubs</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+<plugin>
+    <artifactId>maven-assembly-plugin</artifactId>
+    <version>2.6</version>
+    <dependencies>
+        <dependency>
+            <groupId>io.codearte.accurest</groupId>
+            <artifactId>stubs-assembly-descriptor</artifactId>
+            <version>${accurest.version}</version>
+        </dependency>
+    </dependencies>
+    <executions>
+        <execution>
+            <phase>package</phase>
+            <goals>
+                <goal>single</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <descriptorRefs>
+            <descriptorRef>stubs</descriptorRef>
+        </descriptorRefs>
+    </configuration>
+</plugin>
+```
+
+Deploy to artifact repository using `mvn deploy`
