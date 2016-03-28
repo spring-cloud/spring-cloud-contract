@@ -11,7 +11,6 @@ Runs stubs for service collaborators. Treating stubs as contracts of services al
 You can set the following options to the main class:
 
 ```
-java -jar stub-runner.jar [options...] 
  -maxp (--maxPort) N            : Maximum port value to be assigned to the
                                   Wiremock instance. Defaults to 15000
                                   (default: 15000)
@@ -31,6 +30,21 @@ java -jar stub-runner.jar [options...]
  -wo (--workOffline)            : Switch to work offline. Defaults to 'false'
                                   (default: false)
 
+```
+
+
+#### Building a Fat Jar
+
+Just call the following command:
+
+```
+./gradlew stub-runner-root:stub-runner:shadowJar -PfatJar
+```
+
+and inside the `build/lib` there will be a Fat Jar with classifier `fatJar` waiting for you to execute. E.g.
+
+```
+java -jar stub-runner/stub-runner/build/libs/stub-runner-1.0.1-SNAPSHOT-fatJar.jar -sr http://a.b.com -s a:b:c,d:e,f:g:h 
 ```
 
 ### Stub runner configuration
