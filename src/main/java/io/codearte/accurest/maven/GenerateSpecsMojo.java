@@ -27,7 +27,7 @@ public class GenerateSpecsMojo extends AbstractMojo {
 	@Parameter(property = "contractsDir", defaultValue = "/src/test/resources/stubs")
 	private String contractsDir;
 
-	@Parameter(property = "generatedTestSourcesDir", defaultValue = "/generated-sources/accurest")
+	@Parameter(property = "generatedTestSourcesDir", defaultValue = "/generated-test-sources/accurest")
 	private String generatedTestSourcesDir;
 
 	@Parameter(property = "basePackageForTests", defaultValue = "io.codearte.accurest.tests")

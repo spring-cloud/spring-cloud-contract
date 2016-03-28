@@ -44,6 +44,6 @@ public class PluginUnitTest {
 		File basedir = resources.getBasedir("basic");
 		maven.executeMojo(basedir, "generateSpecs");
 		assertFilesPresent(basedir,
-				"target/generated-sources/accurest/io/codearte/accurest/tests/AccurestSpec.groovy");
+				"target/generated-test-sources/accurest/io/codearte/accurest/tests/AccurestSpec.groovy");
 	}
 }
