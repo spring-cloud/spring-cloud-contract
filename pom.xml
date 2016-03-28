@@ -18,7 +18,6 @@
 		<mavenVersion>3.2.5</mavenVersion>
 		<mavenPluginPluginVersion>3.4</mavenPluginPluginVersion>
 
-		<maven.compiler.source>1.7</maven.compiler.source>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 

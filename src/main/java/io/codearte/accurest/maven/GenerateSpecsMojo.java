@@ -33,6 +33,9 @@ public class GenerateSpecsMojo extends AbstractMojo {
 	@Parameter(property = "basePackageForTests", defaultValue = "io.codearte.accurest.tests")
 	private String basePackageForTests;
 
+	@Parameter(property = "baseClassForTests", required = true)
+	private String baseClassForTests;
+
 	public GenerateSpecsMojo() {
 	}
 
@@ -42,9 +45,11 @@ public class GenerateSpecsMojo extends AbstractMojo {
 		config.setContractsDslDir(new File(baseDir, contractsDir));
 		config.setBasePackageForTests(basePackageForTests);
 		config.setGeneratedTestSourcesDir(new File(projectBuildDirectory, generatedTestSourcesDir));
+		config.setBaseClassForTests(baseClassForTests);
 
 		getLog().info("Accurest Plugin: Invoking test sources generation");
 		getLog().info(format("Using %s as test source directory", config.getGeneratedTestSourcesDir()));
+		getLog().info(format("Using %s as base class for tests", config.getBaseClassForTests()));
 
 		try {
 			TestGenerator generator = new TestGenerator(config);

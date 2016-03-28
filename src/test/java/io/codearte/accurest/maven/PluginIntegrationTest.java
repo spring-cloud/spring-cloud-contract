@@ -40,4 +40,13 @@ public class PluginIntegrationTest {
 				.execute("package")
 				.assertLogText("Accurest Plugin: Invoking test sources generation");
 	}
+
+	@Test
+	public void shouldBuildAndTestSimpleBootProject() throws Exception {
+		File basedir = resources.getBasedir("bootSimple");
+		maven.forProject(basedir)
+				.execute("package")
+				.assertErrorFreeLog()
+				.assertLogText("Accurest Plugin: Invoking test sources generation");
+	}
 }
