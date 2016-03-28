@@ -22,8 +22,6 @@ Sample usage
 ```
 
 
-```
-
 Project default directories
 ---
 
