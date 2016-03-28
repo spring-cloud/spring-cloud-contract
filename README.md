@@ -27,10 +27,10 @@ Sample usage
 Project default directories
 ---
 
-Contract definitions (_contractsDir_):
+_contractsDir_ - contract definitions:
 
     /src/test/resources/contracts
 
-Generated accurest specifications (_generatedTestSourcesDir_):
+_generatedTestSourcesDir_ - Generated accurest specifications:
 
     /target/generated-test-sources/accurest
