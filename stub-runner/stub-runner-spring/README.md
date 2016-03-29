@@ -32,5 +32,5 @@ for the following configuration file:
 
 ```
 stubrunner.stubs.repository.root: classpath:m2repo
-stubrunner.stubs: io.codearte.accurest.stubs:loanIssuance,io.codearte.accurest.stubs:fraudDetectionServer
+stubrunner.stubs.ids: io.codearte.accurest.stubs:loanIssuance,io.codearte.accurest.stubs:fraudDetectionServer
 ```

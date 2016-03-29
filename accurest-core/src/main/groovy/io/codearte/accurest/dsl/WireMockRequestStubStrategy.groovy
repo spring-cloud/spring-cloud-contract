@@ -68,7 +68,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 				requestPattern.bodyPatterns = [new ValuePattern(jsonCompareMode: org.skyscreamer.jsonassert.JSONCompareMode.LENIENT,
 						equalToJson: JsonOutput.toJson(getMatchingStrategy(request.body.clientValue).clientValue) ) ]
 			} else {
-				requestPattern.bodyPatterns = values.collect { new ValuePattern(matchesJsonPath: it.jsonPath().replace("\\\\", "\\")) } ?: null
+				requestPattern.bodyPatterns = values.collect { new ValuePattern(matchesJsonPath: it.jsonPath().replace("\\\\", "\\")) } ?: null as List<ValuePattern>
 			}
 		} else if (contentType == ContentType.XML) {
 			requestPattern.bodyPatterns = [new ValuePattern(equalToXml: getMatchingStrategy(request.body.clientValue).clientValue.toString())]

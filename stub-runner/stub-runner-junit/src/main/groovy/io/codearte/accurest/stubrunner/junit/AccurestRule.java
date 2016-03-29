@@ -58,7 +58,7 @@ public class AccurestRule implements TestRule, StubFinder {
 		String repoRoot = System.getProperty("stubrunner.stubs.repository.root", "");
 		String stubSuffix = System.getProperty("stubrunner.stubs.classifier", "stubs");
 		Boolean workOffline = Boolean.parseBoolean(System.getProperty("stubrunner.work-offline", "false"));
-		String stubsToDownload = System.getProperty("stubrunner.stubs", "");
+		String stubsToDownload = System.getProperty("stubrunner.stubs.ids", "");
 		if (StringUtils.hasText(stubsToDownload)) {
 			Collections.addAll(stubs, stubsToDownload.split(","));
 		}

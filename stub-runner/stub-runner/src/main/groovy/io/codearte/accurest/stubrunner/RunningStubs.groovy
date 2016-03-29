@@ -23,21 +23,25 @@ class RunningStubs {
 	}
 
 	Integer getPort(String artifactId) {
+		return getEntry(artifactId)?.value
+	}
+
+	Map.Entry<StubConfiguration, Integer> getEntry(String artifactId) {
 		def strings = artifactId.split(':')
 		if (strings.length == 1) {
 			return namesAndPorts.entrySet().find {
 				it.key.artifactId == artifactId
-			}?.value
+			}
 		} else if(strings.length == 2) {
 			return namesAndPorts.entrySet().find {
 				it.key.groupId == strings[0] && it.key.artifactId == strings[1]
-			}?.value
+			}
 		}
 		return namesAndPorts.entrySet().find {
 			it.key.groupId == strings[0] &&
 					it.key.artifactId == strings[1] &&
 					it.key.classifier == strings[2]
-		}?.value
+		}
 	}
 
 	Integer getPort(String groupId, String artifactId) {
@@ -47,27 +51,21 @@ class RunningStubs {
 	}
 
 	boolean isPresent(String artifactId) {
-		def strings = artifactId.split(':')
-		if (strings.length == 1) {
-			return namesAndPorts.entrySet().find {
-				it.key.artifactId == artifactId
-			}
-		} else if(strings.length == 2) {
-			return namesAndPorts.entrySet().find {
-				it.key.groupId == strings[0] && it.key.artifactId == strings[1]
-			}
-		}
-		return namesAndPorts.entrySet().find {
-			it.key.groupId == strings[0] &&
-					it.key.artifactId == strings[1] &&
-					it.key.classifier == strings[2]
-		}
+		return getEntry(artifactId)
 	}
 
 	boolean isPresent(String groupId, String artifactId) {
 		return namesAndPorts.entrySet().find {
 			it.key.artifactId == artifactId && it.key.groupId == groupId
 		}
+	}
+
+	Set<StubConfiguration> getAllServices() {
+		return namesAndPorts.keySet()
+	}
+
+	Set<String> getAllServicesNames() {
+		return namesAndPorts.keySet().collect { it.artifactId } as Set
 	}
 
 	@Override

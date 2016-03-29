@@ -9,7 +9,6 @@ dependencies {
 	compile "com.github.tomakehurst:wiremock:$wiremockVersion"
 	compile 'javax.servlet:javax.servlet-api:3.1.0'
 	compile 'args4j:args4j:2.32'
-	compile 'com.nurkiewicz.asyncretry:asyncretry-jdk7:0.0.6'
 
 	if (rootProject.hasProperty("fatJar")) runtime 'ch.qos.logback:logback-classic:1.1.3'
 

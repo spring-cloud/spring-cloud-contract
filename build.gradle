@@ -61,6 +61,18 @@ subprojects {
 			exclude(group: 'org.codehaus.groovy')
 		}
 	}
+
+	// fixing the groovydoc issue http://stackoverflow.com/questions/20618857/gradle-task-groovydoc-failing-with-noclassdeffounderror
+	configurations {
+		jansi.extendsFrom(runtime)
+	}
+	groovydoc {
+		def title = "IPDS ${version}"
+		groovyClasspath = project.configurations.jansi
+	}
+	dependencies {
+		jansi 'org.fusesource.jansi:jansi:1.11'
+	}
 }
 
 project(':accurest-core') {

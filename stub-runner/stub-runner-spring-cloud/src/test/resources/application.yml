@@ -1,0 +1,6 @@
+stubrunner.stubs.repository.root: classpath:m2repo
+stubrunner.stubs.ids: io.codearte.accurest.stubs:loanIssuance,io.codearte.accurest.stubs:fraudDetectionServer
+
+stubrunner.stubs.idsToServiceIds:
+  ivyNotation: someValueInsideYourCode
+  fraudDetectionServer: someNameThatShouldMapFraudDetectionServer

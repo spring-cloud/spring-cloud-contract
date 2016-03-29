@@ -41,7 +41,7 @@ public class StubRunnerConfiguration {
 			@Value("${stubrunner.stubs.repository.root:}") Resource stubRepositoryRoot,
 			@Value("${stubrunner.stubs.classifier:stubs}") String stubsSuffix,
 			@Value("${stubrunner.work-offline:false}") boolean workOffline,
-			@Value("${stubrunner.stubs:}") String stubs) throws IOException {
+			@Value("${stubrunner.stubs.ids:}") String stubs) throws IOException {
 		StubRunnerOptions stubRunnerOptions = new StubRunnerOptions(minPortValue, maxPortValue, uriStringOrEmpty(stubRepositoryRoot),
 				stubRepositoryRoot == null || workOffline, stubsSuffix);
 		Set<StubConfiguration> dependencies = StubsParser.fromString(stubs, stubsSuffix);
