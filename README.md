@@ -58,7 +58,7 @@ Project configuration
         <dependency>
             <groupId>io.codearte.accurest</groupId>
             <artifactId>stubs-assembly-descriptor</artifactId>
-            <version>${accurest.version}</version>
+            <version>1.0</version>
         </dependency>
     </dependencies>
     <executions>

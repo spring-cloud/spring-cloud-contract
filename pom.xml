@@ -8,8 +8,11 @@
 	<artifactId>accurest-maven-project</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
+	<name>Accurate Maven Plugin</name>
+	<description>Accurate REST Maven Plugin</description>
+	<url>https://github.com/Codearte/accurest-maven-plugin</url>
+
 	<modules>
-		<module>stubs-assembly-descriptor</module>
 		<module>test-deps</module>
 		<module>maven-plugin</module>
 	</modules>
@@ -20,11 +23,20 @@
 		<maven>3.2.5</maven>
 	</prerequisites>
 
+	<developers>
+		<developer>
+			<id>mariuszs</id>
+			<name>Mariusz Smykula</name>
+			<email>mariuszs@gmail.com</email>
+		</developer>
+	</developers>
+
 	<properties>
 		<mavenVersion>3.2.5</mavenVersion>
 		<mavenPluginPluginVersion>3.4</mavenPluginPluginVersion>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<accurest.version>1.0.1</accurest.version>
 	</properties>
 
 	<licenses>
@@ -56,75 +68,32 @@
 		</repository>
 	</distributionManagement>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.5.3</version>
+				<configuration>
+					<pushChanges>false</pushChanges>
+					<localCheckout>true</localCheckout>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>io.codearte.accurest</groupId>
 				<artifactId>accurest-core</artifactId>
-				<version>1.0.1</version>
+				<version>${accurest.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>io.codearte.accurest</groupId>
 				<artifactId>accurest-converters</artifactId>
-				<version>1.0.1</version>
-			</dependency>
-			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-classic</artifactId>
-				<version>1.1.6</version>
-				<scope>test</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
-				<artifactId>groovy-all</artifactId>
-				<version>2.4.6</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.maven</groupId>
-				<artifactId>maven-core</artifactId>
-				<version>${mavenVersion}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.maven</groupId>
-				<artifactId>maven-compat</artifactId>
-				<version>${mavenVersion}</version>
-				<scope>test</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.maven</groupId>
-				<artifactId>maven-plugin-api</artifactId>
-				<version>${mavenVersion}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.maven.plugin-tools</groupId>
-				<artifactId>maven-plugin-annotations</artifactId>
-				<version>${mavenPluginPluginVersion}</version>
-				<scope>provided</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>io.takari.maven.plugins</groupId>
-				<artifactId>takari-plugin-testing</artifactId>
-				<version>2.8.0</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>io.takari.maven.plugins</groupId>
-				<artifactId>takari-plugin-integration-testing</artifactId>
-				<version>2.8.0</version>
-				<type>pom</type>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>4.12</version>
-				<scope>test</scope>
+				<version>${accurest.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
