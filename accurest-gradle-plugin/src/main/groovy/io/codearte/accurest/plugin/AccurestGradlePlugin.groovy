@@ -46,7 +46,7 @@ class AccurestGradlePlugin implements Plugin<Project> {
 
 	void setConfigurationDefaults(AccurestConfigProperties extension) {
 		extension.with {
-			generatedTestSourcesDir = project.file("${project.buildDir}/generated-sources/accurest")
+			generatedTestSourcesDir = project.file("${project.buildDir}/generated-test-sources/accurest")
 			contractsDslDir = project.file("${project.rootDir}/src/test/resources/stubs") //TODO: Use sourceset
 			basePackageForTests = 'io.codearte.accurest.tests'
 		}

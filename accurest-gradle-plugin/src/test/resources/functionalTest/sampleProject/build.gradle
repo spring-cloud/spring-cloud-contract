@@ -46,7 +46,7 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 		testMode = 'MockMvc'
 		baseClassForTests = 'com.blogspot.toomuchcoding.MvcSpec'
 		contractsDslDir = file("${project.projectDir.absolutePath}/mappings/")
-		generatedTestSourcesDir = file("${project.buildDir}/generated-sources/")
+		generatedTestSourcesDir = file("${project.buildDir}/generated-test-sources/")
 		stubsOutputDir = wireMockStubsOutputDir
 	}
 
