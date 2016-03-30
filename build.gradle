@@ -66,6 +66,12 @@ subprojects {
 		}
 	}
 
+	test {
+		testLogging {
+			exceptionFormat = 'full'
+		}
+	}
+
 	// fixing the groovydoc issue http://stackoverflow.com/questions/20618857/gradle-task-groovydoc-failing-with-noclassdeffounderror
 	configurations {
 		jansi.extendsFrom(runtime)
