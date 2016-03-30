@@ -50,6 +50,9 @@ subprojects {
 		mavenLocal()
 		mavenCentral()
 		jcenter()
+		maven {
+			url "http://repo.spring.io/milestone"
+		}
 	}
 
 	//Dependencies in all subprojects - http://solidsoft.wordpress.com/2014/11/13/gradle-tricks-display-dependencies-for-all-subprojects-in-multi-project-build/
