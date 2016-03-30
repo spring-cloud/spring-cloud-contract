@@ -10,7 +10,6 @@ before_install:
 
 jdk:
  - oraclejdk7
- - openjdk7
  - oraclejdk8
 
 install: ./gradlew assemble

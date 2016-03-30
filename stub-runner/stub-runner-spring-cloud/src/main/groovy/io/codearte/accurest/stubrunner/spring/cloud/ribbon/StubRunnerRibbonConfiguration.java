@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -29,6 +30,22 @@ import io.codearte.accurest.stubrunner.util.StringUtils;
  */
 @Configuration
 public class StubRunnerRibbonConfiguration {
+
+	@Bean
+	@ConditionalOnMissingBean
+	public ServerList<?> noOpServerList() {
+		return new ServerList<Server>() {
+			@Override
+			public List<Server> getInitialListOfServers() {
+				return new ArrayList<>();
+			}
+
+			@Override
+			public List<Server> getUpdatedListOfServers() {
+				return new ArrayList<>();
+			}
+		};
+	}
 
 	@Bean
 	@Primary
