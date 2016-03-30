@@ -1,12 +1,10 @@
-description = 'Spring configuration for stub-runner'
-
 dependencies {
 	compile project(':stub-runner-root:stub-runner-spring')
 
 	compile localGroovy()
-	compile 'org.springframework.cloud:spring-cloud-starter:[1.0.6.RELEASE,)'
 	// TODO: should be compile only
-	compile 'org.springframework.cloud:spring-cloud-starter-ribbon:[1.0.6.RELEASE,)'
+	compile 'org.springframework.cloud:spring-cloud-starter:1.1.0.RC2'
+	compile 'org.springframework.cloud:spring-cloud-starter-ribbon:1.1.0.RC1'
 
 	testCompile('org.spockframework:spock-core:1.0-groovy-2.3') {
 		exclude(group: 'org.codehaus.groovy')
