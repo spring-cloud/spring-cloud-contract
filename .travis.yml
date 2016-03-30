@@ -14,4 +14,4 @@ jdk:
  - oraclejdk8
 
 install: ./gradlew assemble
-script: ./gradlew clean check funcTest --stacktrace --info --continue
+script: ./gradlew clean check funcTest --stacktrace --continue
