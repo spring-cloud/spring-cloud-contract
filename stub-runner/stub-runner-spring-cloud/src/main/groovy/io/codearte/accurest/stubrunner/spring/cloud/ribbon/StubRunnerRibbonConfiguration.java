@@ -1,7 +1,5 @@
 package io.codearte.accurest.stubrunner.spring.cloud.ribbon;
 
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

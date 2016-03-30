@@ -2,6 +2,7 @@ package io.codearte.accurest.stubrunner.spring.cloud;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +21,7 @@ import io.codearte.accurest.stubrunner.spring.StubRunnerConfiguration;
 @EnableConfigurationProperties
 @ConditionalOnClass(DiscoveryClient.class)
 @Import(StubRunnerConfiguration.class)
+@ConditionalOnProperty(value = "stubrunner.cloud.enabled", matchIfMissing = true)
 public class StubRunnerSpringCloudAutoConfiguration {
 
 	@Bean
