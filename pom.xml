@@ -6,7 +6,7 @@
 	<artifactId>accurest-maven-project</artifactId>
 	<version>0.2-SNAPSHOT</version>
 
-	<name>Accurate Maven Plugin</name>
+	<name>Accurate Maven Plugin Project</name>
 	<description>Accurate REST Maven Plugin</description>
 	<url>https://github.com/Codearte/accurest-maven-plugin</url>
 
