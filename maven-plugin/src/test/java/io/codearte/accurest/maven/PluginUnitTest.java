@@ -46,4 +46,5 @@ public class PluginUnitTest {
 		assertFilesPresent(basedir,
 				"target/generated-test-sources/accurest/io/codearte/accurest/tests/AccurestSpec.groovy");
 	}
+
 }
