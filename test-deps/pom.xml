@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>accurest-maven-project</artifactId>
 		<groupId>io.codearte.accurest</groupId>
-		<version>0.2-SNAPSHOT</version>
+		<version>0.1-beta</version>
 	</parent>
 
 	<artifactId>accurest-test-deps</artifactId>
