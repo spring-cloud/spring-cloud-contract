@@ -1,5 +1,7 @@
 package io.codearte.accurest.maven;
 
+import static java.lang.String.format;
+
 import java.io.File;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -22,10 +24,10 @@ public class GenerateStubsMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${project.build.directory}", readonly = true)
 	private File projectBuildDirectory;
 
-	@Parameter(property = "contractsDir", defaultValue = "/src/test/resources/contracts")
+	@Parameter(defaultValue = "/src/test/resources/contracts")
 	private String contractsDir;
 
-	@Parameter(property = "mappingsDir", defaultValue = "mappings")
+	@Parameter(defaultValue = "mappings")
 	private String mappingsDir;
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
@@ -34,7 +36,7 @@ public class GenerateStubsMojo extends AbstractMojo {
 		config.setStubsOutputDir(new File(projectBuildDirectory, mappingsDir));
 
 		getLog().info("Accurest Plugin: Invoking GroovyDSL to WireMock client stubs conversion");
-		getLog().info(String.format("From '%s' to '%s'", config.getContractsDslDir(), config.getStubsOutputDir()));
+		getLog().info(format("From '%s' to '%s'", config.getContractsDslDir(), config.getStubsOutputDir()));
 
 		RecursiveFilesConverter converter = new RecursiveFilesConverter(new DslToWireMockClientConverter(), config);
 		converter.processFiles();

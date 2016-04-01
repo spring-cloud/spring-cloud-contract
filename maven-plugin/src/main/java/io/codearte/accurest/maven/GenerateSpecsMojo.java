@@ -14,6 +14,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import io.codearte.accurest.AccurestException;
 import io.codearte.accurest.TestGenerator;
 import io.codearte.accurest.config.AccurestConfigProperties;
+import io.codearte.accurest.config.TestFramework;
+import io.codearte.accurest.config.TestMode;
 
 @Mojo(name = "generateSpecs", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES)
 public class GenerateSpecsMojo extends AbstractMojo {
@@ -24,17 +26,23 @@ public class GenerateSpecsMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${project.build.directory}", readonly = true)
 	private File projectBuildDirectory;
 
-	@Parameter(property = "contractsDir", defaultValue = "/src/test/resources/contracts")
+	@Parameter(defaultValue = "/src/test/resources/contracts")
 	private String contractsDir;
 
-	@Parameter(property = "generatedTestSourcesDir", defaultValue = "/generated-test-sources/accurest")
+	@Parameter(defaultValue = "/generated-test-sources/accurest")
 	private String generatedTestSourcesDir;
 
-	@Parameter(property = "basePackageForTests", defaultValue = "io.codearte.accurest.tests")
+	@Parameter(defaultValue = "io.codearte.accurest.tests")
 	private String basePackageForTests;
 
-	@Parameter(property = "baseClassForTests")
+	@Parameter
 	private String baseClassForTests;
+
+	@Parameter(defaultValue = "SPOCK")
+	private TestFramework targetFramework;
+
+	@Parameter(defaultValue = "MOCKMVC")
+	private TestMode testMode;
 
 	public GenerateSpecsMojo() {
 	}
@@ -46,6 +54,8 @@ public class GenerateSpecsMojo extends AbstractMojo {
 		config.setBasePackageForTests(basePackageForTests);
 		config.setGeneratedTestSourcesDir(new File(projectBuildDirectory, generatedTestSourcesDir));
 		config.setBaseClassForTests(baseClassForTests);
+		config.setTargetFramework(targetFramework);
+		config.setTestMode(testMode);
 
 		getLog().info("Accurest Plugin: Invoking test sources generation");
 		getLog().info(format("Using %s as test source directory", config.getGeneratedTestSourcesDir()));
