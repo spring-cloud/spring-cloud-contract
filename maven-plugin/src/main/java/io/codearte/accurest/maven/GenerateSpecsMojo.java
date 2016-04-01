@@ -20,10 +20,10 @@ import io.codearte.accurest.config.TestMode;
 @Mojo(name = "generateSpecs", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES)
 public class GenerateSpecsMojo extends AbstractMojo {
 
-	@Parameter(defaultValue = "${basedir}", readonly = true)
+	@Parameter(defaultValue = "${basedir}", readonly = true, required = true)
 	private File baseDir;
 
-	@Parameter(defaultValue = "${project.build.directory}", readonly = true)
+	@Parameter(defaultValue = "${project.build.directory}", readonly = true, required = true)
 	private File projectBuildDirectory;
 
 	@Parameter(defaultValue = "/src/test/resources/contracts")
