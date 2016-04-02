@@ -24,7 +24,7 @@ public class GenerateStubsMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${project.build.directory}", readonly = true, required = true)
 	private File projectBuildDirectory;
 
-	@Parameter(defaultValue = "/src/test/resources/contracts")
+	@Parameter(defaultValue = "/src/test/accurest")
 	private String contractsDir;
 
 	@Parameter(defaultValue = "mappings")

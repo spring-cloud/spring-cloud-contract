@@ -32,7 +32,7 @@ Project default directories
 
 _contractsDir_ - contract definitions:
 
-    /src/test/resources/contracts
+    /src/test/accurest
 
 _generatedTestSourcesDir_ - Generated accurest specifications:
 
