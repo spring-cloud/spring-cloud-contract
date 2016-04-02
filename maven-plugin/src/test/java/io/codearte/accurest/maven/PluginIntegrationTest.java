@@ -28,12 +28,24 @@ public class PluginIntegrationTest {
 	}
 
 	@Test
-	public void shouldBuildSimpleBootWIthAccurtesProject() throws Exception {
-		File basedir = resources.getBasedir("bootSimple");
+	public void should_build_project_Spring_Boot_Groovy_with_Accurest() throws Exception {
+		File basedir = resources.getBasedir("spring-boot-groovy");
 		maven.forProject(basedir)
 				.execute("package")
 				.assertErrorFreeLog()
-				.assertLogText("Accurest Plugin: Invoking test sources generation")
+				.assertLogText("Generating Spock Specifications source code for Accurest contract verification")
+				.assertLogText("Generated 1 test classes.")
+				.assertLogText("Accurest Plugin: Invoking GroovyDSL to WireMock client stubs conversion")
+				.assertLogText("Creating new json")
+				.assertErrorFreeLog();
+	}
+	@Test
+	public void should_build_project_Spring_Boot_Java_with_Accurest() throws Exception {
+		File basedir = resources.getBasedir("spring-boot-java");
+		maven.forProject(basedir)
+				.execute("package")
+				.assertErrorFreeLog()
+				.assertLogText("Generating JUnit Tests source code for Accurest contract verification")
 				.assertLogText("Generated 1 test classes.")
 				.assertLogText("Accurest Plugin: Invoking GroovyDSL to WireMock client stubs conversion")
 				.assertLogText("Creating new json")
@@ -41,7 +53,7 @@ public class PluginIntegrationTest {
 	}
 
 	@Test
-	public void shouldConvertAccurestToWireMockStubs() throws Exception {
+	public void should_convert_Accurest_Contracts_to_WireMock_Stubs_mappings() throws Exception {
 		File basedir = resources.getBasedir("pomless");
 		properties.getPluginVersion();
 		maven.forProject(basedir)

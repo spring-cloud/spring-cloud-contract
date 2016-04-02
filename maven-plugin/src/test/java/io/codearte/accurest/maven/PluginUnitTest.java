@@ -1,5 +1,6 @@
 package io.codearte.accurest.maven;
 
+import static io.takari.maven.testing.TestMavenRuntime.newParameter;
 import static io.takari.maven.testing.TestResources.assertFilesPresent;
 
 import java.io.File;
@@ -19,23 +20,23 @@ public class PluginUnitTest {
 	public final TestMavenRuntime maven = new TestMavenRuntime();
 
 	@Test
-	public void shouldGenerateWiremockStubsInDefaultcLocation() throws Exception {
+	public void shouldGenerateWireMockStubsInDefaultLocation() throws Exception {
 		File basedir = resources.getBasedir("basic");
 		maven.executeMojo(basedir, "generateStubs");
 		assertFilesPresent(basedir, "target/mappings/Sample.json");
 	}
 
 	@Test
-	public void shouldGenerateWiremockFromStubsDirectory() throws Exception {
+	public void shouldGenerateWireMockFromStubsDirectory() throws Exception {
 		File basedir = resources.getBasedir("withStubs");
-		maven.executeMojo(basedir, "generateStubs", TestMavenRuntime.newParameter("contractsDir", "/src/test/resources/stubs"));
+		maven.executeMojo(basedir, "generateStubs", newParameter("contractsDir", "/src/test/resources/stubs"));
 		assertFilesPresent(basedir, "target/mappings/Sample.json");
 	}
 
 	@Test
-	public void shouldGenerateWiremockStubsInSelectedLocation() throws Exception {
+	public void shouldGenerateWireMockStubsInSelectedLocation() throws Exception {
 		File basedir = resources.getBasedir("basic");
-		maven.executeMojo(basedir, "generateStubs", TestMavenRuntime.newParameter("mappingsDir", "foo"));
+		maven.executeMojo(basedir, "generateStubs", newParameter("mappingsDir", "foo"));
 		assertFilesPresent(basedir, "target/foo/Sample.json");
 	}
 
@@ -45,6 +46,14 @@ public class PluginUnitTest {
 		maven.executeMojo(basedir, "generateSpecs");
 		assertFilesPresent(basedir,
 				"target/generated-test-sources/accurest/io/codearte/accurest/tests/AccurestSpec.groovy");
+	}
+
+	@Test
+	public void shouldGenerateContractTestsInDefaultLocation() throws Exception {
+		File basedir = resources.getBasedir("basic");
+		maven.executeMojo(basedir, "generateTests");
+		assertFilesPresent(basedir,
+				"target/generated-test-sources/accurest/io/codearte/accurest/tests/AccurestTest.java");
 	}
 
 }
