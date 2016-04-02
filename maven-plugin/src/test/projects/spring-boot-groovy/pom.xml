@@ -84,9 +84,10 @@
 					</execution>
 				</executions>
 				<configuration>
-					<baseClassForTests>com.ofg.twitter.place.BaseMockMvcSpec</baseClassForTests>
+					<baseClassForTests>com.ofg.twitter.place.BaseMockMvcTest</baseClassForTests>
 					<contractsDir>/src/test/resources/stubs</contractsDir>
 					<testFramework>SPOCK</testFramework>
+					<nameSuffixForTests>Test</nameSuffixForTests>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -119,7 +120,7 @@
 					</testSources>
 				</configuration>
 			</plugin>
-			<plugin>
+<!--			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.19</version>
 				<configuration>
@@ -127,7 +128,7 @@
 						<include>**/*Spec.java</include>
 					</includes>
 				</configuration>
-			</plugin>
+			</plugin>-->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.6</version>

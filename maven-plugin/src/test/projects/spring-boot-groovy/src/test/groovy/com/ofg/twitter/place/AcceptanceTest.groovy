@@ -9,7 +9,7 @@ import spock.lang.Specification
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class AcceptanceSpec extends Specification {
+class AcceptanceTest extends Specification {
 
 	def "should have controller up and running"() {
 		given:
