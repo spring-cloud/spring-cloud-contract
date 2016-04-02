@@ -6,7 +6,7 @@ Accurate REST Maven Plugin
 
 Converting Accurest GroovyDSL into WireMock stub mappings:
 
-    mvn io.codearte.accurest:accurest-maven-plugin:0.1-beta:convert
+    mvn io.codearte.accurest:accurest-maven-plugin:convert
 
 Sample usage
 ----
