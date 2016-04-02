@@ -14,7 +14,7 @@ import io.takari.maven.testing.executor.junit.MavenJUnitTestRunner;
 
 @RunWith(MavenJUnitTestRunner.class)
 @MavenVersions({ "3.3.3" })
-public class PluginIntegrationTest {
+public class PluginIT {
 
 	@Rule
 	public final TestResources resources = new TestResources();
@@ -23,7 +23,7 @@ public class PluginIntegrationTest {
 
 	private final MavenRuntime maven;
 
-	public PluginIntegrationTest(MavenRuntime.MavenRuntimeBuilder mavenBuilder) throws Exception {
+	public PluginIT(MavenRuntime.MavenRuntimeBuilder mavenBuilder) throws Exception {
 		this.maven = mavenBuilder.withCliOptions("-B", "-U").build();
 	}
 
