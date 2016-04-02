@@ -47,6 +47,9 @@ public class GenerateTestsMojo extends AbstractMojo {
 	@Parameter
 	private String ruleClassForTests;
 
+	@Parameter
+	private String nameSuffixForTests;
+
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		getLog().info("Generating server tests source code for Accurest contract verification");
 
@@ -58,6 +61,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 		config.setBasePackageForTests(basePackageForTests);
 		config.setBaseClassForTests(baseClassForTests);
 		config.setRuleClassForTests(ruleClassForTests);
+		config.setNameSuffixForTests(nameSuffixForTests);
 
 		getLog().info(format("Using %s as test source directory", config.getGeneratedTestSourcesDir()));
 		getLog().info(format("Using %s as base class for test classes", config.getBaseClassForTests()));
