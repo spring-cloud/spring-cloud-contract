@@ -5,8 +5,10 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.client.discovery.noop.NoopDiscoveryClient;
 
 import io.codearte.accurest.stubrunner.RunningStubs;
 import io.codearte.accurest.stubrunner.StubFinder;
@@ -25,10 +27,15 @@ public class StubRunnerDiscoveryClient implements DiscoveryClient {
 	private final StubMapperProperties stubMapperProperties;
 
 	public StubRunnerDiscoveryClient(DiscoveryClient delegate, StubFinder stubFinder,
-			StubMapperProperties stubMapperProperties) {
-		this.delegate = delegate;
+			StubMapperProperties stubMapperProperties, String springAppName) {
+		this.delegate = delegate instanceof  StubRunnerDiscoveryClient ?
+				noOpDiscoveryClient(springAppName) : delegate;
 		this.stubFinder = stubFinder;
 		this.stubMapperProperties = stubMapperProperties;
+	}
+
+	private NoopDiscoveryClient noOpDiscoveryClient(String springAppName) {
+		return new NoopDiscoveryClient(new DefaultServiceInstance(springAppName, "localhost", 0, false));
 	}
 
 	@Override

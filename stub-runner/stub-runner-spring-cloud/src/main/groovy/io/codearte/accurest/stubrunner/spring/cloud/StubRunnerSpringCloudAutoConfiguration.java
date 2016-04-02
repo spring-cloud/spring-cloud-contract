@@ -1,5 +1,6 @@
 package io.codearte.accurest.stubrunner.spring.cloud;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -34,8 +35,9 @@ public class StubRunnerSpringCloudAutoConfiguration {
 	@Primary
 	public DiscoveryClient stubRunnerDiscoveryClient(DiscoveryClient discoveryClient,
 			StubFinder stubFinder,
-			StubMapperProperties stubMapperProperties) {
-		return new StubRunnerDiscoveryClient(discoveryClient, stubFinder, stubMapperProperties);
+			StubMapperProperties stubMapperProperties,
+			@Value("${spring.application.name:unknown}") String springAppName) {
+		return new StubRunnerDiscoveryClient(discoveryClient, stubFinder, stubMapperProperties, springAppName);
 	}
 
 }
