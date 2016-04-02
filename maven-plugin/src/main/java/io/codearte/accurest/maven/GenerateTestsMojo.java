@@ -44,16 +44,20 @@ public class GenerateTestsMojo extends AbstractMojo {
 	@Parameter(defaultValue = "JUNIT")
 	private TestFramework testFramework;
 
+	@Parameter
+	private String ruleClassForTests;
+
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		getLog().info("Generating server tests source code for Accurest contract verification");
 
 		AccurestConfigProperties config = new AccurestConfigProperties();
 		config.setContractsDslDir(new File(baseDir, contractsDir));
-		config.setBasePackageForTests(basePackageForTests);
 		config.setGeneratedTestSourcesDir(new File(projectBuildDirectory, generatedTestSourcesDir));
-		config.setBaseClassForTests(baseClassForTests);
 		config.setTargetFramework(testFramework);
 		config.setTestMode(testMode);
+		config.setBasePackageForTests(basePackageForTests);
+		config.setBaseClassForTests(baseClassForTests);
+		config.setRuleClassForTests(ruleClassForTests);
 
 		getLog().info(format("Using %s as test source directory", config.getGeneratedTestSourcesDir()));
 		getLog().info(format("Using %s as base class for test classes", config.getBaseClassForTests()));
