@@ -7,7 +7,6 @@ import java.io.File;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.assertj.core.util.Strings;
 
 import io.codearte.accurest.AccurestException;
 import io.codearte.accurest.TestGenerator;
@@ -44,13 +43,6 @@ public abstract class AbstractGenerateVerificationCodeMojo extends AbstractMojo 
 		config.setContractsDslDir(new File(baseDir, contractsDir));
 		config.setBasePackageForTests(basePackageForTests);
 		config.setGeneratedTestSourcesDir(new File(projectBuildDirectory, generatedTestSourcesDir));
-		if (Strings.isNullOrEmpty(baseClassForTests)) {
-			if (!Strings.isNullOrEmpty(basePackageForTests)) {
-				baseClassForTests = basePackageForTests + '.' + "BaseAccurest";
-			} else {
-				baseClassForTests = "io.codearte.accurest.tests.BaseAccurest";
-			}
-		}
 		config.setBaseClassForTests(baseClassForTests);
 		config.setTargetFramework(testFramework);
 		config.setTestMode(testMode);
