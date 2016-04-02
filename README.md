@@ -19,7 +19,7 @@ Sample usage
         <execution>
             <goals>
                 <goal>generateStubs</goal>
-                <goal>generateSpecs</goal>
+                <goal>generateTests</goal>
             </goals>
         </execution>
     </executions>

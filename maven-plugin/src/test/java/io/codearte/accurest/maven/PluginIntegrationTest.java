@@ -33,19 +33,20 @@ public class PluginIntegrationTest {
 		maven.forProject(basedir)
 				.execute("package")
 				.assertErrorFreeLog()
-				.assertLogText("Generating Spock Specifications source code for Accurest contract verification")
+				.assertLogText("Generating server tests source code for Accurest contract verification")
 				.assertLogText("Generated 1 test classes.")
 				.assertLogText("Accurest Plugin: Invoking GroovyDSL to WireMock client stubs conversion")
 				.assertLogText("Creating new json")
 				.assertErrorFreeLog();
 	}
+
 	@Test
 	public void should_build_project_Spring_Boot_Java_with_Accurest() throws Exception {
 		File basedir = resources.getBasedir("spring-boot-java");
 		maven.forProject(basedir)
 				.execute("package")
 				.assertErrorFreeLog()
-				.assertLogText("Generating JUnit Tests source code for Accurest contract verification")
+				.assertLogText("Generating server tests source code for Accurest contract verification")
 				.assertLogText("Generated 1 test classes.")
 				.assertLogText("Accurest Plugin: Invoking GroovyDSL to WireMock client stubs conversion")
 				.assertLogText("Creating new json")
@@ -58,7 +59,8 @@ public class PluginIntegrationTest {
 		properties.getPluginVersion();
 		maven.forProject(basedir)
 				.withCliOption("-X")
-				.execute(String.format("io.codearte.accurest:accurest-maven-plugin:%s:convert", properties.getPluginVersion()))
+				.execute(String.format("io.codearte.accurest:accurest-maven-plugin:%s:convert",
+						properties.getPluginVersion()))
 				.assertLogText("Converting from accurest contracts written in GroovyDSL to WireMock stubs mappings")
 				.assertLogText("Creating new json")
 				.assertErrorFreeLog();

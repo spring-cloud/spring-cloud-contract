@@ -79,13 +79,14 @@
 					<execution>
 						<goals>
 							<goal>generateStubs</goal>
-							<goal>generateSpecs</goal>
+							<goal>generateTests</goal>
 						</goals>
 					</execution>
 				</executions>
 				<configuration>
 					<baseClassForTests>com.ofg.twitter.place.BaseMockMvcSpec</baseClassForTests>
 					<contractsDir>/src/test/resources/stubs</contractsDir>
+					<testFramework>SPOCK</testFramework>
 				</configuration>
 			</plugin>
 			<plugin>

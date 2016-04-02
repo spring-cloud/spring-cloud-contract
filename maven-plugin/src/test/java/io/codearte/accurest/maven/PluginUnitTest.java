@@ -43,7 +43,7 @@ public class PluginUnitTest {
 	@Test
 	public void shouldGenerateContractSpecificationInDefaultLocation() throws Exception {
 		File basedir = resources.getBasedir("basic");
-		maven.executeMojo(basedir, "generateSpecs");
+		maven.executeMojo(basedir, "generateTests", newParameter("testFramework", "SPOCK"));
 		assertFilesPresent(basedir,
 				"target/generated-test-sources/accurest/io/codearte/accurest/tests/AccurestSpec.groovy");
 	}
