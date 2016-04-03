@@ -4,82 +4,9 @@ Accurate REST Maven Plugin
 ====
 
 
-Converting Accurest GroovyDSL into WireMock stub mappings:
+Converting [Accurest](https://github.com/Codearte/accurest/wiki/1.-Introduction) GroovyDSL into WireMock stub mappings:
 
     mvn io.codearte.accurest:accurest-maven-plugin:convert
 
-Sample usage
-----
 
-```xml
-<plugin>
-    <groupId>io.codearte.accurest</groupId>
-    <artifactId>accurest-maven-plugin</artifactId>
-    <executions>
-        <execution>
-            <goals>
-                <goal>generateStubs</goal>
-                <goal>generateTests</goal>
-            </goals>
-        </execution>
-    </executions>
-</plugin>
-```
-
-
-Project default directories
----
-
-_contractsDir_ - contract definitions:
-
-    /src/test/accurest
-
-_generatedTestSourcesDir_ - Generated accurest specifications:
-
-    /target/generated-test-sources/accurest
-   
-Publishing wiremock stubs jar
----
-
-Project configuration
-
-```xml
-<plugin>
-    <groupId>io.codearte.accurest</groupId>
-    <artifactId>accurest-maven-plugin</artifactId>
-    <version>${accurest.version}</version>
-    <executions>
-        <execution>
-            <goals>
-                <goal>generateStubs</goal>
-            </goals>
-        </execution>
-    </executions>
-</plugin>
-<plugin>
-    <artifactId>maven-assembly-plugin</artifactId>
-    <version>2.6</version>
-    <dependencies>
-        <dependency>
-            <groupId>io.codearte.accurest</groupId>
-            <artifactId>stubs-assembly-descriptor</artifactId>
-            <version>1.1</version>
-        </dependency>
-    </dependencies>
-    <executions>
-        <execution>
-            <phase>package</phase>
-            <goals>
-                <goal>single</goal>
-            </goals>
-        </execution>
-    </executions>
-    <configuration>
-        <descriptorRefs>
-            <descriptorRef>stubs</descriptorRef>
-        </descriptorRefs>
-    </configuration>
-</plugin>
-```
-
-Deploy to artifact repository using `mvn deploy`
+For more information please go to the [Wiki](https://github.com/Codearte/accurest/wiki/2.2-Maven-Project)
