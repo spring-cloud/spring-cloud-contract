@@ -2,25 +2,19 @@ language: java
 jdk:
 - oraclejdk8
 before_install:
-- true && [ "$TRAVIS_BRANCH" = 'master' ] && [ "$TRAVIS_PULL_REQUEST" == 'false' ] && openssl aes-256-cbc -K $encrypted_6c56aea9ab8c_key -iv $encrypted_6c56aea9ab8c_iv -in .mvn/codesigning.asc.enc -out .mvn/codesigning.asc -d
-- true && [ "$TRAVIS_BRANCH" = 'master' ] && [ "$TRAVIS_PULL_REQUEST" == 'false' ] && gpg --fast-import .mvn/codesigning.asc
-before_script:
-- ./mvnw release-candidate:updateVersion -Drevision=$TRAVIS_BUILD_NUMBER
-script:
-- true && [ "$TRAVIS_BRANCH" = 'master' ] && [ "$TRAVIS_PULL_REQUEST" == 'false' ] && ./mvnw deploy --settings .mvn/settings.xml -Prelease
-after_success:
+- if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]]; then openssl aes-256-cbc -K $encrypted_6c56aea9ab8c_key -iv $encrypted_6c56aea9ab8c_iv -in .mvn/codesigning.asc.enc -out .mvn/codesigning.asc -d; fi
+- if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]]; then gpg --fast-import .mvn/codesigning.asc; fi
 - git config --global user.email "builds@travis-ci.com"
 - git config --global user.name "Travis CI"
-- export GIT_TAG=build-$(date -u "+%Y-%m-%d")-$TRAVIS_BUILD_NUMBER
-- echo -n $GIT_TAG > public/version
-- git commit -m "Set build VERSION number" public/version
-- git tag $GIT_TAG -a -m "Generated tag from TravisCI build $TRAVIS_BUILD_NUMBER"
-- true && [ "$TRAVIS_BRANCH" = 'master' ] && [ "$TRAVIS_PULL_REQUEST" == 'false' ] && git push --quiet https://$GITHUBKEY@github.com/Codearte/accurest-maven-plugin
-  $GIT_TAG > /dev/null 2>&1
+before_script:
+- if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]]; then ./mvnw release-candidate:updateVersion -Drevision=$TRAVIS_BUILD_NUMBER; fi
+script:
+- if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]]; then ./mvnw deploy --settings .mvn/settings.xml -Prelease; else ./mvnw install; fi
+after_success:
 - ./mvnw clean test jacoco:report coveralls:report
 branches:
   except:
-  - /^build-[0-9a-z\-]*/
+  - /^v\d/
 cache:
   directories:
   - "~/.m2/repository"

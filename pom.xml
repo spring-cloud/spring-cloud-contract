@@ -82,7 +82,7 @@
 							<goal>updateVersion</goal>
 						</goals>
 						<configuration>
-							<releaseVersionFormat>{{ api_version }}.${revision}</releaseVersionFormat>
+							<releaseVersionFormat>{{ api_version }}-${revision}</releaseVersionFormat>
 						</configuration>
 					</execution>
 					<execution>
@@ -191,6 +191,22 @@
 								</goals>
 							</execution>
 						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-scm-plugin</artifactId>
+						<version>1.9.4</version>
+						<executions>
+							<execution>
+								<phase>deploy</phase>
+								<goals>
+									<goal>tag</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<tag>v${project.version}</tag>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>
