@@ -2,12 +2,12 @@ language: java
 jdk:
 - oraclejdk8
 before_install:
-- [ "$TRAVIS_BRANCH" = 'master' ] && [ "$TRAVIS_PULL_REQUEST" == 'false' ] && openssl aes-256-cbc -K $encrypted_6c56aea9ab8c_key -iv $encrypted_6c56aea9ab8c_iv -in .mvn/codesigning.asc.enc -out .mvn/codesigning.asc -d
-- [ "$TRAVIS_BRANCH" = 'master' ] && [ "$TRAVIS_PULL_REQUEST" == 'false' ] && gpg --fast-import .mvn/codesigning.asc
+- \[ "$TRAVIS_BRANCH" = 'master' \] && [ "$TRAVIS_PULL_REQUEST" == 'false' ] && openssl aes-256-cbc -K $encrypted_6c56aea9ab8c_key -iv $encrypted_6c56aea9ab8c_iv -in .mvn/codesigning.asc.enc -out .mvn/codesigning.asc -d
+- \[ "$TRAVIS_BRANCH" = 'master' \] && [ "$TRAVIS_PULL_REQUEST" == 'false' ] && gpg --fast-import .mvn/codesigning.asc
 before_script:
 - ./mvnw release-candidate:updateVersion -Drevision=$TRAVIS_BUILD_NUMBER
 script:
-- [ "$TRAVIS_BRANCH" = 'master' ] && [ "$TRAVIS_PULL_REQUEST" == 'false' ] && ./mvnw deploy --settings .mvn/settings.xml -Prelease
+- \[ "$TRAVIS_BRANCH" = 'master' \] && [ "$TRAVIS_PULL_REQUEST" == 'false' ] && ./mvnw deploy --settings .mvn/settings.xml -Prelease
 after_success:
 - git config --global user.email "builds@travis-ci.com"
 - git config --global user.name "Travis CI"
@@ -15,7 +15,7 @@ after_success:
 - echo -n $GIT_TAG > public/version
 - git commit -m "Set build VERSION number" public/version
 - git tag $GIT_TAG -a -m "Generated tag from TravisCI build $TRAVIS_BUILD_NUMBER"
-- [ "$TRAVIS_BRANCH" = 'master' ] && [ "$TRAVIS_PULL_REQUEST" == 'false' ] && git push --quiet https://$GITHUBKEY@github.com/Codearte/accurest-maven-plugin
+- \[ "$TRAVIS_BRANCH" = 'master' \] && [ "$TRAVIS_PULL_REQUEST" == 'false' ] && git push --quiet https://$GITHUBKEY@github.com/Codearte/accurest-maven-plugin
   $GIT_TAG > /dev/null 2>&1
 - ./mvnw clean test jacoco:report coveralls:report
 branches:
