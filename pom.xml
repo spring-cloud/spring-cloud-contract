@@ -187,7 +187,7 @@
 						<extensions>true</extensions>
 						<executions>
 							<execution>
-								<id>default-deploy</id>
+								<id>deploy-to-oss</id>
 								<phase>deploy</phase>
 								<goals>
 									<goal>deploy</goal>
@@ -198,6 +198,7 @@
 							<serverId>oss</serverId>
 							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
 							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+							<skipLocalStaging>true</skipLocalStaging>
 						</configuration>
 					</plugin>
 					<plugin>
