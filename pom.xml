@@ -12,7 +12,6 @@
 	<url>https://github.com/Codearte/accurest-maven-plugin</url>
 
 	<modules>
-		<module>test-deps</module>
 		<module>maven-plugin</module>
 	</modules>
 
@@ -91,23 +90,6 @@
 						</goals>
 						<configuration>
 							<outputTemplate>PROJECT_VERSION={{ version }}</outputTemplate>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-scm-plugin</artifactId>
-				<version>1.9.4</version>
-				<inherited>false</inherited>
-				<executions>
-					<execution>
-						<id>default-cli</id>
-						<goals>
-							<goal>tag</goal>
-						</goals>
-						<configuration>
-							<tag>v${project.version}</tag>
 						</configuration>
 					</execution>
 				</executions>
@@ -208,6 +190,23 @@
 							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
 							<autoReleaseAfterClose>true</autoReleaseAfterClose>
 						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-scm-plugin</artifactId>
+						<version>1.9.4</version>
+						<inherited>false</inherited>
+						<executions>
+							<execution>
+								<phase>deploy</phase>
+								<goals>
+									<goal>tag</goal>
+								</goals>
+								<configuration>
+									<tag>v${project.version}</tag>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>
