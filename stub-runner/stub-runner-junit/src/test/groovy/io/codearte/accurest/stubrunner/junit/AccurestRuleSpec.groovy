@@ -1,5 +1,7 @@
 package io.codearte.accurest.stubrunner.junit
 
+import org.junit.AfterClass
+import org.junit.BeforeClass
 import org.junit.ClassRule
 import spock.lang.Shared
 import spock.lang.Specification
@@ -9,9 +11,11 @@ import spock.lang.Specification
  */
 class AccurestRuleSpec extends Specification {
 
-	static {
-		System.properties.setProperty("stubrunner.stubs.repository.root", "")
-		System.properties.setProperty("stubrunner.stubs.classifier", 'stubs')
+	@BeforeClass
+	@AfterClass
+	void setupProps() {
+		System.getProperties().setProperty("stubrunner.stubs.repository.root", "");
+		System.getProperties().setProperty("stubrunner.stubs.classifier", "stubs");
 	}
 
 	@ClassRule @Shared AccurestRule rule = new AccurestRule()

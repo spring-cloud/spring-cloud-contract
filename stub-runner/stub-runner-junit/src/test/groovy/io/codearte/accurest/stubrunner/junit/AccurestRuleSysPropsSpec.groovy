@@ -1,19 +1,26 @@
 package io.codearte.accurest.stubrunner.junit
 
+import org.junit.AfterClass
+import org.junit.BeforeClass
 import org.junit.ClassRule
 import spock.lang.Shared
 import spock.lang.Specification
-import spock.util.environment.RestoreSystemProperties
 
 /**
  * @author Marcin Grzejszczak
  */
-@RestoreSystemProperties
 class AccurestRuleSysPropsSpec extends Specification {
 
-	static {
+	@BeforeClass
+	void setProps() {
 		System.properties.setProperty("stubrunner.stubs.repository.root", AccurestRuleSysPropsSpec.getResource("/m2repo").toURI().toString())
 		System.properties.setProperty("stubrunner.stubs.classifier", 'classifier that will be overridden')
+	}
+
+	@AfterClass
+	void cleanupProps() {
+		System.getProperties().setProperty("stubrunner.stubs.repository.root", "");
+		System.getProperties().setProperty("stubrunner.stubs.classifier", "stubs");
 	}
 
 	@ClassRule @Shared AccurestRule rule = new AccurestRule()

@@ -1,6 +1,8 @@
 package io.codearte.accurest.stubrunner.junit;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -13,6 +15,13 @@ import static org.assertj.core.api.BDDAssertions.then;
  * @author Marcin Grzejszczak
  */
 public class AccurestRuleJUnitTest {
+
+	@BeforeClass
+	@AfterClass
+	public static void setupProps() {
+			System.getProperties().setProperty("stubrunner.stubs.repository.root", "");
+			System.getProperties().setProperty("stubrunner.stubs.classifier", "stubs");
+	}
 
 	@ClassRule public static AccurestRule rule = new AccurestRule()
 			.repoRoot(repoRoot())
