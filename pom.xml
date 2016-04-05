@@ -187,6 +187,7 @@
 				<configuration>
 					<pushChanges>false</pushChanges>
 					<localCheckout>true</localCheckout>
+					<tagNameFormat>v@{project.version}</tagNameFormat>
 				</configuration>
 			</plugin>
 		</plugins>
