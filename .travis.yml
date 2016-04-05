@@ -12,6 +12,7 @@ script:
 - if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]]; then ./mvnw deploy --settings .mvn/settings.xml -Prelease; else ./mvnw install; fi
 after_success:
 - ./mvnw clean test jacoco:report coveralls:report
+install: true
 branches:
   except:
   - /^v\d/
