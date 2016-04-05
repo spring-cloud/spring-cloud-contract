@@ -4,9 +4,6 @@ dist: trusty
 
 before_install:
  - "export JAVA_OPTS='-Xmx1024m -XX:MaxPermSize=256m'"
- - "rm -rf $HOME/.m2/repository/io/codearte/accurest/stubs"
- - "mkdir $HOME/.m2/repository/io/codearte/accurest/ --parents"
- - "cp -r stub-runner/stub-runner-spring/src/test/resources/m2repo/repository/io/codearte/accurest/stubs $HOME/.m2/repository/io/codearte/accurest/"
 
 jdk:
  - oraclejdk7

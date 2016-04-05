@@ -1,11 +1,11 @@
 package io.codearte.accurest.stubrunner.junit;
 
-import java.io.InputStream;
-import java.net.URI;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.ClassRule;
 import org.junit.Test;
+
+import java.io.InputStream;
+import java.net.URI;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
@@ -37,7 +37,7 @@ public class AccurestRuleJUnitTest {
 
 	private static String repoRoot()  {
 		try {
-			return AccurestRuleJUnitTest.class.getResource("/m2repo").toURI().toString();
+			return AccurestRuleJUnitTest.class.getResource("/m2repo/repository/").toURI().toString();
 		} catch (Exception e) {
 			return "";
 		}
