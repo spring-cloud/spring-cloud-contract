@@ -5,7 +5,7 @@
 	<groupId>io.codearte.accurest</groupId>
 	<artifactId>accurest-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
-	<version>0.4</version>
+	<version>0.5-SNAPSHOT</version>
 
 	<name>Accurate Maven Plugin Project</name>
 	<description>Accurate REST Maven Plugin</description>
@@ -46,7 +46,7 @@
 		<connection>scm:git:https://github.com/Codearte/accurest-maven-plugin.git</connection>
 		<developerConnection>scm:git:git@github.com:Codearte/accurest-maven-plugin.git</developerConnection>
 		<url>https://github.com/Codearte/accurest-maven-plugin</url>
-		<tag>v0.4</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<distributionManagement>
