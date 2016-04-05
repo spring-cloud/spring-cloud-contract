@@ -11,13 +11,14 @@ before_script:
 script:
 - if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]]; then ./mvnw deploy --settings .mvn/settings.xml -Prelease; else ./mvnw install; fi
 after_success:
+- if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]]; then ./mvnw scm:tag --settings .mvn/settings.xml; fi
 - ./mvnw clean test jacoco:report coveralls:report
 branches:
   except:
   - /^v\d/
 cache:
   directories:
-  - "~/.m2/repository"
+  - ~/.m2/repository
 env:
   global:
   - secure: oYAoU+PDuaWLo4MBoQYCF++kEqwWn8xtDAeBxBRIvduJO7758+haeSW43AFjmLfuJ9aUdfS+MrqGnDuj+Nqw1oSU9vdbyX7m+Q3wFDkO1Ln2NCaifrSCVHaAAMSfSKNlYBjD4+sATsrnSF75BSIS2WMNItkGcac7DPD+Ls64Ovw9MbkMB2i4TRYboGFNvOhtFYSOexd6hWltin0s6EHtsqFJKBKiPfvZYPJ34d0bfvMbi/TyfDoaia0QG8EUqyF1FZhBT5j/iXD03kTMdZ59o3pUgkgZjMfiD7rJGWffwZ+kV8PtzYyzjhiH8o+tqhFkLRXfu+s6zcMjBhJDR1rgguEqzlKbGRoFahY5PI+fbLwyNz+kQwtXxF3+lpwM/VZ/1OHPgpTtdDiz5ArRskb/Y/caGbLhjkm4V2x3/7fvRHGcLZf7DraJoShT/5MvG0AN7PCjEhbGX+08YaRucmQLWHUo1pGazwagP+7MqDsimdR+VzIY/HUctFi4DPOLjmZROukcPCFJTwn2T/0TFC5Luptb5ifsT9RvBv89/A71XcYs6rrGcU4UHdy6gZwWIRECKG82X+0jwoM39dFfweF7iVIuimdK2+yy4DtLZQfeqR7pWphs2i42twQUWcwIpRQyi/hn+wteVz7yxIBKfphaIVVP3juS1RPtMD0vOm8BRpo=
