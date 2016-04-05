@@ -29,7 +29,7 @@
 		<mavenPluginPluginVersion>3.4</mavenPluginPluginVersion>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<accurest.version>1.0.1</accurest.version>
+		<accurest.version>1.0.4</accurest.version>
 
 		<revision>0000000</revision>
 	</properties>
