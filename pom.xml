@@ -6,7 +6,7 @@
 	<groupId>io.codearte.accurest</groupId>
 	<artifactId>accurest-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
-	<version>0.5-SNAPSHOT</version>
+	<version>0.5.0-SNAPSHOT</version>
 
 	<name>Accurate Maven Plugin Project</name>
 	<description>Accurate REST Maven Plugin</description>
@@ -30,8 +30,6 @@
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<accurest.version>1.0.4</accurest.version>
-
-		<revision>0000000</revision>
 	</properties>
 
 	<licenses>
@@ -151,41 +149,6 @@
 				<version>4.1.0</version>
 			</plugin>
 			<plugin>
-				<groupId>com.smartcodeltd</groupId>
-				<artifactId>release-candidate-maven-plugin</artifactId>
-				<version>1.0-201603091838.01dbbbf</version>
-				<executions>
-					<execution>
-						<id>default-cli</id>
-						<goals>
-							<goal>updateVersion</goal>
-						</goals>
-						<configuration>
-							<releaseVersionFormat>{{ api_version }}-beta-${revision}</releaseVersionFormat>
-						</configuration>
-					</execution>
-					<execution>
-						<goals>
-							<goal>version</goal>
-						</goals>
-						<configuration>
-							<outputTemplate>PROJECT_VERSION={{ version }}</outputTemplate>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.7</version>
-				<extensions>true</extensions>
-				<configuration>
-					<serverId>oss</serverId>
-					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-					<autoReleaseAfterClose>false</autoReleaseAfterClose>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.5.3</version>
@@ -293,12 +256,6 @@
 	<profiles>
 		<profile>
 			<id>release</id>
-			<activation>
-				<property>
-					<name>performRelease</name>
-					<value>true</value>
-				</property>
-			</activation>
 			<build>
 				<plugins>
 					<plugin>
@@ -354,6 +311,120 @@
 								</goals>
 								<configuration>
 									<tag>v${project.version}</tag>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<version>1.6.7</version>
+						<extensions>true</extensions>
+						<configuration>
+							<serverId>oss</serverId>
+							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>1.10</version>
+						<executions>
+							<execution>
+								<id>parse-version</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>parse-version</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>versions-maven-plugin</artifactId>
+						<version>2.2</version>
+						<executions>
+							<execution>
+								<id>switch-to-snapshot-version</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>set</goal>
+								</goals>
+								<configuration>
+									<allowSnapshots/>
+									<newVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.nextIncrementalVersion}-SNAPSHOT</newVersion>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-scm-plugin</artifactId>
+						<version>1.9.4</version>
+						<inherited>false</inherited>
+						<executions>
+							<execution>
+								<id>tag-new-release</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>tag</goal>
+								</goals>
+								<configuration>
+									<tag>v${project.version}</tag>
+								</configuration>
+							</execution>
+							<execution>
+								<id>save-changes</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>checkin</goal>
+								</goals>
+								<configuration>
+									<connectionType>connection</connectionType>
+									<includes>pom.xml</includes>
+									<message>Setting next development version to ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.nextIncrementalVersion}-SNAPSHOT.
+
+										[ci skip]</message>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<!-- Set version for release-->
+		<profile>
+			<id>version</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>1.10</version>
+						<executions>
+							<execution>
+								<id>parse-version</id>
+								<phase>initialize</phase>
+								<goals>
+									<goal>parse-version</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>versions-maven-plugin</artifactId>
+						<version>2.2</version>
+						<executions>
+							<execution>
+								<id>set-release-version</id>
+								<phase>initialize</phase>
+								<goals>
+									<goal>set</goal>
+								</goals>
+								<configuration>
+									<newVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</newVersion>
 								</configuration>
 							</execution>
 						</executions>

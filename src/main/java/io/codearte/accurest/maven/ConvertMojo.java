@@ -33,8 +33,7 @@ public class ConvertMojo extends AbstractMojo {
 		getLog().info(format("     Accurest contracts directory: %s", config.getContractsDslDir().getAbsolutePath()));
 		getLog().info(format("WireMock stubs mappings directory: %s", config.getStubsOutputDir().getAbsolutePath()));
 
-		RecursiveFilesConverter converter = new RecursiveFilesConverter(new DslToWireMockClientConverter(), config);
-		converter.processFiles();
+		new AccurestConverter().convert(config);
 	}
 
 }

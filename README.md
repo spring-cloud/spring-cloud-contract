@@ -3,16 +3,31 @@
 Accurate REST Maven Plugin
 ====
 
-
 Converting [Accurest](https://github.com/Codearte/accurest/wiki/1.-Introduction) GroovyDSL into WireMock stub mappings:
 
     mvn io.codearte.accurest:accurest-maven-plugin:convert
     
-or shortly
+or shortly (*)
 
     mvn accurest:convert
     
-but this requires additional configuration inside `~/.m2/settings.xml`
+
+Accurest Runner
+---
+
+    mvn io.codearte.accurest:accurest-maven-plugin:run
+    
+or shortly (*)
+
+    mvn accurest:run
+
+
+For more information please go to the [Wiki](https://github.com/Codearte/accurest/wiki/2.2-Maven-Project)
+
+
+---
+
+(*) Additional configuration inside `~/.m2/settings.xml`
 
 ```xml
 <settings>
@@ -22,6 +37,3 @@ but this requires additional configuration inside `~/.m2/settings.xml`
 </settings>
 
 ```
-
-
-For more information please go to the [Wiki](https://github.com/Codearte/accurest/wiki/2.2-Maven-Project)
