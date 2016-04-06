@@ -2,6 +2,7 @@ package io.codearte.accurest.stubrunner
 
 import groovy.grape.Grape
 import groovy.util.logging.Slf4j
+import io.codearte.accurest.stubrunner.util.StringUtils
 import io.codearte.accurest.stubrunner.util.ZipCategory
 
 import static java.nio.file.Files.createTempDirectory
@@ -63,7 +64,11 @@ class StubDownloader {
 		try {
 			System.setProperty(GRAPE_CONFIG, accurestStubrunnerGrapePath)
 			log.info("Setting default grapes path to [$accurestStubrunnerGrapePath]")
-			return buildResolver(workOffline).resolveDependency(stubRepositoryRoot, depToGrab)
+			if (StringUtils.hasText(stubRepositoryRoot)) {
+				return buildResolver(workOffline).resolveDependency(stubRepositoryRoot, depToGrab)
+			}
+			log.warn("No repository passed so will try to resolve dependencies from local Maven Repo")
+			return buildResolver(true).resolveDependency(stubRepositoryRoot, depToGrab)
 		} finally {
 			restoreOldGrapeConfigIfApplicable(oldGrapeConfig)
 		}
