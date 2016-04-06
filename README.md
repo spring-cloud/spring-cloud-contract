@@ -27,7 +27,7 @@ For more information please go to the [Wiki](https://github.com/Codearte/accures
 
 ---
 
-<sup>*</sup> Additional configuration inside `~/.m2/settings.xml`
+<sup>*</sup> Additional configuration inside `~/.m2/settings.xml` is required.
 
 ```xml
 <settings>
