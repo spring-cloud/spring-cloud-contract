@@ -7,7 +7,7 @@ Converting [Accurest](https://github.com/Codearte/accurest/wiki/1.-Introduction)
 
     mvn io.codearte.accurest:accurest-maven-plugin:convert
     
-or shortly (*)
+or shortly <sup>*</sup>
 
     mvn accurest:convert
     
@@ -17,7 +17,7 @@ Accurest Runner
 
     mvn io.codearte.accurest:accurest-maven-plugin:run
     
-or shortly (*)
+or shortly <sup>*</sup>
 
     mvn accurest:run
 
@@ -27,7 +27,7 @@ For more information please go to the [Wiki](https://github.com/Codearte/accures
 
 ---
 
-(*) Additional configuration inside `~/.m2/settings.xml`
+<sup>*</sup> Additional configuration inside `~/.m2/settings.xml`
 
 ```xml
 <settings>
@@ -37,3 +37,4 @@ For more information please go to the [Wiki](https://github.com/Codearte/accures
 </settings>
 
 ```
+
