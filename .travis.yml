@@ -17,6 +17,7 @@ install: true
 branches:
   except:
   - /^v\d/
+  - gh-pages
 cache:
   directories:
   - ~/.m2/repository
