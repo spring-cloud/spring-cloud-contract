@@ -18,7 +18,7 @@
 
     <profiles>
         <profile>
-            <id>oss</id>
+            <id>release</id>
             <properties>
                 <gpg.keyname>${env.GPG_KEY_NAME}</gpg.keyname>
                 <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
