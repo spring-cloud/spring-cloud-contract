@@ -38,3 +38,7 @@ Spring Configuration that automatically starts stubs upon Spring Context build u
 
 Spring Cloud AutoConfiguration that automatically starts stubs upon Spring Context build up and allows you to call the stubs
 as if they were registered in your service discovery
+
+### [Accurest Maven Plugin](https://github.com/Codearte/accurest-maven-plugin)
+
+Maven project support with standalone Accurest Stub Runner and Accurest Contracts to Wiremock mappings converter
