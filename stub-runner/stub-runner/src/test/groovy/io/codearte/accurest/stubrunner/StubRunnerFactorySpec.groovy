@@ -17,7 +17,7 @@ class StubRunnerFactorySpec extends Specification {
 	def "Should download stub definitions many times"() {
 		given:
 		folder.newFolder("mappings")
-		2 * downloader.downloadAndUnpackStubJar(_, _, _, _) >> folder.root
+		2 * downloader.downloadAndUnpackStubJar(_, _, _, _, _) >> folder.root
 		stubRunnerOptions.stubRepositoryRoot = folder.root.absolutePath
 		when:
 		Collection<StubRunner> stubRunners = collectOnlyPresentValues(factory.createStubsFromServiceConfiguration())

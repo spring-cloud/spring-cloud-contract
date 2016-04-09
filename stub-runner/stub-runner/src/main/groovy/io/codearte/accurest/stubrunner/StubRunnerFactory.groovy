@@ -31,13 +31,9 @@ class StubRunnerFactory {
 		return collaborators.collect { StubConfiguration stubsConfiguration ->
 			final File unzipedStubDir = stubDownloader.downloadAndUnpackStubJar(stubRunnerOptions.workOffline,
 					stubRunnerOptions.stubRepositoryRoot,
-					stubsConfiguration.groupId, "$stubsConfiguration.artifactId${getStubDefinitionSuffix(stubsConfiguration)}")
+					stubsConfiguration.groupId, stubsConfiguration.artifactId, stubsConfiguration.classifier)
 			return createStubRunner(unzipedStubDir, stubsConfiguration)
 		}.findAll { it != null }
-	}
-
-	private String getStubDefinitionSuffix(StubConfiguration stubsConfiguration) {
-		return stubsConfiguration.hasClassifier() ? "-${stubsConfiguration.classifier}" : ""
 	}
 
 	private StubRunner createStubRunner(File unzipedStubDir, StubConfiguration stubsConfiguration) {
