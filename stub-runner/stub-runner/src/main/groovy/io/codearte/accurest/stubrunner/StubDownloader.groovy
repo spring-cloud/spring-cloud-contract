@@ -31,11 +31,13 @@ class StubDownloader {
 	 * @return file where the stubs where unpacked
 	 */
 	File downloadAndUnpackStubJar(boolean workOffline, String stubRepositoryRoot, String stubsGroup, String
-			stubsModule) {
-		log.warn("Downloading stubs for group [$stubsGroup] and module [$stubsModule] from repository [$stubRepositoryRoot]")
-		URI stubJarUri = findGrabbedStubJars(workOffline, stubRepositoryRoot, stubsGroup, stubsModule)
+			stubsModule, String classifier) {
+		log.warn("Downloading stubs for group [$stubsGroup], module [$stubsModule], " +
+				"classifier [$classifier] from repository [$stubRepositoryRoot]")
+		URI stubJarUri = findGrabbedStubJars(workOffline, stubRepositoryRoot, stubsGroup, stubsModule, classifier)
 		if (!stubJarUri) {
-			log.warn("Failed to download stubs for group [$stubsGroup] and module [$stubsModule] from repository [$stubRepositoryRoot]")
+			log.warn("Failed to download stubs for group [$stubsGroup] artifactId [$stubsModule] and " +
+					"classifier [$classifier] from repository [$stubRepositoryRoot]")
 			return null
 		}
 		File unzippedStubsDir = unpackStubJarToATemporaryFolder(stubJarUri)
@@ -56,8 +58,8 @@ class StubDownloader {
 		return tmpDirWhereStubsWillBeUnzipped
 	}
 
-	private URI findGrabbedStubJars(boolean workOffline, String stubRepositoryRoot, String stubsGroup, String stubsModule) {
-		Map depToGrab = [group: stubsGroup, module: stubsModule, version: LATEST_MODULE, transitive: false]
+	private URI findGrabbedStubJars(boolean workOffline, String stubRepositoryRoot, String stubsGroup, String stubsModule, String classifier) {
+		Map depToGrab = [group: stubsGroup, module: stubsModule, classifier: classifier, version: LATEST_MODULE, transitive: false]
 		String accurestStubrunnerGrapePath = System.getProperty(STUB_RUNNER_GRAPE_CONFIG, getDefaultAccurestGrapeConfigPath())
 		initializeAccurestGrapeIfAbsent(accurestStubrunnerGrapePath)
 		String oldGrapeConfig = System.getProperty(GRAPE_CONFIG)
