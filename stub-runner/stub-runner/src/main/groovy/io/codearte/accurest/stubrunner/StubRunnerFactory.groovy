@@ -3,13 +3,13 @@ package io.codearte.accurest.stubrunner
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import groovy.util.logging.Slf4j
+
 /**
  * Factory of StubRunners. Basing on the options and passed collaborators
  * downloads the stubs and returns a list of corresponding stub runners.
  */
 @Slf4j
 @CompileStatic
-@PackageScope
 class StubRunnerFactory {
 
 	private final StubRunnerOptions stubRunnerOptions
@@ -17,11 +17,11 @@ class StubRunnerFactory {
 	private final StubDownloader stubDownloader
 
 	StubRunnerFactory(StubRunnerOptions stubRunnerOptions, Collection<StubConfiguration> collaborators) {
-		this(stubRunnerOptions, collaborators, new StubDownloader())
+		this(stubRunnerOptions, collaborators, new GrapeStubDownloader())
 	}
 
-	protected StubRunnerFactory(StubRunnerOptions stubRunnerOptions, Collection<StubConfiguration> collaborators,
-								StubDownloader stubDownloader) {
+	StubRunnerFactory(StubRunnerOptions stubRunnerOptions, Collection<StubConfiguration> collaborators,
+	                            StubDownloader stubDownloader) {
 		this.stubRunnerOptions = stubRunnerOptions
 		this.collaborators = collaborators
 		this.stubDownloader = stubDownloader
