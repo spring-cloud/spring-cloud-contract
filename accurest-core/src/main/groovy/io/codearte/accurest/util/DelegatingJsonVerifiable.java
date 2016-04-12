@@ -137,6 +137,7 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 	public MethodBufferingJsonVerifiable matches(String value) {
 		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(delegate.matches(value), methodsBuffer);
 		if (delegate.isAssertingAValueInArray()) {
+			readyToCheck.appendMethodWithQuotedValue("matches", escapeJava(value));
 			readyToCheck.methodsBuffer.append(".value()");
 		} else {
 			readyToCheck.appendMethodWithQuotedValue("matches", escapeJava(value));

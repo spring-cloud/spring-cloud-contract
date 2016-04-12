@@ -8,7 +8,6 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.util.regex.Pattern
-
 /**
  * @author Jakub Kubrynski
  */
@@ -1117,5 +1116,77 @@ World.'''"""
 			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
 			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
+
+	@Issue('#216')
+	@Unroll
+	def "should parse JSON with arrays using #methodBuilderName"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method "GET"
+					urlPath('/auth/oauth/check_token') {
+						queryParameters {
+							parameter 'token':
+									value(
+											client(regex('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}')),
+											server('6973b31d-7140-402a-bca6-1cdb954e03a7')
+									)
+						}
+					}
+				}
+				response {
+					status 200
+					body(
+							authorities: [
+									value(stub('ROLE_ADMIN'), test(regex('^[a-zA-Z0-9_\\- ]+$')))
+							]
+					)
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('''assertThatJson(parsedJson).array("authorities").matches("^[a-zA-Z0-9_\\\\- ]+\\$").value()''')
+		where:
+			methodBuilderName           | methodBuilder
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+	}
+
+	@Unroll
+	def "should work with execution property"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method 'PUT'
+					url '/fraudcheck'
+				}
+				response {
+					status 200
+					body(
+							fraudCheckStatus: "OK",
+							rejectionReason: $(client(null), server(execute('assertThatRejectionReasonIsNull($it)')))
+					)
+				}
+
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			!test.contains('''assertThatJson(parsedJson).field("rejectionReason").isEqualTo("assertThatRejectionReasonIsNull("''')
+			test.contains('''assertThatRejectionReasonIsNull(''')
+		where:
+			methodBuilderName           | methodBuilder
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) }
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+	}
+
+
 
 }

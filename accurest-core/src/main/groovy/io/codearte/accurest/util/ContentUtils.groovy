@@ -27,8 +27,12 @@ class ContentUtils {
 		it instanceof DslProperty ? it.clientValue : it
 	}
 
+	public static final Closure GET_TEST_SIDE = {
+		it instanceof DslProperty ? it.serverValue : it
+	}
+
 	private static final Pattern TEMPORARY_PATTERN_HOLDER = Pattern.compile('.*REGEXP>>(.*)<<.*')
-	private static final Pattern TEMPORARY_EXECUTION_PATTERN_HOLDER = Pattern.compile('EXECUTION>>(.*)<<')
+	private static final Pattern TEMPORARY_EXECUTION_PATTERN_HOLDER = Pattern.compile('["]?EXECUTION>>(.*)<<["]?')
 	private static final Pattern TEMPORARY_OPTIONAL_PATTERN_HOLDER = Pattern.compile('OPTIONAL>>(.*)<<')
 	private static final String JSON_VALUE_PATTERN_FOR_REGEX = 'REGEXP>>%s<<'
 	private static final String JSON_VALUE_PATTERN_FOR_OPTIONAL = 'OPTIONAL>>%s<<'
@@ -150,23 +154,23 @@ class ContentUtils {
 		)
 	}
 
-	private static String transformJSONStringValue(Object obj, Closure valueProvider) {
-		return obj.toString()
+	protected static Object transformJSONStringValue(Object obj, Closure valueProvider) {
+		return obj
 	}
 
-	private static String transformJSONStringValue(DslProperty dslProperty, Closure valueProvider) {
+	protected static Object transformJSONStringValue(DslProperty dslProperty, Closure valueProvider) {
 		return transformJSONStringValue(valueProvider(dslProperty), valueProvider)
 	}
 
-	private static String transformJSONStringValue(Pattern pattern, Closure valueProvider) {
+	protected static Object transformJSONStringValue(Pattern pattern, Closure valueProvider) {
 		return String.format(JSON_VALUE_PATTERN_FOR_REGEX, pattern.pattern())
 	}
 
-	private static String transformJSONStringValue(OptionalProperty optional, Closure valueProvider) {
+	protected static Object transformJSONStringValue(OptionalProperty optional, Closure valueProvider) {
 		return String.format(JSON_VALUE_PATTERN_FOR_OPTIONAL, optional.value)
 	}
 
-	private static String transformJSONStringValue(ExecutionProperty property, Closure valueProvider) {
+	protected static Object transformJSONStringValue(ExecutionProperty property, Closure valueProvider) {
 		return String.format(JSON_VALUE_PATTERN_FOR_EXECUTION, property.executionCommand)
 	}
 
@@ -176,6 +180,12 @@ class ContentUtils {
 
 	private static String transformXMLStringValue(DslProperty dslProperty, Closure valueProvider) {
 		return transformXMLStringValue(valueProvider(dslProperty), valueProvider)
+	}
+
+	protected static Object convertDslPropsToTemporaryRegexPatterns(parsedJson) {
+		MapConverter.transformValues(parsedJson, { Object value ->
+			return transformJSONStringValue(value, GET_TEST_SIDE)
+		})
 	}
 
 	private static Object convertAllTemporaryRegexPlaceholdersBackToPatterns(parsedJson) {
@@ -212,7 +222,11 @@ class ContentUtils {
 	 * @param string to match the regexps against
 	 * @return object converted from temporary holders
 	 */
-	static Object returnParsedObject(String string) {
+	static Object returnParsedObject(Object object) {
+		if (!(object instanceof String)) {
+			return object
+		}
+		String string = (String) object
 		Matcher matcher = TEMPORARY_PATTERN_HOLDER.matcher(string.trim())
 		if (matcher.matches()) {
 			return Pattern.compile(patternFromMatchingGroup(matcher))

@@ -1,11 +1,12 @@
 package io.codearte.accurest.util
+
 import groovy.json.JsonSlurper
 import io.codearte.accurest.dsl.internal.DslProperty
+
 /**
  * @author Marcin Grzejszczak
  */
 class MapConverter {
-
 
 	public static final boolean STUB_SIDE = true
 	public static final boolean TEST_SIDE = false
