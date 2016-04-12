@@ -16,11 +16,8 @@ class StubRunnerFactory {
 	private final Collection<StubConfiguration> collaborators
 	private final StubDownloader stubDownloader
 
-	StubRunnerFactory(StubRunnerOptions stubRunnerOptions, Collection<StubConfiguration> collaborators) {
-		this(stubRunnerOptions, collaborators, new GrapeStubDownloader())
-	}
-
-	StubRunnerFactory(StubRunnerOptions stubRunnerOptions, Collection<StubConfiguration> collaborators,
+	StubRunnerFactory(StubRunnerOptions stubRunnerOptions,
+	                  Collection<StubConfiguration> collaborators,
 	                            StubDownloader stubDownloader) {
 		this.stubRunnerOptions = stubRunnerOptions
 		this.collaborators = collaborators
