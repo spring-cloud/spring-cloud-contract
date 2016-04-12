@@ -42,7 +42,7 @@ class StubRunnerFactory {
 
 	private StubRunner createStubRunner(File unzippedStubsDir, StubConfiguration stubsConfiguration,
 										StubRunnerOptions stubRunnerOptions) {
-		return new StubRunner(new Arguments(stubRunnerOptions, unzippedStubsDir.path, stubsConfiguration))
+		return new StubRunner(stubRunnerOptions, unzippedStubsDir.path, stubsConfiguration)
 	}
 
 }
