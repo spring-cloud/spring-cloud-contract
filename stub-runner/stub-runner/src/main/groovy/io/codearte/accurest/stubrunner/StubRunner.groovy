@@ -15,21 +15,31 @@ import groovy.util.logging.Slf4j
 class StubRunner implements StubRunning {
 
 	private StubRunnerExecutor localStubRunner
-	private final Arguments arguments
 	private final StubRepository stubRepository
+	private StubConfiguration stubsConfiguration
+	private StubRunnerOptions stubRunnerOptions
 
+	@Deprecated
 	StubRunner(Arguments arguments) {
-		this.arguments = arguments
+		stubsConfiguration = arguments.stub
+		stubRunnerOptions = arguments.stubRunnerOptions
 		this.stubRepository = new StubRepository(new File(arguments.repositoryPath))
+	}
+
+	StubRunner(StubRunnerOptions stubRunnerOptions, String repositoryPath, StubConfiguration stubsConfiguration) {
+		this.stubsConfiguration = stubsConfiguration
+		this.stubRunnerOptions = stubRunnerOptions
+		this.stubRepository = new StubRepository(new File(repositoryPath))
 	}
 
 	@Override
 	RunningStubs runStubs() {
-		AvailablePortScanner portScanner = new AvailablePortScanner(arguments.stubRunnerOptions.minPortValue,
-				arguments.stubRunnerOptions.maxPortValue)
+		AvailablePortScanner portScanner = new AvailablePortScanner(stubRunnerOptions.minPortValue,
+				stubRunnerOptions.maxPortValue)
 		localStubRunner = new StubRunnerExecutor(portScanner)
 		registerShutdownHook()
-		return localStubRunner.runStubs(stubRepository, arguments.stub)
+
+		return localStubRunner.runStubs(stubRepository, stubsConfiguration)
 	}
 
 	@Override
