@@ -1,9 +1,12 @@
 package io.codearte.accurest.builder
 
 import io.codearte.accurest.dsl.GroovyDsl
+import io.codearte.accurest.dsl.internal.ExecutionProperty
 import io.codearte.accurest.dsl.internal.Header
 import io.codearte.accurest.dsl.internal.QueryParameter
 import io.codearte.accurest.dsl.internal.QueryParameters
+
+import java.util.regex.Pattern
 
 import static io.codearte.accurest.config.TestFramework.JUNIT
 
@@ -94,7 +97,7 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 	@Override
 	protected void validateResponseHeadersBlock(BlockBuilder bb) {
 		response.headers?.collect { Header header ->
-			bb.addLine("assertThat(response.getHeaderString(\"$header.name\")).isEqualTo(\"$header.serverValue\");")
+			processHeaderElement(bb, header.name, header.serverValue)
 		}
 	}
 
@@ -105,6 +108,21 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 	@Override
 	protected String getResponseAsString() {
 		return 'responseAsString'
+	}
+
+	@Override
+	protected void processHeaderElement(BlockBuilder blockBuilder, String property, String value) {
+		blockBuilder.addLine("assertThat(response.getHeaderString(\"$property\")).${createHeaderComparison(value)}")
+	}
+
+	@Override
+	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Pattern pattern) {
+		blockBuilder.addLine("assertThat(response.getHeaderString(\"$property\")).${createHeaderComparison(pattern)}")
+	}
+
+	@Override
+	protected void processHeaderElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
+		blockBuilder.addLine("${exec.insertValue("response.getHeaderString(\"$property\")")};")
 	}
 
 }

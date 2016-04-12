@@ -9,6 +9,8 @@ import io.codearte.accurest.dsl.internal.Header
 import io.codearte.accurest.dsl.internal.NamedProperty
 import io.codearte.accurest.dsl.internal.Request
 
+import java.util.regex.Pattern
+
 import static io.codearte.accurest.util.ContentUtils.getGroovyMultipartFileParameterContent
 
 /**
@@ -95,6 +97,14 @@ abstract class SpockMethodBodyBuilder extends MethodBodyBuilder {
 	@Override
 	protected String getParameterString(Map.Entry<String, Object> parameter) {
 		return ".param('$parameter.key', '$parameter.value')"
+	}
+
+	protected String convertHeaderComparison(String headerValue) {
+		return " == '$headerValue'"
+	}
+
+	protected String convertHeaderComparison(Pattern headerValue) {
+		return "==~ java.util.regex.Pattern.compile('$headerValue')"
 	}
 
 }

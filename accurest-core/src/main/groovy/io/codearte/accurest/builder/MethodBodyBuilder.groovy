@@ -19,6 +19,8 @@ import io.codearte.accurest.util.JsonPaths
 import io.codearte.accurest.util.JsonToJsonPathsConverter
 import io.codearte.accurest.util.MapConverter
 
+import java.util.regex.Pattern
+
 import static io.codearte.accurest.util.ContentUtils.extractValue
 import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromContent
 import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromHeader
@@ -54,6 +56,12 @@ abstract class MethodBodyBuilder {
 	protected abstract void processBodyElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec)
 
 	protected abstract void processBodyElement(BlockBuilder blockBuilder, String property, Map.Entry entry)
+
+	protected abstract void processHeaderElement(BlockBuilder blockBuilder, String property, Pattern pattern)
+
+	protected abstract void processHeaderElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec)
+
+	protected abstract void processHeaderElement(BlockBuilder blockBuilder, String property, String value)
 
 	protected abstract String getPropertyInListString(String property, Integer index)
 
@@ -198,6 +206,9 @@ abstract class MethodBodyBuilder {
 		return s.substring(1);
 	}
 
+	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Object value) {
+	}
+
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, Object value) {
 	}
 
@@ -307,4 +318,5 @@ abstract class MethodBodyBuilder {
 	private boolean hasQueryParams(Url url) {
 		return url.queryParameters
 	}
+
 }

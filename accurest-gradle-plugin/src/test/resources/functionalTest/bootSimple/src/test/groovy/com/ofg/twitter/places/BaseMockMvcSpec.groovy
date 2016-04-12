@@ -13,4 +13,9 @@ abstract class BaseMockMvcSpec extends Specification {
 	void isProperCorrelationId(Integer correlationId) {
 		assert correlationId == 123456
 	}
+
+	void isEmpty(String value) {
+		assert value == null
+	}
+
 }
