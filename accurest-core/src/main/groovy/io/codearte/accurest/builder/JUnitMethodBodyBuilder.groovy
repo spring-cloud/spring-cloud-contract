@@ -9,6 +9,8 @@ import io.codearte.accurest.dsl.internal.Header
 import io.codearte.accurest.dsl.internal.NamedProperty
 import io.codearte.accurest.dsl.internal.Request
 
+import java.util.regex.Pattern
+
 import static groovy.json.StringEscapeUtils.escapeJava
 import static io.codearte.accurest.config.TestFramework.JUNIT
 import static io.codearte.accurest.util.ContentUtils.getJavaMultipartFileParameterContent
@@ -113,4 +115,15 @@ abstract class JUnitMethodBodyBuilder extends MethodBodyBuilder {
 	protected String getParameterString(Map.Entry<String, Object> parameter) {
 		return """.param("${escapeJava(parameter.key)}", "${escapeJava(parameter.value as String)}")"""
 	}
+
+	protected String createHeaderComparison(Object headerValue) {
+		String escapedHeader = convertUnicodeEscapesIfRequired("$headerValue")
+		return "isEqualTo(\"$escapedHeader\");"
+	}
+
+	protected String createHeaderComparison(Pattern headerValue) {
+		String escapedHeader = convertUnicodeEscapesIfRequired("$headerValue")
+		return "matches(\"$escapedHeader\");"
+	}
+
 }

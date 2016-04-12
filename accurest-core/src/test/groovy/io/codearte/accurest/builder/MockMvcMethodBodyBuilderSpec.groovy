@@ -884,6 +884,10 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 }""")
 					headers {
 						header('Content-Type': 'application/vnd.fraud.v1+json')
+						header 'Location': value(
+							stub(null),
+							test(execute('assertThatLocationIsNull($it)'))
+						)
 					}
 				}
 			}
@@ -891,13 +895,15 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
-			def test = blockBuilder.toString()
+			String test = blockBuilder.toString()
 		then:
-			test.contains(assertionString)
+			assertionStrings.each { String assertionString ->
+				assert test.contains(assertionString)
+			}
 		where:
-			methodBuilderName           | methodBuilder                                     | assertionString
-			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | '''assertThatRejectionReasonIsNull(parsedJson.read('$.rejectionReason'))'''
-			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | '''assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason"))'''
+			methodBuilderName           | methodBuilder                                               | assertionStrings
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodBodyBuilder(dsl) } | ['''assertThatRejectionReasonIsNull(parsedJson.read('$.rejectionReason'))''', '''assertThatLocationIsNull(response.header('Location'))''']
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) } | ['''assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason"))''', '''assertThatLocationIsNull(response.header("Location"))''']
 	}
 
 	@Unroll
