@@ -1,0 +1,16 @@
+{
+  "request" : {
+    "url" : "/greeting",
+    "method" : "GET",
+    "headers" : {
+      "Content-Type" : {
+        "equalTo" : "application/json"
+      }
+    }
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"id\":1,\"content\":\"Hello, World!\"}"
+  },
+  "priority" : 2
+}

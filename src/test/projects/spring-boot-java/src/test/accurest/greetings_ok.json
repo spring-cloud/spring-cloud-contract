@@ -1,0 +1,21 @@
+{
+  "request" : {
+    "urlPath" : "/greeting",
+    "method" : "GET",
+    "headers" : {
+      "Content-Type" : {
+        "equalTo" : "application/json"
+      }
+    },
+    "queryParameters" : {
+      "name" : {
+        "equalTo" : "Something"
+      }
+    }
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"id\":1,\"content\":\"Hello, Something!\"}"
+  },
+  "priority" : 2
+}
