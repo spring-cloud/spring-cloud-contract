@@ -31,7 +31,7 @@ Running stubs from repository:
 
     mvn accurest:run -Dstubs="org.springframework:gs-rest-service"  
 
-where `org.springframework:gs-rest-service` is artifact with 'stubs` classifier contains wiremock mappings.
+where `org.springframework:gs-rest-service` is artifact with `stubs` classifier contains wiremock mappings.
 
 ---
 
