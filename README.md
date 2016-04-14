@@ -16,14 +16,22 @@ For more information please go to the [Accurest Wiki](https://github.com/Codeart
 
     
 
-Accurest Runner
+Accurest Stub Runner
 ---
+
+Run contracts from current directory:
 
     mvn io.codearte.accurest:accurest-maven-plugin:run
     
 or shortly <sup>*</sup>
 
     mvn accurest:run
+
+Running stubs from repository:
+
+    mvn accurest:run -Dstubs="org.springframework:gs-rest-service"  
+
+where `org.springframework:gs-rest-service` is artifact with 'stubs` classifier contains wiremock mappings.
 
 ---
 
