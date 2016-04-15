@@ -424,7 +424,7 @@
                                 <configuration>
                                     <connectionType>connection</connectionType>
                                     <includes>pom.xml</includes>
-                                    <message>Setting next development version to
+                                    <message>Sets project version to
                                         ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.nextIncrementalVersion}-SNAPSHOT.
 
                                         [ci skip]
