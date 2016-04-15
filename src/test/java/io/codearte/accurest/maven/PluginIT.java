@@ -35,7 +35,7 @@ public class PluginIT {
 				.assertErrorFreeLog()
 				.assertLogText("Generating server tests source code for Accurest contract verification")
 				.assertLogText("Generated 1 test classes.")
-				.assertLogText("Accurest Plugin: Invoking GroovyDSL to WireMock client stubs conversion")
+				.assertLogText("Converting from accurest contracts written in GroovyDSL to WireMock stubs mappings")
 				.assertLogText("Creating new json")
 				.assertErrorFreeLog();
 	}
@@ -48,7 +48,7 @@ public class PluginIT {
 				.assertErrorFreeLog()
 				.assertLogText("Generating server tests source code for Accurest contract verification")
 				.assertLogText("Generated 1 test classes.")
-				.assertLogText("Accurest Plugin: Invoking GroovyDSL to WireMock client stubs conversion")
+				.assertLogText("Converting from accurest contracts written in GroovyDSL to WireMock stubs mappings")
 				.assertLogText("Creating new json")
 				.assertErrorFreeLog();
 	}

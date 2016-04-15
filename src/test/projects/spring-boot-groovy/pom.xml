@@ -86,14 +86,14 @@
 				<executions>
 					<execution>
 						<goals>
-							<goal>generateStubs</goal>
+							<goal>convert</goal>
 							<goal>generateTests</goal>
 						</goals>
 					</execution>
 				</executions>
 				<configuration>
 					<baseClassForTests>com.ofg.twitter.place.BaseMockMvcTest</baseClassForTests>
-					<contractsDir>/src/test/resources/stubs</contractsDir>
+					<contractsDir>src/test/resources/stubs</contractsDir>
 					<testFramework>SPOCK</testFramework>
 					<nameSuffixForTests>Test</nameSuffixForTests>
 				</configuration>

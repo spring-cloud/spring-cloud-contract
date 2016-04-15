@@ -17,7 +17,7 @@ import static java.lang.String.format
 
 @Mojo(name = 'generateTests', defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES)
 @CompileStatic
-public class GenerateTestsMojo extends AbstractMojo {
+class GenerateTestsMojo extends AbstractMojo {
 
     @Parameter(defaultValue = '${basedir}', readonly = true, required = true)
     private File baseDir
@@ -49,7 +49,7 @@ public class GenerateTestsMojo extends AbstractMojo {
     @Parameter
     private String nameSuffixForTests
 
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    void execute() throws MojoExecutionException, MojoFailureException {
         log.info('Generating server tests source code for Accurest contract verification')
 
         AccurestConfigProperties config = new AccurestConfigProperties()

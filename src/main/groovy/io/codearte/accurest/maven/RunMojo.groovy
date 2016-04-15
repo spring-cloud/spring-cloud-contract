@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @Mojo(name = 'run', requiresProject = false)
 @CompileStatic
-public class RunMojo extends AbstractMojo {
+class RunMojo extends AbstractMojo {
 
     @Parameter(defaultValue = '${repositorySystemSession}', readonly = true)
     private RepositorySystemSession repoSession
@@ -38,12 +38,12 @@ public class RunMojo extends AbstractMojo {
     private final RemoteStubRunner remoteStubRunner
 
     @Inject
-    public RunMojo(LocalStubRunner localStubRunner, RemoteStubRunner remoteStubRunner) {
+    RunMojo(LocalStubRunner localStubRunner, RemoteStubRunner remoteStubRunner) {
         this.localStubRunner = localStubRunner
         this.remoteStubRunner = remoteStubRunner
     }
 
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    void execute() throws MojoExecutionException, MojoFailureException {
         StubRunnerOptions options = new StubRunnerOptions(minPort, maxPort, "", false, stubsClassifier)
         log.debug("Launching StubRunner with args: $options")
         if (!stubs) {

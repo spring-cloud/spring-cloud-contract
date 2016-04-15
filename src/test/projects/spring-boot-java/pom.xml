@@ -75,7 +75,7 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>generateStubs</goal>
+                            <goal>convert</goal>
                             <goal>generateTests</goal>
                         </goals>
                     </execution>

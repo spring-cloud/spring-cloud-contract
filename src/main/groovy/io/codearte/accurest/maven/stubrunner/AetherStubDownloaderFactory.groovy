@@ -14,13 +14,13 @@ import javax.inject.Singleton
 @Singleton
 @CompileStatic
 @Slf4j
-public class AetherStubDownloaderFactory {
+class AetherStubDownloaderFactory {
 
     private final MavenProject project
     private final RepositorySystem repoSystem
 
     @Inject
-    public AetherStubDownloaderFactory(RepositorySystem repoSystem, MavenProject project) {
+    AetherStubDownloaderFactory(RepositorySystem repoSystem, MavenProject project) {
         this.repoSystem = repoSystem
         this.project = project
     }
