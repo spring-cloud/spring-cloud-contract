@@ -1,6 +1,5 @@
 package io.codearte.accurest.plugin
 
-import nebula.test.IntegrationSpec
 import spock.lang.Stepwise
 
 @Stepwise

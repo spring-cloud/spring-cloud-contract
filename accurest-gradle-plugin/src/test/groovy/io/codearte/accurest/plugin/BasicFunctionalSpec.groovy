@@ -1,11 +1,10 @@
 package io.codearte.accurest.plugin
 
 import io.codearte.accurest.util.AssertionUtil
-import nebula.test.IntegrationSpec
 import spock.lang.Stepwise
 
 @Stepwise
-class BasicFunctionalSpec extends IntegrationSpec {
+class BasicFunctionalSpec extends AccurestIntegrationSpec {
 
 	private static final String GENERATED_TEST = "build//generated-test-sources//accurest//accurest//twitter_places_analyzer//PairIdSpec.groovy"
 	private static final String GENERATED_CLIENT_JSON_STUB = "build//production//bootSimple-stubs//repository//mappings//twitter-places-analyzer//pairId//collerate_PlacesFrom_Tweet.json"
