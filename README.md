@@ -19,7 +19,7 @@ For more information please go to the [Accurest Wiki](https://github.com/Codeart
 Accurest Stub Runner
 ---
 
-Run contracts from current directory:
+Run stubs mappings from current directory:
 
     mvn io.codearte.accurest:accurest-maven-plugin:run
     

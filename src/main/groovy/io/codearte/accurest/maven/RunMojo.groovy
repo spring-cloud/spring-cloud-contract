@@ -32,7 +32,6 @@ public class RunMojo extends AbstractMojo {
     @Parameter(property = 'maxPort', defaultValue = '15000')
     private int maxPort
 
-
     private String stubsClassifier = 'stubs'
 
     private final LocalStubRunner localStubRunner
@@ -48,7 +47,7 @@ public class RunMojo extends AbstractMojo {
         StubRunnerOptions options = new StubRunnerOptions(minPort, maxPort, "", false, stubsClassifier)
         log.debug("Launching StubRunner with args: $options")
         if (!stubs) {
-            localStubRunner.run(contractsDir, options)
+            localStubRunner.run(contractsDir.getAbsolutePath(), options)
         } else {
             remoteStubRunner.run(stubs, options, repoSession)
         }
