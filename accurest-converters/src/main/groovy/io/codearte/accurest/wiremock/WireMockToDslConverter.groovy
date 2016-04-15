@@ -24,12 +24,14 @@ class WireMockToDslConverter {
 		def response = wireMockStub.response
 		def bodyPatterns = request.bodyPatterns
 		String urlPattern = request.urlPattern
+		String urlPathPattern = request.urlPathPattern
 		return """\
 			${priority ? "priority ${priority}" : ''}
 			request {
 				${request.method ? "method \"\"\"$request.method\"\"\"" : ""}
 				${request.url ? "url \"\"\"$request.url\"\"\"" : ""}
 				${urlPattern ? "url \$(client(regex('${escapeJava(urlPattern)}')), server('${new Xeger(escapeJava(urlPattern)).generate()}'))" : ""}
+				${urlPathPattern ? "urlPath \$(client(regex('${escapeJava(urlPattern)}')), server('${new Xeger(escapeJava(urlPattern)).generate()}'))" : ""}
 				${request.urlPath ? "url \"\"\"$request.urlPath\"\"\"" : ""}
 				${
 					request.headers ? """headers {

@@ -713,6 +713,47 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			stubMappingIsValidWireMockStub(json)
 	}
 
+	@Issue('#230')
+	def "should generate request with urlPathPattern and queryParameters for client side\
+			when both contains regular expressions"() {
+		given:
+		GroovyDsl groovyDsl = GroovyDsl.make {
+			request {
+				method 'GET'
+				urlPath($(client(regex("/users/[0-9]+")), server("/users/1"))) {
+					queryParameters {
+						parameter 'search': $(client(notMatching(~/^\/[0-9]{2}$/)), server("10"))
+					}
+				}
+			}
+			response {
+				status 200
+			}
+		}
+		when:
+		def json = toWireMockClientJsonStub(groovyDsl)
+		then:
+		AssertionUtil.assertThatJsonsAreEqual(('''
+			{
+				"request": {
+					"method": "GET",
+					"urlPathPattern": "/users/[0-9]+",
+					"queryParameters": {
+					  "search": {
+						"doesNotMatch": "^/[0-9]{2}$"
+					  }
+					}
+				},
+				"response": {
+					"status": 200,
+				}
+			}
+			'''), json)
+		and:
+		stubMappingIsValidWireMockStub(json)
+	}
+
+
 	def "should generate request with urlPath for client side"() {
 		given:
 			GroovyDsl groovyDsl = GroovyDsl.make {

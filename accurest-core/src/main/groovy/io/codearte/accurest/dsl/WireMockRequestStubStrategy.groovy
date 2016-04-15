@@ -108,13 +108,17 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	private void appendUrl(RequestPattern requestPattern) {
 		Object urlPath = request?.urlPath?.clientValue
 		if (urlPath) {
-			requestPattern.setUrlPath(getStubSideValue(urlPath.toString()).toString())
+			if(urlPath instanceof Pattern) {
+				requestPattern.setUrlPathPattern(getStubSideValue(urlPath.toString()).toString())
+			} else {
+				requestPattern.setUrlPath(getStubSideValue(urlPath.toString()).toString())
+			}
 		}
 		if(!request.url) {
 			return
 		}
 		Object url = getUrlIfGstring(request?.url?.clientValue)
-		if(url instanceof Pattern) {
+		if (url instanceof Pattern) {
 			requestPattern.setUrlPattern(url.pattern())
 		} else {
 			requestPattern.setUrl(url.toString())
