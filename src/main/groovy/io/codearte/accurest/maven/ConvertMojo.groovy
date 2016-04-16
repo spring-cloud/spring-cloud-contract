@@ -46,8 +46,13 @@ class ConvertMojo extends AbstractMojo {
 
         AccurestConfigProperties config = new AccurestConfigProperties()
 
-        config.contractsDslDir = resolveFile(baseDir, contractsDir, isInsideProject() ? 'src/test/accurest' : '')
-        config.stubsOutputDir = resolveFile(projectBuildDirectory, mappingsDir, isInsideProject() ? 'mappings' : '')
+        if (insideProject) {
+            config.contractsDslDir = resolveFile(baseDir, contractsDir, 'src/test/accurest')
+            config.stubsOutputDir = resolveFile(projectBuildDirectory, mappingsDir, 'mappings')
+        } else {
+            config.contractsDslDir = resolveFile(baseDir, contractsDir, '')
+            config.stubsOutputDir = resolveFile(baseDir, mappingsDir, '')
+        }
 
         log.info('Converting from accurest contracts written in GroovyDSL to WireMock stubs mappings')
         log.info("     Accurest contracts directory: ${config.contractsDslDir}")
@@ -58,15 +63,15 @@ class ConvertMojo extends AbstractMojo {
     }
 
     private boolean isInsideProject() {
-        mavenSession.getRequest().isProjectPresent()
+        return mavenSession.getRequest().isProjectPresent()
     }
 
     private File resolveFile(File baseDir, String requestedPath, String defaultPath) {
-        requestedPath ? alignToBaseDirectory(requestedPath, baseDir) : alignToBaseDirectory(defaultPath, baseDir)
+        return requestedPath ? alignToBaseDirectory(baseDir, requestedPath) : alignToBaseDirectory(baseDir, defaultPath)
     }
 
-    private File alignToBaseDirectory(String dir1, File dir) {
-        return new File(translator.alignToBaseDirectory(dir1, dir))
+    private File alignToBaseDirectory(File baseDir, String path) {
+        return new File(translator.alignToBaseDirectory(path, baseDir))
     }
 
 }
