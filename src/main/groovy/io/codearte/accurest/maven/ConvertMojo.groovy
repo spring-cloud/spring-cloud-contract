@@ -21,16 +21,19 @@ import javax.inject.Inject
 class ConvertMojo extends AbstractMojo {
 
     @Parameter(defaultValue = '${basedir}', readonly = true, required = true)
-    private File baseDir
+    private File basedir
 
     @Parameter(defaultValue = '${project.build.directory}', readonly = true, required = true)
     private File projectBuildDirectory
 
-    @Parameter(property = 'contractsDir')
-    private String contractsDir
+    @Parameter(property = 'contractsDirectory')
+    private String contractsDirectory
 
-    @Parameter(property = 'mappingsDir')
-    private String mappingsDir
+    @Parameter(property = 'stubsDirectory')
+    private String outputDirectory
+
+    @Parameter(property = 'accurest.skip', defaultValue = 'false')
+    private boolean skip
 
     @Component
     private MavenSession mavenSession
@@ -44,14 +47,19 @@ class ConvertMojo extends AbstractMojo {
 
     void execute() throws MojoExecutionException, MojoFailureException {
 
+        if (skip) {
+            log.info("Skipping accurest execution: accurest.skip=${skip}")
+            return
+        }
+
         AccurestConfigProperties config = new AccurestConfigProperties()
 
         if (insideProject) {
-            config.contractsDslDir = resolveFile(baseDir, contractsDir, 'src/test/accurest')
-            config.stubsOutputDir = resolveFile(projectBuildDirectory, mappingsDir, 'mappings')
+            config.contractsDslDir = resolveFile(basedir, contractsDirectory, 'src/test/accurest')
+            config.stubsOutputDir = resolveFile(projectBuildDirectory, outputDirectory, 'mappings')
         } else {
-            config.contractsDslDir = resolveFile(baseDir, contractsDir, '')
-            config.stubsOutputDir = resolveFile(baseDir, mappingsDir, '')
+            config.contractsDslDir = resolveFile(basedir, contractsDirectory, '')
+            config.stubsOutputDir = resolveFile(basedir, outputDirectory, '')
         }
 
         log.info('Converting from accurest contracts written in GroovyDSL to WireMock stubs mappings')
@@ -63,7 +71,7 @@ class ConvertMojo extends AbstractMojo {
     }
 
     private boolean isInsideProject() {
-        return mavenSession.getRequest().isProjectPresent()
+        return mavenSession.request.projectPresent
     }
 
     private File resolveFile(File baseDir, String requestedPath, String defaultPath) {

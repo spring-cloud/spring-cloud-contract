@@ -31,7 +31,7 @@ class RemoteStubRunner {
             RunningStubs runningCollaborators = stubRunner.runStubs()
             log.info(runningCollaborators.toString())
         } catch (Exception e) {
-            log.error("An exception occurred while trying to execute the stubs: ${e.getMessage()}")
+            log.error("An exception occurred while trying to execute the stubs: ${e.message}")
             throw e
         }
     }

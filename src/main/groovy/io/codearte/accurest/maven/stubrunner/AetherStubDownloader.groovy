@@ -40,8 +40,8 @@ class AetherStubDownloader implements StubDownloader {
         ArtifactRequest request = new ArtifactRequest(artifact: artifact, repositories: remoteRepos)
         log.info("Resolving artifact $artifact from $remoteRepos")
         ArtifactResult result = repoSystem.resolveArtifact(repoSession, request)
-        log.info("Resolved artifact $artifact to ${result.getArtifact().getFile()} from ${result.getRepository()}")
-        return unpackStubJarToATemporaryFolder(result.getArtifact().getFile().toURI())
+        log.info("Resolved artifact $artifact to ${result.artifact.file} from ${result.repository}")
+        return unpackStubJarToATemporaryFolder(result.artifact.file.toURI())
     }
 
     private static File unpackStubJarToATemporaryFolder(URI stubJarUri) {

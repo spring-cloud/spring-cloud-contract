@@ -26,7 +26,7 @@ class AetherStubDownloaderFactory {
     }
 
     AetherStubDownloader build(RepositorySystemSession repoSession) {
-        return new AetherStubDownloader(repoSystem, project.getRemoteProjectRepositories(), repoSession)
+        return new AetherStubDownloader(repoSystem, project.remoteProjectRepositories, repoSession)
     }
 
 }
