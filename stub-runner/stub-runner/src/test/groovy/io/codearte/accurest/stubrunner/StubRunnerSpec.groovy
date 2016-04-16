@@ -5,7 +5,7 @@ import spock.lang.Specification
 class StubRunnerSpec extends Specification {
 
 	private static final int MIN_PORT = 8111
-	private static final int MAX_PORT = 8112
+	private static final int MAX_PORT = 8111
 	private static final URL EXPECTED_STUB_URL = new URL("http://localhost:$MIN_PORT")
 
 	def 'should provide stub URL for provided groupid and artifactId'() {

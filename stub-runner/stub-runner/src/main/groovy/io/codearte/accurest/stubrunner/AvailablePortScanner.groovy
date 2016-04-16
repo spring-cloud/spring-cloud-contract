@@ -26,7 +26,7 @@ class AvailablePortScanner {
 	}
 
 	private void checkPortRanges(int minPortNumber, int maxPortNumber) {
-		if (minPortNumber >= maxPortNumber) {
+		if (minPortNumber > maxPortNumber) {
 			throw new InvalidPortRange(minPortNumber, maxPortNumber)
 		}
 	}
@@ -34,7 +34,7 @@ class AvailablePortScanner {
 	public <T> T tryToExecuteWithFreePort(Closure<T> closure) {
 		for (i in (1..maxRetryCount)) {
 			try {
-				int numberOfPortsToBind = maxPortNumber - minPortNumber
+				int numberOfPortsToBind = maxPortNumber - minPortNumber + 1
 				int portToScan = new Random().nextInt(numberOfPortsToBind) + minPortNumber
 				checkIfPortIsAvailable(portToScan)
 				return executeLogicForAvailablePort(portToScan, closure)
@@ -67,7 +67,7 @@ class AvailablePortScanner {
 
 	static class InvalidPortRange extends RuntimeException {
 		protected InvalidPortRange(int lowerBound, int upperBound) {
-			super("Invalid bounds exceptions, min port [$lowerBound] is greater or equal to max port [$upperBound]")
+			super("Invalid bounds exceptions, min port [$lowerBound] is greater to max port [$upperBound]")
 		}
 	}
 }

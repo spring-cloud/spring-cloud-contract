@@ -6,7 +6,7 @@ class StubRunnerExecutorSpec extends Specification {
 
 	static final URL EXPECTED_STUB_URL = new URL('http://localhost:8999')
 	static final int MIN_PORT = 8999
-	static final int MAX_PORT = 9000
+	static final int MAX_PORT = 8999
 
 	private AvailablePortScanner portScanner
 	private StubRepository repository

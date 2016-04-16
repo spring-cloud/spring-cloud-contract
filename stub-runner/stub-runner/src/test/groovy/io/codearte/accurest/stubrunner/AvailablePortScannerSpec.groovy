@@ -15,6 +15,16 @@ class AvailablePortScannerSpec extends Specification {
 		int usedPort = portScanner.tryToExecuteWithFreePort { int port -> port }
 		then:
 		noExceptionThrown()
+		usedPort == MIN_PORT || MAX_PORT
+	}
+
+	def 'should execute given closure with the available port from specified range'() {
+		given:
+		AvailablePortScanner portScanner = new AvailablePortScanner(MIN_PORT, MIN_PORT)
+		when:
+		int usedPort = portScanner.tryToExecuteWithFreePort { int port -> port }
+		then:
+		noExceptionThrown()
 		usedPort == MIN_PORT
 	}
 
@@ -23,10 +33,9 @@ class AvailablePortScannerSpec extends Specification {
 		new AvailablePortScanner(minPort, maxPort, MAX_RETRY_COUNT_FOR_NEGATIVE_SCENARIOS)
 		then:
 		def ex = thrown(AvailablePortScanner.InvalidPortRange)
-		ex.message == "Invalid bounds exceptions, min port [$minPort] is greater or equal to max port [$maxPort]"
+		ex.message == "Invalid bounds exceptions, min port [$minPort] is greater to max port [$maxPort]"
 		where:
 		minPort | maxPort
-		MIN_PORT | MIN_PORT
 		MAX_PORT | MIN_PORT
 
 	}
