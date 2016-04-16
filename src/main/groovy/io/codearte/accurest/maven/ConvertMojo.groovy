@@ -9,14 +9,13 @@ import org.apache.maven.model.path.PathTranslator
 import org.apache.maven.plugin.AbstractMojo
 import org.apache.maven.plugin.MojoExecutionException
 import org.apache.maven.plugin.MojoFailureException
-import org.apache.maven.plugins.annotations.Component
 import org.apache.maven.plugins.annotations.LifecyclePhase
 import org.apache.maven.plugins.annotations.Mojo
 import org.apache.maven.plugins.annotations.Parameter
 
 import javax.inject.Inject
 
-@Mojo(name = 'convert', requiresProject = false, defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
+@Mojo(name = 'convert', requiresProject = false, defaultPhase = LifecyclePhase.PROCESS_TEST_RESOURCES)
 @CompileStatic
 class ConvertMojo extends AbstractMojo {
 
@@ -35,7 +34,7 @@ class ConvertMojo extends AbstractMojo {
     @Parameter(property = 'accurest.skip', defaultValue = 'false')
     private boolean skip
 
-    @Component
+    @Parameter(defaultValue = '${session}', readonly = true)
     private MavenSession mavenSession
 
     private final PathTranslator translator

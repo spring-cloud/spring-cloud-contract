@@ -18,11 +18,14 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.1.3</version>
         </dependency>
 
         <!-- accurest test dependencies -->
@@ -50,12 +53,6 @@
             <version>2.3.0</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <properties>
@@ -76,6 +73,7 @@
                     <execution>
                         <goals>
                             <goal>convert</goal>
+                            <goal>generateStubs</goal>
                             <goal>generateTests</goal>
                         </goals>
                     </execution>
@@ -85,31 +83,6 @@
                     <baseClassForTests>hello.BaseMockMvcTest</baseClassForTests>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.6</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>io.codearte.accurest</groupId>
-                        <artifactId>stubs-assembly-descriptor</artifactId>
-                        <version>1.1</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>stubs</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
-            </plugin>
-
         </plugins>
     </build>
 </project>

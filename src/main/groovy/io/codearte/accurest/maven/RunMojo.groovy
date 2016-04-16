@@ -9,7 +9,6 @@ import org.apache.maven.model.path.PathTranslator
 import org.apache.maven.plugin.AbstractMojo
 import org.apache.maven.plugin.MojoExecutionException
 import org.apache.maven.plugin.MojoFailureException
-import org.apache.maven.plugins.annotations.Component
 import org.apache.maven.plugins.annotations.Mojo
 import org.apache.maven.plugins.annotations.Parameter
 import org.eclipse.aether.RepositorySystemSession
@@ -49,7 +48,7 @@ class RunMojo extends AbstractMojo {
 
     private String stubsClassifier = 'stubs'
 
-    @Component
+    @Parameter(defaultValue = '${session}', readonly = true)
     private MavenSession mavenSession
 
     private final LocalStubRunner localStubRunner

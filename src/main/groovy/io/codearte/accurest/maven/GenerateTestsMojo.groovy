@@ -9,7 +9,10 @@ import io.codearte.accurest.config.TestMode
 import org.apache.maven.plugin.AbstractMojo
 import org.apache.maven.plugin.MojoExecutionException
 import org.apache.maven.plugin.MojoFailureException
-import org.apache.maven.plugins.annotations.*
+import org.apache.maven.plugins.annotations.LifecyclePhase
+import org.apache.maven.plugins.annotations.Mojo
+import org.apache.maven.plugins.annotations.Parameter
+import org.apache.maven.plugins.annotations.ResolutionScope
 import org.apache.maven.project.MavenProject
 
 import static java.lang.String.format
@@ -42,7 +45,7 @@ class GenerateTestsMojo extends AbstractMojo {
     @Parameter
     private String nameSuffixForTests
 
-    @Component
+    @Parameter(defaultValue = '${project}', readonly = true)
     private MavenProject project
 
     @Parameter(property = 'accurest.skip', defaultValue = 'false')
