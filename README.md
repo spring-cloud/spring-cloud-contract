@@ -39,9 +39,11 @@ where `org.springframework:gs-rest-service` is artifact with `stubs` classifier 
 
 ```xml
 <settings>
+  ...
   <pluginGroups>
     <pluginGroup>io.codearte.accurest</pluginGroup>
   </pluginGroups>
+  ...
 </settings>
 
 ```
