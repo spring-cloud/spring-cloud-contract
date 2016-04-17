@@ -33,6 +33,49 @@ Running stubs from repository:
 
 where `org.springframework:gs-rest-service` is artifact with `stubs` classifier contains wiremock mappings.
 
+
+Project configuration
+----
+
+```xml
+<plugin>
+    <groupId>io.codearte.accurest</groupId>
+    <artifactId>accurest-maven-plugin</artifactId>
+    <version>${it-plugin.version}</version>
+    <executions>
+        <execution>
+            <goals>
+                <goal>convert</goal>
+                <goal>generateStubs</goal>
+                <goal>generateTests</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <baseClassForTests>com.company.project.BaseAccurestTest</baseClassForTests>
+    </configuration>
+</plugin>
+```
+
+Sample `BaseAccurateTest.java`
+
+```java
+package com.company.project;
+
+import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc;
+import org.junit.Before;
+
+public class BaseAccurestTest {
+
+    @Before
+    public void setup() {
+        RestAssuredMockMvc.standaloneSetup(new GreetingController());
+    }
+
+}
+```
+
+
 ---
 
 <sup>*</sup> Additional configuration inside `~/.m2/settings.xml` is required.
