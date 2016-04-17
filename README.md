@@ -41,7 +41,7 @@ Project configuration
 <plugin>
     <groupId>io.codearte.accurest</groupId>
     <artifactId>accurest-maven-plugin</artifactId>
-    <version>${it-plugin.version}</version>
+    <version>0.5.6</version>
     <executions>
         <execution>
             <goals>
@@ -52,7 +52,7 @@ Project configuration
         </execution>
     </executions>
     <configuration>
-        <baseClassForTests>com.company.project.BaseAccurestTest</baseClassForTests>
+        <baseClassForTests>foobar.BaseAccurestTest</baseClassForTests>
     </configuration>
 </plugin>
 ```
@@ -60,7 +60,7 @@ Project configuration
 Sample `BaseAccurateTest.java`
 
 ```java
-package com.company.project;
+package foobar;
 
 import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.Before;
