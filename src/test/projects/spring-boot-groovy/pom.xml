@@ -106,6 +106,22 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<testSources>
+						<testSource>
+							<directory>${project.basedir}/src/test/groovy</directory>
+							<includes>
+								<include>**/*.groovy</include>
+							</includes>
+						</testSource>
+						<testSource>
+							<directory>${project.build.directory}/generated-test-sources/accurest</directory>
+							<includes>
+								<include>**/*.groovy</include>
+							</includes>
+						</testSource>
+					</testSources>
+				</configuration>
 			</plugin>
 <!--			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
