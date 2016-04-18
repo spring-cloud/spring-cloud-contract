@@ -12,7 +12,7 @@ To make a long story short - AccuREST is a tool for Consumer Driven Contract (CD
 generating Spock's acceptance tests for the server - to verify if your API implementation is compliant with the contract.
 2. moving TDD to an architecture level.
 
-For more information please go to the [Wiki](https://github.com/Codearte/accurest/wiki/1.-Introduction)
+For more information please go to the [Documentation](http://codearte.github.io/accurest/)
 
 ## Requirements
 
