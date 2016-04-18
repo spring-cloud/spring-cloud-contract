@@ -1,3 +1,4 @@
+include ':docs'
 include "accurest-core", "accurest-gradle-plugin", 'accurest-converters', 'accurest-testing-utils'
 include ':stub-runner:stub-runner'
 include ':stub-runner:stub-runner-spring'

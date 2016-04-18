@@ -1,0 +1,36 @@
+plugins {
+	id 'org.ajoberstar.github-pages' version '1.1.0'
+	id 'org.asciidoctor.gradle.asciidoctor' version '1.5.1'
+	id 'org.asciidoctor.convert' version '1.5.3'
+}
+
+asciidoctorj {
+	version = '1.5.4'
+}
+
+asciidoctor {
+	attributes 'build-gradle': file('build.gradle'),
+			'endpoint-url': 'http://codearte.github.io/accurest',
+			'source-highlighter': 'coderay',
+			'imagesdir': 'images',
+			'toc': 'left',
+			'icons': 'font',
+			'setanchors': 'true',
+			'idprefix': '',
+			'idseparator': '-',
+			'docinfo1': 'true'
+}
+
+publishGhPages.dependsOn asciidoctor
+
+githubPages {
+	repoUri = 'https://github.com/Codearte/accurest'
+	credentials {
+		username = project.hasProperty('githubToken') ? project.githubToken : ''
+		password = project.hasProperty('githubPass') ? project.githubPass : ''
+	}
+
+	pages {
+		from 'build/asciidoc/html5'
+	}
+}
