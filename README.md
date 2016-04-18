@@ -41,7 +41,7 @@ Project configuration
 <plugin>
     <groupId>io.codearte.accurest</groupId>
     <artifactId>accurest-maven-plugin</artifactId>
-    <version>0.5.6</version>
+    <version>0.5.7</version>
     <executions>
         <execution>
             <goals>
@@ -69,7 +69,7 @@ public class BaseAccurestTest {
 
     @Before
     public void setup() {
-        RestAssuredMockMvc.standaloneSetup(new GreetingController());
+        RestAssuredMockMvc.standaloneSetup(new FoobarController());
     }
 
 }
