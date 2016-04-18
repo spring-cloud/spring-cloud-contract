@@ -10,7 +10,7 @@ asciidoctorj {
 
 asciidoctor {
 	attributes 'build-gradle': file('build.gradle'),
-			'endpoint-url': 'http://codearte.github.io/accurest',
+			'endpoint-url': 'https://Codearte.github.io/accurest',
 			'source-highlighter': 'coderay',
 			'imagesdir': 'images',
 			'toc': 'left',

@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-./gradlew clean publishGhPages
+./gradlew :docs:clean publishGhPages
