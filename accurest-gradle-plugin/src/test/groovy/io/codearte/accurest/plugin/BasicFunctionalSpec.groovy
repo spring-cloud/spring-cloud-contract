@@ -14,12 +14,12 @@ class BasicFunctionalSpec extends AccurestIntegrationSpec {
 	private static final String GROOVY_DSL_CONTRACT = "repository//mappings//com//ofg//twitter-places-analyzer//pairId//collerate_PlacesFrom_Tweet.groovy"
 	private static final String TEST_EXECUTION_XML_REPORT = "build/test-results/TEST-accurest.twitter_places_analyzer.PairIdSpec.xml"
 
-	void setup() {
+	def setup() {
 		setupForProject("functionalTest/bootSimple")
 		runTasksSuccessfully('clean') //delete accidental output when previously importing SimpleBoot into Idea to tweak it
 	}
 
-	def "should pass basic flxow"() {
+	def "should pass basic flow"() {
 		when:
 			BuildResult result = run("check")
 		then:
