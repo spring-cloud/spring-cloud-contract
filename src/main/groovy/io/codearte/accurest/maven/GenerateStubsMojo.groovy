@@ -20,7 +20,7 @@ class GenerateStubsMojo extends AbstractMojo {
     @Parameter(defaultValue = '${project.build.directory}', readonly = true, required = true)
     private File projectBuildDirectory
 
-    @Parameter(property = 'stubsDirectory', defaultValue = '${project.build.directory}/mappings')
+    @Parameter(property = 'stubsDirectory', defaultValue = '${project.build.directory}/accurest')
     private File outputDirectory
 
     @Parameter(property = 'accurest.skip', defaultValue = 'false')

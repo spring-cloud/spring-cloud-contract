@@ -23,21 +23,21 @@ public class PluginUnitTest {
 	public void shouldGenerateWireMockStubsInDefaultLocation() throws Exception {
 		File basedir = resources.getBasedir("basic");
 		maven.executeMojo(basedir, "convert");
-		assertFilesPresent(basedir, "target/mappings/Sample.json");
+		assertFilesPresent(basedir, "target/accurest/mappings/Sample.json");
 	}
 
 	@Test
 	public void shouldGenerateWireMockFromStubsDirectory() throws Exception {
 		File basedir = resources.getBasedir("withStubs");
 		maven.executeMojo(basedir, "convert", newParameter("contractsDirectory", "src/test/resources/stubs"));
-		assertFilesPresent(basedir, "target/mappings/Sample.json");
+		assertFilesPresent(basedir, "target/accurest/mappings/Sample.json");
 	}
 
 	@Test
 	public void shouldGenerateWireMockStubsInSelectedLocation() throws Exception {
 		File basedir = resources.getBasedir("basic");
-		maven.executeMojo(basedir, "convert", newParameter("outputDirectory", "foo"));
-		assertFilesPresent(basedir, "target/foo/Sample.json");
+		maven.executeMojo(basedir, "convert", newParameter("outputDirectory", "target/foo"));
+		assertFilesPresent(basedir, "target/foo/mappings/Sample.json");
 	}
 
 	@Test

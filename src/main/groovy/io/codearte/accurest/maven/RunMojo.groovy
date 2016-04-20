@@ -5,7 +5,6 @@ import io.codearte.accurest.maven.stubrunner.LocalStubRunner
 import io.codearte.accurest.maven.stubrunner.RemoteStubRunner
 import io.codearte.accurest.stubrunner.StubRunnerOptions
 import org.apache.maven.execution.MavenSession
-import org.apache.maven.model.path.PathTranslator
 import org.apache.maven.plugin.AbstractMojo
 import org.apache.maven.plugin.MojoExecutionException
 import org.apache.maven.plugin.MojoFailureException
@@ -19,17 +18,14 @@ import javax.inject.Inject
 @CompileStatic
 class RunMojo extends AbstractMojo {
 
-    @Parameter(defaultValue = '${basedir}', readonly = true, required = true)
-    private File basedir
-
-    @Parameter(defaultValue = '${project.build.directory}', readonly = true, required = true)
-    private File projectBuildDirectory
-
     @Parameter(defaultValue = '${repositorySystemSession}', readonly = true)
     private RepositorySystemSession repoSession
 
+    @Parameter(defaultValue = '${project.build.directory}/accurest/mappings')
+    private File stubsDirectory
+
     @Parameter(property = 'stubsDirectory', defaultValue = '${basedir}')
-    private String stubsDirectory
+    private File destination
 
     @Parameter(property = 'accurest.http.port', defaultValue = '8080')
     private int httpPort;
@@ -53,13 +49,11 @@ class RunMojo extends AbstractMojo {
 
     private final LocalStubRunner localStubRunner
     private final RemoteStubRunner remoteStubRunner
-    private final PathTranslator translator
 
     @Inject
-    RunMojo(LocalStubRunner localStubRunner, RemoteStubRunner remoteStubRunner, PathTranslator translator) {
+    RunMojo(LocalStubRunner localStubRunner, RemoteStubRunner remoteStubRunner) {
         this.localStubRunner = localStubRunner
         this.remoteStubRunner = remoteStubRunner
-        this.translator = translator
     }
 
     void execute() throws MojoExecutionException, MojoFailureException {
@@ -84,9 +78,9 @@ class RunMojo extends AbstractMojo {
 
     private File resolveStubsDirectory() {
         if (insideProject) {
-            return resolveFile(projectBuildDirectory, stubsDirectory, 'mappings')
+            stubsDirectory
         } else {
-            return resolveFile(basedir, stubsDirectory, '')
+            destination
         }
     }
 
@@ -101,14 +95,5 @@ class RunMojo extends AbstractMojo {
     private boolean isInsideProject() {
         return mavenSession.request.projectPresent
     }
-
-    private File resolveFile(File baseDir, String requestedPath, String defaultPath) {
-        return requestedPath ? alignToBaseDirectory(baseDir, requestedPath) : alignToBaseDirectory(baseDir, defaultPath)
-    }
-
-    private File alignToBaseDirectory(File baseDir, String path) {
-        return new File(translator.alignToBaseDirectory(path, baseDir))
-    }
-
 
 }
