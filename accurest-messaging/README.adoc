@@ -1,0 +1,25 @@
+= Accurest Messaging
+
+Accurest allows you to verify your application that uses messaging as means of communication.
+All of our integrations are working with Spring but you can also set one yourself.
+
+== Integrations
+
+You can use one of the three integration configurations:
+
+- Apache Camel
+- Spring Integration
+- Spring Cloud Stream
+
+If you're using Spring Boot, the aforementioned test configurations will be appended automatically.
+
+== Manual Integration
+
+The `accurest-messaging-core` module contains 3 main interfaces:
+
+- AccurestMessage - describes a message received / sent to a channel / queue / topic etc.
+- AccurestMessageBuilder - describes how to build a message
+- AccurestMessaging - class that allows you to build, send and receive messages
+
+In the generated test the `AccurestMessaging` is injected via `@Inject` annotation thus you can  
+

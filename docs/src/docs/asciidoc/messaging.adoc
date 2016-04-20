@@ -1,0 +1,44 @@
+= Accurest Messaging
+
+Accurest allows you to verify your application that uses messaging as means of communication.
+All of our integrations are working with Spring but you can also set one yourself.
+
+== Integrations
+
+You can use one of the three integration configurations:
+
+- Apache Camel
+- Spring Integration
+- Spring Cloud Stream
+
+If you're using Spring Boot, the aforementioned test configurations will be appended automatically.
+
+You have to provide as a dependency one of the Accurest Messaging modules. Example for Gradle:
+
+[source,groovy,indent=0]
+----
+// for Apache Camel
+testCompile "io.codearte.accurest:accurest-messaging-camel:${accurestVersion}"
+// for Spring Integration
+testCompile "io.codearte.accurest:accurest-messaging-integration:${accurestVersion}"
+// for Spring Cloud Stream
+testCompile "io.codearte.accurest:accurest-messaging-stream:${accurestVersion}"
+----
+
+== Manual Integration
+
+The `accurest-messaging-core` module contains 3 main interfaces:
+
+- AccurestMessage - describes a message received / sent to a channel / queue / topic etc.
+- AccurestMessageBuilder - describes how to build a message
+- AccurestMessaging - class that allows you to build, send and receive messages
+
+In the generated test the `AccurestMessaging` is injected via `@Inject` annotation thus you can use other injection
+frameworks than Spring.
+
+You have to provide as a dependency the `accurest-messaging-core` module. Example for Gradle:
+
+[source,groovy,indent=0]
+----
+testCompile "io.codearte.accurest:accurest-messaging-core:${accurestVersion}"
+----
