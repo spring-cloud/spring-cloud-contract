@@ -6,11 +6,13 @@ buildscript {
 
 apply plugin: 'groovy'
 apply plugin: 'accurest'
+apply plugin: 'maven-publish'
 
 ext {
-	contractsDir = file("${project.rootDir}/repository/mappings/com/ofg")
-	wireMockStubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
-	wireMockStubsOutputDir = new File(wireMockStubsOutputDirRoot, 'repository/mappings/')
+	contractsDir = file("${project.rootDir}/repository/mappings/")
+	stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
+	wireMockStubsOutputDir = new File(stubsOutputDirRoot, 'repository/mappings/')
+	contractsOutputDir = new File(stubsOutputDirRoot, 'repository/accurest/')
 }
 
 configurations {
@@ -64,4 +66,33 @@ generateAccurest.dependsOn generateWireMockClientStubs
 
 wrapper {
 	gradleVersion '2.2.1'
+}
+
+task copyContracts(type: Copy) {
+	from contractsDir
+	into contractsOutputDir
+}
+
+task stubsJar(type: Jar, dependsOn: ["generateWireMockClientStubs", copyContracts]) {
+	baseName = "${project.name}-stubs"
+	from stubsOutputDirRoot
+}
+
+artifacts {
+	archives stubsJar
+}
+
+publishing {
+	publications {
+		stubs(MavenPublication) {
+			artifactId "${project.name}-stubs"
+			artifact stubsJar
+		}
+	}
+}
+
+test {
+	testLogging {
+		exceptionFormat = 'full'
+	}
 }

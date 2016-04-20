@@ -35,10 +35,13 @@ subprojects {
 configure([project(':fraudDetectionService'), project(':loanApplicationService')]) {
 	apply plugin: 'spring-boot'
 	apply plugin: 'accurest'
+	apply plugin: 'maven-publish'
 
 	ext {
-		wireMockStubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
-		wireMockStubsOutputDir = new File(wireMockStubsOutputDirRoot, 'mappings/')
+		contractsDir = file("${project.rootDir}/repository/mappings/")
+		stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
+		wireMockStubsOutputDir = new File(stubsOutputDirRoot, 'repository/mappings/')
+		contractsOutputDir = new File(stubsOutputDirRoot, 'repository/accurest/')
 	}
 
 	accurest {
@@ -75,6 +78,35 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 
 	clean.dependsOn('cleanup')
 
+	task copyContracts(type: Copy) {
+		from contractsDir
+		into contractsOutputDir
+	}
+
+	task stubsJar(type: Jar, dependsOn: ["generateWireMockClientStubs", copyContracts]) {
+		baseName = "${project.name}-stubs"
+		from stubsOutputDirRoot
+	}
+
+	artifacts {
+		archives stubsJar
+	}
+
+	publishing {
+		publications {
+			stubs(MavenPublication) {
+				artifactId "${project.name}-stubs"
+				artifact stubsJar
+			}
+		}
+	}
+
+	test {
+		testLogging {
+			exceptionFormat = 'full'
+		}
+	}
+
 }
 
 configure(project(':fraudDetectionService')) {
@@ -85,7 +117,7 @@ configure(project(':loanApplicationService')) {
 
 	task copyCollaboratorStubs(type: Copy) {
 		File fraudBuildDir = project(':fraudDetectionService').buildDir
-		from(new File(fraudBuildDir, "/production/${project(':fraudDetectionService').name}-stubs/"))
+		from(new File(fraudBuildDir, "/production/${project(':fraudDetectionService').name}-stubs/repository/"))
 		into "src/test/resources/"
 	}
 

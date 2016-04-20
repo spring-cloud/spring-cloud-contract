@@ -103,3 +103,9 @@ publishing {
 		}
 	}
 }
+
+test {
+	testLogging {
+		exceptionFormat = 'full'
+	}
+}
