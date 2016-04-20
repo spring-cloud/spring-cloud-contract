@@ -130,9 +130,7 @@ project(':accurest-gradle-plugin') {
 		compile project(':accurest-converters')
 		compile gradleApi()
 
-		testCompile('com.netflix.nebula:nebula-test:4.0.0') {
-			exclude(group: 'org.spockframework')
-		}
+		testCompile gradleTestKit()
 		testCompile project(':accurest-testing-utils')
 	}
 
@@ -147,13 +145,50 @@ project(':accurest-gradle-plugin') {
 		}
 	}
 
-	// Hack for reusing this in the plugin test
+	task createClasspathManifest {
+		def outputDir = file("$buildDir/$name")
+
+		inputs.files sourceSets.main.runtimeClasspath
+		outputs.dir outputDir
+
+		doLast {
+			outputDir.mkdirs()
+			file("$outputDir/plugin-classpath.txt").text = sourceSets.test.runtimeClasspath.join("\n")
+			// Switch to 'sourceSets.main' after 'test.dependsOn's are removed
+		}
+	}
+
 	test.dependsOn(':accurest-core:install')
 	test.dependsOn(':accurest-messaging-root:accurest-messaging-core:install')
 	test.dependsOn(':accurest-messaging-root:accurest-messaging-integration:install')
+
+	funcTest.dependsOn(':accurest-core:install')
+	funcTest.dependsOn(':accurest-messaging-root:accurest-messaging-core:install')
+	funcTest.dependsOn(':accurest-messaging-root:accurest-messaging-integration:install')
+
+    // Add the classpath file to the test runtime classpath
+	dependencies {
+		testRuntime files(createClasspathManifest)
+	}
+
 	uploadArchives.dependsOn { funcTest }
 }
 
 task wrapper(type: Wrapper) {
 	gradleVersion = '2.12'
 }
+
+
+// REMOVE AFTER https://issues.gradle.org/browse/GRADLE-3433 IS FIXED
+buildscript {
+	repositories {
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+	}
+	dependencies {
+		classpath "gradle.plugin.com.palantir.ideatestfix:gradle-idea-test-fix:0.1.0"
+	}
+}
+
+apply plugin: "com.palantir.idea-test-fix"

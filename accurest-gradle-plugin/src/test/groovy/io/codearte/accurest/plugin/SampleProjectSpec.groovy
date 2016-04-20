@@ -6,7 +6,7 @@ import spock.lang.Stepwise
 class SampleProjectSpec extends AccurestIntegrationSpec {
 
 	void setup() {
-		copyResources("functionalTest/sampleProject", "")
+		setupForProject("functionalTest/sampleProject")
 		runTasksSuccessfully('clean')   //delete accidental output when previously importing SimpleBoot into Idea to tweak it
 	}
 

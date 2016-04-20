@@ -1,7 +1,10 @@
 package io.codearte.accurest.plugin
-
 import io.codearte.accurest.util.AssertionUtil
+import org.gradle.testkit.runner.BuildResult
 import spock.lang.Stepwise
+
+import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 
 @Stepwise
 class BasicFunctionalSpec extends AccurestIntegrationSpec {
@@ -12,18 +15,16 @@ class BasicFunctionalSpec extends AccurestIntegrationSpec {
 	private static final String TEST_EXECUTION_XML_REPORT = "build/test-results/TEST-accurest.twitter_places_analyzer.PairIdSpec.xml"
 
 	void setup() {
-		copyResources("functionalTest/bootSimple", "")
-		runTasksSuccessfully('clean')   //delete accidental output when previously importing SimpleBoot into Idea to tweak it
+		setupForProject("functionalTest/bootSimple")
+		runTasksSuccessfully('clean') //delete accidental output when previously importing SimpleBoot into Idea to tweak it
 	}
 
-	def "should pass basic flow"() {
-		given:
-			assert fileExists('build.gradle')
+	def "should pass basic flxow"() {
 		when:
-			def result = runTasksSuccessfully('check')
+			BuildResult result = run("check")
 		then:
-			result.wasExecuted(":generateWireMockClientStubs")
-			result.wasExecuted(":generateAccurest")
+			result.task(":generateWireMockClientStubs").outcome == SUCCESS
+			result.task(":generateAccurest").outcome == SUCCESS
 
 		and: "tests generated"
 			fileExists(GENERATED_TEST)
@@ -37,7 +38,7 @@ class BasicFunctionalSpec extends AccurestIntegrationSpec {
 
 	def "should generate valid client json stubs for simple input"() {
 		when:
-			runTasksSuccessfully('generateWireMockClientStubs')
+			run('generateWireMockClientStubs')
 		then:
 			def generatedClientJsonStub = file(GENERATED_CLIENT_JSON_STUB).text
 			AssertionUtil.assertThatJsonsAreEqual("""
@@ -73,25 +74,24 @@ class BasicFunctionalSpec extends AccurestIntegrationSpec {
 			fileExists(GENERATED_TEST)
 
 		when: "running generation without change inputs"
-			def secondExecutionResult = runTasksSuccessfully('generateWireMockClientStubs', 'generateAccurest')
+			def secondExecutionResult = run('generateWireMockClientStubs', 'generateAccurest')
 
 		then: "tasks should be up-to-date"
-			secondExecutionResult.wasUpToDate(":generateWireMockClientStubs")
-			secondExecutionResult.wasUpToDate(":generateAccurest")
+			validateTasksOutcome(secondExecutionResult, UP_TO_DATE, 'generateWireMockClientStubs', 'generateAccurest')
 
 		when: "inputs changed"
 			def groovyDslFile = file(GROOVY_DSL_CONTRACT)
 			groovyDslFile.text = groovyDslFile.text.replace("200", "599")
 
 		and: "tasks run"
-			def thirdExecutionResult = runTasksSuccessfully('generateWireMockClientStubs', 'generateAccurest')
+			def thirdExecutionResult = run('generateWireMockClientStubs', 'generateAccurest')
 
 		then: "tasks should be reexecuted"
-			thirdExecutionResult.wasExecuted(":generateWireMockClientStubs")
-			thirdExecutionResult.wasExecuted(":generateAccurest")
+			validateTasksOutcome(thirdExecutionResult, SUCCESS, 'generateWireMockClientStubs', 'generateAccurest')
 
 		and: "changes visible in generate files"
 			file(GENERATED_CLIENT_JSON_STUB).text.contains("599")
 			file(GENERATED_TEST).text.contains("599")
 	}
+
 }
