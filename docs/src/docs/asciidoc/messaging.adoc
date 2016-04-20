@@ -1,9 +1,11 @@
-= Accurest Messaging
+== Accurest Messaging
+
+WARNING: Feature available since 1.0.7
 
 Accurest allows you to verify your application that uses messaging as means of communication.
 All of our integrations are working with Spring but you can also set one yourself.
 
-== Integrations
+=== Integrations
 
 You can use one of the three integration configurations:
 
@@ -25,7 +27,7 @@ testCompile "io.codearte.accurest:accurest-messaging-integration:${accurestVersi
 testCompile "io.codearte.accurest:accurest-messaging-stream:${accurestVersion}"
 ----
 
-== Manual Integration
+=== Manual Integration
 
 The `accurest-messaging-core` module contains 3 main interfaces:
 

@@ -2,7 +2,7 @@ Welcome to the AccuREST Wiki!
 
 Please follow to the Introduction page to start your journey with Consumer Driven Contracts in JVM
 
-= 1. Introduction
+== Introduction
 
 Just to make long story short - AccuREST is a tool that enables Consumer Driven Contract (CDC) development of JVM-based applications. It is shipped with __REST Contract Definition Language__ (DSL). Contract definitions are used by AccuREST to produce following resources:
 
@@ -11,7 +11,7 @@ Just to make long story short - AccuREST is a tool that enables Consumer Driven 
 
 AccuREST moves TDD to the level of software architecture.
 
-== Why?
+=== Why?
 
 The main purposes of AccuREST are:
 
@@ -20,357 +20,11 @@ The main purposes of AccuREST are:
   - to provide a way to publish changes in contracts that are immediately visible on both sides,
   - to generate boilerplate test code used on the server side.
 
-= 2. Using in your project
+include::rest.adoc[]
 
-== 2.1. Gradle Project
+include::messaging.adoc[]
 
-=== Prerequisites
-
-In order to use Accurest with Wiremock you have to use gradle or maven plugin.
-
-==== Add gradle plugin
-
-[source,groovy,indent=0]
-----
-buildscript {
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath 'io.codearte.accurest:accurest-gradle-plugin:1.0.6'
-	}
-}
-
-apply plugin: 'groovy'
-apply plugin: 'accurest'
-
-dependencies {
-	testCompile('org.codehaus.groovy:groovy-all:2.4.6')
-	testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
-	testCompile 'com.jayway.restassured:spring-mock-mvc:2.9.0' // needed if you're going to use Spring MockMvc
-}
-----
-
-==== Add maven plugin
-
-[source,xml,indent=0]
-----
-<plugin>
-    <groupId>io.codearte.accurest</groupId>
-    <artifactId>accurest-maven-plugin</artifactId>
-    <executions>
-        <execution>
-            <goals>
-                <goal>convert</goal>
-                <goal>generateStubs</goal>
-                <goal>generateTests</goal>
-            </goals>
-        </execution>
-    </executions>
-</plugin>
-----
-
-
-Read more: https://github.com/Codearte/accurest-maven-plugin[accurest-maven-plugin]
-
-==== Add stubs
-
-By default Accurest is looking for stubs in src/test/resources/stubs directory.
-Directory containing stub definitions is treated as a class name, and each stub definition is treated as a single test.
-We assume that it contains at least one directory which will be used as test class name. If there is more than one level of nested directories all except the last one will be used as package name.
-So with following structure
-
-src/test/resources/stubs/myservice/shouldCreateUser.groovy
-src/test/resources/stubs/myservice/shouldReturnUser.groovy
-
-Accurest will create test class `defaultBasePackage.MyService` with two methods
- - shouldCreateUser()
- - shouldReturnUser()
-
-=== Run plugin
-
-Plugin registers itself to be invoked before `compileTestGroovy` task. You have nothing to do as long as you want it to be part of your build process. If you just want to generate tests please invoke `generateAccurest` task.
-
-=== Configure plugin
-
-To change default configuration just add `accurest` snippet to your Gradle config
-
-[source,groovy,indent=0]
-----
-accurest {
-	testMode = 'MockMvc'
-	baseClassForTests = 'org.mycompany.tests'
-	generatedTestSourcesDir = project.file('src/accurest')
-}
-----
-
-==== Configuration options
-
- - **testMode** - defines mode for acceptance tests. By default MockMvc which is based on Spring's MockMvc. It can also be changed to **JaxRsClient** or to **Explicit** for real HTTP calls.
- - **imports** - array with imports that should be included in generated tests (for example ['org.myorg.Matchers']). By default empty array []
- - **staticImports** - array with static imports that should be included in generated tests(for example ['org.myorg.Matchers.*']). By default empty array []
- - **basePackageForTests** - specifies base package for all generated tests. By default set to io.codearte.accurest.tests
- - **baseClassForTests** - base class for generated tests. By default `spock.lang.Specification`
- - **ruleClassForTests** - specifies Rule which should be added to generated test classes.
- - **ignoredFiles** - Ant matcher allowing defining stub files for which processing should be skipped. By default empty array []
- - **contractsDslDir** - directory containing contracts written using the GroovyDSL. By default `$rootDir/src/test/accurest`
- - **generatedTestSourcesDir** - test source directory where tests generated from Groovy DSL should be placed. By default `$buildDir/generated-test-sources/accurest`
- - **stubsOutputDir** - dir where the generated Wiremock stubs from Groovy DSL should be placed
- - **targetFramework** - the target test framework to be used; currently Spock and JUnit are supported with Spock being the default framework
-
-==== Base class for tests
-
- When using Accurest in default MockMvc you need to create a base specification for all generated acceptance tests. In this class you need to point to endpoint which should be verified.
-
-[source,groovy,indent=0]
-----
-package org.mycompany.tests
-
-import org.mycompany.ExampleSpringController
-import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc
-import spock.lang.Specification
-
-class  MvcSpec extends Specification {
-  def setup() {
-   RestAssuredMockMvc.standaloneSetup(new ExampleSpringController())
-  }
-}
-----
-
-In case of using `Explicit` mode, you can use base class to initialize the whole tested app similarly as in regular integration tests. In case of `JAXRSCLIENT` mode this base class should also contain `protected WebTarget webTarget` field, right now the only option to test JAX-RS API is to start a web server.
-
-=== Invoking generated tests
-
-To ensure that provider side is complaint with defined contracts, you need to invoke:
-`./gradlew generateAccurest test`
-
-=== Accurest on consumer side
-
-In consumer service you need to configure Accurest plugin in exactly the same way as in case of provider. You need to copy contracts stored in src/test/resources/stubs and generate Wiremock json stubs using: `./gradlew generateWireMockClientStubs` command. Note that `stubsOutputDir` option has to be set for stub generation to work.
-
-When present, json stubs can be used in consumer automated tests.
-
-[source,groovy,indent=0]
-----
-@ContextConfiguration(loader = SpringApplicationContextLoader, classes = Application)
-class LoanApplicationServiceSpec extends Specification {
-
- @ClassRule
- @Shared
- WireMockClassRule wireMockRule = new WireMockClassRule()
-
- @Autowired
- LoanApplicationService sut
-
- def 'should successfully apply for loan'() {
-   given:
- 	LoanApplication application =
-			new LoanApplication(client: new Client(pesel: '12345678901'), amount: 123.123)
-   when:
-	LoanApplicationResult loanApplication = sut.loanApplication(application)
-   then:
-	loanApplication.loanApplicationStatus == LoanApplicationStatus.LOAN_APPLIED
-	loanApplication.rejectionReason == null
- }
-}
-----
-
-Underneath LoanApplication makes a call to FraudDetection service. This request is handled by Wiremock server configured using stubs generated by Accurest.
-
-== 2.2. Using in your Maven project
-
-=== Add maven plugin
-
-[source,xml,indent=0]
-----
-<plugin>
-    <groupId>io.codearte.accurest</groupId>
-    <artifactId>accurest-maven-plugin</artifactId>
-    <executions>
-        <execution>
-            <goals>
-                <goal>convert</goal>
-                <goal>generateStubs</goal>
-                <goal>generateTests</goal>
-            </goals>
-        </execution>
-    </executions>
-</plugin>
-----
-
-Read more: [accurest-maven-plugin](https://github.com/Codearte/accurest-maven-plugin)
-
-=== Add stubs
-
-By default Accurest is looking for stubs in `src/test/accurest` directory.
-Directory containing stub definitions is treated as a class name, and each stub definition is treated as a single test.
-We assume that it contains at least one directory which will be used as test class name. If there is more than one level of nested directories all except the last one will be used as package name.
-So with following structure
-
-[source,groovy,indent=0]
-----
-src/test/accurest/myservice/shouldCreateUser.groovy
-src/test/accurest/myservice/shouldReturnUser.groovy
-----
-
-Accurest will create test class `defaultBasePackage.MyService` with two methods
- - `shouldCreateUser()`
- - `shouldReturnUser()`
-
-=== Run plugin
-
-Plugin goal `generateTests` is assigned to be invoked in phase `generate-test-sources`. You have nothing to do as long as you want it to be part of your build process. If you just want to generate tests please invoke `generateTests` goal.
-
-=== Configure plugin
-
-To change default configuration just add `configuration` section to plugin definition or `execution` definition.
-
-[source,xml,indent=0]
-----
-<plugin>
-    <groupId>io.codearte.accurest</groupId>
-    <artifactId>accurest-maven-plugin</artifactId>
-    <executions>
-        <execution>
-            <goals>
-                <goal>convert</goal>
-                <goal>generateStubs</goal>
-                <goal>generateTests</goal>
-            </goals>
-        </execution>
-    </executions>
-    <configuration>
-        <basePackageForTests>com.ofg.twitter.place</basePackageForTests>
-        <baseClassForTests>com.ofg.twitter.place.BaseMockMvcSpec</baseClassForTests>
-    </configuration>
-</plugin>
-----
-
-==== Configuration options
-
- - **testMode** - defines mode for acceptance tests. By default `MockMvc` which is based on Spring's MockMvc. It can also be changed to `JaxRsClient` or to `Explicit` for real HTTP calls.
- - **basePackageForTests** - specifies base package for all generated tests. By default set to `io.codearte.accurest.tests`.
- - **ruleClassForTests** - specifies Rule which should be added to generated test classes.
- - **baseClassForTests** - base class for generated tests. By default `spock.lang.Specification`.
- - **contractsDir** - directory containing contracts written using the GroovyDSL. By default `/src/test/accurest`.
- - **generatedTestSourcesDir** - test source directory where tests generated from Groovy DSL should be placed. By default `target/generated-test-sources/accurest`.
- - **mappingsDir** - dir where the generated Wiremock stubs from Groovy DSL should be placed.
- - **testFramework** - the target test framework to be used; currently Spock and JUnit are supported with Spock being the default framework
-
-==== Base class for tests
-
- When using Accurest in default MockMvc you need to create a base specification for all generated acceptance tests. In this class you need to point to endpoint which should be verified.
-
-[source,groovy,indent=0]
-----
-package org.mycompany.tests
-
-import org.mycompany.ExampleSpringController
-import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc
-import spock.lang.Specification
-
-class  MvcSpec extends Specification {
-  def setup() {
-   RestAssuredMockMvc.standaloneSetup(new ExampleSpringController())
-  }
-}
-----
-
-In case of using `Explicit` mode, you can use base class to initialize the whole tested app similarly as in regular integration tests. In case of `JAXRSCLIENT` mode this base class should also contain `protected WebTarget webTarget` field, right now the only option to test JAX-RS API is to start a web server.
-
-=== Invoking generated tests
-
-Accurest Maven Plugins generates verification code into directory `/generated-test-sources/accurest` and attach this directory to `testCompile` goal.
-
-For Groovy Spock code use:
-
-[source,xml,indent=0]
-----
-<plugin>
-	<groupId>org.codehaus.gmavenplus</groupId>
-	<artifactId>gmavenplus-plugin</artifactId>
-	<version>1.5</version>
-	<executions>
-		<execution>
-			<goals>
-				<goal>testCompile</goal>
-			</goals>
-		</execution>
-	</executions>
-	<configuration>
-		<testSources>
-			<testSource>
-				<directory>${project.basedir}/src/test/groovy</directory>
-				<includes>
-					<include>**/*.groovy</include>
-				</includes>
-			</testSource>
-			<testSource>
-				<directory>${project.build.directory}/generated-test-sources/accurest</directory>
-				<includes>
-					<include>**/*.groovy</include>
-				</includes>
-			</testSource>
-		</testSources>
-	</configuration>
-</plugin>
-----
-
-To ensure that provider side is complaint with defined contracts, you need to invoke `mvn generateTest test`
-
-=== Accurest on consumer side
-
-In consumer service you need to configure Accurest plugin in exactly the same way as in case of provider. You need to copy contracts stored in `src/test/accurest` and generate Wiremock json stubs using: `mvn generateStubs` command. By default generated WireMock mapping is stored in directory `target/mappings`. Your project should create from this generated mappings additional artifact with classifier `stubs` for easy deploy to maven repository.
-
-Sample configuration:
-
-[source,xml,indent=0]
-----
-<plugin>
-    <groupId>io.codearte.accurest</groupId>
-    <artifactId>accurest-maven-plugin</artifactId>
-    <version>${accurest.version}</version>
-    <executions>
-        <execution>
-            <goals>
-                <goal>convert</goal>
-                <goal>generateStubs</goal>
-            </goals>
-        </execution>
-    </executions>
-</plugin>
-----
-
-When present, json stubs can be used in consumer automated tests.
-
-[source,groovy,indent=0]
-----
-@ContextConfiguration(loader = SpringApplicationContextLoader, classes = Application)
-class LoanApplicationServiceSpec extends Specification {
-
- @ClassRule
- @Shared
- WireMockClassRule wireMockRule = new WireMockClassRule()
-
- @Autowired
- LoanApplicationService sut
-
- def 'should successfully apply for loan'() {
-   given:
- 	LoanApplication application =
-			new LoanApplication(client: new Client(pesel: '12345678901'), amount: 123.123)
-   when:
-	LoanApplicationResult loanApplication = sut.loanApplication(application)
-   then:
-	loanApplication.loanApplicationStatus == LoanApplicationStatus.LOAN_APPLIED
-	loanApplication.rejectionReason == null
- }
-}
-----
-
-Underneath LoanApplication makes a call to FraudDetection service. This request is handled by Wiremock server configured using stubs generated by Accurest.
-
-= 3. Contract DSL
+== Contract DSL
 
 Contract DSL in AccuREST is written in Groovy, but don't be alarmed if you didn't use Groovy before. Knowledge of the language is not really needed as our DSL uses only a tiny subset of it (namely literals, method calls and closures). What's more, AccuREST's DSL is designed to be programmer-readable without any knowledge of the DSL itself.
 
@@ -406,7 +60,7 @@ Not all features of the DSL are used in example above. If you didn't find what y
 
 > You can easily compile Accurest Contracts to WireMock stubs mapping using standalone maven command: `mvn io.codearte.accurest:accurest-maven-plugin:convert`.
 
-== Top-Level Elements
+=== Top-Level Elements
 
 Following methods can be called in the top-level closure of a contract definition. Request and response are mandatory, priority is optional.
 
@@ -434,7 +88,7 @@ io.codearte.accurest.dsl.GroovyDsl.make {
 }
 ----
 
-== Request
+=== Request
 
 HTTP protocol requires only **method and address** to be specified in a request. The same information is mandatory in request definition of AccuREST contract.
 
@@ -581,7 +235,7 @@ io.codearte.accurest.dsl.GroovyDsl.make {
 }
 ----
 
-== Response
+=== Response
 
 Minimal response must contain **HTTP status code**.
 
@@ -601,14 +255,14 @@ io.codearte.accurest.dsl.GroovyDsl.make {
 
 Besides status response may contain **headers** and **body**, which are specified the same way as in the request (see previous paragraph).
 
-== Regular expressions
+=== Regular expressions
 You can use regular expressions to write your requests in Contract DSL. It is particularly useful when you want to indicate that a given response should be provided for requests that follow a given pattern. Also, you can use it when you need to use patterns and not exact values both for your test and your server side tests.
 
  Please see the example below:
 
 [source,groovy,indent=0]
 ----
-io.codearte.accurest.dsl.GroovyDsl groovyDsl = GroovyDsl.make {
+io.codearte.accurest.dsl.GroovyDsl groovyDsl == GroovyDsl.make {
     request {
         method('GET')
         url $(client(~/\/[0-9]{2}/), server('/12'))
@@ -637,7 +291,7 @@ io.codearte.accurest.dsl.GroovyDsl groovyDsl = GroovyDsl.make {
 }
 ----
 
-== Passing optional parameters
+=== Passing optional parameters
 
 It is possible to provide optional parameters in your contract. It's only possible to have optional parameter for the:
 
@@ -668,7 +322,7 @@ io.codearte.accurest.dsl.GroovyDsl.make {
         }
         body(
                 code: value(stub("123123"), test(optional("123123"))),
-                message: "User not found by email = [${value(test(regex(email())), stub('not.existing@user.com'))}]"
+                message: "User not found by email == [${value(test(regex(email())), stub('not.existing@user.com'))}]"
         )
     }
 }
@@ -681,21 +335,21 @@ That way for the example above the following test would be generated:
 [source,groovy,indent=0]
 ----
  given:
-  def request = given()
+  def request == given()
     .header('Content-Type', 'application/json')
     .body('{"email":"abc@abc.com","callback_url":"http://partners.com"}')
 
  when:
-  def response = given().spec(request)
+  def response == given().spec(request)
     .post("/users/password")
 
  then:
-  response.statusCode == 404
-  response.header('Content-Type')  == 'application/json'
+  response.statusCode === 404
+  response.header('Content-Type')  === 'application/json'
  and:
-  DocumentContext parsedJson = JsonPath.parse(response.body.asString())
+  DocumentContext parsedJson == JsonPath.parse(response.body.asString())
   !parsedJson.read('''$[?(@.code =~ /(123123)?/)]''', JSONArray).empty
-  !parsedJson.read('''$[?(@.message =~ /User not found by email = \\[[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}\\]/)]''', JSONArray).empty
+  !parsedJson.read('''$[?(@.message =~ /User not found by email == \\[[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}\\]/)]''', JSONArray).empty
 
 ----
 
@@ -720,7 +374,7 @@ and the following stub:
   },
   "response" : {
     "status" : 404,
-    "body" : "{\"code\":\"123123\",\"message\":\"User not found by email = [not.existing@user.com]\"}",
+    "body" : "{\"code\":\"123123\",\"message\":\"User not found by email == [not.existing@user.com]\"}",
     "headers" : {
       "Content-Type" : "application/json"
     }
@@ -729,10 +383,10 @@ and the following stub:
 }
 ----
 
-== Executing custom methods on server side
+=== Executing custom methods on server side
 It is also possible to define a method call to be executed on the server side during the test. Such a method can be added to the class defined as "baseClassForTests" in the configuration. Please see the examples below:
 
-=== Groovy DSL
+==== Groovy DSL
 
 [source,groovy,indent=0]
 ----
@@ -759,7 +413,7 @@ io.codearte.accurest.dsl.GroovyDsl.make {
 }
 ----
 
-=== Base Mock Spec
+==== Base Mock Spec
 
 [source,groovy,indent=0]
 ----
@@ -770,12 +424,12 @@ abstract class BaseMockMvcSpec extends Specification {
     }
 
     void isProperCorrelationId(Integer correlationId) {
-        assert correlationId == 123456
+        assert correlationId === 123456
     }
 }
 ----
 
-== JAX-RS support
+=== JAX-RS support
 Starting with release 0.8.0 we support JAX-RS 2 Client API. Base class needs to define `protected WebTarget webTarget` and server initialization, right now the only option how to test JAX-RS API is to start a web server.
 
 Request with a body needs to have a content type set otherwise `application/octet-stream` is going to be used.
@@ -784,7 +438,7 @@ In order to use JAX-RS mode, use the following settings:
 
 [source,groovy,indent=0]
 ----
-testMode = 'JAXRSCLIENT'
+testMode == 'JAXRSCLIENT'
 ----
 
 Example of a test API generated:
@@ -795,44 +449,44 @@ class FraudDetectionServiceSpec extends MvcSpec {
 
 	def shouldMarkClientAsNotFraud() {
 		when:
-			def response = webTarget
+			def response == webTarget
 					.path('/fraudcheck')
 					.request()
 					.method('put', entity('{"clientPesel":"1234567890","loanAmount":123.123}', 'application/vnd.fraud.v1+json'))
 
-			String responseAsString = response.readEntity(String)
+			String responseAsString == response.readEntity(String)
 
 		then:
-			response.status == 200
-			response.getHeaderString('Content-Type') == 'application/vnd.fraud.v1+json'
+			response.status === 200
+			response.getHeaderString('Content-Type') === 'application/vnd.fraud.v1+json'
 		and:
-			def responseBody = new JsonSlurper().parseText(responseAsString)
-			responseBody.fraudCheckStatus == "OK"
+			def responseBody == new JsonSlurper().parseText(responseAsString)
+			responseBody.fraudCheckStatus === "OK"
 			assertThatRejectionReasonIsNull(responseBody.rejectionReason)
 	}
 
 	def shouldMarkClientAsFraud() {
 		when:
-			def response = webTarget
+			def response == webTarget
 					.path('/fraudcheck')
 					.request()
 					.method('put', entity('{"clientPesel":"1234567890","loanAmount":99999}', 'application/vnd.fraud.v1+json'))
 
-			String responseAsString = response.readEntity(String)
+			String responseAsString == response.readEntity(String)
 
 		then:
-			response.status == 200
-			response.getHeaderString('Content-Type') == 'application/vnd.fraud.v1+json'
+			response.status === 200
+			response.getHeaderString('Content-Type') === 'application/vnd.fraud.v1+json'
 		and:
-			def responseBody = new JsonSlurper().parseText(responseAsString)
+			def responseBody == new JsonSlurper().parseText(responseAsString)
 			responseBody.fraudCheckStatus ==~ java.util.regex.Pattern.compile('[A-Z]{5}')
-			responseBody.rejectionReason == "Amount too high"
+			responseBody.rejectionReason === "Amount too high"
 	}
 
 }
 ----
 
-= 4. Client Side
+== Client Side
 
 During the tests you want to have a Wiremock instance up and running that simulates the service Y.
 You would like to feed that instance with a proper stub definition. That stub definition would need
@@ -841,7 +495,7 @@ to be valid from the Wiremock's perspective but should also be reusable on the s
 __Summing it up:__ On this side, in the stub definition, you can use patterns for request stubbing and you need exact
 values for responses.
 
-= 5. Server Side
+== Server Side
 
 Being a service Y since you are developing your stub, you need to be sure that it's actually resembling your
 concrete implementation. You can't have a situation where your stub acts in one way and your application on
@@ -853,7 +507,7 @@ that your application behaves in the same way as you define in your stub.
 __Summing it up:__ On this side, in the stub definition, you need exact values as request and can use patterns/methods
 for response verification.
 
-= 6. Examples
+== Examples
 
 [source,groovy,indent=0]
 ----
@@ -901,7 +555,7 @@ io.codearte.accurest.dsl.GroovyDsl.make {
 }
 ----
 
-= 7. Scenarios
+== Scenarios
 
 It's possible to handle scenarios with Accurest. All you need to do is to stick to proper naming convention while creating your contracts. The convention requires to include order number followed by the underscore.
 
@@ -922,17 +576,17 @@ More details about Wiremock scenarios can be found under [http://wiremock.org/st
 
 Accurest will also generate tests with guaranteed order of execution.
 
-= 8. Stub Runner
+== Stub Runner
 
 One of the issues that you could have encountered while using AccuREST was to pass the generated WireMock JSON stubs from the server side to the client side (or various clients). Copying the JSON files manually is out of the question.
 
 In this article you'll see how to prepare your project to start publishing stubs as JARs and how to use Stub Runner in your tests to run WireMock servers and feed them with stub definitions.
 
-== Publishing stubs as JARs
+=== Publishing stubs as JARs
 
 The easiest approach would be to centralize the way stubs are kept. For example you can keep them as JARs in a Maven repository.
 
-=== Gradle
+==== Gradle
 
 Example of AccuREST Gradle setup:
 
@@ -941,21 +595,21 @@ Example of AccuREST Gradle setup:
 	apply plugin: 'maven-publish'
 
 	ext {
-		wiremockStubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
-		wiremockStubsOutputDir = new File(wiremockStubsOutputDirRoot)
+		wiremockStubsOutputDirRoot == file("${project.buildDir}/production/${project.name}-stubs/")
+		wiremockStubsOutputDir == new File(wiremockStubsOutputDirRoot)
 	}
 
 	accurest {
-		targetFramework = 'Spock'
-		testMode = 'MockMvc'
-		baseClassForTests = 'com.toomuchcoding.MvcSpec'
-		contractsDslDir = file("${project.projectDir.absolutePath}/mappings/")
-		generatedTestSourcesDir = file("${project.buildDir}/generated-sources/")
-		stubsOutputDir = wiremockStubsOutputDir
+		targetFramework == 'Spock'
+		testMode == 'MockMvc'
+		baseClassForTests == 'com.toomuchcoding.MvcSpec'
+		contractsDslDir == file("${project.projectDir.absolutePath}/mappings/")
+		generatedTestSourcesDir == file("${project.buildDir}/generated-sources/")
+		stubsOutputDir == wiremockStubsOutputDir
 	}
 
 	task stubsJar(type: Jar, dependsOn: ["generateWireMockClientStubs"]) {
-	    baseName = "${project.name}-stubs"
+	    baseName == "${project.name}-stubs"
 	    from wiremockStubsOutputDirRoot
 	}
 
@@ -973,15 +627,15 @@ Example of AccuREST Gradle setup:
 	}
 ----
 
-=== Maven
+==== Maven
 
 Example of Maven can be found in the [AccuREST Maven Plugin README](https://github.com/Codearte/accurest-maven-plugin/=publishing-wiremock-stubs-projectf-stubsjar)
 
-== Using Stub Runner to automate running stubs
+=== Using Stub Runner to automate running stubs
 
 Stub Runner automates downloading stubs from a Maven repository (that includes also the local Maven repository) and starting the WireMock server for each of those stubs.
 
-=== Modules
+==== Modules
 
 AccuREST comes with a new structure of modules
 
@@ -994,7 +648,7 @@ AccuREST comes with a new structure of modules
     └── stub-runner-spring-cloud
 ----
 
-==== Stub Runner
+===== Stub Runner
 
 Contains core logic of Stub Runner. Gives you a main class to run Stub Runner from the command line or from Gradle.
 
@@ -1033,13 +687,13 @@ or each parameter separately with a `-P` prefix and without the hyphen (-) in th
 
 `./gradlew stub-runner-root:stub-runner:run -Pc=pl -Pminp=10000 -Pmaxp=10005 -Ps=a:b:c,d:e,f:g:h`
 
-==== Stub Runner JUnit Rule
+===== Stub Runner JUnit Rule
 
 Stub Runner comes with a JUnit rule thanks to which you can very easily download and run stubs for given group and artifact id:
 
 [source,java,indent=0]
 ----
-@ClassRule public static AccurestRule rule = new AccurestRule()
+@ClassRule public static AccurestRule rule == new AccurestRule()
 			.repoRoot("http://your.repo.com")
 			.downloadStub("io.codearte.accurest.stubs", "loanIssuance")
 			.downloadStub("io.codearte.accurest.stubs:fraudDetectionServer")
@@ -1089,24 +743,24 @@ Example of usage in Spock tests:
 
 [source,groovy,indent=0]
 ----
-@ClassRule @Shared AccurestRule rule = new AccurestRule()
+@ClassRule @Shared AccurestRule rule == new AccurestRule()
 			.repoRoot('http://your.repo.com')
 			.downloadStub("io.codearte.accurest.stubs", "loanIssuance")
 			.downloadStub("io.codearte.accurest.stubs:fraudDetectionServer")
 
 	def 'should start WireMock servers'() {
 		expect: 'WireMocks are running'
-			rule.findStubUrl('io.codearte.accurest.stubs', 'loanIssuance') != null
-			rule.findStubUrl('loanIssuance') != null
-			rule.findStubUrl('loanIssuance') == rule.findStubUrl('io.codearte.accurest.stubs', 'loanIssuance')
-			rule.findStubUrl('io.codearte.accurest.stubs:fraudDetectionServer') != null
+			rule.findStubUrl('io.codearte.accurest.stubs', 'loanIssuance') !== null
+			rule.findStubUrl('loanIssuance') !== null
+			rule.findStubUrl('loanIssuance') === rule.findStubUrl('io.codearte.accurest.stubs', 'loanIssuance')
+			rule.findStubUrl('io.codearte.accurest.stubs:fraudDetectionServer') !== null
 		and:
 			rule.findAllRunningStubs().isPresent('loanIssuance')
 			rule.findAllRunningStubs().isPresent('io.codearte.accurest.stubs', 'fraudDetectionServer')
 			rule.findAllRunningStubs().isPresent('io.codearte.accurest.stubs:fraudDetectionServer')
 		and: 'Stubs were registered'
-			"${rule.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
-			"${rule.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
+			"${rule.findStubUrl('loanIssuance').toString()}/name".toURL().text === 'loanIssuance'
+			"${rule.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text === 'fraudDetectionServer'
 	}
 ----
 
@@ -1114,7 +768,7 @@ Example of usage in JUnit tests:
 
 [source,java,indent=0]
 ----
-@ClassRule public static AccurestRule rule = new AccurestRule()
+@ClassRule public static AccurestRule rule == new AccurestRule()
 			.repoRoot("http://your.repo.com")
 			.downloadStub("io.codearte.accurest.stubs", "loanIssuance")
 			.downloadStub("io.codearte.accurest.stubs:fraudDetectionServer");
@@ -1138,7 +792,7 @@ Example of usage in JUnit tests:
 
 Check the *Common properties for JUnit and Spring* for more information on how to apply global configuration of Stub Runner.
 
-==== Stub Runner Spring
+===== Stub Runner Spring
 
 If you're using Spring then you can just import the `io.codearte.accurest.stubrunner.spring.StubRunnerConfiguration` and a bean of type `StubFinder` will get registered.
 
@@ -1146,24 +800,24 @@ In order to find a URL and port of a given dependency you can autowire the bean 
 
 [source,groovy,indent=0]
 ----
-@ContextConfiguration(classes = Config, loader = SpringApplicationContextLoader)
+@ContextConfiguration(classes == Config, loader == SpringApplicationContextLoader)
 class StubRunnerConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
 
 	def 'should start WireMock servers'() {
 		expect: 'WireMocks are running'
-			stubFinder.findStubUrl('io.codearte.accurest.stubs', 'loanIssuance') != null
-			stubFinder.findStubUrl('loanIssuance') != null
-			stubFinder.findStubUrl('loanIssuance') == stubFinder.findStubUrl('io.codearte.accurest.stubs', 'loanIssuance')
-			stubFinder.findStubUrl('io.codearte.accurest.stubs:fraudDetectionServer') != null
+			stubFinder.findStubUrl('io.codearte.accurest.stubs', 'loanIssuance') !== null
+			stubFinder.findStubUrl('loanIssuance') !== null
+			stubFinder.findStubUrl('loanIssuance') === stubFinder.findStubUrl('io.codearte.accurest.stubs', 'loanIssuance')
+			stubFinder.findStubUrl('io.codearte.accurest.stubs:fraudDetectionServer') !== null
 		and:
 			stubFinder.findAllRunningStubs().isPresent('loanIssuance')
 			stubFinder.findAllRunningStubs().isPresent('io.codearte.accurest.stubs', 'fraudDetectionServer')
 			stubFinder.findAllRunningStubs().isPresent('io.codearte.accurest.stubs:fraudDetectionServer')
 		and: 'Stubs were registered'
-			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
-			"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
+			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text === 'loanIssuance'
+			"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text === 'fraudDetectionServer'
 	}
 
 	@Configuration
@@ -1175,11 +829,11 @@ class StubRunnerConfigurationSpec extends Specification {
 
 Check the *Common properties for JUnit and Spring* for more information on how to apply global configuration of Stub Runner.
 
-==== Stub Runner Spring Cloud
+===== Stub Runner Spring Cloud
 
 If you're using Spring Cloud then it's enough to add `stub-runner-spring-cloud` on classpath and automatically a bean of type `StubFinder` will get registered.
 
-==== Common properties for JUnit and Spring
+===== Common properties for JUnit and Spring
 
 Some of the properties that are repetitive can be set using system properties or property sources (for Spring). Here are their names with their default values:
 
@@ -1194,12 +848,12 @@ Some of the properties that are repetitive can be set using system properties or
 |stubrunner.stubs|| Comma separated list of Ivy notation of stubs to download|
 |======================
 
-= 9. Migration Guide
+== Migration Guide
 
-== Migration to 0.4.7
+=== Migration to 0.4.7
 - in 0.4.7 we've fixed package name (coderate to codearte) so you've to do the same in your projects. This means replacing ```io.coderate.accurest.dsl.GroovyDsl``` with ```io.codearte.accurest.dsl.GroovyDsl```
 
-== Migration to 1.0.0-RC1
+=== Migration to 1.0.0-RC1
 - from 1.0.0 we're distinguish ignored contracts from excluded contracts:
  - `excludedFiles` pattern tells Accurest to skip processing those files at all
  - `ignoredFiles` pattern tells Accurest to generate contracts and tests, but tests will be marked as `@Ignore`
@@ -1209,7 +863,7 @@ Some of the properties that are repetitive can be set using system properties or
  - now all DSL files have to be under `contractsDslDir`/*subpackage* resulting in `basePackageForTests`.*subpackage* test package creation
  - If you don't migrate to the new approach you will have your tests under `contractsDslDir`.`contractsDslDir`.*subpackage*
 
-== Migration to 1.0.7
+=== Migration to 1.0.7
 - from 1.0.7 we're setting JUnit as a default testing utility. You have to pass the following option to keep Spock
 as your first choice:
 
