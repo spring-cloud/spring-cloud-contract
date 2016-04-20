@@ -31,7 +31,6 @@ class AccurestGradlePlugin implements Plugin<Project> {
 		project.dependencies.add("testCompile", "com.github.tomakehurst:wiremock:2.0.5-beta")
 		project.dependencies.add("testCompile", "com.toomuchcoding.jsonassert:jsonassert:${extension.getJsonAssertVersion()}")
 		project.dependencies.add("testCompile", "org.assertj:assertj-core:2.3.0")
-		project.dependencies.add("testCompile", "io.codearte.accurest:accurest-messaging-core:${extension.getAccurestMessagingCoreVersion()}")
 
 		project.afterEvaluate {
 			def hasIdea = project.plugins.findPlugin(IDEA_PLUGIN_CLASS)
