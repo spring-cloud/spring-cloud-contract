@@ -1,6 +1,7 @@
 package io.codearte.accurest
 
 import io.codearte.accurest.config.AccurestConfigProperties
+import io.codearte.accurest.config.TestFramework
 import spock.lang.Specification
 
 class GeneratorScannerSpec extends Specification {
@@ -21,7 +22,7 @@ class GeneratorScannerSpec extends Specification {
 
 	def "should create class with full package"() {
 		given:
-			AccurestConfigProperties properties = new AccurestConfigProperties()
+			AccurestConfigProperties properties = new AccurestConfigProperties(targetFramework: TestFramework.SPOCK)
 			properties.contractsDslDir = new File(this.getClass().getResource("/directory/with/stubs/package").toURI())
 			TestGenerator testGenerator = new TestGenerator(properties, classGenerator, Stub(FileSaver))
 		when:

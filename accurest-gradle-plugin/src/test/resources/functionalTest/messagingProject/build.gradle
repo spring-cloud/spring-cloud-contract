@@ -18,6 +18,7 @@ ext {
 	stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
 	wireMockStubsOutputDir = new File(stubsOutputDirRoot, 'repository/mappings/')
 	contractsOutputDir = new File(stubsOutputDirRoot, 'repository/accurest/')
+	targetFramework = 'Spock'
 }
 
 configurations {

@@ -7,7 +7,7 @@ class AccurestConfigProperties {
 	/**
 	 * For which unit test library tests should be generated
 	 */
-	TestFramework targetFramework = TestFramework.SPOCK
+	TestFramework targetFramework = TestFramework.JUNIT
 
 	/**
 	 * Which mechanism should be used to invoke REST calls during tests

@@ -54,6 +54,7 @@ accurest {
 	contractsDslDir = contractsDir
 //	generatedTestSourcesDir = file("${project.rootDir}/src/test/groovy/")
 	stubsOutputDir = wireMockStubsOutputDir
+	targetFramework = 'Spock'
 }
 
 //TODO: Put it into the plugin

@@ -45,7 +45,9 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 	}
 
 	accurest {
+		// tag::target_framework[]
 		targetFramework = 'Spock'
+		// end::target_framework[]
 		testMode = 'MockMvc'
 		baseClassForTests = 'com.blogspot.toomuchcoding.MvcSpec'
 		contractsDslDir = file("${project.projectDir.absolutePath}/mappings/")
