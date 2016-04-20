@@ -35,17 +35,14 @@ abstract class AccurestIntegrationSpec extends Specification {
 
 	protected void setupForProject(String projectRoot) {
 		copyResourcesToRoot(projectRoot)
-
 		def pluginClasspathResource = getClass().classLoader.findResource("plugin-classpath.txt")
 		if (pluginClasspathResource == null) {
 			throw new IllegalStateException("Did not find 'plugin-classpath.txt'")
 		}
-
 		String pluginClasspath = pluginClasspathResource.readLines()
 				.collect { it.replace('\\', '\\\\') } // escape backslashes in Windows paths
 				.collect { "'$it'" }
 				.join(", ")
-
 		buildFile << """
 			buildscript {
 				dependencies {
@@ -53,7 +50,6 @@ abstract class AccurestIntegrationSpec extends Specification {
 				}
 			}
 		"""
-
 		// Extending buildscript is required when 'apply' is used.
 		// 'GradleRunner#withPluginClasspath' can be used when plugin is added using 'plugins { id...'
 	}

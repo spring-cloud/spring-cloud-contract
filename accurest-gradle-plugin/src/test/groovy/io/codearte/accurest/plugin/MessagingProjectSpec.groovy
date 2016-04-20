@@ -14,7 +14,7 @@ class MessagingProjectSpec extends AccurestIntegrationSpec {
 		given:
 			assert fileExists('build.gradle')
 		expect:
-			runTasksSuccessfully('check')
+			runTasksSuccessfully('check', "publishToMavenLocal")
 	}
 
 	def "should pass basic flow for JUnit"() {
@@ -23,7 +23,7 @@ class MessagingProjectSpec extends AccurestIntegrationSpec {
 			assert fileExists('build.gradle')
 		expect:
 			switchToJunitTestFramework('io.codearte.accurest.samples.book.MessagingBaseSpec', 'io.codearte.accurest.samples.book.MessagingBaseTest')
-			runTasksSuccessfully('check')
+			runTasksSuccessfully('check', "publishToMavenLocal")
 	}
 
 }

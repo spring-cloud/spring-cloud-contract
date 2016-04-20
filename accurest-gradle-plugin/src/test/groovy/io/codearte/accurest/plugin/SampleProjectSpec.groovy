@@ -14,7 +14,7 @@ class SampleProjectSpec extends AccurestIntegrationSpec {
 		given:
 			assert fileExists('build.gradle')
 		expect:
-			runTasksSuccessfully('check')
+			runTasksSuccessfully('check', "publishToMavenLocal")
 	}
 
 	def "should pass basic flow for JUnit"() {
@@ -22,7 +22,7 @@ class SampleProjectSpec extends AccurestIntegrationSpec {
 			switchToJunitTestFramework()
 			assert fileExists('build.gradle')
 		expect:
-			runTasksSuccessfully('check')
+			runTasksSuccessfully('check', "publishToMavenLocal")
 	}
 
 }

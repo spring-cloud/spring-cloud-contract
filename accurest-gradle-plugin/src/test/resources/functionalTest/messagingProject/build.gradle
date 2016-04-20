@@ -13,8 +13,10 @@ apply plugin: 'groovy'
 apply plugin: 'accurest'
 apply plugin: 'maven-publish'
 
+group = 'io.codearte.accurest.testprojects'
+
 ext {
-	contractsDir = file("${project.rootDir}/repository/mappings/")
+	contractsDir = file("repository/mappings")
 	stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
 	wireMockStubsOutputDir = new File(stubsOutputDirRoot, 'repository/mappings/')
 	contractsOutputDir = new File(stubsOutputDirRoot, 'repository/accurest/')
@@ -84,11 +86,13 @@ wrapper {
 
 task copyContracts(type: Copy) {
 	from contractsDir
+	include '**/*.groovy'
 	into contractsOutputDir
 }
 
 task stubsJar(type: Jar, dependsOn: ["generateWireMockClientStubs", copyContracts]) {
-	baseName = "${project.name}-stubs"
+	baseName = "${project.name}"
+	classifier = "stubs"
 	from stubsOutputDirRoot
 }
 

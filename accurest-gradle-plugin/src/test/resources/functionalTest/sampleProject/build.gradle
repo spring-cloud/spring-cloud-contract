@@ -16,6 +16,8 @@ ext {
 	accurestStubsBaseDirectory = 'src/test/resources/stubs'
 }
 
+group = 'io.codearte.accurest.testprojects'
+
 subprojects {
 	apply plugin: 'groovy'
 
@@ -38,10 +40,10 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 	apply plugin: 'maven-publish'
 
 	ext {
-		contractsDir = file("${project.rootDir}/repository/mappings/")
+		contractsDir = file("mappings")
 		stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
-		wireMockStubsOutputDir = new File(stubsOutputDirRoot, 'repository/mappings/')
-		contractsOutputDir = new File(stubsOutputDirRoot, 'repository/accurest/')
+		wireMockStubsOutputDir = file(new File(stubsOutputDirRoot, 'repository/mappings/'))
+		contractsOutputDir = file(new File(stubsOutputDirRoot, 'repository/accurest/'))
 	}
 
 	accurest {
@@ -79,10 +81,12 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 	task copyContracts(type: Copy) {
 		from contractsDir
 		into contractsOutputDir
+		includeEmptyDirs = true
 	}
 
 	task stubsJar(type: Jar, dependsOn: ["generateWireMockClientStubs", copyContracts]) {
-		baseName = "${project.name}-stubs"
+		baseName = "${project.name}"
+		classifier = "stubs"
 		from stubsOutputDirRoot
 	}
 

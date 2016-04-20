@@ -21,7 +21,7 @@ class BasicFunctionalSpec extends AccurestIntegrationSpec {
 
 	def "should pass basic flow"() {
 		when:
-			BuildResult result = run("check")
+			BuildResult result = run("check", "publishToMavenLocal")
 		then:
 			result.task(":generateWireMockClientStubs").outcome == SUCCESS
 			result.task(":generateAccurest").outcome == SUCCESS
