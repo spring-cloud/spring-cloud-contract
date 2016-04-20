@@ -7,8 +7,6 @@ import io.codearte.accurest.config.TestMode
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.file.Contract
 import io.codearte.accurest.util.NamesUtil
-import org.codehaus.groovy.control.CompilerConfiguration
-
 /**
  * @author Jakub Kubrynski
  */
@@ -27,10 +25,7 @@ class MethodBuilder {
 		this.configProperties = configProperties
 	}
 
-	static MethodBuilder createTestMethod(Contract contract, AccurestConfigProperties configProperties) {
-		File stubsFile = contract.path.toFile()
-		log.debug("Stub content from file [${stubsFile.text}]")
-		GroovyDsl stubContent = new GroovyShell(this.classLoader, new Binding(), new CompilerConfiguration(sourceEncoding:'UTF-8')).evaluate(stubsFile)
+	static MethodBuilder createTestMethod(Contract contract, File stubsFile, GroovyDsl stubContent, AccurestConfigProperties configProperties) {
 		log.debug("Stub content Groovy DSL [$stubContent]")
 		String methodName = NamesUtil.camelCase(NamesUtil.toLastDot(NamesUtil.afterLast(stubsFile.path, File.separator)))
 		return new MethodBuilder(methodName, stubContent, configProperties, contract.ignored)
@@ -43,12 +38,18 @@ class MethodBuilder {
 		if (ignored) {
 			blockBuilder.addLine('@Ignore')
 		}
-		blockBuilder.addLine(configProperties.targetFramework.methodModifier + "validate_$methodName() {")
+		blockBuilder.addLine(configProperties.targetFramework.methodModifier + "validate_$methodName() throws Exception {")
 		getMethodBodyBuilder().appendTo(blockBuilder)
 		blockBuilder.addLine('}')
 	}
 
 	private MethodBodyBuilder getMethodBodyBuilder() {
+		if (stubContent.inputMessage || stubContent.outputMessage) {
+			if (configProperties.targetFramework == TestFramework.JUNIT){
+				return new JUnitMessagingMethodBodyBuilder(stubContent)
+			}
+			return new SpockMessagingMethodBodyBuilder(stubContent)
+		}
 		if (configProperties.testMode == TestMode.MOCKMVC && configProperties.targetFramework == TestFramework.JUNIT){
 				return new MockMvcJUnitMethodBodyBuilder(stubContent)
 		}
@@ -56,9 +57,9 @@ class MethodBuilder {
 			if (configProperties.targetFramework == TestFramework.JUNIT){
 				return new JaxRsClientJUnitMethodBodyBuilder(stubContent)
 			}
-			return new JaxRsClientSpockMethodBodyBuilder(stubContent)
+			return new JaxRsClientSpockMethodRequestProcessingBodyBuilder(stubContent)
 		}
-		return new MockMvcSpockMethodBodyBuilder(stubContent)
+		return new MockMvcSpockMethodRequestProcessingBodyBuilder(stubContent)
 	}
 
 }

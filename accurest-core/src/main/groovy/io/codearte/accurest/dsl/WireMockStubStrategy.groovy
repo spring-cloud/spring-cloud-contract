@@ -29,13 +29,19 @@ class WireMockStubStrategy {
 	@CompileDynamic
 	String toWireMockClientStub() {
 		StubMapping stubMapping = new StubMapping()
+
 		RequestPattern request = wireMockRequestStubStrategy.buildClientRequestContent()
 		ResponseDefinition response = wireMockResponseStubStrategy.buildClientResponseContent()
 		if (priority) {
 			stubMapping.priority = priority
 		}
+
 		stubMapping.request = request
 		stubMapping.response = response
+
+		if (!request || !response) {
+			return ''
+		}
 
 		if (contract.order != null) {
 			stubMapping.scenarioName = "Scenario_" + rootName

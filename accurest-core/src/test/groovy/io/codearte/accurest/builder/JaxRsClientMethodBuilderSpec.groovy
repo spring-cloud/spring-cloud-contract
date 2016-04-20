@@ -37,7 +37,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                   | methodBuilder
-			"JaxRsClientSpockMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodBodyBuilder(dsl) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
 			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
 	}
 
@@ -71,7 +71,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 		where:
 			methodBuilderName                   | methodBuilder
-			"JaxRsClientSpockMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodBodyBuilder(dsl) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
 			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
 	}
 
@@ -107,7 +107,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())
 		where:
 			methodBuilderName                   | methodBuilder
-			"JaxRsClientSpockMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodBodyBuilder(dsl) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
 			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
 	}
 
@@ -136,9 +136,9 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
-			methodBuilderName                   | methodBuilder                                                   | bodyString
-			"JaxRsClientSpockMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodBodyBuilder(dsl) } | """entity('{\"items\":[\"HOP\"]}', 'application/json')"""
-			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) } | 'entity("{\\"items\\":[\\"HOP\\"]}", "application/json")'
+			methodBuilderName                   | methodBuilder                                                                    | bodyString
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | """entity('{\"items\":[\"HOP\"]}', 'application/json')"""
+			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                  | 'entity("{\\"items\\":[\\"HOP\\"]}", "application/json")'
 	}
 
 	@Issue("#88")
@@ -166,9 +166,9 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
-			methodBuilderName                   | methodBuilder                                                   | bodyString
-			"JaxRsClientSpockMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodBodyBuilder(dsl) } | """entity('property1=VAL1', 'application/octet-stream')"""
-			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) } | 'entity("\\"property1=VAL1\\"", "application/octet-stream")'
+			methodBuilderName                   | methodBuilder                                                                    | bodyString
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | """entity('property1=VAL1', 'application/octet-stream')"""
+			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                  | 'entity("\\"property1=VAL1\\"", "application/octet-stream")'
 	}
 
 	@Unroll
@@ -201,7 +201,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                   | methodBuilder
-			"JaxRsClientSpockMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodBodyBuilder(dsl) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
 			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
 	}
 
@@ -234,7 +234,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                   | methodBuilder
-			"JaxRsClientSpockMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodBodyBuilder(dsl) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
 			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
 	}
 
@@ -267,7 +267,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                   | methodBuilder
-			"JaxRsClientSpockMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodBodyBuilder(dsl) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
 			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
 	}
 
@@ -306,7 +306,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                   | methodBuilder
-			"JaxRsClientSpockMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodBodyBuilder(dsl) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
 			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
 	}
 
@@ -339,7 +339,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                   | methodBuilder
-			"JaxRsClientSpockMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodBodyBuilder(dsl) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
 			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
 	}
 
@@ -367,9 +367,9 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
-			methodBuilderName                   | methodBuilder                                                   | requestString
-			"JaxRsClientSpockMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodBodyBuilder(dsl) } | "request('text/plain')"
-			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) } | 'request("text/plain")'
+			methodBuilderName                   | methodBuilder                                                                    | requestString
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | "request('text/plain')"
+			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                  | 'request("text/plain")'
 	}
 
 	@Unroll
@@ -401,9 +401,9 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
-			methodBuilderName                   | methodBuilder                                                   | requestStrings
-			"JaxRsClientSpockMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodBodyBuilder(dsl) } | ["""entity('', 'text/plain')""", """header('Timer', '123')"""]
-			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) } | ['entity("\\"\\"", "text/plain")', 'header("Timer", "123")']
+			methodBuilderName                   | methodBuilder                                                                    | requestStrings
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | ["""entity('', 'text/plain')""", """header('Timer', '123')"""]
+			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                  | ['entity("\\"\\"", "text/plain")', 'header("Timer", "123")']
 	}
 
 	@Unroll
@@ -456,9 +456,9 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
-			methodBuilderName                   | methodBuilder                                                   | modifyStringIfRequired
-			"JaxRsClientSpockMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodBodyBuilder(dsl) } | { String paramString -> paramString }
-			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) } | { String paramString -> paramString.replace("'", "\"") }
+			methodBuilderName                   | methodBuilder                                                                    | modifyStringIfRequired
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | { String paramString -> paramString }
+			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                  | { String paramString -> paramString.replace("'", "\"") }
 	}
 
 	@Issue('#169')
@@ -512,9 +512,9 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
-			methodBuilderName                   | methodBuilder                                                   | modifyStringIfRequired
-			"JaxRsClientSpockMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodBodyBuilder(dsl) } | { String paramString -> paramString }
-			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) } | { String paramString -> paramString.replace("'", "\"") }
+			methodBuilderName                   | methodBuilder                                                                    | modifyStringIfRequired
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | { String paramString -> paramString }
+			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                  | { String paramString -> paramString.replace("'", "\"") }
 	}
 
 	@Unroll
@@ -541,9 +541,9 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
-			methodBuilderName                   | methodBuilder                                                   | bodyString
-			"JaxRsClientSpockMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodBodyBuilder(dsl) } | "entity('', 'application/octet-stream')"
-			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) } | 'entity("\\"\\"", "application/octet-stream"'
+			methodBuilderName                   | methodBuilder                                                                    | bodyString
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | "entity('', 'application/octet-stream')"
+			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                  | 'entity("\\"\\"", "application/octet-stream"'
 	}
 
 	@Unroll
@@ -570,9 +570,9 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
-			methodBuilderName                   | methodBuilder                                                   | bodyDefinitionString                                    | bodyEvaluationString
-			"JaxRsClientSpockMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodBodyBuilder(dsl) } | "String responseAsString = response.readEntity(String)" | 'responseBody == "test"'
-			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) } | 'Object responseBody = (responseAsString);'             | 'assertThat(responseBody).isEqualTo("test");'
+			methodBuilderName                   | methodBuilder                                                                    | bodyDefinitionString                                    | bodyEvaluationString
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | "String responseAsString = response.readEntity(String)" | 'responseBody == "test"'
+			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                  | 'Object responseBody = (responseAsString);'             | 'assertThat(responseBody).isEqualTo("test");'
 	}
 
 	@Issue('#171')
@@ -604,9 +604,9 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
-			methodBuilderName                   | methodBuilder                                                   | methodString
-			"JaxRsClientSpockMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodBodyBuilder(dsl) } | ".method('GET')"
-			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) } | 'method("GET")'
+			methodBuilderName                   | methodBuilder                                                                    | methodString
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | ".method('GET')"
+			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                  | 'method("GET")'
 	}
 
 }

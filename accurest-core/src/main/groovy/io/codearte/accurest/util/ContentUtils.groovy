@@ -287,6 +287,15 @@ class ContentUtils {
 		return ContentType.JSON
 	}
 
+	public static ContentType recognizeContentTypeFromContent(String string) {
+		try {
+			new JsonSlurper().parseText(string)
+			return ContentType.JSON
+		} catch (Exception e){
+			return ContentType.UNKNOWN
+		}
+	}
+
 	public static ContentType recognizeContentTypeFromContent(Object gstring) {
 		return ContentType.UNKNOWN
 	}

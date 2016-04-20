@@ -9,7 +9,6 @@ buildscript {
 		classpath "com.bmuschko:gradle-nexus-plugin:2.3"
 		classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3"
 		if (project.hasProperty('fatJar')) classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
-		classpath "io.spring.gradle:dependency-management-plugin:0.5.6.RELEASE"
 	}
 }
 
@@ -98,7 +97,7 @@ project(':accurest-core') {
 		compile "com.github.tomakehurst:wiremock:$wiremockVersion"
 		compile "com.toomuchcoding.jsonassert:jsonassert:$jsonassertVersion"
 		compile 'org.assertj:assertj-core:2.3.0'
-		compile 'org.codehaus.groovy:groovy-all:2.4.4'
+		compile localGroovy()
 		testCompile 'cglib:cglib-nodep:2.2'
 		testCompile 'org.objenesis:objenesis:2.1'
 		testCompile project(':accurest-testing-utils')
@@ -129,8 +128,8 @@ project(':accurest-gradle-plugin') {
 	dependencies {
 		compile project(':accurest-core')
 		compile project(':accurest-converters')
-
 		compile gradleApi()
+
 		testCompile('com.netflix.nebula:nebula-test:4.0.0') {
 			exclude(group: 'org.spockframework')
 		}
@@ -148,6 +147,10 @@ project(':accurest-gradle-plugin') {
 		}
 	}
 
+	// Hack for reusing this in the plugin test
+	test.dependsOn(':accurest-core:install')
+	test.dependsOn(':accurest-messaging-root:accurest-messaging-core:install')
+	test.dependsOn(':accurest-messaging-root:accurest-messaging-integration:install')
 	uploadArchives.dependsOn { funcTest }
 }
 

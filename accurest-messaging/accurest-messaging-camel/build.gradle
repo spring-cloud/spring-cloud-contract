@@ -1,0 +1,16 @@
+repositories {
+	mavenLocal()
+	jcenter()
+	maven {
+		url "http://repo.spring.io/snapshot"
+	}
+	maven {
+		url "http://repo.spring.io/milestone"
+	}
+}
+
+dependencies {
+	compile project(':accurest-messaging-root:accurest-messaging-core')
+	compile 'org.apache.camel:camel-spring:[2.9.0,)'
+	compile 'org.slf4j:slf4j-api:[1.6.0,)'
+}

@@ -21,7 +21,7 @@ import static io.codearte.accurest.util.ContentUtils.getJavaMultipartFileParamet
  */
 @TypeChecked
 @PackageScope
-abstract class JUnitMethodBodyBuilder extends MethodBodyBuilder {
+abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder {
 
 	JUnitMethodBodyBuilder(GroovyDsl stubDefinition) {
 		super(stubDefinition)
@@ -87,12 +87,12 @@ abstract class JUnitMethodBodyBuilder extends MethodBodyBuilder {
 	}
 
 	@Override
-	protected String getResponseString(Request request) {
+	protected String getInputString(Request request) {
 		return 'ResponseOptions response = given().spec(request)'
 	}
 
 	@Override
-	protected String getRequestString() {
+	protected String getInputString() {
 		return 'MockMvcRequestSpecification request = given()'
 	}
 

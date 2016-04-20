@@ -2,7 +2,6 @@ package io.codearte.accurest.stubrunner
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-
 /**
  * Represents a single instance of ready-to-run stubs.
  * Can run the stubs and then will return the name of the collaborator together with
@@ -14,10 +13,10 @@ import groovy.util.logging.Slf4j
 @CompileStatic
 class StubRunner implements StubRunning {
 
-	private StubRunnerExecutor localStubRunner
 	private final StubRepository stubRepository
-	private StubConfiguration stubsConfiguration
-	private StubRunnerOptions stubRunnerOptions
+	private final StubConfiguration stubsConfiguration
+	private final StubRunnerOptions stubRunnerOptions
+	private StubRunnerExecutor localStubRunner
 
 	@Deprecated
 	StubRunner(Arguments arguments) {

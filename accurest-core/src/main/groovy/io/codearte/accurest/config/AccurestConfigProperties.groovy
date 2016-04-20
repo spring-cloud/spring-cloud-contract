@@ -74,4 +74,9 @@ class AccurestConfigProperties {
 	 * You can then mention them in your packaging task to create jar with stubs
 	 */
 	File stubsOutputDir
+
+	/**
+	 * Which version of Accurest Messaging Core to use
+	 */
+	String accurestMessagingCoreVersion = "+"
 }

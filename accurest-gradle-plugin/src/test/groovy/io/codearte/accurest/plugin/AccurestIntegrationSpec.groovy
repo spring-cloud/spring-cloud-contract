@@ -24,9 +24,13 @@ class AccurestIntegrationSpec extends IntegrationSpec {
 	}
 
 	protected void switchToJunitTestFramework() {
+		switchToJunitTestFramework(MVC_SPEC, MVC_TEST)
+	}
+
+	protected void switchToJunitTestFramework(String from, String to) {
 		Path path = buildFile.toPath()
 		String content = new StringBuilder(new String(Files.readAllBytes(path), UTF_8)).replaceAll(SPOCK, JUNIT)
-				.replaceAll(MVC_SPEC, MVC_TEST)
+				.replaceAll(from, to)
 		Files.write(path, content.getBytes(UTF_8))
 	}
 

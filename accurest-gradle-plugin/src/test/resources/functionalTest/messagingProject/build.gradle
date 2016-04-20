@@ -1,0 +1,105 @@
+buildscript {
+	repositories {
+		mavenLocal()
+		mavenCentral()
+	}
+	dependencies {
+		// will be passed via classpath
+		// classpath "io.codearte.accurest:accurest-gradle-plugin:+"
+	}
+}
+
+apply plugin: 'groovy'
+apply plugin: 'accurest'
+apply plugin: 'maven-publish'
+
+ext {
+	contractsDir = file("${project.rootDir}/repository/mappings/")
+	stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
+	wireMockStubsOutputDir = new File(stubsOutputDirRoot, 'repository/mappings/')
+	contractsOutputDir = new File(stubsOutputDirRoot, 'repository/accurest/')
+}
+
+configurations {
+	all {
+		resolutionStrategy {
+			eachDependency { DependencyResolveDetails details ->
+				// To prevent an accidental usage of groovy-all.jar and groovy.jar in different versions
+				// all modularized Groovy jars are replaced with groovy-all.jar by default.
+				if (details.requested.group == 'org.codehaus.groovy' && details.requested.name != "groovy-all") {
+					details.useTarget("org.codehaus.groovy:groovy-all:${details.requested.version}")
+				}
+			}
+		}
+	}
+}
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+	maven {
+		url "http://repo.spring.io/snapshot"
+	}
+	maven {
+		url "http://repo.spring.io/milestone"
+	}
+}
+
+dependencies {
+	compile "org.codehaus.groovy:groovy-all:2.4.5"
+	compile 'org.springframework.boot:spring-boot-starter-web:1.3.3.RELEASE'
+	compile 'org.springframework.boot:spring-boot-starter-actuator:1.3.3.RELEASE'
+	compile 'org.springframework.boot:spring-boot-starter-integration:1.3.3.RELEASE'
+	// will be passed via classpath (I have issues with doing that quite frankly)
+	compile 'io.codearte.accurest:accurest-messaging-integration:+'
+
+	testCompile "org.spockframework:spock-spring:1.0-groovy-2.4"
+	testCompile 'org.springframework.boot:spring-boot-starter-test:1.3.3.RELEASE'
+	testCompile "ch.qos.logback:logback-classic:1.1.2"
+}
+
+accurest {
+	//baseClassForTests = 'io.codearte.accurest.samples.book.MessagingBaseTest'
+	baseClassForTests = 'io.codearte.accurest.samples.book.MessagingBaseSpec'
+	basePackageForTests = 'accurest'
+	//targetFramework = 'JUnit'
+	targetFramework = 'Spock'
+	contractsDslDir = contractsDir
+//	generatedTestSourcesDir = file("${project.rootDir}/src/test/groovy/")
+	stubsOutputDir = wireMockStubsOutputDir
+}
+
+//TODO: Put it into the plugin
+task createWireMockStubsOutputDir << {
+	wireMockStubsOutputDir.mkdirs()
+}
+
+generateWireMockClientStubs.dependsOn { createWireMockStubsOutputDir }
+generateAccurest.dependsOn generateWireMockClientStubs
+
+wrapper {
+	gradleVersion '2.12'
+}
+
+task copyContracts(type: Copy) {
+	from contractsDir
+	into contractsOutputDir
+}
+
+task stubsJar(type: Jar, dependsOn: ["generateWireMockClientStubs", copyContracts]) {
+	baseName = "${project.name}-stubs"
+	from stubsOutputDirRoot
+}
+
+artifacts {
+	archives stubsJar
+}
+
+publishing {
+	publications {
+		stubs(MavenPublication) {
+			artifactId "${project.name}-stubs"
+			artifact stubsJar
+		}
+	}
+}

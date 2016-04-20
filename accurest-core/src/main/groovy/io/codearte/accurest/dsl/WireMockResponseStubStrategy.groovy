@@ -27,6 +27,9 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 
 	@PackageScope
 	ResponseDefinition buildClientResponseContent() {
+		if(!response) {
+			return null
+		}
 		ResponseDefinitionBuilder builder = new ResponseDefinitionBuilder()
 				.withStatus(response.status.clientValue as Integer)
 		appendHeaders(builder)

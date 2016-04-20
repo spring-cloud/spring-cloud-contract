@@ -1,0 +1,16 @@
+repositories {
+	mavenLocal()
+	jcenter()
+	maven {
+		url "http://repo.spring.io/snapshot"
+	}
+	maven {
+		url "http://repo.spring.io/milestone"
+	}
+}
+
+dependencies {
+	compile project(':accurest-messaging-root:accurest-messaging-core')
+	compile 'org.springframework:spring-messaging:[4.0.0.RELEASE,)'
+	compile 'org.springframework.cloud:spring-cloud-stream-test-support:[1.0.0.RC2,)'
+}

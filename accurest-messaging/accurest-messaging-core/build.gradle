@@ -1,0 +1,8 @@
+repositories {
+	jcenter()
+}
+
+dependencies {
+	compile 'com.fasterxml.jackson.core:jackson-databind:[2.4.4,)'
+	compile 'javax.inject:javax.inject:1'
+}

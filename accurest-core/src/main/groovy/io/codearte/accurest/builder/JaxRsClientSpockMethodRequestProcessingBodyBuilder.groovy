@@ -12,9 +12,9 @@ import java.util.regex.Pattern
 
 @PackageScope
 @TypeChecked
-class JaxRsClientSpockMethodBodyBuilder extends SpockMethodBodyBuilder {
+class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestProcessingBodyBuilder {
 
-	JaxRsClientSpockMethodBodyBuilder(GroovyDsl stubDefinition) {
+	JaxRsClientSpockMethodRequestProcessingBodyBuilder(GroovyDsl stubDefinition) {
 		super(stubDefinition)
 	}
 

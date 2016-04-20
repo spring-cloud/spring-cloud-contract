@@ -3,7 +3,6 @@ package io.codearte.accurest.builder
 import io.codearte.accurest.config.AccurestConfigProperties
 import io.codearte.accurest.config.TestFramework
 import io.codearte.accurest.util.NamesUtil
-
 /**
  * @author Jakub Kubrynski
  */
@@ -15,6 +14,7 @@ class ClassBuilder {
 	private final List<String> imports = []
 	private final List<String> staticImports = []
 	private final List<String> rules = []
+	private final List<String> fields = []
 	private final List<MethodBuilder> methods = []
 	private final List<String> classLevelAnnotations = []
 	private final TestFramework lang
@@ -49,6 +49,7 @@ class ClassBuilder {
 		return this
 	}
 
+
 	ClassBuilder addStaticImport(String importToAdd) {
 		staticImports << importToAdd
 		return this
@@ -56,6 +57,23 @@ class ClassBuilder {
 
 	ClassBuilder addMethod(MethodBuilder methodBuilder) {
 		methods << methodBuilder
+		return this
+	}
+
+	ClassBuilder addField(String fieldToAdd) {
+		fields << appendColonIfJUniTest(fieldToAdd)
+		return this
+	}
+
+	private String appendColonIfJUniTest(String field) {
+		if (lang == TestFramework.JUNIT && !field.endsWith(';')) {
+			return "$field;"
+		}
+		return field
+	}
+
+	ClassBuilder addField(List<String> fieldsToAdd) {
+		fields.addAll(fieldsToAdd.collect { appendColonIfJUniTest(it) })
 		return this
 	}
 
@@ -102,6 +120,13 @@ class ClassBuilder {
 		}
 		clazz.endBlock()
 		if (!rules.empty) {
+			clazz.addEmptyLine()
+		}
+
+		fields.sort().each {
+			clazz.addLine(it)
+		}
+		if (!fields.empty) {
 			clazz.addEmptyLine()
 		}
 

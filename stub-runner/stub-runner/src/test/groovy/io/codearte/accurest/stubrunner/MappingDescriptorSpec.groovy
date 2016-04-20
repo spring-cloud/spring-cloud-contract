@@ -9,7 +9,7 @@ class MappingDescriptorSpec extends Specification {
 
 	def 'should describe stub mapping'() {
 		given:
-		MappingDescriptor mappingDescriptor = new MappingDescriptor(MAPPING_DESCRIPTOR)
+		WiremockMappingDescriptor mappingDescriptor = new WiremockMappingDescriptor(MAPPING_DESCRIPTOR)
 
 		expect:
 		with(mappingDescriptor.mapping) {

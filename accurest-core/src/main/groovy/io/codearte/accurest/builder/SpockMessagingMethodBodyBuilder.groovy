@@ -6,22 +6,27 @@ import groovy.transform.TypeChecked
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.internal.ExecutionProperty
 import io.codearte.accurest.dsl.internal.Header
+import io.codearte.accurest.dsl.internal.Input
 import io.codearte.accurest.dsl.internal.NamedProperty
-import io.codearte.accurest.dsl.internal.Request
 
 import java.util.regex.Pattern
-
-import static io.codearte.accurest.util.ContentUtils.getGroovyMultipartFileParameterContent
-
 /**
  * @author Jakub Kubrynski
  */
 @PackageScope
 @TypeChecked
-abstract class SpockMethodBodyBuilder extends MethodBodyBuilder {
+class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
-	SpockMethodBodyBuilder(GroovyDsl stubDefinition) {
+	SpockMessagingMethodBodyBuilder(GroovyDsl stubDefinition) {
 		super(stubDefinition)
+	}
+
+	@Override
+	protected String getInputString(Input request) {
+		if (request.triggeredBy) {
+			return request.triggeredBy.executionCommand
+		}
+		return "accurestMessaging.send(inputMessage, '${request.messageFrom}')"
 	}
 
 	@Override
@@ -37,6 +42,42 @@ abstract class SpockMethodBodyBuilder extends MethodBodyBuilder {
 	@Override
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, Map.Entry entry) {
 		processBodyElement(blockBuilder, property + "." + entry.key, entry.value)
+	}
+
+	@Override
+	protected void processHeaderElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
+		blockBuilder.addLine("${exec.insertValue("response.getHeader(\'$property\')")}")
+	}
+
+	@Override
+	protected void processHeaderElement(BlockBuilder blockBuilder, String property, String value) {
+		blockBuilder.addLine("response.getHeader('$property') ${convertHeaderComparison(value)}")
+	}
+
+	@Override
+	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Pattern value) {
+		blockBuilder.addLine("response.getHeader('$property') ${convertHeaderComparison(value)}")
+	}
+
+	@Override
+	protected void validateResponseCodeBlock(BlockBuilder bb) {
+		if (outputMessage) {
+			bb.addLine("""def response = accurestMessaging.receiveMessage('${outputMessage.sentTo}')""")
+		} else {
+			bb.addLine('noExceptionThrown()')
+		}
+	}
+
+	@Override
+	protected void validateResponseHeadersBlock(BlockBuilder bb) {
+		outputMessage.headers?.collect { Header header ->
+			processHeaderElement(bb, header.name, header.serverValue)
+		}
+	}
+
+	@Override
+	protected String getResponseAsString() {
+		return 'accurestObjectMapper.writeValueAsString(response.payload)'
 	}
 
 	@Override
@@ -70,33 +111,43 @@ abstract class SpockMethodBodyBuilder extends MethodBodyBuilder {
 	}
 
 	@Override
-	protected String getResponseString(Request request) {
-		return 'def response = given().spec(request)'
-	}
-
-	@Override
-	protected String getRequestString() {
-		return 'def request = given()'
+	protected String getInputString() {
+		String request = 'def inputMessage = accurestMessaging.create('
+		if (inputMessage.messageBody) {
+			request = "${request}'''${bodyAsString}'''\n\t\t"
+		}
+		if (inputMessage.messageHeaders) {
+			request = "${request},[\n"
+		}
+		def headers = []
+		inputMessage.messageHeaders?.collect { Header header ->
+			headers << "\t\t\t${getHeaderString(header)}"
+		}
+		request = "${request}${headers.join(',\n')}"
+		if (inputMessage.messageHeaders) {
+			request = "${request}\n\t\t]"
+		}
+		return "${request})"
 	}
 
 	@Override
 	protected String getHeaderString(Header header) {
-		return ".header('${getTestSideValue(header.name)}', '${getTestSideValue(header.serverValue)}')"
+		return "'${getTestSideValue(header.name)}': '${getTestSideValue(header.serverValue)}'"
 	}
 
 	@Override
 	protected String getBodyString(String bodyAsString) {
-		return ".body('''$bodyAsString''')"
+		return ''
 	}
 
 	@Override
 	protected String getMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
-		return getGroovyMultipartFileParameterContent(propertyName, propertyValue)
+		return ''
 	}
 
 	@Override
 	protected String getParameterString(Map.Entry<String, Object> parameter) {
-		return ".param('$parameter.key', '$parameter.value')"
+		return ''
 	}
 
 	protected String convertHeaderComparison(String headerValue) {

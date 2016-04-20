@@ -2,7 +2,6 @@ package io.codearte.accurest.stubrunner
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-
 /**
  * Runs stubs for a particular {@link StubServer}
  */
@@ -57,9 +56,10 @@ class StubRunnerExecutor implements StubFinder {
 	}
 
 	private void startStubServers(StubConfiguration stubConfiguration, StubRepository repository) {
-		List<MappingDescriptor> mappings = repository.getProjectDescriptors()
+		List<WiremockMappingDescriptor> mappings = repository.getProjectDescriptors()
+		Collection<GroovyDslWrapper> contracts = repository.accurestContracts
 		stubServer =  portScanner.tryToExecuteWithFreePort { int availablePort ->
-			return new StubServer(availablePort, stubConfiguration, mappings).start()
+			return new StubServer(availablePort, stubConfiguration, mappings, contracts).start()
 		}
 	}
 

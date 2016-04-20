@@ -28,7 +28,7 @@ class RecursiveFilesConverterSpec extends Specification {
 		and:
 			def singleFileConverterStub = Stub(SingleFileConverter)
 			singleFileConverterStub.canHandleFileName(_) >> { String fileName -> fileName.endsWith(".groovy") }
-			singleFileConverterStub.convertContent(_) >> { "converted" }
+			singleFileConverterStub.convertContent(_, _) >> { "converted" }
 			singleFileConverterStub.generateOutputFileNameForInput(_) >> { String inputFileName -> inputFileName.replaceAll('.groovy', '.json') }
 
 			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(singleFileConverterStub, properties)
@@ -53,7 +53,7 @@ class RecursiveFilesConverterSpec extends Specification {
 		and:
 			def singleFileConverterStub = Stub(SingleFileConverter)
 			singleFileConverterStub.canHandleFileName(_) >> { String fileName -> fileName.endsWith(".groovy") }
-			singleFileConverterStub.convertContent(_) >> { "converted" }
+			singleFileConverterStub.convertContent(_, _) >> { "converted" }
 			singleFileConverterStub.generateOutputFileNameForInput(_) >> { String inputFileName -> inputFileName.replaceAll('.groovy', '.json') }
 
 			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(singleFileConverterStub, properties)

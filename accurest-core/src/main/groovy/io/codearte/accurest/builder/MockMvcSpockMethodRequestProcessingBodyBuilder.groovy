@@ -10,9 +10,9 @@ import java.util.regex.Pattern
 
 @PackageScope
 @TypeChecked
-class MockMvcSpockMethodBodyBuilder extends SpockMethodBodyBuilder {
+class MockMvcSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestProcessingBodyBuilder {
 
-	MockMvcSpockMethodBodyBuilder(GroovyDsl stubDefinition) {
+	MockMvcSpockMethodRequestProcessingBodyBuilder(GroovyDsl stubDefinition) {
 		super(stubDefinition)
 	}
 

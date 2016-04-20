@@ -40,6 +40,9 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 
 	@PackageScope
 	RequestPattern buildClientRequestContent() {
+		if(!request) {
+			return null
+		}
 		RequestPattern requestPattern = new RequestPattern()
 		appendMethod(requestPattern)
 		appendHeaders(requestPattern)

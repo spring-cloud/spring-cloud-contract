@@ -13,12 +13,15 @@ import groovy.util.logging.Slf4j
 class StubServer {
 	private WireMockServer wireMockServer
 	final StubConfiguration stubConfiguration
-	final Collection<MappingDescriptor> mappings
+	final Collection<WiremockMappingDescriptor> mappings
+	final Collection<GroovyDslWrapper> contracts
 
-	StubServer(int port, StubConfiguration stubConfiguration, Collection<MappingDescriptor> mappings) {
+	StubServer(int port, StubConfiguration stubConfiguration, Collection<WiremockMappingDescriptor> mappings,
+			   Collection<GroovyDslWrapper> contracts) {
 		this.stubConfiguration = stubConfiguration
 		this.mappings = mappings
 		this.wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(port))
+		this.contracts = contracts
 	}
 
 	StubServer start() {
@@ -51,8 +54,8 @@ class StubServer {
 		registerHealthCheck(wireMock, '/health')
 	}
 
-	private void registerStubs(Collection<MappingDescriptor> sortedMappings, WireMock wireMock) {
-		sortedMappings.each { MappingDescriptor mappingDescriptor ->
+	private void registerStubs(Collection<WiremockMappingDescriptor> sortedMappings, WireMock wireMock) {
+		sortedMappings.each { WiremockMappingDescriptor mappingDescriptor ->
 			try {
 				wireMock.register(mappingDescriptor.mapping)
 				log.debug("Registered stub mappings from $mappingDescriptor.descriptor")

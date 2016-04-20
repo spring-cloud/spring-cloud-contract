@@ -1,19 +1,8 @@
 package io.codearte.accurest.builder
 
-import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
-import groovy.transform.TypeCheckingMode
-import io.codearte.accurest.dsl.GroovyDsl
-import io.codearte.accurest.dsl.internal.DslProperty
-import io.codearte.accurest.dsl.internal.ExecutionProperty
-import io.codearte.accurest.dsl.internal.Header
-import io.codearte.accurest.dsl.internal.MatchingStrategy
-import io.codearte.accurest.dsl.internal.NamedProperty
-import io.codearte.accurest.dsl.internal.QueryParameter
-import io.codearte.accurest.dsl.internal.Request
-import io.codearte.accurest.dsl.internal.Response
-import io.codearte.accurest.dsl.internal.Url
+import io.codearte.accurest.dsl.internal.*
 import io.codearte.accurest.util.ContentType
 import io.codearte.accurest.util.JsonPaths
 import io.codearte.accurest.util.JsonToJsonPathsConverter
@@ -22,9 +11,6 @@ import io.codearte.accurest.util.MapConverter
 import java.util.regex.Pattern
 
 import static io.codearte.accurest.util.ContentUtils.extractValue
-import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromContent
-import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromHeader
-
 /**
  * @author Olga Maciaszek-Sharma
  * @since 2016-02-17
@@ -32,14 +18,6 @@ import static io.codearte.accurest.util.ContentUtils.recognizeContentTypeFromHea
 @TypeChecked
 @PackageScope
 abstract class MethodBodyBuilder {
-
-	protected final Request request
-	protected final Response response
-
-	MethodBodyBuilder(GroovyDsl stubDefinition) {
-		this.request = stubDefinition.request
-		this.response = stubDefinition.response
-	}
 
 	protected abstract void validateResponseCodeBlock(BlockBuilder bb)
 
@@ -71,9 +49,7 @@ abstract class MethodBodyBuilder {
 
 	protected abstract String getSimpleResponseBodyString(String responseString)
 
-	protected abstract String getResponseString(Request request)
-
-	protected abstract String getRequestString()
+	protected abstract String getInputString()
 
 	protected abstract String getHeaderString(Header header)
 
@@ -83,28 +59,28 @@ abstract class MethodBodyBuilder {
 
 	protected abstract String getParameterString(Map.Entry<String, Object> parameter)
 
+	protected abstract void processInput(BlockBuilder bb)
+
+	protected abstract void when(BlockBuilder bb)
+
+	protected abstract void then(BlockBuilder bb)
+
+	protected abstract ContentType getResponseContentType()
+
+	protected abstract String getBodyAsString()
+
+	protected abstract boolean hasGivenSection()
+
 	void appendTo(BlockBuilder blockBuilder) {
 		blockBuilder.startBlock()
 
-		givenBlock(blockBuilder)
+		if (hasGivenSection()) {
+			givenBlock(blockBuilder)
+		}
 		whenBlock(blockBuilder)
 		thenBlock(blockBuilder)
 
 		blockBuilder.endBlock()
-	}
-
-	protected void thenBlock(BlockBuilder bb) {
-		bb.addLine(addCommentSignIfRequired('then:'))
-		bb.startBlock()
-		then(bb)
-		bb.endBlock()
-	}
-
-	protected void whenBlock(BlockBuilder bb) {
-		bb.addLine(addCommentSignIfRequired('when:'))
-		bb.startBlock()
-		when(bb)
-		bb.endBlock().addEmptyLine()
 	}
 
 	protected void givenBlock(BlockBuilder bb) {
@@ -114,48 +90,29 @@ abstract class MethodBodyBuilder {
 		bb.endBlock().addEmptyLine()
 	}
 
+	protected void whenBlock(BlockBuilder bb) {
+		bb.addLine(addCommentSignIfRequired('when:'))
+		bb.startBlock()
+		when(bb)
+		bb.endBlock().addEmptyLine()
+	}
+
+	protected void thenBlock(BlockBuilder bb) {
+		bb.addLine(addCommentSignIfRequired('then:'))
+		bb.startBlock()
+		then(bb)
+		bb.endBlock()
+	}
+
 	protected void given(BlockBuilder bb) {
-		bb.addLine(getRequestString())
+		bb.addLine(getInputString())
 		bb.indent()
-		request.headers?.collect { Header header ->
-			bb.addLine(getHeaderString(header))
-		}
-		if (request.body) {
-			bb.addLine(getBodyString(bodyAsString))
-		}
-		if (request.multipart) {
-			multipartParameters?.each { Map.Entry<String, Object> entry -> bb.addLine(getMultipartParameterLine(entry)) }
-		}
+		processInput(bb)
 		addColonIfRequired(bb)
 		bb.unindent()
 	}
 
-	protected void when(BlockBuilder bb) {
-		bb.addLine(getResponseString(request))
-		bb.indent()
-
-		String url = buildUrl(request)
-		String method = request.method.serverValue.toString().toLowerCase()
-
-		bb.addLine(/.${method}("$url")/)
-		addColonIfRequired(bb)
-		bb.unindent()
-	}
-
-	protected void then(BlockBuilder bb) {
-		validateResponseCodeBlock(bb)
-		if (response.headers) {
-			validateResponseHeadersBlock(bb)
-		}
-		if (response.body) {
-			bb.endBlock()
-			bb.addLine(addCommentSignIfRequired('and:')).startBlock()
-			validateResponseBodyBlock(bb)
-		}
-	}
-
-	private void validateResponseBodyBlock(BlockBuilder bb) {
-		def responseBody = response.body.serverValue
+	protected void validateResponseBodyBlock(BlockBuilder bb, Object responseBody) {
 		ContentType contentType = getResponseContentType()
 		if (responseBody instanceof GString) {
 			responseBody = extractValue(responseBody, contentType, { DslProperty dslProperty -> dslProperty.serverValue })
@@ -177,14 +134,6 @@ abstract class MethodBodyBuilder {
 			processText(bb, "", responseBody as String)
 			addColonIfRequired(bb)
 		}
-	}
-
-	private ContentType getResponseContentType() {
-		ContentType contentType = recognizeContentTypeFromHeader(response.headers)
-		if (contentType == ContentType.UNKNOWN) {
-			contentType = recognizeContentTypeFromContent(response.body.serverValue)
-		}
-		return contentType
 	}
 
 	protected void appendJsonPath(BlockBuilder blockBuilder, String json) {
@@ -212,17 +161,6 @@ abstract class MethodBodyBuilder {
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, Object value) {
 	}
 
-	protected String getBodyAsString() {
-		Object bodyValue = extractServerValueFromBody(request.body.serverValue)
-		String json = new JsonOutput().toJson(bodyValue)
-		json = convertUnicodeEscapesIfRequired(json)
-		return trimRepeatedQuotes(json)
-	}
-
-	protected Map<String, Object> getMultipartParameters() {
-		return (Map<String, Object>) request?.multipart?.serverValue
-	}
-
 	protected String trimRepeatedQuotes(String toTrim) {
 		return toTrim.startsWith('"') ? toTrim.replaceAll('"', '') : toTrim
 	}
@@ -236,18 +174,6 @@ abstract class MethodBodyBuilder {
 		return bodyValue
 	}
 
-	protected boolean allowedQueryParameter(QueryParameter param) {
-		return allowedQueryParameter(param.serverValue)
-	}
-
-	protected boolean allowedQueryParameter(MatchingStrategy matchingStrategy) {
-		return matchingStrategy.type != MatchingStrategy.Type.ABSENT
-	}
-
-	protected boolean allowedQueryParameter(Object o) {
-		return true
-	}
-
 	protected String resolveParamValue(QueryParameter param) {
 		return resolveParamValue(param.serverValue)
 	}
@@ -258,14 +184,6 @@ abstract class MethodBodyBuilder {
 
 	protected String resolveParamValue(MatchingStrategy matchingStrategy) {
 		return matchingStrategy.serverValue.toString()
-	}
-
-	protected ContentType getRequestContentType() {
-		ContentType contentType = recognizeContentTypeFromHeader(request.headers)
-		if (contentType == ContentType.UNKNOWN) {
-			contentType = recognizeContentTypeFromContent(request.body.serverValue)
-		}
-		return contentType
 	}
 
 	protected String getTestSideValue(Object object) {
@@ -285,38 +203,5 @@ abstract class MethodBodyBuilder {
 		}
 	}
 
-	protected String buildUrl(Request request) {
-		if (request.url)
-			return getTestSideValue(buildUrlFromUrlPath(request.url))
-		if (request.urlPath)
-			return getTestSideValue(buildUrlFromUrlPath(request.urlPath))
-		throw new IllegalStateException("URL is not set!")
-	}
-
-	@TypeChecked(TypeCheckingMode.SKIP)
-	protected String buildUrlFromUrlPath(Url url) {
-		if (hasQueryParams(url)) {
-			String params = url.queryParameters.parameters
-					.findAll(this.&allowedQueryParameter)
-					.inject([] as List<String>) { List<String> result, QueryParameter param ->
-				result << "${param.name}=${resolveParamValue(param).toString()}"
-			}
-			.join('&')
-			return "${MapConverter.getTestSideValues(url.serverValue)}?$params"
-		}
-		return MapConverter.getTestSideValues(url.serverValue)
-	}
-
-	protected String getMultipartParameterLine(Map.Entry<String, Object> parameter) {
-		if (parameter.value instanceof NamedProperty) {
-			return ".multiPart(${getMultipartFileParameterContent(parameter.key, (NamedProperty) parameter.value)})"
-		}
-		return getParameterString(parameter)
-	}
-
-
-	private boolean hasQueryParams(Url url) {
-		return url.queryParameters
-	}
 
 }

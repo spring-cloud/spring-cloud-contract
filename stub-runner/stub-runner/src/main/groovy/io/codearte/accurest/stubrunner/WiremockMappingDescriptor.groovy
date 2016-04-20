@@ -14,10 +14,10 @@ import groovy.transform.ToString
 @EqualsAndHashCode
 @ToString(includePackage = false)
 @PackageScope
-class MappingDescriptor {
+class WiremockMappingDescriptor {
 	final File descriptor
 
-	MappingDescriptor(File mappingDescriptor) {
+	WiremockMappingDescriptor(File mappingDescriptor) {
 		this.descriptor = mappingDescriptor
 	}
 

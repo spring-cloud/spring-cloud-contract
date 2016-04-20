@@ -35,11 +35,14 @@ class RecursiveFilesConverter {
 						return
 					}
 					String convertedContent = singleFileConverter.convertContent(entry.key.last().toString(), contract)
+					if (!convertedContent) {
+						return
+					}
 					Path absoluteTargetPath = createAndReturnTargetDirectory(sourceFile)
 					File newGroovyFile = createTargetFileWithProperName(absoluteTargetPath, sourceFile)
 					newGroovyFile.setText(convertedContent, StandardCharsets.UTF_8.toString())
 				} catch (Exception e) {
-					throw new ConversionAccurestException("Unable to make convertion of ${sourceFile.name}", e)
+					throw new ConversionAccurestException("Unable to make conversion of ${sourceFile.name}", e)
 				}
 			}
 		}
@@ -49,12 +52,12 @@ class RecursiveFilesConverter {
 		Path relativePath = Paths.get(properties.contractsDslDir.toURI()).relativize(sourceFile.parentFile.toPath())
 		Path absoluteTargetPath = properties.stubsOutputDir.toPath().resolve(relativePath)
 		Files.createDirectories(absoluteTargetPath)
-		absoluteTargetPath
+		return absoluteTargetPath
 	}
 
 	private File createTargetFileWithProperName(Path absoluteTargetPath, File sourceFile) {
 		File newGroovyFile = new File(absoluteTargetPath.toFile(), singleFileConverter.generateOutputFileNameForInput(sourceFile.name))
 		log.info("Creating new json [$newGroovyFile.path]")
-		newGroovyFile
+		return newGroovyFile
 	}
 }
