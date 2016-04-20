@@ -22,7 +22,7 @@ class AccurestGradlePlugin implements Plugin<Project> {
 		this.project = project
 		AccurestConfigProperties extension = project.extensions.create('accurest', AccurestConfigProperties)
 
-		project.compileTestGroovy.dependsOn(GENERATE_SERVER_TESTS_TASK_NAME)
+		project.check.dependsOn(GENERATE_SERVER_TESTS_TASK_NAME)
 
 		setConfigurationDefaults(extension)
 		createGenerateTestsTask(extension)
