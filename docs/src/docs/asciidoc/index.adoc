@@ -1215,5 +1215,5 @@ as your first choice:
 
 [source,groovy]
 ----
-include::../../../accurest-gradle-plugin/src/test/resources/functionalTest/scenarioProject/build.gradle[tags=target_framework,indent=0]
+include::../../../../accurest-gradle-plugin/src/test/resources/functionalTest/scenarioProject/build.gradle[tags=target_framework,indent=0]
 ----
