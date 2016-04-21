@@ -126,6 +126,15 @@ project(':accurest-converters') {
 }
 
 project(':accurest-gradle-plugin') {
+
+	ext.messagingLibsDir ="$buildDir/messaging-libs"
+	ext.accurestGradlePluginLibsDir ="$buildDir/accurest-gradle-plugin-libs"
+
+	ext.testSystemProperties = [
+			'accurest-gradle-plugin-libs-dir': accurestGradlePluginLibsDir,
+			'messaging-libs-dir': messagingLibsDir
+	]
+
 	dependencies {
 		compile project(':accurest-core')
 		compile project(':accurest-converters')
@@ -135,50 +144,51 @@ project(':accurest-gradle-plugin') {
 		testCompile project(':accurest-testing-utils')
 	}
 
+	configurations {
+		messagingLibs
+		accurestGradlePluginLibs
+	}
+
+	dependencies {
+		messagingLibs project(':accurest-messaging-root:accurest-messaging-integration')
+		messagingLibs project(':accurest-messaging-root:accurest-messaging-core')
+		messagingLibs project(':accurest-testing-utils')
+		messagingLibs 'org.codehaus.groovy:groovy-all:2.4.5'
+
+		accurestGradlePluginLibs project(':accurest-gradle-plugin')
+	}
+
 	test {
 		exclude '**/*FunctionalSpec.*'
+		systemProperties = testSystemProperties
 	}
 	task funcTest(type: Test) {
 		include '**/*FunctionalSpec.*'
-
+		systemProperties = testSystemProperties
 		reports.html {
 			destination = file("${reporting.baseDir}/funcTests")
 		}
 	}
 
-	task createClasspathManifest {
-		def outputDir = file("$buildDir/$name")
-
-		inputs.files sourceSets.main.runtimeClasspath
-		outputs.dir outputDir
-
-		doLast {
-			outputDir.mkdirs()
-			file("$outputDir/plugin-classpath.txt").text = sourceSets.test.runtimeClasspath.join("\n")
-			// Switch to 'sourceSets.main' after 'test.dependsOn's are removed
-		}
+	task archiveMessagingLibsDependencies(type: Sync) {
+		from configurations.messagingLibs.resolvedConfiguration.resolvedArtifacts.collect { it.file }
+		into messagingLibsDir
 	}
 
-	test.dependsOn(':accurest-core:install')
-	test.dependsOn(':accurest-messaging-root:accurest-messaging-core:install')
-	test.dependsOn(':accurest-messaging-root:accurest-messaging-integration:install')
-
-	funcTest.dependsOn(':accurest-core:install')
-	funcTest.dependsOn(':accurest-messaging-root:accurest-messaging-core:install')
-	funcTest.dependsOn(':accurest-messaging-root:accurest-messaging-integration:install')
-
-    // Add the classpath file to the test runtime classpath
-	dependencies {
-		testRuntime files(createClasspathManifest)
+	task archiveAccurestGradlePluginLibsDependencies(type: Sync) {
+		from configurations.accurestGradlePluginLibs.resolvedConfiguration.resolvedArtifacts.collect { it.file }
+		into accurestGradlePluginLibsDir
 	}
+
+	// archive task needs to have jars ready
+	archiveMessagingLibsDependencies.dependsOn project(':accurest-messaging-root:accurest-messaging-integration').tasks.jar
+	archiveAccurestGradlePluginLibsDependencies.dependsOn project(':accurest-gradle-plugin').tasks.jar
+
+	test.dependsOn archiveMessagingLibsDependencies, archiveAccurestGradlePluginLibsDependencies
+	funcTest.dependsOn archiveMessagingLibsDependencies, archiveAccurestGradlePluginLibsDependencies
 
 	uploadArchives.dependsOn { funcTest }
 }
-
-task wrapper(type: Wrapper) {
-	gradleVersion = '2.12'
-}
-
 
 // REMOVE AFTER https://issues.gradle.org/browse/GRADLE-3433 IS FIXED
 buildscript {

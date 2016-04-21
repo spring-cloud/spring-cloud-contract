@@ -35,21 +35,19 @@ abstract class AccurestIntegrationSpec extends Specification {
 
 	protected void setupForProject(String projectRoot) {
 		copyResourcesToRoot(projectRoot)
-		def pluginClasspathResource = getClass().classLoader.findResource("plugin-classpath.txt")
-		if (pluginClasspathResource == null) {
-			throw new IllegalStateException("Did not find 'plugin-classpath.txt'")
-		}
-		String pluginClasspath = pluginClasspathResource.readLines()
-				.collect { it.replace('\\', '\\\\') } // escape backslashes in Windows paths
-				.collect { "'$it'" }
-				.join(", ")
-		buildFile << """
+		String accurestGradlePluginLibsDir = System.getProperty("accurest-gradle-plugin-libs-dir").replace('\\', '\\\\')
+		String messagingLibDir = System.getProperty("messaging-libs-dir").replace('\\', '\\\\')
+
+		buildFile.write """
+			ext.messagingLibsDir = '$messagingLibDir'
+
 			buildscript {
 				dependencies {
-					classpath files($pluginClasspath)
+					classpath fileTree(dir: '$accurestGradlePluginLibsDir', include: '*.jar')
 				}
 			}
-		"""
+
+		""" + buildFile.text
 		// Extending buildscript is required when 'apply' is used.
 		// 'GradleRunner#withPluginClasspath' can be used when plugin is added using 'plugins { id...'
 	}

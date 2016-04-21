@@ -3,10 +3,6 @@ buildscript {
 		mavenLocal()
 		mavenCentral()
 	}
-	dependencies {
-		// will be passed via classpath
-		// classpath "io.codearte.accurest:accurest-gradle-plugin:+"
-	}
 }
 
 apply plugin: 'groovy'
@@ -53,8 +49,8 @@ dependencies {
 	compile 'org.springframework.boot:spring-boot-starter-web:1.3.3.RELEASE'
 	compile 'org.springframework.boot:spring-boot-starter-actuator:1.3.3.RELEASE'
 	compile 'org.springframework.boot:spring-boot-starter-integration:1.3.3.RELEASE'
-	// will be passed via classpath (I have issues with doing that quite frankly)
-	compile 'io.codearte.accurest:accurest-messaging-integration:+'
+
+	compile fileTree(dir: messagingLibsDir, include: '*.jar')
 
 	testCompile "org.spockframework:spock-spring:1.0-groovy-2.4"
 	testCompile 'org.springframework.boot:spring-boot-starter-test:1.3.3.RELEASE'
