@@ -1,7 +1,6 @@
 package io.codearte.accurest.dsl.internal
 
 import spock.lang.Specification
-import spock.lang.Unroll
 
 import java.util.regex.Pattern
 
@@ -9,7 +8,6 @@ class RegexPatternsSpec extends Specification {
 
 	RegexPatterns regexPatterns = new RegexPatterns()
 
-	@Unroll
 	def "should generate a regex for ip address [#textToMatch] that is a match [#shouldMatch]"() {
 		expect:
 			shouldMatch == Pattern.compile(regexPatterns.ipAddress()).matcher(textToMatch).matches()
@@ -19,7 +17,6 @@ class RegexPatternsSpec extends Specification {
 			'a.b.'            || false
 	}
 
-	@Unroll
 	def "should generate a regex for hostname [#textToMatch] that is a match [#shouldMatch]"() {
 		expect:
 			shouldMatch == Pattern.compile(regexPatterns.hostname()).matcher(textToMatch).matches()
@@ -33,7 +30,6 @@ class RegexPatternsSpec extends Specification {
 			'asd.com'                || false
 	}
 
-	@Unroll
 	def "should generate a regex for email [#textToMatch] that is a match [#shouldMatch]"() {
 		expect:
 			shouldMatch == Pattern.compile(regexPatterns.email()).matcher(textToMatch).matches()
@@ -43,7 +39,6 @@ class RegexPatternsSpec extends Specification {
 			'a.b.'        || false
 	}
 
-	@Unroll
 	def "should generate a regex for url [#textToMatch] that is a match [#shouldMatch]"() {
 		expect:
 			shouldMatch == Pattern.compile(regexPatterns.url()).matcher(textToMatch).matches()
@@ -53,7 +48,6 @@ class RegexPatternsSpec extends Specification {
 			'a.b.'                         || false
 	}
 
-	@Unroll
 	def "should generate a regex for a number [#textToMatch] that is a match [#shouldMatch]"() {
 		expect:
 			shouldMatch == Pattern.compile(regexPatterns.number()).matcher(textToMatch).matches()

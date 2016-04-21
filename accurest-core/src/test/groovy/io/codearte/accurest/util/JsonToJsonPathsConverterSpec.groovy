@@ -8,13 +8,11 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import net.minidev.json.JSONArray
 import spock.lang.Specification
-import spock.lang.Unroll
 
 import java.util.regex.Pattern
 
 class JsonToJsonPathsConverterSpec extends Specification {
 
-	@Unroll
 	def 'should convert a json with list as root to a map of path to value'() {
 		when:
 			JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))

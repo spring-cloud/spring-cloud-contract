@@ -6,7 +6,6 @@ import io.codearte.accurest.file.Contract
 import io.codearte.accurest.util.AssertionUtil
 import spock.lang.Issue
 import spock.lang.Specification
-import spock.lang.Unroll
 
 class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifier {
 
@@ -1337,7 +1336,6 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	}
 
 	@Issue('42')
-	@Unroll
 	def 'should generate stub without optional parameters'() {
 		when:
 			String wireMockStub = new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub()
@@ -1442,7 +1440,6 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	}
 
 	@Issue('180')
-	@Unroll
 	def 'should generate stub with multipart parameters'() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {

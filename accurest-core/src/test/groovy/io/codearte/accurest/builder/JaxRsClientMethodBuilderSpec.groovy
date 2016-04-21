@@ -6,11 +6,9 @@ import io.codearte.accurest.dsl.WireMockStubVerifier
 import io.codearte.accurest.file.Contract
 import spock.lang.Issue
 import spock.lang.Specification
-import spock.lang.Unroll
 
 class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStubVerifier {
 
-	@Unroll
 	def "should generate assertions for simple response body with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -42,7 +40,6 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 	}
 
 	@Issue("#187")
-	@Unroll
 	def "should generate assertions for null and boolean values with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -76,7 +73,6 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 	}
 
 	@Issue("#79")
-	@Unroll
 	def "should generate assertions for simple response body constructed from map with a list with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -112,7 +108,6 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 	}
 
 	@Issue("#82")
-	@Unroll
 	def "should generate proper request when body constructed from map with a list with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -142,7 +137,6 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 	}
 
 	@Issue("#88")
-	@Unroll
 	def "should generate proper request when body constructed from GString with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -171,7 +165,6 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                  | 'entity("\\"property1=VAL1\\"", "application/octet-stream")'
 	}
 
-	@Unroll
 	def "should generate assertions for array in response body with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -205,7 +198,6 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
 	}
 
-	@Unroll
 	def "should generate assertions for array inside response body element with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -238,7 +230,6 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
 	}
 
-	@Unroll
 	def "should generate assertions for nested objects in response body with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -271,7 +262,6 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
 	}
 
-	@Unroll
 	def "should generate regex assertions for map objects in response body with #methodBodyName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -310,7 +300,6 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
 	}
 
-	@Unroll
 	def "should generate regex assertions for string objects in response body with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -343,7 +332,6 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
 	}
 
-	@Unroll
 	def "should ignore 'Accept' header and use 'request' method with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -372,7 +360,6 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                  | 'request("text/plain")'
 	}
 
-	@Unroll
 	def "should ignore 'Content-Type' header and use 'entity' method with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -406,7 +393,6 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                  | ['entity("\\"\\"", "text/plain")', 'header("Timer", "123")']
 	}
 
-	@Unroll
 	def "should generate a call with an url path and query parameters with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -462,7 +448,6 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 	}
 
 	@Issue('#169')
-	@Unroll
 	def "should generate a call with an url path and query parameters with url containing a pattern with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -517,7 +502,6 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                  | { String paramString -> paramString.replace("'", "\"") }
 	}
 
-	@Unroll
 	def "should generate test for empty body with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -546,7 +530,6 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                  | 'entity("\\"\\"", "application/octet-stream"'
 	}
 
-	@Unroll
 	def "should generate test for String in response body with #methodBodyName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -576,7 +559,6 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 	}
 
 	@Issue('#171')
-	@Unroll
 	def "should generate test with uppercase method name with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {

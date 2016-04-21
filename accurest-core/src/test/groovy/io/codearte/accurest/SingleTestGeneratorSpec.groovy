@@ -6,7 +6,6 @@ import io.codearte.accurest.file.Contract
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
-import spock.lang.Unroll
 
 import static io.codearte.accurest.config.TestFramework.JUNIT
 import static io.codearte.accurest.config.TestFramework.SPOCK
@@ -43,7 +42,6 @@ class SingleTestGeneratorSpec extends Specification {
 """)
 	}
 
-	@Unroll
 	def "should build MockMvc test class for #testFramework"() {
 		given:
 			AccurestConfigProperties properties = new AccurestConfigProperties();
@@ -65,7 +63,6 @@ class SingleTestGeneratorSpec extends Specification {
 			SPOCK         | spockClassStrings
 	}
 
-	@Unroll
 	def "should build JaxRs test class for #testFramework"() {
 		given:
 			AccurestConfigProperties properties = new AccurestConfigProperties();

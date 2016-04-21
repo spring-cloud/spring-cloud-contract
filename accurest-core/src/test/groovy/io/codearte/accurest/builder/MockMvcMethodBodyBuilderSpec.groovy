@@ -5,7 +5,6 @@ import io.codearte.accurest.dsl.WireMockStubVerifier
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Unroll
 
 import java.util.regex.Pattern
 /**
@@ -73,7 +72,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		}
 	}
 
-	@Unroll
 	def "should generate assertions for simple response body with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -105,7 +103,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 	}
 
 	@Issue("#187")
-	@Unroll
 	def "should generate assertions for null and boolean values with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -139,7 +136,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 	}
 
 	@Issue("#79")
-	@Unroll
 	def "should generate assertions for simple response body constructed from map with a list with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -175,7 +171,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 	}
 
 	@Issue("#82")
-	@Unroll
 	def "should generate proper request when body constructed from map with a list #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -205,7 +200,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 	}
 
 	@Issue("#88")
-	@Unroll
 	def "should generate proper request when body constructed from GString with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -235,7 +229,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 	}
 
 	@Issue("185")
-	@Unroll
 	def "should generate assertions for a response body containing map with integers as keys with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -268,7 +261,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
-	@Unroll
 	def "should generate assertions for array in response body with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -302,7 +294,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
-	@Unroll
 	def "should generate assertions for array inside response body element with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -335,7 +326,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
-	@Unroll
 	def "should generate assertions for nested objects in response body with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -368,7 +358,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
-	@Unroll
 	def "should generate regex assertions for map objects in response body with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -405,7 +394,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
-	@Unroll
 	def "should generate regex assertions for string objects in response body with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -437,7 +425,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 	}
 
 	@Issue(["#126", "#143"])
-	@Unroll
 	def "should generate escaped regex assertions for string objects in response body with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -467,7 +454,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
-	@Unroll
 	def "should generate a call with an url path and query parameters with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -516,7 +502,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 	}
 
 	@Issue('#169')
-	@Unroll
 	def "should generate a call with an url path and query parameters with url containing a pattern with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -564,7 +549,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
-	@Unroll
 	def "should generate test for empty body with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -592,7 +576,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }                  | ".body(\"\\\"\\\"\")"
 	}
 
-	@Unroll
 	def "should generate test for String in response body with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -622,7 +605,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 	}
 
 	@Issue('113')
-	@Unroll
 	def "should generate regex test for String in response header with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -662,7 +644,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 	}
 
 	@Issue('115')
-	@Unroll
 	def "should generate regex with helper method with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -701,7 +682,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }                  | 'assertThat(response.header("Location")).matches("^((http[s]?|ftp):/)/?([^:/s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+");'
 	}
 
-	@Unroll
 	def "should work with more complex stuff and jsonpaths with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -743,7 +723,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
-	@Unroll
 	def "should work properly with GString url with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -777,7 +756,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
-	@Unroll
 	def "should resolve properties in GString with regular expression with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -818,7 +796,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 	}
 
 	@Issue('42')
-	@Unroll
 	def "should not omit the optional field in the test creation with MockMvcSpockMethodBodyBuilder"() {
 		given:
 			MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDsl)
@@ -837,7 +814,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 	}
 
 	@Issue('42')
-	@Unroll
 	def "should not omit the optional field in the test creation with MockMvcJUnitMethodBodyBuilder"() {
 		given:
 			MethodBodyBuilder builder = new MockMvcJUnitMethodBodyBuilder(contractDsl)
@@ -856,7 +832,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 	}
 
 	@Issue('72')
-	@Unroll
 	def "should make the execute method work with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -905,7 +880,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }                  | ['''assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason"))''', '''assertThatLocationIsNull(response.header("Location"))''']
 	}
 
-	@Unroll
 	def "should support inner map and list definitions with #methodBuilderName"() {
 		given:
 
@@ -974,7 +948,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 
 	}
 
-	@Unroll
 	def "shouldn't generate unicode escape characters with #methodBuilderName"() {
 		given:
 			Pattern ONLY_ALPHA_UNICODE = Pattern.compile(/[\p{L}]*/)
@@ -1014,7 +987,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 	}
 
 	@Issue('177')
-	@Unroll
 	def "should generate proper test code when having multiline body with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -1043,7 +1015,6 @@ World.'''"""
 	}
 
 	@Issue('180')
-	@Unroll
 	def "should generate proper test code when having multipart parameters with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -1085,7 +1056,6 @@ World.'''"""
 	}
 
 	@Issue('180')
-	@Unroll
 	def "should generate proper test code when having multipart parameters with named as map with #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -1118,7 +1088,6 @@ World.'''"""
 	}
 
 	@Issue('#216')
-	@Unroll
 	def "should parse JSON with arrays using #methodBuilderName"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
@@ -1156,7 +1125,6 @@ World.'''"""
 			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
-	@Unroll
 	def "should work with execution property"() {
 		given:
 			GroovyDsl contractDsl = GroovyDsl.make {
