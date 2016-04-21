@@ -633,26 +633,6 @@ Example of Maven can be found in the [AccuREST Maven Plugin README](https://gith
 
 include::stubrunner.adoc[]
 
-
-===== Stub Runner Spring Cloud
-
-If you're using Spring Cloud then it's enough to add `stub-runner-spring-cloud` on classpath and automatically a bean of type `StubFinder` will get registered.
-
-===== Common properties for JUnit and Spring
-
-Some of the properties that are repetitive can be set using system properties or property sources (for Spring). Here are their names with their default values:
-
-[width="60%",frame="topbot",options="header"]
-|======================
-| Property name | Default value | Description |
-|stubrunner.port.range.min|10000| Minimal value of a port for a started WireMock with stubs|
-|stubrunner.port.range.max|15000| Minimal value of a port for a started WireMock with stubs|
-|stubrunner.stubs.repository.root|| Maven repo url. If blank then will call the local maven repo|
-|stubrunner.stubs.classifier|stubs| Default classifier for the stub artifacts|
-|stubrunner.work-offline|false| If true then will not contact any remote repositories to download stubs|
-|stubrunner.stubs|| Comma separated list of Ivy notation of stubs to download|
-|======================
-
 == Migration Guide
 
 === Migration to 0.4.7

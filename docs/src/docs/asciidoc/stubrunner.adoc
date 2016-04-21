@@ -21,7 +21,7 @@ include::../../../../stub-runner/stub-runner-spring/README.adoc[]
 include::../../../../stub-runner/stub-runner-spring-cloud/README.adoc[]
 
 
-===== Common properties for JUnit and Spring
+=== Common properties for JUnit and Spring
 
 Some of the properties that are repetitive can be set using system properties or property sources (for Spring). Here are their names with their default values:
 
