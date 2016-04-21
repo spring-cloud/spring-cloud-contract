@@ -16,6 +16,11 @@
         <maven>[3.2.1,)</maven>
     </prerequisites>
 
+    <organization>
+        <name>Codearte</name>
+        <url>http://codearte.io/</url>
+    </organization>
+
     <developers>
         <developer>
             <id>mariuszs</id>

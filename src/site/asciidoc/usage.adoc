@@ -1,0 +1,24 @@
+== Usage
+
+Sample minimal configuration for project with Java source code.
+
+----
+<plugin>
+    <groupId>io.codearte.accurest</groupId>
+    <artifactId>accurest-maven-plugin</artifactId>
+    <version>0.5.8</version> <!-- use latest release -->
+    <executions>
+        <execution>
+            <goals>
+                <goal>convert</goal>
+                <goal>generateStubs</goal>
+                <goal>generateTests</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <baseClassForTests>foobar.AccurestBaseTest</baseClassForTests>
+    </configuration>
+</plugin>
+----
+
