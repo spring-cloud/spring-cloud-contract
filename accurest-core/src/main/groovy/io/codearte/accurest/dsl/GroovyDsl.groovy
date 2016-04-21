@@ -17,6 +17,7 @@ class GroovyDsl {
 	Request request
 	Response response
 	String label
+	String description
 	Input inputMessage
 	OutputMessage outputMessage
 
@@ -33,6 +34,10 @@ class GroovyDsl {
 
 	void label(String label) {
 		this.label = label
+	}
+
+	void description(String description) {
+		this.description = description
 	}
 
 	void request(@DelegatesTo(Request) Closure closure) {
