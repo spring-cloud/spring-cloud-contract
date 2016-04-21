@@ -15,6 +15,7 @@ class SampleJerseyProjectSpec extends AccurestIntegrationSpec {
 			assert fileExists('build.gradle')
 		expect:
 			runTasksSuccessfully('check', "publishToMavenLocal")
+			jarContainsAccurestContracts('fraudDetectionService/build/libs')
 	}
 
 	def "should pass basic flow for JUnit"() {
@@ -23,6 +24,7 @@ class SampleJerseyProjectSpec extends AccurestIntegrationSpec {
 			assert fileExists('build.gradle')
 		expect:
 			runTasksSuccessfully('check', "publishToMavenLocal")
+			jarContainsAccurestContracts('fraudDetectionService/build/libs')
 	}
 
 }

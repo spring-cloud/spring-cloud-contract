@@ -9,9 +9,10 @@ import spock.lang.Specification
 
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.zip.ZipException
+import java.util.zip.ZipFile
 
 import static java.nio.charset.StandardCharsets.UTF_8
-
 /**
  * @author Olga Maciaszek-Sharma
  * @author Denis Stepanov
@@ -114,6 +115,26 @@ abstract class AccurestIntegrationSpec extends Specification {
 
 	protected File getBuildFile() {
 		return new File('build.gradle', testProjectDir)
+	}
+
+	protected boolean jarContainsAccurestContracts(String path) {
+		assert fileExists(path)
+		File rootFile = file(path)
+		boolean containsGroovyFiles = false
+		rootFile.eachFileRecurse { File file ->
+			try {
+				if (file.isFile() && file.name.endsWith('jar')) {
+					new ZipFile(file).entries().each {
+						if (it.name.endsWith('.groovy')) {
+							containsGroovyFiles = true
+						}
+					}
+				}
+			}catch (ZipException zipEx) {
+				println "Unable to open file ${file.name}"
+			}
+		}
+		return containsGroovyFiles
 	}
 
 }
