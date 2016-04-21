@@ -1,0 +1,37 @@
+== Using Stub Runner to automate running stubs
+
+Stub Runner automates downloading stubs from a Maven repository (that includes also the local Maven repository) and starting the WireMock server for each of those stubs.
+
+=== Modules
+
+AccuREST comes with a new structure of modules
+
+[source,indent=0]
+----
+└── stub-runner
+    ├── stub-runner
+    ├── stub-runner-junit
+    ├── stub-runner-spring
+    └── stub-runner-spring-cloud
+----
+
+include::../../../../stub-runner/stub-runner/README.adoc[]
+include::../../../../stub-runner/stub-runner-junit/README.adoc[]
+include::../../../../stub-runner/stub-runner-spring/README.adoc[]
+include::../../../../stub-runner/stub-runner-spring-cloud/README.adoc[]
+
+
+===== Common properties for JUnit and Spring
+
+Some of the properties that are repetitive can be set using system properties or property sources (for Spring). Here are their names with their default values:
+
+[width="60%",frame="topbot",options="header"]
+|======================
+| Property name | Default value | Description |
+|stubrunner.port.range.min|10000| Minimal value of a port for a started WireMock with stubs|
+|stubrunner.port.range.max|15000| Minimal value of a port for a started WireMock with stubs|
+|stubrunner.stubs.repository.root|| Maven repo url. If blank then will call the local maven repo|
+|stubrunner.stubs.classifier|stubs| Default classifier for the stub artifacts|
+|stubrunner.work-offline|false| If true then will not contact any remote repositories to download stubs|
+|stubrunner.stubs|| Comma separated list of Ivy notation of stubs to download|
+|======================

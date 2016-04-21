@@ -1,0 +1,106 @@
+=== Stub Runner JUnit Rule
+
+Stub Runner comes with a JUnit rule thanks to which you can very easily download and run stubs for given group and artifact id:
+
+[source,java,indent=0]
+----
+@ClassRule public static AccurestRule rule == new AccurestRule()
+			.repoRoot("http://your.repo.com")
+			.downloadStub("io.codearte.accurest.stubs", "loanIssuance")
+			.downloadStub("io.codearte.accurest.stubs:fraudDetectionServer")
+                        .downloadStub("io.codearte:stub1", "io.codearte:stub2:classifier", "io.codearte:stub3");
+----
+
+After that rule gets executed Stub Runner connects to your Maven repository and for the given list of dependencies tries to:
+* download them
+* cache them locally
+* unzip them to a temporary folder
+* start a WireMock server for each Maven dependency on a random port from the provided range of ports
+* feed the WireMock server with all JSON files that are valid WireMock definitions
+
+Stub Runner uses http://docs.groovy-lang.org/latest/html/documentation/grape.html[Groovy's Grape] mechanism to download the Maven dependencies. 
+Check their http://docs.groovy-lang.org/latest/html/documentation/grape.html[docs] for more information.
+
+Since the `AccurestRule` implements the `StubFinder` it allows you to find the started stubs:
+
+[source,groovy,indent=0]
+----
+interface StubFinder {
+	/**
+	 * For the given groupId and artifactId tries to find the matching
+	 * URL of the running stub.
+	 *
+	 * @param groupId - might be null. In that case a search only via artifactId takes place
+	 * @return URL of a running stub or null if not found
+	 */
+	URL findStubUrl(String groupId, String artifactId)
+
+	/**
+	 * For the given Ivy notation {@code groupId:artifactId} tries to find the matching
+	 * URL of the running stub. You can also pass only {@code artifactId}.
+	 *
+	 * @param ivyNotation - Ivy representation of the Maven artifact
+	 * @return URL of a running stub or null if not found
+	 */
+	URL findStubUrl(String ivyNotation)
+
+	/**
+	 * Returns all running stubs
+	 */
+	RunningStubs findAllRunningStubs()
+}
+----
+
+Example of usage in Spock tests:
+
+[source,groovy,indent=0]
+----
+@ClassRule @Shared AccurestRule rule == new AccurestRule()
+			.repoRoot('http://your.repo.com')
+			.downloadStub("io.codearte.accurest.stubs", "loanIssuance")
+			.downloadStub("io.codearte.accurest.stubs:fraudDetectionServer")
+
+	def 'should start WireMock servers'() {
+		expect: 'WireMocks are running'
+			rule.findStubUrl('io.codearte.accurest.stubs', 'loanIssuance') !== null
+			rule.findStubUrl('loanIssuance') !== null
+			rule.findStubUrl('loanIssuance') === rule.findStubUrl('io.codearte.accurest.stubs', 'loanIssuance')
+			rule.findStubUrl('io.codearte.accurest.stubs:fraudDetectionServer') !== null
+		and:
+			rule.findAllRunningStubs().isPresent('loanIssuance')
+			rule.findAllRunningStubs().isPresent('io.codearte.accurest.stubs', 'fraudDetectionServer')
+			rule.findAllRunningStubs().isPresent('io.codearte.accurest.stubs:fraudDetectionServer')
+		and: 'Stubs were registered'
+			"${rule.findStubUrl('loanIssuance').toString()}/name".toURL().text === 'loanIssuance'
+			"${rule.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text === 'fraudDetectionServer'
+	}
+----
+
+Example of usage in JUnit tests:
+
+[source,java,indent=0]
+----
+@ClassRule public static AccurestRule rule == new AccurestRule()
+			.repoRoot("http://your.repo.com")
+			.downloadStub("io.codearte.accurest.stubs", "loanIssuance")
+			.downloadStub("io.codearte.accurest.stubs:fraudDetectionServer");
+
+	@Test
+	public void should_start_wiremock_servers() throws Exception {
+		// expect: 'WireMocks are running'
+			then(rule.findStubUrl("io.codearte.accurest.stubs", "loanIssuance")).isNotNull();
+			then(rule.findStubUrl("loanIssuance")).isNotNull();
+			then(rule.findStubUrl("loanIssuance")).isEqualTo(rule.findStubUrl("io.codearte.accurest.stubs", "loanIssuance"));
+			then(rule.findStubUrl("io.codearte.accurest.stubs:fraudDetectionServer")).isNotNull();
+		// and:
+			then(rule.findAllRunningStubs().isPresent("loanIssuance")).isTrue();
+			then(rule.findAllRunningStubs().isPresent("io.codearte.accurest.stubs", "fraudDetectionServer")).isTrue();
+			then(rule.findAllRunningStubs().isPresent("io.codearte.accurest.stubs:fraudDetectionServer")).isTrue();
+		// and: 'Stubs were registered'
+			then(httpGet(rule.findStubUrl("loanIssuance").toString() + "/name")).isEqualTo("loanIssuance");
+			then(httpGet(rule.findStubUrl("fraudDetectionServer").toString() + "/name")).isEqualTo("fraudDetectionServer");
+	}
+----
+
+Check the *Common properties for JUnit and Spring* for more information on how to apply global configuration of Stub Runner.
+

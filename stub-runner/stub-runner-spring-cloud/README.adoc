@@ -1,11 +1,11 @@
-stub-runner-spring-cloud
-========================
+=== Stub Runner Spring Cloud
 
 Registers the stubs in the provided Service Discovery. It's enough to add the jar
 
-```
+[source,groovy,indent=0]
+----
 io.codearte.accurest:stub-runner-spring-cloud
-```
+----
 
 and the Stub Runner autoconfiguration should be picked up.
 
