@@ -1,6 +1,26 @@
-== Using Stub Runner to automate running stubs
+== Stub Runner
 
-Stub Runner automates downloading stubs from a Maven repository (that includes also the local Maven repository) and starting the WireMock server for each of those stubs.
+One of the issues that you could have encountered while using Accurest was to pass the generated WireMock JSON stubs from the server side to the client side (or various clients).
+ The same takes place in terms of client side generation for messaging.
+
+Copying the JSON files / setting the client side for messaging manually is out of the question.
+
+=== Publishing stubs as JARs
+
+The easiest approach would be to centralize the way stubs are kept. For example you can keep them as JARs in a Maven repository.
+
+==== Gradle
+
+Example of Accurest Gradle setup:
+
+[source,groovy,indent=0]
+----
+include::../../../../accurest-gradle-plugin/src/test/resources/functionalTest/scenarioProject/build.gradle[tags=jar_setup,indent=0]
+----
+
+==== Maven
+
+Example of Maven can be found in the [AccuREST Maven Plugin README](https://github.com/Codearte/accurest-maven-plugin/=publishing-wiremock-stubs-projectf-stubsjar)
 
 === Modules
 

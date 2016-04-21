@@ -39,12 +39,39 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 	apply plugin: 'spring-boot'
 	apply plugin: 'accurest'
 
+	// tag::jar_setup[]
 	ext {
 		contractsDir = file("mappings")
 		stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
 		wireMockStubsOutputDir = file(new File(stubsOutputDirRoot, 'repository/mappings/'))
 		contractsOutputDir = file(new File(stubsOutputDirRoot, 'repository/accurest/'))
 	}
+
+	task copyContracts(type: Copy) {
+		from contractsDir
+		include '**/*.groovy'
+		into contractsOutputDir
+	}
+
+	task stubsJar(type: Jar, dependsOn: ["generateWireMockClientStubs", copyContracts]) {
+		baseName = "${project.name}"
+		classifier = "stubs"
+		from stubsOutputDirRoot
+	}
+
+	artifacts {
+		archives stubsJar
+	}
+
+	publishing {
+		publications {
+			stubs(MavenPublication) {
+				artifactId "${project.name}-stubs"
+				artifact stubsJar
+			}
+		}
+	}
+	// end::jar_setup[]
 
 	accurest {
 		// tag::target_framework[]
@@ -79,31 +106,6 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 	}
 
 	clean.dependsOn('cleanup')
-
-	task copyContracts(type: Copy) {
-		from contractsDir
-		include '**/*.groovy'
-		into contractsOutputDir
-	}
-
-	task stubsJar(type: Jar, dependsOn: ["generateWireMockClientStubs", copyContracts]) {
-		baseName = "${project.name}"
-		classifier = "stubs"
-		from stubsOutputDirRoot
-	}
-
-	artifacts {
-		archives stubsJar
-	}
-
-	publishing {
-		publications {
-			stubs(MavenPublication) {
-				artifactId "${project.name}-stubs"
-				artifact stubsJar
-			}
-		}
-	}
 
 	test {
 		testLogging {
