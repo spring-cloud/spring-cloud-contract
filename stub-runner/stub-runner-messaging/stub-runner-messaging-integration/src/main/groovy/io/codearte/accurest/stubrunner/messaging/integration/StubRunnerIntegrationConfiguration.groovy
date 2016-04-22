@@ -33,7 +33,7 @@ class StubRunnerIntegrationConfiguration {
 					.transform(new StubRunnerIntegrationTransformer(dsl), { GenericEndpointSpec e -> e.id("${flowName}.transformer") })
 					.channel(dsl.outputMessage.sentTo)
 					.get()
-				beanFactory.initializeBean(integrationFlow, "${name}_${dsl.label}_${dsl.hashCode()}")
+				beanFactory.initializeBean(integrationFlow, flowName)
 				beanFactory.getBean("${flowName}.filter", Lifecycle.class).start();
 				beanFactory.getBean("${flowName}.transformer", Lifecycle.class).start();
 			}
