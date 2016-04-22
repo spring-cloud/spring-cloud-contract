@@ -18,7 +18,7 @@ class GroovyDsl {
 	Response response
 	String label
 	String description
-	Input inputMessage
+	Input input
 	OutputMessage outputMessage
 
 	static GroovyDsl make(Closure closure) {
@@ -53,8 +53,8 @@ class GroovyDsl {
 	}
 
 	void input(@DelegatesTo(Input) Closure closure) {
-		this.inputMessage = new Input()
-		closure.delegate = inputMessage
+		this.input = new Input()
+		closure.delegate = input
 		closure()
 	}
 

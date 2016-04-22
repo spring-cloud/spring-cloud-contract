@@ -26,6 +26,14 @@ class Headers {
 		}
 	}
 
+	Map<String , Object> asStubSideMap() {
+		def acc = [:].withDefault { [] as Collection<Object> }
+		return entries.inject(acc as Map<String, Object>) { Map<String, Object> map, Header header ->
+			map[header.name] = header.clientValue
+			return map
+		} as Map<String , Object>
+	}
+
 	boolean equals(o) {
 		if (this.is(o)) return true
 		if (getClass() != o.class) return false

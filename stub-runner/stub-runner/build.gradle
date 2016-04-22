@@ -5,6 +5,7 @@ mainClassName = 'io.codearte.accurest.stubrunner.StubRunnerMain'
 
 dependencies {
 	compile project(':accurest-core')
+	compile project(':accurest-messaging-root:accurest-messaging-core')
 	compile 'org.apache.ivy:ivy:2.4.0'
 	compile localGroovy()
 	compile "com.github.tomakehurst:wiremock:$wiremockVersion"

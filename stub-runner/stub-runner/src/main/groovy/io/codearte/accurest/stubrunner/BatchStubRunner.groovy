@@ -1,7 +1,7 @@
 package io.codearte.accurest.stubrunner
 
 import groovy.transform.CompileStatic
-
+import io.codearte.accurest.dsl.GroovyDsl
 /**
  * Manages lifecycle of multiple {@link StubRunner} instances.
  *
@@ -46,6 +46,29 @@ class BatchStubRunner implements StubRunning {
 	@Override
 	RunningStubs findAllRunningStubs() {
 		return new RunningStubs(stubRunners.collect { StubRunner runner -> runner.findAllRunningStubs() })
+	}
+
+	@Override
+	Map<StubConfiguration, Collection<GroovyDsl>> getAccurestContracts() {
+		return stubRunners.inject([:]) { Map<StubConfiguration, Collection<GroovyDsl>> map, StubRunner stubRunner ->
+			map.putAll(stubRunner.accurestContracts)
+			return map
+		} as Map<StubConfiguration, Collection<GroovyDsl>>
+	}
+
+	@Override
+	void trigger(String ivyNotation, String labelName) {
+		stubRunners.each { it.trigger(ivyNotation, labelName) }
+	}
+
+	@Override
+	void trigger(String labelName) {
+		stubRunners.each { it.trigger(labelName) }
+	}
+
+	@Override
+	void trigger() {
+		stubRunners.each { it.trigger() }
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package io.codearte.accurest.stubrunner
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import io.codearte.accurest.stubrunner.util.StringUtils
@@ -51,11 +52,28 @@ public class StubConfiguration {
 		return StringUtils.hasText(classifier)
 	}
 
-	public String toColonSeparatedDependencyNotation() {
+	String toColonSeparatedDependencyNotation() {
 		if(!isDefined()) {
 			return ""
 		}
 		return [groupId, artifactId, classifier].join(STUB_COLON_DELIMITER)
 	}
 
+	@CompileDynamic
+	boolean matches(String ivyNotationAsString) {
+		def (String groupId, String artifactId) = ivyNotationFrom(ivyNotationAsString)
+		if (!groupId) {
+			return this.artifactId == artifactId
+		}
+		return this.groupId == groupId && this.artifactId == artifactId
+	}
+
+	private String[] ivyNotationFrom(String ivyNotation) {
+		String[] splitString = ivyNotation.split(":")
+		if (splitString.length == 1) {
+			// assuming that ivy notation represents artifactId only
+			return [null, splitString[0]] as String[]
+		}
+		return [splitString[0], splitString[1]] as String[]
+	}
 }

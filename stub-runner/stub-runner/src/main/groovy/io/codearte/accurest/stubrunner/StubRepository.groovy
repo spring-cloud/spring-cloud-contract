@@ -15,16 +15,23 @@ import org.codehaus.groovy.control.CompilerConfiguration
 class StubRepository {
 
 	private final File path
+	final List<WiremockMappingDescriptor> projectDescriptors
+	final Collection<GroovyDsl> accurestContracts
 
 	StubRepository(File repository) {
 		if (!repository.isDirectory()) {
-			throw new FileNotFoundException('Missing descriptor repository')
+			throw new FileNotFoundException("Missing descriptor repository under path [$path]")
 		}
 		this.path = repository
+		this.projectDescriptors = projectDescriptors()
+		this.accurestContracts = accurestContracts()
 	}
 
-	Collection<GroovyDslWrapper> getAccurestContracts() {
-		List<GroovyDslWrapper> contracts = []
+	/**
+	 * Returns a list of {@link GroovyDsl}
+	 */
+	private Collection<GroovyDsl> accurestContracts() {
+		List<GroovyDsl> contracts = []
 		contracts.addAll(accurestDescriptors())
 		return contracts
 	}
@@ -32,7 +39,7 @@ class StubRepository {
 	/**
 	 * Returns the list of WireMock JSON files wrapped in {@link WiremockMappingDescriptor}
 	 */
-	List<WiremockMappingDescriptor> getProjectDescriptors() {
+	private List<WiremockMappingDescriptor> projectDescriptors() {
 		List<WiremockMappingDescriptor> mappingDescriptors = []
 		mappingDescriptors.addAll(contextDescriptors())
 		return mappingDescriptors
@@ -52,18 +59,17 @@ class StubRepository {
 		return mappingDescriptors
 	}
 
-	private Collection<GroovyDslWrapper> accurestDescriptors() {
+	private Collection<GroovyDsl> accurestDescriptors() {
 		return path.exists() ? collectAccurestDescriptors(path) : []
 	}
 
-	private Collection<GroovyDslWrapper> collectAccurestDescriptors(File descriptorsDirectory) {
-		List<GroovyDslWrapper> mappingDescriptors = []
+	private Collection<GroovyDsl> collectAccurestDescriptors(File descriptorsDirectory) {
+		List<GroovyDsl> mappingDescriptors = []
 		descriptorsDirectory.eachFileRecurse { File file ->
 			if (isAccurestDescriptor(file)) {
 				try {
-					mappingDescriptors << new GroovyDslWrapper(
+					mappingDescriptors <<
 							((new GroovyShell(delegate.class.classLoader, new Binding(), new CompilerConfiguration(sourceEncoding:'UTF-8')).evaluate(file)) as GroovyDsl)
-					)
 				} catch (Exception e) {
 					log.warn("Exception occurred while trying to parse file [$file]", e)
 				}

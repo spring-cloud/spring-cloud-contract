@@ -44,7 +44,7 @@ class MethodBuilder {
 	}
 
 	private MethodBodyBuilder getMethodBodyBuilder() {
-		if (stubContent.inputMessage || stubContent.outputMessage) {
+		if (stubContent.input || stubContent.outputMessage) {
 			if (configProperties.targetFramework == TestFramework.JUNIT){
 				return new JUnitMessagingMethodBodyBuilder(stubContent)
 			}

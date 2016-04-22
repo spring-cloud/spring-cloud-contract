@@ -1,5 +1,6 @@
 package io.codearte.accurest.stubrunner
 
+import io.codearte.accurest.messaging.noop.NoOpAccurestMessaging
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
@@ -12,7 +13,7 @@ class StubRunnerFactorySpec extends Specification {
 	Collection<StubConfiguration> collaborators = [new StubConfiguration("a:b"), new StubConfiguration("c:d")]
 	StubDownloader downloader = Mock(StubDownloader)
 	StubRunnerOptions stubRunnerOptions = new StubRunnerOptions(stubRepositoryRoot: 'http://sth.net')
-	StubRunnerFactory factory = new StubRunnerFactory(stubRunnerOptions, collaborators, downloader)
+	StubRunnerFactory factory = new StubRunnerFactory(stubRunnerOptions, collaborators, downloader, new NoOpAccurestMessaging())
 
 	def "Should download stub definitions many times"() {
 		given:

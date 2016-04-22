@@ -1,9 +1,8 @@
 package io.codearte.accurest.stubrunner
 
 import groovy.transform.CompileStatic
-import groovy.transform.PackageScope
 import groovy.util.logging.Slf4j
-
+import io.codearte.accurest.messaging.AccurestMessaging
 /**
  * Factory of StubRunners. Basing on the options and passed collaborators
  * downloads the stubs and returns a list of corresponding stub runners.
@@ -15,13 +14,15 @@ class StubRunnerFactory {
 	private final StubRunnerOptions stubRunnerOptions
 	private final Collection<StubConfiguration> collaborators
 	private final StubDownloader stubDownloader
+	private final AccurestMessaging accurestMessaging
 
 	StubRunnerFactory(StubRunnerOptions stubRunnerOptions,
 	                  Collection<StubConfiguration> collaborators,
-	                            StubDownloader stubDownloader) {
+	                            StubDownloader stubDownloader, AccurestMessaging accurestMessaging) {
 		this.stubRunnerOptions = stubRunnerOptions
 		this.collaborators = collaborators
 		this.stubDownloader = stubDownloader
+		this.accurestMessaging = accurestMessaging
 	}
 
 	Collection<StubRunner> createStubsFromServiceConfiguration() {
@@ -42,7 +43,7 @@ class StubRunnerFactory {
 
 	private StubRunner createStubRunner(File unzippedStubsDir, StubConfiguration stubsConfiguration,
 										StubRunnerOptions stubRunnerOptions) {
-		return new StubRunner(stubRunnerOptions, unzippedStubsDir.path, stubsConfiguration)
+		return new StubRunner(stubRunnerOptions, unzippedStubsDir.path, stubsConfiguration, accurestMessaging)
 	}
 
 }

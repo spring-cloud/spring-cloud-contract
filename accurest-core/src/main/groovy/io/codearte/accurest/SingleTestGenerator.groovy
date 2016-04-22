@@ -58,7 +58,7 @@ class SingleTestGenerator {
 			File stubsFile = it.path.toFile()
 			log.debug("Stub content from file [${stubsFile.text}]")
 			GroovyDsl stubContent = new GroovyShell(delegate.class.classLoader, new Binding(), new CompilerConfiguration(sourceEncoding:'UTF-8')).evaluate(stubsFile)
-			TestType testType = (stubContent.inputMessage || stubContent.outputMessage) ? TestType.MESSAGING : TestType.HTTP
+			TestType testType = (stubContent.input || stubContent.outputMessage) ? TestType.MESSAGING : TestType.HTTP
 			return [(new ParsedDsl(it, stubContent, stubsFile)) : testType]
 		}
 

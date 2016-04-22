@@ -1,6 +1,8 @@
 package io.codearte.accurest.stubrunner
 
-interface StubFinder {
+import io.codearte.accurest.dsl.GroovyDsl
+
+interface StubFinder extends StubTriggerer {
 	/**
 	 * For the given groupId and artifactId tries to find the matching
 	 * URL of the running stub.
@@ -23,4 +25,9 @@ interface StubFinder {
 	 * Returns all running stubs
 	 */
 	RunningStubs findAllRunningStubs()
+
+	/**
+	 * Returns the list of Accurest contracts
+	 */
+	Map<StubConfiguration, Collection<GroovyDsl>> getAccurestContracts()
 }

@@ -3,11 +3,14 @@ package io.codearte.accurest.stubrunner.spring;
 import java.io.IOException;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
+import io.codearte.accurest.messaging.AccurestMessaging;
+import io.codearte.accurest.messaging.noop.NoOpAccurestMessaging;
 import io.codearte.accurest.stubrunner.BatchStubRunner;
 import io.codearte.accurest.stubrunner.BatchStubRunnerFactory;
 import io.codearte.accurest.stubrunner.StubConfiguration;
@@ -21,6 +24,8 @@ import io.codearte.accurest.stubrunner.util.StubsParser;
  */
 @Configuration
 public class StubRunnerConfiguration {
+
+	@Autowired(required = false) AccurestMessaging accurestMessaging;
 
 	/**
 	 * Bean that initializes stub runners, runs them and on shutdown closes them. Upon its instantiation
@@ -45,7 +50,8 @@ public class StubRunnerConfiguration {
 		StubRunnerOptions stubRunnerOptions = new StubRunnerOptions(minPortValue, maxPortValue, uriStringOrEmpty(stubRepositoryRoot),
 				stubRepositoryRoot == null || workOffline, stubsSuffix);
 		Set<StubConfiguration> dependencies = StubsParser.fromString(stubs, stubsSuffix);
-		BatchStubRunner batchStubRunner = new BatchStubRunnerFactory(stubRunnerOptions, dependencies).buildBatchStubRunner();
+		BatchStubRunner batchStubRunner = new BatchStubRunnerFactory(stubRunnerOptions, dependencies,
+				accurestMessaging != null ? accurestMessaging :  new NoOpAccurestMessaging()).buildBatchStubRunner();
 		// TODO: Consider running it in a separate thread
 		batchStubRunner.runStubs();
 		return batchStubRunner;

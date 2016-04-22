@@ -6,12 +6,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
+import io.codearte.accurest.dsl.GroovyDsl;
 import io.codearte.accurest.stubrunner.BatchStubRunner;
 import io.codearte.accurest.stubrunner.BatchStubRunnerFactory;
 import io.codearte.accurest.stubrunner.RunningStubs;
@@ -160,5 +162,25 @@ public class AccurestRule implements TestRule, StubFinder {
 	@Override
 	public RunningStubs findAllRunningStubs() {
 		return stubFinder.findAllRunningStubs();
+	}
+
+	@Override
+	public Map<StubConfiguration, Collection<GroovyDsl>> getAccurestContracts() {
+		return stubFinder.getAccurestContracts();
+	}
+
+	@Override
+	public void trigger(String ivyNotation, String labelName) {
+		throw new UnsupportedOperationException("Feature not yet supported");
+	}
+
+	@Override
+	public void trigger(String labelName) {
+		throw new UnsupportedOperationException("Feature not yet supported");
+	}
+
+	@Override
+	public void trigger() {
+		throw new UnsupportedOperationException("Feature not yet supported");
 	}
 }

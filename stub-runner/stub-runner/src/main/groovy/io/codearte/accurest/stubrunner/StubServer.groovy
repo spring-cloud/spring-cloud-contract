@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import groovy.util.logging.Slf4j
+import io.codearte.accurest.dsl.GroovyDsl
 
 @CompileStatic
 @Slf4j
@@ -14,10 +15,10 @@ class StubServer {
 	private WireMockServer wireMockServer
 	final StubConfiguration stubConfiguration
 	final Collection<WiremockMappingDescriptor> mappings
-	final Collection<GroovyDslWrapper> contracts
+	final Collection<GroovyDsl> contracts
 
 	StubServer(int port, StubConfiguration stubConfiguration, Collection<WiremockMappingDescriptor> mappings,
-			   Collection<GroovyDslWrapper> contracts) {
+			   Collection<GroovyDsl> contracts) {
 		this.stubConfiguration = stubConfiguration
 		this.mappings = mappings
 		this.wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(port))

@@ -1,6 +1,8 @@
 package io.codearte.accurest.stubrunner
 
 import groovy.transform.CompileStatic
+import io.codearte.accurest.messaging.AccurestMessaging
+import io.codearte.accurest.messaging.noop.NoOpAccurestMessaging
 
 /**
  * Manages lifecycle of multiple {@link StubRunner} instances.
@@ -14,21 +16,29 @@ class BatchStubRunnerFactory {
 	private final StubRunnerOptions stubRunnerOptions
 	private final Collection<StubConfiguration> dependencies
 	private final StubDownloader stubDownloader
+	private final AccurestMessaging accurestMessaging
 
 	BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, Collection<StubConfiguration> dependencies) {
-		this(stubRunnerOptions, dependencies, new GrapeStubDownloader())
+		this(stubRunnerOptions, dependencies, new GrapeStubDownloader(), new NoOpAccurestMessaging())
+	}
+
+	BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, Collection<StubConfiguration> dependencies,
+						   AccurestMessaging accurestMessaging) {
+		this(stubRunnerOptions, dependencies, new GrapeStubDownloader(), accurestMessaging)
 	}
 
 	BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions,
 	                       Collection<StubConfiguration> dependencies,
-	                       StubDownloader stubDownloader) {
+	                       StubDownloader stubDownloader,
+						   AccurestMessaging accurestMessaging) {
 		this.stubRunnerOptions = stubRunnerOptions
 		this.dependencies = dependencies
 		this.stubDownloader = stubDownloader
+		this.accurestMessaging = accurestMessaging
 	}
 
 	BatchStubRunner buildBatchStubRunner() {
-		StubRunnerFactory stubRunnerFactory = new StubRunnerFactory(stubRunnerOptions, dependencies, stubDownloader)
+		StubRunnerFactory stubRunnerFactory = new StubRunnerFactory(stubRunnerOptions, dependencies, stubDownloader, accurestMessaging)
 		return new BatchStubRunner(stubRunnerFactory.createStubsFromServiceConfiguration())
 	}
 

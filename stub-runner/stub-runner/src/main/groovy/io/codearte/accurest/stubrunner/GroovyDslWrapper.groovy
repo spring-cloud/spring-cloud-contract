@@ -11,7 +11,7 @@ import io.codearte.accurest.dsl.GroovyDsl
 @CompileStatic
 class GroovyDslWrapper {
 
-	@Delegate private final GroovyDsl groovyDsl
+	@Delegate final GroovyDsl groovyDsl
 
 	GroovyDslWrapper(GroovyDsl groovyDsl) {
 		this.groovyDsl = groovyDsl

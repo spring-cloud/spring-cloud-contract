@@ -1,13 +1,19 @@
 include 'docs'
 include "accurest-core", "accurest-gradle-plugin", 'accurest-converters', 'accurest-testing-utils'
-include ':stub-runner:stub-runner'
-include ':stub-runner:stub-runner-spring'
-include ':stub-runner:stub-runner-spring-cloud'
-include ':stub-runner:stub-runner-junit'
+
 include ':accurest-messaging:accurest-messaging-core'
 include ':accurest-messaging:accurest-messaging-integration'
 include ':accurest-messaging:accurest-messaging-stream'
 include ':accurest-messaging:accurest-messaging-camel'
+
+include ':stub-runner:stub-runner'
+include ':stub-runner:stub-runner-spring'
+include ':stub-runner:stub-runner-spring-cloud'
+include ':stub-runner:stub-runner-junit'
+
+include ':stub-runner:stub-runner-messaging:stub-runner-messaging-integration'
+include ':stub-runner:stub-runner-messaging:stub-runner-messaging-stream'
+include ':stub-runner:stub-runner-messaging:stub-runner-messaging-camel'
 
 include ':samples:messaging-stream'
 include ':samples:messaging-integration'
@@ -19,3 +25,4 @@ rootProject.name = "accurest"
 //to prevent StackOverflow in Sonar
 project(":stub-runner").name = "stub-runner-root"
 project(":accurest-messaging").name = "accurest-messaging-root"
+project(":stub-runner:stub-runner-messaging").name = "stub-runner-messaging-root"

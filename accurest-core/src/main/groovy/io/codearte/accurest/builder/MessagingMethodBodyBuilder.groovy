@@ -22,7 +22,7 @@ abstract class MessagingMethodBodyBuilder extends MethodBodyBuilder {
 	protected final OutputMessage outputMessage
 
 	MessagingMethodBodyBuilder(GroovyDsl stubDefinition) {
-		this.inputMessage = stubDefinition.inputMessage
+		this.inputMessage = stubDefinition.input
 		this.outputMessage = stubDefinition.outputMessage
 	}
 
