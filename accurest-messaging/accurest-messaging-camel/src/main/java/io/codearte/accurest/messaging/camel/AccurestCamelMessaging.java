@@ -1,8 +1,8 @@
 package io.codearte.accurest.messaging.camel;
 
-import io.codearte.accurest.messaging.AccurestMessage;
-import io.codearte.accurest.messaging.AccurestMessageBuilder;
-import io.codearte.accurest.messaging.AccurestMessaging;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
@@ -14,8 +14,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import io.codearte.accurest.messaging.AccurestMessage;
+import io.codearte.accurest.messaging.AccurestMessageBuilder;
+import io.codearte.accurest.messaging.AccurestMessaging;
 
 /**
  * @author Marcin Grzejszczak
@@ -47,6 +48,12 @@ public class AccurestCamelMessaging<T> implements AccurestMessaging<T, Message> 
 					"to a channel with name [" + destination + "]", e);
 			throw e;
 		}
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public void send(T payload, Map<String, Object> headers, String destination) {
+		send(builder.create(payload, headers), destination);
 	}
 
 	@Override

@@ -30,6 +30,12 @@ public class AccurestSpringMessaging<T> implements AccurestMessaging<T, Message>
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
+	public void send(T payload, Map<String, Object> headers, String destination) {
+		send(builder.create(payload, headers), destination);
+	}
+
+	@Override
 	public void send(AccurestMessage<T, Message> message, String destination) {
 		try {
 			jmsTemplate.send(destination, ((SpringMessage) message).messageCreator)

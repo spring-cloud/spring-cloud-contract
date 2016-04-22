@@ -1,8 +1,8 @@
 package io.codearte.accurest.messaging.stream;
 
-import io.codearte.accurest.messaging.AccurestMessage;
-import io.codearte.accurest.messaging.AccurestMessageBuilder;
-import io.codearte.accurest.messaging.AccurestMessaging;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +11,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import io.codearte.accurest.messaging.AccurestMessage;
+import io.codearte.accurest.messaging.AccurestMessageBuilder;
+import io.codearte.accurest.messaging.AccurestMessaging;
 
 /**
  * @author Marcin Grzejszczak
@@ -31,6 +32,12 @@ public class AccurestStreamMessaging<T> implements AccurestMessaging<T, Message<
 		this.context = context;
 		this.messageCollector = context.getBean(MessageCollector.class);
 		this.builder = builder;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public void send(T payload, Map<String, Object> headers, String destination) {
+		send(builder.create(payload, headers), destination);
 	}
 
 	@Override

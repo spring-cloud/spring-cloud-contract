@@ -1,5 +1,6 @@
 package io.codearte.accurest.messaging;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -14,6 +15,11 @@ public interface AccurestMessaging<PAYLOAD, TYPE_TO_CONVERT_INTO> extends Accure
 	 * Sends the {@link AccurestMessage} to the given destination.
 	 */
 	void send(AccurestMessage<PAYLOAD, TYPE_TO_CONVERT_INTO> message, String destination);
+
+	/**
+	 * Sends the given payload with headers, to the given destination.
+	 */
+	void send(PAYLOAD payload, Map<String, Object> headers, String destination);
 
 	/**
 	 * Receives the {@link AccurestMessage} from the given destination. You can provide the timeout

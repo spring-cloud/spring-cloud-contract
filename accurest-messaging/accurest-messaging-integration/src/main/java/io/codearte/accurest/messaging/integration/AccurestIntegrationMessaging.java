@@ -1,8 +1,8 @@
 package io.codearte.accurest.messaging.integration;
 
-import io.codearte.accurest.messaging.AccurestMessage;
-import io.codearte.accurest.messaging.AccurestMessageBuilder;
-import io.codearte.accurest.messaging.AccurestMessaging;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +12,9 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.PollableChannel;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import io.codearte.accurest.messaging.AccurestMessage;
+import io.codearte.accurest.messaging.AccurestMessageBuilder;
+import io.codearte.accurest.messaging.AccurestMessaging;
 
 /**
  * @author Marcin Grzejszczak
@@ -31,6 +32,12 @@ public class AccurestIntegrationMessaging<T> implements AccurestMessaging<T, Mes
 	public AccurestIntegrationMessaging(ApplicationContext context, AccurestMessageBuilder accurestMessageBuilder) {
 		this.context = context;
 		this.builder = accurestMessageBuilder;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public void send(T payload, Map<String, Object> headers, String destination) {
+		send(builder.create(payload, headers), destination);
 	}
 
 	@Override

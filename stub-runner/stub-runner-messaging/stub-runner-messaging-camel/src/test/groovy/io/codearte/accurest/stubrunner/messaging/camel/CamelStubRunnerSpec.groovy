@@ -1,6 +1,6 @@
 package io.codearte.accurest.stubrunner.messaging.camel
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import io.codearte.accurest.stubrunner.StubFinder
 import org.apache.activemq.camel.component.ActiveMQComponent
@@ -34,7 +34,7 @@ class CamelStubRunnerSpec extends Specification {
 			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)
 		and:
 			receivedMessage != null
-			receivedMessage.in.body == '{"bookName":"foo"}'
+			assertJsons(receivedMessage.in.body)
 			receivedMessage.in.headers.get('BOOK-NAME') == 'foo'
 	}
 
@@ -45,7 +45,7 @@ class CamelStubRunnerSpec extends Specification {
 			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)
 		and:
 			receivedMessage != null
-			receivedMessage.in.body == '{ "bookName" : "foo" }'
+			assertJsons(receivedMessage.in.body)
 			receivedMessage.in.headers.get('BOOK-NAME') == 'foo'
 	}
 
@@ -56,7 +56,7 @@ class CamelStubRunnerSpec extends Specification {
 			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)
 		and:
 			receivedMessage != null
-			receivedMessage.in.body == '{ "bookName" : "foo" }'
+			assertJsons(receivedMessage.in.body)
 			receivedMessage.in.headers.get('BOOK-NAME') == 'foo'
 	}
 
@@ -67,7 +67,7 @@ class CamelStubRunnerSpec extends Specification {
 			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)
 		and:
 			receivedMessage != null
-			receivedMessage.in.body == '{ "bookName" : "foo" }'
+			assertJsons(receivedMessage.in.body)
 			receivedMessage.in.headers.get('BOOK-NAME') == 'foo'
 	}
 
@@ -90,18 +90,21 @@ class CamelStubRunnerSpec extends Specification {
 	}
 
 	def 'should trigger messages by running all triggers'() {
-		given:
-			ObjectMapper objectMapper = new ObjectMapper()
 		when:
 			stubFinder.trigger()
 		then:
 			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)
 		and:
 			receivedMessage != null
-			new JsonSlurper().parseText(
-					objectMapper.writeValueAsString(
-							receivedMessage.in.body)) == new JsonSlurper().parseText('{"bookName":"foo"}')
+			assertJsons(receivedMessage.in.body)
 			receivedMessage.in.headers.get('BOOK-NAME') == 'foo'
+	}
+
+	private boolean assertJsons(Object payload) {
+		String objectAsString = payload instanceof String ? payload :
+				JsonOutput.toJson(payload)
+		def json = new JsonSlurper().parseText(objectAsString)
+		return json.bookName == 'foo'
 	}
 
 	@Bean
