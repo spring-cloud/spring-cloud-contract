@@ -1,6 +1,7 @@
 package io.codearte.accurest.stubrunner.messaging.camel
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import groovy.json.JsonSlurper
 import io.codearte.accurest.stubrunner.StubFinder
 import org.apache.activemq.camel.component.ActiveMQComponent
 import org.apache.camel.CamelContext
@@ -97,7 +98,9 @@ class CamelStubRunnerSpec extends Specification {
 			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)
 		and:
 			receivedMessage != null
-			objectMapper.writeValueAsString(receivedMessage.in.body) == '{"bookName":"foo"}'
+			new JsonSlurper().parseText(
+					objectMapper.writeValueAsString(
+							receivedMessage.in.body)) == new JsonSlurper().parseText('{"bookName":"foo"}')
 			receivedMessage.in.headers.get('BOOK-NAME') == 'foo'
 	}
 
