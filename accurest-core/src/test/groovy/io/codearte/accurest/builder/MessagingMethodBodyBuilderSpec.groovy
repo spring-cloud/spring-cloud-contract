@@ -9,6 +9,7 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 
 	def "should work for triggered based messaging with Spock"() {
 		given:
+		// tag::trigger_method_dsl[]
 			def contractDsl = GroovyDsl.make {
 				label 'some_label'
 				input {
@@ -22,13 +23,16 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 					}
 				}
 			}
+		// end::trigger_method_dsl[]
 			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			stripped(test) == stripped('''
+			stripped(test) == stripped(
+					// tag::trigger_method_test[]
+					'''
 										when:
 											 bookReturnedTriggered()
 
@@ -38,7 +42,9 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 										and:
 											 DocumentContext parsedJson = JsonPath.parse(accurestObjectMapper.writeValueAsString(response.payload))
 											 assertThatJson(parsedJson).field("bookName").isEqualTo("foo")
-											''')
+											'''
+					// end::trigger_method_test[]
+			)
 	}
 
 	def "should work for triggered based messaging with JUnit"() {
@@ -62,7 +68,9 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			stripped(test) == stripped('''
+			stripped(test) == stripped(
+					// tag::trigger_method_junit_test[]
+					'''
 										// when:
 											 bookReturnedTriggered();
 
@@ -72,7 +80,9 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 										// and:
 											 DocumentContext parsedJson = JsonPath.parse(accurestObjectMapper.writeValueAsString(response.getPayload()));
 											 assertThatJson(parsedJson).field("bookName").isEqualTo("foo");
-											''')
+											'''
+					// end::trigger_method_junit_test[]
+			)
 	}
 
 	private String stripped(String text) {

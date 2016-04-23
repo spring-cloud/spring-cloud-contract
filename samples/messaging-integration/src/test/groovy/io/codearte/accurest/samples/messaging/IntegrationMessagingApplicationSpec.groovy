@@ -14,9 +14,6 @@ import spock.lang.Specification
 
 import javax.inject.Inject
 
-/**
- * SPIKE ON TESTS FROM NOTES IN MessagingSpec
- */
 // Context configuration would end up in base class
 @ContextConfiguration(classes = [IntegrationMessagingApplication], loader = SpringApplicationContextLoader)
 public class IntegrationMessagingApplicationSpec extends Specification {
@@ -27,19 +24,30 @@ public class IntegrationMessagingApplicationSpec extends Specification {
 
 	def "should work for triggered based messaging"() {
 		given:
+		// tag::method_trigger[]
 			def dsl = GroovyDsl.make {
+				// Human readable description
+				description 'Some description'
+				// Label by means of which the output message can be triggered
 				label 'some_label'
+				// input to the contract
 				input {
+					// the contract will be triggered by a method
 					triggeredBy('bookReturnedTriggered()')
 				}
+				// output message of the contract
 				outputMessage {
+					// destination to which the output message will be sent
 					sentTo('output')
+					// the body of the output message
 					body('''{ "bookName" : "foo" }''')
+					// the headers of the output message
 					headers {
 						header('BOOK-NAME', 'foo')
 					}
 				}
 			}
+		// end::method_trigger[]
 		// generated test should look like this:
 		when:
 			bookReturnedTriggered()
@@ -53,13 +61,19 @@ public class IntegrationMessagingApplicationSpec extends Specification {
 
 	def "should generate tests triggered by a message"() {
 		given:
+		// tag::message_trigger[]
 			def dsl = GroovyDsl.make {
+				description 'Some Description'
 				label 'some_label'
+				// input is a message
 				input {
+					// the message was received from this destination
 					messageFrom('input')
+					// has the following body
 					messageBody([
 					        bookName: 'foo'
 					])
+					// and the following headers
 					messageHeaders {
 						header('sample', 'header')
 					}
@@ -74,6 +88,7 @@ public class IntegrationMessagingApplicationSpec extends Specification {
 					}
 				}
 			}
+		// end::message_trigger[]
 
 		// generated test should look like this:
 

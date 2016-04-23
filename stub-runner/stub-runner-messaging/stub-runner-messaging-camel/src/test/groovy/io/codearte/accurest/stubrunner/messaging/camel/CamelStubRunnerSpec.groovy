@@ -2,6 +2,7 @@ package io.codearte.accurest.stubrunner.messaging.camel
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.stubrunner.StubFinder
 import org.apache.activemq.camel.component.ActiveMQComponent
 import org.apache.camel.CamelContext
@@ -29,24 +30,36 @@ class CamelStubRunnerSpec extends Specification {
 
 	def 'should download the stub and register a route for it'() {
 		when:
+		// tag::client_send[]
 			camelContext.createProducerTemplate().sendBodyAndHeaders('jms:input', new BookReturned('foo'), [sample: 'header'])
+		// end::client_send[]
 		then:
+		// tag::client_receive[]
 			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)
+		// end::client_receive[]
 		and:
+		// tag::client_receive_message[]
 			receivedMessage != null
-			assertJsons(receivedMessage.in.body)
+			assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
 			receivedMessage.in.headers.get('BOOK-NAME') == 'foo'
+		// end::client_receive_message[]
 	}
 
 	def 'should trigger a message by label'() {
 		when:
+		// tag::client_trigger[]
 			stubFinder.trigger('return_book_1')
+		// end::client_trigger[]
 		then:
+		// tag::client_trigger_receive[]
 			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)
+		// end::client_trigger_receive[]
 		and:
+		// tag::client_trigger_message[]
 			receivedMessage != null
-			assertJsons(receivedMessage.in.body)
+			assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
 			receivedMessage.in.headers.get('BOOK-NAME') == 'foo'
+		// end::client_trigger_message[]
 	}
 
 	def 'should trigger a label for the existing groupId:artifactId'() {
@@ -56,7 +69,7 @@ class CamelStubRunnerSpec extends Specification {
 			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)
 		and:
 			receivedMessage != null
-			assertJsons(receivedMessage.in.body)
+			assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
 			receivedMessage.in.headers.get('BOOK-NAME') == 'foo'
 	}
 
@@ -67,7 +80,7 @@ class CamelStubRunnerSpec extends Specification {
 			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)
 		and:
 			receivedMessage != null
-			assertJsons(receivedMessage.in.body)
+			assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
 			receivedMessage.in.headers.get('BOOK-NAME') == 'foo'
 	}
 
@@ -96,11 +109,11 @@ class CamelStubRunnerSpec extends Specification {
 			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)
 		and:
 			receivedMessage != null
-			assertJsons(receivedMessage.in.body)
+			assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
 			receivedMessage.in.headers.get('BOOK-NAME') == 'foo'
 	}
 
-	private boolean assertJsons(Object payload) {
+	private boolean assertThatBodyContainsBookNameFoo(Object payload) {
 		String objectAsString = payload instanceof String ? payload :
 				JsonOutput.toJson(payload)
 		def json = new JsonSlurper().parseText(objectAsString)
@@ -111,4 +124,46 @@ class CamelStubRunnerSpec extends Specification {
 	ActiveMQComponent activeMQComponent(@Value('${activemq.url:vm://localhost?broker.persistent=false}') String url) {
 		return new ActiveMQComponent(brokerURL: url)
 	}
+
+	GroovyDsl dsl =
+	// tag::sample_dsl[]
+	io.codearte.accurest.dsl.GroovyDsl.make {
+		label 'return_book_1'
+		input {
+			triggeredBy('bookReturnedTriggered()')
+		}
+		outputMessage {
+			sentTo('jms:output')
+			body('''{ "bookName" : "foo" }''')
+			headers {
+				header('BOOK-NAME', 'foo')
+			}
+		}
+	}
+	// end::sample_dsl[]
+
+	GroovyDsl dsl2 =
+	// tag::sample_dsl_2[]
+	io.codearte.accurest.dsl.GroovyDsl.make {
+		label 'return_book_2'
+		input {
+			messageFrom('jms:input')
+			messageBody([
+					bookName: 'foo'
+			])
+			messageHeaders {
+				header('sample', 'header')
+			}
+		}
+		outputMessage {
+			sentTo('jms:output')
+			body([
+					bookName: 'foo'
+			])
+			headers {
+				header('BOOK-NAME', 'foo')
+			}
+		}
+	}
+	// end::sample_dsl_2[]
 }

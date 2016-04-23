@@ -1,4 +1,4 @@
-== Accurest REST
+== Accurest HTTP
 
 === Gradle Project
 

@@ -1,4 +1,4 @@
-== Stub Runner
+== Stub Runner for HTTP
 
 One of the issues that you could have encountered while using Accurest was to pass the generated WireMock JSON stubs from the server side to the client side (or various clients).
  The same takes place in terms of client side generation for messaging.

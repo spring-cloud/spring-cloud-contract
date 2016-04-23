@@ -44,3 +44,9 @@ You have to provide as a dependency the `accurest-messaging-core` module. Exampl
 ----
 testCompile "io.codearte.accurest:accurest-messaging-core:${accurestVersion}"
 ----
+
+=== Publisher side test generation
+
+Having the `input` or `outputMessage` sections in your DSL will result in creation of tests on the publisher's side.
+
+//TODO: add examples from MessaginMethodBodyBuilderSpec
