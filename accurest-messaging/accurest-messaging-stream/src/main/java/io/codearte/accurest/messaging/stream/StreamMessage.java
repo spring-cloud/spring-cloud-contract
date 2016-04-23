@@ -1,8 +1,9 @@
 package io.codearte.accurest.messaging.stream;
 
-import io.codearte.accurest.messaging.AccurestMessage;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
+
+import io.codearte.accurest.messaging.AccurestMessage;
 
 /**
  * @author Marcin Grzejszczak
@@ -12,6 +13,9 @@ public class StreamMessage<T> implements AccurestMessage<T, Message<T>> {
 	private final Message<T> delegate;
 
 	public StreamMessage(Message<T> delegate) {
+		if (delegate == null) {
+			throw new IllegalArgumentException("Message can't be null");
+		}
 		this.delegate = delegate;
 	}
 
