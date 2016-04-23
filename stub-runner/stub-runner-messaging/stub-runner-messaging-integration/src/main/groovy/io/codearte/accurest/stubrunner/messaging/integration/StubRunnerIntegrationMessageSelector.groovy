@@ -12,6 +12,8 @@ import io.codearte.accurest.util.JsonToJsonPathsConverter
 import org.springframework.integration.core.MessageSelector
 import org.springframework.messaging.Message
 
+import java.util.regex.Pattern
+
 /**
  * Passes through a message that matches the one defined in the DSL
  *
@@ -52,7 +54,10 @@ class StubRunnerIntegrationMessageSelector implements MessageSelector {
 		return groovyDsl.input.messageHeaders.entries.every {
 			String name = it.name
 			Object value = it.clientValue
-			return headers.get(name) == value
+			Object valueInHeader = headers.get(name)
+			return value instanceof Pattern ?
+					value.matcher(valueInHeader.toString()).matches() :
+							valueInHeader == value
 		}
 	}
 }
