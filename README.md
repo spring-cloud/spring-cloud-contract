@@ -6,6 +6,6 @@ Accurate REST Maven Plugin
 Documentation
 ---
 
-* [Accurest Wiki](https://github.com/Codearte/accurest/) 
+* [Accurest Wiki](http://codearte.github.io/accurest/) 
 * [Accurest Maven Plugin Documentation Site](http://codearte.github.io/accurest-maven-plugin/plugin-info.html)
   

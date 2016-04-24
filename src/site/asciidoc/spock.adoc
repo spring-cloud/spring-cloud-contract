@@ -9,7 +9,7 @@ Sample minimal configuration for Groovy Project with Spock Specification
 include::../../../src/test/projects/spring-boot-groovy/pom.xml[tags=dependencies]
 ----
 
-=== Project configuration for Accurest, Groovy and Spock specifications and stub publishing
+=== Project configuration for Accurest, Groovy, Spock specifications and stub publishing
 
 
 [source,xml]
