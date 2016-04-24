@@ -37,7 +37,7 @@ public class PluginIT {
 				.assertLogText("Generated 1 test classes.")
 				.assertLogText("Converting from accurest contracts written in GroovyDSL to WireMock stubs mappings")
 				.assertLogText("Creating new json")
-				.assertLogText("Compiled 3 files.") // groovy test classes
+				.assertLogText("Running io.codearte.accurest.tests.AccurestSpec")
 				.assertErrorFreeLog();
 	}
 
@@ -51,7 +51,7 @@ public class PluginIT {
 				.assertLogText("Generated 1 test classes.")
 				.assertLogText("Converting from accurest contracts written in GroovyDSL to WireMock stubs mappings")
 				.assertLogText("Creating new json")
-				.assertLogText("Compiling 2 source files")
+				.assertLogText("Running io.codearte.accurest.tests.AccurestTest")
 				.assertErrorFreeLog();
 	}
 

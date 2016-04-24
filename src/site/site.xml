@@ -28,6 +28,8 @@
 			<item name="Introduction" href="index.html"/>
 			<item name="Usage" href="usage.html"/>
 			<item name="Goals" href="plugin-info.html"/>
+			<item name="Accurest with JUnit" href="junit.html"/>
+			<item name="Accurest with Spock" href="spock.html"/>
 		</menu>
 		<menu name="Related Projects">
 			<item name="Accurate REST" href="https://github.com/Codearte/accurest"/>

@@ -1,24 +1,35 @@
-== Usage
+= Usage
 
-Sample minimal configuration for project with Java source code.
+== Converting Accurest GroovyDSL into WireMock stub mappings
 
+   mvn io.codearte.accurest:accurest-maven-plugin:convert
+
+or shortly footnoteref:[prefix,Additional configuration inside `~/.m2/settings.xml` is required: `<pluginGroups><pluginGroup>io.codearte.accurest</pluginGroup></pluginGroups>`.]
+
+    mvn accurest:convert
+
+For more information please go to the Accurest Wiki or Plugin Documentation Site.
+
+== Accurest Stub Runner
+
+Run stubs mappings from current directory:
+
+    mvn io.codearte.accurest:accurest-maven-plugin:run
+
+or shortly footnoteref:[prefix]
+
+    mvn accurest:run
+
+== Running stubs from repository
+
+    mvn accurest:run -Dstubs="org.springframework:gs-rest-service"
+
+where `org.springframework:gs-rest-service` is artifact with stubs classifier contains wiremock mappings.
+
+== Project configuration
+
+[source,xml]
 ----
-<plugin>
-    <groupId>io.codearte.accurest</groupId>
-    <artifactId>accurest-maven-plugin</artifactId>
-    <version>0.5.8</version> <!-- use latest release -->
-    <executions>
-        <execution>
-            <goals>
-                <goal>convert</goal>
-                <goal>generateStubs</goal>
-                <goal>generateTests</goal>
-            </goals>
-        </execution>
-    </executions>
-    <configuration>
-        <baseClassForTests>foobar.AccurestBaseTest</baseClassForTests>
-    </configuration>
-</plugin>
+include::../../../src/test/projects/spring-boot-java/pom.xml[tags=plugin]
 ----
 

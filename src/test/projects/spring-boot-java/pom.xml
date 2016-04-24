@@ -29,6 +29,7 @@
         </dependency>
 
         <!-- accurest test dependencies -->
+        <!-- tag::dependencies[] -->
         <dependency>
             <groupId>com.jayway.restassured</groupId>
             <artifactId>rest-assured</artifactId>
@@ -53,10 +54,12 @@
             <version>2.3.0</version>
             <scope>test</scope>
         </dependency>
+        <!-- end::dependencies[] -->
     </dependencies>
 
     <properties>
         <java.version>1.8</java.version>
+        <accurest-plugin.version>${it-plugin.version}</accurest-plugin.version>
     </properties>
 
     <build>
@@ -65,10 +68,11 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <!-- tag::plugin[] -->
             <plugin>
                 <groupId>io.codearte.accurest</groupId>
                 <artifactId>accurest-maven-plugin</artifactId>
-                <version>${it-plugin.version}</version>
+                <version>${accurest-plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -79,10 +83,10 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <basePackageForTests>hello</basePackageForTests>
-                    <baseClassForTests>hello.BaseMockMvcTest</baseClassForTests>
+                    <baseClassForTests>hello.BaseAccurest</baseClassForTests>
                 </configuration>
             </plugin>
+            <!-- end::plugin[] -->
         </plugins>
     </build>
 </project>
