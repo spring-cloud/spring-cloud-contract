@@ -53,7 +53,7 @@ Read more: http://codearte.github.io/accurest-maven-plugin/[accurest-maven-plugi
 
 ===== Add stubs
 
-By default Accurest is looking for stubs in `src/test/resources/stubs` directory.
+By default Accurest is looking for stubs in `src/test/accurest` directory.
 
 Directory containing stub definitions is treated as a class name, and each stub definition is treated as a single test.
 We assume that it contains at least one directory which will be used as test class name. If there is more than one level of nested directories all except the last one will be used as package name.
@@ -66,6 +66,7 @@ src/test/accurest/myservice/shouldReturnUser.groovy
 ----
 
 Accurest will create test class `defaultBasePackage.MyService` with two methods
+
  - `shouldCreateUser()`
  - `shouldReturnUser()`
 
@@ -102,7 +103,7 @@ accurest {
 
 ===== Base class for tests
 
- When using Accurest in default MockMvc you need to create a base specification for all generated acceptance tests. In this class you need to point to endpoint which should be verified.
+When using Accurest in default MockMvc you need to create a base specification for all generated acceptance tests. In this class you need to point to endpoint which should be verified.
 
 [source,groovy,indent=0]
 ----
@@ -131,7 +132,7 @@ In consumer service you need to configure Accurest plugin in exactly the same wa
 ./gradlew generateWireMockClientStubs
 ----
 
-command. Note that `stubsOutputDir` option has to be set for stub generation to work.
+Note that `stubsOutputDir` option has to be set for stub generation to work.
 
 When present, json stubs can be used in consumer automated tests.
 

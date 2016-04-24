@@ -1,4 +1,4 @@
-= Accurest Messaging
+    = Accurest Messaging
 
 Accurest allows you to verify your application that uses messaging as means of communication.
 All of our integrations are working with Spring but you can also set one yourself.
