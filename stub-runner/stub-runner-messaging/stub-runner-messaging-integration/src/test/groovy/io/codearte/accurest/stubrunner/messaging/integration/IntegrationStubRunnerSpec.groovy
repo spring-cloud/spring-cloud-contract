@@ -2,6 +2,7 @@ package io.codearte.accurest.stubrunner.messaging.integration
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.messaging.AccurestMessage
 import io.codearte.accurest.messaging.AccurestMessaging
 import io.codearte.accurest.stubrunner.StubFinder
@@ -31,29 +32,43 @@ class IntegrationStubRunnerSpec extends Specification {
 
 	def 'should download the stub and register a route for it'() {
 		when:
+		// tag::client_send[]
 			messaging.send(new BookReturned('foo'), [sample: 'header'], 'input')
+		// end::client_send[]
 		then:
+		// tag::client_receive[]
 			AccurestMessage receivedMessage = messaging.receiveMessage('outputTest')
+		// end::client_receive[]
 		and:
+		// tag::client_receive_message[]
 			receivedMessage != null
 			assertJsons(receivedMessage.payload)
 			receivedMessage.headers.get('BOOK-NAME') == 'foo'
+		// end::client_receive_message[]
 	}
 
 	def 'should trigger a message by label'() {
 		when:
+		// tag::client_trigger[]
 			stubFinder.trigger('return_book_1')
+		// end::client_trigger[]
 		then:
+		// tag::client_trigger_receive[]
 			AccurestMessage receivedMessage = messaging.receiveMessage('outputTest')
+		// end::client_trigger_receive[]
 		and:
+		// tag::client_trigger_message[]
 			receivedMessage != null
 			assertJsons(receivedMessage.payload)
 			receivedMessage.headers.get('BOOK-NAME') == 'foo'
+		// end::client_trigger_message[]
 	}
 
 	def 'should trigger a label for the existing groupId:artifactId'() {
 		when:
+		// tag::trigger_group_artifact[]
 			stubFinder.trigger('io.codearte.accurest.stubs:integrationService', 'return_book_1')
+		// end::trigger_group_artifact[]
 		then:
 			AccurestMessage receivedMessage = messaging.receiveMessage('outputTest')
 		and:
@@ -64,7 +79,9 @@ class IntegrationStubRunnerSpec extends Specification {
 
 	def 'should trigger a label for the existing artifactId'() {
 		when:
+		// tag::trigger_artifact[]
 			stubFinder.trigger('integrationService', 'return_book_1')
+		// end::trigger_artifact[]
 		then:
 			AccurestMessage receivedMessage = messaging.receiveMessage('outputTest')
 		and:
@@ -95,7 +112,9 @@ class IntegrationStubRunnerSpec extends Specification {
 
 	def 'should trigger messages by running all triggers'() {
 		when:
+		// tag::trigger_all[]
 			stubFinder.trigger()
+		// end::trigger_all[]
 		then:
 			AccurestMessage receivedMessage = messaging.receiveMessage('outputTest')
 		and:
@@ -110,5 +129,47 @@ class IntegrationStubRunnerSpec extends Specification {
 		def json = new JsonSlurper().parseText(objectAsString)
 		return json.bookName == 'foo'
 	}
+
+	GroovyDsl dsl =
+	// tag::sample_dsl[]
+	io.codearte.accurest.dsl.GroovyDsl.make {
+		label 'return_book_1'
+		input {
+			triggeredBy('bookReturnedTriggered()')
+		}
+		outputMessage {
+			sentTo('jms:output')
+			body('''{ "bookName" : "foo" }''')
+			headers {
+				header('BOOK-NAME', 'foo')
+			}
+		}
+	}
+	// end::sample_dsl[]
+
+	GroovyDsl dsl2 =
+	// tag::sample_dsl_2[]
+	io.codearte.accurest.dsl.GroovyDsl.make {
+		label 'return_book_2'
+		input {
+			messageFrom('jms:input')
+			messageBody([
+					bookName: 'foo'
+			])
+			messageHeaders {
+				header('sample', 'header')
+			}
+		}
+		outputMessage {
+			sentTo('jms:output')
+			body([
+					bookName: 'foo'
+			])
+			headers {
+				header('BOOK-NAME', 'foo')
+			}
+		}
+	}
+	// end::sample_dsl_2[]
 
 }

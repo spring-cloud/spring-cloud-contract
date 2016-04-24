@@ -34,6 +34,7 @@ The `accurest-messaging-core` module contains 3 main interfaces:
 - AccurestMessage - describes a message received / sent to a channel / queue / topic etc.
 - AccurestMessageBuilder - describes how to build a message
 - AccurestMessaging - class that allows you to build, send and receive messages
+- AccurestFilter - interface to filter out the messages that do not follow the pattern from the DSL
 
 In the generated test the `AccurestMessaging` is injected via `@Inject` annotation thus you can use other injection
 frameworks than Spring.

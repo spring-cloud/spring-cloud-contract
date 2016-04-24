@@ -51,3 +51,7 @@ include::../../../../stub-runner/stub-runner/src/main/groovy/io/codearte/accures
 For convenience the `StubFinder` interface extends `StubTrigger` so it's enough to use only one in your tests.
 
 include::../../../../stub-runner/stub-runner-messaging/stub-runner-messaging-camel/README.adoc[]
+
+include::../../../../stub-runner/stub-runner-messaging/stub-runner-messaging-integration/README.adoc[]
+
+include::../../../../stub-runner/stub-runner-messaging/stub-runner-messaging-stream/README.adoc[]
