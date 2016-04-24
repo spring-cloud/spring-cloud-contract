@@ -1,5 +1,6 @@
 package io.codearte.accurest.builder
 
+import io.codearte.accurest.Accurest
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.WireMockStubVerifier
 import spock.lang.Issue
@@ -13,7 +14,7 @@ import java.util.regex.Pattern
 class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStubVerifier {
 
 	@Shared
-	GroovyDsl dslWithOptionalsInString = GroovyDsl.make {
+	GroovyDsl dslWithOptionalsInString = Accurest.make {
 		priority 1
 		request {
 			method 'POST'
