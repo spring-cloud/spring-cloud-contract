@@ -171,16 +171,16 @@ public class AccurestRule implements TestRule, StubFinder {
 
 	@Override
 	public void trigger(String ivyNotation, String labelName) {
-		throw new UnsupportedOperationException("Feature not yet supported");
+		stubFinder.trigger(ivyNotation, labelName);
 	}
 
 	@Override
 	public void trigger(String labelName) {
-		throw new UnsupportedOperationException("Feature not yet supported");
+		stubFinder.trigger(labelName);
 	}
 
 	@Override
 	public void trigger() {
-		throw new UnsupportedOperationException("Feature not yet supported");
+		stubFinder.trigger();
 	}
 }

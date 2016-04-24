@@ -119,11 +119,34 @@ class CamelStubRunnerSpec extends Specification {
 			receivedMessage.in.headers.get('BOOK-NAME') == 'foo'
 	}
 
+	def 'should trigger a label with no output message'() {
+		when:
+		// tag::trigger_no_output[]
+			camelContext.createProducerTemplate().sendBodyAndHeaders('jms:delete', new BookReturned('foo'), [sample: 'header'])
+		// end::trigger_no_output[]
+		then:
+			noExceptionThrown()
+	}
+
+	def 'should not trigger a message that does not match input'() {
+		when:
+			camelContext.createProducerTemplate().sendBodyAndHeaders('jms:input', new BookReturned('notmatching'), [wrong: 'header_value'])
+		then:
+			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 100)
+		and:
+			receivedMessage == null
+	}
+
 	private boolean assertThatBodyContainsBookNameFoo(Object payload) {
 		String objectAsString = payload instanceof String ? payload :
 				JsonOutput.toJson(payload)
 		def json = new JsonSlurper().parseText(objectAsString)
 		return json.bookName == 'foo'
+	}
+
+	def setup() {
+		// ensure that message were taken from the queue
+		camelContext.createConsumerTemplate().receive('jms:output', 100)
 	}
 
 	@Bean
@@ -172,4 +195,21 @@ class CamelStubRunnerSpec extends Specification {
 		}
 	}
 	// end::sample_dsl_2[]
+
+	GroovyDsl dsl3 =
+	// tag::sample_dsl_3[]
+	io.codearte.accurest.dsl.GroovyDsl.make {
+		label 'delete_book'
+		input {
+			messageFrom('jms:delete')
+			messageBody([
+					bookName: 'foo'
+			])
+			messageHeaders {
+				header('sample', 'header')
+			}
+			assertThat('bookWasDeleted()')
+		}
+	}
+	// end::sample_dsl_3[]
 }
