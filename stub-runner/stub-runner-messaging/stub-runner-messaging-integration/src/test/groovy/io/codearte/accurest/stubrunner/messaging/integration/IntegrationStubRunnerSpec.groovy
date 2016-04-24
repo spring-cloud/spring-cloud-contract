@@ -30,6 +30,11 @@ class IntegrationStubRunnerSpec extends Specification {
 	@Autowired StubFinder stubFinder
 	@Autowired AccurestMessaging messaging
 
+	def setup() {
+		// ensure that message were taken from the queue
+		messaging.receiveMessage('outputTest', 100, TimeUnit.MILLISECONDS)
+	}
+
 	def 'should download the stub and register a route for it'() {
 		when:
 		// tag::client_send[]
@@ -123,6 +128,24 @@ class IntegrationStubRunnerSpec extends Specification {
 			receivedMessage.headers.get('BOOK-NAME') == 'foo'
 	}
 
+	def 'should trigger a label with no output message'() {
+		when:
+		// tag::trigger_no_output[]
+			messaging.send(new BookReturned('foo'), [sample: 'header'], 'delete')
+		// end::trigger_no_output[]
+		then:
+			noExceptionThrown()
+	}
+
+	def 'should not trigger a message that does not match input'() {
+		when:
+			messaging.send(new BookReturned('not_matching'), [wrong: 'header_value'], 'input')
+		then:
+			AccurestMessage receivedMessage = messaging.receiveMessage('outputTest', 100, TimeUnit.MILLISECONDS)
+		and:
+			receivedMessage == null
+	}
+
 	private boolean assertJsons(Object payload) {
 		String objectAsString = payload instanceof String ? payload :
 				JsonOutput.toJson(payload)
@@ -171,5 +194,22 @@ class IntegrationStubRunnerSpec extends Specification {
 		}
 	}
 	// end::sample_dsl_2[]
+
+	GroovyDsl dsl3 =
+			// tag::sample_dsl_3[]
+			io.codearte.accurest.dsl.GroovyDsl.make {
+				label 'delete_book'
+				input {
+					messageFrom('jms:delete')
+					messageBody([
+							bookName: 'foo'
+					])
+					messageHeaders {
+						header('sample', 'header')
+					}
+					assertThat('bookWasDeleted()')
+				}
+			}
+	// end::sample_dsl_3[]
 
 }

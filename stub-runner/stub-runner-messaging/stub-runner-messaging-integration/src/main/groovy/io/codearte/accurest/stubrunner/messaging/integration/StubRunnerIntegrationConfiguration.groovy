@@ -1,5 +1,6 @@
 package io.codearte.accurest.stubrunner.messaging.integration
 
+import groovy.transform.CompileStatic
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.stubrunner.BatchStubRunner
 import io.codearte.accurest.stubrunner.StubConfiguration
@@ -9,8 +10,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.integration.dsl.FilterEndpointSpec
 import org.springframework.integration.dsl.GenericEndpointSpec
-import org.springframework.integration.dsl.IntegrationFlow
+import org.springframework.integration.dsl.IntegrationFlowBuilder
 import org.springframework.integration.dsl.IntegrationFlows
+import org.springframework.messaging.Message
 import org.springframework.stereotype.Service
 /**
  * Spring Integration configuration that iterates over the downloaded Groovy DSLs
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service
  * @author Marcin Grzejszczak
  */
 @Configuration
+@CompileStatic
 class StubRunnerIntegrationConfiguration {
 
 	@Bean
@@ -26,19 +29,27 @@ class StubRunnerIntegrationConfiguration {
 		Map<StubConfiguration, Collection<GroovyDsl>> accurestContracts = batchStubRunner.accurestContracts
 		accurestContracts.each { StubConfiguration key, Collection<GroovyDsl> value ->
 			String name = "${key.groupId}_${key.artifactId}"
-			value.findAll { it?.input?.messageFrom && it?.outputMessage?.sentTo }.each { GroovyDsl dsl ->
+			value.findAll { it?.input?.messageFrom }.each { GroovyDsl dsl ->
 				String flowName = "${name}_${dsl.label}_${dsl.hashCode()}"
-				IntegrationFlow integrationFlow = IntegrationFlows.from(dsl.input.messageFrom)
+				IntegrationFlowBuilder builder = IntegrationFlows.from(dsl.input.messageFrom)
 					.filter(new StubRunnerIntegrationMessageSelector(dsl), { FilterEndpointSpec e -> e.id("${flowName}.filter") } )
 					.transform(new StubRunnerIntegrationTransformer(dsl), { GenericEndpointSpec e -> e.id("${flowName}.transformer") })
-					.channel(dsl.outputMessage.sentTo)
-					.get()
-				beanFactory.initializeBean(integrationFlow, flowName)
+				if (dsl.outputMessage) {
+					builder = builder.channel(dsl.outputMessage.sentTo)
+				} else {
+					builder = builder.handle(new DummyMessageHandler(), "handle")
+				}
+				beanFactory.initializeBean(builder.get(), flowName)
 				beanFactory.getBean("${flowName}.filter", Lifecycle.class).start();
 				beanFactory.getBean("${flowName}.transformer", Lifecycle.class).start();
 			}
 		}
 		return new FlowRegistrar()
+	}
+
+	@CompileStatic
+	private static class DummyMessageHandler {
+		void handle(Message message) {}
 	}
 
 	@Service

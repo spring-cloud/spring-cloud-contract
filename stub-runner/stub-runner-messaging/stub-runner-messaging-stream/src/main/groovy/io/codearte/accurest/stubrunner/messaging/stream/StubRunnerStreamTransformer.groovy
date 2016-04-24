@@ -22,6 +22,9 @@ class StubRunnerStreamTransformer implements GenericTransformer<Message<?>, Mess
 
 	@Override
 	Message<?> transform(Message<?> source) {
+		if (!groovyDsl.outputMessage) {
+			return source
+		}
 		String payload = BodyAsString.extractClientValueFrom(groovyDsl.outputMessage.body)
 		Map<String, Object> headers = groovyDsl.outputMessage.headers.asStubSideMap()
 		return MessageBuilder.createMessage(payload, new MessageHeaders(headers))

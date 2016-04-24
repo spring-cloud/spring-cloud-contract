@@ -1,11 +1,12 @@
 package io.codearte.accurest.messaging.camel;
 
-import io.codearte.accurest.messaging.AccurestMessage;
-import io.codearte.accurest.messaging.AccurestMessageBuilder;
+import java.util.Map;
+
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
 
-import java.util.Map;
+import io.codearte.accurest.messaging.AccurestMessage;
+import io.codearte.accurest.messaging.AccurestMessageBuilder;
 
 /**
  * @author Marcin Grzejszczak
@@ -22,6 +23,9 @@ public class AccurestCamelMessageBuilder<T> implements AccurestMessageBuilder<T,
 
 	@Override
 	public AccurestMessage<T, Message> create(Message message) {
+		if (message == null) {
+			return null;
+		}
 		return new CamelMessage<>(message);
 	}
 }

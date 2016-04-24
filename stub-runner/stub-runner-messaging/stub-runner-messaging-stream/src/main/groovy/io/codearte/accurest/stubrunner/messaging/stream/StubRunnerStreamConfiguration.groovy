@@ -1,5 +1,6 @@
 package io.codearte.accurest.stubrunner.messaging.stream
 
+import groovy.transform.CompileStatic
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.stubrunner.BatchStubRunner
 import io.codearte.accurest.stubrunner.StubConfiguration
@@ -11,8 +12,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.integration.dsl.FilterEndpointSpec
 import org.springframework.integration.dsl.GenericEndpointSpec
-import org.springframework.integration.dsl.IntegrationFlow
+import org.springframework.integration.dsl.IntegrationFlowBuilder
 import org.springframework.integration.dsl.IntegrationFlows
+import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
 import org.springframework.stereotype.Service
 /**
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service
  */
 @Configuration
 @EnableBinding
+@CompileStatic
 class StubRunnerStreamConfiguration {
 
 	@Bean
@@ -30,21 +33,31 @@ class StubRunnerStreamConfiguration {
 		Map<StubConfiguration, Collection<GroovyDsl>> accurestContracts = batchStubRunner.accurestContracts
 		accurestContracts.each { StubConfiguration key, Collection<GroovyDsl> value ->
 			String name = "${key.groupId}_${key.artifactId}"
-			value.findAll { it?.input?.messageFrom && it?.outputMessage?.sentTo }.each { GroovyDsl dsl ->
+			value.findAll { it?.input?.messageFrom }.each { GroovyDsl dsl ->
 				String flowName = "${name}_${dsl.label}_${dsl.hashCode()}"
-				IntegrationFlow integrationFlow = IntegrationFlows.from(dsl.input.messageFrom)
-					.filter(new StubRunnerStreamMessageSelector(dsl), { FilterEndpointSpec e -> e.id("${flowName}.filter") } )
-					.transform(new StubRunnerStreamTransformer(dsl), { GenericEndpointSpec e -> e.id("${flowName}.transformer") })
-					.channel(dsl.outputMessage.sentTo)
-					.get()
-				beanFactory.initializeBean(integrationFlow, flowName)
+				IntegrationFlowBuilder builder = IntegrationFlows.from(dsl.input.messageFrom)
+						.filter(new StubRunnerStreamMessageSelector(dsl), { FilterEndpointSpec e -> e.id("${flowName}.filter") } )
+						.transform(new StubRunnerStreamTransformer(dsl), { GenericEndpointSpec e -> e.id("${flowName}.transformer") })
+				if (dsl.outputMessage) {
+					builder = builder.channel(dsl.outputMessage.sentTo)
+				} else {
+					builder = builder.handle(new DummyMessageHandler(), "handle")
+				}
+				beanFactory.initializeBean(builder.get(), flowName)
 				beanFactory.getBean("${flowName}.filter", Lifecycle.class).start();
 				beanFactory.getBean("${flowName}.transformer", Lifecycle.class).start();
 				channelBindingService.bindConsumer(beanFactory.getBean(dsl.input.messageFrom, MessageChannel.class), dsl.input.messageFrom)
-				channelBindingService.bindProducer(beanFactory.getBean(dsl.outputMessage.sentTo, MessageChannel.class), dsl.outputMessage.sentTo)
+				if (dsl.outputMessage) {
+					channelBindingService.bindProducer(beanFactory.getBean(dsl.outputMessage.sentTo, MessageChannel.class), dsl.outputMessage.sentTo)
+				}
 			}
 		}
 		return new FlowRegistrar()
+	}
+
+	@CompileStatic
+	private static class DummyMessageHandler {
+		void handle(Message message) {}
 	}
 
 	@Service

@@ -28,6 +28,11 @@ class CamelStubRunnerSpec extends Specification {
 	@Autowired StubFinder stubFinder
 	@Autowired CamelContext camelContext
 
+	def setup() {
+		// ensure that message were taken from the queue
+		camelContext.createConsumerTemplate().receive('jms:output', 100)
+	}
+
 	def 'should download the stub and register a route for it'() {
 		when:
 		// tag::client_send[]
@@ -142,11 +147,6 @@ class CamelStubRunnerSpec extends Specification {
 				JsonOutput.toJson(payload)
 		def json = new JsonSlurper().parseText(objectAsString)
 		return json.bookName == 'foo'
-	}
-
-	def setup() {
-		// ensure that message were taken from the queue
-		camelContext.createConsumerTemplate().receive('jms:output', 100)
 	}
 
 	@Bean
