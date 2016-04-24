@@ -113,34 +113,11 @@ And the received message would pass the following assertions
 include::src/test/groovy/io/codearte/accurest/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=client_receive_message,indent=0]
 ----
 
-===== Custom triggers
+===== Scenario 3 (input with no output)
 
-`StubTrigger` gives you the following options to trigger a message:
-
-===== Trigger by label
+Since the route is set for you it's enough to just send a message to the `{output_name}` destination.
 
 [source,groovy]
 ----
-include::src/test/groovy/io/codearte/accurest/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=client_trigger,indent=0]
-----
-
-===== Trigger by group and artifact ids
-
-[source,groovy]
-----
-include::src/test/groovy/io/codearte/accurest/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=trigger_group_artifact,indent=0]
-----
-
-===== Trigger by artifact ids
-
-[source,groovy]
-----
-include::src/test/groovy/io/codearte/accurest/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=trigger_artifact,indent=0]
-----
-
-===== Trigger all messages
-
-[source,groovy]
-----
-include::src/test/groovy/io/codearte/accurest/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=trigger_all,indent=0]
+include::src/test/groovy/io/codearte/accurest/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=trigger_no_output,indent=0]
 ----
