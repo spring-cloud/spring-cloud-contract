@@ -20,11 +20,11 @@ include::../../../../accurest-gradle-plugin/src/test/resources/functionalTest/sc
 
 ==== Maven
 
-Example of Maven can be found in the [AccuREST Maven Plugin README](https://github.com/Codearte/accurest-maven-plugin/=publishing-wiremock-stubs-projectf-stubsjar)
+Example of Maven can be found in the [Accurest Maven Plugin README](https://github.com/Codearte/accurest-maven-plugin/=publishing-wiremock-stubs-projectf-stubsjar)
 
 === Modules
 
-AccuREST comes with a new structure of modules
+Accurest comes with a new structure of modules
 
 [source,indent=0]
 ----

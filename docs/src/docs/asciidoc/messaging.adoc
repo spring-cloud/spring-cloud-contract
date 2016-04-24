@@ -147,4 +147,4 @@ include::../../../../accurest-gradle-plugin/src/test/resources/functionalTest/sc
 
 ==== Maven Setup
 
-Example of Maven can be found in the [AccuREST Maven Plugin README](https://github.com/Codearte/accurest-maven-plugin/=publishing-wiremock-stubs-projectf-stubsjar)
+Example of Maven can be found in the https://github.com/Codearte/accurest-maven-plugin/=publishing-wiremock-stubs-projectf-stubsjar[Accurest Maven Plugin README]
