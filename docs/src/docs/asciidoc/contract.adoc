@@ -1,0 +1,461 @@
+== Contract DSL
+
+Contract DSL in Accurest is written in Groovy, but don't be alarmed if you didn't use Groovy before. Knowledge of the language is not really needed as our DSL uses only a tiny subset of it (namely literals, method calls and closures). What's more, Accurest's DSL is designed to be programmer-readable without any knowledge of the DSL itself.
+
+Let's look at full example of a contract definition.
+
+[source,groovy,indent=0]
+----
+io.codearte.accurest.dsl.GroovyDsl.make {
+    request {
+        method 'POST'
+        urlPath('/users') {
+            queryParameters {
+                parameter 'limit': 100
+                parameter 'offset': containing("1")
+                parameter 'filter': "email"
+            }
+        }
+        headers {
+            header 'Content-Type': 'application/json'
+        }
+        body '''{ "login" : "john", "name": "John The Contract" }'''
+    }
+    response {
+        status 200
+        headers {
+            header 'Location': '/users/john'
+        }
+    }
+}
+----
+
+Not all features of the DSL are used in example above. If you didn't find what you are looking for, please check next paragraphs on this page.
+
+> You can easily compile Accurest Contracts to WireMock stubs mapping using standalone maven command: `mvn io.codearte.accurest:accurest-maven-plugin:convert`.
+
+=== Top-Level Elements
+
+Following methods can be called in the top-level closure of a contract definition. Request and response are mandatory, priority is optional.
+
+[source,groovy,indent=0]
+----
+io.codearte.accurest.dsl.GroovyDsl.make {
+    // Definition of HTTP request part of the contract
+    // (this can be a valid request or invalid depending
+    // on type of contract being specified).
+    request {
+        ...
+    }
+
+    // Definition of HTTP response part of the contract
+    // (a service implementing this contract should respond
+    // with following response after receiving request
+    // specified in "request" part above).
+    response {
+        ...
+    }
+
+    // Contract priority, which can be used for overriding
+    // contracts (1 is highest). Priority is optional.
+    priority 1
+}
+----
+
+=== Request
+
+HTTP protocol requires only **method and address** to be specified in a request. The same information is mandatory in request definition of Accurest contract.
+
+[source,groovy,indent=0]
+----
+io.codearte.accurest.dsl.GroovyDsl.make {
+    request {
+        // HTTP request method (GET/POST/PUT/DELETE).
+        method 'GET'
+
+        // Path component of request URL is specified as follows.
+        urlPath('/users')
+    }
+
+    response {
+        ...
+    }
+}
+----
+
+It is possible to specify whole `url` instead of just path, but `urlPath` is the recommended way as it makes the tests **host-independent**.
+
+[source,groovy,indent=0]
+----
+io.codearte.accurest.dsl.GroovyDsl.make {
+    request {
+        method 'GET'
+
+        // Specifying `url` and `urlPath` in one contract is illegal.
+        url('http://localhost:8888/users')
+    }
+
+    response {
+        ...
+    }
+}
+----
+
+Request may contain **query parameters**, which are specified in a closure nested in a call to `urlPath` or `url`.
+
+[source,groovy,indent=0]
+----
+io.codearte.accurest.dsl.GroovyDsl.make {
+    request {
+        ...
+
+        urlPath('/users') {
+
+            // Each parameter is specified in form
+            // `'paramName' : paramValue` where parameter value
+            // may be a simple literal or one of matcher functions,
+            // all of which are used in this example.
+            queryParameters {
+
+                // If a simple literal is used as value
+                // default matcher function is used (equalTo)
+                parameter 'limit': 100
+
+                // `equalTo` function simply compares passed value
+                // using identity operator (==).
+                parameter 'filter': equalTo("email")
+
+                // `containing` function matches strings
+                // that contains passed substring.
+                parameter 'gender': containing("[mf]")
+
+                // `matching` function tests parameter
+                // against passed regular expression.
+                parameter 'offset': matching("[0-9]+")
+
+                // `notMatching` functions tests if parameter
+                // does not match passed regular expression.
+                parameter 'loginStartsWith': notMatching(".{0,2}")
+            }
+        }
+
+        ...
+    }
+
+    response {
+        ...
+    }
+}
+----
+
+It may contain additional **request headers**...
+
+[source,groovy,indent=0]
+----
+io.codearte.accurest.dsl.GroovyDsl.make {
+    request {
+        ...
+
+        // Each header is added in form `'Header-Name' : 'Header-Value'`.
+        headers {
+            header 'Content-Type': 'application/json'
+        }
+
+        ...
+    }
+
+    response {
+        ...
+    }
+}
+----
+
+...and a **request body**.
+
+[source,groovy,indent=0]
+----
+io.codearte.accurest.dsl.GroovyDsl.make {
+    request {
+        ...
+
+        // JSON and XML formats of request body are supported.
+        // Format will be determined from a header or body's content.
+        body '''{ "login" : "john", "name": "John The Contract" }'''
+    }
+
+    response {
+        ...
+    }
+}
+----
+
+**Body's format** can also be specified explicitly by invoking one of format functions.
+
+[source,groovy,indent=0]
+----
+io.codearte.accurest.dsl.GroovyDsl.make {
+    request {
+        ...
+
+        // In this case body will be formatted as XML.
+        body equalToXml(
+          '''<user><login>john</login><name>John The Contract</name></user>'''
+        )
+    }
+
+    response {
+        ...
+    }
+}
+----
+
+=== Response
+
+Minimal response must contain **HTTP status code**.
+
+[source,groovy,indent=0]
+----
+io.codearte.accurest.dsl.GroovyDsl.make {
+    request {
+      ...
+    }
+    response {
+        // Status code sent by the server
+        // in response to request specified above.
+        status 200
+    }
+}
+----
+
+Besides status response may contain **headers** and **body**, which are specified the same way as in the request (see previous paragraph).
+
+=== Regular expressions
+You can use regular expressions to write your requests in Contract DSL. It is particularly useful when you want to indicate that a given response should be provided for requests that follow a given pattern. Also, you can use it when you need to use patterns and not exact values both for your test and your server side tests.
+
+ Please see the example below:
+
+[source,groovy,indent=0]
+----
+io.codearte.accurest.dsl.GroovyDsl groovyDsl == GroovyDsl.make {
+    request {
+        method('GET')
+        url $(client(~/\/[0-9]{2}/), server('/12'))
+    }
+    response {
+        status 200
+        body(
+                id: value(
+                        client('123'),
+                        server(regex('[0-9]+'))
+                ),
+                surname: $(
+                        client('Kowalsky'),
+                        server('Lewandowski')
+                ),
+                name: 'Jan',
+                created: $(client('2014-02-02 12:23:43'), server({ currentDate(it) }))
+                correlationId: value(client('5d1f9fef-e0dc-4f3d-a7e4-72d2220dd827'),
+                        server(regex('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}')
+                        )
+        )
+        headers {
+            header 'Content-Type': 'text/plain'
+        }
+    }
+}
+----
+
+=== Passing optional parameters
+
+It is possible to provide optional parameters in your contract. It's only possible to have optional parameter for the:
+
+- __STUB__ side of the Request
+- __TEST__ side of the Response
+
+Example:
+
+[source,groovy,indent=0]
+----
+io.codearte.accurest.dsl.GroovyDsl.make {
+    priority 1
+    request {
+        method 'POST'
+        url '/users/password'
+        headers {
+            header 'Content-Type': 'application/json'
+        }
+        body(
+                email: $(stub(optional(regex(email()))), test('abc@abc.com')),
+                callback_url: $(stub(regex(hostname())), test('http://partners.com'))
+        )
+    }
+    response {
+        status 404
+        headers {
+            header 'Content-Type': 'application/json'
+        }
+        body(
+                code: value(stub("123123"), test(optional("123123"))),
+                message: "User not found by email == [${value(test(regex(email())), stub('not.existing@user.com'))}]"
+        )
+    }
+}
+----
+
+By wrapping a part of the body with the `optional()` method you are in fact creating a regular expression that should be present 0 or more times.
+
+That way for the example above the following test would be generated:
+
+[source,groovy,indent=0]
+----
+ given:
+  def request == given()
+    .header('Content-Type', 'application/json')
+    .body('{"email":"abc@abc.com","callback_url":"http://partners.com"}')
+
+ when:
+  def response == given().spec(request)
+    .post("/users/password")
+
+ then:
+  response.statusCode === 404
+  response.header('Content-Type')  === 'application/json'
+ and:
+  DocumentContext parsedJson == JsonPath.parse(response.body.asString())
+  !parsedJson.read('''$[?(@.code =~ /(123123)?/)]''', JSONArray).empty
+  !parsedJson.read('''$[?(@.message =~ /User not found by email == \\[[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}\\]/)]''', JSONArray).empty
+
+----
+
+and the following stub:
+
+[source,javascript,indent=0]
+----
+{
+  "request" : {
+    "url" : "/users/password",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[?(@.callback_url =~ /((http[s]?|ftp):\\/)\\/?([^:\\/\\s]+)(:[0-9]{1,5})?/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.email =~ /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4})?/)]"
+    } ],
+    "headers" : {
+      "Content-Type" : {
+        "equalTo" : "application/json"
+      }
+    }
+  },
+  "response" : {
+    "status" : 404,
+    "body" : "{\"code\":\"123123\",\"message\":\"User not found by email == [not.existing@user.com]\"}",
+    "headers" : {
+      "Content-Type" : "application/json"
+    }
+  },
+  "priority" : 1
+}
+----
+
+=== Executing custom methods on server side
+It is also possible to define a method call to be executed on the server side during the test. Such a method can be added to the class defined as "baseClassForTests" in the configuration. Please see the examples below:
+
+==== Groovy DSL
+
+[source,groovy,indent=0]
+----
+io.codearte.accurest.dsl.GroovyDsl.make {
+    request {
+        method 'PUT'
+        url $(client(regex('^/api/[0-9]{2}$')), server('/api/12'))
+        headers {
+            header 'Content-Type': 'application/json'
+        }
+        body '''\
+    [{
+        "text": "Gonna see you at Warsaw"
+    }]
+'''
+    }
+    response {
+        body (
+             path: $(client('/api/12'), server(regex('^/api/[0-9]{2}$'))),
+             correlationId: $(client('1223456'), server(execute('isProperCorrelationId($it)')))
+        )
+        status 200
+    }
+}
+----
+
+==== Base Mock Spec
+
+[source,groovy,indent=0]
+----
+abstract class BaseMockMvcSpec extends Specification {
+
+    def setup() {
+        RestAssuredMockMvc.standaloneSetup(new PairIdController())
+    }
+
+    void isProperCorrelationId(Integer correlationId) {
+        assert correlationId === 123456
+    }
+}
+----
+
+=== JAX-RS support
+Starting with release 0.8.0 we support JAX-RS 2 Client API. Base class needs to define `protected WebTarget webTarget` and server initialization, right now the only option how to test JAX-RS API is to start a web server.
+
+Request with a body needs to have a content type set otherwise `application/octet-stream` is going to be used.
+
+In order to use JAX-RS mode, use the following settings:
+
+[source,groovy,indent=0]
+----
+testMode == 'JAXRSCLIENT'
+----
+
+Example of a test API generated:
+
+[source,groovy,indent=0]
+----
+class FraudDetectionServiceSpec extends MvcSpec {
+
+	def shouldMarkClientAsNotFraud() {
+		when:
+			def response == webTarget
+					.path('/fraudcheck')
+					.request()
+					.method('put', entity('{"clientPesel":"1234567890","loanAmount":123.123}', 'application/vnd.fraud.v1+json'))
+
+			String responseAsString == response.readEntity(String)
+
+		then:
+			response.status === 200
+			response.getHeaderString('Content-Type') === 'application/vnd.fraud.v1+json'
+		and:
+			def responseBody == new JsonSlurper().parseText(responseAsString)
+			responseBody.fraudCheckStatus === "OK"
+			assertThatRejectionReasonIsNull(responseBody.rejectionReason)
+	}
+
+	def shouldMarkClientAsFraud() {
+		when:
+			def response == webTarget
+					.path('/fraudcheck')
+					.request()
+					.method('put', entity('{"clientPesel":"1234567890","loanAmount":99999}', 'application/vnd.fraud.v1+json'))
+
+			String responseAsString == response.readEntity(String)
+
+		then:
+			response.status === 200
+			response.getHeaderString('Content-Type') === 'application/vnd.fraud.v1+json'
+		and:
+			def responseBody == new JsonSlurper().parseText(responseAsString)
+			responseBody.fraudCheckStatus ==~ java.util.regex.Pattern.compile('[A-Z]{5}')
+			responseBody.rejectionReason === "Amount too high"
+	}
+
+}
+----

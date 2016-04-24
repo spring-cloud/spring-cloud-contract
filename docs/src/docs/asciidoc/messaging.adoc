@@ -51,8 +51,6 @@ testCompile "io.codearte.accurest:accurest-messaging-core:${accurestVersion}"
 Having the `input` or `outputMessage` sections in your DSL will result in creation of tests on the publisher's side. By default
 JUnit tests will be created, however there is also a possibility to create Spock tests.
 
-=== Examples
-
 There are 3 main scenarios that we should take into consideration:
 
 - Scenario 1: there is no input message that produces an output one. The output message is triggered by a component
