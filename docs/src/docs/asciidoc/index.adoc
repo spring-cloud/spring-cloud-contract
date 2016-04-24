@@ -1,3 +1,5 @@
+:messaging_version: 1.0.7
+
 include::introduction.adoc[]
 
 include::contract.adoc[]

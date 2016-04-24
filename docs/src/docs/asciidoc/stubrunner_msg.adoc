@@ -1,6 +1,6 @@
 == Stub Runner for Messaging
 
-WARNING: Feature available since 1.0.7
+WARNING: Feature available since {messaging_version}
 
 Stub Runner has the functionality to run the published stubs in memory. It can integrate with the following frameworks out of the box
 
@@ -9,7 +9,6 @@ Stub Runner has the functionality to run the published stubs in memory. It can i
 - Apache Camel
 
 It also provides points of entry to integrate with any other solution on the market.
-
 
 === Stub triggering
 

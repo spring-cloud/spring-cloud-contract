@@ -1,6 +1,6 @@
 == Accurest Messaging
 
-WARNING: Feature available since 1.0.7
+WARNING: Feature available since {messaging_version}
 
 Accurest allows you to verify your application that uses messaging as means of communication.
 All of our integrations are working with Spring but you can also set one yourself.

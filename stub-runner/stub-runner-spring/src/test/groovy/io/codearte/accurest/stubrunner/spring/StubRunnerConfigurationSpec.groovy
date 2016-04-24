@@ -12,6 +12,7 @@ import spock.lang.Specification
 /**
  * @author Marcin Grzejszczak
  */
+// tag::test[]
 @ContextConfiguration(classes = Config, loader = SpringApplicationContextLoader)
 class StubRunnerConfigurationSpec extends Specification {
 
@@ -37,3 +38,4 @@ class StubRunnerConfigurationSpec extends Specification {
 	@EnableAutoConfiguration
 	static class Config {}
 }
+// end::test[]

@@ -1,13 +1,13 @@
 package io.codearte.accurest.stubrunner.junit;
 
+import java.io.InputStream;
+import java.net.URI;
+
 import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
-
-import java.io.InputStream;
-import java.net.URI;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
@@ -23,11 +23,14 @@ public class AccurestRuleJUnitTest {
 			System.getProperties().setProperty("stubrunner.stubs.classifier", "stubs");
 	}
 
+	// tag:classrule[]
 	@ClassRule public static AccurestRule rule = new AccurestRule()
 			.repoRoot(repoRoot())
 			.downloadStub("io.codearte.accurest.stubs", "loanIssuance")
 			.downloadStub("io.codearte.accurest.stubs:fraudDetectionServer");
+	// end:classrule[]
 
+	// tag:test[]
 	@Test
 	public void should_start_wiremock_servers() throws Exception {
 		// expect: 'WireMocks are running'
@@ -43,6 +46,7 @@ public class AccurestRuleJUnitTest {
 			then(httpGet(rule.findStubUrl("loanIssuance").toString() + "/name")).isEqualTo("loanIssuance");
 			then(httpGet(rule.findStubUrl("fraudDetectionServer").toString() + "/name")).isEqualTo("fraudDetectionServer");
 	}
+	// end:test[]
 
 	private static String repoRoot()  {
 		try {

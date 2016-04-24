@@ -162,6 +162,8 @@ include::../../../../accurest-core/src/test/groovy/io/codearte/accurest/builder/
 
 === Messaging Top-Level Elements
 
+WARNING: Feature available since {messaging_version}
+
 The DSL for messaging looks a little bit different than the one that focuses on HTTP.
 
 ==== Output triggered by a method

@@ -3,6 +3,9 @@
 Runs stubs for service collaborators. Treating stubs as contracts of services allows to use stub-runner as an implementation of 
 http://martinfowler.com/articles/consumerDrivenContracts.html[Consumer Driven Contracts].
 
+Stub Runner allows you to automatically download the stubs of the provided dependencies, start WireMock servers for them and feed them with proper stub definitions.
+For messaging, special stub routes are defined.
+
 ==== Running stubs
 
 ===== Running using main app
@@ -64,7 +67,7 @@ or each parameter separately with a `-P` prefix and without the hyphen `-` in th
 ./gradlew stub-runner-root:stub-runner:run -Pc=pl -Pminp=10000 -Pmaxp=10005 -Ps=a:b:c,d:e,f:g:h
 ----
 
-===== Stubs
+===== HTTP Stubs
 
 Stubs are defined in JSON documents, whose syntax is defined in http://wiremock.org/stubbing.html[WireMock documentation]
 
@@ -87,8 +90,10 @@ Example:
 }
 ----
 
-In the provided JAR file we're harvesting all JSON files and try to put them inside running WireMock instance.
-
 ===== Viewing registered mappings
 
 Every stubbed collaborator exposes list of defined mappings under `__/admin/` endpoint.
+
+===== Messaging Stubs
+
+Depending on the provided Stub Runner dependency and the DSL the messaging routes are automatically set up.

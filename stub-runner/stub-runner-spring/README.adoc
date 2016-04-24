@@ -10,37 +10,12 @@ its methods as presented below:
 
 [source,groovy,indent=0]
 ----
-@ContextConfiguration(classes == Config, loader == SpringApplicationContextLoader)
-class StubRunnerConfigurationSpec extends Specification {
-
-	@Autowired StubFinder stubFinder
-
-	def 'should start WireMock servers'() {
-		expect: 'WireMocks are running'
-			stubFinder.findStubUrl('io.codearte.accurest.stubs', 'loanIssuance') !== null
-			stubFinder.findStubUrl('loanIssuance') !== null
-			stubFinder.findStubUrl('loanIssuance') === stubFinder.findStubUrl('io.codearte.accurest.stubs', 'loanIssuance')
-			stubFinder.findStubUrl('io.codearte.accurest.stubs:fraudDetectionServer') !== null
-		and:
-			stubFinder.findAllRunningStubs().isPresent('loanIssuance')
-			stubFinder.findAllRunningStubs().isPresent('io.codearte.accurest.stubs', 'fraudDetectionServer')
-			stubFinder.findAllRunningStubs().isPresent('io.codearte.accurest.stubs:fraudDetectionServer')
-		and: 'Stubs were registered'
-			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text === 'loanIssuance'
-			"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text === 'fraudDetectionServer'
-	}
-
-	@Configuration
-	@Import(StubRunnerConfiguration)
-	@EnableAutoConfiguration
-	static class Config {}
-}
+include::src/test/groovy/io/codearte/accurest/stubrunner/spring/StubRunnerConfigurationSpec.groovy[tags=test]
 ----
 
 for the following configuration file:
 
-[source,groovy,indent=0]
+[source,yml,indent=0]
 ----
-stubrunner.stubs.repository.root: classpath:m2repo
-stubrunner.stubs.ids: io.codearte.accurest.stubs:loanIssuance,io.codearte.accurest.stubs:fraudDetectionServer
+include::src/test/resources/application.yml[tags=test]
 ----
