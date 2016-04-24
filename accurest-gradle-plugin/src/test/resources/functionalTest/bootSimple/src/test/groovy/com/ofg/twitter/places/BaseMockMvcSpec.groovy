@@ -4,6 +4,7 @@ import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc
 import com.ofg.twitter.place.PairIdController
 import spock.lang.Specification
 
+// tag::base_class[]
 abstract class BaseMockMvcSpec extends Specification {
 
 	def setup() {
@@ -19,3 +20,4 @@ abstract class BaseMockMvcSpec extends Specification {
 	}
 
 }
+// end::base_class[]

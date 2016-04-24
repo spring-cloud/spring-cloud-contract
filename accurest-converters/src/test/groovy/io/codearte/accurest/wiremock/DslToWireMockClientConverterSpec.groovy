@@ -171,4 +171,70 @@ class DslToWireMockClientConverterSpec extends Specification {
 }
 ''', json, false)
 	}
+	
+	def 'should convert dsl to wiremock to show it in the docs'() {
+		given:
+			def converter = new DslToWireMockClientConverter()
+		and:
+			File file = tmpFolder.newFile("dsl_from_docs.groovy")
+			file.write('''
+			io.codearte.accurest.dsl.GroovyDsl.make {
+				priority 1
+				request {
+					method 'POST'
+					url '/users/password'
+					headers {
+						header 'Content-Type': 'application/json'
+					}
+					body(
+							email: $(stub(optional(regex(email()))), test('abc@abc.com')),
+							callback_url: $(stub(regex(hostname())), test('http://partners.com'))
+					)
+				}
+				response {
+					status 404
+					headers {
+						header 'Content-Type': 'application/json'
+					}
+					body(
+							code: value(stub("123123"), test(optional("123123"))),
+							message: "User not found by email == [${value(test(regex(email())), stub('not.existing@user.com'))}]"
+					)
+				}
+			}
+	''')
+		when:
+		String json = converter.convertContent("Test", new Contract(file.toPath(), false, 0, null))
+		then:
+		JSONAssert.assertEquals( // tag::wiremock[]
+'''
+{
+  "request" : {
+    "url" : "/users/password",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[?(@.email =~ /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4})?/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.callback_url =~ /((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?/)]"
+    } ],
+    "headers" : {
+      "Content-Type" : {
+        "equalTo" : "application/json"
+      }
+    }
+  },
+  "response" : {
+    "status" : 404,
+    "body" : "{\\"code\\":\\"123123\\",\\"message\\":\\"User not found by email == [not.existing@user.com]\\"}",
+    "headers" : {
+      "Content-Type" : "application/json"
+    }
+  },
+  "priority" : 1
+}
+'''
+// end::wiremock[]
+				, json, false)
+	}
+		
 }

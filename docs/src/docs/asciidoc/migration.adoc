@@ -1,0 +1,23 @@
+== Migration Guide
+
+=== Migration to 0.4.7
+- in 0.4.7 we've fixed package name (coderate to codearte) so you've to do the same in your projects. This means replacing ```io.coderate.accurest.dsl.GroovyDsl``` with ```io.codearte.accurest.dsl.GroovyDsl```
+
+=== Migration to 1.0.0-RC1
+- from 1.0.0 we're distinguish ignored contracts from excluded contracts:
+ - `excludedFiles` pattern tells Accurest to skip processing those files at all
+ - `ignoredFiles` pattern tells Accurest to generate contracts and tests, but tests will be marked as `@Ignore`
+
+- from 1.0.0 the `basePackageForTests` behaviour has changed
+ - prior to the change all DSL files had to be under `contractsDslDir`/`basePackageForTests`/*subpackage* resulting in `basePackageForTests`.*subpackage* test package creation
+ - now all DSL files have to be under `contractsDslDir`/*subpackage* resulting in `basePackageForTests`.*subpackage* test package creation
+ - If you don't migrate to the new approach you will have your tests under `contractsDslDir`.`contractsDslDir`.*subpackage*
+
+=== Migration to 1.0.7
+- from 1.0.7 we're setting JUnit as a default testing utility. You have to pass the following option to keep Spock
+as your first choice:
+
+[source,groovy]
+----
+include::../../../../accurest-gradle-plugin/src/test/resources/functionalTest/scenarioProject/build.gradle[tags=target_framework,indent=0]
+----

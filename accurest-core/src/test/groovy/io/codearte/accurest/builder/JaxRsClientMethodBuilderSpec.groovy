@@ -591,4 +591,74 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			"JaxRsClientJUnitMethodBodyBuilder" | { GroovyDsl dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                  | 'method("GET")'
 	}
 
+	def "should generate a call with an url path and query parameters with JUnit - we'll put it into docs"() {
+		given:
+		GroovyDsl contractDsl = GroovyDsl.make {
+			request {
+				method 'GET'
+				urlPath('/users') {
+					queryParameters {
+						parameter 'limit': $(client(equalTo("20")), server(equalTo("10")))
+						parameter 'offset': $(client(containing("20")), server(equalTo("20")))
+						parameter 'filter': "email"
+						parameter 'sort': equalTo("name")
+						parameter 'search': $(client(notMatching(~/^\/[0-9]{2}$/)), server("55"))
+						parameter 'age': $(client(notMatching("^\\w*\$")), server("99"))
+						parameter 'name': $(client(matching("Denis.*")), server("Denis.Stepanov"))
+						parameter 'email': "bob@email.com"
+						parameter 'hello': $(client(matching("Denis.*")), server(absent()))
+						parameter 'hello': absent()
+					}
+				}
+			}
+			response {
+				status 200
+				body """
+					{
+						"property1": "a",
+						"property2": "b"
+					}
+					"""
+			}
+		}
+			MethodBodyBuilder builder = new JaxRsClientJUnitMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+		stripped(test) == stripped( // tag::jaxrs[]
+	'''
+ // when:
+  Response response = webTarget
+    .path("/users")
+    .queryParam("limit", "10")
+    .queryParam("offset", "20")
+    .queryParam("filter", "email")
+    .queryParam("sort", "name")
+    .queryParam("search", "55")
+    .queryParam("age", "99")
+    .queryParam("name", "Denis.Stepanov")
+    .queryParam("email", "bob@email.com")
+    .request()
+    .method("GET");
+
+  String responseAsString = response.readEntity(String.class);
+
+ // then:
+  assertThat(response.getStatus()).isEqualTo(200);
+ // and:
+  DocumentContext parsedJson = JsonPath.parse(responseAsString);
+  assertThatJson(parsedJson).field("property1").isEqualTo("a");
+  assertThatJson(parsedJson).field("property2").isEqualTo("b");
+'''
+// end::jaxrs[]
+)
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+	}
+
+	private String stripped(String string) {
+		return string.stripMargin().stripIndent().replace('\t', '').replace('\n', '')
+	}
 }
