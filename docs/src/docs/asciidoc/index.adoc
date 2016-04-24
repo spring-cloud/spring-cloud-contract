@@ -1,5 +1,9 @@
 :messaging_version: 1.0.7
 
+= Accurest
+
+_Adam Dudczak, Marcin Grzejszczak, Jakub Kubrynski, Karol Lassak, Olga Maciaszek-Sharma, Mariusz Smykuła_
+
 include::introduction.adoc[]
 
 include::contract.adoc[]
