@@ -91,6 +91,7 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 
 	def "should generate tests triggered by a message for Spock"() {
 		given:
+		// tag::trigger_message_dsl[]
 			def contractDsl = GroovyDsl.make {
 				label 'some_label'
 				input {
@@ -112,13 +113,16 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 					}
 				}
 			}
+		// end::trigger_message_dsl[]
 			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			stripped(test) == stripped('''
+			stripped(test) == stripped(
+					// tag::trigger_message_spock[]
+					'''
 											given:
 												 def inputMessage = accurestMessaging.create(
 													\'\'\'{"bookName":"foo"}\'\'\',
@@ -134,7 +138,9 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 											and:
 												 DocumentContext parsedJson = JsonPath.parse(accurestObjectMapper.writeValueAsString(response.payload))
 												 assertThatJson(parsedJson).field("bookName").isEqualTo("foo")
-												''')
+												'''
+					// end::trigger_message_spock[]
+			)
 	}
 
 	def "should generate tests triggered by a message for JUnit"() {
@@ -166,7 +172,9 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			stripped(test) == stripped('''
+			stripped(test) == stripped(
+					// tag::trigger_message_junit[]
+					'''
 											// given:
 												 AccurestMessage inputMessage = accurestMessaging.create(
 													"{\\"bookName\\":\\"foo\\"}"
@@ -183,11 +191,14 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 												 DocumentContext parsedJson = JsonPath.parse(accurestObjectMapper.writeValueAsString(response.getPayload()));
 												 assertThatJson(parsedJson).field("bookName").isEqualTo("foo");
 
-												''')
+												'''
+					// end::trigger_message_junit[]
+			)
 	}
 
 	def "should generate tests without destination, triggered by a message"() {
 		given:
+		// tag::trigger_no_output_dsl[]
 			def contractDsl = GroovyDsl.make {
 				label 'some_label'
 				input {
@@ -201,13 +212,16 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 					assertThat('bookWasDeleted()')
 				}
 			}
+		// end::trigger_no_output_dsl[]
 			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			stripped(test) == stripped('''
+			stripped(test) == stripped(
+					// tag::trigger_no_output_spock[]
+					'''
 											given:
 												 def inputMessage = accurestMessaging.create(
 													\'\'\'{"bookName":"foo"}\'\'\',
@@ -220,7 +234,9 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 											then:
 												 noExceptionThrown()
 												 bookWasDeleted()
-												''')
+												'''
+					// end::trigger_no_output_spock[]
+			)
 	}
 
 	def "should generate tests without destination, triggered by a message for JUnit"() {
@@ -244,7 +260,9 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			stripped(test) == stripped('''
+			stripped(test) == stripped(
+					// tag::trigger_no_output_junit[]
+					'''
 											// given:
 											 AccurestMessage inputMessage = accurestMessaging.create(
 												"{\\"bookName\\":\\"foo\\"}"
@@ -256,7 +274,9 @@ class MessagingMethodBodyBuilderSpec extends Specification {
 
 											// then:
 											 bookWasDeleted();
-												''')
+												'''
+					// end::trigger_no_output_junit[]
+			)
 	}
 
 }

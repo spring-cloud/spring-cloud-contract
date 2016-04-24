@@ -47,6 +47,103 @@ testCompile "io.codearte.accurest:accurest-messaging-core:${accurestVersion}"
 
 === Publisher side test generation
 
-Having the `input` or `outputMessage` sections in your DSL will result in creation of tests on the publisher's side.
+Having the `input` or `outputMessage` sections in your DSL will result in creation of tests on the publisher's side. By default
+JUnit tests will be created, however there is also a possibility to create Spock tests.
 
-//TODO: add examples from MessaginMethodBodyBuilderSpec
+=== Examples
+
+There are 3 main scenarios that we should take into consideration:
+
+- Scenario 1: there is no input message that produces an output one. The output message is triggered by a component
+inside the application (e.g. scheduler)
+- Scenario 2: the input message triggers an output message
+- Scenarion 3: the input message is consumed and there is no output message
+
+==== Scenario 1 (no input message)
+
+For the given contract:
+
+[source,groovy]
+----
+include::../../../../accurest-core/src/test/groovy/io/codearte/accurest/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_method_dsl]
+----
+
+The following JUnit test will be created:
+
+[source,groovy]
+----
+include::../../../../accurest-core/src/test/groovy/io/codearte/accurest/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_method_junit_test]
+----
+
+And the following Spock test would be created:
+
+[source,groovy]
+----
+include::../../../../accurest-core/src/test/groovy/io/codearte/accurest/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_method_test]
+----
+
+==== Scenario 2 (output triggered by input)
+
+For the given contract:
+
+[source,groovy]
+----
+include::../../../../accurest-core/src/test/groovy/io/codearte/accurest/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_message_dsl]
+----
+
+The following JUnit test will be created:
+
+[source,groovy]
+----
+include::../../../../accurest-core/src/test/groovy/io/codearte/accurest/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_message_junit]
+----
+
+And the following Spock test would be created:
+
+[source,groovy]
+----
+include::../../../../accurest-core/src/test/groovy/io/codearte/accurest/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_message_spock]
+----
+
+==== Scenario 3 (no output message)
+
+For the given contract:
+
+[source,groovy]
+----
+include::../../../../accurest-core/src/test/groovy/io/codearte/accurest/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_no_output_dsl]
+----
+
+The following JUnit test will be created:
+
+[source,groovy]
+----
+include::../../../../accurest-core/src/test/groovy/io/codearte/accurest/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_no_output_junit]
+----
+
+And the following Spock test would be created:
+
+[source,groovy]
+----
+include::../../../../accurest-core/src/test/groovy/io/codearte/accurest/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_no_output_spock]
+----
+
+=== Consumer Stub Side generation
+
+Unlike the HTTP part - in Messaging we need to publish the Groovy DSL inside the JAR with a stub. Then it's parsed on the consumer side
+and proper stubbed routes are created.
+
+For more infromation please consult the Stub Runner Messaging sections.
+
+==== Gradle Setup
+
+Example of Accurest Gradle setup:
+
+[source,groovy,indent=0]
+----
+include::../../../../accurest-gradle-plugin/src/test/resources/functionalTest/scenarioProject/build.gradle[tags=jar_setup,indent=0]
+----
+
+==== Maven Setup
+
+Example of Maven can be found in the [AccuREST Maven Plugin README](https://github.com/Codearte/accurest-maven-plugin/=publishing-wiremock-stubs-projectf-stubsjar)
