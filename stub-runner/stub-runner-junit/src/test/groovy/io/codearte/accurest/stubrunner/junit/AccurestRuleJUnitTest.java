@@ -23,14 +23,14 @@ public class AccurestRuleJUnitTest {
 			System.getProperties().setProperty("stubrunner.stubs.classifier", "stubs");
 	}
 
-	// tag:classrule[]
+	// tag::classrule[]
 	@ClassRule public static AccurestRule rule = new AccurestRule()
 			.repoRoot(repoRoot())
 			.downloadStub("io.codearte.accurest.stubs", "loanIssuance")
 			.downloadStub("io.codearte.accurest.stubs:fraudDetectionServer");
-	// end:classrule[]
+	// end::classrule[]
 
-	// tag:test[]
+	// tag::test[]
 	@Test
 	public void should_start_wiremock_servers() throws Exception {
 		// expect: 'WireMocks are running'
@@ -46,7 +46,7 @@ public class AccurestRuleJUnitTest {
 			then(httpGet(rule.findStubUrl("loanIssuance").toString() + "/name")).isEqualTo("loanIssuance");
 			then(httpGet(rule.findStubUrl("fraudDetectionServer").toString() + "/name")).isEqualTo("fraudDetectionServer");
 	}
-	// end:test[]
+	// end::test[]
 
 	private static String repoRoot()  {
 		try {

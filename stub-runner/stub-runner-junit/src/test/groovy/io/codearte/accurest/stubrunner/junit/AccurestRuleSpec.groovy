@@ -18,7 +18,7 @@ class AccurestRuleSpec extends Specification {
 		System.getProperties().setProperty("stubrunner.stubs.classifier", "stubs");
 	}
 
-	// tag:classrule[]
+	// tag::classrule[]
 	@ClassRule @Shared AccurestRule rule = new AccurestRule()
 			.repoRoot(AccurestRuleSpec.getResource("/m2repo").toURI().toString())
 			.downloadStub("io.codearte.accurest.stubs", "loanIssuance")
@@ -38,5 +38,5 @@ class AccurestRuleSpec extends Specification {
 			"${rule.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
 			"${rule.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
 	}
-	// end:classrule[]
+	// end::classrule[]
 }

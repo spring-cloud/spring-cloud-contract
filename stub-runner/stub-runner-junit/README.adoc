@@ -28,7 +28,7 @@ Example of usage in Spock tests:
 
 [source,groovy,indent=0]
 ----
-include::src/test/groovy/io/codearte/accurest/stubrunner/junit/AccurestRuleSpec.java[tags=classrule]
+include::src/test/groovy/io/codearte/accurest/stubrunner/junit/AccurestRuleSpec.groovy[tags=classrule]
 ----
 
 Example of usage in JUnit tests:

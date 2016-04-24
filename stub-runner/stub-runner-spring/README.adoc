@@ -17,5 +17,5 @@ for the following configuration file:
 
 [source,yml,indent=0]
 ----
-include::src/test/resources/application.yml[tags=test]
+include::src/test/resources/application.yml[]
 ----
