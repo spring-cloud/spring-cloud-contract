@@ -17,6 +17,9 @@ import org.codehaus.plexus.archiver.jar.JarArchiver
 @CompileStatic
 class GenerateStubsMojo extends AbstractMojo {
 
+    private static final String STUB_MAPPING_FILE_PATTERN = '**/*.json'
+    private static final String ACCUREST_FILE_PATTERN = '**/*.groovy'
+
     @Parameter(defaultValue = '${project.build.directory}', readonly = true, required = true)
     private File projectBuildDirectory
 
@@ -34,6 +37,9 @@ class GenerateStubsMojo extends AbstractMojo {
 
     @Component(role = Archiver.class, hint = "jar")
     private JarArchiver jarArchiver;
+
+    @Parameter(defaultValue = 'true')
+    private boolean attachContracts
 
     void execute() throws MojoExecutionException, MojoFailureException {
 
@@ -54,7 +60,12 @@ class GenerateStubsMojo extends AbstractMojo {
         File stubJarFile = new File(projectBuildDirectory, stubArchiveName);
 
         try {
-            jarArchiver.addDirectory(stubsOutputDir);
+            if (attachContracts) {
+                jarArchiver.addDirectory(stubsOutputDir, [STUB_MAPPING_FILE_PATTERN, ACCUREST_FILE_PATTERN] as String[], [] as String[]);
+            } else {
+                log.info("Skipping attaching accurest contracts")
+                jarArchiver.addDirectory(stubsOutputDir, [STUB_MAPPING_FILE_PATTERN] as String[], [ACCUREST_FILE_PATTERN] as String[]);
+            }
             jarArchiver.setCompress(true);
             jarArchiver.setDestFile(stubJarFile);
             jarArchiver.createArchive();

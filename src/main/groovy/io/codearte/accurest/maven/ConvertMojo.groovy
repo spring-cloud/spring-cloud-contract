@@ -37,9 +37,6 @@ class ConvertMojo extends AbstractMojo {
     @Parameter(property = 'accurest.skip', defaultValue = 'false')
     private boolean skip
 
-    @Parameter(defaultValue = 'false')
-    private boolean attachContracts
-
     @Parameter(defaultValue = '${session}', readonly = true)
     private MavenSession mavenSession
 
@@ -56,13 +53,9 @@ class ConvertMojo extends AbstractMojo {
             return
         }
 
-        if (attachContracts) {
-            log.info("Attaching accurest contracts")
-            copyContracts()
-        }
+        copyContracts()
 
         AccurestConfigProperties config = new AccurestConfigProperties()
-
         config.contractsDslDir = insideProject ? contractsDirectory : source
         config.stubsOutputDir = insideProject ? new File(outputDirectory, 'mappings') : destination
 
@@ -75,8 +68,8 @@ class ConvertMojo extends AbstractMojo {
     }
 
     private void copyContracts() {
+        log.info("Copying accurest contracts")
         Resource testResource = new Resource(directory: contractsDirectory.absolutePath)
-
         MavenResourcesExecution mavenResourcesExecution =
                 new MavenResourcesExecution([testResource],
                         new File(outputDirectory, 'contracts'), project, 'UTF-8',

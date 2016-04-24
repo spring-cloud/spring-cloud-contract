@@ -1,6 +1,7 @@
 package io.codearte.accurest.maven;
 
 import static io.takari.maven.testing.TestMavenRuntime.newParameter;
+import static io.takari.maven.testing.TestResources.assertFileContents;
 import static io.takari.maven.testing.TestResources.assertFilesPresent;
 
 import java.io.File;
@@ -54,6 +55,21 @@ public class PluginUnitTest {
 		maven.executeMojo(basedir, "generateTests");
 		assertFilesPresent(basedir,
 				"target/generated-test-sources/accurest/io/codearte/accurest/tests/AccurestTest.java");
+	}
+
+	@Test
+	public void shouldGenerateStubs() throws Exception {
+		File basedir = resources.getBasedir("generatedStubs");
+		maven.executeMojo(basedir, "generateStubs");
+		assertFilesPresent(basedir, "target/sample-project-0.1-stubs.jar");
+	}
+
+	@Test
+	public void shouldGenerateStubsWithMappingsOnly() throws Exception {
+		File basedir = resources.getBasedir("generatedStubs");
+		maven.executeMojo(basedir, "generateStubs", newParameter("attachContracts", "false"));
+		assertFilesPresent(basedir, "target/sample-project-0.1-stubs.jar");
+		// FIXME: add assertion for jar content
 	}
 
 }
