@@ -28,10 +28,12 @@ Both have their advantages but also a lot of disadvantages. Let's focus on the l
 *Deploy all microservices and perform end to end tests*
 
 Advantages:
+
 - simulates production
 - tests real communication between services
 
 Disadvantages:
+
 - to test one microservice we would have to deploy 6 microservices, a couple of databases etc.
 - the environment where the tests would be conducted would be locked for a single suite of tests (i.e. nobody else would be able to run the tests in the meantime).
 - long to run
@@ -41,10 +43,12 @@ Disadvantages:
 *Mock other microservices in unit / integration tests*
 
 Advantages:
+
 - very fast feedback
 - no infrastructure requirements
 
 Disadvantages:
+
 - the implementor of the service creates stubs thus they might have nothing to do with the reality
 - you can go to production with passing tests and failing production
 
