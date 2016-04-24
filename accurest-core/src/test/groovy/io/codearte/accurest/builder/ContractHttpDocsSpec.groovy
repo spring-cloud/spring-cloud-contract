@@ -232,8 +232,7 @@ class ContractHttpDocsSpec extends Specification {
 					header 'Content-Type': 'application/json'
 				}
 				body(
-						code: value(stub("123123"), test(optional("123123"))),
-						message: "User not found by email == [${value(test(regex(email())), stub('not.existing@user.com'))}]"
+						code: value(stub("123123"), test(optional("123123")))
 				)
 			}
 		}
@@ -244,28 +243,27 @@ class ContractHttpDocsSpec extends Specification {
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 			new MockMvcSpockMethodRequestProcessingBodyBuilder(optionals).appendTo(blockBuilder)
 		expect:
-		stripped(blockBuilder.toString()) == stripped(
+		String expectedTest =
 // tag::optionals_test[]
 """
-given:
- def request = given()
-   .header('Content-Type', 'application/json')
-   .body('''{"email":"abc@abc.com","callback_url":"http://partners.com"}''')
+ given:
+  def request = given()
+    .header('Content-Type', 'application/json')
+    .body('''{"email":"abc@abc.com","callback_url":"http://partners.com"}''')
 
-when:
- def response = given().spec(request)
-   .post("/users/password")
+ when:
+  def response = given().spec(request)
+    .post("/users/password")
 
-then:
- response.statusCode == 404
- response.header('Content-Type')  == 'application/json'
-and:
- DocumentContext parsedJson = JsonPath.parse(response.body.asString())
- assertThatJson(parsedJson).field("message").matches("User not found by email == \\\\\\\\[[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\\\\\.[a-zA-Z]{2,4}\\\\\\\\]")
- assertThatJson(parsedJson).field("code").matches("(123123)?")
+ then:
+  response.statusCode == 404
+  response.header('Content-Type')  == 'application/json'
+ and:
+  DocumentContext parsedJson = JsonPath.parse(response.body.asString())
+  assertThatJson(parsedJson).field("code").matches("(123123)?")
 """
 // end::optionals_test[]
-)
+		stripped(blockBuilder.toString()) == stripped(expectedTest)
 	}
 
 	GroovyDsl method  =
@@ -294,6 +292,6 @@ and:
 		// end::method[]
 
 	private String stripped(String string) {
-		return string.stripMargin().stripIndent().replace('\t', '').replace('\n', '')
+		return string.stripMargin().stripIndent().replace('\t', '').replace('\n', '').replace(' ','')
 	}
 }

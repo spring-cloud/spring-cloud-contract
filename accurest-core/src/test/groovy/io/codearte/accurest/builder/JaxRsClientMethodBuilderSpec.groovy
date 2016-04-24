@@ -615,8 +615,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 				status 200
 				body """
 					{
-						"property1": "a",
-						"property2": "b"
+						"property1": "a"
 					}
 					"""
 			}
@@ -627,8 +626,9 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-		stripped(test) == stripped( // tag::jaxrs[]
-	'''
+		String expectedResponse =
+// tag::jaxrs[]
+'''
  // when:
   Response response = webTarget
     .path("/users")
@@ -650,15 +650,14 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
  // and:
   DocumentContext parsedJson = JsonPath.parse(responseAsString);
   assertThatJson(parsedJson).field("property1").isEqualTo("a");
-  assertThatJson(parsedJson).field("property2").isEqualTo("b");
 '''
 // end::jaxrs[]
-)
+		stripped(test) == stripped(expectedResponse)
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 	}
 
 	private String stripped(String string) {
-		return string.stripMargin().stripIndent().replace('\t', '').replace('\n', '')
+		return string.stripMargin().stripIndent().replace('\t', '').replace('\n', '').replace(' ','')
 	}
 }

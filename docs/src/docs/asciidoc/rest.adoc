@@ -15,7 +15,7 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'io.codearte.accurest:accurest-gradle-plugin:1.0.6'
+		classpath 'io.codearte.accurest:accurest-gradle-plugin:${accurest_version}'
 	}
 }
 
@@ -23,7 +23,7 @@ apply plugin: 'groovy'
 apply plugin: 'accurest'
 
 dependencies {
-	testCompile('org.codehaus.groovy:groovy-all:2.4.6')
+	testCompile 'org.codehaus.groovy:groovy-all:2.4.6'
 	testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
 	testCompile 'com.jayway.restassured:spring-mock-mvc:2.9.0' // needed if you're going to use Spring MockMvc
 }
@@ -53,7 +53,8 @@ Read more: http://codearte.github.io/accurest-maven-plugin/[accurest-maven-plugi
 
 ===== Add stubs
 
-By default Accurest is looking for stubs in src/test/resources/stubs directory.
+By default Accurest is looking for stubs in `src/test/resources/stubs` directory.
+
 Directory containing stub definitions is treated as a class name, and each stub definition is treated as a single test.
 We assume that it contains at least one directory which will be used as test class name. If there is more than one level of nested directories all except the last one will be used as package name.
 So with following structure
@@ -65,8 +66,8 @@ src/test/accurest/myservice/shouldReturnUser.groovy
 ----
 
 Accurest will create test class `defaultBasePackage.MyService` with two methods
- - shouldCreateUser()
- - shouldReturnUser()
+ - `shouldCreateUser()`
+ - `shouldReturnUser()`
 
 ==== Run plugin
 
@@ -105,29 +106,32 @@ accurest {
 
 [source,groovy,indent=0]
 ----
-package org.mycompany.tests
-
-import org.mycompany.ExampleSpringController
-import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc
-import spock.lang.Specification
-
-class  MvcSpec extends Specification {
-  def setup() {
-   RestAssuredMockMvc.standaloneSetup(new ExampleSpringController())
-  }
-}
+include::../../../../accurest-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/com/ofg/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
 ----
 
-In case of using `Explicit` mode, you can use base class to initialize the whole tested app similarly as in regular integration tests. In case of `JAXRSCLIENT` mode this base class should also contain `protected WebTarget webTarget` field, right now the only option to test JAX-RS API is to start a web server.
+In case of using `Explicit` mode, you can use base class to initialize the whole tested app similarly as in regular integration tests. In case of `JAXRSCLIENT` mode this base class
+should also contain `protected WebTarget webTarget` field, right now the only option to test JAX-RS API is to start a web server.
 
 ==== Invoking generated tests
 
 To ensure that provider side is complaint with defined contracts, you need to invoke:
-`./gradlew generateAccurest test`
+
+[source,bash,indent=0]
+----
+./gradlew generateAccurest test
+----
 
 ==== Accurest on consumer side
 
-In consumer service you need to configure Accurest plugin in exactly the same way as in case of provider. You need to copy contracts stored in src/test/resources/stubs and generate Wiremock json stubs using: `./gradlew generateWireMockClientStubs` command. Note that `stubsOutputDir` option has to be set for stub generation to work.
+In consumer service you need to configure Accurest plugin in exactly the same way as in case of provider. If you don't want to use Stub Runner then you need to copy contracts stored in
+`src/test/accurest` and generate WireMock json stubs using:
+
+[source,bash,indent=0]
+----
+./gradlew generateWireMockClientStubs
+----
+
+command. Note that `stubsOutputDir` option has to be set for stub generation to work.
 
 When present, json stubs can be used in consumer automated tests.
 

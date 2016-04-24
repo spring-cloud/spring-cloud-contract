@@ -75,8 +75,4 @@ class AccurestConfigProperties {
 	 */
 	File stubsOutputDir
 
-	/**
-	 * Which version of Accurest Messaging Core to use
-	 */
-	String accurestMessagingCoreVersion = "+"
 }

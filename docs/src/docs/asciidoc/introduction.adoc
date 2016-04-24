@@ -99,12 +99,22 @@ Accurest and Stub Runner are using the following libraries
 - https://github.com/jayway/JsonPath[Jayway JSONPath]
 - https://github.com/marcingrzejszczak/jsonassert[JSONAssert from Marcin Grzejszczak]
 
-=== Additional readings / videos
+=== Additional links
 
 Below you can find some resources related to Accurest and Stub Runner. Note that some can be outdated since the Accurest project
 is under constant development.
 
-- https://www.youtube.com/watch?v=daafmTYFoDU[Olga Maciaszek-Sharma talking about Accurest]
-- https://vimeo.com/130779882[Marcin Grzejszczak and Jakub Kubrynski talking about Accurest]
+==== Videos
+
+*Olga Maciaszek-Sharma talking about Accurest*
+
+video::daafmTYFoDU[youtube]
+
+*Marcin Grzejszczak and Jakub Kubrynski talking about Accurest*
+
+video::130779882[vimeo]
+
+==== Readings
+
 - http://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura[Slides from Marcin Grzejszczak's talk about Accurest]
-- http://toomuchcoding.com/blog/categories/accurest/[Accurest article from Marcin Grzejszczak's blog]
+- http://toomuchcoding.com/blog/categories/accurest/[Accurest related articles from Marcin Grzejszczak's blog]
