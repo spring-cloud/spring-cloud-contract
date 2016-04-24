@@ -52,7 +52,7 @@ For convenience the `StubFinder` interface extends `StubTrigger` so it's enough 
 
 `StubTrigger` gives you the following options to trigger a message:
 
-===== Trigger by label
+==== Trigger by label
 
 [source,groovy]
 ----
