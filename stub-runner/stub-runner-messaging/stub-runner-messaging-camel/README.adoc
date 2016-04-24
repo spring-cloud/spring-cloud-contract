@@ -103,3 +103,35 @@ And the received message would pass the following assertions
 ----
 include::src/test/groovy/io/codearte/accurest/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=client_receive_message,indent=0]
 ----
+
+===== Custom triggers
+
+`StubTrigger` gives you the following options to trigger a message:
+
+===== Trigger by label
+
+[source,groovy]
+----
+include::src/test/groovy/io/codearte/accurest/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=client_trigger,indent=0]
+----
+
+===== Trigger by group and artifact ids
+
+[source,groovy]
+----
+include::src/test/groovy/io/codearte/accurest/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=trigger_group_artifact,indent=0]
+----
+
+===== Trigger by artifact ids
+
+[source,groovy]
+----
+include::src/test/groovy/io/codearte/accurest/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=trigger_artifact,indent=0]
+----
+
+===== Trigger all messages
+
+[source,groovy]
+----
+include::src/test/groovy/io/codearte/accurest/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=trigger_all,indent=0]
+----

@@ -64,7 +64,9 @@ class CamelStubRunnerSpec extends Specification {
 
 	def 'should trigger a label for the existing groupId:artifactId'() {
 		when:
+		// tag::trigger_group_artifact[]
 			stubFinder.trigger('io.codearte.accurest.stubs:camelService', 'return_book_1')
+		// end::trigger_group_artifact[]
 		then:
 			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)
 		and:
@@ -75,7 +77,9 @@ class CamelStubRunnerSpec extends Specification {
 
 	def 'should trigger a label for the existing artifactId'() {
 		when:
+		// tag::trigger_artifact[]
 			stubFinder.trigger('camelService', 'return_book_1')
+		// end::trigger_artifact[]
 		then:
 			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)
 		and:
@@ -104,7 +108,9 @@ class CamelStubRunnerSpec extends Specification {
 
 	def 'should trigger messages by running all triggers'() {
 		when:
+		// tag::trigger_all[]
 			stubFinder.trigger()
+		// end::trigger_all[]
 		then:
 			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)
 		and:
