@@ -2,7 +2,6 @@ package io.codearte.accurest.builder
 
 import io.codearte.accurest.dsl.GroovyDsl
 import spock.lang.Specification
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -277,6 +276,96 @@ then:
  bookWasDeleted();
 '''
 // end::trigger_no_output_junit[]
+			stripped(test) == stripped(expectedMsg)
+	}
+
+	def "should generate tests without headers for JUnit"() {
+		given:
+			def contractDsl = GroovyDsl.make {
+				label 'some_label'
+				input {
+					messageFrom('jms:input')
+					messageBody([
+							bookName: 'foo'
+					])
+					messageHeaders {
+						header('sample', 'header')
+					}
+				}
+				outputMessage {
+					sentTo('jms:output')
+					body([
+							bookName: 'foo'
+					])
+				}
+			}
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+		String expectedMsg =
+'''
+ // given:
+  AccurestMessage inputMessage = accurestMessaging.create(
+\t\t\t"{\\"bookName\\":\\"foo\\"}"
+\t\t, headers()
+\t\t\t.header("sample", "header"));
+
+ // when:
+  accurestMessaging.send(inputMessage, "jms:input");
+
+ // then:
+  AccurestMessage response = accurestMessaging.receiveMessage("jms:output");
+ DocumentContext parsedJson = JsonPath.parse(accurestObjectMapper.writeValueAsString(response.getPayload()));
+ assertThatJson(parsedJson).field("bookName").isEqualTo("foo");
+'''
+			stripped(test) == stripped(expectedMsg)
+	}
+
+	def "should generate tests without headers for Spock"() {
+		given:
+			def contractDsl = GroovyDsl.make {
+				label 'some_label'
+				input {
+					messageFrom('jms:input')
+					messageBody([
+							bookName: 'foo'
+					])
+					messageHeaders {
+						header('sample', 'header')
+					}
+				}
+				outputMessage {
+					sentTo('jms:output')
+					body([
+							bookName: 'foo'
+					])
+				}
+			}
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+		String expectedMsg =
+"""
+ given:
+  def inputMessage = accurestMessaging.create('''{"bookName":"foo"}'''
+		,[
+			'sample': 'header'
+		])
+
+ when:
+  accurestMessaging.send(inputMessage, 'jms:input')
+
+ then:
+  def response = accurestMessaging.receiveMessage('jms:output')
+ DocumentContext parsedJson = JsonPath.parse(accurestObjectMapper.writeValueAsString(response.payload))
+ assertThatJson(parsedJson).field("bookName").isEqualTo("foo")
+"""
 			stripped(test) == stripped(expectedMsg)
 	}
 

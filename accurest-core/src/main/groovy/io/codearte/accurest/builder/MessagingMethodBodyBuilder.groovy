@@ -52,9 +52,7 @@ abstract class MessagingMethodBodyBuilder extends MethodBodyBuilder {
 			addColonIfRequired(bb)
 		}
 		if (outputMessage) {
-			if (outputMessage.headers) {
-				validateResponseHeadersBlock(bb)
-			}
+			validateResponseHeadersBlock(bb)
 			if (outputMessage.body) {
 				bb.endBlock()
 				if (outputMessage.headers) {
