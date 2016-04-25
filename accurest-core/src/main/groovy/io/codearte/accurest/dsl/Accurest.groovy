@@ -1,4 +1,4 @@
-package io.codearte.accurest
+package io.codearte.accurest.dsl
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString

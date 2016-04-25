@@ -1,6 +1,6 @@
 package io.codearte.accurest.builder
 
-import io.codearte.accurest.Accurest
+import io.codearte.accurest.dsl.Accurest
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.dsl.WireMockStubVerifier
 import spock.lang.Issue
