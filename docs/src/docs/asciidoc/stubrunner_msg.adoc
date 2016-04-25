@@ -16,7 +16,7 @@ To trigger a message it's enough to use the `StubTiggerer` interface:
 
 [source,groovy]
 ----
-include::../../../../stub-runner/stub-runner/src/main/groovy/io/codearte/accurest/stubrunner/StubTriggerer.groovy[]
+include::../../../../stub-runner/stub-runner/src/main/groovy/io/codearte/accurest/stubrunner/StubTrigger.groovy[]
 ----
 
 For convenience the `StubFinder` interface extends `StubTrigger` so it's enough to use only one in your tests.

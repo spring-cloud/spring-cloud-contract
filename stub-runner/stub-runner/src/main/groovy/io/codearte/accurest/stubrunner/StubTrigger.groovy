@@ -1,6 +1,6 @@
 package io.codearte.accurest.stubrunner
 
-interface StubTriggerer {
+interface StubTrigger {
 
 	/**
 	 * Triggers an event by a given label for a given {@code groupid:artifactid} notation. You can use only {@code artifactId} too.

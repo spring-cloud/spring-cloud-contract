@@ -13,8 +13,8 @@
  - now all DSL files have to be under `contractsDslDir`/*subpackage* resulting in `basePackageForTests`.*subpackage* test package creation
  - If you don't migrate to the new approach you will have your tests under `contractsDslDir`.`contractsDslDir`.*subpackage*
 
-=== Migration to 1.0.7
-- from 1.0.7 we're setting JUnit as a default testing utility. You have to pass the following option to keep Spock
+=== Migration to {messaging_version}
+- from {messaging_version} we're setting JUnit as a default testing utility. You have to pass the following option to keep Spock
 as your first choice:
 
 [source,groovy]

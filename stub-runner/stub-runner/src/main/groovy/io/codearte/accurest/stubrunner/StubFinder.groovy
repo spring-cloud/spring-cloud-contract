@@ -2,7 +2,7 @@ package io.codearte.accurest.stubrunner
 
 import io.codearte.accurest.dsl.GroovyDsl
 
-interface StubFinder extends StubTriggerer {
+interface StubFinder extends StubTrigger {
 	/**
 	 * For the given groupId and artifactId tries to find the matching
 	 * URL of the running stub.
