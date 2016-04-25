@@ -86,7 +86,7 @@ and:
 	}
 
 	private String stripped(String text) {
-		return text.stripIndent().stripMargin().replace('\t', '').replace('\n', '')
+		return text.stripIndent().stripMargin().replace('  ', '').replace('\n', '')
 	}
 
 	def "should generate tests triggered by a message for Spock"() {
@@ -309,9 +309,9 @@ then:
 '''
  // given:
   AccurestMessage inputMessage = accurestMessaging.create(
-\t\t\t"{\\"bookName\\":\\"foo\\"}"
-\t\t, headers()
-\t\t\t.header("sample", "header"));
+      "{\\"bookName\\":\\"foo\\"}"
+    , headers()
+      .header("sample", "header"));
 
  // when:
   accurestMessaging.send(inputMessage, "jms:input");

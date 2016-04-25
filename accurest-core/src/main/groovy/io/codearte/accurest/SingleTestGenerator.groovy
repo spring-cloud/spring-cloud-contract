@@ -1,6 +1,7 @@
 package io.codearte.accurest
 
 import groovy.transform.Canonical
+import groovy.transform.EqualsAndHashCode
 import groovy.transform.PackageScope
 import groovy.util.logging.Slf4j
 import io.codearte.accurest.builder.ClassBuilder
@@ -99,6 +100,7 @@ class SingleTestGenerator {
 	}
 
 	@Canonical
+	@EqualsAndHashCode
 	private static class ParsedDsl {
 		Contract contract
 		GroovyDsl groovyDsl
@@ -124,10 +126,10 @@ class SingleTestGenerator {
 
 	private ClassBuilder addMessagingRelatedEntries(ClassBuilder clazz) {
 		clazz.addField(['@Inject AccurestMessaging accurestMessaging',
-						'ObjectMapper accurestObjectMapper = new ObjectMapper()'
+						'AccurestObjectMapper accurestObjectMapper = new AccurestObjectMapper()'
 		])
 		clazz.addImport([ 'javax.inject.Inject',
-						  'com.fasterxml.jackson.databind.ObjectMapper',
+						  'io.codearte.accurest.messaging.AccurestObjectMapper',
 						  'io.codearte.accurest.messaging.AccurestMessage',
 						  'io.codearte.accurest.messaging.AccurestMessaging',
 		])
