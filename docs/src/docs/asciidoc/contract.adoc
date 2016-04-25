@@ -191,3 +191,13 @@ include::../../../../samples/messaging-integration/src/test/groovy/io/codearte/a
 In this case the output message will be sent to `output` if a proper message will be received on the `input` destination. In the message *publisher's* side
 we will generate a test that will send the input message to the defined destination. On the *consumer* side you can either send a message to the input
 destination or use the `some_label` to trigger the message.
+
+==== Consumer / Producer
+
+In HTTP you have a notion of `client`/`stub and `server`/`test` notation. You can use them also in messaging but we're providing also the `consumer` and `produer` methods
+as presented below (note you can use either `$` or `value` methods to provide `consumer` and `producer` parts)
+
+[source,groovy]
+----
+include::../../../../accurest-core/src/test/groovy/io/codearte/accurest/builder/MessagingMethodBodyBuilderSpec.groovy[tags=consumer_producer]
+----

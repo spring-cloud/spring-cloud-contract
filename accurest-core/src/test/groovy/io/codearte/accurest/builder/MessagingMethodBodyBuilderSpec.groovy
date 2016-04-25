@@ -1,5 +1,6 @@
 package io.codearte.accurest.builder
 
+import io.codearte.accurest.dsl.Accurest
 import io.codearte.accurest.dsl.GroovyDsl
 import spock.lang.Specification
 /**
@@ -373,6 +374,55 @@ then:
 
 	private String stripped(String text) {
 		return text.stripIndent().stripMargin().replace('  ', '').replace('\n', '').replace('\t', '').replaceAll("\\W", "")
+	}
+
+	def "should generate tests without headers for JUnit with consumer / producer notation"() {
+		given:
+		def contractDsl =
+		// tag::consumer_producer[]
+Accurest.make {
+	label 'some_label'
+	input {
+		messageFrom value(consumer('jms:output'), producer('jms:input'))
+		messageBody([
+				bookName: 'foo'
+		])
+		messageHeaders {
+			header('sample', 'header')
+		}
+	}
+	outputMessage {
+		sentTo $(consumer('jms:input'), producer('jms:output'))
+		body([
+				bookName: 'foo'
+		])
+	}
+}
+		// end::consumer_producer[]
+		MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl)
+		BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+		builder.appendTo(blockBuilder)
+		def test = blockBuilder.toString()
+		then:
+		String expectedMsg =
+				'''
+ // given:
+  AccurestMessage inputMessage = accurestMessaging.create(
+      "{\\"bookName\\":\\"foo\\"}"
+    , headers()
+      .header("sample", "header"));
+
+ // when:
+  accurestMessaging.send(inputMessage, "jms:input");
+
+ // then:
+  AccurestMessage response = accurestMessaging.receiveMessage("jms:output");
+  assertThat(response).isNotNull();
+ DocumentContext parsedJson = JsonPath.parse(accurestObjectMapper.writeValueAsString(response.getPayload()));
+ assertThatJson(parsedJson).field("bookName").isEqualTo("foo");
+'''
+		stripped(test) == stripped(expectedMsg)
 	}
 
 }
