@@ -77,7 +77,7 @@ include::src/test/resources/integration-context.xml[]
 
 ===== Scenario 1 (no input message)
 
-So as to trigger a message via the `return_book_1` label we'll use the `StubTiggerer` interface as follows
+So as to trigger a message via the `return_book_1` label we'll use the `StubTigger` interface as follows
 
 [source,groovy]
 ----

@@ -12,7 +12,7 @@ It also provides points of entry to integrate with any other solution on the mar
 
 === Stub triggering
 
-To trigger a message it's enough to use the `StubTiggerer` interface:
+To trigger a message it's enough to use the `StubTigger` interface:
 
 [source,groovy]
 ----
