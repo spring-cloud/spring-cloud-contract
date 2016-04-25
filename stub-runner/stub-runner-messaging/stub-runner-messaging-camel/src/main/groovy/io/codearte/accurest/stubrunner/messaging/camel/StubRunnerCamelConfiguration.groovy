@@ -23,8 +23,8 @@ class StubRunnerCamelConfiguration {
 			@Override
 			public void configure() throws Exception {
 				Map<StubConfiguration, Collection<GroovyDsl>> accurestContracts = batchStubRunner.accurestContracts
-				(accurestContracts.values().flatten() as Collection<GroovyDsl>).findAll { it?.input?.messageFrom && it?.outputMessage?.sentTo }.each {
-					from(it.input.messageFrom)
+				(accurestContracts.values().flatten() as Collection<GroovyDsl>).findAll { it?.input?.messageFrom?.clientValue && it?.outputMessage?.sentTo }.each {
+					from(it.input.messageFrom.clientValue)
 							.filter(new StubRunnerCamelPredicate(it))
 							.process(new StubRunnerCamelProcessor(it))
 							.to(it.outputMessage.sentTo.clientValue)

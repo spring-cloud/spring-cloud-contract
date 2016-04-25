@@ -32,12 +32,12 @@ class StubRunnerIntegrationConfiguration {
 		Map<StubConfiguration, Collection<GroovyDsl>> accurestContracts = batchStubRunner.accurestContracts
 		accurestContracts.each { StubConfiguration key, Collection<GroovyDsl> value ->
 			String name = "${key.groupId}_${key.artifactId}"
-			value.findAll { it?.input?.messageFrom }.each { GroovyDsl dsl ->
+			value.findAll { it?.input?.messageFrom?.clientValue }.each { GroovyDsl dsl ->
 				String flowName = "${name}_${dsl.label}_${dsl.hashCode()}"
-				IntegrationFlowBuilder builder = IntegrationFlows.from(dsl.input.messageFrom)
+				IntegrationFlowBuilder builder = IntegrationFlows.from(dsl.input.messageFrom.clientValue)
 					.filter(new StubRunnerIntegrationMessageSelector(dsl), { FilterEndpointSpec e -> e.id("${flowName}.filter") } )
 					.transform(new StubRunnerIntegrationTransformer(dsl), { GenericEndpointSpec e -> e.id("${flowName}.transformer") })
-				if (dsl.outputMessage) {
+				if (dsl.outputMessage?.sentTo) {
 					builder = builder.channel(dsl.outputMessage.sentTo.clientValue)
 				} else {
 					builder = builder.handle(new DummyMessageHandler(), "handle")

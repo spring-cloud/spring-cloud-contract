@@ -10,7 +10,7 @@ import groovy.transform.TypeChecked
 @ToString(includePackage = false, includeNames = true)
 class Input extends Common {
 
-	String messageFrom
+	DslProperty<String> messageFrom
 	ExecutionProperty triggeredBy
 	Headers messageHeaders
 	BodyType messageBody
@@ -24,7 +24,19 @@ class Input extends Common {
 		this.messageBody = input.messageBody
 	}
 
+	ServerDslProperty producer(Object clientValue) {
+		return new ServerDslProperty(clientValue)
+	}
+
+	ClientDslProperty consumer(Object clientValue) {
+		return new ClientDslProperty(clientValue)
+	}
+
 	void messageFrom(String messageFrom) {
+		this.messageFrom = new DslProperty<>(messageFrom)
+	}
+
+	void messageFrom(DslProperty messageFrom) {
 		this.messageFrom = messageFrom
 	}
 

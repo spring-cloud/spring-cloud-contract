@@ -31,6 +31,14 @@ class OutputMessage extends Common {
 		this.sentTo = sentTo
 	}
 
+	ServerDslProperty producer(Object clientValue) {
+		return new ServerDslProperty(clientValue)
+	}
+
+	ClientDslProperty consumer(Object clientValue) {
+		return new ClientDslProperty(clientValue)
+	}
+
 	void body(Object bodyAsValue) {
 		this.body = new DslProperty(bodyAsValue)
 	}

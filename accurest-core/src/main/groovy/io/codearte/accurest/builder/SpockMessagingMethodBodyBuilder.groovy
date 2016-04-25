@@ -26,7 +26,7 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 		if (request.triggeredBy) {
 			return request.triggeredBy.executionCommand
 		}
-		return "accurestMessaging.send(inputMessage, '${request.messageFrom}')"
+		return "accurestMessaging.send(inputMessage, '${request.messageFrom.serverValue}')"
 	}
 
 	@Override
