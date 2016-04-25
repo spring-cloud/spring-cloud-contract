@@ -72,4 +72,12 @@ public class PluginUnitTest {
 		// FIXME: add assertion for jar content
 	}
 
+	@Test
+	public void shouldGenerateStubsWithCustomClassifier() throws Exception {
+		File basedir = resources.getBasedir("generatedStubs");
+		maven.executeMojo(basedir, "generateStubs", newParameter("classifier", "foo"));
+		assertFilesPresent(basedir, "target/sample-project-0.1-foo.jar");
+	}
+
+
 }

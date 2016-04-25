@@ -41,6 +41,9 @@ class GenerateStubsMojo extends AbstractMojo {
     @Parameter(defaultValue = 'true')
     private boolean attachContracts
 
+    @Parameter(defaultValue = 'stubs')
+    private String classifier
+
     void execute() throws MojoExecutionException, MojoFailureException {
 
         if (skip) {
@@ -48,16 +51,16 @@ class GenerateStubsMojo extends AbstractMojo {
             return
         }
 
-        File stubJarFile = createStubJar(outputDirectory)
-        projectHelper.attachArtifact(project, 'jar', 'stubs', stubJarFile)
+        File stubsJarFile = createStubJar(outputDirectory)
+        projectHelper.attachArtifact(project, 'jar', classifier, stubsJarFile)
     }
 
     private File createStubJar(File stubsOutputDir) {
         if (!stubsOutputDir.exists()) {
             throw new MojoExecutionException("Stubs could not be found: $stubsOutputDir.\nPlease make sure that accurest:convert was invoked");
         }
-        String stubArchiveName = project.getBuild().getFinalName() + "-stubs.jar";
-        File stubJarFile = new File(projectBuildDirectory, stubArchiveName);
+        String stubArchiveName = "${project.build.finalName}-${classifier}.jar";
+        File stubsJarFile = new File(projectBuildDirectory, stubArchiveName);
 
         try {
             if (attachContracts) {
@@ -67,12 +70,12 @@ class GenerateStubsMojo extends AbstractMojo {
                 jarArchiver.addDirectory(stubsOutputDir, [STUB_MAPPING_FILE_PATTERN] as String[], [ACCUREST_FILE_PATTERN] as String[]);
             }
             jarArchiver.setCompress(true);
-            jarArchiver.setDestFile(stubJarFile);
+            jarArchiver.setDestFile(stubsJarFile);
             jarArchiver.createArchive();
         } catch (Exception e) {
-            throw new MojoFailureException('Exception while packaging.', e);
+            throw new MojoFailureException("Exception while packaging ${classifier} jar.", e);
         }
-        return stubJarFile
+        return stubsJarFile
     }
 
 }
