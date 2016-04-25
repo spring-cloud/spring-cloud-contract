@@ -16,7 +16,6 @@ import org.springframework.integration.dsl.IntegrationFlowBuilder
 import org.springframework.integration.dsl.IntegrationFlows
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
-import org.springframework.stereotype.Service
 /**
  * Spring Cloud Stream configuration that iterates over the downloaded Groovy DSLs
  * and registers a flow for each DSL.
@@ -29,7 +28,7 @@ import org.springframework.stereotype.Service
 class StubRunnerStreamConfiguration {
 
 	@Bean
-	FlowRegistrar service(AutowireCapableBeanFactory beanFactory, BatchStubRunner batchStubRunner, ChannelBindingService channelBindingService) {
+	FlowRegistrar flowRegistrar(AutowireCapableBeanFactory beanFactory, BatchStubRunner batchStubRunner, ChannelBindingService channelBindingService) {
 		Map<StubConfiguration, Collection<GroovyDsl>> accurestContracts = batchStubRunner.accurestContracts
 		accurestContracts.each { StubConfiguration key, Collection<GroovyDsl> value ->
 			String name = "${key.groupId}_${key.artifactId}"
@@ -60,6 +59,5 @@ class StubRunnerStreamConfiguration {
 		void handle(Message message) {}
 	}
 
-	@Service
 	static class FlowRegistrar {}
 }
