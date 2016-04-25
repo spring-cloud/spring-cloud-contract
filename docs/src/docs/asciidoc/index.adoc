@@ -1,4 +1,4 @@
-:messaging_version: 1.0.7
+:messaging_version: 1.1.0
 
 = Accurest
 

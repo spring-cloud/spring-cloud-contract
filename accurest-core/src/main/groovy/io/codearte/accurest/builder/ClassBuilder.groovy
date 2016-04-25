@@ -123,12 +123,14 @@ class ClassBuilder {
 			clazz.addEmptyLine()
 		}
 
+		clazz.startBlock()
 		fields.sort().each {
 			clazz.addLine(it)
 		}
 		if (!fields.empty) {
 			clazz.addEmptyLine()
 		}
+		clazz.endBlock()
 
 		methods.each {
 			clazz.addBlock(it)

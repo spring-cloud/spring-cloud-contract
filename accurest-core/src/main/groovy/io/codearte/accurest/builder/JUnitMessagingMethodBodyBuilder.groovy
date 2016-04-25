@@ -69,6 +69,7 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	@Override
 	protected void validateResponseHeadersBlock(BlockBuilder bb) {
 		bb.addLine("""AccurestMessage response = accurestMessaging.receiveMessage("${outputMessage.sentTo}");""")
+		bb.addLine("""assertThat(response).isNotNull();""")
 		outputMessage.headers?.collect { Header header ->\
 			processHeaderElement(bb, header.name, header.serverValue)
 		}
@@ -114,13 +115,13 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	protected String getInputString() {
 		String request = 'AccurestMessage inputMessage = accurestMessaging.create('
 		if (inputMessage.messageBody) {
-			request = "${request}\n\t\t\t\"${StringEscapeUtils.escapeJava(bodyAsString)}\"\n\t\t"
+			request = "${request}\n      \"${StringEscapeUtils.escapeJava(bodyAsString)}\"\n    "
 		}
 		if (inputMessage.messageHeaders) {
 			request = "${request}, headers()\n"
 		}
 		inputMessage.messageHeaders?.collect { Header header ->
-			request = "${request}\t\t\t${getHeaderString(header)}"
+			request = "${request}      ${getHeaderString(header)}"
 		}
 		return "${request})"
 	}

@@ -1,19 +1,18 @@
 package io.codearte.accurest.stubrunner.messaging.integration
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
 import com.toomuchcoding.jsonassert.JsonVerifiable
 import groovy.transform.CompileStatic
 import io.codearte.accurest.dsl.GroovyDsl
+import io.codearte.accurest.messaging.AccurestObjectMapper
 import io.codearte.accurest.util.JsonPaths
 import io.codearte.accurest.util.JsonToJsonPathsConverter
 import org.springframework.integration.core.MessageSelector
 import org.springframework.messaging.Message
 
 import java.util.regex.Pattern
-
 /**
  * Passes through a message that matches the one defined in the DSL
  *
@@ -23,7 +22,7 @@ import java.util.regex.Pattern
 class StubRunnerIntegrationMessageSelector implements MessageSelector {
 
 	private final GroovyDsl groovyDsl
-	private final ObjectMapper objectMapper = new ObjectMapper()
+	private final AccurestObjectMapper objectMapper = new AccurestObjectMapper()
 
 	StubRunnerIntegrationMessageSelector(GroovyDsl groovyDsl) {
 		this.groovyDsl = groovyDsl

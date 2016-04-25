@@ -1,12 +1,12 @@
 package io.codearte.accurest.samples.spring
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.messaging.AccurestMessage
 import io.codearte.accurest.messaging.AccurestMessaging
+import io.codearte.accurest.messaging.AccurestObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationContextLoader
 import org.springframework.test.context.ContextConfiguration
@@ -14,7 +14,6 @@ import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
 import javax.inject.Inject
-
 /**
  * SPIKE ON TESTS FROM NOTES IN MessagingSpec
  */
@@ -24,7 +23,7 @@ public class SpringApplicationSpec extends Specification {
 
 	// ALL CASES
 	@Inject AccurestMessaging accurestMessaging
-	ObjectMapper accurestObjectMapper = new ObjectMapper()
+	AccurestObjectMapper accurestObjectMapper = new AccurestObjectMapper()
 
 	def "should work for triggered based messaging"() {
 		given:

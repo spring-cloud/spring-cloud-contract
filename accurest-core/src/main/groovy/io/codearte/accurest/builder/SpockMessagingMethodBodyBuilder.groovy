@@ -63,6 +63,7 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	protected void validateResponseCodeBlock(BlockBuilder bb) {
 		if (outputMessage) {
 			bb.addLine("""def response = accurestMessaging.receiveMessage('${outputMessage.sentTo}')""")
+			bb.addLine("""assert response != null""")
 		} else {
 			bb.addLine('noExceptionThrown()')
 		}
@@ -114,18 +115,18 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	protected String getInputString() {
 		String request = 'def inputMessage = accurestMessaging.create('
 		if (inputMessage.messageBody) {
-			request = "${request}'''${bodyAsString}'''\n\t\t"
+			request = "${request}'''${bodyAsString}'''\n    "
 		}
 		if (inputMessage.messageHeaders) {
 			request = "${request},[\n"
 		}
 		def headers = []
 		inputMessage.messageHeaders?.collect { Header header ->
-			headers << "\t\t\t${getHeaderString(header)}"
+			headers << "      ${getHeaderString(header)}"
 		}
 		request = "${request}${headers.join(',\n')}"
 		if (inputMessage.messageHeaders) {
-			request = "${request}\n\t\t]"
+			request = "${request}\n    ]"
 		}
 		return "${request})"
 	}

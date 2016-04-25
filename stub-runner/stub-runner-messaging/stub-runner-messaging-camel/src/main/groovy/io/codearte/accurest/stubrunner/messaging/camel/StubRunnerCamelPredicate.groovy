@@ -1,12 +1,12 @@
 package io.codearte.accurest.stubrunner.messaging.camel
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
 import com.toomuchcoding.jsonassert.JsonVerifiable
 import groovy.transform.PackageScope
 import io.codearte.accurest.dsl.GroovyDsl
+import io.codearte.accurest.messaging.AccurestObjectMapper
 import io.codearte.accurest.util.JsonPaths
 import io.codearte.accurest.util.JsonToJsonPathsConverter
 import org.apache.camel.Exchange
@@ -23,7 +23,7 @@ import java.util.regex.Pattern
 class StubRunnerCamelPredicate implements Predicate {
 
 	private final GroovyDsl groovyDsl
-	private final ObjectMapper objectMapper = new ObjectMapper()
+	private final AccurestObjectMapper objectMapper = new AccurestObjectMapper()
 
 	StubRunnerCamelPredicate(GroovyDsl groovyDsl) {
 		this.groovyDsl = groovyDsl

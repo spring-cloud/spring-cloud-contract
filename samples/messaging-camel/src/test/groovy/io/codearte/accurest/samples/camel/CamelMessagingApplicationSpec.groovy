@@ -1,12 +1,12 @@
 package io.codearte.accurest.samples.camel
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.messaging.AccurestMessage
 import io.codearte.accurest.messaging.AccurestMessaging
+import io.codearte.accurest.messaging.AccurestObjectMapper
 import org.apache.camel.model.ModelCamelContext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationContextLoader
@@ -24,7 +24,7 @@ public class CamelMessagingApplicationSpec extends Specification {
 
 	// ALL CASES
 	@Inject AccurestMessaging accurestMessaging
-	ObjectMapper accurestObjectMapper = new ObjectMapper()
+	AccurestObjectMapper accurestObjectMapper = new AccurestObjectMapper()
 
 	def "should work for triggered based messaging"() {
 		given:

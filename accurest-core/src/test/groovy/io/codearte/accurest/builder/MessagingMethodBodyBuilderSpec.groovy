@@ -30,21 +30,23 @@ def contractDsl = GroovyDsl.make {
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			stripped(test) == stripped(
+		String expectedMessage =
 // tag::trigger_method_test[]
 '''
-when:
-	 bookReturnedTriggered()
+ when:
+  bookReturnedTriggered()
 
-then:
-	 def response = accurestMessaging.receiveMessage('activemq:output')
-	 response.getHeader('BOOK-NAME')  == 'foo'
-and:
-	 DocumentContext parsedJson = JsonPath.parse(accurestObjectMapper.writeValueAsString(response.payload))
-	 assertThatJson(parsedJson).field("bookName").isEqualTo("foo")
+ then:
+  def response = accurestMessaging.receiveMessage('activemq:output')
+  assert response != null
+  response.getHeader('BOOK-NAME')  == 'foo'
+ and:
+  DocumentContext parsedJson = JsonPath.parse(accurestObjectMapper.writeValueAsString(response.payload))
+  assertThatJson(parsedJson).field("bookName").isEqualTo("foo")
+
 '''
 // end::trigger_method_test[]
-			)
+		stripped(test) == stripped(expectedMessage)
 	}
 
 	def "should work for triggered based messaging with JUnit"() {
@@ -68,25 +70,22 @@ and:
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			stripped(test) == stripped(
+		String expectedMessage =
 // tag::trigger_method_junit_test[]
 '''
-// when:
-	 bookReturnedTriggered();
+ // when:
+  bookReturnedTriggered();
 
-// then:
-	 AccurestMessage response = accurestMessaging.receiveMessage("activemq:output");
-	 assertThat(response.getHeader("BOOK-NAME")).isEqualTo("foo");
-// and:
-	 DocumentContext parsedJson = JsonPath.parse(accurestObjectMapper.writeValueAsString(response.getPayload()));
-	 assertThatJson(parsedJson).field("bookName").isEqualTo("foo");
+ // then:
+  AccurestMessage response = accurestMessaging.receiveMessage("activemq:output");
+  assertThat(response).isNotNull();
+  assertThat(response.getHeader("BOOK-NAME")).isEqualTo("foo");
+ // and:
+  DocumentContext parsedJson = JsonPath.parse(accurestObjectMapper.writeValueAsString(response.getPayload()));
+  assertThatJson(parsedJson).field("bookName").isEqualTo("foo");
 '''
 // end::trigger_method_junit_test[]
-			)
-	}
-
-	private String stripped(String text) {
-		return text.stripIndent().stripMargin().replace('  ', '').replace('\n', '')
+			stripped(test) == stripped(expectedMessage)
 	}
 
 	def "should generate tests triggered by a message for Spock"() {
@@ -120,27 +119,28 @@ def contractDsl = GroovyDsl.make {
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			stripped(test) == stripped(
+		String expectedMessage =
 // tag::trigger_message_spock[]
-'''
+"""\
 given:
-	 def inputMessage = accurestMessaging.create(
-		\'\'\'{"bookName":"foo"}\'\'\',
-		['sample': 'header']
-	)
+   def inputMessage = accurestMessaging.create(
+    '''{"bookName":"foo"}''',
+    ['sample': 'header']
+  )
 
 when:
-	 accurestMessaging.send(inputMessage, 'jms:input')
+   accurestMessaging.send(inputMessage, 'jms:input')
 
 then:
-	 def response = accurestMessaging.receiveMessage('jms:output')
-	 response.getHeader('BOOK-NAME')  == 'foo'
+   def response = accurestMessaging.receiveMessage('jms:output')
+   assert response !- null
+   response.getHeader('BOOK-NAME')  == 'foo'
 and:
-	 DocumentContext parsedJson = JsonPath.parse(accurestObjectMapper.writeValueAsString(response.payload))
-	 assertThatJson(parsedJson).field("bookName").isEqualTo("foo")
-'''
+   DocumentContext parsedJson = JsonPath.parse(accurestObjectMapper.writeValueAsString(response.payload))
+   assertThatJson(parsedJson).field("bookName").isEqualTo("foo")
+"""
 // end::trigger_message_spock[]
-			)
+			stripped(test) == stripped(expectedMessage)
 	}
 
 	def "should generate tests triggered by a message for JUnit"() {
@@ -172,28 +172,28 @@ and:
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			stripped(test) == stripped(
-					// tag::trigger_message_junit[]
+		String expectedMessage =
+// tag::trigger_message_junit[]
 '''
 // given:
  AccurestMessage inputMessage = accurestMessaging.create(
-	"{\\"bookName\\":\\"foo\\"}"
+  "{\\"bookName\\":\\"foo\\"}"
 , headers()
-	.header("sample", "header"));
+  .header("sample", "header"));
 
 // when:
  accurestMessaging.send(inputMessage, "jms:input");
 
 // then:
  AccurestMessage response = accurestMessaging.receiveMessage("jms:output");
+ assertThat(response).isNotNull();
  assertThat(response.getHeader("BOOK-NAME")).isEqualTo("foo");
 // and:
  DocumentContext parsedJson = JsonPath.parse(accurestObjectMapper.writeValueAsString(response.getPayload()));
  assertThatJson(parsedJson).field("bookName").isEqualTo("foo");
-
 '''
-					// end::trigger_message_junit[]
-			)
+// end::trigger_message_junit[]
+			stripped(test) == stripped(expectedMessage)
 	}
 
 	def "should generate tests without destination, triggered by a message"() {
@@ -318,6 +318,7 @@ then:
 
  // then:
   AccurestMessage response = accurestMessaging.receiveMessage("jms:output");
+  assertThat(response).isNotNull();
  DocumentContext parsedJson = JsonPath.parse(accurestObjectMapper.writeValueAsString(response.getPayload()));
  assertThatJson(parsedJson).field("bookName").isEqualTo("foo");
 '''
@@ -363,10 +364,15 @@ then:
 
  then:
   def response = accurestMessaging.receiveMessage('jms:output')
+  assert response != null
  DocumentContext parsedJson = JsonPath.parse(accurestObjectMapper.writeValueAsString(response.payload))
  assertThatJson(parsedJson).field("bookName").isEqualTo("foo")
 """
 			stripped(test) == stripped(expectedMsg)
+	}
+
+	private String stripped(String text) {
+		return text.stripIndent().stripMargin().replace('  ', '').replace('\n', '').replace('\t', '').replaceAll("\\W", "")
 	}
 
 }
