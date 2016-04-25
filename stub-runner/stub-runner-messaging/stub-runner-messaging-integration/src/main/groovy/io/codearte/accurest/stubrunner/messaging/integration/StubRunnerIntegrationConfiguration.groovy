@@ -38,7 +38,7 @@ class StubRunnerIntegrationConfiguration {
 					.filter(new StubRunnerIntegrationMessageSelector(dsl), { FilterEndpointSpec e -> e.id("${flowName}.filter") } )
 					.transform(new StubRunnerIntegrationTransformer(dsl), { GenericEndpointSpec e -> e.id("${flowName}.transformer") })
 				if (dsl.outputMessage) {
-					builder = builder.channel(dsl.outputMessage.sentTo)
+					builder = builder.channel(dsl.outputMessage.sentTo.clientValue)
 				} else {
 					builder = builder.handle(new DummyMessageHandler(), "handle")
 				}

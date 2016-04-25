@@ -10,7 +10,7 @@ import groovy.transform.TypeChecked
 @ToString(includePackage = false, includeNames = true)
 class OutputMessage extends Common {
 
-	String sentTo
+	DslProperty<String> sentTo
 	Headers headers
 	DslProperty body
 	ExecutionProperty assertThat
@@ -24,6 +24,10 @@ class OutputMessage extends Common {
 	}
 
 	void sentTo(String sentTo) {
+		this.sentTo = new DslProperty(sentTo)
+	}
+
+	void sentTo(DslProperty sentTo) {
 		this.sentTo = sentTo
 	}
 

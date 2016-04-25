@@ -62,7 +62,7 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	@Override
 	protected void validateResponseCodeBlock(BlockBuilder bb) {
 		if (outputMessage) {
-			bb.addLine("""def response = accurestMessaging.receiveMessage('${outputMessage.sentTo}')""")
+			bb.addLine("""def response = accurestMessaging.receiveMessage('${outputMessage.sentTo.serverValue}')""")
 			bb.addLine("""assert response != null""")
 		} else {
 			bb.addLine('noExceptionThrown()')

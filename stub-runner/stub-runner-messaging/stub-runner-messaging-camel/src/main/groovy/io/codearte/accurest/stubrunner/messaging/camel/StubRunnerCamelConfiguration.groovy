@@ -27,7 +27,7 @@ class StubRunnerCamelConfiguration {
 					from(it.input.messageFrom)
 							.filter(new StubRunnerCamelPredicate(it))
 							.process(new StubRunnerCamelProcessor(it))
-							.to(it.outputMessage.sentTo)
+							.to(it.outputMessage.sentTo.clientValue)
 				}
 			}
 		};

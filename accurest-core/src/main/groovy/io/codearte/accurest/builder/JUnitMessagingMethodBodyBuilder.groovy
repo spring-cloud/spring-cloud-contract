@@ -68,7 +68,7 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	@Override
 	protected void validateResponseHeadersBlock(BlockBuilder bb) {
-		bb.addLine("""AccurestMessage response = accurestMessaging.receiveMessage("${outputMessage.sentTo}");""")
+		bb.addLine("""AccurestMessage response = accurestMessaging.receiveMessage("${outputMessage.sentTo.serverValue}");""")
 		bb.addLine("""assertThat(response).isNotNull();""")
 		outputMessage.headers?.collect { Header header ->\
 			processHeaderElement(bb, header.name, header.serverValue)

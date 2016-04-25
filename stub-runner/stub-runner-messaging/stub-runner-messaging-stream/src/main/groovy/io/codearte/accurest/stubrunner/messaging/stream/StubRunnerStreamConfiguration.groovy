@@ -42,7 +42,7 @@ class StubRunnerStreamConfiguration {
 						.filter(new StubRunnerStreamMessageSelector(dsl), { FilterEndpointSpec e -> e.id("${flowName}.filter") } )
 						.transform(new StubRunnerStreamTransformer(dsl), { GenericEndpointSpec e -> e.id("${flowName}.transformer") })
 				if (dsl.outputMessage) {
-					builder = builder.channel(dsl.outputMessage.sentTo)
+					builder = builder.channel(dsl.outputMessage.sentTo.clientValue)
 				} else {
 					builder = builder.handle(new DummyMessageHandler(), "handle")
 				}
@@ -51,7 +51,7 @@ class StubRunnerStreamConfiguration {
 				beanFactory.getBean("${flowName}.transformer", Lifecycle.class).start();
 				channelBindingService.bindConsumer(beanFactory.getBean(dsl.input.messageFrom, MessageChannel.class), dsl.input.messageFrom)
 				if (dsl.outputMessage) {
-					channelBindingService.bindProducer(beanFactory.getBean(dsl.outputMessage.sentTo, MessageChannel.class), dsl.outputMessage.sentTo)
+					channelBindingService.bindProducer(beanFactory.getBean(dsl.outputMessage.sentTo.clientValue, MessageChannel.class), dsl.outputMessage.sentTo.clientValue)
 				}
 			}
 		}

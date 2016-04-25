@@ -100,7 +100,7 @@ class StubRunnerExecutor implements StubFinder {
 		}
 		AccurestMessage message = accurestMessaging.create(groovyDsl.outputMessage.body.clientValue,
 				groovyDsl.outputMessage.headers.asStubSideMap())
-		accurestMessaging.send(message, groovyDsl.outputMessage.sentTo)
+		accurestMessaging.send(message, groovyDsl.outputMessage.sentTo.clientValue)
 	}
 
 	private URL returnStubUrlIfMatches(boolean condition) {
