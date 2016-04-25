@@ -81,9 +81,9 @@ To change default configuration just add `accurest` snippet to your Gradle confi
 [source,groovy,indent=0]
 ----
 accurest {
-	testMode == 'MockMvc'
-	baseClassForTests == 'org.mycompany.tests'
-	generatedTestSourcesDir == project.file('src/accurest')
+	testMode = 'MockMvc'
+	baseClassForTests = 'org.mycompany.tests'
+	generatedTestSourcesDir = project.file('src/accurest')
 }
 ----
 
