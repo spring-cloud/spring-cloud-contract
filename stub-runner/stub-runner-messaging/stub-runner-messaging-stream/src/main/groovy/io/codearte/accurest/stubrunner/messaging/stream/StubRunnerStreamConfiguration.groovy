@@ -4,18 +4,21 @@ import groovy.transform.CompileStatic
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.stubrunner.BatchStubRunner
 import io.codearte.accurest.stubrunner.StubConfiguration
+import io.codearte.accurest.stubrunner.spring.StubRunnerConfiguration
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.binding.ChannelBindingService
 import org.springframework.context.Lifecycle
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Import
 import org.springframework.integration.dsl.FilterEndpointSpec
 import org.springframework.integration.dsl.GenericEndpointSpec
 import org.springframework.integration.dsl.IntegrationFlowBuilder
 import org.springframework.integration.dsl.IntegrationFlows
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
+
 /**
  * Spring Cloud Stream configuration that iterates over the downloaded Groovy DSLs
  * and registers a flow for each DSL.
@@ -23,6 +26,7 @@ import org.springframework.messaging.MessageChannel
  * @author Marcin Grzejszczak
  */
 @Configuration
+@Import(StubRunnerConfiguration)
 @EnableBinding
 @CompileStatic
 class StubRunnerStreamConfiguration {
