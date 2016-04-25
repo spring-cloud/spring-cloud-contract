@@ -4,7 +4,7 @@ Contract DSL in Accurest is written in Groovy, but don't be alarmed if you didn'
 a tiny subset of it (namely literals, method calls and closures). What's more, Accurest's DSL is designed to be programmer-readable without any knowledge of the DSL itself -
  it's statically typed.
 
-WARNING: Since {messaging_version} you can use the `io.codearte.accurest.Accurest` class in your DSL files.
+WARNING: Since {messaging_version} you can use the `io.codearte.accurest.dsl.Accurest` class in your DSL files.
 
 Let's look at full example of a contract definition.
 

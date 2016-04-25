@@ -3,8 +3,6 @@ package io.codearte.accurest.dsl
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
-import io.codearte.accurest.dsl.GroovyDsl
-
 /**
  * A better name for GroovyDsl
  *
