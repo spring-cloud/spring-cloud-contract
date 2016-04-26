@@ -30,6 +30,7 @@
 			<item name="Goals" href="plugin-info.html"/>
 			<item name="Accurest with JUnit" href="junit.html"/>
 			<item name="Accurest with Spock" href="spock.html"/>
+			<item name="Complex Configuration" href="complex.html"/>
 		</menu>
 		<menu name="Related Projects">
 			<item name="Accurate REST" href="https://github.com/Codearte/accurest"/>

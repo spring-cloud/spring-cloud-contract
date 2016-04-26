@@ -5,6 +5,7 @@ import static io.takari.maven.testing.TestResources.assertFileContents;
 import static io.takari.maven.testing.TestResources.assertFilesPresent;
 
 import java.io.File;
+import java.util.Arrays;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -53,6 +54,14 @@ public class PluginUnitTest {
 	public void shouldGenerateContractTestsInDefaultLocation() throws Exception {
 		File basedir = resources.getBasedir("basic");
 		maven.executeMojo(basedir, "generateTests");
+		assertFilesPresent(basedir,
+				"target/generated-test-sources/accurest/io/codearte/accurest/tests/AccurestTest.java");
+	}
+
+	@Test
+	public void shouldGenerateContractTestsWithCustomImports() throws Exception {
+		File basedir = resources.getBasedir("basic");
+		maven.executeMojo(basedir, "generateTests", newParameter("imports", ""));
 		assertFilesPresent(basedir,
 				"target/generated-test-sources/accurest/io/codearte/accurest/tests/AccurestTest.java");
 	}

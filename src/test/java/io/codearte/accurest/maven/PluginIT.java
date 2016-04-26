@@ -1,7 +1,9 @@
 package io.codearte.accurest.maven;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,6 +54,18 @@ public class PluginIT {
 				.assertLogText("Converting from accurest contracts written in GroovyDSL to WireMock stubs mappings")
 				.assertLogText("Creating new json")
 				.assertLogText("Running io.codearte.accurest.tests.AccurestTest")
+				.assertErrorFreeLog();
+	}
+
+	@Test
+	@Ignore("Ignored, because of bug accurest#245")
+	public void should_build_project_project_with_complex_configuration() throws Exception {
+		File basedir = resources.getBasedir("complex-configuration");
+		maven.forProject(basedir)
+				.execute("package")
+				.assertErrorFreeLog()
+				.assertLogText("Tests run: 2, Failures: 0, Errors: 0, Skipped: 1")
+				.assertLogText("Running com.blogspot.toomuchcoding.frauddetection.AccurestTest")
 				.assertErrorFreeLog();
 	}
 
