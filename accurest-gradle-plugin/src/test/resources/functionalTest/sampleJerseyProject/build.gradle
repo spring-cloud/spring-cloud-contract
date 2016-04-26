@@ -13,7 +13,7 @@ group = 'io.codearte.accurest.testprojects'
 ext {
 	restAssuredVersion = '2.5.0'
 	spockVersion = '1.0-groovy-2.4'
-	wiremockVersion = '2.0.5-beta'
+	wiremockVersion = '2.0.10-beta'
 
 	accurestStubsBaseDirectory = 'src/test/resources/stubs'
 }

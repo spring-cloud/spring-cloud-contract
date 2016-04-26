@@ -43,7 +43,7 @@ dependencies {
 	compile 'com.fasterxml.jackson.core:jackson-databind:2.4.4'
 	compile 'com.jayway.jsonpath:json-path-assert:2.2.0'
 
-	testCompile "com.github.tomakehurst:wiremock:2.0.5-beta"
+	testCompile "com.github.tomakehurst:wiremock:2.0.10-beta"
 	testCompile "org.spockframework:spock-spring:1.0-groovy-2.4"
 	testCompile "com.jayway.restassured:rest-assured:$restAssuredVersion"
 	testCompile "com.jayway.restassured:spring-mock-mvc:$restAssuredVersion"
