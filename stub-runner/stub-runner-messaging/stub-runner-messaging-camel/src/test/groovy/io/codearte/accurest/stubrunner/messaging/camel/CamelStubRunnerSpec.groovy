@@ -93,22 +93,18 @@ class CamelStubRunnerSpec extends Specification {
 			receivedMessage.in.headers.get('BOOK-NAME') == 'foo'
 	}
 
-	def 'should not run any wrong trigger when missing label is passed'() {
+	def 'should throw an exception when missing label is passed'() {
 		when:
 			stubFinder.trigger('missing label')
 		then:
-			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 100)
-		and:
-			receivedMessage == null
+			thrown(IllegalArgumentException)
 	}
 
-	def 'should not run any wrong trigger when missing label and artifactid is passed'() {
+	def 'should throw an exception when missing label and artifactid is passed'() {
 		when:
 			stubFinder.trigger('some:service', 'return_book_1')
 		then:
-			Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 100)
-		and:
-			receivedMessage == null
+			thrown(IllegalArgumentException)
 	}
 
 	def 'should trigger messages by running all triggers'() {

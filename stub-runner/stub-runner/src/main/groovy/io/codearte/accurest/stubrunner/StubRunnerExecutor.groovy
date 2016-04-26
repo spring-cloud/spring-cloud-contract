@@ -69,29 +69,35 @@ class StubRunnerExecutor implements StubFinder {
 	}
 
 	@Override
-	void trigger(String ivyNotationAsString, String labelName) {
+	boolean trigger(String ivyNotationAsString, String labelName) {
 		Collection<GroovyDsl> matchingContracts = getAccurestContracts().findAll {
 			it.key.matches(ivyNotationAsString)
 		}.values().flatten() as Collection<GroovyDsl>
-		triggerForDsls(matchingContracts, labelName)
+		return triggerForDsls(matchingContracts, labelName)
 	}
 
 	@Override
-	void trigger(String labelName) {
-		triggerForDsls(getAccurestContracts().values().flatten() as Collection<GroovyDsl>, labelName)
+	boolean trigger(String labelName) {
+		return triggerForDsls(getAccurestContracts().values().flatten() as Collection<GroovyDsl>, labelName)
 	}
 
-	private void triggerForDsls(Collection<GroovyDsl> dsls, String labelName) {
-		dsls.findAll { it.label == labelName}.each {
+	private boolean triggerForDsls(Collection<GroovyDsl> dsls, String labelName) {
+		Collection<GroovyDsl> matchingDsls = dsls.findAll { it.label == labelName}
+		if (matchingDsls.empty) {
+			return false
+		}
+		matchingDsls.each {
 			sendMessageIfApplicable(it)
 		}
+		return true
 	}
 
 	@Override
-	void trigger() {
+	boolean trigger() {
 		(getAccurestContracts().values().flatten() as Collection<GroovyDsl>).each { GroovyDsl groovyDsl ->
 			sendMessageIfApplicable(groovyDsl)
 		}
+		return true
 	}
 
 	private void sendMessageIfApplicable(GroovyDsl groovyDsl) {

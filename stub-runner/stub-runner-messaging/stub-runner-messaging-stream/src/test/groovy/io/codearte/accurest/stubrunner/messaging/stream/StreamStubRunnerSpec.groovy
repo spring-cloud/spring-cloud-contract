@@ -92,22 +92,18 @@ class StreamStubRunnerSpec extends Specification {
 			receivedMessage.headers.get('BOOK-NAME') == 'foo'
 	}
 
-	def 'should not run any wrong trigger when missing label is passed'() {
-		given:
-			stubFinder.trigger('missing label')
+	def 'should throw exception when missing label is passed'() {
 		when:
-			AccurestMessage message = messaging.receiveMessage('output', 100, TimeUnit.MILLISECONDS)
+			stubFinder.trigger('missing label')
 		then:
-			message == null
+			thrown(IllegalArgumentException)
 	}
 
-	def 'should not run any wrong trigger when missing label and artifactid is passed'() {
-		given:
-			stubFinder.trigger('some:service', 'return_book_1')
+	def 'should throw exception when missing label and artifactid is passed'() {
 		when:
-			AccurestMessage message = messaging.receiveMessage('output', 100, TimeUnit.MILLISECONDS)
+			stubFinder.trigger('some:service', 'return_book_1')
 		then:
-			message == null
+			thrown(IllegalArgumentException)
 	}
 
 	def 'should trigger messages by running all triggers'() {

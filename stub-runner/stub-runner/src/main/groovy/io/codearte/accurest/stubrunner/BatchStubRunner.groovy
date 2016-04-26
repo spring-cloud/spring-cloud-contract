@@ -57,18 +57,55 @@ class BatchStubRunner implements StubRunning {
 	}
 
 	@Override
-	void trigger(String ivyNotation, String labelName) {
-		stubRunners.each { it.trigger(ivyNotation, labelName) }
+	boolean trigger(String ivyNotation, String labelName) {
+		boolean triggered = stubRunners.inject(false) { boolean acc, StubRunner stubRunner ->
+			boolean success = stubRunner.trigger(ivyNotation, labelName)
+			if (acc) {
+				return true
+			}
+			return success
+		}
+		if (!triggered) {
+			throw new IllegalArgumentException("No label with name [$labelName] for " +
+					"dependency [$ivyNotation] was found. Here you have the list of dependencies " +
+					"and their labels [${ivyToLabels()}")
+		}
+		return triggered
+	}
+
+	private String ivyToLabels() {
+		return (getAccurestContracts().collectEntries {
+			[(it.key.toColonSeparatedDependencyNotation()) : it.value.collect { it.label }]
+		} as Map<String, List<String>>).entrySet().collect {
+			"Dependency [${it.key}] has labels ${it.value}]"
+		}.join('\n')
 	}
 
 	@Override
-	void trigger(String labelName) {
-		stubRunners.each { it.trigger(labelName) }
+	boolean trigger(String labelName) {
+		boolean triggered = stubRunners.inject(false) { boolean acc, StubRunner stubRunner ->
+			boolean success = stubRunner.trigger(labelName)
+			if (acc) {
+				return true
+			}
+			return success
+		}
+		if (!triggered) {
+			throw new IllegalArgumentException("No label with name [$labelName] was found. " +
+					"Here you have the list of dependencies and their labels [${ivyToLabels()}")
+		}
+		return triggered
 	}
 
 	@Override
-	void trigger() {
-		stubRunners.each { it.trigger() }
+	boolean trigger() {
+		return stubRunners.inject(false) { boolean acc, StubRunner stubRunner ->
+			boolean success = stubRunner.trigger()
+			if (acc) {
+				return true
+			}
+			return success
+		}
 	}
 
 	@Override

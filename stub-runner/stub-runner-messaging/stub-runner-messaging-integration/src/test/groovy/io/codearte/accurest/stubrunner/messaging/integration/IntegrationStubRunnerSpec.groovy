@@ -6,7 +6,6 @@ import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.messaging.AccurestMessage
 import io.codearte.accurest.messaging.AccurestMessaging
 import io.codearte.accurest.stubrunner.StubFinder
-import org.springframework.beans.factory.BeanNotOfRequiredTypeException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.SpringApplicationContextLoader
@@ -95,24 +94,18 @@ class IntegrationStubRunnerSpec extends Specification {
 			receivedMessage.headers.get('BOOK-NAME') == 'foo'
 	}
 
-	def 'should not run any wrong trigger when missing label is passed'() {
-		given:
-			stubFinder.trigger('missing label')
+	def 'should throw exception when missing label is passed'() {
 		when:
-			messaging.receiveMessage('output', 100, TimeUnit.MILLISECONDS)
+			stubFinder.trigger('missing label')
 		then:
-			Exception e = thrown(RuntimeException)
-			e.cause.class == BeanNotOfRequiredTypeException
+			thrown(IllegalArgumentException)
 	}
 
-	def 'should not run any wrong trigger when missing label and artifactid is passed'() {
-		given:
-			stubFinder.trigger('some:service', 'return_book_1')
+	def 'should throw exception when missing label and artifactid is passed'() {
 		when:
-			messaging.receiveMessage('output', 100, TimeUnit.MILLISECONDS)
+			stubFinder.trigger('some:service', 'return_book_1')
 		then:
-			Exception e = thrown(RuntimeException)
-			e.cause.class == BeanNotOfRequiredTypeException
+			thrown(IllegalArgumentException)
 	}
 
 	def 'should trigger messages by running all triggers'() {

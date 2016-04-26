@@ -1,18 +1,5 @@
 package io.codearte.accurest.stubrunner.junit;
 
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
-
 import io.codearte.accurest.dsl.GroovyDsl;
 import io.codearte.accurest.stubrunner.BatchStubRunner;
 import io.codearte.accurest.stubrunner.BatchStubRunnerFactory;
@@ -22,6 +9,18 @@ import io.codearte.accurest.stubrunner.StubFinder;
 import io.codearte.accurest.stubrunner.StubRunnerOptions;
 import io.codearte.accurest.stubrunner.util.StringUtils;
 import io.codearte.accurest.stubrunner.util.StubsParser;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
+
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * JUnit class rule that allows you to download the provided stubs.
@@ -170,17 +169,17 @@ public class AccurestRule implements TestRule, StubFinder {
 	}
 
 	@Override
-	public void trigger(String ivyNotation, String labelName) {
-		stubFinder.trigger(ivyNotation, labelName);
+	public boolean trigger(String ivyNotation, String labelName) {
+		return stubFinder.trigger(ivyNotation, labelName);
 	}
 
 	@Override
-	public void trigger(String labelName) {
-		stubFinder.trigger(labelName);
+	public boolean trigger(String labelName) {
+		return stubFinder.trigger(labelName);
 	}
 
 	@Override
-	public void trigger() {
-		stubFinder.trigger();
+	public boolean trigger() {
+		return stubFinder.trigger();
 	}
 }

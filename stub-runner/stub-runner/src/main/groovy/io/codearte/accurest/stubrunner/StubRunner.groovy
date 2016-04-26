@@ -75,18 +75,18 @@ class StubRunner implements StubRunning {
 	}
 
 	@Override
-	void trigger(String ivyNotation, String labelName) {
-		localStubRunner.trigger(ivyNotation, labelName)
+	boolean trigger(String ivyNotation, String labelName) {
+		return localStubRunner.trigger(ivyNotation, labelName)
 	}
 
 	@Override
-	void trigger(String labelName) {
-		localStubRunner.trigger(labelName)
+	boolean trigger(String labelName) {
+		return localStubRunner.trigger(labelName)
 	}
 
 	@Override
-	void trigger() {
-		localStubRunner.trigger()
+	boolean trigger() {
+		return localStubRunner.trigger()
 	}
 
 	private void registerShutdownHook() {

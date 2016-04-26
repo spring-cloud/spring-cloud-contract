@@ -1,5 +1,6 @@
 package io.codearte.accurest.stubrunner
 
+import io.codearte.accurest.dsl.GroovyDsl
 import spock.lang.Specification
 
 class BatchStubRunnerSpec extends Specification {
@@ -22,10 +23,21 @@ class BatchStubRunnerSpec extends Specification {
 		!batchStubRunner.findStubUrl(UNKNOWN_STUB_PATH)
 	}
 
+	def 'should throw exception if trying to execute not available trigger'() {
+		given:
+		BatchStubRunner batchStubRunner = new BatchStubRunner(runners())
+		when:
+		batchStubRunner.trigger('non existing label')
+		then:
+		IllegalArgumentException exception = thrown(IllegalArgumentException)
+		exception.message == "No label with name [non existing label] was found. Here you have the list of dependencies and their labels [Dependency [a:b:c] has labels [foo]]"
+	}
+
 	Collection<StubRunner> runners() {
 		StubRunner runner = Mock(StubRunner)
 		runner.findStubUrl("group", "knownArtifact") >> KNOWN_STUB_URL
 		runner.findStubUrl("group", "unknownArtifact") >> null
+		runner.accurestContracts >> [(new StubConfiguration('a', 'b', 'c')): [GroovyDsl.make { outputMessage { label 'foo' } }]]
 		return [runner]
 	}
 
