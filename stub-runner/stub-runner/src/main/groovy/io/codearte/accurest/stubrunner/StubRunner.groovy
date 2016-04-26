@@ -25,17 +25,15 @@ class StubRunner implements StubRunning {
 
 	@Deprecated
 	StubRunner(Arguments arguments) {
-		this.stubsConfiguration = arguments.stub
-		this.stubRunnerOptions = arguments.stubRunnerOptions
-		this.stubRepository = new StubRepository(new File(arguments.repositoryPath))
-		AvailablePortScanner portScanner = new AvailablePortScanner(stubRunnerOptions.minPortValue,
-				stubRunnerOptions.maxPortValue)
-		this.accurestMessaging = new NoOpAccurestMessaging()
-		this.localStubRunner = new StubRunnerExecutor(portScanner, accurestMessaging)
+		this(arguments.stubRunnerOptions, arguments.repositoryPath, arguments.stub)
+	}
+
+	StubRunner(StubRunnerOptions stubRunnerOptions, String repositoryPath, StubConfiguration stubsConfiguration) {
+		this(stubRunnerOptions, repositoryPath, stubsConfiguration, new NoOpAccurestMessaging())
 	}
 
 	StubRunner(StubRunnerOptions stubRunnerOptions, String repositoryPath, StubConfiguration stubsConfiguration,
-			   AccurestMessaging accurestMessaging) {
+	           AccurestMessaging accurestMessaging) {
 		this.stubsConfiguration = stubsConfiguration
 		this.stubRunnerOptions = stubRunnerOptions
 		this.stubRepository = new StubRepository(new File(repositoryPath))
