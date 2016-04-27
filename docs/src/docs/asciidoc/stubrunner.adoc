@@ -36,6 +36,7 @@ Accurest comes with a new structure of modules
 ----
 
 include::../../../../stub-runner/stub-runner/README.adoc[]
+include::../../../../stub-runner/stub-runner-boot/README.adoc[]
 include::../../../../stub-runner/stub-runner-junit/README.adoc[]
 include::../../../../stub-runner/stub-runner-spring/README.adoc[]
 include::../../../../stub-runner/stub-runner-spring-cloud/README.adoc[]

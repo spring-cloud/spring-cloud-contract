@@ -1,5 +1,7 @@
 === Stub Runner Boot
 
+WARNING: Feature available since {messaging_version}
+
 Accurest Stub Runner Boot is a Spring Boot application that exposes REST endpoints to
 trigger the messaging labels and to access started WireMock servers.
 
