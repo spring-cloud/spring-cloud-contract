@@ -1,4 +1,4 @@
-== Stub Runner for HTTP
+== Stub Runner
 
 One of the issues that you could have encountered while using Accurest was to pass the generated WireMock JSON stubs from the server side to the client side (or various clients).
  The same takes place in terms of client side generation for messaging.
@@ -30,6 +30,7 @@ Accurest comes with a new structure of modules
 ----
 └── stub-runner
     ├── stub-runner
+    ├── stub-runner-boot
     ├── stub-runner-junit
     ├── stub-runner-spring
     └── stub-runner-spring-cloud

@@ -1,4 +1,4 @@
-=== Stub Runner core
+=== Stub Runner Core
 
 Runs stubs for service collaborators. Treating stubs as contracts of services allows to use stub-runner as an implementation of 
 http://martinfowler.com/articles/consumerDrivenContracts.html[Consumer Driven Contracts].
