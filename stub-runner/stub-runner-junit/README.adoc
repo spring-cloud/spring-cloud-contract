@@ -8,11 +8,12 @@ include::src/test/groovy/io/codearte/accurest/stubrunner/junit/AccurestRuleJUnit
 ----
 
 After that rule gets executed Stub Runner connects to your Maven repository and for the given list of dependencies tries to:
-* download them
-* cache them locally
-* unzip them to a temporary folder
-* start a WireMock server for each Maven dependency on a random port from the provided range of ports
-* feed the WireMock server with all JSON files that are valid WireMock definitions
+
+- download them
+- cache them locally
+- unzip them to a temporary folder
+- start a WireMock server for each Maven dependency on a random port from the provided range of ports
+- feed the WireMock server with all JSON files that are valid WireMock definitions
 
 Stub Runner uses http://docs.groovy-lang.org/latest/html/documentation/grape.html[Groovy's Grape] mechanism to download the Maven dependencies. 
 Check their http://docs.groovy-lang.org/latest/html/documentation/grape.html[docs] for more information.

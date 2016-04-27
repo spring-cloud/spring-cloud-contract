@@ -154,7 +154,7 @@ class IntegrationStubRunnerSpec extends Specification {
 			triggeredBy('bookReturnedTriggered()')
 		}
 		outputMessage {
-			sentTo('jms:output')
+			sentTo('output')
 			body('''{ "bookName" : "foo" }''')
 			headers {
 				header('BOOK-NAME', 'foo')
@@ -168,7 +168,7 @@ class IntegrationStubRunnerSpec extends Specification {
 	io.codearte.accurest.dsl.GroovyDsl.make {
 		label 'return_book_2'
 		input {
-			messageFrom('jms:input')
+			messageFrom('input')
 			messageBody([
 					bookName: 'foo'
 			])
@@ -177,7 +177,7 @@ class IntegrationStubRunnerSpec extends Specification {
 			}
 		}
 		outputMessage {
-			sentTo('jms:output')
+			sentTo('output')
 			body([
 					bookName: 'foo'
 			])
@@ -193,7 +193,7 @@ class IntegrationStubRunnerSpec extends Specification {
 			io.codearte.accurest.dsl.GroovyDsl.make {
 				label 'delete_book'
 				input {
-					messageFrom('jms:delete')
+					messageFrom('delete')
 					messageBody([
 							bookName: 'foo'
 					])
