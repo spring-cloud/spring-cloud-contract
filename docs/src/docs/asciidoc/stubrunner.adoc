@@ -57,3 +57,17 @@ Some of the properties that are repetitive can be set using system properties or
 |stubrunner.work-offline|false| If true then will not contact any remote repositories to download stubs|
 |stubrunner.stubs|| Comma separated list of Ivy notation of stubs to download|
 |======================
+
+===== Stub runner stubs ids
+
+You can provide the stubs to download via the `stubrunner.stubs.ids` system property. They follow the following pattern:
+
+[source,java,indent=0]
+----
+groupId:artifactId:classifier:port
+----
+
+`classifier` and `port` are optional.
+
+* If you don't provide the `classifier` then the default one will be taken.
+* If you don't provide the `port` then a random one will be picked
