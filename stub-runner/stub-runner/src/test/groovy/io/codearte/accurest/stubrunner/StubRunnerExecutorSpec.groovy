@@ -11,6 +11,7 @@ class StubRunnerExecutorSpec extends Specification {
 	private AvailablePortScanner portScanner
 	private StubRepository repository
 	private StubConfiguration stub = new StubConfiguration("group:artifact", "stubs")
+	private StubRunnerOptions stubRunnerOptions = new StubRunnerOptions()
 
 	def setup() {
 		portScanner = new AvailablePortScanner(MIN_PORT, MAX_PORT)
@@ -21,7 +22,7 @@ class StubRunnerExecutorSpec extends Specification {
 		given:
 		StubRunnerExecutor executor = new StubRunnerExecutor(portScanner)
 		when:
-		executor.runStubs(repository, stub)
+		executor.runStubs(stubRunnerOptions, repository, stub)
 		then:
 		executor.findStubUrl("group", "artifact") == EXPECTED_STUB_URL
 		and:
@@ -36,9 +37,19 @@ class StubRunnerExecutorSpec extends Specification {
 		given:
 		StubRunnerExecutor executor = new StubRunnerExecutor(portScanner)
 		when:
-		executor.runStubs(repository, stub)
+		executor.runStubs(stubRunnerOptions, repository, stub)
 		then:
 		!executor.findStubUrl("unkowngroup", "unknownartifact")
+	}
+
+	def 'should start a stub on a given port'() {
+		given:
+		StubRunnerExecutor executor = new StubRunnerExecutor(portScanner)
+		stubRunnerOptions.setStubIdsToPortMapping('group:artifact:12345,someotherartifact:123')
+		when:
+		executor.runStubs(stubRunnerOptions, repository, stub)
+		then:
+		executor.findStubUrl("group", "artifact") == 'http://localhost:12345'.toURL()
 	}
 
 }

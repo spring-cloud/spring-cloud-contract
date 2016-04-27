@@ -41,3 +41,38 @@ include::src/test/groovy/io/codearte/accurest/stubrunner/junit/AccurestRuleJUnit
 
 Check the *Common properties for JUnit and Spring* for more information on how to apply global configuration of Stub Runner.
 
+==== Providing fixed ports
+
+You can also run your stubs on fixed ports. You can do it in two different ways. One is to pass it in the properties, and the other via fluent API.
+
+===== System properties
+
+You can provide the stubs to download via the `stubrunner.stubs.ids` system property. They follow the following pattern:
+
+[source,java,indent=0]
+----
+groupId:artifactId:classifier:port
+----
+
+`classifier` and `port` are optional.
+
+* If you don't provide the `classifier` then the default one will be taken.
+* If you don't provide the `port` then a random one will be picked
+
+==== Fluent API
+
+When using the `AccurestRule` you can add a stub to download and then pass the port for the last downloaded stub.
+
+[source,java,indent=0]
+----
+include::src/test/groovy/io/codearte/accurest/stubrunner/junit/AccurestRuleCustomPortJUnitTest.java[tags=classrule_with_port]
+----
+
+You can see that for this example the following test is valid:
+
+[source,java,indent=0]
+----
+include::src/test/groovy/io/codearte/accurest/stubrunner/junit/AccurestRuleCustomPortJUnitTest.java[tags=test_with_port]
+----
+
+

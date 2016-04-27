@@ -30,7 +30,7 @@ class BatchStubRunnerFactory {
 	BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions,
 	                       Collection<StubConfiguration> dependencies,
 	                       StubDownloader stubDownloader) {
-		this(stubRunnerOptions, dependencies, new GrapeStubDownloader(), new NoOpAccurestMessaging())
+		this(stubRunnerOptions, dependencies, stubDownloader, new NoOpAccurestMessaging())
 	}
 
 	BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions,

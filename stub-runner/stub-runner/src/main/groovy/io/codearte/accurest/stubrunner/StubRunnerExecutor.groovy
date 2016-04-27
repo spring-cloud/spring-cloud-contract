@@ -28,8 +28,8 @@ class StubRunnerExecutor implements StubFinder {
 		this.accurestMessaging = new NoOpAccurestMessaging()
 	}
 
-	RunningStubs runStubs(StubRepository repository, StubConfiguration stubConfiguration) {
-		startStubServers(stubConfiguration, repository)
+	RunningStubs runStubs(StubRunnerOptions stubRunnerOptions, StubRepository repository, StubConfiguration stubConfiguration) {
+		startStubServers(stubRunnerOptions, stubConfiguration, repository)
 		RunningStubs runningCollaborators =
 				new RunningStubs([(stubServer.stubConfiguration): stubServer.port])
 		log.info("All stubs are now running [${runningCollaborators.toString()}")
@@ -120,11 +120,16 @@ class StubRunnerExecutor implements StubFinder {
 		return condition ? stubServer.stubUrl : null
 	}
 
-	private void startStubServers(StubConfiguration stubConfiguration, StubRepository repository) {
+	private void startStubServers(StubRunnerOptions stubRunnerOptions, StubConfiguration stubConfiguration, StubRepository repository) {
 		List<WiremockMappingDescriptor> mappings = repository.getProjectDescriptors()
 		Collection<GroovyDsl> contracts = repository.accurestContracts
-		stubServer =  portScanner.tryToExecuteWithFreePort { int availablePort ->
-			return new StubServer(availablePort, stubConfiguration, mappings, contracts).start()
+		Integer port = stubRunnerOptions.port(stubConfiguration)
+		if (port) {
+			stubServer = new StubServer(port, stubConfiguration, mappings, contracts).start()
+		} else {
+			stubServer =  portScanner.tryToExecuteWithFreePort { int availablePort ->
+				return new StubServer(availablePort, stubConfiguration, mappings, contracts).start()
+			}
 		}
 	}
 

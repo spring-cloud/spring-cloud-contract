@@ -1,5 +1,17 @@
 package io.codearte.accurest.stubrunner.junit;
 
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
+
 import io.codearte.accurest.dsl.GroovyDsl;
 import io.codearte.accurest.stubrunner.BatchStubRunner;
 import io.codearte.accurest.stubrunner.BatchStubRunnerFactory;
@@ -9,18 +21,6 @@ import io.codearte.accurest.stubrunner.StubFinder;
 import io.codearte.accurest.stubrunner.StubRunnerOptions;
 import io.codearte.accurest.stubrunner.util.StringUtils;
 import io.codearte.accurest.stubrunner.util.StubsParser;
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
-
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * JUnit class rule that allows you to download the provided stubs.
@@ -30,7 +30,7 @@ import java.util.Set;
 public class AccurestRule implements TestRule, StubFinder {
 	private static final String DELIMITER = ":";
 
-	private Set<String> stubs = new HashSet<String>();
+	private LinkedList<String> stubs = new LinkedList<>();
 	private StubRunnerOptions stubRunnerOptions = defaultStubRunnerOptions();
 	private BatchStubRunner stubFinder;
 
@@ -63,7 +63,7 @@ public class AccurestRule implements TestRule, StubFinder {
 		if (StringUtils.hasText(stubsToDownload)) {
 			Collections.addAll(stubs, stubsToDownload.split(","));
 		}
-		return new StubRunnerOptions(minPort, maxPort, repoRoot, workOffline, stubSuffix);
+		return new StubRunnerOptions(minPort, maxPort, repoRoot, workOffline, stubSuffix, stubsToDownload);
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class AccurestRule implements TestRule, StubFinder {
 	 * Group Id, artifact Id and classifier of a single stub to download
 	 */
 	public AccurestRule downloadStub(String groupId, String artifactId, String classifier) {
-		stubs.add(groupId + DELIMITER + artifactId + DELIMITER + classifier);
+		addStub(groupId + DELIMITER + artifactId + DELIMITER + classifier);
 		return this;
 	}
 
@@ -120,7 +120,7 @@ public class AccurestRule implements TestRule, StubFinder {
 	 * Group Id, artifact Id of a single stub to download. Default classifier will be picked.
 	 */
 	public AccurestRule downloadStub(String groupId, String artifactId) {
-		stubs.add(groupId + DELIMITER + artifactId);
+		addStub(groupId + DELIMITER + artifactId);
 		return this;
 	}
 
@@ -128,7 +128,7 @@ public class AccurestRule implements TestRule, StubFinder {
 	 * Ivy notation of a single stub to download.
 	 */
 	public AccurestRule downloadStub(String ivyNotation) {
-		stubs.add(ivyNotation);
+		addStub(ivyNotation);
 		return this;
 	}
 
@@ -136,7 +136,7 @@ public class AccurestRule implements TestRule, StubFinder {
 	 * Stubs to download in Ivy notations
 	 */
 	public AccurestRule downloadStubs(String... ivyNotations) {
-		stubs.addAll(Arrays.asList(ivyNotations));
+		addStub(Arrays.asList(ivyNotations));
 		return this;
 	}
 
@@ -144,7 +144,16 @@ public class AccurestRule implements TestRule, StubFinder {
 	 * Stubs to download in Ivy notations
 	 */
 	public AccurestRule downloadStubs(List<String> ivyNotations) {
-		stubs.addAll(ivyNotations);
+		addStub(ivyNotations);
+		return this;
+	}
+
+	/**
+	 * Appends port to last added stub
+	 */
+	public AccurestRule withPort(Integer port) {
+		String lastStub = stubs.peekLast();
+		addPort(lastStub + DELIMITER + port);
 		return this;
 	}
 
@@ -186,5 +195,24 @@ public class AccurestRule implements TestRule, StubFinder {
 	@Override
 	public Map<String, Collection<String>> labels() {
 		return stubFinder.labels();
+	}
+
+	private void addStub(String notation) {
+		if(StubsParser.hasPort(notation)) {
+			addPort(notation);
+			stubs.add(StubsParser.ivyFromStringWithPort(notation));
+		} else {
+			stubs.add(notation);
+		}
+	}
+
+	private void addStub(List<String> notations) {
+		for (String notation : notations) {
+			addStub(notation);
+		}
+	}
+
+	private void addPort(String notation) {
+		stubRunnerOptions.putStubIdsToPortMapping(StubsParser.fromStringWithPort(notation));
 	}
 }

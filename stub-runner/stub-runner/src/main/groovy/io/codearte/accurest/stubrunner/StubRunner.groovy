@@ -46,7 +46,7 @@ class StubRunner implements StubRunning {
 	@Override
 	RunningStubs runStubs() {
 		registerShutdownHook()
-		return localStubRunner.runStubs(stubRepository, stubsConfiguration)
+		return localStubRunner.runStubs(stubRunnerOptions,stubRepository, stubsConfiguration)
 	}
 
 	@Override

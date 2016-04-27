@@ -48,7 +48,7 @@ public class StubRunnerConfiguration {
 			@Value("${stubrunner.work-offline:false}") boolean workOffline,
 			@Value("${stubrunner.stubs.ids:}") String stubs) throws IOException {
 		StubRunnerOptions stubRunnerOptions = new StubRunnerOptions(minPortValue, maxPortValue, uriStringOrEmpty(stubRepositoryRoot),
-				stubRepositoryRoot == null || workOffline, stubsSuffix);
+				stubRepositoryRoot == null || workOffline, stubsSuffix, stubs);
 		Set<StubConfiguration> dependencies = StubsParser.fromString(stubs, stubsSuffix);
 		BatchStubRunner batchStubRunner = new BatchStubRunnerFactory(stubRunnerOptions, dependencies,
 				accurestMessaging != null ? accurestMessaging :  new NoOpAccurestMessaging()).buildBatchStubRunner();
