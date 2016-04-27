@@ -12,7 +12,7 @@ After that rule gets executed Stub Runner connects to your Maven repository and 
 - download them
 - cache them locally
 - unzip them to a temporary folder
-- start a WireMock server for each Maven dependency on a random port from the provided range of ports
+- start a WireMock server for each Maven dependency on a random port from the provided range of ports / provided port
 - feed the WireMock server with all JSON files that are valid WireMock definitions
 
 Stub Runner uses http://docs.groovy-lang.org/latest/html/documentation/grape.html[Groovy's Grape] mechanism to download the Maven dependencies. 

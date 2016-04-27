@@ -58,7 +58,7 @@ Some of the properties that are repetitive can be set using system properties or
 |stubrunner.stubs|| Comma separated list of Ivy notation of stubs to download|
 |======================
 
-===== Stub runner stubs ids
+==== Stub runner stubs ids
 
 You can provide the stubs to download via the `stubrunner.stubs.ids` system property. They follow the following pattern:
 
