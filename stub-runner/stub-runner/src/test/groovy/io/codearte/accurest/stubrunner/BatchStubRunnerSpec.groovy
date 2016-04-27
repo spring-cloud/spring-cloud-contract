@@ -1,6 +1,5 @@
 package io.codearte.accurest.stubrunner
 
-import io.codearte.accurest.dsl.GroovyDsl
 import spock.lang.Specification
 
 class BatchStubRunnerSpec extends Specification {
@@ -37,7 +36,7 @@ class BatchStubRunnerSpec extends Specification {
 		StubRunner runner = Mock(StubRunner)
 		runner.findStubUrl("group", "knownArtifact") >> KNOWN_STUB_URL
 		runner.findStubUrl("group", "unknownArtifact") >> null
-		runner.accurestContracts >> [(new StubConfiguration('a', 'b', 'c')): [GroovyDsl.make { outputMessage { label 'foo' } }]]
+		runner.labels() >> ['a:b:c' : ['foo']]
 		return [runner]
 	}
 

@@ -182,4 +182,9 @@ public class AccurestRule implements TestRule, StubFinder {
 	public boolean trigger() {
 		return stubFinder.trigger();
 	}
+
+	@Override
+	public Map<String, Collection<String>> labels() {
+		return stubFinder.labels();
+	}
 }

@@ -4,7 +4,6 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import io.codearte.accurest.stubrunner.util.StringUtils
-
 /**
  * Represents a configuration of a single stub. The stub can be described
  * by groupId:artifactId:classifier notation
@@ -75,5 +74,11 @@ public class StubConfiguration {
 			return [null, splitString[0]] as String[]
 		}
 		return [splitString[0], splitString[1]] as String[]
+	}
+
+
+	@Override
+	public String toString() {
+		return toColonSeparatedDependencyNotation()
 	}
 }

@@ -46,14 +46,14 @@ repositories {
 
 dependencies {
 	compile "org.codehaus.groovy:groovy-all:2.4.5"
-	compile 'org.springframework.boot:spring-boot-starter-web:1.3.3.RELEASE'
-	compile 'org.springframework.boot:spring-boot-starter-actuator:1.3.3.RELEASE'
-	compile 'org.springframework.boot:spring-boot-starter-integration:1.3.3.RELEASE'
+	compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
+	compile "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
+	compile "org.springframework.boot:spring-boot-starter-integration:${springBootVersion}"
 
 	compile fileTree(dir: messagingLibsDir, include: '*.jar')
 
 	testCompile "org.spockframework:spock-spring:1.0-groovy-2.4"
-	testCompile 'org.springframework.boot:spring-boot-starter-test:1.3.3.RELEASE'
+	testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
 	testCompile "ch.qos.logback:logback-classic:1.1.2"
 }
 

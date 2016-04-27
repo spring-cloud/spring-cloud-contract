@@ -82,7 +82,7 @@ class StubRunnerExecutor implements StubFinder {
 	}
 
 	private boolean triggerForDsls(Collection<GroovyDsl> dsls, String labelName) {
-		Collection<GroovyDsl> matchingDsls = dsls.findAll { it.label == labelName}
+		Collection<GroovyDsl> matchingDsls = dsls.findAll { it.label == labelName }
 		if (matchingDsls.empty) {
 			return false
 		}
@@ -98,6 +98,13 @@ class StubRunnerExecutor implements StubFinder {
 			sendMessageIfApplicable(groovyDsl)
 		}
 		return true
+	}
+
+	@Override
+	Map<String, Collection<String>> labels() {
+		return getAccurestContracts().collectEntries {
+			[(it.key.toColonSeparatedDependencyNotation()) : it.value.collect { it.label }]
+		} as Map<String, List<String>>
 	}
 
 	private void sendMessageIfApplicable(GroovyDsl groovyDsl) {

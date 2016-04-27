@@ -28,4 +28,11 @@ interface StubTrigger {
 	 * @return true - if managed to run a trigger
 	 */
 	boolean trigger()
+
+	/**
+	 * Returns a mapping of ivy notation of a dependency to all the labels it has.
+	 *
+	 * Feature related to messaging.
+	 */
+	Map<String, Collection<String>> labels()
 }

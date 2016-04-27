@@ -1,0 +1,51 @@
+=== Stub Runner Boot
+
+Accurest Stub Runner Boot is a Spring Boot application that exposes REST endpoints to
+trigger the messaging labels and to access started WireMock servers.
+
+==== How to use it?
+
+Just add the
+
+[source,groovy,indent=0]
+----
+compile "io.codearte.accurest:stub-runner-boot:${accurestVersion}"
+----
+
+and a messaging implementation:
+
+[source,groovy,indent=0]
+----
+// for Apache Camel
+compile "io.codearte.accurest:accurest-messaging-camel:${accurestVersion}"
+// for Spring Integration
+compile "io.codearte.accurest:accurest-messaging-integration:${accurestVersion}"
+// for Spring Cloud Stream
+compile "io.codearte.accurest:accurest-messaging-stream:${accurestVersion}"
+----
+
+Build a fat-jar and you're ready to go!
+
+For the properties check the *Stub Runner Spring* section.
+
+==== Endpoints
+
+===== HTTP
+
+- GET `/stubs` - returns a list of all running stubs in `ivy:integer` notation
+- GET `/stubs/{ivy}` - returns a port for the given `ivy` notation (when calling the endpoint `ivy` can also be `artifactId` only)
+
+===== Messaging
+
+For Messaging
+
+- GET `/triggers` - returns a list of all running labels in `ivy : [ label1, label2 ...]` notation
+- POST `/triggers/{label}` - executes a trigger with `label`
+- POST `/triggers/{ivy}/{label}` - executes a trigger with `label` for the given `ivy` notation (when calling the endpoint `ivy` can also be `artifactId` only)
+
+==== Example
+
+[source,groovy,indent=0]
+----
+include::src/test/groovy/io/codearte/accurest/stubrunner/boot/StubRunnerBootSpec.groovy[tags=boot_usage]
+----

@@ -51,7 +51,7 @@ class BatchStubRunner implements StubRunning {
 	@Override
 	Map<StubConfiguration, Collection<GroovyDsl>> getAccurestContracts() {
 		return stubRunners.inject([:]) { Map<StubConfiguration, Collection<GroovyDsl>> map, StubRunner stubRunner ->
-			map.putAll(stubRunner.accurestContracts)
+			map.putAll(stubRunner.accurestContracts ?: [:])
 			return map
 		} as Map<StubConfiguration, Collection<GroovyDsl>>
 	}
@@ -74,9 +74,7 @@ class BatchStubRunner implements StubRunning {
 	}
 
 	private String ivyToLabels() {
-		return (getAccurestContracts().collectEntries {
-			[(it.key.toColonSeparatedDependencyNotation()) : it.value.collect { it.label }]
-		} as Map<String, List<String>>).entrySet().collect {
+		return labels().entrySet().collect {
 			"Dependency [${it.key}] has labels ${it.value}]"
 		}.join('\n')
 	}
@@ -106,6 +104,16 @@ class BatchStubRunner implements StubRunning {
 			}
 			return success
 		}
+	}
+
+	@Override
+	Map<String, Collection<String>> labels() {
+		return stubRunners.inject([:]) { Map<String, Collection<String>> map, StubRunner stubRunner ->
+			if (stubRunner) {
+				map.putAll(stubRunner.labels() ?: [:])
+			}
+			return map
+		} as Map<String, Collection<String>>
 	}
 
 	@Override

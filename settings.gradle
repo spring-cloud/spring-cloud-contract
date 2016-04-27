@@ -8,6 +8,7 @@ include ':accurest-messaging:accurest-messaging-camel'
 
 include ':stub-runner:stub-runner'
 include ':stub-runner:stub-runner-spring'
+include ':stub-runner:stub-runner-boot'
 include ':stub-runner:stub-runner-spring-cloud'
 include ':stub-runner:stub-runner-junit'
 

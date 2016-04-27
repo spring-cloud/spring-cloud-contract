@@ -89,6 +89,11 @@ class StubRunner implements StubRunning {
 		return localStubRunner.trigger()
 	}
 
+	@Override
+	Map<String, Collection<String>> labels() {
+		return localStubRunner.labels()
+	}
+
 	private void registerShutdownHook() {
 		Runnable stopAllServers = { this.close() }
 		Runtime.runtime.addShutdownHook(new Thread(stopAllServers))

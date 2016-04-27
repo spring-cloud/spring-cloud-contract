@@ -11,7 +11,7 @@ repositories {
 
 dependencies {
 	compile project(':accurest-core')
-	compile 'org.springframework.boot:spring-boot-starter-actuator:1.3.3.RELEASE'
+	compile "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
 	compile 'org.apache.camel:camel-spring-boot-starter:2.17.0'
 	compile 'org.apache.camel:camel-jms:2.17.0'
 	compile 'org.apache.activemq:activemq-camel:5.12.1'
@@ -19,7 +19,7 @@ dependencies {
 	compile 'org.apache.camel:camel-jackson:2.17.0'
 
 	testCompile project(':accurest-messaging-root:accurest-messaging-camel')
-	testCompile 'org.springframework.boot:spring-boot-starter-test:1.3.3.RELEASE'
+	testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
 	testCompile('org.spockframework:spock-spring:1.0-groovy-2.4') {
 		exclude(group: 'org.codehaus.groovy')
 	}

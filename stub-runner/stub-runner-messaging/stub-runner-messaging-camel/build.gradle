@@ -18,7 +18,7 @@ dependencies {
 	testCompile 'org.apache.camel:camel-jms:2.17.0'
 	testCompile 'org.apache.activemq:activemq-camel:5.12.1'
 	testCompile 'org.apache.activemq:activemq-pool:5.12.1'
-	testCompile 'org.springframework.boot:spring-boot-starter-test:1.3.3.RELEASE'
+	testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
 	testCompile('org.spockframework:spock-spring:1.0-groovy-2.4') {
 		exclude(group: 'org.codehaus.groovy')
 	}

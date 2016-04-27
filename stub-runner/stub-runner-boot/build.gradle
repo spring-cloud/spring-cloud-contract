@@ -11,11 +11,11 @@ repositories {
 
 dependencies {
 	compile project(':stub-runner-root:stub-runner-spring')
-	compile project(':accurest-messaging-root:accurest-messaging-stream')
-	compile 'org.springframework.integration:spring-integration-java-dsl:[1.1.2.RELEASE,)'
+	compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
 
-	testCompile 'org.springframework.cloud:spring-cloud-stream-test-support:1.0.0.RC2'
 	testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+	testCompile project(':stub-runner-root:stub-runner-messaging-root:stub-runner-messaging-stream')
+	testCompile 'com.jayway.restassured:spring-mock-mvc:2.9.0'
 	testCompile('org.spockframework:spock-spring:1.0-groovy-2.4') {
 		exclude(group: 'org.codehaus.groovy')
 	}

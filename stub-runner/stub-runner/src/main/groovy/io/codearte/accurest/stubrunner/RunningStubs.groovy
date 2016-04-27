@@ -2,7 +2,6 @@ package io.codearte.accurest.stubrunner
 
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
-
 /**
  * Structure representing executed stubs. Contains the configuration of each stub
  * together with the port on which its executed.
@@ -66,6 +65,10 @@ class RunningStubs {
 
 	Set<String> getAllServicesNames() {
 		return namesAndPorts.keySet().collect { it.artifactId } as Set
+	}
+
+	Map<String, Integer> toIvyToPortMapping() {
+		return namesAndPorts.collectEntries { [(it.key.toColonSeparatedDependencyNotation()) : it.value]  } as Map<String, Integer>
 	}
 
 	@Override

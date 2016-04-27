@@ -14,7 +14,7 @@ dependencies {
 	testCompile 'org.springframework.cloud:spring-cloud-starter-zookeeper-discovery:1.0.0.RC1'
 	testCompile 'org.apache.curator:curator-test:2.9.1'
 	testCompile 'io.reactivex:rxjava:1.1.1'
-	testCompile 'org.springframework.boot:spring-boot-starter-test:1.3.3.RELEASE'
+	testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
 	testCompile "org.springframework:spring-web:4.2.5.RELEASE"
 	testCompile('org.spockframework:spock-spring:1.0-groovy-2.4')  {
 		exclude(group: 'org.codehaus.groovy')
