@@ -71,3 +71,5 @@ groupId:artifactId:classifier:port
 
 * If you don't provide the `classifier` then the default one will be taken.
 * If you don't provide the `port` then a random one will be picked
+
+Where `port` means the port of the WireMock server.
