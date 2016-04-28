@@ -33,7 +33,7 @@
 			<item name="Complex Configuration" href="complex.html"/>
 		</menu>
 		<menu name="Related Projects">
-			<item name="Accurate REST" href="https://github.com/Codearte/accurest"/>
+			<item name="Accurest" href="https://github.com/Codearte/accurest"/>
 		</menu>
 		<menu ref="reports" />
 	</body>
