@@ -19,11 +19,11 @@ and a messaging implementation:
 [source,groovy,indent=0]
 ----
 // for Apache Camel
-compile "io.codearte.accurest:accurest-messaging-camel:${accurestVersion}"
+compile "io.codearte.accurest:stub-runner-messaging-camel:${accurestVersion}"
 // for Spring Integration
-compile "io.codearte.accurest:accurest-messaging-integration:${accurestVersion}"
+compile "io.codearte.accurest:stub-runner-messaging-integration:${accurestVersion}"
 // for Spring Cloud Stream
-compile "io.codearte.accurest:accurest-messaging-stream:${accurestVersion}"
+compile "io.codearte.accurest:stub-runner-messaging-stream:${accurestVersion}"
 ----
 
 Build a fat-jar and you're ready to go!
