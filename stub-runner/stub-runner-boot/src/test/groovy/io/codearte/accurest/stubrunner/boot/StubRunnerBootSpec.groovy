@@ -5,6 +5,8 @@ import groovy.json.JsonSlurper
 import io.codearte.accurest.stubrunner.StubRunning
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationContextLoader
+import org.springframework.cloud.stream.annotation.EnableBinding
+import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
@@ -12,7 +14,9 @@ import spock.lang.Specification
  * @author Marcin Grzejszczak
  */
 // tag::boot_usage[]
-@ContextConfiguration(classes = StubRunnerBoot, loader = SpringApplicationContextLoader)
+@ContextConfiguration(classes = [StubRunnerBootSpec, StubRunnerBoot], loader = SpringApplicationContextLoader)
+@EnableBinding
+@Configuration
 class StubRunnerBootSpec extends Specification {
 
 	@Autowired StubRunning stubRunning
@@ -87,6 +91,6 @@ class StubRunnerBootSpec extends Specification {
 			response.statusCode == 404
 			response.body.asString() == '''{"io.codearte.accurest.stubs:streamService:stubs":["delete_book","return_book_1","return_book_2"]}'''
 	}
-// end::boot_usage[]
 
 }
+// end::boot_usage[]

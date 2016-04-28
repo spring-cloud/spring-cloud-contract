@@ -33,17 +33,17 @@ class StreamStubRunnerSpec extends Specification {
 
 	def setup() {
 		// ensure that message were taken from the queue
-		messaging.receiveMessage('output', 100, TimeUnit.MILLISECONDS)
+		messaging.receiveMessage('returnBook', 100, TimeUnit.MILLISECONDS)
 	}
 
 	def 'should download the stub and register a route for it'() {
 		when:
 		// tag::client_send[]
-			messaging.send(new BookReturned('foo'), [sample: 'header'], 'input')
+			messaging.send(new BookReturned('foo'), [sample: 'header'], 'bookStorage')
 		// end::client_send[]
 		then:
 		// tag::client_receive[]
-			AccurestMessage receivedMessage = messaging.receiveMessage('output')
+			AccurestMessage receivedMessage = messaging.receiveMessage('returnBook')
 		// end::client_receive[]
 		and:
 		// tag::client_receive_message[]
@@ -60,7 +60,7 @@ class StreamStubRunnerSpec extends Specification {
 		// end::client_trigger[]
 		then:
 		// tag::client_trigger_receive[]
-			AccurestMessage receivedMessage = messaging.receiveMessage('output')
+			AccurestMessage receivedMessage = messaging.receiveMessage('returnBook')
 		// end::client_trigger_receive[]
 		and:
 		// tag::client_trigger_message[]
@@ -76,7 +76,7 @@ class StreamStubRunnerSpec extends Specification {
 			stubFinder.trigger('io.codearte.accurest.stubs:streamService', 'return_book_1')
 		// end::trigger_group_artifact[]
 		then:
-			AccurestMessage receivedMessage = messaging.receiveMessage('output')
+			AccurestMessage receivedMessage = messaging.receiveMessage('returnBook')
 		and:
 			receivedMessage != null
 			assertJsons(receivedMessage.payload)
@@ -89,7 +89,7 @@ class StreamStubRunnerSpec extends Specification {
 			stubFinder.trigger('streamService', 'return_book_1')
 		// end::trigger_artifact[]
 		then:
-			AccurestMessage receivedMessage = messaging.receiveMessage('output')
+			AccurestMessage receivedMessage = messaging.receiveMessage('returnBook')
 		and:
 			receivedMessage != null
 			assertJsons(receivedMessage.payload)
@@ -116,7 +116,7 @@ class StreamStubRunnerSpec extends Specification {
 			stubFinder.trigger()
 		// end::trigger_all[]
 		then:
-			AccurestMessage receivedMessage = messaging.receiveMessage('output')
+			AccurestMessage receivedMessage = messaging.receiveMessage('returnBook')
 		and:
 			receivedMessage != null
 			assertJsons(receivedMessage.payload)
@@ -134,9 +134,9 @@ class StreamStubRunnerSpec extends Specification {
 
 	def 'should not trigger a message that does not match input'() {
 		when:
-			messaging.send(new BookReturned('not_matching'), [wrong: 'header_value'], 'input')
+			messaging.send(new BookReturned('not_matching'), [wrong: 'header_value'], 'bookStorage')
 		then:
-			AccurestMessage receivedMessage = messaging.receiveMessage('output', 100, TimeUnit.MILLISECONDS)
+			AccurestMessage receivedMessage = messaging.receiveMessage('returnBook', 100, TimeUnit.MILLISECONDS)
 		and:
 			receivedMessage == null
 	}
@@ -156,7 +156,7 @@ class StreamStubRunnerSpec extends Specification {
 			triggeredBy('bookReturnedTriggered()')
 		}
 		outputMessage {
-			sentTo('jms:output')
+			sentTo('returnBook')
 			body('''{ "bookName" : "foo" }''')
 			headers {
 				header('BOOK-NAME', 'foo')
@@ -170,7 +170,7 @@ class StreamStubRunnerSpec extends Specification {
 	io.codearte.accurest.dsl.GroovyDsl.make {
 		label 'return_book_2'
 		input {
-			messageFrom('jms:input')
+			messageFrom('bookStorage')
 			messageBody([
 					bookName: 'foo'
 			])
@@ -179,7 +179,7 @@ class StreamStubRunnerSpec extends Specification {
 			}
 		}
 		outputMessage {
-			sentTo('jms:output')
+			sentTo('returnBook')
 			body([
 					bookName: 'foo'
 			])
@@ -195,7 +195,7 @@ class StreamStubRunnerSpec extends Specification {
 			io.codearte.accurest.dsl.GroovyDsl.make {
 				label 'delete_book'
 				input {
-					messageFrom('jms:delete')
+					messageFrom('delete')
 					messageBody([
 							bookName: 'foo'
 					])
