@@ -24,14 +24,15 @@ class ContractFileScanner {
 
 	ContractFileScanner(File baseDir, Set<String> excluded, Set<String> ignored) {
 		this.baseDir = baseDir
-		excludeMatchers = processPatterns(excluded, baseDir)
-		ignoreMatchers = processPatterns(ignored, baseDir)
+		excludeMatchers = processPatterns(excluded)
+		ignoreMatchers = processPatterns(ignored)
 	}
 
-	private Set<PathMatcher> processPatterns(Set<String> patterns, baseDir) {
+	private Set<PathMatcher> processPatterns(Set<String> patterns) {
 		FileSystem fileSystem = FileSystems.getDefault()
 		return patterns.collect({
-			String syntaxAndPattern = MATCH_PREFIX + baseDir.toString() + File.separator + it
+			String syntaxAndPattern = MATCH_PREFIX + '**' + File.separator + it
+			// FIXME: This looks strange, need to be checked on windows
 			if (SystemUtils.IS_OS_WINDOWS) {
 				syntaxAndPattern = syntaxAndPattern.replace("\\", "\\\\")
 			}

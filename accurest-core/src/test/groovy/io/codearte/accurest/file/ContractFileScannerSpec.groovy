@@ -28,6 +28,22 @@ class ContractFileScannerSpec extends Specification {
 			ignoredSet.ignored == [true]
 	}
 
+	def "should find contract files in strange directories"() {
+		given:
+			File baseDir = new File(this.getClass().getResource("/strange_[3.3.3]_directory").toURI())
+			Set<String> excluded = ["foo/**"] as Set
+			Set<String> ignored = ["bar/**"] as Set
+			ContractFileScanner scanner = new ContractFileScanner(baseDir, excluded, ignored)
+		when:
+			ListMultimap<Path, Contract> result = scanner.findContracts()
+		then:
+			result.entries().size() == 2
+		and:
+			Collection<Contract> ignoredSet = result.get(baseDir.toPath().resolve("bar"))
+			ignoredSet.size() == 1
+			ignoredSet.ignored == [true]
+	}
+
 	def "should find contracts group in scenario"() {
 		given:
 			File baseDir = new File(this.getClass().getResource("/directory/with/scenario").toURI())
