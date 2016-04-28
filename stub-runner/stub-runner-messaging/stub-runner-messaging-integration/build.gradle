@@ -12,7 +12,7 @@ repositories {
 dependencies {
 	compile project(':stub-runner-root:stub-runner-spring')
 	compile project(':accurest-messaging-root:accurest-messaging-integration')
-	compile 'org.springframework.integration:spring-integration-java-dsl:1.1.2.RELEASE'
+	compile "org.springframework.integration:spring-integration-java-dsl:${springIntegrationDslVersion}"
 	compile 'com.fasterxml.jackson.core:jackson-databind:2.7.0'
 
 	testCompile "org.springframework.boot:spring-boot-starter-integration:${springBootVersion}"

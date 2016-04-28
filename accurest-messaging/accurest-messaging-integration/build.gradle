@@ -11,6 +11,6 @@ repositories {
 
 dependencies {
 	compile project(':accurest-messaging-root:accurest-messaging-core')
-	compile 'org.springframework:spring-messaging:4.2.5.RELEASE'
+	compile "org.springframework:spring-messaging:${springVersion}"
 	compile 'org.slf4j:slf4j-api:1.6.0'
 }

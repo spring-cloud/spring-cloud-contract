@@ -13,9 +13,11 @@ dependencies {
 	compile project(':stub-runner-root:stub-runner-spring')
 	compile project(':stub-runner-root:stub-runner-messaging-root:stub-runner-messaging-integration')
 	compile project(':accurest-messaging-root:accurest-messaging-stream')
-	compile 'org.springframework.integration:spring-integration-java-dsl:1.1.2.RELEASE'
+	compile "org.springframework.integration:spring-integration-java-dsl:${springIntegrationDslVersion}"
 
-	testCompile 'org.springframework.cloud:spring-cloud-stream-test-support:1.0.0.RC2'
+	testCompile "org.springframework:spring-context:${springVersion}"
+	testCompile "org.springframework:spring-beans:${springVersion}"
+	testCompile "org.springframework.cloud:spring-cloud-stream-test-support:${springStreamVersion}"
 	testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
 	testCompile('org.spockframework:spock-spring:1.0-groovy-2.4') {
 		exclude(group: 'org.codehaus.groovy')

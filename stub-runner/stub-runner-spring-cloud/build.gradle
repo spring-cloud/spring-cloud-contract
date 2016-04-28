@@ -3,19 +3,19 @@ dependencies {
 
 	compile localGroovy()
 	// TODO: should be compile only
-	compile 'org.springframework.cloud:spring-cloud-starter:1.1.0.RC2'
-	compile 'org.springframework.cloud:spring-cloud-starter-ribbon:1.1.0.RC1'
+	compile "org.springframework.cloud:spring-cloud-starter:${springCloudVersion}"
+	compile "org.springframework.cloud:spring-cloud-starter-ribbon:${springCloudVersion}"
 
 	testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
 		exclude(group: 'org.codehaus.groovy')
 	}
 	testCompile 'cglib:cglib-nodep:2.2'
 	testCompile 'org.objenesis:objenesis:2.1'
-	testCompile 'org.springframework.cloud:spring-cloud-starter-zookeeper-discovery:1.0.0.RC1'
+	testCompile 'org.springframework.cloud:spring-cloud-starter-zookeeper-discovery:1.0.0.RC2'
 	testCompile 'org.apache.curator:curator-test:2.9.1'
 	testCompile 'io.reactivex:rxjava:1.1.1'
 	testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
-	testCompile "org.springframework:spring-web:4.2.5.RELEASE"
+	testCompile "org.springframework:spring-web:${springVersion}"
 	testCompile('org.spockframework:spock-spring:1.0-groovy-2.4')  {
 		exclude(group: 'org.codehaus.groovy')
 	}

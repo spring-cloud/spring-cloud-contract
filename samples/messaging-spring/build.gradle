@@ -12,7 +12,7 @@ repositories {
 dependencies {
 	compile project(':accurest-core')
 	compile "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
-	compile 'org.springframework:spring-jms:4.2.3.RELEASE'
+	compile "org.springframework:spring-jms:${springVersion}"
 
 	compile 'org.apache.activemq:activemq-broker:5.12.1'
 	compile 'org.apache.activemq:activemq-pool:5.12.1'

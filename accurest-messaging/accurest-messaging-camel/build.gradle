@@ -11,6 +11,6 @@ repositories {
 
 dependencies {
 	compile project(':accurest-messaging-root:accurest-messaging-core')
-	compile 'org.apache.camel:camel-spring:2.9.0'
+	compile "org.apache.camel:camel-spring:${camelVersion}"
 	compile 'org.slf4j:slf4j-api:1.6.0'
 }
