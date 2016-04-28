@@ -40,7 +40,6 @@ dependencies {
 	compile "org.springframework:spring-web:$springVersion"
 	compile "org.springframework:spring-context-support:$springVersion"
 	compile "org.codehaus.groovy:groovy-all:2.4.5"
-	compile 'com.fasterxml.jackson.core:jackson-databind:2.4.4'
 	compile 'com.jayway.jsonpath:json-path-assert:2.2.0'
 
 	testCompile "com.github.tomakehurst:wiremock:2.0.10-beta"

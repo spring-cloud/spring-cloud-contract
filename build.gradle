@@ -88,17 +88,12 @@ subprojects {
 project(':accurest-core') {
 
 	dependencies {
-		compile 'org.slf4j:slf4j-api:[1.6.0,)'
-		compile 'org.codehaus.plexus:plexus-utils:[3.0.0,)'
-		compile 'commons-io:commons-io:[2.0,)'
-		compile 'org.apache.commons:commons-lang3:[3.3,)'
-		compile 'com.google.code.gson:gson:2.3.1'
-		compile 'com.fasterxml.jackson.core:jackson-databind:2.4.5'
-		compile 'asm:asm:3.3.1'
+		compile 'org.slf4j:slf4j-api:1.6.0'
+		compile 'commons-io:commons-io:2.0'
+		compile 'org.apache.commons:commons-lang3:3.3'
 		compile "com.github.tomakehurst:wiremock:$wiremockVersion"
 		compile "com.toomuchcoding.jsonassert:jsonassert:$jsonassertVersion"
-		compile 'org.assertj:assertj-core:2.3.0'
-		compile localGroovy()
+		compile 'org.codehaus.groovy:groovy-all:2.4.4'
 		testCompile 'cglib:cglib-nodep:2.2'
 		testCompile 'org.objenesis:objenesis:2.1'
 		testCompile project(':accurest-testing-utils')
@@ -117,8 +112,8 @@ project(':accurest-testing-utils') {
 project(':accurest-converters') {
 	dependencies {
 		compile project(':accurest-core')
-		compile 'org.apache.commons:commons-lang3:[3.0,)'
-		compile 'commons-io:commons-io:[2.0,)'
+		compile 'org.apache.commons:commons-lang3:3.0'
+		compile 'commons-io:commons-io:2.0'
 		compile 'dk.brics.automaton:automaton:1.11-8' // needed for Xeger
 		testCompile "com.github.tomakehurst:wiremock:$wiremockVersion"
 		testCompile 'org.hamcrest:hamcrest-all:1.3'

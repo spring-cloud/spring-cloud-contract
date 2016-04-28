@@ -11,7 +11,7 @@ repositories {
 
 dependencies {
 	compile project(':accurest-messaging-root:accurest-messaging-core')
-	compile 'org.springframework.cloud:spring-cloud-stream:[1.0.0.RC2,)'
+	compile 'org.springframework.cloud:spring-cloud-stream:1.0.0.RC2'
 	// for MessageCollector
-	compile 'org.springframework.cloud:spring-cloud-stream-test-support:[1.0.0.RC2,)'
+	compile 'org.springframework.cloud:spring-cloud-stream-test-support:1.0.0.RC2'
 }
