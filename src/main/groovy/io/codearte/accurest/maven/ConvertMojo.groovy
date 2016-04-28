@@ -57,7 +57,7 @@ class ConvertMojo extends AbstractMojo {
 
         AccurestConfigProperties config = new AccurestConfigProperties()
         config.contractsDslDir = insideProject ? contractsDirectory : source
-        config.stubsOutputDir = insideProject ? new File(outputDirectory, 'mappings') : destination
+        config.stubsOutputDir = insideProject ? new File(outputDirectory,  'mappings') : destination
 
         log.info('Converting from accurest contracts written in GroovyDSL to WireMock stubs mappings')
         log.info("     Accurest contracts directory: ${config.contractsDslDir}")
@@ -72,8 +72,7 @@ class ConvertMojo extends AbstractMojo {
         Resource testResource = new Resource(directory: contractsDirectory.absolutePath)
         MavenResourcesExecution mavenResourcesExecution =
                 new MavenResourcesExecution([testResource],
-                        new File(outputDirectory, 'contracts'), project, 'UTF-8',
-                        [], [], mavenSession);
+                        new File(outputDirectory, 'accurest'), project, 'UTF-8', [], [], mavenSession);
         mavenResourcesExecution.injectProjectBuildFilters = false
         mavenResourcesExecution.overwrite = true
         mavenResourcesExecution.includeEmptyDirs = false

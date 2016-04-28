@@ -1,6 +1,7 @@
 package io.codearte.accurest.maven
 
 import groovy.transform.CompileStatic
+import org.apache.maven.model.Plugin
 import org.apache.maven.plugin.AbstractMojo
 import org.apache.maven.plugin.MojoExecutionException
 import org.apache.maven.plugin.MojoFailureException
@@ -12,6 +13,7 @@ import org.apache.maven.project.MavenProject
 import org.apache.maven.project.MavenProjectHelper
 import org.codehaus.plexus.archiver.Archiver
 import org.codehaus.plexus.archiver.jar.JarArchiver
+import org.codehaus.plexus.archiver.jar.Manifest
 
 @Mojo(name = 'generateStubs', defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true)
 @CompileStatic
@@ -36,7 +38,7 @@ class GenerateStubsMojo extends AbstractMojo {
     private MavenProject project
 
     @Component(role = Archiver.class, hint = "jar")
-    private JarArchiver jarArchiver;
+    private JarArchiver archiver;
 
     @Parameter(defaultValue = 'true')
     private boolean attachContracts
@@ -64,18 +66,32 @@ class GenerateStubsMojo extends AbstractMojo {
 
         try {
             if (attachContracts) {
-                jarArchiver.addDirectory(stubsOutputDir, [STUB_MAPPING_FILE_PATTERN, ACCUREST_FILE_PATTERN] as String[], [] as String[]);
+                archiver.addDirectory(stubsOutputDir, [STUB_MAPPING_FILE_PATTERN, ACCUREST_FILE_PATTERN] as String[], [] as String[]);
             } else {
                 log.info("Skipping attaching accurest contracts")
-                jarArchiver.addDirectory(stubsOutputDir, [STUB_MAPPING_FILE_PATTERN] as String[], [ACCUREST_FILE_PATTERN] as String[]);
+                archiver.addDirectory(stubsOutputDir, [STUB_MAPPING_FILE_PATTERN] as String[], [ACCUREST_FILE_PATTERN] as String[]);
             }
-            jarArchiver.setCompress(true);
-            jarArchiver.setDestFile(stubsJarFile);
-            jarArchiver.createArchive();
+            archiver.setCompress(true);
+            archiver.setDestFile(stubsJarFile);
+            archiver.addConfiguredManifest(createManifest());
+            archiver.createArchive();
         } catch (Exception e) {
             throw new MojoFailureException("Exception while packaging ${classifier} jar.", e);
         }
         return stubsJarFile
+    }
+
+    private Manifest createManifest() {
+        Manifest manifest = new Manifest();
+        Plugin accurestMavenPlugin = project.getBuildPlugins().find { it.artifactId == 'accurest-maven-plugin' }
+        manifest.addConfiguredAttribute(new Manifest.Attribute("Accurest-Maven-Plugin-Version", accurestMavenPlugin.version));
+        if (accurestMavenPlugin.getDependencies()) {
+            String accurestVersion = accurestMavenPlugin.getDependencies().find {
+                it.artifactId == 'accurest-core'
+            }.version
+            manifest.addConfiguredAttribute(new Manifest.Attribute("Accurest-Version", accurestVersion));
+        }
+        return manifest
     }
 
 }

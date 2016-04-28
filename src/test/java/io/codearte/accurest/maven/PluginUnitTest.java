@@ -2,6 +2,7 @@ package io.codearte.accurest.maven;
 
 import static io.takari.maven.testing.TestMavenRuntime.newParameter;
 import static io.takari.maven.testing.TestResources.assertFileContents;
+import static io.takari.maven.testing.TestResources.assertFilesNotPresent;
 import static io.takari.maven.testing.TestResources.assertFilesPresent;
 
 import java.io.File;
@@ -26,6 +27,7 @@ public class PluginUnitTest {
 		File basedir = resources.getBasedir("basic");
 		maven.executeMojo(basedir, "convert");
 		assertFilesPresent(basedir, "target/accurest/mappings/Sample.json");
+		assertFilesNotPresent(basedir, "target/accurest/mappings/Messaging.json");
 	}
 
 	@Test
@@ -35,6 +37,13 @@ public class PluginUnitTest {
 		assertFilesPresent(basedir, "target/accurest/mappings/Sample.json");
 	}
 
+	@Test
+	public void shouldCopyContracts() throws Exception {
+		File basedir = resources.getBasedir("basic");
+		maven.executeMojo(basedir, "convert");
+		assertFilesPresent(basedir, "target/accurest/accurest/Sample.groovy");
+		assertFilesPresent(basedir, "target/accurest/accurest/Messaging.groovy");
+	}
 	@Test
 	public void shouldGenerateWireMockStubsInSelectedLocation() throws Exception {
 		File basedir = resources.getBasedir("basic");

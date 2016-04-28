@@ -271,7 +271,12 @@
             <version>${aetherVersion}</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.toomuchcoding.jsonassert</groupId>
+            <artifactId>jsonassert</artifactId>
+            <version>0.3.0</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>maven-filtering</artifactId>
