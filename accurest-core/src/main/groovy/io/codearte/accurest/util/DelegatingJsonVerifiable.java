@@ -66,6 +66,15 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 	}
 
 	@Override
+	public MethodBufferingJsonVerifiable field(String... strings) {
+		MethodBufferingJsonVerifiable verifiable = null;
+		for (String string : strings) {
+			verifiable = verifiable == null ? field(string) : verifiable.field(string);
+		}
+		return verifiable;
+	}
+
+	@Override
 	public MethodBufferingJsonVerifiable array(Object value) {
 		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(delegate.array(value), methodsBuffer);
 		verifiable.appendMethodWithQuotedValue("array", value);
@@ -226,5 +235,10 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 				"delegate=\n" + delegate +
 				", methodsBuffer=" + methodsBuffer +
 				'}';
+	}
+
+	@Override
+	public <T> T read(Class<T> aClass) {
+		return delegate.read(aClass);
 	}
 }
