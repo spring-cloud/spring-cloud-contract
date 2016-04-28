@@ -9,6 +9,9 @@ import io.codearte.accurest.stubrunner.StubFinder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.SpringApplicationContextLoader
+import org.springframework.cloud.stream.annotation.EnableBinding
+import org.springframework.cloud.stream.messaging.Sink
+import org.springframework.cloud.stream.messaging.Source
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ContextConfiguration
@@ -22,6 +25,7 @@ import java.util.concurrent.TimeUnit
 @ComponentScan
 @EnableAutoConfiguration
 @ContextConfiguration(classes = StreamStubRunnerSpec, loader = SpringApplicationContextLoader)
+@EnableBinding([Sink, Source])
 class StreamStubRunnerSpec extends Specification {
 
 	@Autowired StubFinder stubFinder

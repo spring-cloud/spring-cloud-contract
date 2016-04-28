@@ -13,6 +13,7 @@ import org.springframework.integration.core.MessageSelector
 import org.springframework.messaging.Message
 
 import java.util.regex.Pattern
+
 /**
  * Passes through a message that matches the one defined in the DSL
  *

@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
 	compile project(':stub-runner-root:stub-runner-spring')
+	compile project(':stub-runner-root:stub-runner-messaging-root:stub-runner-messaging-integration')
 	compile project(':accurest-messaging-root:accurest-messaging-stream')
 	compile 'org.springframework.integration:spring-integration-java-dsl:[1.1.2.RELEASE,)'
 
