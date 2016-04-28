@@ -55,7 +55,8 @@ class StubRunnerBootSpec extends Specification {
 		when:
 			String response = RestAssuredMockMvc.get('/triggers').body.asString()
 		then:
-			response == '''{"io.codearte.accurest.stubs:streamService:stubs":["delete_book","return_book_1","return_book_2"]}'''
+			def root = new JsonSlurper().parseText(response)
+			root.'io.codearte.accurest.stubs:streamService:stubs'.containsAll(["delete_book","return_book_1","return_book_2"])
 	}
 
 	def 'should trigger a messaging label'() {
@@ -89,7 +90,8 @@ class StubRunnerBootSpec extends Specification {
 			def response = RestAssuredMockMvc.post("/triggers/missing_label")
 		then:
 			response.statusCode == 404
-			response.body.asString() == '''{"io.codearte.accurest.stubs:streamService:stubs":["delete_book","return_book_1","return_book_2"]}'''
+			def root = new JsonSlurper().parseText(response.body.asString())
+			root.'io.codearte.accurest.stubs:streamService:stubs'.containsAll(["delete_book","return_book_1","return_book_2"])
 	}
 
 }
