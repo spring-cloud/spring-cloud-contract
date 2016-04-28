@@ -5,6 +5,9 @@ WARNING: Feature available since {messaging_version}
 Accurest Stub Runner Boot is a Spring Boot application that exposes REST endpoints to
 trigger the messaging labels and to access started WireMock servers.
 
+One of the usecases is to run some smoke (end to end) tests on a deployed application. You can read
+ more about this in the  http://toomuchcoding.com/blog/2015/09/27/microservice-deployment/["Microservice Deployment" article at Too Much Coding blog.]
+
 ==== How to use it?
 
 Just add the
