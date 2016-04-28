@@ -85,5 +85,49 @@ class SingleTestGeneratorSpec extends Specification {
 			SPOCK         | ['import static javax.ws.rs.client.Entity.*;']
 	}
 
+	def "should work if there is messaging and rest in one folder #testFramework"() {
+		given:
+			File secondFile = tmpFolder.newFile()
+			secondFile.write("""
+						io.codearte.accurest.dsl.GroovyDsl.make {
+						  label 'some_label'
+						  input {
+							messageFrom('delete')
+							messageBody([
+								bookName: 'foo'
+							])
+							messageHeaders {
+							  header('sample', 'header')
+							}
+							assertThat('bookWasDeleted()')
+						  }
+						}
+		""")
+		and:
+			AccurestConfigProperties properties = new AccurestConfigProperties();
+			properties.targetFramework = testFramework
+			Contract contract = new Contract(file.toPath(), true, 1, 2)
+			contract.ignored >> true
+			contract.order >> 2
+		and:
+			Contract contract2 = new Contract(secondFile.toPath(), true, 1, 2)
+			contract2.ignored >> true
+			contract2.order >> 2
+		and:
+			SingleTestGenerator testGenerator = new SingleTestGenerator(properties)
+
+		when:
+			String clazz = testGenerator.buildClass([contract, contract2], "test", "test")
+
+		then:
+			classStrings.each { clazz.contains(it) }
+			clazz.contains('@Inject AccurestMessaging')
+
+		where:
+			testFramework | classStrings
+			JUNIT         | jUnitClassStrings
+			SPOCK         | spockClassStrings
+	}
+
 
 }

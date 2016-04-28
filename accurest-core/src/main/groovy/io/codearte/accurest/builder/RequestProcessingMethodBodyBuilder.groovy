@@ -38,7 +38,7 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 
 	@Override
 	protected boolean hasGivenSection() {
-		return request.headers || request.body
+		return true
 	}
 
 	protected boolean allowedQueryParameter(QueryParameter param) {

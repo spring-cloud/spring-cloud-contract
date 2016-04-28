@@ -66,7 +66,7 @@ class SingleTestGenerator {
 		boolean conditionalImportsAdded = false
 		contracts.each { ParsedDsl key, TestType value ->
 			if (!conditionalImportsAdded) {
-				if (value == TestType.HTTP) {
+				if (contracts.values().contains(TestType.HTTP)) {
 					if (configProperties.testMode == TestMode.JAXRSCLIENT) {
 						clazz.addStaticImport('javax.ws.rs.client.Entity.*')
 						if (configProperties.targetFramework == TestFramework.JUNIT) {
@@ -79,7 +79,7 @@ class SingleTestGenerator {
 					}
 				}
 				if (configProperties.targetFramework == TestFramework.JUNIT) {
-					if (value == TestType.HTTP && configProperties.testMode == TestMode.MOCKMVC) {
+					if (contracts.values().contains(TestType.HTTP) && configProperties.testMode == TestMode.MOCKMVC) {
 						clazz.addImport('com.jayway.restassured.module.mockmvc.specification.MockMvcRequestSpecification')
 						clazz.addImport('com.jayway.restassured.response.ResponseOptions')
 					}
@@ -89,7 +89,7 @@ class SingleTestGenerator {
 				if (configProperties.ruleClassForTests) {
 					clazz.addImport('org.junit.Rule').addRule(configProperties.ruleClassForTests)
 				}
-				if (value == TestType.MESSAGING) {
+				if (contracts.values().contains(TestType.MESSAGING)) {
 					addMessagingRelatedEntries(clazz)
 				}
 				conditionalImportsAdded = true
