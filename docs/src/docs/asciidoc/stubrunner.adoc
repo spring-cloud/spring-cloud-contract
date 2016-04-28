@@ -51,15 +51,15 @@ include::../../../../stub-runner/stub-runner-spring-cloud/README.adoc[]
 
 Some of the properties that are repetitive can be set using system properties or property sources (for Spring). Here are their names with their default values:
 
-[width="60%",frame="topbot",options="header"]
+[frame="topbot",options="header"]
 |======================
-| Property name | Default value | Description |
-|stubrunner.port.range.min|10000| Minimal value of a port for a started WireMock with stubs|
-|stubrunner.port.range.max|15000| Minimal value of a port for a started WireMock with stubs|
-|stubrunner.stubs.repository.root|| Maven repo url. If blank then will call the local maven repo|
-|stubrunner.stubs.classifier|stubs| Default classifier for the stub artifacts|
-|stubrunner.work-offline|false| If true then will not contact any remote repositories to download stubs|
-|stubrunner.stubs|| Comma separated list of Ivy notation of stubs to download|
+| Property name | Default value | Description
+|stubrunner.port.range.min|10000| Minimal value of a port for a started WireMock with stubs
+|stubrunner.port.range.max|15000| Minimal value of a port for a started WireMock with stubs
+|stubrunner.stubs.repository.root|| Maven repo url. If blank then will call the local maven repo
+|stubrunner.stubs.classifier|stubs| Default classifier for the stub artifacts
+|stubrunner.work-offline|false| If true then will not contact any remote repositories to download stubs
+|stubrunner.stubs.ids|| Comma separated list of Ivy notation of stubs to download
 |======================
 
 ==== Stub runner stubs ids
