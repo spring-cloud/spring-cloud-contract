@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<component-set>
+	<components>
+		<component>
+			<role>org.apache.maven.lifecycle.Lifecycle</role>
+			<implementation>org.apache.maven.lifecycle.Lifecycle</implementation>
+			<role-hint>accurest</role-hint>
+			<configuration>
+				<id>accurest</id>
+				<phases>
+					<phase>accurest-not-used-phase</phase>
+				</phases>
+				<default-phases>
+					<process-test-resources>
+						io.codearte.accurest:accurest-maven-plugin:${project.version}:convert
+					</process-test-resources>
+					<generate-test-sources>
+						io.codearte.accurest:accurest-maven-plugin:${project.version}:generateTests
+					</generate-test-sources>
+					<package>
+						io.codearte.accurest:accurest-maven-plugin:${project.version}:generateStubs
+					</package>
+				</default-phases>
+			</configuration>
+		</component>
+	</components>
+</component-set>

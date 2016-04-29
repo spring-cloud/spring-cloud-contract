@@ -58,6 +58,20 @@ public class PluginIT {
 	}
 
 	@Test
+	public void should_build_project_with_plugin_extension() throws Exception {
+		File basedir = resources.getBasedir("plugin-extension");
+		maven.forProject(basedir)
+				.execute("package")
+				.assertErrorFreeLog()
+				.assertLogText("Generating server tests source code for Accurest contract verification")
+				.assertLogText("Generated 1 test classes.")
+				.assertLogText("Converting from accurest contracts written in GroovyDSL to WireMock stubs mappings")
+				.assertLogText("Creating new json")
+				.assertLogText("Running io.codearte.accurest.tests.AccurestTest")
+				.assertErrorFreeLog();
+	}
+
+	@Test
 	@Ignore("Ignored, because of bug accurest#245")
 	public void should_build_project_project_with_complex_configuration() throws Exception {
 		File basedir = resources.getBasedir("complex-configuration");
