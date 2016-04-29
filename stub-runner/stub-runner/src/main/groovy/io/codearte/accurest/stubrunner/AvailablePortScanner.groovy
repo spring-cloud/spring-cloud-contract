@@ -55,7 +55,7 @@ class AvailablePortScanner {
 		try {
 			socket = new ServerSocket(portToScan)
 		} finally {
-			socket.close()
+			socket?.close()
 		}
 	}
 

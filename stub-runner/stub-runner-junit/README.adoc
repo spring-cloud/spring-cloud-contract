@@ -15,8 +15,8 @@ After that rule gets executed Stub Runner connects to your Maven repository and 
 - start a WireMock server for each Maven dependency on a random port from the provided range of ports / provided port
 - feed the WireMock server with all JSON files that are valid WireMock definitions
 
-Stub Runner uses http://docs.groovy-lang.org/latest/html/documentation/grape.html[Groovy's Grape] mechanism to download the Maven dependencies. 
-Check their http://docs.groovy-lang.org/latest/html/documentation/grape.html[docs] for more information.
+Stub Runner uses https://wiki.eclipse.org/Aether[Eclipse Aether] mechanism to download the Maven dependencies. 
+Check their https://wiki.eclipse.org/Aether[docs] for more information.
 
 Since the `AccurestRule` implements the `StubFinder` it allows you to find the started stubs:
 

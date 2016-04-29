@@ -1,23 +1,24 @@
 package io.codearte.accurest.stubrunner.spring;
 
-import java.io.IOException;
-import java.util.Set;
-
+import io.codearte.accurest.messaging.AccurestMessaging;
+import io.codearte.accurest.messaging.noop.NoOpAccurestMessaging;
+import io.codearte.accurest.stubrunner.AetherStubDownloader;
+import io.codearte.accurest.stubrunner.BatchStubRunner;
+import io.codearte.accurest.stubrunner.BatchStubRunnerFactory;
+import io.codearte.accurest.stubrunner.StubConfiguration;
+import io.codearte.accurest.stubrunner.StubDownloader;
+import io.codearte.accurest.stubrunner.StubRunner;
+import io.codearte.accurest.stubrunner.StubRunnerOptions;
+import io.codearte.accurest.stubrunner.StubRunning;
+import io.codearte.accurest.stubrunner.util.StubsParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
-import io.codearte.accurest.messaging.AccurestMessaging;
-import io.codearte.accurest.messaging.noop.NoOpAccurestMessaging;
-import io.codearte.accurest.stubrunner.BatchStubRunner;
-import io.codearte.accurest.stubrunner.BatchStubRunnerFactory;
-import io.codearte.accurest.stubrunner.StubConfiguration;
-import io.codearte.accurest.stubrunner.StubRunner;
-import io.codearte.accurest.stubrunner.StubRunnerOptions;
-import io.codearte.accurest.stubrunner.StubRunning;
-import io.codearte.accurest.stubrunner.util.StubsParser;
+import java.io.IOException;
+import java.util.Set;
 
 /**
  * Configuration that initializes a {@link BatchStubRunner} that runs {@link StubRunner} instance for each stub
@@ -26,6 +27,7 @@ import io.codearte.accurest.stubrunner.util.StubsParser;
 public class StubRunnerConfiguration {
 
 	@Autowired(required = false) AccurestMessaging accurestMessaging;
+	@Autowired(required = false) StubDownloader stubDownloader;
 
 	/**
 	 * Bean that initializes stub runners, runs them and on shutdown closes them. Upon its instantiation
@@ -51,6 +53,7 @@ public class StubRunnerConfiguration {
 				stubRepositoryRoot == null || workOffline, stubsSuffix, stubs);
 		Set<StubConfiguration> dependencies = StubsParser.fromString(stubs, stubsSuffix);
 		BatchStubRunner batchStubRunner = new BatchStubRunnerFactory(stubRunnerOptions, dependencies,
+				stubDownloader != null ? stubDownloader : new AetherStubDownloader(stubRunnerOptions),
 				accurestMessaging != null ? accurestMessaging :  new NoOpAccurestMessaging()).buildBatchStubRunner();
 		// TODO: Consider running it in a separate thread
 		batchStubRunner.runStubs();

@@ -19,23 +19,23 @@ class BatchStubRunnerFactory {
 	private final AccurestMessaging accurestMessaging
 
 	BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, Collection<StubConfiguration> dependencies) {
-		this(stubRunnerOptions, dependencies, new GrapeStubDownloader(), new NoOpAccurestMessaging())
+		this(stubRunnerOptions, dependencies, new AetherStubDownloader(stubRunnerOptions), new NoOpAccurestMessaging())
 	}
 
 	BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, Collection<StubConfiguration> dependencies,
 						   AccurestMessaging accurestMessaging) {
-		this(stubRunnerOptions, dependencies, new GrapeStubDownloader(), accurestMessaging)
+		this(stubRunnerOptions, dependencies, new AetherStubDownloader(stubRunnerOptions), accurestMessaging)
 	}
 
 	BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions,
 	                       Collection<StubConfiguration> dependencies,
-	                       StubDownloader stubDownloader) {
+						   StubDownloader stubDownloader) {
 		this(stubRunnerOptions, dependencies, stubDownloader, new NoOpAccurestMessaging())
 	}
 
 	BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions,
-	                       Collection<StubConfiguration> dependencies,
-	                       StubDownloader stubDownloader,
+						   Collection<StubConfiguration> dependencies,
+						   StubDownloader stubDownloader,
 						   AccurestMessaging accurestMessaging) {
 		this.stubRunnerOptions = stubRunnerOptions
 		this.dependencies = dependencies
