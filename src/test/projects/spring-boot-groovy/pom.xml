@@ -48,9 +48,8 @@
             <artifactId>jsonassert</artifactId>
             <version>0.4.1</version>
             <scope>test</scope>
-            <!-- end::dependencies[] -->
         </dependency>
-
+        <!-- end::dependencies[] -->
     </dependencies>
 
     <properties>
