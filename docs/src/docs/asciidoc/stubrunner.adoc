@@ -56,7 +56,7 @@ Some of the properties that are repetitive can be set using system properties or
 | Property name | Default value | Description
 |stubrunner.port.range.min|10000| Minimal value of a port for a started WireMock with stubs
 |stubrunner.port.range.max|15000| Minimal value of a port for a started WireMock with stubs
-|stubrunner.stubs.repository.root|| Maven repo url. If blank then will call the local maven repo
+|stubrunner.stubs.repository.root|| Comma separated list of Maven repo urls. If blank then will call the local maven repo
 |stubrunner.stubs.classifier|stubs| Default classifier for the stub artifacts
 |stubrunner.work-offline|false| If true then will not contact any remote repositories to download stubs
 |stubrunner.stubs.ids|| Comma separated list of Ivy notation of stubs to download

@@ -54,7 +54,12 @@ class AetherStubDownloader implements StubDownloader {
 	}
 
 	private List<RemoteRepository> remoteRepositories(StubRunnerOptions stubRunnerOptions) {
-		return [new RemoteRepository.Builder("remote", "default", stubRunnerOptions.stubRepositoryRoot).build()]
+		if (stubRunnerOptions.workOffline || !stubRunnerOptions.stubRepositoryRoot) {
+			return []
+		}
+		return stubRunnerOptions.stubRepositoryRoot.split(',').collect { String repo ->
+			new RemoteRepository.Builder("remote", "default", repo).build()
+		}
 	}
 
 	private RepositorySystem newRepositorySystem() {
@@ -82,7 +87,7 @@ class AetherStubDownloader implements StubDownloader {
 		}
 		Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier, ARTIFACT_EXTENSION, highestVersion.toString())
 		ArtifactRequest request = new ArtifactRequest(artifact: artifact, repositories: remoteRepos)
-		log.info("Resolving artifact $artifact from $remoteRepos")
+		log.info("Resolving artifact $artifact from ${remoteRepos?:'local maven repo'}")
 		ArtifactResult result = repositorySystem.resolveArtifact(session, request)
 		log.info("Resolved artifact $artifact to ${result.artifact.file} from ${result.repository}")
 		return unpackStubJarToATemporaryFolder(result.artifact.file.toURI())
