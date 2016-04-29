@@ -12,59 +12,114 @@ import io.codearte.accurest.stubrunner.util.StringUtils
 @EqualsAndHashCode
 public class StubConfiguration {
 	private static final String STUB_COLON_DELIMITER = ":"
+	private static final String DEFAULT_VERSION = "+"
+	private static final String DEFAULT_CLASSIFIER = "stubs"
 
 	final String groupId
 	final String artifactId
+	final String version
 	final String classifier
 
-	public StubConfiguration(String groupId, String artifactId, String classifier) {
+	public StubConfiguration(String groupId, String artifactId, String version) {
 		this.groupId = groupId
 		this.artifactId = artifactId
+		this.version = version
+		this.classifier = DEFAULT_CLASSIFIER
+	}
+
+	public StubConfiguration(String groupId, String artifactId, String version, String classifier) {
+		this.groupId = groupId
+		this.artifactId = artifactId
+		this.version = version
 		this.classifier = classifier
 	}
 
-	public StubConfiguration(String stubPath, String defaultClassifier = "stubs") {
+	public StubConfiguration(String stubPath, String defaultClassifier) {
 		String[] parsedPath = parsedPathEmptyByDefault(stubPath, STUB_COLON_DELIMITER, defaultClassifier)
 		this.groupId = parsedPath[0]
 		this.artifactId = parsedPath[1]
-		this.classifier = parsedPath[2]
+		this.version = parsedPath[2]
+		this.classifier = parsedPath[3]
+	}
+
+	public StubConfiguration(String stubPath) {
+		String[] parsedPath = parsedPathEmptyByDefault(stubPath, STUB_COLON_DELIMITER, DEFAULT_CLASSIFIER)
+		this.groupId = parsedPath[0]
+		this.artifactId = parsedPath[1]
+		this.version = parsedPath[2]
+		this.classifier = parsedPath[3]
 	}
 
 	private List<String> parsedPathEmptyByDefault(String path, String delimiter, String defaultClassifier) {
 		String[] splitPath = path.split(delimiter)
 		String stubsGroupId = ""
 		String stubsArtifactId = ""
+		String stubsVersion = ""
 		String stubsClassifier = ""
 		if (splitPath.length >= 2) {
 			stubsGroupId = splitPath[0]
 			stubsArtifactId = splitPath[1]
-			stubsClassifier = splitPath.length == 3 ? splitPath[2] : defaultClassifier
+			stubsVersion = splitPath.length >= 3 ? splitPath[2] : DEFAULT_VERSION
+			stubsClassifier = splitPath.length == 4 ? splitPath[3] : defaultClassifier
 		}
-		return [stubsGroupId, stubsArtifactId, stubsClassifier]
+		return [stubsGroupId, stubsArtifactId, stubsVersion, stubsClassifier]
 	}
 
 	private boolean isDefined() {
 		return StringUtils.hasText(groupId) && StringUtils.hasText(this.artifactId)
 	}
 
-	boolean hasClassifier() {
-		return StringUtils.hasText(classifier)
-	}
-
 	String toColonSeparatedDependencyNotation() {
 		if(!isDefined()) {
 			return ""
 		}
-		return [groupId, artifactId, classifier].join(STUB_COLON_DELIMITER)
+		return [groupId, artifactId, version, classifier].join(STUB_COLON_DELIMITER)
 	}
 
 	@CompileDynamic
-	boolean matches(String ivyNotationAsString) {
+	boolean groupIdAndArtifactMatches(String ivyNotationAsString) {
 		def (String groupId, String artifactId) = ivyNotationFrom(ivyNotationAsString)
 		if (!groupId) {
 			return this.artifactId == artifactId
 		}
 		return this.groupId == groupId && this.artifactId == artifactId
+	}
+
+	boolean equals(o) {
+		if (this.is(o)) return true
+		if (getClass() != o.class) return false
+
+		StubConfiguration that = (StubConfiguration) o
+
+		if (artifactId != that.artifactId) return false
+		if (groupId != that.groupId) return false
+
+		return true
+	}
+
+	int hashCode() {
+		int result
+		result = (groupId != null ? groupId.hashCode() : 0)
+		result = 31 * result + (artifactId != null ? artifactId.hashCode() : 0)
+		return result
+	}
+
+	boolean matchesIvyNotation(String ivyNotationAsString) {
+		def strings = ivyNotationAsString.split(':')
+		if (strings.length == 1) {
+			return artifactId == ivyNotationAsString
+		} else if(strings.length == 2) {
+			return groupId == strings[0] &&
+					artifactId == strings[1]
+		} else if(strings.length == 3) {
+			return groupId == strings[0] &&
+					artifactId == strings[1] &&
+					(strings[2] == DEFAULT_VERSION || version == strings[2])
+		}
+		return groupId == strings[0] &&
+				artifactId == strings[1] &&
+				(strings[2] == DEFAULT_VERSION || version == strings[2]) &&
+				classifier == strings[3]
 	}
 
 	private String[] ivyNotationFrom(String ivyNotation) {

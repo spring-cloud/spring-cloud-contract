@@ -6,26 +6,31 @@ import spock.lang.Specification
  * @author Marcin Grzejszczak
  */
 class RunningStubsSpec extends Specification {
-	RunningStubs runningStubs = new RunningStubs([(new StubConfiguration('a', 'b', 'c')) : 100])
+	RunningStubs runningStubs = new RunningStubs([(new StubConfiguration('group', 'artifact', 'version', 'classifier')) : 100])
 
 	def "should get port by group and artifact id"() {
 		expect:
-			runningStubs.getPort('a', 'b') == 100
+			runningStubs.getPort('group', 'artifact') == 100
 	}
 
 	def "should get port by artifact id"() {
 		expect:
-			runningStubs.getPort('b') == 100
+			runningStubs.getPort('artifact') == 100
 	}
 
 	def "should get port by group and artifact id in Ivy notation"() {
 		expect:
-			runningStubs.getPort('a:b') == 100
+			runningStubs.getPort('group:artifact') == 100
 	}
 
-	def "should get port by group, artifact id and classifier in Ivy notation"() {
+	def "should get port by group, artifact id and version in Ivy notation"() {
 		expect:
-			runningStubs.getPort('a:b:c') == 100
+			runningStubs.getPort('group:artifact:version') == 100
+	}
+
+	def "should get port by group, artifact id, version and classifier in Ivy notation"() {
+		expect:
+			runningStubs.getPort('group:artifact:version:classifier') == 100
 	}
 
 	def "should return null if no stub has been found"() {
@@ -35,22 +40,27 @@ class RunningStubsSpec extends Specification {
 
 	def "should find stub by group and artifact id"() {
 		expect:
-			runningStubs.isPresent('a', 'b')
+			runningStubs.isPresent('group', 'artifact')
 	}
 
 	def "should find stub by artifact id"() {
 		expect:
-			runningStubs.isPresent('b')
+			runningStubs.isPresent('artifact')
 	}
 
 	def "should find stub by group and artifact id in Ivy notation"() {
 		expect:
-			runningStubs.isPresent('a:b')
+			runningStubs.isPresent('group:artifact')
 	}
 
-	def "should find stub by group, artifact id and classifier in Ivy notation"() {
+	def "should find stub by group, artifact id and version in Ivy notation"() {
 		expect:
-			runningStubs.isPresent('a:b:c')
+			runningStubs.isPresent('group:artifact:version')
+	}
+
+	def "should find stub by group, artifact id, version and classifier in Ivy notation"() {
+		expect:
+			runningStubs.isPresent('group:artifact:version:classifier')
 	}
 
 	def "should return false if no stub has been found"() {

@@ -22,7 +22,7 @@ You can set the following options to the main class:
                                   (default: 10000)
  -s (--stubs) VAL               : Comma separated list of Ivy representation of
                                   jars with stubs. Eg. groupid:artifactid1,group
-                                  id2:artifactid2:classifier
+                                  id2:artifactid2:version:classifier
  -sr (--stubRepositoryRoot) VAL : Location of a Jar containing server where you
                                   keep your stubs (e.g. http://nexus.net/content
                                   /repositories/repository)
@@ -48,7 +48,7 @@ and inside the `build/lib` there will be a Fat Jar with classifier `fatJar` wait
 
 [source,groovy,indent=0]
 ----
-java -jar stub-runner/stub-runner/build/libs/stub-runner-1.0.1-SNAPSHOT-fatJar.jar -sr http://a.b.com -s a:b:c,d:e,f:g:h 
+java -jar stub-runner/stub-runner/build/libs/stub-runner-1.0.1-SNAPSHOT-fatJar.jar -sr http://a.b.com -s a:b:c,d:e,f:g:h:i
 ----
 
 ==== Stub runner configuration

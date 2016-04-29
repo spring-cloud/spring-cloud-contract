@@ -26,26 +26,14 @@ class RunningStubs {
 	}
 
 	Map.Entry<StubConfiguration, Integer> getEntry(String artifactId) {
-		def strings = artifactId.split(':')
-		if (strings.length == 1) {
-			return namesAndPorts.entrySet().find {
-				it.key.artifactId == artifactId
-			}
-		} else if(strings.length == 2) {
-			return namesAndPorts.entrySet().find {
-				it.key.groupId == strings[0] && it.key.artifactId == strings[1]
-			}
-		}
 		return namesAndPorts.entrySet().find {
-			it.key.groupId == strings[0] &&
-					it.key.artifactId == strings[1] &&
-					it.key.classifier == strings[2]
+			it.key.matchesIvyNotation(artifactId)
 		}
 	}
 
 	Integer getPort(String groupId, String artifactId) {
 		return namesAndPorts.entrySet().find {
-			it.key.artifactId == artifactId && it.key.groupId == groupId
+			it.key.matchesIvyNotation("$groupId:$artifactId")
 		}?.value
 	}
 
@@ -55,7 +43,7 @@ class RunningStubs {
 
 	boolean isPresent(String groupId, String artifactId) {
 		return namesAndPorts.entrySet().find {
-			it.key.artifactId == artifactId && it.key.groupId == groupId
+			it.key.matchesIvyNotation("$groupId:$artifactId")
 		}
 	}
 

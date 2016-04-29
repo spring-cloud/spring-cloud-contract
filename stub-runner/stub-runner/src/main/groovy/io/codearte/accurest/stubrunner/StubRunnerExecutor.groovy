@@ -71,7 +71,7 @@ class StubRunnerExecutor implements StubFinder {
 	@Override
 	boolean trigger(String ivyNotationAsString, String labelName) {
 		Collection<GroovyDsl> matchingContracts = getAccurestContracts().findAll {
-			it.key.matches(ivyNotationAsString)
+			it.key.groupIdAndArtifactMatches(ivyNotationAsString)
 		}.values().flatten() as Collection<GroovyDsl>
 		return triggerForDsls(matchingContracts, labelName)
 	}

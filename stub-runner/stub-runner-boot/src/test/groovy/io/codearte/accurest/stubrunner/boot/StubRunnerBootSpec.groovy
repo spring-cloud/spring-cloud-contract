@@ -26,12 +26,12 @@ class StubRunnerBootSpec extends Specification {
 				new TriggerController(stubRunning))
 	}
 
-	def 'should return a list of running stub servers in "ivy:port" notation'() {
+	def 'should return a list of running stub servers in "full ivy:port" notation'() {
 		when:
 			String response = RestAssuredMockMvc.get('/stubs').body.asString()
 		then:
 			def root = new JsonSlurper().parseText(response)
-			root.'io.codearte.accurest.stubs:streamService:stubs' instanceof Integer
+			root.'io.codearte.accurest.stubs:streamService:0.0.1-SNAPSHOT:stubs' instanceof Integer
 	}
 
 	def 'should return a port on which a [#stubId] stub is running'() {
@@ -41,7 +41,11 @@ class StubRunnerBootSpec extends Specification {
 			response.statusCode == 200
 			response.body.as(Integer) > 0
 		where:
-			stubId << ['io.codearte.accurest.stubs:streamService:stubs', 'io.codearte.accurest.stubs:streamService', 'streamService']
+			stubId << ['io.codearte.accurest.stubs:streamService:+:stubs',
+					   'io.codearte.accurest.stubs:streamService:0.0.1-SNAPSHOT:stubs',
+					   'io.codearte.accurest.stubs:streamService:+',
+					   'io.codearte.accurest.stubs:streamService',
+					   'streamService']
 	}
 
 	def 'should return 404 when missing stub was called'() {
@@ -51,12 +55,12 @@ class StubRunnerBootSpec extends Specification {
 			response.statusCode == 404
 	}
 
-	def 'should return a list of messaging labels that can be triggered'() {
+	def 'should return a list of messaging labels that can be triggered when version and classifier are passed'() {
 		when:
 			String response = RestAssuredMockMvc.get('/triggers').body.asString()
 		then:
 			def root = new JsonSlurper().parseText(response)
-			root.'io.codearte.accurest.stubs:streamService:stubs'.containsAll(["delete_book","return_book_1","return_book_2"])
+			root.'io.codearte.accurest.stubs:streamService:0.0.1-SNAPSHOT:stubs'?.containsAll(["delete_book","return_book_1","return_book_2"])
 	}
 
 	def 'should trigger a messaging label'() {
@@ -91,7 +95,7 @@ class StubRunnerBootSpec extends Specification {
 		then:
 			response.statusCode == 404
 			def root = new JsonSlurper().parseText(response.body.asString())
-			root.'io.codearte.accurest.stubs:streamService:stubs'.containsAll(["delete_book","return_book_1","return_book_2"])
+			root.'io.codearte.accurest.stubs:streamService:0.0.1-SNAPSHOT:stubs'?.containsAll(["delete_book","return_book_1","return_book_2"])
 	}
 
 }

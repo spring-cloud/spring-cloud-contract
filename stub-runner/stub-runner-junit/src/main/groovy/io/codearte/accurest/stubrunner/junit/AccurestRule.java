@@ -29,6 +29,7 @@ import io.codearte.accurest.stubrunner.util.StubsParser;
  */
 public class AccurestRule implements TestRule, StubFinder {
 	private static final String DELIMITER = ":";
+	public static final String LATEST_VERSION = "+";
 
 	private LinkedList<String> stubs = new LinkedList<>();
 	private StubRunnerOptions stubRunnerOptions = defaultStubRunnerOptions();
@@ -109,10 +110,26 @@ public class AccurestRule implements TestRule, StubFinder {
 	}
 
 	/**
-	 * Group Id, artifact Id and classifier of a single stub to download
+	 * Group Id, artifact Id, version and classifier of a single stub to download
 	 */
-	public AccurestRule downloadStub(String groupId, String artifactId, String classifier) {
-		addStub(groupId + DELIMITER + artifactId + DELIMITER + classifier);
+	public AccurestRule downloadStub(String groupId, String artifactId, String version, String classifier) {
+		addStub(groupId + DELIMITER + artifactId + DELIMITER + version + DELIMITER + classifier);
+		return this;
+	}
+
+	/**
+	 * Group Id, artifact Id and classifier of a single stub to download in the latest version
+	 */
+	public AccurestRule downloadLatestStub(String groupId, String artifactId, String classifier) {
+		addStub(groupId + DELIMITER + artifactId + DELIMITER + LATEST_VERSION + DELIMITER + classifier);
+		return this;
+	}
+
+	/**
+	 * Group Id, artifact Id and version of a single stub to download
+	 */
+	public AccurestRule downloadStub(String groupId, String artifactId, String version) {
+		addStub(groupId + DELIMITER + artifactId + DELIMITER + version);
 		return this;
 	}
 

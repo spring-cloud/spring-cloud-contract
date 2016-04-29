@@ -1,2 +1,2 @@
 stubrunner.stubs.repository.root: classpath:m2repo/repository/
-stubrunner.stubs.ids: io.codearte.accurest.stubs:integrationService
+stubrunner.stubs.ids: io.codearte.accurest.stubs:integrationService:0.0.1-SNAPSHOT

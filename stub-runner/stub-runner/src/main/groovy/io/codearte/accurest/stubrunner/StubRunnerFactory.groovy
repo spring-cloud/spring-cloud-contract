@@ -27,14 +27,15 @@ class StubRunnerFactory {
 
 	Collection<StubRunner> createStubsFromServiceConfiguration() {
 		return collaborators.collect { StubConfiguration stubsConfiguration ->
-			final File unzipedStubDir = stubDownloader.downloadAndUnpackStubJar(stubRunnerOptions.workOffline,
-					stubRunnerOptions.stubRepositoryRoot,
-					stubsConfiguration.groupId, stubsConfiguration.artifactId, stubsConfiguration.classifier)
-			return createStubRunner(unzipedStubDir, stubsConfiguration)
+			Map.Entry<StubConfiguration, File> entry = stubDownloader.downloadAndUnpackStubJar(stubRunnerOptions, stubsConfiguration)
+			if (!entry) {
+				return null
+			}
+			return createStubRunner(entry.key, entry.value)
 		}.findAll { it != null }
 	}
 
-	private StubRunner createStubRunner(File unzipedStubDir, StubConfiguration stubsConfiguration) {
+	private StubRunner createStubRunner(StubConfiguration stubsConfiguration, File unzipedStubDir) {
 		if (!unzipedStubDir) {
 			return null
 		}

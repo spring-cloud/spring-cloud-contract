@@ -68,12 +68,13 @@ You can provide the stubs to download via the `stubrunner.stubs.ids` system prop
 
 [source,java,indent=0]
 ----
-groupId:artifactId:classifier:port
+groupId:artifactId:version:classifier:port
 ----
 
-`classifier` and `port` are optional.
+`version`, `classifier` and `port` are optional.
 
-* If you don't provide the `classifier` then the default one will be taken.
 * If you don't provide the `port` then a random one will be picked
+* If you don't provide the `classifier` then the default one will be taken.
+* If you don't provide the `version` then the `+` will be passed and the latest one will be downloaded
 
 Where `port` means the port of the WireMock server.

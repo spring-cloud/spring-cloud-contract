@@ -1,5 +1,5 @@
 stubrunner.stubs.repository.root: classpath:m2repo/repository/
-stubrunner.stubs.ids: io.codearte.accurest.stubs:streamService
+stubrunner.stubs.ids: io.codearte.accurest.stubs:streamService:0.0.1-SNAPSHOT:stubs
 
 spring:
   cloud:

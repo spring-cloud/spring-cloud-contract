@@ -4,9 +4,8 @@ import spock.lang.Specification
 
 class StubRunnerExecutorSpec extends Specification {
 
-	static final URL EXPECTED_STUB_URL = new URL('http://localhost:8999')
 	static final int MIN_PORT = 8999
-	static final int MAX_PORT = 8999
+	static final int MAX_PORT = 9999
 
 	private AvailablePortScanner portScanner
 	private StubRepository repository
@@ -24,7 +23,9 @@ class StubRunnerExecutorSpec extends Specification {
 		when:
 		executor.runStubs(stubRunnerOptions, repository, stub)
 		then:
-		executor.findStubUrl("group", "artifact") == EXPECTED_STUB_URL
+		URL url = executor.findStubUrl("group", "artifact")
+		url.port >= MIN_PORT
+		url.port <= MAX_PORT
 		and:
 		executor.findAllRunningStubs().isPresent('artifact')
 		executor.findAllRunningStubs().isPresent('group', 'artifact')
