@@ -1,4 +1,4 @@
-<project name="Android Maven Plugin">
+<project name="Accurest Maven Plugin">
 	<bannerLeft>
 		<name>${project.name}</name>
 	</bannerLeft>
