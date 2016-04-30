@@ -10,6 +10,7 @@ import io.codearte.accurest.dsl.internal.Body
 import io.codearte.accurest.dsl.internal.DslProperty
 import io.codearte.accurest.dsl.internal.MatchingStrategy
 import io.codearte.accurest.dsl.internal.NamedProperty
+import io.codearte.accurest.dsl.internal.OptionalProperty
 import io.codearte.accurest.dsl.internal.QueryParameters
 import io.codearte.accurest.dsl.internal.RegexPatterns
 import io.codearte.accurest.dsl.internal.Request
@@ -152,6 +153,9 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			case Pattern:
 				Pattern value = object as Pattern
 				return ValuePattern.matches(value.pattern())
+			case OptionalProperty:
+				OptionalProperty value = object as OptionalProperty
+				return ValuePattern.matches(value.optionalPattern())
 			case MatchingStrategy:
 				MatchingStrategy value = object as MatchingStrategy
 				switch (value.type) {

@@ -1483,4 +1483,82 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
+
+	@Issue('#219')
+	def "should generate request with an optional queryParameter for client side"() {
+		given:
+		GroovyDsl groovyDsl = GroovyDsl.make {
+			request {
+				method 'GET'
+				urlPath ('/some/api') {
+					queryParameters {
+						parameter 'size': value(
+								client(regex('[0-9]+')),
+								server(1)
+						)
+						parameter 'page': value(
+								client(regex('[0-9]+')),
+								server(0)
+						)
+						parameter sort: value(
+							client(optional(regex('^[a-z]+$'))),
+							server('id')
+						)
+					}
+				}
+			}
+			response {
+				status 200
+				body(
+						content: [[
+										  id      : '00000000-0000-0000-0000-000000000000',
+										  type  : 'Extraordinary',
+										  state : 'ACTIVE',
+								  ]],
+						totalPages: 1,
+						totalElements: 1,
+						last: true,
+						sort: [[
+									   direction: 'ASC',
+									   property: 'id',
+									   ignoreCase: false,
+									   nullHandling: 'NATIVE',
+									   ascending: true
+							   ]],
+						first: true,
+						numberOfElements: 1,
+						size: 1,
+						number: 0
+				)
+			}
+		}
+		when:
+		def json = toWireMockClientJsonStub(groovyDsl)
+		then:
+		AssertionUtil.assertThatJsonsAreEqual(('''
+				{
+				  "request" : {
+					"urlPath" : "/some/api",
+					"method" : "GET",
+					"queryParameters" : {
+					  "size" : {
+						"matches" : "[0-9]+"
+					  },
+					  "page" : {
+						"matches" : "[0-9]+"
+					  },
+					  "sort" : {
+						"matches" : "(^[a-z]+$)?"
+					  }
+					}
+				  },
+				  "response" : {
+					"status" : 200,
+					"body" : "{\\"content\\":[{\\"id\\":\\"00000000-0000-0000-0000-000000000000\\",\\"type\\":\\"Extraordinary\\",\\"state\\":\\"ACTIVE\\"}],\\"totalPages\\":1,\\"totalElements\\":1,\\"last\\":true,\\"sort\\":[{\\"direction\\":\\"ASC\\",\\"property\\":\\"id\\",\\"ignoreCase\\":false,\\"nullHandling\\":\\"NATIVE\\",\\"ascending\\":true}],\\"first\\":true,\\"numberOfElements\\":1,\\"size\\":1,\\"number\\":0}"
+				  }
+				}
+				'''), json)
+		and:
+		stubMappingIsValidWireMockStub(json)
+	}
 }
