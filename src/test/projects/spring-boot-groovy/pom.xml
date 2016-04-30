@@ -68,12 +68,21 @@
                 <groupId>io.codearte.accurest</groupId>
                 <artifactId>accurest-maven-plugin</artifactId>
                 <version>${accurest-plugin.version}</version>
-                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>convert</goal>
+                            <goal>generateStubs</goal>
+                            <goal>generateTests</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <baseClassForTests>hello.BaseAccurest</baseClassForTests>
                     <testFramework>SPOCK</testFramework>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
