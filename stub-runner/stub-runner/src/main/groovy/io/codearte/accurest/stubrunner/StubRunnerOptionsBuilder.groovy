@@ -5,7 +5,7 @@ import io.codearte.accurest.stubrunner.util.StubsParser
 
 @CompileStatic
 class StubRunnerOptionsBuilder {
-	private static final String DELIMITER = ":";
+	private static final String DELIMITER = ':'
 	private LinkedList<String> stubs = new LinkedList<>()
 	private Map<StubConfiguration, Integer> stubIdsToPortMapping = [:]
 
@@ -13,7 +13,7 @@ class StubRunnerOptionsBuilder {
 	private Integer maxPortValue = 15000
 	private String stubRepositoryRoot
 	private boolean workOffline = false
-	private String stubsClassifier = "stubs"
+	private String stubsClassifier = 'stubs'
 
 	StubRunnerOptionsBuilder() {
 	}
@@ -29,7 +29,7 @@ class StubRunnerOptionsBuilder {
 
 	StubRunnerOptionsBuilder withStubs(List<String> stubs) {
 		for (String stub : stubs) {
-			withStubs(stub);
+			withStubs(stub)
 		}
 		return this
 	}
@@ -66,26 +66,27 @@ class StubRunnerOptionsBuilder {
 	}
 
 	StubRunnerOptionsBuilder withPort(Integer port) {
-		String lastStub = stubs.peekLast();
+		String lastStub = stubs.peekLast()
 		println "PORT  $lastStub -> $port"
-		addPort(lastStub + DELIMITER + port);
-		return this;
+		addPort(lastStub + DELIMITER + port)
+		return this
+	}
+
+	StubRunnerOptionsBuilder withOptions(StubRunnerOptions options) {
+		this.minPortValue = options.minPortValue
+		this.maxPortValue = options.maxPortValue
+		this.stubRepositoryRoot = options.stubRepositoryRoot
+		this.workOffline = options.workOffline
+		this.stubsClassifier = options.stubsClassifier
+		return this
 	}
 
 	StubRunnerOptions build() {
 		return new StubRunnerOptions(minPortValue, maxPortValue, stubRepositoryRoot, workOffline, stubsClassifier, buildDependencies(), stubIdsToPortMapping)
 	}
 
-	void withOptions(StubRunnerOptions options) {
-		this.minPortValue = options.minPortValue
-		this.maxPortValue = options.maxPortValue
-		this.stubRepositoryRoot = options.stubRepositoryRoot
-		this.workOffline = options.workOffline
-		this.stubsClassifier = options.stubsClassifier
-	}
-
 	private Collection<StubConfiguration> buildDependencies() {
-		return StubsParser.fromString(stubs, stubsClassifier);
+		return StubsParser.fromString(stubs, stubsClassifier)
 	}
 
 	private static List<String> stubsToList(String stubIdsToPortMapping) {
@@ -94,21 +95,21 @@ class StubRunnerOptionsBuilder {
 
 	private void addStub(List<String> notations) {
 		for (String notation : notations) {
-			addStub(notation);
+			addStub(notation)
 		}
 	}
 
 	private void addStub(String notation) {
 		if (StubsParser.hasPort(notation)) {
-			addPort(notation);
-			stubs.add(StubsParser.ivyFromStringWithPort(notation));
+			addPort(notation)
+			stubs.add(StubsParser.ivyFromStringWithPort(notation))
 		} else {
-			stubs.add(notation);
+			stubs.add(notation)
 		}
 	}
 
 	private void addPort(String notation) {
-		putStubIdsToPortMapping(StubsParser.fromStringWithPort(notation));
+		putStubIdsToPortMapping(StubsParser.fromStringWithPort(notation))
 	}
 
 	private void putStubIdsToPortMapping(Map<StubConfiguration, Integer> stubIdsToPortMapping) {
