@@ -32,7 +32,7 @@ class StubRunnerSpec extends Specification {
 
 	Arguments argumentsWithProjectDefinition() {
 		StubConfiguration stubConfiguration = new StubConfiguration("groupId", "artifactId", "classifier")
-		StubRunnerOptions stubRunnerOptions = new StubRunnerOptions(minPortValue: MIN_PORT, maxPortValue: MAX_PORT)
+		StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder().withMinMaxPort(MIN_PORT, MAX_PORT).build()
 		return new Arguments(stubRunnerOptions, 'src/test/resources/repository', stubConfiguration)
 	}
 

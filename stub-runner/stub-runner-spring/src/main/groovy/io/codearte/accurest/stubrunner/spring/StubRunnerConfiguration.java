@@ -5,12 +5,11 @@ import io.codearte.accurest.messaging.noop.NoOpAccurestMessaging;
 import io.codearte.accurest.stubrunner.AetherStubDownloader;
 import io.codearte.accurest.stubrunner.BatchStubRunner;
 import io.codearte.accurest.stubrunner.BatchStubRunnerFactory;
-import io.codearte.accurest.stubrunner.StubConfiguration;
 import io.codearte.accurest.stubrunner.StubDownloader;
 import io.codearte.accurest.stubrunner.StubRunner;
 import io.codearte.accurest.stubrunner.StubRunnerOptions;
+import io.codearte.accurest.stubrunner.StubRunnerOptionsBuilder;
 import io.codearte.accurest.stubrunner.StubRunning;
-import io.codearte.accurest.stubrunner.util.StubsParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +17,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
-import java.util.Set;
 
 /**
  * Configuration that initializes a {@link BatchStubRunner} that runs {@link StubRunner} instance for each stub
@@ -49,10 +47,14 @@ public class StubRunnerConfiguration {
 			@Value("${stubrunner.stubs.classifier:stubs}") String stubsSuffix,
 			@Value("${stubrunner.work-offline:false}") boolean workOffline,
 			@Value("${stubrunner.stubs.ids:}") String stubs) throws IOException {
-		StubRunnerOptions stubRunnerOptions = new StubRunnerOptions(minPortValue, maxPortValue, uriStringOrEmpty(stubRepositoryRoot),
-				stubRepositoryRoot == null || workOffline, stubsSuffix, stubs);
-		Set<StubConfiguration> dependencies = StubsParser.fromString(stubs, stubsSuffix);
-		BatchStubRunner batchStubRunner = new BatchStubRunnerFactory(stubRunnerOptions, dependencies,
+		StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder()
+				.withMinMaxPort(minPortValue, maxPortValue)
+				.withStubRepositoryRoot(uriStringOrEmpty(stubRepositoryRoot))
+				.withWorkOffline(stubRepositoryRoot == null || workOffline)
+				.withStubsClassifier(stubsSuffix)
+				.withStubs(stubs)
+				.build();
+		BatchStubRunner batchStubRunner = new BatchStubRunnerFactory(stubRunnerOptions,
 				stubDownloader != null ? stubDownloader : new AetherStubDownloader(stubRunnerOptions),
 				accurestMessaging != null ? accurestMessaging :  new NoOpAccurestMessaging()).buildBatchStubRunner();
 		// TODO: Consider running it in a separate thread

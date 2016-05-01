@@ -14,37 +14,29 @@ import io.codearte.accurest.messaging.noop.NoOpAccurestMessaging
 class BatchStubRunnerFactory {
 
 	private final StubRunnerOptions stubRunnerOptions
-	private final Collection<StubConfiguration> dependencies
 	private final StubDownloader stubDownloader
 	private final AccurestMessaging accurestMessaging
 
-	BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, Collection<StubConfiguration> dependencies) {
-		this(stubRunnerOptions, dependencies, new AetherStubDownloader(stubRunnerOptions), new NoOpAccurestMessaging())
+	BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions) {
+		this(stubRunnerOptions, new AetherStubDownloader(stubRunnerOptions), new NoOpAccurestMessaging())
 	}
 
-	BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, Collection<StubConfiguration> dependencies,
-						   AccurestMessaging accurestMessaging) {
-		this(stubRunnerOptions, dependencies, new AetherStubDownloader(stubRunnerOptions), accurestMessaging)
+	BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, AccurestMessaging accurestMessaging) {
+		this(stubRunnerOptions, new AetherStubDownloader(stubRunnerOptions), accurestMessaging)
 	}
 
-	BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions,
-	                       Collection<StubConfiguration> dependencies,
-						   StubDownloader stubDownloader) {
-		this(stubRunnerOptions, dependencies, stubDownloader, new NoOpAccurestMessaging())
+	BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, StubDownloader stubDownloader) {
+		this(stubRunnerOptions, stubDownloader, new NoOpAccurestMessaging())
 	}
 
-	BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions,
-						   Collection<StubConfiguration> dependencies,
-						   StubDownloader stubDownloader,
-						   AccurestMessaging accurestMessaging) {
+	BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, StubDownloader stubDownloader, AccurestMessaging accurestMessaging) {
 		this.stubRunnerOptions = stubRunnerOptions
-		this.dependencies = dependencies
 		this.stubDownloader = stubDownloader
 		this.accurestMessaging = accurestMessaging
 	}
 
 	BatchStubRunner buildBatchStubRunner() {
-		StubRunnerFactory stubRunnerFactory = new StubRunnerFactory(stubRunnerOptions, dependencies, stubDownloader, accurestMessaging)
+		StubRunnerFactory stubRunnerFactory = new StubRunnerFactory(stubRunnerOptions, stubDownloader, accurestMessaging)
 		return new BatchStubRunner(stubRunnerFactory.createStubsFromServiceConfiguration())
 	}
 

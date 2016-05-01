@@ -1,11 +1,15 @@
 package io.codearte.accurest.stubrunner
 
 import groovy.transform.CompileStatic
+import groovy.transform.PackageScope
 import groovy.transform.ToString
-import io.codearte.accurest.stubrunner.util.StubsParser
 
 /**
  * Technical options related to running StubRunner
+ *
+ * Use {@class StubRunnerOptionsBuilder} to build this object.
+ *
+ * @see StubRunnerOptionsBuilder
  */
 @ToString(includeNames = true)
 @CompileStatic
@@ -14,77 +18,53 @@ class StubRunnerOptions {
 	/**
 	 * min port value of the WireMock instance for the given collaborator
 	 */
-	Integer minPortValue = 10000
+	final Integer minPortValue
 
 	/**
 	 * max port value of the WireMock instance for the given collaborator
 	 */
-	Integer maxPortValue = 15000
+	final Integer maxPortValue
 
 	/**
 	 * root URL from where the JAR with stub mappings will be downloaded
 	 */
-	String stubRepositoryRoot
+	final String stubRepositoryRoot
 
 	/**
 	 * avoids local repository in dependency resolution
 	 */
-	boolean workOffline = false
+	final boolean workOffline
+
+	/**
+	 * stub definition classifier
+	 */
+	final String stubsClassifier
+
+	final Collection<StubConfiguration> dependencies
 
 	/**
 	 * colon separated list of ids to the desired port
 	 */
-	Map<StubConfiguration, Integer> stubIdsToPortMapping = [:]
+	final Map<StubConfiguration, Integer> stubIdsToPortMapping
 
-	/**
-	 * stub definition suffix
-	 */
-	String stubsClassifier = "stubs"
-
+	@PackageScope
 	StubRunnerOptions(Integer minPortValue, Integer maxPortValue, String stubRepositoryRoot,
-					  boolean workOffline, String stubsClassifier, String stubIdsToPortMapping) {
+	                  boolean workOffline, String stubsClassifier, Collection<StubConfiguration> dependencies, Map<StubConfiguration, Integer> stubIdsToPortMapping) {
 		this.minPortValue = minPortValue
 		this.maxPortValue = maxPortValue
 		this.stubRepositoryRoot = stubRepositoryRoot
 		this.workOffline = workOffline
 		this.stubsClassifier = stubsClassifier
-		this.stubIdsToPortMapping = stubIdsWithPortsFromString(stubIdsToPortMapping)
-	}
-
-	StubRunnerOptions(Integer minPortValue, Integer maxPortValue, String stubRepositoryRoot,
-					  boolean workOffline, String stubsClassifier) {
-		this.minPortValue = minPortValue
-		this.maxPortValue = maxPortValue
-		this.stubRepositoryRoot = stubRepositoryRoot
-		this.workOffline = workOffline
-		this.stubsClassifier = stubsClassifier
-	}
-
-	StubRunnerOptions(String stubRepositoryRoot) {
-		this.stubRepositoryRoot = stubRepositoryRoot
-	}
-
-	StubRunnerOptions() {}
-
-	Map<StubConfiguration, Integer> stubIdsWithPortsFromString(String stubIdsToPortMapping) {
-		return stubIdsToPortMapping.split(',').collectEntries { String entry ->
-			return StubsParser.fromStringWithPort(entry)
-		}
-	}
-
-	Integer port(StubConfiguration stubConfiguration) {
-		return stubIdsToPortMapping[stubConfiguration]
-	}
-
-	void setStubIdsToPortMapping(Map<StubConfiguration, Integer> stubIdsToPortMapping) {
+		this.dependencies = dependencies
 		this.stubIdsToPortMapping = stubIdsToPortMapping
 	}
 
-	void putStubIdsToPortMapping(Map<StubConfiguration, Integer> stubIdsToPortMapping) {
-		this.stubIdsToPortMapping.putAll(stubIdsToPortMapping)
+	Integer port(StubConfiguration stubConfiguration) {
+		if (stubIdsToPortMapping) {
+			return stubIdsToPortMapping[stubConfiguration]
+		} else {
+			return null
+		}
 	}
 
-	void setStubIdsToPortMapping(String stubIdsToPortMapping) {
-		this.stubIdsToPortMapping = stubIdsWithPortsFromString(stubIdsToPortMapping)
-	}
 }

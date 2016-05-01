@@ -1,17 +1,5 @@
 package io.codearte.accurest.stubrunner.junit;
 
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
-
 import io.codearte.accurest.dsl.GroovyDsl;
 import io.codearte.accurest.stubrunner.BatchStubRunner;
 import io.codearte.accurest.stubrunner.BatchStubRunnerFactory;
@@ -19,8 +7,16 @@ import io.codearte.accurest.stubrunner.RunningStubs;
 import io.codearte.accurest.stubrunner.StubConfiguration;
 import io.codearte.accurest.stubrunner.StubFinder;
 import io.codearte.accurest.stubrunner.StubRunnerOptions;
-import io.codearte.accurest.stubrunner.util.StringUtils;
-import io.codearte.accurest.stubrunner.util.StubsParser;
+import io.codearte.accurest.stubrunner.StubRunnerOptionsBuilder;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
+
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * JUnit class rule that allows you to download the provided stubs.
@@ -29,10 +25,9 @@ import io.codearte.accurest.stubrunner.util.StubsParser;
  */
 public class AccurestRule implements TestRule, StubFinder {
 	private static final String DELIMITER = ":";
-	public static final String LATEST_VERSION = "+";
+	private static final String LATEST_VERSION = "+";
 
-	private LinkedList<String> stubs = new LinkedList<>();
-	private StubRunnerOptions stubRunnerOptions = defaultStubRunnerOptions();
+	private StubRunnerOptionsBuilder stubRunnerOptionsBuilder = new StubRunnerOptionsBuilder(defaultStubRunnerOptions());
 	private BatchStubRunner stubFinder;
 
 	@Override
@@ -46,25 +41,21 @@ public class AccurestRule implements TestRule, StubFinder {
 			}
 
 			private void before() {
-				Collection<StubConfiguration> dependencies = StubsParser.fromString(stubs, stubRunnerOptions.getStubsClassifier());
-				stubFinder = new BatchStubRunnerFactory(stubRunnerOptions, dependencies)
-						.buildBatchStubRunner();
+				stubFinder = new BatchStubRunnerFactory(stubRunnerOptionsBuilder.build()).buildBatchStubRunner();
 				stubFinder.runStubs();
 			}
 		};
 	}
 
 	private StubRunnerOptions defaultStubRunnerOptions() {
-		Integer minPort = Integer.valueOf(System.getProperty("stubrunner.port.range.min", "10000"));
-		Integer maxPort = Integer.valueOf(System.getProperty("stubrunner.port.range.max", "15000"));
-		String repoRoot = System.getProperty("stubrunner.stubs.repository.root", "");
-		String stubSuffix = System.getProperty("stubrunner.stubs.classifier", "stubs");
-		Boolean workOffline = Boolean.parseBoolean(System.getProperty("stubrunner.work-offline", "false"));
-		String stubsToDownload = System.getProperty("stubrunner.stubs.ids", "");
-		if (StringUtils.hasText(stubsToDownload)) {
-			Collections.addAll(stubs, stubsToDownload.split(","));
-		}
-		return new StubRunnerOptions(minPort, maxPort, repoRoot, workOffline, stubSuffix, stubsToDownload);
+		return new StubRunnerOptionsBuilder()
+				.withMinPort(Integer.valueOf(System.getProperty("stubrunner.port.range.min", "10000")))
+				.withMaxPort(Integer.valueOf(System.getProperty("stubrunner.port.range.max", "15000")))
+				.withStubRepositoryRoot(System.getProperty("stubrunner.stubs.repository.root", ""))
+				.withWorkOffline(Boolean.parseBoolean(System.getProperty("stubrunner.work-offline", "false")))
+				.withStubsClassifier(System.getProperty("stubrunner.stubs.classifier", "stubs"))
+				.withStubs(System.getProperty("stubrunner.stubs.ids", ""))
+				.build();
 	}
 
 	/**
@@ -73,7 +64,7 @@ public class AccurestRule implements TestRule, StubFinder {
 	 * @see StubRunnerOptions
 	 */
 	public AccurestRule options(StubRunnerOptions stubRunnerOptions) {
-		this.stubRunnerOptions = stubRunnerOptions;
+		stubRunnerOptionsBuilder.withOptions(stubRunnerOptions);
 		return this;
 	}
 
@@ -81,7 +72,7 @@ public class AccurestRule implements TestRule, StubFinder {
 	 * Min value of port for WireMock server
 	 */
 	public AccurestRule minPort(int minPort) {
-		this.stubRunnerOptions.setMinPortValue(minPort);
+		stubRunnerOptionsBuilder.withMinPort(minPort);
 		return this;
 	}
 
@@ -89,7 +80,7 @@ public class AccurestRule implements TestRule, StubFinder {
 	 * Max value of port for WireMock server
 	 */
 	public AccurestRule maxPort(int maxPort) {
-		this.stubRunnerOptions.setMaxPortValue(maxPort);
+		stubRunnerOptionsBuilder.withMaxPort(maxPort);
 		return this;
 	}
 
@@ -97,7 +88,7 @@ public class AccurestRule implements TestRule, StubFinder {
 	 * String URI of repository containing stubs
 	 */
 	public AccurestRule repoRoot(String repoRoot) {
-		this.stubRunnerOptions.setStubRepositoryRoot(repoRoot);
+		stubRunnerOptionsBuilder.withStubRepositoryRoot(repoRoot);
 		return this;
 	}
 
@@ -105,7 +96,7 @@ public class AccurestRule implements TestRule, StubFinder {
 	 * Should download stubs or use only the local repository
 	 */
 	public AccurestRule workOffline(boolean workOffline) {
-		this.stubRunnerOptions.setWorkOffline(workOffline);
+		stubRunnerOptionsBuilder.withWorkOffline(workOffline);
 		return this;
 	}
 
@@ -113,7 +104,7 @@ public class AccurestRule implements TestRule, StubFinder {
 	 * Group Id, artifact Id, version and classifier of a single stub to download
 	 */
 	public AccurestRule downloadStub(String groupId, String artifactId, String version, String classifier) {
-		addStub(groupId + DELIMITER + artifactId + DELIMITER + version + DELIMITER + classifier);
+		stubRunnerOptionsBuilder.withStubs(groupId + DELIMITER + artifactId + DELIMITER + version + DELIMITER + classifier);
 		return this;
 	}
 
@@ -121,7 +112,7 @@ public class AccurestRule implements TestRule, StubFinder {
 	 * Group Id, artifact Id and classifier of a single stub to download in the latest version
 	 */
 	public AccurestRule downloadLatestStub(String groupId, String artifactId, String classifier) {
-		addStub(groupId + DELIMITER + artifactId + DELIMITER + LATEST_VERSION + DELIMITER + classifier);
+		stubRunnerOptionsBuilder.withStubs(groupId + DELIMITER + artifactId + DELIMITER + LATEST_VERSION + DELIMITER + classifier);
 		return this;
 	}
 
@@ -129,7 +120,7 @@ public class AccurestRule implements TestRule, StubFinder {
 	 * Group Id, artifact Id and version of a single stub to download
 	 */
 	public AccurestRule downloadStub(String groupId, String artifactId, String version) {
-		addStub(groupId + DELIMITER + artifactId + DELIMITER + version);
+		stubRunnerOptionsBuilder.withStubs(groupId + DELIMITER + artifactId + DELIMITER + version);
 		return this;
 	}
 
@@ -137,7 +128,7 @@ public class AccurestRule implements TestRule, StubFinder {
 	 * Group Id, artifact Id of a single stub to download. Default classifier will be picked.
 	 */
 	public AccurestRule downloadStub(String groupId, String artifactId) {
-		addStub(groupId + DELIMITER + artifactId);
+		stubRunnerOptionsBuilder.withStubs(groupId + DELIMITER + artifactId);
 		return this;
 	}
 
@@ -145,7 +136,7 @@ public class AccurestRule implements TestRule, StubFinder {
 	 * Ivy notation of a single stub to download.
 	 */
 	public AccurestRule downloadStub(String ivyNotation) {
-		addStub(ivyNotation);
+		stubRunnerOptionsBuilder.withStubs(ivyNotation);
 		return this;
 	}
 
@@ -153,7 +144,7 @@ public class AccurestRule implements TestRule, StubFinder {
 	 * Stubs to download in Ivy notations
 	 */
 	public AccurestRule downloadStubs(String... ivyNotations) {
-		addStub(Arrays.asList(ivyNotations));
+		stubRunnerOptionsBuilder.withStubs(Arrays.asList(ivyNotations));
 		return this;
 	}
 
@@ -161,7 +152,7 @@ public class AccurestRule implements TestRule, StubFinder {
 	 * Stubs to download in Ivy notations
 	 */
 	public AccurestRule downloadStubs(List<String> ivyNotations) {
-		addStub(ivyNotations);
+		stubRunnerOptionsBuilder.withStubs(ivyNotations);
 		return this;
 	}
 
@@ -169,8 +160,7 @@ public class AccurestRule implements TestRule, StubFinder {
 	 * Appends port to last added stub
 	 */
 	public AccurestRule withPort(Integer port) {
-		String lastStub = stubs.peekLast();
-		addPort(lastStub + DELIMITER + port);
+		stubRunnerOptionsBuilder.withPort(port);
 		return this;
 	}
 
@@ -214,22 +204,4 @@ public class AccurestRule implements TestRule, StubFinder {
 		return stubFinder.labels();
 	}
 
-	private void addStub(String notation) {
-		if(StubsParser.hasPort(notation)) {
-			addPort(notation);
-			stubs.add(StubsParser.ivyFromStringWithPort(notation));
-		} else {
-			stubs.add(notation);
-		}
-	}
-
-	private void addStub(List<String> notations) {
-		for (String notation : notations) {
-			addStub(notation);
-		}
-	}
-
-	private void addPort(String notation) {
-		stubRunnerOptions.putStubIdsToPortMapping(StubsParser.fromStringWithPort(notation));
-	}
 }

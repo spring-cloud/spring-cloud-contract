@@ -1,5 +1,6 @@
 package io.codearte.accurest.stubrunner
 
+import io.codearte.accurest.stubrunner.util.StubsParser
 import spock.lang.Specification
 
 class StubRunnerExecutorSpec extends Specification {
@@ -10,7 +11,7 @@ class StubRunnerExecutorSpec extends Specification {
 	private AvailablePortScanner portScanner
 	private StubRepository repository
 	private StubConfiguration stub = new StubConfiguration("group:artifact", "stubs")
-	private StubRunnerOptions stubRunnerOptions = new StubRunnerOptions()
+	private StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder().build()
 
 	def setup() {
 		portScanner = new AvailablePortScanner(MIN_PORT, MAX_PORT)
@@ -46,11 +47,18 @@ class StubRunnerExecutorSpec extends Specification {
 	def 'should start a stub on a given port'() {
 		given:
 		StubRunnerExecutor executor = new StubRunnerExecutor(portScanner)
-		stubRunnerOptions.setStubIdsToPortMapping('group:artifact:12345,someotherartifact:123')
+		stubRunnerOptions = new StubRunnerOptionsBuilder(stubIdsToPortMapping: stubIdsWithPortsFromString('group:artifact:12345,someotherartifact:123'))
+				.build()
 		when:
 		executor.runStubs(stubRunnerOptions, repository, stub)
 		then:
 		executor.findStubUrl("group", "artifact") == 'http://localhost:12345'.toURL()
+	}
+
+	Map<StubConfiguration, Integer> stubIdsWithPortsFromString(String stubIdsToPortMapping) {
+		return stubIdsToPortMapping.split(',').collectEntries { String entry ->
+			return StubsParser.fromStringWithPort(entry)
+		}
 	}
 
 }

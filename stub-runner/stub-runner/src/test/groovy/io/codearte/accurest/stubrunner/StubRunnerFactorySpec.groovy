@@ -10,17 +10,23 @@ class StubRunnerFactorySpec extends Specification {
 	@Rule
 	TemporaryFolder folder = new TemporaryFolder()
 
-	Collection<StubConfiguration> collaborators = [new StubConfiguration("a:b"), new StubConfiguration("c:d")]
+	String stubs = "a:b,c:d"
 	StubDownloader downloader = Mock(StubDownloader)
-	StubRunnerOptions stubRunnerOptions = new StubRunnerOptions(stubRepositoryRoot: 'http://sth.net')
-	StubRunnerFactory factory = new StubRunnerFactory(stubRunnerOptions, collaborators, downloader, new NoOpAccurestMessaging())
+	StubRunnerOptions stubRunnerOptions
+	StubRunnerFactory factory
+
+	void setup() {
+		stubRunnerOptions = new StubRunnerOptionsBuilder()
+				.withStubRepositoryRoot(folder.root.absolutePath) // FIXME: not used
+				.withStubs(stubs).build()
+		factory = new StubRunnerFactory(stubRunnerOptions, downloader, new NoOpAccurestMessaging())
+	}
 
 	def "Should download stub definitions many times"() {
 		given:
 		folder.newFolder("mappings")
 		1 * downloader.downloadAndUnpackStubJar(_, _) >> new AbstractMap.SimpleEntry(new StubConfiguration('a:b'), folder.root)
 		1 * downloader.downloadAndUnpackStubJar(_, _) >> new AbstractMap.SimpleEntry(new StubConfiguration('c:d'), folder.root)
-		stubRunnerOptions.stubRepositoryRoot = folder.root.absolutePath
 		when:
 		Collection<StubRunner> stubRunners = collectOnlyPresentValues(factory.createStubsFromServiceConfiguration())
 		then:

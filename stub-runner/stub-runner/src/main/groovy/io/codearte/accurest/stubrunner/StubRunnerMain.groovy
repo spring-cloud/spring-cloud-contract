@@ -2,7 +2,6 @@ package io.codearte.accurest.stubrunner
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import io.codearte.accurest.stubrunner.util.StubsParser
 import org.kohsuke.args4j.CmdLineException
 import org.kohsuke.args4j.CmdLineParser
 import org.kohsuke.args4j.Option
@@ -37,8 +36,14 @@ class StubRunnerMain {
 		CmdLineParser parser = new CmdLineParser(this)
 		try {
 			parser.parseArgument(args)
-			this.arguments = new Arguments(new StubRunnerOptions(minPortValue, maxPortValue, stubRepositoryRoot,
-					workOffline, stubsSuffix))
+			StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder()
+					.withMinMaxPort(minPortValue, maxPortValue)
+					.withStubRepositoryRoot(stubRepositoryRoot)
+					.withWorkOffline(workOffline)
+					.withStubsClassifier(stubsSuffix)
+					.withStubs(stubs)
+					.build()
+			this.arguments = new Arguments(stubRunnerOptions)
 		} catch (CmdLineException e) {
 			printErrorMessage(e, parser)
 			throw e
@@ -61,8 +66,7 @@ class StubRunnerMain {
 		try {
 			log.debug("Launching StubRunner with args: $arguments")
 			// TODO: Pass StubsToRun either from String or File
-			Collection<StubConfiguration> collaborators = StubsParser.fromString(stubs, stubsSuffix)
-			BatchStubRunner stubRunner = new BatchStubRunnerFactory(arguments.stubRunnerOptions, collaborators).buildBatchStubRunner()
+			BatchStubRunner stubRunner = new BatchStubRunnerFactory(arguments.stubRunnerOptions).buildBatchStubRunner()
 			RunningStubs runningCollaborators = stubRunner.runStubs()
 			log.info(runningCollaborators.toString())
 		} catch (Exception e) {
