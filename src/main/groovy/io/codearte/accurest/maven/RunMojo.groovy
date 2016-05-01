@@ -3,6 +3,8 @@ package io.codearte.accurest.maven
 import groovy.transform.CompileStatic
 import io.codearte.accurest.maven.stubrunner.LocalStubRunner
 import io.codearte.accurest.maven.stubrunner.RemoteStubRunner
+import io.codearte.accurest.stubrunner.BatchStubRunner
+import io.codearte.accurest.stubrunner.StubRunner
 import io.codearte.accurest.stubrunner.StubRunnerOptions
 import org.apache.maven.execution.MavenSession
 import org.apache.maven.plugin.AbstractMojo
@@ -63,17 +65,21 @@ class RunMojo extends AbstractMojo {
             log.info("Skipping accurest execution: accurest.skip=${skip}")
             return
         }
-
+        BatchStubRunner batchStubRunner
         if (!stubs) {
             StubRunnerOptions options = new StubRunnerOptions(httpPort, httpPort + 1, "", false, stubsClassifier)
-            localStubRunner.run(resolveStubsDirectory().absolutePath, options)
+            StubRunner stubRunner = localStubRunner.run(resolveStubsDirectory().absolutePath, options)
+            batchStubRunner = new BatchStubRunner(Arrays.asList(stubRunner))
         } else {
             StubRunnerOptions options = new StubRunnerOptions(minPort, maxPort, "", false, stubsClassifier)
-            remoteStubRunner.run(stubs, options, repoSession)
+            batchStubRunner = remoteStubRunner.run(stubs, options, repoSession)
         }
 
         if (!insideProject) {
             pressAnyKeyToContinue()
+            if (batchStubRunner) {
+                batchStubRunner.close()
+            }
         }
     }
 

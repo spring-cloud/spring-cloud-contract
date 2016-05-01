@@ -13,8 +13,10 @@ import javax.inject.Named
 @Slf4j
 class LocalStubRunner {
 
-    void run(String contractsDir, StubRunnerOptions options) {
+    StubRunner run(String contractsDir, StubRunnerOptions options) {
         log.info("Launching StubRunner with contracts from ${contractsDir}")
-        new StubRunner(options, contractsDir, new StubConfiguration(contractsDir)).runStubs()
+        StubRunner stubRunner = new StubRunner(options, contractsDir, new StubConfiguration(contractsDir))
+        stubRunner.runStubs()
+        return stubRunner
     }
 }
