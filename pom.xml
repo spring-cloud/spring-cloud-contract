@@ -35,7 +35,7 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <accurest.version>1.1.0-M3</accurest.version>
+        <accurest.version>1.1.0-M4</accurest.version>
 
         <aetherVersion>1.1.0</aetherVersion>
 
@@ -387,6 +387,11 @@
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>2.4.0</version>
         </dependency>
 
     </dependencies>

@@ -2,8 +2,11 @@ package io.codearte.accurest.maven.stubrunner
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import io.codearte.accurest.stubrunner.*
-import io.codearte.accurest.stubrunner.util.StubsParser
+import io.codearte.accurest.maven.EnhancedStubRunnerOptions
+import io.codearte.accurest.stubrunner.AetherStubDownloader
+import io.codearte.accurest.stubrunner.BatchStubRunner
+import io.codearte.accurest.stubrunner.BatchStubRunnerFactory
+import io.codearte.accurest.stubrunner.RunningStubs
 import org.eclipse.aether.RepositorySystemSession
 
 import javax.inject.Inject
@@ -21,12 +24,11 @@ class RemoteStubRunner {
         this.aetherStubDownloaderFactory = aetherStubDownloaderFactory
     }
 
-    BatchStubRunner run(String stubs, StubRunnerOptions options, RepositorySystemSession repositorySystemSession) {
+    BatchStubRunner run(EnhancedStubRunnerOptions options, RepositorySystemSession repositorySystemSession) {
         AetherStubDownloader stubDownloader = aetherStubDownloaderFactory.build(repositorySystemSession)
         try {
             log.debug("Launching StubRunner with args: $options")
-            Collection<StubConfiguration> collaborators = StubsParser.fromString(stubs, options.stubsClassifier)
-            BatchStubRunner stubRunner = new BatchStubRunnerFactory(options, collaborators, stubDownloader)
+            BatchStubRunner stubRunner = new BatchStubRunnerFactory(options.getStubsRunnerOptions(), options.getDependencies(), stubDownloader)
                     .buildBatchStubRunner()
             RunningStubs runningCollaborators = stubRunner.runStubs()
             log.info(runningCollaborators.toString())
