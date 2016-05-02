@@ -10,7 +10,7 @@ import io.codearte.accurest.config.TestFramework
 import io.codearte.accurest.config.TestMode
 import io.codearte.accurest.dsl.GroovyDsl
 import io.codearte.accurest.file.Contract
-import org.codehaus.groovy.control.CompilerConfiguration
+import io.codearte.accurest.util.AccurestDslConverter
 
 import static io.codearte.accurest.builder.ClassBuilder.createClass
 import static io.codearte.accurest.builder.MethodBuilder.createTestMethod
@@ -58,7 +58,7 @@ class SingleTestGenerator {
 		Map<ParsedDsl, TestType> contracts = listOfFiles.collectEntries {
 			File stubsFile = it.path.toFile()
 			log.debug("Stub content from file [${stubsFile.text}]")
-			GroovyDsl stubContent = new GroovyShell(delegate.class.classLoader, new Binding(), new CompilerConfiguration(sourceEncoding:'UTF-8')).evaluate(stubsFile)
+			GroovyDsl stubContent = AccurestDslConverter.convert(stubsFile)
 			TestType testType = (stubContent.input || stubContent.outputMessage) ? TestType.MESSAGING : TestType.HTTP
 			return [(new ParsedDsl(it, stubContent, stubsFile)) : testType]
 		}

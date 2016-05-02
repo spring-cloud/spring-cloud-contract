@@ -2,6 +2,7 @@ package io.codearte.accurest.wiremock
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import io.codearte.accurest.dsl.GroovyDsl
+import io.codearte.accurest.util.AccurestDslConverter
 import spock.lang.Specification
 
 class WireMockToDslConverterSpec extends Specification {
@@ -67,7 +68,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			new GroovyShell(this.class.classLoader).evaluate(
+			AccurestDslConverter.convert(
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
 				$groovyDsl
 			}""") == expectedGroovyDsl
@@ -121,7 +122,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			new GroovyShell(this.class.classLoader).evaluate(
+			AccurestDslConverter.convert(
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
 				$groovyDsl
 			}""") == expectedGroovyDsl
@@ -172,7 +173,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			new GroovyShell(this.class.classLoader).evaluate(
+			AccurestDslConverter.convert(
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
 				$groovyDsl
 			}""") == expectedGroovyDsl
@@ -226,7 +227,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			new GroovyShell(this.class.classLoader).evaluate(
+			AccurestDslConverter.convert(
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
 				$groovyDsl
 			}""") == expectedGroovyDsl
@@ -291,7 +292,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			new GroovyShell(this.class.classLoader).evaluate(
+			AccurestDslConverter.convert(
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
 				$groovyDsl
 			}""") == expectedGroovyDsl
@@ -329,7 +330,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			GroovyDsl evaluatedGroovyDsl = new GroovyShell(this.class.classLoader).evaluate(
+			GroovyDsl evaluatedGroovyDsl = AccurestDslConverter.convert(
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
 				$groovyDsl
 			}""")
@@ -369,7 +370,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			GroovyDsl evaluatedGroovyDsl = new GroovyShell(this.class.classLoader).evaluate(
+			GroovyDsl evaluatedGroovyDsl = AccurestDslConverter.convert(
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
 				$groovyDsl
 			}""")
@@ -410,7 +411,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			GroovyDsl evaluatedGroovyDsl = new GroovyShell(this.class.classLoader).evaluate(
+			GroovyDsl evaluatedGroovyDsl = AccurestDslConverter.convert(
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
 				$groovyDsl
 			}""")
@@ -450,7 +451,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			GroovyDsl evaluatedGroovyDsl = new GroovyShell(this.class.classLoader).evaluate(
+			GroovyDsl evaluatedGroovyDsl = AccurestDslConverter.convert(
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
 					$groovyDsl
 				}""")
@@ -490,7 +491,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			GroovyDsl evaluatedGroovyDsl = new GroovyShell(this.class.classLoader).evaluate(
+			GroovyDsl evaluatedGroovyDsl = AccurestDslConverter.convert(
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
 					$groovyDsl
 				}""")
@@ -528,7 +529,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			GroovyDsl evaluatedGroovyDsl = new GroovyShell(this.class.classLoader).evaluate(
+			GroovyDsl evaluatedGroovyDsl = AccurestDslConverter.convert(
 					""" io.codearte.accurest.dsl.GroovyDsl.make {
 					$groovyDsl
 				}""")

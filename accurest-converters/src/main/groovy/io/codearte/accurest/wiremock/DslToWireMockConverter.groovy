@@ -2,7 +2,7 @@ package io.codearte.accurest.wiremock
 
 import groovy.transform.CompileStatic
 import io.codearte.accurest.dsl.GroovyDsl
-import org.codehaus.groovy.control.CompilerConfiguration
+import io.codearte.accurest.util.AccurestDslConverter
 
 @CompileStatic
 abstract class DslToWireMockConverter implements SingleFileConverter {
@@ -18,6 +18,6 @@ abstract class DslToWireMockConverter implements SingleFileConverter {
 	}
 
 	protected GroovyDsl createGroovyDSLfromStringContent(String groovyDslAsString) {
-		return (GroovyDsl) new GroovyShell(this.class.classLoader, new Binding(), new CompilerConfiguration(sourceEncoding:'UTF-8')).evaluate("$groovyDslAsString")
+		return AccurestDslConverter.convert(groovyDslAsString)
 	}
 }

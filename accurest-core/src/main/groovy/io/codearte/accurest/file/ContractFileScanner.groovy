@@ -68,7 +68,7 @@ class ContractFileScanner {
 	}
 
 	private boolean hasScenarioFilenamePattern(Path path) {
-		SCENARIO_STEP_FILENAME_PATTERN.matcher(path.fileName.toString()).matches()
+		return SCENARIO_STEP_FILENAME_PATTERN.matcher(path.fileName.toString()).matches()
 	}
 
 	boolean matchesPattern(File file, Set<PathMatcher> excludeMatchers) {
@@ -81,6 +81,6 @@ class ContractFileScanner {
 	}
 
 	private boolean isContractFile(File file) {
-		file.isFile() && FilenameUtils.getExtension(file.toString()).equalsIgnoreCase("groovy")
+		return file.isFile() && FilenameUtils.getExtension(file.toString()).equalsIgnoreCase("groovy")
 	}
 }
