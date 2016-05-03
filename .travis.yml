@@ -13,4 +13,4 @@ jdk:
  - oraclejdk8
 
 install: ./gradlew assemble
-script: ./gradlew clean check funcTest install --stacktrace --continue && ./scripts/runTests.sh
+script: ./gradlew clean check funcTest install --stacktrace --continue && jdk_switcher use oraclejdk8 && ./scripts/runTests.sh
