@@ -54,7 +54,7 @@ class AccurestGradlePlugin implements Plugin<Project> {
 	}
 
 	private File defaultAccurestContractsDir() {
-		project.file("${project.rootDir}/src/test/accurest")
+		project.file("${project.rootDir}/src/test/resources/accurest")
 	}
 
 	private void createGenerateTestsTask(AccurestConfigProperties extension) {

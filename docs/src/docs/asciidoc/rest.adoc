@@ -53,7 +53,7 @@ Read more: http://codearte.github.io/accurest-maven-plugin/[accurest-maven-plugi
 
 ===== Add stubs
 
-By default Accurest is looking for stubs in `src/test/accurest` directory.
+By default Accurest is looking for stubs in `src/test/resources/accurest` directory.
 
 Directory containing stub definitions is treated as a class name, and each stub definition is treated as a single test.
 We assume that it contains at least one directory which will be used as test class name. If there is more than one level of nested directories all except the last one will be used as package name.
@@ -61,8 +61,8 @@ So with following structure
 
 [source,groovy,indent=0]
 ----
-src/test/accurest/myservice/shouldCreateUser.groovy
-src/test/accurest/myservice/shouldReturnUser.groovy
+src/test/resources/accurest/myservice/shouldCreateUser.groovy
+src/test/resources/accurest/myservice/shouldReturnUser.groovy
 ----
 
 Accurest will create test class `defaultBasePackage.MyService` with two methods
@@ -96,7 +96,7 @@ accurest {
  - **baseClassForTests** - base class for generated tests. By default `spock.lang.Specification` if using Spock tests.
  - **ruleClassForTests** - specifies Rule which should be added to generated test classes.
  - **ignoredFiles** - Ant matcher allowing defining stub files for which processing should be skipped. By default empty array []
- - **contractsDslDir** - directory containing contracts written using the GroovyDSL. By default `$rootDir/src/test/accurest`
+ - **contractsDslDir** - directory containing contracts written using the GroovyDSL. By default `$rootDir/src/test/resources/accurest`
  - **generatedTestSourcesDir** - test source directory where tests generated from Groovy DSL should be placed. By default `$buildDir/generated-test-sources/accurest`
  - **stubsOutputDir** - dir where the generated Wiremock stubs from Groovy DSL should be placed
  - **targetFramework** - the target test framework to be used; currently Spock and JUnit are supported with JUnit being the default framework
@@ -125,7 +125,7 @@ To ensure that provider side is complaint with defined contracts, you need to in
 ==== Accurest on consumer side
 
 In consumer service you need to configure Accurest plugin in exactly the same way as in case of provider. If you don't want to use Stub Runner then you need to copy contracts stored in
-`src/test/accurest` and generate WireMock json stubs using:
+`src/test/resources/accurest` and generate WireMock json stubs using:
 
 [source,bash,indent=0]
 ----
@@ -188,15 +188,15 @@ Read more: http://codearte.github.io/accurest-maven-plugin/[accurest-maven-plugi
 
 ==== Add stubs
 
-By default Accurest is looking for stubs in `src/test/accurest` directory.
+By default Accurest is looking for stubs in `src/test/resources/accurest` directory.
 Directory containing stub definitions is treated as a class name, and each stub definition is treated as a single test.
 We assume that it contains at least one directory which will be used as test class name. If there is more than one level of nested directories all except the last one will be used as package name.
 So with following structure
 
 [source,groovy,indent=0]
 ----
-src/test/accurest/myservice/shouldCreateUser.groovy
-src/test/accurest/myservice/shouldReturnUser.groovy
+src/test/resources/accurest/myservice/shouldCreateUser.groovy
+src/test/resources/accurest/myservice/shouldReturnUser.groovy
 ----
 
 Accurest will create test class `defaultBasePackage.MyService` with two methods
@@ -238,7 +238,7 @@ To change default configuration just add `configuration` section to plugin defin
  - **basePackageForTests** - specifies base package for all generated tests. By default set to `io.codearte.accurest.tests`.
  - **ruleClassForTests** - specifies Rule which should be added to generated test classes.
  - **baseClassForTests** - base class for generated tests. By default `spock.lang.Specification` if using Spock tests.
- - **contractsDir** - directory containing contracts written using the GroovyDSL. By default `/src/test/accurest`.
+ - **contractsDir** - directory containing contracts written using the GroovyDSL. By default `/src/test/resources/accurest`.
  - **testFramework** - the target test framework to be used; currently Spock and JUnit are supported with Spock being the default framework
 
 For complete information take a look at http://codearte.github.io/accurest-maven-plugin/plugin-info.html[Plugin Documentation]
@@ -306,7 +306,7 @@ To ensure that provider side is complaint with defined contracts, you need to in
 
 ==== Accurest on consumer side
 
-In consumer service you need to configure Accurest plugin in exactly the same way as in case of provider. You need to copy contracts stored in `src/test/accurest` and generate Wiremock json stubs using: `mvn generateStubs` command. By default generated WireMock mapping is stored in directory `target/mappings`. Your project should create from this generated mappings additional artifact with classifier `stubs` for easy deploy to maven repository.
+In consumer service you need to configure Accurest plugin in exactly the same way as in case of provider. You need to copy contracts stored in `src/test/resources/accurest` and generate Wiremock json stubs using: `mvn generateStubs` command. By default generated WireMock mapping is stored in directory `target/mappings`. Your project should create from this generated mappings additional artifact with classifier `stubs` for easy deploy to maven repository.
 
 Sample configuration:
 
