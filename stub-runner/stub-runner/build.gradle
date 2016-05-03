@@ -61,7 +61,6 @@ run {
 }
 
 List parseArguments() {
-	println "Trying to parse the project arguments"
 	List arguments = []
 	appendToListIfNotNull(stubRepositoryRoot, '-sr', arguments)
 	appendToListIfNotNull(stubsSuffix, '-ss', arguments)
