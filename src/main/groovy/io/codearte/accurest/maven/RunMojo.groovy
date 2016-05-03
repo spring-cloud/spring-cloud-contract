@@ -67,7 +67,7 @@ class RunMojo extends AbstractMojo {
         }
         BatchStubRunner batchStubRunner
         if (!stubs) {
-            StubRunnerOptions options = new StubRunnerOptions(httpPort, httpPort + 1, "", false, stubsClassifier)
+            StubRunnerOptions options = new StubRunnerOptions(httpPort, httpPort, "", false, stubsClassifier)
             StubRunner stubRunner = localStubRunner.run(resolveStubsDirectory().absolutePath, options)
             batchStubRunner = new BatchStubRunner(Arrays.asList(stubRunner))
         } else {
@@ -77,11 +77,10 @@ class RunMojo extends AbstractMojo {
             batchStubRunner = remoteStubRunner.run(options, repoSession)
         }
 
-        if (!insideProject) {
-            pressAnyKeyToContinue()
-            if (batchStubRunner) {
-                batchStubRunner.close()
-            }
+        pressAnyKeyToContinue()
+
+        if (batchStubRunner) {
+            batchStubRunner.close()
         }
     }
 

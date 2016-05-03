@@ -81,6 +81,7 @@
                             <goal>generateTests</goal>
                         </goals>
                         <configuration>
+                            <contractsDirectory>src/test/accurest</contractsDirectory>
                             <basePackageForTests>com.blogspot.toomuchcoding.frauddetection</basePackageForTests>
                             <testMode>MOCKMVC</testMode>
                             <testFramework>JUNIT</testFramework>

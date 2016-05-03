@@ -21,7 +21,7 @@ import static java.lang.String.format
 @CompileStatic
 class GenerateTestsMojo extends AbstractMojo {
 
-    @Parameter(property = 'accurest.contractsDirectory', defaultValue = '${project.basedir}/src/test/accurest')
+    @Parameter(property = 'accurest.contractsDirectory', defaultValue = '${project.basedir}/src/test/resources/accurest')
     private File contractsDirectory
 
     @Parameter(defaultValue = '${project.build.directory}/generated-test-sources/accurest')
