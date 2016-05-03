@@ -122,3 +122,7 @@ video::130779882[vimeo]
 
 - http://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura[Slides from Marcin Grzejszczak's talk about Accurest]
 - http://toomuchcoding.com/blog/categories/accurest/[Accurest related articles from Marcin Grzejszczak's blog]
+
+=== Samples
+
+Here you can find some https://github.com/Codearte/accurest-samples[working samples]. Check the readme of each project for more information.
