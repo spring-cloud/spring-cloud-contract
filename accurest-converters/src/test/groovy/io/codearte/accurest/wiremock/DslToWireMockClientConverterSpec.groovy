@@ -171,6 +171,42 @@ class DslToWireMockClientConverterSpec extends Specification {
 }
 ''', json, false)
 	}
+
+
+	@Issue("262")
+	def "should create stub with map inside list"() {
+		given:
+			def converter = new DslToWireMockClientConverter()
+		and:
+			File file = tmpFolder.newFile("dsl-mapinlist.groovy")
+			file.write("""
+				io.codearte.accurest.dsl.GroovyDsl.make {
+					request {
+                method 'GET'
+                urlPath '/foos'
+            }
+            response {
+                status 200
+                body([[id: value(
+                        client('123'),
+                        server(regex('[0-9]+'))
+                )], [id: value(
+                        client('567'),
+                        server(regex('[0-9]+'))
+                )]])
+                headers {
+									header 'Content-Type': 'application/json'
+								}
+            }
+			}
+""")
+		when:
+			String json = converter.convertContent("test", new Contract(file.toPath(), false, 0, null))
+		then:
+			JSONAssert.assertEquals('''
+{"request":{"urlPath":"/foos","method":"GET"},"response":{"body":"[{\\"id\\":\\"123\\"},{\\"id\\":\\"567\\"}]"}}
+''', json, false)
+	}
 	
 	def 'should convert dsl to wiremock to show it in the docs'() {
 		given:

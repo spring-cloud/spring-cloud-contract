@@ -69,7 +69,15 @@ abstract class BaseWireMockStubStrategy {
 	}
 
 	public String parseBody(List list, ContentType contentType) {
-		return parseBody(toJson(list), contentType)
+		List result = []
+		list.each {
+			if (it instanceof Map) {
+				result += MapConverter.getStubSideValues(it)
+			} else {
+				result += parseBody(it, contentType)
+			}
+		}
+		return parseBody(toJson(result), contentType)
 	}
 
 	public String parseBody(GString value, ContentType contentType) {

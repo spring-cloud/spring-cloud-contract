@@ -1168,6 +1168,38 @@ World.'''"""
 		"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
 
+	@Issue('262')
+	def "should generate proper test code with map inside list"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method 'GET'
+					urlPath '/foos'
+				}
+				response {
+					status 200
+					body([[id: value(
+							client('123'),
+							server(regex('[0-9]+'))
+					)], [id: value(
+							client('567'),
+							server(regex('[0-9]+'))
+					)]])
+					headers {
+						header('Content-Type': 'application/json;charset=UTF-8')
+					}
+				}
+			}
+			MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.then(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('assertThatJson(parsedJson).array().contains("id").matches("[0-9]+")')
+	}
+
+
 	GroovyDsl dslForDocs =
 			// tag::dsl_example[]
 		io.codearte.accurest.dsl.GroovyDsl.make {
