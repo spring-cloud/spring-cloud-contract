@@ -1199,6 +1199,39 @@ World.'''"""
 			test.contains('assertThatJson(parsedJson).array().contains("id").matches("[0-9]+")')
 	}
 
+	@Issue('266')
+	def "should generate proper test code with top level array using #methodBuilderName"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method 'GET'
+					urlPath '/api/tags'
+				}
+				response {
+					status 200
+					body(["Java", "Java8", "Spring", "SpringBoot", "Stream"])
+					headers {
+						header('Content-Type': 'application/json;charset=UTF-8')
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.then(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('assertThatJson(parsedJson).arrayField().contains("Java8").value()')
+			test.contains('assertThatJson(parsedJson).arrayField().contains("Spring").value()')
+			test.contains('assertThatJson(parsedJson).arrayField().contains("Java").value()')
+			test.contains('assertThatJson(parsedJson).arrayField().contains("Stream").value()')
+			test.contains('assertThatJson(parsedJson).arrayField().contains("SpringBoot").value()')
+		where:
+			methodBuilderName           | methodBuilder
+			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl) }
+			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+	}
+
 
 	GroovyDsl dslForDocs =
 			// tag::dsl_example[]

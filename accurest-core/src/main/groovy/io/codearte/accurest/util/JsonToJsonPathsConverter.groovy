@@ -59,6 +59,11 @@ class JsonToJsonPathsConverter {
 			return convertWithKey(List, key, value as Map, closure)
 		} else if (value instanceof Map) {
 			return convertWithKey(Map, key, value as Map, closure)
+			// JSON with a list of primitives ["a", "b", "c"] in root issue #266
+		} else if (key.isIteratingOverNamelessArray() && value instanceof List && listContainsOnlyPrimitives(value)) {
+			value.each {
+				traverseRecursively(Object, key.arrayField().contains(it), it, closure)
+			}
 		} else if (value instanceof List) {
 			MethodBufferingJsonVerifiable jsonPathVerifiable = createAsserterFromList(key, value)
 			value.each { def element ->

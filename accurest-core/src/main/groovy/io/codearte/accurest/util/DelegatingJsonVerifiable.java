@@ -90,7 +90,9 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 
 	@Override
 	public MethodBufferingJsonVerifiable arrayField() {
-		return new DelegatingJsonVerifiable(delegate.arrayField(), methodsBuffer);
+		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(delegate.arrayField(), methodsBuffer);
+		verifiable.methodsBuffer.append(".arrayField()");
+		return verifiable;
 	}
 
 	@Override

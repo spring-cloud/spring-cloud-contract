@@ -4,6 +4,7 @@ import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.Option
+import com.toomuchcoding.jsonassert.JsonAssertion
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import net.minidev.json.JSONArray
@@ -533,23 +534,27 @@ class JsonToJsonPathsConverterSpec extends Specification {
 		JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
 		then:
 		pathAndValues.find {
-			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().contains(38.995548).value()""" &&
+			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().arrayField().contains(38.995548).value()""" &&
 			it.jsonPath() == """\$[*].place.bounding_box.coordinates[*][*][?(@ == 38.995548)]"""
 		}
 		pathAndValues.find {
-			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().contains(-77.119759).value()""" &&
+			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().arrayField().contains(-77.119759).value()""" &&
 			it.jsonPath() == """\$[*].place.bounding_box.coordinates[*][*][?(@ == -77.119759)]"""
 		}
 		pathAndValues.find {
-			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().contains(-76.909393).value()""" &&
+			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().arrayField().contains(-76.909393).value()""" &&
 			it.jsonPath() == """\$[*].place.bounding_box.coordinates[*][*][?(@ == -76.909393)]"""
 		}
 		pathAndValues.find {
-			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().contains(38.791645).value()""" &&
+			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().arrayField().contains(38.791645).value()""" &&
 			it.jsonPath() == """\$[*].place.bounding_box.coordinates[*][*][?(@ == 38.791645)]"""
 		}
 		and:
-		pathAndValues.size() == 4
+			pathAndValues.size() == 4
+		and:
+			pathAndValues.each {
+				JsonAssertion.assertThat(json).matchesJsonPath(it.jsonPath())
+			}
 	}
 
 	private void assertThatJsonPathsInMapAreValid(String json, JsonPaths pathAndValues) {
