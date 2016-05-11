@@ -2,6 +2,8 @@ package io.codearte.accurest.util;
 
 import com.toomuchcoding.jsonassert.JsonVerifiable;
 
+import java.util.LinkedList;
+
 import static org.apache.commons.lang3.StringEscapeUtils.escapeJava;
 
 /**
@@ -10,17 +12,17 @@ import static org.apache.commons.lang3.StringEscapeUtils.escapeJava;
 class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 
 	private final JsonVerifiable delegate;
-	private final StringBuffer methodsBuffer;
+	private final LinkedList<String> methodsBuffer;
 
 	DelegatingJsonVerifiable(JsonVerifiable delegate,
-	                         StringBuffer methodsBuffer) {
+							 LinkedList<String> methodsBuffer) {
 		this.delegate = delegate;
-		this.methodsBuffer = new StringBuffer(methodsBuffer.toString());
+		this.methodsBuffer = new LinkedList<String>(methodsBuffer);
 	}
 
 	DelegatingJsonVerifiable(JsonVerifiable delegate) {
 		this.delegate = delegate;
-		this.methodsBuffer = new StringBuffer();
+		this.methodsBuffer = new LinkedList<String>();
 	}
 
 	private static String stringWithEscapedQuotes(Object object) {
@@ -35,8 +37,7 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 	}
 
 	private void appendMethodWithValue(String methodName, Object value) {
-		methodsBuffer.append(".").append(methodName).append("(").append(value)
-				.append(")");
+		methodsBuffer.offer("." + methodName + "("  + value + ")");
 	}
 
 	private void appendMethodWithQuotedValue(String methodName, Object value) {
@@ -48,7 +49,7 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 		DelegatingJsonVerifiable verifiable = new FinishedDelegatingJsonVerifiable(delegate.contains(value), methodsBuffer);
 		verifiable.appendMethodWithQuotedValue("contains", value);
 		if (isAssertingAValueInArray()) {
-			verifiable.methodsBuffer.append(".value()");
+			verifiable.methodsBuffer.offer(".value()");
 		}
 		return verifiable;
 	}
@@ -91,14 +92,14 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 	@Override
 	public MethodBufferingJsonVerifiable arrayField() {
 		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(delegate.arrayField(), methodsBuffer);
-		verifiable.methodsBuffer.append(".arrayField()");
+		verifiable.methodsBuffer.offer(".arrayField()");
 		return verifiable;
 	}
 
 	@Override
 	public MethodBufferingJsonVerifiable array() {
 		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(delegate.array(), methodsBuffer);
-		verifiable.methodsBuffer.append(".array()");
+		verifiable.methodsBuffer.offer(".array()");
 		return verifiable;
 	}
 
@@ -110,8 +111,11 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 	@Override
 	public MethodBufferingJsonVerifiable isEqualTo(String value) {
 		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(delegate.isEqualTo(value), methodsBuffer);
-		if (delegate.isAssertingAValueInArray()) {
-			readyToCheck.methodsBuffer.append(".value()");
+		if (delegate.isAssertingAValueInArray() && readyToCheck.methodsBuffer.peekLast().equals(".arrayField()")) {
+			readyToCheck.appendMethodWithQuotedValue("isEqualTo", escapeJava(value));
+			readyToCheck.methodsBuffer.offer(".value()");
+		} else if (delegate.isAssertingAValueInArray() && !readyToCheck.methodsBuffer.peekLast().contains("array")) {
+			readyToCheck.methodsBuffer.offer(".value()");
 		} else {
 			readyToCheck.appendMethodWithQuotedValue("isEqualTo", escapeJava(value));
 		}
@@ -129,18 +133,25 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 	@Override
 	public MethodBufferingJsonVerifiable isEqualTo(Number value) {
 		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(delegate.isEqualTo(value), methodsBuffer);
-		if (delegate.isAssertingAValueInArray()) {
-			readyToCheck.methodsBuffer.append(".value()");
+		// related to #271 - the problem is with asserting arrays of maps vs arrays of primitives
+		String last = readyToCheck.methodsBuffer.peekLast();
+		boolean containsAMatcher = containsAnyMatcher(last);
+		if (delegate.isAssertingAValueInArray() && containsAMatcher) {
+			readyToCheck.methodsBuffer.offer(".value()");
 		} else {
 			readyToCheck.appendMethodWithValue("isEqualTo", String.valueOf(value));
 		}
 		return readyToCheck;
 	}
 
+	private boolean containsAnyMatcher(String string) {
+		return string.contains("isEqualTo") || string.contains("matches") || string.contains("isNull");
+	}
+
 	@Override
 	public MethodBufferingJsonVerifiable isNull() {
 		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(delegate.isNull(), methodsBuffer);
-		readyToCheck.methodsBuffer.append(".isNull()");
+		readyToCheck.methodsBuffer.offer(".isNull()");
 		return readyToCheck;
 	}
 
@@ -149,7 +160,7 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(delegate.matches(value), methodsBuffer);
 		if (delegate.isAssertingAValueInArray()) {
 			readyToCheck.appendMethodWithQuotedValue("matches", escapeJava(value));
-			readyToCheck.methodsBuffer.append(".value()");
+			readyToCheck.methodsBuffer.offer(".value()");
 		} else {
 			readyToCheck.appendMethodWithQuotedValue("matches", escapeJava(value));
 		}
@@ -160,7 +171,7 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 	public MethodBufferingJsonVerifiable isEqualTo(Boolean value) {
 		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(delegate.isEqualTo(value), methodsBuffer);
 		if (delegate.isAssertingAValueInArray()) {
-			readyToCheck.methodsBuffer.append(".value()");
+			readyToCheck.methodsBuffer.offer(".value()");
 		} else {
 			readyToCheck.appendMethodWithValue("isEqualTo", String.valueOf(value));
 		}
@@ -204,7 +215,16 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 
 	@Override
 	public String method() {
-		return methodsBuffer.toString();
+		return createMethodString();
+	}
+
+	private String createMethodString() {
+		LinkedList<String> queue = new LinkedList<String>(methodsBuffer);
+		StringBuilder stringBuffer = new StringBuilder();
+		while (!queue.isEmpty()) {
+			stringBuffer.append(queue.remove());
+		}
+		return stringBuffer.toString();
 	}
 
 	@Override

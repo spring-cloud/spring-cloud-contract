@@ -1016,18 +1016,14 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	}, {
 	  "matchesJsonPath" : "$.errors[*][?(@.providerValue == 'Test')]"
 	}, {
-	  "matchesJsonPath" : "$.errors[*][?(@.providerValue == 'Test')]"
-	}, {
 	  "matchesJsonPath" : "$[?(@.lastName =~ /.*/)]"
 	}, {
-	  "matchesJsonPath" : "$.errors[*][?(@.propertyName =~ /[0-9]{2}/)]"
+	  "matchesJsonPath" : "$[?(@.firstName =~ /.*/)]"
 	}, {
 	  "matchesJsonPath" : "$[?(@.birthDate =~ /[0-9]{4}-[0-9]{2}-[0-9]{2}/)]"
 	}, {
 	  "matchesJsonPath" : "$[?(@.personalId =~ /[0-9]{11}/)]"
-	}, {
-	  "matchesJsonPath" : "$[?(@.firstName =~ /.*/)]"
-	} ]
+	}]
   },
   "response" : {
 	"status" : 200,

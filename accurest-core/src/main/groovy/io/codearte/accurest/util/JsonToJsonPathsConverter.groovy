@@ -62,17 +62,25 @@ class JsonToJsonPathsConverter {
 			// JSON with a list of primitives ["a", "b", "c"] in root issue #266
 		} else if (key.isIteratingOverNamelessArray() && value instanceof List && listContainsOnlyPrimitives(value)) {
 			value.each {
-				traverseRecursively(Object, key.arrayField().contains(it), it, closure)
+				traverseRecursively(Object, key.arrayField().contains(ContentUtils.returnParsedObject(it)),
+						ContentUtils.returnParsedObject(it), closure)
+			}
+		// JSON containing list of primitives { "partners":[ { "role":"AGENT", "payment_methods":[ "BANK", "CASH" ]	} ]
+		} else if (value instanceof List && listContainsOnlyPrimitives(value)) {
+			value.each {
+				traverseRecursively(Object, valueToAsserter(key.arrayField(), ContentUtils.returnParsedObject(it)),
+						ContentUtils.returnParsedObject(it), closure)
 			}
 		} else if (value instanceof List) {
 			MethodBufferingJsonVerifiable jsonPathVerifiable = createAsserterFromList(key, value)
 			value.each { def element ->
-				traverseRecursively(List, createAsserterFromListElement(jsonPathVerifiable, element),
-						element, closure)
+				traverseRecursively(List, createAsserterFromListElement(jsonPathVerifiable, ContentUtils.returnParsedObject(element)),
+						ContentUtils.returnParsedObject(element), closure)
 			}
 			return value
 		} else if (key.isIteratingOverArray()) {
-			traverseRecursively(Object, key.arrayField().contains(value), value, closure)
+			traverseRecursively(Object, key.arrayField().contains(ContentUtils.returnParsedObject(value)),
+					ContentUtils.returnParsedObject(value), closure)
 		}
 		try {
 			return runClosure(closure, key, value)
@@ -108,7 +116,7 @@ class JsonToJsonPathsConverter {
 	}
 
 	private static def runClosure(Closure closure, MethodBufferingJsonVerifiable key, def value) {
-		if (key.isAssertingAValueInArray()) {
+		if (key.isAssertingAValueInArray() && !(value instanceof List || value instanceof Map)) {
 			return closure(valueToAsserter(key, value), value)
 		}
 		return closure(key, value)
@@ -172,19 +180,20 @@ class JsonToJsonPathsConverter {
 	}
 
 	protected static MethodBufferingJsonVerifiable valueToAsserter(MethodBufferingJsonVerifiable key, Object value) {
+		def convertedValue = ContentUtils.returnParsedObject(value)
 		if (key instanceof FinishedDelegatingJsonVerifiable) {
 			return key
 		}
-		if (value instanceof Pattern) {
-			return key.matches((value as Pattern).pattern())
-		} else if (value instanceof OptionalProperty) {
-			return key.matches((value as OptionalProperty).optionalPattern())
-		} else if (value instanceof GString) {
-			return key.matches(RegexpBuilders.buildGStringRegexpForTestSide(value))
-		} else if (ContentUtils.returnParsedObject(value) instanceof  ExecutionProperty) {
+		if (convertedValue instanceof Pattern) {
+			return key.matches((convertedValue as Pattern).pattern())
+		} else if (convertedValue instanceof OptionalProperty) {
+			return key.matches((convertedValue as OptionalProperty).optionalPattern())
+		} else if (convertedValue instanceof GString) {
+			return key.matches(RegexpBuilders.buildGStringRegexpForTestSide(convertedValue))
+		} else if (convertedValue instanceof  ExecutionProperty) {
 			return key
 		}
-		return key.isEqualTo(value)
+		return key.isEqualTo(convertedValue)
 	}
 
 }

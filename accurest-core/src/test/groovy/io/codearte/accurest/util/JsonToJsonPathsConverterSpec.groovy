@@ -142,7 +142,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 			JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
 		then:
 			pathAndValues.find {
-				it.method() == """.array("items").contains("HOP").value()""" &&
+				it.method() == """.array("items").arrayField().isEqualTo("HOP").value()""" &&
 				it.jsonPath() == '''$.items[?(@ == 'HOP')]'''
 			}
 		and:
@@ -534,19 +534,19 @@ class JsonToJsonPathsConverterSpec extends Specification {
 		JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
 		then:
 		pathAndValues.find {
-			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().arrayField().contains(38.995548).value()""" &&
+			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().arrayField().isEqualTo(38.995548)""" &&
 			it.jsonPath() == """\$[*].place.bounding_box.coordinates[*][*][?(@ == 38.995548)]"""
 		}
 		pathAndValues.find {
-			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().arrayField().contains(-77.119759).value()""" &&
+			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().arrayField().isEqualTo(-77.119759)""" &&
 			it.jsonPath() == """\$[*].place.bounding_box.coordinates[*][*][?(@ == -77.119759)]"""
 		}
 		pathAndValues.find {
-			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().arrayField().contains(-76.909393).value()""" &&
+			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().arrayField().isEqualTo(-76.909393)""" &&
 			it.jsonPath() == """\$[*].place.bounding_box.coordinates[*][*][?(@ == -76.909393)]"""
 		}
 		pathAndValues.find {
-			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().arrayField().contains(38.791645).value()""" &&
+			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().arrayField().isEqualTo(38.791645)""" &&
 			it.jsonPath() == """\$[*].place.bounding_box.coordinates[*][*][?(@ == 38.791645)]"""
 		}
 		and:

@@ -117,48 +117,40 @@ class DslToWireMockClientConverterSpec extends Specification {
 {
   "request" : {
 	"url" : "/api/12",
-	"method" : "PUT",
-	"bodyPatterns" : [ {
-	  "matchesJsonPath" : "$[*].place.bounding_box.coordinates[*][*][?(@ == 38.995548)]"
-	}, {
-	  "matchesJsonPath" : "$[*].place[?(@.country == 'United States')]"
-	}, {
-	  "matchesJsonPath" : "$[*].place.bounding_box.coordinates[*][*][?(@ == -77.119759)]"
-	}, {
-	  "matchesJsonPath" : "$[*].place[?(@.name == 'Washington')]"
-	}, {
-	  "matchesJsonPath" : "$[*].place.bounding_box[?(@.type == 'Polygon')]"
-	}, {
-	  "matchesJsonPath" : "$[*][?(@.id_str == '492967299297845248')]"
-	}, {
-	  "matchesJsonPath" : "$[*].place[?(@.country_code == 'US')]"
-	}, {
-	  "matchesJsonPath" : "$[*][?(@.id == 492967299297845248)]"
-	}, {
-	  "matchesJsonPath" : "$[*].place.bounding_box.coordinates[*][*][?(@ == -76.909393)]"
-	}, {
-	  "matchesJsonPath" : "$[*].place.bounding_box.coordinates[*][*][?(@ == 38.791645)]"
-	}, {
-	  "matchesJsonPath" : "$[*].place[?(@.id == '01fbe706f872cb32')]"
-	}, {
-	  "matchesJsonPath" : "$[*].place[?(@.url == 'http://api.twitter.com/1/geo/id/01fbe706f872cb32.json')]"
-	}, {
-	  "matchesJsonPath" : "$[*].place.bounding_box.coordinates[*][*][?(@ == -77.119759)]"
-	}, {
-	  "matchesJsonPath" : "$[*].place.bounding_box.coordinates[*][*][?(@ == -76.909393)]"
-	}, {
-	  "matchesJsonPath" : "$[*].place.bounding_box.coordinates[*][*][?(@ == 38.995548)]"
-	}, {
-	  "matchesJsonPath" : "$[*][?(@.text == 'Gonna see you at Warsaw')]"
-	}, {
-	  "matchesJsonPath" : "$[*].place[?(@.place_type == 'city')]"
-	}, {
-	  "matchesJsonPath" : "$[*][?(@.created_at == 'Sat Jul 26 09:38:57 +0000 2014')]"
-	}, {
-	  "matchesJsonPath" : "$[*].place[?(@.full_name == 'Washington, DC')]"
-	}, {
-	  "matchesJsonPath" : "$[*].place.bounding_box.coordinates[*][*][?(@ == 38.791645)]"
-	} ],
+    "method" : "PUT",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[*].place.bounding_box.coordinates[*][*][?(@ == -77.119759)]"
+    }, {
+      "matchesJsonPath" : "$[*][?(@.text == 'Gonna see you at Warsaw')]"
+    }, {
+      "matchesJsonPath" : "$[*].place[?(@.place_type == 'city')]"
+    }, {
+      "matchesJsonPath" : "$[*][?(@.id == 492967299297845248)]"
+    }, {
+      "matchesJsonPath" : "$[*].place.bounding_box.coordinates[*][*][?(@ == 38.791645)]"
+    }, {
+      "matchesJsonPath" : "$[*].place[?(@.country == 'United States')]"
+    }, {
+      "matchesJsonPath" : "$[*][?(@.id_str == '492967299297845248')]"
+    }, {
+      "matchesJsonPath" : "$[*].place.bounding_box.coordinates[*][*][?(@ == -76.909393)]"
+    }, {
+      "matchesJsonPath" : "$[*].place[?(@.name == 'Washington')]"
+    }, {
+      "matchesJsonPath" : "$[*].place.bounding_box[?(@.type == 'Polygon')]"
+    }, {
+      "matchesJsonPath" : "$[*].place[?(@.url == 'http://api.twitter.com/1/geo/id/01fbe706f872cb32.json')]"
+    }, {
+      "matchesJsonPath" : "$[*].place.bounding_box.coordinates[*][*][?(@ == 38.995548)]"
+    }, {
+      "matchesJsonPath" : "$[*].place[?(@.country_code == 'US')]"
+    }, {
+      "matchesJsonPath" : "$[*].place[?(@.full_name == 'Washington, DC')]"
+    }, {
+      "matchesJsonPath" : "$[*][?(@.created_at == 'Sat Jul 26 09:38:57 +0000 2014')]"
+    }, {
+      "matchesJsonPath" : "$[*].place[?(@.id == '01fbe706f872cb32')]"
+    } ],
 	"headers" : {
 	  "Content-Type" : {
 		"equalTo" : "application/vnd.com.ofg.twitter-places-analyzer.v1+json"
@@ -207,7 +199,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 {"request":{"urlPath":"/foos","method":"GET"},"response":{"body":"[{\\"id\\":\\"123\\"},{\\"id\\":\\"567\\"}]"}}
 ''', json, false)
 	}
-	
+
 	def 'should convert dsl to wiremock to show it in the docs'() {
 		given:
 			def converter = new DslToWireMockClientConverter()
@@ -272,5 +264,5 @@ class DslToWireMockClientConverterSpec extends Specification {
 // end::wiremock[]
 				, json, false)
 	}
-		
+
 }
