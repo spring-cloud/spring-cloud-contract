@@ -4,7 +4,7 @@ Contract DSL in Accurest is written in Groovy, but don't be alarmed if you didn'
 a tiny subset of it (namely literals, method calls and closures). What's more, Accurest's DSL is designed to be programmer-readable without any knowledge of the DSL itself -
  it's statically typed.
 
-WARNING: Since {messaging_version} you can use the `io.codearte.accurest.dsl.Accurest` class in your DSL files.
+TIP: Since {messaging_version} you can use the `io.codearte.accurest.dsl.Accurest` class in your DSL files.
 
 Let's look at full example of a contract definition.
 
@@ -16,6 +16,12 @@ include::../../../../accurest-core/src/test/groovy/io/codearte/accurest/builder/
 Not all features of the DSL are used in example above. If you didn't find what you are looking for, please check next paragraphs on this page.
 
 > You can easily compile Accurest Contracts to WireMock stubs mapping using standalone maven command: `mvn io.codearte.accurest:accurest-maven-plugin:convert`.
+
+=== Limitations
+
+WARNING: Accurest doesn't support XML properly. Please use JSON or help us implement this feature.
+
+WARNING: Accurest supports equality check on text response. Regular expressions are not yet available.
 
 === HTTP Top-Level Elements
 
