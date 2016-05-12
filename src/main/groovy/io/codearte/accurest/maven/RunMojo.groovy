@@ -6,6 +6,7 @@ import io.codearte.accurest.maven.stubrunner.RemoteStubRunner
 import io.codearte.accurest.stubrunner.BatchStubRunner
 import io.codearte.accurest.stubrunner.StubRunner
 import io.codearte.accurest.stubrunner.StubRunnerOptions
+import io.codearte.accurest.stubrunner.StubRunnerOptionsBuilder
 import org.apache.maven.execution.MavenSession
 import org.apache.maven.plugin.AbstractMojo
 import org.apache.maven.plugin.MojoExecutionException
@@ -66,14 +67,14 @@ class RunMojo extends AbstractMojo {
             return
         }
         BatchStubRunner batchStubRunner
+        StubRunnerOptionsBuilder optionsBuilder = new StubRunnerOptionsBuilder()
+                .withStubsClassifier(stubsClassifier)
         if (!stubs) {
-            StubRunnerOptions options = new StubRunnerOptions(httpPort, httpPort, "", false, stubsClassifier)
+            StubRunnerOptions options = optionsBuilder.withPort(httpPort).build()
             StubRunner stubRunner = localStubRunner.run(resolveStubsDirectory().absolutePath, options)
             batchStubRunner = new BatchStubRunner(Arrays.asList(stubRunner))
         } else {
-            EnhancedStubRunnerOptions options = new EnhancedStubRunnerOptionsBuilder(minPort, maxPort, "", false, stubsClassifier)
-                    .withStubs(stubs)
-                    .build()
+            StubRunnerOptions options = optionsBuilder.withMinMaxPort(minPort, maxPort).build()
             batchStubRunner = remoteStubRunner.run(options, repoSession)
         }
 
