@@ -36,6 +36,8 @@ nexusStaging {
 	stagingProfileId = '93c08fdebde1ff'
 }
 
+apply from: "$rootDir/gradle/releaseRoot.gradle"
+
 subprojects {
 	apply plugin: 'groovy'
 	apply from: "$rootDir/gradle/release.gradle"
@@ -212,3 +214,4 @@ buildscript {
 }
 
 apply plugin: "com.palantir.idea-test-fix"
+
