@@ -29,6 +29,19 @@ dependencies {
 }
 ----
 
+====== Snapshot versions
+
+Add the additional snapshot repository to your build.gradle to use snapshot versions which are automatically uploaded after every successful build:
+
+[source,groovy,indent=0]
+----
+repositories {
+    (...)
+    //Required only for SNAPSHOT versions
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+}
+----
+
 ===== Add maven plugin
 
 [source,xml,indent=0]
