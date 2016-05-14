@@ -21,3 +21,8 @@ matrix:
       env:
        - DO_RELEASE=true
 
+env:
+  global:
+    - secure: NbEQ9t5nGKW0LKmOSV4rTiEbYJARM2rynQBdSXkoILbp+nNaCD6uN41tUu8HrjgbjUDMepFUU+hmGQ47Q2vz5L3NzvW+oHBLgrIu6uAimpdR8qyBE899MBKPE19LsvUOeE9B9TydJgYlY+UEYgxwssUwxsN0RqyY4EErQWMNC8k=
+    - secure: zCjkMhjF5TbZehNmOK7EV68J35tuc0etWG/ia0eVTjgIv2kp9islJZ3+Jm/gDgkcv2Ydq3oAU2jFbVkUPSSstV3L5KANsighm2qn9tVzRrbTCfM55zcBhnoE0oZHTPNrLoScz0X5sM8Xuvi6ChjGf+lqAxnFW6tFMjx+1uhUIXU=
+
