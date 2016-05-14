@@ -12,7 +12,7 @@ jdk:
  - oraclejdk8
 
 install: ./gradlew assemble -s
-script: ./gradlew check funcTest install -s --continue && jdk_switcher use oraclejdk8 && ./scripts/runTests.sh && jdk_switcher use $TRAVIS_JDK_VERSION && ./gradlew uploadSnapshotArchives -s
+script: ./gradlew check funcTest install -s --continue && jdk_switcher use oraclejdk8 && ./scripts/runTests.sh && jdk_switcher use $TRAVIS_JDK_VERSION && ./gradlew uploadSnapshotArchives -x check -s
 
 matrix:
   include:
