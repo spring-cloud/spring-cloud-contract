@@ -38,3 +38,22 @@ modifyPom {
 
 uploadArchives.dependsOn { check }
 
+
+task uploadSnapshotArchives {
+	if (shouldUploadSnapshotArchives) {
+		dependsOn { uploadArchives }
+	}
+        onlyIf { shouldUploadSnapshotArchives }
+}
+
+//for Travis to leverage secure variables
+project.ext {
+	if (!hasProperty('nexusUsername') && System.env.NEXUS_USERNAME) {
+		nexusUsername = System.env.NEXUS_USERNAME
+	}
+	if (!hasProperty('nexusPassword') && System.env.NEXUS_PASSWORD) {
+		nexusPassword = System.env.NEXUS_PASSWORD
+	}
+}
+
+
