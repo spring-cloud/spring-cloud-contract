@@ -14,6 +14,7 @@ class Response extends Common {
 	DslProperty delay
 	Headers headers
 	Body body
+	boolean async
 
 	Response() {
 	}
@@ -52,6 +53,10 @@ class Response extends Common {
 
 	void fixedDelayMilliseconds(int timeInMilliseconds) {
 		this.delay = toDslProperty(timeInMilliseconds)
+	}
+
+	public void async() {
+		this.async = true
 	}
 
 	void assertThatSidesMatch(OptionalProperty stubSide, Object testSide) {

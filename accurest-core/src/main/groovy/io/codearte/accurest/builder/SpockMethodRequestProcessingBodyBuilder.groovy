@@ -71,7 +71,11 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 
 	@Override
 	protected String getInputString(Request request) {
-		return 'def response = given().spec(request)'
+		def inputString =  'def response = given().spec(request)'
+		if (response.async){
+			inputString = inputString + '.when().async()'
+		}
+		return inputString
 	}
 
 	@Override

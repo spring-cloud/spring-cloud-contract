@@ -1263,6 +1263,33 @@ World.'''"""
 			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl) }
 			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
+  @Issue('47')
+	def "should generate async body when async flag set in response"() {
+		given:
+		GroovyDsl contractDsl = GroovyDsl.make {
+			request {
+				method 'GET'
+				url '/test'
+			}
+			response {
+				status 200
+				async()
+			}
+		}
+		MethodBodyBuilder builder = methodBuilder(contractDsl)
+		BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+		builder.appendTo(blockBuilder)
+		def test = blockBuilder.toString()
+		then:
+		test.contains(bodyDefinitionString)
+		and:
+		stubMappingIsValidWireMockStub(contractDsl)
+		where:
+		methodBuilderName           | methodBuilder                                                                | bodyDefinitionString
+		"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl) } | '.when().async()'
+		"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }                  | '.when().async()'
+	}
 
 	def "should generate proper test code with array of primitives using #methodBuilderName"() {
 		given:
@@ -1280,7 +1307,7 @@ World.'''"""
 								  }
 							   ]
 							}
-                                ''')
+				''')
 				}
 			}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
