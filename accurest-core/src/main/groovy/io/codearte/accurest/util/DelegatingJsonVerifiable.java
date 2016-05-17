@@ -32,7 +32,7 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 
 	private static String wrapValueWithQuotes(Object value) {
 		return value instanceof String ?
-				"\"" + stringWithEscapedQuotes(value).replaceAll("\\$", "\\\\\\$") + "\"" :
+				"\"" + stringWithEscapedQuotes((String) value) + "\"" :
 				value.toString();
 	}
 

@@ -48,4 +48,9 @@ class MockMvcSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestP
 		blockBuilder.addLine("response.header('$property') ${convertHeaderComparison(value)}")
 	}
 
+	// #273 - should escape $ for Groovy since it will try to make it a GString
+	@Override
+	protected String postProcessJsonPathCall(String jsonPath) {
+		return jsonPath.replace('$', '\\$')
+	}
 }

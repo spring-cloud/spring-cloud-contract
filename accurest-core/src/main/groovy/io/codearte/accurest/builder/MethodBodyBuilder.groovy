@@ -121,7 +121,9 @@ abstract class MethodBodyBuilder {
 			appendJsonPath(bb, getResponseAsString())
 			JsonPaths jsonPaths = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(responseBody)
 			jsonPaths.each {
-				bb.addLine("assertThatJson(parsedJson)" + it.method())
+				String method = it.method()
+				String postProcessedMethod = postProcessJsonPathCall(method)
+				bb.addLine("assertThatJson(parsedJson)" + postProcessedMethod)
 				addColonIfRequired(bb)
 			}
 			processBodyElement(bb, "", responseBody)
@@ -134,6 +136,10 @@ abstract class MethodBodyBuilder {
 			processText(bb, "", responseBody as String)
 			addColonIfRequired(bb)
 		}
+	}
+
+	protected String postProcessJsonPathCall(String jsonPath) {
+		return jsonPath
 	}
 
 	protected void appendJsonPath(BlockBuilder blockBuilder, String json) {

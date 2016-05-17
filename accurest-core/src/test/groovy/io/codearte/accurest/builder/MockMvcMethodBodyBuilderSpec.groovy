@@ -1101,7 +1101,7 @@ World.'''"""
 	}
 
 	@Issue('#216')
-	def "should parse JSON with arrays using #methodBuilderName"() {
+	def "should parse JSON with arrays using Spock"() {
 		given:
 		GroovyDsl contractDsl = GroovyDsl.make {
 			request {
@@ -1125,17 +1125,47 @@ World.'''"""
 				)
 			}
 		}
-		MethodBodyBuilder builder = methodBuilder(contractDsl)
+		MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDsl)
 		BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 		builder.appendTo(blockBuilder)
 		def test = blockBuilder.toString()
 		then:
 		test.contains('''assertThatJson(parsedJson).array("authorities").arrayField().matches("^[a-zA-Z0-9_\\\\- ]+\\$").value()''')
-		where:
-		methodBuilderName           | methodBuilder
-		"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl) }
-		"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+	}
+
+	@Issue('#216')
+	def "should parse JSON with arrays using JUnit"() {
+		given:
+		GroovyDsl contractDsl = GroovyDsl.make {
+			request {
+				method "GET"
+				urlPath('/auth/oauth/check_token') {
+					queryParameters {
+						parameter 'token':
+								value(
+										client(regex('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}')),
+										server('6973b31d-7140-402a-bca6-1cdb954e03a7')
+								)
+					}
+				}
+			}
+			response {
+				status 200
+				body(
+						authorities: [
+								value(stub('ROLE_ADMIN'), test(regex('^[a-zA-Z0-9_\\- ]+$')))
+						]
+				)
+			}
+		}
+		MethodBodyBuilder builder = new MockMvcJUnitMethodBodyBuilder(contractDsl)
+		BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+		builder.appendTo(blockBuilder)
+		def test = blockBuilder.toString()
+		then:
+		test.contains('''assertThatJson(parsedJson).array("authorities").arrayField().matches("^[a-zA-Z0-9_\\\\- ]+$").value()''')
 	}
 
 	def "should work with execution property"() {
@@ -1322,6 +1352,28 @@ World.'''"""
 			methodBuilderName           | methodBuilder
 			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl) }
 			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
+	}
+
+	@Issue('#273')
+	def "should not escape dollar in Spock regex tests"() {
+		given:
+			GroovyDsl contractDsl = GroovyDsl.make {
+				request {
+					method 'GET'
+					urlPath '/get'
+				}
+				response {
+					status 200
+					body( code: 9, message: $(client('Wrong credentials'), server(regex('^(?!\\s*$).+'))) )
+				}
+			}
+			MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.then(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('assertThatJson(parsedJson).field("message").matches("^(?!\\\\s*\\$).+")')
 	}
 
 

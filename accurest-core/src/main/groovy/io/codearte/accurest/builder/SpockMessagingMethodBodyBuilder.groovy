@@ -159,4 +159,10 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 		return "==~ java.util.regex.Pattern.compile('$headerValue')"
 	}
 
+	// #273 - should escape $ for Groovy since it will try to make it a GString
+	@Override
+	protected String postProcessJsonPathCall(String method) {
+		return method.replace('$', '\\$')
+	}
+
 }
