@@ -12,7 +12,13 @@ import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory
 import org.eclipse.aether.impl.DefaultServiceLocator
 import org.eclipse.aether.repository.LocalRepository
 import org.eclipse.aether.repository.RemoteRepository
-import org.eclipse.aether.resolution.*
+import org.eclipse.aether.repository.RepositoryPolicy
+import org.eclipse.aether.resolution.ArtifactRequest
+import org.eclipse.aether.resolution.ArtifactResult
+import org.eclipse.aether.resolution.VersionRangeRequest
+import org.eclipse.aether.resolution.VersionRangeResult
+import org.eclipse.aether.resolution.VersionRequest
+import org.eclipse.aether.resolution.VersionResult
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory
 import org.eclipse.aether.spi.connector.transport.TransporterFactory
 import org.eclipse.aether.transport.file.FileTransporterFactory
@@ -20,6 +26,7 @@ import org.eclipse.aether.transport.http.HttpTransporterFactory
 
 import static io.codearte.accurest.stubrunner.util.ZipCategory.unzipTo
 import static java.nio.file.Files.createTempDirectory
+
 /**
  * @author Mariusz Smykula
  */
@@ -68,6 +75,7 @@ class AetherStubDownloader implements StubDownloader {
 
 	private RepositorySystemSession newSession(RepositorySystem system) {
 		DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
+		session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_ALWAYS)
 		LocalRepository localRepo = new LocalRepository(System.getProperty(MAVEN_LOCAL_REPOSITORY_LOCATION, "${System.getProperty("user.home")}/.m2/repository"));
 		session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
 		return session;
@@ -109,15 +117,15 @@ class AetherStubDownloader implements StubDownloader {
 	}
 
 	@Override
-	Map.Entry<StubConfiguration,File> downloadAndUnpackStubJar(StubRunnerOptions options, StubConfiguration stubConfiguration) {
+	Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(StubRunnerOptions options, StubConfiguration stubConfiguration) {
 		String version = getVersion(stubConfiguration.groupId, stubConfiguration.artifactId, stubConfiguration.version, stubConfiguration.classifier)
 		File unpackedJar = unpackedJar(version, stubConfiguration.groupId, stubConfiguration.artifactId,
 				stubConfiguration.classifier, options.stubRepositoryRoot)
-		if(!unpackedJar) {
+		if (!unpackedJar) {
 			return null
 		}
 		return new AbstractMap.SimpleEntry(new StubConfiguration(stubConfiguration.groupId, stubConfiguration.artifactId, version, stubConfiguration.classifier),
-		unpackedJar)
+				unpackedJar)
 	}
 
 	private String resolveHighestArtifactVersion(String stubsGroup, String stubsModule, String classifier) {
