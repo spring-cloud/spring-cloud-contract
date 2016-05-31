@@ -98,6 +98,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		then:
 			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
 			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("a").isEqualTo("sth")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").hasSize(2)""")
 			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("b").isEqualTo("sthElse")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new Contract(null, false, 0, null), contractDsl).toWireMockClientStub())

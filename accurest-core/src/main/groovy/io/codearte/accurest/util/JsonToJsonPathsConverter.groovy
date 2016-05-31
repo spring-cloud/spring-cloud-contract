@@ -7,10 +7,21 @@ import io.codearte.accurest.dsl.internal.ExecutionProperty
 import io.codearte.accurest.dsl.internal.OptionalProperty
 
 import java.util.regex.Pattern
+
 /**
+ * I would like to apologize to anyone who is reading this class. Since JSON is a hectic structure
+ * this class is also hectic. The idea is to traverse the JSON structure and build a set of
+ * JSON Paths together with methods needed to be called to build them.
+ *
  * @author Marcin Grzejszczak
  */
 class JsonToJsonPathsConverter {
+
+	/**
+	 * In case of issues with size assertion just provide this property as system property
+	 * equal to "false" and then size assertion will be disabled
+	 */
+	private static final String SIZE_ASSERTION_SYSTEM_PROP = "accurest.assert.size"
 
 	private static final Boolean SERVER_SIDE = false
 	private static final Boolean CLIENT_SIDE = true
@@ -61,18 +72,21 @@ class JsonToJsonPathsConverter {
 			return convertWithKey(Map, key, value as Map, closure)
 			// JSON with a list of primitives ["a", "b", "c"] in root issue #266
 		} else if (key.isIteratingOverNamelessArray() && value instanceof List && listContainsOnlyPrimitives(value)) {
+			addSizeVerificationForListWithPrimitives(key, closure, value)
 			value.each {
 				traverseRecursively(Object, key.arrayField().contains(ContentUtils.returnParsedObject(it)),
 						ContentUtils.returnParsedObject(it), closure)
 			}
 		// JSON containing list of primitives { "partners":[ { "role":"AGENT", "payment_methods":[ "BANK", "CASH" ]	} ]
 		} else if (value instanceof List && listContainsOnlyPrimitives(value)) {
+			addSizeVerificationForListWithPrimitives(key, closure, value)
 			value.each {
 				traverseRecursively(Object, valueToAsserter(key.arrayField(), ContentUtils.returnParsedObject(it)),
 						ContentUtils.returnParsedObject(it), closure)
 			}
 		} else if (value instanceof List) {
 			MethodBufferingJsonVerifiable jsonPathVerifiable = createAsserterFromList(key, value)
+			addSizeVerificationForListWithPrimitives(key, closure, value)
 			value.each { def element ->
 				traverseRecursively(List, createAsserterFromListElement(jsonPathVerifiable, ContentUtils.returnParsedObject(element)),
 						ContentUtils.returnParsedObject(element), closure)
@@ -89,6 +103,23 @@ class JsonToJsonPathsConverter {
 		}
 	}
 
+	// Size verification: https://github.com/Codearte/accurest/issues/279
+	private static void addSizeVerificationForListWithPrimitives(MethodBufferingJsonVerifiable key, Closure closure, List value) {
+		if (System.getProperty(SIZE_ASSERTION_SYSTEM_PROP, "true") == "false") {
+			return
+		}
+		if (isRootElement(key) || key.assertsConcreteValue()) {
+			if (value.size() > 0) {
+				closure(key.hasSize(value.size()), value)
+			}
+		}
+	}
+
+	private static boolean isRootElement(MethodBufferingJsonVerifiable key) {
+		return key.jsonPath() == '$'
+	}
+
+	// If you have a list of not-only primitives it can contain different sets of elements (maps, lists, primitives)
 	private static MethodBufferingJsonVerifiable createAsserterFromList(MethodBufferingJsonVerifiable key, List value) {
 		if (key.isIteratingOverNamelessArray()) {
 			return key.array()

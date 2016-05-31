@@ -46,4 +46,8 @@ public interface MethodBufferingJsonVerifiable
 
 	@Override
 	MethodBufferingJsonVerifiable value();
+
+	boolean assertsSize();
+
+	boolean assertsConcreteValue();
 }

@@ -1,8 +1,9 @@
 package io.codearte.accurest.util;
 
-import com.toomuchcoding.jsonassert.JsonVerifiable;
-
 import java.util.LinkedList;
+import java.util.regex.Pattern;
+
+import com.toomuchcoding.jsonassert.JsonVerifiable;
 
 import static org.apache.commons.lang3.StringEscapeUtils.escapeJava;
 
@@ -11,18 +12,21 @@ import static org.apache.commons.lang3.StringEscapeUtils.escapeJava;
  */
 class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 
-	private final JsonVerifiable delegate;
-	private final LinkedList<String> methodsBuffer;
+	private static final Pattern FIELD_PATTERN = Pattern.compile("\\.field\\((\")?(.)+(\")?\\)");
+	private static final Pattern ARRAY_PATTERN = Pattern.compile("\\.array\\((\")?(.)+(\")?\\)");
+
+	final JsonVerifiable delegate;
+	final LinkedList<String> methodsBuffer;
 
 	DelegatingJsonVerifiable(JsonVerifiable delegate,
 							 LinkedList<String> methodsBuffer) {
 		this.delegate = delegate;
-		this.methodsBuffer = new LinkedList<String>(methodsBuffer);
+		this.methodsBuffer = new LinkedList<>(methodsBuffer);
 	}
 
 	DelegatingJsonVerifiable(JsonVerifiable delegate) {
 		this.delegate = delegate;
-		this.methodsBuffer = new LinkedList<String>();
+		this.methodsBuffer = new LinkedList<>();
 	}
 
 	private static String stringWithEscapedQuotes(Object object) {
@@ -32,7 +36,7 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 
 	private static String wrapValueWithQuotes(Object value) {
 		return value instanceof String ?
-				"\"" + stringWithEscapedQuotes((String) value) + "\"" :
+				"\"" + stringWithEscapedQuotes(value) + "\"" :
 				value.toString();
 	}
 
@@ -100,6 +104,13 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 	public MethodBufferingJsonVerifiable array() {
 		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(delegate.array(), methodsBuffer);
 		verifiable.methodsBuffer.offer(".array()");
+		return verifiable;
+	}
+
+	@Override
+	public JsonVerifiable elementWithIndex(int i) {
+		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(delegate.elementWithIndex(i), methodsBuffer);
+		verifiable.methodsBuffer.offer(".elementWithIndex(" + i + ")");
 		return verifiable;
 	}
 
@@ -184,6 +195,26 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 	}
 
 	@Override
+	public boolean assertsSize() {
+		for (String s : methodsBuffer) {
+			if (s.contains(".hasSize(")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean assertsConcreteValue() {
+		for (String s : methodsBuffer) {
+			if (FIELD_PATTERN.matcher(s).matches()|| ARRAY_PATTERN.matcher(s).matches()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public JsonVerifiable withoutThrowingException() {
 		return delegate.withoutThrowingException();
 	}
@@ -196,6 +227,13 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 	@Override
 	public void matchesJsonPath(String s) {
 		delegate.matchesJsonPath(s);
+	}
+
+	@Override
+	public JsonVerifiable hasSize(int size) {
+		FinishedDelegatingJsonVerifiable verifiable = new FinishedDelegatingJsonVerifiable(delegate.hasSize(size), methodsBuffer);
+		verifiable.methodsBuffer.offer(".hasSize(" + size + ")");
+		return verifiable;
 	}
 
 	@Override
@@ -219,7 +257,7 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 	}
 
 	private String createMethodString() {
-		LinkedList<String> queue = new LinkedList<String>(methodsBuffer);
+		LinkedList<String> queue = new LinkedList<>(methodsBuffer);
 		StringBuilder stringBuffer = new StringBuilder();
 		while (!queue.isEmpty()) {
 			stringBuffer.append(queue.remove());
@@ -238,17 +276,19 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 
 		if (delegate != null ? !delegate.equals(that.delegate) : that.delegate != null)
 			return false;
-		return methodsBuffer != null ?
-				methodsBuffer.equals(that.methodsBuffer) :
-				that.methodsBuffer == null;
+		if (delegate == null) {
+			return false;
+		}
+		if (delegate.jsonPath() == null && that.delegate.jsonPath() == null)
+			return true;
+		return delegate.jsonPath().equals(that.delegate.jsonPath());
 
 	}
 
 	@Override
 	public int hashCode() {
-		int result = delegate != null ? delegate.hashCode() : 0;
-		result = 31 * result + (methodsBuffer != null ? methodsBuffer.hashCode() : 0);
-		return result;
+		int result = delegate != null ? delegate.jsonPath().hashCode() : 0;
+		return 31 * result;
 	}
 
 	@Override

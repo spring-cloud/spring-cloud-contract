@@ -354,11 +354,15 @@ class JsonToJsonPathsConverterSpec extends Specification {
 			it.jsonPath() == """\$.property2[*][?(@.a == 'sth')]"""
 		}
 		pathAndValues.find {
+			it.method()== """.array("property2").hasSize(2)""" &&
+			it.jsonPath() == """\$.property2[*]"""
+		}
+		pathAndValues.find {
 			it.method()== """.array("property2").contains("b").isEqualTo("sthElse")""" &&
 			it.jsonPath() == """\$.property2[*][?(@.b == 'sthElse')]"""
 		}
 		and:
-		pathAndValues.size() == 3
+		pathAndValues.size() == 4
 	}
 
 	def "should generate assertions for a response body containing map with integers as keys"() {
@@ -404,8 +408,12 @@ class JsonToJsonPathsConverterSpec extends Specification {
 			it.method()== """.array().contains("property2").isEqualTo("b")""" &&
 			it.jsonPath() == """\$[*][?(@.property2 == 'b')]"""
 		}
+		pathAndValues.find {
+			it.method()== """.hasSize(2)""" &&
+			it.jsonPath() == """\$"""
+		}
 		and:
-		pathAndValues.size() == 2
+		pathAndValues.size() == 3
 	}
 
 	def "should generate assertions for array inside response body element"() {
@@ -427,8 +435,12 @@ class JsonToJsonPathsConverterSpec extends Specification {
 			it.method()== """.array("property1").contains("property3").isEqualTo("test2")""" &&
 			it.jsonPath() == """\$.property1[*][?(@.property3 == 'test2')]"""
 		}
+		pathAndValues.find {
+			it.method()== """.array("property1").hasSize(2)""" &&
+			it.jsonPath() == """\$.property1[*]"""
+		}
 		and:
-		pathAndValues.size() == 2
+		pathAndValues.size() == 3
 	}
 
 	def "should generate assertions for nested objects in response body"() {
@@ -509,8 +521,12 @@ class JsonToJsonPathsConverterSpec extends Specification {
 			it.method()== """.array("errors").contains("message").isEqualTo("incorrect_format")""" &&
 			it.jsonPath() == """\$.errors[*][?(@.message == 'incorrect_format')]"""
 		}
+		pathAndValues.find {
+			it.method()== """.array("errors").hasSize(1)""" &&
+			it.jsonPath() == """\$.errors[*]"""
+		}
 		and:
-		pathAndValues.size() == 2
+		pathAndValues.size() == 3
 	}
 
 	def "should manage to parse a double array"() {
@@ -549,8 +565,20 @@ class JsonToJsonPathsConverterSpec extends Specification {
 			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().arrayField().isEqualTo(38.791645)""" &&
 			it.jsonPath() == """\$[*].place.bounding_box.coordinates[*][*][?(@ == 38.791645)]"""
 		}
+		pathAndValues.find {
+			it.method()== """.hasSize(1)""" &&
+			it.jsonPath() == """\$"""
+		}
+		pathAndValues.find {
+			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().hasSize(2)""" &&
+			it.jsonPath() == """\$[*].place.bounding_box.coordinates[*][*]"""
+		}
+		pathAndValues.find {
+			it.method()== """.array().field("place").field("bounding_box").array("coordinates").hasSize(1)""" &&
+			it.jsonPath() == """\$[*].place.bounding_box.coordinates[*]"""
+		}
 		and:
-			pathAndValues.size() == 4
+			pathAndValues.size() == 7
 		and:
 			pathAndValues.each {
 				JsonAssertion.assertThat(json).matchesJsonPath(it.jsonPath())

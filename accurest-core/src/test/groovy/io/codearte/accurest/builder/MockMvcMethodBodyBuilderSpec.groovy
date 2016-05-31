@@ -166,6 +166,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		then:
 		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
 		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("a").isEqualTo("sth")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").hasSize(2)""")
 		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("b").isEqualTo("sthElse")""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
@@ -1251,6 +1252,7 @@ World.'''"""
 			builder.then(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
+			test.contains('assertThatJson(parsedJson).hasSize(5)')
 			test.contains('assertThatJson(parsedJson).arrayField().contains("Java8").value()')
 			test.contains('assertThatJson(parsedJson).arrayField().contains("Spring").value()')
 			test.contains('assertThatJson(parsedJson).arrayField().contains("Java").value()')
@@ -1284,6 +1286,7 @@ World.'''"""
 			builder.then(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
+			test.contains('assertThatJson(parsedJson).hasSize(2)')
 			test.contains('assertThatJson(parsedJson).array().arrayField().isEqualTo("Programming").value()')
 			test.contains('assertThatJson(parsedJson).array().arrayField().isEqualTo("Java").value()')
 			test.contains('assertThatJson(parsedJson).array().arrayField().isEqualTo("Spring").value()')
@@ -1293,6 +1296,7 @@ World.'''"""
 			"MockMvcSpockMethodBuilder" | { GroovyDsl dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl) }
 			"MockMvcJUnitMethodBuilder" | { GroovyDsl dsl -> new MockMvcJUnitMethodBodyBuilder(dsl) }
 	}
+
   @Issue('47')
 	def "should generate async body when async flag set in response"() {
 		given:
