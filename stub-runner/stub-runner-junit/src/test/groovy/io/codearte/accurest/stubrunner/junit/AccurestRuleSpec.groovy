@@ -20,7 +20,7 @@ class AccurestRuleSpec extends Specification {
 
 	// tag::classrule[]
 	@ClassRule @Shared AccurestRule rule = new AccurestRule()
-			.repoRoot(AccurestRuleSpec.getResource("/m2repo").toURI().toString())
+			.repoRoot(AccurestRuleSpec.getResource("/m2repo/repository").toURI().toString())
 			.downloadStub("io.codearte.accurest.stubs", "loanIssuance")
 			.downloadStub("io.codearte.accurest.stubs:fraudDetectionServer")
 

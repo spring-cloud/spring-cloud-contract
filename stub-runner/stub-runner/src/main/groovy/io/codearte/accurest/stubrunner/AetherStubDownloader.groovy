@@ -37,29 +37,21 @@ class AetherStubDownloader implements StubDownloader {
 	private static final String MAVEN_LOCAL_REPOSITORY_LOCATION = 'maven.repo.local'
 	private static final String ACCUREST_TEMP_DIR_PREFIX = 'accurest'
 	private static final String ARTIFACT_EXTENSION = 'jar'
-	private static final String LATEST_ARTIFACT_VERSION = '(0,]'
+	private static final String LATEST_ARTIFACT_VERSION = '(,]'
 	private static final String LATEST_VERSION_IN_IVY = "+"
 
 	private final List<RemoteRepository> remoteRepos
 	private final RepositorySystem repositorySystem
 	private final RepositorySystemSession session
 
-	AetherStubDownloader(RepositorySystem repositorySystem, List<RemoteRepository> repositories, RepositorySystemSession session) {
-		this.remoteRepos = repositories
-		this.repositorySystem = repositorySystem ?: newRepositorySystem()
-		this.session = session ?: newSession(this.repositorySystem)
-	}
-
 	AetherStubDownloader(StubRunnerOptions stubRunnerOptions) {
 		this.remoteRepos = remoteRepositories(stubRunnerOptions)
+		log.info("Download using remote repositories $remoteRepos")
 		this.repositorySystem = newRepositorySystem()
-		this.session = newSession(this.repositorySystem)
+		this.session = newSession(this.repositorySystem, stubRunnerOptions.workOffline)
 	}
 
 	private List<RemoteRepository> remoteRepositories(StubRunnerOptions stubRunnerOptions) {
-		if (stubRunnerOptions.workOffline || !stubRunnerOptions.stubRepositoryRoot) {
-			return []
-		}
 		return stubRunnerOptions.stubRepositoryRoot.split(',').collect { String repo ->
 			new RemoteRepository.Builder("remote", "default", repo).build()
 		}
@@ -73,35 +65,34 @@ class AetherStubDownloader implements StubDownloader {
 		return locator.getService(RepositorySystem)
 	}
 
-	private RepositorySystemSession newSession(RepositorySystem system) {
-		DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
+	private RepositorySystemSession newSession(RepositorySystem system, boolean workOffline) {
+		DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession()
 		session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_ALWAYS)
-		LocalRepository localRepo = new LocalRepository(System.getProperty(MAVEN_LOCAL_REPOSITORY_LOCATION, "${System.getProperty("user.home")}/.m2/repository"));
-		session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
-		return session;
+		session.setOffline(workOffline)
+		LocalRepository localRepo = new LocalRepository(localRepositoryDirectory())
+		session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo))
+		return session
 	}
 
-	@Override
-	public File downloadAndUnpackStubJar(boolean workOffline, String stubRepositoryRoot, String stubsGroup, String stubsModule, String classifier) {
-		String version = getVersion(stubsGroup, stubsModule, LATEST_VERSION_IN_IVY, classifier)
-		return unpackedJar(version, stubsGroup, stubsModule, classifier, stubRepositoryRoot)
+	private String localRepositoryDirectory() {
+		System.getProperty(MAVEN_LOCAL_REPOSITORY_LOCATION, "${System.getProperty("user.home")}/.m2/repository")
 	}
 
-	private File unpackedJar(String resolvedVersion, String stubsGroup, String stubsModule, String classifier, String stubRepositoryRoot) {
-		log.info("Resolved version is $resolvedVersion")
+	private File unpackedJar(String resolvedVersion, String stubsGroup, String stubsModule, String classifier) {
+		log.info("Resolved version is [$resolvedVersion]")
 		if (!resolvedVersion) {
-			log.warn("Stub for group [$stubsGroup] module [$stubsModule] and classifier [$classifier] not found in [$stubRepositoryRoot]")
+			log.warn("Stub for group [$stubsGroup] module [$stubsModule] and classifier [$classifier] not found in $remoteRepos")
 			return null
 		}
 		Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier, ARTIFACT_EXTENSION, resolvedVersion)
 		ArtifactRequest request = new ArtifactRequest(artifact: artifact, repositories: remoteRepos)
-		log.info("Resolving artifact $artifact from ${remoteRepos ?: 'local maven repo'}")
+		log.info("Resolving artifact $artifact using repository $remoteRepos")
 		try {
 			ArtifactResult result = repositorySystem.resolveArtifact(session, request)
-			log.info("Resolved artifact $artifact to ${result.artifact.file} from ${result.repository}")
+			log.info("Resolved artifact $artifact to ${result.artifact.file}")
 			return unpackStubJarToATemporaryFolder(result.artifact.file.toURI())
 		} catch (Exception e) {
-			log.warn("Exception occured while trying to download a stub for group [$stubsGroup] module [$stubsModule] and classifier [$classifier] in [$stubRepositoryRoot]", e)
+			log.warn("Exception occured while trying to download a stub for group [$stubsGroup] module [$stubsModule] and classifier [$classifier] in $remoteRepos", e)
 			return null
 		}
 
@@ -110,7 +101,7 @@ class AetherStubDownloader implements StubDownloader {
 	private String getVersion(String stubsGroup, String stubsModule, String version, String classifier) {
 		if (!version || LATEST_VERSION_IN_IVY == version) {
 			log.info("Desired version is [$version] - will try to resolve the latest version")
-			return resolveHighestArtifactVersion(stubsGroup, stubsModule, classifier);
+			return resolveHighestArtifactVersion(stubsGroup, stubsModule, classifier)
 		}
 		log.info("Will try to resolve version [$version]")
 		return resolveArtifactVersion(stubsGroup, stubsModule, version, classifier)
@@ -120,7 +111,7 @@ class AetherStubDownloader implements StubDownloader {
 	Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(StubRunnerOptions options, StubConfiguration stubConfiguration) {
 		String version = getVersion(stubConfiguration.groupId, stubConfiguration.artifactId, stubConfiguration.version, stubConfiguration.classifier)
 		File unpackedJar = unpackedJar(version, stubConfiguration.groupId, stubConfiguration.artifactId,
-				stubConfiguration.classifier, options.stubRepositoryRoot)
+				stubConfiguration.classifier)
 		if (!unpackedJar) {
 			return null
 		}
@@ -130,15 +121,18 @@ class AetherStubDownloader implements StubDownloader {
 
 	private String resolveHighestArtifactVersion(String stubsGroup, String stubsModule, String classifier) {
 		Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier, ARTIFACT_EXTENSION, LATEST_ARTIFACT_VERSION)
-		VersionRangeRequest versionRangeRequest = new VersionRangeRequest(artifact, remoteRepos, null);
-		VersionRangeResult rangeResult = repositorySystem.resolveVersionRange(session, versionRangeRequest);
+		VersionRangeRequest versionRangeRequest = new VersionRangeRequest(artifact, remoteRepos, null)
+		VersionRangeResult rangeResult = repositorySystem.resolveVersionRange(session, versionRangeRequest)
+		if (!rangeResult.highestVersion) {
+			log.error("Version was not resolved!")
+		}
 		return rangeResult.highestVersion ?: ''
 	}
 
 	private String resolveArtifactVersion(String stubsGroup, String stubsModule, String version, String classifier) {
 		Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier, ARTIFACT_EXTENSION, version)
 		VersionRequest versionRequest = new VersionRequest(artifact, remoteRepos, null)
-		VersionResult versionResult = repositorySystem.resolveVersion(session, versionRequest);
+		VersionResult versionResult = repositorySystem.resolveVersion(session, versionRequest)
 		return versionResult.version ?: ''
 	}
 
