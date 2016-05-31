@@ -38,22 +38,27 @@ class AetherStubDownloader implements StubDownloader {
 	private static final String ACCUREST_TEMP_DIR_PREFIX = 'accurest'
 	private static final String ARTIFACT_EXTENSION = 'jar'
 	private static final String LATEST_ARTIFACT_VERSION = '(,]'
-	private static final String LATEST_VERSION_IN_IVY = "+"
+	private static final String LATEST_VERSION_IN_IVY = '+'
 
 	private final List<RemoteRepository> remoteRepos
 	private final RepositorySystem repositorySystem
 	private final RepositorySystemSession session
 
 	AetherStubDownloader(StubRunnerOptions stubRunnerOptions) {
-		this.remoteRepos = remoteRepositories(stubRunnerOptions)
-		log.info("Download using remote repositories $remoteRepos")
+		remoteRepos = remoteRepositories(stubRunnerOptions)
+		if (!remoteRepos) {
+			log.error('Remote repositories for stubs are not specified!')
+		}
 		this.repositorySystem = newRepositorySystem()
 		this.session = newSession(this.repositorySystem, stubRunnerOptions.workOffline)
 	}
 
 	private List<RemoteRepository> remoteRepositories(StubRunnerOptions stubRunnerOptions) {
-		return stubRunnerOptions.stubRepositoryRoot.split(',').collect { String repo ->
-			new RemoteRepository.Builder("remote", "default", repo).build()
+		return stubRunnerOptions.stubRepositoryRoot.split(',')
+				.toList().withIndex()
+				.findAll { String repo, int index -> repo }
+				.collect { String repo, int index ->
+			new RemoteRepository.Builder('remote' + index, 'default', repo).build()
 		}
 	}
 
@@ -67,8 +72,11 @@ class AetherStubDownloader implements StubDownloader {
 
 	private RepositorySystemSession newSession(RepositorySystem system, boolean workOffline) {
 		DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession()
-		session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_ALWAYS)
-		session.setOffline(workOffline)
+		if (workOffline) {
+			session.setOffline(workOffline)
+		} else {
+			session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_ALWAYS)
+		}
 		LocalRepository localRepo = new LocalRepository(localRepositoryDirectory())
 		session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo))
 		return session
@@ -86,7 +94,7 @@ class AetherStubDownloader implements StubDownloader {
 		}
 		Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier, ARTIFACT_EXTENSION, resolvedVersion)
 		ArtifactRequest request = new ArtifactRequest(artifact: artifact, repositories: remoteRepos)
-		log.info("Resolving artifact $artifact using repository $remoteRepos")
+		log.info("Resolving artifact '$artifact' using remote repositories $remoteRepos.url")
 		try {
 			ArtifactResult result = repositorySystem.resolveArtifact(session, request)
 			log.info("Resolved artifact $artifact to ${result.artifact.file}")

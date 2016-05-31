@@ -6,7 +6,6 @@ mainClassName = 'io.codearte.accurest.stubrunner.StubRunnerMain'
 dependencies {
 	compile project(':accurest-core')
 	compile project(':accurest-messaging-root:accurest-messaging-core')
-	compile 'org.apache.ivy:ivy:2.4.0'
 	compile 'org.codehaus.groovy:groovy-all:2.4.4'
 	compile "com.github.tomakehurst:wiremock:$wiremockVersion"
 	compile 'javax.servlet:javax.servlet-api:3.1.0'
