@@ -74,7 +74,9 @@ class RunMojo extends AbstractMojo {
             StubRunner stubRunner = localStubRunner.run(resolveStubsDirectory().absolutePath, options)
             batchStubRunner = new BatchStubRunner(Arrays.asList(stubRunner))
         } else {
-            StubRunnerOptions options = optionsBuilder.withMinMaxPort(minPort, maxPort).build()
+            StubRunnerOptions options = optionsBuilder
+                    .withStubs(stubs)
+                    .withMinMaxPort(minPort, maxPort).build()
             batchStubRunner = remoteStubRunner.run(options, repoSession)
         }
 
