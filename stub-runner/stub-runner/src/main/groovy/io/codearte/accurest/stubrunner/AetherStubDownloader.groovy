@@ -2,28 +2,21 @@ package io.codearte.accurest.stubrunner
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.apache.maven.repository.internal.MavenRepositorySystemUtils
-import org.eclipse.aether.DefaultRepositorySystemSession
 import org.eclipse.aether.RepositorySystem
 import org.eclipse.aether.RepositorySystemSession
 import org.eclipse.aether.artifact.Artifact
 import org.eclipse.aether.artifact.DefaultArtifact
-import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory
-import org.eclipse.aether.impl.DefaultServiceLocator
-import org.eclipse.aether.repository.LocalRepository
 import org.eclipse.aether.repository.RemoteRepository
-import org.eclipse.aether.repository.RepositoryPolicy
 import org.eclipse.aether.resolution.ArtifactRequest
 import org.eclipse.aether.resolution.ArtifactResult
 import org.eclipse.aether.resolution.VersionRangeRequest
 import org.eclipse.aether.resolution.VersionRangeResult
 import org.eclipse.aether.resolution.VersionRequest
 import org.eclipse.aether.resolution.VersionResult
-import org.eclipse.aether.spi.connector.RepositoryConnectorFactory
-import org.eclipse.aether.spi.connector.transport.TransporterFactory
-import org.eclipse.aether.transport.file.FileTransporterFactory
-import org.eclipse.aether.transport.http.HttpTransporterFactory
 
+import static io.codearte.accurest.stubrunner.AetherFactories.newRepositories
+import static io.codearte.accurest.stubrunner.AetherFactories.newRepositorySystem
+import static io.codearte.accurest.stubrunner.AetherFactories.newSession
 import static io.codearte.accurest.stubrunner.util.ZipCategory.unzipTo
 import static java.nio.file.Files.createTempDirectory
 
@@ -34,7 +27,6 @@ import static java.nio.file.Files.createTempDirectory
 @Slf4j
 class AetherStubDownloader implements StubDownloader {
 
-	private static final String MAVEN_LOCAL_REPOSITORY_LOCATION = 'maven.repo.local'
 	private static final String ACCUREST_TEMP_DIR_PREFIX = 'accurest'
 	private static final String ARTIFACT_EXTENSION = 'jar'
 	private static final String LATEST_ARTIFACT_VERSION = '(,]'
@@ -45,7 +37,7 @@ class AetherStubDownloader implements StubDownloader {
 	private final RepositorySystemSession session
 
 	AetherStubDownloader(StubRunnerOptions stubRunnerOptions) {
-		remoteRepos = remoteRepositories(stubRunnerOptions)
+		this.remoteRepos = remoteRepositories(stubRunnerOptions)
 		if (!remoteRepos) {
 			log.error('Remote repositories for stubs are not specified!')
 		}
@@ -53,37 +45,27 @@ class AetherStubDownloader implements StubDownloader {
 		this.session = newSession(this.repositorySystem, stubRunnerOptions.workOffline)
 	}
 
+	/**
+	 * Used by Accurest Maven Plugin
+	 *
+	 * @param repositorySystem
+	 * @param remoteRepositories - remote artifact repositories
+	 * @param session
+	 * @param workOffline
+	 */
+	AetherStubDownloader(RepositorySystem repositorySystem,
+	                     List<RemoteRepository> remoteRepositories,
+	                     RepositorySystemSession session) {
+		this.remoteRepos = remoteRepositories
+		this.repositorySystem = repositorySystem
+		this.session = session
+		if (!remoteRepos) {
+			log.error('Remote remoteRepositories for stubs are not specified!')
+		}
+	}
+
 	private List<RemoteRepository> remoteRepositories(StubRunnerOptions stubRunnerOptions) {
-		return stubRunnerOptions.stubRepositoryRoot.split(',')
-				.toList().withIndex()
-				.findAll { String repo, int index -> repo }
-				.collect { String repo, int index ->
-			new RemoteRepository.Builder('remote' + index, 'default', repo).build()
-		}
-	}
-
-	private RepositorySystem newRepositorySystem() {
-		DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator()
-		locator.addService(RepositoryConnectorFactory, BasicRepositoryConnectorFactory)
-		locator.addService(TransporterFactory, FileTransporterFactory)
-		locator.addService(TransporterFactory, HttpTransporterFactory)
-		return locator.getService(RepositorySystem)
-	}
-
-	private RepositorySystemSession newSession(RepositorySystem system, boolean workOffline) {
-		DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession()
-		if (workOffline) {
-			session.setOffline(workOffline)
-		} else {
-			session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_ALWAYS)
-		}
-		LocalRepository localRepo = new LocalRepository(localRepositoryDirectory())
-		session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo))
-		return session
-	}
-
-	private String localRepositoryDirectory() {
-		System.getProperty(MAVEN_LOCAL_REPOSITORY_LOCATION, "${System.getProperty("user.home")}/.m2/repository")
+		return newRepositories(stubRunnerOptions.stubRepositoryRoot.split(',').toList())
 	}
 
 	private File unpackedJar(String resolvedVersion, String stubsGroup, String stubsModule, String classifier) {
