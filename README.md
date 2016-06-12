@@ -1,6 +1,6 @@
 # Spring Cloud Contract
 
-What you always need it confidence in pushing new features into a new application or service in a distributed system. This project provides support for Consumer Driven Contracts in Spring applications, covering a range of options for writing tests, publishing them as assets, asserting that a contract is kept by producers and consumers, for HTTP and message-based interactions.
+What you always need it confidence in pushing new features into a new application or service in a distributed system. This project provides support for Consumer Driven Contracts and service schemas in Spring applications, covering a range of options for writing tests, publishing them as assets, asserting that a contract is kept by producers and consumers, for HTTP and message-based interactions.
 
 Feature ideas:
 
@@ -13,3 +13,4 @@ Feature ideas:
 - [ ] `DiscoveryClient` support so backends can be stubbed or mocked transparently (declaratively)
 - [ ] Actuator endpoints that verify the state of contracts supported by the host service
 - [ ] Something to make PACT easier to use in Spring Boot apps?
+- [ ] Schema registries for binary formats like protobuf, thrift, avro
