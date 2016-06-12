@@ -1,6 +1,6 @@
 # Spring Cloud Contract
 
-What you always need it confidence in pushing mew features into a new application or service in a distributed system. This project provides support for Consumer Driven Contracts in Spring applications, covering a range of options for writing tests, publishing them as assets, asserting that a contract is kept by producers and consumers, for HTTP and message-based interactions.
+What you always need it confidence in pushing new features into a new application or service in a distributed system. This project provides support for Consumer Driven Contracts in Spring applications, covering a range of options for writing tests, publishing them as assets, asserting that a contract is kept by producers and consumers, for HTTP and message-based interactions.
 
 Feature ideas:
 
