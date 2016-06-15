@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.3.3.RELEASE</version>
+        <version>1.3.5.RELEASE</version>
     </parent>
 
     <dependencies>
@@ -46,7 +46,7 @@
         <dependency>
             <groupId>com.toomuchcoding.jsonassert</groupId>
             <artifactId>jsonassert</artifactId>
-            <version>0.4.6</version>
+            <version>0.4.7</version>
             <scope>test</scope>
         </dependency>
         <!-- end::dependencies[] -->

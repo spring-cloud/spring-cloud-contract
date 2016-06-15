@@ -36,7 +36,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <accurest.version>1.1.0-M8</accurest.version>
+        <accurest.version>1.1.0</accurest.version>
         <aether.version>1.1.0</aether.version>
 
         <maven.compiler.source>1.7</maven.compiler.source>
