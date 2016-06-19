@@ -3,14 +3,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.codearte.accurest</groupId>
-    <artifactId>accurest-maven-plugin</artifactId>
+    <groupId>org.springframework.cloud.contract</groupId>
+    <artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>0.6.11-SNAPSHOT</version>
+    <version>1.0.0.BUILD-SNAPSHOT</version>
 
-    <name>Accurest Maven Plugin</name>
-    <description>Accurest Maven Plugin</description>
+    <name>Spring Cloud Contract Verifier Maven Plugin</name>
+    <description>Spring Cloud Contract Verifier Maven Plugin</description>
     <url>https://github.com/Codearte/accurest-maven-plugin</url>
+
+    <inceptionYear>2016</inceptionYear>
 
     <prerequisites>
         <maven>[3.2.1,)</maven>
@@ -27,6 +29,11 @@
             <name>Mariusz Smykula</name>
             <email>mariuszs@gmail.com</email>
         </developer>
+        <developer>
+            <id>marcingrzejszczak</id>
+            <name>Marcin Grzejszczak</name>
+            <email>marcin@grzejszczak.pl</email>
+        </developer>
     </developers>
 
     <properties>
@@ -36,7 +43,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <accurest.version>1.1.0</accurest.version>
+        <spring.cloud.contract.verifier.version>1.0.0.BUILD-SNAPSHOT</spring.cloud.contract.verifier.version>
         <aether.version>1.1.0</aether.version>
 
         <maven.compiler.source>1.7</maven.compiler.source>
@@ -60,16 +67,16 @@
     </scm>
 
     <distributionManagement>
-        <snapshotRepository>
-            <id>oss</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
         <repository>
-            <id>oss</id>
-            <name>Nexus Release Repository</name>
-            <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>repo.spring.io</id>
+            <name>Spring Release Repository</name>
+            <url>https://repo.spring.io/plugins-release-local</url>
         </repository>
+        <snapshotRepository>
+            <id>repo.spring.io</id>
+            <name>Spring Snapshot Repository</name>
+            <url>https://repo.spring.io/plugins-snapshot-local</url>
+        </snapshotRepository>
         <site>
             <id>github</id>
             <url>scm:git:ssh://git@github.com:Codearte/accurest-maven-plugin.git</url>
@@ -161,6 +168,35 @@
                         <goals>
                             <goal>integration-test</goal>
                             <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>3.0.rc1</version>
+                <configuration>
+                    <header>src/etc/header.txt</header>
+                    <includes>
+                        <include>src/**</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/.idea/**</exclude>
+                        <exclude>**/*.adoc</exclude>
+                    </excludes>
+                    <useDefaultExcludes>true</useDefaultExcludes>
+                    <useDefaultMapping>true</useDefaultMapping>
+                    <properties>
+                        <year>${project.inceptionYear}</year>
+                        <company>Codearte</company> <!--FIXME: Change -->
+                    </properties>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -270,19 +306,19 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.codearte.accurest</groupId>
-            <artifactId>accurest-core</artifactId>
-            <version>${accurest.version}</version>
+            <groupId>org.springframework.cloud.contract</groupId>
+            <artifactId>spring-cloud-contract-verifier-core</artifactId>
+            <version>${spring.cloud.contract.verifier.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.codearte.accurest</groupId>
-            <artifactId>accurest-converters</artifactId>
-            <version>${accurest.version}</version>
+            <groupId>org.springframework.cloud.contract</groupId>
+            <artifactId>spring-cloud-contract-verifier-converters</artifactId>
+            <version>${spring.cloud.contract.verifier.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.codearte.accurest</groupId>
-            <artifactId>stub-runner</artifactId>
-            <version>${accurest.version}</version>
+            <groupId>org.springframework.cloud.contract</groupId>
+            <artifactId>spring-cloud-contract-stub-runner</artifactId>
+            <version>${spring.cloud.contract.verifier.version}</version>
         </dependency>
 
         <dependency>
@@ -593,6 +629,72 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>spring</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <repositories>
+                <repository>
+                    <id>spring-snapshots</id>
+                    <name>Spring Snapshots</name>
+                    <url>http://repo.spring.io/libs-snapshot-local</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+                <repository>
+                    <id>spring-milestones</id>
+                    <name>Spring Milestones</name>
+                    <url>http://repo.spring.io/libs-milestone-local</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+                <repository>
+                    <id>spring-releases</id>
+                    <name>Spring Releases</name>
+                    <url>http://repo.spring.io/release</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>spring-snapshots</id>
+                    <name>Spring Snapshots</name>
+                    <url>http://repo.spring.io/libs-snapshot-local</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </pluginRepository>
+                <pluginRepository>
+                    <id>spring-milestones</id>
+                    <name>Spring Milestones</name>
+                    <url>http://repo.spring.io/libs-milestone-local</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </pluginRepository>
+                <pluginRepository>
+                    <id>spring-plugin-snapshots</id>
+                    <name>Spring Snapshots</name>
+                    <url>http://repo.spring.io/plugins-snapshot-local</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </pluginRepository>
+                <pluginRepository>
+                    <id>spring-plugin-milestones</id>
+                    <name>Spring Milestones</name>
+                    <url>http://repo.spring.io/plugins-milestone-local</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
         </profile>
     </profiles>
 </project>

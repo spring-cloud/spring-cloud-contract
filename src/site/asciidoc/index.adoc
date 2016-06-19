@@ -1,10 +1,10 @@
-= Accurest Maven Plugin
+= Spring Cloud Contract Verifier Maven Plugin
 
-Just to make long story short - Accurest is a tool that enables Consumer Driven Contract (CDC) development of JVM-based applications.
+Just to make long story short - Spring Cloud Contract Verifier is a tool that enables Consumer Driven Contract (CDC) development of JVM-based applications.
 
  * Stubs mappings to be used by WireMock when doing integration testing on the client code (client tests).
 
  * Acceptance tests used to verify if server-side implementation of the API is compliant with the contract (server tests).
 
-Accurest moves TDD to the level of software architecture.
+Spring Cloud Contract Verifier moves TDD to the level of software architecture.
 
