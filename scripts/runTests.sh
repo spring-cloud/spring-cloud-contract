@@ -13,9 +13,6 @@ echo "Cloning samples"
 git clone https://github.com/Codearte/accurest-samples
 cd accurest-samples
 
-echo "Using the rebranding branch"
-git checkout rebranding
-
 echo "Running Gradle tests"
 . ./runTests.sh
 
