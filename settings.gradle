@@ -1,29 +1,37 @@
-include 'docs'
-include "accurest-core", "accurest-gradle-plugin", 'accurest-converters', 'accurest-testing-utils'
+String verifier = "spring-cloud-contract-verifier"
+String stubRunner = "spring-cloud-contract-stub-runner"
 
-include ':accurest-messaging:accurest-messaging-core'
-include ':accurest-messaging:accurest-messaging-integration'
-include ':accurest-messaging:accurest-messaging-stream'
-include ':accurest-messaging:accurest-messaging-camel'
+rootProject.name = "$verifier-parent"
 
-include ':stub-runner:stub-runner'
-include ':stub-runner:stub-runner-spring'
-include ':stub-runner:stub-runner-boot'
-include ':stub-runner:stub-runner-spring-cloud'
-include ':stub-runner:stub-runner-junit'
+include "docs"
 
-include ':stub-runner:stub-runner-messaging:stub-runner-messaging-integration'
-include ':stub-runner:stub-runner-messaging:stub-runner-messaging-stream'
-include ':stub-runner:stub-runner-messaging:stub-runner-messaging-camel'
+include ":$verifier:$verifier-core",
+		":$verifier:$verifier-gradle-plugin",
+		":$verifier:$verifier-converters",
+		":$verifier:$verifier-testing-utils"
 
-include ':samples:messaging-stream'
-include ':samples:messaging-integration'
-include ':samples:messaging-camel'
-include ':samples:messaging-spring'
+include ":$verifier:$verifier-messaging:$verifier-messaging-core",
+		":$verifier:$verifier-messaging:$verifier-integration",
+		":$verifier:$verifier-messaging:$verifier-stream",
+		":$verifier:$verifier-messaging:$verifier-camel"
 
-rootProject.name = "accurest"
+include ":$stubRunner:$stubRunner",
+		":$stubRunner:$stubRunner-spring",
+		":$stubRunner:$stubRunner-boot",
+		":$stubRunner:$stubRunner-spring-cloud",
+		":$stubRunner:$stubRunner-junit"
+
+include ":$stubRunner:$stubRunner-messaging:$stubRunner-integration",
+		":$stubRunner:$stubRunner-messaging:$stubRunner-stream",
+		":$stubRunner:$stubRunner-messaging:$stubRunner-camel"
+
+include ":samples:samples-messaging-stream",
+		":samples:samples-messaging-integration",
+		":samples:samples-messaging-camel",
+		":samples:samples-messaging-spring"
 
 //to prevent StackOverflow in Sonar
-project(":stub-runner").name = "stub-runner-root"
-project(":accurest-messaging").name = "accurest-messaging-root"
-project(":stub-runner:stub-runner-messaging").name = "stub-runner-messaging-root"
+project(":$verifier").name = "$verifier-root"
+project(":$stubRunner").name = "$stubRunner-root"
+project(":$verifier:$verifier-messaging").name = "$verifier-messaging-root"
+project(":$stubRunner:$stubRunner-messaging").name = "$stubRunner-messaging-root"

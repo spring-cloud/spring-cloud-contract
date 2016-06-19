@@ -1,0 +1,113 @@
+buildscript {
+	repositories {
+		mavenLocal()
+		mavenCentral()
+	}
+}
+
+apply plugin: 'groovy'
+apply plugin: 'contract-verifier'
+apply plugin: 'maven-publish'
+
+group = 'org.springframework.cloud.testprojects'
+
+ext {
+	contractsDir = file("repository/mappings")
+	stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
+	wireMockStubsOutputDir = new File(stubsOutputDirRoot, 'repository/mappings/')
+	contractsOutputDir = new File(stubsOutputDirRoot, 'repository/contracts/')
+	targetFramework = 'Spock'
+}
+
+configurations {
+	all {
+		resolutionStrategy {
+			eachDependency { DependencyResolveDetails details ->
+				// To prevent an accidental usage of groovy-all.jar and groovy.jar in different versions
+				// all modularized Groovy jars are replaced with groovy-all.jar by default.
+				if (details.requested.group == 'org.codehaus.groovy' && details.requested.name != "groovy-all") {
+					details.useTarget("org.codehaus.groovy:groovy-all:${details.requested.version}")
+				}
+			}
+		}
+	}
+}
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+	maven {
+		url "http://repo.spring.io/snapshot"
+	}
+	maven {
+		url "http://repo.spring.io/milestone"
+	}
+}
+
+dependencies {
+	compile "org.codehaus.groovy:groovy-all:2.4.5"
+	compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
+	compile "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
+	compile "org.springframework.boot:spring-boot-starter-integration:${springBootVersion}"
+
+	compile fileTree(dir: messagingLibsDir, include: '*.jar')
+
+	testCompile "org.spockframework:spock-spring:1.0-groovy-2.4"
+	testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+	testCompile "ch.qos.logback:logback-classic:1.1.2"
+	testCompile 'com.jayway.restassured:spring-mock-mvc:2.9.0' // needed if you're going to use Spring MockMvc
+}
+
+contractVerifier {
+	//baseClassForTests = 'org.springframework.cloud.samples.book.MessagingBaseTest'
+	baseClassForTests = 'org.springframework.cloud.samples.book.MessagingBaseSpec'
+	basePackageForTests = 'contracts'
+	//targetFramework = 'JUnit'
+	targetFramework = 'Spock'
+	contractsDslDir = contractsDir
+//	generatedTestSourcesDir = file("${project.rootDir}/src/test/groovy/")
+	stubsOutputDir = wireMockStubsOutputDir
+}
+
+//TODO: Put it into the plugin
+task createWireMockStubsOutputDir << {
+	wireMockStubsOutputDir.mkdirs()
+}
+
+generateWireMockClientStubs.dependsOn { createWireMockStubsOutputDir }
+generateContractTests.dependsOn generateWireMockClientStubs
+
+wrapper {
+	gradleVersion '2.12'
+}
+
+task copyContracts(type: Copy) {
+	from contractsDir
+	include '**/*.groovy'
+	into contractsOutputDir
+}
+
+task stubsJar(type: Jar, dependsOn: ["generateWireMockClientStubs", copyContracts]) {
+	baseName = "${project.name}"
+	classifier = "stubs"
+	from stubsOutputDirRoot
+}
+
+artifacts {
+	archives stubsJar
+}
+
+publishing {
+	publications {
+		stubs(MavenPublication) {
+			artifactId "${project.name}-stubs"
+			artifact stubsJar
+		}
+	}
+}
+
+test {
+	testLogging {
+		exceptionFormat = 'full'
+	}
+}

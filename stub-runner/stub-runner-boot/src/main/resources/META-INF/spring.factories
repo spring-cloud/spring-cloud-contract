@@ -1,3 +1,0 @@
-# Auto Configuration
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-io.codearte.accurest.stubrunner.spring.StubRunnerConfiguration

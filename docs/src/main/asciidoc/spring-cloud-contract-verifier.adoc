@@ -1,0 +1,20 @@
+:core_path: ../../../..
+:verifier_root_path: {core_path}/spring-cloud-contract-verifier
+:verifier_core_path: {verifier_root_path}/spring-cloud-contract-verifier-core
+:stubrunner_core_path: {core_path}/spring-cloud-contract-stub-runner
+
+= Spring Cloud Contract Verifier
+
+_Adam Dudczak, Marcin Grzejszczak, Jakub Kubryński, Karol Lassak, Olga Maciaszek-Sharma, Mariusz Smykuła_
+
+include::introduction.adoc[]
+
+include::contract.adoc[]
+
+include::rest.adoc[]
+
+include::messaging.adoc[]
+
+include::stubrunner.adoc[]
+
+include::stubrunner_msg.adoc[]

@@ -2,47 +2,31 @@ buildscript {
 	repositories {
 		mavenCentral()
 		mavenLocal()
+		maven { url 'https://repo.spring.io/plugins-release' }
 		if (project.hasProperty('fatJar')) jcenter()
 	}
 	dependencies {
-		classpath "pl.allegro.tech.build:axion-release-plugin:1.3.2"
 		classpath "com.bmuschko:gradle-nexus-plugin:2.3"
 		classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3"
 		if (project.hasProperty('fatJar')) classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
 	}
 }
 
-apply plugin: "pl.allegro.tech.build.axion-release"
-
-scmVersion {
-	tag { prefix = "accurest" }
-	createReleaseCommit = true
-	releaseCommitMessage { version, position -> "Release version: ${version}\n\n[ci skip]" }
-	hooks {
-		pre "fileUpdate", [file       : "README.md",
-		                   pattern    : { v, p -> /'io\.codearte\.accurest:accurest-gradle-plugin:.*'/ },
-		                   replacement: { v, p -> "'io.codearte.accurest:accurest-gradle-plugin:$v'" }]
-	}
+ext {
+	repoUser = project.findProperty('REPO_USERNAME') ?: ''
+	repoPass = project.findProperty('REPO_PASSWORD') ?: ''
+	projectsToSkipPublication = ['parent', 'samples', 'docs', 'root']
 }
 
 allprojects {
-	project.version = scmVersion.version
+	project.version = findProperty('contractVerifierVersion') ?: '1.0.0.BUILD-SNAPSHOT'
+	apply from: "$rootDir/gradle/release.gradle"
 }
-
-apply plugin: 'io.codearte.nexus-staging'
-
-nexusStaging {
-	packageGroup = "io.codearte"
-	stagingProfileId = '93c08fdebde1ff'
-}
-
-apply from: "$rootDir/gradle/releaseRoot.gradle"
 
 subprojects {
 	apply plugin: 'groovy'
-	apply from: "$rootDir/gradle/release.gradle"
 
-	group = 'io.codearte.accurest'
+	group = 'org.springframework.cloud.contract'
 
 	sourceCompatibility = 1.7
 	targetCompatibility = 1.7
@@ -51,9 +35,10 @@ subprojects {
 		mavenLocal()
 		mavenCentral()
 		jcenter()
-		maven {
-			url "http://repo.spring.io/milestone"
-		}
+		maven { url "http://repo.spring.io/snapshot" }
+		maven { url "http://repo.spring.io/milestone" }
+		maven { url "http://repo.spring.io/libs-release-local" }
+		maven { url "http://repo.spring.io/libs-staging-local/" }
 	}
 
 	//Dependencies in all subprojects - http://solidsoft.wordpress.com/2014/11/13/gradle-tricks-display-dependencies-for-all-subprojects-in-multi-project-build/
@@ -87,106 +72,6 @@ subprojects {
 	}
 }
 
-project(':accurest-core') {
-
-	dependencies {
-		compile 'org.slf4j:slf4j-api:1.6.0'
-		compile 'commons-io:commons-io:2.0'
-		compile 'org.apache.commons:commons-lang3:3.3'
-		compile "com.github.tomakehurst:wiremock:$wiremockVersion"
-		compile "com.toomuchcoding.jsonassert:jsonassert:$jsonassertVersion"
-		compile 'org.codehaus.groovy:groovy-all:2.4.4'
-		testCompile 'cglib:cglib-nodep:2.2'
-		testCompile 'org.objenesis:objenesis:2.1'
-		testCompile project(':accurest-testing-utils')
-	}
-
-}
-
-project(':accurest-testing-utils') {
-
-	dependencies {
-		compile 'org.skyscreamer:jsonassert:1.2.3'
-	}
-
-}
-
-project(':accurest-converters') {
-	dependencies {
-		compile project(':accurest-core')
-		compile 'org.apache.commons:commons-lang3:3.0'
-		compile 'commons-io:commons-io:2.0'
-		compile 'dk.brics.automaton:automaton:1.11-8' // needed for Xeger
-		testCompile "com.github.tomakehurst:wiremock:$wiremockVersion"
-		testCompile 'org.hamcrest:hamcrest-all:1.3'
-	}
-}
-
-project(':accurest-gradle-plugin') {
-
-	ext.messagingLibsDir ="$buildDir/messaging-libs"
-	ext.accurestGradlePluginLibsDir ="$buildDir/accurest-gradle-plugin-libs"
-
-	ext.testSystemProperties = [
-			'accurest-gradle-plugin-libs-dir': accurestGradlePluginLibsDir,
-			'messaging-libs-dir': messagingLibsDir
-	]
-
-	dependencies {
-		compile project(':accurest-core')
-		compile project(':accurest-converters')
-		compile gradleApi()
-
-		testCompile gradleTestKit()
-		testCompile project(':accurest-testing-utils')
-	}
-
-	configurations {
-		messagingLibs
-		accurestGradlePluginLibs
-	}
-
-	dependencies {
-		messagingLibs project(':accurest-messaging-root:accurest-messaging-integration')
-		messagingLibs project(':accurest-messaging-root:accurest-messaging-core')
-		messagingLibs project(':accurest-testing-utils')
-		messagingLibs 'org.codehaus.groovy:groovy-all:2.4.5'
-
-		accurestGradlePluginLibs project(':accurest-gradle-plugin')
-	}
-
-	test {
-		exclude '**/*FunctionalSpec.*'
-		systemProperties = testSystemProperties
-	}
-	task funcTest(type: Test) {
-		include '**/*FunctionalSpec.*'
-		systemProperties = testSystemProperties
-		reports.html {
-			destination = file("${reporting.baseDir}/funcTests")
-		}
-	}
-
-	task archiveMessagingLibsDependencies(type: Sync) {
-		from configurations.messagingLibs.resolvedConfiguration.resolvedArtifacts.collect { it.file }
-		into messagingLibsDir
-	}
-
-	task archiveAccurestGradlePluginLibsDependencies(type: Sync) {
-		from configurations.accurestGradlePluginLibs.resolvedConfiguration.resolvedArtifacts.collect { it.file }
-		into accurestGradlePluginLibsDir
-	}
-
-	// archive task needs to have jars ready
-	archiveMessagingLibsDependencies.dependsOn project(':accurest-messaging-root:accurest-messaging-integration').tasks.jar
-	archiveAccurestGradlePluginLibsDependencies.dependsOn project(':accurest-gradle-plugin').tasks.jar
-
-	test.dependsOn archiveMessagingLibsDependencies, archiveAccurestGradlePluginLibsDependencies
-	funcTest.dependsOn archiveMessagingLibsDependencies, archiveAccurestGradlePluginLibsDependencies
-
-	uploadArchives.dependsOn { funcTest }
-}
-
 configurations {
 	all {
 		resolutionStrategy {
@@ -200,18 +85,4 @@ configurations {
 		}
 	}
 }
-
-// REMOVE AFTER https://issues.gradle.org/browse/GRADLE-3433 IS FIXED
-buildscript {
-	repositories {
-		maven {
-			url "https://plugins.gradle.org/m2/"
-		}
-	}
-	dependencies {
-		classpath "gradle.plugin.com.palantir.ideatestfix:gradle-idea-test-fix:0.1.0"
-	}
-}
-
-apply plugin: "com.palantir.idea-test-fix"
 

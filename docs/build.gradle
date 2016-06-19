@@ -1,14 +1,53 @@
+/*
+ *  Copyright 2013-2016 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 plugins {
 	id 'org.ajoberstar.github-pages' version '1.1.0'
 	id 'org.asciidoctor.gradle.asciidoctor' version '1.5.1'
 	id 'org.asciidoctor.convert' version '1.5.3'
+	id 'com.github.jruby-gradle.base' version '1.2.1'
+}
+
+
+apply plugin: 'org.asciidoctor.gradle.asciidoctor'
+apply plugin: 'com.github.jruby-gradle.base'
+
+dependencies {
+	gems group: 'rubygems', name: 'asciidoctor', version: '1.5.3'
 }
 
 asciidoctorj {
 	version = '1.5.4'
 }
 
+task generateReadme(type: com.github.jrubygradle.JRubyExec) {
+	dependsOn jrubyPrepare
+
+	description "Generates an output README.adoc"
+	script "${projectDir}/src/main/ruby/generate_readme.sh"
+	scriptArgs "-o${new File(project.rootDir, 'README.adoc')}"
+	gemWorkDir jrubyPrepare.outputDir
+}
+
 asciidoctor {
+	dependsOn jrubyPrepare
+
+	sourceDir 'src/main/asciidoc'
+	setSourceDocumentName file('spring-cloud-contract-verifier.adoc')
+	backends 'html'
 	attributes 'build-gradle': file('build.gradle'),
 			'endpoint-url': 'https://Codearte.github.io/accurest',
 			'source-highlighter': 'coderay',
@@ -18,9 +57,13 @@ asciidoctor {
 			'setanchors': 'true',
 			'idprefix': '',
 			'idseparator': '-',
-			'docinfo1': 'true'
+			'docinfo1': 'true',
+			'doctype' : 'article'
+
+	gemPath = jrubyPrepare.outputDir
 }
 
+generateReadme.dependsOn asciidoctor
 publishGhPages.dependsOn asciidoctor
 
 githubPages {
