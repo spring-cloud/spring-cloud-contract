@@ -45,6 +45,13 @@ task generateReadme(type: com.github.jrubygradle.JRubyExec) {
 asciidoctor {
 	dependsOn jrubyPrepare
 
+	resources {
+		from("src/main/asciidoc/deprecated") {
+			include '*/**'
+		}
+		into './deprecated'
+	}
+
 	sourceDir 'src/main/asciidoc'
 	backends 'html'
 	attributes 'build-gradle': file('build.gradle'),
@@ -73,6 +80,8 @@ githubPages {
 	}
 
 	pages {
-		from 'build/asciidoc/html'
+		from('build/asciidoc/html') {
+			include '**/'
+		}
 	}
 }
