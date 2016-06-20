@@ -13,7 +13,7 @@ To use it you have to add the following dependency to your project (example for 
 
 [source,groovy,indent=0]
 ----
-testCompile "org.springframework.cloud.contract:stub-runner-messaging-integration:${verifierVersion}"
+testCompile "org.springframework.cloud.contract:stub-runner-integration:${verifierVersion}"
 ----
 
 ==== Examples
