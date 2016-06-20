@@ -13,6 +13,7 @@
 	<packaging>pom</packaging>
 	<name>Spring Cloud Contract Verifier Docs</name>
 	<description>Spring Contract Verifier Docs</description>
+	<version>1.0.0.BUILD-SNAPSHOT</version>
 	<properties>
 		<docs.main>spring-cloud-contract-verifier-maven-plugin</docs.main>
 		<main.basedir>${basedir}/..</main.basedir>
@@ -42,4 +43,15 @@
 			</build>
 		</profile>
 	</profiles>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
