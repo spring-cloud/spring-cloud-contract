@@ -2,6 +2,9 @@
 
 set -o errexit
 
+ROOT_FOLDER=`pwd`
+echo "Current folder is $ROOT_FOLDER"
+
 mkdir -p build
 CONTRACT_VERIFIER_VERSION=1.0.0.BUILD-SNAPSHOT
 export CONTRACT_VERIFIER_VERSION=${CONTRACT_VERIFIER_VERSION}
@@ -18,3 +21,5 @@ echo "Running Gradle tests"
 
 echo "Running Maven tests"
 . ./runMavenTests.sh
+
+cd $ROOT_FOLDER
