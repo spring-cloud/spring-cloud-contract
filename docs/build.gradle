@@ -43,17 +43,20 @@ task generateReadme(type: com.github.jrubygradle.JRubyExec) {
 }
 
 asciidoctor {
+	String backend = 'html'
 	dependsOn jrubyPrepare
 
 	resources {
-		from("src/main/asciidoc/deprecated") {
-			include '*/**'
+		from("src/main/asciidoc/") {
+			include '**/*.png'
+			include '**/*.jpg'
+			include '**/*.html'
 		}
-		into './deprecated'
+		into './'
 	}
 
 	sourceDir 'src/main/asciidoc'
-	backends 'html'
+	backends backend
 	attributes 'build-gradle': file('build.gradle'),
 			'endpoint-url': 'https://Codearte.github.io/accurest',
 			'source-highlighter': 'coderay',
