@@ -27,7 +27,7 @@ Spring Cloud Contract Verifier moves TDD to the level of software architecture.
 
 Let us assume that we have a system comprising of multiple microservices:
 
-image::Deps.png[Microservices Architecture]
+image::docs/src/main/asciidoc/images/Deps.png[Microservices Architecture]
 
 ==== Testing issues
 
