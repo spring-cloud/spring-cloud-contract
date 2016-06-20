@@ -38,7 +38,9 @@ afterEvaluate {
 		repositories {
 			mavenDeployer {
 				// POM signature
-				beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+				if (isReleaseVersion) {
+					beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+				}
 				// Target repository
 				repository(url: repoUrl) {
 					authentication(userName: repoUser, password: repoPass)
