@@ -1,7 +1,7 @@
 :input_name: jms:input
 :output_name: jms:output
 
-=== Stub Runner Messaging Camel
+=== Stub Runner Camel
 
 Spring Cloud Contract Verifier Stub Runner's messaging module gives you an easy way to integrate with Apache Camel.
 For the provided artifacts it will automatically download the stubs and register the required

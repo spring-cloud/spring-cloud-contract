@@ -1,4 +1,4 @@
-=== Stub Runner Messaging Stream
+=== Stub Runner Stream
 
 Spring Cloud Contract Verifier Stub Runner's messaging module gives you an easy way to integrate with Spring Stream.
 For the provided artifacts it will automatically download the stubs and register the required

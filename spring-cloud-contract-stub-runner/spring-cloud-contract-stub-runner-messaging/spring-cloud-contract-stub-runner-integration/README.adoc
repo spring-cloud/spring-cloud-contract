@@ -1,7 +1,7 @@
 :input_name: input
 :output_name: output
 
-=== Stub Runner Messaging Integration
+=== Stub Runner Integration
 
 Spring Cloud Contract Verifier Stub Runner's messaging module gives you an easy way to integrate with Spring Integration.
 For the provided artifacts it will automatically download the stubs and register the required
