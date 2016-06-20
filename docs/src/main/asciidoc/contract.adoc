@@ -4,6 +4,9 @@
 
 == Contract DSL
 
+IMPORTANT: Remember that inside the contract file you have to provide the fully qualified name to
+the `Contract` class and the `make` static import i.e. `org.springframework.cloud.contract.verifier.dsl.Contract.make { ... }`
+
 Contract DSL is written in Groovy, but don't be alarmed if you didn't use Groovy before. Knowledge of the language is not really needed as our DSL uses only
 a tiny subset of it (namely literals, method calls and closures). What's more the DSL is designed to be programmer-readable without any knowledge of the DSL itself -
  it's statically typed.
@@ -136,7 +139,7 @@ include::{verifier_root_path}/spring-cloud-contract-verifier-converters/src/test
 It is also possible to define a method call to be executed on the server side during the test. Such a method can be added to the class defined as "baseClassForTests"
 in the configuration. Please see the examples below:
 
-==== Groovy DSL
+==== Contract DSL
 
 [source,groovy,indent=0]
 ----

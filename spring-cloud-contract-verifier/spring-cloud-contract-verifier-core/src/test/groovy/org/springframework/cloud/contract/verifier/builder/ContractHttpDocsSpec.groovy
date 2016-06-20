@@ -16,8 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
-import org.springframework.cloud.contract.verifier.dsl.Contract
 import spock.lang.Specification
+
 /**
  * Tests used for the documentation
  *
@@ -25,9 +25,9 @@ import spock.lang.Specification
  */
 class ContractHttpDocsSpec extends Specification {
 
-	Contract httpDsl  =
+	org.springframework.cloud.contract.verifier.dsl.Contract httpDsl  =
 		// tag::http_dsl[]
-		Contract.make {
+		org.springframework.cloud.contract.verifier.dsl.Contract.make {
 			// Definition of HTTP request part of the contract
 			// (this can be a valid request or invalid depending
 			// on type of contract being specified).
@@ -49,9 +49,9 @@ class ContractHttpDocsSpec extends Specification {
 		}
 	// end::http_dsl[]
 
-	Contract request  =
+	org.springframework.cloud.contract.verifier.dsl.Contract request  =
 		// tag::request[]
-		Contract.make {
+		org.springframework.cloud.contract.verifier.dsl.Contract.make {
 			request {
 				// HTTP request method (GET/POST/PUT/DELETE).
 				method 'GET'
@@ -66,9 +66,9 @@ class ContractHttpDocsSpec extends Specification {
 		}
 		// end::request[]
 
-	Contract url  =
+	org.springframework.cloud.contract.verifier.dsl.Contract url  =
 		// tag::url[]
-		Contract.make {
+		org.springframework.cloud.contract.verifier.dsl.Contract.make {
 			request {
 				method 'GET'
 
@@ -82,9 +82,9 @@ class ContractHttpDocsSpec extends Specification {
 		}
 		// end::url[]
 
-	Contract urlPaths  =
+	org.springframework.cloud.contract.verifier.dsl.Contract urlPaths  =
 		// tag::urlpath[]
-		Contract.make {
+		org.springframework.cloud.contract.verifier.dsl.Contract.make {
 			request {
 				//...
 
@@ -127,9 +127,9 @@ class ContractHttpDocsSpec extends Specification {
 		}
 		// end::urlpath[]
 
-	Contract headers  =
+	org.springframework.cloud.contract.verifier.dsl.Contract headers  =
 		// tag::headers[]
-		Contract.make {
+		org.springframework.cloud.contract.verifier.dsl.Contract.make {
 			request {
 				//...
 
@@ -147,9 +147,9 @@ class ContractHttpDocsSpec extends Specification {
 		}
 		// end::headers[]
 
-	Contract body  =
+	org.springframework.cloud.contract.verifier.dsl.Contract body  =
 		// tag::body[]
-		Contract.make {
+		org.springframework.cloud.contract.verifier.dsl.Contract.make {
 			request {
 				//...
 
@@ -164,9 +164,9 @@ class ContractHttpDocsSpec extends Specification {
 		}
 		// end::body[]
 
-	Contract bodyAsXml  =
+	org.springframework.cloud.contract.verifier.dsl.Contract bodyAsXml  =
 		// tag::bodyAsXml[]
-		Contract.make {
+		org.springframework.cloud.contract.verifier.dsl.Contract.make {
 			request {
 				//...
 
@@ -182,9 +182,9 @@ class ContractHttpDocsSpec extends Specification {
 		}
 		// end::bodyAsXml[]
 
-	Contract response  =
+	org.springframework.cloud.contract.verifier.dsl.Contract response  =
 		// tag::response[]
-		Contract.make {
+		org.springframework.cloud.contract.verifier.dsl.Contract.make {
 			request {
 				//...
 			}
@@ -196,9 +196,9 @@ class ContractHttpDocsSpec extends Specification {
 		}
 		// end::response[]
 
-	Contract regex  =
+	org.springframework.cloud.contract.verifier.dsl.Contract regex  =
 		// tag::regex[]
-		Contract.make {
+		org.springframework.cloud.contract.verifier.dsl.Contract.make {
 			request {
 				method('GET')
 				url $(client(~/\/[0-9]{2}/), server('/12'))
@@ -227,9 +227,9 @@ class ContractHttpDocsSpec extends Specification {
 		}
 		// end::regex[]
 
-	Contract optionals  =
+	org.springframework.cloud.contract.verifier.dsl.Contract optionals  =
 		// tag::optionals[]
-		Contract.make {
+		org.springframework.cloud.contract.verifier.dsl.Contract.make {
 			priority 1
 			request {
 				method 'POST'
@@ -282,9 +282,9 @@ class ContractHttpDocsSpec extends Specification {
 		stripped(blockBuilder.toString()) == stripped(expectedTest)
 	}
 
-	Contract method  =
+	org.springframework.cloud.contract.verifier.dsl.Contract method  =
 		// tag::method[]
-		Contract.make {
+		org.springframework.cloud.contract.verifier.dsl.Contract.make {
 			request {
 				method 'PUT'
 				url $(client(regex('^/api/[0-9]{2}$')), server('/api/12'))
