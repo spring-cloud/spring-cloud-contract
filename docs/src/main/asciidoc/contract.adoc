@@ -147,7 +147,7 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 
 [source,groovy,indent=0]
 ----
-include::{verifier_root_path}/spring-cloud-contract-verifier-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/org/springframework/cloud/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
+include::{verifier_root_path}/spring-cloud-contract-verifier-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/org/springframework/cloud/contract/verifier/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
 ----
 
 === JAX-RS support
@@ -179,7 +179,7 @@ The output message can be triggered by calling a method (e.g. a Scheduler was st
 
 [source,groovy]
 ----
-include::../../../../samples/messaging-integration/src/test/groovy/org/springframework/cloud/contract/verifier/samples/messaging/IntegrationMessagingApplicationSpec.groovy[tags=method_trigger,indent=0]
+include::../../../../samples/samples-messaging-integration/src/test/groovy/org/springframework/cloud/contract/verifier/samples/messaging/IntegrationMessagingApplicationSpec.groovy[tags=method_trigger,indent=0]
 ----
 
 In this case the output message will be sent to `output` if a method called `bookReturnedTriggered` will be executed. In the message *publisher's* side
@@ -191,7 +191,7 @@ The output message can be triggered by receiving a message.
 
 [source,groovy]
 ----
-include::../../../../samples/messaging-integration/src/test/groovy/org/springframework/cloud/contract/verifier/samples/messaging/IntegrationMessagingApplicationSpec.groovy[tags=message_trigger,indent=0]
+include::../../../../samples/samples-messaging-integration/src/test/groovy/org/springframework/cloud/contract/verifier/samples/messaging/IntegrationMessagingApplicationSpec.groovy[tags=message_trigger,indent=0]
 ----
 
 In this case the output message will be sent to `output` if a proper message will be received on the `input` destination. In the message *publisher's* side

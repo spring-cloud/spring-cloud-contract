@@ -46,7 +46,6 @@ asciidoctor {
 	dependsOn jrubyPrepare
 
 	sourceDir 'src/main/asciidoc'
-	setSourceDocumentName file('spring-cloud-contract-verifier.adoc')
 	backends 'html'
 	attributes 'build-gradle': file('build.gradle'),
 			'endpoint-url': 'https://Codearte.github.io/accurest',
