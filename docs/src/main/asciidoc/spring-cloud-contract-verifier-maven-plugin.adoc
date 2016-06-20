@@ -1,0 +1,3 @@
+:root_folder: ../../../../spring-cloud-contract-verifier-maven-plugin
+
+include::{root_folder}/src/site/asciidoc/complex-content.adoc[]

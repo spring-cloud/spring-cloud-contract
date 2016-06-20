@@ -7,14 +7,14 @@ Sample more complex configuration for Java Project with JUnit tests.
 
 [source,xml]
 ----
-include::../../../src/test/projects/complex-configuration/pom.xml[tags=plugin]
+include::{root_folder}/src/test/projects/complex-configuration/pom.xml[tags=plugin]
 ----
 
 === Base Test class
 
 [source,java]
 ----
-include::../../../src/test/projects/complex-configuration/src/test/java/com/blogspot/toomuchcoding/frauddetection/BaseAccurest.java[]
+include::{root_folder}/src/test/projects/complex-configuration/src/test/java/com/blogspot/toomuchcoding/frauddetection/BaseAccurest.java[]
 ----
 
 
@@ -22,14 +22,14 @@ include::../../../src/test/projects/complex-configuration/src/test/java/com/blog
 
 [source,java]
 ----
-include::../../../src/test/projects/complex-configuration/src/test/java/com/blogspot/toomuchcoding/frauddetection/matchers/CustomMatchers.java[]
+include::{root_folder}/src/test/projects/complex-configuration/src/test/java/com/blogspot/toomuchcoding/frauddetection/matchers/CustomMatchers.java[]
 ----
 
 === Sample contract using matcher
 
 [source,java]
 ----
-include::../../../src/test/projects/complex-configuration/src/test/accurest/shouldMarkClientAsNotFraud.groovy[]
+include::{root_folder}/src/test/projects/complex-configuration/src/test/contracts/shouldMarkClientAsNotFraud.groovy[]
 ----
 
 
