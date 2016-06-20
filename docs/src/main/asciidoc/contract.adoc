@@ -5,7 +5,9 @@
 == Contract DSL
 
 IMPORTANT: Remember that inside the contract file you have to provide the fully qualified name to
-the `Contract` class and the `make` static import i.e. `org.springframework.cloud.contract.verifier.dsl.Contract.make { ... }`
+the `Contract` class and the `make` static import i.e. `org.springframework.cloud.contract.verifier.dsl.Contract.make { ... }`.
+You can also provide an import to the `Contract` class `import org.springframework.cloud.contract.verifier.dsl.Contract` and then call
+  `Contract.make { ... }`
 
 Contract DSL is written in Groovy, but don't be alarmed if you didn't use Groovy before. Knowledge of the language is not really needed as our DSL uses only
 a tiny subset of it (namely literals, method calls and closures). What's more the DSL is designed to be programmer-readable without any knowledge of the DSL itself -

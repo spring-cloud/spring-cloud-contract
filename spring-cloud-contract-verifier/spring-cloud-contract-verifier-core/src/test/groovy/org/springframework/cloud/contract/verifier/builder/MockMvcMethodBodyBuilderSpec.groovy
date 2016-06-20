@@ -1398,7 +1398,7 @@ World.'''"""
 
 	Contract dslForDocs =
 			// tag::dsl_example[]
-		Contract.make {
+		org.springframework.cloud.contract.verifier.dsl.Contract.make {
 			request {
 				method 'PUT'
 				url '/api/12'
