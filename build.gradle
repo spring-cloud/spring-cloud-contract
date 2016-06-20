@@ -13,8 +13,8 @@ buildscript {
 }
 
 ext {
-	repoUser = project.findProperty('REPO_USERNAME') ?: ''
-	repoPass = project.findProperty('REPO_PASSWORD') ?: ''
+	repoUser = System.getenv('REPO_USERNAME') ?: project.findProperty('REPO_USERNAME') ?: ''
+	repoPass = System.getenv('REPO_PASSWORD') ?: project.findProperty('REPO_PASSWORD') ?: ''
 	projectsToSkipPublication = ['parent', 'samples', 'docs', 'root']
 }
 
