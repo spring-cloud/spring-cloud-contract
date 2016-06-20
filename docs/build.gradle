@@ -73,6 +73,6 @@ githubPages {
 	}
 
 	pages {
-		from 'build/asciidoc/html5'
+		from 'build/asciidoc/html'
 	}
 }
