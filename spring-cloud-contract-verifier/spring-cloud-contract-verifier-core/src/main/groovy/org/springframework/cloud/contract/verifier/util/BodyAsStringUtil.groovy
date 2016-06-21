@@ -40,7 +40,7 @@ class BodyAsStringUtil {
 	 * That means that all the interpolations etc. will be resolved for the
 	 * server side.
 	 */
-	static String extractServerValueFrom(Object body) {
+	static String extractTestValueFrom(Object body) {
 		Object bodyValue = extractServerValueFromBody(body)
 		String json = new JsonOutput().toJson(bodyValue)
 		json = StringEscapeUtils.unescapeJavaScript(json)
@@ -52,7 +52,7 @@ class BodyAsStringUtil {
 	 * That means that all the interpolations etc. will be resolved for the
 	 * client side.
 	 */
-	static String extractClientValueFrom(Object body) {
+	static String extractStubValueFrom(Object body) {
 		Object bodyValue = extractClientValueFromBody(body);
 		String json = new JsonOutput().toJson(bodyValue)
 		json = StringEscapeUtils.unescapeJavaScript(json)
