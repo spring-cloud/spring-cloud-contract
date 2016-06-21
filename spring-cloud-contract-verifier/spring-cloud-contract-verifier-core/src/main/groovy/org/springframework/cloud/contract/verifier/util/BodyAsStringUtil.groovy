@@ -74,10 +74,11 @@ class BodyAsStringUtil {
 
 	private static Object extractClientValueFromBody(bodyValue) {
 		if (bodyValue instanceof GString) {
-			bodyValue = extractValue(bodyValue, { DslProperty dslProperty -> dslProperty.clientValue })
+			return extractValue(bodyValue, { DslProperty dslProperty -> dslProperty.clientValue })
+		} else if (bodyValue instanceof DslProperty) {
+			return extractClientValueFromBody(bodyValue.clientValue)
 		} else {
-			bodyValue = MapConverter.transformValues(bodyValue, { it instanceof DslProperty ? it.clientValue : it })
+			return MapConverter.transformValues(bodyValue, { it instanceof DslProperty ? it.clientValue : it })
 		}
-		return bodyValue
 	}
 }
