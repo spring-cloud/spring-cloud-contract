@@ -5,7 +5,7 @@
 
 = Spring Cloud Contract Verifier
 
-_Adam Dudczak, Marcin Grzejszczak, Jakub Kubryński, Karol Lassak, Olga Maciaszek-Sharma, Mariusz Smykuła_
+_Documentation Authors: Adam Dudczak, Marcin Grzejszczak, Jakub Kubryński, Karol Lassak, Olga Maciaszek-Sharma, Mariusz Smykuła_
 
 include::introduction.adoc[]
 
