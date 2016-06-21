@@ -8,9 +8,12 @@
 
 = Spring Cloud Contract Verifier
 
+:images_url: https://raw.githubusercontent.com/Codearte/accurest/master/docs/src/main/asciidoc/images
+
 == Introduction
 
-IMPORTANT: http://codearte.github.io/accurest/deprecated[The documentation to the deprecated Accurest project in version 1.1.0 is available here]
+IMPORTANT: http://codearte.github.io/accurest/deprecated[The documentation to the deprecated Accurest project in version 1.1.0 is available here.].
+The Accurest project was initially started in cooperation with the http://codearte.io[Codearte Company]
 
 Just to make long story short - Spring Cloud Contract Verifier is a tool that enables Consumer Driven Contract (CDC) development of JVM-based applications. It is shipped
 with __Contract Definition Language__ (DSL). Contract definitions are used to produce following resources:
@@ -27,7 +30,7 @@ Spring Cloud Contract Verifier moves TDD to the level of software architecture.
 
 Let us assume that we have a system comprising of multiple microservices:
 
-image::docs/src/main/asciidoc/images/Deps.png[Microservices Architecture]
+image::{images_url}/Deps.png[Microservices Architecture]
 
 ==== Testing issues
 
@@ -68,11 +71,11 @@ Disadvantages:
 To solve the aforementioned issues Spring Cloud Contract Verifier with Stub Runner were created. Their main idea is to give you very fast feedback, without the need
 to set up the whole world of microservices.
 
-image::Stubs1.png[Stubbed Services]
+image::{images_url}/Stubs1.png[Stubbed Services]
 
 If you work on stubs then the only applications you need are those that your application is using directly.
 
-image::Stubs2.png[Stubbed Services]
+image::{images_url}/Stubs2.png[Stubbed Services]
 
 Spring Cloud Contract Verifier gives you the certainty that the stubs that you're using were created by the service that you're calling. Also if you can use them it means that they were
 tested against the producer's side. In other words - you can trust those stubs.
