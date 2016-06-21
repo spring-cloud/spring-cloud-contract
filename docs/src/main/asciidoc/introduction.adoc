@@ -4,7 +4,7 @@
 
 IMPORTANT: http://codearte.github.io/accurest/deprecated[The documentation to the deprecated Accurest project in version 1.1.0 is available here.]
 
-TIP: The Accurest project was initially started in cooperation with the http://codearte.io[Codearte Company]
+TIP: The Accurest project was initially started by Marcin Grzejszczak and Jakub Kubrynski (http://codearte.io[codearte.io])
 
 Just to make long story short - Spring Cloud Contract Verifier is a tool that enables Consumer Driven Contract (CDC) development of JVM-based applications. It is shipped
 with __Contract Definition Language__ (DSL). Contract definitions are used to produce following resources:
