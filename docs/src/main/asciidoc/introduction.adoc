@@ -133,3 +133,16 @@ video::130779882[vimeo]
 === Samples
 
 Here you can find some https://github.com/Codearte/accurest-samples[working samples]. Check the readme of each project for more information.
+
+=== Why use Spring Cloud Contract Verifier and not X ?
+
+For the time being Spring Cloud Contract Verifier is a JVM based tool. So it could be your first pick when you're already creating
+software for the JVM. This project has a lot of really interesting features but especially quite a few of them definitely make
+Spring Cloud Contract Verifier stand out on the "market" of Consumer Driven Contract (CDC) tooling. Out of many the most interesting are:
+
+- Possibility to do CDC with messaging
+- Clear and easy to use, statically typed DSL
+- Possibility to copy paste your current JSON file to the contract and only edit its elements
+- Automatic generation of tests from the defined Contract
+- Stub Runner functionality - the stubs are automatically downloaded at runtime from Nexus / Artifactory
+- Spring Cloud integration - no discovery service is needed for integration tests
