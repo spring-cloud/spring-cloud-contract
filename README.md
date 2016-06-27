@@ -5,6 +5,7 @@ What you always need it confidence in pushing new features into a new applicatio
 Feature ideas:
 
 - [ ] Move DSL and stub runner code over from [Accurest](https://github.com/Codearte/accurest)
+- [ ] Support [Citrus](http://www.citrusframework.org/) users (somehow?)
 - [ ] Spring Restdocs generators
 - [ ] Wiremock support for Spring Boot apps
 - [ ] Wiremock mock servers using `MockRestServiceServer` (from Spring Test)
