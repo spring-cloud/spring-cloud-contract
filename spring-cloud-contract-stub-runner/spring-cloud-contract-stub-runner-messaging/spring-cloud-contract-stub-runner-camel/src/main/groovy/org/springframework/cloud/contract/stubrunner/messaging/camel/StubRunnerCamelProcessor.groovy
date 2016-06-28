@@ -17,7 +17,7 @@
 package org.springframework.cloud.contract.stubrunner.messaging.camel
 
 import groovy.transform.PackageScope
-import org.springframework.cloud.contract.verifier.util.BodyAsStringUtil
+import org.springframework.cloud.contract.verifier.util.BodyExtractor
 import org.apache.camel.Exchange
 import org.apache.camel.Message
 import org.apache.camel.Processor
@@ -47,7 +47,7 @@ class StubRunnerCamelProcessor implements Processor {
 		if (!groovyDsl.outputMessage) {
 			return
 		}
-		input.body = BodyAsStringUtil.extractStubValueFrom(groovyDsl.outputMessage.body)
+		input.body = BodyExtractor.extractStubValueFrom(groovyDsl.outputMessage.body)
 		groovyDsl.outputMessage.headers?.entries?.each {
 			input.setHeader(it.name, it.clientValue)
 		}

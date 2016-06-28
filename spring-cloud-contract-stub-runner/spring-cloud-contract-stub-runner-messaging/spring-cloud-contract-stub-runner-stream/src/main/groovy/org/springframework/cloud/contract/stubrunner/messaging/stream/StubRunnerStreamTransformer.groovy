@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.contract.stubrunner.messaging.stream
 
-import org.springframework.cloud.contract.verifier.util.BodyAsStringUtil
+import org.springframework.cloud.contract.verifier.util.BodyExtractor
 import org.springframework.cloud.contract.verifier.dsl.Contract
 import org.springframework.integration.transformer.GenericTransformer
 import org.springframework.messaging.Message
@@ -41,7 +41,7 @@ class StubRunnerStreamTransformer implements GenericTransformer<Message<?>, Mess
 		if (!groovyDsl.outputMessage) {
 			return source
 		}
-		String payload = BodyAsStringUtil.extractStubValueFrom(groovyDsl.outputMessage.body)
+		String payload = BodyExtractor.extractStubValueFrom(groovyDsl.outputMessage.body)
 		Map<String, Object> headers = groovyDsl.outputMessage.headers.asStubSideMap()
 		return MessageBuilder.createMessage(payload, new MessageHeaders(headers))
 	}

@@ -22,6 +22,7 @@ import org.springframework.cloud.contract.verifier.dsl.Contract
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierMessaging
+import org.springframework.cloud.contract.verifier.util.BodyExtractor
 
 /**
  * Runs stubs for a particular {@link StubServer}
@@ -127,7 +128,8 @@ class StubRunnerExecutor implements StubFinder {
 		if (!groovyDsl.outputMessage) {
 			return
 		}
-		ContractVerifierMessage message = contractVerifierMessaging.create(groovyDsl.outputMessage?.body?.clientValue,
+		ContractVerifierMessage message = contractVerifierMessaging.create(
+				BodyExtractor.extractClientValueFromBody(groovyDsl.outputMessage?.body?.clientValue),
 				groovyDsl.outputMessage?.headers?.asStubSideMap())
 		contractVerifierMessaging.send(message, groovyDsl.outputMessage.sentTo.clientValue)
 	}

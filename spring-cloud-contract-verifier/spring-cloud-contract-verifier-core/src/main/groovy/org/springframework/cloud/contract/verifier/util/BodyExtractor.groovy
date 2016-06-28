@@ -31,9 +31,9 @@ import static ContentUtils.extractValue
  * @since 1.0.0
  */
 @CompileStatic
-class BodyAsStringUtil {
+class BodyExtractor {
 
-	private BodyAsStringUtil() {}
+	private BodyExtractor() {}
 
 	/**
 	 * Returns the string representation of the body for the server side.
@@ -63,7 +63,7 @@ class BodyAsStringUtil {
 		return toTrim.startsWith('"') ? toTrim.replaceAll('"', '') : toTrim
 	}
 
-	private static Object extractServerValueFromBody(bodyValue) {
+	static Object extractServerValueFromBody(bodyValue) {
 		if (bodyValue instanceof GString) {
 			bodyValue = extractValue(bodyValue, { DslProperty dslProperty -> dslProperty.serverValue })
 		} else {
@@ -72,7 +72,7 @@ class BodyAsStringUtil {
 		return bodyValue
 	}
 
-	private static Object extractClientValueFromBody(bodyValue) {
+	static Object extractClientValueFromBody(bodyValue) {
 		if (bodyValue instanceof GString) {
 			return extractValue(bodyValue, { DslProperty dslProperty -> dslProperty.clientValue })
 		} else if (bodyValue instanceof DslProperty) {
