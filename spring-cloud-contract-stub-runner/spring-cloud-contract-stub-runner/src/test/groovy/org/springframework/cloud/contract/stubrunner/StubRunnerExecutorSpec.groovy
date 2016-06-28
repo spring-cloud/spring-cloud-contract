@@ -16,8 +16,13 @@
 
 package org.springframework.cloud.contract.stubrunner
 
+import groovy.json.JsonOutput
 import org.springframework.cloud.contract.stubrunner.util.StubsParser
+import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage
+import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
 import spock.lang.Specification
+
+import java.util.concurrent.TimeUnit
 
 class StubRunnerExecutorSpec extends Specification {
 
@@ -71,9 +76,54 @@ class StubRunnerExecutorSpec extends Specification {
 		executor.findStubUrl("group", "artifact") == 'http://localhost:12345'.toURL()
 	}
 
+	def 'should ensure that triggered contracts have properly parsed message body when a message is sent'() {
+		given:
+			StubRunnerExecutor executor = new StubRunnerExecutor(portScanner, new AssertingContractVerifierMessaging())
+			executor.runStubs(stubRunnerOptions, repository, stub)
+		when:
+			executor.trigger('send_order')
+		then:
+			noExceptionThrown()
+	}
+
 	Map<StubConfiguration, Integer> stubIdsWithPortsFromString(String stubIdsToPortMapping) {
 		return stubIdsToPortMapping.split(',').collectEntries { String entry ->
 			return StubsParser.fromStringWithPort(entry)
+		}
+	}
+
+	private class AssertingContractVerifierMessaging implements ContractVerifierMessaging {
+
+		@Override
+		void send(ContractVerifierMessage message, String destination) {
+
+		}
+
+		@Override
+		ContractVerifierMessage receiveMessage(String destination, long timeout, TimeUnit timeUnit) {
+			return null
+		}
+
+		@Override
+		ContractVerifierMessage receiveMessage(String destination) {
+			return null
+		}
+
+		@Override
+		void send(Object o, Map headers, String destination) {
+
+		}
+
+		@Override
+		ContractVerifierMessage create(Object o, Map headers) {
+			assert !(JsonOutput.toJson(o).contains("serverValue"))
+			assert headers.entrySet().every { !(it.value.toString().contains("serverValue")) }
+			return null
+		}
+
+		@Override
+		ContractVerifierMessage create(Object o) {
+			return null
 		}
 	}
 
