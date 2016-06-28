@@ -29,7 +29,7 @@ dependencies {
 	}
 	testCompile 'cglib:cglib-nodep:2.2'
 	testCompile 'org.objenesis:objenesis:2.1'
-	testCompile 'org.springframework.cloud:spring-cloud-starter-zookeeper-discovery:1.0.0.RC2'
+	testCompile "org.springframework.cloud:spring-cloud-starter-zookeeper-discovery:${springCloudZookeeperVersion}"
 	testCompile 'org.apache.curator:curator-test:2.9.1'
 	testCompile 'io.reactivex:rxjava:1.1.1'
 	testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"

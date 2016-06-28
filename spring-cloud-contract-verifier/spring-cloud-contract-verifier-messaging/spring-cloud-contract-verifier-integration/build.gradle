@@ -16,17 +16,6 @@
 
 String verifier = "spring-cloud-contract-verifier"
 
-repositories {
-	mavenLocal()
-	jcenter()
-	maven {
-		url "http://repo.spring.io/snapshot"
-	}
-	maven {
-		url "http://repo.spring.io/milestone"
-	}
-}
-
 dependencies {
 	compile project(":$verifier-root:$verifier-messaging-root:$verifier-messaging-core")
 	compile "org.springframework:spring-messaging:${springVersion}"
