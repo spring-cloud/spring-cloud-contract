@@ -41,7 +41,7 @@
         </snapshotRepository>
         <site>
             <id>github</id>
-            <url>scm:git:ssh://git@github.com:Codearte/accurest-maven-plugin.git</url>
+            <url>scm:git:git@github.com:Codearte/accurest-maven-plugin.git</url>
         </site>
     </distributionManagement>
 
