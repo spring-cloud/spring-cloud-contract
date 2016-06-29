@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-org.springframework.cloud.contract.verifier.dsl.Contract.make {
+org.springframework.cloud.contract.spec.Contract.make {
     request {
         method 'POST'
         url('/users') {
