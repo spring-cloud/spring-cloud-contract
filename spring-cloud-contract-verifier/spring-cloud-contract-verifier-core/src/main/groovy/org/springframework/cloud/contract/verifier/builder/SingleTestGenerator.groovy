@@ -120,7 +120,7 @@ class SingleTestGenerator {
 		return listOfFiles.collectEntries {
 			File stubsFile = it.path.toFile()
 			log.debug("Stub content from file [${stubsFile.text}]")
-			org.springframework.cloud.contract.verifier.dsl.Contract stubContent = ContractVerifierDslConverter.convert(stubsFile)
+			org.springframework.cloud.contract.spec.Contract stubContent = ContractVerifierDslConverter.convert(stubsFile)
 			TestType testType = (stubContent.input || stubContent.outputMessage) ? TestType.MESSAGING : TestType.HTTP
 			return [(new ParsedDsl(it, stubContent, stubsFile)): testType]
 		}
@@ -130,7 +130,7 @@ class SingleTestGenerator {
 	@EqualsAndHashCode
 	private static class ParsedDsl {
 		ContractMetadata contract
-		org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl
+		org.springframework.cloud.contract.spec.Contract groovyDsl
 		File stubsFile
 	}
 

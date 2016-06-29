@@ -38,11 +38,11 @@ import org.springframework.cloud.contract.verifier.file.ContractMetadata
 class MethodBuilder {
 
 	private final String methodName
-	private final org.springframework.cloud.contract.verifier.dsl.Contract stubContent
+	private final org.springframework.cloud.contract.spec.Contract stubContent
 	private final ContractVerifierConfigProperties configProperties
 	private final boolean ignored
 
-	private MethodBuilder(String methodName, org.springframework.cloud.contract.verifier.dsl.Contract stubContent, ContractVerifierConfigProperties configProperties, boolean ignored) {
+	private MethodBuilder(String methodName, org.springframework.cloud.contract.spec.Contract stubContent, ContractVerifierConfigProperties configProperties, boolean ignored) {
 		this.ignored = ignored
 		this.stubContent = stubContent
 		this.methodName = methodName
@@ -52,7 +52,7 @@ class MethodBuilder {
 	/**
 	 * A factory method that creates a {@link MethodBuilder} for the given arguments
 	 */
-	static MethodBuilder createTestMethod(ContractMetadata contract, File stubsFile, org.springframework.cloud.contract.verifier.dsl.Contract stubContent, ContractVerifierConfigProperties configProperties) {
+	static MethodBuilder createTestMethod(ContractMetadata contract, File stubsFile, org.springframework.cloud.contract.spec.Contract stubContent, ContractVerifierConfigProperties configProperties) {
 		log.debug("Stub content Groovy DSL [$stubContent]")
 		String methodName = NamesUtil.camelCase(NamesUtil.toLastDot(NamesUtil.afterLast(stubsFile.path, File.separator)))
 		return new MethodBuilder(methodName, stubContent, configProperties, contract.ignored)

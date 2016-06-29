@@ -20,14 +20,14 @@ import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
-import org.springframework.cloud.contract.verifier.dsl.Contract
-import org.springframework.cloud.contract.verifier.dsl.internal.Request
-import org.springframework.cloud.contract.verifier.dsl.internal.Header
-import org.springframework.cloud.contract.verifier.dsl.internal.MatchingStrategy
-import org.springframework.cloud.contract.verifier.dsl.internal.NamedProperty
-import org.springframework.cloud.contract.verifier.dsl.internal.QueryParameter
-import org.springframework.cloud.contract.verifier.dsl.internal.Response
-import org.springframework.cloud.contract.verifier.dsl.internal.Url
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.Request
+import org.springframework.cloud.contract.spec.internal.Header
+import org.springframework.cloud.contract.spec.internal.MatchingStrategy
+import org.springframework.cloud.contract.spec.internal.NamedProperty
+import org.springframework.cloud.contract.spec.internal.QueryParameter
+import org.springframework.cloud.contract.spec.internal.Response
+import org.springframework.cloud.contract.spec.internal.Url
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.MapConverter
 

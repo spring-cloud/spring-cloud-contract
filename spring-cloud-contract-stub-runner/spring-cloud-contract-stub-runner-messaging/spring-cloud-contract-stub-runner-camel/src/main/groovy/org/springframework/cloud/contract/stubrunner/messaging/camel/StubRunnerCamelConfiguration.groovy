@@ -18,7 +18,7 @@ package org.springframework.cloud.contract.stubrunner.messaging.camel
 
 import org.apache.camel.RoutesBuilder
 import org.apache.camel.spring.SpringRouteBuilder
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner
 import org.springframework.cloud.contract.stubrunner.StubConfiguration
 import org.springframework.context.annotation.Bean

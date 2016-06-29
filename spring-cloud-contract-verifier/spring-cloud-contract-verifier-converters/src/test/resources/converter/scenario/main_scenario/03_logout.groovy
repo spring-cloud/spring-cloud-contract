@@ -1,4 +1,4 @@
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 
 /*
  *  Copyright 2013-2016 the original author or authors.

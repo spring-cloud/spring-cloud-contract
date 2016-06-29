@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.SpringApplicationContextLoader
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan

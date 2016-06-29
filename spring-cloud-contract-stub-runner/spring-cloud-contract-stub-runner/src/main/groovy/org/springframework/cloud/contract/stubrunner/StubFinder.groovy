@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.contract.stubrunner
 
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 
 interface StubFinder extends StubTrigger {
 	/**

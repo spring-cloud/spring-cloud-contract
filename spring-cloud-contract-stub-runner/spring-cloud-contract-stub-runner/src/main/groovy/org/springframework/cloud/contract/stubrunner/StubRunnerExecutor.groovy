@@ -16,9 +16,10 @@
 
 package org.springframework.cloud.contract.stubrunner
 
+import groovy.json.JsonOutput
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierMessaging
@@ -129,7 +130,7 @@ class StubRunnerExecutor implements StubFinder {
 			return
 		}
 		ContractVerifierMessage message = contractVerifierMessaging.create(
-				BodyExtractor.extractClientValueFromBody(groovyDsl.outputMessage?.body?.clientValue),
+				new JsonOutput().toJson(BodyExtractor.extractClientValueFromBody(groovyDsl.outputMessage?.body?.clientValue)),
 				groovyDsl.outputMessage?.headers?.asStubSideMap())
 		contractVerifierMessaging.send(message, groovyDsl.outputMessage.sentTo.clientValue)
 	}

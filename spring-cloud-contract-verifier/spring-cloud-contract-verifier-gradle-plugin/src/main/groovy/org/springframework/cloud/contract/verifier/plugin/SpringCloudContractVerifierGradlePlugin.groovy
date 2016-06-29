@@ -107,7 +107,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		task.group = GROUP_NAME
 		task.conventionMapping.with {
 			contractsDslDir = { extension.contractsDslDir }
-			stubsOutputDir = { extension.stubsOutputDir }
+			stubsOutputDir = { extension.stubsOutputDir ?: project.file("${project.buildDir}/stubs") }
 			configProperties = { extension }
 		}
 	}

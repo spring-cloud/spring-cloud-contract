@@ -13,17 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-repositories {
-	mavenLocal()
-	jcenter()
-	maven {
-		url "http://repo.spring.io/snapshot"
-	}
-	maven {
-		url "http://repo.spring.io/milestone"
-	}
-}
 String verifier = "spring-cloud-contract-verifier"
 String stubRunner = "spring-cloud-contract-stub-runner"
 

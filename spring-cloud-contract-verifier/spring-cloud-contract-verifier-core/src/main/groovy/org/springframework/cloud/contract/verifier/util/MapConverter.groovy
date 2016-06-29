@@ -17,7 +17,7 @@
 package org.springframework.cloud.contract.verifier.util
 
 import groovy.json.JsonSlurper
-import org.springframework.cloud.contract.verifier.dsl.internal.DslProperty
+import org.springframework.cloud.contract.spec.internal.DslProperty
 
 /**
  * Converts an object into either client or server side representation.
@@ -35,7 +35,7 @@ class MapConverter {
 	public static final boolean TEST_SIDE = false
 
 	/**
-	 * Returns the object with client side values of {@link org.springframework.cloud.contract.verifier.dsl.internal.DslProperty}
+	 * Returns the object with client side values of {@link org.springframework.cloud.contract.spec.internal.DslProperty}
 	 */
 	static def transformToClientValues(def value) {
 		return transformValues(value) {

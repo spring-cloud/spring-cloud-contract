@@ -21,7 +21,7 @@ import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import org.springframework.cloud.contract.verifier.ContractVerifierException
+import org.springframework.cloud.contract.spec.ContractVerifierException
 import org.springframework.cloud.contract.verifier.TestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 

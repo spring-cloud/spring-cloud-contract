@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 
 Contract.make {
 	label 'some_label'

@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.contract.stubrunner.messaging.integration
 
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.util.BodyExtractor
 import org.springframework.integration.transformer.GenericTransformer
 import org.springframework.messaging.Message

@@ -29,10 +29,10 @@ trait WireMockStubVerifier {
 		stubMapping.request.bodyPatterns.findAll { it.matches }.every {
 			Pattern.compile(it.matches)
 		}
-		assert !mappingDefinition.contains('org.springframework.cloud.contract.verifier.dsl.internal')
+		assert !mappingDefinition.contains('org.springframework.cloud.contract.spec.internal')
 	}
 
-	void stubMappingIsValidWireMockStub(org.springframework.cloud.contract.verifier.dsl.Contract contractDsl) {
+	void stubMappingIsValidWireMockStub(org.springframework.cloud.contract.spec.Contract contractDsl) {
 		stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), contractDsl).toWireMockClientStub())
 	}
 

@@ -18,7 +18,7 @@ package org.springframework.cloud.contract.verifier.wiremock
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 import spock.lang.Specification
 
 class WireMockToDslConverterSpec extends Specification {
@@ -85,7 +85,7 @@ class WireMockToDslConverterSpec extends Specification {
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
 			ContractVerifierDslConverter.convert(
-					"""org.springframework.cloud.contract.verifier.dsl.Contract.make {
+					"""org.springframework.cloud.contract.spec.Contract.make {
 				$groovyDsl
 			}""") == expectedGroovyDsl
 	}
@@ -139,7 +139,7 @@ class WireMockToDslConverterSpec extends Specification {
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
 			ContractVerifierDslConverter.convert(
-					"""org.springframework.cloud.contract.verifier.dsl.Contract.make {
+					"""org.springframework.cloud.contract.spec.Contract.make {
 				$groovyDsl
 			}""") == expectedGroovyDsl
 	}
@@ -190,7 +190,7 @@ class WireMockToDslConverterSpec extends Specification {
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
 			ContractVerifierDslConverter.convert(
-					"""org.springframework.cloud.contract.verifier.dsl.Contract.make {
+					"""org.springframework.cloud.contract.spec.Contract.make {
 				$groovyDsl
 			}""") == expectedGroovyDsl
 	}
@@ -244,7 +244,7 @@ class WireMockToDslConverterSpec extends Specification {
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
 			ContractVerifierDslConverter.convert(
-					"""org.springframework.cloud.contract.verifier.dsl.Contract.make {
+					"""org.springframework.cloud.contract.spec.Contract.make {
 				$groovyDsl
 			}""") == expectedGroovyDsl
 	}
@@ -309,7 +309,7 @@ class WireMockToDslConverterSpec extends Specification {
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
 			ContractVerifierDslConverter.convert(
-					"""org.springframework.cloud.contract.verifier.dsl.Contract.make {
+					"""org.springframework.cloud.contract.spec.Contract.make {
 				$groovyDsl
 			}""") == expectedGroovyDsl
 	}
@@ -347,7 +347,7 @@ class WireMockToDslConverterSpec extends Specification {
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
 			Contract evaluatedGroovyDsl = ContractVerifierDslConverter.convert(
-					"""org.springframework.cloud.contract.verifier.dsl.Contract.make {
+					"""org.springframework.cloud.contract.spec.Contract.make {
 				$groovyDsl
 			}""")
 		and:
@@ -387,7 +387,7 @@ class WireMockToDslConverterSpec extends Specification {
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
 			Contract evaluatedGroovyDsl = ContractVerifierDslConverter.convert(
-					"""org.springframework.cloud.contract.verifier.dsl.Contract.make {
+					"""org.springframework.cloud.contract.spec.Contract.make {
 				$groovyDsl
 			}""")
 		and:
@@ -428,7 +428,7 @@ class WireMockToDslConverterSpec extends Specification {
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
 			Contract evaluatedGroovyDsl = ContractVerifierDslConverter.convert(
-					"""org.springframework.cloud.contract.verifier.dsl.Contract.make {
+					"""org.springframework.cloud.contract.spec.Contract.make {
 				$groovyDsl
 			}""")
 		and:
@@ -468,7 +468,7 @@ class WireMockToDslConverterSpec extends Specification {
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
 			Contract evaluatedGroovyDsl = ContractVerifierDslConverter.convert(
-					"""org.springframework.cloud.contract.verifier.dsl.Contract.make {
+					"""org.springframework.cloud.contract.spec.Contract.make {
 					$groovyDsl
 				}""")
 		and:
@@ -508,7 +508,7 @@ class WireMockToDslConverterSpec extends Specification {
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
 			Contract evaluatedGroovyDsl = ContractVerifierDslConverter.convert(
-					"""org.springframework.cloud.contract.verifier.dsl.Contract.make {
+					"""org.springframework.cloud.contract.spec.Contract.make {
 					$groovyDsl
 				}""")
 		and:
@@ -546,7 +546,7 @@ class WireMockToDslConverterSpec extends Specification {
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
 			Contract evaluatedGroovyDsl = ContractVerifierDslConverter.convert(
-					"""org.springframework.cloud.contract.verifier.dsl.Contract.make {
+					"""org.springframework.cloud.contract.spec.Contract.make {
 					$groovyDsl
 				}""")
 		and:

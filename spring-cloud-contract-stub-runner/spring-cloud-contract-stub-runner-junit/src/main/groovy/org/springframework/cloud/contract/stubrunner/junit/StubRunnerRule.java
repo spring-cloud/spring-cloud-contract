@@ -32,7 +32,7 @@ import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubFinder;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
-import org.springframework.cloud.contract.verifier.dsl.Contract;
+import org.springframework.cloud.contract.spec.Contract;
 
 /**
  * JUnit class rule that allows you to download the provided stubs.

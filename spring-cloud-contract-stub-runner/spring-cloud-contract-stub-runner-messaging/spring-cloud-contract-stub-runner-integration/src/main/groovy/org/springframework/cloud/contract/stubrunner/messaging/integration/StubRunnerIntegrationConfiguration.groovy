@@ -17,7 +17,7 @@
 package org.springframework.cloud.contract.stubrunner.messaging.integration
 
 import groovy.transform.CompileStatic
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubConfiguration
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner

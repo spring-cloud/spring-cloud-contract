@@ -18,7 +18,7 @@ package org.springframework.cloud.contract.stubrunner.messaging.stream
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.beans.factory.annotation.Autowired

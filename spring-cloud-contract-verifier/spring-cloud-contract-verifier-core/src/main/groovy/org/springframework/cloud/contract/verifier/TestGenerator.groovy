@@ -19,19 +19,17 @@ package org.springframework.cloud.contract.verifier
 import com.google.common.collect.ListMultimap
 import groovy.transform.PackageScope
 import org.apache.commons.lang3.StringUtils
+import org.springframework.cloud.contract.spec.ContractVerifierException
 import org.springframework.cloud.contract.verifier.builder.SingleTestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
-import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.file.ContractFileScanner
+import org.springframework.cloud.contract.verifier.file.ContractMetadata
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicInteger
 
-import static org.springframework.cloud.contract.verifier.util.NamesUtil.afterLast
-import static org.springframework.cloud.contract.verifier.util.NamesUtil.beforeLast
-import static org.springframework.cloud.contract.verifier.util.NamesUtil.convertIllegalPackageChars
-import static org.springframework.cloud.contract.verifier.util.NamesUtil.directoryToPackage
+import static org.springframework.cloud.contract.verifier.util.NamesUtil.*
 
 /**
  * @author Jakub Kubrynski, codearte.io

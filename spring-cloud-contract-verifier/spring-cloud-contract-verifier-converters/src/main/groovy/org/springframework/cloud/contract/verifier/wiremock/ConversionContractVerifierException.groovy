@@ -17,7 +17,7 @@
 package org.springframework.cloud.contract.verifier.wiremock
 
 import groovy.transform.CompileStatic
-import org.springframework.cloud.contract.verifier.ContractVerifierException
+import org.springframework.cloud.contract.spec.ContractVerifierException
 
 /**
  * Thrown when a a DSL can't be properly converted

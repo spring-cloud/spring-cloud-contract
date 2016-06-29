@@ -34,7 +34,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 		and:
 			File file = tmpFolder.newFile("dsl1.groovy")
 			file.write("""
-				org.springframework.cloud.contract.verifier.dsl.Contract.make {
+				org.springframework.cloud.contract.spec.Contract.make {
 					request {
 						method('PUT')
 						url \$(client(~/\\/[0-9]{2}/), server('/12'))
@@ -59,7 +59,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 		and:
 			File file = tmpFolder.newFile("dsl-delay.groovy")
 			file.write("""
-				org.springframework.cloud.contract.verifier.dsl.Contract.make {
+				org.springframework.cloud.contract.spec.Contract.make {
 					request {
 					}
 					response {
@@ -82,7 +82,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 		and:
 			File file = tmpFolder.newFile("dsl2.groovy")
 			file.write("""
-				org.springframework.cloud.contract.verifier.dsl.Contract.make {
+				org.springframework.cloud.contract.spec.Contract.make {
 					request {
 						method 'PUT'
 						url '/api/12'
@@ -188,7 +188,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 		and:
 			File file = tmpFolder.newFile("dsl-mapinlist.groovy")
 			file.write("""
-				org.springframework.cloud.contract.verifier.dsl.Contract.make {
+				org.springframework.cloud.contract.spec.Contract.make {
 					request {
                 method 'GET'
                 urlPath '/foos'
@@ -222,7 +222,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 		and:
 			File file = tmpFolder.newFile("dsl_from_docs.groovy")
 			file.write('''
-			org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract.make {
 				priority 1
 				request {
 					method 'POST'

@@ -22,7 +22,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import groovy.util.logging.Slf4j
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 
 @CompileStatic
 @Slf4j

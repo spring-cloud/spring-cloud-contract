@@ -17,7 +17,7 @@
 package org.springframework.cloud.contract.stubrunner
 
 import groovy.transform.CompileStatic
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 /**
  * Manages lifecycle of multiple {@link StubRunner} instances.
  *
@@ -84,7 +84,7 @@ class BatchStubRunner implements StubRunning {
 		if (!triggered) {
 			throw new IllegalArgumentException("No label with name [$labelName] for " +
 					"dependency [$ivyNotation] was found. Here you have the list of dependencies " +
-					"and their labels [${ivyToLabels()}")
+					"and their labels [${ivyToLabels()}]")
 		}
 		return triggered
 	}

@@ -21,7 +21,7 @@ import org.springframework.cloud.contract.verifier.util.BodyExtractor
 import org.apache.camel.Exchange
 import org.apache.camel.Message
 import org.apache.camel.Processor
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 
 /**
  * Sends forward a message defined in the DSL. Also removes headers from the

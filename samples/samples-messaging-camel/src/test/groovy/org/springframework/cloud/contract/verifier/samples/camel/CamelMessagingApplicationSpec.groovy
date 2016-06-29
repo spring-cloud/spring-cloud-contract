@@ -19,7 +19,7 @@ package org.springframework.cloud.contract.verifier.samples.camel
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage
 import org.apache.camel.model.ModelCamelContext
 import org.springframework.beans.factory.annotation.Autowired

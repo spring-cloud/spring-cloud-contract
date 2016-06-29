@@ -18,13 +18,13 @@ package org.springframework.cloud.contract.verifier.builder
 
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
-import org.springframework.cloud.contract.verifier.dsl.internal.NamedProperty
+import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.verifier.util.MapConverter
-import org.springframework.cloud.contract.verifier.dsl.internal.DslProperty
-import org.springframework.cloud.contract.verifier.dsl.internal.ExecutionProperty
-import org.springframework.cloud.contract.verifier.dsl.internal.Header
-import org.springframework.cloud.contract.verifier.dsl.internal.MatchingStrategy
-import org.springframework.cloud.contract.verifier.dsl.internal.QueryParameter
+import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.Header
+import org.springframework.cloud.contract.spec.internal.MatchingStrategy
+import org.springframework.cloud.contract.spec.internal.QueryParameter
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
@@ -329,7 +329,7 @@ abstract class MethodBodyBuilder {
 	}
 
 	/**
-	 * Converts the {@link org.springframework.cloud.contract.verifier.dsl.internal.QueryParameter} server side value into its String
+	 * Converts the {@link org.springframework.cloud.contract.spec.internal.QueryParameter} server side value into its String
 	 * representation
 	 */
 	protected String resolveParamValue(QueryParameter param) {

@@ -22,9 +22,9 @@ import com.github.tomakehurst.wiremock.http.HttpHeaders
 import com.github.tomakehurst.wiremock.http.ResponseDefinition
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
-import org.springframework.cloud.contract.verifier.dsl.Contract
-import org.springframework.cloud.contract.verifier.dsl.internal.Request
-import org.springframework.cloud.contract.verifier.dsl.internal.Response
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.Request
+import org.springframework.cloud.contract.spec.internal.Response
 import org.springframework.cloud.contract.verifier.util.ContentType
 
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromContent

@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.dsl.WireMockStubVerifier
 import spock.lang.Issue
 import spock.lang.Shared
@@ -1398,7 +1398,7 @@ World.'''"""
 
 	Contract dslForDocs =
 			// tag::dsl_example[]
-		org.springframework.cloud.contract.verifier.dsl.Contract.make {
+		org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				method 'PUT'
 				url '/api/12'

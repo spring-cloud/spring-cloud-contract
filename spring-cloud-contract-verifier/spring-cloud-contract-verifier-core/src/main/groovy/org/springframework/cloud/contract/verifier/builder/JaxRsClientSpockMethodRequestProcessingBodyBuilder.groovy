@@ -18,11 +18,11 @@ package org.springframework.cloud.contract.verifier.builder
 
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
-import org.springframework.cloud.contract.verifier.dsl.Contract
-import org.springframework.cloud.contract.verifier.dsl.internal.Header
-import org.springframework.cloud.contract.verifier.dsl.internal.QueryParameter
-import org.springframework.cloud.contract.verifier.dsl.internal.QueryParameters
-import org.springframework.cloud.contract.verifier.dsl.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.Header
+import org.springframework.cloud.contract.spec.internal.QueryParameter
+import org.springframework.cloud.contract.spec.internal.QueryParameters
+import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 
 import java.util.regex.Pattern
 

@@ -4,7 +4,7 @@ import org.apache.camel.CamelContext
 import org.apache.camel.Exchange
 import org.apache.camel.builder.ExchangeBuilder
 import org.apache.camel.spring.SpringCamelContext
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 import spock.lang.Specification
 
 class StubRunnerCamelProcessorSpec extends Specification {

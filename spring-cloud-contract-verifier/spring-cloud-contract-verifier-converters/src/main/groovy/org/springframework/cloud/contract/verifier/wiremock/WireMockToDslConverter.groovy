@@ -22,7 +22,7 @@ import groovy.json.JsonParserType
 import groovy.json.JsonSlurper
 import groovy.transform.CompileDynamic
 import groovy.xml.XmlUtil
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 import nl.flotsam.xeger.Xeger
 
 import java.nio.charset.StandardCharsets

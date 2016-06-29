@@ -30,7 +30,12 @@ import java.nio.file.Paths
 class RecursiveFilesConverterSpec extends Specification {
 
 	private static
-	final Set<Path> EXPECTED_TARGET_FILES = [Paths.get("dslRoot.json"), Paths.get("dir1/dsl1.json"), Paths.get("dir1/dsl1b.json"), Paths.get("dir2/dsl2.json")]
+	final Set<Path> EXPECTED_TARGET_FILES = [
+			Paths.get("contracts/dir1/dsl1.groovy"), Paths.get("contracts/dir1/dsl1b.groovy"),
+			Paths.get("contracts/dir2/dsl2.groovy"), Paths.get("contracts/dslRoot.groovy"),
+			Paths.get("mappings/dslRoot.json"), Paths.get("mappings/dir1/dsl1.json"),
+			Paths.get("mappings/dir1/dsl1b.json"), Paths.get("mappings/dir2/dsl2.json")
+	]
 
 	@Rule
 	public TemporaryFolder tmpFolder = new TemporaryFolder();
@@ -79,7 +84,8 @@ class RecursiveFilesConverterSpec extends Specification {
 		then:
 			Collection<File> createdFiles = FileUtils.listFiles(properties.stubsOutputDir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE)
 			Set<String> relativizedCreatedFiles = getRelativePathsForFilesInDirectory(createdFiles, properties.stubsOutputDir)
-			[Paths.get("dslRoot.json"), Paths.get("dir2/dsl2.json")] as Set == relativizedCreatedFiles as Set
+			[ Paths.get("mappings/dslRoot.json"), Paths.get("mappings/dir2/dsl2.json") ,
+			  Paths.get("contracts/dslRoot.groovy"), Paths.get("contracts/dir2/dsl2.groovy")] as Set == relativizedCreatedFiles as Set
 		and:
 			createdFiles.each { it.text == "converted" }
 	}

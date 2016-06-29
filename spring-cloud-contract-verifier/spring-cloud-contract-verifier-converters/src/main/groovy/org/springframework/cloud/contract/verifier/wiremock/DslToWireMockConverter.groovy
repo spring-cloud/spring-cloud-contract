@@ -17,7 +17,7 @@
 package org.springframework.cloud.contract.verifier.wiremock
 
 import groovy.transform.CompileStatic
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.converter.SingleFileConverter
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 

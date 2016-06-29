@@ -19,8 +19,8 @@ package org.springframework.cloud.contract.verifier.util
 import com.toomuchcoding.jsonassert.JsonAssertion
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
-import org.springframework.cloud.contract.verifier.dsl.internal.OptionalProperty
-import org.springframework.cloud.contract.verifier.dsl.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.OptionalProperty
+import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 
 import java.util.regex.Pattern
 

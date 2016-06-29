@@ -18,7 +18,7 @@ package org.springframework.cloud.contract.verifier.util
 
 import groovy.transform.TypeChecked
 import org.codehaus.groovy.runtime.GStringImpl
-import org.springframework.cloud.contract.verifier.dsl.internal.DslProperty
+import org.springframework.cloud.contract.spec.internal.DslProperty
 
 import java.util.regex.Pattern
 
@@ -53,7 +53,7 @@ class RegexpBuilders {
 	}
 
 	/**
-	 * Converts the {@link org.springframework.cloud.contract.verifier.dsl.internal.DslProperty} passed values into their stub side String representations
+	 * Converts the {@link org.springframework.cloud.contract.spec.internal.DslProperty} passed values into their stub side String representations
 	 */
 	static String buildGStringRegexpForStubSide(DslProperty dslProperty) {
 		return buildGStringRegexpForStubSide(dslProperty.clientValue)

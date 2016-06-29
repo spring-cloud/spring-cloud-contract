@@ -25,9 +25,9 @@ import spock.lang.Specification
  */
 class ContractHttpDocsSpec extends Specification {
 
-	org.springframework.cloud.contract.verifier.dsl.Contract httpDsl  =
+	org.springframework.cloud.contract.spec.Contract httpDsl  =
 		// tag::http_dsl[]
-		org.springframework.cloud.contract.verifier.dsl.Contract.make {
+		org.springframework.cloud.contract.spec.Contract.make {
 			// Definition of HTTP request part of the contract
 			// (this can be a valid request or invalid depending
 			// on type of contract being specified).
@@ -49,9 +49,9 @@ class ContractHttpDocsSpec extends Specification {
 		}
 	// end::http_dsl[]
 
-	org.springframework.cloud.contract.verifier.dsl.Contract request  =
+	org.springframework.cloud.contract.spec.Contract request  =
 		// tag::request[]
-		org.springframework.cloud.contract.verifier.dsl.Contract.make {
+		org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				// HTTP request method (GET/POST/PUT/DELETE).
 				method 'GET'
@@ -66,9 +66,9 @@ class ContractHttpDocsSpec extends Specification {
 		}
 		// end::request[]
 
-	org.springframework.cloud.contract.verifier.dsl.Contract url  =
+	org.springframework.cloud.contract.spec.Contract url  =
 		// tag::url[]
-		org.springframework.cloud.contract.verifier.dsl.Contract.make {
+		org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				method 'GET'
 
@@ -82,9 +82,9 @@ class ContractHttpDocsSpec extends Specification {
 		}
 		// end::url[]
 
-	org.springframework.cloud.contract.verifier.dsl.Contract urlPaths  =
+	org.springframework.cloud.contract.spec.Contract urlPaths  =
 		// tag::urlpath[]
-		org.springframework.cloud.contract.verifier.dsl.Contract.make {
+		org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				//...
 
@@ -127,9 +127,9 @@ class ContractHttpDocsSpec extends Specification {
 		}
 		// end::urlpath[]
 
-	org.springframework.cloud.contract.verifier.dsl.Contract headers  =
+	org.springframework.cloud.contract.spec.Contract headers  =
 		// tag::headers[]
-		org.springframework.cloud.contract.verifier.dsl.Contract.make {
+		org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				//...
 
@@ -147,9 +147,9 @@ class ContractHttpDocsSpec extends Specification {
 		}
 		// end::headers[]
 
-	org.springframework.cloud.contract.verifier.dsl.Contract body  =
+	org.springframework.cloud.contract.spec.Contract body  =
 		// tag::body[]
-		org.springframework.cloud.contract.verifier.dsl.Contract.make {
+		org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				//...
 
@@ -164,9 +164,9 @@ class ContractHttpDocsSpec extends Specification {
 		}
 		// end::body[]
 
-	org.springframework.cloud.contract.verifier.dsl.Contract bodyAsXml  =
+	org.springframework.cloud.contract.spec.Contract bodyAsXml  =
 		// tag::bodyAsXml[]
-		org.springframework.cloud.contract.verifier.dsl.Contract.make {
+		org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				//...
 
@@ -182,9 +182,9 @@ class ContractHttpDocsSpec extends Specification {
 		}
 		// end::bodyAsXml[]
 
-	org.springframework.cloud.contract.verifier.dsl.Contract response  =
+	org.springframework.cloud.contract.spec.Contract response  =
 		// tag::response[]
-		org.springframework.cloud.contract.verifier.dsl.Contract.make {
+		org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				//...
 			}
@@ -196,9 +196,9 @@ class ContractHttpDocsSpec extends Specification {
 		}
 		// end::response[]
 
-	org.springframework.cloud.contract.verifier.dsl.Contract regex  =
+	org.springframework.cloud.contract.spec.Contract regex  =
 		// tag::regex[]
-		org.springframework.cloud.contract.verifier.dsl.Contract.make {
+		org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				method('GET')
 				url $(client(~/\/[0-9]{2}/), server('/12'))
@@ -227,9 +227,9 @@ class ContractHttpDocsSpec extends Specification {
 		}
 		// end::regex[]
 
-	org.springframework.cloud.contract.verifier.dsl.Contract optionals  =
+	org.springframework.cloud.contract.spec.Contract optionals  =
 		// tag::optionals[]
-		org.springframework.cloud.contract.verifier.dsl.Contract.make {
+		org.springframework.cloud.contract.spec.Contract.make {
 			priority 1
 			request {
 				method 'POST'
@@ -282,9 +282,9 @@ class ContractHttpDocsSpec extends Specification {
 		stripped(blockBuilder.toString()) == stripped(expectedTest)
 	}
 
-	org.springframework.cloud.contract.verifier.dsl.Contract method  =
+	org.springframework.cloud.contract.spec.Contract method  =
 		// tag::method[]
-		org.springframework.cloud.contract.verifier.dsl.Contract.make {
+		org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				method 'PUT'
 				url $(client(regex('^/api/[0-9]{2}$')), server('/api/12'))

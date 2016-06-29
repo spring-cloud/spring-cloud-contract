@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 import spock.lang.Specification
 /**
  * @author Marcin Grzejszczak

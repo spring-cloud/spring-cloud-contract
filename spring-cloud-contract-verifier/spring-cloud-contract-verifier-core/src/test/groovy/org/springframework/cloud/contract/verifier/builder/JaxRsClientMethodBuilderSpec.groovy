@@ -26,7 +26,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 
 	def "should generate assertions for simple response body with #methodBuilderName"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract contractDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method "GET"
 					url "test"
@@ -50,14 +50,14 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                   | methodBuilder
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
-			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
 	}
 
 	@Issue("#187")
 	def "should generate assertions for null and boolean values with #methodBuilderName"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract contractDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method "GET"
 					url "test"
@@ -83,14 +83,14 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), contractDsl).toWireMockClientStub())
 		where:
 			methodBuilderName                   | methodBuilder
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
-			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
 	}
 
 	@Issue("#79")
 	def "should generate assertions for simple response body constructed from map with a list with #methodBuilderName"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract contractDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method "GET"
 					url "test"
@@ -119,14 +119,14 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), contractDsl).toWireMockClientStub())
 		where:
 			methodBuilderName                   | methodBuilder
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
-			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
 	}
 
 	@Issue("#82")
 	def "should generate proper request when body constructed from map with a list with #methodBuilderName"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract contractDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method "GET"
 					url "test"
@@ -148,14 +148,14 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                   | methodBuilder                                                                                                                                    | bodyString
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | """entity('{\"items\":[\"HOP\"]}', 'application/json')"""
-			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                                   | 'entity("{\\"items\\":[\\"HOP\\"]}", "application/json")'
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | """entity('{\"items\":[\"HOP\"]}', 'application/json')"""
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                                   | 'entity("{\\"items\\":[\\"HOP\\"]}", "application/json")'
 	}
 
 	@Issue("#88")
 	def "should generate proper request when body constructed from GString with #methodBuilderName"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract contractDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method "GET"
 					url "test"
@@ -177,13 +177,13 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                   | methodBuilder                                                                                                                                    | bodyString
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | """entity('property1=VAL1', 'application/octet-stream')"""
-			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                                   | 'entity("\\"property1=VAL1\\"", "application/octet-stream")'
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | """entity('property1=VAL1', 'application/octet-stream')"""
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                                   | 'entity("\\"property1=VAL1\\"", "application/octet-stream")'
 	}
 
 	def "should generate assertions for array in response body with #methodBuilderName"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract contractDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method "GET"
 					url "test"
@@ -210,13 +210,13 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                   | methodBuilder
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
-			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
 	}
 
 	def "should generate assertions for array inside response body element with #methodBuilderName"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract contractDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method "GET"
 					url "test"
@@ -242,13 +242,13 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                   | methodBuilder
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
-			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
 	}
 
 	def "should generate assertions for nested objects in response body with #methodBuilderName"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract contractDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method "GET"
 					url "test"
@@ -274,13 +274,13 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                   | methodBuilder
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
-			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
 	}
 
 	def "should generate regex assertions for map objects in response body with #methodBodyName"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract contractDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method "GET"
 					url "test"
@@ -312,13 +312,13 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                   | methodBuilder
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
-			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
 	}
 
 	def "should generate regex assertions for string objects in response body with #methodBuilderName"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract contractDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method "GET"
 					url "test"
@@ -344,13 +344,13 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                   | methodBuilder
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
-			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) }
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }
 	}
 
 	def "should ignore 'Accept' header and use 'request' method with #methodBuilderName"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract contractDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method "GET"
 					url "test"
@@ -372,13 +372,13 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                   | methodBuilder                                                                                                                                    | requestString
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | "request('text/plain')"
-			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                                   | 'request("text/plain")'
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | "request('text/plain')"
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                                   | 'request("text/plain")'
 	}
 
 	def "should ignore 'Content-Type' header and use 'entity' method with #methodBuilderName"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract contractDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method "GET"
 					url "test"
@@ -405,13 +405,13 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                   | methodBuilder                                                                                                                                    | requestStrings
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | ["""entity('', 'text/plain')""", """header('Timer', '123')"""]
-			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                                   | ['entity("\\"\\"", "text/plain")', 'header("Timer", "123")']
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | ["""entity('', 'text/plain')""", """header('Timer', '123')"""]
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                                   | ['entity("\\"\\"", "text/plain")', 'header("Timer", "123")']
 	}
 
 	def "should generate a call with an url path and query parameters with #methodBuilderName"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract contractDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
 					urlPath('/users') {
@@ -459,14 +459,14 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                   | methodBuilder                                                                                                                                    | modifyStringIfRequired
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | { String paramString -> paramString }
-			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                                   | { String paramString -> paramString.replace("'", "\"") }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | { String paramString -> paramString }
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                                   | { String paramString -> paramString.replace("'", "\"") }
 	}
 
 	@Issue('#169')
 	def "should generate a call with an url path and query parameters with url containing a pattern with #methodBuilderName"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract contractDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
 					url($(stub(regex('/foo/[0-9]+')), test('/foo/123456'))) {
@@ -514,13 +514,13 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                   | methodBuilder                                                                                                                                    | modifyStringIfRequired
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | { String paramString -> paramString }
-			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                                   | { String paramString -> paramString.replace("'", "\"") }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | { String paramString -> paramString }
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                                   | { String paramString -> paramString.replace("'", "\"") }
 	}
 
 	def "should generate test for empty body with #methodBuilderName"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract contractDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method('POST')
 					url("/ws/payments")
@@ -542,13 +542,13 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                   | methodBuilder                                                                                                                                    | bodyString
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | "entity('', 'application/octet-stream')"
-			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                                   | 'entity("\\"\\"", "application/octet-stream"'
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | "entity('', 'application/octet-stream')"
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                                   | 'entity("\\"\\"", "application/octet-stream"'
 	}
 
 	def "should generate test for String in response body with #methodBodyName"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract contractDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method "POST"
 					url "test"
@@ -570,14 +570,14 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                   | methodBuilder                                                                                                                                    | bodyDefinitionString                                    | bodyEvaluationString
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | "String responseAsString = response.readEntity(String)" | 'responseBody == "test"'
-			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                                   | 'Object responseBody = (responseAsString);'             | 'assertThat(responseBody).isEqualTo("test");'
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | "String responseAsString = response.readEntity(String)" | 'responseBody == "test"'
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                                   | 'Object responseBody = (responseAsString);'             | 'assertThat(responseBody).isEqualTo("test");'
 	}
 
 	@Issue('#171')
 	def "should generate test with uppercase method name with #methodBuilderName"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract contractDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method "get"
 					url "/v1/some_cool_requests/e86df6f693de4b35ae648464c5b0dc08"
@@ -603,13 +603,13 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                   | methodBuilder                                                                                                                                    | methodString
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | ".method('GET')"
-			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.verifier.dsl.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                                   | 'method("GET")'
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl) } | ".method('GET')"
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl) }                                   | 'method("GET")'
 	}
 
 	def "should generate a call with an url path and query parameters with JUnit - we'll put it into docs"() {
 		given:
-		org.springframework.cloud.contract.verifier.dsl.Contract contractDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+		org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				method 'GET'
 				urlPath('/users') {

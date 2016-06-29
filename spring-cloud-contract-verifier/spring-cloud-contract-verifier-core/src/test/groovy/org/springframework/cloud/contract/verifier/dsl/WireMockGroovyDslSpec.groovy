@@ -28,7 +28,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should convert groovy dsl stub to wireMock stub for the client side'() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method('GET')
 					url $(client(~/\/[0-9]{2}/), server('/12'))
@@ -77,7 +77,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue("#79")
 	def 'should convert groovy dsl stub to wireMock stub for the client side with a body containing a map'() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
 					url '/ingredients'
@@ -124,7 +124,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue("#86")
 	def 'should convert groovy dsl stub with GString and regexp'() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method('POST')
 					url('/ws/payments')
@@ -176,7 +176,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should convert groovy dsl stub with Body as String to wireMock stub for the client side'() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method('GET')
 					url $(client(~/\/[0-9]{2}/), server('/12'))
@@ -221,7 +221,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should convert groovy dsl stub with simple Body as String to wireMock stub for the client side'() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method('GET')
 					url $(client(regex('/[0-9]{2}')), server('/12'))
@@ -271,7 +271,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should use equalToJson when body match is defined as map'() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method('GET')
 					url $(client(~/\/[0-9]{2}/), server('/12'))
@@ -321,7 +321,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should use equalToJson when content type ends with json'() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
 					url "/users"
@@ -366,7 +366,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should use equalToXml when content type ends with xml'() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
 					url "/users"
@@ -411,7 +411,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should use equalToXml when content type is parsable xml'() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
 					url "/users"
@@ -448,7 +448,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should support xml as a response body'() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
 					url "/users"
@@ -481,7 +481,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should use equalToJson'() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
 					url "/users"
@@ -516,7 +516,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should use equalToXml'() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
 					url "/users"
@@ -553,7 +553,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should convert groovy dsl stub with regexp Body as String to wireMock stub for the client side'() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method('GET')
 					url $(client(regex('/[0-9]{2}')), server('/12'))
@@ -603,7 +603,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should convert groovy dsl stub with a regexp and an integer in request body'() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'PUT'
 					url '/fraudcheck'
@@ -665,7 +665,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def "should generate request with urlPath and queryParameters for client side"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
 					urlPath($(client("users"), server("items"))) {
@@ -733,7 +733,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	def "should generate request with urlPathPattern and queryParameters for client side\
 			when both contains regular expressions"() {
 		given:
-		org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+		org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				method 'GET'
 				urlPath($(client(regex("/users/[0-9]+")), server("/users/1"))) {
@@ -772,7 +772,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def "should generate request with urlPath for client side"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
 					urlPath $(client("boxes"), server("items"))
@@ -801,7 +801,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def "should generate simple request with urlPath for client side"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
 					urlPath "boxes"
@@ -830,7 +830,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def "should not allow regexp in url for server value"() {
 		when:
-			org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
 					url(regex(/users\/[0-9]*/)) {
@@ -851,7 +851,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def "should not allow regexp in query parameter for server value"() {
 		when:
-			org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
 					url("abc") {
@@ -871,7 +871,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def "should not allow query parameter unresolvable for a server value"() {
 		when:
-			org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
 					urlPath("users") {
@@ -892,7 +892,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def "should not allow query parameter with a different absent variation for server/client"() {
 		when:
-			org.springframework.cloud.contract.verifier.dsl.Contract.make dsl
+			org.springframework.cloud.contract.spec.Contract.make dsl
 		then:
 			def e = thrown(IllegalStateException)
 			e.message.contains "Absent cannot only be used only on one side"
@@ -942,7 +942,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def "should generate request with url and queryParameters for client side"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
 					url($(client(regex(/users\/[0-9]*/)), server("users/123"))) {
@@ -984,7 +984,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should convert groovy dsl stub with rich tree Body as String to wireMock stub for the client side'() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method('GET')
 					url $(client(~/\/[0-9]{2}/), server('/12'))
@@ -1055,7 +1055,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should use regexp matches when request body match is defined using a map with a pattern'() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'POST'
 					url '/reissue-payment-order'
@@ -1115,7 +1115,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def "should generate stub for empty body"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method('POST')
 					url("test")
@@ -1148,7 +1148,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def "should generate stub with priority"() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				priority 9
 				request {
 					method('POST')
@@ -1178,7 +1178,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue("#127")
 	def 'should use "test" as an alias for "server"'() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method('POST')
 					body(
@@ -1212,7 +1212,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue("#121")
 	def 'should generate stub with empty list as a value of a field'() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method('POST')
 					body(
@@ -1247,7 +1247,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should generate stub properly resolving GString with regular expression'() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				priority 1
 				request {
 					method 'POST'
@@ -1306,7 +1306,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should generate stub properly resolving GString with regular expression in url'() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 
 				request {
 					method 'PUT'
@@ -1383,7 +1383,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			stubMappingIsValidWireMockStub(wireMockStub)
 		where:
 		contractDsl << [
-				org.springframework.cloud.contract.verifier.dsl.Contract.make {
+				org.springframework.cloud.contract.spec.Contract.make {
 					priority 1
 					request {
 						method 'POST'
@@ -1407,7 +1407,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						)
 					}
 				},
-				org.springframework.cloud.contract.verifier.dsl.Contract.make {
+				org.springframework.cloud.contract.spec.Contract.make {
 					priority 1
 					request {
 						method 'POST'
@@ -1455,7 +1455,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue('180')
 	def 'should generate stub with multipart parameters'() {
 		given:
-			org.springframework.cloud.contract.verifier.dsl.Contract contractDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method "PUT"
 					url "/multipart"
@@ -1500,7 +1500,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue('#219')
 	def "should generate request with an optional queryParameter for client side"() {
 		given:
-		org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl = org.springframework.cloud.contract.verifier.dsl.Contract.make {
+		org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				method 'GET'
 				urlPath ('/some/api') {

@@ -20,7 +20,7 @@ import groovy.transform.CompileStatic
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner
 import org.springframework.cloud.contract.stubrunner.StubConfiguration
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerConfiguration

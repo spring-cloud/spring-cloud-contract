@@ -19,9 +19,9 @@ package org.springframework.cloud.contract.verifier.builder
 import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
-import org.springframework.cloud.contract.verifier.dsl.Contract
-import org.springframework.cloud.contract.verifier.dsl.internal.Input
-import org.springframework.cloud.contract.verifier.dsl.internal.OutputMessage
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.Input
+import org.springframework.cloud.contract.spec.internal.OutputMessage
 import org.springframework.cloud.contract.verifier.util.ContentType
 
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromContent

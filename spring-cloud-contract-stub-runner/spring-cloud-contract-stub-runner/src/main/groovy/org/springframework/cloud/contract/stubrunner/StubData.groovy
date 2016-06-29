@@ -18,7 +18,7 @@ package org.springframework.cloud.contract.stubrunner
 
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 
 /**
  * @author Marcin Grzejszczak

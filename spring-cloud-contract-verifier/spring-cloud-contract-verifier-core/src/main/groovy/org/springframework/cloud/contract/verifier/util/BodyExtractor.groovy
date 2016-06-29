@@ -19,7 +19,7 @@ package org.springframework.cloud.contract.verifier.util
 import groovy.json.JsonOutput
 import groovy.json.StringEscapeUtils
 import groovy.transform.CompileStatic
-import org.springframework.cloud.contract.verifier.dsl.internal.DslProperty
+import org.springframework.cloud.contract.spec.internal.DslProperty
 
 import static ContentUtils.extractValue
 /**

@@ -20,13 +20,13 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.transform.TypeChecked
 import groovy.util.logging.Slf4j
-import org.springframework.cloud.contract.verifier.dsl.internal.Headers
+import org.springframework.cloud.contract.spec.internal.Headers
 import org.codehaus.groovy.runtime.GStringImpl
-import org.springframework.cloud.contract.verifier.dsl.internal.NamedProperty
-import org.springframework.cloud.contract.verifier.dsl.internal.DslProperty
-import org.springframework.cloud.contract.verifier.dsl.internal.ExecutionProperty
-import org.springframework.cloud.contract.verifier.dsl.internal.MatchingStrategy
-import org.springframework.cloud.contract.verifier.dsl.internal.OptionalProperty
+import org.springframework.cloud.contract.spec.internal.NamedProperty
+import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.MatchingStrategy
+import org.springframework.cloud.contract.spec.internal.OptionalProperty
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern

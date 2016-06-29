@@ -19,6 +19,7 @@ String verifier = "spring-cloud-contract-verifier"
 project(":$verifier-root:$verifier-core") {
 
 	dependencies {
+		compile project(":spring-cloud-contract-spec")
 		compile 'org.slf4j:slf4j-api:1.6.0'
 		compile 'commons-io:commons-io:2.0'
 		compile 'org.apache.commons:commons-lang3:3.3'

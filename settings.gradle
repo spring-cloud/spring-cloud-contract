@@ -5,6 +5,8 @@ rootProject.name = "$verifier-parent"
 
 include "docs"
 
+include ":spring-cloud-contract-spec"
+
 include ":$verifier:$verifier-core",
 		":$verifier:$verifier-gradle-plugin",
 		":$verifier:$verifier-converters",

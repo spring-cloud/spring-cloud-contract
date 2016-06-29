@@ -18,7 +18,7 @@ package org.springframework.cloud.contract.verifier.util
 
 import groovy.transform.CompileStatic
 import org.codehaus.groovy.control.CompilerConfiguration
-import org.springframework.cloud.contract.verifier.dsl.Contract
+import org.springframework.cloud.contract.spec.Contract
 
 /**
  * Converts a file or String into a {@link Contract}

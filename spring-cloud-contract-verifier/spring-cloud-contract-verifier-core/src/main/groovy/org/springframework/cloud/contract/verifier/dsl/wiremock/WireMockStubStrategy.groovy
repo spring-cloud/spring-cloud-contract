@@ -39,7 +39,7 @@ class WireMockStubStrategy {
 	private final ContractMetadata contract
 	private final String rootName
 
-	WireMockStubStrategy(String rootName, ContractMetadata contract, org.springframework.cloud.contract.verifier.dsl.Contract groovyDsl) {
+	WireMockStubStrategy(String rootName, ContractMetadata contract, org.springframework.cloud.contract.spec.Contract groovyDsl) {
 		this.rootName = rootName
 		this.contract = contract
 		this.wireMockRequestStubStrategy = new WireMockRequestStubStrategy(groovyDsl)

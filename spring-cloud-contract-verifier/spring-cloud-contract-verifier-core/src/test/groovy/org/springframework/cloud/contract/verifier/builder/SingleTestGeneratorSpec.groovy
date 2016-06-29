@@ -46,7 +46,7 @@ class SingleTestGeneratorSpec extends Specification {
 	def setup() {
 		file = tmpFolder.newFile()
 		file.write("""
-				org.springframework.cloud.contract.verifier.dsl.Contract.make {
+				org.springframework.cloud.contract.spec.Contract.make {
 					request {
 						method 'PUT'
 						url 'url'
@@ -105,7 +105,7 @@ class SingleTestGeneratorSpec extends Specification {
 		given:
 			File secondFile = tmpFolder.newFile()
 			secondFile.write("""
-						org.springframework.cloud.contract.verifier.dsl.Contract.make {
+						org.springframework.cloud.contract.spec.Contract.make {
 						  label 'some_label'
 						  input {
 							messageFrom('delete')

@@ -1,4 +1,4 @@
-org.springframework.cloud.contract.verifier.dsl.Contract.make  {
+org.springframework.cloud.contract.spec.Contract.make  {
 	// Human readable description
 	description 'Sends an order message'
 	// Label by means of which the output message can be triggered
