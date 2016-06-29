@@ -157,6 +157,18 @@ Spring Cloud Contract Verifier stand out on the "market" of Consumer Driven Cont
 - Stub Runner functionality - the stubs are automatically downloaded at runtime from Nexus / Artifactory
 - Spring Cloud integration - no discovery service is needed for integration tests
 
+== Links
+
+Here you can find interesting links related to Spring Cloud Contract Verifier:
+
+- https://github.com/Codearte/accurest[Spring Cloud Contract Verifier Github Repository]
+- http://codearte.github.io/accurest[Spring Cloud Contract Verifier Documentation]
+- http://codearte.github.io/accurest/deprecated[Accurest Legacy Documentation]
+- https://codearte.github.io/accurest/#spring-cloud-contract-stub-runner[Spring Cloud Contract Stub Runner Documentation]
+- http://codearte.github.io/accurest/#stub-runner-for-messaging[Spring Cloud Contract Stub Runner Messaging Documentation]
+- https://gitter.im/Codearte/accurest[Spring Cloud Contract Verifier Gitter]
+- https://github.com/Codearte/accurest-maven-plugin[Spring Cloud Contract Verifier Maven Plugin]
+
 == Documentation
 
 You can read more about Spring Cloud Contract Verifier by reading the {documentation_url}[docs]

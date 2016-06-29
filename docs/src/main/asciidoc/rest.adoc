@@ -42,7 +42,7 @@ Add the additional snapshot repository to your build.gradle to use snapshot vers
 repositories {
     (...)
     //Required only for SNAPSHOT versions
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    maven { url "https://repo.spring.io/plugins-snapshot-local" }
 }
 ----
 
@@ -90,6 +90,48 @@ Spring Cloud Contract Verifier will create test class `defaultBasePackage.MyServ
 ==== Run plugin
 
 Plugin registers itself to be invoked before `check` task. You have nothing to do as long as you want it to be part of your build process. If you just want to generate tests please invoke `generateContractTests` task.
+
+==== Default setup
+
+Default Gradle Plugin setup creates the following Gradle part of the build (it's a pseudocode)
+
+[source,groovy,indent=0]
+----
+contractVerifier {
+    targetFramework = 'JUNIT'
+    testMode = 'MockMvc'
+    generatedTestSourcesDir = project.file("${project.buildDir}/generated-test-sources/contracts")
+    contractsDslDir = "${project.rootDir}/src/test/resources/contracts"
+    basePackageForTests = 'org.springframework.cloud.contract.verifier.tests'
+    stubsOutputDir = project.file("${project.buildDir}/stubs")
+}
+
+tasks.create(type: Jar, name: 'verifierStubsJar', dependsOn: 'generateWireMockClientStubs') {
+    baseName = project.name
+    classifier = contractVerifier.stubsSuffix
+    from contractVerifier.stubsOutputDir
+}
+
+project.artifacts {
+    archives task
+}
+
+tasks.create(type: Copy, name: 'copyContracts') {
+    from contractVerifier.contractsDslDir
+    into contractVerifier.stubsOutputDir
+}
+
+verifierStubsJar.dependsOn 'copyContracts'
+
+publishing {
+    publications {
+        stubs(MavenPublication) {
+            artifactId project.name
+            artifact verifierStubsJar
+        }
+    }
+}
+----
 
 ==== Configure plugin
 
