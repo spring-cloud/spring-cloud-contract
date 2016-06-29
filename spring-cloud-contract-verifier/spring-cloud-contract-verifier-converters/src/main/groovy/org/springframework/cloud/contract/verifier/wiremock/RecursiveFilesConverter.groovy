@@ -39,18 +39,18 @@ class RecursiveFilesConverter {
 
 	private final SingleFileConverter singleFileConverter
 	private final ContractVerifierConfigProperties properties
-	private final String additionalFolder
+	private final File outMappingsDir
 
 	RecursiveFilesConverter(SingleFileConverter singleFileConverter, ContractVerifierConfigProperties properties) {
 		this.properties = properties
 		this.singleFileConverter = singleFileConverter
-		this.additionalFolder = ""
+		this.outMappingsDir = properties.stubsOutputDir
 	}
 
-	RecursiveFilesConverter(SingleFileConverter singleFileConverter, ContractVerifierConfigProperties properties, String additionalFolder) {
+	RecursiveFilesConverter(SingleFileConverter singleFileConverter, ContractVerifierConfigProperties properties, File outMappingsDir) {
 		this.properties = properties
 		this.singleFileConverter = singleFileConverter
-		this.additionalFolder = additionalFolder
+		this.outMappingsDir = outMappingsDir
 	}
 
 	void processFiles() {
@@ -80,8 +80,7 @@ class RecursiveFilesConverter {
 
 	private Path createAndReturnTargetDirectory(File sourceFile) {
 		Path relativePath = Paths.get(properties.contractsDslDir.toURI()).relativize(sourceFile.parentFile.toPath())
-		File rootFile = additionalFolder ? new File(properties.stubsOutputDir, additionalFolder) : properties.stubsOutputDir
-		Path absoluteTargetPath = rootFile.toPath().resolve(relativePath)
+		Path absoluteTargetPath = outMappingsDir.toPath().resolve(relativePath)
 		Files.createDirectories(absoluteTargetPath)
 		return absoluteTargetPath
 	}

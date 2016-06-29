@@ -23,7 +23,6 @@ import org.gradle.api.tasks.TaskAction
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverter
 import org.springframework.cloud.contract.verifier.wiremock.RecursiveFilesConverter
-
 //TODO: Implement as an incremental task: https://gradle.org/docs/current/userguide/custom_tasks.html#incremental_tasks ?
 /**
  * Generates WireMock stubs from the contracts
@@ -45,8 +44,11 @@ class GenerateWireMockClientStubsFromDslTask extends ConventionTask {
 	void generate() {
 		logger.info("Spring Cloud Contract Verifier Plugin: Invoking DSL to WireMock client stubs conversion")
 		logger.debug("From '${getContractsDslDir()}' to '${getStubsOutputDir()}'")
+		ContractVerifierConfigProperties props = getConfigProperties()
+		File outMappingsDir = props.stubsOutputDir != null ? new File(props.stubsOutputDir, DEFAULT_MAPPINGS_FOLDER)
+				: new File(project.buildDir, "stubs/$DEFAULT_MAPPINGS_FOLDER")
 		RecursiveFilesConverter converter = new RecursiveFilesConverter(new DslToWireMockClientConverter(),
-				getConfigProperties(), DEFAULT_MAPPINGS_FOLDER)
+				getConfigProperties(), outMappingsDir)
 		converter.processFiles()
 	}
 }

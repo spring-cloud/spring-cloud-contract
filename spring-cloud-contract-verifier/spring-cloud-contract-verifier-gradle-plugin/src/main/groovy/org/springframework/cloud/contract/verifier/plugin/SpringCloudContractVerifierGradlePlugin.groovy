@@ -91,6 +91,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 			generatedTestSourcesDir = project.file("${project.buildDir}/generated-test-sources/contracts")
 			contractsDslDir = defaultContractsDir() //TODO: Use sourceset
 			basePackageForTests = 'org.springframework.cloud.contract.verifier.tests'
+			stubsOutputDir = stubsOutputDir ?: project.file("${project.buildDir}/stubs")
 		}
 	}
 
@@ -115,7 +116,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		task.group = GROUP_NAME
 		task.conventionMapping.with {
 			contractsDslDir = { extension.contractsDslDir }
-			stubsOutputDir = { extension.stubsOutputDir ?: project.file("${project.buildDir}/stubs") }
+			stubsOutputDir = { extension.stubsOutputDir }
 			configProperties = { extension }
 		}
 	}
@@ -123,14 +124,14 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	private Task createAndConfigureStubsJarTasks(ContractVerifierConfigProperties extension) {
 		Task task = stubsTask()
 		if (task) {
-			project.logger.warn("Stubs jar task was present - won't create one. Remember about adding it to artifacts as an archive!")
+			project.logger.info("Spring Cloud Contract Verifier Plugin: Stubs jar task was present - won't create one. Remember about adding it to artifacts as an archive!")
 			return task
 		} else {
 			task = project.tasks.create(type: Jar, name: VERIFIER_STUBS_JAR_TASK_NAME,
 					dependsOn: DSL_TO_WIREMOCK_CLIENT_TASK_NAME) {
 				baseName = project.name
 				classifier = extension.stubsSuffix
-				from { extension.stubsOutputDir }
+				from { extension.stubsOutputDir ?: project.file("${project.buildDir}/stubs") }
 			}
 			task.description = "Creates the stubs JAR task"
 			task.group = GROUP_NAME
@@ -153,7 +154,8 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	private Task createAndConfigureCopyContractsTask(Task stubs, ContractVerifierConfigProperties extension) {
 		Task task = project.tasks.create(type: Copy, name: COPY_CONTRACTS_TASK_NAME) {
 			from { extension.contractsDslDir }
-			into { project.file("${extension.stubsOutputDir}/contracts") ?: project.file("${project.buildDir}/stubs/contracts") }
+			into { extension.stubsOutputDir != null ?
+					project.file("${extension.stubsOutputDir}/contracts") : project.file("${project.buildDir}/stubs/contracts") }
 		}
 		task.description = "Copies contracts to the output folder"
 		task.group = GROUP_NAME
@@ -163,22 +165,23 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 
 	private void createAndConfigureMavenPublishPlugin(Task stubsTask, ContractVerifierConfigProperties extension) {
 		if (!classIsOnClasspath("org.gradle.api.publish.maven.plugins.MavenPublishPlugin")) {
+			project.logger.debug("Maven Publish Plugin is not present - won't add default publication")
 			return
 		}
-		project.logger.debug("Generating default publication")
+		project.logger.debug("Spring Cloud Contract Verifier Plugin: Generating default publication")
 		project.afterEvaluate {
 			project.plugins.withType(MavenPublishPlugin) { def publishingPlugin ->
 				def publishingExtension = project.extensions.findByName('publishing')
 				if (!hasPublication(publishingExtension)) {
-					project.logger.debug("Stubs publication is not present - will create one")
+					project.logger.debug("Spring Cloud Contract Verifier Plugin: Stubs publication is not present - will create one")
 					publishingExtension.publications {
 						stubs(MavenPublication) {
-							artifactId "${project.name}-${extension.stubsSuffix}"
+							artifactId "${project.name}"
 							artifact stubsTask
 						}
 					}
 				} else {
-					project.logger.warn("Stubs publication was present - won't create a new one. Remember about passing stubs as artifact")
+					project.logger.info("Spring Cloud Contract Verifier Plugin: Stubs publication was present - won't create a new one. Remember about passing stubs as artifact")
 				}
 			}
 		}
