@@ -19,8 +19,11 @@ package org.springframework.cloud.contract.verifier.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
+import org.gradle.api.tasks.Copy
+import org.gradle.jvm.tasks.Jar
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
-
 /**
  * Gradle plugin for Spring Cloud Contract Verifier that from the DSL contract can
  * <ul>
@@ -44,6 +47,8 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 
 	private static final String GENERATE_SERVER_TESTS_TASK_NAME = 'generateContractTests'
 	private static final String DSL_TO_WIREMOCK_CLIENT_TASK_NAME = 'generateWireMockClientStubs'
+	private static final String COPY_CONTRACTS_TASK_NAME = 'copyContracts'
+	private static final String VERIFIER_STUBS_JAR_TASK_NAME = 'verifierStubsJar'
 
 	private static final Class IDEA_PLUGIN_CLASS = org.gradle.plugins.ide.idea.IdeaPlugin
 	private static final String GROUP_NAME = "Verification"
@@ -61,6 +66,9 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		setConfigurationDefaults(extension)
 		createGenerateTestsTask(extension)
 		createAndConfigureGenerateWireMockClientStubsFromDslTask(extension)
+		Task stubsJar = createAndConfigureStubsJarTasks(extension)
+		createAndConfigureCopyContractsTask(stubsJar, extension)
+		createAndConfigureMavenPublishPlugin(stubsJar, extension)
 		project.dependencies.add("testCompile", "com.github.tomakehurst:wiremock:2.0.10-beta")
 		project.dependencies.add("testCompile", "com.toomuchcoding.jsonassert:jsonassert:0.4.7")
 		project.dependencies.add("testCompile", "org.assertj:assertj-core:2.3.0")
@@ -109,6 +117,87 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 			contractsDslDir = { extension.contractsDslDir }
 			stubsOutputDir = { extension.stubsOutputDir ?: project.file("${project.buildDir}/stubs") }
 			configProperties = { extension }
+		}
+	}
+
+	private Task createAndConfigureStubsJarTasks(ContractVerifierConfigProperties extension) {
+		Task task = stubsTask()
+		if (task) {
+			project.logger.warn("Stubs jar task was present - won't create one. Remember about adding it to artifacts as an archive!")
+			return task
+		} else {
+			task = project.tasks.create(type: Jar, name: VERIFIER_STUBS_JAR_TASK_NAME,
+					dependsOn: DSL_TO_WIREMOCK_CLIENT_TASK_NAME) {
+				baseName = project.name
+				classifier = extension.stubsSuffix
+				from { extension.stubsOutputDir }
+			}
+			task.description = "Creates the stubs JAR task"
+			task.group = GROUP_NAME
+
+			project.artifacts {
+				archives task
+			}
+			return task
+		}
+	}
+
+	private Task stubsTask() {
+		try {
+			return project.tasks.getByName(VERIFIER_STUBS_JAR_TASK_NAME)
+		} catch (Exception e) {
+			return null
+		}
+	}
+
+	private Task createAndConfigureCopyContractsTask(Task stubs, ContractVerifierConfigProperties extension) {
+		Task task = project.tasks.create(type: Copy, name: COPY_CONTRACTS_TASK_NAME) {
+			from { extension.contractsDslDir }
+			into { project.file("${extension.stubsOutputDir}/contracts") ?: project.file("${project.buildDir}/stubs/contracts") }
+		}
+		task.description = "Copies contracts to the output folder"
+		task.group = GROUP_NAME
+		stubs.dependsOn task
+		return task
+	}
+
+	private void createAndConfigureMavenPublishPlugin(Task stubsTask, ContractVerifierConfigProperties extension) {
+		if (!classIsOnClasspath("org.gradle.api.publish.maven.plugins.MavenPublishPlugin")) {
+			return
+		}
+		project.logger.debug("Generating default publication")
+		project.afterEvaluate {
+			project.plugins.withType(MavenPublishPlugin) { def publishingPlugin ->
+				def publishingExtension = project.extensions.findByName('publishing')
+				if (!hasPublication(publishingExtension)) {
+					project.logger.debug("Stubs publication is not present - will create one")
+					publishingExtension.publications {
+						stubs(MavenPublication) {
+							artifactId "${project.name}-${extension.stubsSuffix}"
+							artifact stubsTask
+						}
+					}
+				} else {
+					project.logger.warn("Stubs publication was present - won't create a new one. Remember about passing stubs as artifact")
+				}
+			}
+		}
+	}
+
+	private boolean hasPublication(def publishingExtension) {
+		try {
+			return publishingExtension.publications.getByName('stubs')
+		} catch (Exception e) {
+			return false
+		}
+	}
+
+	private boolean classIsOnClasspath(String className) {
+		try {
+			Class.forName(className)
+			return true
+		} catch (Exception e) {
+			project.logger.debug("Maven Publish Plugin is not available")
 		}
 	}
 }

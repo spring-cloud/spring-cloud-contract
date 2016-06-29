@@ -32,6 +32,8 @@ import org.springframework.cloud.contract.verifier.wiremock.RecursiveFilesConver
  */
 class GenerateWireMockClientStubsFromDslTask extends ConventionTask {
 
+	private static final String DEFAULT_MAPPINGS_FOLDER = 'mappings'
+
 	@InputDirectory
 	File contractsDslDir
 	@OutputDirectory
@@ -43,7 +45,8 @@ class GenerateWireMockClientStubsFromDslTask extends ConventionTask {
 	void generate() {
 		logger.info("Spring Cloud Contract Verifier Plugin: Invoking DSL to WireMock client stubs conversion")
 		logger.debug("From '${getContractsDslDir()}' to '${getStubsOutputDir()}'")
-		RecursiveFilesConverter converter = new RecursiveFilesConverter(new DslToWireMockClientConverter(), getConfigProperties())
+		RecursiveFilesConverter converter = new RecursiveFilesConverter(new DslToWireMockClientConverter(),
+				getConfigProperties(), DEFAULT_MAPPINGS_FOLDER)
 		converter.processFiles()
 	}
 }

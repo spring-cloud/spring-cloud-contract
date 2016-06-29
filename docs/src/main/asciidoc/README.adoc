@@ -8,6 +8,8 @@
 
 include::introduction.adoc[]
 
+include::links.adoc[]
+
 == Documentation
 
 You can read more about Spring Cloud Contract Verifier by reading the {documentation_url}[docs]

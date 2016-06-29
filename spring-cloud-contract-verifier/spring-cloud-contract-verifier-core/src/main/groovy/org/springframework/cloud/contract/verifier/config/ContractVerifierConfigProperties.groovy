@@ -91,4 +91,9 @@ class ContractVerifierConfigProperties {
 	 */
 	File stubsOutputDir
 
+	/**
+	 * Suffix for the generated Stubs Jar task
+	 */
+	String stubsSuffix = 'stubs'
+
 }

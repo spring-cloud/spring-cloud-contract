@@ -58,8 +58,6 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 	ext {
 		contractsDir = file("mappings")
 		stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
-		wireMockStubsOutputDir = file(new File(stubsOutputDirRoot, 'repository/mappings/'))
-		contractsOutputDir = file(new File(stubsOutputDirRoot, 'repository/contracts/'))
 	}
 
 	contractVerifier {
@@ -68,7 +66,7 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 		baseClassForTests = 'org.springframework.cloud.MvcSpec'
 		contractsDslDir = file("${project.projectDir.absolutePath}/mappings/")
 		generatedTestSourcesDir = file("${project.buildDir}/generated-test-sources/")
-		stubsOutputDir = wireMockStubsOutputDir
+		stubsOutputDir = stubsOutputDirRoot
 	}
 
 	jar {
@@ -94,31 +92,6 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 
 	clean.dependsOn('cleanup')
 
-	task copyContracts(type: Copy) {
-		from contractsDir
-		into contractsOutputDir
-		includeEmptyDirs = true
-	}
-
-	task stubsJar(type: Jar, dependsOn: ["generateWireMockClientStubs", copyContracts]) {
-		baseName = "${project.name}"
-		classifier = "stubs"
-		from stubsOutputDirRoot
-	}
-
-	artifacts {
-		archives stubsJar
-	}
-
-	publishing {
-		publications {
-			stubs(MavenPublication) {
-				artifactId "${project.name}-stubs"
-				artifact stubsJar
-			}
-		}
-	}
-
 	test {
 		testLogging {
 			exceptionFormat = 'full'
@@ -134,7 +107,7 @@ configure(project(':loanApplicationService')) {
 
 	task copyCollaboratorStubs(type: Copy) {
 		File fraudBuildDir = project(':fraudDetectionService').buildDir
-		from(new File(fraudBuildDir, "/production/${project(':fraudDetectionService').name}-stubs/repository/"))
+		from(new File(fraudBuildDir, "/production/${project(':fraudDetectionService').name}-stubs/"))
 		into "src/test/resources/"
 	}
 
