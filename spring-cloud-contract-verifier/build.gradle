@@ -87,15 +87,7 @@ project(":$verifier-root:$verifier-gradle-plugin") {
 	}
 
 	test {
-		exclude '**/*FunctionalSpec.*'
 		systemProperties = testSystemProperties
-	}
-	task funcTest(type: Test) {
-		include '**/*FunctionalSpec.*'
-		systemProperties = testSystemProperties
-		reports.html {
-			destination = file("${reporting.baseDir}/funcTests")
-		}
 	}
 
 	task archiveMessagingLibsDependencies(type: Sync) {
@@ -113,7 +105,5 @@ project(":$verifier-root:$verifier-gradle-plugin") {
 	archiveContractVerifierGradlePluginLibsDependencies.dependsOn project(":$verifier-root:$verifier-gradle-plugin").tasks.jar
 
 	test.dependsOn archiveMessagingLibsDependencies, archiveContractVerifierGradlePluginLibsDependencies
-	funcTest.dependsOn archiveMessagingLibsDependencies, archiveContractVerifierGradlePluginLibsDependencies
 
-	uploadArchives.dependsOn { funcTest }
 }

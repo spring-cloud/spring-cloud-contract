@@ -12,9 +12,7 @@ group = 'org.springframework.cloud.testprojects'
 
 ext {
 	contractsDir = file("repository/mappings")
-	stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
-	wireMockStubsOutputDir = file(new File(stubsOutputDirRoot, 'repository/mappings/'))
-	contractsOutputDir = file(new File(stubsOutputDirRoot, 'repository/contracts/'))
+	stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/repository/")
 }
 
 configurations {
@@ -54,29 +52,17 @@ contractVerifier {
 	basePackageForTests = 'contracts'
 	contractsDslDir = contractsDir
 //	generatedTestSourcesDir = file("${project.rootDir}/src/test/groovy/")
-	stubsOutputDir = wireMockStubsOutputDir
+	stubsOutputDir = stubsOutputDirRoot
 	targetFramework = 'Spock'
 }
 
-//TODO: Put it into the plugin
-task createWireMockStubsOutputDir << {
-	wireMockStubsOutputDir.mkdirs()
-}
-
-generateWireMockClientStubs.dependsOn { createWireMockStubsOutputDir }
 generateContractTests.dependsOn generateWireMockClientStubs
 
 wrapper {
 	gradleVersion '2.2.1'
 }
 
-task copyContracts(type: Copy) {
-	from contractsDir
-	include '**/*.groovy'
-	into contractsOutputDir
-}
-
-task stubsJar(type: Jar, dependsOn: ["generateWireMockClientStubs", copyContracts]) {
+task stubsJar(type: Jar, dependsOn: ["generateWireMockClientStubs"]) {
 	baseName = "${project.name}"
 	classifier = "stubs"
 	from stubsOutputDirRoot
