@@ -19,8 +19,10 @@ package org.springframework.cloud.contract.verifier.util
 import com.toomuchcoding.jsonassert.JsonAssertion
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+import groovy.util.logging.Slf4j
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 import java.util.regex.Pattern
 
@@ -31,6 +33,7 @@ import java.util.regex.Pattern
  *
  * @author Marcin Grzejszczak
  */
+@Slf4j
 class JsonToJsonPathsConverter {
 
 	/**
@@ -42,15 +45,25 @@ class JsonToJsonPathsConverter {
 	private static final Boolean SERVER_SIDE = false
 	private static final Boolean CLIENT_SIDE = true
 
+	private final ContractVerifierConfigProperties configProperties
+
+	JsonToJsonPathsConverter(ContractVerifierConfigProperties configProperties) {
+		this.configProperties = configProperties
+	}
+
+	JsonToJsonPathsConverter() {
+		this.configProperties = new ContractVerifierConfigProperties()
+	}
+
 	public static JsonPaths transformToJsonPathWithTestsSideValues(def json) {
-		return transformToJsonPathWithValues(json, SERVER_SIDE)
+		return new JsonToJsonPathsConverter().transformToJsonPathWithValues(json, SERVER_SIDE)
 	}
 
 	public static JsonPaths transformToJsonPathWithStubsSideValues(def json) {
-		return transformToJsonPathWithValues(json, CLIENT_SIDE)
+		return new JsonToJsonPathsConverter().transformToJsonPathWithValues(json, CLIENT_SIDE)
 	}
 
-	private static JsonPaths transformToJsonPathWithValues(def json, boolean clientSide) {
+	private JsonPaths transformToJsonPathWithValues(def json, boolean clientSide) {
 		if(!json) {
 			return new JsonPaths()
 		}
@@ -69,7 +82,7 @@ class JsonToJsonPathsConverter {
 		return pathsAndValues
 	}
 
-	protected static def traverseRecursively(Class parentType, MethodBufferingJsonVerifiable key, def value, Closure closure) {
+	protected def traverseRecursively(Class parentType, MethodBufferingJsonVerifiable key, def value, Closure closure) {
 		value = ContentUtils.returnParsedObject(value)
 		if (value instanceof String && value) {
 			try {
@@ -120,10 +133,16 @@ class JsonToJsonPathsConverter {
 	}
 
 	// Size verification: https://github.com/Codearte/accurest/issues/279
-	private static void addSizeVerificationForListWithPrimitives(MethodBufferingJsonVerifiable key, Closure closure, List value) {
-		if (System.getProperty(SIZE_ASSERTION_SYSTEM_PROP, "true") == "false") {
+	private void addSizeVerificationForListWithPrimitives(MethodBufferingJsonVerifiable key, Closure closure, List value) {
+		Boolean systemPropValue = Boolean.parseBoolean(System.getProperty(SIZE_ASSERTION_SYSTEM_PROP, "false"))
+		Boolean configPropValue = configProperties.assertJsonSize
+		boolean configPropSet = configPropValue != null
+		if (configPropSet && !configPropValue) {
+			return
+		} else if (!configPropSet && systemPropValue) {
 			return
 		}
+		log.debug("WARNING: Turning on the incubating feature of JSON array check")
 		if (isRootElement(key) || key.assertsConcreteValue()) {
 			if (value.size() > 0) {
 				closure(key.hasSize(value.size()), value)
@@ -131,12 +150,12 @@ class JsonToJsonPathsConverter {
 		}
 	}
 
-	private static boolean isRootElement(MethodBufferingJsonVerifiable key) {
+	private boolean isRootElement(MethodBufferingJsonVerifiable key) {
 		return key.jsonPath() == '$'
 	}
 
 	// If you have a list of not-only primitives it can contain different sets of elements (maps, lists, primitives)
-	private static MethodBufferingJsonVerifiable createAsserterFromList(MethodBufferingJsonVerifiable key, List value) {
+	private MethodBufferingJsonVerifiable createAsserterFromList(MethodBufferingJsonVerifiable key, List value) {
 		if (key.isIteratingOverNamelessArray()) {
 			return key.array()
 		} else if (key.isIteratingOverArray() && isAnEntryWithLists(value)) {
@@ -151,7 +170,7 @@ class JsonToJsonPathsConverter {
 		return key
 	}
 
-	private static MethodBufferingJsonVerifiable createAsserterFromListElement(MethodBufferingJsonVerifiable jsonPathVerifiable, def element) {
+	private MethodBufferingJsonVerifiable createAsserterFromListElement(MethodBufferingJsonVerifiable jsonPathVerifiable, def element) {
 		if (jsonPathVerifiable.isAssertingAValueInArray()) {
 			def object = ContentUtils.returnParsedObject(element)
 			if (object instanceof Pattern) {
@@ -162,14 +181,14 @@ class JsonToJsonPathsConverter {
 		return jsonPathVerifiable
 	}
 
-	private static def runClosure(Closure closure, MethodBufferingJsonVerifiable key, def value) {
+	private def runClosure(Closure closure, MethodBufferingJsonVerifiable key, def value) {
 		if (key.isAssertingAValueInArray() && !(value instanceof List || value instanceof Map)) {
 			return closure(valueToAsserter(key, value), value)
 		}
 		return closure(key, value)
 	}
 
-	private static boolean isAnEntryWithNonCollectionLikeValue(def value) {
+	private boolean isAnEntryWithNonCollectionLikeValue(def value) {
 		if (!(value instanceof Map)) {
 			return false
 		}
@@ -182,7 +201,7 @@ class JsonToJsonPathsConverter {
 		return !(valueOfEntry instanceof Map || valueOfEntry instanceof List)
 	}
 
-	private static boolean isAnEntryWithoutNestedStructures(def value) {
+	private boolean isAnEntryWithoutNestedStructures(def value) {
 		if (!(value instanceof Map)) {
 			return false
 		}
@@ -192,14 +211,14 @@ class JsonToJsonPathsConverter {
 		}
 	}
 
-	private static boolean listContainsOnlyPrimitives(List list) {
+	private boolean listContainsOnlyPrimitives(List list) {
 		return list.every { def element ->
 			[String, Number, Boolean].any {
 				it.isAssignableFrom(element.getClass())
 			}
 		}
 	}
-	private static boolean isAnEntryWithLists(def value) {
+	private boolean isAnEntryWithLists(def value) {
 		if (!(value instanceof Iterable)) {
 			return false
 		}
@@ -208,7 +227,7 @@ class JsonToJsonPathsConverter {
 		}
 	}
 
-	private static Map convertWithKey(Class parentType, MethodBufferingJsonVerifiable parentKey, Map map, Closure closureToExecute) {
+	private Map convertWithKey(Class parentType, MethodBufferingJsonVerifiable parentKey, Map map, Closure closureToExecute) {
 		return map.collectEntries {
 			Object entrykey, value ->
 				def convertedValue = ContentUtils.returnParsedObject(value)
@@ -222,11 +241,11 @@ class JsonToJsonPathsConverter {
 		}
 	}
 
-	private static void traverseRecursivelyForKey(def json, MethodBufferingJsonVerifiable rootKey, Closure closure) {
+	private void traverseRecursivelyForKey(def json, MethodBufferingJsonVerifiable rootKey, Closure closure) {
 		traverseRecursively(Map, rootKey, json, closure)
 	}
 
-	protected static MethodBufferingJsonVerifiable valueToAsserter(MethodBufferingJsonVerifiable key, Object value) {
+	protected MethodBufferingJsonVerifiable valueToAsserter(MethodBufferingJsonVerifiable key, Object value) {
 		def convertedValue = ContentUtils.returnParsedObject(value)
 		if (key instanceof FinishedDelegatingJsonVerifiable) {
 			return key

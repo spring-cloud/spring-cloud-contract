@@ -96,4 +96,10 @@ class ContractVerifierConfigProperties {
 	 */
 	String stubsSuffix = 'stubs'
 
+	/**
+	 * Incubating feature. You can check the size of JSON arrays. If not turned on
+	 * explicitly will be disabled.
+	 */
+	Boolean assertJsonSize
+
 }

@@ -17,12 +17,16 @@
 package org.springframework.cloud.contract.verifier.builder
 
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import spock.lang.Shared
 import spock.lang.Specification
 /**
  * @author Marcin Grzejszczak
  */
 class MessagingMethodBodyBuilderSpec extends Specification {
 
+	@Shared ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(assertJsonSize: true)
+	
 	def "should work for triggered based messaging with Spock"() {
 		given:
 // tag::trigger_method_dsl[]
@@ -40,7 +44,7 @@ def contractDsl = Contract.make {
 	}
 }
 // end::trigger_method_dsl[]
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl)
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -80,7 +84,7 @@ def contractDsl = Contract.make {
 					}
 				}
 			}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl)
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -129,7 +133,7 @@ def contractDsl = Contract.make {
 	}
 }
 		// end::trigger_message_dsl[]
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl)
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -182,7 +186,7 @@ and:
 					}
 				}
 			}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl)
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -229,7 +233,7 @@ def contractDsl = Contract.make {
 	}
 }
 		// end::trigger_no_output_dsl[]
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl)
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -270,7 +274,7 @@ then:
 					assertThat('bookWasDeleted()')
 				}
 			}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl)
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -315,7 +319,7 @@ then:
 					])
 				}
 			}
-			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl)
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -361,7 +365,7 @@ then:
 					])
 				}
 			}
-			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl)
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -414,7 +418,7 @@ Contract.make {
 	}
 }
 		// end::consumer_producer[]
-		MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl)
+		MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
 		BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 		builder.appendTo(blockBuilder)

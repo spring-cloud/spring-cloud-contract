@@ -23,6 +23,7 @@ import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.QueryParameter
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.QueryParameters
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 import java.util.regex.Pattern
 
@@ -42,8 +43,8 @@ import static org.springframework.cloud.contract.verifier.config.TestFramework.J
 @PackageScope
 class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 
-	JaxRsClientJUnitMethodBodyBuilder(Contract stubDefinition) {
-		super(stubDefinition)
+	JaxRsClientJUnitMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
+		super(stubDefinition, configProperties)
 	}
 
 	@Override

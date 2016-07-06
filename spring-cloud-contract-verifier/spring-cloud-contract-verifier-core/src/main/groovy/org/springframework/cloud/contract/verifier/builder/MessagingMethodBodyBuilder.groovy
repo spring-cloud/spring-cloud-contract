@@ -22,6 +22,7 @@ import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Input
 import org.springframework.cloud.contract.spec.internal.OutputMessage
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.ContentType
 
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromContent
@@ -43,7 +44,8 @@ abstract class MessagingMethodBodyBuilder extends MethodBodyBuilder {
 	protected final Input inputMessage
 	protected final OutputMessage outputMessage
 
-	MessagingMethodBodyBuilder(Contract stubDefinition) {
+	MessagingMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
+		super(configProperties)
 		this.inputMessage = stubDefinition.input
 		this.outputMessage = stubDefinition.outputMessage
 	}

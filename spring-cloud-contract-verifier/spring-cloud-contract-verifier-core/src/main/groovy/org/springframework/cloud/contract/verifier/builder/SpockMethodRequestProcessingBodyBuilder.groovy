@@ -24,6 +24,7 @@ import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 import java.util.regex.Pattern
 
@@ -40,8 +41,8 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.getG
 @TypeChecked
 abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessingMethodBodyBuilder {
 
-	SpockMethodRequestProcessingBodyBuilder(Contract stubDefinition) {
-		super(stubDefinition)
+	SpockMethodRequestProcessingBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
+		super(stubDefinition, configProperties)
 	}
 
 	@Override

@@ -23,6 +23,7 @@ import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.QueryParameter
 import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 import java.util.regex.Pattern
 
@@ -39,8 +40,8 @@ import java.util.regex.Pattern
 @TypeChecked
 class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestProcessingBodyBuilder {
 
-	JaxRsClientSpockMethodRequestProcessingBodyBuilder(Contract stubDefinition) {
-		super(stubDefinition)
+	JaxRsClientSpockMethodRequestProcessingBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
+		super(stubDefinition, configProperties)
 	}
 
 	@Override

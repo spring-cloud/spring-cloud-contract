@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.builder
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import groovy.util.logging.Slf4j
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
 import org.springframework.cloud.contract.verifier.util.NamesUtil
@@ -38,11 +39,11 @@ import org.springframework.cloud.contract.verifier.file.ContractMetadata
 class MethodBuilder {
 
 	private final String methodName
-	private final org.springframework.cloud.contract.spec.Contract stubContent
+	private final Contract stubContent
 	private final ContractVerifierConfigProperties configProperties
 	private final boolean ignored
 
-	private MethodBuilder(String methodName, org.springframework.cloud.contract.spec.Contract stubContent, ContractVerifierConfigProperties configProperties, boolean ignored) {
+	private MethodBuilder(String methodName, Contract stubContent, ContractVerifierConfigProperties configProperties, boolean ignored) {
 		this.ignored = ignored
 		this.stubContent = stubContent
 		this.methodName = methodName
@@ -52,7 +53,7 @@ class MethodBuilder {
 	/**
 	 * A factory method that creates a {@link MethodBuilder} for the given arguments
 	 */
-	static MethodBuilder createTestMethod(ContractMetadata contract, File stubsFile, org.springframework.cloud.contract.spec.Contract stubContent, ContractVerifierConfigProperties configProperties) {
+	static MethodBuilder createTestMethod(ContractMetadata contract, File stubsFile, Contract stubContent, ContractVerifierConfigProperties configProperties) {
 		log.debug("Stub content Groovy DSL [$stubContent]")
 		String methodName = NamesUtil.camelCase(NamesUtil.toLastDot(NamesUtil.afterLast(stubsFile.path, File.separator)))
 		return new MethodBuilder(methodName, stubContent, configProperties, contract.ignored)
@@ -76,20 +77,20 @@ class MethodBuilder {
 	private MethodBodyBuilder getMethodBodyBuilder() {
 		if (stubContent.input || stubContent.outputMessage) {
 			if (configProperties.targetFramework == TestFramework.JUNIT){
-				return new JUnitMessagingMethodBodyBuilder(stubContent)
+				return new JUnitMessagingMethodBodyBuilder(stubContent, configProperties)
 			}
-			return new SpockMessagingMethodBodyBuilder(stubContent)
+			return new SpockMessagingMethodBodyBuilder(stubContent, configProperties)
 		}
 		if (configProperties.testMode == TestMode.MOCKMVC && configProperties.targetFramework == TestFramework.JUNIT){
-				return new MockMvcJUnitMethodBodyBuilder(stubContent)
+				return new MockMvcJUnitMethodBodyBuilder(stubContent, configProperties)
 		}
 		if (configProperties.testMode == TestMode.JAXRSCLIENT) {
 			if (configProperties.targetFramework == TestFramework.JUNIT){
-				return new JaxRsClientJUnitMethodBodyBuilder(stubContent)
+				return new JaxRsClientJUnitMethodBodyBuilder(stubContent, configProperties)
 			}
-			return new JaxRsClientSpockMethodRequestProcessingBodyBuilder(stubContent)
+			return new JaxRsClientSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties)
 		}
-		return new MockMvcSpockMethodRequestProcessingBodyBuilder(stubContent)
+		return new MockMvcSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties)
 	}
 
 }

@@ -32,6 +32,10 @@ WARNING: Spring Cloud Contract Verifier doesn't support XML properly. Please use
 
 WARNING: Spring Cloud Contract Verifier supports equality check on text response. Regular expressions are not yet available.
 
+WARNING: The support for the verification of size of JSON arrays is experimental. If you want to turn it on please provide
+the value of a system property `spring.cloud.contract.verifier.assert.size` equal to `turn`. By default this feature is
+`off`.
+
 === HTTP Top-Level Elements
 
 Following methods can be called in the top-level closure of a contract definition. Request and response are mandatory, priority is optional.

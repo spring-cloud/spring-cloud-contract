@@ -21,6 +21,7 @@ import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 import java.util.regex.Pattern
 
@@ -35,8 +36,8 @@ import java.util.regex.Pattern
 @PackageScope
 class MockMvcJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 
-	MockMvcJUnitMethodBodyBuilder(Contract stubDefinition) {
-		super(stubDefinition)
+	MockMvcJUnitMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
+		super(stubDefinition, configProperties)
 	}
 
 	@Override

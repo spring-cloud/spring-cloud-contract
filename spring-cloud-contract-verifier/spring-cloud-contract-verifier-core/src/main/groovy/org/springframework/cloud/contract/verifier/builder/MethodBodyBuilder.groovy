@@ -18,16 +18,12 @@ package org.springframework.cloud.contract.verifier.builder
 
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
-import org.springframework.cloud.contract.spec.internal.NamedProperty
-import org.springframework.cloud.contract.verifier.util.MapConverter
-import org.springframework.cloud.contract.spec.internal.DslProperty
-import org.springframework.cloud.contract.spec.internal.ExecutionProperty
-import org.springframework.cloud.contract.spec.internal.Header
-import org.springframework.cloud.contract.spec.internal.MatchingStrategy
-import org.springframework.cloud.contract.spec.internal.QueryParameter
+import org.springframework.cloud.contract.spec.internal.*
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
+import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import java.util.regex.Pattern
 
@@ -45,6 +41,12 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.extr
 @TypeChecked
 @PackageScope
 abstract class MethodBodyBuilder {
+
+	protected final ContractVerifierConfigProperties configProperties
+
+	protected MethodBodyBuilder(ContractVerifierConfigProperties configProperties) {
+		this.configProperties = configProperties
+	}
 
 	/**
 	 * Builds the response body validation code block
@@ -245,7 +247,7 @@ abstract class MethodBodyBuilder {
 		}
 		if (contentType == ContentType.JSON) {
 			appendJsonPath(bb, getResponseAsString())
-			JsonPaths jsonPaths = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(responseBody)
+			JsonPaths jsonPaths = new JsonToJsonPathsConverter(configProperties).transformToJsonPathWithTestsSideValues(responseBody)
 			jsonPaths.each {
 				String method = it.method()
 				String postProcessedMethod = postProcessJsonPathCall(method)

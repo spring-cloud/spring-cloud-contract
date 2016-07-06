@@ -24,6 +24,7 @@ import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.Input
 import org.springframework.cloud.contract.spec.internal.NamedProperty
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 import java.util.regex.Pattern
 /**
@@ -33,8 +34,8 @@ import java.util.regex.Pattern
 @TypeChecked
 class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
-	SpockMessagingMethodBodyBuilder(Contract stubDefinition) {
-		super(stubDefinition)
+	SpockMessagingMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
+		super(stubDefinition, configProperties)
 	}
 
 	@Override

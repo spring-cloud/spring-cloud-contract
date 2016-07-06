@@ -20,10 +20,11 @@ import groovy.json.StringEscapeUtils
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.Request
-import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 import java.util.regex.Pattern
 
@@ -45,8 +46,8 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.getJ
 @PackageScope
 abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder {
 
-	JUnitMethodBodyBuilder(Contract stubDefinition) {
-		super(stubDefinition)
+	JUnitMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
+		super(stubDefinition, configProperties)
 	}
 
 	@Override

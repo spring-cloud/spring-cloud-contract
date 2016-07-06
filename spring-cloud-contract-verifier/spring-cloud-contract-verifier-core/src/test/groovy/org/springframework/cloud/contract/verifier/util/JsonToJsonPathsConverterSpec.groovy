@@ -32,7 +32,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 
 	def 'should convert a json with list as root to a map of path to value'() {
 		when:
-			JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
+			JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
 		then:
 			pathAndValues.find {
 				it.method() == """.array().field("some").field("nested").field("json").isEqualTo("with value")""" &&
@@ -125,7 +125,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 						}
 '''
 		when:
-			JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
+			JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
 		then:
 		pathAndValues.find {
 			it.method() == """.field("some").field("nested").field("json").isEqualTo("with value")""" &&
@@ -155,7 +155,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 					}
 '''
 		when:
-			JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
+			JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
 		then:
 			pathAndValues.find {
 				it.method() == """.array("items").arrayField().isEqualTo("HOP").value()""" &&
@@ -174,7 +174,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 					}
 '''
 		when:
-			JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
+			JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
 		then:
 			pathAndValues.find {
 				it.method() == """.field("property1").isNull()""" &&
@@ -193,7 +193,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
                      }
  '''
 		when:
-			JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
+			JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
 		then:
 			pathAndValues.find {
 				it.method() == """.field("extensions").field("7").isEqualTo(28)""" &&
@@ -222,7 +222,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 					}
 '''
 		when:
-			JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
+			JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
 		then:
 			pathAndValues.find {
 				it.method() == """.array("errors").contains("property").isEqualTo("email")""" &&
@@ -273,7 +273,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 					]
 			]
 		when:
-			JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(json)
+			JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(json)
 		then:
 			pathAndValues.find {
 				it.method() == """.array().field("some").field("nested").field("json").isEqualTo("with value")""" &&
@@ -309,7 +309,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 		"property2": "b"
 	}"""
 		when:
-		JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
+		JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
 		then:
 		pathAndValues.find {
 			it.method()== """.field("property1").isEqualTo("a")""" &&
@@ -331,7 +331,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 		"property3": false
 	}"""
 		when:
-		JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
+		JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
 		then:
 		pathAndValues.find {
 			it.method()== """.field("property1").isEqualTo("true")""" &&
@@ -359,7 +359,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 				]
 		]
 		when:
-		JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(json)
+		JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(json)
 		then:
 		pathAndValues.find {
 			it.method()== """.field("property1").isEqualTo("a")""" &&
@@ -390,7 +390,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 				]
 		]
 		when:
-		JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(json)
+		JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(json)
 		then:
 		pathAndValues.find {
 			it.method()== """.field("property").field(7).isEqualTo(0.0)""" &&
@@ -414,7 +414,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 		"property2": "b"
 	}]"""
 		when:
-		JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
+		JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
 		then:
 		pathAndValues.find {
 			it.method()== """.array().contains("property1").isEqualTo("a")""" &&
@@ -441,7 +441,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 	]
 }"""
 		when:
-		JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
+		JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
 		then:
 		pathAndValues.find {
 			it.method()== """.array("property1").contains("property2").isEqualTo("test1")""" &&
@@ -466,7 +466,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 		"property2": {"property3": "b"}
 	}"""
 		when:
-		JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
+		JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
 		then:
 		pathAndValues.find {
 			it.method()== """.field("property2").field("property3").isEqualTo("b")""" &&
@@ -487,7 +487,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 					property2: Pattern.compile('[0-9]{3}')
 			]
 		when:
-			JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(json)
+			JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(json)
 		then:
 			pathAndValues.find {
 				it.method()== """.field("property2").matches("[0-9]{3}")""" &&
@@ -507,7 +507,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 					property2: Pattern.compile('\\d+')
 			]
 		when:
-			JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(json)
+			JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(json)
 		then:
 			pathAndValues.find {
 				it.method()== """.field("property2").matches("\\\\d+")""" &&
@@ -527,7 +527,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 				]
 		]
 		when:
-		JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(json)
+		JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(json)
 		then:
 		pathAndValues.find {
 			it.method()== """.array("errors").contains("property").isEqualTo("bank_account_number")""" &&
@@ -563,7 +563,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 						}]
 					'''
 		when:
-		JsonPaths pathAndValues = JsonToJsonPathsConverter.transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
+		JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
 		then:
 		pathAndValues.find {
 			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().arrayField().isEqualTo(38.995548)""" &&
