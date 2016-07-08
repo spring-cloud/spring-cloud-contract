@@ -14,3 +14,6 @@ script:
     echo "Checking if samples are not broken"
     cd spring-cloud-contract-verifier/spring-cloud-contract-verifier
     ./scripts/runTests.sh
+env:
+  global:
+  - TERM=dumb
