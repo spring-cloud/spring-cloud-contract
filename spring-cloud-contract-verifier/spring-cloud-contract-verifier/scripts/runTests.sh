@@ -13,8 +13,8 @@ echo "Current Spring Cloud Contract Verifier version is ${CONTRACT_VERIFIER_VERS
 
 cd build
 echo "Cloning samples"
-git clone https://github.com/Codearte/accurest-samples
-cd accurest-samples
+git clone https://github.com/spring-cloud-samples/spring-cloud-contract-verifier-samples
+cd spring-cloud-contract-verifier-samples
 
 echo "Running Gradle tests"
 . ./runTests.sh

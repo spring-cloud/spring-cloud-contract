@@ -10,7 +10,7 @@
 
     <name>Spring Cloud Contract Verifier Maven Plugin</name>
     <description>Spring Cloud Contract Verifier Maven Plugin</description>
-    <url>https://github.com/Codearte/accurest-maven-plugin</url>
+    <url>https://github.com/spring-cloud/spring-cloud-contract</url>
 
     <properties>
         <maven.version>3.2.5</maven.version>
@@ -41,7 +41,7 @@
         </snapshotRepository>
         <site>
             <id>github</id>
-            <url>scm:git:git@github.com:Codearte/accurest-maven-plugin.git</url>
+            <url>scm:git:git@github.com:spring-cloud/spring-cloud-contract.git</url>
         </site>
     </distributionManagement>
 
@@ -135,7 +135,7 @@
                     <useDefaultMapping>true</useDefaultMapping>
                     <properties>
                         <year>${project.inceptionYear}</year>
-                        <company>Codearte</company> <!--FIXME: Change -->
+                        <company>Pivotal</company>
                     </properties>
                     <encoding>UTF-8</encoding>
                 </configuration>

@@ -10,7 +10,7 @@
 
     <name>Spring Cloud Contract Verifier Maven Plugin </name>
     <description>Spring Cloud Contract Verifier Maven Plugin Parent</description>
-    <url>https://github.com/Codearte/accurest-maven-plugin</url>
+    <url>https://github.com/spring-cloud/spring-cloud-contract</url>
 
     <inceptionYear>2016</inceptionYear>
 
@@ -24,8 +24,8 @@
     </prerequisites>
 
     <organization>
-        <name>Codearte</name>
-        <url>http://codearte.io/</url>
+        <name>Pivotal Software, Inc.</name>
+        <url>http://www.spring.io</url>
     </organization>
 
     <developers>
@@ -51,20 +51,20 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:https://github.com/Codearte/accurest-maven-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:Codearte/accurest-maven-plugin.git</developerConnection>
-        <url>https://github.com/Codearte/accurest-maven-plugin</url>
+        <connection>scm:git:https://github.com/spring-cloud/spring-cloud-contract.git</connection>
+        <developerConnection>scm:git:git@github.com:spring-cloud/spring-cloud-contract.git</developerConnection>
+        <url>https://github.com/spring-cloud/spring-cloud-contract</url>
         <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
         <system>GitHub Issues</system>
-        <url>https://github.com/Codearte/accurest/labels/maven</url>
+        <url>https://github.com/spring-cloud/spring-cloud-contract/labels/maven</url>
     </issueManagement>
 
     <ciManagement>
         <system>Travis</system>
-        <url>https://travis-ci.org/Codearte/accurest-maven-plugin</url>
+        <url>https://travis-ci.org/spring-cloud/spring-cloud-contract</url>
     </ciManagement>
 
     <build>
