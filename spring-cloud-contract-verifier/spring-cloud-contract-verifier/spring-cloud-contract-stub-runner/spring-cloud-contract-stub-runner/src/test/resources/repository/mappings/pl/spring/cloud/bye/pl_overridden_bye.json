@@ -1,0 +1,14 @@
+{
+
+    "request": {
+        "method": "GET",
+        "url": "/bye"
+    },
+    "response": {
+        "status": 200,
+        "body": "overridden-bye",
+        "headers": {
+            "Content-Type": "text/plain"
+        }
+    }
+}

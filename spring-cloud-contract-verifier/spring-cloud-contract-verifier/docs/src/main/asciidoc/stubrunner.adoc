@@ -1,0 +1,97 @@
+:core_path: ../../../..
+:verifier_root_path: {core_path}/spring-cloud-contract-verifier
+:verifier_core_path: {verifier_root_path}/spring-cloud-contract-verifier-core
+
+== Spring Cloud Contract Stub Runner
+
+One of the issues that you could have encountered while using Spring Cloud Contract Verifier was to pass the generated WireMock JSON stubs from the server side to the client side (or various clients).
+ The same takes place in terms of client side generation for messaging.
+
+Copying the JSON files / setting the client side for messaging manually is out of the question.
+
+=== Snapshot versions
+
+Add the additional snapshot repository to your build.gradle to use snapshot versions which are automatically uploaded after every successful build:
+
+[source,groovy,indent=0]
+----
+repositories {
+    (...)
+    //Required only for SNAPSHOT versions
+    maven { url "https://repo.spring.io/libs-snapshot-local" }
+}
+----
+
+=== Publishing stubs as JARs
+
+The easiest approach would be to centralize the way stubs are kept. For example you can keep them as JARs in a Maven repository.
+
+==== Gradle
+
+Example of Spring Cloud Contract Verifier Gradle setup:
+
+[source,groovy,indent=0]
+----
+include::{verifier_root_path}/spring-cloud-contract-verifier-gradle-plugin/src/test/resources/functionalTest/scenarioProject/build.gradle[tags=jar_setup,indent=0]
+----
+
+==== Maven
+
+Example of Maven can be found in the https://github.com/Codearte/accurest-maven-plugin/=publishing-wiremock-stubs-projectf-stubsjar[Spring Cloud Contract Verifier Maven Plugin README]
+
+=== Modules
+
+Spring Cloud Contract Stub Runner comes with a new structure of modules
+
+[source,indent=0]
+----
+└── spring-cloud-contract-stub-runner
+    ├── spring-cloud-contract-stub-runner
+    ├── spring-cloud-contract-stub-runner-boot
+    ├── spring-cloud-contract-stub-runner-junit
+    ├── spring-cloud-contract-stub-runner-spring
+    └── spring-cloud-contract-stub-runner-spring-cloud
+----
+
+include::../../../../spring-cloud-contract-stub-runner/spring-cloud-contract-stub-runner/README.adoc[]
+
+include::../../../../spring-cloud-contract-stub-runner/spring-cloud-contract-stub-runner-boot/README.adoc[]
+
+include::../../../../spring-cloud-contract-stub-runner/spring-cloud-contract-stub-runner-junit/README.adoc[]
+
+include::../../../../spring-cloud-contract-stub-runner/spring-cloud-contract-stub-runner-spring/README.adoc[]
+
+include::../../../../spring-cloud-contract-stub-runner/spring-cloud-contract-stub-runner-spring-cloud/README.adoc[]
+
+
+=== Common properties for JUnit and Spring
+
+Some of the properties that are repetitive can be set using system properties or property sources (for Spring). Here are their names with their default values:
+
+[frame="topbot",options="header"]
+|======================
+| Property name | Default value | Description
+|stubrunner.port.range.min|10000| Minimal value of a port for a started WireMock with stubs
+|stubrunner.port.range.max|15000| Minimal value of a port for a started WireMock with stubs
+|stubrunner.stubs.repository.root|| Comma separated list of Maven repo urls. If blank then will call the local maven repo
+|stubrunner.stubs.classifier|stubs| Default classifier for the stub artifacts
+|stubrunner.work-offline|false| If true then will not contact any remote repositories to download stubs
+|stubrunner.stubs.ids|| Comma separated list of Ivy notation of stubs to download
+|======================
+
+==== Stub runner stubs ids
+
+You can provide the stubs to download via the `stubrunner.stubs.ids` system property. They follow the following pattern:
+
+[source,java,indent=0]
+----
+groupId:artifactId:version:classifier:port
+----
+
+`version`, `classifier` and `port` are optional.
+
+* If you don't provide the `port` then a random one will be picked
+* If you don't provide the `classifier` then the default one will be taken.
+* If you don't provide the `version` then the `+` will be passed and the latest one will be downloaded
+
+Where `port` means the port of the WireMock server.

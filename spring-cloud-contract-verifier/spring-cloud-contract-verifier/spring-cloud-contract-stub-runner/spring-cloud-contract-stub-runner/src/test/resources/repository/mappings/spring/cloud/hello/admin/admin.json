@@ -1,0 +1,9 @@
+{
+    "request": {
+        "method": "GET",
+        "url": "/admin"
+    },
+    "response": {
+        "status": 401
+    }
+}

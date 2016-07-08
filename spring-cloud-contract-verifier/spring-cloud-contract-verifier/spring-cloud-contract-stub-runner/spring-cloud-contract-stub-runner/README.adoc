@@ -1,0 +1,99 @@
+=== Stub Runner Core
+
+Runs stubs for service collaborators. Treating stubs as contracts of services allows to use stub-runner as an implementation of 
+http://martinfowler.com/articles/consumerDrivenContracts.html[Consumer Driven Contracts].
+
+Stub Runner allows you to automatically download the stubs of the provided dependencies, start WireMock servers for them and feed them with proper stub definitions.
+For messaging, special stub routes are defined.
+
+==== Running stubs
+
+===== Running using main app
+
+You can set the following options to the main class:
+
+[source,groovy,indent=0]
+----
+ -maxp (--maxPort) N            : Maximum port value to be assigned to the
+                                  Wiremock instance. Defaults to 15000
+                                  (default: 15000)
+ -minp (--minPort) N            : Minimal port value to be assigned to the
+                                  Wiremock instance. Defaults to 10000
+                                  (default: 10000)
+ -s (--stubs) VAL               : Comma separated list of Ivy representation of
+                                  jars with stubs. Eg. groupid:artifactid1,group
+                                  id2:artifactid2:version:classifier
+ -sr (--stubRepositoryRoot) VAL : Location of a Jar containing server where you
+                                  keep your stubs (e.g. http://nexus.net/content
+                                  /repositories/repository)
+ -ss (--stubsSuffix) VAL        : Suffix for the jar containing stubs (e.g.
+                                  'stubs' if the stub jar would have a 'stubs'
+                                  classifier for stubs: foobar-stubs ).
+                                  Defaults to 'stubs' (default: stubs)
+ -wo (--workOffline)            : Switch to work offline. Defaults to 'false'
+                                  (default: false)
+----
+
+
+===== Building a Fat Jar
+
+Just call the following command:
+
+[source,groovy,indent=0]
+----
+./gradlew spring-cloud-contract-stub-runner-root:spring-cloud-contract-stub-runner:shadowJar -PfatJar
+----
+
+and inside the `build/lib` there will be a Fat Jar with classifier `fatJar` waiting for you to execute. E.g.
+
+[source,groovy,indent=0]
+----
+java -jar spring-cloud-contract-stub-runner/spring-cloud-contract-stub-runner/build/libs/spring-cloud-contract-stub-runner-1.0.0-SNAPSHOT-fatJar.jar -sr http://a.b.com -s a:b:c,d:e,f:g:h:i
+----
+
+==== Stub runner configuration
+
+You can configure the stub runner by either passing the full arguments list with the `-Pargs` like this:
+
+[source,groovy,indent=0]
+----
+./gradlew spring-cloud-contract-stub-runner-root:spring-cloud-contract-stub-runner:run -Pargs="-c pl -minp 10000 -maxp 10005 -s a:b:c,d:e,f:g:h"
+----
+
+or each parameter separately with a `-P` prefix and without the hyphen `-` in the name of the param
+
+[source,groovy,indent=0]
+----
+./gradlew spring-cloud-contract-stub-runner-root:spring-cloud-contract-stub-runner:run -Pc=pl -Pminp=10000 -Pmaxp=10005 -Ps=a:b:c,d:e,f:g:h
+----
+
+===== HTTP Stubs
+
+Stubs are defined in JSON documents, whose syntax is defined in http://wiremock.org/stubbing.html[WireMock documentation]
+
+Example:
+
+[source,javascript,indent=0]
+----
+{
+    "request": {
+        "method": "GET",
+        "url": "/ping"
+    },
+    "response": {
+        "status": 200,
+        "body": "pong",
+        "headers": {
+            "Content-Type": "text/plain"
+        }
+    }
+}
+----
+
+===== Viewing registered mappings
+
+Every stubbed collaborator exposes list of defined mappings under `__/admin/` endpoint.
+
+===== Messaging Stubs
+
+Depending on the provided Stub Runner dependency and the DSL the messaging routes are automatically set up.

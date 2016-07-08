@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~  Copyright 2013-2016 the original author or authors.
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
+<beans:beans xmlns="http://www.springframework.org/schema/integration"
+			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			 xmlns:beans="http://www.springframework.org/schema/beans"
+			 xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/integration
+			http://www.springframework.org/schema/integration/spring-integration.xsd">
+
+	<channel id="input"/>
+	<channel id="delete"/>
+	<channel id="outputChannel"/>
+
+	<service-activator input-channel="inputChannel"
+					   output-channel="outputChannel"
+					   ref="bookListener"
+					   method="returnBook"/>
+
+	<json-to-object-transformer input-channel="input" type="org.springframework.cloud.contract.verifier.samples.messaging.BookReturned"
+	output-channel="inputChannel"/>
+
+	<service-activator input-channel="deleteChannel"
+					   ref="bookListener"
+					   method="bookDeleted"/>
+
+	<json-to-object-transformer input-channel="delete" type="org.springframework.cloud.contract.verifier.samples.messaging.BookDeleted"
+								output-channel="deleteChannel"/>
+
+	<beans:bean id="bookListener" class="org.springframework.cloud.contract.verifier.samples.messaging.BookListener"/>
+
+
+	<!-- REQUIRED FOR TESTING -->
+	<bridge input-channel="outputChannel"
+			output-channel="output"/>
+
+	<channel id="output">
+		<queue/>
+	</channel>
+
+</beans:beans>

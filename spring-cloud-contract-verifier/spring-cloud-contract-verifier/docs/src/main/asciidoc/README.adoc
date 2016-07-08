@@ -1,0 +1,19 @@
+:core_path: ../../../..
+:verifier_root_path: {core_path}/spring-cloud-contract-verifier
+:verifier_core_path: {verifier_root_path}/spring-cloud-contract-verifier-core
+:stubrunner_core_path: {core_path}/spring-cloud-contract-stub-runner
+:documentation_url: http://codearte.github.io/accurest
+
+= Spring Cloud Contract Verifier
+
+include::introduction.adoc[]
+
+include::links.adoc[]
+
+== Documentation
+
+You can read more about Spring Cloud Contract Verifier by reading the {documentation_url}[docs]
+
+== Contributing
+
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/docs/src/main/asciidoc/contributing.adoc[]

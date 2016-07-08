@@ -1,0 +1,437 @@
+:core_path: ../../../..
+:verifier_root_path: {core_path}/spring-cloud-contract-verifier
+:verifier_core_path: {verifier_root_path}/spring-cloud-contract-verifier-core
+
+== Spring Cloud Contract Verifier HTTP
+
+=== Gradle Project
+
+==== Prerequisites
+
+In order to use Spring Cloud Contract Verifier with Wiremock you have to use gradle or maven plugin.
+
+===== Add gradle plugin
+
+[source,groovy,indent=0]
+----
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'org.springframework.cloud.contract:spring-cloud-contract-verifier-gradle-plugin:${verifier_version}'
+	}
+}
+
+apply plugin: 'groovy'
+apply plugin: 'contract-verifier'
+
+dependencies {
+	testCompile 'org.codehaus.groovy:groovy-all:2.4.6'
+	testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+	testCompile 'com.jayway.restassured:spring-mock-mvc:2.9.0' // needed if you're going to use Spring MockMvc
+}
+----
+
+====== Snapshot versions
+
+Add the additional snapshot repository to your build.gradle to use snapshot versions which are automatically uploaded after every successful build:
+
+[source,groovy,indent=0]
+----
+repositories {
+    (...)
+    //Required only for SNAPSHOT versions
+    maven { url "https://repo.spring.io/plugins-snapshot-local" }
+}
+----
+
+===== Add maven plugin
+
+[source,xml,indent=0]
+----
+<plugin>
+    <groupId>org.springframework.cloud.contract</groupId>
+    <artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
+    <executions>
+        <execution>
+            <goals>
+                <goal>convert</goal>
+                <goal>generateStubs</goal>
+                <goal>generateTests</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+----
+
+
+Read more: http://codearte.github.io/accurest-maven-plugin/[spring-cloud-contract-verifier-maven-plugin]
+
+===== Add stubs
+
+By default Spring Cloud Contract Verifier is looking for stubs in `src/test/resources/contracts` directory.
+
+Directory containing stub definitions is treated as a class name, and each stub definition is treated as a single test.
+We assume that it contains at least one directory which will be used as test class name. If there is more than one level of nested directories all except the last one will be used as package name.
+So with following structure
+
+[source,groovy,indent=0]
+----
+src/test/resources/contracts/myservice/shouldCreateUser.groovy
+src/test/resources/contracts/myservice/shouldReturnUser.groovy
+----
+
+Spring Cloud Contract Verifier will create test class `defaultBasePackage.MyService` with two methods
+
+ - `shouldCreateUser()`
+ - `shouldReturnUser()`
+
+==== Run plugin
+
+Plugin registers itself to be invoked before `check` task. You have nothing to do as long as you want it to be part of your build process. If you just want to generate tests please invoke `generateContractTests` task.
+
+==== Default setup
+
+Default Gradle Plugin setup creates the following Gradle part of the build (it's a pseudocode)
+
+[source,groovy,indent=0]
+----
+contractVerifier {
+    targetFramework = 'JUNIT'
+    testMode = 'MockMvc'
+    generatedTestSourcesDir = project.file("${project.buildDir}/generated-test-sources/contracts")
+    contractsDslDir = "${project.rootDir}/src/test/resources/contracts"
+    basePackageForTests = 'org.springframework.cloud.contract.verifier.tests'
+    stubsOutputDir = project.file("${project.buildDir}/stubs")
+}
+
+tasks.create(type: Jar, name: 'verifierStubsJar', dependsOn: 'generateWireMockClientStubs') {
+    baseName = project.name
+    classifier = contractVerifier.stubsSuffix
+    from contractVerifier.stubsOutputDir
+}
+
+project.artifacts {
+    archives task
+}
+
+tasks.create(type: Copy, name: 'copyContracts') {
+    from contractVerifier.contractsDslDir
+    into contractVerifier.stubsOutputDir
+}
+
+verifierStubsJar.dependsOn 'copyContracts'
+
+publishing {
+    publications {
+        stubs(MavenPublication) {
+            artifactId project.name
+            artifact verifierStubsJar
+        }
+    }
+}
+----
+
+==== Configure plugin
+
+To change default configuration just add `contractVerifier` snippet to your Gradle config
+
+[source,groovy,indent=0]
+----
+contractVerifier {
+	testMode = 'MockMvc'
+	baseClassForTests = 'org.mycompany.tests'
+	generatedTestSourcesDir = project.file('src/generatedContract')
+}
+----
+
+===== Configuration options
+
+ - **testMode** - defines mode for acceptance tests. By default MockMvc which is based on Spring's MockMvc. It can also be changed to **JaxRsClient** or to **Explicit** for real HTTP calls.
+ - **imports** - array with imports that should be included in generated tests (for example ['org.myorg.Matchers']). By default empty array []
+ - **staticImports** - array with static imports that should be included in generated tests(for example ['org.myorg.Matchers.*']). By default empty array []
+ - **basePackageForTests** - specifies base package for all generated tests. By default set to org.springframework.cloud.contract.verifier.tests
+ - **baseClassForTests** - base class for generated tests. By default `spock.lang.Specification` if using Spock tests.
+ - **ruleClassForTests** - specifies Rule which should be added to generated test classes.
+ - **ignoredFiles** - Ant matcher allowing defining stub files for which processing should be skipped. By default empty array []
+ - **contractsDslDir** - directory containing contracts written using the GroovyDSL. By default `$rootDir/src/test/resources/contracts`
+ - **generatedTestSourcesDir** - test source directory where tests generated from Groovy DSL should be placed. By default `$buildDir/generated-test-sources/contractVerifier`
+ - **stubsOutputDir** - dir where the generated WireMock stubs from Groovy DSL should be placed
+ - **targetFramework** - the target test framework to be used; currently Spock and JUnit are supported with JUnit being the default framework
+
+===== Base class for tests
+
+When using Spring Cloud Contract Verifier in default MockMvc you need to create a base specification for all generated acceptance tests. In this class you need to point to endpoint which should be verified.
+
+[source,groovy,indent=0]
+----
+include::{verifier_root_path}/spring-cloud-contract-verifier-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/org/springframework/cloud/contract/verifier/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
+----
+
+In case of using `Explicit` mode, you can use base class to initialize the whole tested app similarly as in regular integration tests. In case of `JAXRSCLIENT` mode this base class
+should also contain `protected WebTarget webTarget` field, right now the only option to test JAX-RS API is to start a web server.
+
+==== Invoking generated tests
+
+To ensure that provider side is complaint with defined contracts, you need to invoke:
+
+[source,bash,indent=0]
+----
+./gradlew generateContractTests test
+----
+
+==== Spring Cloud Contract Verifier on consumer side
+
+In consumer service you need to configure Spring Cloud Contract Verifier plugin in exactly the same way as in case of provider. If you don't want to use Stub Runner then you need to copy contracts stored in
+`src/test/resources/contracts` and generate WireMock json stubs using:
+
+[source,bash,indent=0]
+----
+./gradlew generateWireMockClientStubs
+----
+
+Note that `stubsOutputDir` option has to be set for stub generation to work.
+
+When present, json stubs can be used in consumer automated tests.
+
+[source,groovy,indent=0]
+----
+@ContextConfiguration(loader == SpringApplicationContextLoader, classes == Application)
+class LoanApplicationServiceSpec extends Specification {
+
+ @ClassRule
+ @Shared
+ WireMockClassRule wireMockRule == new WireMockClassRule()
+
+ @Autowired
+ LoanApplicationService sut
+
+ def 'should successfully apply for loan'() {
+   given:
+ 	LoanApplication application =
+			new LoanApplication(client: new Client(pesel: '12345678901'), amount: 123.123)
+   when:
+	LoanApplicationResult loanApplication == sut.loanApplication(application)
+   then:
+	loanApplication.loanApplicationStatus === LoanApplicationStatus.LOAN_APPLIED
+	loanApplication.rejectionReason === null
+ }
+}
+----
+
+Underneath LoanApplication makes a call to FraudDetection service. This request is handled by Wiremock server configured using stubs generated by Spring Cloud Contract Verifier.
+
+=== Using in your Maven project
+
+==== Add maven plugin
+
+[source,xml,indent=0]
+----
+<plugin>
+    <groupId>org.springframework.cloud.contract.verifier</groupId>
+    <artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
+    <executions>
+        <execution>
+            <goals>
+                <goal>convert</goal>
+                <goal>generateStubs</goal>
+                <goal>generateTests</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+----
+
+Read more: http://codearte.github.io/accurest-maven-plugin/[spring-cloud-contract-verifier-maven-plugin]
+
+==== Add stubs
+
+By default Spring Cloud Contract Verifier is looking for stubs in `src/test/resources/contracts` directory.
+Directory containing stub definitions is treated as a class name, and each stub definition is treated as a single test.
+We assume that it contains at least one directory which will be used as test class name. If there is more than one level of nested directories all except the last one will be used as package name.
+So with following structure
+
+[source,groovy,indent=0]
+----
+src/test/resources/contracts/myservice/shouldCreateUser.groovy
+src/test/resources/contracts/myservice/shouldReturnUser.groovy
+----
+
+Spring Cloud Contract Verifier will create test class `defaultBasePackage.MyService` with two methods
+ - `shouldCreateUser()`
+ - `shouldReturnUser()`
+
+==== Run plugin
+
+Plugin goal `generateTests` is assigned to be invoked in phase `generate-test-sources`. You have nothing to do as long as you want it to be part of your build process. If you just want to generate tests please invoke `generateTests` goal.
+
+==== Configure plugin
+
+To change default configuration just add `configuration` section to plugin definition or `execution` definition.
+
+[source,xml,indent=0]
+----
+<plugin>
+    <groupId>org.springframework.cloud.contract.verifier</groupId>
+    <artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
+    <executions>
+        <execution>
+            <goals>
+                <goal>convert</goal>
+                <goal>generateStubs</goal>
+                <goal>generateTests</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <basePackageForTests>org.springframework.cloud.contract.verifier.twitter.place</basePackageForTests>
+        <baseClassForTests>org.springframework.cloud.contract.verifier.twitter.place.BaseMockMvcSpec</baseClassForTests>
+    </configuration>
+</plugin>
+----
+
+===== Important configuration options
+
+ - **testMode** - defines mode for acceptance tests. By default `MockMvc` which is based on Spring's MockMvc. It can also be changed to `JaxRsClient` or to `Explicit` for real HTTP calls.
+ - **basePackageForTests** - specifies base package for all generated tests. By default set to `org.springframework.cloud.contract.verifier.tests`.
+ - **ruleClassForTests** - specifies Rule which should be added to generated test classes.
+ - **baseClassForTests** - base class for generated tests. By default `spock.lang.Specification` if using Spock tests.
+ - **contractsDir** - directory containing contracts written using the GroovyDSL. By default `/src/test/resources/contracts`.
+ - **testFramework** - the target test framework to be used; currently Spock and JUnit are supported with Spock being the default framework
+
+For complete information take a look at http://codearte.github.io/accurest-maven-plugin/plugin-info.html[Plugin Documentation]
+
+===== Base class for tests
+
+ When using Spring Cloud Contract Verifier in default MockMvc you need to create a base specification for all generated acceptance tests. In this class you need to point to endpoint which should be verified.
+
+[source,groovy,indent=0]
+----
+package org.mycompany.tests
+
+import org.mycompany.ExampleSpringController
+import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc
+import spock.lang.Specification
+
+class  MvcSpec extends Specification {
+  def setup() {
+   RestAssuredMockMvc.standaloneSetup(new ExampleSpringController())
+  }
+}
+----
+
+In case of using `Explicit` mode, you can use base class to initialize the whole tested app similarly as in regular integration tests. In case of `JAXRSCLIENT` mode this base class should also contain `protected WebTarget webTarget` field, right now the only option to test JAX-RS API is to start a web server.
+
+==== Invoking generated tests
+
+Spring Cloud Contract Verifier Maven Plugins generates verification code into directory `/generated-test-sources/contractVerifier` and attach this directory to `testCompile` goal.
+
+For Groovy Spock code use:
+
+[source,xml,indent=0]
+----
+<plugin>
+	<groupId>org.codehaus.gmavenplus</groupId>
+	<artifactId>gmavenplus-plugin</artifactId>
+	<version>1.5</version>
+	<executions>
+		<execution>
+			<goals>
+				<goal>testCompile</goal>
+			</goals>
+		</execution>
+	</executions>
+	<configuration>
+		<testSources>
+			<testSource>
+				<directory>${project.basedir}/src/test/groovy</directory>
+				<includes>
+					<include>**/*.groovy</include>
+				</includes>
+			</testSource>
+			<testSource>
+				<directory>${project.build.directory}/generated-test-sources/contractVerifier</directory>
+				<includes>
+					<include>**/*.groovy</include>
+				</includes>
+			</testSource>
+		</testSources>
+	</configuration>
+</plugin>
+----
+
+To ensure that provider side is complaint with defined contracts, you need to invoke `mvn generateTest test`
+
+==== Spring Cloud Contract Verifier on consumer side
+
+In consumer service you need to configure Spring Cloud Contract Verifier plugin in exactly the same way as in case of provider. You need to copy contracts stored in `src/test/resources/contracts` and generate Wiremock json stubs using: `mvn generateStubs` command. By default generated WireMock mapping is stored in directory `target/mappings`. Your project should create from this generated mappings additional artifact with classifier `stubs` for easy deploy to maven repository.
+
+Sample configuration:
+
+[source,xml,indent=0]
+----
+<plugin>
+    <groupId>org.springframework.cloud.contract.verifier</groupId>
+    <artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
+    <version>${verifier-plugin.version}</version>
+    <executions>
+        <execution>
+            <goals>
+                <goal>convert</goal>
+                <goal>generateStubs</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+----
+
+When present, json stubs can be used in consumer automated tests.
+
+[source,groovy,indent=0]
+----
+@ContextConfiguration(loader == SpringApplicationContextLoader, classes == Application)
+class LoanApplicationServiceSpec extends Specification {
+
+ @ClassRule
+ @Shared
+ WireMockClassRule wireMockRule == new WireMockClassRule()
+
+ @Autowired
+ LoanApplicationService sut
+
+ def 'should successfully apply for loan'() {
+   given:
+ 	LoanApplication application =
+			new LoanApplication(client: new Client(pesel: '12345678901'), amount: 123.123)
+   when:
+	LoanApplicationResult loanApplication == sut.loanApplication(application)
+   then:
+	loanApplication.loanApplicationStatus === LoanApplicationStatus.LOAN_APPLIED
+	loanApplication.rejectionReason === null
+ }
+}
+----
+
+Underneath LoanApplication makes a call to FraudDetection service. This request is handled by Wiremock server configured using stubs generated by Spring Cloud Contract Verifier.
+
+=== Scenarios
+
+It's possible to handle scenarios with Spring Cloud Contract Verifier. All you need to do is to stick to proper naming convention while creating your contracts. The convention requires to include order number followed by the underscore.
+
+[source,indent=0]
+----
+my_contracts_dir\
+  scenario1\
+    1_login.groovy
+    2_showCart.groovy
+    3_logout.groovy
+----
+
+Such tree will cause Spring Cloud Contract Verifier generating Wiremock's scenario with name `scenario1` and three steps:
+ - login marked as `Started` pointing to:
+ - showCart marked as `Step1` pointing to:
+ - logout marked as `Step2` which will close the scenario.
+More details about Wiremock scenarios can be found under [http://wiremock.org/stateful-behaviour.html](http://wiremock.org/stateful-behaviour.html)
+
+Spring Cloud Contract Verifier will also generate tests with guaranteed order of execution.

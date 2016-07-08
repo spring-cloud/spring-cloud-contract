@@ -1,0 +1,220 @@
+:core_path: ../../../..
+:verifier_root_path: {core_path}/spring-cloud-contract-verifier
+:verifier_core_path: {verifier_root_path}/spring-cloud-contract-verifier-core
+
+== Contract DSL
+
+IMPORTANT: Remember that inside the contract file you have to provide the fully qualified name to
+the `Contract` class and the `make` static import i.e. `org.springframework.cloud.contract.spec.Contract.make { ... }`.
+You can also provide an import to the `Contract` class `import org.springframework.cloud.contract.spec.Contract` and then call
+  `Contract.make { ... }`
+
+Contract DSL is written in Groovy, but don't be alarmed if you didn't use Groovy before. Knowledge of the language is not really needed as our DSL uses only
+a tiny subset of it (namely literals, method calls and closures). What's more the DSL is designed to be programmer-readable without any knowledge of the DSL itself -
+ it's statically typed.
+
+The Contract is present in the `spring-cloud-contract-spec` module of the Spring Cloud Contract Verifier repository.
+
+Let's look at full example of a contract definition.
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderSpec.groovy[tags=dsl_example,indent=0]
+----
+
+Not all features of the DSL are used in example above. If you didn't find what you are looking for, please check next paragraphs on this page.
+
+> You can easily compile Contracts to WireMock stubs mapping using standalone maven command: `mvn org.springframework.cloud.contract:spring-cloud-contract-verifier-maven-plugin:convert`.
+
+=== Limitations
+
+WARNING: Spring Cloud Contract Verifier doesn't support XML properly. Please use JSON or help us implement this feature.
+
+WARNING: Spring Cloud Contract Verifier supports equality check on text response. Regular expressions are not yet available.
+
+WARNING: The support for the verification of size of JSON arrays is experimental. If you want to turn it on please provide
+the value of a system property `spring.cloud.contract.verifier.assert.size` equal to `true`. By default this feature is set to
+`false`. You can also provide the `assertJsonSize` property in the plugin configuration.
+
+=== HTTP Top-Level Elements
+
+Following methods can be called in the top-level closure of a contract definition. Request and response are mandatory, priority is optional.
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=http_dsl,indent=0]
+----
+
+=== Request
+
+HTTP protocol requires only **method and address** to be specified in a request. The same information is mandatory in request definition of the Contract.
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=request,indent=0]
+----
+
+It is possible to specify whole `url` instead of just path, but `urlPath` is the recommended way as it makes the tests **host-independent**.
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=url,indent=0]
+
+----
+
+Request may contain **query parameters**, which are specified in a closure nested in a call to `urlPath` or `url`.
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=urlpath,indent=0]
+----
+
+It may contain additional **request headers**...
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=headers,indent=0]
+----
+
+...and a **request body**.
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=body,indent=0]
+----
+
+**Body's format** can also be specified explicitly by invoking one of format functions.
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=bodyAsXml,indent=0]
+----
+
+=== Response
+
+Minimal response must contain **HTTP status code**.
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=response,indent=0]
+----
+
+Besides status response may contain **headers** and **body**, which are specified the same way as in the request (see previous paragraph).
+
+=== Regular expressions
+You can use regular expressions to write your requests in Contract DSL. It is particularly useful when you want to indicate that a given response
+should be provided for requests that follow a given pattern. Also, you can use it when you need to use patterns and not exact values both
+for your test and your server side tests.
+
+Please see the example below:
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=regex,indent=0]
+----
+
+=== Passing optional parameters
+
+It is possible to provide optional parameters in your contract. It's only possible to have optional parameter for the:
+
+- __STUB__ side of the Request
+- __TEST__ side of the Response
+
+Example:
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=optionals,indent=0]
+----
+
+By wrapping a part of the body with the `optional()` method you are in fact creating a regular expression that should be present 0 or more times.
+
+That way for the example above the following test would be generated if you pick Spock:
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=optionals_test,indent=0]
+----
+
+and the following stub:
+
+[source,javascript,indent=0]
+----
+include::{verifier_root_path}/spring-cloud-contract-verifier-converters/src/test/groovy/org/springframework/cloud/contract/verifier/wiremock/DslToWireMockClientConverterSpec.groovy[tags=wiremock,indent=0]
+----
+
+=== Executing custom methods on server side
+It is also possible to define a method call to be executed on the server side during the test. Such a method can be added to the class defined as "baseClassForTests"
+in the configuration. Please see the examples below:
+
+==== Contract DSL
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=method,indent=0]
+----
+
+==== Base Mock Spec
+
+[source,groovy,indent=0]
+----
+include::{verifier_root_path}/spring-cloud-contract-verifier-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/org/springframework/cloud/contract/verifier/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
+----
+
+=== JAX-RS support
+Starting with release 0.8.0 we support JAX-RS 2 Client API. Base class needs to define `protected WebTarget webTarget` and server initialization, right now the only option how to test JAX-RS API is to start a web server.
+
+Request with a body needs to have a content type set otherwise `application/octet-stream` is going to be used.
+
+In order to use JAX-RS mode, use the following settings:
+
+[source,groovy,indent=0]
+----
+testMode == 'JAXRSCLIENT'
+----
+
+Example of a test API generated:
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/JaxRsClientMethodBuilderSpec.groovy[tags=jaxrs,indent=0]
+----
+
+=== Messaging Top-Level Elements
+
+The DSL for messaging looks a little bit different than the one that focuses on HTTP.
+
+==== Output triggered by a method
+
+The output message can be triggered by calling a method (e.g. a Scheduler was started and a message was sent)
+
+[source,groovy]
+----
+include::../../../../samples/samples-messaging-integration/src/test/groovy/org/springframework/cloud/contract/verifier/samples/messaging/IntegrationMessagingApplicationSpec.groovy[tags=method_trigger,indent=0]
+----
+
+In this case the output message will be sent to `output` if a method called `bookReturnedTriggered` will be executed. In the message *publisher's* side
+we will generate a test that will call that method to trigger the message. On the *consumer* side you can use the `some_label` to trigger the message.
+
+==== Output triggered by a message
+
+The output message can be triggered by receiving a message.
+
+[source,groovy]
+----
+include::../../../../samples/samples-messaging-integration/src/test/groovy/org/springframework/cloud/contract/verifier/samples/messaging/IntegrationMessagingApplicationSpec.groovy[tags=message_trigger,indent=0]
+----
+
+In this case the output message will be sent to `output` if a proper message will be received on the `input` destination. In the message *publisher's* side
+we will generate a test that will send the input message to the defined destination. On the *consumer* side you can either send a message to the input
+destination or use the `some_label` to trigger the message.
+
+==== Consumer / Producer
+
+In HTTP you have a notion of `client`/`stub and `server`/`test` notation. You can use them also in messaging but we're providing also the `consumer` and `produer` methods
+as presented below (note you can use either `$` or `value` methods to provide `consumer` and `producer` parts)
+
+[source,groovy]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=consumer_producer]
+----

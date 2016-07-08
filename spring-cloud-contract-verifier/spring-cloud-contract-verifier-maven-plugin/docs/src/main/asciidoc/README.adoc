@@ -1,0 +1,15 @@
+image::https://travis-ci.org/Codearte/accurest-maven-plugin.svg?branch=master[Build Status, link=https://travis-ci.org/Codearte/accurest-maven-plugin]
+image::https://img.shields.io/github/issues/Codearte/accurest/maven.svg[Github Issues, link=https://github.com/Codearte/accurest/labels/maven]
+
+//[![Maven Central](https://img.shields.io/maven-central/v/io.codearte.accurest/accurest-maven-plugin.svg)](https://maven-badges.herokuapp.com/maven-central/io.codearte.accurest/accurest-maven-plugin)
+
+= Spring Cloud Contract Verifier Maven Plugin
+
+== Documentation
+
+* http://codearte.github.io/accurest/[Spring Cloud Contract Verifier Documentation] 
+* http://codearte.github.io/accurest-maven-plugin/plugin-info.html[Spring Cloud Contract Verifier Maven Plugin Documentation Site]
+
+== Contributing
+
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/docs/src/main/asciidoc/contributing.adoc[]

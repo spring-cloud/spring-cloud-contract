@@ -1,0 +1,35 @@
+= Usage
+
+== Converting Accurest GroovyDSL into WireMock stub mappings
+
+   mvn org.springframework.cloud.contract:spring-cloud-contract-verifier-maven-plugin:convert
+
+or shortly footnoteref:[prefix,Additional configuration inside `~/.m2/settings.xml` is required: `<pluginGroups><pluginGroup>io.codearte.accurest</pluginGroup></pluginGroups>`.]
+
+    mvn spring-cloud-contract-verifier:convert
+
+For more information please go to the Accurest Wiki or Plugin Documentation Site.
+
+== Accurest Stub Runner
+
+Run stubs mappings from current directory:
+
+    mvn org.springframework.cloud.contract:spring-cloud-contract-verifier-maven-plugin:run
+
+or shortly footnoteref:[prefix]
+
+    mvn spring-cloud-contract-verifier:run
+
+== Running stubs from repository
+
+    mvn spring-cloud-contract-verifier:run -Dstubs="org.springframework:gs-rest-service"
+
+where `org.springframework:gs-rest-service` is artifact with stubs classifier contains wiremock mappings.
+
+== Project configuration
+
+[source,xml]
+----
+include::../../../src/test/projects/spring-boot-java/pom.xml[tags=plugin]
+----
+

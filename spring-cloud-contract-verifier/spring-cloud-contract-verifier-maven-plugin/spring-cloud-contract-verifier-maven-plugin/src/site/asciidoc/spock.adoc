@@ -1,0 +1,29 @@
+== Groovy Project with Spock Specifications
+
+Sample minimal configuration for Groovy Project with Spock Specification
+
+=== Test dependencies for generated contract verification tests
+
+[source,xml]
+----
+include::../../../src/test/projects/spring-boot-groovy/pom.xml[tags=dependencies]
+----
+
+=== Project configuration for Accurest, Groovy, Spock specifications and stub publishing
+
+
+[source,xml]
+----
+include::../../../src/test/projects/spring-boot-groovy/pom.xml[tags=plugin]
+----
+
+=== Base Specification class
+
+[source,java]
+----
+include::../../../src/test/projects/spring-boot-groovy/src/test/groovy/hello/BaseAccurest.groovy[]
+----
+
+=== Project source code
+
+https://github.com/Codearte/accurest-maven-plugin/tree/master/src/test/projects/spring-boot-groovy
