@@ -8,7 +8,6 @@ include "docs"
 include ":spring-cloud-contract-spec"
 
 include ":$verifier:$verifier-core",
-		":$verifier:$verifier-gradle-plugin",
 		":$verifier:$verifier-converters",
 		":$verifier:$verifier-testing-utils"
 
