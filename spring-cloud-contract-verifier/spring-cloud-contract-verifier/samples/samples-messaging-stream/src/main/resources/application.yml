@@ -1,0 +1,2 @@
+spring.cloud.stream.bindings.input.destination: inputDestination
+spring.cloud.stream.bindings.output.destination: sentTo

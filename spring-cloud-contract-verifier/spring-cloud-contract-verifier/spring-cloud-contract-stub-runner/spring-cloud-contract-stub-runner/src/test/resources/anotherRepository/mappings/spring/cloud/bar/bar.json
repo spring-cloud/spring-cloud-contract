@@ -1,0 +1,13 @@
+{
+    "request": {
+        "method": "GET",
+        "url": "/bar"
+    },
+    "response": {
+        "status": 200,
+        "body": "bar",
+        "headers": {
+            "Content-Type": "text/plain"
+        }
+    }
+}

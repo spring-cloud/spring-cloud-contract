@@ -1,0 +1,39 @@
+String verifier = "spring-cloud-contract-verifier"
+String stubRunner = "spring-cloud-contract-stub-runner"
+
+rootProject.name = "$verifier-parent"
+
+include "docs"
+
+include ":spring-cloud-contract-spec"
+
+include ":$verifier:$verifier-core",
+		":$verifier:$verifier-gradle-plugin",
+		":$verifier:$verifier-converters",
+		":$verifier:$verifier-testing-utils"
+
+include ":$verifier:$verifier-messaging:$verifier-messaging-core",
+		":$verifier:$verifier-messaging:$verifier-integration",
+		":$verifier:$verifier-messaging:$verifier-stream",
+		":$verifier:$verifier-messaging:$verifier-camel"
+
+include ":$stubRunner:$stubRunner",
+		":$stubRunner:$stubRunner-spring",
+		":$stubRunner:$stubRunner-boot",
+		":$stubRunner:$stubRunner-spring-cloud",
+		":$stubRunner:$stubRunner-junit"
+
+include ":$stubRunner:$stubRunner-messaging:$stubRunner-integration",
+		":$stubRunner:$stubRunner-messaging:$stubRunner-stream",
+		":$stubRunner:$stubRunner-messaging:$stubRunner-camel"
+
+include ":samples:samples-messaging-stream",
+		":samples:samples-messaging-integration",
+		":samples:samples-messaging-camel",
+		":samples:samples-messaging-spring"
+
+//to prevent StackOverflow in Sonar
+project(":$verifier").name = "$verifier-root"
+project(":$stubRunner").name = "$stubRunner-root"
+project(":$verifier:$verifier-messaging").name = "$verifier-messaging-root"
+project(":$stubRunner:$stubRunner-messaging").name = "$stubRunner-messaging-root"

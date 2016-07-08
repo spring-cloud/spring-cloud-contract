@@ -1,0 +1,30 @@
+/*
+ *  Copyright 2013-2016 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+String verifier = "spring-cloud-contract-verifier"
+String stubRunner = "spring-cloud-contract-stub-runner"
+
+dependencies {
+	compile project(":$stubRunner-root:$stubRunner-spring")
+	compile project(":$verifier-root:$verifier-messaging-root:$verifier-integration")
+	compile "org.springframework.integration:spring-integration-java-dsl:${springIntegrationDslVersion}"
+	compile 'com.fasterxml.jackson.core:jackson-databind:2.7.0'
+
+	testCompile "org.springframework.boot:spring-boot-starter-integration:${springBootVersion}"
+	testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+	testCompile('org.spockframework:spock-spring:1.0-groovy-2.4') {
+		exclude(group: 'org.codehaus.groovy')
+	}
+}

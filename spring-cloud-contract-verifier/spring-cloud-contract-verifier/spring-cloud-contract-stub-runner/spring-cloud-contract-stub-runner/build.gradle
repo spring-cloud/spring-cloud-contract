@@ -1,0 +1,119 @@
+/*
+ *  Copyright 2013-2016 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+description = 'Runs stubs for service collaborators'
+
+apply plugin: 'application'
+mainClassName = 'org.springframework.cloud.stubrunner.StubRunnerMain'
+
+String verifier = "spring-cloud-contract-verifier"
+
+dependencies {
+	compile project(":$verifier-root:$verifier-core")
+	compile project(":$verifier-root:$verifier-messaging-root:$verifier-messaging-core")
+	compile 'org.codehaus.groovy:groovy-all:2.4.4'
+	compile "com.github.tomakehurst:wiremock:$wiremockVersion"
+	compile 'javax.servlet:javax.servlet-api:3.1.0'
+	compile 'args4j:args4j:2.32'
+	compile "org.eclipse.aether:aether-api:${aetherVersion}"
+	compile "org.eclipse.aether:aether-impl:${aetherVersion}"
+	compile "org.eclipse.aether:aether-transport-file:${aetherVersion}"
+	compile "org.eclipse.aether:aether-transport-http:${aetherVersion}"
+	compile "org.eclipse.aether:aether-connector-basic:${aetherVersion}"
+	compile 'org.apache.maven:maven-aether-provider:3.3.9'
+
+	if (rootProject.hasProperty("fatJar")) runtime 'ch.qos.logback:logback-classic:1.1.3'
+
+	testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
+		exclude(group: 'org.codehaus.groovy')
+	}
+	testCompile 'cglib:cglib-nodep:2.2'
+	testCompile 'org.objenesis:objenesis:2.1'
+	testCompile 'ch.qos.logback:logback-classic:1.1.3'
+}
+
+ext {
+	stubRepositoryRoot = getPropertyByEither('sr', 'stubRepositoryRoot')
+	stubsSuffix = getPropertyByEither('ss', 'stubsSuffix')
+	minPortValue = getPropertyByEither('minp', 'minPort')
+	maxPortValue = getPropertyByEither('maxp', 'maxPort')
+	skipLocalRepo = getPropertyByEither('wo', 'workOffline')
+	stubs = getPropertyByEither('s', 'stubs')
+	arguments = project.hasProperty('args') ? project.property('args') : []
+	/* example of args:
+	 '-minp 10000 -maxp 10005 -s ""groupid:artifactid1,groupid2:artifactid2" -sr http://dl.bintray.com/somelink/micro'
+	 */
+}
+
+Object getPropertyByEither(String paramName1, String paramName2, Object defaultValue = null) {
+	return project.hasProperty(paramName1) ? project.property(paramName1) :
+			project.hasProperty(paramName2) ? project.property(paramName2) : defaultValue
+}
+
+run {
+	main = 'org.springframework.cloud.stubrunner.StubRunnerMain'
+	List argumentList
+	if (arguments) {
+		argumentList = (arguments.split(' ') as List).findAll { it != null }
+	} else {
+		argumentList = parseArguments()
+	}
+	args = argumentList
+	if (args) {
+		println "Running task with args $args"
+	}
+}
+
+List parseArguments() {
+	List arguments = []
+	appendToListIfNotNull(stubRepositoryRoot, '-sr', arguments)
+	appendToListIfNotNull(stubsSuffix, '-ss', arguments)
+	appendToListIfNotNull(minPortValue, '-minp', arguments)
+	appendToListIfNotNull(maxPortValue, '-maxp', arguments)
+	appendToListIfNotNull(skipLocalRepo, '-wo', arguments)
+	appendToListIfNotNull(stubs, '-s', arguments)
+	return arguments
+}
+
+Object appendToListIfNotNull(String argument, String prefix, List list) {
+	if (argument != null) {
+		list << "$prefix"
+		if (!argument.isAllWhitespace()) {
+			list << argument
+		}
+	}
+}
+
+if (rootProject.hasProperty("fatJar")) {
+
+	apply plugin: 'com.github.johnrengelman.shadow'
+	apply plugin: 'maven-publish'
+
+	publishing {
+		publications {
+			shadow(MavenPublication) {
+				from components.java
+				artifact shadowJar
+			}
+		}
+	}
+
+	shadowJar {
+		classifier = 'fatJar'
+		dependsOn build
+	}
+
+}

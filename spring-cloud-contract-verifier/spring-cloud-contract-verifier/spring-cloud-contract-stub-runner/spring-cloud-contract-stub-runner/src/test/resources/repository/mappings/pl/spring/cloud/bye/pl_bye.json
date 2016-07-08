@@ -1,0 +1,13 @@
+{
+    "request": {
+        "method": "GET",
+        "url": "/pl/bye"
+    },
+    "response": {
+        "status": 200,
+        "body": "pl-bye",
+        "headers": {
+            "Content-Type": "text/plain"
+        }
+    }
+}

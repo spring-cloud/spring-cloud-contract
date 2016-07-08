@@ -1,0 +1,88 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		mavenLocal()
+		maven { url 'https://repo.spring.io/plugins-release' }
+		if (project.hasProperty('fatJar')) jcenter()
+	}
+	dependencies {
+		classpath "com.bmuschko:gradle-nexus-plugin:2.3"
+		classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3"
+		if (project.hasProperty('fatJar')) classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+	}
+}
+
+ext {
+	repoUser = System.getenv('REPO_USERNAME') ?: project.findProperty('REPO_USERNAME') ?: ''
+	repoPass = System.getenv('REPO_PASSWORD') ?: project.findProperty('REPO_PASSWORD') ?: ''
+	projectsToSkipPublication = ['parent', 'samples', 'docs', 'root']
+}
+
+allprojects {
+	project.version = findProperty('contractVerifierVersion') ?: '1.0.0.BUILD-SNAPSHOT'
+	apply from: "$rootDir/gradle/release.gradle"
+}
+
+subprojects {
+	apply plugin: 'groovy'
+
+	group = 'org.springframework.cloud.contract'
+
+	sourceCompatibility = 1.7
+	targetCompatibility = 1.7
+
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		jcenter()
+		maven { url "http://repo.spring.io/snapshot" }
+		maven { url "http://repo.spring.io/milestone" }
+		maven { url "http://repo.spring.io/libs-release-local" }
+		maven { url "http://repo.spring.io/libs-staging-local/" }
+	}
+
+	//Dependencies in all subprojects - http://solidsoft.wordpress.com/2014/11/13/gradle-tricks-display-dependencies-for-all-subprojects-in-multi-project-build/
+	task allDeps(type: DependencyReportTask) {}
+	task allInsight(type: DependencyInsightReportTask) {}
+
+	dependencies {
+		compile localGroovy()
+		testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
+			exclude(group: 'org.codehaus.groovy')
+		}
+		testCompile 'info.solidsoft.spock:spock-global-unroll:0.5.0'
+	}
+
+	test {
+		testLogging {
+			exceptionFormat = 'full'
+		}
+	}
+
+	// fixing the groovydoc issue http://stackoverflow.com/questions/20618857/gradle-task-groovydoc-failing-with-noclassdeffounderror
+	configurations {
+		jansi.extendsFrom(runtime)
+	}
+	groovydoc {
+		def title = "IPDS ${version}"
+		groovyClasspath = project.configurations.jansi
+	}
+	dependencies {
+		jansi 'org.fusesource.jansi:jansi:1.11'
+	}
+}
+
+configurations {
+	all {
+		resolutionStrategy {
+			eachDependency { DependencyResolveDetails details ->
+				// To prevent an accidental usage of groovy-all.jar and groovy.jar in different versions
+				// all modularized Groovy jars are replaced with groovy-all.jar by default.
+				if (details.requested.group == 'org.codehaus.groovy' && details.requested.name != "groovy-all") {
+					details.useTarget("org.codehaus.groovy:groovy-all:${details.requested.version}")
+				}
+			}
+		}
+	}
+}
+
