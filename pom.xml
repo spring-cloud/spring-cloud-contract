@@ -342,15 +342,6 @@
         </developer>
     </developers>
 
-    <licenses>
-        <license>
-            <name>Apache 2</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-            <comments>A business-friendly OSS license</comments>
-        </license>
-    </licenses>
-
     <scm>
         <connection>scm:git:https://github.com/spring-cloud/spring-cloud-contract-verifier-maven-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:spring-cloud/spring-cloud-contract-verifier-maven-plugin.git</developerConnection>
@@ -360,7 +351,7 @@
 
     <issueManagement>
         <system>GitHub Issues</system>
-        <url>https://github.com/spring-cloud/spring-cloud-contract/labels/maven</url>
+        <url>https://github.com/spring-cloud/spring-cloud-contract</url>
     </issueManagement>
 
     <ciManagement>

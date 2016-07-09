@@ -4,9 +4,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.cloud.contract</groupId>
-		<artifactId>spring-cloud-contract-verifier-build</artifactId>
+		<artifactId>spring-cloud-contract-verifier</artifactId>
 		<version>1.0.0.BUILD-SNAPSHOT</version>
-		<relativePath>../..</relativePath>
+		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>spring-cloud-contract-verifier-core</artifactId>
 	<packaging>jar</packaging>

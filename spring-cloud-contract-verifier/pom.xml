@@ -5,12 +5,12 @@
 
 	<parent>
 		<groupId>org.springframework.cloud.contract</groupId>
-		<artifactId>spring-cloud-contract-verifier-build</artifactId>
+		<artifactId>spring-cloud-contract-parent</artifactId>
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
-    <artifactId>spring-cloud-contract-verifier-core-build-shim</artifactId>
+    <artifactId>spring-cloud-contract-verifier</artifactId>
     <packaging>pom</packaging>
 
     <name>Spring Cloud Contract Verifier Build</name>

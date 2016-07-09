@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.cloud.contract</groupId>
-		<artifactId>spring-cloud-contract-verifier-build</artifactId>
+		<artifactId>spring-cloud-contract-parent</artifactId>
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<artifactId>spring-cloud-contract-verifier-docs</artifactId>
+	<artifactId>spring-cloud-contract-docs</artifactId>
 	<packaging>pom</packaging>
 	<name>Spring Cloud Netflix Docs</name>
 	<description>Spring Cloud Docs</description>
