@@ -31,5 +31,5 @@ class StubRunnerMessagingTrigger {
 		this.contractVerifierMessaging = contractVerifierMessaging
 	}
 
-	void trigger
+	def trigger
 }

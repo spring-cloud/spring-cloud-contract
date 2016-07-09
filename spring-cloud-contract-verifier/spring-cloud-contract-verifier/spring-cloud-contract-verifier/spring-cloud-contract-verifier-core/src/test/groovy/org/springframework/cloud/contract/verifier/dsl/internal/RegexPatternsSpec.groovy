@@ -14,11 +14,13 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.spec.internal
-
-import spock.lang.Specification
+package org.springframework.cloud.contract.verifier.dsl.internal
 
 import java.util.regex.Pattern
+
+import org.springframework.cloud.contract.spec.internal.RegexPatterns
+
+import spock.lang.Specification
 
 class RegexPatternsSpec extends Specification {
 

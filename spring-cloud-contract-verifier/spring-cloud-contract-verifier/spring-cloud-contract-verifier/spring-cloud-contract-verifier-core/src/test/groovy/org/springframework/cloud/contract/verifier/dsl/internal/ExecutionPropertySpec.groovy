@@ -14,7 +14,9 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.spec.internal
+package org.springframework.cloud.contract.verifier.dsl.internal
+
+import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 
 import spock.lang.Specification
 

@@ -5,20 +5,22 @@
 
 	<parent>
 		<groupId>org.springframework.cloud.contract</groupId>
-		<artifactId>spring-cloud-contract-parent</artifactId>
+		<artifactId>spring-cloud-contract-verifier-build</artifactId>
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
-    <artifactId>spring-cloud-contract-verifier-maven-plugin-parent</artifactId>
+    <artifactId>spring-cloud-contract-samples</artifactId>
     <packaging>pom</packaging>
 
-    <name>Spring Cloud Contract Verifier Maven Plugin </name>
-    <description>Spring Cloud Contract Verifier Maven Plugin Parent</description>
+    <name>Spring Cloud Contract Samples</name>
+    <description>Spring Cloud Contract Samples</description>
 
     <modules>
-        <module>docs</module>
-        <module>spring-cloud-contract-verifier-maven-plugin</module>
+        <module>samples-messaging-camel</module>
+        <module>samples-messaging-spring</module>
+        <module>samples-messaging-integration</module>
+        <module>samples-messaging-stream</module>
     </modules>
 
 </project>

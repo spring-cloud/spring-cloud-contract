@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.springframework.cloud.contract</groupId>
+		<artifactId>spring-cloud-contract-verifier-build</artifactId>
+		<version>1.0.0.BUILD-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+    <artifactId>spring-cloud-contract-stub-runner-build</artifactId>
+    <packaging>pom</packaging>
+
+    <name>Spring Cloud Contract Stub Runner Build</name>
+    <description>Spring Cloud Contract Stub Runner Build</description>
+ 
+    <modules>
+        <module>spring-cloud-contract-stub-runner</module>
+        <module>spring-cloud-contract-stub-runner-junit</module>
+        <module>spring-cloud-contract-stub-runner-spring</module>
+        <module>spring-cloud-contract-stub-runner-boot</module>
+        <module>spring-cloud-contract-stub-runner-messaging</module>
+        <module>spring-cloud-contract-stub-runner-spring-cloud</module>
+    </modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.gmavenplus</groupId>
+				<artifactId>gmavenplus-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
