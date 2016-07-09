@@ -10,13 +10,12 @@ cache:
 script:
 -  |
     echo "Running Spring Cloud Contract Verifier"
-    cd spring-cloud-contract-verifier
     ./mvnw clean install
     cd spring-cloud-contract-verifier-gradle-plugin
     ./gradlew clean build install
 
     echo "Checking if samples are not broken"
-    cd ../spring-cloud-contract-verifier/spring-cloud-contract-verifier
+    cd ..
     ./scripts/runTests.sh
 env:
   global:

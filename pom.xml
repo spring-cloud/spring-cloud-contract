@@ -4,17 +4,32 @@
     <modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.springframework.cloud.contract</groupId>
-		<artifactId>spring-cloud-contract-parent</artifactId>
-		<version>1.0.0.BUILD-SNAPSHOT</version>
-		<relativePath>..</relativePath>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-build</artifactId>
+		<version>1.2.0.BUILD-SNAPSHOT</version>
+		<relativePath />
 	</parent>
 
-    <artifactId>spring-cloud-contract-verifier-build</artifactId>
+    <groupId>org.springframework.cloud.contract</groupId>
+    <artifactId>spring-cloud-contract-parent</artifactId>
     <packaging>pom</packaging>
+    <version>1.0.0.BUILD-SNAPSHOT</version>
 
-    <name>Spring Cloud Contract Verifier Build</name>
-    <description>Spring Cloud Contract Verifier Build</description>
+    <name>Spring Cloud Contract</name>
+    <description>Spring Cloud Contract</description>
+
+    <url>https://github.com/spring-cloud/spring-cloud-contract</url>
+
+    <inceptionYear>2016</inceptionYear>
+
+    <modules>
+		<module>docs</module>
+        <module>spring-cloud-contract-verifier</module>
+        <module>spring-cloud-contract-spec</module>
+        <module>spring-cloud-contract-stub-runner</module>
+        <module>spring-cloud-contract-verifier-maven-plugin</module>
+		<module>samples</module>
+    </modules>
 
 	<properties>
 		<wiremock.version>2.0.10-beta</wiremock.version>
@@ -28,13 +43,6 @@
 		<spring-cloud-zookeeper.version>1.0.2.RELEASE</spring-cloud-zookeeper.version>
 		<jetty.version>9.2.13.v20150730</jetty.version>
 	</properties>
-
-    <modules>
-        <module>docs</module>
-        <module>spring-cloud-contract-verifier</module>
-        <module>spring-cloud-contract-spec</module>
-        <module>spring-cloud-contract-stub-runner</module>
-    </modules>
 
 	<dependencyManagement>
 		<dependencies>
@@ -311,5 +319,207 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+    <prerequisites>
+        <maven>[3.2.1,)</maven>
+    </prerequisites>
+
+    <organization>
+        <name>Spring</name>
+        <url>http://spring.io/</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <id>mariuszs</id>
+            <name>Mariusz Smykula</name>
+            <email>mariuszs@gmail.com</email>
+        </developer>
+        <developer>
+            <id>marcingrzejszczak</id>
+            <name>Marcin Grzejszczak</name>
+            <email>marcin@grzejszczak.pl</email>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:https://github.com/spring-cloud/spring-cloud-contract-verifier-maven-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:spring-cloud/spring-cloud-contract-verifier-maven-plugin.git</developerConnection>
+        <url>https://github.com/spring-cloud/spring-cloud-contract-verifier-maven-plugin</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/spring-cloud/spring-cloud-contract/labels/maven</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Travis</system>
+        <url>https://travis-ci.org/spring-cloud/spring-cloud-contract</url>
+    </ciManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+				<plugin>
+					<groupId>org.codehaus.gmavenplus</groupId>
+					<artifactId>gmavenplus-plugin</artifactId>
+					<version>1.5</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>addSources</goal>
+								<goal>addTestSources</goal>
+								<goal>compile</goal>
+								<goal>testCompile</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+                <plugin>
+                    <groupId>org.codehaus.plexus</groupId>
+                    <artifactId>plexus-component-metadata</artifactId>
+                    <version>1.6</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-plugin-plugin</artifactId>
+                    <version>${maven.plugin.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>io.takari.maven.plugins</groupId>
+                    <artifactId>takari-lifecycle-plugin</artifactId>
+                    <version>1.12.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.eluder.coveralls</groupId>
+                    <artifactId>coveralls-maven-plugin</artifactId>
+                    <version>4.1.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+	<profiles>
+		<profile>
+			<id>spring</id>
+			<repositories>
+				<repository>
+					<id>spring-snapshots</id>
+					<name>Spring Snapshots</name>
+					<url>http://repo.spring.io/libs-snapshot-local</url>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
+					<releases>
+						<enabled>false</enabled>
+					</releases>
+				</repository>
+				<repository>
+					<id>spring-milestones</id>
+					<name>Spring Milestones</name>
+					<url>http://repo.spring.io/libs-milestone-local</url>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+				</repository>
+				<repository>
+					<id>spring-releases</id>
+					<name>Spring Releases</name>
+					<url>http://repo.spring.io/release</url>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+				</repository>
+			</repositories>
+			<pluginRepositories>
+				<pluginRepository>
+					<id>spring-snapshots</id>
+					<name>Spring Snapshots</name>
+					<url>http://repo.spring.io/libs-snapshot-local</url>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
+					<releases>
+						<enabled>false</enabled>
+					</releases>
+				</pluginRepository>
+				<pluginRepository>
+					<id>spring-milestones</id>
+					<name>Spring Milestones</name>
+					<url>http://repo.spring.io/libs-milestone-local</url>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+				</pluginRepository>
+				<pluginRepository>
+					<id>spring-releases</id>
+					<name>Spring Releases</name>
+					<url>http://repo.spring.io/libs-release-local</url>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+				</pluginRepository>
+			</pluginRepositories>
+		</profile>
+		<profile>
+			<id>sonar</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>0.7.4.201502262128</version>
+						<configuration>
+							<destFile>${sonar.jacoco.reportPath}</destFile>
+							<append>true</append>
+						</configuration>
+						<executions>
+							<execution>
+								<id>agent</id>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<!-- Minimal supported version is 2.4 -->
+						<version>${surefire.plugin.version}</version>
+						<configuration>
+							<properties>
+								<property>
+									<name>listener</name>
+									<value>org.sonar.java.jacoco.JUnitListener</value>
+								</property>
+							</properties>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+			<dependencies>
+				<dependency>
+					<groupId>org.sonarsource.java</groupId>
+					<artifactId>sonar-jacoco-listeners</artifactId>
+					<version>3.8</version>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 
 </project>
