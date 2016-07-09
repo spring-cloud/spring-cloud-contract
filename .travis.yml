@@ -9,16 +9,14 @@ cache:
   - $HOME/.gradle
 script:
 -  |
-    echo "Running Spring Cloud Contract Verifier tests"
-    cd spring-cloud-contract-verifier/spring-cloud-contract-verifier
+    echo "Running Spring Cloud Contract Verifier"
+    cd spring-cloud-contract-verifier
+    ./mvnw clean install
+    cd spring-cloud-contract-verifier-gradle-plugin
     ./gradlew clean build install
 
-    echo "Running Spring Cloud Contract Verifier Maven Plugin tests"
-    cd spring-cloud-contract-verifier/spring-cloud-contract-verifier-maven-plugin
-    ./mvnw clean install jacoco:report coveralls:report -pl spring-cloud-contract-verifier-maven-plugin
-
     echo "Checking if samples are not broken"
-    cd spring-cloud-contract-verifier/spring-cloud-contract-verifier
+    cd ../spring-cloud-contract-verifier/spring-cloud-contract-verifier
     ./scripts/runTests.sh
 env:
   global:
