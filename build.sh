@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
-./gradlew clean build --parallel
+./mvnw install
+(cd *-gradle-plugin; ./gradlew clean build --parallel)
