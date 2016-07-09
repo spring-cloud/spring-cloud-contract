@@ -7,6 +7,8 @@ cache:
   directories:
   - $HOME/.m2
   - $HOME/.gradle
+install:
+- ./mvnw install -P docs -q -U -DskipTests=true $MVN_LOCAL_OPTS
 script:
 -  |
     echo "Running Spring Cloud Contract Verifier"
