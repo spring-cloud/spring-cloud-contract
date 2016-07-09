@@ -49,13 +49,13 @@ afterEvaluate {
 					name "$project.name"
 					packaging 'jar'
 					description 'Consumer Driven Contract Verifier and Stub Runner'
-					url 'https://github.com/Codearte/accurest'
+					url 'https://github.com/spring-cloud/spring-cloud-contract'
 					inceptionYear '2014'
 
 					scm {
-						connection 'scm:git:git@github.com:Codearte/accurest.git'
-						developerConnection 'scm:git:git@github.com:Codearte/accurest.git'
-						url 'https://github.com/Codearte/accurest'
+						connection 'scm:git:git@github.com:spring-cloud/spring-cloud-contract.git'
+						developerConnection 'scm:git:git@github.com:spring-cloud/spring-cloud-contract.git'
+						url 'https://github.com/spring-cloud/spring-cloud-contract'
 					}
 
 					licenses {

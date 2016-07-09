@@ -49,9 +49,9 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 	protected void setupForProject(String projectRoot) {
 		copyResourcesToRoot(projectRoot)
 		String gradlePluginSysProp = System.getProperty("contract-verifier-gradle-plugin-libs-dir")
-		String gradlePluginLibsDir = (gradlePluginSysProp ?: new File("build/").toString()).replace('\\', '\\\\')
+		String gradlePluginLibsDir = (gradlePluginSysProp ?: new File("build/").absolutePath.toString()).replace('\\', '\\\\')
 		String messagingLibDirProp = System.getProperty("messaging-libs-dir")
-		String messagingLibDir = (messagingLibDirProp ?: new File("build/").toString()).replace('\\', '\\\\')
+		String messagingLibDir = (messagingLibDirProp ?: new File("build/").absolutePath.toString()).replace('\\', '\\\\')
 
 		buildFile.write """
 			ext.messagingLibsDir = '$messagingLibDir'
