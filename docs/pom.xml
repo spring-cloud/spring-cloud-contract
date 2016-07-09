@@ -13,7 +13,7 @@
 	<name>Spring Cloud Netflix Docs</name>
 	<description>Spring Cloud Docs</description>
 	<properties>
-		<docs.main>spring-cloud-netflix</docs.main>
+		<docs.main>spring-cloud-contract</docs.main>
 		<main.basedir>${basedir}/..</main.basedir>
 	</properties>
  	<build>
