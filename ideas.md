@@ -6,8 +6,7 @@ What you always need it confidence in pushing new features into a new applicatio
 
 Feature ideas:
 
-- [ ] Move DSL and stub runner code over from [Accurest](https://github.com/Codearte/accurest)
-- [ ] Support [Citrus](http://www.citrusframework.org/) users (somehow?)
+- [x] Move DSL and stub runner code over from [Accurest](https://github.com/Codearte/accurest)
 - [ ] Spring Restdocs generators
 - [ ] Wiremock support for Spring Boot apps
 - [ ] Wiremock mock servers using `MockRestServiceServer` (from Spring Test)
@@ -16,4 +15,5 @@ Feature ideas:
 - [ ] `DiscoveryClient` support so backends can be stubbed or mocked transparently (declaratively)
 - [ ] Actuator endpoints that verify the state of contracts supported by the host service
 - [ ] Something to make PACT easier to use in Spring Boot apps?
+- [ ] Support [Citrus](http://www.citrusframework.org/) users (somehow?)
 - [ ] Schema registries for binary formats like protobuf, thrift, avro
