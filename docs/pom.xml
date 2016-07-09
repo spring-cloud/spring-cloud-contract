@@ -10,7 +10,7 @@
 	</parent>
 	<artifactId>spring-cloud-contract-docs</artifactId>
 	<packaging>pom</packaging>
-	<name>Spring Cloud Netflix Docs</name>
+	<name>Spring Cloud Contract Docs</name>
 	<description>Spring Cloud Docs</description>
 	<properties>
 		<docs.main>spring-cloud-contract</docs.main>
