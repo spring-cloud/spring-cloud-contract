@@ -343,9 +343,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:https://github.com/spring-cloud/spring-cloud-contract-verifier-maven-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:spring-cloud/spring-cloud-contract-verifier-maven-plugin.git</developerConnection>
-        <url>https://github.com/spring-cloud/spring-cloud-contract-verifier-maven-plugin</url>
+        <connection>scm:git:https://github.com/spring-cloud/spring-cloud-contract.git</connection>
+        <developerConnection>scm:git:git@github.com:spring-cloud/spring-cloud-contract.git</developerConnection>
+        <url>https://github.com/spring-cloud/spring-cloud-contract</url>
         <tag>HEAD</tag>
     </scm>
 

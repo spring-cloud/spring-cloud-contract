@@ -5,10 +5,7 @@ ext {
 	resolveRepoName = { Project project ->
 		String version = project.version
 		String name = project.name
-		String resolvedRepoName = "libs-${resolveVersion(version)}-local"
-		if (name.contains("gradle")) {
-			resolvedRepoName = "plugins-${resolveVersion(version)}-local"
-		}
+		resolvedRepoName = "plugins-${resolveVersion(version)}-local"
 		logger.lifecycle("For project [$project.name] with " +
 				"version [$project.version] the resolved Artifactory repo is [$resolvedRepoName]")
 		return resolvedRepoName
@@ -85,8 +82,4 @@ afterEvaluate {
 
 String repoPrefix() {
 	return project.name.contains('gradle') ? 'plugins' : 'libs'
-}
-
-if (projectsToSkipPublication.any { project.name.contains(it) }) {
-	uploadArchives.enabled = false
 }
