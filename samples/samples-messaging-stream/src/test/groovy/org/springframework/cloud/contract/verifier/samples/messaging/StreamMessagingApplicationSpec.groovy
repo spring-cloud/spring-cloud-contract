@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationContextLoader
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierObjectMapper
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
@@ -34,6 +35,7 @@ import javax.inject.Inject
  */
 // Context configuration would end up in base class
 @ContextConfiguration(classes = [StreamMessagingApplication], loader = SpringApplicationContextLoader)
+@DirtiesContext
 public class StreamMessagingApplicationSpec extends Specification {
 
 	// ALL CASES

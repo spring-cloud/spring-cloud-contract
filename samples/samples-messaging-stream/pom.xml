@@ -29,7 +29,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.spockframework</groupId>
-			<artifactId>spock-core</artifactId>
+			<artifactId>spock-spring</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -38,4 +38,12 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.gmavenplus</groupId>
+				<artifactId>gmavenplus-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 </project>

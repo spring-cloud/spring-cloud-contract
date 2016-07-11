@@ -19,12 +19,15 @@ package org.springframework.cloud.contract.verifier.samples.spring
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
+
+import org.junit.BeforeClass;
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationContextLoader
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierObjectMapper
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
@@ -35,11 +38,17 @@ import javax.inject.Inject
  */
 // Context configuration would end up in base class
 @ContextConfiguration(classes = [SpringMessagingApplication], loader = SpringApplicationContextLoader)
+@DirtiesContext
 public class SpringApplicationSpec extends Specification {
 
 	// ALL CASES
 	@Inject ContractVerifierMessaging contractVerifierMessaging
 	ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()
+
+	@BeforeClass
+	void init() {
+		System.setProperty("org.apache.activemq.SERIALIZABLE_PACKAGES", "*")
+	}
 
 	def "should work for triggered based messaging"() {
 		given:

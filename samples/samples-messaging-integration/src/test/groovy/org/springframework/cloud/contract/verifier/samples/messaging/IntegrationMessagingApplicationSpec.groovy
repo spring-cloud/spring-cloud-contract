@@ -25,12 +25,14 @@ import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierObjectMapper
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
 import javax.inject.Inject
 // Context configuration would end up in base class
 @ContextConfiguration(classes = [IntegrationMessagingApplication], loader = SpringApplicationContextLoader)
+@DirtiesContext
 public class IntegrationMessagingApplicationSpec extends Specification {
 
 	// ALL CASES
