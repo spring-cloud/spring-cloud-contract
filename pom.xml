@@ -326,6 +326,11 @@
 				<artifactId>spock-core</artifactId>
 				<version>1.0-groovy-2.4</version>
 			</dependency>
+			<dependency>
+				<groupId>info.solidsoft.spock</groupId>
+				<artifactId>spock-global-unroll</artifactId>
+				<version>0.5.0</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
