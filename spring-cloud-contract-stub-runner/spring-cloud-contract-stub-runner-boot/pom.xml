@@ -28,7 +28,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.spockframework</groupId>
-			<artifactId>spock-core</artifactId>
+			<artifactId>spock-spring</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

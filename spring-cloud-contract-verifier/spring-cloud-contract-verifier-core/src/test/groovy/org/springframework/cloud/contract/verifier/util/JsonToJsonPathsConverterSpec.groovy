@@ -196,16 +196,16 @@ class JsonToJsonPathsConverterSpec extends Specification {
 			JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
 		then:
 			pathAndValues.find {
-				it.method() == """.field("extensions").field("7").isEqualTo(28)""" &&
-				it.jsonPath() == '''$.extensions[?(@.7 == 28)]'''
+				it.method() == """.field("extensions").field("7").isEqualTo(28.00)""" &&
+				it.jsonPath() == '''$.extensions[?(@.7 == 28.00)]'''
 			}
 			pathAndValues.find {
-				it.method() == """.field("extensions").field("14").isEqualTo(41)""" &&
-				it.jsonPath() == '''$.extensions[?(@.14 == 41)]'''
+				it.method() == """.field("extensions").field("14").isEqualTo(41.00)""" &&
+				it.jsonPath() == '''$.extensions[?(@.14 == 41.00)]'''
 			}
 			pathAndValues.find {
-				it.method() == """.field("extensions").field("30").isEqualTo(60)""" &&
-				it.jsonPath() == '''$.extensions[?(@.30 == 60)]'''
+				it.method() == """.field("extensions").field("30").isEqualTo(60.00)""" &&
+				it.jsonPath() == '''$.extensions[?(@.30 == 60.00)]'''
 			}
 		and:
 			assertThatJsonPathsInMapAreValid(json, pathAndValues)

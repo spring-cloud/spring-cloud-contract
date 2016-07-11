@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.stubrunner.spring.cloud
 import org.apache.curator.test.TestingServer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationContextLoader
 import org.springframework.boot.test.WebIntegrationTest
 import org.springframework.cloud.contract.stubrunner.StubFinder
@@ -39,6 +40,7 @@ import spock.lang.Specification
  */
 @ContextConfiguration(classes = Config, loader = SpringApplicationContextLoader)
 @WebIntegrationTest(randomPort = true)
+@IntegrationTest
 class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder

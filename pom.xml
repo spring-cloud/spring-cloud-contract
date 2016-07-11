@@ -139,7 +139,7 @@
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>1.6.0</version>
+				<version>1.7.21</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-io</groupId>
@@ -318,9 +318,13 @@
 			</dependency>
 			<dependency>
 				<groupId>org.spockframework</groupId>
+				<artifactId>spock-spring</artifactId>
+				<version>1.0-groovy-2.4</version>
+			</dependency>
+			<dependency>
+				<groupId>org.spockframework</groupId>
 				<artifactId>spock-core</artifactId>
 				<version>1.0-groovy-2.4</version>
-				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
