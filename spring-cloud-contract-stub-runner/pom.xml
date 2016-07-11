@@ -25,13 +25,4 @@
         <module>spring-cloud-contract-stub-runner-spring-cloud</module>
     </modules>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.gmavenplus</groupId>
-				<artifactId>gmavenplus-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
-
 </project>

@@ -23,13 +23,4 @@
         <module>spring-cloud-contract-verifier-stream</module>
     </modules>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.gmavenplus</groupId>
-				<artifactId>gmavenplus-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
-
 </project>
