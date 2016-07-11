@@ -69,7 +69,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		Task stubsJar = createAndConfigureStubsJarTasks(extension)
 		createAndConfigureCopyContractsTask(stubsJar, extension)
 		createAndConfigureMavenPublishPlugin(stubsJar, extension)
-		project.dependencies.add("testCompile", "com.github.tomakehurst:wiremock:2.0.10-beta")
+		project.dependencies.add("testCompile", "com.github.tomakehurst:wiremock:2.1.6")
 		project.dependencies.add("testCompile", "com.toomuchcoding.jsonassert:jsonassert:0.4.7")
 		project.dependencies.add("testCompile", "org.assertj:assertj-core:2.3.0")
 

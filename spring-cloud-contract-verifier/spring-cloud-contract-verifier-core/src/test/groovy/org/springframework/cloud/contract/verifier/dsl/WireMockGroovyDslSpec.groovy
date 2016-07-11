@@ -1181,6 +1181,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method('POST')
+					url("foo")
 					body(
 							property: value(stub("value"), test("value"))
 					)
@@ -1215,6 +1216,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method('POST')
+					url("foo")
 					body(
 							values: []
 					)

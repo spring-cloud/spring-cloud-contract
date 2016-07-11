@@ -32,7 +32,7 @@
     </modules>
 
 	<properties>
-		<wiremock.version>2.0.10-beta</wiremock.version>
+		<wiremock.version>2.1.6</wiremock.version>
 		<jsonassert.version>0.4.7</jsonassert.version>
 		<camel.version>2.17.0</camel.version>
 		<aether.version>1.1.0</aether.version>
