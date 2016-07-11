@@ -1,0 +1,47 @@
+machine:
+  java:
+    version: oraclejdk8
+  environment:
+    _JAVA_OPTIONS: "-Xms512m -Xmx1024m"
+    GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1024m -XX:+HeapDumpOnOutOfMemoryError"'
+    TERM: dumb
+dependencies:
+  pre:
+    -  |
+        sudo service zookeeper stop || echo "Service not running"
+        sudo service cassandra stop || echo "Service not running"
+        sudo service elasticsearch stop || echo "Service not running"
+        sudo service rabbitmq-server stop || echo "Service not running"
+        sudo service redis stop || echo "Service not running"
+        sudo service riak stop || echo "Service not running"
+        sudo service beanstalkd stop || echo "Service not running"
+        sudo service couchbase-server stop || echo "Service not running"
+        sudo service neo4j stop || echo "Service not running"
+        sudo service sphinxsearch stop || echo "Service not running"
+        sudo service postgresql stop || echo "Service not running"
+    - touch ~/.gradle/gradle.properties && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
+  override:
+    - ./mvnw -s .settings.xml --fail-never dependency:go-offline || true
+test:
+  override:
+    # docs take 15 minutes to run
+    #- ./mvnw install -P docs -q -U -DskipTests=true $MVN_LOCAL_OPTS
+    -  |
+        echo "Running Spring Cloud Contract Verifier"
+        ./mvnw clean install --batch-mode -Dmaven.test.redirectTestOutputToFile=true -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+    -  |
+        echo "Running Spring Cloud Contract Verifier Gradle Plugin"
+        cd spring-cloud-contract-verifier-gradle-plugin
+        ./gradlew clean build install
+    -  |
+        echo "Checking if samples are not broken"
+        ./scripts/runTests.sh
+  post:
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+    - find . -type f -regex ".*/target/.*-reports/.*" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
+    - find . -type f -regex ".*/build/test-results/.*" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
+notify:
+  webhooks:
+    # A list of hook hashes, containing the url field
+    # gitter hook
+    - url: https://webhooks.gitter.im/e/ece0ece9a76a5af2aa91

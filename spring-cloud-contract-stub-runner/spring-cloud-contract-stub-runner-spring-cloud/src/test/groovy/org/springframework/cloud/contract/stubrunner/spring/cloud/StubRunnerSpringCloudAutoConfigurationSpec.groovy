@@ -16,23 +16,24 @@
 
 package org.springframework.cloud.contract.stubrunner.spring.cloud
 
+import groovy.util.logging.Slf4j
 import org.apache.curator.test.TestingServer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.IntegrationTest;
+import org.springframework.boot.test.IntegrationTest
 import org.springframework.boot.test.SpringApplicationContextLoader
 import org.springframework.boot.test.WebIntegrationTest
-import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
+import org.springframework.cloud.contract.stubrunner.StubFinder
+import org.springframework.cloud.zookeeper.ZookeeperProperties
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.util.SocketUtils
 import org.springframework.web.client.RestTemplate
-import spock.lang.AutoCleanup
-import spock.lang.Shared
 import spock.lang.Specification
 
 /**
@@ -41,13 +42,13 @@ import spock.lang.Specification
 @ContextConfiguration(classes = Config, loader = SpringApplicationContextLoader)
 @WebIntegrationTest(randomPort = true)
 @IntegrationTest
+@Slf4j
 class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
 	@Autowired @LoadBalanced RestTemplate restTemplate
 	@Autowired ZookeeperServiceDiscovery zookeeperServiceDiscovery
 	@Autowired ConfigurableApplicationContext applicationContext
-	@Shared @AutoCleanup TestingServer testingServer = new TestingServer(2181)
 
 	def 'should make service discovery work'() {
 		expect: 'WireMocks are running'
@@ -58,15 +59,33 @@ class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 			restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
 	}
 
+	TestingServer startTestingServer() {
+		try {
+			return new TestingServer(SocketUtils.findAvailableTcpPort())
+		} catch (Exception e) {
+			log.error("Exception occurred ")
+		}
+	}
+
 	def cleanup() {
 		zookeeperServiceDiscovery.serviceDiscovery.close()
-		applicationContext.close()
 	}
 
 	@Configuration
 	@EnableAutoConfiguration
 	@EnableDiscoveryClient
 	static class Config {
+
+		@Bean
+		TestingServer testingServer() {
+			return new TestingServer(SocketUtils.findAvailableTcpPort())
+		}
+
+		@Bean
+		ZookeeperProperties zookeeperProperties() {
+			return new ZookeeperProperties(connectString: testingServer().connectString)
+		}
+
 		@Bean
 		@LoadBalanced
 		RestTemplate restTemplate() {
