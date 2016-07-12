@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.springframework.cloud.contract.testprojects</groupId>
-    <artifactId>http-client</artifactId>
+    <artifactId>http-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
-    <name>Spring Cloud Contract Verifier Http Client Sample</name>
-    <description>Spring Cloud Contract Verifier Http Client Sample</description>
+    <name>Spring Cloud Contract Verifier Http Server Sample</name>
+    <description>Spring Cloud Contract Verifier Http Server Sample</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -21,6 +21,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <spring-cloud-contract-verifier.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-contract-verifier.version>
+        <spring-cloud-contract-verifier-maven-plugin.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-contract-verifier-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -49,18 +50,25 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- verifier test dependencies-->
         <dependency>
-            <groupId>org.springframework.cloud.contract</groupId>
-            <artifactId>spring-cloud-contract-stub-runner-spring</artifactId>
-            <version>${spring-cloud-contract-verifier.version}</version>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>spring-mock-mvc</artifactId>
+            <version>2.9.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.spockframework</groupId>
-            <artifactId>spock-spring</artifactId>
+            <groupId>com.toomuchcoding.jsonassert</groupId>
+            <artifactId>jsonassert</artifactId>
+            <version>0.4.7</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.4.1</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -70,41 +78,21 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.gmavenplus</groupId>
-                <artifactId>gmavenplus-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <groupId>org.springframework.cloud.contract</groupId>
+                <artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
+                <version>${spring-cloud-contract-verifier-maven-plugin.version}</version>
+                <extensions>true</extensions>
                 <configuration>
-                    <testSources>
-                        <testSource>
-                            <directory>${project.basedir}/src/test/groovy</directory>
-                            <includes>
-                                <include>**/*.groovy</include>
-                            </includes>
-                        </testSource>
-                        <testSource>
-                            <directory>${project.build.directory}/generated-test-sources/accurest</directory>
-                            <includes>
-                                <include>**/*.groovy</include>
-                            </includes>
-                        </testSource>
-                    </testSources>
+                    <baseClassForTests>org.springframework.cloud.MvcTest</baseClassForTests>
                 </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
-                <configuration>
-                    <includes>
-                        <include>**/*Spec.java</include>
-                    </includes>
-                </configuration>
+                <!-- this was added for testing purposes only-->
+                <dependencies>
+                    <dependency>
+                        <groupId>org.springframework.cloud.contract</groupId>
+                        <artifactId>spring-cloud-contract-verifier-core</artifactId>
+                        <version>${spring-cloud-contract-verifier.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
@@ -117,7 +105,7 @@
 
     <profiles>
         <profile>
-            <id>spring-sample</id>
+            <id>spring</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -183,5 +171,4 @@
             </pluginRepositories>
         </profile>
     </profiles>
-
 </project>

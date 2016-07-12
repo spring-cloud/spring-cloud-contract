@@ -24,3 +24,5 @@ You can read more about Spring Cloud Contract Verifier by reading the {documenta
 == Contributing
 
 include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/docs/src/main/asciidoc/contributing.adoc[]
+
+include::building.adoc[]

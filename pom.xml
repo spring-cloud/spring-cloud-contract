@@ -79,22 +79,22 @@
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud.contract</groupId>
-				<artifactId>spring-cloud-verifier-messaging-core</artifactId>
+				<artifactId>spring-cloud-contract-verifier-messaging-core</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud.contract</groupId>
-				<artifactId>spring-cloud-verifier-camel</artifactId>
+				<artifactId>spring-cloud-contract-verifier-camel</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud.contract</groupId>
-				<artifactId>spring-cloud-verifier-integration</artifactId>
+				<artifactId>spring-cloud-contract-verifier-integration</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud.contract</groupId>
-				<artifactId>spring-cloud-verifier-messaging-stream</artifactId>
+				<artifactId>spring-cloud-contract-verifier-stream</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

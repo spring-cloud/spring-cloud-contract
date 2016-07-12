@@ -1,0 +1,62 @@
+== How to build it
+
+=== Project structure
+
+Here you can find the Spring Cloud Contract folder structure
+
+```
+├── samples
+├── scripts
+├── spring-cloud-contract-spec
+├── spring-cloud-contract-stub-runner
+├── spring-cloud-contract-verifier
+├── spring-cloud-contract-verifier-gradle-plugin
+├── spring-cloud-contract-verifier-maven-plugin
+└── spring-cloud-contract-verifier-standalone-test-samples
+```
+
+ - `samples` - folder contains integration test samples used also to build documentation
+ - `scripts` - contains scripts to build and test `Spring Cloud Contract` with Maven, Gradle and standalone projects
+ - `spring-cloud-contract-spec` - contains specification modules (contains concept of a Contract)
+ - `spring-cloud-contract-stub-runner` - contains Stub Runner related modules
+ - `spring-cloud-contract-verifier` - core of the `Spring Cloud Contract Verifier` functionality
+ - `spring-cloud-contract-verifier-gradle-plugin` - Gradle plugin for `Spring Cloud Contract Verifier`
+ - `spring-cloud-contract-verifier-maven-plugin` - Maven plugin for `Spring Cloud Contract Verifier`
+ - `spring-cloud-contract-verifier-standalone-test-samples` - standalone test sample that use `Spring Cloud Contract Verifier`
+
+=== Commands
+
+To build the core functionality together with Maven Plugin you can run
+
+```
+./mvnw clean install
+```
+
+To build the Gradle Plugin
+
+```
+cd spring-cloud-contract-verifier-gradle-plugin
+./gradlew clean build
+```
+
+=== Scripts
+
+For your convenience we have created a bunch of scripts to build and test the whole functionality.
+
+Build both Maven and Gradle project
+
+```
+./scripts/build.sh
+```
+
+Run tests on the standalone projects
+
+```
+./scripts/runTests.sh
+```
+
+Build both Maven and Gradle projects and run tests on standalone projects
+
+```
+./scripts/buildAndTest.sh
+```

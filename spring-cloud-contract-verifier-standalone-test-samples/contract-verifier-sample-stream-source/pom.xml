@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.springframework.cloud.contract.testprojects</groupId>
@@ -30,7 +30,7 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-stream-rabbit</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -46,7 +46,7 @@
 
 		<dependency>
 			<groupId>org.springframework.cloud.contract</groupId>
-			<artifactId>spring-cloud-contract-stream</artifactId>
+			<artifactId>spring-cloud-contract-verifier-stream</artifactId>
 			<version>${spring-cloud-contract-verifier.version}</version>
 			<scope>test</scope>
 		</dependency>
@@ -58,19 +58,19 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>Brixton.SR1</version>
+				<version>Brixton.SR3</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -105,7 +105,7 @@
 
 	<profiles>
 		<profile>
-			<id>spring-sample</id>
+			<id>spring</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
@@ -171,6 +171,6 @@
 			</pluginRepositories>
 		</profile>
 	</profiles>
-	
+
 
 </project>

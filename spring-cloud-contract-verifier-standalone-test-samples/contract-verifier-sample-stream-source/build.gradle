@@ -52,7 +52,7 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-jetty")
 	compile("org.springframework.boot:spring-boot-starter-actuator")
 	compile("org.springframework.cloud:spring-cloud-starter-stream-rabbit")
-	compile("org.springframework.cloud.contract:spring-cloud-contract-stream:${findProperty('verifierVersion') ?: verifierVersion}")
+	compile("org.springframework.cloud.contract:spring-cloud-contract-verifier-stream:${findProperty('verifierVersion') ?: verifierVersion}")
 
 	testRuntime "org.spockframework:spock-spring"
 	testCompile "org.spockframework:spock-core"

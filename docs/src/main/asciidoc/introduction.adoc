@@ -1,4 +1,4 @@
-:images_url: https://raw.githubusercontent.com/Codearte/accurest/master/docs/src/main/asciidoc/images
+:images_url: https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images
 
 == Introduction
 
@@ -132,7 +132,8 @@ video::130779882[vimeo]
 
 === Samples
 
-Here you can find some https://github.com/Codearte/accurest-samples[working samples]. Check the readme of each project for more information.
+Here you can find some https://github.com/spring-cloud/spring-cloud-contract[working samples]. Check the `spring-cloud-contract-verifier-standalone-test-samples` folder
+and read readme of each project for more information.
 
 === Why use Spring Cloud Contract Verifier and not X ?
 

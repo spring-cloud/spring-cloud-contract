@@ -42,7 +42,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- accurest test dependencies -->
+        <!-- verifier test dependencies-->
         <!-- tag::dependencies[] -->
         <dependency>
             <groupId>org.spockframework</groupId>

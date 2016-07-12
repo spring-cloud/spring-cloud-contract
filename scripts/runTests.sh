@@ -15,7 +15,7 @@ export CONTRACT_VERIFIER_VERSION=${CONTRACT_VERIFIER_VERSION}
 
 echo "Current Spring Cloud Contract Verifier version is ${CONTRACT_VERIFIER_VERSION}"
 
-cd spring-cloud-contract-verifier-samples
+cd spring-cloud-contract-verifier-standalone-test-samples
 
 echo "Running Gradle tests"
 . ./runTests.sh
