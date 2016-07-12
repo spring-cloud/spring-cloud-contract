@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.springframework.cloud.contract</groupId>
@@ -10,17 +11,17 @@
 		<relativePath>..</relativePath>
 	</parent>
 
-    <artifactId>spring-cloud-contract-verifier-messaging</artifactId>
-    <packaging>pom</packaging>
+	<artifactId>spring-cloud-contract-verifier-messaging</artifactId>
+	<packaging>pom</packaging>
 
-    <name>Spring Cloud Contract Verifier Build</name>
-    <description>Spring Cloud Contract Verifier Build</description>
+	<name>Spring Cloud Contract Verifier Build</name>
+	<description>Spring Cloud Contract Verifier Build</description>
 
-    <modules>
-        <module>spring-cloud-contract-verifier-messaging-core</module>
-        <module>spring-cloud-contract-verifier-camel</module>
-        <module>spring-cloud-contract-verifier-integration</module>
-        <module>spring-cloud-contract-verifier-stream</module>
-    </modules>
+	<modules>
+		<module>spring-cloud-contract-verifier-messaging-core</module>
+		<module>spring-cloud-contract-verifier-camel</module>
+		<module>spring-cloud-contract-verifier-integration</module>
+		<module>spring-cloud-contract-verifier-stream</module>
+	</modules>
 
 </project>

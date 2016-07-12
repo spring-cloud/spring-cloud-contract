@@ -16,34 +16,19 @@
 
 package org.springframework.cloud.contract.verifier.dsl.wiremock
 
+import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.http.RequestMethod
-import com.github.tomakehurst.wiremock.matching.RequestPattern
-import com.github.tomakehurst.wiremock.matching.ValuePattern
+import com.github.tomakehurst.wiremock.matching.*
 import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.spec.internal.Body
-import org.springframework.cloud.contract.spec.internal.NamedProperty
-import org.springframework.cloud.contract.spec.internal.QueryParameters
-import org.springframework.cloud.contract.verifier.util.ContentUtils
-import org.springframework.cloud.contract.verifier.util.JsonPaths
-import org.springframework.cloud.contract.verifier.util.MapConverter
-import org.springframework.cloud.contract.spec.internal.DslProperty
-import org.springframework.cloud.contract.spec.internal.OptionalProperty
-import org.springframework.cloud.contract.spec.internal.RegexPatterns
-import org.springframework.cloud.contract.spec.internal.Request
-import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
-import org.springframework.cloud.contract.spec.internal.MatchingStrategy
-import org.springframework.cloud.contract.verifier.util.ContentType
+import org.springframework.cloud.contract.spec.internal.*
+import org.springframework.cloud.contract.verifier.util.*
 
 import java.util.regex.Pattern
 
-import static ContentUtils.getEqualsTypeFromContentType
-import static ContentUtils.recognizeContentTypeFromContent
-import static ContentUtils.recognizeContentTypeFromHeader
-import static ContentUtils.recognizeContentTypeFromMatchingStrategy
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildGStringRegexpForStubSide
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildJSONRegexpMatch
 
@@ -67,24 +52,24 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		if(!request) {
 			return null
 		}
-		RequestPattern requestPattern = new RequestPattern()
-		appendMethod(requestPattern)
-		appendHeaders(requestPattern)
-		appendUrl(requestPattern)
-		appendQueryParameters(requestPattern)
-		appendBody(requestPattern)
-		appendMultipart(requestPattern)
-		return requestPattern
+		RequestPatternBuilder requestPatternBuilder = appendMethodAndUrl()
+		appendHeaders(requestPatternBuilder)
+		appendQueryParameters(requestPatternBuilder)
+		appendBody(requestPatternBuilder)
+		appendMultipart(requestPatternBuilder)
+		return requestPatternBuilder.build()
 	}
 
-	private void appendMethod(RequestPattern requestPattern) {
+	private RequestPatternBuilder appendMethodAndUrl() {
 		if(!request.method) {
 			return
 		}
-		requestPattern.setMethod(RequestMethod.fromString(request.method.clientValue?.toString()))
+		RequestMethod requestMethod = RequestMethod.fromString(request.method.clientValue?.toString())
+		UrlPattern urlPattern = urlPattern()
+		return RequestPatternBuilder.newRequestPattern(requestMethod, urlPattern)
 	}
 
-	private void appendBody(RequestPattern requestPattern) {
+	private void appendBody(RequestPatternBuilder requestPattern) {
 		if (!request.body) {
 			return
 		}
@@ -92,64 +77,65 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		if (contentType == ContentType.JSON) {
 			JsonPaths values = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValues(getMatchingStrategyFromBody(request.body)?.clientValue)
 			if (values.empty) {
-				requestPattern.bodyPatterns = [new ValuePattern(jsonCompareMode: org.skyscreamer.jsonassert.JSONCompareMode.LENIENT,
-						equalToJson: JsonOutput.toJson(getMatchingStrategy(request.body.clientValue).clientValue) ) ]
+				requestPattern.withRequestBody(WireMock.equalToJson(JsonOutput.toJson(getMatchingStrategy(request.body.clientValue).clientValue), false, false))
 			} else {
-				requestPattern.bodyPatterns = values.findAll{ !it.assertsSize() }.collect { new ValuePattern(matchesJsonPath: it.jsonPath().replace("\\\\", "\\")) } ?: null as List<ValuePattern>
+				values.findAll{ !it.assertsSize() }.each {
+					requestPattern.withRequestBody(WireMock.matchingJsonPath(it.jsonPath().replace("\\\\", "\\")))
+				}
 			}
 		} else if (contentType == ContentType.XML) {
-			requestPattern.bodyPatterns = [new ValuePattern(equalToXml: getMatchingStrategy(request.body.clientValue).clientValue.toString())]
+			requestPattern.withRequestBody(WireMock.equalToXml(getMatchingStrategy(request.body.clientValue).clientValue.toString()))
 		} else if (containsPattern(request?.body)) {
 				MatchingStrategy matchingStrategy = appendBodyRegexpMatchPattern(request.body)
-				requestPattern.bodyPatterns = [convertToValuePattern(matchingStrategy)]
+			requestPattern.withRequestBody(convertToValuePattern(matchingStrategy))
 		} else {
-			requestPattern.bodyPatterns = [convertToValuePattern(getMatchingStrategy(request.body.clientValue))]
+			requestPattern.withRequestBody(convertToValuePattern(getMatchingStrategy(request.body.clientValue)))
 		}
 	}
 	
-	private void appendMultipart(RequestPattern requestPattern) {
+	private void appendMultipart(RequestPatternBuilder requestPattern) {
 		if (!request.multipart) {
 			return
 		}
 		
 		if (request.multipart.clientValue instanceof Map) {
-			List<ValuePattern> multipartPatterns = (request.multipart.clientValue as Map).collect { 
+			List<StringValuePattern> multipartPatterns = (request.multipart.clientValue as Map).collect {
 				(it.value instanceof NamedProperty 
-				? ValuePattern.matches(RegexPatterns.multipartFile(it.key, (it.value as NamedProperty).name.clientValue, (it.value as NamedProperty).value.clientValue))
-				: ValuePattern.matches(RegexPatterns.multipartParam(it.key, it.value)) )
+				? WireMock.matching(RegexPatterns.multipartFile(it.key, (it.value as NamedProperty).name.clientValue, (it.value as NamedProperty).value.clientValue))
+				: WireMock.matching(RegexPatterns.multipartParam(it.key, it.value)) )
 			}
-			
-			requestPattern.bodyPatterns ? requestPattern.bodyPatterns.addAll(multipartPatterns) : (requestPattern.bodyPatterns = multipartPatterns)
+			multipartPatterns.each {
+				requestPattern.withRequestBody(it)
+			}
 		}
 	}
 
-	private void appendHeaders(RequestPattern requestPattern) {
+	private void appendHeaders(RequestPatternBuilder requestPattern) {
 		if(!request.headers) {
 			return
 		}
 		request.headers.entries.each {
-			requestPattern.addHeader(it.name, convertToValuePattern(it.clientValue))
+			requestPattern.withHeader(it.name, convertToValuePattern(it.clientValue))
 		}
 	}
 
-	private void appendUrl(RequestPattern requestPattern) {
+	private UrlPattern urlPattern() {
 		Object urlPath = request?.urlPath?.clientValue
 		if (urlPath) {
 			if(urlPath instanceof Pattern) {
-				requestPattern.setUrlPathPattern(getStubSideValue(urlPath.toString()).toString())
+				return WireMock.urlPathMatching(getStubSideValue(urlPath.toString()) as String)
 			} else {
-				requestPattern.setUrlPath(getStubSideValue(urlPath.toString()).toString())
+				return WireMock.urlPathEqualTo(getStubSideValue(urlPath.toString()) as String)
 			}
 		}
 		if(!request.url) {
-			return
+			throw new IllegalStateException("URL is required!")
 		}
 		Object url = getUrlIfGstring(request?.url?.clientValue)
 		if (url instanceof Pattern) {
-			requestPattern.setUrlPattern(url.pattern())
-		} else {
-			requestPattern.setUrl(url.toString())
+			return WireMock.urlMatching(url.pattern())
 		}
+		return WireMock.urlEqualTo(url.toString())
 	}
 
 	private Object getUrlIfGstring(Object clientSide) {
@@ -163,34 +149,34 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		return clientSide
 	}
 
-	private void appendQueryParameters(RequestPattern requestPattern) {
+	private void appendQueryParameters(RequestPatternBuilder requestPattern) {
 		QueryParameters queryParameters = request?.urlPath?.queryParameters ?: request?.url?.queryParameters
 		queryParameters?.parameters?.each {
-			requestPattern.addQueryParam(it.name, convertToValuePattern(it.clientValue))
+			requestPattern.withQueryParam(it.name, convertToValuePattern(it.clientValue))
 		}
 	}
 
 	@TypeChecked(TypeCheckingMode.SKIP)
-	private static ValuePattern convertToValuePattern(Object object) {
+	private static StringValuePattern convertToValuePattern(Object object) {
 		switch (object) {
 			case Pattern:
 				Pattern value = object as Pattern
-				return ValuePattern.matches(value.pattern())
+				return WireMock.matching(value.pattern())
 			case OptionalProperty:
 				OptionalProperty value = object as OptionalProperty
-				return ValuePattern.matches(value.optionalPattern())
+				return WireMock.matching(value.optionalPattern())
 			case MatchingStrategy:
 				MatchingStrategy value = object as MatchingStrategy
 				switch (value.type) {
 					case MatchingStrategy.Type.NOT_MATCHING:
-						return new ValuePattern(doesNotMatch: value.clientValue)
+						return WireMock.notMatching(value.clientValue.toString())
 					case MatchingStrategy.Type.ABSENT:
-						return ValuePattern.absent()
+						return WireMock.absent()
 					default:
-						return ValuePattern."${value.type.name}"(value.clientValue)
+						return WireMock."${value.type.name}"(value.clientValue)
 				}
 			default:
-				return ValuePattern.equalTo(object.toString())
+				return WireMock.equalTo(object.toString())
 		}
 	}
 
@@ -230,10 +216,10 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	private MatchingStrategy getMatchingStrategyIncludingContentType(MatchingStrategy matchingStrategy) {
 		MatchingStrategy.Type type = matchingStrategy.type
 		Object value = matchingStrategy.clientValue
-		ContentType contentType = recognizeContentTypeFromMatchingStrategy(type)
+		ContentType contentType = ContentUtils.recognizeContentTypeFromMatchingStrategy(type)
 		if (contentType == ContentType.UNKNOWN && type == MatchingStrategy.Type.EQUAL_TO) {
-			contentType = recognizeContentTypeFromContent(value)
-			type = getEqualsTypeFromContentType(contentType)
+			contentType = ContentUtils.recognizeContentTypeFromContent(value)
+			type = ContentUtils.getEqualsTypeFromContentType(contentType)
 		}
 		return new MatchingStrategy(parseBody(value, contentType), type)
 	}
@@ -286,7 +272,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	}
 
 	private MatchingStrategy.Type getEqualsTypeFromContentTypeHeader() {
-		return getEqualsTypeFromContentType(recognizeContentTypeFromHeader(request.headers))
+		return ContentUtils.getEqualsTypeFromContentType(ContentUtils.recognizeContentTypeFromHeader(request.headers))
 	}
 
 }

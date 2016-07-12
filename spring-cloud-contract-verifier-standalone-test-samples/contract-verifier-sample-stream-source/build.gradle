@@ -1,0 +1,91 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		mavenLocal()
+		maven { url "http://repo.spring.io/snapshot" }
+		maven { url "http://repo.spring.io/milestone" }
+		maven { url "http://repo.spring.io/plugins-release-local" }
+		maven { url "http://repo.spring.io/plugins-staging-local/" }
+	}
+	dependencies {
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.3.5.RELEASE"
+		classpath "org.springframework.cloud.contract:spring-cloud-contract-verifier-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
+	}
+}
+
+group = 'org.springframework.cloud.contract.testprojects'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+	maven { url "http://repo.spring.io/snapshot" }
+	maven { url "http://repo.spring.io/milestone" }
+	maven { url "http://repo.spring.io/libs-release-local" }
+	maven { url "http://repo.spring.io/libs-staging-local/" }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'spring-boot'
+apply plugin: 'contract-verifier'
+apply plugin: 'maven-publish'
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:$BOM_VERSION"
+	}
+}
+
+ext {
+	stubsOutputDirRoot = file("${project.buildDir}/stubs/")
+}
+
+contractVerifier {
+	baseClassForTests = 'org.springframework.cloud.stream.sample.verifier.source.SensorSourceTestBase'
+	stubsOutputDir = stubsOutputDirRoot
+}
+
+dependencies {
+	compile("org.springframework.boot:spring-boot-starter-web") {
+		exclude module: "spring-boot-starter-tomcat"
+	}
+	compile("org.springframework.boot:spring-boot-starter-jetty")
+	compile("org.springframework.boot:spring-boot-starter-actuator")
+	compile("org.springframework.cloud:spring-cloud-starter-stream-rabbit")
+	compile("org.springframework.cloud.contract:spring-cloud-contract-verifier-stream:${findProperty('verifierVersion') ?: verifierVersion}")
+
+	testRuntime "org.spockframework:spock-spring"
+	testCompile "org.spockframework:spock-core"
+	testCompile "org.springframework:spring-test"
+	testCompile "com.jayway.restassured:spring-mock-mvc:2.9.0"
+	testCompile "junit:junit"
+}
+
+task stubsJar(type: Jar, dependsOn: "generateWireMockClientStubs") {
+	baseName = "${project.name}"
+	classifier = "stubs"
+	from stubsOutputDirRoot
+}
+
+artifacts {
+	archives stubsJar
+}
+
+publishing {
+	publications {
+		stubs(MavenPublication) {
+			artifactId "${project.name}"
+			artifact stubsJar
+		}
+	}
+}
+
+test {
+	testLogging {
+		exceptionFormat = 'full'
+	}
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.14'
+}

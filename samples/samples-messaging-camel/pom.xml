@@ -42,7 +42,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud.contract</groupId>
-			<artifactId>spring-cloud-verifier-camel</artifactId>
+			<artifactId>spring-cloud-contract-verifier-camel</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

@@ -15,7 +15,7 @@ What you always need it confidence in pushing new features into a new applicatio
 
 == Spring Cloud Contract Verifier
 
-:images_url: https://raw.githubusercontent.com/Codearte/accurest/master/docs/src/main/asciidoc/images
+:images_url: https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images
 
 == Introduction
 
@@ -149,7 +149,8 @@ video::130779882[vimeo]
 
 === Samples
 
-Here you can find some https://github.com/Codearte/accurest-samples[working samples]. Check the readme of each project for more information.
+Here you can find some https://github.com/spring-cloud/spring-cloud-contract[working samples]. Check the `spring-cloud-contract-verifier-standalone-test-samples` folder
+and read readme of each project for more information.
 
 === Why use Spring Cloud Contract Verifier and not X ?
 
@@ -226,3 +227,66 @@ added after the original pull request but before a merge.
 * When writing a commit message please follow http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html[these conventions],
   if you are fixing an existing issue please add `Fixes gh-XXXX` at the end of the commit
   message (where XXXX is the issue number).
+
+== How to build it
+
+=== Project structure
+
+Here you can find the Spring Cloud Contract folder structure
+
+```
+├── samples
+├── scripts
+├── spring-cloud-contract-spec
+├── spring-cloud-contract-stub-runner
+├── spring-cloud-contract-verifier
+├── spring-cloud-contract-verifier-gradle-plugin
+├── spring-cloud-contract-verifier-maven-plugin
+└── spring-cloud-contract-verifier-standalone-test-samples
+```
+
+ - `samples` - folder contains integration test samples used also to build documentation
+ - `scripts` - contains scripts to build and test `Spring Cloud Contract` with Maven, Gradle and standalone projects
+ - `spring-cloud-contract-spec` - contains specification modules (contains concept of a Contract)
+ - `spring-cloud-contract-stub-runner` - contains Stub Runner related modules
+ - `spring-cloud-contract-verifier` - core of the `Spring Cloud Contract Verifier` functionality
+ - `spring-cloud-contract-verifier-gradle-plugin` - Gradle plugin for `Spring Cloud Contract Verifier`
+ - `spring-cloud-contract-verifier-maven-plugin` - Maven plugin for `Spring Cloud Contract Verifier`
+ - `spring-cloud-contract-verifier-standalone-test-samples` - standalone test sample that use `Spring Cloud Contract Verifier`
+
+=== Commands
+
+To build the core functionality together with Maven Plugin you can run
+
+```
+./mvnw clean install
+```
+
+To build the Gradle Plugin
+
+```
+cd spring-cloud-contract-verifier-gradle-plugin
+./gradlew clean build
+```
+
+=== Scripts
+
+For your convenience we have created a bunch of scripts to build and test the whole functionality.
+
+Build both Maven and Gradle project
+
+```
+./scripts/build.sh
+```
+
+Run tests on the standalone projects
+
+```
+./scripts/runTests.sh
+```
+
+Build both Maven and Gradle projects and run tests on standalone projects
+
+```
+./scripts/buildAndTest.sh
+```

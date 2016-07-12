@@ -60,11 +60,7 @@ class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 	}
 
 	TestingServer startTestingServer() {
-		try {
-			return new TestingServer(SocketUtils.findAvailableTcpPort())
-		} catch (Exception e) {
-			log.error("Exception occurred ")
-		}
+		return new TestingServer(SocketUtils.findAvailableTcpPort())
 	}
 
 	def cleanup() {

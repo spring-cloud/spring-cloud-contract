@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!--
+
+	POM ONLY TO EASILY IMPORT TO IDE
+
+	-->
+
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-contract-samples</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>Spring Cloud Contract Verifier Standalone Test Samples</name>
+	<description>Spring Cloud Contract Verifier Standalone Test Samples used for end to end tests</description>
+
+	<modules>
+		<module>http-server</module>
+		<module>http-client</module>
+		<module>contract-verifier-sample-stream-sink</module>
+		<module>contract-verifier-sample-stream-source</module>
+	</modules>
+
+	<properties>
+		<maven.install.skip>true</maven.install.skip>
+	</properties>
+
+</project>

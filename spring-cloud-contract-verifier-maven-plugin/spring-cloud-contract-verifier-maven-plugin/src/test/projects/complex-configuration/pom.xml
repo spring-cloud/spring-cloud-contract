@@ -46,7 +46,7 @@
             <artifactId>logback-classic</artifactId>
         </dependency>
 
-        <!-- accurest test dependencies -->
+        <!-- verifier test dependencies-->
         <!-- tag::dependencies[] -->
         <dependency>
             <groupId>com.jayway.restassured</groupId>

@@ -8,14 +8,14 @@
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<artifactId>spring-cloud-verifier-integration</artifactId>
+	<artifactId>spring-cloud-contract-verifier-integration</artifactId>
 	<packaging>jar</packaging>
 	<name>Spring Cloud Contract Verifier Integration</name>
 	<description>Spring Cloud Contract Verifier Integration</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud.contract</groupId>
-			<artifactId>spring-cloud-verifier-messaging-core</artifactId>
+			<artifactId>spring-cloud-contract-verifier-messaging-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>

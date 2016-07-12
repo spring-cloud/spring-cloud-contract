@@ -22,20 +22,12 @@ dependencies:
     - touch ~/.gradle/gradle.properties && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
   override:
     - ./mvnw -s .settings.xml --fail-never dependency:go-offline || true
+    - cd spring-cloud-contract-verifier-samples && ./mvnw --fail-never dependency:go-offline || true
 test:
   override:
     # docs take 15 minutes to run
     #- ./mvnw install -P docs -q -U -DskipTests=true $MVN_LOCAL_OPTS
-    -  |
-        echo "Running Spring Cloud Contract Verifier"
-        ./mvnw clean install --batch-mode -Dmaven.test.redirectTestOutputToFile=true -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
-    -  |
-        echo "Running Spring Cloud Contract Verifier Gradle Plugin"
-        cd spring-cloud-contract-verifier-gradle-plugin
-        ./gradlew clean build install
-    -  |
-        echo "Checking if samples are not broken"
-        ./scripts/runTests.sh
+    -  ./scripts/buildAndTest.sh
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/target/.*-reports/.*" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;

@@ -190,7 +190,7 @@ The output message can be triggered by calling a method (e.g. a Scheduler was st
 
 [source,groovy]
 ----
-include::../../../../samples/samples-messaging-integration/src/test/groovy/org/springframework/cloud/contract/verifier/samples/messaging/IntegrationMessagingApplicationSpec.groovy[tags=method_trigger,indent=0]
+include::../../../../samples/samples-messaging-integration/src/test/groovy/com/example/IntegrationMessagingApplicationSpec.groovy[tags=method_trigger,indent=0]
 ----
 
 In this case the output message will be sent to `output` if a method called `bookReturnedTriggered` will be executed. In the message *publisher's* side
@@ -202,7 +202,7 @@ The output message can be triggered by receiving a message.
 
 [source,groovy]
 ----
-include::../../../../samples/samples-messaging-integration/src/test/groovy/org/springframework/cloud/contract/verifier/samples/messaging/IntegrationMessagingApplicationSpec.groovy[tags=message_trigger,indent=0]
+include::../../../../samples/samples-messaging-integration/src/test/groovy/com/example/IntegrationMessagingApplicationSpec.groovy[tags=message_trigger,indent=0]
 ----
 
 In this case the output message will be sent to `output` if a proper message will be received on the `input` destination. In the message *publisher's* side

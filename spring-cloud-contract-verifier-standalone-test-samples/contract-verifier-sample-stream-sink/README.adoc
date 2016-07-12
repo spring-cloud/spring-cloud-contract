@@ -1,0 +1,26 @@
+= Stream Sink
+
+== Prerequisites
+
+First you have to publish to Maven Local the stubs of the *contract-verifier-sample-stream-source* stubs
+
+== How to run it?
+
+Run
+
+[source=groovy]
+--------
+./gradlew clean build
+--------
+
+or
+
+--------
+./mvnw clean package
+--------
+
+To
+
+- build the app
+- use spring-cloud-contract-stub-runner-stream[Stub Runner Spring] to download the stub of `contract-verifier-sample-stream-source`
+- run the tests against stubbed producer

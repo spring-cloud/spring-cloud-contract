@@ -8,14 +8,14 @@
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<artifactId>spring-cloud-verifier-messaging-stream</artifactId>
+	<artifactId>spring-cloud-contract-verifier-stream</artifactId>
 	<packaging>jar</packaging>
-	<name>Spring Cloud Contract Verifier Messaging Stream</name>
+	<name>Spring Cloud Contract Verifier Stream</name>
 	<description>Spring Cloud Contract Verifier Messaging Stream</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud.contract</groupId>
-			<artifactId>spring-cloud-verifier-messaging-core</artifactId>
+			<artifactId>spring-cloud-contract-verifier-messaging-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
