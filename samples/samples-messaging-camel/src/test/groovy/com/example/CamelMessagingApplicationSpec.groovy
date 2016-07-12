@@ -16,30 +16,30 @@
 
 package com.example
 
-import com.example.BookDeleter;
-import com.example.CamelMessagingApplication;
-import com.jayway.jsonpath.DocumentContext
-import com.jayway.jsonpath.JsonPath
-import com.toomuchcoding.jsonassert.JsonAssertion
+import javax.inject.Inject
+
+import org.apache.camel.model.ModelCamelContext
+import org.junit.BeforeClass
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage
-import org.apache.camel.model.ModelCamelContext
-import org.junit.BeforeClass;
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.SpringApplicationContextLoader
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierObjectMapper
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
+
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
-import javax.inject.Inject
+import com.jayway.jsonpath.DocumentContext
+import com.jayway.jsonpath.JsonPath
+import com.toomuchcoding.jsonassert.JsonAssertion
 /**
  * SPIKE ON TESTS FROM NOTES IN MessagingSpec
  */
 // Context configuration would end up in base class
-@ContextConfiguration(classes = [CamelMessagingApplication], loader = SpringApplicationContextLoader)
+@ContextConfiguration(classes = [CamelMessagingApplication], loader = SpringBootContextLoader)
 @DirtiesContext
 public class CamelMessagingApplicationSpec extends Specification {
 

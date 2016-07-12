@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 import org.junit.BeforeClass
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.SpringApplicationContextLoader
+import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
@@ -38,7 +38,7 @@ import com.toomuchcoding.jsonassert.JsonAssertion
  * SPIKE ON TESTS FROM NOTES IN MessagingSpec
  */
 // Context configuration would end up in base class
-@ContextConfiguration(classes = [SpringMessagingApplication], loader = SpringApplicationContextLoader)
+@ContextConfiguration(classes = [SpringMessagingApplication], loader = SpringBootContextLoader)
 @DirtiesContext
 public class SpringApplicationSpec extends Specification {
 
