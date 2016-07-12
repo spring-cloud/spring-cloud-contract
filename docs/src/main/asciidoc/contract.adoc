@@ -158,7 +158,7 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 
 [source,groovy,indent=0]
 ----
-include::{verifier_root_path}/spring-cloud-contract-verifier-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/org/springframework/cloud/contract/verifier/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
+include::{core_path}/spring-cloud-contract-verifier-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/org/springframework/cloud/contract/verifier/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
 ----
 
 === JAX-RS support
