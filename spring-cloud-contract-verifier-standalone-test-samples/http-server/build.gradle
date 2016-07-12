@@ -60,3 +60,16 @@ test {
 task wrapper(type: Wrapper) {
     gradleVersion = '2.14'
 }
+
+task resolveDependencies {
+	doLast {
+		project.rootProject.allprojects.each { subProject ->
+			subProject.buildscript.configurations.each { configuration ->
+				configuration.resolve()
+			}
+			subProject.configurations.each { configuration ->
+				configuration.resolve()
+			}
+		}
+	}
+}

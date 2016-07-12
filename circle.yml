@@ -21,8 +21,7 @@ dependencies:
         sudo service postgresql stop || echo "Service not running"
     - touch ~/.gradle/gradle.properties && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
   override:
-    - ./mvnw -s .settings.xml --fail-never dependency:go-offline || true
-    - cd spring-cloud-contract-verifier-samples && ./mvnw --fail-never dependency:go-offline || true
+    - ./scripts/downloadDependencies.sh || true
 test:
   override:
     # docs take 15 minutes to run
