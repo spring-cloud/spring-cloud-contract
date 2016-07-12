@@ -62,7 +62,7 @@ class StubRepository {
 	}
 
 	private List<WiremockMappingDescriptor> contextDescriptors() {
-		return path.exists() ? collectMappingDescriptors(path) : []
+		return (path.exists() ? collectMappingDescriptors(path) : []) as List<WiremockMappingDescriptor>
 	}
 
 	private List<WiremockMappingDescriptor> collectMappingDescriptors(File descriptorsDirectory) {
@@ -76,7 +76,7 @@ class StubRepository {
 	}
 
 	private Collection<Contract> contractDescriptors() {
-		return path.exists() ? collectContractDescriptors(path) : []
+		return (path.exists() ? collectContractDescriptors(path) : []) as Collection<Contract>
 	}
 
 	private Collection<Contract> collectContractDescriptors(File descriptorsDirectory) {

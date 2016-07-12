@@ -42,7 +42,7 @@ class StubRunnerFactory {
 		return stubRunnerOptions.getDependencies().collect { StubConfiguration stubsConfiguration ->
 			Map.Entry<StubConfiguration, File> entry = stubDownloader.downloadAndUnpackStubJar(stubRunnerOptions, stubsConfiguration)
 			if (!entry) {
-				return null
+				return (StubRunner) null
 			}
 			return createStubRunner(entry.key, entry.value)
 		}.findAll { it != null }
