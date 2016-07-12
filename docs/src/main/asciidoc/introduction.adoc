@@ -2,7 +2,7 @@
 
 == Introduction
 
-IMPORTANT: http://codearte.github.io/accurest/deprecated[The documentation to the deprecated Accurest project in version 1.1.0 is available here.]
+IMPORTANT: http://codearte.github.io/accurest[The documentation to the deprecated Accurest project in version 1.1.0 is available here.]
 
 TIP: The Accurest project was initially started by Marcin Grzejszczak and Jakub Kubrynski (http://codearte.io[codearte.io])
 

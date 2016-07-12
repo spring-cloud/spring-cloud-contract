@@ -4,7 +4,7 @@
 :verifier_root_path: {core_path}/spring-cloud-contract-verifier
 :verifier_core_path: {verifier_root_path}/spring-cloud-contract-verifier-core
 :stubrunner_core_path: {core_path}/spring-cloud-contract-stub-runner
-:documentation_url: http://codearte.github.io/accurest
+:documentation_url: http://cloud.spring.io/spring-cloud-contract/
 
 image::https://badges.gitter.im/Join%20Chat.svg[Gitter, link="https://gitter.im/spring-cloud/spring-cloud-contract?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"]
 image:https://circleci.com/gh/spring-cloud/spring-cloud-contract.svg?style=svg["CircleCI", link="https://circleci.com/gh/spring-cloud/spring-cloud-contract"]
@@ -19,7 +19,7 @@ What you always need it confidence in pushing new features into a new applicatio
 
 == Introduction
 
-IMPORTANT: http://codearte.github.io/accurest/deprecated[The documentation to the deprecated Accurest project in version 1.1.0 is available here.]
+IMPORTANT: http://codearte.github.io/accurest[The documentation to the deprecated Accurest project in version 1.1.0 is available here.]
 
 TIP: The Accurest project was initially started by Marcin Grzejszczak and Jakub Kubrynski (http://codearte.io[codearte.io])
 
