@@ -33,7 +33,7 @@
 			<topBarEnabled>true</topBarEnabled>
 			<sideBarEnabled>true</sideBarEnabled>
 			<gitHub>
-				<projectId>codearte/accurest-maven-plugin</projectId>
+				<projectId>spring-cloud/spring-cloud-contract</projectId>
 				<ribbonOrientation>right</ribbonOrientation>
 				<ribbonColor>orange</ribbonColor>
 			</gitHub>
@@ -51,7 +51,7 @@
 			<item name="Complex Configuration" href="complex.html"/>
 		</menu>
 		<menu name="Related Projects">
-			<item name="Accurest" href="https://github.com/Codearte/accurest"/>
+			<item name="Spring Cloud Contract" href="https://github.com/spring-cloud/spring-cloud-contract"/>
 		</menu>
 		<menu ref="reports" />
 	</body>

@@ -15,6 +15,7 @@
 	<properties>
 		<docs.main>spring-cloud-contract</docs.main>
 		<main.basedir>${basedir}/..</main.basedir>
+		<mpir.skip>true</mpir.skip>
 	</properties>
  	<build>
 		<plugins>
@@ -45,6 +46,49 @@
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>build-helper-maven-plugin</artifactId>
 						<inherited>false</inherited>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-site-plugin</artifactId>
+						<configuration>
+							<siteDirectory>${main.basedir}/spring-cloud-contract-verifier-maven-plugin/src/site/</siteDirectory>
+							<outputDirectory>${build.directory}/generated-docs/spring-cloud-contract-verifier-maven-plugin</outputDirectory>>
+							<skipDeploy>true</skipDeploy><!-- don't deploy site with maven-site-plugin -->
+							<!-- disable generateReports if you don't want to include the built-in reports -->
+							<generateReports>true</generateReports>
+							<generateSitemap>true</generateSitemap>
+							<relativizeDecorationLinks>false</relativizeDecorationLinks>
+							<locales>en</locales>
+							<inputEncoding>UTF-8</inputEncoding>
+							<outputEncoding>UTF-8</outputEncoding>
+							<asciidoc>
+								<!-- optional site-wide AsciiDoc attributes -->
+								<attributes>
+									<icons>font</icons>
+									<source-highlighter>coderay</source-highlighter>
+									<coderay-css>style</coderay-css>
+									<toclevels>2</toclevels>
+									<docinfo>true</docinfo>
+									<allow-uri-read>true</allow-uri-read>
+								</attributes>
+							</asciidoc>
+						</configuration>
+						<executions>
+							<execution>
+								<id>generate-site</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>site</goal>
+								</goals>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>org.asciidoctor</groupId>
+								<artifactId>asciidoctor-maven-plugin</artifactId>
+								<version>1.5.3</version>
+							</dependency>
+						</dependencies>
 					</plugin>
 				</plugins>
 			</build>
