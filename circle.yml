@@ -22,6 +22,7 @@ dependencies:
     - touch ~/.gradle/gradle.properties && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
   override:
     - ./mvnw -s .settings.xml --fail-never dependency:go-offline || true
+    - cd spring-cloud-contract-verifier-samples && ./mvnw -s .settings.xml --fail-never dependency:go-offline || true
 test:
   override:
     # docs take 15 minutes to run

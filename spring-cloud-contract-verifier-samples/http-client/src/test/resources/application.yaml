@@ -1,0 +1,3 @@
+stubrunner:
+  work-offline: true
+  stubs.ids: 'org.springframework.cloud.contract.testprojects:http-server:+:stubs:8080'

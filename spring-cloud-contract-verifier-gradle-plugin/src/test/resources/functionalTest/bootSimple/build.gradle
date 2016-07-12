@@ -40,7 +40,7 @@ dependencies {
 	compile "org.codehaus.groovy:groovy-all:2.4.5"
 	compile 'com.jayway.jsonpath:json-path-assert:2.2.0'
 
-	testCompile "com.github.tomakehurst:wiremock:2.1.6"
+	testCompile "com.github.tomakehurst:wiremock:2.1.7"
 	testCompile "org.spockframework:spock-spring:1.0-groovy-2.4"
 	testCompile "com.jayway.restassured:rest-assured:$restAssuredVersion"
 	testCompile "com.jayway.restassured:spring-mock-mvc:$restAssuredVersion"

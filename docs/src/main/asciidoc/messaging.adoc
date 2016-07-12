@@ -22,11 +22,11 @@ You have to provide as a dependency one of the Spring Cloud Contract Verifier Me
 [source,groovy,indent=0]
 ----
 // for Apache Camel
-testCompile "org.springframework.cloud.contract:spring-cloud-contract-verifier-camel:${verifierVersion}"
+testCompile "org.springframework.cloud.contract:spring-cloud-verifier-camel:${verifierVersion}"
 // for Spring Integration
-testCompile "org.springframework.cloud.contract:spring-cloud-contract-verifier-integration:${verifierVersion}"
+testCompile "org.springframework.cloud.contract:spring-cloud-verifier-integration:${verifierVersion}"
 // for Spring Cloud Stream
-testCompile "org.springframework.cloud.contract:spring-cloud-contract-verifier-stream:${verifierVersion}"
+testCompile "org.springframework.cloud.contract:spring-cloud-verifier-stream:${verifierVersion}"
 ----
 
 === Manual Integration

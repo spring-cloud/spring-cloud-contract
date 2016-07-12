@@ -29,7 +29,6 @@ import org.springframework.cloud.contract.verifier.util.*
 
 import java.util.regex.Pattern
 
-import static ContentUtils.*
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildGStringRegexpForStubSide
 import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.buildJSONRegexpMatch
 
@@ -217,10 +216,10 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	private MatchingStrategy getMatchingStrategyIncludingContentType(MatchingStrategy matchingStrategy) {
 		MatchingStrategy.Type type = matchingStrategy.type
 		Object value = matchingStrategy.clientValue
-		ContentType contentType = recognizeContentTypeFromMatchingStrategy(type)
+		ContentType contentType = ContentUtils.recognizeContentTypeFromMatchingStrategy(type)
 		if (contentType == ContentType.UNKNOWN && type == MatchingStrategy.Type.EQUAL_TO) {
-			contentType = recognizeContentTypeFromContent(value)
-			type = getEqualsTypeFromContentType(contentType)
+			contentType = ContentUtils.recognizeContentTypeFromContent(value)
+			type = ContentUtils.getEqualsTypeFromContentType(contentType)
 		}
 		return new MatchingStrategy(parseBody(value, contentType), type)
 	}
@@ -273,7 +272,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	}
 
 	private MatchingStrategy.Type getEqualsTypeFromContentTypeHeader() {
-		return getEqualsTypeFromContentType(recognizeContentTypeFromHeader(request.headers))
+		return ContentUtils.getEqualsTypeFromContentType(ContentUtils.recognizeContentTypeFromHeader(request.headers))
 	}
 
 }

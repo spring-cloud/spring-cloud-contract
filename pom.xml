@@ -1,38 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-build</artifactId>
 		<version>1.2.0.BUILD-SNAPSHOT</version>
-		<relativePath />
+		<relativePath/>
 	</parent>
 
-    <groupId>org.springframework.cloud.contract</groupId>
-    <artifactId>spring-cloud-contract-parent</artifactId>
-    <packaging>pom</packaging>
-    <version>1.0.0.BUILD-SNAPSHOT</version>
+	<groupId>org.springframework.cloud.contract</groupId>
+	<artifactId>spring-cloud-contract-parent</artifactId>
+	<packaging>pom</packaging>
+	<version>1.0.0.BUILD-SNAPSHOT</version>
 
-    <name>Spring Cloud Contract</name>
-    <description>Spring Cloud Contract</description>
+	<name>Spring Cloud Contract</name>
+	<description>Spring Cloud Contract</description>
 
-    <url>https://github.com/spring-cloud/spring-cloud-contract</url>
+	<url>https://github.com/spring-cloud/spring-cloud-contract</url>
 
-    <inceptionYear>2016</inceptionYear>
+	<inceptionYear>2016</inceptionYear>
 
-    <modules>
+	<modules>
 		<module>docs</module>
-        <module>spring-cloud-contract-verifier</module>
-        <module>spring-cloud-contract-spec</module>
-        <module>spring-cloud-contract-stub-runner</module>
-        <module>spring-cloud-contract-verifier-maven-plugin</module>
+		<module>spring-cloud-contract-verifier</module>
+		<module>spring-cloud-contract-spec</module>
+		<module>spring-cloud-contract-stub-runner</module>
+		<module>spring-cloud-contract-verifier-maven-plugin</module>
 		<module>samples</module>
-    </modules>
+	</modules>
 
 	<properties>
-		<wiremock.version>2.1.6</wiremock.version>
+		<wiremock.version>2.1.7</wiremock.version>
 		<jsonassert.version>0.4.7</jsonassert.version>
 		<camel.version>2.17.0</camel.version>
 		<aether.version>1.1.0</aether.version>
@@ -130,6 +131,12 @@
 				<groupId>org.apache.curator</groupId>
 				<artifactId>curator-test</artifactId>
 				<version>2.9.1</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.google.guava</groupId>
+						<artifactId>guava</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>commons-io</groupId>
@@ -324,48 +331,48 @@
 		</dependencies>
 	</dependencyManagement>
 
-    <prerequisites>
-        <maven>[3.2.1,)</maven>
-    </prerequisites>
+	<prerequisites>
+		<maven>[3.2.1,)</maven>
+	</prerequisites>
 
-    <organization>
-        <name>Spring</name>
-        <url>http://spring.io/</url>
-    </organization>
+	<organization>
+		<name>Spring</name>
+		<url>http://spring.io/</url>
+	</organization>
 
-    <developers>
-        <developer>
-            <id>mariuszs</id>
-            <name>Mariusz Smykula</name>
-            <email>mariuszs@gmail.com</email>
-        </developer>
-        <developer>
-            <id>marcingrzejszczak</id>
-            <name>Marcin Grzejszczak</name>
-            <email>marcin@grzejszczak.pl</email>
-        </developer>
-    </developers>
+	<developers>
+		<developer>
+			<id>mariuszs</id>
+			<name>Mariusz Smykula</name>
+			<email>mariuszs@gmail.com</email>
+		</developer>
+		<developer>
+			<id>marcingrzejszczak</id>
+			<name>Marcin Grzejszczak</name>
+			<email>marcin@grzejszczak.pl</email>
+		</developer>
+	</developers>
 
-    <scm>
-        <connection>scm:git:https://github.com/spring-cloud/spring-cloud-contract.git</connection>
-        <developerConnection>scm:git:git@github.com:spring-cloud/spring-cloud-contract.git</developerConnection>
-        <url>https://github.com/spring-cloud/spring-cloud-contract</url>
-        <tag>HEAD</tag>
-    </scm>
+	<scm>
+		<connection>scm:git:https://github.com/spring-cloud/spring-cloud-contract.git</connection>
+		<developerConnection>scm:git:git@github.com:spring-cloud/spring-cloud-contract.git</developerConnection>
+		<url>https://github.com/spring-cloud/spring-cloud-contract</url>
+		<tag>HEAD</tag>
+	</scm>
 
-    <issueManagement>
-        <system>GitHub Issues</system>
-        <url>https://github.com/spring-cloud/spring-cloud-contract</url>
-    </issueManagement>
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/spring-cloud/spring-cloud-contract</url>
+	</issueManagement>
 
-    <ciManagement>
-        <system>Travis</system>
-        <url>https://travis-ci.org/spring-cloud/spring-cloud-contract</url>
-    </ciManagement>
+	<ciManagement>
+		<system>Travis</system>
+		<url>https://travis-ci.org/spring-cloud/spring-cloud-contract</url>
+	</ciManagement>
 
-    <build>
-        <pluginManagement>
-            <plugins>
+	<build>
+		<pluginManagement>
+			<plugins>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
@@ -377,28 +384,28 @@
 						</includes>
 					</configuration>
 				</plugin>
-                <plugin>
-                    <groupId>org.codehaus.plexus</groupId>
-                    <artifactId>plexus-component-metadata</artifactId>
-                    <version>1.6</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-plugin-plugin</artifactId>
-                    <version>${maven.plugin.plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>io.takari.maven.plugins</groupId>
-                    <artifactId>takari-lifecycle-plugin</artifactId>
-                    <version>1.12.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.eluder.coveralls</groupId>
-                    <artifactId>coveralls-maven-plugin</artifactId>
-                    <version>4.1.0</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
+				<plugin>
+					<groupId>org.codehaus.plexus</groupId>
+					<artifactId>plexus-component-metadata</artifactId>
+					<version>1.6</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-plugin-plugin</artifactId>
+					<version>${maven.plugin.plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>io.takari.maven.plugins</groupId>
+					<artifactId>takari-lifecycle-plugin</artifactId>
+					<version>1.12.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eluder.coveralls</groupId>
+					<artifactId>coveralls-maven-plugin</artifactId>
+					<version>4.1.0</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 
 	<profiles>
 		<profile>

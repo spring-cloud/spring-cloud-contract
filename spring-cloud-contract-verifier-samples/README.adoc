@@ -1,0 +1,7 @@
+= Spring Cloud Contract Verifier Samples
+
+Projects that contain different samples of Spring Cloud Contract Verifier.
+
+include::http-server/README.adoc[]
+
+include::http-client/README.adoc[]

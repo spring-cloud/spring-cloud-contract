@@ -61,6 +61,8 @@ class DslToWireMockClientConverterSpec extends Specification {
 			file.write("""
 				org.springframework.cloud.contract.spec.Contract.make {
 					request {
+						method 'GET'
+						url '/foo'
 					}
 					response {
 						status 200
@@ -72,7 +74,12 @@ class DslToWireMockClientConverterSpec extends Specification {
 			String json = converter.convertContent("test", new ContractMetadata(file.toPath(), false, 0, null))
 		then:
 			JSONAssert.assertEquals('''
-{"request":{},"response":{"status":200,"fixedDelayMilliseconds":1000}}
+{"request":{
+	"url" : "/foo",
+	"method" : "GET"},
+"response":{
+"status":200,"fixedDelayMilliseconds":1000
+}}
 ''', json, false)
 	}
 
