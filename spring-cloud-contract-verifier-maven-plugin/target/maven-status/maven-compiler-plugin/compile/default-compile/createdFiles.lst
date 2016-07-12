@@ -1,0 +1,11 @@
+org/springframework/cloud/contract/verifier/maven/GenerateTestsMojo.class
+org/springframework/cloud/contract/verifier/maven/RunMojo.class
+org/springframework/cloud/contract/verifier/maven/stubrunner/AetherStubDownloaderFactory.class
+org/springframework/cloud/contract/verifier/maven/stubrunner/RemoteStubRunner.class
+HelpMojo.class
+org/springframework/cloud/contract/verifier/maven/CopyContracts.class
+org/springframework/cloud/contract/verifier/maven/GenerateStubsMojo.class
+org/springframework/cloud/contract/verifier/maven/ManifestCreator.class
+org/springframework/cloud/contract/verifier/maven/ConvertMojo.class
+org/springframework/cloud/contract/verifier/maven/stubrunner/LocalStubRunner.class
+META-INF/sisu/javax.inject.Named
