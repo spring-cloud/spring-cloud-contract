@@ -32,17 +32,17 @@
 					   ref="bookListener"
 					   method="returnBook"/>
 
-	<json-to-object-transformer input-channel="input" type="org.springframework.cloud.contract.verifier.samples.messaging.BookReturned"
+	<json-to-object-transformer input-channel="input" type="com.example.BookReturned"
 	output-channel="inputChannel"/>
 
 	<service-activator input-channel="deleteChannel"
 					   ref="bookListener"
 					   method="bookDeleted"/>
 
-	<json-to-object-transformer input-channel="delete" type="org.springframework.cloud.contract.verifier.samples.messaging.BookDeleted"
+	<json-to-object-transformer input-channel="delete" type="com.example.BookDeleted"
 								output-channel="deleteChannel"/>
 
-	<beans:bean id="bookListener" class="org.springframework.cloud.contract.verifier.samples.messaging.BookListener"/>
+	<beans:bean id="bookListener" class="com.example.BookListener"/>
 
 
 	<!-- REQUIRED FOR TESTING -->
