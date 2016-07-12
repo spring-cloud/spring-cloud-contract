@@ -16,21 +16,24 @@
 
 package org.springframework.cloud.contract.stubrunner.boot
 
-import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc
 import groovy.json.JsonSlurper
+
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.SpringApplicationContextLoader
+import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.stubrunner.StubRunning
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ContextConfiguration
+
 import spock.lang.Specification
+
+import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc
 
 /**
  * @author Marcin Grzejszczak
  */
 // tag::boot_usage[]
-@ContextConfiguration(classes = [StubRunnerBootSpec, StubRunnerBoot], loader = SpringApplicationContextLoader)
+@ContextConfiguration(classes = [StubRunnerBootSpec, StubRunnerBoot], loader = SpringBootContextLoader)
 @EnableBinding
 @Configuration
 class StubRunnerBootSpec extends Specification {

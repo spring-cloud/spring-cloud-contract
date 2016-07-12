@@ -26,11 +26,13 @@
 	<properties>
 		<camel.version>2.17.0</camel.version>
 		<spring-cloud-stream.version>1.0.2.RELEASE</spring-cloud-stream.version>
+		<spring-framework.version>4.3.1.BUILD-SNAPSHOT</spring-framework.version>
 	</properties>
 
 	<modules>
 		<module>spring-cloud-contract-dependencies</module>
 		<module>docs</module>
+		<module>spring-cloud-contract-wiremock</module>
 		<module>spring-cloud-contract-verifier</module>
 		<module>spring-cloud-contract-spec</module>
 		<module>spring-cloud-contract-stub-runner</module>
@@ -61,6 +63,17 @@
 				<version>${project.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>${spring-framework.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

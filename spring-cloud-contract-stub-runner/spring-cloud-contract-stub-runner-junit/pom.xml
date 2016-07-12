@@ -15,7 +15,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud.contract</groupId>
-			<artifactId>spring-cloud-contract-stub-runner</artifactId>
+			<artifactId>spring-cloud-contract-stub-runner-jetty</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

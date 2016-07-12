@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.cloud.contract</groupId>
@@ -8,36 +8,45 @@
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<artifactId>spring-cloud-contract-stub-runner-spring</artifactId>
+	<artifactId>spring-cloud-contract-stub-runner-jetty</artifactId>
 	<packaging>jar</packaging>
-	<name>Spring Cloud Contract Stub Runner Spring</name>
-	<description>Spring Cloud Contract Stub Runner Spring</description>
+	<name>spring-cloud-contract-stub-runner-jetty</name>
+	<description>Spring Cloud Contract Stub Runner</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud.contract</groupId>
 			<artifactId>spring-cloud-contract-stub-runner</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.cloud.contract</groupId>
-			<artifactId>spring-cloud-contract-wiremock</artifactId>
+			<artifactId>jetty-server</artifactId>
+			<groupId>org.eclipse.jetty</groupId>
 		</dependency>
 		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy</artifactId>
+			<artifactId>jetty-servlet</artifactId>
+			<groupId>org.eclipse.jetty</groupId>
 		</dependency>
 		<dependency>
-			<groupId>org.spockframework</groupId>
-			<artifactId>spock-spring</artifactId>
+			<artifactId>jetty-servlets</artifactId>
+			<groupId>org.eclipse.jetty</groupId>
+		</dependency>
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
+			<groupId>org.spockframework</groupId>
+			<artifactId>spock-core</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -46,6 +55,9 @@
 			<plugin>
 				<groupId>org.codehaus.gmavenplus</groupId>
 				<artifactId>gmavenplus-plugin</artifactId>
+				<configuration>
+					<disabled>true</disabled>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

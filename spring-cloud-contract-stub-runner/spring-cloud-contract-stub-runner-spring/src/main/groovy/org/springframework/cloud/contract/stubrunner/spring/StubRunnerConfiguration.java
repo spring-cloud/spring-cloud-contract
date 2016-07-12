@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.contract.stubrunner.AetherStubDownloader;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunnerFactory;
@@ -38,6 +39,7 @@ import org.springframework.core.io.Resource;
  * Configuration that initializes a {@link BatchStubRunner} that runs {@link StubRunner} instance for each stub
  */
 @Configuration
+@ConditionalOnMissingBean(type="org.springframework.cloud.contract.wiremock.WiremockServerConfiguration")
 public class StubRunnerConfiguration {
 
 	@Autowired(required = false) ContractVerifierMessaging contractVerifierMessaging;
@@ -55,7 +57,7 @@ public class StubRunnerConfiguration {
 	 * @param workOffline        forces offline work
 	 * @param stubs              comma separated list of stubs presented in Ivy notation
 	 */
-	@Bean(destroyMethod = "close")
+	@Bean
 	public StubRunning batchStubRunner(
 			@Value("${stubrunner.port.range.min:10000}") Integer minPortValue,
 			@Value("${stubrunner.port.range.max:15000}") Integer maxPortValue,

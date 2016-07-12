@@ -16,13 +16,17 @@
 
 package org.springframework.cloud.contract.stubrunner
 
-import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import groovy.util.logging.Slf4j
+
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.wiremock.WireMockSpring
+import org.springframework.util.ClassUtils
+
+import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 
 @CompileStatic
 @Slf4j
@@ -34,11 +38,18 @@ class StubServer {
 	final Collection<Contract> contracts
 
 	StubServer(int port, StubConfiguration stubConfiguration, Collection<WiremockMappingDescriptor> mappings,
-			   Collection<Contract> contracts) {
+	Collection<Contract> contracts) {
 		this.stubConfiguration = stubConfiguration
 		this.mappings = mappings
-		this.wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(port))
+		this.wireMockServer = new WireMockServer(config().port(port))
 		this.contracts = contracts
+	}
+
+	private WireMockConfiguration config() {
+		if (ClassUtils.isPresent('org.springframework.cloud.contract.wiremock.WireMockSpring', null)) {
+			return WireMockSpring.config()
+		}
+		return new WireMockConfiguration()
 	}
 
 	StubServer start() {

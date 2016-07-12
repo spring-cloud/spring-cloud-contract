@@ -19,6 +19,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud.contract</groupId>
+			<artifactId>spring-cloud-contract-wiremock</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud.contract</groupId>
 			<artifactId>spring-cloud-contract-verifier-messaging-core</artifactId>
 		</dependency>
 		<dependency>
@@ -26,16 +31,12 @@
 			<artifactId>spring-cloud-contract-spec</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>args4j</groupId>
@@ -78,6 +79,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

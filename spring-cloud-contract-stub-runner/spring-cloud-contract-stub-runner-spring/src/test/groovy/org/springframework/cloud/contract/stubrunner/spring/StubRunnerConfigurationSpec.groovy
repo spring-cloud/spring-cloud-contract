@@ -50,7 +50,6 @@ class StubRunnerConfigurationSpec extends Specification {
 	}
 
 	@Configuration
-	@Import(StubRunnerConfiguration)
 	@EnableAutoConfiguration
 	static class Config {}
 }

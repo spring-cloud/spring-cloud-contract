@@ -19,7 +19,6 @@
 		<jsonassert.version>0.4.7</jsonassert.version>
 		<camel.version>2.17.0</camel.version>
 		<aether.version>1.1.0</aether.version>
-		<jetty.version>9.2.13.v20150730</jetty.version>
 		<spring-cloud-stream.version>1.0.2.RELEASE</spring-cloud-stream.version>
 		<spring-cloud-zookeeper.version>1.0.3.BUILD-SNAPSHOT</spring-cloud-zookeeper.version>
 		<spring-cloud-netflix.version>1.1.5.BUILD-SNAPSHOT</spring-cloud-netflix.version>
@@ -27,6 +26,11 @@
 	</properties>
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud.contract</groupId>
+				<artifactId>spring-cloud-contract-wiremock</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud.contract</groupId>
 				<artifactId>spring-cloud-contract-spec</artifactId>
@@ -45,6 +49,11 @@
 			<dependency>
 				<groupId>org.springframework.cloud.contract</groupId>
 				<artifactId>spring-cloud-contract-stub-runner</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud.contract</groupId>
+				<artifactId>spring-cloud-contract-stub-runner-jetty</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -81,91 +90,40 @@
 				<groupId>com.github.tomakehurst</groupId>
 				<artifactId>wiremock</artifactId>
 				<version>${wiremock.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-annotations</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-client</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-continuation</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-deploy</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-http</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-io</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>apache-jstl</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>apache-jsp</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-jmx</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-plus</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-security</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-server</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-servlet</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-servlets</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-util</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-webapp</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-xml</artifactId>
-				<version>${jetty.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.mortbay.jetty</groupId>
+						<artifactId>jetty</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.apache.httpcomponents</groupId>
+						<artifactId>httpclient</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.jayway.jsonpath</groupId>
+						<artifactId>json-path</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>net.sf.jopt-simple</groupId>
+						<artifactId>jopt-simple</artifactId>
+					</exclusion>
+					<exclusion>
+						<artifactId>jetty-server</artifactId>
+						<groupId>org.eclipse.jetty</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>jetty-servlet</artifactId>
+						<groupId>org.eclipse.jetty</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>jetty-servlets</artifactId>
+						<groupId>org.eclipse.jetty</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>jetty-webapp</artifactId>
+						<groupId>org.eclipse.jetty</groupId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>com.toomuchcoding.jsonassert</groupId>

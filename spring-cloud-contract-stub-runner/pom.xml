@@ -19,6 +19,7 @@
 
 	<modules>
 		<module>spring-cloud-contract-stub-runner</module>
+		<module>spring-cloud-contract-stub-runner-jetty</module>
 		<module>spring-cloud-contract-stub-runner-junit</module>
 		<module>spring-cloud-contract-stub-runner-spring</module>
 		<module>spring-cloud-contract-stub-runner-boot</module>
