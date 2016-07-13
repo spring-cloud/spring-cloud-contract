@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="Date-Revision-yyyymmdd" content="20160713" />
     <meta http-equiv="Content-Language" content="en" />
-    <title>Spring Cloud Contract Verifier Maven Plugin &#x2013; Issue Management</title>
+    <title>Spring Cloud Contract Verifier Maven Plugin &#x2013; Plugin Documentation</title>
     <link rel="stylesheet" href="./css/apache-maven-fluido-1.5.min.css" />
     <link rel="stylesheet" href="./css/site.css" />
     <link rel="stylesheet" href="./css/print.css" media="print" />
@@ -182,12 +182,10 @@
         Usage</a>
             </li>
                 
-      <li>
+      <li class="active">
   
-                          <a href="plugin-info.html" title="Goals">
-          <span class="none"></span>
-        Goals</a>
-            </li>
+            <a href="#"><span class="none"></span>Goals</a>
+          </li>
                 
       <li>
   
@@ -218,111 +216,27 @@
         Spring Cloud Contract</a>
             </li>
                               <li class="nav-header">Project Documentation</li>
-                                                                                                                                                                                                                                                                                                                  
+                                                                                                                                                                                                                                                                                                        
       <li>
   
                           <a href="project-info.html" title="Project Information">
-          <span class="icon-chevron-down"></span>
+          <span class="icon-chevron-right"></span>
         Project Information</a>
-                    <ul class="nav nav-list">
-                    
-      <li>
-  
-                          <a href="integration.html" title="CI Management">
-          <span class="none"></span>
-        CI Management</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="dependencies.html" title="Dependencies">
-          <span class="none"></span>
-        Dependencies</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="dependency-info.html" title="Dependency Information">
-          <span class="none"></span>
-        Dependency Information</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="dependency-management.html" title="Dependency Management">
-          <span class="none"></span>
-        Dependency Management</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="distribution-management.html" title="Distribution Management">
-          <span class="none"></span>
-        Distribution Management</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="index.html" title="About">
-          <span class="none"></span>
-        About</a>
-            </li>
-                    
-      <li class="active">
-  
-            <a href="#"><span class="none"></span>Issue Management</a>
-          </li>
-                    
-      <li>
-  
-                          <a href="license.html" title="Licenses">
-          <span class="none"></span>
-        Licenses</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="plugin-management.html" title="Plugin Management">
-          <span class="none"></span>
-        Plugin Management</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="plugins.html" title="Plugins">
-          <span class="none"></span>
-        Plugins</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="team-list.html" title="Team">
-          <span class="none"></span>
-        Team</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="source-repository.html" title="Source Code Management">
-          <span class="none"></span>
-        Source Code Management</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="project-summary.html" title="Summary">
-          <span class="none"></span>
-        Summary</a>
-            </li>
-              </ul>
-        </li>
-                                                                  
+                  </li>
+                                                                            
       <li>
   
                           <a href="project-reports.html" title="Project Reports">
-          <span class="icon-chevron-right"></span>
+          <span class="icon-chevron-down"></span>
         Project Reports</a>
-                  </li>
+                    <ul class="nav nav-list">
+                    
+      <li class="active">
+  
+            <a href="#"><span class="none"></span>Plugin Documentation</a>
+          </li>
+              </ul>
+        </li>
             </ul>
               
                 
@@ -344,12 +258,81 @@
         <div id="bodyColumn"  class="span10" >
                                   
             <div class="section">
-<h2><a name="Overview"></a>Overview</h2><a name="Overview"></a>
-<p>This project uses GitHub Issues to manage its issues.</p></div>
+<h2><a name="Plugin_Documentation"></a>Plugin Documentation</h2><a name="Plugin_Documentation"></a>
+<p>Goals available for this plugin:</p>
+<table border="0" class="table table-striped">
+<tr class="a">
+<th>Goal</th>
+<th>Description</th></tr>
+<tr class="b">
+<td><a href="convert-mojo.html">spring-cloud-contract-verifier:convert</a></td>
+<td>Convert Spring Cloud Contract Verifier contracts into WireMock
+stubs mappings. 
+<p>This goal allow to generate `stubs-jar` or execute
+`spring-cloud-contract-verifier:run` with generated WireMock
+mappings.</p></td></tr>
+<tr class="a">
+<td><a href="generateStubs-mojo.html">spring-cloud-contract-verifier:generateStubs</a></td>
+<td>No description.</td></tr>
+<tr class="b">
+<td><a href="generateTests-mojo.html">spring-cloud-contract-verifier:generateTests</a></td>
+<td>No description.</td></tr>
+<tr class="a">
+<td><a href="help-mojo.html">spring-cloud-contract-verifier:help</a></td>
+<td>Display help information on
+spring-cloud-contract-verifier-maven-plugin.<br />
+Call <code>mvn spring-cloud-contract-verifier:help -Ddetail=true
+-Dgoal=&lt;goal-name&gt;</code> to display parameter details.</td></tr>
+<tr class="b">
+<td><a href="run-mojo.html">spring-cloud-contract-verifier:run</a></td>
+<td>No description.</td></tr></table>
 <div class="section">
-<h2><a name="Issue_Management"></a>Issue Management</h2><a name="Issue_Management"></a>
-<p>Issues, bugs, and feature requests should be submitted to the following issue management system for this project.</p>
-<div class="source"><pre class="prettyprint"><a class="externalLink" href="https://github.com/spring-cloud/spring-cloud-contract">https://github.com/spring-cloud/spring-cloud-contract</a></pre></div></div>
+<h3><a name="System_Requirements"></a>System Requirements</h3><a name="System_Requirements"></a>
+<p>The following specifies the minimum requirements to run this Maven plugin:</p>
+<table border="0" class="table table-striped">
+<tr class="a">
+<td>Maven</td>
+<td>2.0</td></tr>
+<tr class="b">
+<td>JDK</td>
+<td>1.7</td></tr>
+<tr class="a">
+<td>Memory</td>
+<td>No minimum requirement.</td></tr>
+<tr class="b">
+<td>Disk Space</td>
+<td>No minimum requirement.</td></tr></table></div>
+<div class="section">
+<h3><a name="Usage"></a>Usage</h3><a name="Usage"></a>
+<p>You should specify the version in your project's plugin configuration:</p>
+<div class="source"><pre class="prettyprint">&lt;project&gt;
+  ...
+  &lt;build&gt;
+    &lt;!-- To define the plugin version in your parent POM --&gt;
+    &lt;pluginManagement&gt;
+      &lt;plugins&gt;
+        &lt;plugin&gt;
+          &lt;groupId&gt;org.springframework.cloud.contract&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-cloud-contract-verifier-maven-plugin&lt;/artifactId&gt;
+          &lt;version&gt;1.0.0.BUILD-SNAPSHOT&lt;/version&gt;
+        &lt;/plugin&gt;
+        ...
+      &lt;/plugins&gt;
+    &lt;/pluginManagement&gt;
+    &lt;!-- To use the plugin goals in your POM or parent POM --&gt;
+    &lt;plugins&gt;
+      &lt;plugin&gt;
+        &lt;groupId&gt;org.springframework.cloud.contract&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-cloud-contract-verifier-maven-plugin&lt;/artifactId&gt;
+        &lt;version&gt;1.0.0.BUILD-SNAPSHOT&lt;/version&gt;
+      &lt;/plugin&gt;
+      ...
+    &lt;/plugins&gt;
+  &lt;/build&gt;
+  ...
+&lt;/project&gt;
+</pre></div>
+<p>For more information, see <a class="externalLink" href="http://maven.apache.org/guides/mini/guide-configuring-plugins.html">&quot;Guide to Configuring Plug-ins&quot;</a></p></div></div>
                   </div>
             </div>
           </div>
