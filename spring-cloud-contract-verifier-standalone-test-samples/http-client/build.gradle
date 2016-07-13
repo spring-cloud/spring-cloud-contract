@@ -35,6 +35,7 @@ dependencies {
 
 	testRuntime "org.spockframework:spock-spring"
 	testCompile "org.springframework:spring-test"
+	testCompile "org.springframework.boot:spring-boot-starter-test"
 	testCompile "org.spockframework:spock-core"
 	testCompile "junit:junit"
 	testCompile "org.springframework.cloud.contract:spring-cloud-contract-stub-runner-spring:${findProperty('verifierVersion') ?: verifierVersion}"

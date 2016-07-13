@@ -2,6 +2,10 @@ buildscript {
 	repositories {
 		mavenCentral()
 		mavenLocal()
+		maven { url "http://repo.spring.io/libs-snapshot-local" }
+		maven { url "http://repo.spring.io/libs-release-local" }
+		maven { url "http://repo.spring.io/libs-staging-local" }
+		maven { url 'http://repo.spring.io/plugins-snapshot' }
 		maven { url "http://repo.spring.io/plugins-release-local" }
 		maven { url "http://repo.spring.io/plugins-staging-local/" }
 	}
@@ -39,6 +43,7 @@ dependencies {
 	testRuntime "org.spockframework:spock-spring"
 	testCompile "org.springframework:spring-test"
 	testCompile "org.spockframework:spock-core"
+	testCompile "org.springframework.boot:spring-boot-starter-test"
 	testCompile "junit:junit"
 	testCompile "org.springframework.cloud.contract:spring-cloud-contract-stub-runner-stream:${findProperty('verifierVersion') ?: verifierVersion}"
 }
