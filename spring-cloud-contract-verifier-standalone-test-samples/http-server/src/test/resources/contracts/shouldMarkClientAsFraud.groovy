@@ -22,7 +22,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 	"rejectionReason": "Amount too high"
 }""")
 				headers {
-					 header('Content-Type': 'application/vnd.fraud.v1+json')
+					 header('Content-Type': value(server(regex('application/vnd.fraud.v1.json.*')), client('application/vnd.fraud.v1+json')))
 					}
 			}
 

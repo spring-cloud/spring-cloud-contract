@@ -8,7 +8,7 @@ buildscript {
 		maven { url "http://repo.spring.io/plugins-staging-local/" }
 	}
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.3.5.RELEASE"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.4.0.BUILD-SNAPSHOT"
 		classpath "org.springframework.cloud.contract:spring-cloud-contract-verifier-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
 	}
 }
@@ -41,15 +41,12 @@ ext {
 }
 
 contractVerifier {
-	baseClassForTests = 'org.springframework.cloud.stream.sample.verifier.source.SensorSourceTestBase'
+	baseClassForTests = 'com.example.source.SensorSourceTestBase'
 	stubsOutputDir = stubsOutputDirRoot
 }
 
 dependencies {
-	compile("org.springframework.boot:spring-boot-starter-web") {
-		exclude module: "spring-boot-starter-tomcat"
-	}
-	compile("org.springframework.boot:spring-boot-starter-jetty")
+	compile("org.springframework.boot:spring-boot-starter-web")
 	compile("org.springframework.boot:spring-boot-starter-actuator")
 	compile("org.springframework.cloud:spring-cloud-starter-stream-rabbit")
 	compile("org.springframework.cloud.contract:spring-cloud-contract-verifier-stream:${findProperty('verifierVersion') ?: verifierVersion}")

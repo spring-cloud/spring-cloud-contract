@@ -6,11 +6,11 @@ buildscript {
 		maven { url "http://repo.spring.io/plugins-staging-local/" }
 	}
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.3.5.RELEASE"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.4.0.BUILD-SNAPSHOT"
 	}
 }
 
-group = 'org.springframework.cloud.contract.testprojects'
+group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
 repositories {
@@ -26,10 +26,7 @@ apply plugin: 'spring-boot'
 apply plugin: 'maven-publish'
 
 dependencies {
-	compile("org.springframework.boot:spring-boot-starter-web") {
-		exclude module: "spring-boot-starter-tomcat"
-	}
-	compile("org.springframework.boot:spring-boot-starter-jetty")
+	compile("org.springframework.boot:spring-boot-starter-web")
 	compile("org.springframework.boot:spring-boot-starter-actuator")
 
 	testRuntime "org.spockframework:spock-spring"

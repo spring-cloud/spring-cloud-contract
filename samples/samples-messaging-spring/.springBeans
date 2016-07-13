@@ -7,7 +7,7 @@
 	</configSuffixes>
 	<enableImports><![CDATA[false]]></enableImports>
 	<configs>
-		<config>java:com.example.SpringMessagingApplication</config>
+		<config>java:com.example.fraud.SpringMessagingApplication</config>
 	</configs>
 	<autoconfigs>
 	</autoconfigs>

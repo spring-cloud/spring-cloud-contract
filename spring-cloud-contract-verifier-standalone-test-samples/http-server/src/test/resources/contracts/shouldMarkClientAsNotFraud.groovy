@@ -23,7 +23,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 						rejectionReason: $(client(null), server(execute('assertThatRejectionReasonIsNull($it)')))
 				)
 				headers {
-					 header('Content-Type': 'application/vnd.fraud.v1+json')
+					 header('Content-Type': value(test(regex('application/vnd.fraud.v1.json.*')), stub('application/vnd.fraud.v1+json')))
 				}
 			}
 
