@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/plugin" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/groovy" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/target/generated-site" />
+      <excludeFolder url="file://$MODULE_DIR$/target/generated-sources/groovy-stubs" />
+      <excludeFolder url="file://$MODULE_DIR$/target/incremental" />
+      <excludeFolder url="file://$MODULE_DIR$/target/maven-status" />
+      <excludeFolder url="file://$MODULE_DIR$/target/scmpublish-checkout" />
+      <excludeFolder url="file://$MODULE_DIR$/target/site" />
+      <excludeFolder url="file://$MODULE_DIR$/target/staging" />
+      <excludeFolder url="file://$MODULE_DIR$/target/surefire" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="spring-cloud-contract-verifier-core" />
+    <orderEntry type="module" module-name="spring-cloud-contract-spec" />
+    <orderEntry type="module" module-name="spring-cloud-contract-verifier-testing-utils" />
+    <orderEntry type="library" name="Maven: commons-io:commons-io:2.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.3" level="project" />
+    <orderEntry type="library" name="Maven: com.github.tomakehurst:wiremock:2.1.7" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:18.0" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.8.0" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.8.0" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.8.0" level="project" />
+    <orderEntry type="library" name="Maven: org.xmlunit:xmlunit-core:2.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.xmlunit:xmlunit-legacy:2.1.1" level="project" />
+    <orderEntry type="library" name="Maven: com.flipkart.zjsonpatch:zjsonpatch:0.2.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-collections4:4.0" level="project" />
+    <orderEntry type="library" name="Maven: com.toomuchcoding.jsonassert:jsonassert:0.4.7" level="project" />
+    <orderEntry type="library" name="Maven: com.jayway.jsonpath:json-path:2.2.0" level="project" />
+    <orderEntry type="library" name="Maven: net.minidev:json-smart:2.2.1" level="project" />
+    <orderEntry type="library" name="Maven: net.minidev:accessors-smart:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.ow2.asm:asm:5.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.groovy:groovy:2.4.7" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.groovy:groovy-json:2.4.7" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.groovy:groovy-xml:2.4.7" level="project" />
+    <orderEntry type="library" name="Maven: org.skyscreamer:jsonassert:1.2.3" level="project" />
+    <orderEntry type="library" name="Maven: org.json:json:20140107" level="project" />
+    <orderEntry type="module" module-name="spring-cloud-contract-verifier-converters" />
+    <orderEntry type="library" name="Maven: org.codehaus.groovy:groovy-nio:2.4.7" level="project" />
+    <orderEntry type="library" name="Maven: dk.brics.automaton:automaton:1.11-8" level="project" />
+    <orderEntry type="module" module-name="spring-cloud-contract-stub-runner" />
+    <orderEntry type="module" module-name="spring-cloud-contract-verifier-messaging-core" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-core:4.3.1.BUILD-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: args4j:args4j:2.32" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.aether:aether-impl:1.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.aether:aether-spi:1.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.aether:aether-transport-file:1.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.aether:aether-transport-http:1.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.5" level="project" />
+    <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.10" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:jcl-over-slf4j:1.7.21" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.aether:aether-connector-basic:1.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-aether-provider:3.3.9" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.aether:aether-api:1.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven.shared:maven-filtering:3.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven.shared:maven-shared-utils:3.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:2.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-utils:3.0.22" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-interpolation:1.21" level="project" />
+    <orderEntry type="library" name="Maven: org.sonatype.plexus:plexus-build-api:0.0.7" level="project" />
+    <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.1.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.slf4j:slf4j-simple:1.7.12" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.21" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.inject:javax.inject:1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.maven:maven-core:3.2.5" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-model:3.2.5" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.maven:maven-settings:3.2.5" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.maven:maven-settings-builder:3.2.5" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-repository-metadata:3.2.5" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-artifact:3.2.5" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-model-builder:3.2.5" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.aether:aether-util:1.0.0.v20140518" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.sisu:org.eclipse.sisu.plexus:0.3.0.M1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.enterprise:cdi-api:1.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.annotation:jsr250-api:1.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.sisu:org.eclipse.sisu.inject:0.3.0.M1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu:sisu-guice:no_aop:3.2.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: aopalliance:aopalliance:1.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.codehaus.plexus:plexus-classworlds:2.5.2" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-component-annotations:1.5.5" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.plexus:plexus-sec-dispatcher:1.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.plexus:plexus-cipher:1.4" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.maven:maven-plugin-api:3.2.5" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.maven.plugin-tools:maven-plugin-annotations:3.4" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-archiver:3.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-archiver:3.1" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-io:2.7.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-compress:1.10" level="project" />
+    <orderEntry type="library" name="Maven: org.iq80.snappy:snappy:0.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: io.takari.maven.plugins:takari-plugin-testing:2.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.apache.commons:commons-exec:1.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: io.takari.m2e.workspace:org.eclipse.m2e.workspace.cli:0.4.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.apache.maven:maven-compat:3.2.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.apache.maven.wagon:wagon-provider-api:2.8" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.assertj:assertj-core:2.4.0" level="project" />
+  </component>
+</module>
