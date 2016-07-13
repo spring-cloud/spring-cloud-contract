@@ -28,7 +28,6 @@ import org.springframework.cloud.contract.stubrunner.StubDownloader;
 import org.springframework.cloud.contract.stubrunner.StubRunner;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
-import org.springframework.cloud.contract.stubrunner.StubRunning;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierMessaging;
 import org.springframework.context.annotation.Bean;
@@ -58,7 +57,7 @@ public class StubRunnerConfiguration {
 	 * @param stubs              comma separated list of stubs presented in Ivy notation
 	 */
 	@Bean
-	public StubRunning batchStubRunner(
+	public BatchStubRunner batchStubRunner(
 			@Value("${stubrunner.port.range.min:10000}") Integer minPortValue,
 			@Value("${stubrunner.port.range.max:15000}") Integer maxPortValue,
 			@Value("${stubrunner.stubs.repository.root:}") Resource stubRepositoryRoot,

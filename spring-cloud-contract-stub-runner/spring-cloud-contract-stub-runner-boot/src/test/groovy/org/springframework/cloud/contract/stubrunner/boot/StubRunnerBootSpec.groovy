@@ -50,7 +50,7 @@ class StubRunnerBootSpec extends Specification {
 			String response = RestAssuredMockMvc.get('/stubs').body.asString()
 		then:
 			def root = new JsonSlurper().parseText(response)
-			root.'org.springframework.cloud.contract.verifier.stubs:streamService:0.0.1-SNAPSHOT:stubs' instanceof Integer
+			root.'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs' instanceof Integer
 	}
 
 	def 'should return a port on which a [#stubId] stub is running'() {
@@ -60,11 +60,11 @@ class StubRunnerBootSpec extends Specification {
 			response.statusCode == 200
 			response.body.as(Integer) > 0
 		where:
-			stubId << ['org.springframework.cloud.contract.verifier.stubs:streamService:+:stubs',
-					   'org.springframework.cloud.contract.verifier.stubs:streamService:0.0.1-SNAPSHOT:stubs',
-					   'org.springframework.cloud.contract.verifier.stubs:streamService:+',
-					   'org.springframework.cloud.contract.verifier.stubs:streamService',
-					   'streamService']
+			stubId << ['org.springframework.cloud.contract.verifier.stubs:bootService:+:stubs',
+					   'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs',
+					   'org.springframework.cloud.contract.verifier.stubs:bootService:+',
+					   'org.springframework.cloud.contract.verifier.stubs:bootService',
+					   'bootService']
 	}
 
 	def 'should return 404 when missing stub was called'() {
@@ -79,7 +79,7 @@ class StubRunnerBootSpec extends Specification {
 			String response = RestAssuredMockMvc.get('/triggers').body.asString()
 		then:
 			def root = new JsonSlurper().parseText(response)
-			root.'org.springframework.cloud.contract.verifier.stubs:streamService:0.0.1-SNAPSHOT:stubs'?.containsAll(["delete_book","return_book_1","return_book_2"])
+			root.'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs'?.containsAll(["delete_book","return_book_1","return_book_2"])
 	}
 
 	def 'should trigger a messaging label'() {
@@ -105,7 +105,7 @@ class StubRunnerBootSpec extends Specification {
 		and:
 			1 * stubRunning.trigger(stubId, 'delete_book')
 		where:
-			stubId << ['org.springframework.cloud.contract.verifier.stubs:streamService:stubs', 'org.springframework.cloud.contract.verifier.stubs:streamService', 'streamService']
+			stubId << ['org.springframework.cloud.contract.verifier.stubs:bootService:stubs', 'org.springframework.cloud.contract.verifier.stubs:bootService', 'bootService']
 	}
 
 	def 'should return when trigger is missing'() {
@@ -114,7 +114,7 @@ class StubRunnerBootSpec extends Specification {
 		then:
 			response.statusCode == 404
 			def root = new JsonSlurper().parseText(response.body.asString())
-			root.'org.springframework.cloud.contract.verifier.stubs:streamService:0.0.1-SNAPSHOT:stubs'?.containsAll(["delete_book","return_book_1","return_book_2"])
+			root.'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs'?.containsAll(["delete_book","return_book_1","return_book_2"])
 	}
 
 }

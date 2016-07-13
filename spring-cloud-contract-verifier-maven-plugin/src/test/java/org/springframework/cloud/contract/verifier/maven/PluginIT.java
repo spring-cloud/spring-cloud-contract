@@ -104,7 +104,7 @@ public class PluginIT {
 		properties.getPluginVersion();
 		maven.forProject(basedir)
 				.withCliOption("-X")
-				.execute(String.format("org.springframework.cloud.contract:spring-cloud-contract-verifier-maven-plugin:%s:convert",
+				.execute(String.format("org.springframework.cloud:spring-cloud-contract-verifier-maven-plugin:%s:convert",
 						properties.getPluginVersion()))
 				.assertLogText("Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings")
 				.assertLogText("Creating new json")

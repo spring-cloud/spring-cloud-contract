@@ -3,7 +3,7 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.springframework.cloud.contract</groupId>
+		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-stub-runner-build</artifactId>
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
@@ -14,20 +14,20 @@
 	<description>Spring Cloud Contract Stub Runner</description>
 	<dependencies>
 		<dependency>
-			<groupId>org.springframework.cloud.contract</groupId>
+			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-verifier-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.cloud.contract</groupId>
+			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-wiremock</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.cloud.contract</groupId>
+			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-verifier-messaging-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.cloud.contract</groupId>
+			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-spec</artifactId>
 		</dependency>
 		<dependency>
@@ -84,6 +84,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>info.solidsoft.spock</groupId>
+			<artifactId>spock-global-unroll</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

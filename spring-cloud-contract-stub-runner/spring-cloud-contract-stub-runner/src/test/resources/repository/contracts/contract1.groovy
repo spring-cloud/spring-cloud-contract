@@ -1,27 +1,27 @@
-org.springframework.cloud.contract.spec.Contract.make  {
-	// Human readable description
-	description 'Sends an order message'
-	// Label by means of which the output message can be triggered
-	label 'send_order'
-	// input to the contract
-	input {
-		// the contract will be triggered by a method
-		triggeredBy('orderTrigger()')
-	}
-	// output message of the contract
-	outputMessage {
-		// destination to which the output message will be sent
-		sentTo('orders')
-		// any headers for the output message
-		headers {
-			header('contentType': 'application/json')
-		}
-		// the body of the output message
-		body(
-				orderId: value(
-						consumer('40058c70-891c-4176-a033-f70bad0c5f77'),
-						producer(regex('([0-9|a-f]*-*)*'))),
-				description: "This is the order description"
+org.springframework.cloud.contract.spec.Contract.make {
+	request {
+		method """PUT"""
+		url """/fraudcheck"""
+		body("""
+					{
+					"clientPesel":"${value(client(regex('[0-9]{10}')), server('1234567890'))}",
+					"loanAmount":99999}
+				"""
 		)
+		headers {
+			header("""Content-Type""", """application/vnd.fraud.v1+json""")
+		}
+
 	}
+	response {
+		status 200
+		body( """{
+	"fraudCheckStatus": "${value(client('FRAUD'), server(regex('[A-Z]{5}')))}",
+	"rejectionReason": "Amount too high"
+}""")
+		headers {
+			header('Content-Type': value(server(regex('application/vnd.fraud.v1.json.*')), client('application/vnd.fraud.v1+json')))
+		}
+	}
+
 }

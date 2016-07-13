@@ -12,7 +12,7 @@ Just add the
 
 [source,groovy,indent=0]
 ----
-compile "org.springframework.cloud.contract:stub-runner-boot:${verifierVersion}"
+compile "org.springframework.cloud:stub-runner-boot:${verifierVersion}"
 ----
 
 and a messaging implementation:
@@ -20,11 +20,11 @@ and a messaging implementation:
 [source,groovy,indent=0]
 ----
 // for Apache Camel
-compile "org.springframework.cloud.contract:spring-cloud-contract-stub-runner-camel:${verifierVersion}"
+compile "org.springframework.cloud:spring-cloud-contract-stub-runner-camel:${verifierVersion}"
 // for Spring Integration
-compile "org.springframework.cloud.contract:spring-cloud-contract-stub-runner-integration:${verifierVersion}"
+compile "org.springframework.cloud:spring-cloud-contract-stub-runner-integration:${verifierVersion}"
 // for Spring Cloud Stream
-compile "org.springframework.cloud.contract:spring-cloud-contract-stub-runner-stream:${verifierVersion}"
+compile "org.springframework.cloud:spring-cloud-contract-stub-runner-stream:${verifierVersion}"
 ----
 
 Build a fat-jar and you're ready to go!

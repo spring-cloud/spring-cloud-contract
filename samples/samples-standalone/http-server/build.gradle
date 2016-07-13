@@ -11,7 +11,7 @@ buildscript {
 	}
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.4.0.BUILD-SNAPSHOT"
-		classpath "org.springframework.cloud.contract:spring-cloud-contract-verifier-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
+		classpath "org.springframework.cloud:spring-cloud-contract-verifier-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
 	}
 }
 
@@ -32,6 +32,12 @@ apply plugin: 'spring-boot'
 apply plugin: 'contract-verifier'
 apply plugin: 'maven-publish'
 
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:$BOM_VERSION"
+		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${project.findProperty('verifierVersion') ?: verifierVersion}"
+	}
+}
 
 contractVerifier {
 	baseClassForTests = 'com.example.fraud.MvcTest'

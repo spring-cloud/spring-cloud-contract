@@ -3,7 +3,7 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.springframework.cloud.contract</groupId>
+		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-verifier-messaging</artifactId>
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
@@ -14,7 +14,7 @@
 	<description>Spring Cloud Contract Verifier Integration</description>
 	<dependencies>
 		<dependency>
-			<groupId>org.springframework.cloud.contract</groupId>
+			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-verifier-messaging-core</artifactId>
 		</dependency>
 		<dependency>

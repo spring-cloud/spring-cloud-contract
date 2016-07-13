@@ -14,7 +14,7 @@ buildscript {
 	}
 }
 
-group = 'org.springframework.cloud.contract.testprojects'
+group = 'org.springframework.cloud.testprojects'
 version = '0.0.1-SNAPSHOT'
 
 repositories {
@@ -32,6 +32,7 @@ apply plugin: 'maven-publish'
 dependencyManagement {
 	imports {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:$BOM_VERSION"
+		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${project.findProperty('verifierVersion') ?: verifierVersion}"
 	}
 }
 
@@ -45,7 +46,7 @@ dependencies {
 	testCompile "org.spockframework:spock-core"
 	testCompile "org.springframework.boot:spring-boot-starter-test"
 	testCompile "junit:junit"
-	testCompile "org.springframework.cloud.contract:spring-cloud-contract-stub-runner-stream:${findProperty('verifierVersion') ?: verifierVersion}"
+	testCompile "org.springframework.cloud:spring-cloud-contract-stub-runner-stream:${project.findProperty('verifierVersion') ?: verifierVersion}"
 }
 
 test {

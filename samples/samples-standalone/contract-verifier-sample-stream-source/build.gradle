@@ -9,11 +9,11 @@ buildscript {
 	}
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.4.0.BUILD-SNAPSHOT"
-		classpath "org.springframework.cloud.contract:spring-cloud-contract-verifier-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
+		classpath "org.springframework.cloud:spring-cloud-contract-verifier-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
 	}
 }
 
-group = 'org.springframework.cloud.contract.testprojects'
+group = 'org.springframework.cloud.testprojects'
 version = '0.0.1-SNAPSHOT'
 
 repositories {
@@ -33,6 +33,7 @@ apply plugin: 'maven-publish'
 dependencyManagement {
 	imports {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:$BOM_VERSION"
+		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${project.findProperty('verifierVersion') ?: verifierVersion}"
 	}
 }
 
@@ -49,7 +50,7 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-web")
 	compile("org.springframework.boot:spring-boot-starter-actuator")
 	compile("org.springframework.cloud:spring-cloud-starter-stream-rabbit")
-	compile("org.springframework.cloud.contract:spring-cloud-contract-verifier-stream:${findProperty('verifierVersion') ?: verifierVersion}")
+	compile("org.springframework.cloud:spring-cloud-contract-verifier-stream:${findProperty('verifierVersion') ?: verifierVersion}")
 
 	testRuntime "org.spockframework:spock-spring"
 	testCompile "org.spockframework:spock-core"

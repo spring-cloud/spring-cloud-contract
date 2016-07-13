@@ -64,7 +64,12 @@ class StubServer {
 	}
 
 	int getPort() {
-		return wireMockServer.port()
+		if (wireMockServer.isRunning()) {
+			return wireMockServer.port()
+		}
+		log.debug("The HTTP Server stub is not running... That means that the " +
+				"artifact is running a messaging module. Returning back -1 value of the port.")
+		return -1
 	}
 
 	URL getStubUrl() {

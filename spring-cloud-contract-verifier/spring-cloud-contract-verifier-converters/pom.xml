@@ -3,7 +3,7 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.springframework.cloud.contract</groupId>
+		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-verifier</artifactId>
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
@@ -15,7 +15,7 @@
 	<properties><java.version>1.8</java.version></properties>
 	<dependencies>
 		<dependency>
-			<groupId>org.springframework.cloud.contract</groupId>
+			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-verifier-core</artifactId>
 		</dependency>
 		<dependency>
@@ -43,6 +43,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>info.solidsoft.spock</groupId>
+			<artifactId>spock-global-unroll</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

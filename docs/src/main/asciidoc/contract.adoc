@@ -5,8 +5,8 @@
 == Contract DSL
 
 IMPORTANT: Remember that inside the contract file you have to provide the fully qualified name to
-the `Contract` class and the `make` static import i.e. `org.springframework.cloud.contract.spec.Contract.make { ... }`.
-You can also provide an import to the `Contract` class `import org.springframework.cloud.contract.spec.Contract` and then call
+the `Contract` class and the `make` static import i.e. `org.springframework.cloud.spec.Contract.make { ... }`.
+You can also provide an import to the `Contract` class `import org.springframework.cloud.spec.Contract` and then call
   `Contract.make { ... }`
 
 Contract DSL is written in Groovy, but don't be alarmed if you didn't use Groovy before. Knowledge of the language is not really needed as our DSL uses only
@@ -24,7 +24,7 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 
 Not all features of the DSL are used in example above. If you didn't find what you are looking for, please check next paragraphs on this page.
 
-> You can easily compile Contracts to WireMock stubs mapping using standalone maven command: `mvn org.springframework.cloud.contract:spring-cloud-contract-verifier-maven-plugin:convert`.
+> You can easily compile Contracts to WireMock stubs mapping using standalone maven command: `mvn org.springframework.cloud:spring-cloud-contract-verifier-maven-plugin:convert`.
 
 === Limitations
 

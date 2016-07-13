@@ -28,7 +28,7 @@ project.version = findProperty('contractVerifierVersion') ?: '1.0.0.BUILD-SNAPSH
 apply from: "$rootDir/gradle/release.gradle"
 apply plugin: 'groovy'
 
-group = 'org.springframework.cloud.contract'
+group = 'org.springframework.cloud'
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -58,13 +58,13 @@ configurations {
 dependencies {
 	compile gradleApi()
 	compile localGroovy()
-	compile("org.springframework.cloud.contract:spring-cloud-contract-verifier-core:${project.version}") {
+	compile("org.springframework.cloud:spring-cloud-contract-verifier-core:${project.version}") {
 		exclude(group: 'org.codehaus.groovy')
 	}
-	compile("org.springframework.cloud.contract:spring-cloud-contract-verifier-converters:${project.version}") {
+	compile("org.springframework.cloud:spring-cloud-contract-verifier-converters:${project.version}") {
 		exclude(group: 'org.codehaus.groovy')
 	}
-	compile("org.springframework.cloud.contract:spring-cloud-contract-stub-runner:${project.version}") {
+	compile("org.springframework.cloud:spring-cloud-contract-stub-runner:${project.version}") {
 		exclude(group: 'org.codehaus.groovy')
 	}
 	testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
@@ -73,7 +73,7 @@ dependencies {
 	testCompile 'info.solidsoft.spock:spock-global-unroll:0.5.0'
 	testCompile gradleTestKit()
 
-	messagingLibs("org.springframework.cloud.contract:spring-cloud-contract-verifier-integration:${project.version}") {
+	messagingLibs("org.springframework.cloud:spring-cloud-contract-verifier-integration:${project.version}") {
 		exclude(group: 'org.codehaus.groovy')
 	}
 }

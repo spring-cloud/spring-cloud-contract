@@ -35,7 +35,8 @@ class BatchStubRunner implements StubRunning {
 	@Override
 	RunningStubs runStubs() {
 		Map<StubConfiguration, Integer> appsAndPorts = stubRunners.inject([:]) { Map<StubConfiguration, Integer> acc, StubRunner value ->
-			acc.putAll(value.runStubs().namesAndPorts)
+			RunningStubs runningStubs = value.runStubs()
+			acc.putAll(runningStubs.validNamesAndPorts())
 			return acc
 		} as Map<StubConfiguration, Integer>
 		return new RunningStubs(appsAndPorts)

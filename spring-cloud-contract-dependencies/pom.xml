@@ -8,7 +8,6 @@
 		<version>1.1.2.BUILD-SNAPSHOT</version>
         <relativePath/>
 	</parent>
-	<groupId>org.springframework.cloud.contract</groupId>
 	<artifactId>spring-cloud-contract-dependencies</artifactId>
 	<version>1.0.0.BUILD-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -18,6 +17,7 @@
 		<wiremock.version>2.1.7</wiremock.version>
 		<jsonassert.version>0.4.7</jsonassert.version>
 		<camel.version>2.17.0</camel.version>
+		<activemq.version>5.12.1</activemq.version>
 		<aether.version>1.1.0</aether.version>
 		<spring-cloud-stream.version>1.0.2.RELEASE</spring-cloud-stream.version>
 		<spring-cloud-zookeeper.version>1.0.3.BUILD-SNAPSHOT</spring-cloud-zookeeper.version>
@@ -27,67 +27,77 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>org.springframework.cloud.contract</groupId>
+				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-wiremock</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework.cloud.contract</groupId>
+				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-spec</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework.cloud.contract</groupId>
+				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-verifier-core</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework.cloud.contract</groupId>
+				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-verifier-testing-utils</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework.cloud.contract</groupId>
+				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-stub-runner</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework.cloud.contract</groupId>
+				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-stub-runner-jetty</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework.cloud.contract</groupId>
+				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-stub-runner-spring</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework.cloud.contract</groupId>
+				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-stub-runner-boot</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework.cloud.contract</groupId>
+				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-stub-runner-stream</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework.cloud.contract</groupId>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-contract-stub-runner-camel</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-contract-stub-runner-integration</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-verifier-messaging-core</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework.cloud.contract</groupId>
+				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-verifier-camel</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework.cloud.contract</groupId>
+				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-verifier-integration</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework.cloud.contract</groupId>
+				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-verifier-stream</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -149,6 +159,31 @@
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-spring</artifactId>
 				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-spring-boot-starter</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-jackson</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-jms</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>activemq-camel</artifactId>
+				<version>${activemq.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>activemq-pool</artifactId>
+				<version>${activemq.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>args4j</groupId>

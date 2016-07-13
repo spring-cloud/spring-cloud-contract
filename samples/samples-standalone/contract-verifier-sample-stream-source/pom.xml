@@ -3,7 +3,7 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.springframework.cloud.contract.testprojects</groupId>
+	<groupId>org.springframework.cloud.testprojects</groupId>
 	<artifactId>contract-verifier-sample-stream-source</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -37,13 +37,13 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.springframework.cloud.contract</groupId>
+			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-verifier-core</artifactId>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>org.springframework.cloud.contract</groupId>
+			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-verifier-stream</artifactId>
 			<scope>test</scope>
 		</dependency>
@@ -58,7 +58,7 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>org.springframework.cloud.contract</groupId>
+				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-dependencies</artifactId>
 				<version>${spring-cloud-contract.version}</version>
 				<type>pom</type>
@@ -81,7 +81,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<groupId>org.springframework.cloud.contract</groupId>
+				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
 				<version>${spring-cloud-contract.version}</version>
 				<extensions>true</extensions>
@@ -91,7 +91,7 @@
 				<!-- this was added for testing purposes only-->
 				<dependencies>
 					<dependency>
-						<groupId>org.springframework.cloud.contract</groupId>
+						<groupId>org.springframework.cloud</groupId>
 						<artifactId>spring-cloud-contract-verifier-core</artifactId>
 						<version>${spring-cloud-contract.version}</version>
 					</dependency>
@@ -116,7 +116,7 @@
 							<pluginExecutions>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>org.springframework.cloud.contract</groupId>
+										<groupId>org.springframework.cloud</groupId>
 										<artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
 										<versionRange>[1.0.0.BUILD-SNAPSHOT,)</versionRange>
 										<goals>

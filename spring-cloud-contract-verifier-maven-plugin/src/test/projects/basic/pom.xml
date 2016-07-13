@@ -21,14 +21,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.springframework.cloud.contract.verifier.sample</groupId>
+	<groupId>org.springframework.cloud.verifier.sample</groupId>
 	<artifactId>sample-project</artifactId>
 	<version>0.1</version>
 
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.springframework.cloud.contract</groupId>
+				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
 			</plugin>
 		</plugins>

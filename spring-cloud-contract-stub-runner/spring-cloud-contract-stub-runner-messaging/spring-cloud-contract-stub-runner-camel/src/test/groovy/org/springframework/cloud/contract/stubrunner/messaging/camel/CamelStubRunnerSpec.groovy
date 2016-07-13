@@ -19,12 +19,14 @@ package org.springframework.cloud.contract.stubrunner.messaging.camel
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.apache.activemq.camel.component.ActiveMQComponent
+import org.apache.activemq.spring.ActiveMQConnectionFactory
 import org.apache.camel.CamelContext
 import org.apache.camel.Exchange
+import org.apache.camel.component.jms.JmsConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.SpringApplicationContextLoader
+import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.context.annotation.Bean
@@ -32,13 +34,11 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
+
 /**
  * @author Marcin Grzejszczak
  */
-@Configuration
-@ComponentScan
-@EnableAutoConfiguration
-@ContextConfiguration(classes = CamelStubRunnerSpec, loader = SpringApplicationContextLoader)
+@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 class CamelStubRunnerSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
@@ -161,10 +161,27 @@ class CamelStubRunnerSpec extends Specification {
 		return json.bookName == 'foo'
 	}
 
-	@Bean
-	ActiveMQComponent activeMQComponent(@Value('${activemq.url:vm://localhost?broker.persistent=false}') String url) {
-		return new ActiveMQComponent(brokerURL: url)
+	@Configuration
+	@ComponentScan
+	@EnableAutoConfiguration
+	static class Config {
+
+		@Bean
+		ActiveMQConnectionFactory activeMQConnectionFactory(@Value('${activemq.url:vm://localhost?broker.persistent=false}') String url) {
+			return new ActiveMQConnectionFactory(brokerURL: url, trustAllPackages: true)
+		}
+
+		@Bean
+		JmsConfiguration jmsConfiguration(ActiveMQConnectionFactory activeMQConnectionFactory) {
+			return new JmsConfiguration(connectionFactory: activeMQConnectionFactory)
+		}
+
+		@Bean
+		ActiveMQComponent activeMQComponent(JmsConfiguration jmsConfiguration) {
+			return new ActiveMQComponent(configuration: jmsConfiguration)
+		}
 	}
+
 
 	Contract dsl =
 	// tag::sample_dsl[]

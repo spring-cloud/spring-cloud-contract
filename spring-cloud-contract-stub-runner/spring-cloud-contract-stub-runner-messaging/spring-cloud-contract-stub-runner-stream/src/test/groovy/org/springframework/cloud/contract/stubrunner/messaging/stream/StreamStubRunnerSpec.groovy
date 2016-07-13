@@ -18,12 +18,12 @@ package org.springframework.cloud.contract.stubrunner.messaging.stream
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
-import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage
-import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.SpringApplicationContextLoader
+import org.springframework.boot.test.context.SpringBootContextLoader
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.stubrunner.StubFinder
+import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.messaging.Sink
@@ -34,13 +34,14 @@ import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
 import java.util.concurrent.TimeUnit
+
 /**
  * @author Marcin Grzejszczak
  */
 @Configuration
 @ComponentScan
 @EnableAutoConfiguration
-@ContextConfiguration(classes = StreamStubRunnerSpec, loader = SpringApplicationContextLoader)
+@ContextConfiguration(classes = StreamStubRunnerSpec, loader = SpringBootContextLoader)
 @EnableBinding([Sink, Source])
 class StreamStubRunnerSpec extends Specification {
 

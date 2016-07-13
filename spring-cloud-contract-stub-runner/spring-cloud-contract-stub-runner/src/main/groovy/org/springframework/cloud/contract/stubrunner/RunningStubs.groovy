@@ -75,6 +75,10 @@ class RunningStubs {
 		return namesAndPorts.collectEntries { [(it.key.toColonSeparatedDependencyNotation()) : it.value]  } as Map<String, Integer>
 	}
 
+	Map<StubConfiguration, Integer> validNamesAndPorts() {
+		return namesAndPorts.findAll { StubConfiguration key, Integer value -> value != -1 }
+	}
+
 	@Override
 	String toString() {
 		return namesAndPorts.collect {

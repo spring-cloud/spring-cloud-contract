@@ -88,7 +88,7 @@
             </plugin>
             <!-- tag::plugin[] -->
             <plugin>
-                <groupId>org.springframework.cloud.contract</groupId>
+                <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
                 <version>${accurest-plugin.version}</version>
                 <extensions>true</extensions>

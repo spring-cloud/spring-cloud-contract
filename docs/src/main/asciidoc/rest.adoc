@@ -19,7 +19,7 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'org.springframework.cloud.contract:spring-cloud-contract-verifier-gradle-plugin:${verifier_version}'
+		classpath 'org.springframework.cloud:spring-cloud-contract-verifier-gradle-plugin:${verifier_version}'
 	}
 }
 
@@ -51,7 +51,7 @@ repositories {
 [source,xml,indent=0]
 ----
 <plugin>
-    <groupId>org.springframework.cloud.contract</groupId>
+    <groupId>org.springframework.cloud</groupId>
     <artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
     <executions>
         <execution>
@@ -102,7 +102,7 @@ contractVerifier {
     testMode = 'MockMvc'
     generatedTestSourcesDir = project.file("${project.buildDir}/generated-test-sources/contracts")
     contractsDslDir = "${project.rootDir}/src/test/resources/contracts"
-    basePackageForTests = 'org.springframework.cloud.contract.verifier.tests'
+    basePackageForTests = 'org.springframework.cloud.verifier.tests'
     stubsOutputDir = project.file("${project.buildDir}/stubs")
 }
 
@@ -151,7 +151,7 @@ contractVerifier {
  - **testMode** - defines mode for acceptance tests. By default MockMvc which is based on Spring's MockMvc. It can also be changed to **JaxRsClient** or to **Explicit** for real HTTP calls.
  - **imports** - array with imports that should be included in generated tests (for example ['org.myorg.Matchers']). By default empty array []
  - **staticImports** - array with static imports that should be included in generated tests(for example ['org.myorg.Matchers.*']). By default empty array []
- - **basePackageForTests** - specifies base package for all generated tests. By default set to org.springframework.cloud.contract.verifier.tests
+ - **basePackageForTests** - specifies base package for all generated tests. By default set to org.springframework.cloud.verifier.tests
  - **baseClassForTests** - base class for generated tests. By default `spock.lang.Specification` if using Spock tests.
  - **ruleClassForTests** - specifies Rule which should be added to generated test classes.
  - **ignoredFiles** - Ant matcher allowing defining stub files for which processing should be skipped. By default empty array []
@@ -229,7 +229,7 @@ Underneath LoanApplication makes a call to FraudDetection service. This request 
 [source,xml,indent=0]
 ----
 <plugin>
-    <groupId>org.springframework.cloud.contract.verifier</groupId>
+    <groupId>org.springframework.cloud.verifier</groupId>
     <artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
     <executions>
         <execution>
@@ -273,7 +273,7 @@ To change default configuration just add `configuration` section to plugin defin
 [source,xml,indent=0]
 ----
 <plugin>
-    <groupId>org.springframework.cloud.contract.verifier</groupId>
+    <groupId>org.springframework.cloud.verifier</groupId>
     <artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
     <executions>
         <execution>
@@ -285,8 +285,8 @@ To change default configuration just add `configuration` section to plugin defin
         </execution>
     </executions>
     <configuration>
-        <basePackageForTests>org.springframework.cloud.contract.verifier.twitter.place</basePackageForTests>
-        <baseClassForTests>org.springframework.cloud.contract.verifier.twitter.place.BaseMockMvcSpec</baseClassForTests>
+        <basePackageForTests>org.springframework.cloud.verifier.twitter.place</basePackageForTests>
+        <baseClassForTests>org.springframework.cloud.verifier.twitter.place.BaseMockMvcSpec</baseClassForTests>
     </configuration>
 </plugin>
 ----
@@ -294,7 +294,7 @@ To change default configuration just add `configuration` section to plugin defin
 ===== Important configuration options
 
  - **testMode** - defines mode for acceptance tests. By default `MockMvc` which is based on Spring's MockMvc. It can also be changed to `JaxRsClient` or to `Explicit` for real HTTP calls.
- - **basePackageForTests** - specifies base package for all generated tests. By default set to `org.springframework.cloud.contract.verifier.tests`.
+ - **basePackageForTests** - specifies base package for all generated tests. By default set to `org.springframework.cloud.verifier.tests`.
  - **ruleClassForTests** - specifies Rule which should be added to generated test classes.
  - **baseClassForTests** - base class for generated tests. By default `spock.lang.Specification` if using Spock tests.
  - **contractsDir** - directory containing contracts written using the GroovyDSL. By default `/src/test/resources/contracts`.
@@ -372,7 +372,7 @@ Sample configuration:
 [source,xml,indent=0]
 ----
 <plugin>
-    <groupId>org.springframework.cloud.contract.verifier</groupId>
+    <groupId>org.springframework.cloud.verifier</groupId>
     <artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
     <version>${verifier-plugin.version}</version>
     <executions>

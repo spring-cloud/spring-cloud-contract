@@ -144,12 +144,21 @@ class StubRunnerExecutor implements StubFinder {
 		Collection<Contract> contracts = repository.contracts
 		Integer port = stubRunnerOptions.port(stubConfiguration)
 		if (port) {
-			stubServer = new StubServer(port, stubConfiguration, mappings, contracts).start()
+			stubServer = new StubServer(port, stubConfiguration, mappings, contracts)
 		} else {
 			stubServer =  portScanner.tryToExecuteWithFreePort { int availablePort ->
-				return new StubServer(availablePort, stubConfiguration, mappings, contracts).start()
+				return new StubServer(availablePort, stubConfiguration, mappings, contracts)
 			}
 		}
+		if (!contracts.empty && !contracts.any { it.request }) {
+			log.debug("There are no HTTP related contracts. Won't start any servers")
+			return
+		}
+		if (contracts.empty) {
+			log.warn("There are no contracts in the published JAR. This is an unusual situation " +
+					"that's why will start the server - maybe you know what you're doing...")
+		}
+		stubServer = stubServer.start()
 	}
 
 }

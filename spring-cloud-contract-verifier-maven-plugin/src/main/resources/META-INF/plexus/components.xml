@@ -30,13 +30,13 @@
 				</phases>
 				<default-phases>
 					<process-test-resources>
-						org.springframework.cloud.contract:spring-cloud-contract-verifier-maven-plugin:${project.version}:convert
+						org.springframework.cloud:spring-cloud-contract-verifier-maven-plugin:${project.version}:convert
 					</process-test-resources>
 					<generate-test-sources>
-						org.springframework.cloud.contract:spring-cloud-contract-verifier-maven-plugin:${project.version}:generateTests
+						org.springframework.cloud:spring-cloud-contract-verifier-maven-plugin:${project.version}:generateTests
 					</generate-test-sources>
 					<package>
-						org.springframework.cloud.contract:spring-cloud-contract-verifier-maven-plugin:${project.version}:generateStubs
+						org.springframework.cloud:spring-cloud-contract-verifier-maven-plugin:${project.version}:generateStubs
 					</package>
 				</default-phases>
 			</configuration>
