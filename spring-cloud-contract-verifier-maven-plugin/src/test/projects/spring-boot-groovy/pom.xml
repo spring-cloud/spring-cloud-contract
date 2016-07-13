@@ -72,7 +72,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <accurest-plugin.version>${it-plugin.version}</accurest-plugin.version>
+        <spring-cloud-verifier-plugin.version>${it-plugin.version}</spring-cloud-verifier-plugin.version>
     </properties>
 
     <build>
@@ -85,7 +85,7 @@
             <plugin>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
-                <version>${accurest-plugin.version}</version>
+                <version>${spring-cloud-verifier-plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
