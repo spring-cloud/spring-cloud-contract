@@ -12,5 +12,5 @@ fi
 
 ./mvnw -s .settings.xml --fail-never dependency:go-offline || true
 cd $ROOT_FOLDER/spring-cloud-contact-verifier-gradle-plugin && ./gradlew resolveDependencies || true
-cd $ROOT_FOLDER/spring-cloud-contract-verifier-standalone-test-samples && ./mvnw --fail-never dependency:go-offline || true
-cd $ROOT_FOLDER/spring-cloud-contract-verifier-standalone-test-samples && ./downloadGradleDeps.sh
+cd $ROOT_FOLDER/samples/samples-standalone && ./mvnw --fail-never dependency:go-offline || true
+cd $ROOT_FOLDER/samples/samples-standalone && ./downloadGradleDeps.sh

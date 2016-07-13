@@ -154,8 +154,7 @@ video::130779882[vimeo]
 
 === Samples
 
-Here you can find some https://github.com/spring-cloud/spring-cloud-contract[working samples]. Check the `spring-cloud-contract-verifier-standalone-test-samples` folder
-and read readme of each project for more information.
+Here you can find some https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/[samples].
 
 === Why use Spring Cloud Contract Verifier and not X ?
 

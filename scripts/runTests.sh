@@ -10,12 +10,11 @@ if [[ ! -e "${ROOT_FOLDER}/.git" ]]; then
     ROOT_FOLDER=`pwd`
 fi
 
-CONTRACT_VERIFIER_VERSION=1.0.0.BUILD-SNAPSHOT
-export CONTRACT_VERIFIER_VERSION=${CONTRACT_VERIFIER_VERSION}
+export CONTRACT_VERIFIER_VERSION=${CONTRACT_VERIFIER_VERSION:-1.0.0.BUILD-SNAPSHOT}
 
 echo "Current Spring Cloud Contract Verifier version is ${CONTRACT_VERIFIER_VERSION}"
 
-cd spring-cloud-contract-verifier-standalone-test-samples
+cd samples/samples-standalone
 
 echo "Running Gradle tests"
 . ./runTests.sh
