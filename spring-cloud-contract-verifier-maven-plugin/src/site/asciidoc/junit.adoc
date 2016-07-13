@@ -9,7 +9,7 @@ Sample minimal configuration for Java Project with JUnit tests.
 include::../../../src/test/projects/spring-boot-java/pom.xml[tags=dependencies]
 ----
 
-=== Project configuration for Accurest with JUnit tests and stub publishing
+=== Project configuration for Spring Cloud Contract Verifier with JUnit tests and stub publishing
 
 [source,xml]
 ----
@@ -26,4 +26,4 @@ include::../../../src/test/projects/spring-boot-java/src/test/java/hello/BaseAcc
 
 === Project source code
 
-https://github.com/Codearte/accurest-maven-plugin/tree/master/src/test/projects/spring-boot-java
+https://github.com/spring-cloud/spring-cloud-contract/tree/master/spring-cloud-contract-verifier-maven-plugin/src/test/projects/spring-boot-java

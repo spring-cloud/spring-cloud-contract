@@ -3,7 +3,7 @@
 Sample more complex configuration for Java Project with JUnit tests.
 
 
-=== Project configuration for Accurest with JUnit tests and stub publishing
+=== Project configuration for Spring Cloud Contract Verifier with JUnit tests and stub publishing
 
 [source,xml]
 ----

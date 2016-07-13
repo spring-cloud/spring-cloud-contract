@@ -9,7 +9,7 @@ Sample minimal configuration for Groovy Project with Spock Specification
 include::../../../src/test/projects/spring-boot-groovy/pom.xml[tags=dependencies]
 ----
 
-=== Project configuration for Accurest, Groovy, Spock specifications and stub publishing
+=== Project configuration for Spring Cloud Contract Verifier, Groovy, Spock specifications and stub publishing
 
 
 [source,xml]
@@ -26,4 +26,4 @@ include::../../../src/test/projects/spring-boot-groovy/src/test/groovy/hello/Bas
 
 === Project source code
 
-https://github.com/Codearte/accurest-maven-plugin/tree/master/src/test/projects/spring-boot-groovy
+https://github.com/spring-cloud/spring-cloud-contract/tree/master/spring-cloud-contract-verifier-maven-plugin/src/test/projects/spring-boot-groovy

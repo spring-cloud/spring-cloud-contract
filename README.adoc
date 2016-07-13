@@ -295,3 +295,16 @@ Build both Maven and Gradle projects and run tests on standalone projects
 ```
 ./scripts/buildAndTest.sh
 ```
+```
+
+Generate documentation
+
+```
+./scripts/generateDocs.sh
+```
+
+Publish documentation to `gh-pages`
+
+```
+./docs/src/main/asciidoc/ghpages.sh
+```
