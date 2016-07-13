@@ -2,6 +2,10 @@ buildscript {
 	repositories {
 		mavenCentral()
 		mavenLocal()
+		maven { url "http://repo.spring.io/libs-snapshot-local" }
+		maven { url "http://repo.spring.io/libs-release-local" }
+		maven { url "http://repo.spring.io/libs-staging-local" }
+		maven { url 'http://repo.spring.io/plugins-snapshot' }
 		maven { url "http://repo.spring.io/plugins-release-local" }
 		maven { url "http://repo.spring.io/plugins-staging-local/" }
 	}

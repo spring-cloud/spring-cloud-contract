@@ -1,0 +1,4 @@
+include 'contract-verifier-sample-stream-sink',
+		'contract-verifier-sample-stream-source',
+		'http-client',
+		'http-server'
