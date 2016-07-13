@@ -1,3 +1,0 @@
-org.springframework.cloud.contract.verifier.maven.stubrunner.AetherStubDownloaderFactory
-org.springframework.cloud.contract.verifier.maven.stubrunner.LocalStubRunner
-org.springframework.cloud.contract.verifier.maven.stubrunner.RemoteStubRunner
