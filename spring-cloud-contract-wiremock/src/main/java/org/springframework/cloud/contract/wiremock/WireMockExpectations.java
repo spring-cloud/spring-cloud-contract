@@ -57,6 +57,15 @@ public class WireMockExpectations {
 		return this;
 	}
 
+	public WireMockExpectations prefix(String prefix) {
+		this.prefix = prefix;
+		return this;
+	}
+	public WireMockExpectations suffix(String suffix) {
+		this.suffix = suffix;
+		return this;
+	}
+
 	public MockRestServiceServer expect(String... locations) {
 		for (String location : locations) {
 			try {

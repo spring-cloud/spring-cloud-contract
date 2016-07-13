@@ -25,6 +25,8 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.Banner.Mode;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAutoConfiguration;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration;
@@ -36,8 +38,12 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.Ssl;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.boot.context.embedded.undertow.UndertowBuilderCustomizer;
+import org.springframework.boot.context.embedded.undertow.UndertowEmbeddedServletContainerFactory;
 import org.springframework.boot.context.event.ApplicationPreparedEvent;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.cloud.contract.wiremock.ContainerConfiguration.TomcatContainerConfiguration;
+import org.springframework.cloud.contract.wiremock.ContainerConfiguration.UndertowContainerConfiguration;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -56,6 +62,8 @@ import com.github.tomakehurst.wiremock.http.HttpServerFactory;
 import com.github.tomakehurst.wiremock.http.RequestHandler;
 import com.github.tomakehurst.wiremock.http.StubRequestHandler;
 import com.github.tomakehurst.wiremock.servlet.WireMockHandlerDispatchingServlet;
+
+import io.undertow.Undertow.Builder;
 
 /**
  * @author Dave Syer
@@ -182,7 +190,7 @@ class SpringBootHttpServer
 }
 
 @Configuration
-@Import({ ServerPropertiesAutoConfiguration.class, BeanPostProcessorsRegistrar.class,
+@Import({ TomcatContainerConfiguration.class, UndertowContainerConfiguration.class, ServerPropertiesAutoConfiguration.class, BeanPostProcessorsRegistrar.class,
 		ConfigurationPropertiesAutoConfiguration.class, JacksonAutoConfiguration.class,
 		HttpMessageConvertersAutoConfiguration.class,
 		PropertyPlaceholderAutoConfiguration.class })
@@ -231,20 +239,55 @@ class WiremockServerConfiguration {
 		};
 	}
 
-	@Bean
-	public EmbeddedServletContainerFactory servletContainer() {
-		// TODO support for other containers
-		TomcatEmbeddedServletContainerFactory tomcat = new TomcatEmbeddedServletContainerFactory();
-		if (this.options.httpsSettings().enabled()) {
-			tomcat.addAdditionalTomcatConnectors(createStandardConnector());
+}
+
+class ContainerConfiguration {
+
+	@Configuration
+	@ConditionalOnMissingBean(EmbeddedServletContainerFactory.class)
+	@ConditionalOnClass({TomcatEmbeddedServletContainerFactory.class, Connector.class})
+	static class TomcatContainerConfiguration {
+		@Autowired
+		private Options options;
+
+		@Bean
+		public EmbeddedServletContainerFactory servletContainer() {
+			TomcatEmbeddedServletContainerFactory tomcat = new TomcatEmbeddedServletContainerFactory();
+			if (this.options.httpsSettings().enabled()) {
+				tomcat.addAdditionalTomcatConnectors(createStandardConnector());
+			}
+			return tomcat;
 		}
-		return tomcat;
+
+		private Connector createStandardConnector() {
+			Connector connector = new Connector(
+					"org.apache.coyote.http11.Http11NioProtocol");
+			connector.setPort(this.options.portNumber());
+			return connector;
+		}
+
 	}
 
-	private Connector createStandardConnector() {
-		Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
-		connector.setPort(this.options.portNumber());
-		return connector;
+	@Configuration
+	@ConditionalOnMissingBean(EmbeddedServletContainerFactory.class)
+	@ConditionalOnClass({UndertowEmbeddedServletContainerFactory.class, Builder.class})
+	static class UndertowContainerConfiguration {
+		@Autowired
+		private Options options;
+
+		@Bean
+		public EmbeddedServletContainerFactory servletContainer() {
+			UndertowEmbeddedServletContainerFactory undertow = new UndertowEmbeddedServletContainerFactory();
+			if (this.options.httpsSettings().enabled()) {
+				undertow.addBuilderCustomizers(new UndertowBuilderCustomizer() {
+					@Override
+					public void customize(Builder builder) {
+						builder.addHttpListener(options.portNumber(), "localhost");
+					}
+				});
+			}
+			return undertow;
+		}
 	}
 
 }
