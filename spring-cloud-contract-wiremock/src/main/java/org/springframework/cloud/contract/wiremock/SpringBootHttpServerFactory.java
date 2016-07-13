@@ -19,6 +19,10 @@ package org.springframework.cloud.contract.wiremock;
 import javax.servlet.ServletContext;
 
 import org.apache.catalina.connector.Connector;
+import org.eclipse.jetty.server.ConnectionFactory;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -37,11 +41,14 @@ import org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfigurat
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.Ssl;
+import org.springframework.boot.context.embedded.jetty.JettyEmbeddedServletContainerFactory;
+import org.springframework.boot.context.embedded.jetty.JettyServerCustomizer;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.undertow.UndertowBuilderCustomizer;
 import org.springframework.boot.context.embedded.undertow.UndertowEmbeddedServletContainerFactory;
 import org.springframework.boot.context.event.ApplicationPreparedEvent;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.cloud.contract.wiremock.ContainerConfiguration.JettyContainerConfiguration;
 import org.springframework.cloud.contract.wiremock.ContainerConfiguration.TomcatContainerConfiguration;
 import org.springframework.cloud.contract.wiremock.ContainerConfiguration.UndertowContainerConfiguration;
 import org.springframework.context.ApplicationListener;
@@ -190,9 +197,10 @@ class SpringBootHttpServer
 }
 
 @Configuration
-@Import({ TomcatContainerConfiguration.class, UndertowContainerConfiguration.class, ServerPropertiesAutoConfiguration.class, BeanPostProcessorsRegistrar.class,
-		ConfigurationPropertiesAutoConfiguration.class, JacksonAutoConfiguration.class,
-		HttpMessageConvertersAutoConfiguration.class,
+@Import({ TomcatContainerConfiguration.class, JettyContainerConfiguration.class,
+		UndertowContainerConfiguration.class, ServerPropertiesAutoConfiguration.class,
+		BeanPostProcessorsRegistrar.class, ConfigurationPropertiesAutoConfiguration.class,
+		JacksonAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class,
 		PropertyPlaceholderAutoConfiguration.class })
 class WiremockServerConfiguration {
 
@@ -245,7 +253,7 @@ class ContainerConfiguration {
 
 	@Configuration
 	@ConditionalOnMissingBean(EmbeddedServletContainerFactory.class)
-	@ConditionalOnClass({TomcatEmbeddedServletContainerFactory.class, Connector.class})
+	@ConditionalOnClass({ TomcatEmbeddedServletContainerFactory.class, Connector.class })
 	static class TomcatContainerConfiguration {
 		@Autowired
 		private Options options;
@@ -270,7 +278,7 @@ class ContainerConfiguration {
 
 	@Configuration
 	@ConditionalOnMissingBean(EmbeddedServletContainerFactory.class)
-	@ConditionalOnClass({UndertowEmbeddedServletContainerFactory.class, Builder.class})
+	@ConditionalOnClass({ UndertowEmbeddedServletContainerFactory.class, Builder.class })
 	static class UndertowContainerConfiguration {
 		@Autowired
 		private Options options;
@@ -287,6 +295,44 @@ class ContainerConfiguration {
 				});
 			}
 			return undertow;
+		}
+	}
+
+	@Configuration
+	@ConditionalOnMissingBean(EmbeddedServletContainerFactory.class)
+	@ConditionalOnClass({ JettyEmbeddedServletContainerFactory.class,
+			ServerConnector.class })
+	static class JettyContainerConfiguration {
+		@Autowired
+		private Options options;
+
+		@Bean
+		public EmbeddedServletContainerFactory servletContainer() {
+			final JettyEmbeddedServletContainerFactory jetty = new JettyEmbeddedServletContainerFactory();
+			if (this.options.httpsSettings().enabled()) {
+				jetty.addServerCustomizers(new JettyServerCustomizer() {
+					@Override
+					public void customize(Server server) {
+						server.addConnector(createStandardConnector(server));
+					}
+				});
+			}
+			return jetty;
+		}
+
+		private org.eclipse.jetty.server.Connector createStandardConnector(
+				Server server) {
+			ServerConnector connector = new ServerConnector(server, -1, -1);
+			connector.setHost("localhost");
+			connector.setPort(options.portNumber());
+			for (ConnectionFactory connectionFactory : connector
+					.getConnectionFactories()) {
+				if (connectionFactory instanceof HttpConfiguration.ConnectionFactory) {
+					((HttpConfiguration.ConnectionFactory) connectionFactory)
+							.getHttpConfiguration().setSendServerVersion(false);
+				}
+			}
+			return connector;
 		}
 	}
 
