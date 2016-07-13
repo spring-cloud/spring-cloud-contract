@@ -831,8 +831,8 @@ Spring Cloud Contract Verifier stand out on the "market" of Consumer Driven Cont
 </td>
 <td class="content">
 Remember that inside the contract file you have to provide the fully qualified name to
-the <code>Contract</code> class and the <code>make</code> static import i.e. <code>org.springframework.cloud.contract.spec.Contract.make { &#8230;&#8203; }</code>.
-You can also provide an import to the <code>Contract</code> class <code>import org.springframework.cloud.contract.spec.Contract</code> and then call
+the <code>Contract</code> class and the <code>make</code> static import i.e. <code>org.springframework.cloud.spec.Contract.make { &#8230;&#8203; }</code>.
+You can also provide an import to the <code>Contract</code> class <code>import org.springframework.cloud.spec.Contract</code> and then call
   <code>Contract.make { &#8230;&#8203; }</code>
 </td>
 </tr>
@@ -901,7 +901,7 @@ a tiny subset of it (namely literals, method calls and closures). What&#8217;s m
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
-<p>You can easily compile Contracts to WireMock stubs mapping using standalone maven command: <code>mvn org.springframework.cloud.contract:spring-cloud-contract-verifier-maven-plugin:convert</code>.</p>
+<p>You can easily compile Contracts to WireMock stubs mapping using standalone maven command: <code>mvn org.springframework.cloud:spring-cloud-contract-verifier-maven-plugin:convert</code>.</p>
 </div>
 </blockquote>
 </div>
@@ -1538,7 +1538,7 @@ as presented below (note you can use either <code>$</code> or <code>value</code>
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'org.springframework.cloud.contract:spring-cloud-contract-verifier-gradle-plugin:${verifier_version}'
+		classpath 'org.springframework.cloud:spring-cloud-contract-verifier-gradle-plugin:${verifier_version}'
 	}
 }
 
@@ -1573,7 +1573,7 @@ dependencies {
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
-    &lt;groupId&gt;org.springframework.cloud.contract&lt;/groupId&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
     &lt;artifactId&gt;spring-cloud-contract-verifier-maven-plugin&lt;/artifactId&gt;
     &lt;executions&gt;
         &lt;execution&gt;
@@ -1640,7 +1640,7 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
     testMode = 'MockMvc'
     generatedTestSourcesDir = project.file("${project.buildDir}/generated-test-sources/contracts")
     contractsDslDir = "${project.rootDir}/src/test/resources/contracts"
-    basePackageForTests = 'org.springframework.cloud.contract.verifier.tests'
+    basePackageForTests = 'org.springframework.cloud.verifier.tests'
     stubsOutputDir = project.file("${project.buildDir}/stubs")
 }
 
@@ -1700,7 +1700,7 @@ publishing {
 <p><strong>staticImports</strong> - array with static imports that should be included in generated tests(for example ['org.myorg.Matchers.*']). By default empty array []</p>
 </li>
 <li>
-<p><strong>basePackageForTests</strong> - specifies base package for all generated tests. By default set to org.springframework.cloud.contract.verifier.tests</p>
+<p><strong>basePackageForTests</strong> - specifies base package for all generated tests. By default set to org.springframework.cloud.verifier.tests</p>
 </li>
 <li>
 <p><strong>baseClassForTests</strong> - base class for generated tests. By default <code>spock.lang.Specification</code> if using Spock tests.</p>
@@ -1821,7 +1821,7 @@ class LoanApplicationServiceSpec extends Specification {
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
-    &lt;groupId&gt;org.springframework.cloud.contract.verifier&lt;/groupId&gt;
+    &lt;groupId&gt;org.springframework.cloud.verifier&lt;/groupId&gt;
     &lt;artifactId&gt;spring-cloud-contract-verifier-maven-plugin&lt;/artifactId&gt;
     &lt;executions&gt;
         &lt;execution&gt;
@@ -1873,7 +1873,7 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
-    &lt;groupId&gt;org.springframework.cloud.contract.verifier&lt;/groupId&gt;
+    &lt;groupId&gt;org.springframework.cloud.verifier&lt;/groupId&gt;
     &lt;artifactId&gt;spring-cloud-contract-verifier-maven-plugin&lt;/artifactId&gt;
     &lt;executions&gt;
         &lt;execution&gt;
@@ -1885,8 +1885,8 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
         &lt;/execution&gt;
     &lt;/executions&gt;
     &lt;configuration&gt;
-        &lt;basePackageForTests&gt;org.springframework.cloud.contract.verifier.twitter.place&lt;/basePackageForTests&gt;
-        &lt;baseClassForTests&gt;org.springframework.cloud.contract.verifier.twitter.place.BaseMockMvcSpec&lt;/baseClassForTests&gt;
+        &lt;basePackageForTests&gt;org.springframework.cloud.verifier.twitter.place&lt;/basePackageForTests&gt;
+        &lt;baseClassForTests&gt;org.springframework.cloud.verifier.twitter.place.BaseMockMvcSpec&lt;/baseClassForTests&gt;
     &lt;/configuration&gt;
 &lt;/plugin&gt;</code></pre>
 </div>
@@ -1899,7 +1899,7 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
 <p><strong>testMode</strong> - defines mode for acceptance tests. By default <code>MockMvc</code> which is based on Spring&#8217;s MockMvc. It can also be changed to <code>JaxRsClient</code> or to <code>Explicit</code> for real HTTP calls.</p>
 </li>
 <li>
-<p><strong>basePackageForTests</strong> - specifies base package for all generated tests. By default set to <code>org.springframework.cloud.contract.verifier.tests</code>.</p>
+<p><strong>basePackageForTests</strong> - specifies base package for all generated tests. By default set to <code>org.springframework.cloud.verifier.tests</code>.</p>
 </li>
 <li>
 <p><strong>ruleClassForTests</strong> - specifies Rule which should be added to generated test classes.</p>
@@ -2001,7 +2001,7 @@ class  MvcSpec extends Specification {
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
-    &lt;groupId&gt;org.springframework.cloud.contract.verifier&lt;/groupId&gt;
+    &lt;groupId&gt;org.springframework.cloud.verifier&lt;/groupId&gt;
     &lt;artifactId&gt;spring-cloud-contract-verifier-maven-plugin&lt;/artifactId&gt;
     &lt;version&gt;${verifier-plugin.version}&lt;/version&gt;
     &lt;executions&gt;
@@ -2109,11 +2109,11 @@ All of our integrations are working with Spring but you can also set one yoursel
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">// for Apache Camel
-testCompile "org.springframework.cloud.contract:spring-cloud-contract-verifier-camel:${verifierVersion}"
+testCompile "org.springframework.cloud:spring-cloud-contract-verifier-camel:${verifierVersion}"
 // for Spring Integration
-testCompile "org.springframework.cloud.contract:spring-cloud-contract-verifier-integration:${verifierVersion}"
+testCompile "org.springframework.cloud:spring-cloud-contract-verifier-integration:${verifierVersion}"
 // for Spring Cloud Stream
-testCompile "org.springframework.cloud.contract:spring-cloud-contract-verifier-stream:${verifierVersion}"</code></pre>
+testCompile "org.springframework.cloud:spring-cloud-contract-verifier-stream:${verifierVersion}"</code></pre>
 </div>
 </div>
 </div>
@@ -2147,7 +2147,7 @@ frameworks than Spring.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">testCompile "org.springframework.cloud.contract:spring-cloud-contract-verifier-messaging-core:${verifierVersion}"</code></pre>
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">testCompile "org.springframework.cloud:spring-cloud-contract-verifier-messaging-core:${verifierVersion}"</code></pre>
 </div>
 </div>
 </div>
@@ -2644,7 +2644,7 @@ trigger the messaging labels and to access started WireMock servers.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">compile "org.springframework.cloud.contract:stub-runner-boot:${verifierVersion}"</code></pre>
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">compile "org.springframework.cloud:stub-runner-boot:${verifierVersion}"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2653,11 +2653,11 @@ trigger the messaging labels and to access started WireMock servers.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">// for Apache Camel
-compile "org.springframework.cloud.contract:spring-cloud-contract-stub-runner-camel:${verifierVersion}"
+compile "org.springframework.cloud:spring-cloud-contract-stub-runner-camel:${verifierVersion}"
 // for Spring Integration
-compile "org.springframework.cloud.contract:spring-cloud-contract-stub-runner-integration:${verifierVersion}"
+compile "org.springframework.cloud:spring-cloud-contract-stub-runner-integration:${verifierVersion}"
 // for Spring Cloud Stream
-compile "org.springframework.cloud.contract:spring-cloud-contract-stub-runner-stream:${verifierVersion}"</code></pre>
+compile "org.springframework.cloud:spring-cloud-contract-stub-runner-stream:${verifierVersion}"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2723,7 +2723,7 @@ class StubRunnerBootSpec extends Specification {
 			String response = RestAssuredMockMvc.get('/stubs').body.asString()
 		then:
 			def root = new JsonSlurper().parseText(response)
-			root.'org.springframework.cloud.contract.verifier.stubs:streamService:0.0.1-SNAPSHOT:stubs' instanceof Integer
+			root.'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs' instanceof Integer
 	}
 
 	def 'should return a port on which a [#stubId] stub is running'() {
@@ -2733,11 +2733,11 @@ class StubRunnerBootSpec extends Specification {
 			response.statusCode == 200
 			response.body.as(Integer) &gt; 0
 		where:
-			stubId &lt;&lt; ['org.springframework.cloud.contract.verifier.stubs:streamService:+:stubs',
-					   'org.springframework.cloud.contract.verifier.stubs:streamService:0.0.1-SNAPSHOT:stubs',
-					   'org.springframework.cloud.contract.verifier.stubs:streamService:+',
-					   'org.springframework.cloud.contract.verifier.stubs:streamService',
-					   'streamService']
+			stubId &lt;&lt; ['org.springframework.cloud.contract.verifier.stubs:bootService:+:stubs',
+					   'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs',
+					   'org.springframework.cloud.contract.verifier.stubs:bootService:+',
+					   'org.springframework.cloud.contract.verifier.stubs:bootService',
+					   'bootService']
 	}
 
 	def 'should return 404 when missing stub was called'() {
@@ -2752,7 +2752,7 @@ class StubRunnerBootSpec extends Specification {
 			String response = RestAssuredMockMvc.get('/triggers').body.asString()
 		then:
 			def root = new JsonSlurper().parseText(response)
-			root.'org.springframework.cloud.contract.verifier.stubs:streamService:0.0.1-SNAPSHOT:stubs'?.containsAll(["delete_book","return_book_1","return_book_2"])
+			root.'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs'?.containsAll(["delete_book","return_book_1","return_book_2"])
 	}
 
 	def 'should trigger a messaging label'() {
@@ -2778,7 +2778,7 @@ class StubRunnerBootSpec extends Specification {
 		and:
 			1 * stubRunning.trigger(stubId, 'delete_book')
 		where:
-			stubId &lt;&lt; ['org.springframework.cloud.contract.verifier.stubs:streamService:stubs', 'org.springframework.cloud.contract.verifier.stubs:streamService', 'streamService']
+			stubId &lt;&lt; ['org.springframework.cloud.contract.verifier.stubs:bootService:stubs', 'org.springframework.cloud.contract.verifier.stubs:bootService', 'bootService']
 	}
 
 	def 'should return when trigger is missing'() {
@@ -2787,7 +2787,7 @@ class StubRunnerBootSpec extends Specification {
 		then:
 			response.statusCode == 404
 			def root = new JsonSlurper().parseText(response.body.asString())
-			root.'org.springframework.cloud.contract.verifier.stubs:streamService:0.0.1-SNAPSHOT:stubs'?.containsAll(["delete_book","return_book_1","return_book_2"])
+			root.'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs'?.containsAll(["delete_book","return_book_1","return_book_2"])
 	}
 
 }</code></pre>
@@ -3031,7 +3031,7 @@ stubrunner.stubs.ids: org.springframework.cloud.contract.verifier.stubs:loanIssu
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract:stub-runner-spring-cloud</code></pre>
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud:stub-runner-spring-cloud</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3289,7 +3289,7 @@ routes.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">testCompile "org.springframework.cloud.contract:stub-runner-camel:${verifierVersion}"</code></pre>
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">testCompile "org.springframework.cloud:stub-runner-camel:${verifierVersion}"</code></pre>
 </div>
 </div>
 </div>
@@ -3466,7 +3466,7 @@ routes.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">testCompile "org.springframework.cloud.contract:stub-runner-integration:${verifierVersion}"</code></pre>
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">testCompile "org.springframework.cloud:stub-runner-integration:${verifierVersion}"</code></pre>
 </div>
 </div>
 </div>
@@ -3699,7 +3699,7 @@ channel name.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">testCompile "org.springframework.cloud.contract:stub-runner-stream:${verifierVersion}"</code></pre>
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">testCompile "org.springframework.cloud:stub-runner-stream:${verifierVersion}"</code></pre>
 </div>
 </div>
 </div>
@@ -3918,7 +3918,7 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-07-13 14:37:27 CEST
+Last updated 2016-07-13 15:50:53 CEST
 </div>
 </div>
 </body>
