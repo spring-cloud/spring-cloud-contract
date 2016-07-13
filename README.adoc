@@ -134,6 +134,10 @@ is under constant development.
 
 ==== Videos
 
+*Marcin Grzejszczak and Jakub Kubryński talking about Spring Cloud Contract Verifier*
+
+video::msRFcQM07-Y[youtube]
+
 *Olga Maciaszek-Sharma talking about Accurest (Spring Cloud Contract Verifier predecessor)*
 
 video::daafmTYFoDU[youtube]
@@ -146,6 +150,7 @@ video::130779882[vimeo]
 
 - http://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura[Slides from Marcin Grzejszczak's talk about Accurest]
 - http://toomuchcoding.com/blog/categories/accurest/[Accurest related articles from Marcin Grzejszczak's blog]
+- http://toomuchcoding.com/blog/categories/spring-cloud-contract/[Spring Cloud Contract related articles from Marcin Grzejszczak's blog]
 
 === Samples
 
@@ -169,13 +174,13 @@ Spring Cloud Contract Verifier stand out on the "market" of Consumer Driven Cont
 
 Here you can find interesting links related to Spring Cloud Contract Verifier:
 
-- https://github.com/Codearte/accurest[Spring Cloud Contract Verifier Github Repository]
+- https://github.com/spring-cloud/spring-cloud-contract/[Spring Cloud Contract Verifier Github Repository]
 - https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html[Spring Cloud Contract Verifier Documentation]
 - https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/deprecated[Accurest Legacy Documentation]
 - https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/#spring-cloud-contract-stub-runner[Spring Cloud Contract Stub Runner Documentation]
 - https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/#stub-runner-for-messaging[Spring Cloud Contract Stub Runner Messaging Documentation]
 - https://gitter.im/spring-cloud/spring-cloud-contract[Spring Cloud Contract Verifier Gitter]
-- https://github.com/Codearte/accurest-maven-plugin[Spring Cloud Contract Verifier Maven Plugin]
+- https://github.com/spring-cloud/spring-cloud-contract[Spring Cloud Contract Verifier Maven Plugin]
 
 == Documentation
 

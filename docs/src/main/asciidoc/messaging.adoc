@@ -147,4 +147,4 @@ include::{core_path}/spring-cloud-contract-verifier-gradle-plugin/src/test/resou
 
 ==== Maven Setup
 
-Example of Maven can be found in the https://github.com/Codearte/accurest-maven-plugin/=publishing-wiremock-stubs-projectf-stubsjar[Spring Cloud Contract Verifier Maven Plugin README]
+Example of Maven can be found in the https://github.com/spring-cloud/spring-cloud-contract/[Spring Cloud Contract Verifier README]

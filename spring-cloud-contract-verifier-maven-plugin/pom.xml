@@ -24,8 +24,7 @@
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<!--<dependency.locations.enabled>false</dependency.locations.enabled>-->
-		<mpir.skip>true</mpir.skip>
+		<dependency.locations.enabled>false</dependency.locations.enabled>
 
 		<spring.cloud.contract.verifier.version>1.0.0.BUILD-SNAPSHOT</spring.cloud.contract.verifier.version>
 		<aether.version>1.1.0</aether.version>
@@ -205,6 +204,22 @@
 						<version>1.5.3</version>
 					</dependency>
 				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-scm-publish-plugin</artifactId>
+				<configuration>
+					<content>${project.reporting.outputDirectory}</content>
+				</configuration>
+				<executions>
+					<execution>
+						<id>scm-publish</id>
+						<phase>site-deploy</phase>
+						<goals>
+							<goal>publish-scm</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

@@ -117,6 +117,10 @@ is under constant development.
 
 ==== Videos
 
+*Marcin Grzejszczak and Jakub Kubryński talking about Spring Cloud Contract Verifier*
+
+video::msRFcQM07-Y[youtube]
+
 *Olga Maciaszek-Sharma talking about Accurest (Spring Cloud Contract Verifier predecessor)*
 
 video::daafmTYFoDU[youtube]
@@ -129,6 +133,7 @@ video::130779882[vimeo]
 
 - http://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura[Slides from Marcin Grzejszczak's talk about Accurest]
 - http://toomuchcoding.com/blog/categories/accurest/[Accurest related articles from Marcin Grzejszczak's blog]
+- http://toomuchcoding.com/blog/categories/spring-cloud-contract/[Spring Cloud Contract related articles from Marcin Grzejszczak's blog]
 
 === Samples
 
