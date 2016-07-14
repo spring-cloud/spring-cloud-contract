@@ -26,9 +26,12 @@ import org.apache.camel.component.jms.JmsConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubFinder
+import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
+import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureContractVerifierMessaging;
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
@@ -39,6 +42,9 @@ import spock.lang.Specification
  * @author Marcin Grzejszczak
  */
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
+@IntegrationTest("debug=true")
+@AutoConfigureStubRunner
+@AutoConfigureContractVerifierMessaging
 class CamelStubRunnerSpec extends Specification {
 
 	@Autowired StubFinder stubFinder

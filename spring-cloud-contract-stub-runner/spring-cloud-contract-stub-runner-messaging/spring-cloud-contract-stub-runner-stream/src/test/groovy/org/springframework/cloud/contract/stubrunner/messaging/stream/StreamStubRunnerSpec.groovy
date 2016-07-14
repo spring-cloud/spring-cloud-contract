@@ -26,6 +26,7 @@ import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
+import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureContractVerifierMessaging;
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.messaging.Sink
 import org.springframework.cloud.stream.messaging.Source
@@ -45,6 +46,7 @@ import java.util.concurrent.TimeUnit
 @ContextConfiguration(classes = StreamStubRunnerSpec, loader = SpringBootContextLoader)
 @EnableBinding([Sink, Source])
 @AutoConfigureStubRunner
+@AutoConfigureContractVerifierMessaging
 class StreamStubRunnerSpec extends Specification {
 
 	@Autowired StubFinder stubFinder

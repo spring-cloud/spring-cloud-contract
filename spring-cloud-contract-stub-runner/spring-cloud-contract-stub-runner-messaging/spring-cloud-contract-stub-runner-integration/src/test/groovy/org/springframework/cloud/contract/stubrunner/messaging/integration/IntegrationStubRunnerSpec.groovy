@@ -23,8 +23,10 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubFinder
+import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
+import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureContractVerifierMessaging;
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.ImportResource
@@ -41,6 +43,8 @@ import java.util.concurrent.TimeUnit
 @EnableAutoConfiguration
 @ContextConfiguration(classes = IntegrationStubRunnerSpec, loader = SpringBootContextLoader)
 @ImportResource("classpath*:integration-context.xml")
+@AutoConfigureStubRunner
+@AutoConfigureContractVerifierMessaging
 class IntegrationStubRunnerSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
