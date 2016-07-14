@@ -28,6 +28,7 @@ project.version = findProperty('verifierVersion') ?: '1.0.0.BUILD-SNAPSHOT'
 apply from: "$rootDir/gradle/release.gradle"
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
+apply plugin: "jacoco"
 
 group = 'org.springframework.cloud'
 
@@ -120,6 +121,10 @@ configurations {
 			}
 		}
 	}
+}
+
+jacoco {
+	toolVersion = "0.7.7.201606060606"
 }
 
 task resolveDependencies {
