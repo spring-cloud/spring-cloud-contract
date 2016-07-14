@@ -9,7 +9,7 @@ buildscript {
 	}
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.4.0.BUILD-SNAPSHOT"
-		classpath "org.springframework.cloud:spring-cloud-contract-verifier-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
+		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
 	}
 }
 
@@ -27,7 +27,7 @@ repositories {
 
 apply plugin: 'groovy'
 apply plugin: 'spring-boot'
-apply plugin: 'contract-verifier'
+apply plugin: 'spring-cloud-contract'
 apply plugin: 'maven-publish'
 
 dependencyManagement {

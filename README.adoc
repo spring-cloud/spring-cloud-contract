@@ -245,8 +245,8 @@ Here you can find the Spring Cloud Contract folder structure
 ├── spring-cloud-contract-spec
 ├── spring-cloud-contract-stub-runner
 ├── spring-cloud-contract-verifier
-├── spring-cloud-contract-verifier-gradle-plugin
-├── spring-cloud-contract-verifier-maven-plugin
+├── spring-cloud-contract-gradle-plugin
+├── spring-cloud-contract-maven-plugin
 └── spring-cloud-contract-verifier-standalone-test-samples
 ```
 
@@ -255,8 +255,8 @@ Here you can find the Spring Cloud Contract folder structure
  - `spring-cloud-contract-spec` - contains specification modules (contains concept of a Contract)
  - `spring-cloud-contract-stub-runner` - contains Stub Runner related modules
  - `spring-cloud-contract-verifier` - core of the `Spring Cloud Contract Verifier` functionality
- - `spring-cloud-contract-verifier-gradle-plugin` - Gradle plugin for `Spring Cloud Contract Verifier`
- - `spring-cloud-contract-verifier-maven-plugin` - Maven plugin for `Spring Cloud Contract Verifier`
+ - `spring-cloud-contract-gradle-plugin` - Gradle plugin for `Spring Cloud Contract Verifier`
+ - `spring-cloud-contract-maven-plugin` - Maven plugin for `Spring Cloud Contract Verifier`
  - `spring-cloud-contract-verifier-standalone-test-samples` - standalone test sample that use `Spring Cloud Contract Verifier`
 
 === Commands
@@ -270,7 +270,7 @@ To build the core functionality together with Maven Plugin you can run
 To build the Gradle Plugin
 
 ```
-cd spring-cloud-contract-verifier-gradle-plugin
+cd spring-cloud-contract-gradle-plugin
 ./gradlew clean build
 ```
 

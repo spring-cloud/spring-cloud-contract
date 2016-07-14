@@ -1,0 +1,35 @@
+= Usage
+
+== Converting Spring Cloud Contract DSL into WireMock stub mappings
+
+   mvn org.springramework.cloud:spring-cloud-contract-maven-plugin:convert
+
+or shortly footnoteref:[prefix,Additional configuration inside `~/.m2/settings.xml` is required: `<pluginGroups><pluginGroup>io.codearte.Spring Cloud Contract</pluginGroup></pluginGroups>`.]
+
+    mvn spring-cloud-contract-verifier:convert
+
+For more information please go to the Spring Cloud Contract Wiki or Plugin Documentation Site.
+
+== Spring Cloud Contract Stub Runner
+
+Run stubs mappings from current directory:
+
+    mvn org.springramework.cloud:spring-cloud-contract-maven-plugin:run
+
+or shortly footnoteref:[prefix]
+
+    mvn spring-cloud-contract-verifier:run
+
+== Running stubs from repository
+
+    mvn spring-cloud-contract-verifier:run -Dstubs="org.springframework:gs-rest-service"
+
+where `org.springframework:gs-rest-service` is artifact with stubs classifier contains WireMock mappings.
+
+== Project configuration
+
+[source,xml]
+----
+include::../../../src/test/projects/spring-boot-java/pom.xml[tags=plugin]
+----
+

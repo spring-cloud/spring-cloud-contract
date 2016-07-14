@@ -16,4 +16,4 @@ echo "Building Maven stuff with additional opts [$ADDITIONAL_MAVEN_OPTS]"
 ./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Psonar --batch-mode $ADDITIONAL_MAVEN_OPTS
 
 echo "Building Gradle plugin"
-(cd *-gradle-plugin; ./gradlew clean build install jacocoTestReport)
+(cd */*-gradle-plugin; ./gradlew clean build install jacocoTestReport)

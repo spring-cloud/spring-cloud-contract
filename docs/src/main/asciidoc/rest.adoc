@@ -19,7 +19,7 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'org.springframework.cloud:spring-cloud-contract-verifier-gradle-plugin:${verifier_version}'
+		classpath 'org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}'
 	}
 }
 
@@ -52,7 +52,7 @@ repositories {
 ----
 <plugin>
     <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
+    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
     <executions>
         <execution>
             <goals>
@@ -66,7 +66,7 @@ repositories {
 ----
 
 
-Read more: https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-verifier-maven-plugin/[spring-cloud-contract-verifier-maven-plugin]
+Read more: https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/[spring-cloud-contract-maven-plugin]
 
 ===== Add stubs
 
@@ -166,7 +166,7 @@ When using Spring Cloud Contract Verifier in default MockMvc you need to create 
 
 [source,groovy,indent=0]
 ----
-include::{core_path}/spring-cloud-contract-verifier-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/org/springframework/cloud/contract/verifier/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
+include::{core_path}/spring-cloud-contract-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/org/springframework/cloud/contract/verifier/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
 ----
 
 In case of using `Explicit` mode, you can use base class to initialize the whole tested app similarly as in regular integration tests. In case of `JAXRSCLIENT` mode this base class
@@ -230,7 +230,7 @@ Underneath LoanApplication makes a call to FraudDetection service. This request 
 ----
 <plugin>
     <groupId>org.springframework.cloud.verifier</groupId>
-    <artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
+    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
     <executions>
         <execution>
             <goals>
@@ -243,7 +243,7 @@ Underneath LoanApplication makes a call to FraudDetection service. This request 
 </plugin>
 ----
 
-Read more: https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-verifier-maven-plugin/[spring-cloud-contract-verifier-maven-plugin]
+Read more: https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/[spring-cloud-contract-maven-plugin]
 
 ==== Add stubs
 
@@ -274,7 +274,7 @@ To change default configuration just add `configuration` section to plugin defin
 ----
 <plugin>
     <groupId>org.springframework.cloud.verifier</groupId>
-    <artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
+    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
     <executions>
         <execution>
             <goals>
@@ -300,7 +300,7 @@ To change default configuration just add `configuration` section to plugin defin
  - **contractsDir** - directory containing contracts written using the GroovyDSL. By default `/src/test/resources/contracts`.
  - **testFramework** - the target test framework to be used; currently Spock and JUnit are supported with Spock being the default framework
 
-For complete information take a look at https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-verifier-maven-plugin/plugin-info.html[Plugin Documentation]
+For complete information take a look at https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/plugin-info.html[Plugin Documentation]
 
 ===== Base class for tests
 
@@ -373,7 +373,7 @@ Sample configuration:
 ----
 <plugin>
     <groupId>org.springframework.cloud.verifier</groupId>
-    <artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
+    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
     <version>${verifier-plugin.version}</version>
     <executions>
         <execution>

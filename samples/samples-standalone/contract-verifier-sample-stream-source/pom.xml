@@ -82,7 +82,7 @@
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
+				<artifactId>spring-cloud-contract-maven-plugin</artifactId>
 				<version>${spring-cloud-contract.version}</version>
 				<extensions>true</extensions>
 				<configuration>
@@ -117,7 +117,7 @@
 								<pluginExecution>
 									<pluginExecutionFilter>
 										<groupId>org.springframework.cloud</groupId>
-										<artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
+										<artifactId>spring-cloud-contract-maven-plugin</artifactId>
 										<versionRange>[1.0.0.BUILD-SNAPSHOT,)</versionRange>
 										<goals>
 											<goal>convert</goal>

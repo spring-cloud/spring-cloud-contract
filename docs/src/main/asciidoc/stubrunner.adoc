@@ -32,7 +32,7 @@ Example of Spring Cloud Contract Verifier Gradle setup:
 
 [source,groovy,indent=0]
 ----
-include::{core_path}/spring-cloud-contract-verifier-gradle-plugin/src/test/resources/functionalTest/scenarioProject/build.gradle[tags=jar_setup,indent=0]
+include::{core_path}/spring-cloud-contract-gradle-plugin/src/test/resources/functionalTest/scenarioProject/build.gradle[tags=jar_setup,indent=0]
 ----
 
 ==== Maven

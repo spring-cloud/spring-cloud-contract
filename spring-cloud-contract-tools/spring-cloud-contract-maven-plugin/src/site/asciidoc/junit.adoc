@@ -1,0 +1,29 @@
+== Java Project with JUnit Tests
+
+Sample minimal configuration for Java Project with JUnit tests.
+
+=== Test dependencies for generated contract verification tests
+
+[source,xml]
+----
+include::../../../src/test/projects/spring-boot-java/pom.xml[tags=dependencies]
+----
+
+=== Project configuration for Spring Cloud Contract Verifier with JUnit tests and stub publishing
+
+[source,xml]
+----
+include::../../../src/test/projects/spring-boot-java/pom.xml[tags=plugin]
+----
+
+=== Base Test class
+
+[source,java]
+----
+include::../../../src/test/projects/spring-boot-java/src/test/java/hello/BaseAccurest.java[]
+----
+
+
+=== Project source code
+
+https://github.com/spring-cloud/spring-cloud-contract/tree/master/spring-cloud-contract-maven-plugin/src/test/projects/spring-boot-java

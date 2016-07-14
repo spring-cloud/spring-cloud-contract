@@ -1,0 +1,69 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+}
+
+apply plugin: 'groovy'
+apply plugin: 'spring-cloud-contract'
+apply plugin: 'maven-publish'
+
+group = 'org.springframework.cloud.testprojects'
+
+ext {
+	contractsDir = file("repository/mappings")
+	stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/repository/")
+}
+
+configurations {
+	all {
+		resolutionStrategy {
+			eachDependency { DependencyResolveDetails details ->
+				// To prevent an accidental usage of groovy-all.jar and groovy.jar in different versions
+				// all modularized Groovy jars are replaced with groovy-all.jar by default.
+				if (details.requested.group == 'org.codehaus.groovy' && details.requested.name != "groovy-all") {
+					details.useTarget("org.codehaus.groovy:groovy-all:${details.requested.version}")
+				}
+			}
+		}
+	}
+}
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+}
+
+dependencies {
+	compile "org.springframework:spring-web:$springVersion"
+	compile "org.springframework:spring-context-support:$springVersion"
+	compile "org.codehaus.groovy:groovy-all:2.4.5"
+	compile 'com.jayway.jsonpath:json-path-assert:2.2.0'
+
+	testCompile "com.github.tomakehurst:wiremock:2.1.7"
+	testCompile "org.spockframework:spock-spring:1.0-groovy-2.4"
+	testCompile "com.jayway.restassured:rest-assured:$restAssuredVersion"
+	testCompile "com.jayway.restassured:spring-mock-mvc:$restAssuredVersion"
+	testCompile "ch.qos.logback:logback-classic:1.1.2"
+}
+
+contractVerifier {
+	baseClassForTests = 'org.springframework.cloud.contract.verifier.twitter.places.BaseMockMvcSpec'
+	basePackageForTests = 'contracts'
+	contractsDslDir = contractsDir
+//	generatedTestSourcesDir = file("${project.rootDir}/src/test/groovy/")
+	stubsOutputDir = stubsOutputDirRoot
+	targetFramework = 'Spock'
+}
+
+generateContractTests.dependsOn generateWireMockClientStubs
+
+wrapper {
+	gradleVersion '2.2.1'
+}
+
+test {
+	testLogging {
+		exceptionFormat = 'full'
+	}
+}

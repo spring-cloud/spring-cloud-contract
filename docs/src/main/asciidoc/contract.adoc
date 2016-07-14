@@ -24,7 +24,7 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 
 Not all features of the DSL are used in example above. If you didn't find what you are looking for, please check next paragraphs on this page.
 
-> You can easily compile Contracts to WireMock stubs mapping using standalone maven command: `mvn org.springframework.cloud:spring-cloud-contract-verifier-maven-plugin:convert`.
+> You can easily compile Contracts to WireMock stubs mapping using standalone maven command: `mvn org.springframework.cloud:spring-cloud-contract-maven-plugin:convert`.
 
 === Limitations
 
@@ -158,7 +158,7 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 
 [source,groovy,indent=0]
 ----
-include::{core_path}/spring-cloud-contract-verifier-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/org/springframework/cloud/contract/verifier/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
+include::{core_path}/spring-cloud-contract-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/org/springframework/cloud/contract/verifier/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
 ----
 
 === JAX-RS support

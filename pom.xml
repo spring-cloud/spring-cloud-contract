@@ -35,7 +35,7 @@
 		<module>spring-cloud-contract-verifier</module>
 		<module>spring-cloud-contract-spec</module>
 		<module>spring-cloud-contract-stub-runner</module>
-		<module>spring-cloud-contract-verifier-maven-plugin</module>
+		<module>spring-cloud-contract-tools</module>
 		<module>samples</module>
 	</modules>
 

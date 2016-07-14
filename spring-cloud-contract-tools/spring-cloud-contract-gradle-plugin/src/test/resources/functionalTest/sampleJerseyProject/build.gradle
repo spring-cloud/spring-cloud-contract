@@ -1,0 +1,119 @@
+/*
+ *  Copyright 2013-2016 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+buildscript {
+	repositories {
+		mavenLocal()
+		mavenCentral()
+	}
+	dependencies {
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.2.6.RELEASE"
+	}
+}
+
+group = 'org.springframework.cloud.testprojects'
+
+ext {
+	restAssuredVersion = '2.5.0'
+	spockVersion = '1.0-groovy-2.4'
+	wiremockVersion = '2.0.10-beta'
+
+	contractVerifierStubsBaseDirectory = 'src/test/resources/stubs'
+}
+
+subprojects {
+	apply plugin: 'groovy'
+
+	repositories {
+		mavenCentral()
+		mavenLocal()
+	}
+
+	dependencies {
+		testCompile 'org.codehaus.groovy:groovy-all:2.4.5'
+		testCompile "org.spockframework:spock-core:$spockVersion"
+		testCompile 'junit:junit:4.12'
+		testCompile "com.github.tomakehurst:wiremock:$wiremockVersion"
+	}
+}
+
+configure([project(':fraudDetectionService'), project(':loanApplicationService')]) {
+	apply plugin: 'spring-boot'
+	apply plugin: 'spring-cloud-contract'
+	apply plugin: 'maven-publish'
+
+	ext {
+		contractsDir = file("mappings")
+		stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
+	}
+
+	contractVerifier {
+		targetFramework = 'Spock'
+		testMode = 'JaxRsClient'
+		baseClassForTests = 'org.springframework.cloud.MvcSpec'
+		contractsDslDir = file("${project.projectDir.absolutePath}/mappings/")
+		generatedTestSourcesDir = file("${project.buildDir}/generated-test-sources/")
+		stubsOutputDir = stubsOutputDirRoot
+	}
+
+	jar {
+		version = '0.0.1'
+	}
+
+	configurations {
+		compile.exclude module: "spring-boot-starter-tomcat"
+	}
+
+	dependencies {
+		compile 'org.glassfish.jersey.containers:jersey-container-jetty-http:2.15'
+		compile 'org.springframework.boot:spring-boot-starter-jersey'
+		compile 'org.springframework.boot:spring-boot-starter-jetty'
+
+		testRuntime "org.spockframework:spock-spring:$spockVersion"
+
+		compile 'org.glassfish.jersey.connectors:jersey-apache-connector:2.15'
+		testCompile 'org.springframework:spring-test'
+	}
+
+	task cleanup(type: Delete) {
+		delete 'src/test/resources/mappings', 'src/test/resources/stubs'
+	}
+
+	clean.dependsOn('cleanup')
+
+	test {
+		testLogging {
+			exceptionFormat = 'full'
+		}
+	}
+
+}
+
+configure(project(':fraudDetectionService')) {
+	test.dependsOn('generateWireMockClientStubs')
+}
+
+configure(project(':loanApplicationService')) {
+
+	task copyCollaboratorStubs(type: Copy) {
+		File fraudBuildDir = project(':fraudDetectionService').buildDir
+		from(new File(fraudBuildDir, "/production/${project(':fraudDetectionService').name}-stubs/"))
+		into "src/test/resources/"
+	}
+
+	generateContractTests.dependsOn('copyCollaboratorStubs')
+}
+
