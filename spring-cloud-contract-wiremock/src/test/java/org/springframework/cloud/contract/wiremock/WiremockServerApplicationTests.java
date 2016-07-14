@@ -23,7 +23,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 public class WiremockServerApplicationTests {
 
 	@ClassRule
-	public static WireMockClassRule wiremock = new WireMockClassRule(WireMockSpring.config());
+	public static WireMockClassRule wiremock = new WireMockClassRule(WireMockSpring.options());
 
 	@Autowired
 	private Service service;

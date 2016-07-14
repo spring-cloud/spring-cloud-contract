@@ -47,7 +47,7 @@ class StubServer {
 
 	private WireMockConfiguration config() {
 		if (ClassUtils.isPresent('org.springframework.cloud.contract.wiremock.WireMockSpring', null)) {
-			return WireMockSpring.config()
+			return WireMockSpring.options()
 		}
 		return new WireMockConfiguration()
 	}

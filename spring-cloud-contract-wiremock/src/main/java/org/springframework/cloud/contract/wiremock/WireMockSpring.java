@@ -46,7 +46,7 @@ public abstract class WireMockSpring {
 
 	private static boolean initialized = false;
 
-	public static WireMockConfiguration config() {
+	public static WireMockConfiguration options() {
 		if (!initialized) {
 			if (ClassUtils.isPresent("org.apache.http.conn.ssl.NoopHostnameVerifier",
 					null)) {

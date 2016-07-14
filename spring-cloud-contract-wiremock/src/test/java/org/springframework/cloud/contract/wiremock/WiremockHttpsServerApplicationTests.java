@@ -23,7 +23,7 @@ public class WiremockHttpsServerApplicationTests {
 
 	@ClassRule
 	public static WireMockClassRule wiremock = new WireMockClassRule(
-			WireMockSpring.config().httpsPort(8443));
+			WireMockSpring.options().httpsPort(8443));
 
 	@Autowired
 	private Service service;
