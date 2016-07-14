@@ -27,6 +27,7 @@ ext {
 project.version = findProperty('contractVerifierVersion') ?: '1.0.0.BUILD-SNAPSHOT'
 apply from: "$rootDir/gradle/release.gradle"
 apply plugin: 'groovy'
+apply plugin: 'eclipse'
 
 group = 'org.springframework.cloud'
 

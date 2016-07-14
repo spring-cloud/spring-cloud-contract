@@ -18,6 +18,7 @@ package org.springframework.cloud.samples.book
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationContextLoader
+import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureContractVerifierMessaging;
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc
@@ -26,6 +27,7 @@ import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc
  * @author Marcin Grzejszczak
  */
 @ContextConfiguration(classes = [IntegrationMessagingApplication], loader = SpringApplicationContextLoader)
+@AutoConfigureContractVerifierMessaging
 abstract class MessagingBaseSpec extends Specification {
 
 	// BASE CLASS WOULD HAVE THIS:
