@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes=WiremockTestsApplication.class, properties="app.baseUrl=http://localhost:8080", webEnvironment=WebEnvironment.NONE)
 @DirtiesContext
 @AutoConfigureWireMock
-public class WiremockImportApplicationTests {
+public class AutoConfigureWireMockApplicationTests {
 
 	@Autowired
 	private Service service;
