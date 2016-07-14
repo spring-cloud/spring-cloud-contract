@@ -18,21 +18,19 @@ package com.example.sink;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.contract.stubrunner.StubTrigger;
+import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import com.example.sink.ContractVerifierSampleStreamSinkApplication;
 
 /**
  * @author Marius Bogoevici
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ContractVerifierSampleStreamSinkApplication.class)
-@IntegrationTest("spring.cloud.stream.bindings.input.destination=sensor-data")
+@SpringBootTest(classes = ContractVerifierSampleStreamSinkApplication.class, webEnvironment = WebEnvironment.NONE, properties = "spring.cloud.stream.bindings.input.destination=sensor-data")
+@AutoConfigureStubRunner
 public class MessageConsumedTests {
 
 	@Autowired

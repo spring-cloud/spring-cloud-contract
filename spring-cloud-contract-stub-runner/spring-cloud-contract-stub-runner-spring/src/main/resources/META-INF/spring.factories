@@ -1,3 +1,3 @@
 # Auto Configuration
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner=\
 org.springframework.cloud.contract.stubrunner.spring.StubRunnerConfiguration

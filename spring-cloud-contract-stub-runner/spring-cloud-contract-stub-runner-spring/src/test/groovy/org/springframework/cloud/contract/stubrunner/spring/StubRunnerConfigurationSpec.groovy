@@ -18,18 +18,19 @@ package org.springframework.cloud.contract.stubrunner.spring
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.SpringApplicationContextLoader
+import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Import
 import org.springframework.test.context.ContextConfiguration
+
 import spock.lang.Specification
 
 /**
  * @author Marcin Grzejszczak
  */
 // tag::test[]
-@ContextConfiguration(classes = Config, loader = SpringApplicationContextLoader)
+@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
+@AutoConfigureStubRunner
 class StubRunnerConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder

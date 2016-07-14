@@ -149,9 +149,15 @@
 					<artifactId>coveralls-maven-plugin</artifactId>
 					<version>4.1.0</version>
 				</plugin>
+				<plugin>
+					<groupId>org.codehaus.gmavenplus</groupId>
+					<artifactId>gmavenplus-plugin</artifactId>
+					<version>1.5</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
+
 
 	<profiles>
 		<profile>

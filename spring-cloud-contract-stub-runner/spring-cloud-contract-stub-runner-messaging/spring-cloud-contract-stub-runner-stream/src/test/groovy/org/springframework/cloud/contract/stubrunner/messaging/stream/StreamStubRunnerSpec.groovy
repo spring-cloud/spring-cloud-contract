@@ -23,6 +23,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubFinder
+import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
 import org.springframework.cloud.stream.annotation.EnableBinding
@@ -43,6 +44,7 @@ import java.util.concurrent.TimeUnit
 @EnableAutoConfiguration
 @ContextConfiguration(classes = StreamStubRunnerSpec, loader = SpringBootContextLoader)
 @EnableBinding([Sink, Source])
+@AutoConfigureStubRunner
 class StreamStubRunnerSpec extends Specification {
 
 	@Autowired StubFinder stubFinder

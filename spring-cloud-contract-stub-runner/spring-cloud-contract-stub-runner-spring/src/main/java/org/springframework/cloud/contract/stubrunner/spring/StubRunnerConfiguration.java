@@ -41,7 +41,7 @@ import org.springframework.core.io.Resource;
 @ConditionalOnMissingBean(type="org.springframework.cloud.contract.wiremock.WiremockServerConfiguration")
 public class StubRunnerConfiguration {
 
-	@Autowired(required = false) ContractVerifierMessaging contractVerifierMessaging;
+	@Autowired(required = false) ContractVerifierMessaging<?,?> contractVerifierMessaging;
 	@Autowired(required = false) StubDownloader stubDownloader;
 
 	/**

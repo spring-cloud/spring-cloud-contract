@@ -1,26 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.springframework.cloud</groupId>
-	<artifactId>spring-cloud-contract-samples</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<parent>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-contract-samples</artifactId>
+		<version>1.0.0.BUILD-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<artifactId>spring-cloud-contract-samples-standalone</artifactId>
 	<packaging>pom</packaging>
 
-	<name>Spring Cloud Contract Verifier Standalone Test Samples</name>
-	<description>Spring Cloud Contract Verifier Standalone Test Samples used for end to end tests</description>
+	<name>Spring Cloud Contract Standalone Test Samples</name>
+	<description>Spring Cloud Contract Standalone Test Samples used for end to end tests</description>
 
 	<modules>
 		<module>http-server</module>
 		<module>http-client</module>
-		<module>contract-verifier-sample-stream-sink</module>
 		<module>contract-verifier-sample-stream-source</module>
+		<module>contract-verifier-sample-stream-sink</module>
 	</modules>
 
-	<properties>
-		<maven.install.skip>true</maven.install.skip>
-	</properties>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.codehaus.gmavenplus</groupId>
+					<artifactId>gmavenplus-plugin</artifactId>
+					<version>1.5</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>testCompile</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 
 </project>
