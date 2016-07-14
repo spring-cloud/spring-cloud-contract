@@ -20,17 +20,24 @@ import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMes
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @author Marcin Grzejszczak
  */
+@Configuration
 public class ContractVerifierIntegrationConfiguration {
 
-	@Bean ContractVerifierMessaging contractVerifierMessaging(ApplicationContext applicationContext, ContractVerifierMessageBuilder contractVerifierMessageBuilder) {
-		return new ContractVerifierIntegrationMessaging(applicationContext, contractVerifierMessageBuilder);
+	@Bean
+	public ContractVerifierMessaging<?, ?> contractVerifierMessaging(
+			ApplicationContext applicationContext,
+			ContractVerifierMessageBuilder<?,?> contractVerifierMessageBuilder) {
+		return new ContractVerifierIntegrationMessaging<>(applicationContext,
+				contractVerifierMessageBuilder);
 	}
 
-	@Bean ContractVerifierMessageBuilder contractVerifierMessageBuilder() {
-		return new ContractVerifierIntegrationMessageBuilder();
+	@Bean
+	public ContractVerifierMessageBuilder<?, ?> contractVerifierMessageBuilder() {
+		return new ContractVerifierIntegrationMessageBuilder<>();
 	}
 }

@@ -16,21 +16,21 @@
 
 package org.springframework.cloud.contract.verifier.messaging.stream;
 
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage;
+import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
+import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging;
 import org.springframework.cloud.stream.config.BindingProperties;
 import org.springframework.cloud.stream.config.ChannelBindingServiceProperties;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Marcin Grzejszczak
@@ -42,18 +42,16 @@ public class ContractVerifierStreamMessaging<T> implements
 
 	private final ApplicationContext context;
 	private final MessageCollector messageCollector;
-	private final ContractVerifierMessageBuilder builder;
+	private final ContractVerifierMessageBuilder<T, Message<T>> builder;
 
 	@Autowired
-	@SuppressWarnings("unchecked")
-	public ContractVerifierStreamMessaging(ApplicationContext context, ContractVerifierMessageBuilder builder) {
+	public ContractVerifierStreamMessaging(ApplicationContext context, ContractVerifierMessageBuilder<T, Message<T>> builder) {
 		this.context = context;
 		this.messageCollector = context.getBean(MessageCollector.class);
 		this.builder = builder;
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void send(T payload, Map<String, Object> headers, String destination) {
 		send(builder.create(payload, headers), destination);
 	}
@@ -75,7 +73,7 @@ public class ContractVerifierStreamMessaging<T> implements
 	public ContractVerifierMessage<T, Message<T>> receiveMessage(String destination, long timeout, TimeUnit timeUnit) {
 		try {
 			MessageChannel messageChannel = context.getBean(resolvedDestination(destination), MessageChannel.class);
-			return builder.create(messageCollector.forChannel(messageChannel).poll(timeout, timeUnit));
+			return builder.create((Message<T>) messageCollector.forChannel(messageChannel).poll(timeout, timeUnit));
 		} catch (Exception e) {
 			log.error("Exception occurred while trying to read a message from " +
 					" a channel with name [" + destination + "]", e);
@@ -102,13 +100,11 @@ public class ContractVerifierStreamMessaging<T> implements
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public ContractVerifierMessage<T, Message<T>> create(T t, Map<String, Object> headers) {
 		return builder.create(t, headers);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public ContractVerifierMessage<T, Message<T>> create(Message<T> message) {
 		return builder.create(message);
 	}
