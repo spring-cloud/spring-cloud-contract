@@ -32,6 +32,6 @@ import org.springframework.context.annotation.Import;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import(WireMockConfiguration.class)
-public @interface WireMockTest {
+public @interface AutoConfigureWireMock {
 
 }
