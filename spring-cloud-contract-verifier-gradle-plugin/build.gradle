@@ -24,7 +24,7 @@ ext {
 	]
 }
 
-project.version = findProperty('contractVerifierVersion') ?: '1.0.0.BUILD-SNAPSHOT'
+project.version = findProperty('verifierVersion') ?: '1.0.0.BUILD-SNAPSHOT'
 apply from: "$rootDir/gradle/release.gradle"
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
@@ -96,7 +96,7 @@ dependencies {
 }
 
 task archiveContractVerifierGradlePluginLibsDependencies(type: Sync) {
-	from configurations.contractVerifierGradlePluginLibs.resolvedConfiguration.resolvedArtifacts.collect { it.file }
+	from configurations.contractVerifierGradlePluginLibs.resolvedConfiguration.resolvedArtifacts.collect { it.file } + configurations.messagingLibs.resolvedConfiguration.resolvedArtifacts.collect { it.file }
 	into contractVerifierGradlePluginLibsDir
 }
 
