@@ -17,6 +17,10 @@
     <description>Spring Cloud Contract Samples</description>
 
     <modules>
+        <module>wiremock-native</module>
+        <module>wiremock-jetty</module>
+        <module>wiremock-tomcat</module>
+        <module>wiremock-undertow</module>
         <module>samples-messaging-camel</module>
         <module>samples-messaging-spring</module>
         <module>samples-messaging-integration</module>
