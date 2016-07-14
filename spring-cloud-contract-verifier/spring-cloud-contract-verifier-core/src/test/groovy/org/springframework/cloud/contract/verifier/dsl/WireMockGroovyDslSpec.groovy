@@ -865,8 +865,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 		then:
-			def e = thrown(IllegalStateException)
-			e.message.contains "Query parameter 'age' can't be a pattern for the server side"
+			thrown(IllegalStateException)
 	}
 
 	def "should not allow query parameter unresolvable for a server value"() {

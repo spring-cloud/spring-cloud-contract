@@ -81,13 +81,17 @@ class Common {
 		return new DslProperty(client.clientValue, server.serverValue)
 	}
 
-	DslProperty value(Object value) {
-		return new DslProperty(value)
-	}
-
 	DslProperty value(ServerDslProperty server, ClientDslProperty client) {
 		assertThatSidesMatch(client.clientValue, server.serverValue)
 		return new DslProperty(client.clientValue, server.serverValue)
+	}
+
+	DslProperty value(DslProperty value) {
+		return value
+	}
+
+	DslProperty value(Object value) {
+		return new DslProperty(value)
 	}
 
 	DslProperty $(ClientDslProperty client, ServerDslProperty server) {

@@ -20,6 +20,9 @@ import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
+import repackaged.nl.flotsam.xeger.Xeger
+
+import java.util.regex.Pattern
 
 /**
  * Represents the response side of the HTTP communication
@@ -82,6 +85,30 @@ class Response extends Common {
 
 	void assertThatSidesMatch(OptionalProperty stubSide, Object testSide) {
 		throw new IllegalStateException("Optional can be used only in the test side of the response!")
+	}
+
+	DslProperty value(ServerDslProperty server) {
+		Object value = server.clientValue
+		if (server.clientValue instanceof Pattern) {
+			value = new Xeger(((Pattern)server.clientValue).pattern()).generate()
+		}
+		return new DslProperty(server.clientValue, value)
+	}
+
+	@Override
+	DslProperty value(ClientDslProperty client, ServerDslProperty server) {
+		if (client.clientValue instanceof Pattern) {
+			throw new IllegalStateException("You can't have a regular expression for the response on the client side")
+		}
+		return super.value(client, server)
+	}
+
+	@Override
+	DslProperty value(ServerDslProperty server, ClientDslProperty client) {
+		if (client.clientValue instanceof Pattern) {
+			throw new IllegalStateException("You can't have a regular expression for the response on the client side")
+		}
+		return super.value(server, client)
 	}
 }
 

@@ -19,15 +19,15 @@
  * released to any central repository.
  *
  */
-package nl.flotsam.xeger;
+package repackaged.nl.flotsam.xeger;
+
+import java.util.List;
+import java.util.Random;
 
 import dk.brics.automaton.Automaton;
 import dk.brics.automaton.RegExp;
 import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
-
-import java.util.List;
-import java.util.Random;
 
 /**
  * An object that will generate text from a regular expression. In a way, it's the opposite of a regular expression
@@ -53,7 +53,7 @@ public class Xeger {
     }
 
     /**
-     * As {@link nl.flotsam.xeger.Xeger#Xeger(String, java.util.Random)}, creating a {@link java.util.Random} instance
+     * As {@link Xeger#Xeger(String, java.util.Random)}, creating a {@link java.util.Random} instance
      * implicityly.
      *
      * @param regex as string
