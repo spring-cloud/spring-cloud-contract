@@ -423,71 +423,205 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_spring_cloud_contract_verifier">Spring Cloud Contract Verifier</a></li>
-<li><a href="#_introduction">Introduction</a>
+<li><a href="#_spring_cloud_contract_verifier">Spring Cloud Contract Verifier</a>
 <ul class="sectlevel2">
-<li><a href="#_why">Why?</a></li>
+<li><a href="#_introduction">Introduction</a>
+<ul class="sectlevel3">
+<li><a href="#_why">Why?</a>
+<ul class="sectlevel4">
+<li><a href="#_testing_issues">Testing issues</a></li>
+</ul>
+</li>
 <li><a href="#_purposes">Purposes</a></li>
 <li><a href="#_client_side">Client Side</a></li>
 <li><a href="#_server_side">Server Side</a></li>
 <li><a href="#_step_by_step_guide_to_cdc">Step by step guide to CDC</a></li>
 <li><a href="#_dependencies">Dependencies</a></li>
-<li><a href="#_additional_links">Additional links</a></li>
+<li><a href="#_additional_links">Additional links</a>
+<ul class="sectlevel4">
+<li><a href="#_videos">Videos</a></li>
+<li><a href="#_readings">Readings</a></li>
+</ul>
+</li>
 <li><a href="#_samples">Samples</a></li>
 <li><a href="#_why_use_spring_cloud_contract_verifier_and_not_x">Why use Spring Cloud Contract Verifier and not X ?</a></li>
 </ul>
 </li>
 <li><a href="#_contract_dsl">Contract DSL</a>
-<ul class="sectlevel2">
+<ul class="sectlevel3">
 <li><a href="#_limitations">Limitations</a></li>
 <li><a href="#_http_top_level_elements">HTTP Top-Level Elements</a></li>
 <li><a href="#_request">Request</a></li>
 <li><a href="#_response">Response</a></li>
 <li><a href="#_regular_expressions">Regular expressions</a></li>
 <li><a href="#_passing_optional_parameters">Passing optional parameters</a></li>
-<li><a href="#_executing_custom_methods_on_server_side">Executing custom methods on server side</a></li>
+<li><a href="#_executing_custom_methods_on_server_side">Executing custom methods on server side</a>
+<ul class="sectlevel4">
+<li><a href="#_contract_dsl_2">Contract DSL</a></li>
+<li><a href="#_base_mock_spec">Base Mock Spec</a></li>
+</ul>
+</li>
 <li><a href="#_jax_rs_support">JAX-RS support</a></li>
-<li><a href="#_messaging_top_level_elements">Messaging Top-Level Elements</a></li>
+<li><a href="#_messaging_top_level_elements">Messaging Top-Level Elements</a>
+<ul class="sectlevel4">
+<li><a href="#_output_triggered_by_a_method">Output triggered by a method</a></li>
+<li><a href="#_output_triggered_by_a_message">Output triggered by a message</a></li>
+<li><a href="#_consumer_producer">Consumer / Producer</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#_spring_cloud_contract_verifier_http">Spring Cloud Contract Verifier HTTP</a>
-<ul class="sectlevel2">
-<li><a href="#_gradle_project">Gradle Project</a></li>
-<li><a href="#_using_in_your_maven_project">Using in your Maven project</a></li>
+<ul class="sectlevel3">
+<li><a href="#_gradle_project">Gradle Project</a>
+<ul class="sectlevel4">
+<li><a href="#_prerequisites">Prerequisites</a></li>
+<li><a href="#_run_plugin">Run plugin</a></li>
+<li><a href="#_default_setup">Default setup</a></li>
+<li><a href="#_configure_plugin">Configure plugin</a></li>
+<li><a href="#_invoking_generated_tests">Invoking generated tests</a></li>
+<li><a href="#_spring_cloud_contract_verifier_on_consumer_side">Spring Cloud Contract Verifier on consumer side</a></li>
+</ul>
+</li>
+<li><a href="#_using_in_your_maven_project">Using in your Maven project</a>
+<ul class="sectlevel4">
+<li><a href="#_add_maven_plugin_2">Add maven plugin</a></li>
+<li><a href="#_add_stubs_2">Add stubs</a></li>
+<li><a href="#_run_plugin_2">Run plugin</a></li>
+<li><a href="#_configure_plugin_2">Configure plugin</a></li>
+<li><a href="#_invoking_generated_tests_2">Invoking generated tests</a></li>
+<li><a href="#_spring_cloud_contract_verifier_on_consumer_side_2">Spring Cloud Contract Verifier on consumer side</a></li>
+</ul>
+</li>
 <li><a href="#_scenarios">Scenarios</a></li>
 </ul>
 </li>
 <li><a href="#_spring_cloud_contract_verifier_messaging">Spring Cloud Contract Verifier Messaging</a>
-<ul class="sectlevel2">
+<ul class="sectlevel3">
 <li><a href="#_integrations">Integrations</a></li>
 <li><a href="#_manual_integration">Manual Integration</a></li>
-<li><a href="#_publisher_side_test_generation">Publisher side test generation</a></li>
-<li><a href="#_consumer_stub_side_generation">Consumer Stub Side generation</a></li>
+<li><a href="#_publisher_side_test_generation">Publisher side test generation</a>
+<ul class="sectlevel4">
+<li><a href="#_scenario_1_no_input_message">Scenario 1 (no input message)</a></li>
+<li><a href="#_scenario_2_output_triggered_by_input">Scenario 2 (output triggered by input)</a></li>
+<li><a href="#_scenario_3_no_output_message">Scenario 3 (no output message)</a></li>
+</ul>
+</li>
+<li><a href="#_consumer_stub_side_generation">Consumer Stub Side generation</a>
+<ul class="sectlevel4">
+<li><a href="#_gradle_setup">Gradle Setup</a></li>
+<li><a href="#_maven_setup">Maven Setup</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#_spring_cloud_contract_stub_runner">Spring Cloud Contract Stub Runner</a>
-<ul class="sectlevel2">
-<li><a href="#_snapshot_versions_2">Snapshot versions</a></li>
-<li><a href="#_publishing_stubs_as_jars">Publishing stubs as JARs</a></li>
+<ul class="sectlevel3">
+<li><a href="#_snapshot_versions">Snapshot versions</a></li>
+<li><a href="#_publishing_stubs_as_jars">Publishing stubs as JARs</a>
+<ul class="sectlevel4">
+<li><a href="#_gradle">Gradle</a></li>
+<li><a href="#_maven">Maven</a></li>
+</ul>
+</li>
 <li><a href="#_modules">Modules</a></li>
-<li><a href="#_stub_runner_core">Stub Runner Core</a></li>
-<li><a href="#_stub_runner_boot">Stub Runner Boot</a></li>
+</ul>
+</li>
+<li><a href="#_stub_runner_core">Stub Runner Core</a>
+<ul class="sectlevel3">
+<li><a href="#_running_stubs">Running stubs</a>
+<ul class="sectlevel4">
+<li><a href="#_running_using_main_app">Running using main app</a></li>
+<li><a href="#_http_stubs">HTTP Stubs</a></li>
+<li><a href="#_viewing_registered_mappings">Viewing registered mappings</a></li>
+<li><a href="#_messaging_stubs">Messaging Stubs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_stub_runner_boot">Stub Runner Boot</a>
+<ul class="sectlevel3">
+<li><a href="#_how_to_use_it">How to use it?</a></li>
+<li><a href="#_endpoints">Endpoints</a>
+<ul class="sectlevel4">
+<li><a href="#_http">HTTP</a></li>
+<li><a href="#_messaging">Messaging</a></li>
+</ul>
+</li>
+<li><a href="#_example">Example</a></li>
+</ul>
+</li>
 <li><a href="#_stub_runner_jetty">Stub Runner Jetty</a></li>
-<li><a href="#_stub_runner_junit_rule">Stub Runner JUnit Rule</a></li>
+<li><a href="#_stub_runner_junit_rule">Stub Runner JUnit Rule</a>
+<ul class="sectlevel3">
+<li><a href="#_providing_fixed_ports">Providing fixed ports</a></li>
+<li><a href="#_fluent_api">Fluent API</a></li>
+</ul>
+</li>
 <li><a href="#_stub_runner_spring">Stub Runner Spring</a></li>
-<li><a href="#_stub_runner_spring_cloud">Stub Runner Spring Cloud</a></li>
-<li><a href="#_common_properties_for_junit_and_spring">Common properties for JUnit and Spring</a></li>
+<li><a href="#_stub_runner_spring_cloud">Stub Runner Spring Cloud</a>
+<ul class="sectlevel3">
+<li><a href="#_stubbing_service_discovery">Stubbing Service Discovery</a></li>
+<li><a href="#_additional_configuration">Additional Configuration</a></li>
+<li><a href="#_common_properties_for_junit_and_spring">Common properties for JUnit and Spring</a>
+<ul class="sectlevel4">
+<li><a href="#_stub_runner_stubs_ids">Stub runner stubs ids</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#_stub_runner_for_messaging">Stub Runner for Messaging</a>
-<ul class="sectlevel2">
-<li><a href="#_stub_triggering">Stub triggering</a></li>
-<li><a href="#_stub_runner_camel">Stub Runner Camel</a></li>
-<li><a href="#_stub_runner_integration">Stub Runner Integration</a></li>
-<li><a href="#_stub_runner_stream">Stub Runner Stream</a></li>
+<ul class="sectlevel3">
+<li><a href="#_stub_triggering">Stub triggering</a>
+<ul class="sectlevel4">
+<li><a href="#_trigger_by_label">Trigger by label</a></li>
+<li><a href="#_trigger_all_messages">Trigger all messages</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_stub_runner_camel">Stub Runner Camel</a>
+<ul class="sectlevel3">
+<li><a href="#_adding_it_to_the_project">Adding it to the project</a></li>
+<li><a href="#_examples">Examples</a>
+<ul class="sectlevel4">
+<li><a href="#_stubs_structure">Stubs structure</a></li>
+<li><a href="#_scenario_1_no_input_message_2">Scenario 1 (no input message)</a></li>
+<li><a href="#_scenario_2_output_triggered_by_input_2">Scenario 2 (output triggered by input)</a></li>
+<li><a href="#_scenario_3_input_with_no_output">Scenario 3 (input with no output)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_stub_runner_integration">Stub Runner Integration</a>
+<ul class="sectlevel3">
+<li><a href="#_adding_it_to_the_project_2">Adding it to the project</a></li>
+<li><a href="#_examples_2">Examples</a>
+<ul class="sectlevel4">
+<li><a href="#_stubs_structure_2">Stubs structure</a></li>
+<li><a href="#_scenario_1_no_input_message_3">Scenario 1 (no input message)</a></li>
+<li><a href="#_scenario_2_output_triggered_by_input_3">Scenario 2 (output triggered by input)</a></li>
+<li><a href="#_scenario_3_input_with_no_output_2">Scenario 3 (input with no output)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_stub_runner_stream">Stub Runner Stream</a>
+<ul class="sectlevel3">
+<li><a href="#_adding_it_to_the_project_3">Adding it to the project</a></li>
+<li><a href="#_examples_3">Examples</a>
+<ul class="sectlevel4">
+<li><a href="#_stubs_structure_3">Stubs structure</a></li>
+<li><a href="#_scenario_1_no_input_message_4">Scenario 1 (no input message)</a></li>
+<li><a href="#_scenario_2_output_triggered_by_input_4">Scenario 2 (output triggered by input)</a></li>
+<li><a href="#_scenario_3_input_with_no_output_3">Scenario 3 (input with no output)</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#_links">Links</a></li>
+</ul>
+</li>
 <li><a href="#_spring_cloud_contract_wiremock">Spring Cloud Contract WireMock</a></li>
 </ul>
 </div>
@@ -510,12 +644,8 @@ and consumers, for HTTP and message-based interactions.</p>
 <div class="sect1">
 <h2 id="_spring_cloud_contract_verifier">Spring Cloud Contract Verifier</h2>
 <div class="sectionbody">
-
-</div>
-</div>
-<div class="sect1">
-<h2 id="_introduction">Introduction</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_introduction">Introduction</h3>
 <div class="admonitionblock important">
 <table>
 <tr>
@@ -562,8 +692,8 @@ Full test is generated by Spring Cloud Contract Verifier.</p>
 <div class="paragraph">
 <p>Spring Cloud Contract Verifier moves TDD to the level of software architecture.</p>
 </div>
-<div class="sect2">
-<h3 id="_why">Why?</h3>
+<div class="sect3">
+<h4 id="_why">Why?</h4>
 <div class="paragraph">
 <p>Let us assume that we have a system comprising of multiple microservices:</p>
 </div>
@@ -572,8 +702,8 @@ Full test is generated by Spring Cloud Contract Verifier.</p>
 <img src="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/Deps.png" alt="Microservices Architecture">
 </div>
 </div>
-<div class="sect3">
-<h4 id="_testing_issues">Testing issues</h4>
+<div class="sect4">
+<h5 id="_testing_issues">Testing issues</h5>
 <div class="paragraph">
 <p>If we wanted to test the application in top left corner if it can communicate with other services then we could do one of two things:</p>
 </div>
@@ -680,8 +810,8 @@ tested against the producer&#8217;s side. In other words - you can trust those s
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_purposes">Purposes</h3>
+<div class="sect3">
+<h4 id="_purposes">Purposes</h4>
 <div class="paragraph">
 <p>The main purposes of Spring Cloud Contract Verifier with Stub Runner are:</p>
 </div>
@@ -702,8 +832,8 @@ tested against the producer&#8217;s side. In other words - you can trust those s
 </ul>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_client_side">Client Side</h3>
+<div class="sect3">
+<h4 id="_client_side">Client Side</h4>
 <div class="paragraph">
 <p>During the tests you want to have a Wiremock instance / Messaging route up and running that simulates the service Y.
 You would like to feed that instance with a proper stub definition. That stub definition would need
@@ -714,8 +844,8 @@ to be valid and should also be reusable on the server side.</p>
 values for responses.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_server_side">Server Side</h3>
+<div class="sect3">
+<h4 id="_server_side">Server Side</h4>
 <div class="paragraph">
 <p>Being a service Y since you are developing your stub, you need to be sure that it&#8217;s actually resembling your
 concrete implementation. You can&#8217;t have a situation where your stub acts in one way and your application on
@@ -730,8 +860,8 @@ that your application behaves in the same way as you define in your stub.</p>
 for response verification.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_step_by_step_guide_to_cdc">Step by step guide to CDC</h3>
+<div class="sect3">
+<h4 id="_step_by_step_guide_to_cdc">Step by step guide to CDC</h4>
 <div class="paragraph">
 <p>Let&#8217;s take an example of Fraud Detection and Loan Issuance process. Let&#8217;s assume that the Loan Issuance is a client to the
 Fraud Detection server. Let&#8217;s assume that we have to write a new feature (if a client wants too borrow too much money then
@@ -942,8 +1072,8 @@ return new FraudCheckResult(FraudCheckStatus.OK, NO_REASON);
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_dependencies">Dependencies</h3>
+<div class="sect3">
+<h4 id="_dependencies">Dependencies</h4>
 <div class="paragraph">
 <p>Spring Cloud Contract Verifier and Stub Runner are using the following libraries</p>
 </div>
@@ -961,14 +1091,14 @@ return new FraudCheckResult(FraudCheckStatus.OK, NO_REASON);
 </ul>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_additional_links">Additional links</h3>
+<div class="sect3">
+<h4 id="_additional_links">Additional links</h4>
 <div class="paragraph">
 <p>Below you can find some resources related to Spring Cloud Contract Verifier and Stub Runner. Note that some can be outdated since the Spring Cloud Contract Verifier project
 is under constant development.</p>
 </div>
-<div class="sect3">
-<h4 id="_videos">Videos</h4>
+<div class="sect4">
+<h5 id="_videos">Videos</h5>
 <div class="paragraph">
 <p><strong>Marcin Grzejszczak and Jakub Kubryński talking about Spring Cloud Contract Verifier</strong></p>
 </div>
@@ -1003,8 +1133,8 @@ is under constant development.</p>
 <p><a href="https://vimeo.com/130779882">click here to see the video</a></p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_readings">Readings</h4>
+<div class="sect4">
+<h5 id="_readings">Readings</h5>
 <div class="ulist">
 <ul>
 <li>
@@ -1020,14 +1150,14 @@ is under constant development.</p>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_samples">Samples</h3>
+<div class="sect3">
+<h4 id="_samples">Samples</h4>
 <div class="paragraph">
 <p>Here you can find some <a href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/">samples</a>.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_why_use_spring_cloud_contract_verifier_and_not_x">Why use Spring Cloud Contract Verifier and not X ?</h3>
+<div class="sect3">
+<h4 id="_why_use_spring_cloud_contract_verifier_and_not_x">Why use Spring Cloud Contract Verifier and not X ?</h4>
 <div class="paragraph">
 <p>For the time being Spring Cloud Contract Verifier is a JVM based tool. So it could be your first pick when you&#8217;re already creating
 software for the JVM. This project has a lot of really interesting features but especially quite a few of them definitely make
@@ -1057,10 +1187,8 @@ Spring Cloud Contract Verifier stand out on the "market" of Consumer Driven Cont
 </div>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_contract_dsl">Contract DSL</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_contract_dsl">Contract DSL</h3>
 <div class="admonitionblock important">
 <table>
 <tr>
@@ -1143,8 +1271,8 @@ a tiny subset of it (namely literals, method calls and closures). What&#8217;s m
 </div>
 </blockquote>
 </div>
-<div class="sect2">
-<h3 id="_limitations">Limitations</h3>
+<div class="sect3">
+<h4 id="_limitations">Limitations</h4>
 <div class="admonitionblock warning">
 <table>
 <tr>
@@ -1184,8 +1312,8 @@ the value of a system property <code>spring.cloud.contract.verifier.assert.size<
 </table>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_http_top_level_elements">HTTP Top-Level Elements</h3>
+<div class="sect3">
+<h4 id="_http_top_level_elements">HTTP Top-Level Elements</h4>
 <div class="paragraph">
 <p>Following methods can be called in the top-level closure of a contract definition. Request and response are mandatory, priority is optional.</p>
 </div>
@@ -1214,8 +1342,8 @@ the value of a system property <code>spring.cloud.contract.verifier.assert.size<
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_request">Request</h3>
+<div class="sect3">
+<h4 id="_request">Request</h4>
 <div class="paragraph">
 <p>HTTP protocol requires only <strong>method and address</strong> to be specified in a request. The same information is mandatory in request definition of the Contract.</p>
 </div>
@@ -1368,8 +1496,8 @@ the value of a system property <code>spring.cloud.contract.verifier.assert.size<
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_response">Response</h3>
+<div class="sect3">
+<h4 id="_response">Response</h4>
 <div class="paragraph">
 <p>Minimal response must contain <strong>HTTP status code</strong>.</p>
 </div>
@@ -1391,8 +1519,8 @@ the value of a system property <code>spring.cloud.contract.verifier.assert.size<
 <p>Besides status response may contain <strong>headers</strong> and <strong>body</strong>, which are specified the same way as in the request (see previous paragraph).</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_regular_expressions">Regular expressions</h3>
+<div class="sect3">
+<h4 id="_regular_expressions">Regular expressions</h4>
 <div class="paragraph">
 <p>You can use regular expressions to write your requests in Contract DSL. It is particularly useful when you want to indicate that a given response
 should be provided for requests that follow a given pattern. Also, you can use it when you need to use patterns and not exact values both
@@ -1459,8 +1587,8 @@ provide the generated string that matches the provided regular expression. For e
 <p>In this example for request and response the opposite side of the communication will have the respective data generated.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_passing_optional_parameters">Passing optional parameters</h3>
+<div class="sect3">
+<h4 id="_passing_optional_parameters">Passing optional parameters</h4>
 <div class="paragraph">
 <p>It is possible to provide optional parameters in your contract. It&#8217;s only possible to have optional parameter for the:</p>
 </div>
@@ -1565,14 +1693,14 @@ provide the generated string that matches the provided regular expression. For e
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_executing_custom_methods_on_server_side">Executing custom methods on server side</h3>
+<div class="sect3">
+<h4 id="_executing_custom_methods_on_server_side">Executing custom methods on server side</h4>
 <div class="paragraph">
 <p>It is also possible to define a method call to be executed on the server side during the test. Such a method can be added to the class defined as "baseClassForTests"
 in the configuration. Please see the examples below:</p>
 </div>
-<div class="sect3">
-<h4 id="_contract_dsl_2">Contract DSL</h4>
+<div class="sect4">
+<h5 id="_contract_dsl_2">Contract DSL</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
@@ -1599,8 +1727,8 @@ in the configuration. Please see the examples below:</p>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_base_mock_spec">Base Mock Spec</h4>
+<div class="sect4">
+<h5 id="_base_mock_spec">Base Mock Spec</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">abstract class BaseMockMvcSpec extends Specification {
@@ -1622,8 +1750,8 @@ in the configuration. Please see the examples below:</p>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_jax_rs_support">JAX-RS support</h3>
+<div class="sect3">
+<h4 id="_jax_rs_support">JAX-RS support</h4>
 <div class="paragraph">
 <p>Starting with release 0.8.0 we support JAX-RS 2 Client API. Base class needs to define <code>protected WebTarget webTarget</code> and server initialization, right now the only option how to test JAX-RS API is to start a web server.</p>
 </div>
@@ -1635,7 +1763,7 @@ in the configuration. Please see the examples below:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">testMode == 'JAXRSCLIENT'</code></pre>
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">testMode === 'JAXRSCLIENT'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1669,13 +1797,13 @@ in the configuration. Please see the examples below:</p>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_messaging_top_level_elements">Messaging Top-Level Elements</h3>
+<div class="sect3">
+<h4 id="_messaging_top_level_elements">Messaging Top-Level Elements</h4>
 <div class="paragraph">
 <p>The DSL for messaging looks a little bit different than the one that focuses on HTTP.</p>
 </div>
-<div class="sect3">
-<h4 id="_output_triggered_by_a_method">Output triggered by a method</h4>
+<div class="sect4">
+<h5 id="_output_triggered_by_a_method">Output triggered by a method</h5>
 <div class="paragraph">
 <p>The output message can be triggered by calling a method (e.g. a Scheduler was started and a message was sent)</p>
 </div>
@@ -1710,8 +1838,8 @@ in the configuration. Please see the examples below:</p>
 we will generate a test that will call that method to trigger the message. On the <strong>consumer</strong> side you can use the <code>some_label</code> to trigger the message.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_output_triggered_by_a_message">Output triggered by a message</h4>
+<div class="sect4">
+<h5 id="_output_triggered_by_a_message">Output triggered by a message</h5>
 <div class="paragraph">
 <p>The output message can be triggered by receiving a message.</p>
 </div>
@@ -1751,8 +1879,8 @@ we will generate a test that will send the input message to the defined destinat
 destination or use the <code>some_label</code> to trigger the message.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_consumer_producer">Consumer / Producer</h4>
+<div class="sect4">
+<h5 id="_consumer_producer">Consumer / Producer</h5>
 <div class="paragraph">
 <p>In HTTP you have a notion of <code>client</code>/<code>stub and `server</code>/<code>test</code> notation. You can use them also in messaging but we&#8217;re providing also the <code>consumer</code> and <code>produer</code> methods
 as presented below (note you can use either <code>$</code> or <code>value</code> methods to provide <code>consumer</code> and <code>producer</code> parts)</p>
@@ -1782,19 +1910,17 @@ as presented below (note you can use either <code>$</code> or <code>value</code>
 </div>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_spring_cloud_contract_verifier_http">Spring Cloud Contract Verifier HTTP</h2>
-<div class="sectionbody">
 <div class="sect2">
-<h3 id="_gradle_project">Gradle Project</h3>
+<h3 id="_spring_cloud_contract_verifier_http">Spring Cloud Contract Verifier HTTP</h3>
 <div class="sect3">
-<h4 id="_prerequisites">Prerequisites</h4>
+<h4 id="_gradle_project">Gradle Project</h4>
+<div class="sect4">
+<h5 id="_prerequisites">Prerequisites</h5>
 <div class="paragraph">
 <p>In order to use Spring Cloud Contract Verifier with WireMock you have to use gradle or maven plugin.</p>
 </div>
-<div class="sect4">
-<h5 id="_add_gradle_plugin">Add gradle plugin</h5>
+<div class="sect5">
+<h6 id="_add_gradle_plugin">Add gradle plugin</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">buildscript {
@@ -1816,8 +1942,9 @@ dependencies {
 }</code></pre>
 </div>
 </div>
-<div class="sect5">
-<h6 id="_snapshot_versions">Snapshot versions</h6>
+<div class="paragraph">
+<p>======= Snapshot versions</p>
+</div>
 <div class="paragraph">
 <p>Add the additional snapshot repository to your build.gradle to use snapshot versions which are automatically uploaded after every successful build:</p>
 </div>
@@ -1831,9 +1958,8 @@ dependencies {
 </div>
 </div>
 </div>
-</div>
-<div class="sect4">
-<h5 id="_add_maven_plugin">Add maven plugin</h5>
+<div class="sect5">
+<h6 id="_add_maven_plugin">Add maven plugin</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
@@ -1855,8 +1981,8 @@ dependencies {
 <p>Read more: <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/">spring-cloud-contract-maven-plugin</a></p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="_add_stubs">Add stubs</h5>
+<div class="sect5">
+<h6 id="_add_stubs">Add stubs</h6>
 <div class="paragraph">
 <p>By default Spring Cloud Contract Verifier is looking for stubs in <code>src/test/resources/contracts</code> directory.</p>
 </div>
@@ -1886,14 +2012,14 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_run_plugin">Run plugin</h4>
+<div class="sect4">
+<h5 id="_run_plugin">Run plugin</h5>
 <div class="paragraph">
 <p>Plugin registers itself to be invoked before <code>check</code> task. You have nothing to do as long as you want it to be part of your build process. If you just want to generate tests please invoke <code>generateContractTests</code> task.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_default_setup">Default setup</h4>
+<div class="sect4">
+<h5 id="_default_setup">Default setup</h5>
 <div class="paragraph">
 <p>Default Gradle Plugin setup creates the following Gradle part of the build (it&#8217;s a pseudocode)</p>
 </div>
@@ -1936,8 +2062,8 @@ publishing {
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_configure_plugin">Configure plugin</h4>
+<div class="sect4">
+<h5 id="_configure_plugin">Configure plugin</h5>
 <div class="paragraph">
 <p>To change default configuration just add <code>contractVerifier</code> snippet to your Gradle config</p>
 </div>
@@ -1950,8 +2076,8 @@ publishing {
 }</code></pre>
 </div>
 </div>
-<div class="sect4">
-<h5 id="_configuration_options">Configuration options</h5>
+<div class="sect5">
+<h6 id="_configuration_options">Configuration options</h6>
 <div class="ulist">
 <ul>
 <li>
@@ -1990,8 +2116,8 @@ publishing {
 </ul>
 </div>
 </div>
-<div class="sect4">
-<h5 id="_base_class_for_tests">Base class for tests</h5>
+<div class="sect5">
+<h6 id="_base_class_for_tests">Base class for tests</h6>
 <div class="paragraph">
 <p>When using Spring Cloud Contract Verifier in default MockMvc you need to create a base specification for all generated acceptance tests. In this class you need to point to endpoint which should be verified.</p>
 </div>
@@ -2020,8 +2146,8 @@ should also contain <code>protected WebTarget webTarget</code> field, right now 
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_invoking_generated_tests">Invoking generated tests</h4>
+<div class="sect4">
+<h5 id="_invoking_generated_tests">Invoking generated tests</h5>
 <div class="paragraph">
 <p>To ensure that provider side is complaint with defined contracts, you need to invoke:</p>
 </div>
@@ -2031,8 +2157,8 @@ should also contain <code>protected WebTarget webTarget</code> field, right now 
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_spring_cloud_contract_verifier_on_consumer_side">Spring Cloud Contract Verifier on consumer side</h4>
+<div class="sect4">
+<h5 id="_spring_cloud_contract_verifier_on_consumer_side">Spring Cloud Contract Verifier on consumer side</h5>
 <div class="paragraph">
 <p>In consumer service you need to configure Spring Cloud Contract Verifier plugin in exactly the same way as in case of provider. If you don&#8217;t want to use Stub Runner then you need to copy contracts stored in
 <code>src/test/resources/contracts</code> and generate WireMock json stubs using:</p>
@@ -2067,8 +2193,8 @@ class LoanApplicationServiceSpec extends Specification {
    when:
 	LoanApplicationResult loanApplication == sut.loanApplication(application)
    then:
-	loanApplication.loanApplicationStatus === LoanApplicationStatus.LOAN_APPLIED
-	loanApplication.rejectionReason === null
+	loanApplication.loanApplicationStatus == LoanApplicationStatus.LOAN_APPLIED
+	loanApplication.rejectionReason == null
  }
 }</code></pre>
 </div>
@@ -2078,10 +2204,10 @@ class LoanApplicationServiceSpec extends Specification {
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_using_in_your_maven_project">Using in your Maven project</h3>
 <div class="sect3">
-<h4 id="_add_maven_plugin_2">Add maven plugin</h4>
+<h4 id="_using_in_your_maven_project">Using in your Maven project</h4>
+<div class="sect4">
+<h5 id="_add_maven_plugin_2">Add maven plugin</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
@@ -2103,8 +2229,8 @@ class LoanApplicationServiceSpec extends Specification {
 <p>Read more: <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/">spring-cloud-contract-maven-plugin</a></p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_add_stubs_2">Add stubs</h4>
+<div class="sect4">
+<h5 id="_add_stubs_2">Add stubs</h5>
 <div class="paragraph">
 <p>By default Spring Cloud Contract Verifier is looking for stubs in <code>src/test/resources/contracts</code> directory.
 Directory containing stub definitions is treated as a class name, and each stub definition is treated as a single test.
@@ -2123,14 +2249,14 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
  - <code>shouldReturnUser()</code></p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_run_plugin_2">Run plugin</h4>
+<div class="sect4">
+<h5 id="_run_plugin_2">Run plugin</h5>
 <div class="paragraph">
 <p>Plugin goal <code>generateTests</code> is assigned to be invoked in phase <code>generate-test-sources</code>. You have nothing to do as long as you want it to be part of your build process. If you just want to generate tests please invoke <code>generateTests</code> goal.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_configure_plugin_2">Configure plugin</h4>
+<div class="sect4">
+<h5 id="_configure_plugin_2">Configure plugin</h5>
 <div class="paragraph">
 <p>To change default configuration just add <code>configuration</code> section to plugin definition or <code>execution</code> definition.</p>
 </div>
@@ -2155,8 +2281,8 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
 &lt;/plugin&gt;</code></pre>
 </div>
 </div>
-<div class="sect4">
-<h5 id="_important_configuration_options">Important configuration options</h5>
+<div class="sect5">
+<h6 id="_important_configuration_options">Important configuration options</h6>
 <div class="ulist">
 <ul>
 <li>
@@ -2183,8 +2309,8 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
 <p>For complete information take a look at <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/plugin-info.html">Plugin Documentation</a></p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="_base_class_for_tests_2">Base class for tests</h5>
+<div class="sect5">
+<h6 id="_base_class_for_tests_2">Base class for tests</h6>
 <div class="literalblock">
 <div class="content">
 <pre>When using Spring Cloud Contract Verifier in default MockMvc you need to create a base specification for all generated acceptance tests. In this class you need to point to endpoint which should be verified.</pre>
@@ -2210,8 +2336,8 @@ class  MvcSpec extends Specification {
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_invoking_generated_tests_2">Invoking generated tests</h4>
+<div class="sect4">
+<h5 id="_invoking_generated_tests_2">Invoking generated tests</h5>
 <div class="paragraph">
 <p>Spring Cloud Contract Verifier Maven Plugins generates verification code into directory <code>/generated-test-sources/contractVerifier</code> and attach this directory to <code>testCompile</code> goal.</p>
 </div>
@@ -2254,8 +2380,8 @@ class  MvcSpec extends Specification {
 <p>To ensure that provider side is complaint with defined contracts, you need to invoke <code>mvn generateTest test</code></p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_spring_cloud_contract_verifier_on_consumer_side_2">Spring Cloud Contract Verifier on consumer side</h4>
+<div class="sect4">
+<h5 id="_spring_cloud_contract_verifier_on_consumer_side_2">Spring Cloud Contract Verifier on consumer side</h5>
 <div class="paragraph">
 <p>In consumer service you need to configure Spring Cloud Contract Verifier plugin in exactly the same way as in case of provider. You need to copy contracts stored in <code>src/test/resources/contracts</code> and generate Wiremock json stubs using: <code>mvn generateStubs</code> command. By default generated WireMock mapping is stored in directory <code>target/mappings</code>. Your project should create from this generated mappings additional artifact with classifier <code>stubs</code> for easy deploy to maven repository.</p>
 </div>
@@ -2312,8 +2438,8 @@ class LoanApplicationServiceSpec extends Specification {
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_scenarios">Scenarios</h3>
+<div class="sect3">
+<h4 id="_scenarios">Scenarios</h4>
 <div class="paragraph">
 <p>It&#8217;s possible to handle scenarios with Spring Cloud Contract Verifier. All you need to do is to stick to proper naming convention while creating your contracts. The convention requires to include order number followed by the underscore.</p>
 </div>
@@ -2338,16 +2464,14 @@ More details about Wiremock scenarios can be found under <a href="http://wiremoc
 </div>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_spring_cloud_contract_verifier_messaging">Spring Cloud Contract Verifier Messaging</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_spring_cloud_contract_verifier_messaging">Spring Cloud Contract Verifier Messaging</h3>
 <div class="paragraph">
 <p>Spring Cloud Contract Verifier allows you to verify your application that uses messaging as means of communication.
 All of our integrations are working with Spring but you can also set one yourself.</p>
 </div>
-<div class="sect2">
-<h3 id="_integrations">Integrations</h3>
+<div class="sect3">
+<h4 id="_integrations">Integrations</h4>
 <div class="paragraph">
 <p>You can use one of the three integration configurations:</p>
 </div>
@@ -2381,8 +2505,8 @@ testCompile "org.springframework.cloud:spring-cloud-contract-verifier-stream:${v
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_manual_integration">Manual Integration</h3>
+<div class="sect3">
+<h4 id="_manual_integration">Manual Integration</h4>
 <div class="paragraph">
 <p>The <code>spring-cloud-contract-verifier-messaging-core</code> module contains 3 main interfaces:</p>
 </div>
@@ -2415,8 +2539,8 @@ frameworks than Spring.</p>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_publisher_side_test_generation">Publisher side test generation</h3>
+<div class="sect3">
+<h4 id="_publisher_side_test_generation">Publisher side test generation</h4>
 <div class="paragraph">
 <p>Having the <code>input</code> or <code>outputMessage</code> sections in your DSL will result in creation of tests on the publisher&#8217;s side. By default
 JUnit tests will be created, however there is also a possibility to create Spock tests.</p>
@@ -2438,8 +2562,8 @@ inside the application (e.g. scheduler)</p>
 </li>
 </ul>
 </div>
-<div class="sect3">
-<h4 id="_scenario_1_no_input_message">Scenario 1 (no input message)</h4>
+<div class="sect4">
+<h5 id="_scenario_1_no_input_message">Scenario 1 (no input message)</h5>
 <div class="paragraph">
 <p>For the given contract:</p>
 </div>
@@ -2500,8 +2624,8 @@ inside the application (e.g. scheduler)</p>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_scenario_2_output_triggered_by_input">Scenario 2 (output triggered by input)</h4>
+<div class="sect4">
+<h5 id="_scenario_2_output_triggered_by_input">Scenario 2 (output triggered by input)</h5>
 <div class="paragraph">
 <p>For the given contract:</p>
 </div>
@@ -2581,8 +2705,8 @@ and:
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_scenario_3_no_output_message">Scenario 3 (no output message)</h4>
+<div class="sect4">
+<h5 id="_scenario_3_no_output_message">Scenario 3 (no output message)</h5>
 <div class="paragraph">
 <p>For the given contract:</p>
 </div>
@@ -2646,8 +2770,8 @@ then:
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_consumer_stub_side_generation">Consumer Stub Side generation</h3>
+<div class="sect3">
+<h4 id="_consumer_stub_side_generation">Consumer Stub Side generation</h4>
 <div class="paragraph">
 <p>Unlike the HTTP part - in Messaging we need to publish the Groovy DSL inside the JAR with a stub. Then it&#8217;s parsed on the consumer side
 and proper stubbed routes are created.</p>
@@ -2655,8 +2779,8 @@ and proper stubbed routes are created.</p>
 <div class="paragraph">
 <p>For more infromation please consult the Stub Runner Messaging sections.</p>
 </div>
-<div class="sect3">
-<h4 id="_gradle_setup">Gradle Setup</h4>
+<div class="sect4">
+<h5 id="_gradle_setup">Gradle Setup</h5>
 <div class="paragraph">
 <p>Example of Spring Cloud Contract Verifier Gradle setup:</p>
 </div>
@@ -2683,18 +2807,16 @@ publishing {
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_maven_setup">Maven Setup</h4>
+<div class="sect4">
+<h5 id="_maven_setup">Maven Setup</h5>
 <div class="paragraph">
 <p>Example of Maven can be found in the <a href="https://github.com/spring-cloud/spring-cloud-contract/">Spring Cloud Contract Verifier README</a></p>
 </div>
 </div>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_spring_cloud_contract_stub_runner">Spring Cloud Contract Stub Runner</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_spring_cloud_contract_stub_runner">Spring Cloud Contract Stub Runner</h3>
 <div class="paragraph">
 <p>One of the issues that you could have encountered while using Spring Cloud Contract Verifier was to pass the generated WireMock JSON stubs from the server side to the client side (or various clients).
  The same takes place in terms of client side generation for messaging.</p>
@@ -2702,8 +2824,8 @@ publishing {
 <div class="paragraph">
 <p>Copying the JSON files / setting the client side for messaging manually is out of the question.</p>
 </div>
-<div class="sect2">
-<h3 id="_snapshot_versions_2">Snapshot versions</h3>
+<div class="sect3">
+<h4 id="_snapshot_versions">Snapshot versions</h4>
 <div class="paragraph">
 <p>Add the additional snapshot repository to your build.gradle to use snapshot versions which are automatically uploaded after every successful build:</p>
 </div>
@@ -2717,13 +2839,13 @@ publishing {
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_publishing_stubs_as_jars">Publishing stubs as JARs</h3>
+<div class="sect3">
+<h4 id="_publishing_stubs_as_jars">Publishing stubs as JARs</h4>
 <div class="paragraph">
 <p>The easiest approach would be to centralize the way stubs are kept. For example you can keep them as JARs in a Maven repository.</p>
 </div>
-<div class="sect3">
-<h4 id="_gradle">Gradle</h4>
+<div class="sect4">
+<h5 id="_gradle">Gradle</h5>
 <div class="paragraph">
 <p>Example of Spring Cloud Contract Verifier Gradle setup:</p>
 </div>
@@ -2750,15 +2872,15 @@ publishing {
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_maven">Maven</h4>
+<div class="sect4">
+<h5 id="_maven">Maven</h5>
 <div class="paragraph">
 <p>Example of Maven can be found in the <a href="https://github.com/spring-cloud/spring-cloud-contract/">Spring Cloud Contract Verifier README</a></p>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_modules">Modules</h3>
+<div class="sect3">
+<h4 id="_modules">Modules</h4>
 <div class="paragraph">
 <p>Spring Cloud Contract Stub Runner comes with a new structure of modules</p>
 </div>
@@ -2770,6 +2892,7 @@ publishing {
     ├── spring-cloud-contract-stub-runner-junit
     ├── spring-cloud-contract-stub-runner-spring
     └── spring-cloud-contract-stub-runner-spring-cloud</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -3299,9 +3422,8 @@ You can disable Stub Runner Ribbon support by providing: <code>stubrunner.cloud.
 You can disable Stub Runner support by providing: <code>stubrunner.cloud.enabled</code> equal to <code>false</code></p>
 </div>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_common_properties_for_junit_and_spring">Common properties for JUnit and Spring</h3>
+<div class="sect3">
+<h4 id="_common_properties_for_junit_and_spring">Common properties for JUnit and Spring</h4>
 <div class="paragraph">
 <p>Some of the properties that are repetitive can be set using system properties or property sources (for Spring). Here are their names with their default values:</p>
 </div>
@@ -3351,8 +3473,8 @@ You can disable Stub Runner support by providing: <code>stubrunner.cloud.enabled
 </tr>
 </tbody>
 </table>
-<div class="sect3">
-<h4 id="_stub_runner_stubs_ids">Stub runner stubs ids</h4>
+<div class="sect4">
+<h5 id="_stub_runner_stubs_ids">Stub runner stubs ids</h5>
 <div class="paragraph">
 <p>You can provide the stubs to download via the <code>stubrunner.stubs.ids</code> system property. They follow the following pattern:</p>
 </div>
@@ -3383,10 +3505,8 @@ You can disable Stub Runner support by providing: <code>stubrunner.cloud.enabled
 </div>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_stub_runner_for_messaging">Stub Runner for Messaging</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_stub_runner_for_messaging">Stub Runner for Messaging</h3>
 <div class="paragraph">
 <p>Stub Runner has the functionality to run the published stubs in memory. It can integrate with the following frameworks out of the box</p>
 </div>
@@ -3406,8 +3526,8 @@ You can disable Stub Runner support by providing: <code>stubrunner.cloud.enabled
 <div class="paragraph">
 <p>It also provides points of entry to integrate with any other solution on the market.</p>
 </div>
-<div class="sect2">
-<h3 id="_stub_triggering">Stub triggering</h3>
+<div class="sect3">
+<h4 id="_stub_triggering">Stub triggering</h4>
 <div class="paragraph">
 <p>To trigger a message it&#8217;s enough to use the <code>StubTrigger</code> interface:</p>
 </div>
@@ -3475,26 +3595,27 @@ interface StubTrigger {
 <div class="paragraph">
 <p><code>StubTrigger</code> gives you the following options to trigger a message:</p>
 </div>
-<div class="sect3">
-<h4 id="_trigger_by_label">Trigger by label</h4>
+<div class="sect4">
+<h5 id="_trigger_by_label">Trigger by label</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">stubFinder.trigger('return_book_1')</code></pre>
 </div>
 </div>
-<div class="sect4">
-<h5 id="_trigger_by_group_and_artifact_ids">Trigger by group and artifact ids</h5>
+<div class="sect5">
+<h6 id="_trigger_by_group_and_artifact_ids">Trigger by group and artifact ids</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">stubFinder.trigger('org.springframework.cloud.contract.verifier.stubs:camelService', 'return_book_1')</code></pre>
 </div>
 </div>
 </div>
-<div class="sect4">
-<h5 id="_trigger_by_artifact_ids">Trigger by artifact ids</h5>
+<div class="sect5">
+<h6 id="_trigger_by_artifact_ids">Trigger by artifact ids</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">stubFinder.trigger('camelService', 'return_book_1')</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -4113,11 +4234,8 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_links">Links</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_links">Links</h3>
 <div class="paragraph">
 <p>Here you can find interesting links related to Spring Cloud Contract Verifier:</p>
 </div>
@@ -4148,6 +4266,7 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 </div>
 </div>
+</div>
 <div class="sect1">
 <h2 id="_spring_cloud_contract_wiremock">Spring Cloud Contract WireMock</h2>
 <div class="sectionbody">
@@ -4163,7 +4282,7 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-07-15 15:17:45 CEST
+Last updated 2016-07-15 15:24:20 CEST
 </div>
 </div>
 </body>
