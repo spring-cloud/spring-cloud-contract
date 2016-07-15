@@ -1,0 +1,210 @@
+/*
+ *  Copyright 2013-2016 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+package org.springframework.cloud.contract.stubrunner;
+
+import static java.nio.file.Files.createTempDirectory;
+import static org.springframework.cloud.contract.stubrunner.AetherFactories.newRepositories;
+import static org.springframework.cloud.contract.stubrunner.AetherFactories.newRepositorySystem;
+import static org.springframework.cloud.contract.stubrunner.AetherFactories.newSession;
+import static org.springframework.cloud.contract.stubrunner.util.ZipCategory.unzipTo;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.util.AbstractMap;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResult;
+import org.eclipse.aether.resolution.VersionRangeRequest;
+import org.eclipse.aether.resolution.VersionRangeResolutionException;
+import org.eclipse.aether.resolution.VersionRangeResult;
+import org.eclipse.aether.resolution.VersionRequest;
+import org.eclipse.aether.resolution.VersionResolutionException;
+import org.eclipse.aether.resolution.VersionResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
+
+/**
+ * @author Mariusz Smykula
+ */
+public class AetherStubDownloader implements StubDownloader {
+
+	private static final Logger log = LoggerFactory.getLogger(AetherStubDownloader.class);
+
+	private static final String TEMP_DIR_PREFIX = "contracts";
+	private static final String ARTIFACT_EXTENSION = "jar";
+	private static final String LATEST_ARTIFACT_VERSION = "(,]";
+	private static final String LATEST_VERSION_IN_IVY = "+";
+
+	private final List<RemoteRepository> remoteRepos;
+	private final RepositorySystem repositorySystem;
+	private final RepositorySystemSession session;
+
+	public AetherStubDownloader(StubRunnerOptions stubRunnerOptions) {
+		this.remoteRepos = remoteRepositories(stubRunnerOptions);
+		if (remoteRepos == null || remoteRepos.isEmpty()) {
+			log.error("Remote repositories for stubs are not specified!");
+		}
+		this.repositorySystem = newRepositorySystem();
+		this.session = newSession(this.repositorySystem, stubRunnerOptions.workOffline);
+	}
+
+	/**
+	 * Used by the Maven Plugin
+	 *
+	 * @param repositorySystem
+	 * @param remoteRepositories - remote artifact repositories
+	 * @param session
+	 * @param workOffline
+	 */
+	public AetherStubDownloader(RepositorySystem repositorySystem,
+			List<RemoteRepository> remoteRepositories, RepositorySystemSession session) {
+		this.remoteRepos = remoteRepositories;
+		this.repositorySystem = repositorySystem;
+		this.session = session;
+		if (remoteRepos == null || remoteRepos.isEmpty()) {
+			log.error("Remote remoteRepositories for stubs are not specified!");
+		}
+	}
+
+	private List<RemoteRepository> remoteRepositories(
+			StubRunnerOptions stubRunnerOptions) {
+		return newRepositories(
+				Arrays.asList(stubRunnerOptions.stubRepositoryRoot.split(",")));
+	}
+
+	private File unpackedJar(String resolvedVersion, String stubsGroup,
+			String stubsModule, String classifier) {
+		log.info("Resolved version is" + resolvedVersion);
+		if (!StringUtils.hasText(resolvedVersion)) {
+			log.warn("Stub for group [" + stubsGroup + "] module [" + stubsModule
+					+ "] and classifier [" + classifier + "] not found in "
+					+ remoteRepos);
+			return null;
+		}
+		Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier,
+				ARTIFACT_EXTENSION, resolvedVersion);
+		ArtifactRequest request = new ArtifactRequest(artifact, remoteRepos, null);
+		log.info("Resolving artifact " + artifact
+				+ " using remote repositories " + remoteRepos);
+		try {
+			ArtifactResult result = repositorySystem.resolveArtifact(session, request);
+			log.info("Resolved artifact " + artifact + "to "
+					+ result.getArtifact().getFile());
+			File temporaryFile = unpackStubJarToATemporaryFolder(
+					result.getArtifact().getFile().toURI());
+			log.info("Unpacked file to [" + temporaryFile + "]");
+			return temporaryFile;
+		}
+		catch (Exception e) {
+			log.warn(
+					"Exception occured while trying to download a stub for group ["
+							+ stubsGroup + "] module [" + stubsModule
+							+ "] and classifier [" + classifier + "] in " + remoteRepos,
+					e);
+			return null;
+		}
+
+	}
+
+	private String getVersion(String stubsGroup, String stubsModule, String version,
+			String classifier) {
+		if (!StringUtils.hasText(version) || LATEST_VERSION_IN_IVY.equals(version)) {
+			log.info("Desired version is " + version
+					+ " - will try to resolve the latest version");
+			return resolveHighestArtifactVersion(stubsGroup, stubsModule, classifier);
+		}
+		log.info("Will try to resolve version " + version);
+		return resolveArtifactVersion(stubsGroup, stubsModule, version, classifier);
+	}
+
+	@Override
+	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
+			StubRunnerOptions options, StubConfiguration stubConfiguration) {
+		String version = getVersion(stubConfiguration.groupId,
+				stubConfiguration.artifactId, stubConfiguration.version,
+				stubConfiguration.classifier);
+		File unpackedJar = unpackedJar(version, stubConfiguration.groupId,
+				stubConfiguration.artifactId, stubConfiguration.classifier);
+		if (unpackedJar == null) {
+			return null;
+		}
+		return new AbstractMap.SimpleEntry<StubConfiguration, File>(new StubConfiguration(
+				stubConfiguration.groupId, stubConfiguration.artifactId, version,
+				stubConfiguration.classifier), unpackedJar);
+	}
+
+	private String resolveHighestArtifactVersion(String stubsGroup, String stubsModule,
+			String classifier) {
+		Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier,
+				ARTIFACT_EXTENSION, LATEST_ARTIFACT_VERSION);
+		VersionRangeRequest versionRangeRequest = new VersionRangeRequest(artifact,
+				remoteRepos, null);
+		VersionRangeResult rangeResult;
+		try {
+			rangeResult = repositorySystem.resolveVersionRange(session,
+					versionRangeRequest);
+		}
+		catch (VersionRangeResolutionException e) {
+			throw new IllegalStateException("Cannot resolve version range", e);
+		}
+		if (rangeResult.getHighestVersion() == null) {
+			log.error("Version was not resolved!");
+		}
+		return rangeResult.getHighestVersion() == null ? null : rangeResult.getHighestVersion().toString();
+	}
+
+	private String resolveArtifactVersion(String stubsGroup, String stubsModule,
+			String version, String classifier) {
+		Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier,
+				ARTIFACT_EXTENSION, version);
+		VersionRequest versionRequest = new VersionRequest(artifact, remoteRepos, null);
+		VersionResult versionResult;
+		try {
+			versionResult = repositorySystem.resolveVersion(session, versionRequest);
+		}
+		catch (VersionResolutionException e) {
+			throw new IllegalStateException("Cannot resolve version", e);
+		}
+		return versionResult.getVersion() == null ? null : versionResult.getVersion();
+	}
+
+	private static File unpackStubJarToATemporaryFolder(URI stubJarUri) {
+		File tmpDirWhereStubsWillBeUnzipped;
+		try {
+			tmpDirWhereStubsWillBeUnzipped = createTempDirectory(TEMP_DIR_PREFIX)
+					.toFile();
+		}
+		catch (IOException e) {
+			throw new IllegalStateException("Cannot create tmp dir with prefix: [" + TEMP_DIR_PREFIX + "]", e);
+		}
+		tmpDirWhereStubsWillBeUnzipped.deleteOnExit();
+		log.info("Unpacking stub from JAR [URI: " + stubJarUri + "]");
+		unzipTo(new File(stubJarUri), tmpDirWhereStubsWillBeUnzipped);
+		return tmpDirWhereStubsWillBeUnzipped;
+	}
+
+}

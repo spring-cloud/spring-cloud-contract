@@ -39,7 +39,6 @@ import org.springframework.messaging.Message
  * @author Marcin Grzejszczak
  */
 @Configuration
-@Import(StubRunnerConfiguration)
 @CompileStatic
 class StubRunnerIntegrationConfiguration {
 

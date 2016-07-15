@@ -14,26 +14,20 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.messaging.camel;
+package org.springframework.cloud.contract.stubrunner;
 
-import org.apache.camel.CamelContext;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * @author Marcin Grzejszczak
  */
-@Configuration
-public class ContractVerifierCamelConfiguration {
+class StubRunnerMessagingTrigger {
 
-	@Bean ContractVerifierMessaging<?,?> contractVerifierMessaging(CamelContext context,
-			ContractVerifierMessageBuilder<?,?> builder) {
-		return new ContractVerifierCamelMessaging<>(context, builder);
+	private final ContractVerifierMessaging<?,?> contractVerifierMessaging;
+
+	StubRunnerMessagingTrigger(ContractVerifierMessaging<?,?> contractVerifierMessaging) {
+		this.contractVerifierMessaging = contractVerifierMessaging;
 	}
 
-	@Bean ContractVerifierMessageBuilder<?,?> contractVerifierMessageBuilder() {
-		return new ContractVerifierCamelMessageBuilder<>();
-	}
+	// def trigger
 }

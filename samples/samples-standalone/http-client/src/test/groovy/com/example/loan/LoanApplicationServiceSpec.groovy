@@ -1,6 +1,7 @@
 package com.example.loan
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
 import org.springframework.test.context.ContextConfiguration
@@ -14,6 +15,7 @@ import com.example.loan.model.LoanApplicationStatus
 
 @ContextConfiguration(loader = SpringBootContextLoader, classes = Application)
 @AutoConfigureStubRunner
+@IntegrationTest("debug=true")
 class LoanApplicationServiceSpec extends Specification {
 
 	@Autowired

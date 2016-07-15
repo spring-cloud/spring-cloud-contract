@@ -43,17 +43,15 @@ public class ContractVerifierIntegrationMessaging<T> implements
 			ContractVerifierIntegrationMessaging.class);
 
 	private final ApplicationContext context;
-	private final ContractVerifierMessageBuilder builder;
+	private final ContractVerifierMessageBuilder<T, Message<T>> builder;
 
 	@Autowired
-	@SuppressWarnings("unchecked")
-	public ContractVerifierIntegrationMessaging(ApplicationContext context, ContractVerifierMessageBuilder contractVerifierMessageBuilder) {
+	public ContractVerifierIntegrationMessaging(ApplicationContext context, ContractVerifierMessageBuilder<T, Message<T>> contractVerifierMessageBuilder) {
 		this.context = context;
 		this.builder = contractVerifierMessageBuilder;
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void send(T payload, Map<String, Object> headers, String destination) {
 		send(builder.create(payload, headers), destination);
 	}
@@ -75,7 +73,7 @@ public class ContractVerifierIntegrationMessaging<T> implements
 	public ContractVerifierMessage<T, Message<T>> receiveMessage(String destination, long timeout, TimeUnit timeUnit) {
 		try {
 			PollableChannel messageChannel = context.getBean(destination, PollableChannel.class);
-			return builder.create(messageChannel.receive(timeUnit.toMillis(timeout)));
+			return builder.create((Message<T>) messageChannel.receive(timeUnit.toMillis(timeout)));
 		} catch (Exception e) {
 			log.error("Exception occurred while trying to read a message from " +
 					" a channel with name [" + destination + "]", e);
@@ -89,13 +87,11 @@ public class ContractVerifierIntegrationMessaging<T> implements
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public ContractVerifierMessage<T, Message<T>> create(T t, Map<String, Object> headers) {
 		return builder.create(t, headers);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public ContractVerifierMessage<T, Message<T>> create(Message<T> message) {
 		return builder.create(message);
 	}

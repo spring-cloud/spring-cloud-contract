@@ -45,6 +45,6 @@ class StubRepositorySpec extends Specification {
 		when:
 		new StubRepository(new File('src/test/resources/nonexistingrepo'))
 		then:
-		thrown(FileNotFoundException)
+		thrown(IllegalArgumentException)
 	}
 }
