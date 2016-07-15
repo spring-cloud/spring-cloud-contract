@@ -44,7 +44,6 @@ Spring Cloud Contract Stub Runner comes with a new structure of modules
 └── spring-cloud-contract-stub-runner
     ├── spring-cloud-contract-stub-runner
     ├── spring-cloud-contract-stub-runner-boot
-    ├── spring-cloud-contract-stub-runner-junit
     ├── spring-cloud-contract-stub-runner-spring
     └── spring-cloud-contract-stub-runner-spring-cloud
 ----
@@ -54,8 +53,6 @@ include::{stubrunner_core_path}/spring-cloud-contract-stub-runner/README.adoc[]
 include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-boot/README.adoc[]
 
 include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-jetty/README.adoc[]
-
-include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-junit/README.adoc[]
 
 include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-spring/README.adoc[]
 

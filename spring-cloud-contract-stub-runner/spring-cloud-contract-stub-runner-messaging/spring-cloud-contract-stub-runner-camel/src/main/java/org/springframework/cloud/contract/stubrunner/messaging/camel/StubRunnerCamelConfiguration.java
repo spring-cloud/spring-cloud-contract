@@ -41,17 +41,22 @@ public class StubRunnerCamelConfiguration {
 		return new SpringRouteBuilder() {
 			@Override
 			public void configure() throws Exception {
-				Map<StubConfiguration, Collection<Contract>> contracts = batchStubRunner.getContracts();
-						for (Collection<Contract> list : contracts.values()) {
-							for (Contract it : list) {
-								if (it.getInput()!=null && it.getInput().getMessageFrom()!=null && it.getOutputMessage()!=null && it.getOutputMessage().getSentTo()!=null) {
-									from(it.getInput().getMessageFrom().getClientValue())
+				Map<StubConfiguration, Collection<Contract>> contracts = batchStubRunner
+						.getContracts();
+				for (Collection<Contract> list : contracts.values()) {
+					for (Contract it : list) {
+						if (it.getInput() != null
+								&& it.getInput().getMessageFrom() != null
+								&& it.getOutputMessage() != null
+								&& it.getOutputMessage().getSentTo() != null) {
+							from(it.getInput().getMessageFrom().getClientValue())
 									.filter(new StubRunnerCamelPredicate(it))
 									.process(new StubRunnerCamelProcessor(it))
-									.to(it.getOutputMessage().getSentTo().getClientValue());
-								}
-							}
+									.to(it.getOutputMessage().getSentTo()
+											.getClientValue());
 						}
+					}
+				}
 			}
 		};
 	}

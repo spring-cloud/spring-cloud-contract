@@ -63,6 +63,8 @@ class StubRunnerExecutorSpec extends Specification {
 		executor.runStubs(stubRunnerOptions, repository, stub)
 		then:
 		!executor.findStubUrl("unkowngroup", "unknownartifact")
+		cleanup:
+		executor.shutdown()
 	}
 
 	def 'should start a stub on a given port'() {
@@ -74,6 +76,8 @@ class StubRunnerExecutorSpec extends Specification {
 		executor.runStubs(stubRunnerOptions, repository, stub)
 		then:
 		executor.findStubUrl("group", "artifact") == 'http://localhost:12345'.toURL()
+		cleanup:
+		executor.shutdown()
 	}
 
 	def 'should ensure that triggered contracts have properly parsed message body when a message is sent'() {
@@ -84,6 +88,8 @@ class StubRunnerExecutorSpec extends Specification {
 			executor.trigger('send_order')
 		then:
 			noExceptionThrown()
+		cleanup:
+		executor.shutdown()
 	}
 
 	Map<StubConfiguration, Integer> stubIdsWithPortsFromString(String stubIdsToPortMapping) {
