@@ -113,6 +113,17 @@ Please see the example below:
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=regex,indent=0]
 ----
 
+You can also provide only one side of the communication using a regular expression. If you do that then automatically we'll
+provide the generated string that matches the provided regular expression. For example:
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderSpec.groovy[tags=dsl_one_side_data_generation_example,indent=0]
+----
+
+In this example for request and response the opposite side of the communication will have the respective data generated.
+
+
 === Passing optional parameters
 
 It is possible to provide optional parameters in your contract. It's only possible to have optional parameter for the:

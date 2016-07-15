@@ -1398,7 +1398,6 @@ World.'''"""
 			test.contains('assertThatJson(parsedJson).field("message").matches("^(?!\\\\s*\\$).+")')
 	}
 
-
 	Contract dslForDocs =
 			// tag::dsl_example[]
 		org.springframework.cloud.contract.spec.Contract.make {
@@ -1444,4 +1443,39 @@ World.'''"""
 			}
 		}
 		// end::dsl_example[]
+
+	Contract dslWithOnlyOneSideForDocs =
+			// tag::dsl_one_side_data_generation_example[]
+		org.springframework.cloud.contract.spec.Contract.make {
+			request {
+				method 'PUT'
+				url '/foo'
+				body([
+					requestElement: value(client(regex('[0-9]{5}')))
+				])
+			}
+			response {
+				status 200
+				body([
+					responseElement: value(server(regex('[0-9]{7}')))
+				])
+			}
+		}
+		// end::dsl_one_side_data_generation_example[]
+
+	@Issue('#32')
+	def "should generate the regular expression for the other side of communication"() {
+		given:
+			MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(
+					dslWithOnlyOneSideForDocs, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.given(blockBuilder)
+			builder.then(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.replace('\n', '').matches('.*')
+			test.replace('\n', '').stripIndent().stripMargin().matches('.*field\\("responseElement"\\).isEqualTo\\("[0-9]{7}.*')
+	}
+
 }
