@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.3">
-<title>Spring Cloud Contract Verifier</title>
+<title>Spring Cloud Contract</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -417,76 +417,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 .show-for-print{display:inherit!important}}
 </style>
 </head>
-<body class="article toc2 toc-left">
+<body class="article">
 <div id="header">
-<h1>Spring Cloud Contract Verifier</h1>
-<div id="toc" class="toc2">
-<div id="toctitle">Table of Contents</div>
-<ul class="sectlevel1">
-<li><a href="#_introduction">Introduction</a>
-<ul class="sectlevel2">
-<li><a href="#_why">Why?</a></li>
-<li><a href="#_purposes">Purposes</a></li>
-<li><a href="#_client_side">Client Side</a></li>
-<li><a href="#_server_side">Server Side</a></li>
-<li><a href="#_dependencies">Dependencies</a></li>
-<li><a href="#_additional_links">Additional links</a></li>
-<li><a href="#_samples">Samples</a></li>
-<li><a href="#_why_use_spring_cloud_contract_verifier_and_not_x">Why use Spring Cloud Contract Verifier and not X ?</a></li>
-</ul>
-</li>
-<li><a href="#_contract_dsl">Contract DSL</a>
-<ul class="sectlevel2">
-<li><a href="#_limitations">Limitations</a></li>
-<li><a href="#_http_top_level_elements">HTTP Top-Level Elements</a></li>
-<li><a href="#_request">Request</a></li>
-<li><a href="#_response">Response</a></li>
-<li><a href="#_regular_expressions">Regular expressions</a></li>
-<li><a href="#_passing_optional_parameters">Passing optional parameters</a></li>
-<li><a href="#_executing_custom_methods_on_server_side">Executing custom methods on server side</a></li>
-<li><a href="#_jax_rs_support">JAX-RS support</a></li>
-<li><a href="#_messaging_top_level_elements">Messaging Top-Level Elements</a></li>
-</ul>
-</li>
-<li><a href="#_spring_cloud_contract_verifier_http">Spring Cloud Contract Verifier HTTP</a>
-<ul class="sectlevel2">
-<li><a href="#_gradle_project">Gradle Project</a></li>
-<li><a href="#_using_in_your_maven_project">Using in your Maven project</a></li>
-<li><a href="#_scenarios">Scenarios</a></li>
-</ul>
-</li>
-<li><a href="#_spring_cloud_contract_verifier_messaging">Spring Cloud Contract Verifier Messaging</a>
-<ul class="sectlevel2">
-<li><a href="#_integrations">Integrations</a></li>
-<li><a href="#_manual_integration">Manual Integration</a></li>
-<li><a href="#_publisher_side_test_generation">Publisher side test generation</a></li>
-<li><a href="#_consumer_stub_side_generation">Consumer Stub Side generation</a></li>
-</ul>
-</li>
-<li><a href="#_spring_cloud_contract_stub_runner">Spring Cloud Contract Stub Runner</a>
-<ul class="sectlevel2">
-<li><a href="#_snapshot_versions_2">Snapshot versions</a></li>
-<li><a href="#_publishing_stubs_as_jars">Publishing stubs as JARs</a></li>
-<li><a href="#_modules">Modules</a></li>
-<li><a href="#_stub_runner_core">Stub Runner Core</a></li>
-<li><a href="#_stub_runner_boot">Stub Runner Boot</a></li>
-<li><a href="#_stub_runner_junit_rule">Stub Runner JUnit Rule</a></li>
-<li><a href="#_stub_runner_spring">Stub Runner Spring</a></li>
-<li><a href="#_stub_runner_spring_cloud">Stub Runner Spring Cloud</a></li>
-<li><a href="#_common_properties_for_junit_and_spring">Common properties for JUnit and Spring</a></li>
-</ul>
-</li>
-<li><a href="#_stub_runner_for_messaging">Stub Runner for Messaging</a>
-<ul class="sectlevel2">
-<li><a href="#_stub_triggering">Stub triggering</a></li>
-<li><a href="#_stub_runner_camel">Stub Runner Camel</a></li>
-<li><a href="#_stub_runner_integration">Stub Runner Integration</a></li>
-<li><a href="#_stub_runner_stream">Stub Runner Stream</a></li>
-</ul>
-</li>
-<li><a href="#_links">Links</a></li>
-</ul>
-</div>
+<h1>Spring Cloud Contract</h1>
 </div>
 <div id="content">
 <div id="preamble">
@@ -494,6 +427,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p><em>Documentation Authors: Adam Dudczak, Marcin Grzejszczak, Jakub Kubryński, Karol Lassak, Olga Maciaszek-Sharma, Mariusz Smykuła</em></p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_spring_cloud_contract_verifier">Spring Cloud Contract Verifier</h2>
+<div class="sectionbody">
+
 </div>
 </div>
 <div class="sect1">
@@ -713,6 +652,220 @@ that your application behaves in the same way as you define in your stub.</p>
 for response verification.</p>
 </div>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_step_by_step_guide_to_cdc">Step by step guide to CDC</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Let&#8217;s take an example of Fraud Detection and Loan Issuance process. Let&#8217;s assume that the Loan Issuance is a client to the
+Fraud Detection server. Let&#8217;s assume that we have to write a new feature (if a client wants too borrow too much money then
+we mark him as fraud). The current implementation grants loan to everybody.</p>
+</div>
+<div class="paragraph">
+<p>Of course both client and server development teams need to communicate directly and discuss changes while
+going through the process. CDC is all about communication.</p>
+</div>
+<div class="paragraph">
+<p>The code is available under the <code>samples/samples-standalone/http-server</code> and <code>samples/samples-standalone/http-client</code> folders.</p>
+</div>
+<div class="paragraph">
+<p>As a developer of the Loan Issuance service (a consumer to the Fraud Detection server):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>start doing TDD by writing a test to your feature</p>
+</li>
+<li>
+<p>at some point in time you need to send a request to the Fraud Detection service</p>
+</li>
+<li>
+<p>you clone the Fraud Detection service repository locally</p>
+</li>
+<li>
+<p>you define the contract locally in the repo of Fraud Detection service</p>
+</li>
+<li>
+<p>provide the group id and artifact id for the Spring Cloud Contract Stub Runner to download stubs of your collaborators</p>
+</li>
+<li>
+<p>also provide the offline work switch since you don&#8217;t want to work offline</p>
+</li>
+<li>
+<p>when you need to install the stubs of the server side you execute e.g. <code>./mvnw clean install -DskipTests</code> in their repo</p>
+</li>
+<li>
+<p>when you&#8217;re happy with the contract and your test passes publish a PR to the server side</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>As a developer of the Fraud Detection server (a server to the Loan Issuance service):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>take over the PR (if you try to build it your app will break cause you have a missing implementation)</p>
+</li>
+<li>
+<p>write the missing implementation</p>
+</li>
+<li>
+<p>deploy your app with the stubs e.g. <code>./mvnw clean deploy</code> you&#8217;ll publish both the application fat jar and the stub jar</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>As a developer of the Loan Issuance service (a consumer to the Fraud Detection server):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>since the server side work was done you can merge the branch to master</p>
+</li>
+<li>
+<p>disable the offline work for Spring Cloud Contract Stub Runner</p>
+</li>
+<li>
+<p>at this moment the stubs of the server side will be automatically downloaded from Nexus / Artifactory</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Code examples:</p>
+</div>
+<div class="paragraph">
+<p><strong>CLIENT</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>start doing TDD</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">def 'should be rejected due to abnormal loan amount'() {
+	given:
+		LoanApplication application =
+				new LoanApplication(client: new Client(pesel: '1234567890'), amount: 99_999)
+	when:
+		LoanApplicationResult loanApplication = sut.loanApplication(application)
+	then:
+		loanApplication.loanApplicationStatus == LoanApplicationStatus.LOAN_APPLICATION_REJECTED
+		loanApplication.rejectionReason == 'Amount too high'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>at some point in time you need to send a request to the Fraud Detection service</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">ResponseEntity&lt;FraudServiceResponse&gt; response =
+		restTemplate.exchange("http://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
+				new HttpEntity&lt;&gt;(request, httpHeaders),
+				FraudServiceResponse.class);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>you define the contract locally in the repo of Fraud Detection service</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">package contracts
+
+org.springframework.cloud.contract.spec.Contract.make {
+				request {
+				method 'PUT'
+				url '/fraudcheck'
+				body("""
+					{
+					"clientPesel":"${value(client(regex('[0-9]{10}')), server('1234567890'))}",
+					"loanAmount":99999}
+				"""
+				)
+				headers {
+					header('Content-Type', 'application/vnd.fraud.v1+json')
+				}
+
+			}
+			response {
+				status 200
+				body( """{
+	"fraudCheckStatus": "${value(client('FRAUD'), server(regex('[A-Z]{5}')))}",
+	"rejectionReason": "Amount too high"
+}""")
+				headers {
+					 header('Content-Type': value(server(regex('application/vnd.fraud.v1.json.*')), client('application/vnd.fraud.v1+json')))
+					}
+			}
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>provide the group id and artifact id for the Spring Cloud Contract Stub Runner to download stubs of your collaborators</strong>
+<strong>also provide the offline work switch since you don&#8217;t want to work offline</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">stubrunner:
+  work-offline: true
+  stubs.ids: 'com.example:http-server:+:stubs:8080'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>SERVER</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>take over the PR (if you try to build it your app will break cause you have a missing implementation)</strong></p>
+</div>
+<div class="paragraph">
+<p>the API</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@RequestMapping(
+		value = "/fraudcheck",
+		method = PUT,
+		consumes = FRAUD_SERVICE_JSON_VERSION_1,
+		produces = FRAUD_SERVICE_JSON_VERSION_1)
+public FraudCheckResult fraudCheck(@RequestBody FraudCheck fraudCheck) {
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>the initial impl</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@RequestMapping(
+		value = "/fraudcheck",
+		method = PUT,
+		consumes = FRAUD_SERVICE_JSON_VERSION_1,
+		produces = FRAUD_SERVICE_JSON_VERSION_1)
+public FraudCheckResult fraudCheck(@RequestBody FraudCheck fraudCheck) {
+return new FraudCheckResult(FraudCheckStatus.OK, NO_REASON);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>write the missing implementation</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@RequestMapping(
+		value = "/fraudcheck",
+		method = PUT,
+		consumes = FRAUD_SERVICE_JSON_VERSION_1,
+		produces = FRAUD_SERVICE_JSON_VERSION_1)
+public FraudCheckResult fraudCheck(@RequestBody FraudCheck fraudCheck) {
+if (amountGreaterThanThreshold(fraudCheck)) {
+	return new FraudCheckResult(FraudCheckStatus.FRAUD, AMOUNT_TOO_HIGH);
+}
+return new FraudCheckResult(FraudCheckStatus.OK, NO_REASON);
+}</code></pre>
+</div>
+</div>
 <div class="sect2">
 <h3 id="_dependencies">Dependencies</h3>
 <div class="paragraph">
@@ -901,7 +1054,7 @@ a tiny subset of it (namely literals, method calls and closures). What&#8217;s m
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
-<p>You can easily compile Contracts to WireMock stubs mapping using standalone maven command: <code>mvn org.springframework.cloud:spring-cloud-contract-verifier-maven-plugin:convert</code>.</p>
+<p>You can easily compile Contracts to WireMock stubs mapping using standalone maven command: <code>mvn org.springframework.cloud:spring-cloud-contract-maven-plugin:convert</code>.</p>
 </div>
 </blockquote>
 </div>
@@ -1193,6 +1346,32 @@ for your test and your server side tests.</p>
 	}
 }</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>You can also provide only one side of the communication using a regular expression. If you do that then automatically we&#8217;ll
+provide the generated string that matches the provided regular expression. For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
+	request {
+		method 'PUT'
+		url '/foo'
+		body([
+			requestElement: value(client(regex('[0-9]{5}')))
+		])
+	}
+	response {
+		status 200
+		body([
+			responseElement: value(server(regex('[0-9]{7}')))
+		])
+	}
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this example for request and response the opposite side of the communication will have the respective data generated.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1527,7 +1706,7 @@ as presented below (note you can use either <code>$</code> or <code>value</code>
 <div class="sect3">
 <h4 id="_prerequisites">Prerequisites</h4>
 <div class="paragraph">
-<p>In order to use Spring Cloud Contract Verifier with Wiremock you have to use gradle or maven plugin.</p>
+<p>In order to use Spring Cloud Contract Verifier with WireMock you have to use gradle or maven plugin.</p>
 </div>
 <div class="sect4">
 <h5 id="_add_gradle_plugin">Add gradle plugin</h5>
@@ -1538,7 +1717,7 @@ as presented below (note you can use either <code>$</code> or <code>value</code>
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'org.springframework.cloud:spring-cloud-contract-verifier-gradle-plugin:${verifier_version}'
+		classpath 'org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}'
 	}
 }
 
@@ -1574,7 +1753,7 @@ dependencies {
 <div class="content">
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
     &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-contract-verifier-maven-plugin&lt;/artifactId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
     &lt;executions&gt;
         &lt;execution&gt;
             &lt;goals&gt;
@@ -1588,7 +1767,7 @@ dependencies {
 </div>
 </div>
 <div class="paragraph">
-<p>Read more: <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-verifier-maven-plugin/">spring-cloud-contract-verifier-maven-plugin</a></p>
+<p>Read more: <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/">spring-cloud-contract-maven-plugin</a></p>
 </div>
 </div>
 <div class="sect4">
@@ -1822,7 +2001,7 @@ class LoanApplicationServiceSpec extends Specification {
 <div class="content">
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
     &lt;groupId&gt;org.springframework.cloud.verifier&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-contract-verifier-maven-plugin&lt;/artifactId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
     &lt;executions&gt;
         &lt;execution&gt;
             &lt;goals&gt;
@@ -1836,7 +2015,7 @@ class LoanApplicationServiceSpec extends Specification {
 </div>
 </div>
 <div class="paragraph">
-<p>Read more: <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-verifier-maven-plugin/">spring-cloud-contract-verifier-maven-plugin</a></p>
+<p>Read more: <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/">spring-cloud-contract-maven-plugin</a></p>
 </div>
 </div>
 <div class="sect3">
@@ -1874,7 +2053,7 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
 <div class="content">
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
     &lt;groupId&gt;org.springframework.cloud.verifier&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-contract-verifier-maven-plugin&lt;/artifactId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
     &lt;executions&gt;
         &lt;execution&gt;
             &lt;goals&gt;
@@ -1916,7 +2095,7 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
 </ul>
 </div>
 <div class="paragraph">
-<p>For complete information take a look at <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-verifier-maven-plugin/plugin-info.html">Plugin Documentation</a></p>
+<p>For complete information take a look at <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/plugin-info.html">Plugin Documentation</a></p>
 </div>
 </div>
 <div class="sect4">
@@ -2002,7 +2181,7 @@ class  MvcSpec extends Specification {
 <div class="content">
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
     &lt;groupId&gt;org.springframework.cloud.verifier&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-contract-verifier-maven-plugin&lt;/artifactId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
     &lt;version&gt;${verifier-plugin.version}&lt;/version&gt;
     &lt;executions&gt;
         &lt;execution&gt;
@@ -2067,7 +2246,7 @@ class LoanApplicationServiceSpec extends Specification {
  - login marked as <code>Started</code> pointing to:
  - showCart marked as <code>Step1</code> pointing to:
  - logout marked as <code>Step2</code> which will close the scenario.
-More details about Wiremock scenarios can be found under [<a href="http://wiremock.org/stateful-behaviour.html" class="bare">http://wiremock.org/stateful-behaviour.html</a>](<a href="http://wiremock.org/stateful-behaviour.html" class="bare">http://wiremock.org/stateful-behaviour.html</a>)</p>
+More details about Wiremock scenarios can be found under <a href="http://wiremock.org/stateful-behaviour.html">http://wiremock.org/stateful-behaviour.html</a></p>
 </div>
 <div class="paragraph">
 <p>Spring Cloud Contract Verifier will also generate tests with guaranteed order of execution.</p>
@@ -2550,44 +2729,6 @@ For messaging, special stub routes are defined.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_building_a_fat_jar">Building a Fat Jar</h5>
-<div class="paragraph">
-<p>Just call the following command:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">./gradlew spring-cloud-contract-stub-runner-root:spring-cloud-contract-stub-runner:shadowJar -PfatJar</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>and inside the <code>build/lib</code> there will be a Fat Jar with classifier <code>fatJar</code> waiting for you to execute. E.g.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">java -jar spring-cloud-contract-stub-runner/spring-cloud-contract-stub-runner/build/libs/spring-cloud-contract-stub-runner-1.0.0-SNAPSHOT-fatJar.jar -sr http://a.b.com -s a:b:c,d:e,f:g:h:i</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_stub_runner_configuration">Stub runner configuration</h4>
-<div class="paragraph">
-<p>You can configure the stub runner by either passing the full arguments list with the <code>-Pargs</code> like this:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">./gradlew spring-cloud-contract-stub-runner-root:spring-cloud-contract-stub-runner:run -Pargs="-c pl -minp 10000 -maxp 10005 -s a:b:c,d:e,f:g:h"</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>or each parameter separately with a <code>-P</code> prefix and without the hyphen <code>-</code> in the name of the param</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">./gradlew spring-cloud-contract-stub-runner-root:spring-cloud-contract-stub-runner:run -Pc=pl -Pminp=10000 -Pmaxp=10005 -Ps=a:b:c,d:e,f:g:h</code></pre>
-</div>
-</div>
-<div class="sect4">
 <h5 id="_http_stubs">HTTP Stubs</h5>
 <div class="paragraph">
 <p>Stubs are defined in JSON documents, whose syntax is defined in <a href="http://wiremock.org/stubbing.html">WireMock documentation</a></p>
@@ -2796,6 +2937,12 @@ class StubRunnerBootSpec extends Specification {
 </div>
 </div>
 <div class="sect2">
+<h3 id="_stub_runner_jetty">Stub Runner Jetty</h3>
+<div class="paragraph">
+<p>Convenience module that pulls together the dependencies needed to run the Stub Runner with WireMock, but without Spring Boot.</p>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_stub_runner_junit_rule">Stub Runner JUnit Rule</h3>
 <div class="paragraph">
 <p>Stub Runner comes with a JUnit rule thanks to which you can very easily download and run stubs for given group and artifact id:</p>
@@ -2988,7 +3135,8 @@ its methods as presented below:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">@ContextConfiguration(classes = Config, loader = SpringApplicationContextLoader)
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
+@AutoConfigureStubRunner
 class StubRunnerConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
@@ -3915,10 +4063,22 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_spring_cloud_contract_wiremock">Spring Cloud Contract WireMock</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Modules giving you the possibility to use <a href="http://wiremock.org">WireMock</a> with different servers. Check out the
+<a href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples">samples</a> for more information.</p>
+</div>
+<div class="paragraph">
+<p>Currently we support Jetty, Native WireMock server, Tomcat and Undertow.</p>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-07-13 19:26:49 CEST
+Last updated 2016-07-15 14:27:23 CEST
 </div>
 </div>
 </body>
