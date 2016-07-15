@@ -1,4 +1,5 @@
 :core_path: ../../../../..
+:plugins_path: ../../../../../spring-cloud-contract-tools
 :verifier_root_path: {core_path}/spring-cloud-contract-verifier
 :samples_path: {core_path}/samples
 :verifier_core_path: {verifier_root_path}/spring-cloud-contract-verifier-core
