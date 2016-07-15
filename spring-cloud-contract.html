@@ -417,9 +417,83 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 .show-for-print{display:inherit!important}}
 </style>
 </head>
-<body class="article">
+<body class="article toc2 toc-left">
 <div id="header">
 <h1>Spring Cloud Contract</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_spring_cloud_contract_verifier">Spring Cloud Contract Verifier</a></li>
+<li><a href="#_introduction">Introduction</a>
+<ul class="sectlevel2">
+<li><a href="#_why">Why?</a></li>
+<li><a href="#_purposes">Purposes</a></li>
+<li><a href="#_client_side">Client Side</a></li>
+<li><a href="#_server_side">Server Side</a></li>
+</ul>
+</li>
+<li><a href="#_step_by_step_guide_to_cdc">Step by step guide to CDC</a>
+<ul class="sectlevel2">
+<li><a href="#_dependencies">Dependencies</a></li>
+<li><a href="#_additional_links">Additional links</a></li>
+<li><a href="#_samples">Samples</a></li>
+<li><a href="#_why_use_spring_cloud_contract_verifier_and_not_x">Why use Spring Cloud Contract Verifier and not X ?</a></li>
+</ul>
+</li>
+<li><a href="#_contract_dsl">Contract DSL</a>
+<ul class="sectlevel2">
+<li><a href="#_limitations">Limitations</a></li>
+<li><a href="#_http_top_level_elements">HTTP Top-Level Elements</a></li>
+<li><a href="#_request">Request</a></li>
+<li><a href="#_response">Response</a></li>
+<li><a href="#_regular_expressions">Regular expressions</a></li>
+<li><a href="#_passing_optional_parameters">Passing optional parameters</a></li>
+<li><a href="#_executing_custom_methods_on_server_side">Executing custom methods on server side</a></li>
+<li><a href="#_jax_rs_support">JAX-RS support</a></li>
+<li><a href="#_messaging_top_level_elements">Messaging Top-Level Elements</a></li>
+</ul>
+</li>
+<li><a href="#_spring_cloud_contract_verifier_http">Spring Cloud Contract Verifier HTTP</a>
+<ul class="sectlevel2">
+<li><a href="#_gradle_project">Gradle Project</a></li>
+<li><a href="#_using_in_your_maven_project">Using in your Maven project</a></li>
+<li><a href="#_scenarios">Scenarios</a></li>
+</ul>
+</li>
+<li><a href="#_spring_cloud_contract_verifier_messaging">Spring Cloud Contract Verifier Messaging</a>
+<ul class="sectlevel2">
+<li><a href="#_integrations">Integrations</a></li>
+<li><a href="#_manual_integration">Manual Integration</a></li>
+<li><a href="#_publisher_side_test_generation">Publisher side test generation</a></li>
+<li><a href="#_consumer_stub_side_generation">Consumer Stub Side generation</a></li>
+</ul>
+</li>
+<li><a href="#_spring_cloud_contract_stub_runner">Spring Cloud Contract Stub Runner</a>
+<ul class="sectlevel2">
+<li><a href="#_snapshot_versions_2">Snapshot versions</a></li>
+<li><a href="#_publishing_stubs_as_jars">Publishing stubs as JARs</a></li>
+<li><a href="#_modules">Modules</a></li>
+<li><a href="#_stub_runner_core">Stub Runner Core</a></li>
+<li><a href="#_stub_runner_boot">Stub Runner Boot</a></li>
+<li><a href="#_stub_runner_jetty">Stub Runner Jetty</a></li>
+<li><a href="#_stub_runner_junit_rule">Stub Runner JUnit Rule</a></li>
+<li><a href="#_stub_runner_spring">Stub Runner Spring</a></li>
+<li><a href="#_stub_runner_spring_cloud">Stub Runner Spring Cloud</a></li>
+<li><a href="#_common_properties_for_junit_and_spring">Common properties for JUnit and Spring</a></li>
+</ul>
+</li>
+<li><a href="#_stub_runner_for_messaging">Stub Runner for Messaging</a>
+<ul class="sectlevel2">
+<li><a href="#_stub_triggering">Stub triggering</a></li>
+<li><a href="#_stub_runner_camel">Stub Runner Camel</a></li>
+<li><a href="#_stub_runner_integration">Stub Runner Integration</a></li>
+<li><a href="#_stub_runner_stream">Stub Runner Stream</a></li>
+</ul>
+</li>
+<li><a href="#_links">Links</a></li>
+<li><a href="#_spring_cloud_contract_wiremock">Spring Cloud Contract WireMock</a></li>
+</ul>
+</div>
 </div>
 <div id="content">
 <div id="preamble">
@@ -4078,7 +4152,7 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-07-15 14:35:00 CEST
+Last updated 2016-07-15 14:43:09 CEST
 </div>
 </div>
 </body>
