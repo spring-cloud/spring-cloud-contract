@@ -41,7 +41,7 @@ Spring Cloud Contract Verifier moves TDD to the level of software architecture.
 
 Let us assume that we have a system comprising of multiple microservices:
 
-image::{images_url}/Deps.png[Microservices Architecture]
+image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/Deps.png[Microservices Architecture]
 
 ==== Testing issues
 
@@ -82,11 +82,11 @@ Disadvantages:
 To solve the aforementioned issues Spring Cloud Contract Verifier with Stub Runner were created. Their main idea is to give you very fast feedback, without the need
 to set up the whole world of microservices.
 
-image::{images_url}/Stubs1.png[Stubbed Services]
+image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/Stubs1.png[Stubbed Services]
 
 If you work on stubs then the only applications you need are those that your application is using directly.
 
-image::{images_url}/Stubs2.png[Stubbed Services]
+image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/Stubs2.png[Stubbed Services]
 
 Spring Cloud Contract Verifier gives you the certainty that the stubs that you're using were created by the service that you're calling. Also if you can use them it means that they were
 tested against the producer's side. In other words - you can trust those stubs.
@@ -164,21 +164,61 @@ Code examples:
 
 [source,groovy,indent=0]
 ----
-Unresolved directive in verifier/introduction.adoc - include::{standalone_samples_path}/http-client/src/test/groovy/com/example/loan/LoanApplicationServiceSpec.groovy[tags=client_tdd,indent=0]
+def 'should be rejected due to abnormal loan amount'() {
+    given:
+        LoanApplication application =
+                new LoanApplication(client: new Client(pesel: '1234567890'), amount: 99_999)
+    when:
+        LoanApplicationResult loanApplication = sut.loanApplication(application)
+    then:
+        loanApplication.loanApplicationStatus == LoanApplicationStatus.LOAN_APPLICATION_REJECTED
+        loanApplication.rejectionReason == 'Amount too high'
+}
 ----
 
 *at some point in time you need to send a request to the Fraud Detection service*
 
 [source,groovy,indent=0]
 ----
-Unresolved directive in verifier/introduction.adoc - include::{standalone_samples_path}/http-client/src/main/java/com/example/loan/LoanApplicationService.java[tags=client_call_server,indent=0]
+ResponseEntity<FraudServiceResponse> response =
+        restTemplate.exchange("http://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
+                new HttpEntity<>(request, httpHeaders),
+                FraudServiceResponse.class);
 ----
 
 *you define the contract locally in the repo of Fraud Detection service*
 
 [source,groovy,indent=0]
 ----
-Unresolved directive in verifier/introduction.adoc - include::{standalone_samples_path}/http-server/src/test/resources/contracts/shouldMarkClientAsFraud.groovy[]
+package contracts
+
+org.springframework.cloud.contract.spec.Contract.make {
+				request {
+				method 'PUT'
+				url '/fraudcheck'
+				body("""
+					{
+					"clientPesel":"${value(client(regex('[0-9]{10}')), server('1234567890'))}",
+					"loanAmount":99999}
+				"""
+				)
+				headers {
+					header('Content-Type', 'application/vnd.fraud.v1+json')
+				}
+
+			}
+			response {
+				status 200
+				body( """{
+	"fraudCheckStatus": "${value(client('FRAUD'), server(regex('[A-Z]{5}')))}",
+	"rejectionReason": "Amount too high"
+}""")
+				headers {
+					 header('Content-Type': value(server(regex('application/vnd.fraud.v1.json.*')), client('application/vnd.fraud.v1+json')))
+					}
+			}
+
+}
 ----
 
 *provide the group id and artifact id for the Spring Cloud Contract Stub Runner to download stubs of your collaborators*
@@ -186,7 +226,9 @@ Unresolved directive in verifier/introduction.adoc - include::{standalone_sample
 
 [source,groovy,indent=0]
 ----
-Unresolved directive in verifier/introduction.adoc - include::{standalone_samples_path}/http-client/src/test/resources/application.yaml[]
+stubrunner:
+  work-offline: true
+  stubs.ids: 'com.example:http-server:+:stubs:8080'
 ----
 
 *SERVER*
@@ -197,7 +239,12 @@ the API
 
 [source,java,indent=0]
 ----
-Unresolved directive in verifier/introduction.adoc - include::{standalone_samples_path}/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
+@RequestMapping(
+        value = "/fraudcheck",
+        method = PUT,
+        consumes = FRAUD_SERVICE_JSON_VERSION_1,
+        produces = FRAUD_SERVICE_JSON_VERSION_1)
+public FraudCheckResult fraudCheck(@RequestBody FraudCheck fraudCheck) {
 }
 ----
 
@@ -205,8 +252,13 @@ the initial impl
 
 [source,java,indent=0]
 ----
-Unresolved directive in verifier/introduction.adoc - include::{standalone_samples_path}/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
-Unresolved directive in verifier/introduction.adoc - include::{standalone_samples_path}/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
+@RequestMapping(
+        value = "/fraudcheck",
+        method = PUT,
+        consumes = FRAUD_SERVICE_JSON_VERSION_1,
+        produces = FRAUD_SERVICE_JSON_VERSION_1)
+public FraudCheckResult fraudCheck(@RequestBody FraudCheck fraudCheck) {
+return new FraudCheckResult(FraudCheckStatus.OK, NO_REASON);
 }
 ----
 
@@ -214,9 +266,16 @@ Unresolved directive in verifier/introduction.adoc - include::{standalone_sample
 
 [source,java,indent=0]
 ----
-Unresolved directive in verifier/introduction.adoc - include::{standalone_samples_path}/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
-Unresolved directive in verifier/introduction.adoc - include::{standalone_samples_path}/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=new_impl,indent=0]
-Unresolved directive in verifier/introduction.adoc - include::{standalone_samples_path}/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
+@RequestMapping(
+        value = "/fraudcheck",
+        method = PUT,
+        consumes = FRAUD_SERVICE_JSON_VERSION_1,
+        produces = FRAUD_SERVICE_JSON_VERSION_1)
+public FraudCheckResult fraudCheck(@RequestBody FraudCheck fraudCheck) {
+if (amountGreaterThanThreshold(fraudCheck)) {
+    return new FraudCheckResult(FraudCheckStatus.FRAUD, AMOUNT_TOO_HIGH);
+}
+return new FraudCheckResult(FraudCheckStatus.OK, NO_REASON);
 }
 ----
 

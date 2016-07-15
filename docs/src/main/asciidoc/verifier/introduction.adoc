@@ -19,7 +19,7 @@ Spring Cloud Contract Verifier moves TDD to the level of software architecture.
 
 Let us assume that we have a system comprising of multiple microservices:
 
-image::{images_url}/Deps.png[Microservices Architecture]
+image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/Deps.png[Microservices Architecture]
 
 ==== Testing issues
 
@@ -60,11 +60,11 @@ Disadvantages:
 To solve the aforementioned issues Spring Cloud Contract Verifier with Stub Runner were created. Their main idea is to give you very fast feedback, without the need
 to set up the whole world of microservices.
 
-image::{images_url}/Stubs1.png[Stubbed Services]
+image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/Stubs1.png[Stubbed Services]
 
 If you work on stubs then the only applications you need are those that your application is using directly.
 
-image::{images_url}/Stubs2.png[Stubbed Services]
+image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/Stubs2.png[Stubbed Services]
 
 Spring Cloud Contract Verifier gives you the certainty that the stubs that you're using were created by the service that you're calling. Also if you can use them it means that they were
 tested against the producer's side. In other words - you can trust those stubs.
@@ -142,21 +142,21 @@ Code examples:
 
 [source,groovy,indent=0]
 ----
-include::{standalone_samples_path}/http-client/src/test/groovy/com/example/loan/LoanApplicationServiceSpec.groovy[tags=client_tdd,indent=0]
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/samples-standalone/http-client/src/test/groovy/com/example/loan/LoanApplicationServiceSpec.groovy[tags=client_tdd,indent=0]
 ----
 
 *at some point in time you need to send a request to the Fraud Detection service*
 
 [source,groovy,indent=0]
 ----
-include::{standalone_samples_path}/http-client/src/main/java/com/example/loan/LoanApplicationService.java[tags=client_call_server,indent=0]
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/samples-standalone/http-client/src/main/java/com/example/loan/LoanApplicationService.java[tags=client_call_server,indent=0]
 ----
 
 *you define the contract locally in the repo of Fraud Detection service*
 
 [source,groovy,indent=0]
 ----
-include::{standalone_samples_path}/http-server/src/test/resources/contracts/shouldMarkClientAsFraud.groovy[]
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/samples-standalone/http-server/src/test/resources/contracts/shouldMarkClientAsFraud.groovy[]
 ----
 
 *provide the group id and artifact id for the Spring Cloud Contract Stub Runner to download stubs of your collaborators*
@@ -164,7 +164,7 @@ include::{standalone_samples_path}/http-server/src/test/resources/contracts/shou
 
 [source,groovy,indent=0]
 ----
-include::{standalone_samples_path}/http-client/src/test/resources/application.yaml[]
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/samples-standalone/http-client/src/test/resources/application.yaml[]
 ----
 
 *SERVER*
@@ -175,7 +175,7 @@ the API
 
 [source,java,indent=0]
 ----
-include::{standalone_samples_path}/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/samples-standalone/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
 }
 ----
 
@@ -183,8 +183,8 @@ the initial impl
 
 [source,java,indent=0]
 ----
-include::{standalone_samples_path}/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
-include::{standalone_samples_path}/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/samples-standalone/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/samples-standalone/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
 }
 ----
 
@@ -192,9 +192,9 @@ include::{standalone_samples_path}/http-server/src/main/java/com/example/fraud/F
 
 [source,java,indent=0]
 ----
-include::{standalone_samples_path}/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
-include::{standalone_samples_path}/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=new_impl,indent=0]
-include::{standalone_samples_path}/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/samples-standalone/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/samples-standalone/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=new_impl,indent=0]
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/samples-standalone/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
 }
 ----
 
