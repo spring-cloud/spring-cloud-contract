@@ -31,6 +31,7 @@ test:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/target/.*-reports/.*" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
     - find . -type f -regex ".*/build/test-results/.*" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
+    - cd spring-cloud-contract-tools/spring-cloud-contract-gradle-plugin && ./gradlew jacocoTestReport
     - bash <(curl -s https://codecov.io/bash)
 notify:
   webhooks:
