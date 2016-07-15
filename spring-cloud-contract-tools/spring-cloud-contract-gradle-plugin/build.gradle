@@ -127,6 +127,12 @@ jacoco {
 	toolVersion = "0.7.7.201606060606"
 }
 
+jacocoTestReport {
+	reports {
+		xml.enabled true
+	}
+}
+
 task resolveDependencies {
 	doLast {
 		project.rootProject.allprojects.each { subProject ->
