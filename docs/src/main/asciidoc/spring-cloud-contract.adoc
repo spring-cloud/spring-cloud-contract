@@ -1,3 +1,5 @@
+:toc: left
+
 = Spring Cloud Contract
 
 _Documentation Authors: Adam Dudczak, Marcin Grzejszczak, Jakub Kubryński, Karol Lassak, Olga Maciaszek-Sharma, Mariusz Smykuła_
