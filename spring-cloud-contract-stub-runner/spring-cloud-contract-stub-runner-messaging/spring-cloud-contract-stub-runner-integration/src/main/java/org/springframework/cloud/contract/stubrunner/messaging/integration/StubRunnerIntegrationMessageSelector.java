@@ -14,19 +14,19 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.stubrunner.messaging.camel;
+package org.springframework.cloud.contract.stubrunner.messaging.integration;
 
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Predicate;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.Header;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierObjectMapper;
 import org.springframework.cloud.contract.verifier.util.JsonPaths;
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter;
 import org.springframework.cloud.contract.verifier.util.MethodBufferingJsonVerifiable;
+import org.springframework.integration.core.MessageSelector;
+import org.springframework.messaging.Message;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jayway.jsonpath.DocumentContext;
@@ -34,33 +34,35 @@ import com.jayway.jsonpath.JsonPath;
 import com.toomuchcoding.jsonassert.JsonAssertion;
 import com.toomuchcoding.jsonassert.JsonVerifiable;
 
+import groovy.transform.CompileStatic;
+
 /**
  * Passes through a message that matches the one defined in the DSL
  *
  * @author Marcin Grzejszczak
  */
-
-public class StubRunnerCamelPredicate implements Predicate {
+@CompileStatic
+public class StubRunnerIntegrationMessageSelector implements MessageSelector {
 
 	private final Contract groovyDsl;
 	private final ContractVerifierObjectMapper objectMapper = new ContractVerifierObjectMapper();
 
-	public StubRunnerCamelPredicate(Contract groovyDsl) {
+	StubRunnerIntegrationMessageSelector(Contract groovyDsl) {
 		this.groovyDsl = groovyDsl;
 	}
 
 	@Override
-	public boolean matches(Exchange exchange) {
-		if (!headersMatch(exchange)) {
+	public boolean accept(Message<?> message) {
+		if (!headersMatch(message)) {
 			return false;
 		}
-		Object inputMessage = exchange.getIn().getBody();
+		Object inputMessage = message.getPayload();
 		JsonPaths jsonPaths = JsonToJsonPathsConverter
-				.transformToJsonPathWithStubsSideValues(groovyDsl.getInput().getMessageBody());
+				.transformToJsonPathWithStubsSideValues(
+						groovyDsl.getInput().getMessageBody());
 		DocumentContext parsedJson;
 		try {
-			parsedJson = JsonPath
-					.parse(objectMapper.writeValueAsString(inputMessage));
+			parsedJson = JsonPath.parse(objectMapper.writeValueAsString(inputMessage));
 		}
 		catch (JsonProcessingException e) {
 			throw new IllegalStateException("Cannot serialize to JSON", e);
@@ -72,17 +74,20 @@ public class StubRunnerCamelPredicate implements Predicate {
 		return matches;
 	}
 
-	private boolean matchesJsonPath(DocumentContext parsedJson, JsonVerifiable jsonVerifiable) {
+	private boolean matchesJsonPath(DocumentContext parsedJson,
+			JsonVerifiable jsonVerifiable) {
 		try {
-			JsonAssertion.assertThat(parsedJson).matchesJsonPath(jsonVerifiable.jsonPath());
+			JsonAssertion.assertThat(parsedJson)
+					.matchesJsonPath(jsonVerifiable.jsonPath());
 			return true;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return false;
 		}
 	}
 
-	private boolean headersMatch(Exchange exchange) {
-		Map<String, Object> headers = exchange.getIn().getHeaders();
+	private boolean headersMatch(Message<?> message) {
+		Map<String, Object> headers = message.getHeaders();
 		boolean matches = true;
 		for (Header it : groovyDsl.getInput().getMessageHeaders().getEntries()) {
 			String name = it.getName();
