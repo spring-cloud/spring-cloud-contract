@@ -30,6 +30,7 @@ class LoanApplicationServiceSpec extends Specification {
 			loanApplication.rejectionReason == null
 	}
 
+	// tag::client_tdd[]
 	def 'should be rejected due to abnormal loan amount'() {
 		given:
 			LoanApplication application =
@@ -40,5 +41,6 @@ class LoanApplicationServiceSpec extends Specification {
 			loanApplication.loanApplicationStatus == LoanApplicationStatus.LOAN_APPLICATION_REJECTED
 			loanApplication.rejectionReason == 'Amount too high'
 	}
+	// end::client_tdd[]
 
 }

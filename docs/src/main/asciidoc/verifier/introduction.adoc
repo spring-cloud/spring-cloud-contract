@@ -1,5 +1,3 @@
-:images_url: https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images
-
 == Introduction
 
 IMPORTANT: http://codearte.github.io/accurest[The documentation to the deprecated Accurest project in version 1.1.0 is available here.]
@@ -101,6 +99,104 @@ that your application behaves in the same way as you define in your stub.
 
 __Summing it up:__ On this side, in the stub definition, you need exact values as request and can use patterns/methods
 for response verification.
+
+== Step by step guide to CDC
+
+Let's take an example of Fraud Detection and Loan Issuance process. Let's assume that the Loan Issuance is a client to the
+Fraud Detection server. Let's assume that we have to write a new feature (if a client wants too borrow too much money then
+we mark him as fraud). The current implementation grants loan to everybody.
+
+Of course both client and server development teams need to communicate directly and discuss changes while
+going through the process. CDC is all about communication.
+
+The code is available under the `samples/samples-standalone/http-server` and `samples/samples-standalone/http-client` folders.
+
+As a developer of the Loan Issuance service (a consumer to the Fraud Detection server):
+
+- start doing TDD by writing a test to your feature
+- at some point in time you need to send a request to the Fraud Detection service
+- you clone the Fraud Detection service repository locally
+- you define the contract locally in the repo of Fraud Detection service
+- provide the group id and artifact id for the Spring Cloud Contract Stub Runner to download stubs of your collaborators
+- also provide the offline work switch since you don't want to work offline
+- when you need to install the stubs of the server side you execute e.g. `./mvnw clean install -DskipTests` in their repo
+- when you're happy with the contract and your test passes publish a PR to the server side
+
+As a developer of the Fraud Detection server (a server to the Loan Issuance service):
+
+- take over the PR (if you try to build it your app will break cause you have a missing implementation)
+- write the missing implementation
+- deploy your app with the stubs e.g. `./mvnw clean deploy` you'll publish both the application fat jar and the stub jar
+
+As a developer of the Loan Issuance service (a consumer to the Fraud Detection server):
+
+- since the server side work was done you can merge the branch to master
+- disable the offline work for Spring Cloud Contract Stub Runner
+- at this moment the stubs of the server side will be automatically downloaded from Nexus / Artifactory
+
+Code examples:
+
+*CLIENT*
+
+*start doing TDD*
+
+[source,groovy,indent=0]
+----
+include::{standalone_samples_path}/http-client/src/test/groovy/com/example/loan/LoanApplicationServiceSpec.groovy[tags=client_tdd,indent=0]
+----
+
+*at some point in time you need to send a request to the Fraud Detection service*
+
+[source,groovy,indent=0]
+----
+include::{standalone_samples_path}/http-client/src/main/java/com/example/loan/LoanApplicationService.java[tags=client_call_server,indent=0]
+----
+
+*you define the contract locally in the repo of Fraud Detection service*
+
+[source,groovy,indent=0]
+----
+include::{standalone_samples_path}/http-server/src/test/resources/contracts/shouldMarkClientAsFraud.groovy[]
+----
+
+*provide the group id and artifact id for the Spring Cloud Contract Stub Runner to download stubs of your collaborators*
+*also provide the offline work switch since you don't want to work offline*
+
+[source,groovy,indent=0]
+----
+include::{standalone_samples_path}/http-client/src/test/resources/application.yaml[]
+----
+
+*SERVER*
+
+*take over the PR (if you try to build it your app will break cause you have a missing implementation)*
+
+the API
+
+[source,java,indent=0]
+----
+include::{standalone_samples_path}/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
+}
+----
+
+the initial impl
+
+[source,java,indent=0]
+----
+include::{standalone_samples_path}/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
+include::{standalone_samples_path}/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
+}
+----
+
+*write the missing implementation*
+
+[source,java,indent=0]
+----
+include::{standalone_samples_path}/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
+include::{standalone_samples_path}/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=new_impl,indent=0]
+include::{standalone_samples_path}/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
+}
+----
 
 === Dependencies
 

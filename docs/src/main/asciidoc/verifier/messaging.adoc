@@ -1,7 +1,3 @@
-:core_path: ../../../../..
-:verifier_root_path: {core_path}/spring-cloud-contract-verifier
-:verifier_core_path: {verifier_root_path}/spring-cloud-contract-verifier-core
-
 == Spring Cloud Contract Verifier Messaging
 
 Spring Cloud Contract Verifier allows you to verify your application that uses messaging as means of communication.

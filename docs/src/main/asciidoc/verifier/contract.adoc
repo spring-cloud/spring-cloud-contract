@@ -1,7 +1,3 @@
-:core_path: ../../../../..
-:verifier_root_path: {core_path}/spring-cloud-contract-verifier
-:verifier_core_path: {verifier_root_path}/spring-cloud-contract-verifier-core
-
 == Contract DSL
 
 IMPORTANT: Remember that inside the contract file you have to provide the fully qualified name to
@@ -201,7 +197,7 @@ The output message can be triggered by calling a method (e.g. a Scheduler was st
 
 [source,groovy]
 ----
-include::../../../../samples/samples-messaging-integration/src/test/groovy/com/example/IntegrationMessagingApplicationSpec.groovy[tags=method_trigger,indent=0]
+include::{samples_path}/samples-messaging-integration/src/test/groovy/com/example/IntegrationMessagingApplicationSpec.groovy[tags=method_trigger,indent=0]
 ----
 
 In this case the output message will be sent to `output` if a method called `bookReturnedTriggered` will be executed. In the message *publisher's* side
@@ -213,7 +209,7 @@ The output message can be triggered by receiving a message.
 
 [source,groovy]
 ----
-include::../../../../samples/samples-messaging-integration/src/test/groovy/com/example/IntegrationMessagingApplicationSpec.groovy[tags=message_trigger,indent=0]
+include::{samples_path}/samples-messaging-integration/src/test/groovy/com/example/IntegrationMessagingApplicationSpec.groovy[tags=message_trigger,indent=0]
 ----
 
 In this case the output message will be sent to `output` if a proper message will be received on the `input` destination. In the message *publisher's* side

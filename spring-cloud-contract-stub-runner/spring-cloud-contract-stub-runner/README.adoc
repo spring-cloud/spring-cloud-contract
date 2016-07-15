@@ -34,39 +34,6 @@ You can set the following options to the main class:
                                   (default: false)
 ----
 
-
-===== Building a Fat Jar
-
-Just call the following command:
-
-[source,groovy,indent=0]
-----
-./gradlew spring-cloud-contract-stub-runner-root:spring-cloud-contract-stub-runner:shadowJar -PfatJar
-----
-
-and inside the `build/lib` there will be a Fat Jar with classifier `fatJar` waiting for you to execute. E.g.
-
-[source,groovy,indent=0]
-----
-java -jar spring-cloud-contract-stub-runner/spring-cloud-contract-stub-runner/build/libs/spring-cloud-contract-stub-runner-1.0.0-SNAPSHOT-fatJar.jar -sr http://a.b.com -s a:b:c,d:e,f:g:h:i
-----
-
-==== Stub runner configuration
-
-You can configure the stub runner by either passing the full arguments list with the `-Pargs` like this:
-
-[source,groovy,indent=0]
-----
-./gradlew spring-cloud-contract-stub-runner-root:spring-cloud-contract-stub-runner:run -Pargs="-c pl -minp 10000 -maxp 10005 -s a:b:c,d:e,f:g:h"
-----
-
-or each parameter separately with a `-P` prefix and without the hyphen `-` in the name of the param
-
-[source,groovy,indent=0]
-----
-./gradlew spring-cloud-contract-stub-runner-root:spring-cloud-contract-stub-runner:run -Pc=pl -Pminp=10000 -Pmaxp=10005 -Ps=a:b:c,d:e,f:g:h
-----
-
 ===== HTTP Stubs
 
 Stubs are defined in JSON documents, whose syntax is defined in http://wiremock.org/stubbing.html[WireMock documentation]

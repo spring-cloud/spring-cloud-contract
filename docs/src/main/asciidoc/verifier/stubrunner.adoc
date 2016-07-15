@@ -1,7 +1,3 @@
-:core_path: ../../../../..
-:verifier_root_path: {core_path}/spring-cloud-contract-verifier
-:verifier_core_path: {verifier_root_path}/spring-cloud-contract-verifier-core
-
 == Spring Cloud Contract Stub Runner
 
 One of the issues that you could have encountered while using Spring Cloud Contract Verifier was to pass the generated WireMock JSON stubs from the server side to the client side (or various clients).
@@ -53,15 +49,17 @@ Spring Cloud Contract Stub Runner comes with a new structure of modules
     └── spring-cloud-contract-stub-runner-spring-cloud
 ----
 
-include::../../../../spring-cloud-contract-stub-runner/spring-cloud-contract-stub-runner/README.adoc[]
+include::{stubrunner_core_path}/spring-cloud-contract-stub-runner/README.adoc[]
 
-include::../../../../spring-cloud-contract-stub-runner/spring-cloud-contract-stub-runner-boot/README.adoc[]
+include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-boot/README.adoc[]
 
-include::../../../../spring-cloud-contract-stub-runner/spring-cloud-contract-stub-runner-junit/README.adoc[]
+include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-jetty/README.adoc[]
 
-include::../../../../spring-cloud-contract-stub-runner/spring-cloud-contract-stub-runner-spring/README.adoc[]
+include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-junit/README.adoc[]
 
-include::../../../../spring-cloud-contract-stub-runner/spring-cloud-contract-stub-runner-spring-cloud/README.adoc[]
+include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-spring/README.adoc[]
+
+include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-spring-cloud/README.adoc[]
 
 
 === Common properties for JUnit and Spring

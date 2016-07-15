@@ -1,8 +1,3 @@
-:core_path: ../../../../..
-:verifier_root_path: {core_path}/spring-cloud-contract-verifier
-:verifier_core_path: {verifier_root_path}/spring-cloud-contract-verifier-core
-:stubrunner_core_path: {core_path}/spring-cloud-contract-stub-runner
-
 == Stub Runner for Messaging
 
 Stub Runner has the functionality to run the published stubs in memory. It can integrate with the following frameworks out of the box

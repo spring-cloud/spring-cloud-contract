@@ -43,10 +43,12 @@ public class LoanApplicationService {
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add(HttpHeaders.CONTENT_TYPE, FRAUD_SERVICE_JSON_VERSION_1);
 
+		// tag::client_call_server[]
 		ResponseEntity<FraudServiceResponse> response =
 				restTemplate.exchange("http://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
 						new HttpEntity<>(request, httpHeaders),
 						FraudServiceResponse.class);
+		// end::client_call_server[]
 
 		return response.getBody();
 	}

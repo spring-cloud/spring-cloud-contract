@@ -1,14 +1,10 @@
-:core_path: ../../../../..
-:verifier_root_path: {core_path}/spring-cloud-contract-verifier
-:verifier_core_path: {verifier_root_path}/spring-cloud-contract-verifier-core
-
 == Spring Cloud Contract Verifier HTTP
 
 === Gradle Project
 
 ==== Prerequisites
 
-In order to use Spring Cloud Contract Verifier with Wiremock you have to use gradle or maven plugin.
+In order to use Spring Cloud Contract Verifier with WireMock you have to use gradle or maven plugin.
 
 ===== Add gradle plugin
 

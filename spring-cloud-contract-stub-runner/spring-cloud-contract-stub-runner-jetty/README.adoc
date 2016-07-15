@@ -1,3 +1,3 @@
 === Stub Runner Jetty
 
-Convenience module that pulls together the dependencies needed to run the Stub Runner with wiremock, but without Spring Boot.
+Convenience module that pulls together the dependencies needed to run the Stub Runner with WireMock, but without Spring Boot.

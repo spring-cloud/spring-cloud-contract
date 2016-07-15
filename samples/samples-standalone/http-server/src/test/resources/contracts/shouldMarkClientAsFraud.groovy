@@ -2,8 +2,8 @@ package contracts
 
 org.springframework.cloud.contract.spec.Contract.make {
 				request {
-				method """PUT"""
-				url """/fraudcheck"""
+				method 'PUT'
+				url '/fraudcheck'
 				body("""
 					{
 					"clientPesel":"${value(client(regex('[0-9]{10}')), server('1234567890'))}",
@@ -11,7 +11,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 				"""
 				)
 				headers {
-					header("""Content-Type""", """application/vnd.fraud.v1+json""")
+					header('Content-Type', 'application/vnd.fraud.v1+json')
 				}
 
 			}

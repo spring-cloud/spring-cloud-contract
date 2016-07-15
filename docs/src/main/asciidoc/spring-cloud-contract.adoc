@@ -1,23 +1,11 @@
-:core_path: ../../../../..
-:verifier_root_path: {core_path}/spring-cloud-contract-verifier
-:verifier_core_path: {verifier_root_path}/spring-cloud-contract-verifier-core
-:stubrunner_core_path: {core_path}/spring-cloud-contract-stub-runner
-:toc: left
-
 = Spring Cloud Contract
 
 _Documentation Authors: Adam Dudczak, Marcin Grzejszczak, Jakub Kubryński, Karol Lassak, Olga Maciaszek-Sharma, Mariusz Smykuła_
 
-include::verifier/introduction.adoc[]
+== Spring Cloud Contract Verifier
 
-include::verifier/contract.adoc[]
+include::verifier/spring-cloud-contract-verifier.adoc[]
 
-include::verifier/rest.adoc[]
+== Spring Cloud Contract WireMock
 
-include::verifier/messaging.adoc[]
-
-include::verifier/stubrunner.adoc[]
-
-include::verifier/stubrunner_msg.adoc[]
-
-include::verifier/links.adoc[]
+include::spring-cloud-wiremock.adoc[]

@@ -20,16 +20,22 @@ public class FraudDetectionController {
 	private static final String AMOUNT_TOO_HIGH = "Amount too high";
 	private static final BigDecimal MAX_AMOUNT = new BigDecimal("5000");
 
+	// tag::server_api[]
 	@RequestMapping(
 			value = "/fraudcheck",
 			method = PUT,
 			consumes = FRAUD_SERVICE_JSON_VERSION_1,
 			produces = FRAUD_SERVICE_JSON_VERSION_1)
 	public FraudCheckResult fraudCheck(@RequestBody FraudCheck fraudCheck) {
+	// end::server_api[]
+		// tag::new_impl[]
 		if (amountGreaterThanThreshold(fraudCheck)) {
 			return new FraudCheckResult(FraudCheckStatus.FRAUD, AMOUNT_TOO_HIGH);
 		}
+		// end::new_impl[]
+		// tag::initial_impl[]
 		return new FraudCheckResult(FraudCheckStatus.OK, NO_REASON);
+		// end::initial_impl[]
 	}
 
 	private boolean amountGreaterThanThreshold(FraudCheck fraudCheck) {

@@ -1,0 +1,21 @@
+:core_path: ../../../../..
+:verifier_root_path: {core_path}/spring-cloud-contract-verifier
+:samples_path: {core_path}/samples
+:verifier_core_path: {verifier_root_path}/spring-cloud-contract-verifier-core
+:stubrunner_core_path: {core_path}/spring-cloud-contract-stub-runner
+:standalone_samples_path: {samples_path}/samples-standalone
+:images_url: https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images
+
+include::introduction.adoc[]
+
+include::contract.adoc[]
+
+include::rest.adoc[]
+
+include::messaging.adoc[]
+
+include::stubrunner.adoc[]
+
+include::stubrunner_msg.adoc[]
+
+include::links.adoc[]
