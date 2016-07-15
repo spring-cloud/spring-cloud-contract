@@ -100,7 +100,7 @@ that your application behaves in the same way as you define in your stub.
 __Summing it up:__ On this side, in the stub definition, you need exact values as request and can use patterns/methods
 for response verification.
 
-== Step by step guide to CDC
+=== Step by step guide to CDC
 
 Let's take an example of Fraud Detection and Loan Issuance process. Let's assume that the Loan Issuance is a client to the
 Fraud Detection server. Let's assume that we have to write a new feature (if a client wants too borrow too much money then
@@ -217,13 +217,19 @@ is under constant development.
 
 video::msRFcQM07-Y[youtube]
 
+https://www.youtube.com/watch?v=msRFcQM07-Y[click here to see the video]
+
 *Olga Maciaszek-Sharma talking about Accurest (Spring Cloud Contract Verifier predecessor)*
 
 video::daafmTYFoDU[youtube]
 
+https://www.youtube.com/watch?v=daafmTYFoDU[click here to see the video]
+
 *Marcin Grzejszczak and Jakub Kubryński talking about Accurest (Spring Cloud Contract Verifier predecessor)*
 
 video::130779882[vimeo]
+
+https://vimeo.com/130779882[click here to see the video]
 
 ==== Readings
 
