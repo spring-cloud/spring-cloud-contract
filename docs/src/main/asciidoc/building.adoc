@@ -60,7 +60,6 @@ Build both Maven and Gradle projects and run tests on standalone projects
 ```
 ./scripts/buildAndTest.sh
 ```
-```
 
 Generate documentation
 

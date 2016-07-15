@@ -1,0 +1,4 @@
+Modules giving you the possibility to use http://wiremock.org[WireMock] with different servers. Check out the
+https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples[samples] for more information.
+
+Currently we support Jetty, Native WireMock server, Tomcat and Undertow.

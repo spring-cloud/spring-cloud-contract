@@ -1,4 +1,4 @@
-:core_path: ../../../..
+:core_path: ../../../../..
 :verifier_root_path: {core_path}/spring-cloud-contract-verifier
 :verifier_core_path: {verifier_root_path}/spring-cloud-contract-verifier-core
 
@@ -432,6 +432,6 @@ Such tree will cause Spring Cloud Contract Verifier generating Wiremock's scenar
  - login marked as `Started` pointing to:
  - showCart marked as `Step1` pointing to:
  - logout marked as `Step2` which will close the scenario.
-More details about Wiremock scenarios can be found under [http://wiremock.org/stateful-behaviour.html](http://wiremock.org/stateful-behaviour.html)
+More details about Wiremock scenarios can be found under http://wiremock.org/stateful-behaviour.html[http://wiremock.org/stateful-behaviour.html]
 
 Spring Cloud Contract Verifier will also generate tests with guaranteed order of execution.
