@@ -1,9 +1,9 @@
-== Spring Cloud Contract Verifier Messaging
+=== Spring Cloud Contract Verifier Messaging
 
 Spring Cloud Contract Verifier allows you to verify your application that uses messaging as means of communication.
 All of our integrations are working with Spring but you can also set one yourself.
 
-=== Integrations
+==== Integrations
 
 You can use one of the three integration configurations:
 
@@ -25,7 +25,7 @@ testCompile "org.springframework.cloud:spring-cloud-contract-verifier-integratio
 testCompile "org.springframework.cloud:spring-cloud-contract-verifier-stream:${verifierVersion}"
 ----
 
-=== Manual Integration
+==== Manual Integration
 
 The `spring-cloud-contract-verifier-messaging-core` module contains 3 main interfaces:
 
@@ -44,7 +44,7 @@ You have to provide as a dependency the `spring-cloud-contract-verifier-messagin
 testCompile "org.springframework.cloud:spring-cloud-contract-verifier-messaging-core:${verifierVersion}"
 ----
 
-=== Publisher side test generation
+==== Publisher side test generation
 
 Having the `input` or `outputMessage` sections in your DSL will result in creation of tests on the publisher's side. By default
 JUnit tests will be created, however there is also a possibility to create Spock tests.
@@ -56,7 +56,7 @@ inside the application (e.g. scheduler)
 - Scenario 2: the input message triggers an output message
 - Scenario 3: the input message is consumed and there is no output message
 
-==== Scenario 1 (no input message)
+===== Scenario 1 (no input message)
 
 For the given contract:
 
@@ -79,7 +79,7 @@ And the following Spock test would be created:
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_method_test]
 ----
 
-==== Scenario 2 (output triggered by input)
+===== Scenario 2 (output triggered by input)
 
 For the given contract:
 
@@ -102,7 +102,7 @@ And the following Spock test would be created:
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_message_spock]
 ----
 
-==== Scenario 3 (no output message)
+===== Scenario 3 (no output message)
 
 For the given contract:
 
@@ -125,14 +125,14 @@ And the following Spock test would be created:
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_no_output_spock]
 ----
 
-=== Consumer Stub Side generation
+==== Consumer Stub Side generation
 
 Unlike the HTTP part - in Messaging we need to publish the Groovy DSL inside the JAR with a stub. Then it's parsed on the consumer side
 and proper stubbed routes are created.
 
 For more infromation please consult the Stub Runner Messaging sections.
 
-==== Gradle Setup
+===== Gradle Setup
 
 Example of Spring Cloud Contract Verifier Gradle setup:
 
@@ -141,6 +141,6 @@ Example of Spring Cloud Contract Verifier Gradle setup:
 include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/resources/functionalTest/scenarioProject/build.gradle[tags=jar_setup,indent=0]
 ----
 
-==== Maven Setup
+===== Maven Setup
 
 Example of Maven can be found in the https://github.com/spring-cloud/spring-cloud-contract/[Spring Cloud Contract Verifier README]

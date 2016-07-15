@@ -1,4 +1,5 @@
 :toc: left
+:toclevels: 4
 
 = Spring Cloud Contract
 

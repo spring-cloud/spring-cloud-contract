@@ -1,4 +1,4 @@
-== Contract DSL
+=== Contract DSL
 
 IMPORTANT: Remember that inside the contract file you have to provide the fully qualified name to
 the `Contract` class and the `make` static import i.e. `org.springframework.cloud.spec.Contract.make { ... }`.
@@ -22,7 +22,7 @@ Not all features of the DSL are used in example above. If you didn't find what y
 
 > You can easily compile Contracts to WireMock stubs mapping using standalone maven command: `mvn org.springframework.cloud:spring-cloud-contract-maven-plugin:convert`.
 
-=== Limitations
+==== Limitations
 
 WARNING: Spring Cloud Contract Verifier doesn't support XML properly. Please use JSON or help us implement this feature.
 
@@ -32,7 +32,7 @@ WARNING: The support for the verification of size of JSON arrays is experimental
 the value of a system property `spring.cloud.contract.verifier.assert.size` equal to `true`. By default this feature is set to
 `false`. You can also provide the `assertJsonSize` property in the plugin configuration.
 
-=== HTTP Top-Level Elements
+==== HTTP Top-Level Elements
 
 Following methods can be called in the top-level closure of a contract definition. Request and response are mandatory, priority is optional.
 
@@ -41,7 +41,7 @@ Following methods can be called in the top-level closure of a contract definitio
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=http_dsl,indent=0]
 ----
 
-=== Request
+==== Request
 
 HTTP protocol requires only **method and address** to be specified in a request. The same information is mandatory in request definition of the Contract.
 
@@ -86,7 +86,7 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=bodyAsXml,indent=0]
 ----
 
-=== Response
+==== Response
 
 Minimal response must contain **HTTP status code**.
 
@@ -97,7 +97,7 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 
 Besides status response may contain **headers** and **body**, which are specified the same way as in the request (see previous paragraph).
 
-=== Regular expressions
+==== Regular expressions
 You can use regular expressions to write your requests in Contract DSL. It is particularly useful when you want to indicate that a given response
 should be provided for requests that follow a given pattern. Also, you can use it when you need to use patterns and not exact values both
 for your test and your server side tests.
@@ -120,7 +120,7 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 In this example for request and response the opposite side of the communication will have the respective data generated.
 
 
-=== Passing optional parameters
+==== Passing optional parameters
 
 It is possible to provide optional parameters in your contract. It's only possible to have optional parameter for the:
 
@@ -150,25 +150,25 @@ and the following stub:
 include::{verifier_root_path}/spring-cloud-contract-verifier-converters/src/test/groovy/org/springframework/cloud/contract/verifier/wiremock/DslToWireMockClientConverterSpec.groovy[tags=wiremock,indent=0]
 ----
 
-=== Executing custom methods on server side
+==== Executing custom methods on server side
 It is also possible to define a method call to be executed on the server side during the test. Such a method can be added to the class defined as "baseClassForTests"
 in the configuration. Please see the examples below:
 
-==== Contract DSL
+===== Contract DSL
 
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=method,indent=0]
 ----
 
-==== Base Mock Spec
+===== Base Mock Spec
 
 [source,groovy,indent=0]
 ----
 include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/org/springframework/cloud/contract/verifier/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
 ----
 
-=== JAX-RS support
+==== JAX-RS support
 Starting with release 0.8.0 we support JAX-RS 2 Client API. Base class needs to define `protected WebTarget webTarget` and server initialization, right now the only option how to test JAX-RS API is to start a web server.
 
 Request with a body needs to have a content type set otherwise `application/octet-stream` is going to be used.
@@ -177,7 +177,7 @@ In order to use JAX-RS mode, use the following settings:
 
 [source,groovy,indent=0]
 ----
-testMode == 'JAXRSCLIENT'
+testMode === 'JAXRSCLIENT'
 ----
 
 Example of a test API generated:
@@ -187,11 +187,11 @@ Example of a test API generated:
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/JaxRsClientMethodBuilderSpec.groovy[tags=jaxrs,indent=0]
 ----
 
-=== Messaging Top-Level Elements
+==== Messaging Top-Level Elements
 
 The DSL for messaging looks a little bit different than the one that focuses on HTTP.
 
-==== Output triggered by a method
+===== Output triggered by a method
 
 The output message can be triggered by calling a method (e.g. a Scheduler was started and a message was sent)
 
@@ -203,7 +203,7 @@ include::{samples_path}/samples-messaging-integration/src/test/groovy/com/exampl
 In this case the output message will be sent to `output` if a method called `bookReturnedTriggered` will be executed. In the message *publisher's* side
 we will generate a test that will call that method to trigger the message. On the *consumer* side you can use the `some_label` to trigger the message.
 
-==== Output triggered by a message
+===== Output triggered by a message
 
 The output message can be triggered by receiving a message.
 
@@ -216,7 +216,7 @@ In this case the output message will be sent to `output` if a proper message wil
 we will generate a test that will send the input message to the defined destination. On the *consumer* side you can either send a message to the input
 destination or use the `some_label` to trigger the message.
 
-==== Consumer / Producer
+===== Consumer / Producer
 
 In HTTP you have a notion of `client`/`stub and `server`/`test` notation. You can use them also in messaging but we're providing also the `consumer` and `produer` methods
 as presented below (note you can use either `$` or `value` methods to provide `consumer` and `producer` parts)

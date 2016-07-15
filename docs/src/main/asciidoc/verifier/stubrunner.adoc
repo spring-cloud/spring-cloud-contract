@@ -1,11 +1,11 @@
-== Spring Cloud Contract Stub Runner
+=== Spring Cloud Contract Stub Runner
 
 One of the issues that you could have encountered while using Spring Cloud Contract Verifier was to pass the generated WireMock JSON stubs from the server side to the client side (or various clients).
  The same takes place in terms of client side generation for messaging.
 
 Copying the JSON files / setting the client side for messaging manually is out of the question.
 
-=== Snapshot versions
+==== Snapshot versions
 
 Add the additional snapshot repository to your build.gradle to use snapshot versions which are automatically uploaded after every successful build:
 
@@ -18,11 +18,11 @@ repositories {
 }
 ----
 
-=== Publishing stubs as JARs
+==== Publishing stubs as JARs
 
 The easiest approach would be to centralize the way stubs are kept. For example you can keep them as JARs in a Maven repository.
 
-==== Gradle
+===== Gradle
 
 Example of Spring Cloud Contract Verifier Gradle setup:
 
@@ -31,11 +31,11 @@ Example of Spring Cloud Contract Verifier Gradle setup:
 include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/resources/functionalTest/scenarioProject/build.gradle[tags=jar_setup,indent=0]
 ----
 
-==== Maven
+===== Maven
 
 Example of Maven can be found in the https://github.com/spring-cloud/spring-cloud-contract/[Spring Cloud Contract Verifier README]
 
-=== Modules
+==== Modules
 
 Spring Cloud Contract Stub Runner comes with a new structure of modules
 
@@ -62,7 +62,7 @@ include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-spring/README.
 include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-spring-cloud/README.adoc[]
 
 
-=== Common properties for JUnit and Spring
+==== Common properties for JUnit and Spring
 
 Some of the properties that are repetitive can be set using system properties or property sources (for Spring). Here are their names with their default values:
 
@@ -77,7 +77,7 @@ Some of the properties that are repetitive can be set using system properties or
 |stubrunner.stubs.ids|| Comma separated list of Ivy notation of stubs to download
 |======================
 
-==== Stub runner stubs ids
+===== Stub runner stubs ids
 
 You can provide the stubs to download via the `stubrunner.stubs.ids` system property. They follow the following pattern:
 
