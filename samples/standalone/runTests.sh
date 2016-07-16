@@ -30,10 +30,10 @@ rm -rf $LOCAL_MAVEN_REPO/repository/org/springframework/cloud/contract/testproje
 
 echo -e "\n\nRunning tests for Gradle (communication via messaging)\n\n"
 echo -e "Building producer (uses Spring Cloud Contract Verifier Gradle Plugin)"
-cd contract-verifier-sample-stream-source
+cd stream-source
 ./gradlew clean build publishToMavenLocal -PverifierVersion=${VERIFIER_VERSION} --stacktrace
 cd $ROOT
 echo -e "\n\nBuilding consumer (uses Spring Cloud Contract Stub Runner Messaging)"
-cd contract-verifier-sample-stream-sink
+cd stream-sink
 ./gradlew clean build -PverifierVersion=${VERIFIER_VERSION} --stacktrace
 cd $ROOT

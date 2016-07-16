@@ -14,7 +14,7 @@ export CONTRACT_VERIFIER_VERSION=${CONTRACT_VERIFIER_VERSION:-1.0.0.BUILD-SNAPSH
 
 echo "Current Spring Cloud Contract Verifier version is ${CONTRACT_VERIFIER_VERSION}"
 
-cd samples/samples-standalone
+cd samples/standalone
 
 echo "Running Gradle tests"
 . ./runTests.sh
