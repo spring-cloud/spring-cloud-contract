@@ -14,14 +14,14 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.stubrunner.boot
+package org.springframework.cloud.contract.stubrunner.server
 
 import groovy.json.JsonSlurper
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.stubrunner.StubRunning
-import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ContextConfiguration
 
@@ -33,9 +33,8 @@ import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc
  * @author Marcin Grzejszczak
  */
 // tag::boot_usage[]
-@ContextConfiguration(classes = [StubRunnerBootSpec, StubRunnerBoot], loader = SpringBootContextLoader)
-@EnableBinding
-@Configuration
+@ContextConfiguration(classes = StubRunnerBoot, loader = SpringBootContextLoader)
+@IntegrationTest("spring.cloud.zookeeper.enabled=false")
 class StubRunnerBootSpec extends Specification {
 
 	@Autowired StubRunning stubRunning

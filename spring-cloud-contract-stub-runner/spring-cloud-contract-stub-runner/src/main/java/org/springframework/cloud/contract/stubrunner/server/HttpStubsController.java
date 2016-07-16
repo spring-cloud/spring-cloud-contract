@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.stubrunner.boot;
+package org.springframework.cloud.contract.stubrunner.server;
 
 import java.util.Map;
 

@@ -14,29 +14,21 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.stubrunner.boot;
+package org.springframework.cloud.contract.stubrunner.server;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.cloud.contract.stubrunner.spring.StubRunnerConfiguration;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierMessageBuilder;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierMessaging;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @author Marcin Grzejszczak
  */
-@SpringBootApplication
-@AutoConfigureAfter(StubRunnerConfiguration.class)
-public class StubRunnerBoot {
-
-	public static void main(String[] args) {
-		SpringApplication.run(StubRunnerBoot.class, args);
-	}
+@Configuration
+public class StubRunnerBackupAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
