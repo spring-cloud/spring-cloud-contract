@@ -44,13 +44,13 @@ import spock.lang.Specification
  */
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @WebIntegrationTest(randomPort = true)
-@IntegrationTest
 @Slf4j
 @AutoConfigureStubRunner
 class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
 	@Autowired @LoadBalanced RestTemplate restTemplate
+	// TODO: this shouldn't be needed?
 	@Autowired ZookeeperServiceDiscovery zookeeperServiceDiscovery
 	@Autowired ConfigurableApplicationContext applicationContext
 

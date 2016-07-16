@@ -20,10 +20,8 @@
 	<modules>
 		<module>spring-cloud-contract-stub-runner</module>
 		<module>spring-cloud-contract-stub-runner-jetty</module>
-		<module>spring-cloud-contract-stub-runner-spring</module>
 		<module>spring-cloud-contract-stub-runner-boot</module>
 		<module>spring-cloud-contract-stub-runner-messaging</module>
-		<module>spring-cloud-contract-stub-runner-spring-cloud</module>
 	</modules>
 
 </project>
