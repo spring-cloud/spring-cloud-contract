@@ -20,7 +20,9 @@
 	<modules>
 		<module>spring-cloud-contract-stub-runner</module>
 		<module>spring-cloud-contract-stub-runner-jetty</module>
-		<module>spring-cloud-contract-stub-runner-messaging</module>
+		<module>spring-cloud-contract-stub-runner-camel</module>
+		<module>spring-cloud-contract-stub-runner-integration</module>
+		<module>spring-cloud-contract-stub-runner-stream</module>
 	</modules>
 
 </project>
