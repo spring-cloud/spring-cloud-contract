@@ -36,8 +36,8 @@ public class StubRunnerRuleJUnitTest {
 	@BeforeClass
 	@AfterClass
 	public static void setupProps() {
-			System.getProperties().setProperty("stubrunner.stubs.repository.root", "");
-			System.getProperties().setProperty("stubrunner.stubs.classifier", "stubs");
+			System.clearProperty("stubrunner.stubs.repository.root");
+			System.clearProperty("stubrunner.stubs.classifier");
 	}
 
 	// tag::classrule[]

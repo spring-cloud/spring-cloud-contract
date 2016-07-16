@@ -19,6 +19,8 @@ package org.springframework.cloud.contract.stubrunner.spring.cloud
 import groovy.util.logging.Slf4j
 
 import org.apache.curator.test.TestingServer
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.IntegrationTest
@@ -33,6 +35,7 @@ import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.util.SocketUtils
 import org.springframework.web.client.RestTemplate
@@ -44,8 +47,10 @@ import spock.lang.Specification
  */
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @WebIntegrationTest(randomPort = true)
+@IntegrationTest
 @Slf4j
 @AutoConfigureStubRunner
+@DirtiesContext
 class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
@@ -53,6 +58,13 @@ class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 	// TODO: this shouldn't be needed?
 	@Autowired ZookeeperServiceDiscovery zookeeperServiceDiscovery
 	@Autowired ConfigurableApplicationContext applicationContext
+
+	@BeforeClass
+	@AfterClass
+	void setupProps() {
+		System.clearProperty("stubrunner.stubs.repository.root");
+		System.clearProperty("stubrunner.stubs.classifier");
+	}
 
 	def 'should make service discovery work'() {
 		expect: 'WireMocks are running'

@@ -46,7 +46,7 @@ dependencies {
 	testCompile "org.spockframework:spock-core"
 	testCompile "junit:junit"
 	testCompile 'org.springframework.cloud:spring-cloud-contract-wiremock'
-	testCompile "org.springframework.cloud:spring-cloud-contract-stub-runner-spring:${findProperty('verifierVersion') ?: verifierVersion}"
+	testCompile "org.springframework.cloud:spring-cloud-contract-stub-runner"
 }
 
 test {

@@ -46,7 +46,8 @@ dependencies {
 	testCompile "org.spockframework:spock-core"
 	testCompile "org.springframework.boot:spring-boot-starter-test"
 	testCompile "junit:junit"
-	testCompile "org.springframework.cloud:spring-cloud-contract-stub-runner-stream:${project.findProperty('verifierVersion') ?: verifierVersion}"
+	testCompile "org.springframework.cloud:spring-cloud-contract-stub-runner-stream"
+	testCompile "org.springframework.cloud:spring-cloud-contract-wiremock"
 }
 
 test {

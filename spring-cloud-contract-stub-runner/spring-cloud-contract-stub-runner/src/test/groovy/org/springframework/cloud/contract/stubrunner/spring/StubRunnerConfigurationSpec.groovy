@@ -16,12 +16,15 @@
 
 package org.springframework.cloud.contract.stubrunner.spring
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.context.annotation.Configuration
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 
 import spock.lang.Specification
@@ -31,10 +34,20 @@ import spock.lang.Specification
  */
 // tag::test[]
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
+// Not necessary if Spring Cloud is used. TODO: make it work without this.
+@IntegrationTest("stubrunner.cloud.enabled=false")
 @AutoConfigureStubRunner
+@DirtiesContext
 class StubRunnerConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
+
+	@BeforeClass
+	@AfterClass
+	void setupProps() {
+		System.clearProperty("stubrunner.stubs.repository.root");
+		System.clearProperty("stubrunner.stubs.classifier");
+	}
 
 	def 'should start WireMock servers'() {
 		expect: 'WireMocks are running'

@@ -58,11 +58,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-contract-stub-runner-spring</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-stub-runner-boot</artifactId>
 				<version>${project.version}</version>
 			</dependency>
