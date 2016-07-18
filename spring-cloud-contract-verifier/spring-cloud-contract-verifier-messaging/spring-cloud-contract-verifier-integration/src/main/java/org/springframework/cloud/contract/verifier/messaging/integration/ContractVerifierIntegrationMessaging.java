@@ -22,15 +22,14 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging;
+import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
+import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.PollableChannel;
 import org.springframework.stereotype.Component;
-
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage;
 
 /**
  * @author Marcin Grzejszczak

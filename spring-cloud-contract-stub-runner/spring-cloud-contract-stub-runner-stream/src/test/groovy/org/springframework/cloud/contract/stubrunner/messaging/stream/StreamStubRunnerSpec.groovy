@@ -46,7 +46,6 @@ import java.util.concurrent.TimeUnit
 @ContextConfiguration(classes = StreamStubRunnerSpec, loader = SpringBootContextLoader)
 @EnableBinding([Sink, Source])
 @AutoConfigureStubRunner
-@AutoConfigureContractVerifierMessaging
 class StreamStubRunnerSpec extends Specification {
 
 	@Autowired StubFinder stubFinder

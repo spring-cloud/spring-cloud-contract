@@ -19,6 +19,7 @@ package com.example
 import javax.inject.Inject
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage
@@ -39,6 +40,7 @@ import com.toomuchcoding.jsonassert.JsonAssertion
 // Context configuration would end up in base class
 @ContextConfiguration(classes = [StreamMessagingApplication], loader = SpringBootContextLoader)
 @DirtiesContext
+@IntegrationTest("debug=true")
 @AutoConfigureContractVerifierMessaging
 public class StreamMessagingApplicationSpec extends Specification {
 

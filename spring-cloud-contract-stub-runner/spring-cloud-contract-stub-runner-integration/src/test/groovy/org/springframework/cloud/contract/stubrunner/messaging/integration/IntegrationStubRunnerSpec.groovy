@@ -44,7 +44,6 @@ import java.util.concurrent.TimeUnit
 @ContextConfiguration(classes = IntegrationStubRunnerSpec, loader = SpringBootContextLoader)
 @ImportResource("classpath*:integration-context.xml")
 @AutoConfigureStubRunner
-@AutoConfigureContractVerifierMessaging
 class IntegrationStubRunnerSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
