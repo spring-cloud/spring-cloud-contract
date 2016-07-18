@@ -97,9 +97,4 @@ public class ContractVerifierStreamMessaging implements
 		return receiveMessage(destination, 5, TimeUnit.SECONDS);
 	}
 
-	@Override
-	public <T> Message<?> create(T t, Map<String, Object> headers) {
-		return builder.create(t, headers);
-	}
-
 }

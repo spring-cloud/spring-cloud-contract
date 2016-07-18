@@ -91,10 +91,4 @@ public class ContractVerifierCamelMessaging implements
 		return receiveMessage(destination, 5, TimeUnit.SECONDS);
 	}
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public <T> Message create(T t, Map<String, Object> headers) {
-		return builder.create(t, headers);
-	}
-
 }

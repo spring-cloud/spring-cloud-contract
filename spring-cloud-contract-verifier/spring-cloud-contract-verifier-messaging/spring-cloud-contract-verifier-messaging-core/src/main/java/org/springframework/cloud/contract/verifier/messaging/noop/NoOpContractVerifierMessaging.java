@@ -43,9 +43,4 @@ public class NoOpContractVerifierMessaging implements ContractVerifierMessaging<
 		return null;
 	}
 
-	@Override
-	public <T> Object create(T o, Map<String, Object> headers) {
-		return o;
-	}
-
 }

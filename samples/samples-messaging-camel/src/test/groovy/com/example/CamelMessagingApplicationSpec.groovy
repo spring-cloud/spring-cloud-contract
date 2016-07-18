@@ -76,7 +76,7 @@ public class CamelMessagingApplicationSpec extends Specification {
 			def response = contractVerifierMessaging.receiveMessage('activemq:output')
 			response.headers.get('BOOK-NAME')  == 'foo'
 		and:
-			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
+			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.body))
 			JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
 	}
 
@@ -107,18 +107,15 @@ public class CamelMessagingApplicationSpec extends Specification {
 
 		// generated test should look like this:
 
-		//given:
-		Message inputMessage = contractVerifierMessaging.create(
-				contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-				[sample: 'header']
-		)
 		when:
-			contractVerifierMessaging.send(inputMessage, 'jms:input')
+			contractVerifierMessaging.send(
+				contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
+				[sample: 'header'], 'jms:input')
 		then:
 			def response = contractVerifierMessaging.receiveMessage('jms:output')
 			response.headers.get('BOOK-NAME')  == 'foo'
 		and:
-			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
+			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.body))
 			JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
 	}
 
@@ -140,13 +137,9 @@ public class CamelMessagingApplicationSpec extends Specification {
 
 		// generated test should look like this:
 
-		//given:
-		Message inputMessage = contractVerifierMessaging.create(
-				contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-				[sample: 'header']
-		)
 		when:
-			contractVerifierMessaging.send(inputMessage, 'jms:delete')
+			contractVerifierMessaging.send(contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
+				[sample: 'header'], 'jms:delete')
 		then:
 			noExceptionThrown()
 			bookWasDeleted()

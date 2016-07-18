@@ -113,13 +113,10 @@ public class IntegrationMessagingApplicationSpec extends Specification {
 
 		// generated test should look like this:
 
-		//given:
-		Message<?> inputMessage = contractVerifierMessaging.create(
-				contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-				[sample: 'header']
-		)
 		when:
-			contractVerifierMessaging.send(inputMessage, 'input')
+			contractVerifierMessaging.send(
+				contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
+				[sample: 'header'], 'input')
 		then:
 			def response = contractVerifierMessaging.receiveMessage('output')
 			response.headers.get('BOOK-NAME')  == 'foo'
@@ -146,13 +143,9 @@ public class IntegrationMessagingApplicationSpec extends Specification {
 
 		// generated test should look like this:
 
-		//given:
-		Message<?> inputMessage = contractVerifierMessaging.create(
-				contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-				[sample: 'header']
-		)
 		when:
-			contractVerifierMessaging.send(inputMessage, 'delete')
+			contractVerifierMessaging.send(contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
+				[sample: 'header'], 'delete')
 		then:
 			noExceptionThrown()
 			bookWasDeleted()

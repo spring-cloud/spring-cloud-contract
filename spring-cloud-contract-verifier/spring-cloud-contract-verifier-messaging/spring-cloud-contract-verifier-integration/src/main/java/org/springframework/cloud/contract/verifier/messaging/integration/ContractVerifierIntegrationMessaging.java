@@ -51,7 +51,7 @@ public class ContractVerifierIntegrationMessaging implements
 
 	@Override
 	public <T> void send(T payload, Map<String, Object> headers, String destination) {
-		send(create(payload, headers), destination);
+		send(builder.create(payload, headers), destination);
 	}
 
 	@Override
@@ -81,11 +81,6 @@ public class ContractVerifierIntegrationMessaging implements
 	@Override
 	public Message<?> receiveMessage(String destination) {
 		return receiveMessage(destination, 5, TimeUnit.SECONDS);
-	}
-
-	@Override
-	public <T> Message<?> create(T t, Map<String, Object> headers) {
-		return builder.create(t, headers);
 	}
 
 }

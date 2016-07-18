@@ -118,13 +118,8 @@ class StubRunnerExecutorSpec extends Specification {
 
 		@Override
 		void send(Object o, Map headers, String destination) {
-		}
-
-		@Override
-		Object create(Object o, Map headers) {
 			assert !(JsonOutput.toJson(o).contains("serverValue"))
 			assert headers.entrySet().every { !(it.value.toString().contains("serverValue")) }
-			return null
 		}
 
 	}

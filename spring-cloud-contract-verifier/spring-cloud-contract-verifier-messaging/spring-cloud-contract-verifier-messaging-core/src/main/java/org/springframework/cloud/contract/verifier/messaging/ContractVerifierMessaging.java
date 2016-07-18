@@ -26,8 +26,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Marcin Grzejszczak
  */
-public interface ContractVerifierMessaging<M> extends
-		ContractVerifierMessageBuilder<M> {
+public interface ContractVerifierMessaging<M> {
 	/**
 	 * Sends the {@link ContractVerifierMessage} to the given destination.
 	 */

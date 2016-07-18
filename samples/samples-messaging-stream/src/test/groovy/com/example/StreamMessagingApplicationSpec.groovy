@@ -19,7 +19,7 @@ package com.example
 import javax.inject.Inject
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.IntegrationTest;
+import org.springframework.boot.test.IntegrationTest
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
@@ -100,13 +100,10 @@ public class StreamMessagingApplicationSpec extends Specification {
 
 		// generated test should look like this:
 
-		//given:
-		Message<?> inputMessage = contractVerifierMessaging.create(
-				contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-				[sample: 'header']
-		)
 		when:
-			contractVerifierMessaging.send(inputMessage, 'input')
+			contractVerifierMessaging.send(
+				contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
+				[sample: 'header'], 'input')
 		then:
 			def response = contractVerifierMessaging.receiveMessage('output')
 			response.headers.get('BOOK-NAME')  == 'foo'
@@ -133,13 +130,9 @@ public class StreamMessagingApplicationSpec extends Specification {
 
 		// generated test should look like this:
 
-		//given:
-		Message<?> inputMessage = contractVerifierMessaging.create(
-				contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-				[sample: 'header']
-		)
 		when:
-			contractVerifierMessaging.send(inputMessage, 'delete')
+			contractVerifierMessaging.send(contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
+				[sample: 'header'], 'delete')
 		then:
 			noExceptionThrown()
 			bookWasDeleted()
