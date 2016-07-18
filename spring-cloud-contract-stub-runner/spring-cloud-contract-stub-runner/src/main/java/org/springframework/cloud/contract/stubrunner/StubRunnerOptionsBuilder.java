@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.cloud.contract.stubrunner.util.StubsParser;
+import org.springframework.util.StringUtils;
 
 public class StubRunnerOptionsBuilder {
 
@@ -44,7 +45,7 @@ public class StubRunnerOptionsBuilder {
 		withOptions(options);
 	}
 
-	public StubRunnerOptionsBuilder withStubs(String stubs) {
+	public StubRunnerOptionsBuilder withStubs(String... stubs) {
 		addStub(stubsToList(stubs));
 		return this;
 	}
@@ -112,8 +113,12 @@ public class StubRunnerOptionsBuilder {
 		return StubsParser.fromString(stubs, stubsClassifier);
 	}
 
-	private static List<String> stubsToList(String stubIdsToPortMapping) {
-		return Arrays.asList(stubIdsToPortMapping.split(","));
+	private static List<String> stubsToList(String[] stubIdsToPortMapping) {
+		List<String> list = new ArrayList<>();
+		for (String stub : stubIdsToPortMapping) {
+			list.addAll(StringUtils.commaDelimitedListToSet(stub));
+		}
+		return list;
 	}
 
 	private void addStub(List<String> notations) {

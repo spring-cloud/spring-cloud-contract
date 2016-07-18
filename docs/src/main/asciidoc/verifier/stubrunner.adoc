@@ -61,17 +61,17 @@ include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-spring-cloud/R
 
 ==== Common properties for JUnit and Spring
 
-Some of the properties that are repetitive can be set using system properties or property sources (for Spring). Here are their names with their default values:
+Some of the properties that are repetitive can be set using system properties or configuration properties (for Spring). Here are their names with their default values:
 
 [frame="topbot",options="header"]
 |======================
 | Property name | Default value | Description
-|stubrunner.port.range.min|10000| Minimal value of a port for a started WireMock with stubs
-|stubrunner.port.range.max|15000| Minimal value of a port for a started WireMock with stubs
-|stubrunner.stubs.repository.root|| Comma separated list of Maven repo urls. If blank then will call the local maven repo
+|stubrunner.minPort|10000| Minimal value of a port for a started WireMock with stubs
+|stubrunner.maxPort|15000| Minimal value of a port for a started WireMock with stubs
+|stubrunner.stubs.repositoryRoot|| Maven repo url. If blank then will call the local maven repo
 |stubrunner.stubs.classifier|stubs| Default classifier for the stub artifacts
-|stubrunner.work-offline|false| If true then will not contact any remote repositories to download stubs
-|stubrunner.stubs.ids|| Comma separated list of Ivy notation of stubs to download
+|stubrunner.workOffline|false| If true then will not contact any remote repositories to download stubs
+|stubrunner.stubs.ids|| Array of Ivy notation stubs to download
 |======================
 
 ===== Stub runner stubs ids

@@ -19,8 +19,8 @@ package org.springframework.cloud.contract.stubrunner.spring;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.contract.stubrunner.AetherStubDownloader;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunnerFactory;
@@ -35,45 +35,49 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
 /**
- * Configuration that initializes a {@link BatchStubRunner} that runs {@link StubRunner} instance for each stub
+ * Configuration that initializes a {@link BatchStubRunner} that runs {@link StubRunner}
+ * instance for each stub
  */
 @Configuration
-@ConditionalOnMissingBean(type="org.springframework.cloud.contract.wiremock.WiremockServerConfiguration")
+@EnableConfigurationProperties(StubRunnerProperties.class)
+@ConditionalOnMissingBean(type = "org.springframework.cloud.contract.wiremock.WiremockServerConfiguration")
 public class StubRunnerConfiguration {
 
-	@Autowired(required = false) ContractVerifierMessaging<?,?> contractVerifierMessaging;
-	@Autowired(required = false) StubDownloader stubDownloader;
+	@Autowired(required = false)
+	private ContractVerifierMessaging<?, ?> contractVerifierMessaging;
+	@Autowired(required = false)
+	private StubDownloader stubDownloader;
+	@Autowired
+	private StubRunnerProperties props;
 
 	/**
-	 * Bean that initializes stub runners, runs them and on shutdown closes them. Upon its instantiation
-	 * JAR with stubs is downloaded and unpacked to a temporary folder and WireMock server are started
-	 * for each of those stubs
+	 * Bean that initializes stub runners, runs them and on shutdown closes them. Upon its
+	 * instantiation JAR with stubs is downloaded and unpacked to a temporary folder and
+	 * WireMock server are started for each of those stubs
 	 *
-	 * @param minPortValue       min port value of the WireMock instance for stubs
-	 * @param maxPortValue       max port value of the WireMock instance for stubs
-	 * @param stubRepositoryRoot root URL from where the JAR with stub mappings will be downloaded
-	 * @param stubsSuffix        classifier for the jar containing stubs
-	 * @param workOffline        forces offline work
-	 * @param stubs              comma separated list of stubs presented in Ivy notation
+	 * @param minPortValue min port value of the WireMock instance for stubs
+	 * @param maxPortValue max port value of the WireMock instance for stubs
+	 * @param stubRepositoryRoot root URL from where the JAR with stub mappings will be
+	 * downloaded
+	 * @param stubsSuffix classifier for the jar containing stubs
+	 * @param workOffline forces offline work
+	 * @param stubs comma separated list of stubs presented in Ivy notation
 	 */
 	@Bean
-	public BatchStubRunner batchStubRunner(
-			@Value("${stubrunner.port.range.min:10000}") Integer minPortValue,
-			@Value("${stubrunner.port.range.max:15000}") Integer maxPortValue,
-			@Value("${stubrunner.stubs.repository.root:}") Resource stubRepositoryRoot,
-			@Value("${stubrunner.stubs.classifier:stubs}") String stubsSuffix,
-			@Value("${stubrunner.work-offline:false}") boolean workOffline,
-			@Value("${stubrunner.stubs.ids:}") String stubs) throws IOException {
+	public BatchStubRunner batchStubRunner() throws IOException {
 		StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder()
-				.withMinMaxPort(minPortValue, maxPortValue)
-				.withStubRepositoryRoot(uriStringOrEmpty(stubRepositoryRoot))
-				.withWorkOffline(stubRepositoryRoot == null || workOffline)
-				.withStubsClassifier(stubsSuffix)
-				.withStubs(stubs)
-				.build();
+				.withMinMaxPort(props.getMinPort(), props.getMaxPort())
+				.withStubRepositoryRoot(
+						uriStringOrEmpty(props.getStubs().getRepositoryRoot()))
+				.withWorkOffline(props.getStubs().getRepositoryRoot() == null
+						|| props.isWorkOffline())
+				.withStubsClassifier(props.getStubs().getClassifier())
+				.withStubs(props.getStubs().getIds()).build();
 		BatchStubRunner batchStubRunner = new BatchStubRunnerFactory(stubRunnerOptions,
-				stubDownloader != null ? stubDownloader : new AetherStubDownloader(stubRunnerOptions),
-				contractVerifierMessaging != null ? contractVerifierMessaging :  new NoOpContractVerifierMessaging()).buildBatchStubRunner();
+				stubDownloader != null ? stubDownloader
+						: new AetherStubDownloader(stubRunnerOptions),
+				contractVerifierMessaging != null ? contractVerifierMessaging
+						: new NoOpContractVerifierMessaging()).buildBatchStubRunner();
 		// TODO: Consider running it in a separate thread
 		batchStubRunner.runStubs();
 		return batchStubRunner;

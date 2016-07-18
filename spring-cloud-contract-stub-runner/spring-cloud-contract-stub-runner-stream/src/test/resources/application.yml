@@ -1,4 +1,4 @@
-stubrunner.stubs.repository.root: classpath:m2repo/repository/
+stubrunner.stubs.repositoryRoot: classpath:m2repo/repository/
 stubrunner.stubs.ids: org.springframework.cloud.contract.verifier.stubs:streamService:0.0.1-SNAPSHOT:stubs
 
 spring:
