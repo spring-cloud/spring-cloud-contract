@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging;
 import org.springframework.context.ApplicationContext;
@@ -35,31 +34,31 @@ import org.springframework.stereotype.Component;
  * @author Marcin Grzejszczak
  */
 @Component
-public class ContractVerifierIntegrationMessaging<T> implements
-		ContractVerifierMessaging<T, Message<T>> {
+public class ContractVerifierIntegrationMessaging implements
+		ContractVerifierMessaging<Message<?>> {
 
 	private static final Logger log = LoggerFactory.getLogger(
 			ContractVerifierIntegrationMessaging.class);
 
 	private final ApplicationContext context;
-	private final ContractVerifierMessageBuilder<T, Message<T>> builder;
+	private final ContractVerifierMessageBuilder<Message<?>> builder;
 
 	@Autowired
-	public ContractVerifierIntegrationMessaging(ApplicationContext context, ContractVerifierMessageBuilder<T, Message<T>> contractVerifierMessageBuilder) {
+	public ContractVerifierIntegrationMessaging(ApplicationContext context, ContractVerifierMessageBuilder<Message<?>> contractVerifierMessageBuilder) {
 		this.context = context;
 		this.builder = contractVerifierMessageBuilder;
 	}
 
 	@Override
-	public void send(T payload, Map<String, Object> headers, String destination) {
-		send(builder.create(payload, headers), destination);
+	public <T> void send(T payload, Map<String, Object> headers, String destination) {
+		send(create(payload, headers), destination);
 	}
 
 	@Override
-	public void send(ContractVerifierMessage<T, Message<T>> message, String destination) {
+	public void send(Message<?> message, String destination) {
 		try {
 			MessageChannel messageChannel = context.getBean(destination, MessageChannel.class);
-			messageChannel.send(message.convert());
+			messageChannel.send(message);
 		} catch (Exception e) {
 			log.error("Exception occurred while trying to send a message [" + message + "] " +
 					"to a channel with name [" + destination + "]", e);
@@ -68,11 +67,10 @@ public class ContractVerifierIntegrationMessaging<T> implements
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public ContractVerifierMessage<T, Message<T>> receiveMessage(String destination, long timeout, TimeUnit timeUnit) {
+	public Message<?> receiveMessage(String destination, long timeout, TimeUnit timeUnit) {
 		try {
 			PollableChannel messageChannel = context.getBean(destination, PollableChannel.class);
-			return builder.create((Message<T>) messageChannel.receive(timeUnit.toMillis(timeout)));
+			return messageChannel.receive(timeUnit.toMillis(timeout));
 		} catch (Exception e) {
 			log.error("Exception occurred while trying to read a message from " +
 					" a channel with name [" + destination + "]", e);
@@ -81,17 +79,13 @@ public class ContractVerifierIntegrationMessaging<T> implements
 	}
 
 	@Override
-	public ContractVerifierMessage<T, Message<T>> receiveMessage(String destination) {
+	public Message<?> receiveMessage(String destination) {
 		return receiveMessage(destination, 5, TimeUnit.SECONDS);
 	}
 
 	@Override
-	public ContractVerifierMessage<T, Message<T>> create(T t, Map<String, Object> headers) {
+	public <T> Message<?> create(T t, Map<String, Object> headers) {
 		return builder.create(t, headers);
 	}
 
-	@Override
-	public ContractVerifierMessage<T, Message<T>> create(Message<T> message) {
-		return builder.create(message);
-	}
 }

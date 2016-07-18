@@ -17,12 +17,13 @@
 package org.springframework.cloud.contract.stubrunner
 
 import groovy.json.JsonOutput
-import org.springframework.cloud.contract.stubrunner.util.StubsParser
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
-import spock.lang.Specification
 
 import java.util.concurrent.TimeUnit
+
+import org.springframework.cloud.contract.stubrunner.util.StubsParser
+import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
+
+import spock.lang.Specification
 
 class StubRunnerExecutorSpec extends Specification {
 
@@ -98,39 +99,34 @@ class StubRunnerExecutorSpec extends Specification {
 		}
 	}
 
-	private class AssertingContractVerifierMessaging implements ContractVerifierMessaging {
+	private class AssertingContractVerifierMessaging implements ContractVerifierMessaging<Object> {
 
 		@Override
-		void send(ContractVerifierMessage message, String destination) {
+		void send(Object message, String destination) {
 
 		}
 
 		@Override
-		ContractVerifierMessage receiveMessage(String destination, long timeout, TimeUnit timeUnit) {
+		Object receiveMessage(String destination, long timeout, TimeUnit timeUnit) {
 			return null
 		}
 
 		@Override
-		ContractVerifierMessage receiveMessage(String destination) {
+		Object receiveMessage(String destination) {
 			return null
 		}
 
 		@Override
 		void send(Object o, Map headers, String destination) {
-
 		}
 
 		@Override
-		ContractVerifierMessage create(Object o, Map headers) {
+		Object create(Object o, Map headers) {
 			assert !(JsonOutput.toJson(o).contains("serverValue"))
 			assert headers.entrySet().every { !(it.value.toString().contains("serverValue")) }
 			return null
 		}
 
-		@Override
-		ContractVerifierMessage create(Object o) {
-			return null
-		}
 	}
 
 }

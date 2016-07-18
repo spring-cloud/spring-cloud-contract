@@ -31,11 +31,11 @@ public class StubRunnerFactory {
 
 	private final StubRunnerOptions stubRunnerOptions;
 	private final StubDownloader stubDownloader;
-	private final ContractVerifierMessaging<?, ?> contractVerifierMessaging;
+	private final ContractVerifierMessaging<?> contractVerifierMessaging;
 
 	public StubRunnerFactory(StubRunnerOptions stubRunnerOptions,
 			StubDownloader stubDownloader,
-			ContractVerifierMessaging<?, ?> contractVerifierMessaging) {
+			ContractVerifierMessaging<?> contractVerifierMessaging) {
 		this.stubRunnerOptions = stubRunnerOptions;
 		this.stubDownloader = stubDownloader;
 		this.contractVerifierMessaging = contractVerifierMessaging;

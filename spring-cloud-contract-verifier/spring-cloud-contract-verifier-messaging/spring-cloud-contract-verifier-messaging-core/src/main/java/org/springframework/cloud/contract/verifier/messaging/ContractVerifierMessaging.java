@@ -26,26 +26,26 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Marcin Grzejszczak
  */
-public interface ContractVerifierMessaging<PAYLOAD, TYPE_TO_CONVERT_INTO> extends
-		ContractVerifierMessageBuilder<PAYLOAD, TYPE_TO_CONVERT_INTO> {
+public interface ContractVerifierMessaging<M> extends
+		ContractVerifierMessageBuilder<M> {
 	/**
 	 * Sends the {@link ContractVerifierMessage} to the given destination.
 	 */
-	void send(ContractVerifierMessage<PAYLOAD, TYPE_TO_CONVERT_INTO> message, String destination);
+	void send(M message, String destination);
 
 	/**
 	 * Sends the given payload with headers, to the given destination.
 	 */
-	void send(PAYLOAD payload, Map<String, Object> headers, String destination);
+	<T> void send(T payload, Map<String, Object> headers, String destination);
 
 	/**
 	 * Receives the {@link ContractVerifierMessage} from the given destination. You can provide the timeout
 	 * for receiving that message.
 	 */
-	ContractVerifierMessage<PAYLOAD, TYPE_TO_CONVERT_INTO> receiveMessage(String destination, long timeout, TimeUnit timeUnit);
+	M receiveMessage(String destination, long timeout, TimeUnit timeUnit);
 
 	/**
 	 * Receives the {@link ContractVerifierMessage} from the given destination. A default timeout will be applied.
 	 */
-	ContractVerifierMessage<PAYLOAD, TYPE_TO_CONVERT_INTO> receiveMessage(String destination);
+	M receiveMessage(String destination);
 }

@@ -32,7 +32,6 @@ import org.springframework.cloud.contract.spec.internal.DslProperty;
 import org.springframework.cloud.contract.spec.internal.Headers;
 import org.springframework.cloud.contract.spec.internal.OutputMessage;
 import org.springframework.cloud.contract.stubrunner.AvailablePortScanner.PortCallback;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierMessaging;
 import org.springframework.cloud.contract.verifier.util.BodyExtractor;
@@ -46,11 +45,11 @@ public class StubRunnerExecutor implements StubFinder {
 
 	private static final Logger log = LoggerFactory.getLogger(StubRunnerExecutor.class);
 	private final AvailablePortScanner portScanner;
-	private final ContractVerifierMessaging<String, Object> contractVerifierMessaging;
+	private final ContractVerifierMessaging<?> contractVerifierMessaging;
 	private StubServer stubServer;
 
 	public StubRunnerExecutor(AvailablePortScanner portScanner,
-			ContractVerifierMessaging<String, Object> contractVerifierMessaging) {
+			ContractVerifierMessaging<?> contractVerifierMessaging) {
 		this.portScanner = portScanner;
 		this.contractVerifierMessaging = contractVerifierMessaging;
 	}
@@ -177,11 +176,10 @@ public class StubRunnerExecutor implements StubFinder {
 		}
 		DslProperty<?> body = outputMessage == null ? null : outputMessage.getBody();
 		Headers headers = outputMessage == null ? null : outputMessage.getHeaders();
-		ContractVerifierMessage<String, Object> message = contractVerifierMessaging
-				.create(JsonOutput.toJson(BodyExtractor.extractClientValueFromBody(
+		contractVerifierMessaging.send(
+				JsonOutput.toJson(BodyExtractor.extractClientValueFromBody(
 						body == null ? null : body.getClientValue())),
-						headers == null ? null : headers.asStubSideMap());
-		contractVerifierMessaging.send(message,
+				headers == null ? null : headers.asStubSideMap(),
 				outputMessage.getSentTo().getClientValue());
 	}
 

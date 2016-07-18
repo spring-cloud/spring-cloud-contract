@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.verifier.messaging.camel;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Message;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging;
 import org.springframework.context.annotation.Bean;
@@ -28,12 +29,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ContractVerifierCamelConfiguration {
 
-	@Bean ContractVerifierMessaging<?,?> contractVerifierMessaging(CamelContext context,
-			ContractVerifierMessageBuilder<?,?> builder) {
-		return new ContractVerifierCamelMessaging<>(context, builder);
+	@Bean ContractVerifierMessaging<Message> contractVerifierMessaging(CamelContext context,
+			ContractVerifierMessageBuilder<Message> builder) {
+		return new ContractVerifierCamelMessaging(context, builder);
 	}
 
-	@Bean ContractVerifierMessageBuilder<?,?> contractVerifierMessageBuilder() {
-		return new ContractVerifierCamelMessageBuilder<>();
+	@Bean ContractVerifierMessageBuilder<Message> contractVerifierMessageBuilder() {
+		return new ContractVerifierCamelMessageBuilder();
 	}
 }

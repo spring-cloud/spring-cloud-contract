@@ -22,10 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierObjectMapper
-import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureContractVerifierMessaging;
+import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureContractVerifierMessaging
+import org.springframework.messaging.Message;
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 
@@ -45,7 +45,7 @@ import com.toomuchcoding.jsonassert.JsonAssertion
 public class StreamMessagingApplicationSpec extends Specification {
 
 	// ALL CASES
-	@Inject ContractVerifierMessaging contractVerifierMessaging
+	@Inject ContractVerifierMessaging<Message<?>> contractVerifierMessaging
 	ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()
 
 	def "should work for triggered based messaging"() {
@@ -101,7 +101,7 @@ public class StreamMessagingApplicationSpec extends Specification {
 		// generated test should look like this:
 
 		//given:
-		ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+		Message<?> inputMessage = contractVerifierMessaging.create(
 				contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
 				[sample: 'header']
 		)
@@ -134,7 +134,7 @@ public class StreamMessagingApplicationSpec extends Specification {
 		// generated test should look like this:
 
 		//given:
-		ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+		Message<?> inputMessage = contractVerifierMessaging.create(
 				contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
 				[sample: 'header']
 		)

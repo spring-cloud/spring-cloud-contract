@@ -32,13 +32,13 @@ public class StubRunnerBackupAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ContractVerifierMessaging<?,?> noOpContractVerifierMessaging() {
+	public ContractVerifierMessaging<?> noOpContractVerifierMessaging() {
 		return new NoOpContractVerifierMessaging();
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ContractVerifierMessageBuilder<?,?> noOpContractVerifierMessageBuilder() {
+	public ContractVerifierMessageBuilder<?> noOpContractVerifierMessageBuilder() {
 		return new NoOpContractVerifierMessageBuilder();
 	}
 }

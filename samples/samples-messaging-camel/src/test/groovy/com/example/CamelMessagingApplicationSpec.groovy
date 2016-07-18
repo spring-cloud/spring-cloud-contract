@@ -18,15 +18,15 @@ package com.example
 
 import javax.inject.Inject
 
+import org.apache.camel.Message
 import org.apache.camel.model.ModelCamelContext
 import org.junit.BeforeClass
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierObjectMapper
-import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureContractVerifierMessaging;
+import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureContractVerifierMessaging
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 
@@ -46,7 +46,7 @@ import com.toomuchcoding.jsonassert.JsonAssertion
 public class CamelMessagingApplicationSpec extends Specification {
 
 	// ALL CASES
-	@Inject ContractVerifierMessaging contractVerifierMessaging
+	@Inject ContractVerifierMessaging<Message> contractVerifierMessaging
 	ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()
 	
 	@BeforeClass
@@ -108,7 +108,7 @@ public class CamelMessagingApplicationSpec extends Specification {
 		// generated test should look like this:
 
 		//given:
-		ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+		Message inputMessage = contractVerifierMessaging.create(
 				contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
 				[sample: 'header']
 		)
@@ -141,7 +141,7 @@ public class CamelMessagingApplicationSpec extends Specification {
 		// generated test should look like this:
 
 		//given:
-		ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+		Message inputMessage = contractVerifierMessaging.create(
 				contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
 				[sample: 'header']
 		)

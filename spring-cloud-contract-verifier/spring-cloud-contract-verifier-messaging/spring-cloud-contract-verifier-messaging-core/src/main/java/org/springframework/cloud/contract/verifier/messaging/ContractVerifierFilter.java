@@ -21,10 +21,10 @@ package org.springframework.cloud.contract.verifier.messaging;
  *
  * @author Marcin Grzejszczak
  */
-public interface ContractVerifierFilter<PAYLOAD, TYPE_TO_CONVERT_INTO> {
+public interface ContractVerifierFilter<M> {
 
 	/**
 	 * @return @{code true} if the message should be passed through, @{code false} if the message should be filtered out,
 	 */
-	boolean matches(ContractVerifierMessage<PAYLOAD, TYPE_TO_CONVERT_INTO> message);
+	boolean matches(M message);
 }

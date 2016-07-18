@@ -18,7 +18,6 @@ package org.springframework.cloud.contract.verifier.messaging.integration;
 
 import java.util.Map;
 
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
@@ -27,19 +26,12 @@ import org.springframework.messaging.support.MessageBuilder;
 /**
  * @author Marcin Grzejszczak
  */
-public class ContractVerifierIntegrationMessageBuilder<T> implements
-		ContractVerifierMessageBuilder<T, Message<T>> {
+public class ContractVerifierIntegrationMessageBuilder implements
+		ContractVerifierMessageBuilder<Message<?>> {
 
 	@Override
-	public ContractVerifierMessage<T, Message<T>> create(T payload, Map<String, Object> headers) {
-		return new IntegrationMessage<>(MessageBuilder.createMessage(payload, new MessageHeaders(headers)));
+	public <T> Message<T> create(T payload, Map<String, Object> headers) {
+		return MessageBuilder.createMessage(payload, new MessageHeaders(headers));
 	}
 
-	@Override
-	public ContractVerifierMessage<T, Message<T>> create(Message<T> message) {
-		if (message == null) {
-			return null;
-		}
-		return new IntegrationMessage<>(message);
-	}
 }

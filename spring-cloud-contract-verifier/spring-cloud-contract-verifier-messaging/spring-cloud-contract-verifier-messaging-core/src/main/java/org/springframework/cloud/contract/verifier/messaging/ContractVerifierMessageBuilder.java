@@ -24,15 +24,11 @@ import java.util.Map;
  *
  * @author Marcin Grzejszczak
  */
-public interface ContractVerifierMessageBuilder<PAYLOAD, TYPE_TO_CONVERT_INTO> {
+public interface ContractVerifierMessageBuilder<M> {
 
 	/**
 	 * Creates a {@link ContractVerifierMessage} from payload and headers
 	 */
-	ContractVerifierMessage<PAYLOAD, TYPE_TO_CONVERT_INTO> create(PAYLOAD payload, Map<String, Object> headers);
+	<T> M create(T payload, Map<String, Object> headers);
 
-	/**
-	 * Creates a {@link ContractVerifierMessage} from the {@code TYPE_TO_CONVERT_INTO} type
-	 */
-	ContractVerifierMessage<PAYLOAD, TYPE_TO_CONVERT_INTO> create(TYPE_TO_CONVERT_INTO typeToConvertInto);
 }

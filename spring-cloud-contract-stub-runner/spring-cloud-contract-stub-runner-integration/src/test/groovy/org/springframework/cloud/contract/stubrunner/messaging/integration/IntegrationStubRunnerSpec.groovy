@@ -18,22 +18,23 @@ package org.springframework.cloud.contract.stubrunner.messaging.integration
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+
+import java.util.concurrent.TimeUnit
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubFinder
-import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
-import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureContractVerifierMessaging;
+import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
+import org.springframework.cloud.contract.verifier.messaging.integration.ContractVerifierIntegrationMessaging
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.ImportResource
+import org.springframework.messaging.Message
 import org.springframework.test.context.ContextConfiguration
-import spock.lang.Specification
 
-import java.util.concurrent.TimeUnit
+import spock.lang.Specification
 
 /**
  * @author Marcin Grzejszczak
@@ -47,7 +48,7 @@ import java.util.concurrent.TimeUnit
 class IntegrationStubRunnerSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
-	@Autowired ContractVerifierMessaging messaging
+	@Autowired ContractVerifierIntegrationMessaging messaging
 
 	def setup() {
 		// ensure that message were taken from the queue
@@ -61,7 +62,7 @@ class IntegrationStubRunnerSpec extends Specification {
 		// end::client_send[]
 		then:
 		// tag::client_receive[]
-			ContractVerifierMessage receivedMessage = messaging.receiveMessage('outputTest')
+			Message<?> receivedMessage = messaging.receiveMessage('outputTest')
 		// end::client_receive[]
 		and:
 		// tag::client_receive_message[]
@@ -78,7 +79,7 @@ class IntegrationStubRunnerSpec extends Specification {
 		// end::client_trigger[]
 		then:
 		// tag::client_trigger_receive[]
-			ContractVerifierMessage receivedMessage = messaging.receiveMessage('outputTest')
+			Message<?> receivedMessage = messaging.receiveMessage('outputTest')
 		// end::client_trigger_receive[]
 		and:
 		// tag::client_trigger_message[]
@@ -94,7 +95,7 @@ class IntegrationStubRunnerSpec extends Specification {
 			stubFinder.trigger('org.springframework.cloud.contract.verifier.stubs:integrationService', 'return_book_1')
 		// end::trigger_group_artifact[]
 		then:
-			ContractVerifierMessage receivedMessage = messaging.receiveMessage('outputTest')
+			Message<?> receivedMessage = messaging.receiveMessage('outputTest')
 		and:
 			receivedMessage != null
 			assertJsons(receivedMessage.payload)
@@ -107,7 +108,7 @@ class IntegrationStubRunnerSpec extends Specification {
 			stubFinder.trigger('integrationService', 'return_book_1')
 		// end::trigger_artifact[]
 		then:
-			ContractVerifierMessage receivedMessage = messaging.receiveMessage('outputTest')
+			Message<?> receivedMessage = messaging.receiveMessage('outputTest')
 		and:
 			receivedMessage != null
 			assertJsons(receivedMessage.payload)
@@ -134,7 +135,7 @@ class IntegrationStubRunnerSpec extends Specification {
 			stubFinder.trigger()
 		// end::trigger_all[]
 		then:
-			ContractVerifierMessage receivedMessage = messaging.receiveMessage('outputTest')
+			Message<?> receivedMessage = messaging.receiveMessage('outputTest')
 		and:
 			receivedMessage != null
 			assertJsons(receivedMessage.payload)
@@ -154,7 +155,7 @@ class IntegrationStubRunnerSpec extends Specification {
 		when:
 			messaging.send(new BookReturned('not_matching'), [wrong: 'header_value'], 'input')
 		then:
-			ContractVerifierMessage receivedMessage = messaging.receiveMessage('outputTest', 100, TimeUnit.MILLISECONDS)
+			Message<?> receivedMessage = messaging.receiveMessage('outputTest', 100, TimeUnit.MILLISECONDS)
 		and:
 			receivedMessage == null
 	}

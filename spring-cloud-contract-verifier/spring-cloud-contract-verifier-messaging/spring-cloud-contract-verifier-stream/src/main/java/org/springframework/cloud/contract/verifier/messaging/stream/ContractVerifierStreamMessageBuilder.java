@@ -23,24 +23,15 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
 
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage;
-
 /**
  * @author Marcin Grzejszczak
  */
-public class ContractVerifierStreamMessageBuilder<T> implements
-		ContractVerifierMessageBuilder<T, Message<T>> {
+public class ContractVerifierStreamMessageBuilder implements
+		ContractVerifierMessageBuilder<Message<?>> {
 
 	@Override
-	public ContractVerifierMessage<T, Message<T>> create(T payload, Map<String, Object> headers) {
-		return new StreamMessage<>(MessageBuilder.createMessage(payload, new MessageHeaders(headers)));
+	public <T> Message<?> create(T payload, Map<String, Object> headers) {
+		return MessageBuilder.createMessage(payload, new MessageHeaders(headers));
 	}
 
-	@Override
-	public ContractVerifierMessage<T, Message<T>> create(Message<T> message) {
-		if (message == null) {
-			return null;
-		}
-		return new StreamMessage<>(message);
-	}
 }

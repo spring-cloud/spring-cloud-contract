@@ -30,15 +30,15 @@ import org.springframework.messaging.Message;
 public class ContractVerifierIntegrationConfiguration<T> {
 
 	@Bean
-	public ContractVerifierMessaging<T, Message<T>> contractVerifierMessaging(
+	public ContractVerifierMessaging<Message<?>> contractVerifierMessaging(
 			ApplicationContext applicationContext,
-			ContractVerifierMessageBuilder<T, Message<T>> contractVerifierMessageBuilder) {
-		return new ContractVerifierIntegrationMessaging<T>(applicationContext,
+			ContractVerifierMessageBuilder<Message<?>> contractVerifierMessageBuilder) {
+		return new ContractVerifierIntegrationMessaging(applicationContext,
 				contractVerifierMessageBuilder);
 	}
 
 	@Bean
-	public ContractVerifierMessageBuilder<T, Message<T>> contractVerifierMessageBuilder() {
-		return new ContractVerifierIntegrationMessageBuilder<>();
+	public ContractVerifierMessageBuilder<Message<?>> contractVerifierMessageBuilder() {
+		return new ContractVerifierIntegrationMessageBuilder();
 	}
 }

@@ -52,13 +52,13 @@ public class StubRunner implements StubRunning {
 
 	public StubRunner(StubRunnerOptions stubRunnerOptions, String repositoryPath,
 			StubConfiguration stubsConfiguration,
-			ContractVerifierMessaging<?, ?> contractVerifierMessaging) {
+			ContractVerifierMessaging<?> contractVerifierMessaging) {
 		this.stubsConfiguration = stubsConfiguration;
 		this.stubRunnerOptions = stubRunnerOptions;
 		this.stubRepository = new StubRepository(new File(repositoryPath));
 		AvailablePortScanner portScanner = new AvailablePortScanner(
 				stubRunnerOptions.getMinPortValue(), stubRunnerOptions.getMaxPortValue());
-		this.localStubRunner = new StubRunnerExecutor(portScanner, (ContractVerifierMessaging<String, Object>) contractVerifierMessaging);
+		this.localStubRunner = new StubRunnerExecutor(portScanner, contractVerifierMessaging);
 	}
 
 	@Override

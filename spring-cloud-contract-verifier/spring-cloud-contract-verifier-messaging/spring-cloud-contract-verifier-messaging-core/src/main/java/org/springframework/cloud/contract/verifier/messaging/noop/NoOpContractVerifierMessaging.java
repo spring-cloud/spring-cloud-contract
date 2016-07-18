@@ -19,40 +19,33 @@ package org.springframework.cloud.contract.verifier.messaging.noop;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging;
 
 /**
  * @author Marcin Grzejszczak
  */
-public class NoOpContractVerifierMessaging implements ContractVerifierMessaging {
+public class NoOpContractVerifierMessaging implements ContractVerifierMessaging<Object> {
 	@Override
-	public void send(ContractVerifierMessage message, String destination) {
-
+	public void send(Object message, String destination) {
 	}
 
 	@Override
-	public void send(Object payload, Map headers, String destination) {
-
+	public <T> void send(T payload, Map<String,Object> headers, String destination) {
 	}
 
 	@Override
-	public ContractVerifierMessage receiveMessage(String destination, long timeout, TimeUnit timeUnit) {
+	public Object receiveMessage(String destination, long timeout, TimeUnit timeUnit) {
 		return null;
 	}
 
 	@Override
-	public ContractVerifierMessage receiveMessage(String destination) {
+	public Object receiveMessage(String destination) {
 		return null;
 	}
 
 	@Override
-	public ContractVerifierMessage create(Object o, Map headers) {
-		return null;
+	public <T> Object create(T o, Map<String, Object> headers) {
+		return o;
 	}
 
-	@Override
-	public ContractVerifierMessage create(Object o) {
-		return null;
-	}
 }

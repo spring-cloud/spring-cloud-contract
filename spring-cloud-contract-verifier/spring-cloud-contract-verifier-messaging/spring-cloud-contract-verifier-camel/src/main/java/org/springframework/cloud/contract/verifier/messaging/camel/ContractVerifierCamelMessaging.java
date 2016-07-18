@@ -28,38 +28,36 @@ import org.apache.camel.impl.DefaultExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging;
 import org.springframework.stereotype.Component;
-
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
 
 /**
  * @author Marcin Grzejszczak
  */
 @Component
-public class ContractVerifierCamelMessaging<T> implements
-		ContractVerifierMessaging<T, Message> {
+public class ContractVerifierCamelMessaging implements
+		ContractVerifierMessaging<Message> {
 
 	private static final Logger log = LoggerFactory.getLogger(
 			ContractVerifierCamelMessaging.class);
 
 	private final CamelContext context;
-	private final ContractVerifierMessageBuilder builder;
+	private final ContractVerifierMessageBuilder<Message> builder;
 
 	@Autowired
 	@SuppressWarnings("unchecked")
-	public ContractVerifierCamelMessaging(CamelContext context, ContractVerifierMessageBuilder contractVerifierMessageBuilder) {
+	public ContractVerifierCamelMessaging(CamelContext context, ContractVerifierMessageBuilder<Message> contractVerifierMessageBuilder) {
 		this.context = context;
 		this.builder = contractVerifierMessageBuilder;
 	}
 
 	@Override
-	public void send(ContractVerifierMessage<T, Message> message, String destination) {
+	public void send(Message message, String destination) {
 		try {
 			ProducerTemplate producerTemplate = context.createProducerTemplate();
 			Exchange exchange = new DefaultExchange(context);
-			exchange.setIn(message.convert());
+			exchange.setIn(message);
 			producerTemplate.send(destination, exchange);
 		} catch (Exception e) {
 			log.error("Exception occurred while trying to send a message [" + message + "] " +
@@ -70,17 +68,17 @@ public class ContractVerifierCamelMessaging<T> implements
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void send(T payload, Map<String, Object> headers, String destination) {
+	public <T> void send(T payload, Map<String, Object> headers, String destination) {
 		send(builder.create(payload, headers), destination);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public ContractVerifierMessage<T, Message> receiveMessage(String destination, long timeout, TimeUnit timeUnit) {
+	public Message receiveMessage(String destination, long timeout, TimeUnit timeUnit) {
 		try {
 			ConsumerTemplate consumerTemplate = context.createConsumerTemplate();
 			Exchange exchange = consumerTemplate.receive(destination, timeUnit.toMillis(timeout));
-			return builder.create(exchange.getIn());
+			return exchange.getIn();
 		} catch (Exception e) {
 			log.error("Exception occurred while trying to read a message from " +
 					" a channel with name [" + destination + "]", e);
@@ -89,19 +87,14 @@ public class ContractVerifierCamelMessaging<T> implements
 	}
 
 	@Override
-	public ContractVerifierMessage<T, Message> receiveMessage(String destination) {
+	public Message receiveMessage(String destination) {
 		return receiveMessage(destination, 5, TimeUnit.SECONDS);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public ContractVerifierMessage<T, Message> create(T t, Map<String, Object> headers) {
+	public <T> Message create(T t, Map<String, Object> headers) {
 		return builder.create(t, headers);
 	}
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public ContractVerifierMessage<T, Message> create(Message message) {
-		return builder.create(message);
-	}
 }

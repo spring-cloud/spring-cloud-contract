@@ -18,24 +18,25 @@ package org.springframework.cloud.contract.stubrunner.messaging.stream
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+
+import java.util.concurrent.TimeUnit
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubFinder
-import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage
+import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
-import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureContractVerifierMessaging;
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.messaging.Sink
 import org.springframework.cloud.stream.messaging.Source
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
+import org.springframework.messaging.Message
 import org.springframework.test.context.ContextConfiguration
-import spock.lang.Specification
 
-import java.util.concurrent.TimeUnit
+import spock.lang.Specification
 
 /**
  * @author Marcin Grzejszczak
@@ -49,7 +50,7 @@ import java.util.concurrent.TimeUnit
 class StreamStubRunnerSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
-	@Autowired ContractVerifierMessaging messaging
+	@Autowired ContractVerifierMessaging<Message<?>> messaging
 
 	def setup() {
 		// ensure that message were taken from the queue
@@ -63,7 +64,7 @@ class StreamStubRunnerSpec extends Specification {
 		// end::client_send[]
 		then:
 		// tag::client_receive[]
-			ContractVerifierMessage receivedMessage = messaging.receiveMessage('returnBook')
+			Message<?> receivedMessage = messaging.receiveMessage('returnBook')
 		// end::client_receive[]
 		and:
 		// tag::client_receive_message[]
@@ -80,7 +81,7 @@ class StreamStubRunnerSpec extends Specification {
 		// end::client_trigger[]
 		then:
 		// tag::client_trigger_receive[]
-			ContractVerifierMessage receivedMessage = messaging.receiveMessage('returnBook')
+			Message<?> receivedMessage = messaging.receiveMessage('returnBook')
 		// end::client_trigger_receive[]
 		and:
 		// tag::client_trigger_message[]
@@ -96,7 +97,7 @@ class StreamStubRunnerSpec extends Specification {
 			stubFinder.trigger('org.springframework.cloud.contract.verifier.stubs:streamService', 'return_book_1')
 		// end::trigger_group_artifact[]
 		then:
-			ContractVerifierMessage receivedMessage = messaging.receiveMessage('returnBook')
+			Message<?> receivedMessage = messaging.receiveMessage('returnBook')
 		and:
 			receivedMessage != null
 			assertJsons(receivedMessage.payload)
@@ -109,7 +110,7 @@ class StreamStubRunnerSpec extends Specification {
 			stubFinder.trigger('streamService', 'return_book_1')
 		// end::trigger_artifact[]
 		then:
-			ContractVerifierMessage receivedMessage = messaging.receiveMessage('returnBook')
+			Message<?> receivedMessage = messaging.receiveMessage('returnBook')
 		and:
 			receivedMessage != null
 			assertJsons(receivedMessage.payload)
@@ -136,7 +137,7 @@ class StreamStubRunnerSpec extends Specification {
 			stubFinder.trigger()
 		// end::trigger_all[]
 		then:
-			ContractVerifierMessage receivedMessage = messaging.receiveMessage('returnBook')
+			Message<?> receivedMessage = messaging.receiveMessage('returnBook')
 		and:
 			receivedMessage != null
 			assertJsons(receivedMessage.payload)
@@ -156,7 +157,7 @@ class StreamStubRunnerSpec extends Specification {
 		when:
 			messaging.send(new BookReturned('not_matching'), [wrong: 'header_value'], 'bookStorage')
 		then:
-			ContractVerifierMessage receivedMessage = messaging.receiveMessage('returnBook', 100, TimeUnit.MILLISECONDS)
+			Message<?> receivedMessage = messaging.receiveMessage('returnBook', 100, TimeUnit.MILLISECONDS)
 		and:
 			receivedMessage == null
 	}

@@ -18,21 +18,17 @@ package org.springframework.cloud.contract.verifier.messaging.noop;
 
 import java.util.Map;
 
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
 
 /**
  * @author Marcin Grzejszczak
  */
 public class NoOpContractVerifierMessageBuilder
-		implements ContractVerifierMessageBuilder {
-	@Override
-	public ContractVerifierMessage create(Object o, Map headers) {
-		return new NoOpContractVerifierMessage();
-	}
+		implements ContractVerifierMessageBuilder<Object> {
 
 	@Override
-	public ContractVerifierMessage create(Object o) {
-		return new NoOpContractVerifierMessage();
+	public <T> Object create(T o, Map<String, Object> headers) {
+		return o;
 	}
+
 }

@@ -44,7 +44,7 @@ import org.springframework.core.io.Resource;
 public class StubRunnerConfiguration {
 
 	@Autowired(required = false)
-	private ContractVerifierMessaging<?, ?> contractVerifierMessaging;
+	private ContractVerifierMessaging<?> contractVerifierMessaging;
 	@Autowired(required = false)
 	private StubDownloader stubDownloader;
 	@Autowired

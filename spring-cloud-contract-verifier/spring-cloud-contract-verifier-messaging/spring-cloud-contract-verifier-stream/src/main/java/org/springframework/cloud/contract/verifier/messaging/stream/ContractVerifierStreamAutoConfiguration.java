@@ -30,15 +30,15 @@ import org.springframework.messaging.Message;
 public class ContractVerifierStreamAutoConfiguration {
 
 	@Bean
-	ContractVerifierMessaging<?, ?> contractVerifierMessaging(
+	ContractVerifierMessaging<Message<?>> contractVerifierMessaging(
 			ApplicationContext applicationContext,
-			ContractVerifierMessageBuilder<Object, Message<Object>> contractVerifierMessageBuilder) {
-		return new ContractVerifierStreamMessaging<Object>(applicationContext,
+			ContractVerifierMessageBuilder<Message<?>> contractVerifierMessageBuilder) {
+		return new ContractVerifierStreamMessaging(applicationContext,
 				contractVerifierMessageBuilder);
 	}
 
 	@Bean
-	ContractVerifierMessageBuilder<?, ?> contractVerifierMessageBuilder() {
-		return new ContractVerifierStreamMessageBuilder<>();
+	ContractVerifierMessageBuilder<Message<?>> contractVerifierMessageBuilder() {
+		return new ContractVerifierStreamMessageBuilder();
 	}
 }
