@@ -10,6 +10,14 @@ public class LoanApplication {
 
 	private String loanApplicationId;
 
+	public LoanApplication() {
+	}
+
+	public LoanApplication(Client client, double amount) {
+		this.client = client;
+		this.amount = BigDecimal.valueOf(amount);
+	}
+
 	public Client getClient() {
 		return client;
 	}
