@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.example</groupId>
-	<artifactId>contract-verifier-sample-stream-sink</artifactId>
+	<artifactId>stream-sink</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>Spring Cloud Contract Verifier Stream Sink Sample</name>
+	<name>Stream Sink Sample</name>
 	<description>Spring Cloud Contract Verifier Stream Sink Sample</description>
 
 	<parent>
