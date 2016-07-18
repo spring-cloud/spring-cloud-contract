@@ -48,7 +48,6 @@ import spock.lang.Specification
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @WebIntegrationTest(randomPort = true)
 @IntegrationTest
-@Slf4j
 @AutoConfigureStubRunner
 @DirtiesContext
 class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
