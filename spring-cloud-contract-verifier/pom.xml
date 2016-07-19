@@ -10,8 +10,8 @@
 	</parent>
 	<artifactId>spring-cloud-contract-verifier</artifactId>
 	<packaging>jar</packaging>
-	<name>Spring Cloud Contract Verifier Core</name>
-	<description>Spring Cloud Contract Verifier Core</description>
+	<name>Spring Cloud Contract Verifier</name>
+	<description>Spring Cloud Contract Verifier</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -58,6 +58,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-nio</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-json</artifactId>
 		</dependency>
 		<dependency>
@@ -99,6 +103,15 @@
 			<plugin>
 				<groupId>org.codehaus.gmavenplus</groupId>
 				<artifactId>gmavenplus-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>addSources</goal>
+							<goal>compile</goal>
+							<goal>testCompile</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

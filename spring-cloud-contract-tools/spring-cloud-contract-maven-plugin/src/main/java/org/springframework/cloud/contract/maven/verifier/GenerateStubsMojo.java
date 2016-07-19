@@ -75,7 +75,7 @@ public class GenerateStubsMojo extends AbstractMojo {
 
     private File createStubJar(File stubsOutputDir) throws MojoFailureException, MojoExecutionException {
         if (!stubsOutputDir.exists()) {
-            throw new MojoExecutionException("Stubs could not be found: [" + stubsOutputDir.getAbsolutePath() + "] .\nPlease make sure that spring-cloud-contract-verifier:convert was invoked");
+            throw new MojoExecutionException("Stubs could not be found: [" + stubsOutputDir.getAbsolutePath() + "] .\nPlease make sure that spring-cloud-contract:convert was invoked");
         }
         String stubArchiveName = project.getBuild().getFinalName() + "-" + classifier + ".jar";
         File stubsJarFile = new File(projectBuildDirectory, stubArchiveName);

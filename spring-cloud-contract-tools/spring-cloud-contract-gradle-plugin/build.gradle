@@ -72,9 +72,6 @@ dependencies {
 	testCompile 'info.solidsoft.spock:spock-global-unroll:0.5.0'
 	testCompile gradleTestKit()
 
-	messagingLibs("org.springframework.cloud:spring-cloud-contract-verifier-integration:${project.version}") {
-		exclude(group: 'org.codehaus.groovy')
-	}
 }
 
 test {

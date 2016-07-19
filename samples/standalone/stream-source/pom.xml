@@ -30,13 +30,18 @@
 			<artifactId>spring-cloud-starter-stream-rabbit</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-stream-test-support</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-contract-verifier-stream</artifactId>
+			<artifactId>spring-cloud-contract-verifier</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

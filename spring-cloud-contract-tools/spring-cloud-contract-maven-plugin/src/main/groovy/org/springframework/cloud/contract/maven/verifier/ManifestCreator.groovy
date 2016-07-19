@@ -27,7 +27,7 @@ class ManifestCreator {
         manifest.addConfiguredAttribute(new Manifest.Attribute("Spring-Cloud-Contract-Verifier-Maven-Plugin-Version", verifierMavenPlugin.version));
         if (verifierMavenPlugin.getDependencies()) {
             String verifierVersion = verifierMavenPlugin.getDependencies().find {
-                it.artifactId == 'spring-cloud-contract-verifier-core'
+                it.artifactId == 'spring-cloud-contract-verifier'
             }.version
             manifest.addConfiguredAttribute(new Manifest.Attribute("Spring-Cloud-Contract-Verifier-Version", verifierVersion));
         }

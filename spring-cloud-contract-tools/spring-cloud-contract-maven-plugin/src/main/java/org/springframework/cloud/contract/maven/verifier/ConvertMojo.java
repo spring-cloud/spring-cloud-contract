@@ -36,7 +36,7 @@ import org.springframework.cloud.contract.verifier.wiremock.RecursiveFilesConver
 /**
  * Convert Spring Cloud Contract Verifier contracts into WireMock stubs mappings.
  * <p>
- * This goal allow to generate `stubs-jar` or execute `spring-cloud-contract-verifier:run` with generated WireMock mappings.
+ * This goal allows you to generate `stubs-jar` or execute `spring-cloud-contract:run` with generated WireMock mappings.
  */
 @Mojo(name = "convert", requiresProject = false, defaultPhase = LifecyclePhase.PROCESS_TEST_RESOURCES)
 public class ConvertMojo extends AbstractMojo {

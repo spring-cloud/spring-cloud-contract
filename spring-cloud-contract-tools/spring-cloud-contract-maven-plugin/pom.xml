@@ -12,10 +12,9 @@
 
 	<artifactId>spring-cloud-contract-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
-	<version>1.0.0.BUILD-SNAPSHOT</version>
 
-	<name>Spring Cloud Contract Verifier Maven Plugin</name>
-	<description>Spring Cloud Contract Verifier Maven Plugin</description>
+	<name>Spring Cloud Contract Maven Plugin</name>
+	<description>Spring Cloud Contract Maven Plugin</description>
 	<url>https://github.com/spring-cloud/spring-cloud-contract</url>
 
 	<properties>
@@ -259,7 +258,6 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-verifier</artifactId>
-			<version>${spring.cloud.contract.verifier.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -269,13 +267,11 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-stub-runner</artifactId>
-			<version>${spring.cloud.contract.verifier.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.aether</groupId>
 			<artifactId>aether-api</artifactId>
-			<version>${aether.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -288,19 +284,16 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
-			<version>1.1.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
-			<version>1.7.12</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>javax.inject</groupId>
 			<artifactId>javax.inject</artifactId>
-			<version>1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -370,13 +363,11 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
-			<version>2.4.0</version>
 			<scope>test</scope>
 		</dependency>
 
