@@ -114,7 +114,7 @@ Technical remark - Fraud Detection will have artifact id `http-server`, Loan Iss
 Social remark - both client and server development teams need to communicate directly and discuss changes while
 going through the process. CDC is all about communication.
 
-The https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/samples/http-server[server side code is available here] and https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/samples/http-client[the client side code here].
+The https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/http-server[server side code is available here] and https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/http-client[the client side code here].
 
 ===== Consumer side (Loan Issuance)
 
