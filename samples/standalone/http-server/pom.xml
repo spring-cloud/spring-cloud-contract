@@ -83,14 +83,6 @@
 				<configuration>
 					<baseClassForTests>com.example.fraud.MvcTest</baseClassForTests>
 				</configuration>
-				<!-- this was added for testing purposes only -->
-				<dependencies>
-					<dependency>
-						<groupId>org.springframework.cloud</groupId>
-						<artifactId>spring-cloud-contract-verifier-core</artifactId>
-						<version>${spring-cloud-contract.version}</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 			<plugin>
 				<artifactId>maven-deploy-plugin</artifactId>
