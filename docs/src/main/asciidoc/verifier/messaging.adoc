@@ -1,7 +1,7 @@
 === Spring Cloud Contract Verifier Messaging
 
 Spring Cloud Contract Verifier allows you to verify your application that uses messaging as means of communication.
-All of our integrations are working with Spring but you can also set one yourself.
+All of our integrations are working with Spring but you can also create one yourself and use it.
 
 ==== Integrations
 
@@ -11,38 +11,54 @@ You can use one of the three integration configurations:
 - Spring Integration
 - Spring Cloud Stream
 
-If you're using Spring Boot, the aforementioned test configurations will be appended automatically.
-
 You have to provide as a dependency one of the Spring Cloud Contract Verifier Messaging modules. Example for Gradle:
 
 [source,groovy,indent=0]
 ----
 // for Apache Camel
-testCompile "org.springframework.cloud:spring-cloud-contract-verifier-camel:${verifierVersion}"
+testCompile "org.springframework.cloud:spring-cloud-contract-verifier-camel"
 // for Spring Integration
-testCompile "org.springframework.cloud:spring-cloud-contract-verifier-integration:${verifierVersion}"
+testCompile "org.springframework.cloud:spring-cloud-contract-verifier-integration"
 // for Spring Cloud Stream
-testCompile "org.springframework.cloud:spring-cloud-contract-verifier-stream:${verifierVersion}"
+testCompile "org.springframework.cloud:spring-cloud-contract-verifier-stream"
 ----
 
-==== Manual Integration
+If you're using Spring Boot, the test configurations will be added automatically.
 
-The `spring-cloud-contract-verifier-messaging-core` module contains 3 main interfaces:
+==== Manual Integration Testing
 
-- `ContractVerifierMessage` - describes a message received / sent to a channel / queue / topic etc.
-- `ContractVerifierMessageBuilder` - describes how to build a message
-- `ContractVerifierMessaging` - class that allows you to build, send and receive messages
+The `spring-cloud-contract-verifier-messaging-core` module contains 2 main interfaces:
+
+- `ContractVerifierMessageExchange` - class that allows you to build, send and receive messages
 - `ContractVerifierFilter` - interface to filter out the messages that do not follow the pattern from the DSL
 
-In the generated test the `ContractVerifierMessaging` is injected via `@Inject` annotation thus you can use other injection
-frameworks than Spring.
+In the a test you can inject a `ContractVerifierMessageExchange` to send and receive messages that follow the contract.
 
-You have to provide as a dependency the `spring-cloud-contract-verifier-messaging-core` module. Example for Gradle:
+You have to provide as a dependency the messaging module that matches your provider. Example for Gradle and Spring Integration:
 
 [source,groovy,indent=0]
 ----
-testCompile "org.springframework.cloud:spring-cloud-contract-verifier-messaging-core:${verifierVersion}"
+testCompile "org.springframework.cloud:spring-cloud-contract-verifier-integration"
 ----
+
+and then add `@AutoConfigureContractVerifierMessaging` to your test, e.g.
+
+[source,java,indent=0]
+----
+@RunWith(SpringTestRunner.class)
+@SpringBootTest
+@AutoConfigureContractVerifierMessaging
+public static class MessagingContractTests {
+
+  @Autowired
+  private ContractVerifierMessageExchange exchange;
+  ...
+}
+----
+
+NOTE: If your tests require stubs as well, then
+`@AutoConfigureStubRunner` includes the messaging configuration, so
+you only need the one annotation.
 
 ==== Publisher side test generation
 
