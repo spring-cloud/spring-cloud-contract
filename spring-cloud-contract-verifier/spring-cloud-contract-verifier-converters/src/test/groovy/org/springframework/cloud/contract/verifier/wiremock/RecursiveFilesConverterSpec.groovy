@@ -16,16 +16,19 @@
 
 package org.springframework.cloud.contract.verifier.wiremock
 
-import org.apache.commons.io.FileUtils
-import org.apache.commons.io.filefilter.TrueFileFilter
+import groovy.io.FileType
+
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.converter.SingleFileConverter
-import spock.lang.Specification
+import org.springframework.util.FileSystemUtils
 
-import java.nio.file.Path
-import java.nio.file.Paths
+import spock.lang.Specification
 
 class RecursiveFilesConverterSpec extends Specification {
 
@@ -41,7 +44,7 @@ class RecursiveFilesConverterSpec extends Specification {
 			File originalSourceRootDirectory = new File(this.getClass().getResource("/converter/source").toURI())
 			properties.contractsDslDir = tmpFolder.newFolder("source")
 			properties.stubsOutputDir = tmpFolder.newFolder("target")
-			FileUtils.copyDirectory(originalSourceRootDirectory, properties.contractsDslDir)
+			FileSystemUtils.copyRecursively(originalSourceRootDirectory, properties.contractsDslDir)
 		and:
 			def singleFileConverterStub = Stub(SingleFileConverter)
 			singleFileConverterStub.canHandleFileName(_) >> { String fileName -> fileName.endsWith(".groovy") }
@@ -52,7 +55,8 @@ class RecursiveFilesConverterSpec extends Specification {
 		when:
 			recursiveFilesConverter.processFiles()
 		then:
-			Collection<File> createdFiles = FileUtils.listFiles(properties.stubsOutputDir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE)
+			Collection<File> createdFiles = [] as List
+			properties.stubsOutputDir.eachFileRecurse(FileType.FILES) {it -> createdFiles << it}
 			Set<String> relativizedCreatedFiles = getRelativePathsForFilesInDirectory(createdFiles, properties.stubsOutputDir)
 			EXPECTED_TARGET_FILES == relativizedCreatedFiles
 		and:
@@ -66,7 +70,7 @@ class RecursiveFilesConverterSpec extends Specification {
 			properties.contractsDslDir = tmpFolder.newFolder("source")
 			properties.stubsOutputDir = tmpFolder.newFolder("target")
 			properties.excludedFiles = ["dir1/**"]
-			FileUtils.copyDirectory(originalSourceRootDirectory, properties.contractsDslDir)
+			FileSystemUtils.copyRecursively(originalSourceRootDirectory, properties.contractsDslDir)
 		and:
 			def singleFileConverterStub = Stub(SingleFileConverter)
 			singleFileConverterStub.canHandleFileName(_) >> { String fileName -> fileName.endsWith(".groovy") }
@@ -77,7 +81,8 @@ class RecursiveFilesConverterSpec extends Specification {
 		when:
 			recursiveFilesConverter.processFiles()
 		then:
-			Collection<File> createdFiles = FileUtils.listFiles(properties.stubsOutputDir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE)
+			Collection<File> createdFiles = [] as List
+			properties.stubsOutputDir.eachFileRecurse(FileType.FILES) {it -> createdFiles << it}
 			Set<String> relativizedCreatedFiles = getRelativePathsForFilesInDirectory(createdFiles, properties.stubsOutputDir)
 			[Paths.get("dslRoot.json"), Paths.get("dir2/dsl2.json")] as Set == relativizedCreatedFiles as Set
 		and:

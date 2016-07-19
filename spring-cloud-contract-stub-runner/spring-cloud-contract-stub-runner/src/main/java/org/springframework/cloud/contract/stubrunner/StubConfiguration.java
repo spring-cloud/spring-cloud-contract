@@ -16,9 +16,6 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.springframework.util.StringUtils;
 
 /**

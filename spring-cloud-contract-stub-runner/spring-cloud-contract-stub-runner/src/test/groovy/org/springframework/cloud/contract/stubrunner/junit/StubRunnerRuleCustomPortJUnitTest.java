@@ -16,17 +16,18 @@
 
 package org.springframework.cloud.contract.stubrunner.junit;
 
+import static org.assertj.core.api.BDDAssertions.then;
+
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.Charset;
 
-import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
-
-import static org.assertj.core.api.BDDAssertions.then;
+import org.springframework.util.StreamUtils;
 
 /**
  * @author Marcin Grzejszczak
@@ -79,7 +80,7 @@ public class StubRunnerRuleCustomPortJUnitTest {
 
 	private String httpGet(String url) throws Exception {
 		try(InputStream stream = URI.create(url).toURL().openStream()) {
-			return IOUtils.toString(stream);
+			return StreamUtils.copyToString(stream, Charset.forName("UTF-8"));
 		}
 	}
 }

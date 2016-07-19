@@ -16,17 +16,18 @@
 
 package org.springframework.cloud.contract.verifier.file
 
-import com.google.common.collect.ArrayListMultimap
-import com.google.common.collect.ListMultimap
 import groovy.transform.CompileStatic
-import org.apache.commons.io.FilenameUtils
-import org.apache.commons.lang3.SystemUtils
 
 import java.nio.file.FileSystem
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.PathMatcher
 import java.util.regex.Pattern
+
+import org.apache.commons.lang3.SystemUtils
+
+import com.google.common.collect.ArrayListMultimap
+import com.google.common.collect.ListMultimap
 
 /**
  * Scans the provided file path for the DSLs. There's a possibility to provide
@@ -107,6 +108,21 @@ class ContractFileScanner {
 	}
 
 	private boolean isContractFile(File file) {
-		return file.isFile() && FilenameUtils.getExtension(file.toString()).equalsIgnoreCase("groovy")
+		return file.isFile() && getFilenameExtension(file.toString())?.equalsIgnoreCase("groovy")
+	}
+	
+	private static String getFilenameExtension(String path) {
+		if (path == null) {
+			return null;
+		}
+		int extIndex = path.lastIndexOf('.');
+		if (extIndex == -1) {
+			return null;
+		}
+		int folderIndex = path.lastIndexOf('/');
+		if (folderIndex > extIndex) {
+			return null;
+		}
+		return path.substring(extIndex + 1);
 	}
 }
