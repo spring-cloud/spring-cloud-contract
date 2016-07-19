@@ -2,13 +2,6 @@
 
 Projects that contain different samples of Spring Cloud Contract Verifier.
 
-WARNING: The Verifier Maven Plugin is disabled by default. That's because we want in the
- IDE help in terms of compilation verification. If someone executes `./mvnw clean install`
- from the root of the `Spring Cloud Contract` project the samples will not blow up. To
- ensure that you're running the `Verifier` tests you have to pass the `-Ptests` from the
- `spring-cloud-contract-verifier-standalone-test-samples` project. Or just run the tests
- from each of the standalone sample projects (since each of them is a separate Maven project).
-
 Below you can find a list of samples:
 
 include::http-server/README.adoc[]
