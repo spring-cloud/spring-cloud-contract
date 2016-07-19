@@ -1,3 +1,0 @@
-# Auto Configuration
-org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner=\
-org.springframework.cloud.contract.stubrunner.messaging.integration.StubRunnerIntegrationConfiguration
