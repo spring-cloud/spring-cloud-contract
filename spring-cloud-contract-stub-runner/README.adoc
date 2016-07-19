@@ -89,7 +89,7 @@ Since the `StubRunnerRule` implements the `StubFinder` it allows you to find the
 
 [source,groovy,indent=0]
 ----
-include::../spring-cloud-contract-stub-runner/src/main/groovy/org/springframework/cloud/contract/stubrunner/StubFinder.groovy[]
+include::src/main/java/org/springframework/cloud/contract/stubrunner/StubFinder.java[]
 ----
 
 Example of usage in Spock tests:
@@ -129,7 +129,7 @@ You can see that for this example the following test is valid:
 include::src/test/groovy/org/springframework/cloud/contract/stubrunner/junit/StubRunnerRuleCustomPortJUnitTest.java[tags=test_with_port]
 ----
 
--=== Stub Runner Spring
+==== Stub Runner Spring
 
 Sets up Spring configuration of the Stub Runner project.
 
@@ -193,7 +193,7 @@ Just add the
 
 [source,groovy,indent=0]
 ----
-compile "org.springframework.cloud:stub-runner"
+compile "org.springframework.cloud:spring-cloud-stub-runner"
 ----
 
 and (optionally) a messaging implementation:
@@ -231,5 +231,5 @@ For Messaging
 
 [source,groovy,indent=0]
 ----
-include::src/test/groovy/org/springframework/cloud/contract/stubrunner/boot/StubRunnerBootSpec.groovy[tags=boot_usage]
+include::src/test/groovy/org/springframework/cloud/contract/stubrunner/server/StubRunnerBootSpec.groovy[tags=boot_usage]
 ----

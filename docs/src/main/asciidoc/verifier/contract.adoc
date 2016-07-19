@@ -147,7 +147,7 @@ and the following stub:
 
 [source,javascript,indent=0]
 ----
-include::{verifier_root_path}/spring-cloud-contract-verifier-converters/src/test/groovy/org/springframework/cloud/contract/verifier/wiremock/DslToWireMockClientConverterSpec.groovy[tags=wiremock,indent=0]
+include::{plugins_path}/spring-cloud-contract-converters/src/test/groovy/org/springframework/cloud/contract/verifier/wiremock/DslToWireMockClientConverterSpec.groovy[tags=wiremock,indent=0]
 ----
 
 ==== Executing custom methods on server side

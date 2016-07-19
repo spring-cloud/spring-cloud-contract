@@ -48,15 +48,7 @@ Spring Cloud Contract Stub Runner comes with a new structure of modules
     └── spring-cloud-contract-stub-runner-spring-cloud
 ----
 
-include::{stubrunner_core_path}/spring-cloud-contract-stub-runner/README.adoc[]
-
-include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-boot/README.adoc[]
-
-include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-jetty/README.adoc[]
-
-include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-spring/README.adoc[]
-
-include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-spring-cloud/README.adoc[]
+include::{stubrunner_core_path}/README.adoc[]
 
 
 ==== Common properties for JUnit and Spring

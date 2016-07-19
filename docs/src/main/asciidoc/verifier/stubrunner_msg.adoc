@@ -14,7 +14,7 @@ To trigger a message it's enough to use the `StubTrigger` interface:
 
 [source,groovy]
 ----
-include::{stubrunner_core_path}/spring-cloud-contract-stub-runner/src/main/groovy/org/springframework/cloud/contract/stubrunner/StubTrigger.groovy[]
+include::{stubrunner_core_path}/src/main/java/org/springframework/cloud/contract/stubrunner/StubTrigger.java[]
 ----
 
 For convenience the `StubFinder` interface extends `StubTrigger` so it's enough to use only one in your tests.
@@ -25,32 +25,32 @@ For convenience the `StubFinder` interface extends `StubTrigger` so it's enough 
 
 [source,groovy]
 ----
-include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-messaging/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=client_trigger,indent=0]
+include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=client_trigger,indent=0]
 ----
 
 ====== Trigger by group and artifact ids
 
 [source,groovy]
 ----
-include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-messaging/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=trigger_group_artifact,indent=0]
+include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=trigger_group_artifact,indent=0]
 ----
 
 ====== Trigger by artifact ids
 
 [source,groovy]
 ----
-include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-messaging/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=trigger_artifact,indent=0]
+include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=trigger_artifact,indent=0]
 ----
 
 ===== Trigger all messages
 
 [source,groovy]
 ----
-include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-messaging/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=trigger_all,indent=0]
+include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=trigger_all,indent=0]
 ----
 
-include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-messaging/spring-cloud-contract-stub-runner-camel/README.adoc[]
+include::{tests_path}/spring-cloud-contract-stub-runner-camel/README.adoc[]
 
-include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-messaging/spring-cloud-contract-stub-runner-integration/README.adoc[]
+include::{tests_path}/spring-cloud-contract-stub-runner-integration/README.adoc[]
 
-include::{stubrunner_core_path}/spring-cloud-contract-stub-runner-messaging/spring-cloud-contract-stub-runner-stream/README.adoc[]
+include::{tests_path}/spring-cloud-contract-stub-runner-stream/README.adoc[]

@@ -20,6 +20,8 @@ Currently we support Jetty, Native WireMock server, Tomcat and Undertow.
 
 === Spring Cloud Contract Verifier
 
+:introduction_url: https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master
+
 === Introduction
 
 IMPORTANT: http://codearte.github.io/accurest[The documentation to the deprecated Accurest project in version 1.1.0 is available here.]
@@ -124,59 +126,46 @@ for response verification.
 
 ==== Step by step guide to CDC
 
-Let's take an example of Fraud Detection and Loan Issuance process. Let's assume that the Loan Issuance is a client to the
-Fraud Detection server. Let's assume that we have to write a new feature (if a client wants too borrow too much money then
-we mark him as fraud). The current implementation grants loan to everybody.
+Let's take an example of Fraud Detection and Loan Issuance process. The business scenario is such that we want to issue loans to people but don't want them to steal the money from us. The current implementation of our system grants loans to everybody.
 
-Of course both client and server development teams need to communicate directly and discuss changes while
+Let's assume that the `Loan Issuance` is a client to the
+`Fraud Detection` server. In the current sprint we are required to develop a new feature - if a client wants too borrow too much money then
+we mark him as fraud.
+
+Technical remark - Fraud Detection will have artifact id `http-server`, Loan Issuance `http-client` and both have group id `com.example`.
+
+Social remark - both client and server development teams need to communicate directly and discuss changes while
 going through the process. CDC is all about communication.
 
-The code is available under the `samples/samples-standalone/http-server` and `samples/samples-standalone/http-client` folders.
+The https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/samples/http-server[server side code is available here] and https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/samples/http-client[the client side code here].
 
-As a developer of the Loan Issuance service (a consumer to the Fraud Detection server):
+=== Consumer side (Loan Issuance)
 
-- start doing TDD by writing a test to your feature
-- at some point in time you need to send a request to the Fraud Detection service
-- you clone the Fraud Detection service repository locally
-- you define the contract locally in the repo of Fraud Detection service
-- provide the group id and artifact id for the Spring Cloud Contract Stub Runner to download stubs of your collaborators
-- also provide the offline work switch since you don't want to work offline
-- when you need to install the stubs of the server side you execute e.g. `./mvnw clean install -DskipTests` in their repo
-- when you're happy with the contract and your test passes publish a PR to the server side
+As a developer of the Loan Issuance service (a consumer of the Fraud Detection server):
 
-As a developer of the Fraud Detection server (a server to the Loan Issuance service):
-
-- take over the PR (if you try to build it your app will break cause you have a missing implementation)
-- write the missing implementation
-- deploy your app with the stubs e.g. `./mvnw clean deploy` you'll publish both the application fat jar and the stub jar
-
-As a developer of the Loan Issuance service (a consumer to the Fraud Detection server):
-
-- since the server side work was done you can merge the branch to master
-- disable the offline work for Spring Cloud Contract Stub Runner
-- at this moment the stubs of the server side will be automatically downloaded from Nexus / Artifactory
-
-Code examples:
-
-*CLIENT*
-
-*start doing TDD*
+*start doing TDD by writing a test to your feature*
 
 [source,groovy,indent=0]
 ----
-def 'should be rejected due to abnormal loan amount'() {
-    given:
-        LoanApplication application =
-                new LoanApplication(client: new Client(pesel: '1234567890'), amount: 99_999)
-    when:
-        LoanApplicationResult loanApplication = sut.loanApplication(application)
-    then:
-        loanApplication.loanApplicationStatus == LoanApplicationStatus.LOAN_APPLICATION_REJECTED
-        loanApplication.rejectionReason == 'Amount too high'
+@Test
+public void shouldBeRejectedDueToAbnormalLoanAmount() {
+    // given:
+    LoanApplication application = new LoanApplication(new Client("1234567890"),
+            99999);
+    // when:
+    LoanApplicationResult loanApplication = sut.loanApplication(application);
+    // then:
+    assertThat(loanApplication.getLoanApplicationStatus())
+            .isEqualTo(LoanApplicationStatus.LOAN_APPLICATION_REJECTED);
+    assertThat(loanApplication.getRejectionReason()).isEqualTo("Amount too high");
 }
 ----
 
-*at some point in time you need to send a request to the Fraud Detection service*
+We've just written a test of our new feature. If a loan application for a big amount is received we should reject that loan application with some description.
+
+*write the missing implementation*
+
+At some point in time you need to send a request to the Fraud Detection service. Let's assume that we'd like to send the request containing the id of the client and the amount he wants to borrow from us. We'd like to send it to the `/fraudcheck` url via the `PUT` method.
 
 [source,groovy,indent=0]
 ----
@@ -186,7 +175,22 @@ ResponseEntity<FraudServiceResponse> response =
                 FraudServiceResponse.class);
 ----
 
-*you define the contract locally in the repo of Fraud Detection service*
+For simplicity we've hardcoded the port of the Fraud Detection service at `8080` and our application is running on `8090`.
+
+If we'd start the written test it would obviously break since we have no service running on port `8080`.
+
+*clone the Fraud Detection service repository locally*
+
+We'll start playing around with the server side contract. That's why we need to first clone it.
+
+[source,bash,indent=0]
+----
+git clone https://your-git-server.com/server-side.git local-http-server-repo
+----
+
+*define the contract locally in the repo of Fraud Detection service*
+
+As consumers we need to define what exactly we want to achieve. We need to formulate our expectations. That's why we write the following contract.
 
 [source,groovy,indent=0]
 ----
@@ -198,7 +202,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 				url '/fraudcheck'
 				body("""
 					{
-					"clientPesel":"${value(client(regex('[0-9]{10}')), server('1234567890'))}",
+					"clientId":"${value(client(regex('[0-9]{10}')), server('1234567890'))}",
 					"loanAmount":99999}
 				"""
 				)
@@ -221,34 +225,184 @@ org.springframework.cloud.contract.spec.Contract.make {
 }
 ----
 
-*provide the group id and artifact id for the Spring Cloud Contract Stub Runner to download stubs of your collaborators*
-*also provide the offline work switch since you don't want to work offline*
+The Contract is written using a statically typed Groovy DSL. You might be wondering what are those `${value(client(...), server(...))}` parts. So the `${}` is a String interpolation in Groovy. You can resolve a variable inside a String. In other words `"concat ${foo} and ${bar}"` is the same as `"concat " + foo + " and " + bar`. The `value(client(...), server(...))` allows you to define parts of a JSON which are dynamic. In case of an identifier or a timestamp you don't want to hardcode a value. You want to allow some different ranges of values. That's why for the consumer side you can set regular expressions matching those values. You can provide the body either by means of String with interpolations or with a map notation. https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_contract_dsl[Consult the docs for more information.]
 
-[source,groovy,indent=0]
+The aforementioned contract is an agreement between two sides that:
+
+- if an HTTP request is sent with
+** a method `PUT` on an endpoint `/fraudcheck`
+** JSON body with `clientId` matching the regular expression `[0-9]{10}` and `loanAmount` equal to `99999`
+** and with a header `Content-Type` equal to `application/vnd.fraud.v1+json`
+- then an HTTP response would be sent to the consumer that
+** has status `200`
+** contains JSON body with the `fraudCheckStatus` field containing a value `FRAUD` and the `rejectionReason` field having value `Amount too high`
+** and a `Content-Type` header with a value of `application/vnd.fraud.v1+json`
+
+Once we're ready to check the API in practice in the integration tests we need to just install the stubs locally
+
+*add the Spring Cloud Contract Verifier plugin*
+
+We can add either Maven or Gradle plugin - in this example we'll show how to add Maven. First we need to add the `Spring Cloud Contract` BOM.
+
+[source,xml,indent=0]
+----
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-contract-dependencies</artifactId>
+            <version>${spring-cloud-contract.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+----
+
+Next, the `Spring Cloud Contract Verifier` Maven plugin
+
+[source,xml,indent=0]
+----
+<plugin>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+    <version>${spring-cloud-contract.version}</version>
+    <extensions>true</extensions>
+    <configuration>
+        <baseClassForTests>com.example.fraud.MvcTest</baseClassForTests>
+    </configuration>
+</plugin>
+----
+
+Since the plugin was added we get the `Spring Cloud Contract Verifier` features which from the provided contracts:
+
+- generate and run tests
+- produce and install stubs
+
+We don't want to generate tests since we, as consumers, want only to play with the stubs. That's why we need to skip the tests generation and execution. When we execute:
+
+[source,bash,indent=0]
+----
+cd local-http-server-repo
+./mvnw clean install -DskipTests
+----
+
+In the logs we'll see something like this:
+
+[source,bash,indent=0]
+----
+[INFO] --- spring-cloud-contract-maven-plugin:1.0.0.BUILD-SNAPSHOT:generateStubs (default-generateStubs) @ http-server ---
+[INFO] Building jar: /some/path/http-server/target/http-server-0.0.1-SNAPSHOT-stubs.jar
+[INFO]
+[INFO] --- maven-jar-plugin:2.6:jar (default-jar) @ http-server ---
+[INFO] Building jar: /some/path/http-server/target/http-server-0.0.1-SNAPSHOT.jar
+[INFO]
+[INFO] --- spring-boot-maven-plugin:1.4.0.BUILD-SNAPSHOT:repackage (default) @ http-server ---
+[INFO]
+[INFO] --- maven-install-plugin:2.5.2:install (default-install) @ http-server ---
+[INFO] Installing /some/path/http-server/target/http-server-0.0.1-SNAPSHOT.jar to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT.jar
+[INFO] Installing /some/path/http-server/pom.xml to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT.pom
+[INFO] Installing /some/path/http-server/target/http-server-0.0.1-SNAPSHOT-stubs.jar to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar
+----
+
+This line is extremely important
+
+[source,bash,indent=0]
+----
+[INFO] Installing /some/path/http-server/target/http-server-0.0.1-SNAPSHOT-stubs.jar to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar
+----
+
+It's confirming that the stubs of the `http-server` have been installed in the local repository.
+
+*run the integration tests*
+
+In order to profit from the Spring Cloud Contract Stub Runner functionality of automatic stub downloading you have to do the following in our consumer side project (`Loan Application service`).
+
+Add the `Spring Cloud Contract` BOM
+
+[source,xml,indent=0]
+----
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-contract-dependencies</artifactId>
+            <version>${spring-cloud-contract.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+----
+
+Add the dependency to `Spring Cloud Contract Stub Runner`
+
+[source,xml,indent=0]
+----
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-wiremock</artifactId>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-stub-runner</artifactId>
+    <scope>test</scope>
+</dependency>
+----
+
+Provide the group id and artifact id for the Stub Runner to download stubs of your collaborators. Also provide the offline work switch since you're playing with the collaborators offline (optional step).
+
+[source,yaml,indent=0]
 ----
 stubrunner:
   work-offline: true
   stubs.ids: 'com.example:http-server:+:stubs:8080'
 ----
 
-*SERVER*
+Annotate your test class with `@AutoConfigureStubRunner`
 
-*take over the PR (if you try to build it your app will break cause you have a missing implementation)*
-
-the API
-
-[source,java,indent=0]
+[source,groovy,indent=0]
 ----
-@RequestMapping(
-        value = "/fraudcheck",
-        method = PUT,
-        consumes = FRAUD_SERVICE_JSON_VERSION_1,
-        produces = FRAUD_SERVICE_JSON_VERSION_1)
-public FraudCheckResult fraudCheck(@RequestBody FraudCheck fraudCheck) {
-}
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureStubRunner
+public class LoanApplicationServiceTests {
 ----
 
-the initial impl
+Now if you run your tests you'll see sth like this:
+
+[source,bash,indent=0]
+----
+2016-07-19 14:22:25.403  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Desired version is + - will try to resolve the latest version
+2016-07-19 14:22:25.438  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolved version is 0.0.1-SNAPSHOT
+2016-07-19 14:22:25.439  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolving artifact com.example:http-server:jar:stubs:0.0.1-SNAPSHOT using remote repositories []
+2016-07-19 14:22:25.451  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolved artifact com.example:http-server:jar:stubs:0.0.1-SNAPSHOT to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar
+2016-07-19 14:22:25.465  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Unpacking stub from JAR [URI: file:/path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar]
+2016-07-19 14:22:25.475  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Unpacked file to [/var/folders/0p/xwq47sq106x1_g3dtv6qfm940000gq/T/contracts100276532569594265]
+2016-07-19 14:22:27.737  INFO 41050 --- [           main] o.s.c.c.stubrunner.StubRunnerExecutor    : All stubs are now running RunningStubs [namesAndPorts={com.example:http-server:0.0.1-SNAPSHOT:stubs=8080}]
+----
+
+Which means that Stub Runner has found your stubs and started a server for app with group id `com.example`, artifact id `http-server` with version `0.0.1-SNAPSHOT` of the stubs and with `stubs` classifier on port `8080`.
+
+*file a PR*
+
+What we did until now is an iterative process. We can play around with the contract, install it locally and work on the consumer side until we're happy with the contract.
+
+Once we're satisfied with the results and the test passes publish a PR to the server side. Currently the consumer side work is done.
+
+=== Producer side (Fraud Detection server)
+
+As a developer of the Fraud Detection server (a server to the Loan Issuance service):
+
+*initial implementation*
+
+As a reminder here you can see the initial implementation
 
 [source,java,indent=0]
 ----
@@ -262,7 +416,116 @@ return new FraudCheckResult(FraudCheckStatus.OK, NO_REASON);
 }
 ----
 
+*take over the PR*
+
+[source,bash,indent=0]
+----
+git checkout -b contract-change-pr master
+git pull https://your-git-server.com/server-side-fork.git contract-change-pr
+----
+
+You have to add the dependencies needed by the autogenerated tests
+
+[source,xml,indent=0]
+----
+<dependency>
+    <groupId>com.jayway.restassured</groupId>
+    <artifactId>spring-mock-mvc</artifactId>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>com.jayway.restassured</groupId>
+    <artifactId>spring-mock-mvc</artifactId>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>com.toomuchcoding.jsonassert</groupId>
+    <artifactId>jsonassert</artifactId>
+    <scope>test</scope>
+</dependency>
+----
+
+In the configuration of the Maven plugin we passed the `baseClassForTests` property
+
+[source,xml,indent=0]
+----
+<plugin>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+    <version>${spring-cloud-contract.version}</version>
+    <extensions>true</extensions>
+    <configuration>
+        <baseClassForTests>com.example.fraud.MvcTest</baseClassForTests>
+    </configuration>
+</plugin>
+----
+
+That's because all the generated tests will extend that class. Over there you can set up your Spring Context or whatever is necessary. In our case we're using http://rest-assured.io/[Rest Assured MVC] to start the server side `FraudDetectionController`.
+
+[source,java,indent=0]
+----
+package com.example.fraud;
+
+import com.example.fraud.FraudDetectionController;
+import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc;
+
+import org.junit.Before;
+
+public class MvcTest {
+
+	@Before
+	public void setup() {
+		RestAssuredMockMvc.standaloneSetup(new FraudDetectionController());
+	}
+
+	public void assertThatRejectionReasonIsNull(Object rejectionReason) {
+		assert rejectionReason == null;
+	}
+}
+----
+
+Now, if you run the `./mvnw clean install` you would get sth like this:
+
+[source,bash,indent=0]
+----
+Results :
+
+Tests in error:
+  ContractVerifierTest.validate_shouldMarkClientAsFraud:32 » IllegalState Parsed...
+----
+
+That's because you have a new contract from which a test was generated and it failed since you haven't implemented the feature. The autogenerated test would look like this:
+
+[source,java,indent=0]
+----
+@Test
+public void validate_shouldMarkClientAsFraud() throws Exception {
+    // given:
+        MockMvcRequestSpecification request = given()
+                .header("Content-Type", "application/vnd.fraud.v1+json")
+                .body("{\"clientId\":\"1234567890\",\"loanAmount\":99999}");
+
+    // when:
+        ResponseOptions response = given().spec(request)
+                .put("/fraudcheck");
+
+    // then:
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.header("Content-Type")).matches("application/vnd.fraud.v1.json.*");
+    // and:
+        DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+        assertThatJson(parsedJson).field("fraudCheckStatus").matches("[A-Z]{5}");
+        assertThatJson(parsedJson).field("rejectionReason").isEqualTo("Amount too high");
+}
+----
+
+As you can see all the `server()` parts of the Contract that were present in the `value(client(...), server(...))` blocks got injected into the test.
+
+What's important here to note is that on the producer side we also are doing TDD. We have expectations in form of a test. This test is shooting a request to our own application to an URL, headers and body defined in the contract. It also is expecting very precisely defined values in the response. In other words you have is your `red` part of `red`, `green` and `refactor`. Time to convert the `red` into the `green`.
+
 *write the missing implementation*
+
+Now since we now what is the expected input and expected output let's write the missing implementation.
 
 [source,java,indent=0]
 ----
@@ -278,6 +541,46 @@ if (amountGreaterThanThreshold(fraudCheck)) {
 return new FraudCheckResult(FraudCheckStatus.OK, NO_REASON);
 }
 ----
+
+If we execute `./mvnw clean install` again the tests will pass. Since the `Spring Cloud Contract Verifier` plugin adds the tests to the `generated-test-sources` you can actually run those tests from your IDE.
+
+*deploy your app*
+
+Once you've finished your work it's time to deploy your change. First merge the branch
+
+[source,bash,indent=0]
+----
+git checkout master
+git merge --no-ff contract-change-pr
+git push origin master
+----
+
+Then we assume that your CI would run sth like `./mvnw clean deploy` which would publish both the application and the stub artifcats.
+
+=== Consumer side (Loan Issuance) final step
+
+As a developer of the Loan Issuance service (a consumer of the Fraud Detection server):
+
+*merge branch to master*
+
+[source,bash,indent=0]
+----
+git checkout master
+git merge --no-ff contract-change-pr
+----
+
+*work online*
+
+Now you can disable the offline work for Spring Cloud Contract Stub Runner ad provide where the repository with your stubs is placed. At this moment the stubs of the server side will be automatically downloaded from Nexus / Artifactory.
+
+[source,yaml,indent=0]
+----
+stubrunner.stubs:
+  ids: 'com.example:http-server:+:stubs:8080'
+  repositoryRoot: http://repo.spring.io/libs-snapshot
+----
+
+And that's it!
 
 ==== Dependencies
 
