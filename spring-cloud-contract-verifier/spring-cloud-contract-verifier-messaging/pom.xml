@@ -18,7 +18,6 @@
 	<description>Spring Cloud Contract Verifier Build</description>
 
 	<modules>
-		<module>spring-cloud-contract-verifier-messaging-core</module>
 		<module>spring-cloud-contract-verifier-camel</module>
 		<module>spring-cloud-contract-verifier-integration</module>
 		<module>spring-cloud-contract-verifier-stream</module>

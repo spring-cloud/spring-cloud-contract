@@ -15,7 +15,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-contract-verifier-messaging-core</artifactId>
+			<artifactId>spring-cloud-contract-verifier-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
