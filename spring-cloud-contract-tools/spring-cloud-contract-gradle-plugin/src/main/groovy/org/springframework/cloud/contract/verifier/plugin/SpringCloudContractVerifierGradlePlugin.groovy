@@ -202,5 +202,6 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		} catch (Exception e) {
 			project.logger.debug("Maven Publish Plugin is not available")
 		}
+		return false
 	}
 }

@@ -97,6 +97,7 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 		return GradleRunner.create()
 				.withProjectDir(testProjectDir)
 				.withArguments(tasks)
+				.forwardOutput()
 				.build()
 	}
 
