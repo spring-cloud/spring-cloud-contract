@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.stubrunner
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages
+
 import spock.lang.Specification
 
 class StubRunnerFactorySpec extends Specification {
@@ -35,7 +36,7 @@ class StubRunnerFactorySpec extends Specification {
 		stubRunnerOptions = new StubRunnerOptionsBuilder()
 				.withStubRepositoryRoot(folder.root.absolutePath) // FIXME: not used
 				.withStubs(stubs).build()
-		factory = new StubRunnerFactory(stubRunnerOptions, downloader, new NoOpContractVerifierMessaging())
+		factory = new StubRunnerFactory(stubRunnerOptions, downloader, new NoOpStubMessages())
 	}
 
 	def "Should download stub definitions many times"() {

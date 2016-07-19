@@ -18,13 +18,10 @@ package org.springframework.cloud.contract.stubrunner
 
 import groovy.json.JsonOutput
 
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeUnit
 
 import org.springframework.cloud.contract.stubrunner.util.StubsParser
-import org.springframework.cloud.contract.verifier.messaging.StubMessages;
-import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
-import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
+import org.springframework.cloud.contract.verifier.messaging.StubMessages
 
 import spock.lang.Specification
 
@@ -86,7 +83,7 @@ class StubRunnerExecutorSpec extends Specification {
 
 	def 'should ensure that triggered contracts have properly parsed message body when a message is sent'() {
 		given:
-			StubRunnerExecutor executor = new StubRunnerExecutor(portScanner, new AssertingContractVerifierMessaging())
+			StubRunnerExecutor executor = new StubRunnerExecutor(portScanner, new AssertingStubMessages())
 			executor.runStubs(stubRunnerOptions, repository, stub)
 		when:
 			executor.trigger('send_order')
@@ -102,7 +99,7 @@ class StubRunnerExecutorSpec extends Specification {
 		}
 	}
 
-	private class AssertingContractVerifierMessaging implements ContractVerifierMessageExchange<Object> {
+	private class AssertingStubMessages implements StubMessages<Object> {
 		
 		@Override
 		public void send(Object message, String destination) {
