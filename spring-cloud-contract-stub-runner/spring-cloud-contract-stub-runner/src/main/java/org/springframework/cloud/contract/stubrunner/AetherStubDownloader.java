@@ -16,12 +16,6 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
-import static java.nio.file.Files.createTempDirectory;
-import static org.springframework.cloud.contract.stubrunner.AetherFactories.newRepositories;
-import static org.springframework.cloud.contract.stubrunner.AetherFactories.newRepositorySystem;
-import static org.springframework.cloud.contract.stubrunner.AetherFactories.newSession;
-import static org.springframework.cloud.contract.stubrunner.util.ZipCategory.unzipTo;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -46,6 +40,12 @@ import org.eclipse.aether.resolution.VersionResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+
+import static java.nio.file.Files.createTempDirectory;
+import static org.springframework.cloud.contract.stubrunner.AetherFactories.newRepositories;
+import static org.springframework.cloud.contract.stubrunner.AetherFactories.newRepositorySystem;
+import static org.springframework.cloud.contract.stubrunner.AetherFactories.newSession;
+import static org.springframework.cloud.contract.stubrunner.util.ZipCategory.unzipTo;
 
 /**
  * @author Mariusz Smykula
@@ -78,7 +78,6 @@ public class AetherStubDownloader implements StubDownloader {
 	 * @param repositorySystem
 	 * @param remoteRepositories - remote artifact repositories
 	 * @param session
-	 * @param workOffline
 	 */
 	public AetherStubDownloader(RepositorySystem repositorySystem,
 			List<RemoteRepository> remoteRepositories, RepositorySystemSession session) {
@@ -98,7 +97,7 @@ public class AetherStubDownloader implements StubDownloader {
 
 	private File unpackedJar(String resolvedVersion, String stubsGroup,
 			String stubsModule, String classifier) {
-		log.info("Resolved version is" + resolvedVersion);
+		log.info("Resolved version is [" + resolvedVersion + "]");
 		if (!StringUtils.hasText(resolvedVersion)) {
 			log.warn("Stub for group [" + stubsGroup + "] module [" + stubsModule
 					+ "] and classifier [" + classifier + "] not found in "
@@ -108,11 +107,11 @@ public class AetherStubDownloader implements StubDownloader {
 		Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier,
 				ARTIFACT_EXTENSION, resolvedVersion);
 		ArtifactRequest request = new ArtifactRequest(artifact, remoteRepos, null);
-		log.info("Resolving artifact " + artifact
-				+ " using remote repositories " + remoteRepos);
+		log.info("Resolving artifact [" + artifact
+				+ "] using remote repositories " + remoteRepos);
 		try {
 			ArtifactResult result = repositorySystem.resolveArtifact(session, request);
-			log.info("Resolved artifact " + artifact + "to "
+			log.info("Resolved artifact [" + artifact + "] to "
 					+ result.getArtifact().getFile());
 			File temporaryFile = unpackStubJarToATemporaryFolder(
 					result.getArtifact().getFile().toURI());
@@ -121,7 +120,7 @@ public class AetherStubDownloader implements StubDownloader {
 		}
 		catch (Exception e) {
 			log.warn(
-					"Exception occured while trying to download a stub for group ["
+					"Exception occurred while trying to download a stub for group ["
 							+ stubsGroup + "] module [" + stubsModule
 							+ "] and classifier [" + classifier + "] in " + remoteRepos,
 					e);
@@ -133,8 +132,8 @@ public class AetherStubDownloader implements StubDownloader {
 	private String getVersion(String stubsGroup, String stubsModule, String version,
 			String classifier) {
 		if (!StringUtils.hasText(version) || LATEST_VERSION_IN_IVY.equals(version)) {
-			log.info("Desired version is " + version
-					+ " - will try to resolve the latest version");
+			log.info("Desired version is [" + version
+					+ "] - will try to resolve the latest version");
 			return resolveHighestArtifactVersion(stubsGroup, stubsModule, classifier);
 		}
 		log.info("Will try to resolve version " + version);

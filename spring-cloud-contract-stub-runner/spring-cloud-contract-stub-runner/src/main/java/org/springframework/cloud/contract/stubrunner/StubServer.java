@@ -56,7 +56,8 @@ public class StubServer {
 
 	public StubServer start() {
 		wireMockServer.start();
-		log.info("Started stub server for project ${stubConfiguration.toColonSeparatedDependencyNotation()} on port ${wireMockServer.port()}");
+		log.info("Started stub server for project [" + stubConfiguration.toColonSeparatedDependencyNotation() +
+				"] on port " + wireMockServer.port());
 		registerStubMappings();
 		return this;
 	}
@@ -114,7 +115,7 @@ public class StubServer {
 		for (WiremockMappingDescriptor mappingDescriptor : sortedMappings) {		
 			try {
 				wireMock.register(mappingDescriptor.getMapping());
-				log.debug("Registered stub mappings from $mappingDescriptor.descriptor");
+				log.debug("Registered stub mappings from [" + mappingDescriptor.descriptor + "]");
 			} catch (Exception e) {
 				log.warn("Failed to register the stub mapping ["+ mappingDescriptor + "]", e);
 			}
