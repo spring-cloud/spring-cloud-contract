@@ -17,10 +17,8 @@ ext {
 	repoPass = System.getenv('REPO_PASSWORD') ?: project.findProperty('REPO_PASSWORD') ?: ''
 
 	contractVerifierGradlePluginLibsDir ="$buildDir/contractVerifier-gradle-plugin-libs"
-	messagingLibsDir ="$buildDir/messaging-libs"
 	testSystemProperties = [
-			'contract-gradle-plugin-libs-dir': contractVerifierGradlePluginLibsDir,
-			'messaging-libs-dir': messagingLibsDir
+			'contract-gradle-plugin-libs-dir': contractVerifierGradlePluginLibsDir
 	]
 }
 
@@ -54,7 +52,6 @@ configurations {
 	jansi.extendsFrom(runtime)
 
 	contractVerifierGradlePluginLibs
-	messagingLibs
 }
 
 dependencies {
@@ -91,17 +88,12 @@ dependencies {
 }
 
 task archiveContractVerifierGradlePluginLibsDependencies(type: Sync) {
-	from configurations.contractVerifierGradlePluginLibs.resolvedConfiguration.resolvedArtifacts.collect { it.file } + configurations.messagingLibs.resolvedConfiguration.resolvedArtifacts.collect { it.file }
+	from configurations.contractVerifierGradlePluginLibs.resolvedConfiguration.resolvedArtifacts.collect { it.file }
 	into contractVerifierGradlePluginLibsDir
 }
 
-task archiveMessagingLibsDependencies(type: Sync) {
-	from configurations.messagingLibs.resolvedConfiguration.resolvedArtifacts.collect { it.file }
-	into messagingLibsDir
-}
-
 archiveContractVerifierGradlePluginLibsDependencies.dependsOn project.tasks.jar
-test.dependsOn archiveContractVerifierGradlePluginLibsDependencies, archiveMessagingLibsDependencies
+test.dependsOn archiveContractVerifierGradlePluginLibsDependencies
 
 configurations {
 	all {
