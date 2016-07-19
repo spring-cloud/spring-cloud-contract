@@ -4,19 +4,19 @@ import java.math.BigDecimal;
 
 public class FraudCheck {
 
-	private String clientPesel;
+	private String clientId;
 
 	private BigDecimal loanAmount;
 
 	public FraudCheck() {
 	}
 
-	public String getClientPesel() {
-		return clientPesel;
+	public String getClientId() {
+		return clientId;
 	}
 
-	public void setClientPesel(String clientPesel) {
-		this.clientPesel = clientPesel;
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
 	}
 
 	public BigDecimal getLoanAmount() {

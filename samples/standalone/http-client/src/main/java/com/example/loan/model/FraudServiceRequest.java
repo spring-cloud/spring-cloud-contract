@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class FraudServiceRequest {
 
-	private String clientPesel;
+	private String clientId;
 
 	private BigDecimal loanAmount;
 
@@ -12,16 +12,16 @@ public class FraudServiceRequest {
 	}
 
 	public FraudServiceRequest(LoanApplication loanApplication) {
-		this.clientPesel = loanApplication.getClient().getPesel();
+		this.clientId = loanApplication.getClient().getPesel();
 		this.loanAmount = loanApplication.getAmount();
 	}
 
-	public String getClientPesel() {
-		return clientPesel;
+	public String getClientId() {
+		return clientId;
 	}
 
-	public void setClientPesel(String clientPesel) {
-		this.clientPesel = clientPesel;
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
 	}
 
 	public BigDecimal getLoanAmount() {

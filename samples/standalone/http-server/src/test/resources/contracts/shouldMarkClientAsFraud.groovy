@@ -6,7 +6,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 				url '/fraudcheck'
 				body("""
 					{
-					"clientPesel":"${value(client(regex('[0-9]{10}')), server('1234567890'))}",
+					"clientId":"${value(client(regex('[0-9]{10}')), server('1234567890'))}",
 					"loanAmount":99999}
 				"""
 				)
