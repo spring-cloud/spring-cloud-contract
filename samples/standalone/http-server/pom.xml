@@ -39,7 +39,7 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- verifier test dependencies -->
+		<!-- tag::verifier_test_dependencies[] -->
 		<dependency>
 			<groupId>com.jayway.restassured</groupId>
 			<artifactId>spring-mock-mvc</artifactId>
@@ -55,8 +55,10 @@
 			<artifactId>jsonassert</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- end::verifier_test_dependencies[] -->
 	</dependencies>
 
+<!-- tag::contract_bom[] -->
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -68,6 +70,7 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	<!-- end::contract_bom[] -->
 
 	<build>
 		<plugins>
@@ -75,6 +78,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<!-- tag::contract_maven_plugin[] -->
 			<plugin>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-maven-plugin</artifactId>
@@ -84,6 +88,7 @@
 					<baseClassForTests>com.example.fraud.MvcTest</baseClassForTests>
 				</configuration>
 			</plugin>
+			<!-- end::contract_maven_plugin[] -->
 			<plugin>
 				<artifactId>maven-deploy-plugin</artifactId>
 				<configuration>

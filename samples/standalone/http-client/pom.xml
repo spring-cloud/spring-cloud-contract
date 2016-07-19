@@ -33,6 +33,7 @@
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 
+		<!-- tag::stub_runner[] -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-wiremock</artifactId>
@@ -48,8 +49,10 @@
 			<artifactId>spring-cloud-contract-stub-runner</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- end::stub_runner[] -->
 
 	</dependencies>
+	<!-- tag::contract_bom[] -->
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -61,6 +64,7 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	<!-- end::contract_bom[] -->
 
 	<build>
 		<plugins>
