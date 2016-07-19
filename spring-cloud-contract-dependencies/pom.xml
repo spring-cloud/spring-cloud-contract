@@ -36,7 +36,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-contract-verifier-core</artifactId>
+				<artifactId>spring-cloud-contract-verifier</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
