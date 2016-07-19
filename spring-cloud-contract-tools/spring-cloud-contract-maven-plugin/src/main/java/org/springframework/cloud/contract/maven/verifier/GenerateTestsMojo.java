@@ -90,9 +90,17 @@ public class GenerateTestsMojo extends AbstractMojo {
     @Parameter(property = "spring.cloud.contract.verifier.skip", defaultValue = "false")
     private boolean skip;
 
+    @Parameter(property = "maven.test.skip", defaultValue = "false")
+    private boolean mavenTestSkip;
+
+    @Parameter(property = "skipTests", defaultValue = "false")
+    private boolean skipTests;
+
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (skip) {
-            getLog().info("Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip=" + skip);
+        if (skip || mavenTestSkip || skipTests) {
+            if (skip) getLog().info("Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip=" + skip);
+            if (mavenTestSkip) getLog().info("Skipping Spring Cloud Contract Verifier execution: maven.test.skip=" + mavenTestSkip);
+            if (skipTests) getLog().info("Skipping Spring Cloud Contract Verifier execution: skipTests" + skipTests);
             return;
         }
         getLog().info("Generating server tests source code for Spring Cloud Contract Verifier contract verification");
