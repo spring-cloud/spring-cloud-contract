@@ -156,11 +156,11 @@ class SingleTestGenerator {
 						'ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()'
 		])
 		clazz.addImport([ 'javax.inject.Inject',
-						  'org.springframework.cloud.contract.verifier.messaging.ContractVerifierObjectMapper',
-						  'org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessage',
-						  'org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging',
+						  'org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper',
+						  'org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage',
+						  'org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging',
 		])
-		clazz.addStaticImport('org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessagingUtil.headers')
+		clazz.addStaticImport('org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers')
 	}
 
 	private static boolean jsonAssertPresent() {

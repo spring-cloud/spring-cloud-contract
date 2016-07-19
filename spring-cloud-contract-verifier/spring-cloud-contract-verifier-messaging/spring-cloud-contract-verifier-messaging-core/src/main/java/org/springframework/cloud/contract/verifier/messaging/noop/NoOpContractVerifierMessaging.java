@@ -19,12 +19,12 @@ package org.springframework.cloud.contract.verifier.messaging.noop;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging;
+import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange;
 
 /**
  * @author Marcin Grzejszczak
  */
-public class NoOpContractVerifierMessaging implements ContractVerifierMessaging<Object> {
+public class NoOpContractVerifierMessaging implements ContractVerifierMessageExchange<Object> {
 	@Override
 	public void send(Object message, String destination) {
 	}
@@ -34,12 +34,12 @@ public class NoOpContractVerifierMessaging implements ContractVerifierMessaging<
 	}
 
 	@Override
-	public Object receiveMessage(String destination, long timeout, TimeUnit timeUnit) {
+	public Object receive(String destination, long timeout, TimeUnit timeUnit) {
 		return null;
 	}
 
 	@Override
-	public Object receiveMessage(String destination) {
+	public Object receive(String destination) {
 		return null;
 	}
 

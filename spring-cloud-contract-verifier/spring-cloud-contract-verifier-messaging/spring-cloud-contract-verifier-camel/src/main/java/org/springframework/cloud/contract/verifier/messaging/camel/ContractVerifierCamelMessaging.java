@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging;
+import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange;
 import org.springframework.stereotype.Component;
 
 /**
@@ -37,7 +37,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ContractVerifierCamelMessaging implements
-		ContractVerifierMessaging<Message> {
+		ContractVerifierMessageExchange<Message> {
 
 	private static final Logger log = LoggerFactory.getLogger(
 			ContractVerifierCamelMessaging.class);
@@ -74,7 +74,7 @@ public class ContractVerifierCamelMessaging implements
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public Message receiveMessage(String destination, long timeout, TimeUnit timeUnit) {
+	public Message receive(String destination, long timeout, TimeUnit timeUnit) {
 		try {
 			ConsumerTemplate consumerTemplate = context.createConsumerTemplate();
 			Exchange exchange = consumerTemplate.receive(destination, timeUnit.toMillis(timeout));
@@ -87,8 +87,8 @@ public class ContractVerifierCamelMessaging implements
 	}
 
 	@Override
-	public Message receiveMessage(String destination) {
-		return receiveMessage(destination, 5, TimeUnit.SECONDS);
+	public Message receive(String destination) {
+		return receive(destination, 5, TimeUnit.SECONDS);
 	}
 
 }

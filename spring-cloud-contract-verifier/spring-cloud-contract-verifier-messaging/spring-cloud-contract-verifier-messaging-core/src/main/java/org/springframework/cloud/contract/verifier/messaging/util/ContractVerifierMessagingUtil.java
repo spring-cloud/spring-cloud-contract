@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.messaging;
+package org.springframework.cloud.contract.verifier.messaging.util;
 
 import java.util.Collection;
 import java.util.HashMap;

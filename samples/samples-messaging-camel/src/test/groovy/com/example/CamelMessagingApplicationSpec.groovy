@@ -24,9 +24,9 @@ import org.junit.BeforeClass
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierObjectMapper
+import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureContractVerifierMessaging
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 
@@ -46,7 +46,7 @@ import com.toomuchcoding.jsonassert.JsonAssertion
 public class CamelMessagingApplicationSpec extends Specification {
 
 	// ALL CASES
-	@Inject ContractVerifierMessaging<Message> contractVerifierMessaging
+	@Inject ContractVerifierMessageExchange<Message> contractVerifierMessaging
 	ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()
 	
 	@BeforeClass
@@ -73,7 +73,7 @@ public class CamelMessagingApplicationSpec extends Specification {
 		when:
 			bookReturnedTriggered()
 		then:
-			def response = contractVerifierMessaging.receiveMessage('activemq:output')
+			def response = contractVerifierMessaging.receive('activemq:output')
 			response.headers.get('BOOK-NAME')  == 'foo'
 		and:
 			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.body))
@@ -112,7 +112,7 @@ public class CamelMessagingApplicationSpec extends Specification {
 				contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
 				[sample: 'header'], 'jms:input')
 		then:
-			def response = contractVerifierMessaging.receiveMessage('jms:output')
+			def response = contractVerifierMessaging.receive('jms:output')
 			response.headers.get('BOOK-NAME')  == 'foo'
 		and:
 			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.body))

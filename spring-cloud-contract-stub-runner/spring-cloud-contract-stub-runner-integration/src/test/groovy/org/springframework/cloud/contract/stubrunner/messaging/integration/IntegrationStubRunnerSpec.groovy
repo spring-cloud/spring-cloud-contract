@@ -52,7 +52,7 @@ class IntegrationStubRunnerSpec extends Specification {
 
 	def setup() {
 		// ensure that message were taken from the queue
-		messaging.receiveMessage('outputTest', 100, TimeUnit.MILLISECONDS)
+		messaging.receive('outputTest', 100, TimeUnit.MILLISECONDS)
 	}
 
 	def 'should download the stub and register a route for it'() {
@@ -62,7 +62,7 @@ class IntegrationStubRunnerSpec extends Specification {
 		// end::client_send[]
 		then:
 		// tag::client_receive[]
-			Message<?> receivedMessage = messaging.receiveMessage('outputTest')
+			Message<?> receivedMessage = messaging.receive('outputTest')
 		// end::client_receive[]
 		and:
 		// tag::client_receive_message[]
@@ -79,7 +79,7 @@ class IntegrationStubRunnerSpec extends Specification {
 		// end::client_trigger[]
 		then:
 		// tag::client_trigger_receive[]
-			Message<?> receivedMessage = messaging.receiveMessage('outputTest')
+			Message<?> receivedMessage = messaging.receive('outputTest')
 		// end::client_trigger_receive[]
 		and:
 		// tag::client_trigger_message[]
@@ -95,7 +95,7 @@ class IntegrationStubRunnerSpec extends Specification {
 			stubFinder.trigger('org.springframework.cloud.contract.verifier.stubs:integrationService', 'return_book_1')
 		// end::trigger_group_artifact[]
 		then:
-			Message<?> receivedMessage = messaging.receiveMessage('outputTest')
+			Message<?> receivedMessage = messaging.receive('outputTest')
 		and:
 			receivedMessage != null
 			assertJsons(receivedMessage.payload)
@@ -108,7 +108,7 @@ class IntegrationStubRunnerSpec extends Specification {
 			stubFinder.trigger('integrationService', 'return_book_1')
 		// end::trigger_artifact[]
 		then:
-			Message<?> receivedMessage = messaging.receiveMessage('outputTest')
+			Message<?> receivedMessage = messaging.receive('outputTest')
 		and:
 			receivedMessage != null
 			assertJsons(receivedMessage.payload)
@@ -135,7 +135,7 @@ class IntegrationStubRunnerSpec extends Specification {
 			stubFinder.trigger()
 		// end::trigger_all[]
 		then:
-			Message<?> receivedMessage = messaging.receiveMessage('outputTest')
+			Message<?> receivedMessage = messaging.receive('outputTest')
 		and:
 			receivedMessage != null
 			assertJsons(receivedMessage.payload)
@@ -155,7 +155,7 @@ class IntegrationStubRunnerSpec extends Specification {
 		when:
 			messaging.send(new BookReturned('not_matching'), [wrong: 'header_value'], 'input')
 		then:
-			Message<?> receivedMessage = messaging.receiveMessage('outputTest', 100, TimeUnit.MILLISECONDS)
+			Message<?> receivedMessage = messaging.receive('outputTest', 100, TimeUnit.MILLISECONDS)
 		and:
 			receivedMessage == null
 	}

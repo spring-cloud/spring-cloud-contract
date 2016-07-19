@@ -23,11 +23,13 @@ import java.util.concurrent.TimeUnit
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
+import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange
+import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureContractVerifierMessaging;
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.messaging.Sink
 import org.springframework.cloud.stream.messaging.Source
@@ -41,125 +43,123 @@ import spock.lang.Specification
 /**
  * @author Marcin Grzejszczak
  */
-@Configuration
-@ComponentScan
-@EnableAutoConfiguration
-@ContextConfiguration(classes = StreamStubRunnerSpec, loader = SpringBootContextLoader)
-@EnableBinding([Sink, Source])
+@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
+@IntegrationTest("debug=true")
 @AutoConfigureStubRunner
+@AutoConfigureContractVerifierMessaging
 class StreamStubRunnerSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
-	@Autowired ContractVerifierMessaging<Message<?>> messaging
+	@Autowired ContractVerifierMessageExchange<Message<?>> messaging
 
 	def setup() {
 		// ensure that message were taken from the queue
-		messaging.receiveMessage('returnBook', 100, TimeUnit.MILLISECONDS)
+		messaging.receive('returnBook', 100, TimeUnit.MILLISECONDS)
 	}
 
 	def 'should download the stub and register a route for it'() {
 		when:
 		// tag::client_send[]
-			messaging.send(new BookReturned('foo'), [sample: 'header'], 'bookStorage')
+		messaging.send(new BookReturned('foo'), [sample: 'header'], 'bookStorage')
 		// end::client_send[]
 		then:
 		// tag::client_receive[]
-			Message<?> receivedMessage = messaging.receiveMessage('returnBook')
+		Message<?> receivedMessage = messaging.receive('returnBook')
 		// end::client_receive[]
 		and:
 		// tag::client_receive_message[]
-			receivedMessage != null
-			assertJsons(receivedMessage.payload)
-			receivedMessage.headers.get('BOOK-NAME') == 'foo'
+		receivedMessage != null
+		assertJsons(receivedMessage.payload)
+		receivedMessage.headers.get('BOOK-NAME') == 'foo'
 		// end::client_receive_message[]
 	}
 
 	def 'should trigger a message by label'() {
 		when:
 		// tag::client_trigger[]
-			stubFinder.trigger('return_book_1')
+		stubFinder.trigger('return_book_1')
 		// end::client_trigger[]
 		then:
 		// tag::client_trigger_receive[]
-			Message<?> receivedMessage = messaging.receiveMessage('returnBook')
+		Message<?> receivedMessage = messaging.receive('returnBook')
 		// end::client_trigger_receive[]
 		and:
 		// tag::client_trigger_message[]
-			receivedMessage != null
-			assertJsons(receivedMessage.payload)
-			receivedMessage.headers.get('BOOK-NAME') == 'foo'
+		receivedMessage != null
+		assertJsons(receivedMessage.payload)
+		receivedMessage.headers.get('BOOK-NAME') == 'foo'
 		// end::client_trigger_message[]
 	}
 
 	def 'should trigger a label for the existing groupId:artifactId'() {
 		when:
 		// tag::trigger_group_artifact[]
-			stubFinder.trigger('org.springframework.cloud.contract.verifier.stubs:streamService', 'return_book_1')
+		stubFinder.trigger('org.springframework.cloud.contract.verifier.stubs:streamService', 'return_book_1')
 		// end::trigger_group_artifact[]
 		then:
-			Message<?> receivedMessage = messaging.receiveMessage('returnBook')
+		Message<?> receivedMessage = messaging.receive('returnBook')
 		and:
-			receivedMessage != null
-			assertJsons(receivedMessage.payload)
-			receivedMessage.headers.get('BOOK-NAME') == 'foo'
+		receivedMessage != null
+		assertJsons(receivedMessage.payload)
+		receivedMessage.headers.get('BOOK-NAME') == 'foo'
 	}
 
 	def 'should trigger a label for the existing artifactId'() {
 		when:
 		// tag::trigger_artifact[]
-			stubFinder.trigger('streamService', 'return_book_1')
+		stubFinder.trigger('streamService', 'return_book_1')
 		// end::trigger_artifact[]
 		then:
-			Message<?> receivedMessage = messaging.receiveMessage('returnBook')
+		Message<?> receivedMessage = messaging.receive('returnBook')
 		and:
-			receivedMessage != null
-			assertJsons(receivedMessage.payload)
-			receivedMessage.headers.get('BOOK-NAME') == 'foo'
+		receivedMessage != null
+		assertJsons(receivedMessage.payload)
+		receivedMessage.headers.get('BOOK-NAME') == 'foo'
 	}
 
 	def 'should throw exception when missing label is passed'() {
 		when:
-			stubFinder.trigger('missing label')
+		stubFinder.trigger('missing label')
 		then:
-			thrown(IllegalArgumentException)
+		thrown(IllegalArgumentException)
 	}
 
 	def 'should throw exception when missing label and artifactid is passed'() {
 		when:
-			stubFinder.trigger('some:service', 'return_book_1')
+		stubFinder.trigger('some:service', 'return_book_1')
 		then:
-			thrown(IllegalArgumentException)
+		thrown(IllegalArgumentException)
 	}
 
 	def 'should trigger messages by running all triggers'() {
 		when:
 		// tag::trigger_all[]
-			stubFinder.trigger()
+		stubFinder.trigger()
 		// end::trigger_all[]
 		then:
-			Message<?> receivedMessage = messaging.receiveMessage('returnBook')
+		Message<?> receivedMessage = messaging.receive('returnBook')
 		and:
-			receivedMessage != null
-			assertJsons(receivedMessage.payload)
-			receivedMessage.headers.get('BOOK-NAME') == 'foo'
+		receivedMessage != null
+		assertJsons(receivedMessage.payload)
+		receivedMessage.headers.get('BOOK-NAME') == 'foo'
 	}
 
 	def 'should trigger a label with no output message'() {
 		when:
 		// tag::trigger_no_output[]
-			messaging.send(new BookReturned('foo'), [sample: 'header'], 'delete')
+		messaging.send(new BookReturned('foo'), [sample: 'header'], 'delete')
 		// end::trigger_no_output[]
 		then:
-			noExceptionThrown()
+		noExceptionThrown()
 	}
 
 	def 'should not trigger a message that does not match input'() {
 		when:
-			messaging.send(new BookReturned('not_matching'), [wrong: 'header_value'], 'bookStorage')
+		messaging.send(new BookReturned('not_matching'), [wrong: 'header_value'], 'bookStorage')
 		then:
-			Message<?> receivedMessage = messaging.receiveMessage('returnBook', 100, TimeUnit.MILLISECONDS)
+		Message<?> receivedMessage = messaging.receive('returnBook', 100, TimeUnit.MILLISECONDS)
 		and:
-			receivedMessage == null
+		receivedMessage == null
 	}
 
 	private boolean assertJsons(Object payload) {
@@ -173,15 +173,11 @@ class StreamStubRunnerSpec extends Specification {
 	// tag::sample_dsl[]
 	Contract.make {
 		label 'return_book_1'
-		input {
-			triggeredBy('bookReturnedTriggered()')
-		}
+		input { triggeredBy('bookReturnedTriggered()') }
 		outputMessage {
 			sentTo('returnBook')
 			body('''{ "bookName" : "foo" }''')
-			headers {
-				header('BOOK-NAME', 'foo')
-			}
+			headers { header('BOOK-NAME', 'foo') }
 		}
 	}
 	// end::sample_dsl[]
@@ -193,39 +189,39 @@ class StreamStubRunnerSpec extends Specification {
 		input {
 			messageFrom('bookStorage')
 			messageBody([
-					bookName: 'foo'
+				bookName: 'foo'
 			])
-			messageHeaders {
-				header('sample', 'header')
-			}
+			messageHeaders { header('sample', 'header') }
 		}
 		outputMessage {
 			sentTo('returnBook')
 			body([
-					bookName: 'foo'
+				bookName: 'foo'
 			])
-			headers {
-				header('BOOK-NAME', 'foo')
-			}
+			headers { header('BOOK-NAME', 'foo') }
 		}
 	}
 	// end::sample_dsl_2[]
 
 	Contract dsl3 =
-			// tag::sample_dsl_3[]
-			Contract.make {
-				label 'delete_book'
-				input {
-					messageFrom('delete')
-					messageBody([
-							bookName: 'foo'
-					])
-					messageHeaders {
-						header('sample', 'header')
-					}
-					assertThat('bookWasDeleted()')
-				}
-			}
+	// tag::sample_dsl_3[]
+	Contract.make {
+		label 'delete_book'
+		input {
+			messageFrom('delete')
+			messageBody([
+				bookName: 'foo'
+			])
+			messageHeaders { header('sample', 'header') }
+			assertThat('bookWasDeleted()')
+		}
+	}
 	// end::sample_dsl_3[]
+
+
+	@EnableBinding([Sink, Source])
+	@Configuration
+	@EnableAutoConfiguration
+	protected static class Config {}
 
 }

@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.Header;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierObjectMapper;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
 import org.springframework.cloud.contract.verifier.util.JsonPaths;
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter;
 import org.springframework.cloud.contract.verifier.util.MethodBufferingJsonVerifiable;

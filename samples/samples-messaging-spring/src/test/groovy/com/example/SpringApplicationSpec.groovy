@@ -22,9 +22,9 @@ import org.junit.BeforeClass
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierObjectMapper
+import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureContractVerifierMessaging
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
 import org.springframework.messaging.Message;
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
@@ -45,7 +45,7 @@ import com.toomuchcoding.jsonassert.JsonAssertion
 public class SpringApplicationSpec extends Specification {
 
 	// ALL CASES
-	@Inject ContractVerifierMessaging<Message<?>> contractVerifierMessaging
+	@Inject ContractVerifierMessageExchange<Message<?>> contractVerifierMessaging
 	ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()
 
 	@BeforeClass
@@ -72,7 +72,7 @@ public class SpringApplicationSpec extends Specification {
 		when:
 			bookReturnedTriggered()
 		then:
-			def response = contractVerifierMessaging.receiveMessage('output')
+			def response = contractVerifierMessaging.receive('output')
 			response.headers.get('BOOK-NAME')  == 'foo'
 		and:
 			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
@@ -113,7 +113,7 @@ public class SpringApplicationSpec extends Specification {
 		when:
 			contractVerifierMessaging.send(inputMessage, 'input')
 		then:
-			def response = contractVerifierMessaging.receiveMessage('output')
+			def response = contractVerifierMessaging.receive('output')
 			response.headers.get('BOOK-NAME')  == 'foo'
 		and:
 			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))

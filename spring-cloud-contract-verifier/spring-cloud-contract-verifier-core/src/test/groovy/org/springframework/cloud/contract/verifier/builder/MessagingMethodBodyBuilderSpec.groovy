@@ -57,7 +57,7 @@ def contractDsl = Contract.make {
   bookReturnedTriggered()
 
  then:
-  def response = contractVerifierMessaging.receiveMessage('activemq:output')
+  ContractVerifierMessage response = contractVerifierMessaging.receive('activemq:output')
   assert response != null
   response.getHeader('BOOK-NAME')  == 'foo'
  and:
@@ -97,7 +97,7 @@ def contractDsl = Contract.make {
   bookReturnedTriggered();
 
  // then:
-  ContractVerifierMessage response = contractVerifierMessaging.receiveMessage("activemq:output");
+  ContractVerifierMessage response = contractVerifierMessaging.receive("activemq:output");
   assertThat(response).isNotNull();
   assertThat(response.getHeader("BOOK-NAME")).isEqualTo("foo");
  // and:
@@ -143,7 +143,7 @@ def contractDsl = Contract.make {
 // tag::trigger_message_spock[]
 """\
 given:
-   def inputMessage = contractVerifierMessaging.create(
+   ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
     '''{"bookName":"foo"}''',
     ['sample': 'header']
   )
@@ -152,7 +152,7 @@ when:
    contractVerifierMessaging.send(inputMessage, 'jms:input')
 
 then:
-   def response = contractVerifierMessaging.receiveMessage('jms:output')
+   ContractVerifierMessage response = contractVerifierMessaging.receive('jms:output')
    assert response !- null
    response.getHeader('BOOK-NAME')  == 'foo'
 and:
@@ -205,7 +205,7 @@ and:
  contractVerifierMessaging.send(inputMessage, "jms:input");
 
 // then:
- ContractVerifierMessage response = contractVerifierMessaging.receiveMessage("jms:output");
+ ContractVerifierMessage response = contractVerifierMessaging.receive("jms:output");
  assertThat(response).isNotNull();
  assertThat(response.getHeader("BOOK-NAME")).isEqualTo("foo");
 // and:
@@ -243,7 +243,7 @@ def contractDsl = Contract.make {
 // tag::trigger_no_output_spock[]
 '''
 given:
-	 def inputMessage = contractVerifierMessaging.create(
+	 ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
 		\'\'\'{"bookName":"foo"}\'\'\',
 		['sample': 'header']
 	)
@@ -337,7 +337,7 @@ then:
   contractVerifierMessaging.send(inputMessage, "jms:input");
 
  // then:
-  ContractVerifierMessage response = contractVerifierMessaging.receiveMessage("jms:output");
+  ContractVerifierMessage response = contractVerifierMessaging.receive("jms:output");
   assertThat(response).isNotNull();
  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
  assertThatJson(parsedJson).field("bookName").isEqualTo("foo");
@@ -374,7 +374,7 @@ then:
 		String expectedMsg =
 """
  given:
-  def inputMessage = contractVerifierMessaging.create('''{"bookName":"foo"}'''
+  ContractVerifierMessage inputMessage = contractVerifierMessaging.create('''{"bookName":"foo"}'''
 		,[
 			'sample': 'header'
 		])
@@ -383,7 +383,7 @@ then:
   contractVerifierMessaging.send(inputMessage, 'jms:input')
 
  then:
-  def response = contractVerifierMessaging.receiveMessage('jms:output')
+  ContractVerifierMessage response = contractVerifierMessaging.receive('jms:output')
   assert response != null
  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
  assertThatJson(parsedJson).field("bookName").isEqualTo("foo")
@@ -436,7 +436,7 @@ Contract.make {
   contractVerifierMessaging.send(inputMessage, "jms:input");
 
  // then:
-  ContractVerifierMessage response = contractVerifierMessaging.receiveMessage("jms:output");
+  ContractVerifierMessage response = contractVerifierMessaging.receive("jms:output");
   assertThat(response).isNotNull();
  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
  assertThatJson(parsedJson).field("bookName").isEqualTo("foo");

@@ -14,8 +14,9 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.stubrunner.server;
+package org.springframework.cloud.contract.verifier.messaging.noop;
 
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange;
@@ -24,12 +25,14 @@ import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVe
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierMessaging;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 /**
  * @author Marcin Grzejszczak
  */
 @Configuration
-public class StubRunnerBackupAutoConfiguration {
+@AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
+public class NoOpContractVerifierAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
@@ -44,7 +47,8 @@ public class StubRunnerBackupAutoConfiguration {
 	}
 
 	@Bean
-	public ContractVerifierMessaging<Object> contractVerifierMessaging(
+	@ConditionalOnMissingBean
+	public ContractVerifierMessaging<?> contractVerifierMessaging(
 			ContractVerifierMessageExchange<Object> exchange) {
 		return new ContractVerifierMessaging<Object>(exchange);
 	}

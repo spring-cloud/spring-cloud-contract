@@ -18,10 +18,13 @@ package org.springframework.cloud.contract.stubrunner
 
 import groovy.json.JsonOutput
 
-import java.util.concurrent.TimeUnit
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.cloud.contract.stubrunner.util.StubsParser
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging
+import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 
 import spock.lang.Specification
 
@@ -99,27 +102,27 @@ class StubRunnerExecutorSpec extends Specification {
 		}
 	}
 
-	private class AssertingContractVerifierMessaging implements ContractVerifierMessaging<Object> {
-
+	private class AssertingContractVerifierMessaging implements ContractVerifierMessageExchange<Object> {
+		
 		@Override
-		void send(Object message, String destination) {
-
+		public void send(Object message, String destination) {
+			throw new UnsupportedOperationException()
 		}
 
 		@Override
-		Object receiveMessage(String destination, long timeout, TimeUnit timeUnit) {
-			return null
-		}
-
-		@Override
-		Object receiveMessage(String destination) {
-			return null
-		}
-
-		@Override
-		void send(Object o, Map headers, String destination) {
-			assert !(JsonOutput.toJson(o).contains("serverValue"))
+		public <T> void send(T payload, Map<String, Object> headers, String destination) {
+			assert !(JsonOutput.toJson(payload).contains("serverValue"))
 			assert headers.entrySet().every { !(it.value.toString().contains("serverValue")) }
+		}
+
+		@Override
+		public Object receive(String destination, long timeout, TimeUnit timeUnit) {
+			throw new UnsupportedOperationException()
+		}
+
+		@Override
+		public Object receive(String destination) {
+			throw new UnsupportedOperationException()
 		}
 
 	}

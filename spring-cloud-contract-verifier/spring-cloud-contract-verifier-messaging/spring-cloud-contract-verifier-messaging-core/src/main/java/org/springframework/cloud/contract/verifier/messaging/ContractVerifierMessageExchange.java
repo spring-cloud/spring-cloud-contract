@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Marcin Grzejszczak
  */
-public interface ContractVerifierMessaging<M> {
+public interface ContractVerifierMessageExchange<M> {
 	/**
 	 * Sends the {@link ContractVerifierMessage} to the given destination.
 	 */
@@ -41,10 +41,10 @@ public interface ContractVerifierMessaging<M> {
 	 * Receives the {@link ContractVerifierMessage} from the given destination. You can provide the timeout
 	 * for receiving that message.
 	 */
-	M receiveMessage(String destination, long timeout, TimeUnit timeUnit);
+	M receive(String destination, long timeout, TimeUnit timeUnit);
 
 	/**
 	 * Receives the {@link ContractVerifierMessage} from the given destination. A default timeout will be applied.
 	 */
-	M receiveMessage(String destination);
+	M receive(String destination);
 }

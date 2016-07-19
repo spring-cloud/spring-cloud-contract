@@ -18,8 +18,12 @@ package org.springframework.cloud.contract.verifier.messaging.camel;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging;
+import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
+import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,14 +31,36 @@ import org.springframework.context.annotation.Configuration;
  * @author Marcin Grzejszczak
  */
 @Configuration
+@AutoConfigureBefore(NoOpContractVerifierAutoConfiguration.class)
 public class ContractVerifierCamelConfiguration {
 
-	@Bean ContractVerifierMessaging<Message> contractVerifierMessaging(CamelContext context,
-			ContractVerifierMessageBuilder<Message> builder) {
+	@Bean
+	ContractVerifierMessageExchange<Message> contractVerifierMessageExchange(
+			CamelContext context, ContractVerifierMessageBuilder<Message> builder) {
 		return new ContractVerifierCamelMessaging(context, builder);
 	}
 
-	@Bean ContractVerifierMessageBuilder<Message> contractVerifierMessageBuilder() {
+	@Bean
+	ContractVerifierMessageBuilder<Message> contractVerifierMessageBuilder() {
 		return new ContractVerifierCamelMessageBuilder();
+	}
+
+	@Bean
+	public ContractVerifierMessaging<Message> contractVerifierMessaging(
+			ContractVerifierMessageExchange<Message> exchange) {
+		return new ContractVerifierCamelHelper(exchange);
+	}
+}
+
+class ContractVerifierCamelHelper extends ContractVerifierMessaging<Message> {
+
+	public ContractVerifierCamelHelper(
+			ContractVerifierMessageExchange<Message> exchange) {
+		super(exchange);
+	}
+
+	@Override
+	protected ContractVerifierMessage convert(Message receive) {
+		return new ContractVerifierMessage(receive.getBody(), receive.getHeaders());
 	}
 }

@@ -79,7 +79,7 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	@Override
 	protected void validateResponseCodeBlock(BlockBuilder bb) {
 		if (outputMessage) {
-			bb.addLine("""def response = contractVerifierMessaging.receiveMessage('${outputMessage.sentTo.serverValue}')""")
+			bb.addLine("""ContractVerifierMessage response = contractVerifierMessaging.receive('${outputMessage.sentTo.serverValue}')""")
 			bb.addLine("""assert response != null""")
 		} else {
 			bb.addLine('noExceptionThrown()')
@@ -130,7 +130,7 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	@Override
 	protected String getInputString() {
-		String request = 'def inputMessage = contractVerifierMessaging.create('
+		String request = 'ContractVerifierMessage inputMessage = contractVerifierMessaging.create('
 		if (inputMessage.messageBody) {
 			request = "${request}'''${bodyAsString}'''\n    "
 		}

@@ -16,11 +16,9 @@
 
 package org.springframework.cloud.contract.stubrunner.spring.cloud
 
-import groovy.util.logging.Slf4j
-
 import org.apache.curator.test.TestingServer
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.AfterClass
+import org.junit.BeforeClass
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.IntegrationTest

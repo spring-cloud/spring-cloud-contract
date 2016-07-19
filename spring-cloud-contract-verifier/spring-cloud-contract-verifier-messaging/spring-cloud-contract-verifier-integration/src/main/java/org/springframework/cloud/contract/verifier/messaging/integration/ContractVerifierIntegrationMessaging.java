@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessaging;
+import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -35,7 +35,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ContractVerifierIntegrationMessaging implements
-		ContractVerifierMessaging<Message<?>> {
+		ContractVerifierMessageExchange<Message<?>> {
 
 	private static final Logger log = LoggerFactory.getLogger(
 			ContractVerifierIntegrationMessaging.class);
@@ -67,7 +67,7 @@ public class ContractVerifierIntegrationMessaging implements
 	}
 
 	@Override
-	public Message<?> receiveMessage(String destination, long timeout, TimeUnit timeUnit) {
+	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit) {
 		try {
 			PollableChannel messageChannel = context.getBean(destination, PollableChannel.class);
 			return messageChannel.receive(timeUnit.toMillis(timeout));
@@ -79,8 +79,8 @@ public class ContractVerifierIntegrationMessaging implements
 	}
 
 	@Override
-	public Message<?> receiveMessage(String destination) {
-		return receiveMessage(destination, 5, TimeUnit.SECONDS);
+	public Message<?> receive(String destination) {
+		return receive(destination, 5, TimeUnit.SECONDS);
 	}
 
 }
