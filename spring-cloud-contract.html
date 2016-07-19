@@ -423,6 +423,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
+<li><a href="#_spring_cloud_contract">Spring Cloud Contract</a></li>
 <li><a href="#_spring_cloud_contract_verifier">Spring Cloud Contract Verifier</a>
 <ul class="sectlevel2">
 <li><a href="#_introduction">Introduction</a>
@@ -435,13 +436,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_purposes">Purposes</a></li>
 <li><a href="#_client_side">Client Side</a></li>
 <li><a href="#_server_side">Server Side</a></li>
-<li><a href="#_step_by_step_guide_to_cdc">Step by step guide to CDC</a></li>
-</ul>
-</li>
+<li><a href="#_step_by_step_guide_to_cdc">Step by step guide to CDC</a>
+<ul class="sectlevel4">
 <li><a href="#_consumer_side_loan_issuance">Consumer side (Loan Issuance)</a></li>
 <li><a href="#_producer_side_fraud_detection_server">Producer side (Fraud Detection server)</a></li>
-<li><a href="#_consumer_side_loan_issuance_final_step">Consumer side (Loan Issuance) final step</a>
-<ul class="sectlevel3">
+<li><a href="#_consumer_side_loan_issuance_final_step">Consumer side (Loan Issuance) final step</a></li>
+</ul>
+</li>
 <li><a href="#_dependencies">Dependencies</a></li>
 <li><a href="#_additional_links">Additional links</a>
 <ul class="sectlevel4">
@@ -481,10 +482,21 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel3">
 <li><a href="#_gradle_project">Gradle Project</a>
 <ul class="sectlevel4">
-<li><a href="#_prerequisites">Prerequisites</a></li>
+<li><a href="#_prerequisites">Prerequisites</a>
+<ul class="sectlevel5">
+<li><a href="#_add_gradle_plugin">Add gradle plugin</a></li>
+<li><a href="#_add_maven_plugin">Add maven plugin</a></li>
+<li><a href="#_add_stubs">Add stubs</a></li>
+</ul>
+</li>
 <li><a href="#_run_plugin">Run plugin</a></li>
 <li><a href="#_default_setup">Default setup</a></li>
-<li><a href="#_configure_plugin">Configure plugin</a></li>
+<li><a href="#_configure_plugin">Configure plugin</a>
+<ul class="sectlevel5">
+<li><a href="#_configuration_options">Configuration options</a></li>
+<li><a href="#_base_class_for_tests">Base class for tests</a></li>
+</ul>
+</li>
 <li><a href="#_invoking_generated_tests">Invoking generated tests</a></li>
 <li><a href="#_spring_cloud_contract_verifier_on_consumer_side">Spring Cloud Contract Verifier on consumer side</a></li>
 </ul>
@@ -494,7 +506,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_add_maven_plugin_2">Add maven plugin</a></li>
 <li><a href="#_add_stubs_2">Add stubs</a></li>
 <li><a href="#_run_plugin_2">Run plugin</a></li>
-<li><a href="#_configure_plugin_2">Configure plugin</a></li>
+<li><a href="#_configure_plugin_2">Configure plugin</a>
+<ul class="sectlevel5">
+<li><a href="#_important_configuration_options">Important configuration options</a></li>
+<li><a href="#_base_class_for_tests_2">Base class for tests</a></li>
+</ul>
+</li>
 <li><a href="#_invoking_generated_tests_2">Invoking generated tests</a></li>
 <li><a href="#_spring_cloud_contract_verifier_on_consumer_side_2">Spring Cloud Contract Verifier on consumer side</a></li>
 </ul>
@@ -579,7 +596,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel3">
 <li><a href="#_stub_triggering">Stub triggering</a>
 <ul class="sectlevel4">
-<li><a href="#_trigger_by_label">Trigger by label</a></li>
+<li><a href="#_trigger_by_label">Trigger by label</a>
+<ul class="sectlevel5">
+<li><a href="#_trigger_by_group_and_artifact_ids">Trigger by group and artifact ids</a></li>
+<li><a href="#_trigger_by_artifact_ids">Trigger by artifact ids</a></li>
+</ul>
+</li>
 <li><a href="#_trigger_all_messages">Trigger all messages</a></li>
 </ul>
 </li>
@@ -638,6 +660,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p><em>Documentation Authors: Adam Dudczak, Marcin Grzejszczak, Jakub Kubryński, Karol Lassak,
 Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer</em></p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_spring_cloud_contract">Spring Cloud Contract</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>What you always need it confidence in pushing new features into a new application or service in a distributed system.
 This project provides support for Consumer Driven Contracts and service schemas in Spring applications, covering a
@@ -885,10 +912,8 @@ going through the process. CDC is all about communication.</p>
 <div class="paragraph">
 <p>The <a href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/samples/http-server">server side code is available here</a> and <a href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/samples/http-client">the client side code here</a>.</p>
 </div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_consumer_side_loan_issuance">Consumer side (Loan Issuance)</h3>
+<div class="sect4">
+<h5 id="_consumer_side_loan_issuance">Consumer side (Loan Issuance)</h5>
 <div class="paragraph">
 <p>As a developer of the Loan Issuance service (a consumer of the Fraud Detection server):</p>
 </div>
@@ -1212,8 +1237,8 @@ public class LoanApplicationServiceTests {</code></pre>
 <p>Once we&#8217;re satisfied with the results and the test passes publish a PR to the server side. Currently the consumer side work is done.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_producer_side_fraud_detection_server">Producer side (Fraud Detection server)</h3>
+<div class="sect4">
+<h5 id="_producer_side_fraud_detection_server">Producer side (Fraud Detection server)</h5>
 <div class="paragraph">
 <p>As a developer of the Fraud Detection server (a server to the Loan Issuance service):</p>
 </div>
@@ -1391,8 +1416,8 @@ git push origin master</code></pre>
 <p>Then we assume that your CI would run sth like <code>./mvnw clean deploy</code> which would publish both the application and the stub artifcats.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_consumer_side_loan_issuance_final_step">Consumer side (Loan Issuance) final step</h3>
+<div class="sect4">
+<h5 id="_consumer_side_loan_issuance_final_step">Consumer side (Loan Issuance) final step</h5>
 <div class="paragraph">
 <p>As a developer of the Loan Issuance service (a consumer of the Fraud Detection server):</p>
 </div>
@@ -1420,6 +1445,8 @@ git merge --no-ff contract-change-pr</code></pre>
 </div>
 <div class="paragraph">
 <p>And that&#8217;s it!</p>
+</div>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_dependencies">Dependencies</h4>
@@ -4652,7 +4679,7 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-07-15 15:28:13 CEST
+Last updated 2016-07-19 19:54:07 CEST
 </div>
 </div>
 </body>
