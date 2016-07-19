@@ -117,7 +117,7 @@ going through the process. CDC is all about communication.
 
 The https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/samples/http-server[server side code is available here] and https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/samples/http-client[the client side code here].
 
-=== Consumer side (Loan Issuance)
+===== Consumer side (Loan Issuance)
 
 As a developer of the Loan Issuance service (a consumer of the Fraud Detection server):
 
@@ -285,7 +285,7 @@ What we did until now is an iterative process. We can play around with the contr
 
 Once we're satisfied with the results and the test passes publish a PR to the server side. Currently the consumer side work is done.
 
-=== Producer side (Fraud Detection server)
+===== Producer side (Fraud Detection server)
 
 As a developer of the Fraud Detection server (a server to the Loan Issuance service):
 
@@ -395,7 +395,7 @@ git push origin master
 
 Then we assume that your CI would run sth like `./mvnw clean deploy` which would publish both the application and the stub artifcats.
 
-=== Consumer side (Loan Issuance) final step
+===== Consumer side (Loan Issuance) final step
 
 As a developer of the Loan Issuance service (a consumer of the Fraud Detection server):
 
