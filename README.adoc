@@ -129,8 +129,7 @@ for response verification.
 Let's take an example of Fraud Detection and Loan Issuance process. The business scenario is such that we want to issue loans to people but don't want them to steal the money from us. The current implementation of our system grants loans to everybody.
 
 Let's assume that the `Loan Issuance` is a client to the
-`Fraud Detection` server. In the current sprint we are required to develop a new feature - if a client wants too borrow too much money then
-we mark him as fraud.
+`Fraud Detection` server. In the current sprint we are required to develop a new feature - if a client wants to borrow too much money then we mark him as fraud.
 
 Technical remark - Fraud Detection will have artifact id `http-server`, Loan Issuance `http-client` and both have group id `com.example`.
 
