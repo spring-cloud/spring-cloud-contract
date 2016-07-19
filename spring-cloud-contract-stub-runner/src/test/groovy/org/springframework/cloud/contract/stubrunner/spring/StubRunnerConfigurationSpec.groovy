@@ -35,7 +35,7 @@ import spock.lang.Specification
 // tag::test[]
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 // Not necessary if Spring Cloud is used. TODO: make it work without this.
-@IntegrationTest("stubrunner.cloud.enabled=false")
+@IntegrationTest(["stubrunner.cloud.enabled=false", "stubrunner.camel.enabled=false"])
 @AutoConfigureStubRunner
 @DirtiesContext
 class StubRunnerConfigurationSpec extends Specification {

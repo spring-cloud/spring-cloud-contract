@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
@@ -45,6 +46,7 @@ import org.springframework.messaging.Message;
  */
 @Configuration
 @ConditionalOnClass(IntegrationFlowBuilder.class)
+@ConditionalOnProperty(name="stubrunner.integration.enabled", havingValue="true", matchIfMissing=true)
 public class StubRunnerIntegrationConfiguration {
 
 	@Bean

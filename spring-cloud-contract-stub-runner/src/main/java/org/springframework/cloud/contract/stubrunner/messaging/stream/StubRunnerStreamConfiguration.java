@@ -23,11 +23,15 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
+import org.springframework.cloud.contract.stubrunner.messaging.integration.StubRunnerIntegrationConfiguration;
 import org.springframework.cloud.contract.stubrunner.messaging.stream.StubRunnerStreamConfiguration.FlowRegistrar;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.config.BindingProperties;
@@ -52,6 +56,8 @@ import org.springframework.util.StringUtils;
  */
 @Configuration
 @ConditionalOnClass({FlowRegistrar.class, EnableBinding.class})
+@ConditionalOnProperty(name="stubrunner.stream.enabled", havingValue="true", matchIfMissing=true)
+@AutoConfigureBefore(StubRunnerIntegrationConfiguration.class)
 public class StubRunnerStreamConfiguration {
 
 	private static final Logger log = LoggerFactory
@@ -59,6 +65,7 @@ public class StubRunnerStreamConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean(name="stubFlowRegistrar")
+	@ConditionalOnBean(ChannelBindingServiceProperties.class)
 	public FlowRegistrar stubFlowRegistrar(AutowireCapableBeanFactory beanFactory,
 			BatchStubRunner batchStubRunner) {
 		Map<StubConfiguration, Collection<Contract>> contracts = batchStubRunner

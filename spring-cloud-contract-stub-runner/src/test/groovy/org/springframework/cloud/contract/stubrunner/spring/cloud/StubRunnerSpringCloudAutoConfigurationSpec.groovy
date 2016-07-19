@@ -45,7 +45,7 @@ import spock.lang.Specification
  */
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @WebIntegrationTest(randomPort = true)
-@IntegrationTest
+@IntegrationTest("stubrunner.camel.enabled=false")
 @AutoConfigureStubRunner
 @DirtiesContext
 class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
@@ -77,7 +77,7 @@ class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 	}
 
 	def cleanup() {
-		zookeeperServiceDiscovery.serviceDiscovery.close()
+		zookeeperServiceDiscovery?.serviceDiscovery?.close()
 	}
 
 	@Configuration

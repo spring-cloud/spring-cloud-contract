@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
@@ -36,6 +37,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnClass(RoutesBuilder.class)
+@ConditionalOnProperty(name="stubrunner.camel.enabled", havingValue="true", matchIfMissing=true)
 public class StubRunnerCamelConfiguration {
 
 	@Bean
