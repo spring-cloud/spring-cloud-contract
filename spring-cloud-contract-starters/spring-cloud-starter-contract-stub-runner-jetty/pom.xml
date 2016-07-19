@@ -4,14 +4,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
-		<artifactId>spring-cloud-contract-stub-runner-build</artifactId>
+		<artifactId>spring-cloud-contract-starters</artifactId>
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<artifactId>spring-cloud-contract-stub-runner-jetty</artifactId>
+	<artifactId>spring-cloud-starter-contract-stub-runner-jetty</artifactId>
 	<packaging>jar</packaging>
-	<name>spring-cloud-contract-stub-runner-jetty</name>
-	<description>Spring Cloud Contract Stub Runner</description>
+	<name>spring-cloud-starter-contract-stub-runner-jetty</name>
+	<description>Spring Cloud Contract Stub Runner Jetty runs wiremock stubs with "native" jetty. Don't use this in a Spring Boot app with its own embedded container.</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
