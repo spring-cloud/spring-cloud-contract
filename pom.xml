@@ -23,6 +23,7 @@
 	<inceptionYear>2016</inceptionYear>
 
 	<properties>
+		<activemq.version>5.12.1</activemq.version>
 		<camel.version>2.17.0</camel.version>
 		<spring-cloud-stream.version>1.0.2.RELEASE</spring-cloud-stream.version>
 		<spring-framework.version>4.3.1.BUILD-SNAPSHOT</spring-framework.version>
@@ -42,14 +43,54 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-spring</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-spring-boot-starter</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-jackson</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-jms</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>activemq-camel</artifactId>
+				<version>${activemq.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>activemq-pool</artifactId>
+				<version>${activemq.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>cglib</groupId>
 				<artifactId>cglib</artifactId>
 				<version>3.2.4</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-lang3</artifactId>
-				<version>3.3</version>
+				<groupId>org.spockframework</groupId>
+				<artifactId>spock-spring</artifactId>
+				<version>1.0-groovy-2.4</version>
+			</dependency>
+			<dependency>
+				<groupId>org.spockframework</groupId>
+				<artifactId>spock-core</artifactId>
+				<version>1.0-groovy-2.4</version>
+			</dependency>
+			<dependency>
+				<groupId>info.solidsoft.spock</groupId>
+				<artifactId>spock-global-unroll</artifactId>
+				<version>0.5.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>

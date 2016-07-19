@@ -16,8 +16,6 @@
 	<properties>
 		<wiremock.version>2.1.7</wiremock.version>
 		<jsonassert.version>0.4.7</jsonassert.version>
-		<camel.version>2.17.0</camel.version>
-		<activemq.version>5.12.1</activemq.version>
 		<aether.version>1.1.0</aether.version>
 		<spring-cloud-stream.version>1.0.2.RELEASE</spring-cloud-stream.version>
 		<spring-cloud-zookeeper.version>1.0.3.BUILD-SNAPSHOT</spring-cloud-zookeeper.version>
@@ -151,44 +149,9 @@
 				<version>1.2.3</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-spring</artifactId>
-				<version>${camel.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-spring-boot-starter</artifactId>
-				<version>${camel.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-jackson</artifactId>
-				<version>${camel.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-jms</artifactId>
-				<version>${camel.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.activemq</groupId>
-				<artifactId>activemq-camel</artifactId>
-				<version>${activemq.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.activemq</groupId>
-				<artifactId>activemq-pool</artifactId>
-				<version>${activemq.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>args4j</groupId>
 				<artifactId>args4j</artifactId>
 				<version>2.32</version>
-			</dependency>
-			<dependency>
-				<groupId>com.jayway.restassured</groupId>
-				<artifactId>spring-mock-mvc</artifactId>
-				<version>2.9.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.aether</groupId>
@@ -219,21 +182,6 @@
 				<groupId>org.apache.maven</groupId>
 				<artifactId>maven-aether-provider</artifactId>
 				<version>3.3.9</version>
-			</dependency>
-			<dependency>
-				<groupId>org.spockframework</groupId>
-				<artifactId>spock-spring</artifactId>
-				<version>1.0-groovy-2.4</version>
-			</dependency>
-			<dependency>
-				<groupId>org.spockframework</groupId>
-				<artifactId>spock-core</artifactId>
-				<version>1.0-groovy-2.4</version>
-			</dependency>
-			<dependency>
-				<groupId>info.solidsoft.spock</groupId>
-				<artifactId>spock-global-unroll</artifactId>
-				<version>0.5.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
