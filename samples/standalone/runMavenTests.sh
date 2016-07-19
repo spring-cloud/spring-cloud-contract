@@ -14,6 +14,7 @@ EOF
 
 echo -e "\n\nClearing saved stubs"
 rm -rf $LOCAL_MAVEN_REPO/repository/org/springframework/cloud/contract/testprojects/
+rm -rf $LOCAL_MAVEN_REPO/repository/com/example
 
 echo -e "\n\nRunning tests for Maven (HTTP communication)\n\n"
 echo -e "Building server (uses Spring Cloud Contract Verifier Maven Plugin)"
