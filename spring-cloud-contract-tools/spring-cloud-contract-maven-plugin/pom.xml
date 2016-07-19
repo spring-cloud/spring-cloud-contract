@@ -261,8 +261,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-contract-verifier-converters</artifactId>
-			<version>${spring.cloud.contract.verifier.version}</version>
+			<artifactId>spring-cloud-contract-converters</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
