@@ -106,6 +106,8 @@ Spring Cloud Contract Verifier features:
 
 ## Quick Start
 
+[For a very detailed step by step guide check out the docs](https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_step_by_step_guide_to_cdc). Below you can find a simplified verstion.
+
 ### Server / Producer side
 
 On the server (HTTP) / producer (Messaging) side add the Spring Cloud Contract Verifier Maven / Gradle plugin. Let us assume that our project's group id is `com.example` and artifact id is `http-server`.
@@ -311,22 +313,22 @@ Maven
 Gradle
 
 ```groovy
-testCompile "org.springframework.cloud.contract:spring-cloud-contract-stub-runner-spring:${spring-cloud-contract-verifier.version}"
+testCompile "org.springframework.cloud.contract:spring-cloud-contract-stub-runner-spring:${verifier_version}"
 ```
 
 The last step is to provide the property for the Stub Runner to automatically download the required stubs. If you're using Spring Boot it's enough to add the following section to your project test properties:
 
 ```yaml
 stubrunner:
-  stubs.ids: 'com.example:http-server:+:stubs:8123'
+  stubs.ids: 'com.example:http-server:+:stubs:8080'
 ```
 
-That way an artifact with group id `com.example`, artifact id `http-server`, in `latest` version, with `stubs` classifier will be registered at port `8123`. Once your test context got booted up, executing the following code will not lead to a 404 because the Spring Cloud Contract Stub Runner will automatically start a WireMock server inside your test and feed it with the stubs generated from the server side.
+That way an artifact with group id `com.example`, artifact id `http-server`, in `latest` version, with `stubs` classifier will be registered at port `8080`. Once your test context got booted up, executing the following code will not lead to a 404 because the Spring Cloud Contract Stub Runner will automatically start a WireMock server inside your test and feed it with the stubs generated from the server side.
 
 ```java
 HttpHeaders httpHeaders = new HttpHeaders();
 httpHeaders.add("Content-Type", "application/vnd.fraud.v1+json");
-String response = restTemplate.exchange("http://localhost:8123/fraudcheck", HttpMethod.PUT,
+String response = restTemplate.exchange("http://localhost:8080/fraudcheck", HttpMethod.PUT,
             new HttpEntity<>("{\"clientId\":\"1234567890\",\"loanAmount\":99999}", httpHeaders),
             String.class);
 assertThat(response).isEqualTo("{\"fraudCheckStatus\":\"FRAUD\",\"rejectionReason\":\"Amount too high\"}");
