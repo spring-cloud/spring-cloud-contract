@@ -48,6 +48,7 @@ dependencies {
 	testCompile "junit:junit"
 	testCompile "org.springframework.cloud:spring-cloud-contract-stub-runner-stream"
 	testCompile "org.springframework.cloud:spring-cloud-contract-wiremock"
+	testCompile "org.springframework.cloud:spring-cloud-stream-test-support"
 }
 
 test {
