@@ -14,27 +14,20 @@
 	<description>Spring Cloud Contract Sample Spring</description>
 	<dependencies>
 		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-contract-verifier-core</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
-			<version>${spring-boot.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-activemq</artifactId>
-			<version>${spring-boot.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-pool</artifactId>
-			<version>5.12.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-contract-verifier-messaging-core</artifactId>
+			<artifactId>spring-cloud-contract-verifier-core</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

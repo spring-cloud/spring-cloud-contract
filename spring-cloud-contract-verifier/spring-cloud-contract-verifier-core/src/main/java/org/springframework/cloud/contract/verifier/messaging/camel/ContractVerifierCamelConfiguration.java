@@ -14,50 +14,52 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.messaging.stream;
+package org.springframework.cloud.contract.verifier.messaging.camel;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Message;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierAutoConfiguration;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.Message;
 
 /**
  * @author Marcin Grzejszczak
  */
 @Configuration
-@ConditionalOnProperty(name="stubrunner.stream.enabled", havingValue="true", matchIfMissing=true)
+@ConditionalOnClass(Message.class)
 @AutoConfigureBefore(NoOpContractVerifierAutoConfiguration.class)
-public class ContractVerifierStreamAutoConfiguration {
+public class ContractVerifierCamelConfiguration {
 
 	@Bean
-	MessageVerifier<Message<?>> contractVerifierMessageExchange(
-			ApplicationContext applicationContext) {
-		return new StreamStubMessages(applicationContext);
+	@ConditionalOnMissingBean
+	MessageVerifier<Message> contractVerifierMessageExchange(
+			CamelContext context) {
+		return new CamelStubMessages(context);
 	}
 
 	@Bean
-	public ContractVerifierMessaging<?> contractVerifierMessagingConverter(
-			MessageVerifier<Message<?>> exchange) {
-		return new ContractVerifierHelper(exchange);
+	@ConditionalOnMissingBean
+	public ContractVerifierMessaging<Message> contractVerifierMessaging(
+			MessageVerifier<Message> exchange) {
+		return new ContractVerifierCamelHelper(exchange);
 	}
 }
 
-class ContractVerifierHelper extends ContractVerifierMessaging<Message<?>> {
+class ContractVerifierCamelHelper extends ContractVerifierMessaging<Message> {
 
-	public ContractVerifierHelper(
-			MessageVerifier<Message<?>> exchange) {
+	public ContractVerifierCamelHelper(
+			MessageVerifier<Message> exchange) {
 		super(exchange);
 	}
 
 	@Override
-	protected ContractVerifierMessage convert(Message<?> receive) {
-		return new ContractVerifierMessage(receive.getPayload(), receive.getHeaders());
+	protected ContractVerifierMessage convert(Message receive) {
+		return new ContractVerifierMessage(receive.getBody(), receive.getHeaders());
 	}
 }
-

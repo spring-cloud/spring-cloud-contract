@@ -19,7 +19,6 @@
 
 	<modules>
 		<module>spring-cloud-contract-verifier-core</module>
-		<module>spring-cloud-contract-verifier-messaging</module>
 	</modules>
 
 	<build>

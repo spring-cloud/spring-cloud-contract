@@ -14,13 +14,17 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.messaging.integration;
+package org.springframework.cloud.contract.verifier.messaging.stream;
 
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierAutoConfiguration;
+import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,17 +34,21 @@ import org.springframework.messaging.Message;
  * @author Marcin Grzejszczak
  */
 @Configuration
+@ConditionalOnClass(EnableBinding.class)
+@ConditionalOnProperty(name="stubrunner.stream.enabled", havingValue="true", matchIfMissing=true)
 @AutoConfigureBefore(NoOpContractVerifierAutoConfiguration.class)
-public class ContractVerifierIntegrationConfiguration<T> {
+public class ContractVerifierStreamAutoConfiguration {
 
 	@Bean
-	public MessageVerifier<Message<?>> contractVerifierMessageExchange(
+	@ConditionalOnMissingBean
+	MessageVerifier<Message<?>> contractVerifierMessageExchange(
 			ApplicationContext applicationContext) {
-		return new SpringIntegrationStubMessages(applicationContext);
+		return new StreamStubMessages(applicationContext);
 	}
 
 	@Bean
-	public ContractVerifierMessaging<Message<?>> contractVerifierMessaging(
+	@ConditionalOnMissingBean
+	public ContractVerifierMessaging<?> contractVerifierMessagingConverter(
 			MessageVerifier<Message<?>> exchange) {
 		return new ContractVerifierHelper(exchange);
 	}
@@ -48,7 +56,8 @@ public class ContractVerifierIntegrationConfiguration<T> {
 
 class ContractVerifierHelper extends ContractVerifierMessaging<Message<?>> {
 
-	public ContractVerifierHelper(MessageVerifier<Message<?>> exchange) {
+	public ContractVerifierHelper(
+			MessageVerifier<Message<?>> exchange) {
 		super(exchange);
 	}
 
@@ -57,3 +66,4 @@ class ContractVerifierHelper extends ContractVerifierMessaging<Message<?>> {
 		return new ContractVerifierMessage(receive.getPayload(), receive.getHeaders());
 	}
 }
+

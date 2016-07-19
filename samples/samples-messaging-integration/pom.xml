@@ -14,22 +14,16 @@
 	<description>Spring Cloud Contract Sample Spring Integration</description>
 	<dependencies>
 		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-contract-verifier-core</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
-			<version>${spring-boot.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-integration</artifactId>
-			<version>${spring-boot.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-contract-verifier-integration</artifactId>
+			<artifactId>spring-cloud-contract-verifier-core</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
