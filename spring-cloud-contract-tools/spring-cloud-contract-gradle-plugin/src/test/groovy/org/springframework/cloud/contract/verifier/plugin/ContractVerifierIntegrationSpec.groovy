@@ -16,15 +16,14 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
-import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.BuildTask
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import spock.lang.Specification
 
-import java.nio.file.Files
-import java.nio.file.Path
+import java.nio.file.*
+import java.nio.file.attribute.BasicFileAttributes
 import java.util.zip.ZipException
 import java.util.zip.ZipFile
 
@@ -113,9 +112,10 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 		}
 		File resourceFile = new File(resource.toURI())
 		if (resourceFile.file) {
-			FileUtils.copyFile(resourceFile, destinationFile)
+			Files.copy(resourceFile.toPath(), destinationFile.toPath())
 		} else {
-			FileUtils.copyDirectory(resourceFile, destinationFile)
+			Files.walkFileTree(resourceFile.toPath(),
+					new CopyFileVisitor(destinationFile.toPath()))
 		}
 	}
 
@@ -151,4 +151,33 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 		return containsGroovyFiles
 	}
 
+	private static class CopyFileVisitor extends SimpleFileVisitor<Path> {
+		private final Path targetPath;
+		private Path sourcePath = null
+		public CopyFileVisitor(Path targetPath) {
+			this.targetPath = targetPath
+		}
+
+		@Override
+		public FileVisitResult preVisitDirectory(final Path dir,
+												 final BasicFileAttributes attrs) throws IOException {
+			if (sourcePath == null) {
+				sourcePath = dir
+			} else {
+				Files.createDirectories(targetPath.resolve(sourcePath
+						.relativize(dir)))
+			}
+			return FileVisitResult.CONTINUE
+		}
+
+		@Override
+		public FileVisitResult visitFile(final Path file,
+										 final BasicFileAttributes attrs) throws IOException {
+			Path target = targetPath.resolve(sourcePath.relativize(file))
+			if (!target.toFile().exists()) {
+				Files.copy(file, target)
+			}
+			return FileVisitResult.CONTINUE
+		}
+	}
 }
