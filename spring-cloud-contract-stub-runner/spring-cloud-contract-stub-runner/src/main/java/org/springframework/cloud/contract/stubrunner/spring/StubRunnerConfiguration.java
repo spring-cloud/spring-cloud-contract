@@ -28,7 +28,7 @@ import org.springframework.cloud.contract.stubrunner.StubDownloader;
 import org.springframework.cloud.contract.stubrunner.StubRunner;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
-import org.springframework.cloud.contract.verifier.messaging.StubMessages;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,7 +44,7 @@ import org.springframework.core.io.Resource;
 public class StubRunnerConfiguration {
 
 	@Autowired(required = false)
-	private StubMessages<?> contractVerifierMessaging;
+	private MessageVerifier<?> contractVerifierMessaging;
 	@Autowired(required = false)
 	private StubDownloader stubDownloader;
 	@Autowired

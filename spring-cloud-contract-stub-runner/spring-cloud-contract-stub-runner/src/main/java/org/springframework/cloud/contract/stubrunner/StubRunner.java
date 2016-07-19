@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.springframework.cloud.contract.spec.Contract;
-import org.springframework.cloud.contract.verifier.messaging.StubMessages;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 
 /**
@@ -52,7 +52,7 @@ public class StubRunner implements StubRunning {
 
 	public StubRunner(StubRunnerOptions stubRunnerOptions, String repositoryPath,
 			StubConfiguration stubsConfiguration,
-			StubMessages<?> contractVerifierMessaging) {
+			MessageVerifier<?> contractVerifierMessaging) {
 		this.stubsConfiguration = stubsConfiguration;
 		this.stubRunnerOptions = stubRunnerOptions;
 		this.stubRepository = new StubRepository(new File(repositoryPath));

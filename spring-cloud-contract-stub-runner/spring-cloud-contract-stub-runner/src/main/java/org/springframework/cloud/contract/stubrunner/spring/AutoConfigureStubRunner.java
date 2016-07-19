@@ -23,7 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureStubMessages;
+import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier;
 
 /**
  * @author Dave Syer
@@ -33,7 +33,7 @@ import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureS
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @ImportAutoConfiguration
-@AutoConfigureStubMessages
+@AutoConfigureMessageVerifier
 public @interface AutoConfigureStubRunner {
 
 }

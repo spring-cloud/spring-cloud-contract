@@ -21,7 +21,7 @@ import groovy.json.JsonOutput
 import java.util.concurrent.TimeUnit
 
 import org.springframework.cloud.contract.stubrunner.util.StubsParser
-import org.springframework.cloud.contract.verifier.messaging.StubMessages
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
 
 import spock.lang.Specification
 
@@ -99,7 +99,7 @@ class StubRunnerExecutorSpec extends Specification {
 		}
 	}
 
-	private class AssertingStubMessages implements StubMessages<Object> {
+	private class AssertingStubMessages implements MessageVerifier<Object> {
 		
 		@Override
 		public void send(Object message, String destination) {

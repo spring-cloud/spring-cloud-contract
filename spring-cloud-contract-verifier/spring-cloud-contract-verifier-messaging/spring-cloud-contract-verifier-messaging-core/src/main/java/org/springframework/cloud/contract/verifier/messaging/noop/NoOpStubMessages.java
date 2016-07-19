@@ -19,12 +19,12 @@ package org.springframework.cloud.contract.verifier.messaging.noop;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.cloud.contract.verifier.messaging.StubMessages;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 
 /**
  * @author Marcin Grzejszczak
  */
-public class NoOpStubMessages implements StubMessages<Object> {
+public class NoOpStubMessages implements MessageVerifier<Object> {
 	@Override
 	public void send(Object message, String destination) {
 	}

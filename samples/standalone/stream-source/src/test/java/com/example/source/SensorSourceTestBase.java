@@ -19,7 +19,7 @@ package com.example.source;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureStubMessages;
+import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
@@ -31,7 +31,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ContractVerifierSampleStreamSourceApplication.class, properties="spring.cloud.stream.bindings.output.destination=sensor-data")
-@AutoConfigureStubMessages
+@AutoConfigureMessageVerifier
 public abstract class SensorSourceTestBase {
 
 	@Autowired

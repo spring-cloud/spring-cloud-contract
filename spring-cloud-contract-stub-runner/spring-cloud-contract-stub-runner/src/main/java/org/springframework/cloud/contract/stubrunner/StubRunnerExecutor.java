@@ -32,7 +32,7 @@ import org.springframework.cloud.contract.spec.internal.DslProperty;
 import org.springframework.cloud.contract.spec.internal.Headers;
 import org.springframework.cloud.contract.spec.internal.OutputMessage;
 import org.springframework.cloud.contract.stubrunner.AvailablePortScanner.PortCallback;
-import org.springframework.cloud.contract.verifier.messaging.StubMessages;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.cloud.contract.verifier.util.BodyExtractor;
 
@@ -45,11 +45,11 @@ public class StubRunnerExecutor implements StubFinder {
 
 	private static final Logger log = LoggerFactory.getLogger(StubRunnerExecutor.class);
 	private final AvailablePortScanner portScanner;
-	private final StubMessages<?> contractVerifierMessaging;
+	private final MessageVerifier<?> contractVerifierMessaging;
 	private StubServer stubServer;
 
 	public StubRunnerExecutor(AvailablePortScanner portScanner,
-			StubMessages<?> contractVerifierMessaging) {
+			MessageVerifier<?> contractVerifierMessaging) {
 		this.portScanner = portScanner;
 		this.contractVerifierMessaging = contractVerifierMessaging;
 	}

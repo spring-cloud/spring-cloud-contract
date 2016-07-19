@@ -32,6 +32,6 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @ImportAutoConfiguration
-public @interface AutoConfigureStubMessages {
+public @interface AutoConfigureMessageVerifier {
 
 }

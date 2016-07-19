@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-import org.springframework.cloud.contract.verifier.messaging.StubMessages;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 
 /**
  * Factory of StubRunners. Basing on the options and passed collaborators downloads the
@@ -31,11 +31,11 @@ public class StubRunnerFactory {
 
 	private final StubRunnerOptions stubRunnerOptions;
 	private final StubDownloader stubDownloader;
-	private final StubMessages<?> contractVerifierMessaging;
+	private final MessageVerifier<?> contractVerifierMessaging;
 
 	public StubRunnerFactory(StubRunnerOptions stubRunnerOptions,
 			StubDownloader stubDownloader,
-			StubMessages<?> contractVerifierMessaging) {
+			MessageVerifier<?> contractVerifierMessaging) {
 		this.stubRunnerOptions = stubRunnerOptions;
 		this.stubDownloader = stubDownloader;
 		this.contractVerifierMessaging = contractVerifierMessaging;

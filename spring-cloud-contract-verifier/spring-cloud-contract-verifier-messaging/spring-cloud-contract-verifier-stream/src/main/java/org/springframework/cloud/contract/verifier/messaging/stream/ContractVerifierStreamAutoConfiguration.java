@@ -18,7 +18,7 @@ package org.springframework.cloud.contract.verifier.messaging.stream;
 
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cloud.contract.verifier.messaging.StubMessages;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierAutoConfiguration;
@@ -36,14 +36,14 @@ import org.springframework.messaging.Message;
 public class ContractVerifierStreamAutoConfiguration {
 
 	@Bean
-	StubMessages<Message<?>> contractVerifierMessageExchange(
+	MessageVerifier<Message<?>> contractVerifierMessageExchange(
 			ApplicationContext applicationContext) {
 		return new StreamStubMessages(applicationContext);
 	}
 
 	@Bean
 	public ContractVerifierMessaging<?> contractVerifierMessagingConverter(
-			StubMessages<Message<?>> exchange) {
+			MessageVerifier<Message<?>> exchange) {
 		return new ContractVerifierHelper(exchange);
 	}
 }
@@ -51,7 +51,7 @@ public class ContractVerifierStreamAutoConfiguration {
 class ContractVerifierHelper extends ContractVerifierMessaging<Message<?>> {
 
 	public ContractVerifierHelper(
-			StubMessages<Message<?>> exchange) {
+			MessageVerifier<Message<?>> exchange) {
 		super(exchange);
 	}
 
