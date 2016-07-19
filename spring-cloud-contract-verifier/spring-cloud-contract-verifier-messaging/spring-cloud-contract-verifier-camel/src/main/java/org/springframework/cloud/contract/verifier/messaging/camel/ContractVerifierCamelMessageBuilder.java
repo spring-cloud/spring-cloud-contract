@@ -20,15 +20,12 @@ import java.util.Map;
 
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
 
 /**
  * @author Marcin Grzejszczak
  */
-public class ContractVerifierCamelMessageBuilder implements
-		ContractVerifierMessageBuilder<Message> {
+public class ContractVerifierCamelMessageBuilder {
 
-	@Override
 	public <T> Message create(T payload, Map<String, Object> headers) {
 		DefaultMessage message = new DefaultMessage();
 		message.setBody(payload);

@@ -28,7 +28,6 @@ import org.apache.camel.impl.DefaultExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange;
 import org.springframework.stereotype.Component;
 
@@ -43,13 +42,11 @@ public class ContractVerifierCamelMessaging implements
 			ContractVerifierCamelMessaging.class);
 
 	private final CamelContext context;
-	private final ContractVerifierMessageBuilder<Message> builder;
+	private final ContractVerifierCamelMessageBuilder builder = new ContractVerifierCamelMessageBuilder();
 
 	@Autowired
-	@SuppressWarnings("unchecked")
-	public ContractVerifierCamelMessaging(CamelContext context, ContractVerifierMessageBuilder<Message> contractVerifierMessageBuilder) {
+	public ContractVerifierCamelMessaging(CamelContext context) {
 		this.context = context;
-		this.builder = contractVerifierMessageBuilder;
 	}
 
 	@Override

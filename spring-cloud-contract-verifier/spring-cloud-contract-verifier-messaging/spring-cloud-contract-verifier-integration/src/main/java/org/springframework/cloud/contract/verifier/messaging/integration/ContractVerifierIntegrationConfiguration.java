@@ -17,7 +17,6 @@
 package org.springframework.cloud.contract.verifier.messaging.integration;
 
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
@@ -36,15 +35,8 @@ public class ContractVerifierIntegrationConfiguration<T> {
 
 	@Bean
 	public ContractVerifierMessageExchange<Message<?>> contractVerifierMessageExchange(
-			ApplicationContext applicationContext,
-			ContractVerifierMessageBuilder<Message<?>> contractVerifierMessageBuilder) {
-		return new ContractVerifierIntegrationMessaging(applicationContext,
-				contractVerifierMessageBuilder);
-	}
-
-	@Bean
-	public ContractVerifierMessageBuilder<Message<?>> contractVerifierMessageBuilder() {
-		return new ContractVerifierIntegrationMessageBuilder();
+			ApplicationContext applicationContext) {
+		return new ContractVerifierIntegrationMessaging(applicationContext);
 	}
 
 	@Bean
@@ -56,8 +48,7 @@ public class ContractVerifierIntegrationConfiguration<T> {
 
 class ContractVerifierHelper extends ContractVerifierMessaging<Message<?>> {
 
-	public ContractVerifierHelper(
-			ContractVerifierMessageExchange<Message<?>> exchange) {
+	public ContractVerifierHelper(ContractVerifierMessageExchange<Message<?>> exchange) {
 		super(exchange);
 	}
 
@@ -66,4 +57,3 @@ class ContractVerifierHelper extends ContractVerifierMessaging<Message<?>> {
 		return new ContractVerifierMessage(receive.getPayload(), receive.getHeaders());
 	}
 }
-

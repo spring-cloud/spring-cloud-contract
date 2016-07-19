@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange;
 import org.springframework.cloud.stream.config.BindingProperties;
 import org.springframework.cloud.stream.config.ChannelBindingServiceProperties;
@@ -34,20 +33,20 @@ import org.springframework.messaging.MessageChannel;
 /**
  * @author Marcin Grzejszczak
  */
-public class ContractVerifierStreamMessaging implements
-		ContractVerifierMessageExchange<Message<?>> {
+public class ContractVerifierStreamMessaging
+		implements ContractVerifierMessageExchange<Message<?>> {
 
-	private static final Logger log = LoggerFactory.getLogger(ContractVerifierStreamMessaging.class);
+	private static final Logger log = LoggerFactory
+			.getLogger(ContractVerifierStreamMessaging.class);
 
 	private final ApplicationContext context;
 	private final MessageCollector messageCollector;
-	private final ContractVerifierMessageBuilder<Message<?>> builder;
+	private final ContractVerifierStreamMessageBuilder builder = new ContractVerifierStreamMessageBuilder();
 
 	@Autowired
-	public ContractVerifierStreamMessaging(ApplicationContext context, ContractVerifierMessageBuilder<Message<?>> builder) {
+	public ContractVerifierStreamMessaging(ApplicationContext context) {
 		this.context = context;
 		this.messageCollector = context.getBean(MessageCollector.class);
-		this.builder = builder;
 	}
 
 	@Override
@@ -58,11 +57,13 @@ public class ContractVerifierStreamMessaging implements
 	@Override
 	public void send(Message<?> message, String destination) {
 		try {
-			MessageChannel messageChannel = context.getBean(resolvedDestination(destination), MessageChannel.class);
+			MessageChannel messageChannel = context
+					.getBean(resolvedDestination(destination), MessageChannel.class);
 			messageChannel.send(message);
-		} catch (Exception e) {
-			log.error("Exception occurred while trying to send a message [" + message + "] " +
-					"to a channel with name [" + destination + "]", e);
+		}
+		catch (Exception e) {
+			log.error("Exception occurred while trying to send a message [" + message
+					+ "] " + "to a channel with name [" + destination + "]", e);
 			throw e;
 		}
 	}
@@ -70,25 +71,32 @@ public class ContractVerifierStreamMessaging implements
 	@Override
 	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit) {
 		try {
-			MessageChannel messageChannel = context.getBean(resolvedDestination(destination), MessageChannel.class);
+			MessageChannel messageChannel = context
+					.getBean(resolvedDestination(destination), MessageChannel.class);
 			return messageCollector.forChannel(messageChannel).poll(timeout, timeUnit);
-		} catch (Exception e) {
-			log.error("Exception occurred while trying to read a message from " +
-					" a channel with name [" + destination + "]", e);
+		}
+		catch (Exception e) {
+			log.error("Exception occurred while trying to read a message from "
+					+ " a channel with name [" + destination + "]", e);
 			throw new RuntimeException(e);
 		}
 	}
 
 	private String resolvedDestination(String destination) {
-		ChannelBindingServiceProperties channelBindingServiceProperties = context.getBean(ChannelBindingServiceProperties.class);
+		ChannelBindingServiceProperties channelBindingServiceProperties = context
+				.getBean(ChannelBindingServiceProperties.class);
 		String resolvedDestination = destination;
-		for (Map.Entry<String, BindingProperties> entry : channelBindingServiceProperties.getBindings().entrySet()) {
+		for (Map.Entry<String, BindingProperties> entry : channelBindingServiceProperties
+				.getBindings().entrySet()) {
 			if (entry.getValue().getDestination().equals(destination)) {
-				log.debug("Found a channel named [{}] with destination [{}]", entry.getKey(), destination);
+				log.debug("Found a channel named [{}] with destination [{}]",
+						entry.getKey(), destination);
 				return entry.getKey();
 			}
 		}
-		log.debug("No destination named [{}] was found. Assuming that the destination equals the channel name", destination);
+		log.debug(
+				"No destination named [{}] was found. Assuming that the destination equals the channel name",
+				destination);
 		return resolvedDestination;
 	}
 

@@ -18,7 +18,6 @@ package org.springframework.cloud.contract.verifier.messaging.stream;
 
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
@@ -38,15 +37,8 @@ public class ContractVerifierStreamAutoConfiguration {
 
 	@Bean
 	ContractVerifierMessageExchange<Message<?>> contractVerifierMessageExchange(
-			ApplicationContext applicationContext,
-			ContractVerifierMessageBuilder<Message<?>> contractVerifierMessageBuilder) {
-		return new ContractVerifierStreamMessaging(applicationContext,
-				contractVerifierMessageBuilder);
-	}
-
-	@Bean
-	ContractVerifierMessageBuilder<Message<?>> contractVerifierMessageBuilder() {
-		return new ContractVerifierStreamMessageBuilder();
+			ApplicationContext applicationContext) {
+		return new ContractVerifierStreamMessaging(applicationContext);
 	}
 
 	@Bean

@@ -19,7 +19,6 @@ package org.springframework.cloud.contract.verifier.messaging.camel;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
@@ -36,13 +35,8 @@ public class ContractVerifierCamelConfiguration {
 
 	@Bean
 	ContractVerifierMessageExchange<Message> contractVerifierMessageExchange(
-			CamelContext context, ContractVerifierMessageBuilder<Message> builder) {
-		return new ContractVerifierCamelMessaging(context, builder);
-	}
-
-	@Bean
-	ContractVerifierMessageBuilder<Message> contractVerifierMessageBuilder() {
-		return new ContractVerifierCamelMessageBuilder();
+			CamelContext context) {
+		return new ContractVerifierCamelMessaging(context);
 	}
 
 	@Bean

@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageBuilder;
 import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.Message;
@@ -41,12 +40,11 @@ public class ContractVerifierIntegrationMessaging implements
 			ContractVerifierIntegrationMessaging.class);
 
 	private final ApplicationContext context;
-	private final ContractVerifierMessageBuilder<Message<?>> builder;
+	private final ContractVerifierIntegrationMessageBuilder builder = new ContractVerifierIntegrationMessageBuilder();
 
 	@Autowired
-	public ContractVerifierIntegrationMessaging(ApplicationContext context, ContractVerifierMessageBuilder<Message<?>> contractVerifierMessageBuilder) {
+	public ContractVerifierIntegrationMessaging(ApplicationContext context) {
 		this.context = context;
-		this.builder = contractVerifierMessageBuilder;
 	}
 
 	@Override
