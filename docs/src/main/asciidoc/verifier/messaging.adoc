@@ -27,10 +27,8 @@ If you're using Spring Boot, the test configurations will be added automatically
 
 ==== Manual Integration Testing
 
-The `spring-cloud-contract-verifier-messaging-core` module contains 2 main interfaces:
-
-- `ContractVerifierMessageExchange` - class that allows you to build, send and receive messages
-- `ContractVerifierFilter` - interface to filter out the messages that do not follow the pattern from the DSL
+The `spring-cloud-contract-verifier-messaging-core` module contains `ContractVerifierMessageExchange`,
+class that allows you to build, send and receive messages
 
 In the a test you can inject a `ContractVerifierMessageExchange` to send and receive messages that follow the contract.
 
@@ -146,7 +144,7 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 Unlike the HTTP part - in Messaging we need to publish the Groovy DSL inside the JAR with a stub. Then it's parsed on the consumer side
 and proper stubbed routes are created.
 
-For more infromation please consult the Stub Runner Messaging sections.
+For more information please consult the Stub Runner Messaging sections.
 
 ===== Gradle Setup
 
