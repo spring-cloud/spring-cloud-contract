@@ -17,7 +17,7 @@
 package org.springframework.cloud.contract.verifier.messaging.integration;
 
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange;
+import org.springframework.cloud.contract.verifier.messaging.StubMessages;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierAutoConfiguration;
@@ -34,21 +34,21 @@ import org.springframework.messaging.Message;
 public class ContractVerifierIntegrationConfiguration<T> {
 
 	@Bean
-	public ContractVerifierMessageExchange<Message<?>> contractVerifierMessageExchange(
+	public StubMessages<Message<?>> contractVerifierMessageExchange(
 			ApplicationContext applicationContext) {
-		return new ContractVerifierIntegrationMessaging(applicationContext);
+		return new SpringIntegrationStubMessages(applicationContext);
 	}
 
 	@Bean
 	public ContractVerifierMessaging<Message<?>> contractVerifierMessaging(
-			ContractVerifierMessageExchange<Message<?>> exchange) {
+			StubMessages<Message<?>> exchange) {
 		return new ContractVerifierHelper(exchange);
 	}
 }
 
 class ContractVerifierHelper extends ContractVerifierMessaging<Message<?>> {
 
-	public ContractVerifierHelper(ContractVerifierMessageExchange<Message<?>> exchange) {
+	public ContractVerifierHelper(StubMessages<Message<?>> exchange) {
 		super(exchange);
 	}
 

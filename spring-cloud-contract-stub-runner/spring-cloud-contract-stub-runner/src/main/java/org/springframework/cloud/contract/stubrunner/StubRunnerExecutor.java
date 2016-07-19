@@ -32,8 +32,8 @@ import org.springframework.cloud.contract.spec.internal.DslProperty;
 import org.springframework.cloud.contract.spec.internal.Headers;
 import org.springframework.cloud.contract.spec.internal.OutputMessage;
 import org.springframework.cloud.contract.stubrunner.AvailablePortScanner.PortCallback;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange;
-import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierMessaging;
+import org.springframework.cloud.contract.verifier.messaging.StubMessages;
+import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.cloud.contract.verifier.util.BodyExtractor;
 
 import groovy.json.JsonOutput;
@@ -45,17 +45,17 @@ public class StubRunnerExecutor implements StubFinder {
 
 	private static final Logger log = LoggerFactory.getLogger(StubRunnerExecutor.class);
 	private final AvailablePortScanner portScanner;
-	private final ContractVerifierMessageExchange<?> contractVerifierMessaging;
+	private final StubMessages<?> contractVerifierMessaging;
 	private StubServer stubServer;
 
 	public StubRunnerExecutor(AvailablePortScanner portScanner,
-			ContractVerifierMessageExchange<?> contractVerifierMessaging) {
+			StubMessages<?> contractVerifierMessaging) {
 		this.portScanner = portScanner;
 		this.contractVerifierMessaging = contractVerifierMessaging;
 	}
 
 	public StubRunnerExecutor(AvailablePortScanner portScanner) {
-		this(portScanner, new NoOpContractVerifierMessaging());
+		this(portScanner, new NoOpStubMessages());
 	}
 
 	public RunningStubs runStubs(StubRunnerOptions stubRunnerOptions,

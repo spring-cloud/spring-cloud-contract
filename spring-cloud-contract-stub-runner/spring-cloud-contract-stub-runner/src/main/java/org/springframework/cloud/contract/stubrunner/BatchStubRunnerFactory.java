@@ -16,8 +16,8 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange;
-import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierMessaging;
+import org.springframework.cloud.contract.verifier.messaging.StubMessages;
+import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 
 /**
  * Manages lifecycle of multiple {@link StubRunner} instances.
@@ -29,21 +29,21 @@ public class BatchStubRunnerFactory {
 
 	private final StubRunnerOptions stubRunnerOptions;
 	private final StubDownloader stubDownloader;
-	private final ContractVerifierMessageExchange contractVerifierMessaging;
+	private final StubMessages contractVerifierMessaging;
 
 	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions) {
-		this(stubRunnerOptions, new AetherStubDownloader(stubRunnerOptions), new NoOpContractVerifierMessaging());
+		this(stubRunnerOptions, new AetherStubDownloader(stubRunnerOptions), new NoOpStubMessages());
 	}
 
-	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, ContractVerifierMessageExchange contractVerifierMessaging) {
+	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, StubMessages contractVerifierMessaging) {
 		this(stubRunnerOptions, new AetherStubDownloader(stubRunnerOptions), contractVerifierMessaging);
 	}
 
 	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, StubDownloader stubDownloader) {
-		this(stubRunnerOptions, stubDownloader, new NoOpContractVerifierMessaging());
+		this(stubRunnerOptions, stubDownloader, new NoOpStubMessages());
 	}
 
-	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, StubDownloader stubDownloader, ContractVerifierMessageExchange contractVerifierMessaging) {
+	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, StubDownloader stubDownloader, StubMessages contractVerifierMessaging) {
 		this.stubRunnerOptions = stubRunnerOptions;
 		this.stubDownloader = stubDownloader;
 		this.contractVerifierMessaging = contractVerifierMessaging;

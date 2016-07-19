@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Marcin Grzejszczak
  */
-public interface ContractVerifierMessageExchange<M> {
+public interface StubMessages<M> {
 	/**
 	 * Sends the {@link ContractVerifierMessage} to the given destination.
 	 */

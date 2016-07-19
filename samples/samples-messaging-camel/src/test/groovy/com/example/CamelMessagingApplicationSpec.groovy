@@ -24,8 +24,8 @@ import org.junit.BeforeClass
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange
-import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureContractVerifierMessaging
+import org.springframework.cloud.contract.verifier.messaging.StubMessages
+import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureStubMessages
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
@@ -42,11 +42,11 @@ import com.toomuchcoding.jsonassert.JsonAssertion
 // Context configuration would end up in base class
 @ContextConfiguration(classes = [CamelMessagingApplication], loader = SpringBootContextLoader)
 @DirtiesContext
-@AutoConfigureContractVerifierMessaging
+@AutoConfigureStubMessages
 public class CamelMessagingApplicationSpec extends Specification {
 
 	// ALL CASES
-	@Inject ContractVerifierMessageExchange<Message> contractVerifierMessaging
+	@Inject StubMessages<Message> contractVerifierMessaging
 	ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()
 	
 	@BeforeClass

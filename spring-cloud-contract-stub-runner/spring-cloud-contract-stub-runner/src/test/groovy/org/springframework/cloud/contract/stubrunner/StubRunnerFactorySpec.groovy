@@ -18,7 +18,7 @@ package org.springframework.cloud.contract.stubrunner
 
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierMessaging
+import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages
 import spock.lang.Specification
 
 class StubRunnerFactorySpec extends Specification {

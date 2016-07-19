@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange;
+import org.springframework.cloud.contract.verifier.messaging.StubMessages;
 import org.springframework.cloud.stream.config.BindingProperties;
 import org.springframework.cloud.stream.config.ChannelBindingServiceProperties;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
@@ -33,18 +33,16 @@ import org.springframework.messaging.MessageChannel;
 /**
  * @author Marcin Grzejszczak
  */
-public class ContractVerifierStreamMessaging
-		implements ContractVerifierMessageExchange<Message<?>> {
+public class StreamStubMessages implements StubMessages<Message<?>> {
 
-	private static final Logger log = LoggerFactory
-			.getLogger(ContractVerifierStreamMessaging.class);
+	private static final Logger log = LoggerFactory.getLogger(StreamStubMessages.class);
 
 	private final ApplicationContext context;
 	private final MessageCollector messageCollector;
 	private final ContractVerifierStreamMessageBuilder builder = new ContractVerifierStreamMessageBuilder();
 
 	@Autowired
-	public ContractVerifierStreamMessaging(ApplicationContext context) {
+	public StreamStubMessages(ApplicationContext context) {
 		this.context = context;
 		this.messageCollector = context.getBean(MessageCollector.class);
 	}

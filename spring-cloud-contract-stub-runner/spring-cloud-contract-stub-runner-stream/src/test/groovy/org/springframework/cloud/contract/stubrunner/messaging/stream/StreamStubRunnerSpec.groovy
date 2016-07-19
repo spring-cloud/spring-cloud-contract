@@ -28,8 +28,8 @@ import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange
-import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureContractVerifierMessaging;
+import org.springframework.cloud.contract.verifier.messaging.StubMessages
+import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureStubMessages;
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.messaging.Sink
 import org.springframework.cloud.stream.messaging.Source
@@ -46,11 +46,11 @@ import spock.lang.Specification
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @IntegrationTest("debug=true")
 @AutoConfigureStubRunner
-@AutoConfigureContractVerifierMessaging
+@AutoConfigureStubMessages
 class StreamStubRunnerSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
-	@Autowired ContractVerifierMessageExchange<Message<?>> messaging
+	@Autowired StubMessages<Message<?>> messaging
 
 	def setup() {
 		// ensure that message were taken from the queue

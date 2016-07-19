@@ -22,8 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.IntegrationTest
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange
-import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureContractVerifierMessaging
+import org.springframework.cloud.contract.verifier.messaging.StubMessages
+import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureStubMessages
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
 import org.springframework.messaging.Message;
 import org.springframework.test.annotation.DirtiesContext
@@ -41,11 +41,11 @@ import com.toomuchcoding.jsonassert.JsonAssertion
 @ContextConfiguration(classes = [StreamMessagingApplication], loader = SpringBootContextLoader)
 @DirtiesContext
 @IntegrationTest("debug=true")
-@AutoConfigureContractVerifierMessaging
+@AutoConfigureStubMessages
 public class StreamMessagingApplicationSpec extends Specification {
 
 	// ALL CASES
-	@Inject ContractVerifierMessageExchange<Message<?>> contractVerifierMessaging
+	@Inject StubMessages<Message<?>> contractVerifierMessaging
 	ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()
 
 	def "should work for triggered based messaging"() {

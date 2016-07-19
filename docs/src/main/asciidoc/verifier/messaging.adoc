@@ -39,17 +39,17 @@ You have to provide as a dependency the messaging module that matches your provi
 testCompile "org.springframework.cloud:spring-cloud-contract-verifier-integration"
 ----
 
-and then add `@AutoConfigureContractVerifierMessaging` to your test, e.g.
+and then add `@AutoConfigureStubMessages` to your test, e.g.
 
 [source,java,indent=0]
 ----
 @RunWith(SpringTestRunner.class)
 @SpringBootTest
-@AutoConfigureContractVerifierMessaging
+@AutoConfigureStubMessages
 public static class MessagingContractTests {
 
   @Autowired
-  private ContractVerifierMessageExchange exchange;
+  private StubMessages exchange;
   ...
 }
 ----

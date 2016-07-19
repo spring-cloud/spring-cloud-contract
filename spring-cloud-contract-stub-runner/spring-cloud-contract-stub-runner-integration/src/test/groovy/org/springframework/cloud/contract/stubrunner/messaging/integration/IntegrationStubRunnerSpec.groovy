@@ -27,7 +27,7 @@ import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
-import org.springframework.cloud.contract.verifier.messaging.integration.ContractVerifierIntegrationMessaging
+import org.springframework.cloud.contract.verifier.messaging.integration.SpringIntegrationStubMessages
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.ImportResource
@@ -48,7 +48,7 @@ import spock.lang.Specification
 class IntegrationStubRunnerSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
-	@Autowired ContractVerifierIntegrationMessaging messaging
+	@Autowired SpringIntegrationStubMessages messaging
 
 	def setup() {
 		// ensure that message were taken from the queue

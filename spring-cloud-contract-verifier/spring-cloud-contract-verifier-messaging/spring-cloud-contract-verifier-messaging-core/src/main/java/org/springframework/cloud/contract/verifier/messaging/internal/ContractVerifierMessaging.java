@@ -18,7 +18,7 @@ package org.springframework.cloud.contract.verifier.messaging.internal;
 
 import java.util.Map;
 
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange;
+import org.springframework.cloud.contract.verifier.messaging.StubMessages;
 
 /**
  * @author Dave Syer
@@ -26,9 +26,9 @@ import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMes
  */
 public class ContractVerifierMessaging<M> {
 	
-	private ContractVerifierMessageExchange<M> exchange;
+	private StubMessages<M> exchange;
 	
-	public ContractVerifierMessaging(ContractVerifierMessageExchange<M> exchange) {
+	public ContractVerifierMessaging(StubMessages<M> exchange) {
 		this.exchange = exchange;
 	}
 

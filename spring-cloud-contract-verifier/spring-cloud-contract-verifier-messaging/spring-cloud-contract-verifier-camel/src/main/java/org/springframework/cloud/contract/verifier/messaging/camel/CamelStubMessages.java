@@ -14,49 +14,48 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.messaging.integration;
+package org.springframework.cloud.contract.verifier.messaging.camel;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.impl.DefaultExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange;
-import org.springframework.context.ApplicationContext;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.PollableChannel;
+import org.springframework.cloud.contract.verifier.messaging.StubMessages;
 import org.springframework.stereotype.Component;
 
 /**
  * @author Marcin Grzejszczak
  */
 @Component
-public class ContractVerifierIntegrationMessaging implements
-		ContractVerifierMessageExchange<Message<?>> {
+public class CamelStubMessages implements
+		StubMessages<Message> {
 
 	private static final Logger log = LoggerFactory.getLogger(
-			ContractVerifierIntegrationMessaging.class);
+			CamelStubMessages.class);
 
-	private final ApplicationContext context;
-	private final ContractVerifierIntegrationMessageBuilder builder = new ContractVerifierIntegrationMessageBuilder();
+	private final CamelContext context;
+	private final ContractVerifierCamelMessageBuilder builder = new ContractVerifierCamelMessageBuilder();
 
 	@Autowired
-	public ContractVerifierIntegrationMessaging(ApplicationContext context) {
+	public CamelStubMessages(CamelContext context) {
 		this.context = context;
 	}
 
 	@Override
-	public <T> void send(T payload, Map<String, Object> headers, String destination) {
-		send(builder.create(payload, headers), destination);
-	}
-
-	@Override
-	public void send(Message<?> message, String destination) {
+	public void send(Message message, String destination) {
 		try {
-			MessageChannel messageChannel = context.getBean(destination, MessageChannel.class);
-			messageChannel.send(message);
+			ProducerTemplate producerTemplate = context.createProducerTemplate();
+			Exchange exchange = new DefaultExchange(context);
+			exchange.setIn(message);
+			producerTemplate.send(destination, exchange);
 		} catch (Exception e) {
 			log.error("Exception occurred while trying to send a message [" + message + "] " +
 					"to a channel with name [" + destination + "]", e);
@@ -65,10 +64,16 @@ public class ContractVerifierIntegrationMessaging implements
 	}
 
 	@Override
-	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit) {
+	public <T> void send(T payload, Map<String, Object> headers, String destination) {
+		send(builder.create(payload, headers), destination);
+	}
+
+	@Override
+	public Message receive(String destination, long timeout, TimeUnit timeUnit) {
 		try {
-			PollableChannel messageChannel = context.getBean(destination, PollableChannel.class);
-			return messageChannel.receive(timeUnit.toMillis(timeout));
+			ConsumerTemplate consumerTemplate = context.createConsumerTemplate();
+			Exchange exchange = consumerTemplate.receive(destination, timeUnit.toMillis(timeout));
+			return exchange.getIn();
 		} catch (Exception e) {
 			log.error("Exception occurred while trying to read a message from " +
 					" a channel with name [" + destination + "]", e);
@@ -77,7 +82,7 @@ public class ContractVerifierIntegrationMessaging implements
 	}
 
 	@Override
-	public Message<?> receive(String destination) {
+	public Message receive(String destination) {
 		return receive(destination, 5, TimeUnit.SECONDS);
 	}
 

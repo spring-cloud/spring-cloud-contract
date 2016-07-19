@@ -19,7 +19,7 @@ package org.springframework.cloud.contract.verifier.messaging.camel;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange;
+import org.springframework.cloud.contract.verifier.messaging.StubMessages;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierAutoConfiguration;
@@ -34,14 +34,14 @@ import org.springframework.context.annotation.Configuration;
 public class ContractVerifierCamelConfiguration {
 
 	@Bean
-	ContractVerifierMessageExchange<Message> contractVerifierMessageExchange(
+	StubMessages<Message> contractVerifierMessageExchange(
 			CamelContext context) {
-		return new ContractVerifierCamelMessaging(context);
+		return new CamelStubMessages(context);
 	}
 
 	@Bean
 	public ContractVerifierMessaging<Message> contractVerifierMessaging(
-			ContractVerifierMessageExchange<Message> exchange) {
+			StubMessages<Message> exchange) {
 		return new ContractVerifierCamelHelper(exchange);
 	}
 }
@@ -49,7 +49,7 @@ public class ContractVerifierCamelConfiguration {
 class ContractVerifierCamelHelper extends ContractVerifierMessaging<Message> {
 
 	public ContractVerifierCamelHelper(
-			ContractVerifierMessageExchange<Message> exchange) {
+			StubMessages<Message> exchange) {
 		super(exchange);
 	}
 

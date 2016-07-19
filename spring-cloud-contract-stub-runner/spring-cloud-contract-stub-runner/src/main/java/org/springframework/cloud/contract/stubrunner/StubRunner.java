@@ -23,8 +23,8 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.springframework.cloud.contract.spec.Contract;
-import org.springframework.cloud.contract.verifier.messaging.ContractVerifierMessageExchange;
-import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierMessaging;
+import org.springframework.cloud.contract.verifier.messaging.StubMessages;
+import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 
 /**
  * Represents a single instance of ready-to-run stubs. Can run the stubs and then will
@@ -47,12 +47,12 @@ public class StubRunner implements StubRunning {
 	public StubRunner(StubRunnerOptions stubRunnerOptions, String repositoryPath,
 			StubConfiguration stubsConfiguration) {
 		this(stubRunnerOptions, repositoryPath, stubsConfiguration,
-				new NoOpContractVerifierMessaging());
+				new NoOpStubMessages());
 	}
 
 	public StubRunner(StubRunnerOptions stubRunnerOptions, String repositoryPath,
 			StubConfiguration stubsConfiguration,
-			ContractVerifierMessageExchange<?> contractVerifierMessaging) {
+			StubMessages<?> contractVerifierMessaging) {
 		this.stubsConfiguration = stubsConfiguration;
 		this.stubRunnerOptions = stubRunnerOptions;
 		this.stubRepository = new StubRepository(new File(repositoryPath));
