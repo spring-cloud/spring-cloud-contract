@@ -1,3 +1,9 @@
+# tag::stubs[]
 stubrunner:
   work-offline: true
   stubs.ids: 'com.example:http-server:+:stubs:8080'
+# end::stubs[]
+
+# tag::repo_root[]
+# stubrunner.stubs.repositoryRoot: http://repo.spring.io/libs-snapshot
+# end::repo_root[]

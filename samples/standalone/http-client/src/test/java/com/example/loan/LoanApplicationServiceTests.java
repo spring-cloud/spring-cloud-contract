@@ -1,7 +1,5 @@
 package com.example.loan;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +12,14 @@ import com.example.loan.model.LoanApplication;
 import com.example.loan.model.LoanApplicationResult;
 import com.example.loan.model.LoanApplicationStatus;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+// tag::autoconfigure_stubrunner[]
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureStubRunner
 public class LoanApplicationServiceTests {
+// end::autoconfigure_stubrunner[]
 
 	@Autowired
 	private LoanApplicationService sut;
