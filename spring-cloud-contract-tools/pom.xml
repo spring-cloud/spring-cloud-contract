@@ -18,6 +18,7 @@
 	<description>Spring Cloud Contract Tools</description>
 
 	<modules>
+		<module>spring-cloud-contract-converters</module>
 		<module>spring-cloud-contract-maven-plugin</module>
 	</modules>
 

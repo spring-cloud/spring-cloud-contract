@@ -20,7 +20,6 @@
 	<modules>
 		<module>spring-cloud-contract-verifier-testing-utils</module>
 		<module>spring-cloud-contract-verifier-core</module>
-		<module>spring-cloud-contract-verifier-converters</module>
 		<module>spring-cloud-contract-verifier-messaging</module>
 	</modules>
 

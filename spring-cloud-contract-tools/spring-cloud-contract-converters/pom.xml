@@ -8,10 +8,10 @@
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<artifactId>spring-cloud-contract-verifier-converters</artifactId>
+	<artifactId>spring-cloud-contract-converters</artifactId>
 	<packaging>jar</packaging>
-	<name>Spring Cloud Contract Verifier Converters</name>
-	<description>Spring Cloud Contract Verifier Converters</description>
+	<name>Spring Cloud Contract Converters</name>
+	<description>Spring Cloud Contract Converters</description>
 	<properties><java.version>1.8</java.version></properties>
 	<dependencies>
 		<dependency>
