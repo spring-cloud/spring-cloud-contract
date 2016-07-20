@@ -4,8 +4,8 @@ Feature ideas:
 
 - [x] Move DSL and stub runner code over from [Accurest](https://github.com/Codearte/accurest)
 - [ ] Spring Restdocs generators
-- [ ] Wiremock support for Spring Boot apps
-- [ ] Wiremock mock servers using `MockRestServiceServer` (from Spring Test)
+- [x] Wiremock support for Spring Boot apps
+- [x] Wiremock mock servers using `MockRestServiceServer` (from Spring Test)
 - [ ] POJO-based contracts (packaging DTOs and stub declarations from the producer)
 - [ ] Sample messages packaged and injectable into Spring Cloud Stream consumer tests
 - [ ] `DiscoveryClient` support so backends can be stubbed or mocked transparently (declaratively)
