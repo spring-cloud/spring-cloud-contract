@@ -484,9 +484,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel4">
 <li><a href="#_prerequisites">Prerequisites</a>
 <ul class="sectlevel5">
-<li><a href="#_add_gradle_plugin">Add gradle plugin</a></li>
+<li><a href="#_add_gradle_plugin_with_dependencies">Add gradle plugin with dependencies</a></li>
 <li><a href="#_snapshot_versions_for_gradle">Snapshot versions for Gradle</a></li>
-<li><a href="#_add_maven_plugin">Add maven plugin</a></li>
+<li><a href="#_add_maven_plugin_with_dependencies">Add maven plugin with dependencies</a></li>
 <li><a href="#_snapshot_versions_for_maven">Snapshot versions for Maven</a></li>
 <li><a href="#_add_stubs">Add stubs</a></li>
 </ul>
@@ -505,7 +505,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_using_in_your_maven_project">Using in your Maven project</a>
 <ul class="sectlevel4">
-<li><a href="#_add_maven_plugin_2">Add maven plugin</a>
+<li><a href="#_add_maven_plugin">Add maven plugin</a>
 <ul class="sectlevel5">
 <li><a href="#_snapshot_versions">Snapshot versions</a></li>
 </ul>
@@ -2299,7 +2299,7 @@ the <code>spock-core</code> and <code>spock-spring</code> modules. Check <a href
 </table>
 </div>
 <div class="sect5">
-<h6 id="_add_gradle_plugin">Add gradle plugin</h6>
+<h6 id="_add_gradle_plugin_with_dependencies">Add gradle plugin with dependencies</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">buildscript {
@@ -2307,17 +2307,26 @@ the <code>spock-core</code> and <code>spock-spring</code> modules. Check <a href
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}'
+	    classpath "org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"
+		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}"
 	}
 }
 
 apply plugin: 'groovy'
-apply plugin: 'contract-verifier'
+apply plugin: 'spring-cloud-contract'
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifier_version}"
+	}
+}
 
 dependencies {
 	testCompile 'org.codehaus.groovy:groovy-all:2.4.6'
+	// example with adding Spock core and Spock Spring
 	testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
-	testCompile 'com.jayway.restassured:spring-mock-mvc:2.9.0' // needed if you're going to use Spring MockMvc
+	testCompile 'org.spockframework:spock-spring:1.0-groovy-2.4'
+	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
 }</code></pre>
 </div>
 </div>
@@ -2338,10 +2347,30 @@ dependencies {
 </div>
 </div>
 <div class="sect5">
-<h6 id="_add_maven_plugin">Add maven plugin</h6>
+<h6 id="_add_maven_plugin_with_dependencies">Add maven plugin with dependencies</h6>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-contract-dependencies&lt;/artifactId&gt;
+            &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;
+
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-cloud-starter-contract-verifier&lt;/artifactId&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+
+&lt;plugin&gt;
     &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
     &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
     &lt;executions&gt;
@@ -2656,7 +2685,7 @@ class LoanApplicationServiceSpec extends Specification {
 <div class="sect3">
 <h4 id="_using_in_your_maven_project">Using in your Maven project</h4>
 <div class="sect4">
-<h5 id="_add_maven_plugin_2">Add maven plugin</h5>
+<h5 id="_add_maven_plugin">Add maven plugin</h5>
 <div class="paragraph">
 <p>Add the Spring Cloud Contract BOM</p>
 </div>
@@ -4874,7 +4903,7 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-07-20 18:59:40 CEST
+Last updated 2016-07-20 19:41:22 CEST
 </div>
 </div>
 </body>
