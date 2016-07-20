@@ -9,7 +9,7 @@ In order to use Spring Cloud Contract Verifier with WireMock you have to use Gra
 WARNING: If you want to use Spock in your projects you have to add separately
 the `spock-core` and `spock-spring` modules. Check http://spockframework.github.io/[Spock docs for more information]
 
-====== Add gradle plugin
+====== Add gradle plugin with dependencies
 
 [source,groovy,indent=0]
 ----
@@ -18,17 +18,26 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}'
+	    classpath "org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"
+		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}"
 	}
 }
 
 apply plugin: 'groovy'
-apply plugin: 'contract-verifier'
+apply plugin: 'spring-cloud-contract'
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifier_version}"
+	}
+}
 
 dependencies {
 	testCompile 'org.codehaus.groovy:groovy-all:2.4.6'
+	// example with adding Spock core and Spock Spring
 	testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
-	testCompile 'com.jayway.restassured:spring-mock-mvc:2.9.0' // needed if you're going to use Spring MockMvc
+	testCompile 'org.spockframework:spock-spring:1.0-groovy-2.4'
+	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
 }
 ----
 
@@ -45,10 +54,31 @@ repositories {
 }
 ----
 
-====== Add maven plugin
+====== Add maven plugin with dependencies
 
 [source,xml,indent=0]
 ----
+
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-contract-dependencies</artifactId>
+            <version>${spring-cloud-contract.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-contract-verifier</artifactId>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+
 <plugin>
     <groupId>org.springframework.cloud</groupId>
     <artifactId>spring-cloud-contract-maven-plugin</artifactId>
