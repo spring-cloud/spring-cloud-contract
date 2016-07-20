@@ -52,7 +52,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 
 	private static final Class IDEA_PLUGIN_CLASS = org.gradle.plugins.ide.idea.IdeaPlugin
 	private static final String GROUP_NAME = "Verification"
-	private static final String EXTENSION_NAME = 'contractVerifier'
+	private static final String EXTENSION_NAME = 'contracts'
 
 	private Project project
 

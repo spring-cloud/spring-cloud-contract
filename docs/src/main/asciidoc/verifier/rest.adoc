@@ -93,7 +93,7 @@ Default Gradle Plugin setup creates the following Gradle part of the build (it's
 
 [source,groovy,indent=0]
 ----
-contractVerifier {
+contracts {
     targetFramework = 'JUNIT'
     testMode = 'MockMvc'
     generatedTestSourcesDir = project.file("${project.buildDir}/generated-test-sources/contracts")
@@ -104,7 +104,7 @@ contractVerifier {
 
 tasks.create(type: Jar, name: 'verifierStubsJar', dependsOn: 'generateWireMockClientStubs') {
     baseName = project.name
-    classifier = contractVerifier.stubsSuffix
+    classifier = contracts.stubsSuffix
     from contractVerifier.stubsOutputDir
 }
 
@@ -113,8 +113,8 @@ project.artifacts {
 }
 
 tasks.create(type: Copy, name: 'copyContracts') {
-    from contractVerifier.contractsDslDir
-    into contractVerifier.stubsOutputDir
+    from contracts.contractsDslDir
+    into contracts.stubsOutputDir
 }
 
 verifierStubsJar.dependsOn 'copyContracts'
@@ -131,11 +131,11 @@ publishing {
 
 ===== Configure plugin
 
-To change default configuration just add `contractVerifier` snippet to your Gradle config
+To change default configuration just add `contracts` snippet to your Gradle config
 
 [source,groovy,indent=0]
 ----
-contractVerifier {
+contracts {
 	testMode = 'MockMvc'
 	baseClassForTests = 'org.mycompany.tests'
 	generatedTestSourcesDir = project.file('src/generatedContract')

@@ -31,6 +31,11 @@ import static java.nio.charset.StandardCharsets.UTF_8
 
 abstract class ContractVerifierIntegrationSpec extends Specification {
 
+	public static final String SPOCK = "targetFramework = 'Spock'"
+	public static final String JUNIT = "targetFramework = 'JUnit'"
+	public static final String MVC_SPEC = "baseClassForTests = 'org.springframework.cloud.MvcSpec'"
+	public static final String MVC_TEST = "baseClassForTests = 'org.springframework.cloud.MvcTest'"
+
 	File testProjectDir
 
 	def setup() {
@@ -40,21 +45,12 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 		testProjectDir = testFolder
 	}
 
-	public static final String SPOCK = "targetFramework = 'Spock'"
-	public static final String JUNIT = "targetFramework = 'JUnit'"
-	public static final String MVC_SPEC = "baseClassForTests = 'org.springframework.cloud.MvcSpec'"
-	public static final String MVC_TEST = "baseClassForTests = 'org.springframework.cloud.MvcTest'"
-
 	protected void setupForProject(String projectRoot) {
 		copyResourcesToRoot(projectRoot)
 		String gradlePluginSysProp = System.getProperty("contract-gradle-plugin-libs-dir")
 		String gradlePluginLibsDir = (gradlePluginSysProp ?: new File("build/").absolutePath.toString()).replace('\\', '\\\\')
-		String messagingLibDirProp = System.getProperty("messaging-libs-dir")
-		String messagingLibDir = (messagingLibDirProp ?: new File("build/").absolutePath.toString()).replace('\\', '\\\\')
 
 		buildFile.write """
-			ext.messagingLibsDir = '$messagingLibDir'
-
 			buildscript {
 				dependencies {
 					classpath fileTree(dir: '$gradlePluginLibsDir', include: '*.jar')
@@ -97,6 +93,7 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 		return GradleRunner.create()
 				.withProjectDir(testProjectDir)
 				.withArguments(tasks)
+				.withDebug(true)
 				.forwardOutput()
 				.build()
 	}

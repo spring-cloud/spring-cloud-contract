@@ -41,7 +41,7 @@ ext {
 	stubsOutputDirRoot = file("${project.buildDir}/stubs/")
 }
 
-contractVerifier {
+contracts {
 	baseClassForTests = 'com.example.source.SensorSourceTestBase'
 	stubsOutputDir = stubsOutputDirRoot
 }

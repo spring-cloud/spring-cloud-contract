@@ -47,7 +47,7 @@ dependencies {
 	testCompile "ch.qos.logback:logback-classic:1.1.2"
 }
 
-contractVerifier {
+contracts {
 	baseClassForTests = 'org.springframework.cloud.contract.verifier.twitter.places.BaseMockMvcSpec'
 	basePackageForTests = 'contracts'
 	contractsDslDir = contractsDir

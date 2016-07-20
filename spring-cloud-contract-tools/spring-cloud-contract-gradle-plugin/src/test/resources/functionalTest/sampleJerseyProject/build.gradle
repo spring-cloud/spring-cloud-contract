@@ -60,7 +60,7 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 		stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
 	}
 
-	contractVerifier {
+	contracts {
 		targetFramework = 'Spock'
 		testMode = 'JaxRsClient'
 		baseClassForTests = 'org.springframework.cloud.MvcSpec'

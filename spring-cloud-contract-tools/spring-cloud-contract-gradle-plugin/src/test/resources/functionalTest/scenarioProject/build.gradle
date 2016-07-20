@@ -76,7 +76,7 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 	}
 	// end::jar_setup[]
 
-	contractVerifier {
+	contracts {
 		// tag::target_framework[]
 		targetFramework = 'Spock'
 		// end::target_framework[]

@@ -39,7 +39,7 @@ dependencyManagement {
 	}
 }
 
-contractVerifier {
+contracts {
 	baseClassForTests = 'com.example.fraud.MvcTest'
 }
 
