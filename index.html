@@ -116,22 +116,22 @@ Gradle Setup
 
 ```groovy
 buildscript {
-        repositories {
-                mavenCentral()
-        }
-        dependencies {
-                classpath 'org.springframework.cloud:spring-cloud-contract-verifier-gradle-plugin:${verifier_version}'
-                classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootPlugin
-        }
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath 'org.springframework.cloud:spring-cloud-contract-verifier-gradle-plugin:${verifier_version}'
+    classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootPlugin}
+  }
 }
 
 apply plugin: 'spring-boot'
 apply plugin: 'contract-verifier'
 
 dependencyManagement {
-	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"
-	}
+  imports {
+    mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"
+  }
 }
 
 contractVerifier {
@@ -140,7 +140,7 @@ contractVerifier {
 }
 
 dependencies {
-        testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+  testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
 }
 ```
 
@@ -319,44 +319,43 @@ Maven
   </dependencies>
 </dependencyManagement>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-contract-wiremock</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-  </dependencies>
+<dependencies>
+  <dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-wiremock</artifactId>
+    <scope>test</scope>
+  </dependency>
+  <dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
+    <scope>test</scope>
+  </dependency>
+</dependencies>
 ```
 
 Gradle
 
 ```groovy
 buildscript {
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootPluginVersion}"
-	}
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootPluginVersion}"
+  }
 }
 
 apply plugin: 'spring-boot'
 
 dependencyManagement {
-	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"
-	}
+  imports {
+    mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"
+  }
 }
 
 dependencies {
-	testCompile "org.springframework.cloud:spring-cloud-contract-wiremock"
-	testCompile "org.springframework.cloud:spring-cloud-starter-contract-stub-runner"
+  testCompile "org.springframework.cloud:spring-cloud-contract-wiremock"
+  testCompile "org.springframework.cloud:spring-cloud-starter-contract-stub-runner"
 }```
 
 The last step is to provide the property for the Stub Runner to automatically download the required stubs. If you're using Spring Boot it's enough to add the following section to your project test properties:
