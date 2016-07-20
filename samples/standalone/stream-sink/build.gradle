@@ -46,9 +46,10 @@ dependencies {
 	testCompile "org.spockframework:spock-core"
 	testCompile "org.springframework.boot:spring-boot-starter-test"
 	testCompile "junit:junit"
-	testCompile "org.springframework.cloud:spring-cloud-contract-stub-runner-stream"
+	testCompile "org.springframework.cloud:spring-cloud-contract-stub-runner"
 	testCompile "org.springframework.cloud:spring-cloud-contract-wiremock"
 	testCompile "org.springframework.cloud:spring-cloud-stream-test-support"
+	testCompile "org.springframework.integration:spring-integration-java-dsl"
 }
 
 test {
