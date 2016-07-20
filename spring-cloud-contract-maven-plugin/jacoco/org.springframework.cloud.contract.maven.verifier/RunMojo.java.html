@@ -37,6 +37,7 @@ import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+@SuppressWarnings(&quot;FieldCanBeLocal&quot;)
 @Mojo(name = &quot;run&quot;, requiresProject = false, requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class RunMojo extends AbstractMojo {
 
@@ -79,7 +80,7 @@ public class RunMojo extends AbstractMojo {
 	/**
 	 * Classifier used by stubs artifacts.
 	 */
-<span class="nc" id="L82">	@Parameter(defaultValue = &quot;stubs&quot;)</span>
+<span class="nc" id="L83">	@Parameter(defaultValue = &quot;stubs&quot;)</span>
 	private String stubsClassifier = &quot;stubs&quot;;
 
 	@Parameter(defaultValue = &quot;${session}&quot;, readonly = true)
@@ -90,60 +91,60 @@ public class RunMojo extends AbstractMojo {
 	private final RemoteStubRunner remoteStubRunner;
 
 	@Inject
-<span class="nc" id="L93">	public RunMojo(LocalStubRunner localStubRunner, RemoteStubRunner remoteStubRunner) {</span>
-<span class="nc" id="L94">		this.localStubRunner = localStubRunner;</span>
-<span class="nc" id="L95">		this.remoteStubRunner = remoteStubRunner;</span>
-<span class="nc" id="L96">	}</span>
+<span class="nc" id="L94">	public RunMojo(LocalStubRunner localStubRunner, RemoteStubRunner remoteStubRunner) {</span>
+<span class="nc" id="L95">		this.localStubRunner = localStubRunner;</span>
+<span class="nc" id="L96">		this.remoteStubRunner = remoteStubRunner;</span>
+<span class="nc" id="L97">	}</span>
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
-<span class="nc bnc" id="L99" title="All 4 branches missed.">		if (skip || skipTestOnly) {</span>
-<span class="nc" id="L100">			getLog().info(&quot;Skipping verifier execution: spring.cloud.contract.verifier.skip=&quot; + String.valueOf(skip));</span>
-<span class="nc" id="L101">			return;</span>
+<span class="nc bnc" id="L100" title="All 4 branches missed.">		if (skip || skipTestOnly) {</span>
+<span class="nc" id="L101">			getLog().info(&quot;Skipping verifier execution: spring.cloud.contract.verifier.skip=&quot; + String.valueOf(skip));</span>
+<span class="nc" id="L102">			return;</span>
 		}
-<span class="nc" id="L103">		BatchStubRunner batchStubRunner = null;</span>
-<span class="nc" id="L104">		StubRunnerOptionsBuilder optionsBuilder = new StubRunnerOptionsBuilder()</span>
-<span class="nc" id="L105">				.withStubsClassifier(stubsClassifier);</span>
-<span class="nc bnc" id="L106" title="All 2 branches missed.">		if (isNullOrEmpty(stubs)) {</span>
-<span class="nc" id="L107">			StubRunnerOptions options = optionsBuilder</span>
-<span class="nc" id="L108">					.withPort(httpPort)</span>
-<span class="nc" id="L109">					.build();</span>
-<span class="nc" id="L110">			StubRunner stubRunner = localStubRunner.run(resolveStubsDirectory().getAbsolutePath(), options);</span>
-<span class="nc" id="L111">			batchStubRunner = new BatchStubRunner(Collections.singleton(stubRunner));</span>
-<span class="nc" id="L112">		} else {</span>
-<span class="nc" id="L113">			StubRunnerOptions options = optionsBuilder</span>
-<span class="nc" id="L114">					.withStubs(stubs)</span>
-<span class="nc" id="L115">					.withMinMaxPort(minPort, maxPort)</span>
-<span class="nc" id="L116">					.build();</span>
-<span class="nc" id="L117">			batchStubRunner = remoteStubRunner.run(options, repoSession);</span>
+<span class="nc" id="L104">		BatchStubRunner batchStubRunner = null;</span>
+<span class="nc" id="L105">		StubRunnerOptionsBuilder optionsBuilder = new StubRunnerOptionsBuilder()</span>
+<span class="nc" id="L106">				.withStubsClassifier(stubsClassifier);</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">		if (isNullOrEmpty(stubs)) {</span>
+<span class="nc" id="L108">			StubRunnerOptions options = optionsBuilder</span>
+<span class="nc" id="L109">					.withPort(httpPort)</span>
+<span class="nc" id="L110">					.build();</span>
+<span class="nc" id="L111">			StubRunner stubRunner = localStubRunner.run(resolveStubsDirectory().getAbsolutePath(), options);</span>
+<span class="nc" id="L112">			batchStubRunner = new BatchStubRunner(Collections.singleton(stubRunner));</span>
+<span class="nc" id="L113">		} else {</span>
+<span class="nc" id="L114">			StubRunnerOptions options = optionsBuilder</span>
+<span class="nc" id="L115">					.withStubs(stubs)</span>
+<span class="nc" id="L116">					.withMinMaxPort(minPort, maxPort)</span>
+<span class="nc" id="L117">					.build();</span>
+<span class="nc" id="L118">			batchStubRunner = remoteStubRunner.run(options, repoSession);</span>
 		}
-<span class="nc" id="L119">		pressAnyKeyToContinue();</span>
-<span class="nc bnc" id="L120" title="All 2 branches missed.">		if (batchStubRunner != null) {</span>
+<span class="nc" id="L120">		pressAnyKeyToContinue();</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">		if (batchStubRunner != null) {</span>
 			try {
-<span class="nc" id="L122">				batchStubRunner.close();</span>
-<span class="nc" id="L123">			} catch (IOException e) {</span>
-<span class="nc" id="L124">				throw new MojoExecutionException(&quot;Fail to close batch stub runner&quot;, e);</span>
-<span class="nc" id="L125">			}</span>
+<span class="nc" id="L123">				batchStubRunner.close();</span>
+<span class="nc" id="L124">			} catch (IOException e) {</span>
+<span class="nc" id="L125">				throw new MojoExecutionException(&quot;Fail to close batch stub runner&quot;, e);</span>
+<span class="nc" id="L126">			}</span>
 		}
-<span class="nc" id="L127">	}</span>
+<span class="nc" id="L128">	}</span>
 
 	private File resolveStubsDirectory() {
-<span class="nc bnc" id="L130" title="All 2 branches missed.">		if (isInsideProject()) {</span>
-<span class="nc" id="L131">			return stubsDirectory;</span>
+<span class="nc bnc" id="L131" title="All 2 branches missed.">		if (isInsideProject()) {</span>
+<span class="nc" id="L132">			return stubsDirectory;</span>
 		} else {
-<span class="nc" id="L133">			return destination;</span>
+<span class="nc" id="L134">			return destination;</span>
 		}
 	}
 
 	private void pressAnyKeyToContinue() {
-<span class="nc" id="L138">		getLog().info(&quot;Press ENTER to continue...&quot;);</span>
+<span class="nc" id="L139">		getLog().info(&quot;Press ENTER to continue...&quot;);</span>
 		try {
-<span class="nc" id="L140">			System.in.read();</span>
-<span class="nc" id="L141">		} catch (Exception ignored) {</span>
-<span class="nc" id="L142">		}</span>
-<span class="nc" id="L143">	}</span>
+<span class="nc" id="L141">			System.in.read();</span>
+<span class="nc" id="L142">		} catch (Exception ignored) {</span>
+<span class="nc" id="L143">		}</span>
+<span class="nc" id="L144">	}</span>
 
 	private boolean isInsideProject() {
-<span class="nc" id="L146">		return mavenSession.getRequest().isProjectPresent();</span>
+<span class="nc" id="L147">		return mavenSession.getRequest().isProjectPresent();</span>
 	}
 
 }
