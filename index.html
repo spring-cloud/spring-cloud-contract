@@ -120,11 +120,19 @@ buildscript {
                 mavenCentral()
         }
         dependencies {
-                classpath 'org.springframework.cloud.contract:spring-cloud-contract-verifier-gradle-plugin:${verifier_version}'
+                classpath 'org.springframework.cloud:spring-cloud-contract-verifier-gradle-plugin:${verifier_version}'
+                classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootPlugin
         }
 }
 
+apply plugin: 'spring-boot'
 apply plugin: 'contract-verifier'
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"
+	}
+}
 
 contractVerifier {
   baseClassForTests = 'com.example.MvcTest'
@@ -132,8 +140,7 @@ contractVerifier {
 }
 
 dependencies {
-        testCompile 'com.jayway.restassured:spring-mock-mvc:2.9.0'
-        // needed if you're going to use Spring MockMvc for the generated tests
+        testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
 }
 ```
 
@@ -152,23 +159,21 @@ Maven Setup
 and the required test dependencies
 
 ```xml
-<!-- needed if you're going to use Spring MockMvc for the generated tests -->
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-contract-dependencies</artifactId>
+      <version>${spring-cloud-contract.version}</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
+
 <dependency>
-    <groupId>com.jayway.restassured</groupId>
-    <artifactId>spring-mock-mvc</artifactId>
-    <version>2.9.0</version>
-    <scope>test</scope>
-</dependency>
-<dependency>
-    <groupId>com.toomuchcoding.jsonassert</groupId>
-    <artifactId>jsonassert</artifactId>
-    <version>0.4.7</version>
-    <scope>test</scope>
-</dependency>
-<dependency>
-    <groupId>org.assertj</groupId>
-    <artifactId>assertj-core</artifactId>
-    <version>3.4.1</version>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-contract-verifier</artifactId>
     <scope>test</scope>
 </dependency>
 ```
@@ -297,24 +302,62 @@ The idea behind CDC (Consumer Driven Contracts) is to share the contract between
 
 ### Client / Consumer side
 
-On the client (HTTP) / consumer (Messaging) side it's enough to provide a dependency to a proper Spring Cloud Contract Stub Runner implementation. In this case since our example consists of HTTP communication we will pick `spring-cloud-contract-stub-runner-spring`. Just add it to your project as a test dependency.
+On the client (HTTP) / consumer (Messaging) side it's enough to provide a dependency to a proper Spring Cloud Contract Stub Runner implementation. In this case since our example consists of HTTP communication with WireMock as the HTTP Server Stub. We will pick the following dependencies:
 
 Maven
 
 ```xml
-<dependency>
-    <groupId>org.springframework.cloud.contract</groupId>
-    <artifactId>spring-cloud-contract-stub-runner-spring</artifactId>
-    <version>${spring-cloud-contract-verifier.version}</version>
-    <scope>test</scope>
-</dependency>
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-contract-dependencies</artifactId>
+      <version>${spring-cloud-contract.version}</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-contract-wiremock</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
 ```
 
 Gradle
 
 ```groovy
-testCompile "org.springframework.cloud.contract:spring-cloud-contract-stub-runner-spring:${verifier_version}"
-```
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootPluginVersion}"
+	}
+}
+
+apply plugin: 'spring-boot'
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"
+	}
+}
+
+dependencies {
+	testCompile "org.springframework.cloud:spring-cloud-contract-wiremock"
+	testCompile "org.springframework.cloud:spring-cloud-starter-contract-stub-runner"
+}```
 
 The last step is to provide the property for the Stub Runner to automatically download the required stubs. If you're using Spring Boot it's enough to add the following section to your project test properties:
 
