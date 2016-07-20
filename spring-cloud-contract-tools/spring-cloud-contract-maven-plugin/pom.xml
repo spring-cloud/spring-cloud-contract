@@ -126,34 +126,6 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>com.mycila</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<configuration>
-					<header>src/etc/header.txt</header>
-					<includes>
-						<include>src/**</include>
-					</includes>
-					<excludes>
-						<exclude>**/.idea/**</exclude>
-						<exclude>**/*.adoc</exclude>
-					</excludes>
-					<useDefaultExcludes>true</useDefaultExcludes>
-					<useDefaultMapping>true</useDefaultMapping>
-					<properties>
-						<year>${project.inceptionYear}</year>
-						<company>Pivotal</company>
-					</properties>
-					<encoding>UTF-8</encoding>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<configuration>

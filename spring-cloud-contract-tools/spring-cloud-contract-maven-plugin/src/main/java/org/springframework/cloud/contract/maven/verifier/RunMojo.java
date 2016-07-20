@@ -1,5 +1,4 @@
-/**
- *
+/*
  *  Copyright 2013-2016 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,10 +15,10 @@
  */
 package org.springframework.cloud.contract.maven.verifier;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import javax.inject.Inject;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -41,110 +40,110 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @Mojo(name = "run", requiresProject = false, requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class RunMojo extends AbstractMojo {
 
-    @Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
-    private RepositorySystemSession repoSession;
+	@Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
+	private RepositorySystemSession repoSession;
 
-    @Parameter(defaultValue = "${project.build.directory}/contracts/mappings")
-    private File stubsDirectory;
+	@Parameter(defaultValue = "${project.build.directory}/contracts/mappings")
+	private File stubsDirectory;
 
-    @Parameter(property = "stubsDirectory", defaultValue = "${basedir}")
-    private File destination;
+	@Parameter(property = "stubsDirectory", defaultValue = "${basedir}")
+	private File destination;
 
-    /**
-     * HTTP port for WireMock server
-     */
-    @Parameter(property = "spring.cloud.contract.verifier.http.port", defaultValue = "8080")
-    private int httpPort;
+	/**
+	 * HTTP port for WireMock server
+	 */
+	@Parameter(property = "spring.cloud.contract.verifier.http.port", defaultValue = "8080")
+	private int httpPort;
 
-    /**
-     * Set this to "true" to bypass verifier execution.
-     */
-    @Parameter(property = "spring.cloud.contract.verifier.skip", defaultValue = "false")
-    private boolean skip;
+	/**
+	 * Set this to "true" to bypass verifier execution.
+	 */
+	@Parameter(property = "spring.cloud.contract.verifier.skip", defaultValue = "false")
+	private boolean skip;
 
-    /**
-     * Set this to "true" to bypass verifier test generation.
-     */
-    @Parameter(property = "spring.cloud.contract.verifier.skipTestOnly", defaultValue = "false")
-    private boolean skipTestOnly;
+	/**
+	 * Set this to "true" to bypass verifier test generation.
+	 */
+	@Parameter(property = "spring.cloud.contract.verifier.skipTestOnly", defaultValue = "false")
+	private boolean skipTestOnly;
 
-    @Parameter(property = "spring.cloud.contract.verifier.stubs")
-    private String stubs;
+	@Parameter(property = "spring.cloud.contract.verifier.stubs")
+	private String stubs;
 
-    @Parameter(property = "spring.cloud.contract.verifier.http.minPort", defaultValue = "10000")
-    private int minPort;
+	@Parameter(property = "spring.cloud.contract.verifier.http.minPort", defaultValue = "10000")
+	private int minPort;
 
-    @Parameter(property = "spring.cloud.contract.verifier.http.maxPort", defaultValue = "15000")
-    private int maxPort;
+	@Parameter(property = "spring.cloud.contract.verifier.http.maxPort", defaultValue = "15000")
+	private int maxPort;
 
-    /**
-     * Classifier used by stubs artifacts.
-     */
-    @Parameter(defaultValue = "stubs")
-    private String stubsClassifier = "stubs";
+	/**
+	 * Classifier used by stubs artifacts.
+	 */
+	@Parameter(defaultValue = "stubs")
+	private String stubsClassifier = "stubs";
 
-    @Parameter(defaultValue = "${session}", readonly = true)
-    private MavenSession mavenSession;
+	@Parameter(defaultValue = "${session}", readonly = true)
+	private MavenSession mavenSession;
 
-    private final LocalStubRunner localStubRunner;
+	private final LocalStubRunner localStubRunner;
 
-    private final RemoteStubRunner remoteStubRunner;
+	private final RemoteStubRunner remoteStubRunner;
 
-    @Inject
-    public RunMojo(LocalStubRunner localStubRunner, RemoteStubRunner remoteStubRunner) {
-        this.localStubRunner = localStubRunner;
-        this.remoteStubRunner = remoteStubRunner;
-    }
+	@Inject
+	public RunMojo(LocalStubRunner localStubRunner, RemoteStubRunner remoteStubRunner) {
+		this.localStubRunner = localStubRunner;
+		this.remoteStubRunner = remoteStubRunner;
+	}
 
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        if (skip || skipTestOnly) {
-            getLog().info("Skipping verifier execution: spring.cloud.contract.verifier.skip=" + String.valueOf(skip));
-            return;
-        }
-        BatchStubRunner batchStubRunner = null;
-        StubRunnerOptionsBuilder optionsBuilder = new StubRunnerOptionsBuilder()
-                .withStubsClassifier(stubsClassifier);
-        if (isNullOrEmpty(stubs)) {
-            StubRunnerOptions options = optionsBuilder
-                    .withPort(httpPort)
-                    .build();
-            StubRunner stubRunner = localStubRunner.run(resolveStubsDirectory().getAbsolutePath(), options);
-            batchStubRunner = new BatchStubRunner(Collections.singleton(stubRunner));
-        } else {
-            StubRunnerOptions options = optionsBuilder
-                    .withStubs(stubs)
-                    .withMinMaxPort(minPort, maxPort)
-                    .build();
-            batchStubRunner = remoteStubRunner.run(options, repoSession);
-        }
-        pressAnyKeyToContinue();
-        if (batchStubRunner != null) {
-            try {
-                batchStubRunner.close();
-            } catch (IOException e) {
-                throw new MojoExecutionException("Fail to close batch stub runner", e);
-            }
-        }
-    }
+	public void execute() throws MojoExecutionException, MojoFailureException {
+		if (skip || skipTestOnly) {
+			getLog().info("Skipping verifier execution: spring.cloud.contract.verifier.skip=" + String.valueOf(skip));
+			return;
+		}
+		BatchStubRunner batchStubRunner = null;
+		StubRunnerOptionsBuilder optionsBuilder = new StubRunnerOptionsBuilder()
+				.withStubsClassifier(stubsClassifier);
+		if (isNullOrEmpty(stubs)) {
+			StubRunnerOptions options = optionsBuilder
+					.withPort(httpPort)
+					.build();
+			StubRunner stubRunner = localStubRunner.run(resolveStubsDirectory().getAbsolutePath(), options);
+			batchStubRunner = new BatchStubRunner(Collections.singleton(stubRunner));
+		} else {
+			StubRunnerOptions options = optionsBuilder
+					.withStubs(stubs)
+					.withMinMaxPort(minPort, maxPort)
+					.build();
+			batchStubRunner = remoteStubRunner.run(options, repoSession);
+		}
+		pressAnyKeyToContinue();
+		if (batchStubRunner != null) {
+			try {
+				batchStubRunner.close();
+			} catch (IOException e) {
+				throw new MojoExecutionException("Fail to close batch stub runner", e);
+			}
+		}
+	}
 
-    private File resolveStubsDirectory() {
-        if (isInsideProject()) {
-            return stubsDirectory;
-        } else {
-            return destination;
-        }
-    }
+	private File resolveStubsDirectory() {
+		if (isInsideProject()) {
+			return stubsDirectory;
+		} else {
+			return destination;
+		}
+	}
 
-    private void pressAnyKeyToContinue() {
-        getLog().info("Press ENTER to continue...");
-        try {
-            System.in.read();
-        } catch (Exception ignored) {
-        }
-    }
+	private void pressAnyKeyToContinue() {
+		getLog().info("Press ENTER to continue...");
+		try {
+			System.in.read();
+		} catch (Exception ignored) {
+		}
+	}
 
-    private boolean isInsideProject() {
-        return mavenSession.getRequest().isProjectPresent();
-    }
+	private boolean isInsideProject() {
+		return mavenSession.getRequest().isProjectPresent();
+	}
 
 }

@@ -1,5 +1,4 @@
-/**
- *
+/*
  *  Copyright 2013-2016 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,118 +32,127 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.cloud.contract.verifier.config.TestFramework;
 import org.springframework.cloud.contract.verifier.config.TestMode;
 
-@Mojo(name = "generateTests", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES, requiresDependencyResolution = ResolutionScope.TEST)
+@Mojo(name = "generateTests", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES,
+		requiresDependencyResolution = ResolutionScope.TEST)
 public class GenerateTestsMojo extends AbstractMojo {
 
-    @Parameter(property = "spring.cloud.contract.verifier.contractsDirectory", defaultValue = "${project.basedir}/src/test/resources/contracts")
-    private File contractsDirectory;
+	@Parameter(property = "spring.cloud.contract.verifier.contractsDirectory",
+			defaultValue = "${project.basedir}/src/test/resources/contracts")
+	private File contractsDirectory;
 
-    @Parameter(defaultValue = "${project.build.directory}/generated-test-sources/contracts")
-    private File generatedTestSourcesDir;
+	@Parameter(
+			defaultValue = "${project.build.directory}/generated-test-sources/contracts")
+	private File generatedTestSourcesDir;
 
-    @Parameter(defaultValue = "org.springframework.cloud.contract.verifier.tests")
-    private String basePackageForTests;
+	@Parameter(defaultValue = "org.springframework.cloud.contract.verifier.tests")
+	private String basePackageForTests;
 
-    @Parameter
-    private String baseClassForTests;
+	@Parameter
+	private String baseClassForTests;
 
-    @Parameter(defaultValue = "MOCKMVC")
-    private TestMode testMode;
+	@Parameter(defaultValue = "MOCKMVC")
+	private TestMode testMode;
 
-    @Parameter(defaultValue = "JUNIT")
-    private TestFramework testFramework;
+	@Parameter(defaultValue = "JUNIT")
+	private TestFramework testFramework;
 
-    @Parameter
-    private String ruleClassForTests;
+	@Parameter
+	private String ruleClassForTests;
 
-    @Parameter
-    private String nameSuffixForTests;
+	@Parameter
+	private String nameSuffixForTests;
 
-    /**
-     * Imports that should be added to generated tests
-     */
-    @Parameter
-    private String[] imports;
+	/**
+	 * Imports that should be added to generated tests
+	 */
+	@Parameter
+	private String[] imports;
 
-    /**
-     * Static imports that should be added to generated tests
-     */
-    @Parameter
-    private String[] staticImports;
+	/**
+	 * Static imports that should be added to generated tests
+	 */
+	@Parameter
+	private String[] staticImports;
 
-    /**
-     * Patterns that should not be taken into account for processing
-     */
-    @Parameter
-    private List<String> excludedFiles;
+	/**
+	 * Patterns that should not be taken into account for processing
+	 */
+	@Parameter
+	private List<String> excludedFiles;
 
-    /**
-     * Patterns for which Spring Cloud Contract Verifier should generate @Ignored tests
-     */
-    @Parameter
-    private List<String> ignoredFiles;
+	/**
+	 * Patterns for which Spring Cloud Contract Verifier should generate @Ignored tests
+	 */
+	@Parameter
+	private List<String> ignoredFiles;
 
-    @Parameter(defaultValue = "${project}", readonly = true)
-    private MavenProject project;
+	@Parameter(defaultValue = "${project}", readonly = true)
+	private MavenProject project;
 
-    @Parameter(property = "spring.cloud.contract.verifier.skip", defaultValue = "false")
-    private boolean skip;
+	@Parameter(property = "spring.cloud.contract.verifier.skip", defaultValue = "false")
+	private boolean skip;
 
-    @Parameter(property = "maven.test.skip", defaultValue = "false")
-    private boolean mavenTestSkip;
+	@Parameter(property = "maven.test.skip", defaultValue = "false")
+	private boolean mavenTestSkip;
 
-    @Parameter(property = "skipTests", defaultValue = "false")
-    private boolean skipTests;
+	@Parameter(property = "skipTests", defaultValue = "false") private boolean skipTests;
 
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        if (skip || mavenTestSkip || skipTests) {
-            if (skip) getLog().info("Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip=" + skip);
-            if (mavenTestSkip) getLog().info("Skipping Spring Cloud Contract Verifier execution: maven.test.skip=" + mavenTestSkip);
-            if (skipTests) getLog().info("Skipping Spring Cloud Contract Verifier execution: skipTests" + skipTests);
-            return;
-        }
-        getLog().info("Generating server tests source code for Spring Cloud Contract Verifier contract verification");
-        final ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
-        config.setContractsDslDir(contractsDirectory);
-        config.setGeneratedTestSourcesDir(generatedTestSourcesDir);
-        config.setTargetFramework(testFramework);
-        config.setTestMode(testMode);
-        config.setBasePackageForTests(basePackageForTests);
-        config.setBaseClassForTests(baseClassForTests);
-        config.setRuleClassForTests(ruleClassForTests);
-        config.setNameSuffixForTests(nameSuffixForTests);
-        config.setImports(imports);
-        config.setStaticImports(staticImports);
-        config.setIgnoredFiles(ignoredFiles);
-        config.setExcludedFiles(excludedFiles);
-        project.addTestCompileSourceRoot(generatedTestSourcesDir.getAbsolutePath());
-        if (getLog().isInfoEnabled()) {
-            getLog().info("Test Source directory: " + generatedTestSourcesDir.getAbsolutePath() + " added.");
-            getLog().info("Using " + config.getBaseClassForTests() + " as base class for test classes");
-        }
-        try {
-            TestGenerator generator = new TestGenerator(config);
-            int generatedClasses = generator.generate();
-            getLog().info("Generated " + generatedClasses + " test classes.");
-        } catch (ContractVerifierException e) {
-            throw new MojoExecutionException(String.format("Spring Cloud Contract Verifier Plugin exception: %s", e.getMessage()), e);
-        }
-    }
+	public void execute() throws MojoExecutionException, MojoFailureException {
+		if (skip || mavenTestSkip || skipTests) {
+			if (skip) getLog().info("Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip=" + skip);
+			if (mavenTestSkip) getLog().info("Skipping Spring Cloud Contract Verifier execution: maven.test.skip=" + mavenTestSkip);
+			if (skipTests) getLog().info("Skipping Spring Cloud Contract Verifier execution: skipTests" + skipTests);
+			return;
+		}
+		getLog().info(
+				"Generating server tests source code for Spring Cloud Contract Verifier contract verification");
+		final ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
+		config.setContractsDslDir(contractsDirectory);
+		config.setGeneratedTestSourcesDir(generatedTestSourcesDir);
+		config.setTargetFramework(testFramework);
+		config.setTestMode(testMode);
+		config.setBasePackageForTests(basePackageForTests);
+		config.setBaseClassForTests(baseClassForTests);
+		config.setRuleClassForTests(ruleClassForTests);
+		config.setNameSuffixForTests(nameSuffixForTests);
+		config.setImports(imports);
+		config.setStaticImports(staticImports);
+		config.setIgnoredFiles(ignoredFiles);
+		config.setExcludedFiles(excludedFiles);
+		project.addTestCompileSourceRoot(generatedTestSourcesDir.getAbsolutePath());
+		if (getLog().isInfoEnabled()) {
+			getLog().info(
+					"Test Source directory: " + generatedTestSourcesDir.getAbsolutePath()
+							+ " added.");
+			getLog().info("Using " + config.getBaseClassForTests()
+					+ " as base class for test classes");
+		}
+		try {
+			TestGenerator generator = new TestGenerator(config);
+			int generatedClasses = generator.generate();
+			getLog().info("Generated " + generatedClasses + " test classes.");
+		}
+		catch (ContractVerifierException e) {
+			throw new MojoExecutionException(
+					String.format("Spring Cloud Contract Verifier Plugin exception: %s",
+							e.getMessage()), e);
+		}
+	}
 
-    public List<String> getExcludedFiles() {
-        return excludedFiles;
-    }
+	public List<String> getExcludedFiles() {
+		return excludedFiles;
+	}
 
-    public void setExcludedFiles(List<String> excludedFiles) {
-        this.excludedFiles = excludedFiles;
-    }
+	public void setExcludedFiles(List<String> excludedFiles) {
+		this.excludedFiles = excludedFiles;
+	}
 
-    public List<String> getIgnoredFiles() {
-        return ignoredFiles;
-    }
+	public List<String> getIgnoredFiles() {
+		return ignoredFiles;
+	}
 
-    public void setIgnoredFiles(List<String> ignoredFiles) {
-        this.ignoredFiles = ignoredFiles;
-    }
+	public void setIgnoredFiles(List<String> ignoredFiles) {
+		this.ignoredFiles = ignoredFiles;
+	}
 
 }
