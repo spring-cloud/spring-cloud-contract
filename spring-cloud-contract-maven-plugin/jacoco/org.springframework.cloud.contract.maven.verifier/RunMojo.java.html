@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>RunMojo.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Spring Cloud Contract Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">org.springframework.cloud.contract.maven.verifier</a> &gt; <span class="el_source">RunMojo.java</span></div><h1>RunMojo.java</h1><pre class="source lang-java linenums">/*
+ *  Copyright 2013-2016 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.springframework.cloud.contract.maven.verifier;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import javax.inject.Inject;
+
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.eclipse.aether.RepositorySystemSession;
+import org.springframework.cloud.contract.maven.verifier.stubrunner.LocalStubRunner;
+import org.springframework.cloud.contract.maven.verifier.stubrunner.RemoteStubRunner;
+import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
+import org.springframework.cloud.contract.stubrunner.StubRunner;
+import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
+import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+
+@Mojo(name = &quot;run&quot;, requiresProject = false, requiresDependencyResolution = ResolutionScope.RUNTIME)
+public class RunMojo extends AbstractMojo {
+
+	@Parameter(defaultValue = &quot;${repositorySystemSession}&quot;, readonly = true)
+	private RepositorySystemSession repoSession;
+
+	@Parameter(defaultValue = &quot;${project.build.directory}/contracts/mappings&quot;)
+	private File stubsDirectory;
+
+	@Parameter(property = &quot;stubsDirectory&quot;, defaultValue = &quot;${basedir}&quot;)
+	private File destination;
+
+	/**
+	 * HTTP port for WireMock server
+	 */
+	@Parameter(property = &quot;spring.cloud.contract.verifier.http.port&quot;, defaultValue = &quot;8080&quot;)
+	private int httpPort;
+
+	/**
+	 * Set this to &quot;true&quot; to bypass verifier execution.
+	 */
+	@Parameter(property = &quot;spring.cloud.contract.verifier.skip&quot;, defaultValue = &quot;false&quot;)
+	private boolean skip;
+
+	/**
+	 * Set this to &quot;true&quot; to bypass verifier test generation.
+	 */
+	@Parameter(property = &quot;spring.cloud.contract.verifier.skipTestOnly&quot;, defaultValue = &quot;false&quot;)
+	private boolean skipTestOnly;
+
+	@Parameter(property = &quot;spring.cloud.contract.verifier.stubs&quot;)
+	private String stubs;
+
+	@Parameter(property = &quot;spring.cloud.contract.verifier.http.minPort&quot;, defaultValue = &quot;10000&quot;)
+	private int minPort;
+
+	@Parameter(property = &quot;spring.cloud.contract.verifier.http.maxPort&quot;, defaultValue = &quot;15000&quot;)
+	private int maxPort;
+
+	/**
+	 * Classifier used by stubs artifacts.
+	 */
+<span class="nc" id="L82">	@Parameter(defaultValue = &quot;stubs&quot;)</span>
+	private String stubsClassifier = &quot;stubs&quot;;
+
+	@Parameter(defaultValue = &quot;${session}&quot;, readonly = true)
+	private MavenSession mavenSession;
+
+	private final LocalStubRunner localStubRunner;
+
+	private final RemoteStubRunner remoteStubRunner;
+
+	@Inject
+<span class="nc" id="L93">	public RunMojo(LocalStubRunner localStubRunner, RemoteStubRunner remoteStubRunner) {</span>
+<span class="nc" id="L94">		this.localStubRunner = localStubRunner;</span>
+<span class="nc" id="L95">		this.remoteStubRunner = remoteStubRunner;</span>
+<span class="nc" id="L96">	}</span>
+
+	public void execute() throws MojoExecutionException, MojoFailureException {
+<span class="nc bnc" id="L99" title="All 4 branches missed.">		if (skip || skipTestOnly) {</span>
+<span class="nc" id="L100">			getLog().info(&quot;Skipping verifier execution: spring.cloud.contract.verifier.skip=&quot; + String.valueOf(skip));</span>
+<span class="nc" id="L101">			return;</span>
+		}
+<span class="nc" id="L103">		BatchStubRunner batchStubRunner = null;</span>
+<span class="nc" id="L104">		StubRunnerOptionsBuilder optionsBuilder = new StubRunnerOptionsBuilder()</span>
+<span class="nc" id="L105">				.withStubsClassifier(stubsClassifier);</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">		if (isNullOrEmpty(stubs)) {</span>
+<span class="nc" id="L107">			StubRunnerOptions options = optionsBuilder</span>
+<span class="nc" id="L108">					.withPort(httpPort)</span>
+<span class="nc" id="L109">					.build();</span>
+<span class="nc" id="L110">			StubRunner stubRunner = localStubRunner.run(resolveStubsDirectory().getAbsolutePath(), options);</span>
+<span class="nc" id="L111">			batchStubRunner = new BatchStubRunner(Collections.singleton(stubRunner));</span>
+<span class="nc" id="L112">		} else {</span>
+<span class="nc" id="L113">			StubRunnerOptions options = optionsBuilder</span>
+<span class="nc" id="L114">					.withStubs(stubs)</span>
+<span class="nc" id="L115">					.withMinMaxPort(minPort, maxPort)</span>
+<span class="nc" id="L116">					.build();</span>
+<span class="nc" id="L117">			batchStubRunner = remoteStubRunner.run(options, repoSession);</span>
+		}
+<span class="nc" id="L119">		pressAnyKeyToContinue();</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">		if (batchStubRunner != null) {</span>
+			try {
+<span class="nc" id="L122">				batchStubRunner.close();</span>
+<span class="nc" id="L123">			} catch (IOException e) {</span>
+<span class="nc" id="L124">				throw new MojoExecutionException(&quot;Fail to close batch stub runner&quot;, e);</span>
+<span class="nc" id="L125">			}</span>
+		}
+<span class="nc" id="L127">	}</span>
+
+	private File resolveStubsDirectory() {
+<span class="nc bnc" id="L130" title="All 2 branches missed.">		if (isInsideProject()) {</span>
+<span class="nc" id="L131">			return stubsDirectory;</span>
+		} else {
+<span class="nc" id="L133">			return destination;</span>
+		}
+	}
+
+	private void pressAnyKeyToContinue() {
+<span class="nc" id="L138">		getLog().info(&quot;Press ENTER to continue...&quot;);</span>
+		try {
+<span class="nc" id="L140">			System.in.read();</span>
+<span class="nc" id="L141">		} catch (Exception ignored) {</span>
+<span class="nc" id="L142">		}</span>
+<span class="nc" id="L143">	}</span>
+
+	private boolean isInsideProject() {
+<span class="nc" id="L146">		return mavenSession.getRequest().isProjectPresent();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

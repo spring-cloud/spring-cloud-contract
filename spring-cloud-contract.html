@@ -1177,13 +1177,8 @@ org.springframework.cloud.contract.spec.Contract.make {
 	&lt;scope&gt;test&lt;/scope&gt;
 &lt;/dependency&gt;
 &lt;dependency&gt;
-	&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-	&lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
-	&lt;scope&gt;test&lt;/scope&gt;
-&lt;/dependency&gt;
-&lt;dependency&gt;
 	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-	&lt;artifactId&gt;spring-cloud-contract-stub-runner&lt;/artifactId&gt;
+	&lt;artifactId&gt;spring-cloud-starter-contract-stub-runner&lt;/artifactId&gt;
 	&lt;scope&gt;test&lt;/scope&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
@@ -1274,18 +1269,8 @@ git pull https://your-git-server.com/server-side-fork.git contract-change-pr</co
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
-	&lt;groupId&gt;com.jayway.restassured&lt;/groupId&gt;
-	&lt;artifactId&gt;spring-mock-mvc&lt;/artifactId&gt;
-	&lt;scope&gt;test&lt;/scope&gt;
-&lt;/dependency&gt;
-&lt;dependency&gt;
-	&lt;groupId&gt;com.jayway.restassured&lt;/groupId&gt;
-	&lt;artifactId&gt;spring-mock-mvc&lt;/artifactId&gt;
-	&lt;scope&gt;test&lt;/scope&gt;
-&lt;/dependency&gt;
-&lt;dependency&gt;
-	&lt;groupId&gt;com.toomuchcoding.jsonassert&lt;/groupId&gt;
-	&lt;artifactId&gt;jsonassert&lt;/artifactId&gt;
+	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+	&lt;artifactId&gt;spring-cloud-starter-contract-verifier&lt;/artifactId&gt;
 	&lt;scope&gt;test&lt;/scope&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
@@ -2400,7 +2385,7 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">contractVerifier {
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">contracts {
     targetFramework = 'JUNIT'
     testMode = 'MockMvc'
     generatedTestSourcesDir = project.file("${project.buildDir}/generated-test-sources/contracts")
@@ -2411,7 +2396,7 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
 
 tasks.create(type: Jar, name: 'verifierStubsJar', dependsOn: 'generateWireMockClientStubs') {
     baseName = project.name
-    classifier = contractVerifier.stubsSuffix
+    classifier = contracts.stubsSuffix
     from contractVerifier.stubsOutputDir
 }
 
@@ -2420,8 +2405,8 @@ project.artifacts {
 }
 
 tasks.create(type: Copy, name: 'copyContracts') {
-    from contractVerifier.contractsDslDir
-    into contractVerifier.stubsOutputDir
+    from contracts.contractsDslDir
+    into contracts.stubsOutputDir
 }
 
 verifierStubsJar.dependsOn 'copyContracts'
@@ -2440,11 +2425,11 @@ publishing {
 <div class="sect4">
 <h5 id="_configure_plugin">Configure plugin</h5>
 <div class="paragraph">
-<p>To change default configuration just add <code>contractVerifier</code> snippet to your Gradle config</p>
+<p>To change default configuration just add <code>contracts</code> snippet to your Gradle config</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">contractVerifier {
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">contracts {
 	testMode = 'MockMvc'
 	baseClassForTests = 'org.mycompany.tests'
 	generatedTestSourcesDir = project.file('src/generatedContract')
@@ -4678,7 +4663,7 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-07-19 20:38:05 CEST
+Last updated 2016-07-19 21:55:20 CEST
 </div>
 </div>
 </body>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ManifestCreator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Spring Cloud Contract Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">org.springframework.cloud.contract.maven.verifier</a> &gt; <span class="el_source">ManifestCreator.java</span></div><h1>ManifestCreator.java</h1><pre class="source lang-java linenums">/*
+ *  Copyright 2013-2016 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.springframework.cloud.contract.maven.verifier;
+
+import java.util.List;
+
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
+import org.codehaus.plexus.archiver.jar.Manifest;
+import org.codehaus.plexus.archiver.jar.ManifestException;
+
+<span class="nc" id="L27">public class ManifestCreator {</span>
+	public static Manifest createManifest(MavenProject project) throws ManifestException {
+<span class="fc" id="L29">		Manifest manifest = new Manifest();</span>
+<span class="fc" id="L30">		Plugin verifierMavenPlugin = findMavenPlugin(project.getBuildPlugins());</span>
+<span class="fc" id="L31">		manifest.addConfiguredAttribute(new Manifest.Attribute(</span>
+<span class="fc" id="L32">				&quot;Spring-Cloud-Contract-Verifier-Maven-Plugin-Version&quot;, verifierMavenPlugin.getVersion()));</span>
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">		if (DefaultGroovyMethods.asBoolean(verifierMavenPlugin.getDependencies())) {</span>
+<span class="nc" id="L34">			Dependency verifierDependency = findVerifierDependency(verifierMavenPlugin.getDependencies());</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">			if (verifierDependency != null) {</span>
+<span class="nc" id="L36">				String verifierVersion = verifierDependency.getVersion();</span>
+<span class="nc" id="L37">				manifest.addConfiguredAttribute(new Manifest.Attribute(&quot;Spring-Cloud-Contract-Verifier-Version&quot;,</span>
+						verifierVersion));
+			}
+		}
+<span class="fc" id="L41">		return manifest;</span>
+	}
+
+	private static Plugin findMavenPlugin(List&lt;Plugin&gt; plugins) {
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">		for (Plugin plugin : plugins) {</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">			if (&quot;spring-cloud-contract-maven-plugin&quot;.equals(plugin.getArtifactId())) {</span>
+<span class="fc" id="L47">				return plugin;</span>
+			}
+<span class="nc" id="L49">		}</span>
+<span class="nc" id="L50">		return null;</span>
+	}
+
+	private static Dependency findVerifierDependency(List&lt;Dependency&gt; deps) {
+<span class="nc bnc" id="L54" title="All 2 branches missed.">		for (Dependency dep : deps) {</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">			if (&quot;spring-cloud-contract-verifier&quot;.equals(dep.getArtifactId())) {</span>
+<span class="nc" id="L56">				return dep;</span>
+			}
+<span class="nc" id="L58">		}</span>
+<span class="nc" id="L59">		return null;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>
