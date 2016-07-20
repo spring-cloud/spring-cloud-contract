@@ -41,7 +41,7 @@ import groovy.json.JsonOutput;
 /**
  * Runs stubs for a particular {@link StubServer}
  */
-public class StubRunnerExecutor implements StubFinder {
+class StubRunnerExecutor implements StubFinder {
 
 	private static final Logger log = LoggerFactory.getLogger(StubRunnerExecutor.class);
 	private final AvailablePortScanner portScanner;
@@ -174,8 +174,8 @@ public class StubRunnerExecutor implements StubFinder {
 		if (outputMessage == null) {
 			return;
 		}
-		DslProperty<?> body = outputMessage == null ? null : outputMessage.getBody();
-		Headers headers = outputMessage == null ? null : outputMessage.getHeaders();
+		DslProperty<?> body = outputMessage.getBody();
+		Headers headers = outputMessage.getHeaders();
 		contractVerifierMessaging.send(
 				JsonOutput.toJson(BodyExtractor.extractClientValueFromBody(
 						body == null ? null : body.getClientValue())),
@@ -193,29 +193,29 @@ public class StubRunnerExecutor implements StubFinder {
 				.getProjectDescriptors();
 		final Collection<Contract> contracts = repository.contracts;
 		Integer port = stubRunnerOptions.port(stubConfiguration);
-		if (port != null && port >= 0) {
-			stubServer = new StubServer(port, stubConfiguration, mappings, contracts);
-		}
-		else {
-			stubServer = portScanner
-					.tryToExecuteWithFreePort(new PortCallback<StubServer>() {
-
-						@Override
-						public StubServer call(int availablePort) {
-							return new StubServer(availablePort, stubConfiguration,
-									mappings, contracts);
-						}
-
-					});
-		}
 		if (!contracts.isEmpty() && !hasRequest(contracts)) {
 			log.debug("There are no HTTP related contracts. Won't start any servers");
+			stubServer = new StubServer(stubConfiguration, mappings, contracts, new NoOpHttpServerStub());
 			return;
 		}
 		if (contracts.isEmpty()) {
 			log.warn(
 					"There are no contracts in the published JAR. This is an unusual situation "
 							+ "that's why will start the server - maybe you know what you're doing...");
+		}
+		if (port != null && port >= 0) {
+			stubServer = new StubServer(stubConfiguration, mappings, contracts,
+					new WireMockHttpServerStub(port));
+		} else {
+			stubServer = portScanner
+					.tryToExecuteWithFreePort(new PortCallback<StubServer>() {
+						@Override
+						public StubServer call(int availablePort) {
+							return new StubServer(stubConfiguration,
+									mappings, contracts,
+									new WireMockHttpServerStub(availablePort));
+						}
+					});
 		}
 		stubServer = stubServer.start();
 	}

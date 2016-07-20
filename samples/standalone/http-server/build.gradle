@@ -47,11 +47,7 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-web")
 	compile("org.springframework.boot:spring-boot-starter-actuator")
 
-	testRuntime "org.spockframework:spock-spring"
-	testCompile "org.spockframework:spock-core"
-	testCompile "org.springframework:spring-test"
-	testCompile "com.jayway.restassured:spring-mock-mvc:2.9.0"
-	testCompile "junit:junit"
+	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
 }
 
 test {

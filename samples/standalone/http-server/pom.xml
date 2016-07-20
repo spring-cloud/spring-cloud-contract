@@ -41,18 +41,8 @@
 
 		<!-- tag::verifier_test_dependencies[] -->
 		<dependency>
-			<groupId>com.jayway.restassured</groupId>
-			<artifactId>spring-mock-mvc</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.jayway.restassured</groupId>
-			<artifactId>spring-mock-mvc</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.toomuchcoding.jsonassert</groupId>
-			<artifactId>jsonassert</artifactId>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-contract-verifier</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<!-- end::verifier_test_dependencies[] -->

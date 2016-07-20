@@ -40,13 +40,8 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-web")
 	compile("org.springframework.boot:spring-boot-starter-actuator")
 
-	testRuntime "org.spockframework:spock-spring"
-	testCompile "org.springframework:spring-test"
-	testCompile "org.springframework.boot:spring-boot-starter-test"
-	testCompile "org.spockframework:spock-core"
-	testCompile "junit:junit"
 	testCompile 'org.springframework.cloud:spring-cloud-contract-wiremock'
-	testCompile "org.springframework.cloud:spring-cloud-contract-stub-runner"
+	testCompile "org.springframework.cloud:spring-cloud-starter-contract-stub-runner"
 }
 
 test {

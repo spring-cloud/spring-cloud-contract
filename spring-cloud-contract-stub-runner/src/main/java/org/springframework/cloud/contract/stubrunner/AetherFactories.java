@@ -34,7 +34,7 @@ import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.springframework.util.StringUtils;
 
-public class AetherFactories {
+class AetherFactories {
 
 	private static final String MAVEN_LOCAL_REPOSITORY_LOCATION = "maven.repo.local";
 

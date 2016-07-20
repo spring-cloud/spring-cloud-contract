@@ -23,52 +23,41 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.spec.Contract;
-import org.springframework.cloud.contract.wiremock.WireMockSpring;
-import org.springframework.util.ClassUtils;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 
-public class StubServer {
+class StubServer {
 	
 	private static final Logger log = LoggerFactory.getLogger(StubServer.class);
 	
-	private WireMockServer wireMockServer;
+	private HttpServerStub httpServerStub;
 	final StubConfiguration stubConfiguration;
 	final Collection<WiremockMappingDescriptor> mappings;
 	final Collection<Contract> contracts;
 
-	public StubServer(int port, StubConfiguration stubConfiguration, Collection<WiremockMappingDescriptor> mappings,
-	Collection<Contract> contracts) {
+	StubServer(StubConfiguration stubConfiguration, Collection<WiremockMappingDescriptor> mappings,
+	Collection<Contract> contracts, HttpServerStub httpServerStub) {
 		this.stubConfiguration = stubConfiguration;
 		this.mappings = mappings;
-		this.wireMockServer = new WireMockServer(config().port(port));
+		this.httpServerStub = httpServerStub;
 		this.contracts = contracts;
 	}
 
-	private WireMockConfiguration config() {
-		if (ClassUtils.isPresent("org.springframework.cloud.contract.wiremock.WireMockSpring", null)) {
-			return WireMockSpring.options();
-		}
-		return new WireMockConfiguration();
-	}
-
 	public StubServer start() {
-		wireMockServer.start();
+		this.httpServerStub.start();
 		log.info("Started stub server for project [" + stubConfiguration.toColonSeparatedDependencyNotation() +
-				"] on port " + wireMockServer.port());
+				"] on port " + httpServerStub.port());
 		registerStubMappings();
 		return this;
 	}
 
 	public void stop() {
-		wireMockServer.stop();
+		this.httpServerStub.stop();
 	}
 
 	public int getPort() {
-		if (wireMockServer.isRunning()) {
-			return wireMockServer.port();
+		if (httpServerStub.isRunning()) {
+			return httpServerStub.port();
 		}
 		log.debug("The HTTP Server stub is not running... That means that the " +
 				"artifact is running a messaging module. Returning back -1 value of the port.");
@@ -84,10 +73,6 @@ public class StubServer {
 		}
 	}
 
-	public WireMockServer getWireMockServer() {
-		return wireMockServer;
-	}
-
 	public StubConfiguration getStubConfiguration() {
 		return stubConfiguration;
 	}
@@ -101,7 +86,7 @@ public class StubServer {
 	}
 
 	private void registerStubMappings() {
-		WireMock wireMock = new WireMock("localhost", wireMockServer.port());
+		WireMock wireMock = new WireMock("localhost", httpServerStub.port());
 		registerDefaultHealthChecks(wireMock);
 		registerStubs(mappings, wireMock);
 	}

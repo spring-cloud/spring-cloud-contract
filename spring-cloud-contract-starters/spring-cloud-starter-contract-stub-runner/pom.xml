@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
@@ -8,30 +8,22 @@
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<artifactId>spring-cloud-starter-contract-stub-runner-jetty</artifactId>
+	<artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
 	<packaging>jar</packaging>
-	<name>Spring Cloud Contract Stub Runner Starter Jetty</name>
-	<description>Spring Cloud Contract Stub Runner Jetty runs wiremock stubs with "native" jetty. Don't use this in a Spring Boot app with its own embedded container.</description>
+	<name>Spring Cloud Contract Stub Runner Starter</name>
+	<description>Spring Cloud Contract Stub Runner Starter</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-stub-runner</artifactId>
 		</dependency>
 		<dependency>
-			<artifactId>jetty-server</artifactId>
-			<groupId>org.eclipse.jetty</groupId>
+			<groupId>org.springframework.integration</groupId>
+			<artifactId>spring-integration-java-dsl</artifactId>
 		</dependency>
 		<dependency>
-			<artifactId>jetty-servlet</artifactId>
-			<groupId>org.eclipse.jetty</groupId>
-		</dependency>
-		<dependency>
-			<artifactId>jetty-servlets</artifactId>
-			<groupId>org.eclipse.jetty</groupId>
-		</dependency>
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.spockframework</groupId>
@@ -40,14 +32,6 @@
 		<dependency>
 			<groupId>org.spockframework</groupId>
 			<artifactId>spock-spring</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

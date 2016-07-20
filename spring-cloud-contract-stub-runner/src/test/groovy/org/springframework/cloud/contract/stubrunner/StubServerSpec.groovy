@@ -28,24 +28,24 @@ class StubServerSpec extends Specification {
 	def 'should register stub mappings upon server start'() {
 		given:
 		List<WiremockMappingDescriptor> mappingDescriptors = new StubRepository(repository).getProjectDescriptors()
-		StubServer pingStubServer = new StubServer(STUB_SERVER_PORT, stubConfiguration, mappingDescriptors, [])
+		StubServer pingStubServer = new StubServer(stubConfiguration, mappingDescriptors, [],
+				new WireMockHttpServerStub(STUB_SERVER_PORT))
 		when:
 		pingStubServer.start()
 		then:
 		"http://localhost:$pingStubServer.port/bye".toURL().text == 'Goodbye world!'
-		cleanup:
 		pingStubServer.stop()
 	}
 
 	def 'should provide stub server URL'() {
 		given:
 		List<WiremockMappingDescriptor> mappingDescriptors = new StubRepository(repository).getProjectDescriptors()
-		StubServer pingStubServer = new StubServer(STUB_SERVER_PORT, stubConfiguration, mappingDescriptors, [])
+		StubServer pingStubServer = new StubServer(stubConfiguration, mappingDescriptors, [],
+				new WireMockHttpServerStub(STUB_SERVER_PORT))
 		when:
 		pingStubServer.start()
 		then:
 		pingStubServer.stubUrl == EXPECTED_URL
-		cleanup:
 		pingStubServer.stop()
 	}
 }

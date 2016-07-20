@@ -18,7 +18,9 @@
 	<description>Spring Cloud Contract Starters</description>
 
 	<modules>
+		<module>spring-cloud-starter-contract-stub-runner</module>
 		<module>spring-cloud-starter-contract-stub-runner-jetty</module>
+		<module>spring-cloud-starter-contract-verifier</module>
 	</modules>
 
 </project>

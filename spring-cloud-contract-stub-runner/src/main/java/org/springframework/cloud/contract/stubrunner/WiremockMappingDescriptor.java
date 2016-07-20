@@ -29,7 +29,7 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping;
  * Represents a single JSON file that was found in the folder with potential WireMock
  * stubs
  */
-public class WiremockMappingDescriptor {
+class WiremockMappingDescriptor {
 
 	final File descriptor;
 

@@ -27,7 +27,7 @@ import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
  * Factory of StubRunners. Basing on the options and passed collaborators downloads the
  * stubs and returns a list of corresponding stub runners.
  */
-public class StubRunnerFactory {
+class StubRunnerFactory {
 
 	private final StubRunnerOptions stubRunnerOptions;
 	private final StubDownloader stubDownloader;
