@@ -9,12 +9,8 @@ routes.
 
 ==== Adding it to the project
 
-To use it you have to add the following dependency to your project (example for Gradle):
-
-[source,groovy,indent=0]
-----
-testCompile "org.springframework.cloud:stub-runner-camel:${verifierVersion}"
-----
+It's enough to have both Apache Camel and Spring Cloud Contract Stub Runner on classpath.
+Remember to annotate your test class with `@AutoConfigureMessageVerifier`.
 
 ==== Examples
 

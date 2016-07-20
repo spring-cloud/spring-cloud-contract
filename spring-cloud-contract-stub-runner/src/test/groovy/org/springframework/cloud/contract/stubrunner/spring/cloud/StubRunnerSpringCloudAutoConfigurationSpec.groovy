@@ -58,11 +58,12 @@ class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 
 	@BeforeClass
 	@AfterClass
-	void setupProps() {
+	static void setupProps() {
 		System.clearProperty("stubrunner.stubs.repository.root");
 		System.clearProperty("stubrunner.stubs.classifier");
 	}
 
+	// tag::test[]
 	def 'should make service discovery work'() {
 		expect: 'WireMocks are running'
 			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
@@ -71,6 +72,7 @@ class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 			restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
 			restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
 	}
+	// end::test[]
 
 	TestingServer startTestingServer() {
 		return new TestingServer(SocketUtils.findAvailableTcpPort())

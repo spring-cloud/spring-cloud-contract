@@ -11,35 +11,20 @@ You can use one of the three integration configurations:
 - Spring Integration
 - Spring Cloud Stream
 
-You have to provide as a dependency one of the Spring Cloud Contract Verifier Messaging modules. Example for Gradle:
+Since we're using Spring Boot then if you have added one of the aforementioned libraries
+to the classpath then automatically all the messaging configuration will be set up.
 
-[source,groovy,indent=0]
-----
-// for Apache Camel
-testCompile "org.springframework.cloud:spring-cloud-contract-verifier-camel"
-// for Spring Integration
-testCompile "org.springframework.cloud:spring-cloud-contract-verifier-integration"
-// for Spring Cloud Stream
-testCompile "org.springframework.cloud:spring-cloud-contract-verifier-stream"
-----
-
-If you're using Spring Boot, the test configurations will be added automatically.
+IMPORTANT: Remember to put `@AutoConfigureMessageVerifier` on the base class of your
+generated tests. Otherwise messaging part of Spring Cloud Contract Verifier will not work.
 
 ==== Manual Integration Testing
 
-The `spring-cloud-contract-verifier-messaging-core` module contains `ContractVerifierMessageExchange`,
-class that allows you to build, send and receive messages
+The main interface used by the tests is the `org.springframework.cloud.contract.verifier.messaging.MessageVerifier`.
+It defines how to send and receive messages. You can create your own implementation to achieve the
+same goal.
 
 In the a test you can inject a `ContractVerifierMessageExchange` to send and receive messages that follow the contract.
-
-You have to provide as a dependency the messaging module that matches your provider. Example for Gradle and Spring Integration:
-
-[source,groovy,indent=0]
-----
-testCompile "org.springframework.cloud:spring-cloud-contract-verifier-integration"
-----
-
-and then add `@AutoConfigureMessageVerifier` to your test, e.g.
+Then add `@AutoConfigureMessageVerifier` to your test, e.g.
 
 [source,java,indent=0]
 ----
@@ -157,4 +142,4 @@ include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/resources/f
 
 ===== Maven Setup
 
-Example of Maven can be found in the https://github.com/spring-cloud/spring-cloud-contract/[Spring Cloud Contract Verifier README]
+Example of Maven can be found in the https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/stream-sink/pom.xml[Stream Sink sample]

@@ -22,7 +22,7 @@ package org.springframework.cloud.contract.stubrunner.util;
  * @author Marcin Grzejszczak
  */
 public class StringUtils {
-	public static String EMPTY = "";
+	public static final String EMPTY = "";
 	private static int INDEX_NOT_FOUND = -1;
 
 	// Empty checks

@@ -51,6 +51,6 @@ public class HttpStubsController {
 		if (port!=null) {
 			return ResponseEntity.ok(port);
 		}
-		return new ResponseEntity<Integer>(HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 }

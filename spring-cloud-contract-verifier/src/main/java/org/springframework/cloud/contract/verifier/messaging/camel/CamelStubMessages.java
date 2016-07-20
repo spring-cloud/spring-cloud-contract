@@ -35,8 +35,7 @@ import org.springframework.stereotype.Component;
  * @author Marcin Grzejszczak
  */
 @Component
-public class CamelStubMessages implements
-		MessageVerifier<Message> {
+public class CamelStubMessages implements MessageVerifier<Message> {
 
 	private static final Logger log = LoggerFactory.getLogger(
 			CamelStubMessages.class);
@@ -77,7 +76,7 @@ public class CamelStubMessages implements
 		} catch (Exception e) {
 			log.error("Exception occurred while trying to read a message from " +
 					" a channel with name [" + destination + "]", e);
-			throw new RuntimeException(e);
+			throw new IllegalStateException(e);
 		}
 	}
 

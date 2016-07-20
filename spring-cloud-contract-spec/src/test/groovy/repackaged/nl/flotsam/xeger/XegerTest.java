@@ -55,7 +55,7 @@ public class XegerTest {
 	}
 
 	private List<String> generateRegex(Xeger generator, int count) {
-		List<String> regexList = new ArrayList<String>();
+		List<String> regexList = new ArrayList<>();
 		for (int i = 0; i < count; i++) {
 			regexList.add(generator.generate());
 		}

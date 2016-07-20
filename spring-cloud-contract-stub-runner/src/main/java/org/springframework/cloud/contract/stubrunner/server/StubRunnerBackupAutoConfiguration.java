@@ -38,7 +38,7 @@ public class StubRunnerBackupAutoConfiguration {
 	@Bean
 	public ContractVerifierMessaging<Object> contractVerifierMessaging(
 			MessageVerifier<Object> exchange) {
-		return new ContractVerifierMessaging<Object>(exchange);
+		return new ContractVerifierMessaging<>(exchange);
 	}
 
 }

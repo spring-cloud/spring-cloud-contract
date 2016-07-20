@@ -55,7 +55,7 @@ public class TriggerController {
 			return ResponseEntity.ok().body(Collections.<String, Collection<String>>emptyMap());
 		} catch (Exception e) {
 			log.debug("Exception occurred while trying to return " + label + " label", e);
-			return new ResponseEntity<Map<String,Collection<String>>>(stubFinder.labels(), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(stubFinder.labels(), HttpStatus.NOT_FOUND);
 		}
 	}
 
@@ -66,7 +66,7 @@ public class TriggerController {
 			return ResponseEntity.ok().body(Collections.<String, Collection<String>>emptyMap());
 		} catch (Exception e) {
 			log.debug("Exception occurred while trying to return " + label + " label", e);
-			return new ResponseEntity<Map<String,Collection<String>>>(stubFinder.labels(), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(stubFinder.labels(), HttpStatus.NOT_FOUND);
 		}
 	}
 

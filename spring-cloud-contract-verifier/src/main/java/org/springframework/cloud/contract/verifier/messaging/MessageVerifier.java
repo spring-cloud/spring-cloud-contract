@@ -22,13 +22,13 @@ import java.util.concurrent.TimeUnit;
 /**
  * Core interface that allows you to build, send and receive messages.
  *
- * Destination is relevant to the underlaying implementation. Might be a channel, queue, topic etc.
+ * Destination is relevant to the underlying implementation. Might be a channel, queue, topic etc.
  *
  * @author Marcin Grzejszczak
  */
 public interface MessageVerifier<M> {
 	/**
-	 * Sends the {@link ContractVerifierMessage} to the given destination.
+	 * Sends the message to the given destination.
 	 */
 	void send(M message, String destination);
 
@@ -38,13 +38,13 @@ public interface MessageVerifier<M> {
 	<T> void send(T payload, Map<String, Object> headers, String destination);
 
 	/**
-	 * Receives the {@link ContractVerifierMessage} from the given destination. You can provide the timeout
+	 * Receives the message from the given destination. You can provide the timeout
 	 * for receiving that message.
 	 */
 	M receive(String destination, long timeout, TimeUnit timeUnit);
 
 	/**
-	 * Receives the {@link ContractVerifierMessage} from the given destination. A default timeout will be applied.
+	 * Receives the message from the given destination. A default timeout will be applied.
 	 */
 	M receive(String destination);
 }

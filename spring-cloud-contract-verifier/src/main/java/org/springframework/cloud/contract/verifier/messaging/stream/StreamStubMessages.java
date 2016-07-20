@@ -76,7 +76,7 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 		catch (Exception e) {
 			log.error("Exception occurred while trying to read a message from "
 					+ " a channel with name [" + destination + "]", e);
-			throw new RuntimeException(e);
+			throw new IllegalStateException(e);
 		}
 	}
 

@@ -27,12 +27,8 @@ import org.springframework.cloud.contract.stubrunner.spring.StubRunnerConfigurat
 import org.springframework.context.annotation.Import;
 
 /**
- * @author Dave Syer
- *
- */
-/**
  * Annotation to enable a Stub runner server.
- * @author Spencer Gibb
+ * @author Dave Syer
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

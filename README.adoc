@@ -31,7 +31,7 @@ TIP: The Accurest project was initially started by Marcin Grzejszczak and Jakub 
 Just to make long story short - Spring Cloud Contract Verifier is a tool that enables Consumer Driven Contract (CDC) development of JVM-based applications. It is shipped
 with __Contract Definition Language__ (DSL). Contract definitions are used to produce following resources:
 
-* JSON stub definitions to be used by Wiremock when doing integration testing on the client code (__client tests__).
+* JSON stub definitions to be used by WireMock when doing integration testing on the client code (__client tests__).
 Test code must still be written by hand, test data is produced by Spring Cloud Contract Verifier.
 * Messaging routes if you're using one. We're integrating with Spring Integration, Spring Cloud Stream and Apache Camel. You can however set your own integrations if you want to
 * Acceptance tests (in JUnit or Spock) used to verify if server-side implementation of the API is compliant with the contract (__server tests__).
@@ -105,7 +105,7 @@ The main purposes of Spring Cloud Contract Verifier with Stub Runner are:
 
 ==== Client Side
 
-During the tests you want to have a Wiremock instance / Messaging route up and running that simulates the service Y.
+During the tests you want to have a WireMock instance / Messaging route up and running that simulates the service Y.
 You would like to feed that instance with a proper stub definition. That stub definition would need
 to be valid and should also be reusable on the server side.
 

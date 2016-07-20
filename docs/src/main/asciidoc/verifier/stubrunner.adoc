@@ -5,6 +5,9 @@ One of the issues that you could have encountered while using Spring Cloud Contr
 
 Copying the JSON files / setting the client side for messaging manually is out of the question.
 
+That's why we'll introduce Spring Cloud Contract Stub Runner that can download and run the stubs
+automatically for you.
+
 ==== Snapshot versions
 
 Add the additional snapshot repository to your build.gradle to use snapshot versions which are automatically uploaded after every successful build:
@@ -16,6 +19,38 @@ repositories {
     //Required only for SNAPSHOT versions
     maven { url "https://repo.spring.io/libs-snapshot-local" }
 }
+----
+
+for Maven
+
+[source,xml,indent=0]
+----
+<repositories>
+    <repository>
+        <id>spring-snapshots</id>
+        <name>Spring Snapshots</name>
+        <url>http://repo.spring.io/libs-snapshot-local</url>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
+    <repository>
+        <id>spring-milestones</id>
+        <name>Spring Milestones</name>
+        <url>http://repo.spring.io/libs-milestone-local</url>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+    </repository>
+    <repository>
+        <id>spring-releases</id>
+        <name>Spring Releases</name>
+        <url>http://repo.spring.io/release</url>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+    </repository>
+</repositories>
 ----
 
 ==== Publishing stubs as JARs
@@ -37,19 +72,7 @@ Example of Maven can be found in the https://github.com/spring-cloud/spring-clou
 
 ==== Modules
 
-Spring Cloud Contract Stub Runner comes with a new structure of modules
-
-[source,indent=0]
-----
-└── spring-cloud-contract-stub-runner
-    ├── spring-cloud-contract-stub-runner
-    ├── spring-cloud-contract-stub-runner-boot
-    ├── spring-cloud-contract-stub-runner-spring
-    └── spring-cloud-contract-stub-runner-spring-cloud
-----
-
 include::{stubrunner_core_path}/README.adoc[]
-
 
 ==== Common properties for JUnit and Spring
 

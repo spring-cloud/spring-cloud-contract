@@ -129,7 +129,7 @@ You can see that for this example the following test is valid:
 include::src/test/groovy/org/springframework/cloud/contract/stubrunner/junit/StubRunnerRuleCustomPortJUnitTest.java[tags=test_with_port]
 ----
 
-==== Stub Runner Spring
+==== Stub Runner with Spring
 
 Sets up Spring configuration of the Stub Runner project.
 
@@ -153,14 +153,7 @@ include::src/test/resources/application.yml[]
 
 === Stub Runner Spring Cloud
 
-Registers the stubs in the provided Service Discovery. It's enough to add the jar
-
-[source,groovy,indent=0]
-----
-org.springframework.cloud:stub-runner-spring-cloud
-----
-
-and the Stub Runner autoconfiguration should be picked up.
+Stub Runner can integrate with Spring Cloud.
 
 ==== Stubbing Service Discovery
 
@@ -169,9 +162,23 @@ The most important feature of `Stub Runner Spring Cloud` is the fact that it's s
 - `DiscoveryClient`
 - `Ribbon` `ServerList`
 
-that means that regardles of the fact whether you're using Zookeeper, Consul, Eureka or anything else, you don't need that in your tests.
+that means that regardless of the fact whether you're using Zookeeper, Consul, Eureka or anything else, you don't need that in your tests.
 We're starting WireMock instances of your dependencies and we're telling your application whenever you're using `Feign`, load balanced `RestTemplate`
 or `DiscoveryClient` directly, to call those stubbed servers instead of calling the real Service Discovery tool.
+
+For example this test will pass
+
+[source,groovy,indent=0]
+----
+include::src/test/groovy/org/springframework/cloud/contract/stubrunner/spring/cloud/StubRunnerSpringCloudAutoConfigurationSpec.groovy[tags=test]
+----
+
+for the following configuration file
+
+[source,yml,indent=0]
+----
+include::src/test/resources/application.yml[]
+----
 
 ==== Additional Configuration
 
@@ -179,12 +186,12 @@ You can match the artifactId of the stub with the name of your app by using the 
 You can disable Stub Runner Ribbon support by providing: `stubrunner.cloud.ribbon.enabled` equal to `false`
 You can disable Stub Runner support by providing: `stubrunner.cloud.enabled` equal to `false`
 
-=== Stub Runner Boot
+=== Stub Runner Boot Application
 
 Spring Cloud Contract Verifier Stub Runner Boot is a Spring Boot application that exposes REST endpoints to
 trigger the messaging labels and to access started WireMock servers.
 
-One of the usecases is to run some smoke (end to end) tests on a deployed application. You can read
+One of the use-cases is to run some smoke (end to end) tests on a deployed application. You can read
  more about this in the  http://toomuchcoding.com/blog/2015/09/27/microservice-deployment/["Microservice Deployment" article at Too Much Coding blog.]
 
 ==== How to use it?
@@ -193,22 +200,10 @@ Just add the
 
 [source,groovy,indent=0]
 ----
-compile "org.springframework.cloud:spring-cloud-stub-runner"
+compile "org.springframework.cloud:spring-cloud-starter-stub-runner"
 ----
 
-and (optionally) a messaging implementation:
-
-[source,groovy,indent=0]
-----
-// for Apache Camel
-compile "org.springframework.cloud:spring-cloud-contract-stub-runner-camel"
-// for Spring Integration
-compile "org.springframework.cloud:spring-cloud-contract-stub-runner-integration"
-// for Spring Cloud Stream
-compile "org.springframework.cloud:spring-cloud-contract-stub-runner-stream"
-----
-
-Build a fat-jar with `@EnableStubRunnerServer` and you're ready to go!
+Annotate a class with `@EnableStubRunnerServer`, build a fat-jar and you're ready to go!
 
 For the properties check the *Stub Runner Spring* section.
 

@@ -151,9 +151,9 @@ public class AetherStubDownloader implements StubDownloader {
 		if (unpackedJar == null) {
 			return null;
 		}
-		return new AbstractMap.SimpleEntry<StubConfiguration, File>(new StubConfiguration(
-				stubConfiguration.groupId, stubConfiguration.artifactId, version,
-				stubConfiguration.classifier), unpackedJar);
+		return new AbstractMap.SimpleEntry<>(
+				new StubConfiguration(stubConfiguration.groupId, stubConfiguration.artifactId, version,
+						stubConfiguration.classifier), unpackedJar);
 	}
 
 	private String resolveHighestArtifactVersion(String stubsGroup, String stubsModule,
