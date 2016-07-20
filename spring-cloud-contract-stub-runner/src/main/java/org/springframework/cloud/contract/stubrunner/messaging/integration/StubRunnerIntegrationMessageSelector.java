@@ -34,15 +34,12 @@ import com.jayway.jsonpath.JsonPath;
 import com.toomuchcoding.jsonassert.JsonAssertion;
 import com.toomuchcoding.jsonassert.JsonVerifiable;
 
-import groovy.transform.CompileStatic;
-
 /**
  * Passes through a message that matches the one defined in the DSL
  *
  * @author Marcin Grzejszczak
  */
-@CompileStatic
-public class StubRunnerIntegrationMessageSelector implements MessageSelector {
+class StubRunnerIntegrationMessageSelector implements MessageSelector {
 
 	private final Contract groovyDsl;
 	private final ContractVerifierObjectMapper objectMapper = new ContractVerifierObjectMapper();

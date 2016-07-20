@@ -37,6 +37,7 @@ import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+@SuppressWarnings("FieldCanBeLocal")
 @Mojo(name = "run", requiresProject = false, requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class RunMojo extends AbstractMojo {
 

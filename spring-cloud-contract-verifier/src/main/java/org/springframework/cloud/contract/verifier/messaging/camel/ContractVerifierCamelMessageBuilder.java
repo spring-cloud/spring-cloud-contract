@@ -24,7 +24,7 @@ import org.apache.camel.impl.DefaultMessage;
 /**
  * @author Marcin Grzejszczak
  */
-public class ContractVerifierCamelMessageBuilder {
+class ContractVerifierCamelMessageBuilder {
 
 	public <T> Message create(T payload, Map<String, Object> headers) {
 		DefaultMessage message = new DefaultMessage();

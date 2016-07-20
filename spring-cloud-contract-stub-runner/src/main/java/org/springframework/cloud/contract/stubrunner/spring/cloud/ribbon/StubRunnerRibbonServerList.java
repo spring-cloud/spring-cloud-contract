@@ -21,15 +21,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import com.netflix.client.config.IClientConfig;
-import com.netflix.loadbalancer.Server;
-import com.netflix.loadbalancer.ServerList;
-
 import org.springframework.cloud.contract.stubrunner.RunningStubs;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubFinder;
 import org.springframework.cloud.contract.stubrunner.spring.cloud.StubMapperProperties;
 import org.springframework.cloud.contract.stubrunner.util.StringUtils;
+
+import com.netflix.client.config.IClientConfig;
+import com.netflix.loadbalancer.Server;
+import com.netflix.loadbalancer.ServerList;
 
 /**
  * Stub Runner representation of a server list
@@ -46,7 +46,7 @@ class StubRunnerRibbonServerList implements ServerList {
 	StubRunnerRibbonServerList(final StubFinder stubFinder,
 									  final StubMapperProperties stubMapperProperties,
 									  final IClientConfig clientConfig,
-									  final ServerList<?> delegate) {;
+									  final ServerList<?> delegate) {
 		String serviceName = clientConfig.getClientName();
 		String mappedServiceName = StringUtils
 				.hasText(stubMapperProperties.fromServiceIdToIvyNotation(serviceName)) ?

@@ -62,7 +62,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 
 	private RequestPatternBuilder appendMethodAndUrl() {
 		if(!request.method) {
-			return
+			return null
 		}
 		RequestMethod requestMethod = RequestMethod.fromString(request.method.clientValue?.toString())
 		UrlPattern urlPattern = urlPattern()

@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Marcin Grzejszczak
  */
 @Configuration
-public class StubRunnerBackupAutoConfiguration {
+class StubRunnerBackupAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean

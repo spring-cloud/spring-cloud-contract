@@ -22,8 +22,8 @@ package org.springframework.cloud.contract.stubrunner.util;
  * @author Marcin Grzejszczak
  */
 public class StringUtils {
-	public static final String EMPTY = "";
-	private static int INDEX_NOT_FOUND = -1;
+	private static final String EMPTY = "";
+	private static final int INDEX_NOT_FOUND = -1;
 
 	// Empty checks
 	// -----------------------------------------------------------------------
@@ -48,11 +48,11 @@ public class StringUtils {
 	 * @param str the String to check, may be null
 	 * @return <code>true</code> if the String is empty or null
 	 */
-	public static boolean isEmpty(String str) {
+	private static boolean isEmpty(String str) {
 		return str == null || str.length() == 0;
 	}
 
-	public static boolean isNotEmpty(String string) {
+	private static boolean isNotEmpty(String string) {
 		return string != null && !string.isEmpty();
 	}
 

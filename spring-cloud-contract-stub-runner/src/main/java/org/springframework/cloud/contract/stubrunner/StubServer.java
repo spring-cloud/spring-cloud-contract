@@ -30,7 +30,7 @@ class StubServer {
 	
 	private static final Logger log = LoggerFactory.getLogger(StubServer.class);
 	
-	private HttpServerStub httpServerStub;
+	private final HttpServerStub httpServerStub;
 	final StubConfiguration stubConfiguration;
 	final Collection<WiremockMappingDescriptor> mappings;
 	final Collection<Contract> contracts;
@@ -75,10 +75,6 @@ class StubServer {
 
 	public StubConfiguration getStubConfiguration() {
 		return stubConfiguration;
-	}
-
-	public Collection<WiremockMappingDescriptor> getMappings() {
-		return mappings;
 	}
 
 	public Collection<Contract> getContracts() {

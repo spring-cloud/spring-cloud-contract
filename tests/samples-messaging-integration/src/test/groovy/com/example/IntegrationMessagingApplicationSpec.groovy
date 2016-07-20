@@ -161,7 +161,7 @@ public class IntegrationMessagingApplicationSpec extends Specification {
 	}
 
 	void bookWasDeleted() {
-		assert bookListener.bookSuccessfulyDeleted.get()
+		assert bookListener.bookSuccessfullyDeleted.get()
 	}
 
 }

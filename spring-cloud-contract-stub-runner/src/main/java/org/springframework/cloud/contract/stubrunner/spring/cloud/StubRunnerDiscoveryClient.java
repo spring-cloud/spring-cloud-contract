@@ -38,7 +38,7 @@ import org.springframework.cloud.contract.stubrunner.util.StringUtils;
  *
  * @since 1.0.0
  */
-public class StubRunnerDiscoveryClient implements DiscoveryClient {
+class StubRunnerDiscoveryClient implements DiscoveryClient {
 
 	private final DiscoveryClient delegate;
 	private final StubFinder stubFinder;

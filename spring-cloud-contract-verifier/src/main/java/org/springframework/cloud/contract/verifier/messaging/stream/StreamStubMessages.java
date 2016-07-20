@@ -83,7 +83,6 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 	private String resolvedDestination(String destination) {
 		ChannelBindingServiceProperties channelBindingServiceProperties = context
 				.getBean(ChannelBindingServiceProperties.class);
-		String resolvedDestination = destination;
 		for (Map.Entry<String, BindingProperties> entry : channelBindingServiceProperties
 				.getBindings().entrySet()) {
 			if (entry.getValue().getDestination().equals(destination)) {
@@ -95,7 +94,7 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 		log.debug(
 				"No destination named [{}] was found. Assuming that the destination equals the channel name",
 				destination);
-		return resolvedDestination;
+		return destination;
 	}
 
 	@Override

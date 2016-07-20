@@ -23,7 +23,7 @@ package org.springframework.cloud.contract.verifier.util;
  *
  * @since 1.0.0
  */
-public interface MethodBuffering {
+interface MethodBuffering {
 
 	String method();
 }

@@ -54,7 +54,7 @@ class StubRunnerExecutor implements StubFinder {
 		this.contractVerifierMessaging = contractVerifierMessaging;
 	}
 
-	public StubRunnerExecutor(AvailablePortScanner portScanner) {
+	protected StubRunnerExecutor(AvailablePortScanner portScanner) {
 		this(portScanner, new NoOpStubMessages());
 	}
 
@@ -114,7 +114,6 @@ class StubRunnerExecutor implements StubFinder {
 				matchingContracts.addAll(it.getValue());
 			}
 		}
-		;
 		return triggerForDsls(matchingContracts, labelName);
 	}
 

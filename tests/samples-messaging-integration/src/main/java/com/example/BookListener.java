@@ -25,6 +25,8 @@ import org.springframework.messaging.support.MessageBuilder;
 
 public class BookListener {
 
+	public AtomicBoolean bookSuccessfullyDeleted = new AtomicBoolean(false);
+
 	private static final Logger log = LoggerFactory.getLogger(BookListener.class);
 
 	/**
@@ -34,7 +36,7 @@ public class BookListener {
 	 * upon receiving message on the output messageFrom
 	 */
 	public Message<BookReturned> returnBook(BookReturned bookReturned) {
-		log.info("Returning book [$bookReturned]");
+		log.info("Returning book [" + bookReturned + "]");
 		return MessageBuilder.withPayload(bookReturned)
 				.setHeader("BOOK-NAME", bookReturned.bookName).build();
 	}
@@ -46,9 +48,7 @@ public class BookListener {
 	 * upon receiving message on the output messageFrom
 	 */
 	public void bookDeleted(BookDeleted bookDeleted) {
-		log.info("Deleting book [$bookDeleted]");
-		bookSuccessfulyDeleted.set(true);
+		log.info("Deleting book [ "+ bookDeleted + "]");
+		bookSuccessfullyDeleted.set(true);
 	}
-
-	public AtomicBoolean bookSuccessfulyDeleted = new AtomicBoolean(false);
 }

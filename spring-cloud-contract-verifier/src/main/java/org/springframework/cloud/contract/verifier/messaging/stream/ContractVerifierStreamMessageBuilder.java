@@ -25,7 +25,7 @@ import org.springframework.messaging.support.MessageBuilder;
 /**
  * @author Marcin Grzejszczak
  */
-public class ContractVerifierStreamMessageBuilder {
+class ContractVerifierStreamMessageBuilder {
 
 	public <T> Message<?> create(T payload, Map<String, Object> headers) {
 		return MessageBuilder.createMessage(payload, new MessageHeaders(headers));

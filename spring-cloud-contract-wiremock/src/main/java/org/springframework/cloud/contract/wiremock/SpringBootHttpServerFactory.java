@@ -76,7 +76,7 @@ import io.undertow.Undertow.Builder;
  * @author Dave Syer
  *
  */
-public class SpringBootHttpServerFactory implements HttpServerFactory {
+class SpringBootHttpServerFactory implements HttpServerFactory {
 
 	@Override
 	public HttpServer buildHttpServer(Options options,

@@ -39,7 +39,7 @@ import com.toomuchcoding.jsonassert.JsonVerifiable;
  *
  * @author Marcin Grzejszczak
  */
-public class StubRunnerStreamMessageSelector implements MessageSelector {
+class StubRunnerStreamMessageSelector implements MessageSelector {
 
 	private final Contract groovyDsl;
 	private final ContractVerifierObjectMapper objectMapper = new ContractVerifierObjectMapper();
@@ -87,7 +87,7 @@ public class StubRunnerStreamMessageSelector implements MessageSelector {
 			String name = it.getName();
 			Object value = it.getClientValue();
 			Object valueInHeader = headers.get(name);
-			boolean matches = true;
+			boolean matches;
 			if (value instanceof Pattern) {
 				Pattern pattern = (Pattern) value;
 				matches = pattern.matcher(valueInHeader.toString()).matches();
@@ -95,7 +95,7 @@ public class StubRunnerStreamMessageSelector implements MessageSelector {
 				matches = valueInHeader!=null && valueInHeader.equals(value);
 			}
 			if (!matches) {
-				return matches;
+				return false;
 			}
 		}
 		return true;

@@ -26,7 +26,7 @@ import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
  */
 public class ContractVerifierMessaging<M> {
 	
-	private MessageVerifier<M> exchange;
+	private final MessageVerifier<M> exchange;
 	
 	public ContractVerifierMessaging(MessageVerifier<M> exchange) {
 		this.exchange = exchange;

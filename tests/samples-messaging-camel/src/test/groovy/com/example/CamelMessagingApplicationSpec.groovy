@@ -43,20 +43,23 @@ import com.toomuchcoding.jsonassert.JsonAssertion
 @ContextConfiguration(classes = [CamelMessagingApplication], loader = SpringBootContextLoader)
 @DirtiesContext
 @AutoConfigureMessageVerifier
-public class CamelMessagingApplicationSpec extends Specification {
+class CamelMessagingApplicationSpec extends Specification {
 
 	// ALL CASES
+	@Autowired ModelCamelContext camelContext
+	@Autowired BookDeleter bookDeleter
 	@Inject MessageVerifier<Message> contractVerifierMessaging
+
 	ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()
-	
+
 	@BeforeClass
-	void init() {
+	static void init() {
 		System.setProperty("org.apache.activemq.SERIALIZABLE_PACKAGES", "*")
 	}
 
 	def "should work for triggered based messaging"() {
 		given:
-			def dsl = Contract.make {
+			Contract.make {
 				label 'some_label'
 				input {
 					triggeredBy('bookReturnedTriggered()')
@@ -82,7 +85,7 @@ public class CamelMessagingApplicationSpec extends Specification {
 
 	def "should generate tests triggered by a message"() {
 		given:
-			def dsl = Contract.make {
+			Contract.make {
 				label 'some_label'
 				input {
 					messageFrom('jms:input')
@@ -104,9 +107,7 @@ public class CamelMessagingApplicationSpec extends Specification {
 					}
 				}
 			}
-
 		// generated test should look like this:
-
 		when:
 			contractVerifierMessaging.send(
 				contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
@@ -121,7 +122,7 @@ public class CamelMessagingApplicationSpec extends Specification {
 
 	def "should generate tests without destination, triggered by a message"() {
 		given:
-			def dsl = Contract.make {
+			Contract.make {
 				label 'some_label'
 				input {
 					messageFrom('jms:delete')
@@ -134,9 +135,7 @@ public class CamelMessagingApplicationSpec extends Specification {
 					assertThat('bookWasDeleted()')
 				}
 			}
-
 		// generated test should look like this:
-
 		when:
 			contractVerifierMessaging.send(contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
 				[sample: 'header'], 'jms:delete')
@@ -144,11 +143,6 @@ public class CamelMessagingApplicationSpec extends Specification {
 			noExceptionThrown()
 			bookWasDeleted()
 	}
-
-	// BASE CLASS WOULD HAVE THIS:
-
-	@Autowired ModelCamelContext camelContext
-	@Autowired BookDeleter bookDeleter
 
 	void bookReturnedTriggered() {
 		camelContext.createProducerTemplate().sendBody('direct:start', '''{"bookName" : "foo" }''')

@@ -30,7 +30,7 @@ import org.springframework.messaging.support.MessageBuilder;
  *
  * @author Marcin Grzejszczak
  */
-public class StubRunnerStreamTransformer implements GenericTransformer<Message<?>, Message<?>> {
+class StubRunnerStreamTransformer implements GenericTransformer<Message<?>, Message<?>> {
 
 	private final Contract groovyDsl;
 

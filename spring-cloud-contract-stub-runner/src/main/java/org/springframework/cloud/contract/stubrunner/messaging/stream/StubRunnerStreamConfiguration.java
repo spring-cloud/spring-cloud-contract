@@ -123,7 +123,6 @@ public class StubRunnerStreamConfiguration {
 			String destination) {
 		ChannelBindingServiceProperties channelBindingServiceProperties = context
 				.getBean(ChannelBindingServiceProperties.class);
-		String resolvedDestination = destination;
 		for (Map.Entry<String, BindingProperties> entry : channelBindingServiceProperties
 				.getBindings().entrySet()) {
 			if (entry.getValue().getDestination().equals(destination)) {
@@ -135,12 +134,11 @@ public class StubRunnerStreamConfiguration {
 		log.debug(
 				"No destination named [{}] was found. Assuming that the destination equals the channel name",
 				destination);
-		return resolvedDestination;
+		return destination;
 	}
 
-	protected static class DummyMessageHandler {
-		public void handle(Message<?> message) {
-		}
+	private static class DummyMessageHandler {
+		public void handle(Message<?> message) {}
 	}
 
 	static class FlowRegistrar {

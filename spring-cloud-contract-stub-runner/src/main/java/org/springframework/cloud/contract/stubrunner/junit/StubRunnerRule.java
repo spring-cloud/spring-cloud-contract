@@ -43,7 +43,7 @@ public class StubRunnerRule implements TestRule, StubFinder {
 	private static final String DELIMITER = ":";
 	private static final String LATEST_VERSION = "+";
 
-	private StubRunnerOptionsBuilder stubRunnerOptionsBuilder = new StubRunnerOptionsBuilder(defaultStubRunnerOptions());
+	private final StubRunnerOptionsBuilder stubRunnerOptionsBuilder = new StubRunnerOptionsBuilder(defaultStubRunnerOptions());
 	private BatchStubRunner stubFinder;
 
 	@Override

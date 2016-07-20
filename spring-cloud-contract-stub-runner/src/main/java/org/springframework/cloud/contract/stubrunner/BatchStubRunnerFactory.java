@@ -35,10 +35,6 @@ public class BatchStubRunnerFactory {
 		this(stubRunnerOptions, new AetherStubDownloader(stubRunnerOptions), new NoOpStubMessages());
 	}
 
-	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, MessageVerifier contractVerifierMessaging) {
-		this(stubRunnerOptions, new AetherStubDownloader(stubRunnerOptions), contractVerifierMessaging);
-	}
-
 	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, StubDownloader stubDownloader) {
 		this(stubRunnerOptions, stubDownloader, new NoOpStubMessages());
 	}

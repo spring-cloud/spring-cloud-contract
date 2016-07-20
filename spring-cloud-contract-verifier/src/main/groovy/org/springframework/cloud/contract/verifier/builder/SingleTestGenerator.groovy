@@ -20,6 +20,7 @@ import groovy.transform.Canonical
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.PackageScope
 import groovy.util.logging.Slf4j
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
@@ -130,7 +131,7 @@ class SingleTestGenerator {
 	@EqualsAndHashCode
 	private static class ParsedDsl {
 		ContractMetadata contract
-		org.springframework.cloud.contract.spec.Contract groovyDsl
+		Contract groovyDsl
 		File stubsFile
 	}
 
@@ -139,10 +140,10 @@ class SingleTestGenerator {
 	}
 
 	private boolean isScenarioClass(Collection<ContractMetadata> listOfFiles) {
-		listOfFiles.find({ it.order != null }) != null
+		return listOfFiles.find({ it.order != null }) != null
 	}
 
-	private ClassBuilder addJsonPathRelatedImports(ClassBuilder clazz) {
+	private void addJsonPathRelatedImports(ClassBuilder clazz) {
 		clazz.addImport(['com.jayway.jsonpath.DocumentContext',
 		                 'com.jayway.jsonpath.JsonPath',
 		])
@@ -151,7 +152,7 @@ class SingleTestGenerator {
 		}
 	}
 
-	private ClassBuilder addMessagingRelatedEntries(ClassBuilder clazz) {
+	private void addMessagingRelatedEntries(ClassBuilder clazz) {
 		clazz.addField(['@Inject ContractVerifierMessaging contractVerifierMessaging',
 						'ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()'
 		])

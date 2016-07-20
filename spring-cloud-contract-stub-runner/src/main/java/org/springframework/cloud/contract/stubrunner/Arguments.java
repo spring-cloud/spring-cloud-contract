@@ -21,9 +21,8 @@ package org.springframework.cloud.contract.stubrunner;
  *
  * @see StubRunner
  */
-public class Arguments {
+class Arguments {
 	final private StubRunnerOptions stubRunnerOptions;
-	final private String context;
 	final private String repositoryPath;
 	final private StubConfiguration stub;
 
@@ -35,16 +34,11 @@ public class Arguments {
 			StubConfiguration stub) {
 		this.stubRunnerOptions = stubRunnerOptions;
 		this.repositoryPath = repositoryPath == null ? "" : repositoryPath;
-		this.context = null; // eh?
 		this.stub = stub;
 	}
 
 	public StubRunnerOptions getStubRunnerOptions() {
 		return stubRunnerOptions;
-	}
-
-	public String getContext() {
-		return context;
 	}
 
 	public String getRepositoryPath() {

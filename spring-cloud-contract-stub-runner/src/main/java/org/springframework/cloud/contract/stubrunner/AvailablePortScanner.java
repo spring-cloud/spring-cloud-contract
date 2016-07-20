@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Tries to execute a closure with an available port from the given range
  */
-public class AvailablePortScanner {
+class AvailablePortScanner {
 
 	private static final Logger log = LoggerFactory.getLogger(AvailablePortScanner.class);
 
@@ -89,20 +89,20 @@ public class AvailablePortScanner {
 
 	@SuppressWarnings("serial")
 	static class NoPortAvailableException extends RuntimeException {
-		protected NoPortAvailableException(int lowerBound, int upperBound) {
+		NoPortAvailableException(int lowerBound, int upperBound) {
 			super("Could not find available port in range " + lowerBound + ":" + upperBound);
 		}
 	}
 
 	@SuppressWarnings("serial")
 	static class InvalidPortRange extends RuntimeException {
-		protected InvalidPortRange(int lowerBound, int upperBound) {
+		InvalidPortRange(int lowerBound, int upperBound) {
 			super("Invalid bounds exceptions, min port [" + lowerBound
 					+ "] is greater to max port [" + upperBound + "]");
 		}
 	}
 
-	public static interface PortCallback<T> {
+	public interface PortCallback<T> {
 		T call(int port) throws IOException;
 	}
 }

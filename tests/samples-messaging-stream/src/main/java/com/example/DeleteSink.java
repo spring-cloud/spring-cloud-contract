@@ -25,7 +25,7 @@ import org.springframework.messaging.SubscribableChannel;
  */
 interface DeleteSink extends Sink {
 
-	static String INPUT = "delete";
+	String INPUT = "delete";
 
 	@Input(DeleteSink.INPUT)
 	SubscribableChannel delete();

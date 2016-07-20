@@ -26,6 +26,4 @@ public interface StubDownloader {
 	 * If there was no artifact this method will return {@code null}.
 	 */
 	Map.Entry<StubConfiguration,File> downloadAndUnpackStubJar(StubRunnerOptions options, StubConfiguration stubConfiguration);
-
-
 }

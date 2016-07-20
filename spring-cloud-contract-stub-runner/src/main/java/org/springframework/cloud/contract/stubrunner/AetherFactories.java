@@ -68,7 +68,7 @@ class AetherFactories {
 		return result;
 	}
 
-	public static String localRepositoryDirectory() {
+	private static String localRepositoryDirectory() {
 		return System.getProperty(MAVEN_LOCAL_REPOSITORY_LOCATION, System.getProperty("user.home") + "/.m2/repository");
 	}
 

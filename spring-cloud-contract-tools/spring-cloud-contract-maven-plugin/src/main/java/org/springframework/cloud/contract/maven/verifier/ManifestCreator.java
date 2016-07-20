@@ -20,17 +20,18 @@ import java.util.List;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 import org.codehaus.plexus.archiver.jar.Manifest;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 
-public class ManifestCreator {
+class ManifestCreator {
 	public static Manifest createManifest(MavenProject project) throws ManifestException {
 		Manifest manifest = new Manifest();
 		Plugin verifierMavenPlugin = findMavenPlugin(project.getBuildPlugins());
-		manifest.addConfiguredAttribute(new Manifest.Attribute(
-				"Spring-Cloud-Contract-Verifier-Maven-Plugin-Version", verifierMavenPlugin.getVersion()));
-		if (DefaultGroovyMethods.asBoolean(verifierMavenPlugin.getDependencies())) {
+		if (verifierMavenPlugin != null) {
+			manifest.addConfiguredAttribute(new Manifest.Attribute(
+					"Spring-Cloud-Contract-Verifier-Maven-Plugin-Version", verifierMavenPlugin.getVersion()));
+		}
+		if (verifierMavenPlugin != null && !verifierMavenPlugin.getDependencies().isEmpty()) {
 			Dependency verifierDependency = findVerifierDependency(verifierMavenPlugin.getDependencies());
 			if (verifierDependency != null) {
 				String verifierVersion = verifierDependency.getVersion();

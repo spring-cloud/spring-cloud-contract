@@ -37,7 +37,7 @@ import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConve
 /**
  * Wraps the folder with WireMock mappings.
  */
-public class StubRepository {
+class StubRepository {
 
 	private static final Logger log = LoggerFactory.getLogger(StubRepository.class);
 

@@ -16,9 +16,6 @@
 
 package org.springframework.cloud.contract.wiremock;
 
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 
@@ -32,13 +29,16 @@ import org.springframework.web.client.RestTemplate;
 import com.github.tomakehurst.wiremock.common.Json;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+
 /**
  * @author Dave Syer
  *
  */
 public class WireMockExpectations {
 
-	private PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+	private final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
 	private String prefix = "classpath:/stubs/";
 
@@ -85,8 +85,7 @@ public class WireMockExpectations {
 	}
 
 	public static WireMockExpectations with(RestTemplate restTemplate) {
-		WireMockExpectations result = new WireMockExpectations(restTemplate);
-		return result;
+		return new WireMockExpectations(restTemplate);
 	}
 
 }

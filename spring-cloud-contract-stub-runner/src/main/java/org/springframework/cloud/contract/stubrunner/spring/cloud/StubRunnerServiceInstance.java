@@ -29,7 +29,7 @@ import org.springframework.cloud.client.ServiceInstance;
  *
  * @since 1.0.0
  */
-public class StubRunnerServiceInstance implements ServiceInstance {
+class StubRunnerServiceInstance implements ServiceInstance {
 
 	private final String serviceId;
 	private final String host;

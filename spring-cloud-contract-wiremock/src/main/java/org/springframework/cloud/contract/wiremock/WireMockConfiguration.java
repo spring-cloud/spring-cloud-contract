@@ -31,7 +31,7 @@ import com.github.tomakehurst.wiremock.core.Options;
  *
  */
 @Configuration
-public class WireMockConfiguration implements SmartLifecycle {
+class WireMockConfiguration implements SmartLifecycle {
 
 	private volatile boolean running;
 

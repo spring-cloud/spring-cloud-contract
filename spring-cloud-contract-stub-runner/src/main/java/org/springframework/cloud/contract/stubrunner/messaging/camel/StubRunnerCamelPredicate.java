@@ -39,8 +39,7 @@ import com.toomuchcoding.jsonassert.JsonVerifiable;
  *
  * @author Marcin Grzejszczak
  */
-
-public class StubRunnerCamelPredicate implements Predicate {
+class StubRunnerCamelPredicate implements Predicate {
 
 	private final Contract groovyDsl;
 	private final ContractVerifierObjectMapper objectMapper = new ContractVerifierObjectMapper();

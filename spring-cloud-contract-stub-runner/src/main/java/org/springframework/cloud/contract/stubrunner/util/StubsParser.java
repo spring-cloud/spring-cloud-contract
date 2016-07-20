@@ -16,11 +16,9 @@
 
 package org.springframework.cloud.contract.stubrunner.util;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,11 +44,6 @@ public class StubsParser {
 	 *
 	 * "a:b,c:d:e"
 	 */
-	public static Set<StubConfiguration> fromString(String list, String defaultClassifier) {
-		List<String> splitList =  Arrays.asList(list.split(","));
-		return fromString(splitList, defaultClassifier);
-	}
-
 	public static Set<StubConfiguration> fromString(Collection<String> collection, String defaultClassifier) {
 		Set<StubConfiguration> stubs = new LinkedHashSet<>();
 		for (String config : collection) {
@@ -89,8 +82,8 @@ public class StubsParser {
 	
 	private static class StubSpecification {
 
-		private StubConfiguration stub;
-		private Integer port;
+		private final StubConfiguration stub;
+		private final Integer port;
 
 		public StubSpecification(StubConfiguration stub, Integer port) {
 			this.stub = stub;
@@ -98,7 +91,7 @@ public class StubsParser {
 		}
 
 		public boolean hasPort() {
-			return port!=null;
+			return port != null;
 		}
 		
 		private static StubSpecification parse(String id, String defaultClassifier) {
