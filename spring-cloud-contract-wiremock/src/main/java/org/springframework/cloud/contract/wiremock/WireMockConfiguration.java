@@ -43,29 +43,36 @@ public class WireMockConfiguration implements SmartLifecycle, ImportAware {
 
 	@Autowired(required = false)
 	private Options options;
-	
+
 	@Value("${wiremock.server.port:8080}")
 	private int port = 8080;
 
+	@Value("${wiremock.server.https-port:-1}")
+	private int httpsPort = -1;
+
 	@Override
 	public void setImportMetadata(AnnotationMetadata metadata) {
-		int port = AnnotationAttributes
-				.fromMap(metadata
-						.getAnnotationAttributes(AutoConfigureWireMock.class.getName()))
-				.getNumber("port").intValue();
-		if (port>0) {
+		AnnotationAttributes map = AnnotationAttributes.fromMap(
+				metadata.getAnnotationAttributes(AutoConfigureWireMock.class.getName()));
+		int port = map.getNumber("port").intValue();
+		if (port > 0) {
 			this.port = port;
+		}
+		int httpsPort = map.getNumber("httpsPort").intValue();
+		if (httpsPort > 0) {
+			this.httpsPort = httpsPort;
 		}
 	}
 
 	@PostConstruct
 	public void init() {
 		if (options == null) {
-			com.github.tomakehurst.wiremock.core.WireMockConfiguration factory = com.github.tomakehurst.wiremock.core.WireMockConfiguration
-					.wireMockConfig()
-					.httpServerFactory(new SpringBootHttpServerFactory());
+			com.github.tomakehurst.wiremock.core.WireMockConfiguration factory = WireMockSpring.options();
 			if (port != 8080) {
 				factory.port(port);
+			}
+			if (httpsPort != -1) {
+				factory.httpsPort(httpsPort);
 			}
 			this.options = factory;
 		}

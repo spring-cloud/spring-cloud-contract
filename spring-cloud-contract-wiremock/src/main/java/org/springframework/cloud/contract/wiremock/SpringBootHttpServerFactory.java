@@ -40,6 +40,7 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerInitializedEvent;
 import org.springframework.boot.context.embedded.EmbeddedWebApplicationContext;
 import org.springframework.boot.context.embedded.Ssl;
 import org.springframework.boot.context.embedded.jetty.JettyEmbeddedServletContainerFactory;
@@ -57,7 +58,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.event.EventListener;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.ServletContextAware;
 
 import com.github.tomakehurst.wiremock.common.HttpsSettings;
@@ -126,17 +129,19 @@ class SpringBootHttpServer
 
 	@Override
 	public int port() {
-		if (options.httpsSettings().enabled()) {
-			return options.portNumber();
-		}
-		EmbeddedWebApplicationContext embedded = (EmbeddedWebApplicationContext) context;
-		return embedded.getEmbeddedServletContainer().getPort();
+		return container().port();
 	}
 
 	@Override
 	public int httpsPort() {
-		// TODO HTTPS on random port
-		return this.options.httpsSettings().port();
+		return container().httpsPort();
+	}
+
+	private ContainerProperties container() {
+		if (this.context != null) {
+			return context.getBean(ContainerProperties.class);
+		}
+		return new ContainerProperties(options);
 	}
 
 	@Override
@@ -207,7 +212,7 @@ class SpringBootHttpServer
 		UndertowContainerConfiguration.class, ServerPropertiesAutoConfiguration.class,
 		BeanPostProcessorsRegistrar.class, ConfigurationPropertiesAutoConfiguration.class,
 		JacksonAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class,
-		PropertyPlaceholderAutoConfiguration.class })
+		PropertyPlaceholderAutoConfiguration.class, ContainerProperties.class })
 class WiremockServerConfiguration {
 
 	@Autowired
@@ -255,6 +260,51 @@ class WiremockServerConfiguration {
 
 }
 
+@Component
+class ContainerProperties {
+
+	private Options options;
+
+	private Integer localPort;
+
+	private Integer localHttpsPort;
+
+	@Autowired
+	private ConfigurableApplicationContext context;
+
+	@Autowired
+	public ContainerProperties(Options options) {
+		this.options = options;
+	}
+
+	public int port() {
+		if (options.httpsSettings().enabled()) {
+			return options.portNumber();
+		}
+		if (this.localPort != null) {
+			return this.localPort;
+		}
+		EmbeddedWebApplicationContext embedded = (EmbeddedWebApplicationContext) context;
+		return embedded.getEmbeddedServletContainer().getPort();
+	}
+
+	public int httpsPort() {
+		if (this.localHttpsPort != null) {
+			return this.localHttpsPort;
+		}
+		return this.options.httpsSettings().port();
+	}
+
+	public void setLocalPort(int localPort) {
+		this.localPort = localPort;
+	}
+
+	public void setLocalHttpsPort(int localHttpsPort) {
+		this.localHttpsPort = localHttpsPort;
+	}
+
+}
+
 class ContainerConfiguration {
 
 	@Configuration
@@ -263,6 +313,11 @@ class ContainerConfiguration {
 	static class TomcatContainerConfiguration {
 		@Autowired
 		private Options options;
+
+		@Autowired
+		private ContainerProperties container;
+
+		private Connector connector;
 
 		@Bean
 		public EmbeddedServletContainerFactory servletContainer() {
@@ -273,10 +328,20 @@ class ContainerConfiguration {
 			return tomcat;
 		}
 
+		@EventListener
+		public void serverUp(EmbeddedServletContainerInitializedEvent event) {
+			if (connector != null) {
+				container.setLocalPort(connector.getLocalPort());
+				container
+						.setLocalHttpsPort(event.getEmbeddedServletContainer().getPort());
+			}
+		}
+
 		private Connector createStandardConnector() {
 			Connector connector = new Connector(
 					"org.apache.coyote.http11.Http11NioProtocol");
 			connector.setPort(this.options.portNumber());
+			this.connector = connector;
 			return connector;
 		}
 
@@ -286,8 +351,14 @@ class ContainerConfiguration {
 	@ConditionalOnMissingBean(EmbeddedServletContainerFactory.class)
 	@ConditionalOnClass({ UndertowEmbeddedServletContainerFactory.class, Builder.class })
 	static class UndertowContainerConfiguration {
+
 		@Autowired
 		private Options options;
+
+		@Autowired
+		private ContainerProperties container;
+		
+		private Integer port;
 
 		@Bean
 		public EmbeddedServletContainerFactory servletContainer() {
@@ -297,11 +368,23 @@ class ContainerConfiguration {
 					@Override
 					public void customize(Builder builder) {
 						builder.addHttpListener(options.portNumber(), "localhost");
+						UndertowContainerConfiguration.this.port = options.portNumber();
 					}
 				});
 			}
 			return undertow;
 		}
+
+		@EventListener
+		public void serverUp(EmbeddedServletContainerInitializedEvent event) {
+			if (port != null) {
+				// TODO: make it dynamic as well
+				container.setLocalPort(port);
+				container
+						.setLocalHttpsPort(event.getEmbeddedServletContainer().getPort());
+			}
+		}
+
 	}
 
 	@Configuration
@@ -309,8 +392,14 @@ class ContainerConfiguration {
 	@ConditionalOnClass({ JettyEmbeddedServletContainerFactory.class,
 			ServerConnector.class })
 	static class JettyContainerConfiguration {
+
+		@Autowired
+		private ContainerProperties container;
+
 		@Autowired
 		private Options options;
+
+		private ServerConnector connector;
 
 		@Bean
 		public EmbeddedServletContainerFactory servletContainer() {
@@ -338,7 +427,17 @@ class ContainerConfiguration {
 							.getHttpConfiguration().setSendServerVersion(false);
 				}
 			}
+			this.connector = connector;
 			return connector;
+		}
+
+		@EventListener
+		public void serverUp(EmbeddedServletContainerInitializedEvent event) {
+			if (connector != null) {
+				container.setLocalPort(connector.getLocalPort());
+				container
+						.setLocalHttpsPort(event.getEmbeddedServletContainer().getPort());
+			}
 		}
 	}
 

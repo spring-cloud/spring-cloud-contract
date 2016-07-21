@@ -38,4 +38,6 @@ public @interface AutoConfigureWireMock {
 	
 	int port() default 8080;
 
+	int httpsPort() default -1;
+
 }

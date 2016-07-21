@@ -49,7 +49,17 @@ public class WireMockApplicationListener implements ApplicationListener<Applicat
 			}
 			Map<String, Object> source = ((MapPropertySource) propertySources
 					.get("wiremock")).getSource();
-			source.put("wiremock.server.port", SocketUtils.findAvailableTcpPort(10000, 15000));
+			source.put("wiremock.server.port", SocketUtils.findAvailableTcpPort(10000, 12500));
+		}
+		if (environment.getProperty("wiremock.server.https-port", Integer.class, 0) == 0) {
+			MutablePropertySources propertySources = environment.getPropertySources();
+			if (!propertySources.contains("wiremock")) {
+				propertySources.addFirst(
+						new MapPropertySource("wiremock", new HashMap<String, Object>()));
+			}
+			Map<String, Object> source = ((MapPropertySource) propertySources
+					.get("wiremock")).getSource();
+			source.put("wiremock.server.https-port", SocketUtils.findAvailableTcpPort(12500, 15000));
 		}
 	}
 
