@@ -460,6 +460,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_http_top_level_elements">HTTP Top-Level Elements</a></li>
 <li><a href="#_request">Request</a></li>
 <li><a href="#_response">Response</a></li>
+<li><a href="#_dynamic_properties">Dynamic properties</a></li>
 <li><a href="#_regular_expressions">Regular expressions</a></li>
 <li><a href="#_passing_optional_parameters">Passing optional parameters</a></li>
 <li><a href="#_executing_custom_methods_on_server_side">Executing custom methods on server side</a>
@@ -991,7 +992,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 				url '/fraudcheck'
 				body("""
 					{
-					"clientId":"${value(client(regex('[0-9]{10}')), server('1234567890'))}",
+					"clientId":"${value(consumer(regex('[0-9]{10}')), producer('1234567890'))}",
 					"loanAmount":99999}
 				"""
 				)
@@ -1003,11 +1004,11 @@ org.springframework.cloud.contract.spec.Contract.make {
 			response {
 				status 200
 				body( """{
-	"fraudCheckStatus": "${value(client('FRAUD'), server(regex('[A-Z]{5}')))}",
+	"fraudCheckStatus": "${value(consumer('FRAUD'), producer(regex('[A-Z]{5}')))}",
 	"rejectionReason": "Amount too high"
 }""")
 				headers {
-					 header('Content-Type': value(server(regex('application/vnd.fraud.v1.json.*')), client('application/vnd.fraud.v1+json')))
+					 header('Content-Type': value(producer(regex('application/vnd.fraud.v1.json.*')), consumer('application/vnd.fraud.v1+json')))
 					}
 			}
 
@@ -1015,7 +1016,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 </div>
 </div>
 <div class="paragraph">
-<p>The Contract is written using a statically typed Groovy DSL. You might be wondering what are those <code>${value(client(&#8230;&#8203;), server(&#8230;&#8203;))}</code> parts. So the <code>${}</code> is a String interpolation in Groovy. You can resolve a variable inside a String. In other words <code>"concat ${foo} and ${bar}"</code> is the same as <code>"concat " + foo + " and " + bar</code>. The <code>value(client(&#8230;&#8203;), server(&#8230;&#8203;))</code> allows you to define parts of a JSON which are dynamic. In case of an identifier or a timestamp you don&#8217;t want to hardcode a value. You want to allow some different ranges of values. That&#8217;s why for the consumer side you can set regular expressions matching those values. You can provide the body either by means of String with interpolations or with a map notation. <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_contract_dsl">Consult the docs for more information.</a></p>
+<p>The Contract is written using a statically typed Groovy DSL. You might be wondering what are those <code>${value(consumer(&#8230;&#8203;), producer(&#8230;&#8203;))}</code> parts. So the <code>${}</code> is a String interpolation in Groovy. You can resolve a variable inside a String. In other words <code>"concat ${foo} and ${bar}"</code> is the same as <code>"concat " + foo + " and " + bar</code>. The <code>value(consumer(&#8230;&#8203;), producer(&#8230;&#8203;))</code> allows you to define parts of a JSON which are dynamic. In case of an identifier or a timestamp you don&#8217;t want to hardcode a value. You want to allow some different ranges of values. That&#8217;s why for the consumer side you can set regular expressions matching those values. You can provide the body either by means of String with interpolations or with a map notation. <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_contract_dsl">Consult the docs for more information.</a></p>
 </div>
 <div class="paragraph">
 <p>The aforementioned contract is an agreement between two sides that:</p>
@@ -1177,16 +1178,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
-	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-	&lt;artifactId&gt;spring-cloud-contract-wiremock&lt;/artifactId&gt;
-	&lt;scope&gt;test&lt;/scope&gt;
-&lt;/dependency&gt;
-&lt;dependency&gt;
-	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-	&lt;artifactId&gt;spring-cloud-starter-contract-stub-runner&lt;/artifactId&gt;
-	&lt;scope&gt;test&lt;/scope&gt;
-&lt;/dependency&gt;</code></pre>
+<pre class="highlight"><code class="language-xml" data-lang="xml">Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/standalone/http-client/pom.xml[tags=stub_runner,indent=0]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1360,7 +1352,7 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
 </div>
 </div>
 <div class="paragraph">
-<p>As you can see all the <code>server()</code> parts of the Contract that were present in the <code>value(client(&#8230;&#8203;), server(&#8230;&#8203;))</code> blocks got injected into the test.</p>
+<p>As you can see all the <code>producer()</code> parts of the Contract that were present in the <code>value(consumer(&#8230;&#8203;), producer(&#8230;&#8203;))</code> blocks got injected into the test.</p>
 </div>
 <div class="paragraph">
 <p>What&#8217;s important here to note is that on the producer side we also are doing TDD. We have expectations in form of a test. This test is shooting a request to our own application to an URL, headers and body defined in the contract. It also is expecting very precisely defined values in the response. In other words you have is your <code>red</code> part of <code>red</code>, <code>green</code> and <code>refactor</code>. Time to convert the <code>red</code> into the <code>green</code>.</p>
@@ -1776,15 +1768,15 @@ the value of a system property <code>spring.cloud.contract.verifier.assert.size<
 
 				// `containing` function matches strings
 				// that contains passed substring.
-				parameter 'gender': value(stub(containing("[mf]")), server('mf'))
+				parameter 'gender': value(consumer(containing("[mf]")), producer('mf'))
 
 				// `matching` function tests parameter
 				// against passed regular expression.
-				parameter 'offset': value(stub(matching("[0-9]+")), server(123))
+				parameter 'offset': value(consumer(matching("[0-9]+")), producer(123))
 
 				// `notMatching` functions tests if parameter
 				// does not match passed regular expression.
-				parameter 'loginStartsWith': value(stub(notMatching(".{0,2}")), server(3))
+				parameter 'loginStartsWith': value(consumer(notMatching(".{0,2}")), producer(3))
 			}
 		}
 
@@ -1886,6 +1878,38 @@ the value of a system property <code>spring.cloud.contract.verifier.assert.size<
 </div>
 </div>
 <div class="sect3">
+<h4 id="_dynamic_properties">Dynamic properties</h4>
+<div class="paragraph">
+<p>The contract can contain some dynamic properties - timestamps / ids etc. You don&#8217;t want to enforce the consumers to stub their
+clocks to always return the same value of time so that it gets matched by the stub. That&#8217;s why we allow you to provide the dynamic
+parts in your contracts in the following way</p>
+</div>
+<div class="paragraph">
+<p>either via the <code>value</code> method</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">value(consumer(...), producer(...))
+value(stub(...), test(...))
+value(client(...), server(...))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or if you&#8217;re using the Groovy map notation for body you can use the <code>$()</code> method</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">$(consumer(...), producer(...))
+$(stub(...), test(...))
+$(client(...), server(...))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>All of the aforementioned approaches are equal. That means that <code>stub</code> and <code>client</code> methods are aliases over the <code>consumer</code>
+method. Let&#8217;s take a closer look at what we can do with those values in the subsequent sections.</p>
+</div>
+</div>
+<div class="sect3">
 <h4 id="_regular_expressions">Regular expressions</h4>
 <div class="paragraph">
 <p>You can use regular expressions to write your requests in Contract DSL. It is particularly useful when you want to indicate that a given response
@@ -1900,23 +1924,23 @@ for your test and your server side tests.</p>
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
 	request {
 		method('GET')
-		url $(client(~/\/[0-9]{2}/), server('/12'))
+		url $(consumer(~/\/[0-9]{2}/), producer('/12'))
 	}
 	response {
 		status 200
 		body(
 				id: value(
-						client('123'),
-						server(regex('[0-9]+'))
+						consumer('123'),
+						producer(regex('[0-9]+'))
 				),
 				surname: $(
-						client('Kowalsky'),
-						server('Lewandowski')
+						consumer('Kowalsky'),
+						producer('Lewandowski')
 				),
 				name: 'Jan',
-				created: $(client('2014-02-02 12:23:43'), server(execute('currentDate(it)'))),
-				correlationId: value(client('5d1f9fef-e0dc-4f3d-a7e4-72d2220dd827'),
-						server(regex('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}'))
+				created: $(consumer('2014-02-02 12:23:43'), producer(execute('currentDate(it)'))),
+				correlationId: value(consumer('5d1f9fef-e0dc-4f3d-a7e4-72d2220dd827'),
+						producer(regex('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}'))
 				)
 		)
 		headers {
@@ -1937,13 +1961,13 @@ provide the generated string that matches the provided regular expression. For e
 		method 'PUT'
 		url '/foo'
 		body([
-			requestElement: value(client(regex('[0-9]{5}')))
+			requestElement: value(consumer(regex('[0-9]{5}')))
 		])
 	}
 	response {
 		status 200
 		body([
-			responseElement: value(server(regex('[0-9]{7}')))
+			responseElement: value(producer(regex('[0-9]{7}')))
 		])
 	}
 }</code></pre>
@@ -1951,6 +1975,79 @@ provide the generated string that matches the provided regular expression. For e
 </div>
 <div class="paragraph">
 <p>In this example for request and response the opposite side of the communication will have the respective data generated.</p>
+</div>
+<div class="paragraph">
+<p>Spring Cloud Contract comes with a series of predefined regular expressions that you can use in your contracts.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">private static final Pattern TRUE_OR_FALSE = Pattern.compile(/(true|false)/)
+private static final Pattern ONLY_ALPHA_UNICODE = Pattern.compile(/[\p{L}]*/)
+private static final Pattern NUMBER = Pattern.compile('-?\\d*(\\.\\d+)?')
+private static final Pattern IP_ADDRESS = Pattern.compile('([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])');
+private static final Pattern HOSTNAME_PATTERN = Pattern.compile('((http[s]?|ftp):\\/)\\/?([^:\\/\\s]+)(:[0-9]{1,5})?');
+private static final Pattern EMAIL = Pattern.compile('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}');
+private static final Pattern URL = Pattern.compile('((www\\.|(http|https|ftp|news|file)+\\:\\/\\/)[_.a-z0-9-]+\\.[a-z0-9\\/_:@=.+?,##%&amp;~-]*[^.|\\\'|\\# |!|\\(|?|,| |&gt;|&lt;|;|\\)])')
+
+String onlyAlphaUnicode() {
+	return ONLY_ALPHA_UNICODE.pattern()
+}
+
+String number() {
+	return NUMBER.pattern()
+}
+
+String anyBoolean() {
+	return TRUE_OR_FALSE.pattern()
+}
+
+String ipAddress() {
+	return IP_ADDRESS.pattern()
+}
+
+String hostname() {
+	return HOSTNAME_PATTERN.pattern()
+}
+
+String email() {
+	return EMAIL.pattern()
+}
+
+String url() {
+	return URL.pattern()
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>so in your contract you can use it like this</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">Contract dslWithOptionalsInString = Contract.make {
+	priority 1
+	request {
+		method 'POST'
+		url '/users/password'
+		headers {
+			header 'Content-Type': 'application/json'
+		}
+		body(
+				email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),
+				callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
+		)
+	}
+	response {
+		status 404
+		headers {
+			header 'Content-Type': 'application/json'
+		}
+		body(
+				code: value(consumer("123123"), producer(optional("123123"))),
+				message: "User not found by email = [${value(producer(regex(email())), consumer('not.existing@user.com'))}]"
+		)
+	}
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -1982,8 +2079,8 @@ provide the generated string that matches the provided regular expression. For e
 			header 'Content-Type': 'application/json'
 		}
 		body(
-				email: $(stub(optional(regex(email()))), test('abc@abc.com')),
-				callback_url: $(stub(regex(hostname())), test('http://partners.com'))
+				email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),
+				callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
 		)
 	}
 	response {
@@ -1992,7 +2089,7 @@ provide the generated string that matches the provided regular expression. For e
 			header 'Content-Type': 'application/json'
 		}
 		body(
-				code: value(stub("123123"), test(optional("123123")))
+				code: value(consumer("123123"), producer(optional("123123")))
 		)
 	}
 }</code></pre>
@@ -2072,7 +2169,7 @@ in the configuration. Please see the examples below:</p>
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
 	request {
 		method 'PUT'
-		url $(client(regex('^/api/[0-9]{2}$')), server('/api/12'))
+		url $(consumer(regex('^/api/[0-9]{2}$')), producer('/api/12'))
 		headers {
 			header 'Content-Type': 'application/json'
 		}
@@ -2084,8 +2181,8 @@ in the configuration. Please see the examples below:</p>
 	}
 	response {
 		body (
-				path: $(client('/api/12'), server(regex('^/api/[0-9]{2}$'))),
-				correlationId: $(client('1223456'), server(execute('isProperCorrelationId($it)')))
+				path: $(consumer('/api/12'), producer(regex('^/api/[0-9]{2}$'))),
+				correlationId: $(consumer('1223456'), producer(execute('isProperCorrelationId($it)')))
 		)
 		status 200
 	}
@@ -4903,7 +5000,7 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-07-20 19:41:22 CEST
+Last updated 2016-07-20 20:17:11 CEST
 </div>
 </div>
 </body>
