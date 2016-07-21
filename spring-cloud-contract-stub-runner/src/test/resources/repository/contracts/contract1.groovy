@@ -4,7 +4,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 		url """/fraudcheck"""
 		body("""
 					{
-					"clientPesel":"${value(client(regex('[0-9]{10}')), server('1234567890'))}",
+					"clientPesel":"${value(consumer(regex('[0-9]{10}')), producer('1234567890'))}",
 					"loanAmount":99999}
 				"""
 		)
@@ -16,11 +16,11 @@ org.springframework.cloud.contract.spec.Contract.make {
 	response {
 		status 200
 		body( """{
-	"fraudCheckStatus": "${value(client('FRAUD'), server(regex('[A-Z]{5}')))}",
+	"fraudCheckStatus": "${value(consumer('FRAUD'), producer(regex('[A-Z]{5}')))}",
 	"rejectionReason": "Amount too high"
 }""")
 		headers {
-			header('Content-Type': value(server(regex('application/vnd.fraud.v1.json.*')), client('application/vnd.fraud.v1+json')))
+			header('Content-Type': value(producer(regex('application/vnd.fraud.v1.json.*')), consumer('application/vnd.fraud.v1+json')))
 		}
 	}
 

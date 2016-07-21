@@ -11,13 +11,13 @@ class RequestSpec extends Specification {
 			Request request = new Request()
 		when:
 			request.with {
-				value(client("foo"), server(regex("foo")))
+				value(consumer("foo"), producer(regex("foo")))
 			}
 		then:
 			thrown(IllegalStateException)
 		when:
 			request.with {
-				value(server(regex("foo")), client("foo"))
+				value(producer(regex("foo")), consumer("foo"))
 			}
 		then:
 			thrown(IllegalStateException)
@@ -29,7 +29,7 @@ class RequestSpec extends Specification {
 			DslProperty property
 		when:
 			request.with {
-				property = value(client(regex("[0-9]{5}")))
+				property = value(consumer(regex("[0-9]{5}")))
 			}
 		then:
 			(property.serverValue as String).matches(/[0-9]{5}/)

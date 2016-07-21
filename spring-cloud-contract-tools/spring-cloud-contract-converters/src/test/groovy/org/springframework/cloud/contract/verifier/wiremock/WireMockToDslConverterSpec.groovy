@@ -57,12 +57,12 @@ class WireMockToDslConverterSpec extends Specification {
 					url '/path'
 					headers {
 						header('Accept': $(
-								client(regex('text/.*')),
-								server('text/plain')
+								consumer(regex('text/.*')),
+								producer('text/plain')
 						))
 						header('X-Custom-Header': $(
-								client(regex('^.*2134.*$')),
-								server('121345')
+								consumer(regex('^.*2134.*$')),
+								producer('121345')
 						))
 
 					}
@@ -119,7 +119,7 @@ class WireMockToDslConverterSpec extends Specification {
 			Contract expectedGroovyDsl = Contract.make {
 				request {
 					method 'DELETE'
-					url $(client(~/\/credit-card-verification-data\/[0-9]+/), server('/credit-card-verification-data/1'))
+					url $(consumer(~/\/credit-card-verification-data\/[0-9]+/), producer('/credit-card-verification-data/1'))
 					headers {
 						header('Content-Type': 'application/vnd.mymoid-adapter.v2+json; charset=UTF-8')
 					}
@@ -377,7 +377,7 @@ class WireMockToDslConverterSpec extends Specification {
 				request {
 					method 'POST'
 					url '/test'
-					body $(client(~/[0-9]{5}/), server('12345'))
+					body $(consumer(~/[0-9]{5}/), producer('12345'))
 				}
 				response {
 					status 200
@@ -498,7 +498,7 @@ class WireMockToDslConverterSpec extends Specification {
 				request {
 					method 'POST'
 					url '/test'
-					body $(client(~/[0-9]{2}/), server('12'))
+					body $(consumer(~/[0-9]{2}/), producer('12'))
 				}
 				response {
 					status 200

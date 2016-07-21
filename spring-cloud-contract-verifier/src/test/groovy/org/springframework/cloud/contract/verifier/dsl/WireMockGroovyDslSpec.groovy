@@ -31,21 +31,21 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method('GET')
-					url $(client(~/\/[0-9]{2}/), server('/12'))
+					url $(consumer(~/\/[0-9]{2}/), producer('/12'))
 				}
 				response {
 					status 200
 					body(
 							id: value(
-									client('123'),
-									server(regex('[0-9]+'))
+									consumer('123'),
+									producer(regex('[0-9]+'))
 							),
 							surname: $(
-									client('Kowalsky'),
-									server('Lewandowski')
+									consumer('Kowalsky'),
+									producer('Lewandowski')
 							),
 							name: 'Jan',
-							created: $(client('2014-02-02 12:23:43'), server({ currentDate(it) }))
+							created: $(consumer('2014-02-02 12:23:43'), producer({ currentDate(it) }))
 					)
 					headers {
 						header 'Content-Type': 'text/plain'
@@ -132,15 +132,15 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						header("Content-Type": 'application/x-www-form-urlencoded')
 					}
 					body("""paymentType=INCOMING&transferType=BANK&amount=${
-						value(client(regex('[0-9]{3}\\.[0-9]{2}')), server(500.00))
+						value(consumer(regex('[0-9]{3}\\.[0-9]{2}')), producer(500.00))
 					}&bookingDate=${
-						value(client(regex('[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])')), server('2015-05-18'))
+						value(consumer(regex('[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])')), producer('2015-05-18'))
 					}""")
 				}
 				response {
 					status 204
 					body(
-							paymentId: value(client('4'), server(regex('[1-9][0-9]*'))),
+							paymentId: value(consumer('4'), producer(regex('[1-9][0-9]*'))),
 							foundExistingPayment: false
 					)
 				}
@@ -179,16 +179,16 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method('GET')
-					url $(client(~/\/[0-9]{2}/), server('/12'))
+					url $(consumer(~/\/[0-9]{2}/), producer('/12'))
 				}
 				response {
 					status 200
 					body("""\
 							{
-								"id": "${value(client('123'), server('321'))}",
-								"surname": "${value(client('Kowalsky'), server('Lewandowski'))}",
+								"id": "${value(consumer('123'), producer('321'))}",
+								"surname": "${value(consumer('Kowalsky'), producer('Lewandowski'))}",
 								"name": "Jan",
-								"created" : "${$(client('2014-02-02 12:23:43'), server('2999-09-09 01:23:45'))}"
+								"created" : "${$(consumer('2014-02-02 12:23:43'), producer('2999-09-09 01:23:45'))}"
 							}
 						"""
 					)
@@ -224,7 +224,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method('GET')
-					url $(client(regex('/[0-9]{2}')), server('/12'))
+					url $(consumer(regex('/[0-9]{2}')), producer('/12'))
 					body """
 						{
 							"name": "Jan"
@@ -274,18 +274,18 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method('GET')
-					url $(client(~/\/[0-9]{2}/), server('/12'))
+					url $(consumer(~/\/[0-9]{2}/), producer('/12'))
 					body(
 							id: value(
-									client('123'),
-									server({ regex('[0-9]+') })
+									consumer('123'),
+									producer({ regex('[0-9]+') })
 							),
 							surname: $(
-									client('Kowalsky'),
-									server('Lewandowski')
+									consumer('Kowalsky'),
+									producer('Lewandowski')
 							),
 							name: 'Jan',
-							created: $(client('2014-02-02 12:23:43'), server({ currentDate(it) }))
+							created: $(consumer('2014-02-02 12:23:43'), producer({ currentDate(it) }))
 					)
 				}
 				response {
@@ -373,8 +373,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					headers {
 						header "Content-Type", "customtype/xml"
 					}
-					body """<name>${value(client('Jozo'), server('Denis'))}</name><jobId>${
-						value(client("<test>"), server('1234567890'))
+					body """<name>${value(consumer('Jozo'), producer('Denis'))}</name><jobId>${
+						value(consumer("<test>"), producer('1234567890'))
 					}</jobId>"""
 				}
 				response {
@@ -415,8 +415,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				request {
 					method 'GET'
 					url "/users"
-					body """<user><name>${value(client('Jozo'), server('Denis'))}</name><jobId>${
-						value(client("<test>"), server('1234567890'))
+					body """<user><name>${value(consumer('Jozo'), producer('Denis'))}</name><jobId>${
+						value(consumer("<test>"), producer('1234567890'))
 					}</jobId></user>"""
 				}
 				response {
@@ -455,8 +455,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 				response {
 					status 200
-					body """<user><name>${value(client('Jozo'), server('Denis'))}</name><jobId>${
-						value(client("<test>"), server('1234567890'))
+					body """<user><name>${value(consumer('Jozo'), producer('Denis'))}</name><jobId>${
+						value(consumer("<test>"), producer('1234567890'))
 					}</jobId></user>"""
 				}
 			}
@@ -520,8 +520,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				request {
 					method 'GET'
 					url "/users"
-					body equalToXml("""<name>${value(client('Jozo'), server('Denis'))}</name><jobId>${
-						value(client("<test>"), server('1234567890'))
+					body equalToXml("""<name>${value(consumer('Jozo'), producer('Denis'))}</name><jobId>${
+						value(consumer("<test>"), producer('1234567890'))
 					}</jobId>""")
 				}
 				response {
@@ -556,10 +556,10 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method('GET')
-					url $(client(regex('/[0-9]{2}')), server('/12'))
+					url $(consumer(regex('/[0-9]{2}')), producer('/12'))
 					body """
 						{
-							"personalId": "${value(client(regex('^[0-9]{11}$')), server('57593728525'))}"
+							"personalId": "${value(consumer(regex('^[0-9]{11}$')), producer('57593728525'))}"
 						}
 						"""
 				}
@@ -609,7 +609,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					url '/fraudcheck'
 					body("""
 						{
-						"clientPesel":"${value(client(regex('[0-9]{10}')), server('1234567890'))}",
+						"clientPesel":"${value(consumer(regex('[0-9]{10}')), producer('1234567890'))}",
 						"loanAmount":123.123
 						}
 					"""
@@ -623,7 +623,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					status 200
 					body(
 							fraudCheckStatus: "OK",
-							rejectionReason: $(client(null), server(execute('assertThatRejectionReasonIsNull($it)')))
+							rejectionReason: $(consumer(null), producer(execute('assertThatRejectionReasonIsNull($it)')))
 					)
 					headers {
 						header('Content-Type': 'application/vnd.fraud.v1+json')
@@ -668,15 +668,15 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
-					urlPath($(client("users"), server("items"))) {
+					urlPath($(consumer("users"), producer("items"))) {
 						queryParameters {
-							parameter 'limit': $(client(equalTo("20")), server("10"))
-							parameter 'offset': $(client(containing("10")), server("10"))
+							parameter 'limit': $(consumer(equalTo("20")), producer("10"))
+							parameter 'offset': $(consumer(containing("10")), producer("10"))
 							parameter 'filter': "email"
-							parameter 'sort': $(client(~/^[0-9]{10}$/), server("1234567890"))
-							parameter 'search': $(client(notMatching(~/^\/[0-9]{2}$/)), server("10"))
-							parameter 'age': $(client(notMatching("^\\w*\$")), server(10))
-							parameter 'name': $(client(matching("Denis.*")), server("Denis"))
+							parameter 'sort': $(consumer(~/^[0-9]{10}$/), producer("1234567890"))
+							parameter 'search': $(consumer(notMatching(~/^\/[0-9]{2}$/)), producer("10"))
+							parameter 'age': $(consumer(notMatching("^\\w*\$")), producer(10))
+							parameter 'name': $(consumer(matching("Denis.*")), producer("Denis"))
 							parameter 'credit': absent()
 						}
 					}
@@ -736,9 +736,9 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				method 'GET'
-				urlPath($(client(regex("/users/[0-9]+")), server("/users/1"))) {
+				urlPath($(consumer(regex("/users/[0-9]+")), producer("/users/1"))) {
 					queryParameters {
-						parameter 'search': $(client(notMatching(~/^\/[0-9]{2}$/)), server("10"))
+						parameter 'search': $(consumer(notMatching(~/^\/[0-9]{2}$/)), producer("10"))
 					}
 				}
 			}
@@ -775,7 +775,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
-					urlPath $(client("boxes"), server("items"))
+					urlPath $(consumer("boxes"), producer("items"))
 				}
 				response {
 					status 200
@@ -856,7 +856,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					method 'GET'
 					url("abc") {
 						queryParameters {
-							parameter 'age': $(client(notMatching("^\\w*\$")), server(regex(".*")))
+							parameter 'age': $(consumer(notMatching("^\\w*\$")), producer(regex(".*")))
 						}
 					}
 				}
@@ -902,7 +902,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 							method 'GET'
 							urlPath("users") {
 								queryParameters {
-									parameter 'name': $(client(absent()), server(""))
+									parameter 'name': $(consumer(absent()), producer(""))
 								}
 							}
 						}
@@ -915,7 +915,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 							method 'GET'
 							urlPath("users") {
 								queryParameters {
-									parameter 'name': $(client(""), server(absent()))
+									parameter 'name': $(consumer(""), producer(absent()))
 								}
 							}
 						}
@@ -928,7 +928,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 							method 'GET'
 							urlPath("users") {
 								queryParameters {
-									parameter 'name': $(client(absent()), server(matching("abc")))
+									parameter 'name': $(consumer(absent()), producer(matching("abc")))
 								}
 							}
 						}
@@ -944,10 +944,10 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
-					url($(client(regex(/users\/[0-9]*/)), server("users/123"))) {
+					url($(consumer(regex(/users\/[0-9]*/)), producer("users/123"))) {
 						queryParameters {
-							parameter 'age': $(client(notMatching("^\\w*\$")), server(10))
-							parameter 'name': $(client(matching("Denis.*")), server("Denis"))
+							parameter 'age': $(consumer(notMatching("^\\w*\$")), producer(10))
+							parameter 'name': $(consumer(matching("Denis.*")), producer("Denis"))
 						}
 					}
 				}
@@ -986,20 +986,20 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method('GET')
-					url $(client(~/\/[0-9]{2}/), server('/12'))
+					url $(consumer(~/\/[0-9]{2}/), producer('/12'))
 					body """\
 						{
-						  "personalId": "${value(client(regex('[0-9]{11}')), server('57593728525'))}",
-						  "firstName": "${value(client(regex('.*')), server('Bruce'))}",
-						  "lastName": "${value(client(regex('.*')), server('Lee'))}",
-						  "birthDate": "${value(client(regex('[0-9]{4}-[0-9]{2}-[0-9]{2}')), server('1985-12-12'))}",
+						  "personalId": "${value(consumer(regex('[0-9]{11}')), producer('57593728525'))}",
+						  "firstName": "${value(consumer(regex('.*')), producer('Bruce'))}",
+						  "lastName": "${value(consumer(regex('.*')), producer('Lee'))}",
+						  "birthDate": "${value(consumer(regex('[0-9]{4}-[0-9]{2}-[0-9]{2}')), producer('1985-12-12'))}",
 						  "errors": [
 									{
-									  "propertyName": "${value(client(regex('[0-9]{2}')), server('04'))}",
+									  "propertyName": "${value(consumer(regex('[0-9]{2}')), producer('04'))}",
 									  "providerValue": "Test"
 									},
 									{
-									  "propertyName": "${value(client(regex('[0-9]{2}')), server('08'))}",
+									  "propertyName": "${value(consumer(regex('[0-9]{2}')), producer('08'))}",
 									  "providerValue": "Test"
 									}
 								  ]
@@ -1060,10 +1060,10 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					url '/reissue-payment-order'
 					body(
 							loanNumber: "999997001",
-							amount: value(client(regex('[0-9.]+')), server('100.00')),
+							amount: value(consumer(regex('[0-9.]+')), producer('100.00')),
 							currency: "DKK",
-							applicationName: value(client(regex('.*')), server("Auto-Repayments")),
-							username: value(client(regex('.*')), server("scheduler")),
+							applicationName: value(consumer(regex('.*')), producer("Auto-Repayments")),
+							username: value(consumer(regex('.*')), producer("scheduler")),
 							cardId: 1
 					)
 				}
@@ -1182,7 +1182,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					method('POST')
 					url("foo")
 					body(
-							property: value(stub("value"), test("value"))
+							property: value(consumer("value"), producer("value"))
 					)
 				}
 				response {
@@ -1257,8 +1257,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						header 'Content-Type': 'application/json'
 					}
 					body(
-							email: $(client(regex(email())), server('not.existing@user.com')),
-							callback_url: $(client(regex(hostname())), server('http://partners.com'))
+							email: $(consumer(regex(email())), producer('not.existing@user.com')),
+							callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
 					)
 				}
 				response {
@@ -1268,7 +1268,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					}
 					body(
 							code: 4,
-							message: "User not found by email = [${value(server(regex(email())), client('not.existing@user.com'))}]"
+							message: "User not found by email = [${value(producer(regex(email())), consumer('not.existing@user.com'))}]"
 					)
 				}
 			}
@@ -1311,7 +1311,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 				request {
 					method 'PUT'
-					url "/partners/${value(client(regex('^[0-9]*$')), server('11'))}/agents/11/customers/09665703Z"
+					url "/partners/${value(consumer(regex('^[0-9]*$')), producer('11'))}/agents/11/customers/09665703Z"
 					headers {
 						header 'Content-Type': 'application/json'
 					}
@@ -1393,8 +1393,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 							header 'Content-Type': 'application/json'
 						}
 						body(
-								email: $(stub(optional(regex(email()))), test('abc@abc.com')),
-								callback_url: $(stub(regex(hostname())), test('http://partners.com'))
+								email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),
+								callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
 						)
 					}
 					response {
@@ -1403,8 +1403,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 							header 'Content-Type': 'application/json'
 						}
 						body(
-								code: $(stub("123123"), test(optional("123123"))),
-								message: "User not found by email = [${value(test(regex(email())), stub('not.existing@user.com'))}]"
+								code: $(consumer("123123"), producer(optional("123123"))),
+								message: "User not found by email = [${value(producer(regex(email())), consumer('not.existing@user.com'))}]"
 						)
 					}
 				},
@@ -1418,8 +1418,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						}
 						body(
 								""" {
-								"email" : "${value(stub(optional(regex(email()))), test('abc@abc.com'))}",
-								"callback_url" : "${value(client(regex(hostname())), server('http://partners.com'))}"
+								"email" : "${value(consumer(optional(regex(email()))), producer('abc@abc.com'))}",
+								"callback_url" : "${value(consumer(regex(hostname())), producer('http://partners.com'))}"
 								}
 							"""
 						)
@@ -1431,8 +1431,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						}
 						body(
 								""" {
-								"code" : "${value(stub(123123), test(optional(123123)))}",
-								"message" : "User not found by email = [${value(server(regex(email())), client('not.existing@user.com'))}]"
+								"code" : "${value(consumer(123123), producer(optional(123123)))}",
+								"message" : "User not found by email = [${value(producer(regex(email())), consumer('not.existing@user.com'))}]"
 								}
 							"""
 						)
@@ -1461,11 +1461,11 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					method "PUT"
 					url "/multipart"
 					multipart(
-							formParameter: value(client(regex('".+"')), server('"formParameterValue"')),
-							someBooleanParameter: value(client(regex('(true|false)')), server('true')),
+							formParameter: value(consumer(regex('".+"')), producer('"formParameterValue"')),
+							someBooleanParameter: value(consumer(regex('(true|false)')), producer('true')),
 							file: named(
-									name: value(client(regex('.+')), server('filename.csv')),
-									content: value(client(regex('.+')), server('file content')))
+									name: value(consumer(regex('.+')), producer('filename.csv')),
+									content: value(consumer(regex('.+')), producer('file content')))
 					)
 				}
 				response {
@@ -1507,16 +1507,16 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				urlPath ('/some/api') {
 					queryParameters {
 						parameter 'size': value(
-								client(regex('[0-9]+')),
-								server(1)
+								consumer(regex('[0-9]+')),
+								producer(1)
 						)
 						parameter 'page': value(
-								client(regex('[0-9]+')),
-								server(0)
+								consumer(regex('[0-9]+')),
+								producer(0)
 						)
 						parameter sort: value(
-							client(optional(regex('^[a-z]+$'))),
-							server('id')
+							consumer(optional(regex('^[a-z]+$'))),
+							producer('id')
 						)
 					}
 				}

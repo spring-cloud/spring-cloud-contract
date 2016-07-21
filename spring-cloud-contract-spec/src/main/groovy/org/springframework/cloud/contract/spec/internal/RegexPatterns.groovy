@@ -28,6 +28,7 @@ import java.util.regex.Pattern
 @CompileStatic
 class RegexPatterns {
 
+	// tag::regexps[]
 	private static final Pattern TRUE_OR_FALSE = Pattern.compile(/(true|false)/)
 	private static final Pattern ONLY_ALPHA_UNICODE = Pattern.compile(/[\p{L}]*/)
 	private static final Pattern NUMBER = Pattern.compile('-?\\d*(\\.\\d+)?')
@@ -63,6 +64,7 @@ class RegexPatterns {
 	String url() {
 		return URL.pattern()
 	}
+	// end::regexps[]
 	
 	static String multipartParam(Object name, Object value) {
 		return ".*--(.*)\r\nContent-Disposition: form-data; name=\"$name\"\r\n(Content-Type: .*\r\n)?(Content-Length: \\d+\r\n)?\r\n$value\r\n--\\1.*"

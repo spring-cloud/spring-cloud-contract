@@ -110,15 +110,15 @@ class ContractHttpDocsSpec extends Specification {
 
 						// `containing` function matches strings
 						// that contains passed substring.
-						parameter 'gender': value(stub(containing("[mf]")), server('mf'))
+						parameter 'gender': value(consumer(containing("[mf]")), producer('mf'))
 
 						// `matching` function tests parameter
 						// against passed regular expression.
-						parameter 'offset': value(stub(matching("[0-9]+")), server(123))
+						parameter 'offset': value(consumer(matching("[0-9]+")), producer(123))
 
 						// `notMatching` functions tests if parameter
 						// does not match passed regular expression.
-						parameter 'loginStartsWith': value(stub(notMatching(".{0,2}")), server(3))
+						parameter 'loginStartsWith': value(consumer(notMatching(".{0,2}")), producer(3))
 					}
 				}
 
@@ -205,23 +205,23 @@ class ContractHttpDocsSpec extends Specification {
 		org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				method('GET')
-				url $(client(~/\/[0-9]{2}/), server('/12'))
+				url $(consumer(~/\/[0-9]{2}/), producer('/12'))
 			}
 			response {
 				status 200
 				body(
 						id: value(
-								client('123'),
-								server(regex('[0-9]+'))
+								consumer('123'),
+								producer(regex('[0-9]+'))
 						),
 						surname: $(
-								client('Kowalsky'),
-								server('Lewandowski')
+								consumer('Kowalsky'),
+								producer('Lewandowski')
 						),
 						name: 'Jan',
-						created: $(client('2014-02-02 12:23:43'), server(execute('currentDate(it)'))),
-						correlationId: value(client('5d1f9fef-e0dc-4f3d-a7e4-72d2220dd827'),
-								server(regex('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}'))
+						created: $(consumer('2014-02-02 12:23:43'), producer(execute('currentDate(it)'))),
+						correlationId: value(consumer('5d1f9fef-e0dc-4f3d-a7e4-72d2220dd827'),
+								producer(regex('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}'))
 						)
 				)
 				headers {
@@ -242,8 +242,8 @@ class ContractHttpDocsSpec extends Specification {
 					header 'Content-Type': 'application/json'
 				}
 				body(
-						email: $(stub(optional(regex(email()))), test('abc@abc.com')),
-						callback_url: $(stub(regex(hostname())), test('http://partners.com'))
+						email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),
+						callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
 				)
 			}
 			response {
@@ -252,7 +252,7 @@ class ContractHttpDocsSpec extends Specification {
 					header 'Content-Type': 'application/json'
 				}
 				body(
-						code: value(stub("123123"), test(optional("123123")))
+						code: value(consumer("123123"), producer(optional("123123")))
 				)
 			}
 		}
@@ -291,7 +291,7 @@ class ContractHttpDocsSpec extends Specification {
 		org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				method 'PUT'
-				url $(client(regex('^/api/[0-9]{2}$')), server('/api/12'))
+				url $(consumer(regex('^/api/[0-9]{2}$')), producer('/api/12'))
 				headers {
 					header 'Content-Type': 'application/json'
 				}
@@ -303,8 +303,8 @@ class ContractHttpDocsSpec extends Specification {
 			}
 			response {
 				body (
-						path: $(client('/api/12'), server(regex('^/api/[0-9]{2}$'))),
-						correlationId: $(client('1223456'), server(execute('isProperCorrelationId($it)')))
+						path: $(consumer('/api/12'), producer(regex('^/api/[0-9]{2}$'))),
+						correlationId: $(consumer('1223456'), producer(execute('isProperCorrelationId($it)')))
 				)
 				status 200
 			}

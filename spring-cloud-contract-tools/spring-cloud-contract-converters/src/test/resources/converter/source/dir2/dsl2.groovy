@@ -22,7 +22,7 @@ Contract.make {
 		headers {
 			header 'Content-Type': 'application/json'
 		}
-		url $(client('/[0-9]{2}'), server('/12'))
+		url $(consumer('/[0-9]{2}'), producer('/12'))
 	}
 	response {
 		status 200

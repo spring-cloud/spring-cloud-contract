@@ -47,20 +47,6 @@ class Input extends Common {
 	}
 
 	/**
-	 * Helper method to provide a better name for the producer side
-	 */
-	ServerDslProperty producer(Object clientValue) {
-		return new ServerDslProperty(clientValue)
-	}
-
-	/**
-	 * Helper method to provide a better name for the consumer side
-	 */
-	ClientDslProperty consumer(Object clientValue) {
-		return new ClientDslProperty(clientValue)
-	}
-
-	/**
 	 * Name of a destination from which message would come to trigger action in the system
 	 */
 	void messageFrom(String messageFrom) {

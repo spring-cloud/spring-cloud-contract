@@ -21,7 +21,7 @@ Contract.make {
 				url """/fraudcheck"""
 				body("""
 					{
-					"clientPesel":"${value(client(regex('[0-9]{10}')), server('1234567890'))}",
+					"clientPesel":"${value(consumer(regex('[0-9]{10}')), producer('1234567890'))}",
 					"loanAmount":99999}
 				"""
 				)
@@ -33,7 +33,7 @@ Contract.make {
 			response {
 				status 200
 				body( """{
-	"fraudCheckStatus": "${value(client('FRAUD'), server(regex('[A-Z]{5}')))}",
+	"fraudCheckStatus": "${value(consumer('FRAUD'), producer(regex('[A-Z]{5}')))}",
 	"rejectionReason": "Amount too high"
 }""")
 				headers {

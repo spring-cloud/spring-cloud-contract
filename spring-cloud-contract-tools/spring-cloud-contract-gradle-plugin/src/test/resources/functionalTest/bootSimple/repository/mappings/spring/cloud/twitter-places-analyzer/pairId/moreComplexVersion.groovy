@@ -19,7 +19,7 @@ import org.springframework.cloud.contract.spec.Contract
 Contract.make {
 	request {
 		method 'PUT'
-		url $(client(regex('^/api/[0-9]{2}$')), server('/api/12'))
+		url $(consumer(regex('^/api/[0-9]{2}$')), producer('/api/12'))
 		headers {
 			header 'Content-Type': 'application/json'
 		}
@@ -31,12 +31,12 @@ Contract.make {
 	}
 	response {
 		headers {
-			header 'Content-Type': $(client('application/json'), server(regex('application/json.*')))
-			header 'Location': $(client('https://localhost:8080'), server(execute('isEmpty($it)')))
+			header 'Content-Type': $(consumer('application/json'), producer(regex('application/json.*')))
+			header 'Location': $(consumer('https://localhost:8080'), producer(execute('isEmpty($it)')))
 		}
 		body (
-			 path: $(client('/api/12'), server(regex('^/api/[0-9]{2}$'))),
-			 correlationId: $(client('1223456'), server(execute('isProperCorrelationId($it)')))
+			 path: $(consumer('/api/12'), producer(regex('^/api/[0-9]{2}$'))),
+			 correlationId: $(consumer('1223456'), producer(execute('isProperCorrelationId($it)')))
 		)
 		status 200
 	}

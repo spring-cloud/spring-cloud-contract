@@ -25,19 +25,19 @@ Contract.make {
 		body("""\
 		  {
 			"name": "Jan",
-			"id": "${value(client('abc'), server('def'))}",
+			"id": "${value(consumer('abc'), producer('def'))}",
 		  }
 		  """
 		)
-		url $(client('/[0-9]{2}'), server('/12'))
+		url $(consumer('/[0-9]{2}'), producer('/12'))
 	}
 	response {
 		status 200
 		body("""\
 		  {
 			"name": "Jan",
-			"id": "${value(client('123'), server('321'))}",
-						"surname": "${value(client('Kowalsky'), server('$checkIfSurnameValid($value)'))}"
+			"id": "${value(consumer('123'), producer('321'))}",
+						"surname": "${value(consumer('Kowalsky'), producer('$checkIfSurnameValid($value)'))}"
 		  }
 		  """
 		)

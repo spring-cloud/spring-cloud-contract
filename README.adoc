@@ -224,7 +224,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 }
 ----
 
-The Contract is written using a statically typed Groovy DSL. You might be wondering what are those `${value(client(...), server(...))}` parts. So the `${}` is a String interpolation in Groovy. You can resolve a variable inside a String. In other words `"concat ${foo} and ${bar}"` is the same as `"concat " + foo + " and " + bar`. The `value(client(...), server(...))` allows you to define parts of a JSON which are dynamic. In case of an identifier or a timestamp you don't want to hardcode a value. You want to allow some different ranges of values. That's why for the consumer side you can set regular expressions matching those values. You can provide the body either by means of String with interpolations or with a map notation. https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_contract_dsl[Consult the docs for more information.]
+The Contract is written using a statically typed Groovy DSL. You might be wondering what are those `${value(consumer(...), producer(...))}` parts. So the `${}` is a String interpolation in Groovy. You can resolve a variable inside a String. In other words `"concat ${foo} and ${bar}"` is the same as `"concat " + foo + " and " + bar`. The `value(consumer(...), producer(...))` allows you to define parts of a JSON which are dynamic. In case of an identifier or a timestamp you don't want to hardcode a value. You want to allow some different ranges of values. That's why for the consumer side you can set regular expressions matching those values. You can provide the body either by means of String with interpolations or with a map notation. https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_contract_dsl[Consult the docs for more information.]
 
 The aforementioned contract is an agreement between two sides that:
 
@@ -503,7 +503,7 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
 }
 ----
 
-As you can see all the `server()` parts of the Contract that were present in the `value(client(...), server(...))` blocks got injected into the test.
+As you can see all the `producer()` parts of the Contract that were present in the `value(consumer(...), producer(...))` blocks got injected into the test.
 
 What's important here to note is that on the producer side we also are doing TDD. We have expectations in form of a test. This test is shooting a request to our own application to an URL, headers and body defined in the contract. It also is expecting very precisely defined values in the response. In other words you have is your `red` part of `red`, `green` and `refactor`. Time to convert the `red` into the `green`.
 

@@ -21,7 +21,7 @@ Contract.make {
 					url '/fraudcheck'
 					body("""
 						{
-						"clientPesel":"${value(client(regex('[0-9]{10}')), server('1234567890'))}",
+						"clientPesel":"${value(consumer(regex('[0-9]{10}')), producer('1234567890'))}",
 						"loanAmount":123.123
 						}
 					"""
@@ -35,7 +35,7 @@ Contract.make {
 				status 200
 				body(
 						fraudCheckStatus: "OK",
-						rejectionReason: $(client(null), server(execute('assertThatRejectionReasonIsNull($it)')))
+						rejectionReason: $(consumer(null), producer(execute('assertThatRejectionReasonIsNull($it)')))
 				)
 				headers {
 					 header('Content-Type': 'application/vnd.fraud.v1+json')

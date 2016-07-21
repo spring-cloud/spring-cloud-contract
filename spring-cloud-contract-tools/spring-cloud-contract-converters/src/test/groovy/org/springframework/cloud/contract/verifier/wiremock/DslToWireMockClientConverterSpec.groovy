@@ -37,7 +37,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 				org.springframework.cloud.contract.spec.Contract.make {
 					request {
 						method('PUT')
-						url \$(client(~/\\/[0-9]{2}/), server('/12'))
+						url \$(consumer(~/\\/[0-9]{2}/), producer('/12'))
 					}
 					response {
 						status 200
@@ -203,11 +203,11 @@ class DslToWireMockClientConverterSpec extends Specification {
             response {
                 status 200
                 body([[id: value(
-                        client('123'),
-                        server(regex('[0-9]+'))
+                        consumer('123'),
+                        producer(regex('[0-9]+'))
                 )], [id: value(
-                        client('567'),
-                        server(regex('[0-9]+'))
+                        consumer('567'),
+                        producer(regex('[0-9]+'))
                 )]])
                 headers {
 									header 'Content-Type': 'application/json'
@@ -238,8 +238,8 @@ class DslToWireMockClientConverterSpec extends Specification {
 						header 'Content-Type': 'application/json'
 					}
 					body(
-							email: $(stub(optional(regex(email()))), test('abc@abc.com')),
-							callback_url: $(stub(regex(hostname())), test('http://partners.com'))
+							email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),
+							callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
 					)
 				}
 				response {
@@ -248,8 +248,8 @@ class DslToWireMockClientConverterSpec extends Specification {
 						header 'Content-Type': 'application/json'
 					}
 					body(
-							code: value(stub("123123"), test(optional("123123"))),
-							message: "User not found by email == [${value(test(regex(email())), stub('not.existing@user.com'))}]"
+							code: value(consumer("123123"), producer(optional("123123"))),
+							message: "User not found by email == [${value(producer(regex(email())), consumer('not.existing@user.com'))}]"
 					)
 				}
 			}

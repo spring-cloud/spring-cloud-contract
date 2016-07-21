@@ -59,8 +59,8 @@ class WireMockToDslConverter {
 			request {
 				${request.method ? "method \"\"\"$request.method\"\"\"" : ""}
 				${request.url ? "url \"\"\"$request.url\"\"\"" : ""}
-				${urlPattern ? "url \$(client(regex('${escapeJava(urlPattern)}')), server('${new Xeger(escapeJava(urlPattern)).generate()}'))" : ""}
-				${urlPathPattern ? "urlPath \$(client(regex('${escapeJava(urlPattern)}')), server('${new Xeger(escapeJava(urlPattern)).generate()}'))" : ""}
+				${urlPattern ? "url \$(consumer(regex('${escapeJava(urlPattern)}')), producer('${new Xeger(escapeJava(urlPattern)).generate()}'))" : ""}
+				${urlPathPattern ? "urlPath \$(consumer(regex('${escapeJava(urlPattern)}')), producer('${new Xeger(escapeJava(urlPattern)).generate()}'))" : ""}
 				${request.urlPath ? "url \"\"\"$request.urlPath\"\"\"" : ""}
 				${
 					request.headers ? """headers {
@@ -77,7 +77,7 @@ class WireMockToDslConverter {
 				}
 				${bodyPatterns?.equalTo?.every { it } ? "body('''${bodyPatterns.equalTo[0]}''')" : ''}
 				${bodyPatterns?.equalToJson?.every { it } ? "body('''${bodyPatterns.equalToJson[0]}''')" : ''}
-				${bodyPatterns?.matches?.every { it } ? "body \$(client(regex('${escapeJava(bodyPatterns.matches[0])}')), server('${new Xeger(escapeJava(bodyPatterns.matches[0])).generate()}'))" : ""}
+				${bodyPatterns?.matches?.every { it } ? "body \$(consumer(regex('${escapeJava(bodyPatterns.matches[0])}')), producer('${new Xeger(escapeJava(bodyPatterns.matches[0])).generate()}'))" : ""}
 			}
 			response {
 				${response.status ? "status $response.status" : ""}

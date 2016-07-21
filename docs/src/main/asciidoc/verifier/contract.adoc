@@ -97,7 +97,35 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 
 Besides status response may contain **headers** and **body**, which are specified the same way as in the request (see previous paragraph).
 
+==== Dynamic properties
+
+The contract can contain some dynamic properties - timestamps / ids etc. You don't want to enforce the consumers to stub their
+clocks to always return the same value of time so that it gets matched by the stub. That's why we allow you to provide the dynamic
+parts in your contracts in the following way
+
+either via the `value` method
+
+[source,groovy,indent=0]
+----
+value(consumer(...), producer(...))
+value(stub(...), test(...))
+value(client(...), server(...))
+----
+
+or if you're using the Groovy map notation for body you can use the `$()` method
+
+[source,groovy,indent=0]
+----
+$(consumer(...), producer(...))
+$(stub(...), test(...))
+$(client(...), server(...))
+----
+
+All of the aforementioned approaches are equal. That means that `stub` and `client` methods are aliases over the `consumer`
+method. Let's take a closer look at what we can do with those values in the subsequent sections.
+
 ==== Regular expressions
+
 You can use regular expressions to write your requests in Contract DSL. It is particularly useful when you want to indicate that a given response
 should be provided for requests that follow a given pattern. Also, you can use it when you need to use patterns and not exact values both
 for your test and your server side tests.
@@ -118,6 +146,20 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 ----
 
 In this example for request and response the opposite side of the communication will have the respective data generated.
+
+Spring Cloud Contract comes with a series of predefined regular expressions that you can use in your contracts.
+
+[source,groovy,indent=0]
+----
+include::{contract_spec_path}/src/main/groovy/org/springframework/cloud/contract/spec/internal/RegexPatterns.groovy[tags=regexps,indent=0]
+----
+
+so in your contract you can use it like this
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderSpec.groovy[tags=contract_with_regex,indent=0]
+----
 
 
 ==== Passing optional parameters

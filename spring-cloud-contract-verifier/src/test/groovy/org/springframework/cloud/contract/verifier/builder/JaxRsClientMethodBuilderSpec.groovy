@@ -294,8 +294,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					body(
 							property1: "a",
 							property2: value(
-									client('123'),
-									server(regex('[0-9]{3}'))
+									consumer('123'),
+									producer(regex('[0-9]{3}'))
 							)
 					)
 					headers {
@@ -329,7 +329,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 				}
 				response {
 					status 200
-					body("""{"property1":"a","property2":"${value(client('123'), server(regex('[0-9]{3}')))}"}""")
+					body("""{"property1":"a","property2":"${value(consumer('123'), producer(regex('[0-9]{3}')))}"}""")
 					headers {
 						header('Content-Type': 'application/json')
 
@@ -420,15 +420,15 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					method 'GET'
 					urlPath('/users') {
 						queryParameters {
-							parameter 'limit': $(client(equalTo("20")), server(equalTo("10")))
-							parameter 'offset': $(client(containing("20")), server(equalTo("20")))
+							parameter 'limit': $(consumer(equalTo("20")), producer(equalTo("10")))
+							parameter 'offset': $(consumer(containing("20")), producer(equalTo("20")))
 							parameter 'filter': "email"
 							parameter 'sort': equalTo("name")
-							parameter 'search': $(client(notMatching(~/^\/[0-9]{2}$/)), server("55"))
-							parameter 'age': $(client(notMatching("^\\w*\$")), server("99"))
-							parameter 'name': $(client(matching("Denis.*")), server("Denis.Stepanov"))
+							parameter 'search': $(consumer(notMatching(~/^\/[0-9]{2}$/)), producer("55"))
+							parameter 'age': $(consumer(notMatching("^\\w*\$")), producer("99"))
+							parameter 'name': $(consumer(matching("Denis.*")), producer("Denis.Stepanov"))
 							parameter 'email': "bob@email.com"
-							parameter 'hello': $(client(matching("Denis.*")), server(absent()))
+							parameter 'hello': $(consumer(matching("Denis.*")), producer(absent()))
 							parameter 'hello': absent()
 						}
 					}
@@ -473,17 +473,17 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
-					url($(stub(regex('/foo/[0-9]+')), test('/foo/123456'))) {
+					url($(consumer(regex('/foo/[0-9]+')), producer('/foo/123456'))) {
 						queryParameters {
-							parameter 'limit': $(client(equalTo("20")), server(equalTo("10")))
-							parameter 'offset': $(client(containing("20")), server(equalTo("20")))
+							parameter 'limit': $(consumer(equalTo("20")), producer(equalTo("10")))
+							parameter 'offset': $(consumer(containing("20")), producer(equalTo("20")))
 							parameter 'filter': "email"
 							parameter 'sort': equalTo("name")
-							parameter 'search': $(client(notMatching(~/^\/[0-9]{2}$/)), server("55"))
-							parameter 'age': $(client(notMatching("^\\w*\$")), server("99"))
-							parameter 'name': $(client(matching("Denis.*")), server("Denis.Stepanov"))
+							parameter 'search': $(consumer(notMatching(~/^\/[0-9]{2}$/)), producer("55"))
+							parameter 'age': $(consumer(notMatching("^\\w*\$")), producer("99"))
+							parameter 'name': $(consumer(matching("Denis.*")), producer("Denis.Stepanov"))
 							parameter 'email': "bob@email.com"
-							parameter 'hello': $(client(matching("Denis.*")), server(absent()))
+							parameter 'hello': $(consumer(matching("Denis.*")), producer(absent()))
 							parameter 'hello': absent()
 						}
 					}
@@ -618,15 +618,15 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 				method 'GET'
 				urlPath('/users') {
 					queryParameters {
-						parameter 'limit': $(client(equalTo("20")), server(equalTo("10")))
-						parameter 'offset': $(client(containing("20")), server(equalTo("20")))
+						parameter 'limit': $(consumer(equalTo("20")), producer(equalTo("10")))
+						parameter 'offset': $(consumer(containing("20")), producer(equalTo("20")))
 						parameter 'filter': "email"
 						parameter 'sort': equalTo("name")
-						parameter 'search': $(client(notMatching(~/^\/[0-9]{2}$/)), server("55"))
-						parameter 'age': $(client(notMatching("^\\w*\$")), server("99"))
-						parameter 'name': $(client(matching("Denis.*")), server("Denis.Stepanov"))
+						parameter 'search': $(consumer(notMatching(~/^\/[0-9]{2}$/)), producer("55"))
+						parameter 'age': $(consumer(notMatching("^\\w*\$")), producer("99"))
+						parameter 'name': $(consumer(matching("Denis.*")), producer("Denis.Stepanov"))
 						parameter 'email': "bob@email.com"
-						parameter 'hello': $(client(matching("Denis.*")), server(absent()))
+						parameter 'hello': $(consumer(matching("Denis.*")), producer(absent()))
 						parameter 'hello': absent()
 					}
 				}

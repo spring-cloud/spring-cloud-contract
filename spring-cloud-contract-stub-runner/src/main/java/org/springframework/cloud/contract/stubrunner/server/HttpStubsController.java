@@ -46,7 +46,7 @@ public class HttpStubsController {
 	}
 
 	@RequestMapping(path = "/{ivy:.*}")
-	public ResponseEntity<Integer> stub(@PathVariable String ivy) {
+	public ResponseEntity<Integer> consumer(@PathVariable String ivy) {
 		Integer port = stubRunning.runStubs().getPort(ivy);
 		if (port!=null) {
 			return ResponseEntity.ok(port);

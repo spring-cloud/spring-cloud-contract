@@ -30,8 +30,9 @@ import java.util.regex.Pattern
 class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStubVerifier {
 
 	@Shared ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(assertJsonSize: true)
-	
+
 	@Shared
+	// tag::contract_with_regex[]
 	Contract dslWithOptionalsInString = Contract.make {
 		priority 1
 		request {
@@ -41,8 +42,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				header 'Content-Type': 'application/json'
 			}
 			body(
-					email: $(stub(optional(regex(email()))), test('abc@abc.com')),
-					callback_url: $(stub(regex(hostname())), test('http://partners.com'))
+					email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),
+					callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
 			)
 		}
 		response {
@@ -51,11 +52,12 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				header 'Content-Type': 'application/json'
 			}
 			body(
-					code: value(stub("123123"), test(optional("123123"))),
-					message: "User not found by email = [${value(test(regex(email())), stub('not.existing@user.com'))}]"
+					code: value(consumer("123123"), producer(optional("123123"))),
+					message: "User not found by email = [${value(producer(regex(email())), consumer('not.existing@user.com'))}]"
 			)
 		}
 	}
+	// end::contract_with_regex[]
 
 	@Shared
 	Contract dslWithOptionals = Contract.make {
@@ -69,10 +71,10 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			body(
 					""" {
 								"email" : "${
-						value(stub(optional(regex(email()))), test('abc@abc.com'))
+						value(consumer(optional(regex(email()))), producer('abc@abc.com'))
 					}",
 								"callback_url" : "${
-						value(client(regex(hostname())), server('http://partners.com'))
+						value(consumer(regex(hostname())), producer('http://partners.com'))
 					}"
 								}
 							"""
@@ -85,9 +87,9 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			}
 			body(
 					""" {
-								"code" : "${value(stub(123123), test(optional(123123)))}",
+								"code" : "${value(consumer(123123), producer(optional(123123)))}",
 								"message" : "User not found by email = [${
-						value(server(regex(email())), client('not.existing@user.com'))
+						value(producer(regex(email())), consumer('not.existing@user.com'))
 					}]"
 								}
 							"""
@@ -394,8 +396,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				body(
 						property1: "a",
 						property2: value(
-								client('123'),
-								server(regex('[0-9]{3}'))
+								consumer('123'),
+								producer(regex('[0-9]{3}'))
 						)
 				)
 				headers {
@@ -428,7 +430,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			response {
 				status 200
 				body("""{"property1":"a","property2":"${
-					value(client('123'), server(regex('[0-9]{3}')))
+					value(consumer('123'), producer(regex('[0-9]{3}')))
 				}"}""")
 				headers {
 					header('Content-Type': 'application/json')
@@ -461,7 +463,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			response {
 				status 200
 				body("""{"property":"  ${
-					value(client('123'), server(regex('\\d+')))
+					value(consumer('123'), producer(regex('\\d+')))
 				}"}""")
 				headers {
 					header('Content-Type': 'application/json')
@@ -489,15 +491,15 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				method 'GET'
 				urlPath('/users') {
 					queryParameters {
-						parameter 'limit': $(client(equalTo("20")), server(equalTo("10")))
-						parameter 'offset': $(client(containing("20")), server(equalTo("20")))
+						parameter 'limit': $(consumer(equalTo("20")), producer(equalTo("10")))
+						parameter 'offset': $(consumer(containing("20")), producer(equalTo("20")))
 						parameter 'filter': "email"
 						parameter 'sort': equalTo("name")
-						parameter 'search': $(client(notMatching(~/^\/[0-9]{2}$/)), server("55"))
-						parameter 'age': $(client(notMatching("^\\w*\$")), server("99"))
-						parameter 'name': $(client(matching("Denis.*")), server("Denis.Stepanov"))
+						parameter 'search': $(consumer(notMatching(~/^\/[0-9]{2}$/)), producer("55"))
+						parameter 'age': $(consumer(notMatching("^\\w*\$")), producer("99"))
+						parameter 'name': $(consumer(matching("Denis.*")), producer("Denis.Stepanov"))
 						parameter 'email': "bob@email.com"
-						parameter 'hello': $(client(matching("Denis.*")), server(absent()))
+						parameter 'hello': $(consumer(matching("Denis.*")), producer(absent()))
 						parameter 'hello': absent()
 					}
 				}
@@ -535,17 +537,17 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		Contract contractDsl = Contract.make {
 			request {
 				method 'GET'
-				url($(stub(regex('/foo/[0-9]+')), test('/foo/123456'))) {
+				url($(consumer(regex('/foo/[0-9]+')), producer('/foo/123456'))) {
 					queryParameters {
-						parameter 'limit': $(client(equalTo("20")), server(equalTo("10")))
-						parameter 'offset': $(client(containing("20")), server(equalTo("20")))
+						parameter 'limit': $(consumer(equalTo("20")), producer(equalTo("10")))
+						parameter 'offset': $(consumer(containing("20")), producer(equalTo("20")))
 						parameter 'filter': "email"
 						parameter 'sort': equalTo("name")
-						parameter 'search': $(client(notMatching(~/^\/[0-9]{2}$/)), server("55"))
-						parameter 'age': $(client(notMatching("^\\w*\$")), server("99"))
-						parameter 'name': $(client(matching("Denis.*")), server("Denis.Stepanov"))
+						parameter 'search': $(consumer(notMatching(~/^\/[0-9]{2}$/)), producer("55"))
+						parameter 'age': $(consumer(notMatching("^\\w*\$")), producer("99"))
+						parameter 'name': $(consumer(matching("Denis.*")), producer("Denis.Stepanov"))
 						parameter 'email': "bob@email.com"
-						parameter 'hello': $(client(matching("Denis.*")), server(absent()))
+						parameter 'hello': $(consumer(matching("Denis.*")), producer(absent()))
 						parameter 'hello': absent()
 					}
 				}
@@ -638,7 +640,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		Contract contractDsl = Contract.make {
 			request {
 				method 'POST'
-				url $(client(regex('/partners/[0-9]+/users')), server('/partners/1000/users'))
+				url $(consumer(regex('/partners/[0-9]+/users')), producer('/partners/1000/users'))
 				headers { header 'Content-Type': 'application/json' }
 				body(
 						first_name: 'John',
@@ -652,7 +654,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			response {
 				status 201
 				headers {
-					header 'Location': $(client('http://localhost/partners/1000/users/1001'), server(regex('http://localhost/partners/[0-9]+/users/[0-9]+')))
+					header 'Location': $(consumer('http://localhost/partners/1000/users/1001'), producer(regex('http://localhost/partners/[0-9]+/users/[0-9]+')))
 				}
 			}
 		}
@@ -677,7 +679,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		Contract contractDsl = Contract.make {
 			request {
 				method 'POST'
-				url $(client(regex('/partners/[0-9]+/users')), server('/partners/1000/users'))
+				url $(consumer(regex('/partners/[0-9]+/users')), producer('/partners/1000/users'))
 				headers { header 'Content-Type': 'application/json' }
 				body(
 						first_name: 'John',
@@ -691,7 +693,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			response {
 				status 201
 				headers {
-					header 'Location': $(client('http://localhost/partners/1000/users/1001'), server(regex("^${hostname()}/partners/[0-9]+/users/[0-9]+")))
+					header 'Location': $(consumer('http://localhost/partners/1000/users/1001'), producer(regex("^${hostname()}/partners/[0-9]+/users/[0-9]+")))
 				}
 			}
 		}
@@ -757,7 +759,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 
 			request {
 				method 'PUT'
-				url "/partners/${value(client(regex('^[0-9]*$')), server('11'))}/agents/11/customers/09665703Z"
+				url "/partners/${value(consumer(regex('^[0-9]*$')), producer('11'))}/agents/11/customers/09665703Z"
 				headers {
 					header 'Content-Type': 'application/json'
 				}
@@ -795,8 +797,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 					header 'Content-Type': 'application/json'
 				}
 				body(
-						email: $(client(regex(email())), server('not.existing@user.com')),
-						callback_url: $(client(regex(hostname())), server('http://partners.com'))
+						email: $(consumer(regex(email())), producer('not.existing@user.com')),
+						callback_url: $(consumer(regex(hostname())), producer('http://partners.com'))
 				)
 			}
 			response {
@@ -806,7 +808,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				}
 				body(
 						code: 4,
-						message: "User not found by email = [${value(server(regex(email())), client('not.existing@user.com'))}]"
+						message: "User not found by email = [${value(producer(regex(email())), consumer('not.existing@user.com'))}]"
 				)
 			}
 		}
@@ -869,7 +871,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				body("""
                         {
                         "clientPesel":"${
-					value(client(regex('[0-9]{10}')), server('1234567890'))
+					value(consumer(regex('[0-9]{10}')), producer('1234567890'))
 				}",
                         "loanAmount":123.123
                         }
@@ -885,14 +887,14 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				body("""{
     "fraudCheckStatus": "OK",
     "rejectionReason": ${
-					value(client(null), server(execute('assertThatRejectionReasonIsNull($it)')))
+					value(consumer(null), producer(execute('assertThatRejectionReasonIsNull($it)')))
 				}
 }""")
 				headers {
 					header('Content-Type': 'application/vnd.fraud.v1+json')
 					header 'Location': value(
-							stub(null),
-							test(execute('assertThatLocationIsNull($it)'))
+							consumer(null),
+							producer(execute('assertThatLocationIsNull($it)'))
 					)
 				}
 			}
@@ -929,31 +931,31 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				}
 				body(
 						client: [
-								first_name   : $(stub(regex(onlyAlphaUnicode())), test('Denis')),
-								last_name    : $(stub(regex(onlyAlphaUnicode())), test('FakeName')),
-								email        : $(stub(regex(email())), test('fakemail@fakegmail.com')),
-								fax          : $(stub(PHONE_NUMBER), test('+xx001213214')),
-								phone        : $(stub(PHONE_NUMBER), test('2223311')),
-								data_of_birth: $(stub(DATETIME), test('2002-10-22T00:00:00Z'))
+								first_name   : $(consumer(regex(onlyAlphaUnicode())), producer('Denis')),
+								last_name    : $(consumer(regex(onlyAlphaUnicode())), producer('FakeName')),
+								email        : $(consumer(regex(email())), producer('fakemail@fakegmail.com')),
+								fax          : $(consumer(PHONE_NUMBER), producer('+xx001213214')),
+								phone        : $(consumer(PHONE_NUMBER), producer('2223311')),
+								data_of_birth: $(consumer(DATETIME), producer('2002-10-22T00:00:00Z'))
 						],
 						client_id_card: [
-								id           : $(stub(ANYSTRING), test('ABC12345')),
-								date_of_issue: $(stub(ANYSTRING), test('2002-10-02T00:00:00Z')),
+								id           : $(consumer(ANYSTRING), producer('ABC12345')),
+								date_of_issue: $(consumer(ANYSTRING), producer('2002-10-02T00:00:00Z')),
 								address      : [
-										street : $(stub(ANYSTRING), test('Light Street')),
-										city   : $(stub(ANYSTRING), test('Fire')),
-										region : $(stub(ANYSTRING), test('Skys')),
-										country: $(stub(ANYSTRING), test('HG')),
-										zip    : $(stub(NUMBERS), test('658965'))
+										street : $(consumer(ANYSTRING), producer('Light Street')),
+										city   : $(consumer(ANYSTRING), producer('Fire')),
+										region : $(consumer(ANYSTRING), producer('Skys')),
+										country: $(consumer(ANYSTRING), producer('HG')),
+										zip    : $(consumer(NUMBERS), producer('658965'))
 								]
 						],
 						incomes_and_expenses: [
-								monthly_income         : $(stub(NUMBERS), test('0.0')),
-								monthly_loan_repayments: $(stub(NUMBERS), test('100')),
-								monthly_living_expenses: $(stub(NUMBERS), test('22'))
+								monthly_income         : $(consumer(NUMBERS), producer('0.0')),
+								monthly_loan_repayments: $(consumer(NUMBERS), producer('100')),
+								monthly_living_expenses: $(consumer(NUMBERS), producer('22'))
 						],
 						additional_info: [
-								allow_to_contact: $(stub(optional(regex(anyBoolean()))), test('true'))
+								allow_to_contact: $(consumer(optional(regex(anyBoolean()))), producer('true'))
 						]
 				)
 			}
@@ -993,8 +995,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				}
 				body(
 						client: [
-								first_name: $(stub(ONLY_ALPHA_UNICODE), test('Пенева')),
-								last_name : $(stub(ONLY_ALPHA_UNICODE), test('Пенева'))
+								first_name: $(consumer(ONLY_ALPHA_UNICODE), producer('Пенева')),
+								last_name : $(consumer(ONLY_ALPHA_UNICODE), producer('Пенева'))
 						]
 				)
 			}
@@ -1057,9 +1059,9 @@ World.'''"""
 					header('content-type', 'multipart/form-data;boundary=AaB03x')
 				}
 				multipart(
-						formParameter: value(client(regex('.+')), server('"formParameterValue"')),
-						someBooleanParameter: value(client(regex('(true|false)')), server('true')),
-						file: named(value(client(regex('.+')), server('filename.csv')), value(client(regex('.+')), server('file content')))
+						formParameter: value(consumer(regex('.+')), producer('"formParameterValue"')),
+						someBooleanParameter: value(consumer(regex('(true|false)')), producer('true')),
+						file: named(value(consumer(regex('.+')), producer('filename.csv')), value(consumer(regex('.+')), producer('file content')))
 				)
 			}
 			response {
@@ -1095,11 +1097,11 @@ World.'''"""
 				method "PUT"
 				url "/multipart"
 				multipart(
-						formParameter: value(client(regex('".+"')), server('"formParameterValue"')),
-						someBooleanParameter: value(client(regex('(true|false)')), server('true')),
+						formParameter: value(consumer(regex('".+"')), producer('"formParameterValue"')),
+						someBooleanParameter: value(consumer(regex('(true|false)')), producer('true')),
 						file: named(
-								name: value(client(regex('.+')), server('filename.csv')),
-								content: value(client(regex('.+')), server('file content')))
+								name: value(consumer(regex('.+')), producer('filename.csv')),
+								content: value(consumer(regex('.+')), producer('file content')))
 				)
 			}
 			response {
@@ -1129,8 +1131,8 @@ World.'''"""
 					queryParameters {
 						parameter 'token':
 								value(
-										client(regex('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}')),
-										server('6973b31d-7140-402a-bca6-1cdb954e03a7')
+										consumer(regex('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}')),
+										producer('6973b31d-7140-402a-bca6-1cdb954e03a7')
 								)
 					}
 				}
@@ -1139,7 +1141,7 @@ World.'''"""
 				status 200
 				body(
 						authorities: [
-								value(stub('ROLE_ADMIN'), test(regex('^[a-zA-Z0-9_\\- ]+$')))
+								value(consumer('ROLE_ADMIN'), producer(regex('^[a-zA-Z0-9_\\- ]+$')))
 						]
 				)
 			}
@@ -1163,8 +1165,8 @@ World.'''"""
 					queryParameters {
 						parameter 'token':
 								value(
-										client(regex('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}')),
-										server('6973b31d-7140-402a-bca6-1cdb954e03a7')
+										consumer(regex('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}')),
+										producer('6973b31d-7140-402a-bca6-1cdb954e03a7')
 								)
 					}
 				}
@@ -1173,7 +1175,7 @@ World.'''"""
 				status 200
 				body(
 						authorities: [
-								value(stub('ROLE_ADMIN'), test(regex('^[a-zA-Z0-9_\\- ]+$')))
+								value(consumer('ROLE_ADMIN'), producer(regex('^[a-zA-Z0-9_\\- ]+$')))
 						]
 				)
 			}
@@ -1198,7 +1200,7 @@ World.'''"""
 				status 200
 				body(
 						fraudCheckStatus: "OK",
-						rejectionReason: $(client(null), server(execute('assertThatRejectionReasonIsNull($it)')))
+						rejectionReason: $(consumer(null), producer(execute('assertThatRejectionReasonIsNull($it)')))
 				)
 			}
 
@@ -1228,11 +1230,11 @@ World.'''"""
 				response {
 					status 200
 					body([[id: value(
-							client('123'),
-							server(regex('[0-9]+'))
+							consumer('123'),
+							producer(regex('[0-9]+'))
 					)], [id: value(
-							client('567'),
-							server(regex('[0-9]+'))
+							consumer('567'),
+							producer(regex('[0-9]+'))
 					)]])
 					headers {
 						header('Content-Type': 'application/json;charset=UTF-8')
@@ -1386,7 +1388,7 @@ World.'''"""
 				}
 				response {
 					status 200
-					body( code: 9, message: $(client('Wrong credentials'), server(regex('^(?!\\s*$).+'))) )
+					body( code: 9, message: $(consumer('Wrong credentials'), producer(regex('^(?!\\s*$).+'))) )
 				}
 			}
 			MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
@@ -1451,13 +1453,13 @@ World.'''"""
 				method 'PUT'
 				url '/foo'
 				body([
-					requestElement: value(client(regex('[0-9]{5}')))
+					requestElement: value(consumer(regex('[0-9]{5}')))
 				])
 			}
 			response {
 				status 200
 				body([
-					responseElement: value(server(regex('[0-9]{7}')))
+					responseElement: value(producer(regex('[0-9]{7}')))
 				])
 			}
 		}

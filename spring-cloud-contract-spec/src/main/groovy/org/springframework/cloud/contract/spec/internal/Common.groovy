@@ -118,7 +118,17 @@ class Common {
 		return new ClientDslProperty(clientValue)
 	}
 
+	/**
+	 * Helper method to provide a better name for the consumer side
+	 */
 	ClientDslProperty stub(Object clientValue) {
+		return new ClientDslProperty(clientValue)
+	}
+
+	/**
+	 * Helper method to provide a better name for the consumer side
+	 */
+	ClientDslProperty consumer(Object clientValue) {
 		return new ClientDslProperty(clientValue)
 	}
 
@@ -126,8 +136,18 @@ class Common {
 		return new ServerDslProperty(serverValue)
 	}
 
+	/**
+	 * Helper method to provide a better name for the producer side
+	 */
 	ServerDslProperty test(Object serverValue) {
 		return new ServerDslProperty(serverValue)
+	}
+
+	/**
+	 * Helper method to provide a better name for the producer side
+	 */
+	ServerDslProperty producer(Object clientValue) {
+		return new ServerDslProperty(clientValue)
 	}
 
 	void assertThatSidesMatch(OptionalProperty stubSide, Object testSide) {
