@@ -992,24 +992,26 @@ org.springframework.cloud.contract.spec.Contract.make {
 				url '/fraudcheck'
 				body("""
 					{
-					"clientId":"${value(consumer(regex('[0-9]{10}')), producer('1234567890'))}",
+					"clientId":"${value(consumer(regex('[0-9]{10}')))}",
 					"loanAmount":99999}
 				"""
 				)
 				headers {
 					header('Content-Type', 'application/vnd.fraud.v1+json')
 				}
-
 			}
 			response {
 				status 200
 				body( """{
-	"fraudCheckStatus": "${value(consumer('FRAUD'), producer(regex('[A-Z]{5}')))}",
-	"rejectionReason": "Amount too high"
-}""")
+					"fraudCheckStatus": "FRAUD",
+					"rejectionReason": "Amount too high"
+				}""")
 				headers {
-					 header('Content-Type': value(producer(regex('application/vnd.fraud.v1.json.*')), consumer('application/vnd.fraud.v1+json')))
-					}
+					 header('Content-Type': value(
+							 producer(regex('application/vnd.fraud.v1.json.*')),
+							 consumer('application/vnd.fraud.v1+json'))
+					 )
+				}
 			}
 
 }</code></pre>
@@ -1178,7 +1180,16 @@ org.springframework.cloud.contract.spec.Contract.make {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/standalone/http-client/pom.xml[tags=stub_runner,indent=0]</code></pre>
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+	&lt;artifactId&gt;spring-cloud-contract-wiremock&lt;/artifactId&gt;
+	&lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+	&lt;artifactId&gt;spring-cloud-starter-contract-stub-runner&lt;/artifactId&gt;
+	&lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1959,16 +1970,25 @@ provide the generated string that matches the provided regular expression. For e
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
 	request {
 		method 'PUT'
-		url '/foo'
+		url value(consumer(regex('/foo/[0-9]{5}')))
 		body([
 			requestElement: value(consumer(regex('[0-9]{5}')))
 		])
+		headers {
+			header('header', value(consumer(regex('application\\/vnd\\.fraud\\.v1\\+json;.*'))))
+		}
 	}
 	response {
 		status 200
 		body([
 			responseElement: value(producer(regex('[0-9]{7}')))
 		])
+		headers {
+			header('Content-Type': value(
+					producer(regex('application/vnd.fraud.v1.json.*')),
+					consumer('application/vnd.fraud.v1+json'))
+			)
+		}
 	}
 }</code></pre>
 </div>
@@ -5000,7 +5020,7 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-07-20 20:17:11 CEST
+Last updated 2016-07-21 12:17:19 CEST
 </div>
 </div>
 </body>
