@@ -92,7 +92,7 @@ class Response extends Common {
 		if (server.clientValue instanceof Pattern) {
 			value = new Xeger(((Pattern)server.clientValue).pattern()).generate()
 		}
-		return new DslProperty(server.clientValue, value)
+		return new DslProperty(value, server.serverValue)
 	}
 
 	@Override

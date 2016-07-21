@@ -20,6 +20,9 @@ import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
+import repackaged.nl.flotsam.xeger.Xeger
+
+import java.util.regex.Pattern
 
 /**
  * Represents an input for messaging. The input can be a message or some
@@ -75,6 +78,14 @@ class Input extends Common {
 		this.messageHeaders = new Headers()
 		closure.delegate = messageHeaders
 		closure()
+	}
+
+	DslProperty value(ClientDslProperty client) {
+		Object clientValue = client.clientValue
+		if (client.clientValue instanceof Pattern) {
+			clientValue = new Xeger(((Pattern)client.clientValue).pattern()).generate()
+		}
+		return new DslProperty(client.clientValue, clientValue)
 	}
 
 	static class BodyType extends DslProperty {

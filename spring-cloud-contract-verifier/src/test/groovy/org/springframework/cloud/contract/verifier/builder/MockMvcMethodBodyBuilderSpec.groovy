@@ -1451,16 +1451,25 @@ World.'''"""
 		org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				method 'PUT'
-				url '/foo'
+				url value(consumer(regex('/foo/[0-9]{5}')))
 				body([
 					requestElement: value(consumer(regex('[0-9]{5}')))
 				])
+				headers {
+					header('header', value(consumer(regex('application\\/vnd\\.fraud\\.v1\\+json;.*'))))
+				}
 			}
 			response {
 				status 200
 				body([
 					responseElement: value(producer(regex('[0-9]{7}')))
 				])
+				headers {
+					header('Content-Type': value(
+							producer(regex('application/vnd.fraud.v1.json.*')),
+							consumer('application/vnd.fraud.v1+json'))
+					)
+				}
 			}
 		}
 		// end::dsl_one_side_data_generation_example[]
@@ -1472,12 +1481,16 @@ World.'''"""
 					dslWithOnlyOneSideForDocs, properties)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
-			builder.given(blockBuilder)
-			builder.then(blockBuilder)
+			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
+			def strippedTest = test.replace('\n', '').stripIndent().stripMargin()
 		then:
-			test.replace('\n', '').matches('.*')
-			test.replace('\n', '').stripIndent().stripMargin().matches('.*field\\("responseElement"\\).isEqualTo\\("[0-9]{7}.*')
+			strippedTest.matches(""".*header\\('header', 'application\\/vnd\\.fraud\\.v1\\+json;.*'\\).*""")
+			strippedTest.matches(""".*body\\('''\\{"requestElement":"[0-9]{5}"\\}'''\\).*""")
+			strippedTest.matches(""".*put\\("/foo/[0-9]{5}"\\).*""")
+			strippedTest.contains("""response.header('Content-Type') ==~ java.util.regex.Pattern.compile('application/vnd.fraud.v1.json.*')""")
+			"application/vnd.fraud.v1+json;charset=UTF-8".matches('application/vnd.fraud.v1.json.*')
+			strippedTest.contains("""assertThatJson(parsedJson).field("responseElement").matches("[0-9]{7}")""")
 	}
 
 }

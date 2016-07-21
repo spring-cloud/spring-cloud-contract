@@ -20,6 +20,9 @@ import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
+import repackaged.nl.flotsam.xeger.Xeger
+
+import java.util.regex.Pattern
 
 @TypeChecked
 @EqualsAndHashCode
@@ -47,14 +50,6 @@ class OutputMessage extends Common {
 		this.sentTo = sentTo
 	}
 
-	ServerDslProperty producer(Object clientValue) {
-		return new ServerDslProperty(clientValue)
-	}
-
-	ClientDslProperty consumer(Object clientValue) {
-		return new ClientDslProperty(clientValue)
-	}
-
 	void body(Object bodyAsValue) {
 		this.body = new DslProperty(bodyAsValue)
 	}
@@ -71,6 +66,14 @@ class OutputMessage extends Common {
 
 	void assertThat(String assertThat) {
 		this.assertThat = new ExecutionProperty(assertThat)
+	}
+
+	DslProperty value(ServerDslProperty server) {
+		Object value = server.clientValue
+		if (server.clientValue instanceof Pattern) {
+			value = new Xeger(((Pattern)server.clientValue).pattern()).generate()
+		}
+		return new DslProperty(value, server.serverValue)
 	}
 }
 

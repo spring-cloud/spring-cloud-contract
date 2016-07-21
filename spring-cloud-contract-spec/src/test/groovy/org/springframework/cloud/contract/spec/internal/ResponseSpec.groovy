@@ -1,6 +1,9 @@
 package org.springframework.cloud.contract.spec.internal
 
 import spock.lang.Specification
+
+import java.util.regex.Pattern
+
 /**
  * @author Marcin Grzejszczak
  */
@@ -32,6 +35,7 @@ class ResponseSpec extends Specification {
 				property = value(producer(regex("[0-9]{5}")))
 			}
 		then:
-			(property.serverValue as String).matches(/[0-9]{5}/)
+			(property.clientValue as String).matches(/[0-9]{5}/)
+			(property.serverValue as Pattern).pattern() == '[0-9]{5}'
 	}
 }
