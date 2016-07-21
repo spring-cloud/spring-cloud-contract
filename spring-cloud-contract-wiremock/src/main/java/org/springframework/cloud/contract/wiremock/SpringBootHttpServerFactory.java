@@ -40,6 +40,7 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
+import org.springframework.boot.context.embedded.EmbeddedWebApplicationContext;
 import org.springframework.boot.context.embedded.Ssl;
 import org.springframework.boot.context.embedded.jetty.JettyEmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.jetty.JettyServerCustomizer;
@@ -125,11 +126,16 @@ class SpringBootHttpServer
 
 	@Override
 	public int port() {
-		return this.options.portNumber();
+		if (options.httpsSettings().enabled()) {
+			return options.portNumber();
+		}
+		EmbeddedWebApplicationContext embedded = (EmbeddedWebApplicationContext) context;
+		return embedded.getEmbeddedServletContainer().getPort();
 	}
 
 	@Override
 	public int httpsPort() {
+		// TODO HTTPS on random port
 		return this.options.httpsSettings().port();
 	}
 

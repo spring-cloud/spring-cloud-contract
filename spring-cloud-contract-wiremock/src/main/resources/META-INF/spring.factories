@@ -1,0 +1,3 @@
+# Application Listeners
+org.springframework.context.ApplicationListener=\
+org.springframework.cloud.contract.wiremock.WireMockApplicationListener

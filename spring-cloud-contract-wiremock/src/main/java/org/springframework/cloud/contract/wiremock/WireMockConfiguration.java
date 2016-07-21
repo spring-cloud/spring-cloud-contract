@@ -19,8 +19,12 @@ package org.springframework.cloud.contract.wiremock;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportAware;
+import org.springframework.core.annotation.AnnotationAttributes;
+import org.springframework.core.type.AnnotationMetadata;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -31,7 +35,7 @@ import com.github.tomakehurst.wiremock.core.Options;
  *
  */
 @Configuration
-class WireMockConfiguration implements SmartLifecycle {
+public class WireMockConfiguration implements SmartLifecycle, ImportAware {
 
 	private volatile boolean running;
 
@@ -39,13 +43,31 @@ class WireMockConfiguration implements SmartLifecycle {
 
 	@Autowired(required = false)
 	private Options options;
+	
+	@Value("${wiremock.server.port:8080}")
+	private int port = 8080;
+
+	@Override
+	public void setImportMetadata(AnnotationMetadata metadata) {
+		int port = AnnotationAttributes
+				.fromMap(metadata
+						.getAnnotationAttributes(AutoConfigureWireMock.class.getName()))
+				.getNumber("port").intValue();
+		if (port>0) {
+			this.port = port;
+		}
+	}
 
 	@PostConstruct
 	public void init() {
 		if (options == null) {
-			this.options = com.github.tomakehurst.wiremock.core.WireMockConfiguration
+			com.github.tomakehurst.wiremock.core.WireMockConfiguration factory = com.github.tomakehurst.wiremock.core.WireMockConfiguration
 					.wireMockConfig()
 					.httpServerFactory(new SpringBootHttpServerFactory());
+			if (port != 8080) {
+				factory.port(port);
+			}
+			this.options = factory;
 		}
 		server = new WireMockServer(options);
 	}
@@ -53,7 +75,7 @@ class WireMockConfiguration implements SmartLifecycle {
 	@Override
 	public void start() {
 		server.start();
-		WireMock.configureFor("localhost", options.portNumber());
+		WireMock.configureFor("localhost", server.port());
 		running = true;
 	}
 
