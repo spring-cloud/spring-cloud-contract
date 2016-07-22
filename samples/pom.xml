@@ -21,6 +21,7 @@
         <module>wiremock-jetty</module>
         <module>wiremock-tomcat</module>
         <module>wiremock-undertow</module>
+        <module>wiremock-undertow-ssl</module>
     </modules>
 
  	<build>

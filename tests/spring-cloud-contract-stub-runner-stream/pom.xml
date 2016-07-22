@@ -23,7 +23,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-contract-stub-runner-jetty</artifactId>
+			<artifactId>spring-cloud-starter-contract-stub-runner-jetty</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
