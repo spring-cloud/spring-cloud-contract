@@ -23,8 +23,8 @@ ext {
 }
 
 project.version = findProperty('verifierVersion') ?: '1.0.0.BUILD-SNAPSHOT'
-apply from: "$rootDir/gradle/release.gradle"
 apply plugin: 'groovy'
+apply from: "$rootDir/gradle/release.gradle"
 apply plugin: 'eclipse'
 apply plugin: "jacoco"
 
