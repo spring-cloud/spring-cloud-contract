@@ -52,4 +52,12 @@ class Service {
 	public String go() {
 		return this.restTemplate.getForEntity(this.base + "/resource", String.class).getBody();
 	}
+
+	public String getBase() {
+		return base;
+	}
+
+	public void setBase(String base) {
+		this.base = base;
+	}
 }

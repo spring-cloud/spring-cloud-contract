@@ -1,10 +1,12 @@
 package com.example;
 
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.cloud.contract.wiremock.WireMockSpring;
 import org.springframework.test.annotation.DirtiesContext;
@@ -20,28 +22,35 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("classrule")
 @DirtiesContext
-//tag::wiremock_test[]
+//tag::wiremock_test1[]
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureWireMock
 public class WiremockForDocsClassRuleTests {
 
-	// Start WireMock on port 9090
+	// Start WireMock on some dynamic port
 	@ClassRule
 	public static WireMockClassRule wiremock = new WireMockClassRule(
-			WireMockSpring.options().port(9090));
-
-	// A service that calls out over HTTP to localhost:9090
+			WireMockSpring.options().dynamicPort());
+//end::wiremock_test1[]
+	@Before
+	public void setup() {
+		this.service.setBase("http://localhost:" + wiremock.port());
+	}
+//tag::wiremock_test2[]
+	// A service that calls out over HTTP to localhost:${wiremock.port}
 	@Autowired
 	private Service service;
 
 	// Using the WireMock APIs in the normal way:
 	@Test
 	public void contextLoads() throws Exception {
+		// Stubbing WireMock
 		wiremock.stubFor(get(urlEqualTo("/resource"))
 				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
+		// We're asserting if WireMock responded properly
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 	}
 
 }
-//end::wiremock_test[]
+//end::wiremock_test2[]

@@ -33,19 +33,19 @@ part of your test. Here's a simple example:
 [source,java,indent=0]
 ----
 @RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureWireMock
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@AutoConfigureWireMock(port = 0)
 public class WiremockForDocsTests {
-
-	// A service that calls out over HTTP to localhost:8080
-	@Autowired
-	private Service service;
+	// A service that calls out over HTTP
+	@Autowired private Service service;
 
 	// Using the WireMock APIs in the normal way:
 	@Test
 	public void contextLoads() throws Exception {
+		// Stubbing WireMock
 		stubFor(get(urlEqualTo("/resource"))
 				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
+		// We're asserting if WireMock responded properly
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 	}
 
@@ -61,24 +61,25 @@ class to obtain an `Options` instance:
 [source,java,indent=0]
 ----
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureWireMock
 public class WiremockForDocsClassRuleTests {
 
-	// Start WireMock on port 9090
+	// Start WireMock on some dynamic port
 	@ClassRule
 	public static WireMockClassRule wiremock = new WireMockClassRule(
-			WireMockSpring.options().port(9090));
-
-	// A service that calls out over HTTP to localhost:9090
+			WireMockSpring.options().dynamicPort());
+	// A service that calls out over HTTP to localhost:${wiremock.port}
 	@Autowired
 	private Service service;
 
 	// Using the WireMock APIs in the normal way:
 	@Test
 	public void contextLoads() throws Exception {
+		// Stubbing WireMock
 		wiremock.stubFor(get(urlEqualTo("/resource"))
 				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
+		// We're asserting if WireMock responded properly
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 	}
 
@@ -110,6 +111,7 @@ public class WiremockForDocsMockServerApplicationTests {
 		MockRestServiceServer server = WireMockExpectations.with(this.restTemplate)
 				.baseUrl("http://example.org")
 				.expect("resource");
+		// We're asserting if WireMock responded properly
 		assertThat(this.service.go()).isEqualTo("Hello World");
 		server.verify();
 	}

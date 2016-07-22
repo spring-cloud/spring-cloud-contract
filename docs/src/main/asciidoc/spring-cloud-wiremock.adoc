@@ -17,7 +17,8 @@ part of your test. Here's a simple example:
 
 [source,java,indent=0]
 ----
-include::{doc_samples}/src/test/java/com/example/WiremockForDocsTests.java[tags=wiremock_test]
+include::{doc_samples}/src/test/java/com/example/WiremockForDocsTests.java[tags=wiremock_test1]
+include::{doc_samples}/src/test/java/com/example/WiremockForDocsTests.java[tags=wiremock_test2]
 ----
 
 To start the stub server on a different port use `@AutoConfigureWireMock(port=9999)` (for example), and for a random port use the value 0. The stub server port will be bindable in the test application context as "wiremock.server.port". Using `@AutoConfigureWireMock` adds a bean of type `WiremockConfiguration` to your test application context, where it will be cached in between methods and classes having the same context, just like for normal Spring integration tests.
@@ -28,7 +29,8 @@ class to obtain an `Options` instance:
 
 [source,java,indent=0]
 ----
-include::{doc_samples}/src/test/java/com/example/WiremockForDocsClassRuleTests.java[tags=wiremock_test]
+include::{doc_samples}/src/test/java/com/example/WiremockForDocsClassRuleTests.java[tags=wiremock_test1]
+include::{doc_samples}/src/test/java/com/example/WiremockForDocsClassRuleTests.java[tags=wiremock_test2]
 ----
 
 The use `@ClassRule` means that the server will shut down after all the methods in this class.

@@ -31,6 +31,7 @@ public class WiremockForDocsMockServerApplicationTests {
 		MockRestServiceServer server = WireMockExpectations.with(this.restTemplate)
 				.baseUrl("http://example.org")
 				.expect("resource");
+		// We're asserting if WireMock responded properly
 		assertThat(this.service.go()).isEqualTo("Hello World");
 		server.verify();
 	}
