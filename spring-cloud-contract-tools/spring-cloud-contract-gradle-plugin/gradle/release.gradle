@@ -8,6 +8,21 @@ ext {
 
 uploadArchives.dependsOn { [check] }
 
+task sourcesJar(type: Jar, dependsOn: classes) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+	classifier = 'javadoc'
+	from javadoc.destinationDir
+}
+
+artifacts {
+	archives sourcesJar
+	archives javadocJar
+}
+
 ext {
 	repositoryUrl = "https://repo.spring.io/plugins-release-local"
 	snapshotRepositoryUrl = "https://repo.spring.io/plugins-snapshot-local"
@@ -29,7 +44,7 @@ afterEvaluate {
 				pom.project {
 					name "$project.name"
 					packaging 'jar'
-					description 'Consumer Driven Contract Verifier and Stub Runner'
+					description 'Spring Cloud Contract'
 					url 'https://github.com/spring-cloud/spring-cloud-contract'
 					inceptionYear '2014'
 
@@ -55,7 +70,12 @@ afterEvaluate {
 						developer {
 							id 'marcingrzejszczak'
 							name 'Marcin Grzejszczak'
-							email 'marcin ATT grzejszczak DOTT pl'
+							email 'mgrzejszczak ATT pivotal DOTT io'
+						}
+						developer {
+							id 'dsyer'
+							name 'Dave Syer'
+							email 'dsyer ATT pivotal DOTT io'
 						}
 					}
 				}
