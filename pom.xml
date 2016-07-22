@@ -26,7 +26,6 @@
 		<activemq.version>5.12.1</activemq.version>
 		<camel.version>2.17.0</camel.version>
 		<spring-cloud-stream.version>1.0.2.RELEASE</spring-cloud-stream.version>
-		<spring-framework.version>4.3.1.BUILD-SNAPSHOT</spring-framework.version>
 	</properties>
 
 	<modules>
@@ -104,7 +103,6 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-core</artifactId>
-				<version>${spring-framework.version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
