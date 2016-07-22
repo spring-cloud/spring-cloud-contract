@@ -1,3 +1,6 @@
+:core_path: ../../../..
+:doc_samples: {core_path}/samples/wiremock-jetty
+
 Modules giving you the possibility to use
 http://wiremock.org[WireMock] with different servers by using the
 "ambient" server embedded in a Spring Boot application. Check out the
@@ -14,24 +17,8 @@ part of your test. Here's a simple example:
 
 [source,java,indent=0]
 ----
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureWireMock
-public class WiremockImportApplicationTests {
-
-	// A service that calls out over HTTP to localhost:8080
-	@Autowired
-	private Service service;
-
-	@Test
-	public void contextLoads() throws Exception {
-		// Using the WireMock APIs in the normal way:
-		stubFor(get(urlEqualTo("/resource"))
-				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
-		assertThat(this.service.go()).isEqualTo("Hello World!");
-	}
-
-}
+include::{doc_samples}/src/test/java/com/example/WiremockForDocsTests.java[tags=wiremock_test1]
+include::{doc_samples}/src/test/java/com/example/WiremockForDocsTests.java[tags=wiremock_test2]
 ----
 
 To start the stub server on a different port use `@AutoConfigureWireMock(port=9999)` (for example), and for a random port use the value 0. The stub server port will be bindable in the test application context as "wiremock.server.port". Using `@AutoConfigureWireMock` adds a bean of type `WiremockConfiguration` to your test application context, where it will be cached in between methods and classes having the same context, just like for normal Spring integration tests.
@@ -42,34 +29,20 @@ class to obtain an `Options` instance:
 
 [source,java,indent=0]
 ----
-	@ClassRule
-	public static WireMockClassRule wiremock = new WireMockClassRule(
-			WireMockSpring.options());
+include::{doc_samples}/src/test/java/com/example/WiremockForDocsClassRuleTests.java[tags=wiremock_test1]
+include::{doc_samples}/src/test/java/com/example/WiremockForDocsClassRuleTests.java[tags=wiremock_test2]
 ----
 
 The use `@ClassRule` means that the server will shut down after all the methods in this class.
 
 == WireMock and Spring MVC Mocks
 
-Spring Cloud Contract provides a convenience class that can load JSON WireMock stubs into a Spring `MockRestServiceServer`. Here's an example:
+Spring Cloud Contract provides a convenience class that can load JSON WireMock stubs into a
+Spring `MockRestServiceServer`. Here's an example:
 
 [source,java,indent=0]
 ----
-	@Autowired
-	private RestTemplate restTemplate;
-
-	@Autowired
-	private Service service;
-
-	@Test
-	public void contextLoads() throws Exception {
-		MockRestServiceServer server = WireMockExpectations.with(this.restTemplate)
-				.baseUrl("http://example.org")
-				.expect("resource");
-		assertThat(this.service.go()).isEqualTo("Hello World");
-		server.verify();
-	}
-
+include::{doc_samples}/src/test/java/com/example/WiremockForDocsMockServerApplicationTests.java[tags=wiremock_test]
 ----
 
 The `baseUrl` is prepended to all mock calls, and the `expect()`
