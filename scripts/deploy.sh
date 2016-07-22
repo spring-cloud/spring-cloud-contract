@@ -1,14 +1,7 @@
 #!/usr/bin/env bash
 
-set -o errexit
+source common.sh || source scripts/common.sh || echo "No common.sh script found..."
 
-ROOT_FOLDER=`pwd`
-echo "Current folder is $ROOT_FOLDER"
-
-if [[ ! -e "${ROOT_FOLDER}/.git" ]]; then
-    cd ..
-    ROOT_FOLDER=`pwd`
-fi
-
+set -e
 
 ./mvnw clean install && (cd *-gradle-plugin; ./gradlew clean build install) && ./scripts/runTests.sh && ./mvnw deploy && (cd *-gradle-plugin; ./gradlew uploadArchives -x test)
