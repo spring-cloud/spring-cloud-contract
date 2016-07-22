@@ -2,32 +2,16 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 ext {
-	resolveRepoName = { Project project ->
-		String version = project.version
-		String name = project.name
-		resolvedRepoName = "plugins-${resolveVersion(version)}-local"
-		logger.lifecycle("For project [$project.name] with " +
-				"version [$project.version] the resolved Artifactory repo is [$resolvedRepoName]")
-		return resolvedRepoName
-	}
-
-	resolveVersion = { String version ->
-		if (version.endsWith('BUILD-SNAPSHOT')) return 'snapshot'
-		if (version.matches('[0-9].[0-9].[0-9].M[0-9]+')) return 'milestone'
-		if (version.matches('[0-9].[0-9].[0-9].RC[0-9]+')) return 'milestone'
-		if (version.endsWith('RELEASE')) return 'release'
-		return 'snapshot'
-	}
-
-	isReleaseVersion = !version.endsWith("SNAPSHOT")
+	isReleaseVersion = version.endsWith("RELEASE")
+	isMilestoneVersion = version.matches('[0-9].[0-9].[0-9].M[0-9]+') || version.matches('[0-9].[0-9].[0-9].RC[0-9]+')
 }
 
 uploadArchives.dependsOn { [check] }
 
 ext {
-	repositoryUrl = "https://repo.spring.io/${repoPrefix()}-${resolveVersion(version)}-local"
-	snapshotRepositoryUrl = "https://repo.spring.io/${repoPrefix()}-snapshot-local"
-	repoUrl = isReleaseVersion ? repositoryUrl : snapshotRepositoryUrl
+	repositoryUrl = "https://repo.spring.io/plugins-release-local"
+	snapshotRepositoryUrl = "https://repo.spring.io/plugins-snapshot-local"
+	repoUrl = (isReleaseVersion || isMilestoneVersion) ? repositoryUrl : snapshotRepositoryUrl
 }
 
 afterEvaluate {

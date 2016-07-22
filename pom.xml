@@ -7,13 +7,13 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-build</artifactId>
-		<version>1.2.0.BUILD-SNAPSHOT</version>
+		<version>1.1.1.RELEASE</version>
 		<relativePath/>
 	</parent>
 
 	<artifactId>spring-cloud-contract-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.0.BUILD-SNAPSHOT</version>
+	<version>1.0.0.M1</version>
 
 	<name>Spring Cloud Contract</name>
 	<description>Spring Cloud Contract</description>
@@ -99,16 +99,6 @@
 				<version>${project.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-core</artifactId>
-				<exclusions>
-					<exclusion>
-						<groupId>commons-logging</groupId>
-						<artifactId>commons-logging</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

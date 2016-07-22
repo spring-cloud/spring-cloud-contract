@@ -5,11 +5,11 @@
 	<parent>
 		<artifactId>spring-cloud-dependencies-parent</artifactId>
 		<groupId>org.springframework.cloud</groupId>
-		<version>1.1.2.BUILD-SNAPSHOT</version>
+		<version>1.1.1.RELEASE</version>
         <relativePath/>
 	</parent>
 	<artifactId>spring-cloud-contract-dependencies</artifactId>
-	<version>1.0.0.BUILD-SNAPSHOT</version>
+	<version>1.0.0.M1</version>
 	<packaging>pom</packaging>
 	<name>spring-cloud-contract-dependencies</name>
 	<description>Spring Cloud Contract Dependencies</description>
@@ -18,9 +18,9 @@
 		<jsonassert.version>0.4.7</jsonassert.version>
 		<aether.version>1.1.0</aether.version>
 		<spring-cloud-stream.version>1.0.2.RELEASE</spring-cloud-stream.version>
-		<spring-cloud-zookeeper.version>1.0.3.BUILD-SNAPSHOT</spring-cloud-zookeeper.version>
-		<spring-cloud-netflix.version>1.1.5.BUILD-SNAPSHOT</spring-cloud-netflix.version>
-		<spring-boot.version>1.4.0.BUILD-SNAPSHOT</spring-boot.version>
+		<spring-cloud-zookeeper.version>1.0.2.RELEASE</spring-cloud-zookeeper.version>
+		<spring-cloud-netflix.version>1.1.4.RELEASE</spring-cloud-netflix.version>
+		<spring-boot.version>1.4.0.RC1</spring-boot.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
