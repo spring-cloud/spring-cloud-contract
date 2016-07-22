@@ -1,14 +1,10 @@
 #!/usr/bin/env bash
 
-set -o errexit
+source common.sh || source scripts/common.sh || echo "No common.sh script found..."
 
-ROOT_FOLDER=`pwd`
-echo "Current folder is $ROOT_FOLDER"
+set -e
 
-if [[ ! -e "${ROOT_FOLDER}/.git" ]]; then
-    cd ..
-    ROOT_FOLDER=`pwd`
-fi
+echo "Generating docs for Spring Cloud Contract version [$VERIFIER_VERSION]"
 
 echo "Building main docs"
 ./mvnw clean install -P docs -DskipTests=true --pl docs

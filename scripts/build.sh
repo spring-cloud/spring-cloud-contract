@@ -1,16 +1,12 @@
 #!/usr/bin/env bash
 
-set -o errexit
+source common.sh || source scripts/common.sh || echo "No common.sh script found..."
 
-ROOT_FOLDER=`pwd`
-echo "Current folder is $ROOT_FOLDER"
-
-if [[ ! -e "${ROOT_FOLDER}/.git" ]]; then
-    cd ..
-    ROOT_FOLDER=`pwd`
-fi
+set -e
 
 ADDITIONAL_MAVEN_OPTS=${ADDITIONAL_MAVEN_OPTS:--Dmaven.test.redirectTestOutputToFile=true -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn}
+
+echo "Building Maven and Gradle projects for version [$VERIFIER_VERSION]"
 
 echo "Building Maven stuff with additional opts [$ADDITIONAL_MAVEN_OPTS]"
 ./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Psonar --batch-mode $ADDITIONAL_MAVEN_OPTS

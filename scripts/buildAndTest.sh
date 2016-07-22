@@ -1,14 +1,8 @@
 #!/usr/bin/env bash
 
-set -o errexit
+source common.sh || source scripts/common.sh || echo "No common.sh script found..."
 
-ROOT_FOLDER=`pwd`
-echo "Current folder is $ROOT_FOLDER"
-
-if [[ ! -e "${ROOT_FOLDER}/.git" ]]; then
-    cd ..
-    ROOT_FOLDER=`pwd`
-fi
+set -e
 
 function print_usage() {
 cat <<EOF
@@ -39,7 +33,13 @@ esac
 shift # past argument or value
 done
 
-[[ -z "${VERIFIER_VERSION}" ]] && VERIFIER_VERSION="1.0.0.BUILD-SNAPSHOT"
+# Code grepping for the 3rd presence of "version" in pom.xml.
+# The 3rd one is where we define the SC-Contract version
+VERSION_NODE=`awk '/version/{i++}i==3{print; exit}' $ROOT_FOLDER/pom.xml`
+# Extract the contents of the version node
+VERSION_VALUE=$(sed -ne '/version/{s/.*<version>\(.*\)<\/version>.*/\1/p;q;}' <<< "$VERSION_NODE")
+
+[[ -z "${VERIFIER_VERSION}" ]] && VERIFIER_VERSION="$VERSION_VALUE"
 export VERIFIER_VERSION
 
 echo -e "\n\nBUILDING AND RUNNING TESTS FOR VERIFIER IN VERSION [$VERIFIER_VERSION]\n\n"

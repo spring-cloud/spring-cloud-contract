@@ -1,25 +1,21 @@
 #!/usr/bin/env bash
 
-set -o errexit
+source common.sh || source scripts/common.sh || echo "No common.sh script found..."
 
-ROOT_FOLDER=`pwd`
-echo "Current folder is $ROOT_FOLDER"
+set -e
 
-if [[ ! -e "${ROOT_FOLDER}/.git" ]]; then
-    cd ..
-    ROOT_FOLDER=`pwd`
-fi
+[[ -z "${VERSION_VALUE}" ]] && VERSION_VALUE="1.0.0.BUILD-SNAPSHOT"
+[[ -z "${VERIFIER_VERSION}" ]] && VERIFIER_VERSION="$VERSION_VALUE"
+export VERIFIER_VERSION
 
-export CONTRACT_VERIFIER_VERSION=${CONTRACT_VERIFIER_VERSION:-1.0.0.BUILD-SNAPSHOT}
-
-echo "Current Spring Cloud Contract Verifier version is ${CONTRACT_VERIFIER_VERSION}"
+echo -e "\n\nRUNNING TESTS FOR VERIFIER IN VERSION [${VERIFIER_VERSION}]\n\n"
 
 cd samples/standalone
 
 echo "Running Gradle tests"
-. ./runTests.sh
+./runTests.sh
 
 echo "Running Maven tests"
-. ./runMavenTests.sh
+./runMavenTests.sh
 
 cd $ROOT_FOLDER
