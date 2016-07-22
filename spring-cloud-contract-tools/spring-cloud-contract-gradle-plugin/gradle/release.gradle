@@ -63,7 +63,3 @@ afterEvaluate {
 		}
 	}
 }
-
-String repoPrefix() {
-	return project.name.contains('gradle') ? 'plugins' : 'libs'
-}
