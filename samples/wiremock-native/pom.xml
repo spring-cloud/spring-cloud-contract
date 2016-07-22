@@ -64,7 +64,7 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>org.springframework.cloud.contract</groupId>
+				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-dependencies</artifactId>
 				<version>${spring-cloud-contract.version}</version>
 				<type>pom</type>
