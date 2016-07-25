@@ -45,9 +45,19 @@
 			<artifactId>spring-web</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.restdocs</groupId>
+			<artifactId>spring-restdocs-mockmvc</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>

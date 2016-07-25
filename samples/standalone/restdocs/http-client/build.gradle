@@ -1,0 +1,68 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		mavenLocal()
+		maven { url "http://repo.spring.io/libs-snapshot-local" }
+		maven { url "http://repo.spring.io/libs-release-local" }
+		maven { url "http://repo.spring.io/libs-staging-local" }
+		maven { url 'http://repo.spring.io/plugins-snapshot' }
+		maven { url "http://repo.spring.io/plugins-release-local" }
+		maven { url "http://repo.spring.io/plugins-staging-local/" }
+	}
+	dependencies {
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.4.0.BUILD-SNAPSHOT"
+	}
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+	maven { url "http://repo.spring.io/libs-release-local" }
+	maven { url "http://repo.spring.io/libs-snapshot-local/" }
+	maven { url "http://repo.spring.io/libs-milestone-local/" }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'spring-boot'
+apply plugin: 'maven-publish'
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:$BOM_VERSION"
+		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${project.findProperty('verifierVersion') ?: verifierVersion}"
+	}
+}
+
+dependencies {
+	compile("org.springframework.boot:spring-boot-starter-web")
+	compile("org.springframework.boot:spring-boot-starter-actuator")
+
+	testCompile 'org.springframework.cloud:spring-cloud-contract-wiremock'
+	testCompile "org.springframework.cloud:spring-cloud-starter-contract-stub-runner"
+}
+
+test {
+	testLogging {
+		exceptionFormat = 'full'
+	}
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.14'
+}
+
+task resolveDependencies {
+	doLast {
+		project.rootProject.allprojects.each { subProject ->
+			subProject.buildscript.configurations.each { configuration ->
+				configuration.resolve()
+			}
+			subProject.configurations.each { configuration ->
+				configuration.resolve()
+			}
+		}
+	}
+}

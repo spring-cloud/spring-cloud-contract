@@ -39,6 +39,7 @@ class Controller {
 	public String home() {
 		return this.service.go();
 	}
+
 }
 
 @Component

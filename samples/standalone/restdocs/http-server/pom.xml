@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.example</groupId>
-	<artifactId>http-server</artifactId>
+	<artifactId>http-server-restdocs</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
 	<name>Spring Cloud Contract Verifier Http Server Sample</name>
@@ -39,16 +39,18 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- tag::verifier_test_dependencies[] -->
+		<dependency>
+			<groupId>org.springframework.restdocs</groupId>
+			<artifactId>spring-restdocs-mockmvc</artifactId>
+			<optional>true</optional>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-contract-verifier</artifactId>
+			<artifactId>spring-cloud-contract-wiremock</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- end::verifier_test_dependencies[] -->
 	</dependencies>
 
-<!-- tag::contract_bom[] -->
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -60,7 +62,6 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	<!-- end::contract_bom[] -->
 
 	<build>
 		<plugins>
@@ -68,54 +69,31 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-			<!-- tag::contract_maven_plugin[] -->
-			<plugin>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-contract-maven-plugin</artifactId>
-				<version>${spring-cloud-contract.version}</version>
-				<extensions>true</extensions>
-				<configuration>
-					<baseClassForTests>com.example.fraud.MvcTest</baseClassForTests>
-				</configuration>
-			</plugin>
-			<!-- end::contract_maven_plugin[] -->
 			<plugin>
 				<artifactId>maven-deploy-plugin</artifactId>
 				<configuration>
 					<skip>true</skip>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>stub</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<inherited>false</inherited>
+						<configuration>
+							<attach>true</attach>
+							<descriptor>${basedir}/src/assembly/stub.xml</descriptor>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.springframework.cloud</groupId>
-										<artifactId>spring-cloud-contract-maven-plugin</artifactId>
-										<versionRange>[1.0.0.BUILD-SNAPSHOT,)</versionRange>
-										<goals>
-											<goal>convert</goal>
-											<goal>generateTests</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 
 	<profiles>
@@ -124,12 +102,11 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
-			<!-- tag::repos[] -->
 			<repositories>
 				<repository>
 					<id>spring-snapshots</id>
 					<name>Spring Snapshots</name>
-					<url>http://repo.spring.io/snapshot</url>
+					<url>http://repo.spring.io/libs-snapshot-local</url>
 					<snapshots>
 						<enabled>true</enabled>
 					</snapshots>
@@ -137,7 +114,7 @@
 				<repository>
 					<id>spring-milestones</id>
 					<name>Spring Milestones</name>
-					<url>http://repo.spring.io/milestone</url>
+					<url>http://repo.spring.io/libs-milestone-local</url>
 					<snapshots>
 						<enabled>false</enabled>
 					</snapshots>
@@ -155,7 +132,7 @@
 				<pluginRepository>
 					<id>spring-snapshots</id>
 					<name>Spring Snapshots</name>
-					<url>http://repo.spring.io/snapshot</url>
+					<url>http://repo.spring.io/libs-snapshot-local</url>
 					<snapshots>
 						<enabled>true</enabled>
 					</snapshots>
@@ -163,21 +140,28 @@
 				<pluginRepository>
 					<id>spring-milestones</id>
 					<name>Spring Milestones</name>
-					<url>http://repo.spring.io/milestone</url>
+					<url>http://repo.spring.io/libs-milestone-local</url>
 					<snapshots>
 						<enabled>false</enabled>
 					</snapshots>
 				</pluginRepository>
 				<pluginRepository>
-					<id>spring-releases</id>
-					<name>Spring Releases</name>
-					<url>http://repo.spring.io/release</url>
+					<id>spring-plugin-snapshots</id>
+					<name>Spring Snapshots</name>
+					<url>http://repo.spring.io/plugins-snapshot-local</url>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
+				</pluginRepository>
+				<pluginRepository>
+					<id>spring-plugin-milestones</id>
+					<name>Spring Milestones</name>
+					<url>http://repo.spring.io/plugins-milestone-local</url>
 					<snapshots>
 						<enabled>false</enabled>
 					</snapshots>
 				</pluginRepository>
 			</pluginRepositories>
-			<!-- end::repos[] -->
 		</profile>
 	</profiles>
 </project>
