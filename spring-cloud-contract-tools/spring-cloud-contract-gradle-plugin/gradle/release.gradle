@@ -1,11 +1,6 @@
 apply plugin: 'maven'
 apply plugin: 'signing'
 
-ext {
-	isReleaseVersion = version.endsWith("RELEASE")
-	isMilestoneVersion = version.matches('[0-9].[0-9].[0-9].M[0-9]+') || version.matches('[0-9].[0-9].[0-9].RC[0-9]+')
-}
-
 uploadArchives.dependsOn { [check] }
 
 task sourcesJar(type: Jar) {
@@ -30,9 +25,24 @@ artifacts {
 }
 
 ext {
-	repositoryUrl = "https://repo.spring.io/plugins-release-local"
-	snapshotRepositoryUrl = "https://repo.spring.io/plugins-snapshot-local"
-	repoUrl = (isReleaseVersion || isMilestoneVersion) ? repositoryUrl : snapshotRepositoryUrl
+	resolveRepoName = { Project project ->
+		resolvedRepoName = "libs-${resolveVersion(project.version)}-local"
+		logger.lifecycle("For project [$project.name] with " +
+				"version [$project.version] the resolved Artifactory repo is [$resolvedRepoName]")
+		return resolvedRepoName
+	}
+
+	isReleaseVersion = version.endsWith("RELEASE")
+	isMilestoneVersion = version.matches('[0-9].[0-9].[0-9].M[0-9]+') || version.matches('[0-9].[0-9].[0-9].RC[0-9]+')
+	isSnapshotVersion = !(isReleaseVersion || isMilestoneVersion)
+
+	resolveVersion = { String version ->
+		if (isMilestoneVersion) return 'milestone'
+		if (isReleaseVersion) return 'release'
+		return 'snapshot'
+	}
+
+	repoUrl = "https://repo.spring.io/${resolveRepoName(project)}"
 }
 
 afterEvaluate {
