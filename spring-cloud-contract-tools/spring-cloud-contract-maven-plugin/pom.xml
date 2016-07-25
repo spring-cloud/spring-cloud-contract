@@ -34,23 +34,6 @@
 
 	<inceptionYear>2016</inceptionYear>
 
-	<distributionManagement>
-		<repository>
-			<id>repo.spring.io</id>
-			<name>Spring Release Repository</name>
-			<url>https://repo.spring.io/plugins-release-local</url>
-		</repository>
-		<snapshotRepository>
-			<id>repo.spring.io</id>
-			<name>Spring Snapshot Repository</name>
-			<url>https://repo.spring.io/plugins-snapshot-local</url>
-		</snapshotRepository>
-		<site>
-			<id>github</id>
-			<url>scm:git:git@github.com:spring-cloud/spring-cloud-contract.git</url>
-		</site>
-	</distributionManagement>
-
 	<build>
 		<plugins>
 			<plugin>
