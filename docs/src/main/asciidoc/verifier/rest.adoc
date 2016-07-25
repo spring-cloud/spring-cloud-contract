@@ -47,10 +47,7 @@ Add the additional snapshot repository to your build.gradle to use snapshot vers
 
 [source,groovy,indent=0]
 ----
-repositories {
-    (...)
-    //Required only for SNAPSHOT versions
-    maven { url "https://repo.spring.io/plugins-snapshot-local" }
+include::{standalone_samples_path}/http-server/build.gradle[tags=repos,indent=0]
 }
 ----
 
@@ -95,74 +92,6 @@ repositories {
 ----
 
 Read more: https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/[spring-cloud-contract-maven-plugin]
-
-====== Snapshot versions for Maven
-
-For Snapshot / Milestone versions you have to add the following section to your `pom.xml`
-
-[source,xml,indent=0]
-----
-<repositories>
-    <repository>
-        <id>spring-snapshots</id>
-        <name>Spring Snapshots</name>
-        <url>http://repo.spring.io/libs-snapshot-local</url>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-    </repository>
-    <repository>
-        <id>spring-milestones</id>
-        <name>Spring Milestones</name>
-        <url>http://repo.spring.io/libs-milestone-local</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </repository>
-    <repository>
-        <id>spring-releases</id>
-        <name>Spring Releases</name>
-        <url>http://repo.spring.io/release</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </repository>
-    </repositories>
-    <pluginRepositories>
-    <pluginRepository>
-        <id>spring-snapshots</id>
-        <name>Spring Snapshots</name>
-        <url>http://repo.spring.io/libs-snapshot-local</url>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-        <id>spring-milestones</id>
-        <name>Spring Milestones</name>
-        <url>http://repo.spring.io/libs-milestone-local</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-        <id>spring-plugin-snapshots</id>
-        <name>Spring Snapshots</name>
-        <url>http://repo.spring.io/plugins-snapshot-local</url>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-        <id>spring-plugin-milestones</id>
-        <name>Spring Milestones</name>
-        <url>http://repo.spring.io/plugins-milestone-local</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </pluginRepository>
-</pluginRepositories>
-----
 
 ====== Add stubs
 
@@ -338,72 +267,13 @@ include::{standalone_samples_path}/http-server/pom.xml[tags=contract_maven_plugi
 
 You can read more in the https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/[Spring Cloud Contract Maven Plugin Docs]
 
-====== Snapshot versions
+====== Snapshot versions for Maven
 
 For Snapshot / Milestone versions you have to add the following section to your `pom.xml`
 
 [source,xml,indent=0]
 ----
-<repositories>
-    <repository>
-        <id>spring-snapshots</id>
-        <name>Spring Snapshots</name>
-        <url>http://repo.spring.io/libs-snapshot-local</url>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-    </repository>
-    <repository>
-        <id>spring-milestones</id>
-        <name>Spring Milestones</name>
-        <url>http://repo.spring.io/libs-milestone-local</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </repository>
-    <repository>
-        <id>spring-releases</id>
-        <name>Spring Releases</name>
-        <url>http://repo.spring.io/release</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </repository>
-    </repositories>
-    <pluginRepositories>
-    <pluginRepository>
-        <id>spring-snapshots</id>
-        <name>Spring Snapshots</name>
-        <url>http://repo.spring.io/libs-snapshot-local</url>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-        <id>spring-milestones</id>
-        <name>Spring Milestones</name>
-        <url>http://repo.spring.io/libs-milestone-local</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-        <id>spring-plugin-snapshots</id>
-        <name>Spring Snapshots</name>
-        <url>http://repo.spring.io/plugins-snapshot-local</url>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-        <id>spring-plugin-milestones</id>
-        <name>Spring Milestones</name>
-        <url>http://repo.spring.io/plugins-milestone-local</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </pluginRepository>
-</pluginRepositories>
+include::{standalone_samples_path}/http-server/pom.xml[tags=repos,indent=0]
 ----
 
 ===== Add stubs
