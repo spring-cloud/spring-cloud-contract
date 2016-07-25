@@ -2,12 +2,9 @@ buildscript {
 	repositories {
 		mavenCentral()
 		mavenLocal()
-		maven { url "http://repo.spring.io/libs-snapshot-local" }
-		maven { url "http://repo.spring.io/libs-release-local" }
-		maven { url "http://repo.spring.io/libs-staging-local" }
-		maven { url 'http://repo.spring.io/plugins-snapshot' }
-		maven { url "http://repo.spring.io/plugins-release-local" }
-		maven { url "http://repo.spring.io/plugins-staging-local/" }
+		maven { url "http://repo.spring.io/snapshot" }
+		maven { url "http://repo.spring.io/milestone" }
+		maven { url "http://repo.spring.io/release" }
 	}
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.4.0.BUILD-SNAPSHOT"
@@ -20,9 +17,9 @@ version = '0.0.1-SNAPSHOT'
 repositories {
 	mavenCentral()
 	mavenLocal()
-	maven { url "http://repo.spring.io/libs-release-local" }
-	maven { url "http://repo.spring.io/libs-snapshot-local/" }
-	maven { url "http://repo.spring.io/libs-milestone-local/" }
+	maven { url "http://repo.spring.io/snapshot" }
+	maven { url "http://repo.spring.io/milestone" }
+	maven { url "http://repo.spring.io/release" }
 }
 
 apply plugin: 'groovy'
