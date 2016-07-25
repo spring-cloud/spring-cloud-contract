@@ -488,7 +488,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_add_gradle_plugin_with_dependencies">Add gradle plugin with dependencies</a></li>
 <li><a href="#_snapshot_versions_for_gradle">Snapshot versions for Gradle</a></li>
 <li><a href="#_add_maven_plugin_with_dependencies">Add maven plugin with dependencies</a></li>
-<li><a href="#_snapshot_versions_for_maven">Snapshot versions for Maven</a></li>
 <li><a href="#_add_stubs">Add stubs</a></li>
 </ul>
 </li>
@@ -508,7 +507,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel4">
 <li><a href="#_add_maven_plugin">Add maven plugin</a>
 <ul class="sectlevel5">
-<li><a href="#_snapshot_versions">Snapshot versions</a></li>
+<li><a href="#_snapshot_versions_for_maven">Snapshot versions for Maven</a></li>
 </ul>
 </li>
 <li><a href="#_add_stubs_2">Add stubs</a></li>
@@ -547,7 +546,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_spring_cloud_contract_stub_runner">Spring Cloud Contract Stub Runner</a>
 <ul class="sectlevel3">
-<li><a href="#_snapshot_versions_2">Snapshot versions</a></li>
+<li><a href="#_snapshot_versions">Snapshot versions</a></li>
 <li><a href="#_publishing_stubs_as_jars">Publishing stubs as JARs</a>
 <ul class="sectlevel4">
 <li><a href="#_gradle">Gradle</a></li>
@@ -2456,10 +2455,14 @@ dependencies {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">repositories {
-    (...)
-    //Required only for SNAPSHOT versions
-    maven { url "https://repo.spring.io/plugins-snapshot-local" }
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">buildscript {
+	repositories {
+		mavenCentral()
+		mavenLocal()
+		maven { url "http://repo.spring.io/snapshot" }
+		maven { url "http://repo.spring.io/milestone" }
+		maven { url "http://repo.spring.io/release" }
+	}
 }</code></pre>
 </div>
 </div>
@@ -2505,76 +2508,6 @@ dependencies {
 </div>
 <div class="paragraph">
 <p>Read more: <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/">spring-cloud-contract-maven-plugin</a></p>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_snapshot_versions_for_maven">Snapshot versions for Maven</h6>
-<div class="paragraph">
-<p>For Snapshot / Milestone versions you have to add the following section to your <code>pom.xml</code></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;repositories&gt;
-    &lt;repository&gt;
-        &lt;id&gt;spring-snapshots&lt;/id&gt;
-        &lt;name&gt;Spring Snapshots&lt;/name&gt;
-        &lt;url&gt;http://repo.spring.io/libs-snapshot-local&lt;/url&gt;
-        &lt;snapshots&gt;
-            &lt;enabled&gt;true&lt;/enabled&gt;
-        &lt;/snapshots&gt;
-    &lt;/repository&gt;
-    &lt;repository&gt;
-        &lt;id&gt;spring-milestones&lt;/id&gt;
-        &lt;name&gt;Spring Milestones&lt;/name&gt;
-        &lt;url&gt;http://repo.spring.io/libs-milestone-local&lt;/url&gt;
-        &lt;snapshots&gt;
-            &lt;enabled&gt;false&lt;/enabled&gt;
-        &lt;/snapshots&gt;
-    &lt;/repository&gt;
-    &lt;repository&gt;
-        &lt;id&gt;spring-releases&lt;/id&gt;
-        &lt;name&gt;Spring Releases&lt;/name&gt;
-        &lt;url&gt;http://repo.spring.io/release&lt;/url&gt;
-        &lt;snapshots&gt;
-            &lt;enabled&gt;false&lt;/enabled&gt;
-        &lt;/snapshots&gt;
-    &lt;/repository&gt;
-    &lt;/repositories&gt;
-    &lt;pluginRepositories&gt;
-    &lt;pluginRepository&gt;
-        &lt;id&gt;spring-snapshots&lt;/id&gt;
-        &lt;name&gt;Spring Snapshots&lt;/name&gt;
-        &lt;url&gt;http://repo.spring.io/libs-snapshot-local&lt;/url&gt;
-        &lt;snapshots&gt;
-            &lt;enabled&gt;true&lt;/enabled&gt;
-        &lt;/snapshots&gt;
-    &lt;/pluginRepository&gt;
-    &lt;pluginRepository&gt;
-        &lt;id&gt;spring-milestones&lt;/id&gt;
-        &lt;name&gt;Spring Milestones&lt;/name&gt;
-        &lt;url&gt;http://repo.spring.io/libs-milestone-local&lt;/url&gt;
-        &lt;snapshots&gt;
-            &lt;enabled&gt;false&lt;/enabled&gt;
-        &lt;/snapshots&gt;
-    &lt;/pluginRepository&gt;
-    &lt;pluginRepository&gt;
-        &lt;id&gt;spring-plugin-snapshots&lt;/id&gt;
-        &lt;name&gt;Spring Snapshots&lt;/name&gt;
-        &lt;url&gt;http://repo.spring.io/plugins-snapshot-local&lt;/url&gt;
-        &lt;snapshots&gt;
-            &lt;enabled&gt;true&lt;/enabled&gt;
-        &lt;/snapshots&gt;
-    &lt;/pluginRepository&gt;
-    &lt;pluginRepository&gt;
-        &lt;id&gt;spring-plugin-milestones&lt;/id&gt;
-        &lt;name&gt;Spring Milestones&lt;/name&gt;
-        &lt;url&gt;http://repo.spring.io/plugins-milestone-local&lt;/url&gt;
-        &lt;snapshots&gt;
-            &lt;enabled&gt;false&lt;/enabled&gt;
-        &lt;/snapshots&gt;
-    &lt;/pluginRepository&gt;
-&lt;/pluginRepositories&gt;</code></pre>
-</div>
 </div>
 </div>
 <div class="sect5">
@@ -2842,71 +2775,63 @@ class LoanApplicationServiceSpec extends Specification {
 <p>You can read more in the <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/">Spring Cloud Contract Maven Plugin Docs</a></p>
 </div>
 <div class="sect5">
-<h6 id="_snapshot_versions">Snapshot versions</h6>
+<h6 id="_snapshot_versions_for_maven">Snapshot versions for Maven</h6>
 <div class="paragraph">
 <p>For Snapshot / Milestone versions you have to add the following section to your <code>pom.xml</code></p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;repositories&gt;
-    &lt;repository&gt;
-        &lt;id&gt;spring-snapshots&lt;/id&gt;
-        &lt;name&gt;Spring Snapshots&lt;/name&gt;
-        &lt;url&gt;http://repo.spring.io/libs-snapshot-local&lt;/url&gt;
-        &lt;snapshots&gt;
-            &lt;enabled&gt;true&lt;/enabled&gt;
-        &lt;/snapshots&gt;
-    &lt;/repository&gt;
-    &lt;repository&gt;
-        &lt;id&gt;spring-milestones&lt;/id&gt;
-        &lt;name&gt;Spring Milestones&lt;/name&gt;
-        &lt;url&gt;http://repo.spring.io/libs-milestone-local&lt;/url&gt;
-        &lt;snapshots&gt;
-            &lt;enabled&gt;false&lt;/enabled&gt;
-        &lt;/snapshots&gt;
-    &lt;/repository&gt;
-    &lt;repository&gt;
-        &lt;id&gt;spring-releases&lt;/id&gt;
-        &lt;name&gt;Spring Releases&lt;/name&gt;
-        &lt;url&gt;http://repo.spring.io/release&lt;/url&gt;
-        &lt;snapshots&gt;
-            &lt;enabled&gt;false&lt;/enabled&gt;
-        &lt;/snapshots&gt;
-    &lt;/repository&gt;
-    &lt;/repositories&gt;
-    &lt;pluginRepositories&gt;
-    &lt;pluginRepository&gt;
-        &lt;id&gt;spring-snapshots&lt;/id&gt;
-        &lt;name&gt;Spring Snapshots&lt;/name&gt;
-        &lt;url&gt;http://repo.spring.io/libs-snapshot-local&lt;/url&gt;
-        &lt;snapshots&gt;
-            &lt;enabled&gt;true&lt;/enabled&gt;
-        &lt;/snapshots&gt;
-    &lt;/pluginRepository&gt;
-    &lt;pluginRepository&gt;
-        &lt;id&gt;spring-milestones&lt;/id&gt;
-        &lt;name&gt;Spring Milestones&lt;/name&gt;
-        &lt;url&gt;http://repo.spring.io/libs-milestone-local&lt;/url&gt;
-        &lt;snapshots&gt;
-            &lt;enabled&gt;false&lt;/enabled&gt;
-        &lt;/snapshots&gt;
-    &lt;/pluginRepository&gt;
-    &lt;pluginRepository&gt;
-        &lt;id&gt;spring-plugin-snapshots&lt;/id&gt;
-        &lt;name&gt;Spring Snapshots&lt;/name&gt;
-        &lt;url&gt;http://repo.spring.io/plugins-snapshot-local&lt;/url&gt;
-        &lt;snapshots&gt;
-            &lt;enabled&gt;true&lt;/enabled&gt;
-        &lt;/snapshots&gt;
-    &lt;/pluginRepository&gt;
-    &lt;pluginRepository&gt;
-        &lt;id&gt;spring-plugin-milestones&lt;/id&gt;
-        &lt;name&gt;Spring Milestones&lt;/name&gt;
-        &lt;url&gt;http://repo.spring.io/plugins-milestone-local&lt;/url&gt;
-        &lt;snapshots&gt;
-            &lt;enabled&gt;false&lt;/enabled&gt;
-        &lt;/snapshots&gt;
-    &lt;/pluginRepository&gt;
+	&lt;repository&gt;
+		&lt;id&gt;spring-snapshots&lt;/id&gt;
+		&lt;name&gt;Spring Snapshots&lt;/name&gt;
+		&lt;url&gt;http://repo.spring.io/snapshot&lt;/url&gt;
+		&lt;snapshots&gt;
+			&lt;enabled&gt;true&lt;/enabled&gt;
+		&lt;/snapshots&gt;
+	&lt;/repository&gt;
+	&lt;repository&gt;
+		&lt;id&gt;spring-milestones&lt;/id&gt;
+		&lt;name&gt;Spring Milestones&lt;/name&gt;
+		&lt;url&gt;http://repo.spring.io/milestone&lt;/url&gt;
+		&lt;snapshots&gt;
+			&lt;enabled&gt;false&lt;/enabled&gt;
+		&lt;/snapshots&gt;
+	&lt;/repository&gt;
+	&lt;repository&gt;
+		&lt;id&gt;spring-releases&lt;/id&gt;
+		&lt;name&gt;Spring Releases&lt;/name&gt;
+		&lt;url&gt;http://repo.spring.io/release&lt;/url&gt;
+		&lt;snapshots&gt;
+			&lt;enabled&gt;false&lt;/enabled&gt;
+		&lt;/snapshots&gt;
+	&lt;/repository&gt;
+&lt;/repositories&gt;
+&lt;pluginRepositories&gt;
+	&lt;pluginRepository&gt;
+		&lt;id&gt;spring-snapshots&lt;/id&gt;
+		&lt;name&gt;Spring Snapshots&lt;/name&gt;
+		&lt;url&gt;http://repo.spring.io/snapshot&lt;/url&gt;
+		&lt;snapshots&gt;
+			&lt;enabled&gt;true&lt;/enabled&gt;
+		&lt;/snapshots&gt;
+	&lt;/pluginRepository&gt;
+	&lt;pluginRepository&gt;
+		&lt;id&gt;spring-milestones&lt;/id&gt;
+		&lt;name&gt;Spring Milestones&lt;/name&gt;
+		&lt;url&gt;http://repo.spring.io/milestone&lt;/url&gt;
+		&lt;snapshots&gt;
+			&lt;enabled&gt;false&lt;/enabled&gt;
+		&lt;/snapshots&gt;
+	&lt;/pluginRepository&gt;
+	&lt;pluginRepository&gt;
+		&lt;id&gt;spring-releases&lt;/id&gt;
+		&lt;name&gt;Spring Releases&lt;/name&gt;
+		&lt;url&gt;http://repo.spring.io/release&lt;/url&gt;
+		&lt;snapshots&gt;
+			&lt;enabled&gt;false&lt;/enabled&gt;
+		&lt;/snapshots&gt;
+	&lt;/pluginRepository&gt;
 &lt;/pluginRepositories&gt;</code></pre>
 </div>
 </div>
@@ -3537,16 +3462,20 @@ publishing {
 automatically for you.</p>
 </div>
 <div class="sect3">
-<h4 id="_snapshot_versions_2">Snapshot versions</h4>
+<h4 id="_snapshot_versions">Snapshot versions</h4>
 <div class="paragraph">
 <p>Add the additional snapshot repository to your build.gradle to use snapshot versions which are automatically uploaded after every successful build:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">repositories {
-    (...)
-    //Required only for SNAPSHOT versions
-    maven { url "https://repo.spring.io/libs-snapshot-local" }
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">buildscript {
+	repositories {
+		mavenCentral()
+		mavenLocal()
+		maven { url "http://repo.spring.io/snapshot" }
+		maven { url "http://repo.spring.io/milestone" }
+		maven { url "http://repo.spring.io/release" }
+	}
 }</code></pre>
 </div>
 </div>
@@ -3556,31 +3485,57 @@ automatically for you.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;repositories&gt;
-    &lt;repository&gt;
-        &lt;id&gt;spring-snapshots&lt;/id&gt;
-        &lt;name&gt;Spring Snapshots&lt;/name&gt;
-        &lt;url&gt;http://repo.spring.io/libs-snapshot-local&lt;/url&gt;
-        &lt;snapshots&gt;
-            &lt;enabled&gt;true&lt;/enabled&gt;
-        &lt;/snapshots&gt;
-    &lt;/repository&gt;
-    &lt;repository&gt;
-        &lt;id&gt;spring-milestones&lt;/id&gt;
-        &lt;name&gt;Spring Milestones&lt;/name&gt;
-        &lt;url&gt;http://repo.spring.io/libs-milestone-local&lt;/url&gt;
-        &lt;snapshots&gt;
-            &lt;enabled&gt;false&lt;/enabled&gt;
-        &lt;/snapshots&gt;
-    &lt;/repository&gt;
-    &lt;repository&gt;
-        &lt;id&gt;spring-releases&lt;/id&gt;
-        &lt;name&gt;Spring Releases&lt;/name&gt;
-        &lt;url&gt;http://repo.spring.io/release&lt;/url&gt;
-        &lt;snapshots&gt;
-            &lt;enabled&gt;false&lt;/enabled&gt;
-        &lt;/snapshots&gt;
-    &lt;/repository&gt;
-&lt;/repositories&gt;</code></pre>
+	&lt;repository&gt;
+		&lt;id&gt;spring-snapshots&lt;/id&gt;
+		&lt;name&gt;Spring Snapshots&lt;/name&gt;
+		&lt;url&gt;http://repo.spring.io/snapshot&lt;/url&gt;
+		&lt;snapshots&gt;
+			&lt;enabled&gt;true&lt;/enabled&gt;
+		&lt;/snapshots&gt;
+	&lt;/repository&gt;
+	&lt;repository&gt;
+		&lt;id&gt;spring-milestones&lt;/id&gt;
+		&lt;name&gt;Spring Milestones&lt;/name&gt;
+		&lt;url&gt;http://repo.spring.io/milestone&lt;/url&gt;
+		&lt;snapshots&gt;
+			&lt;enabled&gt;false&lt;/enabled&gt;
+		&lt;/snapshots&gt;
+	&lt;/repository&gt;
+	&lt;repository&gt;
+		&lt;id&gt;spring-releases&lt;/id&gt;
+		&lt;name&gt;Spring Releases&lt;/name&gt;
+		&lt;url&gt;http://repo.spring.io/release&lt;/url&gt;
+		&lt;snapshots&gt;
+			&lt;enabled&gt;false&lt;/enabled&gt;
+		&lt;/snapshots&gt;
+	&lt;/repository&gt;
+&lt;/repositories&gt;
+&lt;pluginRepositories&gt;
+	&lt;pluginRepository&gt;
+		&lt;id&gt;spring-snapshots&lt;/id&gt;
+		&lt;name&gt;Spring Snapshots&lt;/name&gt;
+		&lt;url&gt;http://repo.spring.io/snapshot&lt;/url&gt;
+		&lt;snapshots&gt;
+			&lt;enabled&gt;true&lt;/enabled&gt;
+		&lt;/snapshots&gt;
+	&lt;/pluginRepository&gt;
+	&lt;pluginRepository&gt;
+		&lt;id&gt;spring-milestones&lt;/id&gt;
+		&lt;name&gt;Spring Milestones&lt;/name&gt;
+		&lt;url&gt;http://repo.spring.io/milestone&lt;/url&gt;
+		&lt;snapshots&gt;
+			&lt;enabled&gt;false&lt;/enabled&gt;
+		&lt;/snapshots&gt;
+	&lt;/pluginRepository&gt;
+	&lt;pluginRepository&gt;
+		&lt;id&gt;spring-releases&lt;/id&gt;
+		&lt;name&gt;Spring Releases&lt;/name&gt;
+		&lt;url&gt;http://repo.spring.io/release&lt;/url&gt;
+		&lt;snapshots&gt;
+			&lt;enabled&gt;false&lt;/enabled&gt;
+		&lt;/snapshots&gt;
+	&lt;/pluginRepository&gt;
+&lt;/pluginRepositories&gt;</code></pre>
 </div>
 </div>
 </div>
@@ -5142,7 +5097,7 @@ Spring Boot container if there is one.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-07-22 11:42:44 CEST
+Last updated 2016-07-22 14:11:04 CEST
 </div>
 </div>
 </body>
