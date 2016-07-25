@@ -20,7 +20,6 @@
 		<spring-cloud-stream.version>1.0.2.RELEASE</spring-cloud-stream.version>
 		<spring-cloud-zookeeper.version>1.0.3.BUILD-SNAPSHOT</spring-cloud-zookeeper.version>
 		<spring-cloud-netflix.version>1.1.5.BUILD-SNAPSHOT</spring-cloud-netflix.version>
-		<spring-boot.version>1.4.0.BUILD-SNAPSHOT</spring-boot.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -171,13 +170,6 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-zookeeper-dependencies</artifactId>
 				<version>${spring-cloud-zookeeper.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
-				<version>${spring-boot.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
