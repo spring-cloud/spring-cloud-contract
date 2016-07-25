@@ -14,10 +14,7 @@ Add the additional snapshot repository to your build.gradle to use snapshot vers
 
 [source,groovy,indent=0]
 ----
-repositories {
-    (...)
-    //Required only for SNAPSHOT versions
-    maven { url "https://repo.spring.io/libs-snapshot-local" }
+include::{standalone_samples_path}/http-server/build.gradle[tags=repos,indent=0]
 }
 ----
 
@@ -25,32 +22,7 @@ for Maven
 
 [source,xml,indent=0]
 ----
-<repositories>
-    <repository>
-        <id>spring-snapshots</id>
-        <name>Spring Snapshots</name>
-        <url>http://repo.spring.io/libs-snapshot-local</url>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-    </repository>
-    <repository>
-        <id>spring-milestones</id>
-        <name>Spring Milestones</name>
-        <url>http://repo.spring.io/libs-milestone-local</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </repository>
-    <repository>
-        <id>spring-releases</id>
-        <name>Spring Releases</name>
-        <url>http://repo.spring.io/release</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </repository>
-</repositories>
+include::{standalone_samples_path}/http-server/pom.xml[tags=repos,indent=0]
 ----
 
 ==== Publishing stubs as JARs

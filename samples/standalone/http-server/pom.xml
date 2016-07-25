@@ -124,6 +124,7 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
+			<!-- tag::repos[] -->
 			<repositories>
 				<repository>
 					<id>spring-snapshots</id>
@@ -176,6 +177,7 @@
 					</snapshots>
 				</pluginRepository>
 			</pluginRepositories>
+			<!-- end::repos[] -->
 		</profile>
 	</profiles>
 </project>

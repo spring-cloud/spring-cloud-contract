@@ -1,3 +1,4 @@
+// tag::repos[]
 buildscript {
 	repositories {
 		mavenCentral()
@@ -6,6 +7,7 @@ buildscript {
 		maven { url "http://repo.spring.io/milestone" }
 		maven { url "http://repo.spring.io/release" }
 	}
+// end::repos[]
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RC1"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
