@@ -1680,6 +1680,20 @@ the value of a system property <code>spring.cloud.contract.verifier.assert.size<
 </tr>
 </table>
 </div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+Due to the fact that JSON structure can have any form it&#8217;s sometimes impossible to parse it properly when using
+the <code>value(consumer(&#8230;&#8203;), producer(&#8230;&#8203;))</code> notation when using that in GString. That&#8217;s why we highly recommend using the
+Groovy Map notation.
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_http_top_level_elements">HTTP Top-Level Elements</h4>
@@ -5097,7 +5111,7 @@ Spring Boot container if there is one.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-07-22 14:11:04 CEST
+Last updated 2016-07-25 13:16:39 CEST
 </div>
 </div>
 </body>
