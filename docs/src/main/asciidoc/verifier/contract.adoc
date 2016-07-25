@@ -32,6 +32,10 @@ WARNING: The support for the verification of size of JSON arrays is experimental
 the value of a system property `spring.cloud.contract.verifier.assert.size` equal to `true`. By default this feature is set to
 `false`. You can also provide the `assertJsonSize` property in the plugin configuration.
 
+WARNING: Due to the fact that JSON structure can have any form it's sometimes impossible to parse it properly when using
+the `value(consumer(...), producer(...))` notation when using that in GString. That's why we highly recommend using the
+Groovy Map notation.
+
 ==== HTTP Top-Level Elements
 
 Following methods can be called in the top-level closure of a contract definition. Request and response are mandatory, priority is optional.
