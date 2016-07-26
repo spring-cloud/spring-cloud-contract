@@ -45,7 +45,7 @@ public class ContractRequestHandler implements ResultHandler {
 	public ContractRequestHandler() {
 	}
 
-	public ResultHandler contract(String name) {
+	public ResultHandler stub(String name) {
 		this.name = name;
 		// TODO: try and get access to the internals of this so we don't need to store
 		// state in the snippet

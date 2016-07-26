@@ -87,3 +87,77 @@ embedded servers, and Wiremock itself has "native" support for a
 particular version of Jetty (currently 9.2). To use the native Jetty
 you need to add the native wiremock dependencies and exclude the
 Spring Boot container if there is one.
+
+== Generating Stubs using RestDocs
+
+https://projects.spring.io/spring-restdocs[Spring RestDocs] can be
+used to generate documentation (e.g. in asciidoctor format) for an
+HTTP API with Spring MockMvc or RestEasy. At the same time as you
+generate documentation for your API, you can also generate WireMock
+stubs, by using Spring Cloud Contract WireMock. Just write your normal
+RestDocs test cases and use `@AutoConfigureRestDocs` to have stubs
+automatically in the restdocs output directory. For example:
+
+
+[source,java,indent=0]
+----
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureRestDocs(outputDir = "target/snippets")
+@AutoConfigureMockMvc
+public class ApplicationTests {
+
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Test
+	public void contextLoads() throws Exception {
+		mockMvc.perform(get("/resource"))
+				.andExpect(content().string("Hello World"))
+				.andDo(document("resource"));
+	}
+}
+----
+
+From this test will be generated a WireMock stub at
+"target/snippets/stubs/resource.json". It matches all GET requests to
+the "/resource" path.
+
+To create stubs for PUT and POST it is useful to be able to match the
+body of the request as well. The main entry point for this is
+`WireMockRestDocs.verify()` which can be used as a substitute for the
+`document()` convenience method. For example:
+
+[source,java,indent=0]
+----
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureRestDocs(outputDir = "target/snippets")
+@AutoConfigureMockMvc
+public class ApplicationTests {
+
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Test
+	public void contextLoads() throws Exception {
+		mockMvc.perform(post("/resource")
+                .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
+				.andExpect(status.isOk())
+				.andDo(verify().jsonPath("$.id")
+                        .stub("resource"));
+	}
+}
+----
+
+The `jsonPath()` method does 2 things: 1) asserts that the request
+body in the test itself actually contains the JSON it matches, and 2)
+makes a WireMock request matcher using the same JSON. So this contract
+is saying: any valid POST with an "id" field will get back an the same
+response as in this test. You can chain together calls to
+`.jsonPath()` to add additional matchers.
+
+On the consumer side, assuming the `resource.json` generated above is
+available on the classpath, you can create a stub using WireMock in a
+number of different ways, including as described above using
+`@AutoConfigureWireMock(stubs="classpath:resource.json")`.

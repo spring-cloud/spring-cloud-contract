@@ -1,6 +1,6 @@
 package com.example.fraud;
 
-import static org.springframework.cloud.contract.wiremock.restdocs.RestDocsContracts.verify;
+import static org.springframework.cloud.contract.wiremock.restdocs.WireMockRestDocs.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import java.math.BigDecimal;
@@ -47,7 +47,7 @@ public class StubGeneratorTests {
 				.andDo(verify().jsonPath("$.clientId")
 						.jsonPath("$[?(@.loanAmount > 1000)]")
 						.contentType(MediaType.valueOf("application/vnd.fraud.v1+json"))
-						.contract("markClientAsFraud"));
+						.stub("markClientAsFraud"));
 	}
 
 	@Test
@@ -63,7 +63,7 @@ public class StubGeneratorTests {
 				.andDo(verify().jsonPath("$.clientId")
 						.jsonPath("$[?(@.loanAmount <= 1000)]")
 						.contentType(MediaType.valueOf("application/vnd.fraud.v1+json"))
-						.contract("markClientAsNotFraud"));
+						.stub("markClientAsNotFraud"));
 	}
 
 }

@@ -34,6 +34,10 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
+ * Convenience class for loading WireMock stubs into a {@link MockRestServiceServer}. In
+ * this way using a {@link RestTemplate} can mock the responses from a server using
+ * WireMock JSON DSL instead of the native Java DSL.
+ * 
  * @author Dave Syer
  *
  */
@@ -42,7 +46,7 @@ public class WireMockRestServiceServer {
 	private final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
 	private String suffix = ".json";
-	
+
 	private String baseUrl = "";
 
 	private MockRestServiceServer server;
@@ -64,7 +68,8 @@ public class WireMockRestServiceServer {
 	public MockRestServiceServer stubs(String... locations) {
 		for (String location : locations) {
 			try {
-				if (!StringUtils.getFilename(location).contains(".") && !location.contains("*")) {
+				if (!StringUtils.getFilename(location).contains(".")
+						&& !location.contains("*")) {
 					if (!location.endsWith("/")) {
 						location = location + "/";
 					}
@@ -72,14 +77,19 @@ public class WireMockRestServiceServer {
 				}
 				for (Resource resource : this.resolver.getResources(location)) {
 					StubMapping mapping;
-					mapping = Json.read(StreamUtils.copyToString(resource.getInputStream(), Charset.defaultCharset()),
-							StubMapping.class);
-					this.server.expect(requestTo(this.baseUrl + mapping.getRequest().getUrlPath()))
-							.andRespond(withSuccess(mapping.getResponse().getBody(), MediaType.TEXT_PLAIN));
+					mapping = Json
+							.read(StreamUtils.copyToString(resource.getInputStream(),
+									Charset.defaultCharset()), StubMapping.class);
+					this.server
+							.expect(requestTo(
+									this.baseUrl + mapping.getRequest().getUrlPath()))
+							.andRespond(withSuccess(mapping.getResponse().getBody(),
+									MediaType.TEXT_PLAIN));
 				}
 			}
 			catch (IOException e) {
-				throw new IllegalStateException("Cannot load resources for: " + location, e);
+				throw new IllegalStateException("Cannot load resources for: " + location,
+						e);
 			}
 		}
 		return this.server;

@@ -39,6 +39,13 @@ import com.github.tomakehurst.wiremock.core.Options;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 /**
+ * Configuration and lifecycle for a Spring Application context that wants to run a
+ * WireMock server. Can be used by adding
+ * {@link AutoConfigureWireMock @AutoConfigureWireMock} to a Spring Boot JUnit test. To
+ * configure the properties of the wiremock server you can use the AutoConfigureWireMock
+ * annotation, or add a bean of type {@link Options} (via
+ * {@link WireMockSpring#options()}) to your test context.
+ * 
  * @author Dave Syer
  *
  */
