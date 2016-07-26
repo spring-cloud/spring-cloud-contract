@@ -40,7 +40,7 @@ public class WireMockExpectations {
 
 	private final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
-	private String prefix = "classpath:/stubs/";
+	private String prefix = "classpath:/mappings/";
 
 	private String suffix = ".json";
 

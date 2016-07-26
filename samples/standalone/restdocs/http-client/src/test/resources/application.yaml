@@ -1,3 +1,0 @@
-stubrunner:
-  work-offline: true
-  stubs.ids: 'com.example:http-server:+:stubs:8080'

@@ -1,5 +1,6 @@
 package com.example.loan;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -15,6 +16,7 @@ import com.example.loan.model.LoanApplicationResult;
 import com.example.loan.model.LoanApplicationStatus;
 
 @Service
+@ConfigurationProperties("service")
 public class LoanApplicationService {
 
 	private static final String FRAUD_SERVICE_JSON_VERSION_1 =

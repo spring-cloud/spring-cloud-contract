@@ -1,3 +1,0 @@
-stubrunner.stubs:
-  ids: 'com.example:http-server:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot

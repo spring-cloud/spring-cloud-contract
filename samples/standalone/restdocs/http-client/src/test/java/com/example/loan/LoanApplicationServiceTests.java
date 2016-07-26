@@ -22,12 +22,12 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureWireMock
+@SpringBootTest(properties="service.port=${wiremock.server.port}")
+@AutoConfigureWireMock(port=0)
 public class LoanApplicationServiceTests {
 
 	@Autowired
-	private LoanApplicationService sut;
+	private LoanApplicationService service;
 
 	@Value("classpath:META-INF/com.example/http-server-restdocs/0.0.1-SNAPSHOT/mappings/markClientAsFraud.json")
 	private Resource markClientAsFraud;
@@ -46,7 +46,7 @@ public class LoanApplicationServiceTests {
 		LoanApplication application = new LoanApplication(new Client("1234567890"),
 				123.123);
 		// when:
-		LoanApplicationResult loanApplication = sut.loanApplication(application);
+		LoanApplicationResult loanApplication = service.loanApplication(application);
 		// then:
 		assertThat(loanApplication.getLoanApplicationStatus())
 				.isEqualTo(LoanApplicationStatus.LOAN_APPLIED);
@@ -61,7 +61,7 @@ public class LoanApplicationServiceTests {
 		LoanApplication application = new LoanApplication(new Client("1234567890"),
 				99999);
 		// when:
-		LoanApplicationResult loanApplication = sut.loanApplication(application);
+		LoanApplicationResult loanApplication = service.loanApplication(application);
 		// then:
 		assertThat(loanApplication.getLoanApplicationStatus())
 				.isEqualTo(LoanApplicationStatus.LOAN_APPLICATION_REJECTED);

@@ -16,27 +16,35 @@
 
 package org.springframework.cloud.contract.wiremock;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportAware;
-import org.springframework.core.annotation.AnnotationAttributes;
-import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.util.StreamUtils;
+import org.springframework.util.StringUtils;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.Options;
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 /**
  * @author Dave Syer
  *
  */
 @Configuration
-public class WireMockConfiguration implements SmartLifecycle, ImportAware {
+@EnableConfigurationProperties(WireMockProperties.class)
+public class WireMockConfiguration implements SmartLifecycle {
 
 	private volatile boolean running;
 
@@ -45,44 +53,50 @@ public class WireMockConfiguration implements SmartLifecycle, ImportAware {
 	@Autowired(required = false)
 	private Options options;
 
-	@Value("${wiremock.server.port:8080}")
-	private int port = 8080;
-
-	@Value("${wiremock.server.https-port:-1}")
-	private int httpsPort = -1;
-	
 	@Autowired
 	private DefaultListableBeanFactory beanFactory;
-	
-	@Override
-	public void setImportMetadata(AnnotationMetadata metadata) {
-		AnnotationAttributes map = AnnotationAttributes.fromMap(
-				metadata.getAnnotationAttributes(AutoConfigureWireMock.class.getName()));
-		int port = map.getNumber("port").intValue();
-		if (port > 0) {
-			this.port = port;
-		}
-		int httpsPort = map.getNumber("httpsPort").intValue();
-		if (httpsPort > 0) {
-			this.httpsPort = httpsPort;
-		}
-	}
+
+	@Autowired
+	private WireMockProperties wireMock;
+
+	@Autowired
+	private ResourceLoader resourceLoader;
 
 	@PostConstruct
-	public void init() {
+	public void init() throws IOException {
 		if (options == null) {
-			com.github.tomakehurst.wiremock.core.WireMockConfiguration factory = WireMockSpring.options();
-			if (port != 8080) {
-				factory.port(port);
+			com.github.tomakehurst.wiremock.core.WireMockConfiguration factory = WireMockSpring
+					.options();
+			if (wireMock.getPort() != 8080) {
+				factory.port(wireMock.getPort());
 			}
-			if (httpsPort != -1) {
-				factory.httpsPort(httpsPort);
+			if (wireMock.getHttpsPort() != -1) {
+				factory.httpsPort(wireMock.getHttpsPort());
 			}
 			this.options = factory;
 		}
 		server = new WireMockServer(options);
+		registerStubs();
 		if (!beanFactory.containsBean("wireMockServer")) {
 			beanFactory.registerSingleton("wireMockServer", server);
+		}
+	}
+
+	private void registerStubs() throws IOException {
+		if (StringUtils.hasText(wireMock.getStubs())) {
+			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(
+					resourceLoader);
+			String pattern = wireMock.getStubs();
+			if (!pattern.contains("*")) {
+				if (!pattern.endsWith("/")) {
+					pattern = pattern + "/";
+				}
+				pattern = pattern + "**/*.json";
+			}
+			for (Resource resource : resolver.getResources(pattern)) {
+				server.addStubMapping(StubMapping.buildFrom(StreamUtils.copyToString(
+						resource.getInputStream(), Charset.forName("UTF-8"))));
+			}
 		}
 	}
 
@@ -120,6 +134,40 @@ public class WireMockConfiguration implements SmartLifecycle, ImportAware {
 	public void stop(Runnable callback) {
 		stop();
 		callback.run();
+	}
+
+}
+
+@ConfigurationProperties("wiremock.server")
+class WireMockProperties {
+	private int port = 8080;
+
+	private int httpsPort = -1;
+
+	private String stubs;
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	public int getHttpsPort() {
+		return httpsPort;
+	}
+
+	public void setHttpsPort(int httpsPort) {
+		this.httpsPort = httpsPort;
+	}
+
+	public String getStubs() {
+		return stubs;
+	}
+
+	public void setStubs(String stubs) {
+		this.stubs = stubs;
 	}
 
 }
