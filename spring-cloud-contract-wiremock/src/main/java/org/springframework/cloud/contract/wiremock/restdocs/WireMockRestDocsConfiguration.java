@@ -14,16 +14,23 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.wiremock;
+package org.springframework.cloud.contract.wiremock.restdocs;
+
+import org.springframework.boot.test.autoconfigure.restdocs.RestDocsMockMvcConfigurationCustomizer;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentationConfigurer;
 
 /**
  * @author Dave Syer
  *
  */
-public class RestDocsContracts {
+@Configuration
+public class WireMockRestDocsConfiguration
+		implements RestDocsMockMvcConfigurationCustomizer {
 
-	public static ContractRequestHandler verify() {
-		return new ContractRequestHandler();
+	@Override
+	public void customize(MockMvcRestDocumentationConfigurer configurer) {
+		configurer.snippets().withAdditionalDefaults(new WireMockSnippet());
 	}
 
 }

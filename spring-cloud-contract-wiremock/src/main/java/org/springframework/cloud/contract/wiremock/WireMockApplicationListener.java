@@ -29,11 +29,15 @@ import org.springframework.core.env.MutablePropertySources;
 import org.springframework.util.SocketUtils;
 
 /**
+ * Listener that prepares the environment so that WireMock will work when it is
+ * initialized. For example, by finding free ports for the server to listen on.
+ * 
  * @author Dave Syer
  *
  */
 @Order(Ordered.LOWEST_PRECEDENCE)
-public class WireMockApplicationListener implements ApplicationListener<ApplicationPreparedEvent> {
+public class WireMockApplicationListener
+		implements ApplicationListener<ApplicationPreparedEvent> {
 
 	@Override
 	public void onApplicationEvent(ApplicationPreparedEvent event) {
@@ -49,9 +53,11 @@ public class WireMockApplicationListener implements ApplicationListener<Applicat
 			}
 			Map<String, Object> source = ((MapPropertySource) propertySources
 					.get("wiremock")).getSource();
-			source.put("wiremock.server.port", SocketUtils.findAvailableTcpPort(10000, 12500));
+			source.put("wiremock.server.port",
+					SocketUtils.findAvailableTcpPort(10000, 12500));
 		}
-		if (environment.getProperty("wiremock.server.https-port", Integer.class, 0) == 0) {
+		if (environment.getProperty("wiremock.server.https-port", Integer.class,
+				0) == 0) {
 			MutablePropertySources propertySources = environment.getPropertySources();
 			if (!propertySources.contains("wiremock")) {
 				propertySources.addFirst(
@@ -59,9 +65,9 @@ public class WireMockApplicationListener implements ApplicationListener<Applicat
 			}
 			Map<String, Object> source = ((MapPropertySource) propertySources
 					.get("wiremock")).getSource();
-			source.put("wiremock.server.https-port", SocketUtils.findAvailableTcpPort(12500, 15000));
+			source.put("wiremock.server.https-port",
+					SocketUtils.findAvailableTcpPort(12500, 15000));
 		}
 	}
-
 
 }

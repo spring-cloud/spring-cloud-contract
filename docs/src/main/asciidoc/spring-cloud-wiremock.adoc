@@ -23,6 +23,32 @@ include::{doc_samples}/src/test/java/com/example/WiremockForDocsTests.java[tags=
 
 To start the stub server on a different port use `@AutoConfigureWireMock(port=9999)` (for example), and for a random port use the value 0. The stub server port will be bindable in the test application context as "wiremock.server.port". Using `@AutoConfigureWireMock` adds a bean of type `WiremockConfiguration` to your test application context, where it will be cached in between methods and classes having the same context, just like for normal Spring integration tests.
 
+=== Registering Stubs Automatically
+
+If you add a `stubs` attribute to your `@AutoConfigureWireMock` then
+it will register WireMock JSON stubs from the file system or
+classpath. The stubs attribute can be a resource pattern (ant-style)
+or a directory, in which case `**/*.json` is appended. Example:
+
+----
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureWireMock(stubs="classpath:/stubs")
+public class WiremockImportApplicationTests {
+
+	@Autowired
+	private Service service;
+
+	@Test
+	public void contextLoads() throws Exception {
+		assertThat(this.service.go()).isEqualTo("Hello World!");
+	}
+
+}
+----
+
+=== Alternative: Using JUnit Rules
+
 For a more conventional WireMock experience, using JUnit `@Rules` to
 start and stop the server, just use the `WireMockSpring` convenience
 class to obtain an `Options` instance:
