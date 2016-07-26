@@ -2,34 +2,46 @@ package com.example.loan;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.nio.charset.Charset;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
-import org.springframework.cloud.contract.wiremock.WireMockSpring;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.core.io.Resource;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.StreamUtils;
 
 import com.example.loan.model.Client;
 import com.example.loan.model.LoanApplication;
 import com.example.loan.model.LoanApplicationResult;
 import com.example.loan.model.LoanApplicationStatus;
-import com.github.tomakehurst.wiremock.core.Options;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes=TestConfiguration.class)
+@SpringBootTest
 @AutoConfigureWireMock
 public class LoanApplicationServiceTests {
 
 	@Autowired
 	private LoanApplicationService sut;
 
+	@Value("classpath:META-INF/com.example/http-server-restdocs/0.0.1-SNAPSHOT/mappings/markClientAsFraud.json")
+	private Resource markClientAsFraud;
+
+	@Value("classpath:META-INF/com.example/http-server-restdocs/0.0.1-SNAPSHOT/mappings/markClientAsNotFraud.json")
+	private Resource markClientAsNotFraud;
+
+	@Autowired
+	private WireMockServer server;
+
 	@Test
-	public void shouldSuccessfullyApplyForLoan() {
+	public void shouldSuccessfullyApplyForLoan() throws Exception {
+		server.addStubMapping(StubMapping.buildFrom(StreamUtils.copyToString(
+				markClientAsNotFraud.getInputStream(), Charset.forName("UTF-8"))));
 		// given:
 		LoanApplication application = new LoanApplication(new Client("1234567890"),
 				123.123);
@@ -42,7 +54,9 @@ public class LoanApplicationServiceTests {
 	}
 
 	@Test
-	public void shouldBeRejectedDueToAbnormalLoanAmount() {
+	public void shouldBeRejectedDueToAbnormalLoanAmount() throws Exception {
+		server.addStubMapping(StubMapping.buildFrom(StreamUtils.copyToString(
+				markClientAsFraud.getInputStream(), Charset.forName("UTF-8"))));
 		// given:
 		LoanApplication application = new LoanApplication(new Client("1234567890"),
 				99999);
@@ -54,14 +68,4 @@ public class LoanApplicationServiceTests {
 		assertThat(loanApplication.getRejectionReason()).isEqualTo("Amount too high");
 	}
 
-	@Configuration
-	@Import(Application.class)
-	protected static class TestConfiguration {
-
-		@Bean
-		public Options wiremockOptions() {
-			return WireMockSpring.options().usingFilesUnderClasspath("META-INF/wiremock");
-		}
-
-	}
 }

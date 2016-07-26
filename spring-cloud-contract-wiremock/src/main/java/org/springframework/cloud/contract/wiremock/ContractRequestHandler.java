@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.wiremock;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -35,13 +36,13 @@ import com.jayway.jsonpath.JsonPath;
 
 public class ContractRequestHandler implements ResultHandler {
 
+	static final String ATTRIBUTE_NAME_CONFIGURATION = "org.springframework.restdocs.configuration";
+
 	private Map<String, JsonPath> jsonPaths = new LinkedHashMap<>();
 	private MediaType contentType;
-	private WireMockSnippet snippet;
 	private String name;
 
-	public ContractRequestHandler(WireMockSnippet snippet) {
-		this.snippet = snippet;
+	public ContractRequestHandler() {
 	}
 
 	public ResultHandler contract(String name) {
@@ -54,20 +55,31 @@ public class ContractRequestHandler implements ResultHandler {
 	@Override
 	public void handle(MvcResult result) throws Exception {
 		MockHttpServletRequest request = result.getRequest();
+		Map<String,Object> configuration = getConfiguration(result);
 		String actual = StreamUtils.copyToString(request.getInputStream(),
 				Charset.forName("UTF-8"));
 		for (JsonPath jsonPath : jsonPaths.values()) {
 			new JsonPathValue(jsonPath, actual).assertHasValue(Object.class, "an object");
 		}
-		snippet.setJsonPaths(jsonPaths.keySet());
+		configuration.put("contract.jsonPaths", jsonPaths.keySet());
 		if (contentType != null) {
-			snippet.setContentType(contentType);
+			configuration.put("contract.contentType", contentType);
 			String resultType = request.getContentType();
 			assertThat(resultType).isNotNull().as("no content type");
 			assertThat(contentType.includes(MediaType.valueOf(resultType))).isTrue()
 					.as("content type did not match");
 		}
 		MockMvcRestDocumentation.document(this.name).handle(result);
+	}
+
+	private Map<String, Object> getConfiguration(MvcResult result) {
+		@SuppressWarnings("unchecked")
+		Map<String, Object> map = (Map<String, Object>) result.getRequest().getAttribute(ATTRIBUTE_NAME_CONFIGURATION);
+		if (map==null) {
+			map = new HashMap<>();
+			result.getRequest().setAttribute(ATTRIBUTE_NAME_CONFIGURATION, map);
+		}
+		return map;
 	}
 
 	public ContractRequestHandler jsonPath(String expression, Object... args) {

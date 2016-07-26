@@ -17,7 +17,6 @@
 package org.springframework.cloud.contract.wiremock;
 
 import org.springframework.boot.test.autoconfigure.restdocs.RestDocsMockMvcConfigurationCustomizer;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentationConfigurer;
 
@@ -31,12 +30,7 @@ public class WireMockRestDocsConfiguration
 
 	@Override
 	public void customize(MockMvcRestDocumentationConfigurer configurer) {
-		configurer.snippets().withAdditionalDefaults(wireMockSnippet());
-	}
-
-	@Bean
-	public WireMockSnippet wireMockSnippet() {
-		return new WireMockSnippet();
+		configurer.snippets().withAdditionalDefaults(new WireMockSnippet());
 	}
 
 }

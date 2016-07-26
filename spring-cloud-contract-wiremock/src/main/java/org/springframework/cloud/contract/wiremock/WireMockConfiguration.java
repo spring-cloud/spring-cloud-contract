@@ -20,6 +20,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportAware;
@@ -49,7 +50,10 @@ public class WireMockConfiguration implements SmartLifecycle, ImportAware {
 
 	@Value("${wiremock.server.https-port:-1}")
 	private int httpsPort = -1;
-
+	
+	@Autowired
+	private DefaultListableBeanFactory beanFactory;
+	
 	@Override
 	public void setImportMetadata(AnnotationMetadata metadata) {
 		AnnotationAttributes map = AnnotationAttributes.fromMap(
@@ -77,6 +81,9 @@ public class WireMockConfiguration implements SmartLifecycle, ImportAware {
 			this.options = factory;
 		}
 		server = new WireMockServer(options);
+		if (!beanFactory.containsBean("wireMockServer")) {
+			beanFactory.registerSingleton("wireMockServer", server);
+		}
 	}
 
 	@Override

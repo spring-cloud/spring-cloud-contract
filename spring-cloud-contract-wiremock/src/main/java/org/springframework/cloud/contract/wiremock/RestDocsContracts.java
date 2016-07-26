@@ -22,8 +22,8 @@ package org.springframework.cloud.contract.wiremock;
  */
 public class RestDocsContracts {
 
-	public static ContractRequestHandler content(WireMockSnippet snippet) {
-		return new ContractRequestHandler(snippet);
+	public static ContractRequestHandler verify() {
+		return new ContractRequestHandler();
 	}
 
 }

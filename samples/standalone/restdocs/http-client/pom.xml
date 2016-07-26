@@ -53,6 +53,10 @@
 		</dependency>
 		<!-- end::stub_runner[] -->
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-activemq</artifactId>
+		</dependency>
 	</dependencies>
 	<!-- tag::contract_bom[] -->
 	<dependencyManagement>

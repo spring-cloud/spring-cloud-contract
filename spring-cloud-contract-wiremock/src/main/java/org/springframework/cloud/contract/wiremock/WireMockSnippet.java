@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -63,6 +62,7 @@ public class WireMockSnippet implements Snippet {
 
 	@Override
 	public void document(Operation operation) throws IOException {
+		extractMatchers(operation);
 		String json = Json
 				.write(request(operation).willReturn(response(operation)).build());
 		RestDocumentationContext context = (RestDocumentationContext) operation
@@ -73,6 +73,14 @@ public class WireMockSnippet implements Snippet {
 		try (Writer writer = new OutputStreamWriter(new FileOutputStream(output))) {
 			writer.append(json);
 		}
+	}
+
+	private void extractMatchers(Operation operation) {
+		@SuppressWarnings("unchecked")
+		Set<String> jsonPaths = (Set<String>) operation.getAttributes()
+				.get("contract.jsonPaths");
+		this.jsonPaths = jsonPaths;
+		contentType = (MediaType) operation.getAttributes().get("contract.contentType");
 	}
 
 	private ResponseDefinitionBuilder response(Operation operation) {
@@ -141,20 +149,11 @@ public class WireMockSnippet implements Snippet {
 				.getHeaders();
 		HttpHeaders result = new HttpHeaders();
 		for (String name : headers.keySet()) {
-			// TODO: whitelist the headers
 			if (!headerBlackList.contains(name.toLowerCase())) {
 				result = result.plus(new HttpHeader(name, headers.get(name)));
 			}
 		}
 		return result;
-	}
-
-	public void setJsonPaths(Collection<String> jsonPaths) {
-		this.jsonPaths = new LinkedHashSet<>(jsonPaths);
-	}
-
-	public void setContentType(MediaType contentType) {
-		this.contentType = contentType;
 	}
 
 }

@@ -24,7 +24,7 @@
 		</fileSet>
 		<fileSet>
 			<directory>${project.build.directory}/snippets/stubs</directory>
-			<outputDirectory>META-INF/wiremock/mappings/${project.artifactId}</outputDirectory>
+			<outputDirectory>META-INF/${project.groupId}/${project.artifactId}/${project.version}/mappings</outputDirectory>
 			<includes>
 				<include>**/*</include>
 			</includes>
