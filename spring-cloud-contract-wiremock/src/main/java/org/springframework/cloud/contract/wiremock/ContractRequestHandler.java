@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.util.ObjectUtils;
@@ -37,9 +38,17 @@ public class ContractRequestHandler implements ResultHandler {
 	private Map<String, JsonPath> jsonPaths = new LinkedHashMap<>();
 	private MediaType contentType;
 	private WireMockSnippet snippet;
+	private String name;
 
 	public ContractRequestHandler(WireMockSnippet snippet) {
 		this.snippet = snippet;
+	}
+
+	public ResultHandler contract(String name) {
+		this.name = name;
+		// TODO: try and get access to the internals of this so we don't need to store
+		// state in the snippet
+		return this;
 	}
 
 	@Override
@@ -58,6 +67,7 @@ public class ContractRequestHandler implements ResultHandler {
 			assertThat(contentType.includes(MediaType.valueOf(resultType))).isTrue()
 					.as("content type did not match");
 		}
+		MockMvcRestDocumentation.document(this.name).handle(result);
 	}
 
 	public ContractRequestHandler jsonPath(String expression, Object... args) {

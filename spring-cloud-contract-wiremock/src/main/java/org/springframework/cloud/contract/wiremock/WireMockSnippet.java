@@ -149,10 +149,6 @@ public class WireMockSnippet implements Snippet {
 		return result;
 	}
 
-	public ContractRequestHandler content() {
-		return new ContractRequestHandler(this);
-	}
-
 	public void setJsonPaths(Collection<String> jsonPaths) {
 		this.jsonPaths = new LinkedHashSet<>(jsonPaths);
 	}
