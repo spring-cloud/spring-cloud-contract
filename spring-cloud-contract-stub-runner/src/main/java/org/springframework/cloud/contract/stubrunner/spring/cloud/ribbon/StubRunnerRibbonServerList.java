@@ -38,11 +38,10 @@ import com.netflix.loadbalancer.ServerList;
  *
  * @since 1.0.0
  */
-class StubRunnerRibbonServerList implements ServerList {
+class StubRunnerRibbonServerList implements ServerList<Server> {
 
-	private final ServerList<?> serverList;
+	private final ServerList<Server> serverList;
 
-	@SuppressWarnings("unchecked")
 	StubRunnerRibbonServerList(final StubFinder stubFinder,
 									  final StubMapperProperties stubMapperProperties,
 									  final IClientConfig clientConfig,
@@ -53,7 +52,7 @@ class StubRunnerRibbonServerList implements ServerList {
 				stubMapperProperties.fromServiceIdToIvyNotation(serviceName) : serviceName;
 		RunningStubs runningStubs = stubFinder.findAllRunningStubs();
 		final Map.Entry<StubConfiguration, Integer> entry = runningStubs.getEntry(mappedServiceName);
-		final Collection servers = new ArrayList<>();
+		final Collection<Server> servers = new ArrayList<>();
 		if (entry != null) {
 			servers.add(new Server("localhost", entry.getValue()) {
 				@Override
@@ -82,18 +81,18 @@ class StubRunnerRibbonServerList implements ServerList {
 				}
 			});
 		}
-		serverList = new ServerList() {
+		serverList = new ServerList<Server>() {
 			@Override
-			public List<?> getInitialListOfServers() {
-				List combinedList = new ArrayList<>();
+			public List<Server> getInitialListOfServers() {
+				List<Server> combinedList = new ArrayList<>();
 				combinedList.addAll(servers);
 				combinedList.addAll(delegate.getInitialListOfServers());
 				return combinedList;
 			}
 
 			@Override
-			public List<?> getUpdatedListOfServers() {
-				List combinedList = new ArrayList<>();
+			public List<Server> getUpdatedListOfServers() {
+				List<Server> combinedList = new ArrayList<>();
 				combinedList.addAll(servers);
 				combinedList.addAll(delegate.getUpdatedListOfServers());
 				return combinedList;
@@ -102,12 +101,12 @@ class StubRunnerRibbonServerList implements ServerList {
 	}
 
 	@Override
-	public List<?> getInitialListOfServers() {
+	public List<Server> getInitialListOfServers() {
 		return serverList.getInitialListOfServers();
 	}
 
 	@Override
-	public List<?> getUpdatedListOfServers() {
+	public List<Server> getUpdatedListOfServers() {
 		return serverList.getUpdatedListOfServers();
 	}
 }

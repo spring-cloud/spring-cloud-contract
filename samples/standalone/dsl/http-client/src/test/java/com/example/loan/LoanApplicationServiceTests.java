@@ -22,7 +22,7 @@ public class LoanApplicationServiceTests {
 // end::autoconfigure_stubrunner[]
 
 	@Autowired
-	private LoanApplicationService sut;
+	private LoanApplicationService service;
 
 	@Test
 	public void shouldSuccessfullyApplyForLoan() {
@@ -30,7 +30,7 @@ public class LoanApplicationServiceTests {
 		LoanApplication application = new LoanApplication(new Client("1234567890"),
 				123.123);
 		// when:
-		LoanApplicationResult loanApplication = sut.loanApplication(application);
+		LoanApplicationResult loanApplication = service.loanApplication(application);
 		// then:
 		assertThat(loanApplication.getLoanApplicationStatus())
 				.isEqualTo(LoanApplicationStatus.LOAN_APPLIED);
@@ -44,7 +44,7 @@ public class LoanApplicationServiceTests {
 		LoanApplication application = new LoanApplication(new Client("1234567890"),
 				99999);
 		// when:
-		LoanApplicationResult loanApplication = sut.loanApplication(application);
+		LoanApplicationResult loanApplication = service.loanApplication(application);
 		// then:
 		assertThat(loanApplication.getLoanApplicationStatus())
 				.isEqualTo(LoanApplicationStatus.LOAN_APPLICATION_REJECTED);

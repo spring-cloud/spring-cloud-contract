@@ -29,7 +29,7 @@ public class BatchStubRunnerFactory {
 
 	private final StubRunnerOptions stubRunnerOptions;
 	private final StubDownloader stubDownloader;
-	private final MessageVerifier contractVerifierMessaging;
+	private final MessageVerifier<?> contractVerifierMessaging;
 
 	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions) {
 		this(stubRunnerOptions, new AetherStubDownloader(stubRunnerOptions), new NoOpStubMessages());
@@ -39,7 +39,7 @@ public class BatchStubRunnerFactory {
 		this(stubRunnerOptions, stubDownloader, new NoOpStubMessages());
 	}
 
-	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, StubDownloader stubDownloader, MessageVerifier contractVerifierMessaging) {
+	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, StubDownloader stubDownloader, MessageVerifier<?> contractVerifierMessaging) {
 		this.stubRunnerOptions = stubRunnerOptions;
 		this.stubDownloader = stubDownloader;
 		this.contractVerifierMessaging = contractVerifierMessaging;
