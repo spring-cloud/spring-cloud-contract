@@ -1960,7 +1960,7 @@ for your test and your server side tests.</p>
 				),
 				surname: $(
 						consumer('Kowalsky'),
-						producer('Lewandowski')
+						producer(regex('[a-zA-Z]+'))
 				),
 				name: 'Jan',
 				created: $(consumer('2014-02-02 12:23:43'), producer(execute('currentDate(it)'))),
@@ -5111,7 +5111,7 @@ Spring Boot container if there is one.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-07-25 13:16:39 CEST
+Last updated 2016-07-25 17:16:20 CEST
 </div>
 </div>
 </body>
