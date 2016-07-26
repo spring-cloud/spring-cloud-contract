@@ -12,10 +12,17 @@ LOCAL_MAVEN_REPO=${LOCAL_MAVEN_REPO}
 VERIFIER_VERSION=${VERIFIER_VERSION}
 EOF
 
-cd http-server
+cd dsl/http-server
 ./gradlew resolveDependencies -PverifierVersion=${VERIFIER_VERSION}
 cd $ROOT
-cd http-client
+cd dsl/http-client
+./gradlew resolveDependencies -PverifierVersion=${VERIFIER_VERSION} --stacktrace
+cd $ROOT
+
+cd restdocs/http-server
+./gradlew resolveDependencies -PverifierVersion=${VERIFIER_VERSION}
+cd $ROOT
+cd restdocs/http-client
 ./gradlew resolveDependencies -PverifierVersion=${VERIFIER_VERSION} --stacktrace
 cd $ROOT
 

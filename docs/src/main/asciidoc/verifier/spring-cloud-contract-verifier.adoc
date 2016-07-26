@@ -5,7 +5,7 @@
 :samples_path: {core_path}/samples
 :verifier_core_path: {verifier_root_path}
 :stubrunner_core_path: {core_path}/spring-cloud-contract-stub-runner
-:standalone_samples_path: {samples_path}/standalone
+:standalone_samples_path: {samples_path}/standalone/dsl
 :tests_path: ../../../../../tests
 
 include::introduction.adoc[]

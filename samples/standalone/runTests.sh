@@ -18,11 +18,11 @@ rm -rf $LOCAL_MAVEN_REPO/repository/com/example
 
 echo -e "\n\nRunning tests for Gradle (HTTP communication)\n\n"
 echo -e "Building server (uses Spring Cloud Contract Verifier Gradle Plugin)"
-cd http-server
+cd dsl/http-server
 ./gradlew clean build publishToMavenLocal -PverifierVersion=${VERIFIER_VERSION} --stacktrace
 cd $ROOT
 echo -e "\n\nBuilding client (uses Spring Cloud Contract Stub Runner)"
-cd http-client
+cd dsl/http-client
 ./gradlew clean build -PverifierVersion=${VERIFIER_VERSION} --stacktrace
 cd $ROOT
 
