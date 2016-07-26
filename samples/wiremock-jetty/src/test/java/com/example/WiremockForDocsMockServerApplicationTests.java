@@ -27,9 +27,9 @@ public class WiremockForDocsMockServerApplicationTests {
 
 	@Test
 	public void contextLoads() throws Exception {
-		// will read stubs from default /resources/stubs location
+		// will read stubs classpath
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate)
-				.baseUrl("http://example.org").stubs("resource");
+				.baseUrl("http://example.org").stubs("classpath:/stubs/resource.json");
 		// We're asserting if WireMock responded properly
 		assertThat(this.service.go()).isEqualTo("Hello World");
 		server.verify();
