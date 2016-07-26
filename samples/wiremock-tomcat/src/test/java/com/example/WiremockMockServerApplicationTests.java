@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.cloud.contract.wiremock.WireMockExpectations;
+import org.springframework.cloud.contract.wiremock.WireMockRestServiceServer;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -26,9 +26,9 @@ public class WiremockMockServerApplicationTests {
 
 	@Test
 	public void contextLoads() throws Exception {
-		MockRestServiceServer server = WireMockExpectations.with(this.restTemplate) //
+		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("http://example.org") //
-				.expect("resource");
+				.stubs("classpath:/stubs/**/*.json");
 		assertThat(this.service.go()).isEqualTo("Hello World");
 		server.verify();
 	}

@@ -24,6 +24,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.util.StreamUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.github.tomakehurst.wiremock.common.Json;
@@ -36,40 +37,40 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  * @author Dave Syer
  *
  */
-public class WireMockExpectations {
+public class WireMockRestServiceServer {
 
 	private final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
-	private String prefix = "classpath:/mappings/";
-
 	private String suffix = ".json";
-
+	
 	private String baseUrl = "";
 
 	private MockRestServiceServer server;
 
-	private WireMockExpectations(RestTemplate restTemplate) {
+	private WireMockRestServiceServer(RestTemplate restTemplate) {
 		this.server = MockRestServiceServer.bindTo(restTemplate).build();
 	}
 
-	public WireMockExpectations baseUrl(String baseUrl) {
-		this.baseUrl = baseUrl;
-		return this;
-	}
-
-	public WireMockExpectations prefix(String prefix) {
-		this.prefix = prefix;
-		return this;
-	}
-	public WireMockExpectations suffix(String suffix) {
+	public WireMockRestServiceServer suffix(String suffix) {
 		this.suffix = suffix;
 		return this;
 	}
 
-	public MockRestServiceServer expect(String... locations) {
+	public WireMockRestServiceServer baseUrl(String baseUrl) {
+		this.baseUrl = baseUrl;
+		return this;
+	}
+
+	public MockRestServiceServer stubs(String... locations) {
 		for (String location : locations) {
 			try {
-				for (Resource resource : this.resolver.getResources(this.prefix + location + this.suffix)) {
+				if (!StringUtils.getFilename(location).contains(".") && !location.contains("*")) {
+					if (!location.endsWith("/")) {
+						location = location + "/";
+					}
+					location = location + "/**/*" + this.suffix;
+				}
+				for (Resource resource : this.resolver.getResources(location)) {
 					StubMapping mapping;
 					mapping = Json.read(StreamUtils.copyToString(resource.getInputStream(), Charset.defaultCharset()),
 							StubMapping.class);
@@ -84,8 +85,8 @@ public class WireMockExpectations {
 		return this.server;
 	}
 
-	public static WireMockExpectations with(RestTemplate restTemplate) {
-		return new WireMockExpectations(restTemplate);
+	public static WireMockRestServiceServer with(RestTemplate restTemplate) {
+		return new WireMockRestServiceServer(restTemplate);
 	}
 
 }

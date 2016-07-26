@@ -25,9 +25,9 @@ public class WiremockMockServerApplicationTests {
 
 	@Test
 	public void contextLoads() throws Exception {
-		MockRestServiceServer server = WireMockExpectations.with(this.restTemplate) //
+		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("http://example.org") //
-				.expect("resource");
+				.stubs("classpath:/mappings");
 		assertThat(this.service.go()).isEqualTo("Hello World");
 		server.verify();
 	}
