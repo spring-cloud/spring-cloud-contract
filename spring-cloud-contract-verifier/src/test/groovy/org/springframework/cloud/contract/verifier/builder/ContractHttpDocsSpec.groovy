@@ -216,7 +216,7 @@ class ContractHttpDocsSpec extends Specification {
 						),
 						surname: $(
 								consumer('Kowalsky'),
-								producer('Lewandowski')
+								producer(regex('[a-zA-Z]+'))
 						),
 						name: 'Jan',
 						created: $(consumer('2014-02-02 12:23:43'), producer(execute('currentDate(it)'))),

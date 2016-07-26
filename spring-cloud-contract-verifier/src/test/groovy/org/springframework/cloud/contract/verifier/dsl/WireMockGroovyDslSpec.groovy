@@ -42,7 +42,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 							),
 							surname: $(
 									consumer('Kowalsky'),
-									producer('Lewandowski')
+									producer(regex('[a-zA-Z]+'))
 							),
 							name: 'Jan',
 							created: $(consumer('2014-02-02 12:23:43'), producer({ currentDate(it) }))
@@ -186,7 +186,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					body("""\
 							{
 								"id": "${value(consumer('123'), producer('321'))}",
-								"surname": "${value(consumer('Kowalsky'), producer('Lewandowski'))}",
+								"surname": "${value(consumer('Kowalsky'), producer(regex('[a-zA-Z]+')))}",
 								"name": "Jan",
 								"created" : "${$(consumer('2014-02-02 12:23:43'), producer('2999-09-09 01:23:45'))}"
 							}
@@ -277,15 +277,15 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					url $(consumer(~/\/[0-9]{2}/), producer('/12'))
 					body(
 							id: value(
-									consumer('123'),
-									producer({ regex('[0-9]+') })
+									consumer(regex('[0-9]+')),
+									producer('123'),
 							),
 							surname: $(
-									consumer('Kowalsky'),
-									producer('Lewandowski')
+									consumer(regex('[a-zA-Z]+')),
+									producer('Kowalsky'),
 							),
 							name: 'Jan',
-							created: $(consumer('2014-02-02 12:23:43'), producer({ currentDate(it) }))
+							created: $(consumer('2014-02-02 12:23:43'), producer(execute('currentDate($it)')))
 					)
 				}
 				response {
@@ -303,11 +303,11 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"bodyPatterns" : [ {
 	  "matchesJsonPath" : "$[?(@.created == '2014-02-02 12:23:43')]"
 	}, {
-	  "matchesJsonPath" : "$[?(@.surname == 'Kowalsky')]"
+	  "matchesJsonPath" : "$[?(@.surname =~ /[a-zA-Z]+/)]"
 	}, {
 	  "matchesJsonPath" : "$[?(@.name == 'Jan')]"
 	}, {
-	  "matchesJsonPath" : "$[?(@.id == '123')]"
+	  "matchesJsonPath" : "$[?(@.id =~ /[0-9]+/)]"
 	} ]
   },
   "response" : {
