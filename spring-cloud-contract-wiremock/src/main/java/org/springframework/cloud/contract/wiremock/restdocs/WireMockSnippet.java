@@ -48,6 +48,7 @@ import com.github.tomakehurst.wiremock.common.Json;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 public class WireMockSnippet implements Snippet {
 
@@ -60,11 +61,15 @@ public class WireMockSnippet implements Snippet {
 
 	private MediaType contentType;
 
+	private StubMapping stubMapping;
+
 	@Override
 	public void document(Operation operation) throws IOException {
 		extractMatchers(operation);
-		String json = Json
-				.write(request(operation).willReturn(response(operation)).build());
+		if (stubMapping == null) {
+			stubMapping = request(operation).willReturn(response(operation)).build();
+		}
+		String json = Json.write(stubMapping);
 		RestDocumentationContext context = (RestDocumentationContext) operation
 				.getAttributes().get(RestDocumentationContext.class.getName());
 		File output = new File(context.getOutputDirectory(),
@@ -76,6 +81,10 @@ public class WireMockSnippet implements Snippet {
 	}
 
 	private void extractMatchers(Operation operation) {
+		stubMapping = (StubMapping) operation.getAttributes().get("contract.stubMapping");
+		if (stubMapping != null) {
+			return;
+		}
 		@SuppressWarnings("unchecked")
 		Set<String> jsonPaths = (Set<String>) operation.getAttributes()
 				.get("contract.jsonPaths");
