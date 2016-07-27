@@ -184,7 +184,30 @@ created stub. Example:
 
 The WireMock API is rich - you can match headers, query parameters,
 and request body by regex as well as by json path - so this can useful
-to create stubs with a wider range of parameters.
+to create stubs with a wider range of parameters. The above example
+will generate a stub something like this:
+
+.post-resource.json
+[source,json]
+----
+{
+  "request" : {
+    "url" : "/resource",
+    "method" : "PUT",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$.id"
+    }]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "Hello World",
+    "headers" : {
+      "X-Application-Context" : "application:-1",
+      "Content-Type" : "text/plain"
+    }
+  }
+}
+----
 
 NOTE: You can use either the `wiremock()` method or the `jsonPath()`
 and `contentType()` methods to create request matchers, but not both.
