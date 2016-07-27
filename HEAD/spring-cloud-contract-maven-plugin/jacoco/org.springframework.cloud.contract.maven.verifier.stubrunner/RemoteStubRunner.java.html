@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>RemoteStubRunner.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Spring Cloud Contract Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">org.springframework.cloud.contract.maven.verifier.stubrunner</a> &gt; <span class="el_source">RemoteStubRunner.java</span></div><h1>RemoteStubRunner.java</h1><pre class="source lang-java linenums">/*
+ *  Copyright 2013-2016 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.springframework.cloud.contract.maven.verifier.stubrunner;
+
+import java.lang.invoke.MethodHandles;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.eclipse.aether.RepositorySystemSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cloud.contract.stubrunner.AetherStubDownloader;
+import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
+import org.springframework.cloud.contract.stubrunner.BatchStubRunnerFactory;
+import org.springframework.cloud.contract.stubrunner.RunningStubs;
+import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
+
+@Named
+public class RemoteStubRunner {
+<span class="nc" id="L33">	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());</span>
+	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
+
+	@Inject
+<span class="nc" id="L37">	public RemoteStubRunner(AetherStubDownloaderFactory aetherStubDownloaderFactory) {</span>
+<span class="nc" id="L38">		this.aetherStubDownloaderFactory = aetherStubDownloaderFactory;</span>
+<span class="nc" id="L39">	}</span>
+
+	public BatchStubRunner run(StubRunnerOptions options, RepositorySystemSession repositorySystemSession) {
+<span class="nc" id="L42">		AetherStubDownloader stubDownloader = aetherStubDownloaderFactory.build(repositorySystemSession);</span>
+		try {
+<span class="nc" id="L44">			log.debug(&quot;Launching StubRunner with args: &quot; + String.valueOf(options));</span>
+<span class="nc" id="L45">			BatchStubRunner stubRunner = new BatchStubRunnerFactory(options,</span>
+<span class="nc" id="L46">					stubDownloader).buildBatchStubRunner();</span>
+<span class="nc" id="L47">			RunningStubs runningCollaborators = stubRunner.runStubs();</span>
+<span class="nc" id="L48">			log.info(runningCollaborators.toString());</span>
+<span class="nc" id="L49">			return stubRunner;</span>
+		}
+<span class="nc" id="L51">		catch (Exception e) {</span>
+<span class="nc" id="L52">			log.error(&quot;An exception occurred while trying to execute the stubs: &quot; + e.getMessage());</span>
+<span class="nc" id="L53">			throw e;</span>
+		}
+
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

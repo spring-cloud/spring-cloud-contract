@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GenerateStubsMojo.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Spring Cloud Contract Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">org.springframework.cloud.contract.maven.verifier</a> &gt; <span class="el_source">GenerateStubsMojo.java</span></div><h1>GenerateStubsMojo.java</h1><pre class="source lang-java linenums">/*
+ *  Copyright 2013-2016 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.springframework.cloud.contract.maven.verifier;
+
+import java.io.File;
+
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.jar.JarArchiver;
+
+@Mojo(name = &quot;generateStubs&quot;, defaultPhase = LifecyclePhase.PACKAGE,
+		requiresProject = true)
+<span class="fc" id="L34">public class GenerateStubsMojo extends AbstractMojo {</span>
+
+	private static final String STUB_MAPPING_FILE_PATTERN = &quot;**/*.json&quot;;
+	private static final String CONTRACT_FILE_PATTERN = &quot;**/*.groovy&quot;;
+
+	@Parameter(defaultValue = &quot;${project.build.directory}&quot;, readonly = true,
+			required = true)
+	private File projectBuildDirectory;
+
+	@Parameter(property = &quot;stubsDirectory&quot;,
+			defaultValue = &quot;${project.build.directory}/stubs&quot;)
+	private File outputDirectory;
+
+	/**
+	 * Set this to &quot;true&quot; to bypass Verifier execution..
+	 */
+	@Parameter(property = &quot;spring.cloud.contract.verifier.skip&quot;, defaultValue = &quot;false&quot;)
+	private boolean skip;
+
+	@Component
+	private MavenProjectHelper projectHelper;
+
+	@Parameter(defaultValue = &quot;${project}&quot;, readonly = true)
+	private MavenProject project;
+
+	@Component(role = Archiver.class, hint = &quot;jar&quot;)
+	private JarArchiver archiver;
+
+	@Parameter(defaultValue = &quot;true&quot;)
+	private boolean attachContracts;
+
+	@Parameter(defaultValue = &quot;stubs&quot;)
+	private String classifier;
+
+	public void execute() throws MojoExecutionException, MojoFailureException {
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">		if (skip) {</span>
+<span class="nc" id="L70">			getLog().info(</span>
+					&quot;Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip=&quot;
+							+ skip);
+<span class="nc" id="L73">			return;</span>
+		}
+<span class="fc" id="L75">		File stubsJarFile = createStubJar(outputDirectory);</span>
+<span class="fc" id="L76">		projectHelper.attachArtifact(project, &quot;jar&quot;, classifier, stubsJarFile);</span>
+<span class="fc" id="L77">	}</span>
+
+	private File createStubJar(File stubsOutputDir)
+			throws MojoFailureException, MojoExecutionException {
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">		if (!stubsOutputDir.exists()) {</span>
+<span class="nc" id="L82">			throw new MojoExecutionException(</span>
+<span class="nc" id="L83">					&quot;Stubs could not be found: [&quot; + stubsOutputDir.getAbsolutePath()</span>
+							+ &quot;] .\nPlease make sure that spring-cloud-contract:convert was invoked&quot;);
+		}
+<span class="fc" id="L86">		String stubArchiveName =</span>
+<span class="fc" id="L87">				project.getBuild().getFinalName() + &quot;-&quot; + classifier + &quot;.jar&quot;;</span>
+<span class="fc" id="L88">		File stubsJarFile = new File(projectBuildDirectory, stubArchiveName);</span>
+		try {
+<span class="fc bfc" id="L90" title="All 2 branches covered.">			if (attachContracts) {</span>
+<span class="fc" id="L91">				archiver.addDirectory(stubsOutputDir,</span>
+						new String[] { STUB_MAPPING_FILE_PATTERN, CONTRACT_FILE_PATTERN },
+						new String[0]);
+			}
+			else {
+<span class="fc" id="L96">				getLog().info(</span>
+						&quot;Skipping attaching Spring Cloud Contract Verifier contracts&quot;);
+<span class="fc" id="L98">				archiver.addDirectory(stubsOutputDir,</span>
+						new String[] { STUB_MAPPING_FILE_PATTERN },
+						new String[] { CONTRACT_FILE_PATTERN });
+			}
+<span class="fc" id="L102">			archiver.setCompress(true);</span>
+<span class="fc" id="L103">			archiver.setDestFile(stubsJarFile);</span>
+<span class="fc" id="L104">			archiver.addConfiguredManifest(ManifestCreator.createManifest(project));</span>
+<span class="fc" id="L105">			archiver.createArchive();</span>
+		}
+<span class="nc" id="L107">		catch (Exception e) {</span>
+<span class="nc" id="L108">			throw new MojoFailureException(</span>
+					&quot;Exception while packaging &quot; + classifier + &quot; jar.&quot;, e);
+<span class="fc" id="L110">		}</span>
+<span class="fc" id="L111">		return stubsJarFile;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>
