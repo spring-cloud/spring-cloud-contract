@@ -114,7 +114,7 @@ Technical remark - Fraud Detection will have artifact id `http-server`, Loan Iss
 Social remark - both client and server development teams need to communicate directly and discuss changes while
 going through the process. CDC is all about communication.
 
-The https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/http-server[server side code is available here] and https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/http-client[the client side code here].
+The https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-server[server side code is available here] and https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-client[the client side code here].
 
 ===== Consumer side (Loan Issuance)
 
@@ -124,7 +124,7 @@ As a developer of the Loan Issuance service (a consumer of the Fraud Detection s
 
 [source,groovy,indent=0]
 ----
-include::{introduction_url}/samples/standalone/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[tags=client_tdd,indent=0]
+include::{introduction_url}/samples/standalone/dsl/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[tags=client_tdd,indent=0]
 ----
 
 We've just written a test of our new feature. If a loan application for a big amount is received we should reject that loan application with some description.
@@ -135,7 +135,7 @@ At some point in time you need to send a request to the Fraud Detection service.
 
 [source,groovy,indent=0]
 ----
-include::{introduction_url}/samples/standalone/http-client/src/main/java/com/example/loan/LoanApplicationService.java[tags=client_call_server,indent=0]
+include::{introduction_url}/samples/standalone/dsl/http-client/src/main/java/com/example/loan/LoanApplicationService.java[tags=client_call_server,indent=0]
 ----
 
 For simplicity we've hardcoded the port of the Fraud Detection service at `8080` and our application is running on `8090`.
@@ -157,7 +157,7 @@ As consumers we need to define what exactly we want to achieve. We need to formu
 
 [source,groovy,indent=0]
 ----
-include::{introduction_url}/samples/standalone/http-server/src/test/resources/contracts/shouldMarkClientAsFraud.groovy[]
+include::{introduction_url}/samples/standalone/dsl/http-server/src/test/resources/contracts/shouldMarkClientAsFraud.groovy[]
 ----
 
 The Contract is written using a statically typed Groovy DSL. You might be wondering what are those
@@ -188,14 +188,14 @@ We can add either Maven or Gradle plugin - in this example we'll show how to add
 
 [source,xml,indent=0]
 ----
-include::{introduction_url}/samples/standalone/http-server/pom.xml[tags=contract_bom,indent=0]
+include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=contract_bom,indent=0]
 ----
 
 Next, the `Spring Cloud Contract Verifier` Maven plugin
 
 [source,xml,indent=0]
 ----
-include::{introduction_url}/samples/standalone/http-server/pom.xml[tags=contract_maven_plugin,indent=0]
+include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=contract_maven_plugin,indent=0]
 ----
 
 Since the plugin was added we get the `Spring Cloud Contract Verifier` features which from the provided contracts:
@@ -246,28 +246,28 @@ Add the `Spring Cloud Contract` BOM
 
 [source,xml,indent=0]
 ----
-include::{introduction_url}/samples/standalone/http-client/pom.xml[tags=contract_bom,indent=0]
+include::{introduction_url}/samples/standalone/dsl/http-client/pom.xml[tags=contract_bom,indent=0]
 ----
 
 Add the dependency to `Spring Cloud Contract Stub Runner`
 
 [source,xml,indent=0]
 ----
-include::{introduction_url}/samples/standalone/http-client/pom.xml[tags=stub_runner,indent=0]
+include::{introduction_url}/samples/standalone/dsl/http-client/pom.xml[tags=stub_runner,indent=0]
 ----
 
 Provide the group id and artifact id for the Stub Runner to download stubs of your collaborators. Also provide the offline work switch since you're playing with the collaborators offline (optional step).
 
 [source,yaml,indent=0]
 ----
-include::{introduction_url}/samples/standalone/http-client/src/test/resources/application.yaml[]
+include::{introduction_url}/samples/standalone/dsl/http-client/src/test/resources/application.yaml[]
 ----
 
 Annotate your test class with `@AutoConfigureStubRunner`
 
 [source,groovy,indent=0]
 ----
-include::{introduction_url}/samples/standalone/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[tags=autoconfigure_stubrunner,indent=0]
+include::{introduction_url}/samples/standalone/dsl/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[tags=autoconfigure_stubrunner,indent=0]
 ----
 
 Now if you run your tests you'll see sth like this:
@@ -301,8 +301,8 @@ As a reminder here you can see the initial implementation
 
 [source,java,indent=0]
 ----
-include::{introduction_url}/samples/standalone/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
-include::{introduction_url}/samples/standalone/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
+include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
+include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
 }
 ----
 
@@ -318,21 +318,21 @@ You have to add the dependencies needed by the autogenerated tests
 
 [source,xml,indent=0]
 ----
-include::{introduction_url}/samples/standalone/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
+include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
 ----
 
 In the configuration of the Maven plugin we passed the `baseClassForTests` property
 
 [source,xml,indent=0]
 ----
-include::{introduction_url}/samples/standalone/http-server/pom.xml[tags=contract_maven_plugin,indent=0]
+include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=contract_maven_plugin,indent=0]
 ----
 
 That's because all the generated tests will extend that class. Over there you can set up your Spring Context or whatever is necessary. In our case we're using http://rest-assured.io/[Rest Assured MVC] to start the server side `FraudDetectionController`.
 
 [source,java,indent=0]
 ----
-include::{introduction_url}/samples/standalone/http-server/src/test/java/com/example/fraud/MvcTest.java[]
+include::{introduction_url}/samples/standalone/dsl/http-server/src/test/java/com/example/fraud/MvcTest.java[]
 ----
 
 Now, if you run the `./mvnw clean install` you would get sth like this:
@@ -380,9 +380,9 @@ Now since we now what is the expected input and expected output let's write the 
 
 [source,java,indent=0]
 ----
-include::{introduction_url}/samples/standalone/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
-include::{introduction_url}/samples/standalone/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=new_impl,indent=0]
-include::{introduction_url}/samples/standalone/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
+include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
+include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=new_impl,indent=0]
+include::{introduction_url}/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
 }
 ----
 
@@ -419,7 +419,7 @@ Now you can disable the offline work for Spring Cloud Contract Stub Runner ad pr
 
 [source,yaml,indent=0]
 ----
-include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/standalone/http-client/src/test/resources/application-test-repo.yaml[]
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
 ----
 
 And that's it!
