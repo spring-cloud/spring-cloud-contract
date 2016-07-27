@@ -193,7 +193,7 @@ will generate a stub something like this:
 {
   "request" : {
     "url" : "/resource",
-    "method" : "PUT",
+    "method" : "POST",
     "bodyPatterns" : [ {
       "matchesJsonPath" : "$.id"
     }]
