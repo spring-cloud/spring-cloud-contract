@@ -32,27 +32,37 @@ part of your test. Here's a simple example:
 
 [source,java,indent=0]
 ----
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@AutoConfigureWireMock(port = 0)
-public class WiremockForDocsTests {
-	// A service that calls out over HTTP
-	@Autowired private Service service;
+Unresolved directive in spring-cloud-wiremock.adoc - include::{doc_samples}/src/test/java/com/example/WiremockForDocsTests.java[tags=wiremock_test1]
+Unresolved directive in spring-cloud-wiremock.adoc - include::{doc_samples}/src/test/java/com/example/WiremockForDocsTests.java[tags=wiremock_test2]
+----
 
-	// Using the WireMock APIs in the normal way:
+To start the stub server on a different port use `@AutoConfigureWireMock(port=9999)` (for example), and for a random port use the value 0. The stub server port will be bindable in the test application context as "wiremock.server.port". Using `@AutoConfigureWireMock` adds a bean of type `WiremockConfiguration` to your test application context, where it will be cached in between methods and classes having the same context, just like for normal Spring integration tests.
+
+=== Registering Stubs Automatically
+
+If you add a `stubs` attribute to your `@AutoConfigureWireMock` then
+it will register WireMock JSON stubs from the file system or
+classpath. The stubs attribute can be a resource pattern (ant-style)
+or a directory, in which case `**/*.json` is appended. Example:
+
+----
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureWireMock(stubs="classpath:/stubs")
+public class WiremockImportApplicationTests {
+
+	@Autowired
+	private Service service;
+
 	@Test
 	public void contextLoads() throws Exception {
-		// Stubbing WireMock
-		stubFor(get(urlEqualTo("/resource"))
-				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
-		// We're asserting if WireMock responded properly
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 	}
 
 }
 ----
 
-To start the stub server on a different port use `@AutoConfigureWireMock(port=9999)` (for example), and for a random port use the value 0. The stub server port will be bindable in the test application context as "wiremock.server.port". Using `@AutoConfigureWireMock` adds a bean of type `WiremockConfiguration` to your test application context, where it will be cached in between methods and classes having the same context, just like for normal Spring integration tests.
+=== Alternative: Using JUnit Rules
 
 For a more conventional WireMock experience, using JUnit `@Rules` to
 start and stop the server, just use the `WireMockSpring` convenience
@@ -60,30 +70,8 @@ class to obtain an `Options` instance:
 
 [source,java,indent=0]
 ----
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@AutoConfigureWireMock
-public class WiremockForDocsClassRuleTests {
-
-	// Start WireMock on some dynamic port
-	@ClassRule
-	public static WireMockClassRule wiremock = new WireMockClassRule(
-			WireMockSpring.options().dynamicPort());
-	// A service that calls out over HTTP to localhost:${wiremock.port}
-	@Autowired
-	private Service service;
-
-	// Using the WireMock APIs in the normal way:
-	@Test
-	public void contextLoads() throws Exception {
-		// Stubbing WireMock
-		wiremock.stubFor(get(urlEqualTo("/resource"))
-				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
-		// We're asserting if WireMock responded properly
-		assertThat(this.service.go()).isEqualTo("Hello World!");
-	}
-
-}
+Unresolved directive in spring-cloud-wiremock.adoc - include::{doc_samples}/src/test/java/com/example/WiremockForDocsClassRuleTests.java[tags=wiremock_test1]
+Unresolved directive in spring-cloud-wiremock.adoc - include::{doc_samples}/src/test/java/com/example/WiremockForDocsClassRuleTests.java[tags=wiremock_test2]
 ----
 
 The use `@ClassRule` means that the server will shut down after all the methods in this class.
@@ -95,43 +83,154 @@ Spring `MockRestServiceServer`. Here's an example:
 
 [source,java,indent=0]
 ----
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment=WebEnvironment.NONE)
-public class WiremockForDocsMockServerApplicationTests {
-
-	@Autowired
-	private RestTemplate restTemplate;
-
-	@Autowired
-	private Service service;
-
-	@Test
-	public void contextLoads() throws Exception {
-		// will read stubs from default /resources/stubs location
-		MockRestServiceServer server = WireMockExpectations.with(this.restTemplate)
-				.baseUrl("http://example.org")
-				.expect("resource");
-		// We're asserting if WireMock responded properly
-		assertThat(this.service.go()).isEqualTo("Hello World");
-		server.verify();
-	}
-}
+Unresolved directive in spring-cloud-wiremock.adoc - include::{doc_samples}/src/test/java/com/example/WiremockForDocsMockServerApplicationTests.java[tags=wiremock_test]
 ----
 
-The `baseUrl` is prepended to all mock calls, and the `expect()`
-method takes a stub name as an argument, where the stubs are stored in
-the classpath at `/stubs/<name>.json` by default. So in this example
-the stub defined at `/stubs/resource.json` is loaded into the mock
-server, so if the `RestTemplate` is asked to visit
-`http://example.org/` it will get the responses as declared there. The
-JSON format is the normal WireMock format which you can read about in
-the WireMock website.
+The `baseUrl` is prepended to all mock calls, and the `stubs()`
+method takes a stub path resource pattern as an argument. So in this
+example the stub defined at `/stubs/resource.json` is loaded into the
+mock server, so if the `RestTemplate` is asked to visit
+`http://example.org/` it will get the responses as declared
+there. More than one stub pattern can be specified, and each one can
+be a directory (for a recursive list of all ".json"), or a fixed
+filename (like in the example above) or an ant-style pattern. The JSON
+format is the normal WireMock format which you can read about in the
+WireMock website.
 
 Currently we support Tomcat, Jetty and Undertow as Spring Boot
 embedded servers, and Wiremock itself has "native" support for a
 particular version of Jetty (currently 9.2). To use the native Jetty
 you need to add the native wiremock dependencies and exclude the
 Spring Boot container if there is one.
+
+== Generating Stubs using RestDocs
+
+https://projects.spring.io/spring-restdocs[Spring RestDocs] can be
+used to generate documentation (e.g. in asciidoctor format) for an
+HTTP API with Spring MockMvc or RestEasy. At the same time as you
+generate documentation for your API, you can also generate WireMock
+stubs, by using Spring Cloud Contract WireMock. Just write your normal
+RestDocs test cases and use `@AutoConfigureRestDocs` to have stubs
+automatically in the restdocs output directory. For example:
+
+
+[source,java,indent=0]
+----
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureRestDocs(outputDir = "target/snippets")
+@AutoConfigureMockMvc
+public class ApplicationTests {
+
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Test
+	public void contextLoads() throws Exception {
+		mockMvc.perform(get("/resource"))
+				.andExpect(content().string("Hello World"))
+				.andDo(document("resource"));
+	}
+}
+----
+
+From this test will be generated a WireMock stub at
+"target/snippets/stubs/resource.json". It matches all GET requests to
+the "/resource" path.
+
+Without any additional configuration this will create a stub with a
+request matcher for the HTTP method and all headers except "host" and
+"content-length". To match the request more precisely, for example to
+match the body of a POST or PUT, we need to explicitly create a
+request matcher. This will do two things: 1) create a stub that only
+matches the way you specify, 2) assert that the request in the test
+case also matches the same conditions.
+
+The main entry point for this is `WireMockRestDocs.verify()` which can
+be used as a substitute for the `document()` convenience method. For
+example:
+
+[source,java,indent=0]
+----
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureRestDocs(outputDir = "target/snippets")
+@AutoConfigureMockMvc
+public class ApplicationTests {
+
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Test
+	public void contextLoads() throws Exception {
+		mockMvc.perform(post("/resource")
+                .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
+				.andExpect(status.isOk())
+				.andDo(verify().jsonPath("$.id")
+                        .stub("resource"));
+	}
+}
+----
+
+So this contract is saying: any valid POST with an "id" field will get
+back an the same response as in this test. You can chain together
+calls to `.jsonPath()` to add additional matchers. The
+https://github.com/jayway/JsonPath[JayWay documentation] can help you
+to get up to speed with JSON Path if it is unfamiliar to you.
+
+Instead of the `jsonPath` and `contentType` convenience methods, you
+can also use the WireMock APIs to verify the request matches the
+created stub. Example:
+
+[source,java,indent=0]
+----
+	@Test
+	public void contextLoads() throws Exception {
+		mockMvc.perform(post("/resource")
+                .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
+				.andExpect(status.isOk())
+				.andDo(verify()
+						.wiremock(WireMock.post(
+							urlPathEquals("/resource"))
+							.withRequestBody(matchingJsonPath("$.id"))
+                        .stub("post-resource"));
+	}
+----
+
+The WireMock API is rich - you can match headers, query parameters,
+and request body by regex as well as by json path - so this can useful
+to create stubs with a wider range of parameters. The above example
+will generate a stub something like this:
+
+.post-resource.json
+[source,json]
+----
+{
+  "request" : {
+    "url" : "/resource",
+    "method" : "PUT",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$.id"
+    }]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "Hello World",
+    "headers" : {
+      "X-Application-Context" : "application:-1",
+      "Content-Type" : "text/plain"
+    }
+  }
+}
+----
+
+NOTE: You can use either the `wiremock()` method or the `jsonPath()`
+and `contentType()` methods to create request matchers, but not both.
+
+On the consumer side, assuming the `resource.json` generated above is
+available on the classpath, you can create a stub using WireMock in a
+number of different ways, including as described above using
+`@AutoConfigureWireMock(stubs="classpath:resource.json")`.
 
 === Spring Cloud Contract Verifier
 
@@ -261,18 +360,7 @@ As a developer of the Loan Issuance service (a consumer of the Fraud Detection s
 
 [source,groovy,indent=0]
 ----
-@Test
-public void shouldBeRejectedDueToAbnormalLoanAmount() {
-    // given:
-    LoanApplication application = new LoanApplication(new Client("1234567890"),
-            99999);
-    // when:
-    LoanApplicationResult loanApplication = sut.loanApplication(application);
-    // then:
-    assertThat(loanApplication.getLoanApplicationStatus())
-            .isEqualTo(LoanApplicationStatus.LOAN_APPLICATION_REJECTED);
-    assertThat(loanApplication.getRejectionReason()).isEqualTo("Amount too high");
-}
+Unresolved directive in verifier/introduction.adoc - include::{introduction_url}/samples/standalone/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[tags=client_tdd,indent=0]
 ----
 
 We've just written a test of our new feature. If a loan application for a big amount is received we should reject that loan application with some description.
@@ -283,10 +371,7 @@ At some point in time you need to send a request to the Fraud Detection service.
 
 [source,groovy,indent=0]
 ----
-ResponseEntity<FraudServiceResponse> response =
-        restTemplate.exchange("http://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
-                new HttpEntity<>(request, httpHeaders),
-                FraudServiceResponse.class);
+Unresolved directive in verifier/introduction.adoc - include::{introduction_url}/samples/standalone/http-client/src/main/java/com/example/loan/LoanApplicationService.java[tags=client_call_server,indent=0]
 ----
 
 For simplicity we've hardcoded the port of the Fraud Detection service at `8080` and our application is running on `8090`.
@@ -308,73 +393,7 @@ As consumers we need to define what exactly we want to achieve. We need to formu
 
 [source,groovy,indent=0]
 ----
-package contracts
-
-org.springframework.cloud.contract.spec.Contract.make {
-			request { // (1)
-				method 'PUT' // (2)
-				url '/fraudcheck' // (3)
-				body([ // (4)
-					clientId: value(consumer(regex('[0-9]{10}'))),
-					loanAmount: 99999
-					])
-				headers { // (5)
-					header('Content-Type', 'application/vnd.fraud.v1+json')
-				}
-			}
-			response { // (6)
-				status 200 // (7)
-				body([ // (8)
-					fraudCheckStatus: "FRAUD",
-					rejectionReason: "Amount too high"
-				])
-				headers { // (9)
-					 header('Content-Type': value(
-							 producer(regex('application/vnd.fraud.v1.json.*')),
-							 consumer('application/vnd.fraud.v1+json'))
-					 )
-				}
-			}
-}
-
-/*
-Since we don't want to force on the user to hardcode values of fields that are dynamic
-(timestamps, database ids etc.), one can provide parametrize those entries by using the
-`value(consumer(...), producer(...))` method. That way what's present in the `consumer`
-section will end up in the produced stub. What's there in the `producer` will end up in the
-autogenerated test. If you provide only the regular expression side without the concrete
-value then Spring Cloud Contract will generate one for you.
-
-From the Consumer perspective, when shooting a request in the integration test:
-
-(1) - If the consumer sends a request
-(2) - With the "PUT" method
-(3) - to the URL "/fraudcheck"
-(4) - with the JSON body that
- * has a field `clientId` that matches a regular expression `[0-9]{10}`
- * has a field `loanAmount` that is equal to `99999`
-(5) - with header `Content-Type` equal to `application/vnd.fraud.v1+json`
-(6) - then the response will be sent with
-(7) - status equal `200`
-(8) - and JSON body equal to
- { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
-(9) - with header `Content-Type` equal to `application/vnd.fraud.v1+json`
-
-From the Producer perspective, in the autogenerated producer-side test:
-
-(1) - A request will be sent to the producer
-(2) - With the "PUT" method
-(3) - to the URL "/fraudcheck"
-(4) - with the JSON body that
- * has a field `clientId` that will have a generated value that matches a regular expression `[0-9]{10}`
- * has a field `loanAmount` that is equal to `99999`
-(5) - with header `Content-Type` equal to `application/vnd.fraud.v1+json`
-(6) - then the test will assert if the response has been sent with
-(7) - status equal `200`
-(8) - and JSON body equal to
- { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
-(9) - with header `Content-Type` matching `application/vnd.fraud.v1+json.*`
- */
+Unresolved directive in verifier/introduction.adoc - include::{introduction_url}/samples/standalone/http-server/src/test/resources/contracts/shouldMarkClientAsFraud.groovy[]
 ----
 
 The Contract is written using a statically typed Groovy DSL. You might be wondering what are those
@@ -405,32 +424,14 @@ We can add either Maven or Gradle plugin - in this example we'll show how to add
 
 [source,xml,indent=0]
 ----
-<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-contract-dependencies</artifactId>
-            <version>${spring-cloud-contract.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
+Unresolved directive in verifier/introduction.adoc - include::{introduction_url}/samples/standalone/http-server/pom.xml[tags=contract_bom,indent=0]
 ----
 
 Next, the `Spring Cloud Contract Verifier` Maven plugin
 
 [source,xml,indent=0]
 ----
-<plugin>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
-    <version>${spring-cloud-contract.version}</version>
-    <extensions>true</extensions>
-    <configuration>
-        <baseClassForTests>com.example.fraud.MvcTest</baseClassForTests>
-    </configuration>
-</plugin>
+Unresolved directive in verifier/introduction.adoc - include::{introduction_url}/samples/standalone/http-server/pom.xml[tags=contract_maven_plugin,indent=0]
 ----
 
 Since the plugin was added we get the `Spring Cloud Contract Verifier` features which from the provided contracts:
@@ -481,52 +482,28 @@ Add the `Spring Cloud Contract` BOM
 
 [source,xml,indent=0]
 ----
-<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-contract-dependencies</artifactId>
-            <version>${spring-cloud-contract.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
+Unresolved directive in verifier/introduction.adoc - include::{introduction_url}/samples/standalone/http-client/pom.xml[tags=contract_bom,indent=0]
 ----
 
 Add the dependency to `Spring Cloud Contract Stub Runner`
 
 [source,xml,indent=0]
 ----
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-contract-wiremock</artifactId>
-    <scope>test</scope>
-</dependency>
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
-    <scope>test</scope>
-</dependency>
+Unresolved directive in verifier/introduction.adoc - include::{introduction_url}/samples/standalone/http-client/pom.xml[tags=stub_runner,indent=0]
 ----
 
 Provide the group id and artifact id for the Stub Runner to download stubs of your collaborators. Also provide the offline work switch since you're playing with the collaborators offline (optional step).
 
 [source,yaml,indent=0]
 ----
-stubrunner:
-  work-offline: true
-  stubs.ids: 'com.example:http-server:+:stubs:8080'
+Unresolved directive in verifier/introduction.adoc - include::{introduction_url}/samples/standalone/http-client/src/test/resources/application.yaml[]
 ----
 
 Annotate your test class with `@AutoConfigureStubRunner`
 
 [source,groovy,indent=0]
 ----
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureStubRunner
-public class LoanApplicationServiceTests {
+Unresolved directive in verifier/introduction.adoc - include::{introduction_url}/samples/standalone/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[tags=autoconfigure_stubrunner,indent=0]
 ----
 
 Now if you run your tests you'll see sth like this:
@@ -560,13 +537,8 @@ As a reminder here you can see the initial implementation
 
 [source,java,indent=0]
 ----
-@RequestMapping(
-        value = "/fraudcheck",
-        method = PUT,
-        consumes = FRAUD_SERVICE_JSON_VERSION_1,
-        produces = FRAUD_SERVICE_JSON_VERSION_1)
-public FraudCheckResult fraudCheck(@RequestBody FraudCheck fraudCheck) {
-return new FraudCheckResult(FraudCheckStatus.OK, NO_REASON);
+Unresolved directive in verifier/introduction.adoc - include::{introduction_url}/samples/standalone/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
+Unresolved directive in verifier/introduction.adoc - include::{introduction_url}/samples/standalone/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
 }
 ----
 
@@ -582,50 +554,21 @@ You have to add the dependencies needed by the autogenerated tests
 
 [source,xml,indent=0]
 ----
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-contract-verifier</artifactId>
-    <scope>test</scope>
-</dependency>
+Unresolved directive in verifier/introduction.adoc - include::{introduction_url}/samples/standalone/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
 ----
 
 In the configuration of the Maven plugin we passed the `baseClassForTests` property
 
 [source,xml,indent=0]
 ----
-<plugin>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
-    <version>${spring-cloud-contract.version}</version>
-    <extensions>true</extensions>
-    <configuration>
-        <baseClassForTests>com.example.fraud.MvcTest</baseClassForTests>
-    </configuration>
-</plugin>
+Unresolved directive in verifier/introduction.adoc - include::{introduction_url}/samples/standalone/http-server/pom.xml[tags=contract_maven_plugin,indent=0]
 ----
 
 That's because all the generated tests will extend that class. Over there you can set up your Spring Context or whatever is necessary. In our case we're using http://rest-assured.io/[Rest Assured MVC] to start the server side `FraudDetectionController`.
 
 [source,java,indent=0]
 ----
-package com.example.fraud;
-
-import com.example.fraud.FraudDetectionController;
-import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc;
-
-import org.junit.Before;
-
-public class MvcTest {
-
-	@Before
-	public void setup() {
-		RestAssuredMockMvc.standaloneSetup(new FraudDetectionController());
-	}
-
-	public void assertThatRejectionReasonIsNull(Object rejectionReason) {
-		assert rejectionReason == null;
-	}
-}
+Unresolved directive in verifier/introduction.adoc - include::{introduction_url}/samples/standalone/http-server/src/test/java/com/example/fraud/MvcTest.java[]
 ----
 
 Now, if you run the `./mvnw clean install` you would get sth like this:
@@ -673,16 +616,9 @@ Now since we now what is the expected input and expected output let's write the 
 
 [source,java,indent=0]
 ----
-@RequestMapping(
-        value = "/fraudcheck",
-        method = PUT,
-        consumes = FRAUD_SERVICE_JSON_VERSION_1,
-        produces = FRAUD_SERVICE_JSON_VERSION_1)
-public FraudCheckResult fraudCheck(@RequestBody FraudCheck fraudCheck) {
-if (amountGreaterThanThreshold(fraudCheck)) {
-    return new FraudCheckResult(FraudCheckStatus.FRAUD, AMOUNT_TOO_HIGH);
-}
-return new FraudCheckResult(FraudCheckStatus.OK, NO_REASON);
+Unresolved directive in verifier/introduction.adoc - include::{introduction_url}/samples/standalone/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
+Unresolved directive in verifier/introduction.adoc - include::{introduction_url}/samples/standalone/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=new_impl,indent=0]
+Unresolved directive in verifier/introduction.adoc - include::{introduction_url}/samples/standalone/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
 }
 ----
 
@@ -719,9 +655,7 @@ Now you can disable the offline work for Spring Cloud Contract Stub Runner ad pr
 
 [source,yaml,indent=0]
 ----
-stubrunner.stubs:
-  ids: 'com.example:http-server:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/standalone/http-client/src/test/resources/application-test-repo.yaml[]
 ----
 
 And that's it!

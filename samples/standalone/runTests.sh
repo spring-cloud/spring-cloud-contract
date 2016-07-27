@@ -25,14 +25,6 @@ echo -e "\n\nBuilding client (uses Spring Cloud Contract Stub Runner)"
 cd dsl/http-client
 ./gradlew clean build -PverifierVersion=${VERIFIER_VERSION} --stacktrace
 cd $ROOT
-echo -e "Building server (uses Spring Cloud Contract Verifier Gradle Plugin)"
-cd restdocs/http-server
-./gradlew clean build publishToMavenLocal -PverifierVersion=${VERIFIER_VERSION} --stacktrace
-cd $ROOT
-echo -e "\n\nBuilding client (uses Spring Cloud Contract Stub Runner)"
-cd restdocs/http-client
-./gradlew clean build -PverifierVersion=${VERIFIER_VERSION} --stacktrace
-cd $ROOT
 
 echo -e "\n\nClearing saved stubs"
 rm -rf $LOCAL_MAVEN_REPO/repository/org/springframework/cloud/contract/testprojects/
