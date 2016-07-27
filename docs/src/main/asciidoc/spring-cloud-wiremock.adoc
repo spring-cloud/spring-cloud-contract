@@ -157,6 +157,29 @@ is saying: any valid POST with an "id" field will get back an the same
 response as in this test. You can chain together calls to
 `.jsonPath()` to add additional matchers.
 
+Instead of the `jsonPath` and `contentType` convenience methods, you
+can also use WireMock to verify the request matches the created
+stub. Example:
+
+[source,java,indent=0]
+----
+	@Test
+	public void contextLoads() throws Exception {
+		mockMvc.perform(post("/resource")
+                .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
+				.andExpect(status.isOk())
+				.andDo(verify()
+						.wiremock(WireMock.post(
+							urlPathEquals("/resource"))
+							.withRequestBody(matchingJsonPath("$.id"))
+                        .stub("resource"));
+	}
+----
+
+The WireMock API is rich - you can match headers, query parameters,
+and request body by regex for instance - so this can useful to create
+stubs with a wider range of parameters.
+
 On the consumer side, assuming the `resource.json` generated above is
 available on the classpath, you can create a stub using WireMock in a
 number of different ways, including as described above using
