@@ -123,10 +123,17 @@ From this test will be generated a WireMock stub at
 "target/snippets/stubs/resource.json". It matches all GET requests to
 the "/resource" path.
 
-To create stubs for PUT and POST it is useful to be able to match the
-body of the request as well. The main entry point for this is
-`WireMockRestDocs.verify()` which can be used as a substitute for the
-`document()` convenience method. For example:
+Without any additional configuration this will create a stub with a
+request matcher for the HTTP method and all headers except "host" and
+"content-length". To match the request more precisely, for example to
+match the body of a POST or PUT, we need to explicitly create a
+request matcher. This will do two things: 1) create a stub that only
+matches the way you specify, 2) assert that the request in the test
+case also matches the same conditions.
+
+The main entry point for this is `WireMockRestDocs.verify()` which can
+be used as a substitute for the `document()` convenience method. For
+example:
 
 [source,java,indent=0]
 ----
@@ -150,16 +157,15 @@ public class ApplicationTests {
 }
 ----
 
-The `jsonPath()` method does 2 things: 1) asserts that the request
-body in the test itself actually contains the JSON it matches, and 2)
-makes a WireMock request matcher using the same JSON. So this contract
-is saying: any valid POST with an "id" field will get back an the same
-response as in this test. You can chain together calls to
-`.jsonPath()` to add additional matchers.
+So this contract is saying: any valid POST with an "id" field will get
+back an the same response as in this test. You can chain together
+calls to `.jsonPath()` to add additional matchers. The
+https://github.com/jayway/JsonPath[JayWay documentation] can help you
+to get up to speed with JSON Path if it is unfamiliar to you.
 
 Instead of the `jsonPath` and `contentType` convenience methods, you
-can also use WireMock to verify the request matches the created
-stub. Example:
+can also use the WireMock APIs to verify the request matches the
+created stub. Example:
 
 [source,java,indent=0]
 ----
@@ -172,13 +178,16 @@ stub. Example:
 						.wiremock(WireMock.post(
 							urlPathEquals("/resource"))
 							.withRequestBody(matchingJsonPath("$.id"))
-                        .stub("resource"));
+                        .stub("post-resource"));
 	}
 ----
 
 The WireMock API is rich - you can match headers, query parameters,
-and request body by regex for instance - so this can useful to create
-stubs with a wider range of parameters.
+and request body by regex as well as by json path - so this can useful
+to create stubs with a wider range of parameters.
+
+NOTE: You can use either the `wiremock()` method or the `jsonPath()`
+and `contentType()` methods to create request matchers, but not both.
 
 On the consumer side, assuming the `resource.json` generated above is
 available on the classpath, you can create a stub using WireMock in a
