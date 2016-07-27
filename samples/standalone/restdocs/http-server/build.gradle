@@ -11,7 +11,6 @@ buildscript {
 	}
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.4.0.BUILD-SNAPSHOT"
-		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
 	}
 }
 
@@ -37,10 +36,6 @@ dependencyManagement {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:$BOM_VERSION"
 		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${project.findProperty('verifierVersion') ?: verifierVersion}"
 	}
-}
-
-contracts {
-	baseClassForTests = 'com.example.fraud.MvcTest'
 }
 
 dependencies {

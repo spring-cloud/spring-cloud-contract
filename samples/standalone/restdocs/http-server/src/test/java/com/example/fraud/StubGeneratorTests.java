@@ -1,10 +1,8 @@
 package com.example.fraud;
 
-import static org.springframework.cloud.contract.wiremock.restdocs.WireMockRestDocs.verify;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-
 import java.math.BigDecimal;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +18,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.example.fraud.model.FraudCheck;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.springframework.cloud.contract.wiremock.restdocs.WireMockRestDocs.verify;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -33,6 +35,13 @@ public class StubGeneratorTests {
 	private MockMvc mockMvc;
 
 	private JacksonTester<FraudCheck> json;
+
+	@Before
+	public void setup() {
+		ObjectMapper objectMappper = new ObjectMapper();
+		// Possibly configure the mapper
+		JacksonTester.initFields(this, objectMappper);
+	}
 
 	@Test
 	public void shouldMarkClientAsFraud() throws Exception {
