@@ -16,25 +16,6 @@ echo -e "\n\nClearing saved stubs"
 rm -rf $LOCAL_MAVEN_REPO/repository/org/springframework/cloud/contract/testprojects/
 rm -rf $LOCAL_MAVEN_REPO/repository/com/example
 
-echo -e "\n\nRunning tests for Gradle (HTTP communication)\n\n"
-echo -e "Building server (uses Spring Cloud Contract Verifier Gradle Plugin)"
-cd dsl/http-server
-./gradlew clean build publishToMavenLocal -PverifierVersion=${VERIFIER_VERSION} --stacktrace
-cd $ROOT
-echo -e "\n\nBuilding client (uses Spring Cloud Contract Stub Runner)"
-cd dsl/http-client
-./gradlew clean build -PverifierVersion=${VERIFIER_VERSION} --stacktrace
-cd $ROOT
-
-echo -e "\n\nClearing saved stubs"
-rm -rf $LOCAL_MAVEN_REPO/repository/org/springframework/cloud/contract/testprojects/
-
-echo -e "\n\nRunning tests for Gradle (communication via messaging)\n\n"
-echo -e "Building producer (uses Spring Cloud Contract Verifier Gradle Plugin)"
-cd stream-source
-./gradlew clean build publishToMavenLocal -PverifierVersion=${VERIFIER_VERSION} --stacktrace
-cd $ROOT
-echo -e "\n\nBuilding consumer (uses Spring Cloud Contract Stub Runner Messaging)"
-cd stream-sink
-./gradlew clean build -PverifierVersion=${VERIFIER_VERSION} --stacktrace
-cd $ROOT
+echo -e "\n\nRunning tests for Maven (HTTP communication)\n\n"
+echo -e "Building server (uses Spring Cloud Contract Verifier Maven Plugin)"
+./mvnw clean install -Dspring-contract.version=${VERIFIER_VERSION} -P integration

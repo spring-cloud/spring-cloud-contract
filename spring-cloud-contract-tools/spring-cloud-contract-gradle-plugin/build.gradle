@@ -71,6 +71,8 @@ dependencies {
 
 }
 
+task libtest << { configurations.testCompile.files.each { println it } }
+
 test {
 	testLogging {
 		exceptionFormat = 'full'

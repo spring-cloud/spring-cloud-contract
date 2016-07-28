@@ -16,6 +16,10 @@
 	<name>Spring Cloud Contract Standalone Test Samples</name>
 	<description>Spring Cloud Contract Standalone Test Samples used for end to end tests</description>
 
+	<properties>
+		<verifier.version>${project.version}</verifier.version>
+	</properties>
+
 	<modules>
 		<module>dsl</module>
 		<module>restdocs</module>
@@ -34,6 +38,21 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>3.0.0</version>
+					<configuration>
+						<filesets>
+							<fileset>
+								<directory>build</directory>
+							</fileset>
+							<fileset>
+								<directory>target</directory>
+							</fileset>
+						</filesets>
+					</configuration>
+				</plugin>
 				<plugin>
 					<groupId>org.codehaus.gmavenplus</groupId>
 					<artifactId>gmavenplus-plugin</artifactId>

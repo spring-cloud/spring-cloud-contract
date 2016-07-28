@@ -179,5 +179,33 @@
 			</pluginRepositories>
 			<!-- end::repos[] -->
 		</profile>
+		<profile>
+			<id>integration</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>gradle</id>
+								<phase>install</phase>
+								<configuration>
+									<executable>./gradlew</executable>
+									<arguments>
+										<argument>build</argument>
+										<argument>publishToMavenLocal</argument>
+										<argument>-PverifierVersion=${spring-cloud-contract.version}</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 </project>

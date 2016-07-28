@@ -28,7 +28,6 @@ repositories {
 
 apply plugin: 'groovy'
 apply plugin: 'spring-boot'
-apply plugin: 'spring-cloud-contract'
 apply plugin: 'maven-publish'
 
 dependencyManagement {
@@ -42,7 +41,10 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-web")
 	compile("org.springframework.boot:spring-boot-starter-actuator")
 
-	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+	testCompile 'com.google.code.gson:gson'
+	testCompile 'org.springframework.boot:spring-boot-starter-test'
+	testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	testCompile 'org.springframework.cloud:spring-cloud-contract-wiremock'
 }
 
 test {

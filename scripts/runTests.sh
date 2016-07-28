@@ -12,10 +12,7 @@ echo -e "\n\nRUNNING TESTS FOR VERIFIER IN VERSION [${VERIFIER_VERSION}]\n\n"
 
 cd samples/standalone
 
-echo "Running Gradle tests"
+echo "Running tests"
 ./runTests.sh
-
-echo "Running Maven tests"
-./runMavenTests.sh
 
 cd $ROOT_FOLDER
