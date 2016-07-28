@@ -16,6 +16,10 @@
     <name>Spring Cloud Contract Samples</name>
     <description>Spring Cloud Contract Samples</description>
 
+	<properties>
+		<main.basedir>${basedir}/..</main.basedir>
+	</properties>
+
     <modules>
         <module>wiremock-native</module>
         <module>wiremock-jetty</module>
@@ -32,6 +36,35 @@
 		        <skip>true</skip>
 		      </configuration>
 	        </plugin>
+			<plugin>
+				<!-- Invoke integration tests in the install phase, after the maven-plugin
+					 is available -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-invoker-plugin</artifactId>
+				<inherited>false</inherited>
+				<configuration>
+					<settingsFile>src/it/settings.xml</settingsFile>
+					<projectsDirectory>standalone</projectsDirectory>
+					<skipInvocation>${skipTests}</skipInvocation>
+					<streamLogs>true</streamLogs>
+					<profiles>
+						<profile>integration</profile>
+					</profiles>
+					<pomIncludes>
+						<pomInclude>*/pom.xml</pomInclude>
+					</pomIncludes>
+				</configuration>
+				<executions>
+					<execution>
+						<id>integration</id>
+						<phase>install</phase>
+						<goals>
+							<goal>install</goal>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 

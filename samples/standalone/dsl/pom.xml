@@ -13,7 +13,7 @@
 	<artifactId>spring-cloud-contract-samples-dsl</artifactId>
 	<packaging>pom</packaging>
 
-	<name>Spring Cloud Contract Standalone Test Samples</name>
+	<name>Spring Cloud Contract Standalone Dsl Test Samples</name>
 	<description>Spring Cloud Contract Standalone Test Samples used for end to end tests</description>
 
 	<modules>
@@ -30,22 +30,6 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.codehaus.gmavenplus</groupId>
-					<artifactId>gmavenplus-plugin</artifactId>
-					<version>1.5</version>
-					<executions>
-						<execution>
-							<goals>
-								<goal>testCompile</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 
 </project>
