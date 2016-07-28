@@ -16,22 +16,32 @@
 
 package org.springframework.cloud.contract.wiremock;
 
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.test.web.client.MockRestServiceServer.MockRestServiceServerBuilder;
+import org.springframework.test.web.client.ResponseActions;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.github.tomakehurst.wiremock.common.Json;
+import com.github.tomakehurst.wiremock.http.HttpHeader;
+import com.github.tomakehurst.wiremock.http.ResponseDefinition;
+import com.github.tomakehurst.wiremock.matching.MultiValuePattern;
+import com.github.tomakehurst.wiremock.matching.RequestPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
-
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
  * Convenience class for loading WireMock stubs into a {@link MockRestServiceServer}. In
@@ -49,10 +59,17 @@ public class WireMockRestServiceServer {
 
 	private String baseUrl = "";
 
-	private MockRestServiceServer server;
+	private MockRestServiceServerBuilder builder;
+
+	private List<String> locations = new ArrayList<String>();
 
 	private WireMockRestServiceServer(RestTemplate restTemplate) {
-		this.server = MockRestServiceServer.bindTo(restTemplate).build();
+		this.builder = MockRestServiceServer.bindTo(restTemplate);
+	}
+
+	public WireMockRestServiceServer ignoreExpectOrder(boolean ignoreExpectOrder) {
+		this.builder.ignoreExpectOrder(ignoreExpectOrder);
+		return this;
 	}
 
 	public WireMockRestServiceServer suffix(String suffix) {
@@ -65,8 +82,14 @@ public class WireMockRestServiceServer {
 		return this;
 	}
 
-	public MockRestServiceServer stubs(String... locations) {
-		for (String location : locations) {
+	public WireMockRestServiceServer stubs(String... locations) {
+		this.locations.addAll(Arrays.asList(locations));
+		return this;
+	}
+
+	public MockRestServiceServer build() {
+		MockRestServiceServer server = builder.build();
+		for (String location : this.locations) {
 			try {
 				if (!StringUtils.getFilename(location).contains(".")
 						&& !location.contains("*")) {
@@ -80,11 +103,12 @@ public class WireMockRestServiceServer {
 					mapping = Json
 							.read(StreamUtils.copyToString(resource.getInputStream(),
 									Charset.defaultCharset()), StubMapping.class);
-					this.server
-							.expect(requestTo(
-									this.baseUrl + mapping.getRequest().getUrlPath()))
-							.andRespond(withSuccess(mapping.getResponse().getBody(),
-									MediaType.TEXT_PLAIN));
+					ResponseActions expect = server.expect(
+							requestTo(this.baseUrl + mapping.getRequest().getUrlPath()));
+					requestHeaders(expect, mapping.getRequest());
+					expect.andRespond(withSuccess(mapping.getResponse().getBody(),
+							contentType(mapping.getResponse()))
+									.headers(responseHeaders(mapping.getResponse())));
 				}
 			}
 			catch (IOException e) {
@@ -92,7 +116,41 @@ public class WireMockRestServiceServer {
 						e);
 			}
 		}
-		return this.server;
+		return server;
+	}
+
+	private void requestHeaders(ResponseActions expect, RequestPattern request) {
+		if (request.getHeaders() != null) {
+			for (final String header : request.getHeaders().keySet()) {
+				final MultiValuePattern pattern = request.getHeaders().get(header);
+				// TODO: match the headers
+			}
+		}
+	}
+
+	private HttpHeaders responseHeaders(ResponseDefinition response) {
+		HttpHeaders headers = new HttpHeaders();
+		if (response.getHeaders() != null) {
+			for (HttpHeader header : response.getHeaders().all()) {
+				if (!header.keyEquals("Content-Type")) {
+					for (String value : header.values()) {
+						headers.add(header.key(), value);
+					}
+				}
+			}
+		}
+		return headers;
+	}
+
+	private MediaType contentType(ResponseDefinition response) {
+		String value = null;
+		if (response.getHeaders() != null) {
+			HttpHeader header = response.getHeaders().getHeader("Content-Type");
+			if (header != null) {
+				value = header.firstValue();
+			}
+		}
+		return value == null ? MediaType.TEXT_PLAIN : MediaType.valueOf(value);
 	}
 
 	public static WireMockRestServiceServer with(RestTemplate restTemplate) {

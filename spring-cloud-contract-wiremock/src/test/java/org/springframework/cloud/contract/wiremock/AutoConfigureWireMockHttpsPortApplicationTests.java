@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = WiremockTestsApplication.class, properties = "app.baseUrl=https://localhost:${wiremock.server.https-port}", webEnvironment = WebEnvironment.NONE)
 @DirtiesContext
-@AutoConfigureWireMock(httpsPort = 9999)
+@AutoConfigureWireMock(httpsPort = 9999, port=0)
 public class AutoConfigureWireMockHttpsPortApplicationTests {
 
 	@Autowired

@@ -1,0 +1,10 @@
+{
+  "request" : {
+    "urlPath" : "/poster",
+    "method" : "POST"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "Hello World"
+  }
+}
