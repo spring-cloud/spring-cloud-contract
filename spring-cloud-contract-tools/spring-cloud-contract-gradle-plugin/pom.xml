@@ -64,6 +64,7 @@
 							<executable>./gradlew</executable>
 							<arguments>
 								<argument>build</argument>
+								<argument>jacocoTestReport</argument>
 							</arguments>
 						</configuration>
 						<goals>

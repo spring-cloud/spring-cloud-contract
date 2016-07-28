@@ -25,17 +25,15 @@ dependencies:
         sudo service postgresql stop || echo "Service not running"
     - touch ~/.gradle/gradle.properties && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
   override:
-    - ./scripts/downloadDependencies.sh || true
+    - ./mvnw dependency:resolve || true
 test:
   override:
     # docs take 15 minutes to run
-    #- ./mvnw install -P docs -q -U -DskipTests=true $MVN_LOCAL_OPTS
-    -  ./scripts/buildAndTest.sh
+    - ./mvnw install -P docs,integration -q -U $MVN_LOCAL_OPTS
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/target/.*-reports/.*" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
     - find . -type f -regex ".*/build/test-results/.*" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
-    - cd spring-cloud-contract-tools/spring-cloud-contract-gradle-plugin && ./gradlew jacocoTestReport
     - bash <(curl -s https://codecov.io/bash)
 notify:
   webhooks:
