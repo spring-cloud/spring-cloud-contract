@@ -17,7 +17,7 @@
 package org.springframework.cloud.contract.wiremock;
 
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -28,10 +28,12 @@ import java.util.List;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.MockRestServiceServer.MockRestServiceServerBuilder;
 import org.springframework.test.web.client.ResponseActions;
+import org.springframework.test.web.client.response.DefaultResponseCreator;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
@@ -67,48 +69,82 @@ public class WireMockRestServiceServer {
 		this.builder = MockRestServiceServer.bindTo(restTemplate);
 	}
 
+	/**
+	 * Public factory method for wrapping a rest template into a MockRestServiceServer.
+	 * 
+	 * @param restTemplate the rest template to wrap
+	 * @return a WireMockRestServiceServer
+	 */
+	public static WireMockRestServiceServer with(RestTemplate restTemplate) {
+		return new WireMockRestServiceServer(restTemplate);
+	}
+
+	/**
+	 * Flag to tell the MockRestServiceServer to ignore the order of calls when matching
+	 * requests.
+	 * 
+	 * @param ignoreExpectOrder flag value
+	 * @return this
+	 */
 	public WireMockRestServiceServer ignoreExpectOrder(boolean ignoreExpectOrder) {
 		this.builder.ignoreExpectOrder(ignoreExpectOrder);
 		return this;
 	}
 
+	/**
+	 * If stub locations are given as a directory, then we search recursively in that
+	 * directory for files with this suffix. Default is ".json".
+	 * 
+	 * @param suffix the suffix to use when creating a resource pattern
+	 * @return this
+	 */
 	public WireMockRestServiceServer suffix(String suffix) {
 		this.suffix = suffix;
 		return this;
 	}
 
+	/**
+	 * Add a base url to all requests. Most WireMock JSON stubs have a path, but no
+	 * protocol or host in the request matcher, so this is useful when your rest template
+	 * is calling to a specific host.
+	 * 
+	 * @param baseUrl a base url to apply
+	 * @return this
+	 */
 	public WireMockRestServiceServer baseUrl(String baseUrl) {
 		this.baseUrl = baseUrl;
 		return this;
 	}
 
+	/**
+	 * Add some resource locations for stubs. Each location can be a resource path (to a
+	 * single JSON file), or a pattern with ant-style wildcards to load all stubs that
+	 * match.
+	 * 
+	 * @param locations a set of resource locations
+	 * @return this
+	 */
 	public WireMockRestServiceServer stubs(String... locations) {
 		this.locations.addAll(Arrays.asList(locations));
 		return this;
 	}
 
+	/**
+	 * Build a MockRestServiceServer from the configured stubs. The server can later be
+	 * verified (optionally), if you need to check that all expected requests were made.
+	 * 
+	 * @return a MockRestServiceServer
+	 */
 	public MockRestServiceServer build() {
 		MockRestServiceServer server = builder.build();
 		for (String location : this.locations) {
 			try {
-				if (!StringUtils.getFilename(location).contains(".")
-						&& !location.contains("*")) {
-					if (!location.endsWith("/")) {
-						location = location + "/";
-					}
-					location = location + "/**/*" + this.suffix;
-				}
-				for (Resource resource : this.resolver.getResources(location)) {
-					StubMapping mapping;
-					mapping = Json
-							.read(StreamUtils.copyToString(resource.getInputStream(),
-									Charset.defaultCharset()), StubMapping.class);
+				for (Resource resource : this.resolver.getResources(pattern(location))) {
+					StubMapping mapping = mapping(resource);
 					ResponseActions expect = server.expect(
 							requestTo(this.baseUrl + mapping.getRequest().getUrlPath()));
 					requestHeaders(expect, mapping.getRequest());
-					expect.andRespond(withSuccess(mapping.getResponse().getBody(),
-							contentType(mapping.getResponse()))
-									.headers(responseHeaders(mapping.getResponse())));
+					expect.andRespond(response(mapping.getResponse()));
 				}
 			}
 			catch (IOException e) {
@@ -117,6 +153,27 @@ public class WireMockRestServiceServer {
 			}
 		}
 		return server;
+	}
+
+	private String pattern(String location) {
+		if (!StringUtils.getFilename(location).contains(".") && !location.contains("*")) {
+			if (!location.endsWith("/")) {
+				location = location + "/";
+			}
+			location = location + "/**/*" + this.suffix;
+		}
+		return location;
+	}
+
+	private StubMapping mapping(Resource resource) throws IOException {
+		return Json.read(StreamUtils.copyToString(resource.getInputStream(),
+				Charset.defaultCharset()), StubMapping.class);
+	}
+
+	private DefaultResponseCreator response(ResponseDefinition response) {
+		return withStatus(HttpStatus.valueOf(response.getStatus()))
+				.body(response.getBody()).contentType(contentType(response))
+				.headers(responseHeaders(response));
 	}
 
 	private void requestHeaders(ResponseActions expect, RequestPattern request) {
@@ -151,10 +208,6 @@ public class WireMockRestServiceServer {
 			}
 		}
 		return value == null ? MediaType.TEXT_PLAIN : MediaType.valueOf(value);
-	}
-
-	public static WireMockRestServiceServer with(RestTemplate restTemplate) {
-		return new WireMockRestServiceServer(restTemplate);
 	}
 
 }
