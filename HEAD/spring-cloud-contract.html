@@ -5159,7 +5159,8 @@ public class WiremockForDocsMockServerApplicationTests {
 	public void contextLoads() throws Exception {
 		// will read stubs classpath
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate)
-				.baseUrl("http://example.org").stubs("classpath:/stubs/resource.json");
+				.baseUrl("http://example.org").stubs("classpath:/stubs/resource.json")
+				.build();
 		// We're asserting if WireMock responded properly
 		assertThat(this.service.go()).isEqualTo("Hello World");
 		server.verify();
@@ -5340,7 +5341,7 @@ number of different ways, including as described above using
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-07-21 21:06:01 UTC
+Last updated 2016-07-28 21:06:01 UTC
 </div>
 </div>
 </body>
