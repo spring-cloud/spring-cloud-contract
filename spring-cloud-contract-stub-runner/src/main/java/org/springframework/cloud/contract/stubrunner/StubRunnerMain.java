@@ -16,64 +16,77 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
-import org.kohsuke.args4j.Option;
+import java.io.IOException;
+import java.util.Arrays;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("FieldCanBeLocal")
+import joptsimple.ArgumentAcceptingOptionSpec;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+
 public class StubRunnerMain {
-	
+
 	private static final Logger log = LoggerFactory.getLogger(StubRunnerMain.class);
-
-	@Option(name = "-sr", aliases = "--stubRepositoryRoot", usage = "Location of a Jar containing server where you keep your stubs (e.g. http://nexus.net/content/repositories/repository)", required = true)
-	private String stubRepositoryRoot;
-
-	@Option(name = "-ss", aliases = "--stubsSuffix", usage = "Suffix for the jar containing stubs (e.g. 'stubs' if the stub jar would have a 'stubs' classifier for stubs: foobar-stubs ). Defaults to 'stubs'")
-	private String stubsSuffix = "stubs";
-
-	@Option(name = "-minp", aliases = "--minPort", usage = "Minimal port value to be assigned to the WireMock instance. Defaults to 10000")
-	private Integer minPortValue = 10000;
-
-	@Option(name = "-maxp", aliases = "--maxPort", usage = "Maximum port value to be assigned to the WireMock instance. Defaults to 15000")
-	private Integer maxPortValue = 15000;
-
-	@Option(name = "-wo", aliases = "--workOffline", usage = "Switch to work offline. Defaults to 'false'")
-	private Boolean workOffline = Boolean.FALSE;
-
-	@Option(name = "-s", aliases = "--stubs", usage = "Comma separated list of Ivy representation of jars with stubs. Eg. groupid:artifactid1,groupid2:artifactid2:classifier")
-	private String stubs;
 
 	private final Arguments arguments;
 
-	private StubRunnerMain(String[] args) throws CmdLineException {
-		CmdLineParser parser = new CmdLineParser(this);
+	private StubRunnerMain(String[] args) throws Exception {
+		OptionParser parser = new OptionParser();
 		try {
-			parser.parseArgument(args);
+			ArgumentAcceptingOptionSpec<Integer> minPortValueOpt = parser
+					.acceptsAll(Arrays.asList("minp", "minPort"),
+							"Minimum port value to be assigned to the WireMock instance. Defaults to 10000")
+					.withRequiredArg().ofType(Integer.class);
+			ArgumentAcceptingOptionSpec<Integer> maxPortValueOpt = parser
+					.acceptsAll(Arrays.asList("maxp", "maxPort"),
+							"Maximum port value to be assigned to the WireMock instance. Defaults to 15000")
+					.withRequiredArg().ofType(Integer.class);
+			ArgumentAcceptingOptionSpec<String> stubsOpt = parser
+					.acceptsAll(Arrays.asList("s", "stubs"),
+							"Comma separated list of Ivy representation of jars with stubs. Eg. groupid:artifactid1,groupid2:artifactid2:classifier")
+					.withRequiredArg();
+			ArgumentAcceptingOptionSpec<String> classifierOpt = parser
+					.acceptsAll(Arrays.asList("c", "classifier"),
+							"Suffix for the jar containing stubs (e.g. 'stubs' if the stub jar would have a 'stubs' classifier for stubs: foobar-stubs ). Defaults to 'stubs'")
+					.withRequiredArg().defaultsTo("stubs");
+			ArgumentAcceptingOptionSpec<String> rootOpt = parser
+					.acceptsAll(Arrays.asList("r", "root"),"Location of a Jar containing server where you keep your stubs (e.g. http://nexus.net/content/repositories/repository)")
+					.withRequiredArg();
+
+			parser.acceptsAll(Arrays.asList("wo", "workOffline"),
+					"Switch to work offline. Defaults to 'false'");
+			OptionSet options = parser.parse(args);
+			String stubs = options.valueOf(stubsOpt);
+			boolean workOffline = options.has("wo");
+			Integer minPortValue = options.valueOf(minPortValueOpt);
+			Integer maxPortValue = options.valueOf(maxPortValueOpt);
+			String stubRepositoryRoot= options.valueOf(rootOpt);
+			String stubsSuffix = options.valueOf(classifierOpt);
 			StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder()
 					.withMinMaxPort(minPortValue, maxPortValue)
 					.withStubRepositoryRoot(stubRepositoryRoot)
-					.withWorkOffline(workOffline)
-					.withStubsClassifier(stubsSuffix)
-					.withStubs(stubs)
-					.build();
+					.withWorkOffline(workOffline).withStubsClassifier(stubsSuffix)
+					.withStubs(stubs).build();
 			this.arguments = new Arguments(stubRunnerOptions);
-		} catch (CmdLineException e) {
+		}
+		catch (Exception e) {
 			printErrorMessage(e, parser);
 			throw e;
 		}
 	}
 
-	private void printErrorMessage(CmdLineException e, CmdLineParser parser) {
+	private void printErrorMessage(Exception e, OptionParser parser) throws IOException {
 		System.err.println(e.getMessage());
 		System.err.println("java -jar stub-runner.jar [options...] ");
-		parser.printUsage(System.err);
+		parser.printHelpOn(System.err);
 		System.err.println();
-		System.err.println("Example: java -jar stub-runner.jar ${parser.printExample(ALL)}");
+		System.err.println(
+				"Example: java -jar stub-runner.jar ${parser.printExample(ALL)}");
 	}
 
-	static void main(String[] args) throws CmdLineException {
+	static void main(String[] args) throws Exception {
 		new StubRunnerMain(args).execute();
 	}
 
@@ -81,10 +94,12 @@ public class StubRunnerMain {
 		try {
 			log.debug("Launching StubRunner with args: " + arguments);
 			// TODO: Pass StubsToRun either from String or File
-			BatchStubRunner stubRunner = new BatchStubRunnerFactory(arguments.getStubRunnerOptions()).buildBatchStubRunner();
+			BatchStubRunner stubRunner = new BatchStubRunnerFactory(
+					arguments.getStubRunnerOptions()).buildBatchStubRunner();
 			RunningStubs runningCollaborators = stubRunner.runStubs();
 			log.info(runningCollaborators.toString());
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			log.error("An exception occurred while trying to execute the stubs", e);
 			throw e;
 		}

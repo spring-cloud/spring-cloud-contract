@@ -47,8 +47,10 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>args4j</groupId>
-			<artifactId>args4j</artifactId>
+			<groupId>net.sf.jopt-simple</groupId>
+			<artifactId>jopt-simple</artifactId>
+			<version>4.9</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
