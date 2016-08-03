@@ -29,7 +29,7 @@ class ManifestCreator {
 		Plugin verifierMavenPlugin = findMavenPlugin(project.getBuildPlugins());
 		if (verifierMavenPlugin != null) {
 			manifest.addConfiguredAttribute(new Manifest.Attribute(
-					"Spring-Cloud-Contract-Verifier-Maven-Plugin-Version", verifierMavenPlugin.getVersion()));
+					"Spring-Cloud-Contract-Maven-Plugin-Version", verifierMavenPlugin.getVersion()));
 		}
 		if (verifierMavenPlugin != null && !verifierMavenPlugin.getDependencies().isEmpty()) {
 			Dependency verifierDependency = findVerifierDependency(verifierMavenPlugin.getDependencies());
