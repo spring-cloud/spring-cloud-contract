@@ -3,7 +3,9 @@
 Feature ideas:
 
 - [x] Move DSL and stub runner code over from [Accurest](https://github.com/Codearte/accurest)
-- [ ] Spring Restdocs generators
+- [x] Spring Restdocs generators
+- [ ] RAML generators
+- [ ] Named scenarios for modelling sequences of request-response with state changes
 - [x] Wiremock support for Spring Boot apps
 - [x] Wiremock mock servers using `MockRestServiceServer` (from Spring Test)
 - [ ] POJO-based contracts (packaging DTOs and stub declarations from the producer)
