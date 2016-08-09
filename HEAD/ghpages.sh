@@ -28,7 +28,7 @@ if [ "$dirty" != "0" ]; then git stash; fi
 # Switch to gh-pages branch to sync it with current branch
 ###################################################################
 git checkout gh-pages
-git pull origin gh-pages --rebase
+git pull origin gh-pages
 
 for f in docs/target/generated-docs/*; do
     file=${f#docs/target/generated-docs/*}
