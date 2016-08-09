@@ -29,7 +29,7 @@ dependencies:
 test:
   override:
     # docs take 15 minutes to run
-    - ./mvnw install -P docs,integration -q -U $MVN_LOCAL_OPTS
+    - ./mvnw clean install -P docs,integration -q -U $MVN_LOCAL_OPTS
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/target/.*-reports/.*" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
