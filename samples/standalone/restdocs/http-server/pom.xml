@@ -178,12 +178,14 @@
 						<executions>
 							<execution>
 								<id>gradle</id>
-								<phase>install</phase>
+								<phase>test</phase>
 								<configuration>
 									<executable>./gradlew</executable>
 									<arguments>
+										<argument>clean</argument>
 										<argument>build</argument>
-										<argument>publishToMavenLocal</argument>
+										<!-- For some reason publishToMavenLocal doesn't work... Please don't troll Gradle ;)-->
+										<argument>install</argument>
 										<argument>-PverifierVersion=${spring-cloud-contract.version}</argument>
 									</arguments>
 								</configuration>

@@ -80,6 +80,28 @@
 					<baseClassForTests>com.example.source.SensorSourceTestBase</baseClassForTests>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>build</directory>
+						</fileset>
+						<fileset>
+							<directory>target</directory>
+						</fileset>
+						<fileset>
+							<directory>${env.HOME}/.m2/repository/com/example/</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
 			<plugin>
 				<artifactId>maven-deploy-plugin</artifactId>
 				<configuration>
@@ -177,6 +199,35 @@
 					</snapshots>
 				</pluginRepository>
 			</pluginRepositories>
+		</profile>
+		<profile>
+			<id>integration</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>gradle</id>
+								<phase>test</phase>
+								<configuration>
+									<executable>./gradlew</executable>
+									<arguments>
+										<argument>clean</argument>
+										<argument>build</argument>
+										<argument>publishToMavenLocal</argument>
+										<argument>-PverifierVersion=${spring-cloud-contract.version}</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
 </project>

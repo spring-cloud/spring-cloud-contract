@@ -29,6 +29,7 @@ repositories {
 apply plugin: 'groovy'
 apply plugin: 'spring-boot'
 apply plugin: 'maven-publish'
+apply plugin: 'maven'
 
 dependencyManagement {
 	imports {
@@ -55,6 +56,38 @@ test {
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.14'
+}
+
+task stubsJar(type: Jar, dependsOn: ['copySnippets', 'copySources', 'copyClasses']) {
+	baseName = project.name
+	classifier = 'stubs'
+	from project.file("${project.buildDir}/stubs")
+}
+
+artifacts {
+	archives stubsJar
+}
+
+task copySnippets(type: Copy, dependsOn: test) {
+	from "target/snippets/stubs"
+	into "${project.buildDir}/stubs/META-INF/${project.group}/${project.name}/${project.version}/mappings"
+}
+
+task copySources(type: Copy) {
+	from "src/main/java"
+	include '**/model/Fraud*.*'
+	into "${project.buildDir}/stubs/"
+}
+
+task copyClasses(type: Copy) {
+	from "${project.buildDir}/classes/main/"
+	include '**/model/Fraud*.*'
+	into "${project.buildDir}/stubs/"
+}
+
+clean.doFirst {
+	delete 'target/snippets/stubs'
+	delete "~/.m2/repository/com/example/"
 }
 
 task resolveDependencies {

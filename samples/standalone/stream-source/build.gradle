@@ -82,6 +82,10 @@ task wrapper(type: Wrapper) {
     gradleVersion = '2.14'
 }
 
+clean.doFirst {
+	delete "~/.m2/repository/com/example/"
+}
+
 task resolveDependencies {
 	doLast {
 		project.rootProject.allprojects.each { subProject ->

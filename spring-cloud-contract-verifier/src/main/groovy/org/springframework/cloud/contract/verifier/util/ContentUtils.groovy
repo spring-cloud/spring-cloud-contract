@@ -78,15 +78,15 @@ class ContentUtils {
 		}
 		// else Brute force :(
 		try {
-			log.debug("No content type provided so trying to parse as JSON")
+			log.trace("No content type provided so trying to parse as JSON")
 			return extractValueForJSON(bodyAsValue, valueProvider)
 		} catch(JsonException e) {
 			// Not a JSON format
-			log.debug("Failed to parse as JSON - trying to parse as XML", e)
+			log.trace("Failed to parse as JSON - trying to parse as XML", e)
 			try {
 				return extractValueForXML(bodyAsValue, valueProvider)
 			} catch (Exception exception) {
-				log.debug("No content type provided and failed to parse as XML - returning the value back to the user", exception)
+				log.trace("No content type provided and failed to parse as XML - returning the value back to the user", exception)
 				return extractValueForGString(bodyAsValue, valueProvider)
 			}
 		}

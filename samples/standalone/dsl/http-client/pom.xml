@@ -73,6 +73,21 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>build</directory>
+						</fileset>
+						<fileset>
+							<directory>target</directory>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -145,10 +160,11 @@
 						<executions>
 							<execution>
 								<id>gradle</id>
-								<phase>install</phase>
+								<phase>test</phase>
 								<configuration>
 									<executable>./gradlew</executable>
 									<arguments>
+										<argument>clean</argument>
 										<argument>build</argument>
 										<argument>publishToMavenLocal</argument>
 										<argument>-PverifierVersion=${spring-cloud-contract.version}</argument>

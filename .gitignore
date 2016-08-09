@@ -34,3 +34,5 @@ build/
 hs_err_pid*
 .DS_Store
 *.log
+interpolated-settings.xml
+interpolated-pom.xml

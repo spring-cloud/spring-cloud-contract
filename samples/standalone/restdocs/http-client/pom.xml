@@ -153,7 +153,7 @@
 						<executions>
 							<execution>
 								<id>gradle</id>
-								<phase>install</phase>
+								<phase>test</phase>
 								<configuration>
 									<executable>./gradlew</executable>
 									<arguments>
