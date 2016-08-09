@@ -45,13 +45,6 @@
 			<artifactId>spring-cloud-stream-test-support</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- ENFORCING BUILD ORDER -->
-		<dependency>
-			<groupId>com.example</groupId>
-			<artifactId>stream-source</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
-		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
