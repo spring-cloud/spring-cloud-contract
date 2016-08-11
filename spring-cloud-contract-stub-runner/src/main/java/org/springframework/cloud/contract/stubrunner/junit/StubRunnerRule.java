@@ -67,10 +67,10 @@ public class StubRunnerRule implements TestRule, StubFinder {
 		return new StubRunnerOptionsBuilder()
 				.withMinPort(Integer.valueOf(System.getProperty("stubrunner.port.range.min", "10000")))
 				.withMaxPort(Integer.valueOf(System.getProperty("stubrunner.port.range.max", "15000")))
-				.withStubRepositoryRoot(System.getProperty("stubrunner.stubs.repository.root", ""))
+				.withStubRepositoryRoot(System.getProperty("stubrunner.repository.root", ""))
 				.withWorkOffline(Boolean.parseBoolean(System.getProperty("stubrunner.work-offline", "false")))
-				.withStubsClassifier(System.getProperty("stubrunner.stubs.classifier", "stubs"))
-				.withStubs(System.getProperty("stubrunner.stubs.ids", ""))
+				.withStubsClassifier(System.getProperty("stubrunner.classifier", "stubs"))
+				.withStubs(System.getProperty("stubrunner.ids", ""))
 				.build();
 	}
 

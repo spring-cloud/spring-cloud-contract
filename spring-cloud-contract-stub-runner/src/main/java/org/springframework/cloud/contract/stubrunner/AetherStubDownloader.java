@@ -171,7 +171,8 @@ public class AetherStubDownloader implements StubDownloader {
 			throw new IllegalStateException("Cannot resolve version range", e);
 		}
 		if (rangeResult.getHighestVersion() == null) {
-			log.error("Version was not resolved!");
+			log.error("For groupId [" + stubsGroup + "] artifactId [" + artifact + "] "
+					+ "and classifier [" + classifier + "] the version was not resolved!");
 		}
 		return rangeResult.getHighestVersion() == null ? null : rangeResult.getHighestVersion().toString();
 	}

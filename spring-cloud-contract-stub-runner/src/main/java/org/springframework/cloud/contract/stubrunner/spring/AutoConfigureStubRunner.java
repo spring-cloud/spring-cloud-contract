@@ -23,6 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.properties.PropertyMapping;
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier;
 
 /**
@@ -34,6 +35,31 @@ import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureM
 @Documented
 @ImportAutoConfiguration
 @AutoConfigureMessageVerifier
+@PropertyMapping("stubrunner")
 public @interface AutoConfigureStubRunner {
 
+	/**
+	 * Min value of a port for the automatically started WireMock server
+	 */
+	int minPort() default 10000;
+
+	/**
+	 * Max value of a port for the automatically started WireMock server
+	 */
+	int maxPort() default 15000;
+
+	/**
+	 * Should the stubs be checked for presence only locally
+	 */
+	boolean workOffline() default false;
+
+	/**
+	 * The ids of the stubs to run in "ivy" notation (groupId:artifactId[:classifier]:version[:port]).
+	 */
+	String[] ids() default {};
+
+	/**
+	 * The classifier to use by default in ivy co-ordinates for a stub.
+	 */
+	String classifier() default "stubs";
 }

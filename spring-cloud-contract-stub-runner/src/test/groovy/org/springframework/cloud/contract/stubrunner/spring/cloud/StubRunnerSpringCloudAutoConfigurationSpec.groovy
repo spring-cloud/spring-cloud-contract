@@ -29,7 +29,6 @@ import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.cloud.zookeeper.ZookeeperProperties
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery
-import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.annotation.DirtiesContext
@@ -43,30 +42,34 @@ import spock.lang.Specification
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = ["stubrunner.camel.enabled=false"])
-@AutoConfigureStubRunner
+@AutoConfigureStubRunner(ids =
+		["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
+				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
+				"org.springframework.cloud.contract.verifier.stubs:bootService"],
+		workOffline = true)
 @DirtiesContext
 class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
 	@Autowired @LoadBalanced RestTemplate restTemplate
+	// TODO: this shouldn't be needed?
 	@Autowired ZookeeperServiceDiscovery zookeeperServiceDiscovery
-	@Autowired ConfigurableApplicationContext applicationContext
 
 	@BeforeClass
 	@AfterClass
 	static void setupProps() {
-		System.clearProperty("stubrunner.stubs.repository.root");
-		System.clearProperty("stubrunner.stubs.classifier");
+		System.clearProperty("stubrunner.repository.root")
+		System.clearProperty("stubrunner.classifier")
 	}
 
 	// tag::test[]
 	def 'should make service discovery work'() {
 		expect: 'WireMocks are running'
-			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
-			"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
+		"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
+		"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
 		and: 'Stubs can be reached via load service discovery'
-			restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
-			restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
+		restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
+		restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
 	}
 	// end::test[]
 

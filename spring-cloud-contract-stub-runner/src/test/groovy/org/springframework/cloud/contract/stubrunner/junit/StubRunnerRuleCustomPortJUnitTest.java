@@ -36,8 +36,8 @@ public class StubRunnerRuleCustomPortJUnitTest {
 	@BeforeClass
 	@AfterClass
 	public static void setupProps() {
-			System.clearProperty("stubrunner.stubs.repository.root");
-			System.clearProperty("stubrunner.stubs.classifier");
+			System.clearProperty("stubrunner.repository.root");
+			System.clearProperty("stubrunner.classifier");
 	}
 
 	// tag::classrule_with_port[]

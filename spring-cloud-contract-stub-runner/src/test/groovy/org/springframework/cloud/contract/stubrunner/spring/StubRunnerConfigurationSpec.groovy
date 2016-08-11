@@ -25,6 +25,7 @@ import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 
 import spock.lang.Specification
@@ -39,6 +40,7 @@ import spock.lang.Specification
 @IntegrationTest(["stubrunner.cloud.enabled=false", "stubrunner.camel.enabled=false"])
 @AutoConfigureStubRunner
 @DirtiesContext
+@ActiveProfiles("test")
 class StubRunnerConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
@@ -46,8 +48,8 @@ class StubRunnerConfigurationSpec extends Specification {
 	@BeforeClass
 	@AfterClass
 	void setupProps() {
-		System.clearProperty("stubrunner.stubs.repository.root");
-		System.clearProperty("stubrunner.stubs.classifier");
+		System.clearProperty("stubrunner.repository.root");
+		System.clearProperty("stubrunner.classifier");
 	}
 
 	def 'should start WireMock servers'() {
