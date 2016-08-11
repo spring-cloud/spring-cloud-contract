@@ -47,7 +47,8 @@ class GenerateWireMockClientStubsFromDslTask extends ConventionTask {
 		ContractVerifierConfigProperties props = getConfigProperties()
 		File outMappingsDir = props.stubsOutputDir != null ? new File(props.stubsOutputDir, DEFAULT_MAPPINGS_FOLDER)
 				: new File(project.buildDir, "stubs/$DEFAULT_MAPPINGS_FOLDER")
-		RecursiveFilesConverter converter = new RecursiveFilesConverter(new DslToWireMockClientConverter(),
+		RecursiveFilesConverter converter = new RecursiveFilesConverter(
+				new DslToWireMockClientConverter(),
 				getConfigProperties(), outMappingsDir)
 		converter.processFiles()
 	}

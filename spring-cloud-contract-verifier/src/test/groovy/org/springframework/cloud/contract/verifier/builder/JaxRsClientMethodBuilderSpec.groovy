@@ -18,11 +18,12 @@ package org.springframework.cloud.contract.verifier.builder
 
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.dsl.WireMockStubVerifier
-import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubStrategy
+import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.util.environment.RestoreSystemProperties
 
 class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStubVerifier {
 
@@ -94,6 +95,43 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 	@Issue("#79")
 	def "should generate assertions for simple response body constructed from map with a list with #methodBuilderName"() {
 		given:
+			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
+				request {
+					method "GET"
+					url "test"
+				}
+				response {
+					status 200
+					body(
+							property1: 'a',
+							property2: [
+									[a: 'sth'],
+									[b: 'sthElse']
+							]
+					)
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("a").isEqualTo("sth")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("b").isEqualTo("sthElse")""")
+		and:
+			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), contractDsl).toWireMockClientStub())
+		where:
+			methodBuilderName                   | methodBuilder
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
+	@Issue("#79")
+	@RestoreSystemProperties
+	def "should generate assertions for simple response body constructed from map with a list with #methodBuilderName with array size check"() {
+		given:
+			System.setProperty('spring.cloud.contract.verifier.assert.size', 'true')
 			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method "GET"

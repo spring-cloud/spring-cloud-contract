@@ -55,7 +55,7 @@ class StubRunnerIntegrationMessageSelector implements MessageSelector {
 		}
 		Object inputMessage = message.getPayload();
 		JsonPaths jsonPaths = JsonToJsonPathsConverter
-				.transformToJsonPathWithStubsSideValues(
+				.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(
 						groovyDsl.getInput().getMessageBody());
 		DocumentContext parsedJson;
 		try {

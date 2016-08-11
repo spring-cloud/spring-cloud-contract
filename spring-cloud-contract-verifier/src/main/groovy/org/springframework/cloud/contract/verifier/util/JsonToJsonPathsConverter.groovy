@@ -53,14 +53,20 @@ class JsonToJsonPathsConverter {
 
 	JsonToJsonPathsConverter() {
 		this.configProperties = new ContractVerifierConfigProperties()
+		log.debug("Creating JsonToJsonPaths converter with default properties")
 	}
 
-	public static JsonPaths transformToJsonPathWithTestsSideValues(def json) {
-		return new JsonToJsonPathsConverter().transformToJsonPathWithValues(json, SERVER_SIDE)
+	public JsonPaths transformToJsonPathWithTestsSideValues(def json) {
+		return transformToJsonPathWithValues(json, SERVER_SIDE)
 	}
 
-	public static JsonPaths transformToJsonPathWithStubsSideValues(def json) {
-		return new JsonToJsonPathsConverter().transformToJsonPathWithValues(json, CLIENT_SIDE)
+	public JsonPaths transformToJsonPathWithStubsSideValues(def json) {
+		return transformToJsonPathWithValues(json, CLIENT_SIDE)
+	}
+
+	public static JsonPaths transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(def json) {
+		return new JsonToJsonPathsConverter()
+				.transformToJsonPathWithValues(json, CLIENT_SIDE)
 	}
 
 	private JsonPaths transformToJsonPathWithValues(def json, boolean clientSide) {
@@ -134,14 +140,19 @@ class JsonToJsonPathsConverter {
 
 	// Size verification: https://github.com/Codearte/accurest/issues/279
 	private void addSizeVerificationForListWithPrimitives(MethodBufferingJsonVerifiable key, Closure closure, List value) {
-		Boolean systemPropValue = Boolean.parseBoolean(System.getProperty(SIZE_ASSERTION_SYSTEM_PROP, "false"))
+		String systemPropValue = System.getProperty(SIZE_ASSERTION_SYSTEM_PROP)
 		Boolean configPropValue = configProperties.assertJsonSize
-		boolean configPropSet = configPropValue != null
-		if (configPropSet && !configPropValue) {
-			return
-		} else if (!configPropSet && systemPropValue) {
+		if ((systemPropValue != null && Boolean.parseBoolean(systemPropValue)) ||
+				configPropValue) {
+			addArraySizeCheck(key, value, closure)
+		} else {
+			log.debug("Turning off the incubating feature of JSON array check. " +
+					"System property [$systemPropValue]. Config property [$configPropValue]")
 			return
 		}
+	}
+
+	private void addArraySizeCheck(MethodBufferingJsonVerifiable key, List value, Closure closure) {
 		log.debug("WARNING: Turning on the incubating feature of JSON array check")
 		if (isRootElement(key) || key.assertsConcreteValue()) {
 			if (value.size() > 0) {

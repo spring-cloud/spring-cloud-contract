@@ -22,6 +22,7 @@ import org.springframework.cloud.contract.verifier.dsl.WireMockStubVerifier
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.util.environment.RestoreSystemProperties
 
 import java.util.regex.Pattern
 /**
@@ -163,6 +164,43 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 	@Issue("#79")
 	def "should generate assertions for simple response body constructed from map with a list with #methodBuilderName"() {
 		given:
+		Contract contractDsl = Contract.make {
+			request {
+				method "GET"
+				url "test"
+			}
+			response {
+				status 200
+				body(
+						property1: 'a',
+						property2: [
+								[a: 'sth'],
+								[b: 'sthElse']
+						]
+				)
+			}
+		}
+		MethodBodyBuilder builder = methodBuilder(contractDsl)
+		BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+		builder.appendTo(blockBuilder)
+		then:
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("a").isEqualTo("sth")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("b").isEqualTo("sthElse")""")
+		and:
+		stubMappingIsValidWireMockStub(contractDsl)
+		where:
+		methodBuilderName           | methodBuilder
+		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+		"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
+	@Issue("#79")
+	@RestoreSystemProperties
+	def "should generate assertions for simple response body constructed from map with a list with #methodBuilderName with array size check"() {
+		given:
+		System.setProperty('spring.cloud.contract.verifier.assert.size', 'true')
 		Contract contractDsl = Contract.make {
 			request {
 				method "GET"
@@ -1272,6 +1310,41 @@ World.'''"""
 			builder.then(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
+			test.contains('assertThatJson(parsedJson).arrayField().contains("Java8").value()')
+			test.contains('assertThatJson(parsedJson).arrayField().contains("Spring").value()')
+			test.contains('assertThatJson(parsedJson).arrayField().contains("Java").value()')
+			test.contains('assertThatJson(parsedJson).arrayField().contains("Stream").value()')
+			test.contains('assertThatJson(parsedJson).arrayField().contains("SpringBoot").value()')
+		where:
+			methodBuilderName           | methodBuilder
+			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
+	@Issue('266')
+	@RestoreSystemProperties
+	def "should generate proper test code with top level array using #methodBuilderName with array size check"() {
+		given:
+			System.setProperty('spring.cloud.contract.verifier.assert.size', 'true')
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					urlPath '/api/tags'
+				}
+				response {
+					status 200
+					body(["Java", "Java8", "Spring", "SpringBoot", "Stream"])
+					headers {
+						header('Content-Type': 'application/json;charset=UTF-8')
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.then(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
 			test.contains('assertThatJson(parsedJson).hasSize(5)')
 			test.contains('assertThatJson(parsedJson).arrayField().contains("Java8").value()')
 			test.contains('assertThatJson(parsedJson).arrayField().contains("Spring").value()')
@@ -1306,7 +1379,6 @@ World.'''"""
 			builder.then(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('assertThatJson(parsedJson).hasSize(2)')
 			test.contains('assertThatJson(parsedJson).array().arrayField().isEqualTo("Programming").value()')
 			test.contains('assertThatJson(parsedJson).array().arrayField().isEqualTo("Java").value()')
 			test.contains('assertThatJson(parsedJson).array().arrayField().isEqualTo("Spring").value()')

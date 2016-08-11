@@ -81,6 +81,14 @@ public class GenerateTestsMojo extends AbstractMojo {
 	private List<String> excludedFiles;
 
 	/**
+	 * Incubating feature. You can check the size of JSON arrays. If not turned on
+	 * explicitly will be disabled.
+	 */
+	@Parameter(property = "spring.cloud.contract.verifier.assert.size",
+			defaultValue = "false")
+	private boolean assertJsonSize;
+
+	/**
 	 * Patterns for which Spring Cloud Contract Verifier should generate @Ignored tests
 	 */
 	@Parameter
@@ -119,6 +127,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 		config.setStaticImports(staticImports);
 		config.setIgnoredFiles(ignoredFiles);
 		config.setExcludedFiles(excludedFiles);
+		config.setAssertJsonSize(assertJsonSize);
 		project.addTestCompileSourceRoot(generatedTestSourcesDir.getAbsolutePath());
 		if (getLog().isInfoEnabled()) {
 			getLog().info(
@@ -155,4 +164,11 @@ public class GenerateTestsMojo extends AbstractMojo {
 		this.ignoredFiles = ignoredFiles;
 	}
 
+	public boolean isAssertJsonSize() {
+		return assertJsonSize;
+	}
+
+	public void setAssertJsonSize(boolean assertJsonSize) {
+		this.assertJsonSize = assertJsonSize;
+	}
 }

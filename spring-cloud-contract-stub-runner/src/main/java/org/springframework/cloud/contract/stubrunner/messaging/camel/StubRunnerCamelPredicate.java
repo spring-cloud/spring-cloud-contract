@@ -55,7 +55,8 @@ class StubRunnerCamelPredicate implements Predicate {
 		}
 		Object inputMessage = exchange.getIn().getBody();
 		JsonPaths jsonPaths = JsonToJsonPathsConverter
-				.transformToJsonPathWithStubsSideValues(groovyDsl.getInput().getMessageBody());
+				.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(
+						groovyDsl.getInput().getMessageBody());
 		DocumentContext parsedJson;
 		try {
 			parsedJson = JsonPath

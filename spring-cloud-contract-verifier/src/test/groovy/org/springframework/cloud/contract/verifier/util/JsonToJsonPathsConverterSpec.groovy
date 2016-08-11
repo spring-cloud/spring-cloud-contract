@@ -25,6 +25,7 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import net.minidev.json.JSONArray
 import spock.lang.Specification
+import spock.util.environment.RestoreSystemProperties
 
 import java.util.regex.Pattern
 
@@ -370,6 +371,36 @@ class JsonToJsonPathsConverterSpec extends Specification {
 			it.jsonPath() == """\$.property2[*][?(@.a == 'sth')]"""
 		}
 		pathAndValues.find {
+			it.method()== """.array("property2").contains("b").isEqualTo("sthElse")""" &&
+			it.jsonPath() == """\$.property2[*][?(@.b == 'sthElse')]"""
+		}
+		and:
+		pathAndValues.size() == 3
+	}
+
+	@RestoreSystemProperties
+	def "should generate assertions for simple response body constructed from map with a list with array size check"() {
+		given:
+		System.setProperty('spring.cloud.contract.verifier.assert.size', 'true')
+		Map json =  [
+				property1: 'a',
+				property2: [
+						[a: 'sth'],
+						[b: 'sthElse']
+				]
+		]
+		when:
+		JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(json)
+		then:
+		pathAndValues.find {
+			it.method()== """.field("property1").isEqualTo("a")""" &&
+			it.jsonPath() == """\$[?(@.property1 == 'a')]"""
+		}
+		pathAndValues.find {
+			it.method()== """.array("property2").contains("a").isEqualTo("sth")""" &&
+			it.jsonPath() == """\$.property2[*][?(@.a == 'sth')]"""
+		}
+		pathAndValues.find {
 			it.method()== """.array("property2").hasSize(2)""" &&
 			it.jsonPath() == """\$.property2[*]"""
 		}
@@ -424,6 +455,32 @@ class JsonToJsonPathsConverterSpec extends Specification {
 			it.method()== """.array().contains("property2").isEqualTo("b")""" &&
 			it.jsonPath() == """\$[*][?(@.property2 == 'b')]"""
 		}
+		and:
+		pathAndValues.size() == 2
+	}
+
+	@RestoreSystemProperties
+	def "should generate assertions for array in response body with array size check"() {
+		given:
+		System.setProperty('spring.cloud.contract.verifier.assert.size', 'true')
+		String json =  """[
+	{
+		"property1": "a"
+	},
+	{
+		"property2": "b"
+	}]"""
+		when:
+		JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
+		then:
+		pathAndValues.find {
+			it.method()== """.array().contains("property1").isEqualTo("a")""" &&
+			it.jsonPath() == """\$[*][?(@.property1 == 'a')]"""
+		}
+		pathAndValues.find {
+			it.method()== """.array().contains("property2").isEqualTo("b")""" &&
+			it.jsonPath() == """\$[*][?(@.property2 == 'b')]"""
+		}
 		pathAndValues.find {
 			it.method()== """.hasSize(2)""" &&
 			it.jsonPath() == """\$"""
@@ -434,6 +491,31 @@ class JsonToJsonPathsConverterSpec extends Specification {
 
 	def "should generate assertions for array inside response body element"() {
 		given:
+		String json =  """{
+	"property1": [
+	{ "property2": "test1"},
+	{ "property3": "test2"}
+	]
+}"""
+		when:
+		JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
+		then:
+		pathAndValues.find {
+			it.method()== """.array("property1").contains("property2").isEqualTo("test1")""" &&
+			it.jsonPath() == """\$.property1[*][?(@.property2 == 'test1')]"""
+		}
+		pathAndValues.find {
+			it.method()== """.array("property1").contains("property3").isEqualTo("test2")""" &&
+			it.jsonPath() == """\$.property1[*][?(@.property3 == 'test2')]"""
+		}
+		and:
+		pathAndValues.size() == 2
+	}
+
+	@RestoreSystemProperties
+	def "should generate assertions for array inside response body element with array size check"() {
+		given:
+		System.setProperty('spring.cloud.contract.verifier.assert.size', 'true')
 		String json =  """{
 	"property1": [
 	{ "property2": "test1"},
@@ -517,9 +599,33 @@ class JsonToJsonPathsConverterSpec extends Specification {
 			pathAndValues.size() == 1
 	}
 
-
 	def "should work with more complex stuff and jsonpaths"() {
 		given:
+		Map json =  [
+				errors: [
+						[property: "bank_account_number",
+						 message: "incorrect_format"]
+				]
+		]
+		when:
+		JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(json)
+		then:
+		pathAndValues.find {
+			it.method()== """.array("errors").contains("property").isEqualTo("bank_account_number")""" &&
+			it.jsonPath() == """\$.errors[*][?(@.property == 'bank_account_number')]"""
+		}
+		pathAndValues.find {
+			it.method()== """.array("errors").contains("message").isEqualTo("incorrect_format")""" &&
+			it.jsonPath() == """\$.errors[*][?(@.message == 'incorrect_format')]"""
+		}
+		and:
+		pathAndValues.size() == 2
+	}
+
+	@RestoreSystemProperties
+	def "should work with more complex stuff and jsonpaths with array size check"() {
+		given:
+		System.setProperty('spring.cloud.contract.verifier.assert.size', 'true')
 		Map json =  [
 				errors: [
 						[property: "bank_account_number",
@@ -547,6 +653,52 @@ class JsonToJsonPathsConverterSpec extends Specification {
 
 	def "should manage to parse a double array"() {
 		given:
+		String json = '''
+						[{
+							"place":
+							{
+								"bounding_box":
+								{
+									"coordinates":
+										[[
+											[-77.119759,38.995548],
+											[-76.909393,38.791645]
+										]]
+								}
+							}
+						}]
+					'''
+		when:
+		JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
+		then:
+		pathAndValues.find {
+			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().arrayField().isEqualTo(38.995548)""" &&
+			it.jsonPath() == """\$[*].place.bounding_box.coordinates[*][*][?(@ == 38.995548)]"""
+		}
+		pathAndValues.find {
+			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().arrayField().isEqualTo(-77.119759)""" &&
+			it.jsonPath() == """\$[*].place.bounding_box.coordinates[*][*][?(@ == -77.119759)]"""
+		}
+		pathAndValues.find {
+			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().arrayField().isEqualTo(-76.909393)""" &&
+			it.jsonPath() == """\$[*].place.bounding_box.coordinates[*][*][?(@ == -76.909393)]"""
+		}
+		pathAndValues.find {
+			it.method()== """.array().field("place").field("bounding_box").array("coordinates").array().arrayField().isEqualTo(38.791645)""" &&
+			it.jsonPath() == """\$[*].place.bounding_box.coordinates[*][*][?(@ == 38.791645)]"""
+		}
+		and:
+			pathAndValues.size() == 4
+		and:
+			pathAndValues.each {
+				JsonAssertion.assertThat(json).matchesJsonPath(it.jsonPath())
+			}
+	}
+
+	@RestoreSystemProperties
+	def "should manage to parse a double array with array size check"() {
+		given:
+		System.setProperty('spring.cloud.contract.verifier.assert.size', 'true')
 		String json = '''
 						[{
 							"place":

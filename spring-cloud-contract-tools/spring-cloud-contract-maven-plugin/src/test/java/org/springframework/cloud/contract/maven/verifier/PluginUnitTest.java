@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.maven.verifier;
 
 import java.io.File;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -27,6 +28,7 @@ import io.takari.maven.testing.TestResources;
 import static io.takari.maven.testing.TestMavenRuntime.newParameter;
 import static io.takari.maven.testing.TestResources.assertFilesNotPresent;
 import static io.takari.maven.testing.TestResources.assertFilesPresent;
+import static org.assertj.core.api.BDDAssertions.then;
 
 public class PluginUnitTest {
 
@@ -58,6 +60,7 @@ public class PluginUnitTest {
 		assertFilesPresent(basedir, "target/stubs/contracts/Sample.groovy");
 		assertFilesPresent(basedir, "target/stubs/contracts/Messaging.groovy");
 	}
+
 	@Test
 	public void shouldGenerateWireMockStubsInSelectedLocation() throws Exception {
 		File basedir = resources.getBasedir("basic");
@@ -87,6 +90,26 @@ public class PluginUnitTest {
 		maven.executeMojo(basedir, "generateTests", newParameter("imports", ""));
 		assertFilesPresent(basedir,
 				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
+	}
+
+	@Test
+	public void shouldGenerateContractTestsWithoutArraySize() throws Exception {
+		File basedir = resources.getBasedir("basic");
+		maven.executeMojo(basedir, "generateTests");
+		assertFilesPresent(basedir,
+				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
+		File test = new File(basedir, "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
+		then(FileUtils.readFileToString(test)).doesNotContain("hasSize(4)");
+	}
+
+	@Test
+	public void shouldGenerateContractTestsWithArraySize() throws Exception {
+		File basedir = resources.getBasedir("basic");
+		maven.executeMojo(basedir, "generateTests", newParameter("assertJsonSize", "true"));
+		assertFilesPresent(basedir,
+				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
+		File test = new File(basedir, "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
+		then(FileUtils.readFileToString(test)).contains("hasSize(4)");
 	}
 
 	@Test

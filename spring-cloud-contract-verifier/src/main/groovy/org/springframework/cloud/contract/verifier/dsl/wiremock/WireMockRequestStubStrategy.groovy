@@ -75,7 +75,8 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 		ContentType contentType = tryToGetContentType(request.body.clientValue, request.headers)
 		if (contentType == ContentType.JSON) {
-			JsonPaths values = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValues(getMatchingStrategyFromBody(request.body)?.clientValue)
+			JsonPaths values = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(
+					getMatchingStrategyFromBody(request.body)?.clientValue)
 			if (values.empty) {
 				requestPattern.withRequestBody(WireMock.equalToJson(JsonOutput.toJson(getMatchingStrategy(request.body.clientValue).clientValue), false, false))
 			} else {
