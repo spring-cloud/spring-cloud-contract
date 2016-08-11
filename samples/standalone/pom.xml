@@ -23,8 +23,8 @@
 	<modules>
 		<module>dsl</module>
 		<module>restdocs</module>
-		<module>stream-source</module>
-		<module>stream-sink</module>
+		<module>01-stream-source</module>
+		<module>02-stream-sink</module>
 	</modules>
 
 	<build>

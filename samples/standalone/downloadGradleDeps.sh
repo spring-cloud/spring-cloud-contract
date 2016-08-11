@@ -26,9 +26,9 @@ cd restdocs/http-client
 ./gradlew resolveDependencies -PverifierVersion=${VERIFIER_VERSION} --stacktrace
 cd $ROOT
 
-cd contract-verifier-sample-stream-source
+cd 01-stream-source
 ./gradlew resolveDependencies -PverifierVersion=${VERIFIER_VERSION} --stacktrace
 cd $ROOT
-cd contract-verifier-sample-stream-sink
+cd 02-stream-sink
 ./gradlew resolveDependencies -PverifierVersion=${VERIFIER_VERSION} --stacktrace
 cd $ROOT
