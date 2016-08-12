@@ -193,7 +193,9 @@ class StubRunnerExecutor implements StubFinder {
 		final Collection<Contract> contracts = repository.contracts;
 		Integer port = stubRunnerOptions.port(stubConfiguration);
 		if (!contracts.isEmpty() && !hasRequest(contracts)) {
-			log.debug("There are no HTTP related contracts. Won't start any servers");
+			if (log.isDebugEnabled()) {
+				log.debug("There are no HTTP related contracts. Won't start any servers");
+			}
 			stubServer = new StubServer(stubConfiguration, mappings, contracts, new NoOpHttpServerStub());
 			return;
 		}

@@ -56,7 +56,9 @@ class RecursiveFilesConverter {
 	void processFiles() {
 		ContractFileScanner scanner = new ContractFileScanner(properties.contractsDslDir, properties.excludedFiles as Set, [] as Set)
 		ListMultimap<Path, ContractMetadata> contracts = scanner.findContracts()
-		log.debug("Found the following contracts $contracts")
+		if (log.isDebugEnabled()) {
+			log.debug("Found the following contracts $contracts")
+		}
 		contracts.asMap().entrySet().each { entry ->
 			entry.value.each { ContractMetadata contract ->
 				File sourceFile = contract.path.toFile()

@@ -126,14 +126,18 @@ public class StubRunnerStreamConfiguration {
 		for (Map.Entry<String, BindingProperties> entry : channelBindingServiceProperties
 				.getBindings().entrySet()) {
 			if (entry.getValue().getDestination().equals(destination)) {
-				log.debug("Found a channel named [{}] with destination [{}]",
-						entry.getKey(), destination);
+				if (log.isDebugEnabled()) {
+					log.debug("Found a channel named [{}] with destination [{}]",
+							entry.getKey(), destination);
+				}
 				return entry.getKey();
 			}
 		}
-		log.debug(
-				"No destination named [{}] was found. Assuming that the destination equals the channel name",
-				destination);
+		if (log.isDebugEnabled()) {
+			log.debug(
+					"No destination named [{}] was found. Assuming that the destination equals the channel name",
+					destination);
+		}
 		return destination;
 	}
 

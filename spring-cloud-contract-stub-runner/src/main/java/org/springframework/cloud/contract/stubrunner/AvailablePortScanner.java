@@ -63,15 +63,19 @@ class AvailablePortScanner {
 				return executeLogicForAvailablePort(portToScan, closure);
 			}
 			catch (IOException exception) {
-				log.debug("Failed to execute callback (try: " + i + "/" + maxRetryCount
-						+ ")", exception);
+				if (log.isDebugEnabled()) {
+					log.debug("Failed to execute callback (try: " + i + "/" + maxRetryCount
+							+ ")", exception);
+				}
 			}
 		}
 		throw new NoPortAvailableException(minPortNumber, maxPortNumber);
 	}
 
 	private <T> T executeLogicForAvailablePort(int portToScan, PortCallback<T> closure) throws IOException {
-		log.debug("Trying to execute closure with port [$portToScan]");
+		if (log.isDebugEnabled()) {
+			log.debug("Trying to execute closure with port [" + portToScan + "]");
+		}
 		return closure.call(portToScan);
 	}
 

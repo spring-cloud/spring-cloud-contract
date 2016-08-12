@@ -59,8 +59,10 @@ class StubServer {
 		if (httpServerStub.isRunning()) {
 			return httpServerStub.port();
 		}
-		log.debug("The HTTP Server stub is not running... That means that the " +
-				"artifact is running a messaging module. Returning back -1 value of the port.");
+		if (log.isDebugEnabled()) {
+			log.debug("The HTTP Server stub is not running... That means that the " +
+					"artifact is running a messaging module. Returning back -1 value of the port.");
+		}
 		return -1;
 	}
 
@@ -96,7 +98,9 @@ class StubServer {
 		for (WiremockMappingDescriptor mappingDescriptor : sortedMappings) {		
 			try {
 				wireMock.register(mappingDescriptor.getMapping());
-				log.debug("Registered stub mappings from [" + mappingDescriptor.descriptor + "]");
+				if (log.isDebugEnabled()) {
+					log.debug("Registered stub mappings from [" + mappingDescriptor.descriptor + "]");
+				}
 			} catch (Exception e) {
 				log.warn("Failed to register the stub mapping ["+ mappingDescriptor + "]", e);
 			}

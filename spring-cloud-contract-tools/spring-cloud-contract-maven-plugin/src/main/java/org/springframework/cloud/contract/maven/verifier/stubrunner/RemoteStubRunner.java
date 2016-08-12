@@ -41,7 +41,9 @@ public class RemoteStubRunner {
 	public BatchStubRunner run(StubRunnerOptions options, RepositorySystemSession repositorySystemSession) {
 		AetherStubDownloader stubDownloader = aetherStubDownloaderFactory.build(repositorySystemSession);
 		try {
-			log.debug("Launching StubRunner with args: " + String.valueOf(options));
+			if (log.isDebugEnabled()) {
+				log.debug("Launching StubRunner with args: " + options);
+			}
 			BatchStubRunner stubRunner = new BatchStubRunnerFactory(options,
 					stubDownloader).buildBatchStubRunner();
 			RunningStubs runningCollaborators = stubRunner.runStubs();

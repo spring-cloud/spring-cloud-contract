@@ -16,18 +16,17 @@
 
 package org.springframework.cloud.contract.stubrunner.junit;
 
-import static org.assertj.core.api.BDDAssertions.then;
-
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 
-import org.assertj.core.api.BDDAssertions;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.springframework.util.StreamUtils;
+
+import static org.assertj.core.api.BDDAssertions.then;
 
 /**
  * @author Marcin Grzejszczak
@@ -57,9 +56,9 @@ public class StubRunnerRuleCustomPortJUnitTest {
 			then(rule.findStubUrl("loanIssuance")).isEqualTo(rule.findStubUrl("org.springframework.cloud.contract.verifier.stubs", "loanIssuance"));
 			then(rule.findStubUrl("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")).isNotNull();
 		// and:
-			BDDAssertions.then(rule.findAllRunningStubs().isPresent("loanIssuance")).isTrue();
-			BDDAssertions.then(rule.findAllRunningStubs().isPresent("org.springframework.cloud.contract.verifier.stubs", "fraudDetectionServer")).isTrue();
-			BDDAssertions.then(rule.findAllRunningStubs().isPresent("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")).isTrue();
+			then(rule.findAllRunningStubs().isPresent("loanIssuance")).isTrue();
+			then(rule.findAllRunningStubs().isPresent("org.springframework.cloud.contract.verifier.stubs", "fraudDetectionServer")).isTrue();
+			then(rule.findAllRunningStubs().isPresent("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")).isTrue();
 		// and: 'Stubs were registered'
 			then(httpGet(rule.findStubUrl("loanIssuance").toString() + "/name")).isEqualTo("loanIssuance");
 			then(httpGet(rule.findStubUrl("fraudDetectionServer").toString() + "/name")).isEqualTo("fraudDetectionServer");

@@ -92,7 +92,9 @@ public class StubRunnerMain {
 
 	private void execute() {
 		try {
-			log.debug("Launching StubRunner with args: " + arguments);
+			if (log.isDebugEnabled()) {
+				log.debug("Launching StubRunner with args: " + arguments);
+			}
 			// TODO: Pass StubsToRun either from String or File
 			BatchStubRunner stubRunner = new BatchStubRunnerFactory(
 					arguments.getStubRunnerOptions()).buildBatchStubRunner();

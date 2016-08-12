@@ -53,7 +53,9 @@ class JsonToJsonPathsConverter {
 
 	JsonToJsonPathsConverter() {
 		this.configProperties = new ContractVerifierConfigProperties()
-		log.debug("Creating JsonToJsonPaths converter with default properties")
+		if (log.isDebugEnabled()) {
+			log.debug("Creating JsonToJsonPaths converter with default properties")
+		}
 	}
 
 	public JsonPaths transformToJsonPathWithTestsSideValues(def json) {
@@ -146,14 +148,18 @@ class JsonToJsonPathsConverter {
 				configPropValue) {
 			addArraySizeCheck(key, value, closure)
 		} else {
-			log.debug("Turning off the incubating feature of JSON array check. " +
-					"System property [$systemPropValue]. Config property [$configPropValue]")
+			if (log.isDebugEnabled()) {
+				log.debug("Turning off the incubating feature of JSON array check. " +
+						"System property [$systemPropValue]. Config property [$configPropValue]")
+			}
 			return
 		}
 	}
 
 	private void addArraySizeCheck(MethodBufferingJsonVerifiable key, List value, Closure closure) {
-		log.debug("WARNING: Turning on the incubating feature of JSON array check")
+		if (log.isDebugEnabled()) {
+			log.debug("WARNING: Turning on the incubating feature of JSON array check")
+		}
 		if (isRootElement(key) || key.assertsConcreteValue()) {
 			if (value.size() > 0) {
 				closure(key.hasSize(value.size()), value)

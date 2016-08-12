@@ -98,7 +98,7 @@ public class RunMojo extends AbstractMojo {
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (skip || skipTestOnly) {
-			getLog().info("Skipping verifier execution: spring.cloud.contract.verifier.skip=" + String.valueOf(skip));
+			getLog().info("Skipping verifier execution: spring.cloud.contract.verifier.skip=" + skip);
 			return;
 		}
 		BatchStubRunner batchStubRunner = null;

@@ -16,8 +16,6 @@
 
 package org.springframework.cloud.contract.wiremock.restdocs;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -40,6 +38,8 @@ import com.github.tomakehurst.wiremock.matching.MatchResult;
 import com.github.tomakehurst.wiremock.servlet.WireMockHttpServletRequestAdapter;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.jayway.jsonpath.JsonPath;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ContractRequestHandler implements ResultHandler {
 
@@ -134,9 +134,9 @@ public class ContractRequestHandler implements ResultHandler {
 
 	private void compile(String expression, Object... args) {
 		org.springframework.util.Assert.hasText(
-				(expression == null ? null : expression.toString()),
+				(expression == null ? null : expression),
 				"expression must not be null or empty");
-		expression = String.format(expression.toString(), args);
+		expression = String.format(expression, args);
 		jsonPaths.put(expression, JsonPath.compile(expression));
 	}
 

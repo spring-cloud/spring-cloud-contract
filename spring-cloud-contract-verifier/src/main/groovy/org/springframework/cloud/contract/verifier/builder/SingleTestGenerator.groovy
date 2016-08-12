@@ -120,7 +120,9 @@ class SingleTestGenerator {
 	private Map<ParsedDsl, TestType> mapContractsToTheirTestTypes(Collection<ContractMetadata> listOfFiles) {
 		return listOfFiles.collectEntries {
 			File stubsFile = it.path.toFile()
-			log.debug("Stub content from file [${stubsFile.text}]")
+			if (log.isDebugEnabled()) {
+				log.debug("Stub content from file [${stubsFile.text}]")
+			}
 			org.springframework.cloud.contract.spec.Contract stubContent = ContractVerifierDslConverter.convert(stubsFile)
 			TestType testType = (stubContent.input || stubContent.outputMessage) ? TestType.MESSAGING : TestType.HTTP
 			return [(new ParsedDsl(it, stubContent, stubsFile)): testType]
@@ -169,7 +171,9 @@ class SingleTestGenerator {
 			Class.forName(JSON_ASSERT_CLASS)
 			return true
 		} catch (ClassNotFoundException e) {
-			log.debug("JsonAssert is not present on classpath. Will not add a static import.")
+			if (log.isDebugEnabled()) {
+				log.debug("JsonAssert is not present on classpath. Will not add a static import.")
+			}
 			return false
 		}
 	}
