@@ -28,7 +28,7 @@ dependencies:
     - ./scripts/downloadDependencies.sh
 test:
   override:
-    - ./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent install -P docs,integration -U $MVN_LOCAL_OPTS
+    - ./mvnw clean install -P docs,integration -U $MVN_LOCAL_OPTS
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/target/.*-reports/.*" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
