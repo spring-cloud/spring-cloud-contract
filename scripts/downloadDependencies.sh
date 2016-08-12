@@ -16,5 +16,5 @@ cd $ROOT_FOLDER/samples/standalone/restdocs/http-server && ./mvnw --fail-never d
 cd $ROOT_FOLDER/samples/standalone/restdocs/http-server && ./gradlew resolveDependencies || true
 cd $ROOT_FOLDER/samples/standalone/messaging/stream-sink && ./mvnw --fail-never dependency:go-offline || true
 cd $ROOT_FOLDER/samples/standalone/messaging/stream-sink && ./gradlew resolveDependencies || true
-cd $ROOT_FOLDER/samples/standalone/messaging/sream-source && ./mvnw --fail-never dependency:go-offline || true
-cd $ROOT_FOLDER/samples/standalone/messaging/sream-source && ./gradlew resolveDependencies || true
+cd $ROOT_FOLDER/samples/standalone/messaging/stream-source && ./mvnw --fail-never dependency:go-offline || true
+cd $ROOT_FOLDER/samples/standalone/messaging/stream-source && ./gradlew resolveDependencies || true
