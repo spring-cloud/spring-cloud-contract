@@ -25,11 +25,10 @@ dependencies:
         sudo service postgresql stop || echo "Service not running"
     - touch ~/.gradle/gradle.properties && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
   override:
-    - ./mvnw dependency:resolve || true
+    - ./scripts/downloadDependencies.sh
 test:
   override:
-    # docs take 15 minutes to run
-    - rm -rf ~/.m2/repository/com/example && ./mvnw clean install -P docs,integration -U $MVN_LOCAL_OPTS
+    - ./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent install -P docs,integration -U $MVN_LOCAL_OPTS
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/target/.*-reports/.*" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;

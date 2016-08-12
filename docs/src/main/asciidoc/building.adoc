@@ -7,64 +7,43 @@ Here you can find the Spring Cloud Contract folder structure
 ```
 ├── samples
 ├── scripts
+├── spring-cloud-contract-dependencies
 ├── spring-cloud-contract-spec
+├── spring-cloud-contract-starters
 ├── spring-cloud-contract-stub-runner
 ├── spring-cloud-contract-tools
-└── spring-cloud-contract-verifier
+├── spring-cloud-contract-verifier
+├── spring-cloud-contract-wiremock
+└── tests
 ```
 
  - `samples` - folder contains test samples together with standalone ones used also to build documentation
  - `scripts` - contains scripts to build and test `Spring Cloud Contract` with Maven, Gradle and standalone projects
+ - `spring-cloud-contract-dependencies` - contains Spring Cloud Contract BOM
+ - `spring-cloud-contract-starters` - contains Spring Cloud Contract Starters
  - `spring-cloud-contract-spec` - contains specification modules (contains concept of a Contract)
  - `spring-cloud-contract-stub-runner` - contains Stub Runner related modules
  - `spring-cloud-contract-tools` - Gradle and Maven plugin for `Spring Cloud Contract Verifier`
  - `spring-cloud-contract-verifier` - core of the `Spring Cloud Contract Verifier` functionality
+ - `spring-cloud-contract-wiremock` - all WireMock related functionality
+ - `tests` - integration tests for different messaging technologies
 
 === Commands
 
 To build the core functionality together with Maven Plugin you can run
 
 ```
-./mvnw clean install
+./mvnw clean install -P integration
 ```
 
-To build the Gradle Plugin
+Calling that function will build core, Maven plugin, Gradle plugin and run end to end tests on the
+standalone samples in proper order (both for Maven and Gradle).
+
+To build the Gradle Plugin only
 
 ```
 cd spring-cloud-contract-tools/spring-cloud-contract-gradle-plugin
 ./gradlew clean build
 ```
 
-=== Scripts
 
-For your convenience we have created a bunch of scripts to build and test the whole functionality.
-
-Build both Maven and Gradle project
-
-```
-./scripts/build.sh
-```
-
-Run tests on the standalone projects
-
-```
-./scripts/runTests.sh
-```
-
-Build both Maven and Gradle projects and run tests on standalone projects
-
-```
-./scripts/buildAndTest.sh
-```
-
-Generate documentation
-
-```
-./scripts/generateDocs.sh
-```
-
-Publish documentation to `gh-pages`
-
-```
-./docs/src/main/asciidoc/ghpages.sh
-```

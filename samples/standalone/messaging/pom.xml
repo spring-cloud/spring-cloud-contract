@@ -5,24 +5,20 @@
 
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
-		<artifactId>spring-cloud-contract-samples</artifactId>
+		<artifactId>spring-cloud-contract-samples-standalone</artifactId>
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
-	<artifactId>spring-cloud-contract-samples-standalone</artifactId>
+	<artifactId>spring-cloud-contract-samples-messaging</artifactId>
 	<packaging>pom</packaging>
 
-	<name>Spring Cloud Contract Standalone Test Samples</name>
+	<name>Spring Cloud Contract Standalone Dsl Test Samples With Messaging</name>
 	<description>Spring Cloud Contract Standalone Test Samples used for end to end tests</description>
 
 	<properties>
-		<verifier.version>${project.version}</verifier.version>
+		<spring-cloud-contract.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-contract.version>
 	</properties>
-
-	<modules>
-		<module>restdocs</module>
-	</modules>
 
 	<build>
 		<plugins>
@@ -33,37 +29,6 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-clean-plugin</artifactId>
-					<version>3.0.0</version>
-					<configuration>
-						<filesets>
-							<fileset>
-								<directory>build</directory>
-							</fileset>
-							<fileset>
-								<directory>target</directory>
-							</fileset>
-						</filesets>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.codehaus.gmavenplus</groupId>
-					<artifactId>gmavenplus-plugin</artifactId>
-					<version>1.5</version>
-					<executions>
-						<execution>
-							<goals>
-								<goal>testCompile</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 
 	<profiles>
@@ -76,7 +41,7 @@
 				<repository>
 					<id>spring-snapshots</id>
 					<name>Spring Snapshots</name>
-					<url>http://repo.spring.io/libs-snapshot-local</url>
+					<url>http://repo.spring.io/snapshot</url>
 					<snapshots>
 						<enabled>true</enabled>
 					</snapshots>
@@ -84,7 +49,7 @@
 				<repository>
 					<id>spring-milestones</id>
 					<name>Spring Milestones</name>
-					<url>http://repo.spring.io/libs-milestone-local</url>
+					<url>http://repo.spring.io/milestone</url>
 					<snapshots>
 						<enabled>false</enabled>
 					</snapshots>
@@ -102,7 +67,7 @@
 				<pluginRepository>
 					<id>spring-snapshots</id>
 					<name>Spring Snapshots</name>
-					<url>http://repo.spring.io/libs-snapshot-local</url>
+					<url>http://repo.spring.io/snapshot</url>
 					<snapshots>
 						<enabled>true</enabled>
 					</snapshots>
@@ -110,28 +75,46 @@
 				<pluginRepository>
 					<id>spring-milestones</id>
 					<name>Spring Milestones</name>
-					<url>http://repo.spring.io/libs-milestone-local</url>
+					<url>http://repo.spring.io/milestone</url>
 					<snapshots>
 						<enabled>false</enabled>
 					</snapshots>
 				</pluginRepository>
 				<pluginRepository>
-					<id>spring-plugin-snapshots</id>
-					<name>Spring Snapshots</name>
-					<url>http://repo.spring.io/plugins-snapshot-local</url>
-					<snapshots>
-						<enabled>true</enabled>
-					</snapshots>
-				</pluginRepository>
-				<pluginRepository>
-					<id>spring-plugin-milestones</id>
-					<name>Spring Milestones</name>
-					<url>http://repo.spring.io/plugins-milestone-local</url>
+					<id>spring-releases</id>
+					<name>Spring Releases</name>
+					<url>http://repo.spring.io/release</url>
 					<snapshots>
 						<enabled>false</enabled>
 					</snapshots>
 				</pluginRepository>
 			</pluginRepositories>
+		</profile>
+		<profile>
+			<id>integration</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>runTests</id>
+								<phase>test</phase>
+								<configuration>
+									<executable>./runTests.sh</executable>
+									<arguments>
+										<argument>${spring-cloud-contract.version}</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
 
