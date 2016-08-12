@@ -3865,9 +3865,9 @@ public void should_start_wiremock_servers() throws Exception {
 		then(rule.findStubUrl("loanIssuance")).isEqualTo(rule.findStubUrl("org.springframework.cloud.contract.verifier.stubs", "loanIssuance"));
 		then(rule.findStubUrl("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")).isNotNull();
 	// and:
-		BDDAssertions.then(rule.findAllRunningStubs().isPresent("loanIssuance")).isTrue();
-		BDDAssertions.then(rule.findAllRunningStubs().isPresent("org.springframework.cloud.contract.verifier.stubs", "fraudDetectionServer")).isTrue();
-		BDDAssertions.then(rule.findAllRunningStubs().isPresent("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")).isTrue();
+		then(rule.findAllRunningStubs().isPresent("loanIssuance")).isTrue();
+		then(rule.findAllRunningStubs().isPresent("org.springframework.cloud.contract.verifier.stubs", "fraudDetectionServer")).isTrue();
+		then(rule.findAllRunningStubs().isPresent("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")).isTrue();
 	// and: 'Stubs were registered'
 		then(httpGet(rule.findStubUrl("loanIssuance").toString() + "/name")).isEqualTo("loanIssuance");
 		then(httpGet(rule.findStubUrl("fraudDetectionServer").toString() + "/name")).isEqualTo("fraudDetectionServer");
@@ -5341,7 +5341,7 @@ number of different ways, including as described above using
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-08-12 08:59:16 UTC
+Last updated 2016-08-12 09:33:05 UTC
 </div>
 </div>
 </body>
