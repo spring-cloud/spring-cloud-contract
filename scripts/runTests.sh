@@ -13,6 +13,6 @@ echo -e "\n\nRUNNING TESTS FOR VERIFIER IN VERSION [${VERIFIER_VERSION}]\n\n"
 cd samples/standalone
 
 echo "Running tests"
-./runTests.sh
+../../mvnw clean install -P integration
 
 cd $ROOT_FOLDER

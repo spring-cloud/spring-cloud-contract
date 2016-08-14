@@ -26,6 +26,7 @@
         <module>wiremock-tomcat</module>
         <module>wiremock-undertow</module>
         <module>wiremock-undertow-ssl</module>
+		<!-- standalone tests get executed separately by invoker plugin -->
     </modules>
 
  	<build>
