@@ -201,12 +201,6 @@
 							<directory>target</directory>
 						</fileset>
 						<fileset>
-							<directory>${env.HOME}/.m2/repository/com/example/</directory>
-							<includes>
-								<include>**/*</include>
-							</includes>
-						</fileset>
-						<fileset>
 							<directory>${env.HOME}/.m2/repository/org/springframework/cloud/contract/verifier/stubs/</directory>
 							<includes>
 								<include>**/*</include>

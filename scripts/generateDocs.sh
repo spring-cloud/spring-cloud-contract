@@ -4,7 +4,7 @@ source common.sh || source scripts/common.sh || echo "No common.sh script found.
 
 set -e
 
-echo "Generating docs for Spring Cloud Contract version [$VERIFIER_VERSION]"
+echo "Generating docs for Spring Cloud Contract"
 
 echo "Building main docs"
 ./mvnw clean install -P docs -DskipTests=true --pl docs

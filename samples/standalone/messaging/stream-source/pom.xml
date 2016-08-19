@@ -94,7 +94,7 @@
 							<directory>target</directory>
 						</fileset>
 						<fileset>
-							<directory>${env.HOME}/.m2/repository/com/example/</directory>
+							<directory>${env.HOME}/.m2/repository/com/example/stream-source</directory>
 							<includes>
 								<include>**/*</include>
 							</includes>

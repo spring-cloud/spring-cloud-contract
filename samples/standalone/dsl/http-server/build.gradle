@@ -49,6 +49,7 @@ dependencies {
 }
 
 test {
+	systemProperty 'spring.profiles.active', 'gradle'
 	testLogging {
 		exceptionFormat = 'full'
 	}
@@ -59,7 +60,7 @@ task wrapper(type: Wrapper) {
 }
 
 clean.doFirst {
-	delete "~/.m2/repository/com/example/"
+	delete "~/.m2/repository/com/example/http-server-dsl-gradle"
 }
 
 task resolveDependencies {

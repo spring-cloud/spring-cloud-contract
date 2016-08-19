@@ -43,6 +43,7 @@ dependencies {
 }
 
 test {
+	systemProperty 'spring.profiles.active', 'gradle'
 	testLogging {
 		exceptionFormat = 'full'
 	}

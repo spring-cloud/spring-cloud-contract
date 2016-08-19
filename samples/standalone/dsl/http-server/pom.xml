@@ -98,7 +98,7 @@
 							<directory>target</directory>
 						</fileset>
 						<fileset>
-							<directory>${env.HOME}/.m2/repository/com/example/</directory>
+							<directory>${env.HOME}/.m2/repository/com/example/http-server-dsl</directory>
 							<includes>
 								<include>**/*</include>
 							</includes>
