@@ -21,7 +21,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.Suite
 import org.junit.runners.Suite.SuiteClasses
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerConfigurationSpec
-import org.springframework.cloud.contract.stubrunner.spring.cloud.StubRunnerSpringCloudAutoConfigurationSpec
+import org.springframework.cloud.contract.stubrunner.spring.cloud.zookeeper.StubRunnerSpringCloudZookeeperAutoConfigurationSpec
 
 /**
  * A test suite for probing weird ordering problems in the tests.
@@ -30,7 +30,7 @@ import org.springframework.cloud.contract.stubrunner.spring.cloud.StubRunnerSpri
  */
 @RunWith(Suite)
 @SuiteClasses([
-		StubRunnerSpringCloudAutoConfigurationSpec,
+		StubRunnerSpringCloudZookeeperAutoConfigurationSpec,
 		StubRunnerConfigurationSpec
 		 ])
 @Ignore

@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.contract.stubrunner.StubConfiguration;
+import org.springframework.cloud.contract.stubrunner.util.StringUtils;
 
 /**
  * Maps Ivy based ids to service Ids. You might want to name the service you're calling
@@ -59,7 +61,17 @@ public class StubMapperProperties {
 	}
 
 	public String fromIvyNotationToId(String ivyNotation) {
-		return idsToServiceIds.get(ivyNotation);
+		StubConfiguration stubConfiguration = new StubConfiguration(ivyNotation);
+		String id = idsToServiceIds.get(ivyNotation);
+		if (StringUtils.hasText(id)) {
+			return id;
+		}
+		String groupAndArtifact = idsToServiceIds.get(stubConfiguration.getGroupId() +
+				":" + stubConfiguration.getArtifactId());
+		if (StringUtils.hasText(groupAndArtifact)) {
+			return groupAndArtifact;
+		}
+		return idsToServiceIds.get(stubConfiguration.getArtifactId());
 	}
 
 	public String fromServiceIdToIvyNotation(String serviceId) {

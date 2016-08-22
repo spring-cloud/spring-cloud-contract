@@ -5,4 +5,5 @@ org.springframework.cloud.contract.stubrunner.spring.cloud.StubRunnerSpringCloud
 org.springframework.cloud.contract.stubrunner.spring.cloud.ribbon.StubRunnerRibbonAutoConfiguration,\
 org.springframework.cloud.contract.stubrunner.messaging.stream.StubRunnerStreamConfiguration,\
 org.springframework.cloud.contract.stubrunner.messaging.integration.StubRunnerIntegrationConfiguration,\
-org.springframework.cloud.contract.stubrunner.messaging.camel.StubRunnerCamelConfiguration
+org.springframework.cloud.contract.stubrunner.messaging.camel.StubRunnerCamelConfiguration,\
+org.springframework.cloud.contract.stubrunner.spring.cloud.zookeeper.StubRunnerSpringCloudZookeeperAutoConfiguration
