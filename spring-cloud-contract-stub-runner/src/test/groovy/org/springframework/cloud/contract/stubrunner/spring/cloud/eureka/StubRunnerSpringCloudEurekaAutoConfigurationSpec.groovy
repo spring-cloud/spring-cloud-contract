@@ -14,26 +14,24 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.stubrunner.spring.cloud.zookeeper
+package org.springframework.cloud.contract.stubrunner.spring.cloud.eureka
 
-import org.apache.curator.test.TestingServer
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
-import org.springframework.cloud.zookeeper.ZookeeperProperties
-import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer
+import org.springframework.cloud.zookeeper.discovery.RibbonZookeeperAutoConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.util.SocketUtils
 import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
 
@@ -42,20 +40,16 @@ import spock.lang.Specification
  */
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = ["stubrunner.camel.enabled=false", "eureka.client.enabled=false",
+		properties = ["stubrunner.camel.enabled=false",
+				"spring.cloud.zookeeper.enabled=false",
+				"spring.cloud.zookeeper.discovery.enabled=false",
 				"stubrunner.cloud.stubbed.discovery.enabled=false"])
-@AutoConfigureStubRunner( ids =
-		["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
-		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
-		"org.springframework.cloud.contract.verifier.stubs:bootService"],
-		repositoryRoot = "classpath:m2repo/repository/")
 @AutoConfigureStubRunner
 @DirtiesContext
-class StubRunnerSpringCloudZookeeperAutoConfigurationSpec extends Specification {
+class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
 	@Autowired @LoadBalanced RestTemplate restTemplate
-	@Autowired ZookeeperServiceDiscovery zookeeperServiceDiscovery
 
 	@BeforeClass
 	@AfterClass
@@ -73,30 +67,11 @@ class StubRunnerSpringCloudZookeeperAutoConfigurationSpec extends Specification 
 			restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
 	}
 
-	def 'should have all apps registered in Service Discovery'() {
-		expect:
-			!zookeeperServiceDiscovery.getServiceDiscovery().queryForInstances('loanIssuance').empty
-			!zookeeperServiceDiscovery.getServiceDiscovery().queryForInstances('someNameThatShouldMapFraudDetectionServer').empty
-	}
-
-	def cleanup() {
-		zookeeperServiceDiscovery?.serviceDiscovery?.close()
-	}
-
 	@Configuration
-	@EnableAutoConfiguration
-	@EnableDiscoveryClient
+	@EnableAutoConfiguration(exclude = [RibbonZookeeperAutoConfiguration])
+	@EnableEurekaClient
+	@EnableEurekaServer
 	static class Config {
-
-		@Bean
-		TestingServer testingServer() {
-			return new TestingServer(SocketUtils.findAvailableTcpPort())
-		}
-
-		@Bean
-		ZookeeperProperties zookeeperProperties() {
-			return new ZookeeperProperties(connectString: testingServer().connectString)
-		}
 
 		@Bean
 		@LoadBalanced

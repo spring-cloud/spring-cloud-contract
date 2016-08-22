@@ -43,6 +43,7 @@ public class StubRunnerSpringCloudAutoConfiguration {
 	@Bean
 	@ConditionalOnBean(DiscoveryClient.class)
 	@Primary
+	@ConditionalOnProperty(value = "stubrunner.cloud.stubbed.discovery.enabled", havingValue = "true", matchIfMissing = true)
 	public DiscoveryClient stubRunnerDiscoveryClientWrapper(DiscoveryClient discoveryClient,
 			StubFinder stubFinder,
 			StubMapperProperties stubMapperProperties,
@@ -52,6 +53,7 @@ public class StubRunnerSpringCloudAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean(DiscoveryClient.class)
+	@ConditionalOnProperty(value = "stubrunner.cloud.stubbed.discovery.enabled", havingValue = "true", matchIfMissing = true)
 	public DiscoveryClient stubRunnerDiscoveryClient(StubFinder stubFinder,
 			StubMapperProperties stubMapperProperties,
 			@Value("${spring.application.name:unknown}") String springAppName) {
