@@ -76,17 +76,11 @@ class Common {
 		return new NamedProperty(namedMap)
 	}
 
-	DslProperty value(ClientDslProperty client, ServerDslProperty server) {
-		assertThatSidesMatch(client.clientValue, server.serverValue)
-		return new DslProperty(client.clientValue, server.serverValue)
-	}
-
-	DslProperty value(ServerDslProperty server, ClientDslProperty client) {
-		assertThatSidesMatch(client.clientValue, server.serverValue)
-		return new DslProperty(client.clientValue, server.serverValue)
-	}
-
 	DslProperty value(DslProperty value) {
+		return value
+	}
+
+	DslProperty $(DslProperty value) {
 		return value
 	}
 
@@ -94,8 +88,22 @@ class Common {
 		return new DslProperty(value)
 	}
 
+	DslProperty $(Object value) {
+		return new DslProperty(value)
+	}
+
+	DslProperty value(ClientDslProperty client, ServerDslProperty server) {
+		assertThatSidesMatch(client.clientValue, server.serverValue)
+		return new DslProperty(client.clientValue, server.serverValue)
+	}
+
 	DslProperty $(ClientDslProperty client, ServerDslProperty server) {
 		return value(client, server)
+	}
+
+	DslProperty value(ServerDslProperty server, ClientDslProperty client) {
+		assertThatSidesMatch(client.clientValue, server.serverValue)
+		return new DslProperty(client.clientValue, server.serverValue)
 	}
 
 	DslProperty $(ServerDslProperty server, ClientDslProperty client) {
