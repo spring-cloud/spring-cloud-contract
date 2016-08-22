@@ -37,36 +37,47 @@
 		        <skip>true</skip>
 		      </configuration>
 	        </plugin>
-			<plugin>
-				<!-- Invoke integration tests in the install phase, after the maven-plugin
-					 is available -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-invoker-plugin</artifactId>
-				<inherited>false</inherited>
-				<configuration>
-					<settingsFile>src/it/settings.xml</settingsFile>
-					<projectsDirectory>standalone</projectsDirectory>
-					<skipInvocation>${skipTests}</skipInvocation>
-					<streamLogs>true</streamLogs>
-					<profiles>
-						<profile>integration</profile>
-					</profiles>
-					<pomIncludes>
-						<pomInclude>*/pom.xml</pomInclude>
-					</pomIncludes>
-				</configuration>
-				<executions>
-					<execution>
-						<id>integration</id>
-						<phase>install</phase>
-						<goals>
-							<goal>install</goal>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>integration</id>
+			<build>
+				<plugins>
+					<plugin>
+						<!-- Invoke integration tests in the install phase, after the maven-plugin
+							 is available -->
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-invoker-plugin</artifactId>
+						<configuration>
+							<settingsFile>src/it/settings.xml</settingsFile>
+							<projectsDirectory>standalone</projectsDirectory>
+							<skipInvocation>${skipTests}</skipInvocation>
+							<streamLogs>true</streamLogs>
+							<profiles>
+								<profile>integration</profile>
+							</profiles>
+							<pomIncludes>
+								<pomInclude>*/pom.xml</pomInclude>
+							</pomIncludes>
+							<goals>
+								<goal>clean</goal>
+								<goal>install</goal>
+							</goals>
+						</configuration>
+						<executions>
+							<execution>
+								<id>integration</id>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>

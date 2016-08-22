@@ -49,6 +49,7 @@ dependencies {
 }
 
 test {
+	systemProperty 'spring.profiles.active', 'gradle'
 	testLogging {
 		exceptionFormat = 'full'
 	}
@@ -87,7 +88,7 @@ task copyClasses(type: Copy) {
 
 clean.doFirst {
 	delete 'target/snippets/stubs'
-	delete "~/.m2/repository/com/example/"
+	delete "~/.m2/repository/com/example/http-server-restdocs-gradle"
 }
 
 task resolveDependencies {

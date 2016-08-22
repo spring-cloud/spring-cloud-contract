@@ -93,12 +93,6 @@
 						<fileset>
 							<directory>target</directory>
 						</fileset>
-						<fileset>
-							<directory>${env.HOME}/.m2/repository/com/example/</directory>
-							<includes>
-								<include>**/*</include>
-							</includes>
-						</fileset>
 					</filesets>
 				</configuration>
 			</plugin>
