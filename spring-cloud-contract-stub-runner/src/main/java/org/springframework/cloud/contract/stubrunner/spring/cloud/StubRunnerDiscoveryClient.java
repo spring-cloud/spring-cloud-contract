@@ -46,8 +46,15 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 
 	public StubRunnerDiscoveryClient(DiscoveryClient delegate, StubFinder stubFinder,
 			StubMapperProperties stubMapperProperties, String springAppName) {
-		this.delegate = delegate instanceof  StubRunnerDiscoveryClient ?
+		this.delegate = delegate instanceof StubRunnerDiscoveryClient ?
 				noOpDiscoveryClient(springAppName) : delegate;
+		this.stubFinder = stubFinder;
+		this.stubMapperProperties = stubMapperProperties;
+	}
+
+	public StubRunnerDiscoveryClient(StubFinder stubFinder,
+			StubMapperProperties stubMapperProperties, String springAppName) {
+		this.delegate = noOpDiscoveryClient(springAppName);
 		this.stubFinder = stubFinder;
 		this.stubMapperProperties = stubMapperProperties;
 	}

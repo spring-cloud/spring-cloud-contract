@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.contract.stubrunner.spring.cloud
 
-import org.apache.curator.test.TestingServer
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,14 +26,11 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
-import org.springframework.cloud.zookeeper.ZookeeperProperties
-import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery
-import org.springframework.context.ConfigurableApplicationContext
+import org.springframework.cloud.zookeeper.discovery.RibbonZookeeperAutoConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.util.SocketUtils
 import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
 /**
@@ -42,15 +38,15 @@ import spock.lang.Specification
  */
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = ["stubrunner.camel.enabled=false"])
+		properties = ["stubrunner.camel.enabled=false",
+				"spring.cloud.zookeeper.enabled=false",
+				"spring.cloud.zookeeper.discovery.enabled=false"])
 @AutoConfigureStubRunner
 @DirtiesContext
-class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
+class StubRunnerSpringCloudAutoConfigurationWithoutDiscoverySpec extends Specification {
 
 	@Autowired StubFinder stubFinder
 	@Autowired @LoadBalanced RestTemplate restTemplate
-	@Autowired ZookeeperServiceDiscovery zookeeperServiceDiscovery
-	@Autowired ConfigurableApplicationContext applicationContext
 
 	@BeforeClass
 	@AfterClass
@@ -70,28 +66,10 @@ class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 	}
 	// end::test[]
 
-	TestingServer startTestingServer() {
-		return new TestingServer(SocketUtils.findAvailableTcpPort())
-	}
-
-	def cleanup() {
-		zookeeperServiceDiscovery?.serviceDiscovery?.close()
-	}
-
 	@Configuration
-	@EnableAutoConfiguration
+	@EnableAutoConfiguration(exclude = [RibbonZookeeperAutoConfiguration])
 	@EnableDiscoveryClient
 	static class Config {
-
-		@Bean
-		TestingServer testingServer() {
-			return new TestingServer(SocketUtils.findAvailableTcpPort())
-		}
-
-		@Bean
-		ZookeeperProperties zookeeperProperties() {
-			return new ZookeeperProperties(connectString: testingServer().connectString)
-		}
 
 		@Bean
 		@LoadBalanced

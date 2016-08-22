@@ -26,7 +26,7 @@
 		<activemq.version>5.12.1</activemq.version>
 		<camel.version>2.17.0</camel.version>
 		<spring-cloud-stream.version>1.0.2.RELEASE</spring-cloud-stream.version>
-		<spring-boot.version>1.4.0.RC1</spring-boot.version>
+		<spring-boot.version>1.4.0.RELEASE</spring-boot.version>
 	</properties>
 
 	<modules>
