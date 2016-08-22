@@ -27,6 +27,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.zookeeper.ZookeeperProperties
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery
 import org.springframework.context.annotation.Bean
@@ -54,12 +55,17 @@ class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 	@Autowired @LoadBalanced RestTemplate restTemplate
 	// TODO: this shouldn't be needed?
 	@Autowired ZookeeperServiceDiscovery zookeeperServiceDiscovery
+	@Autowired StubRunnerProperties stubRunnerProperties
 
 	@BeforeClass
 	@AfterClass
 	static void setupProps() {
 		System.clearProperty("stubrunner.repository.root")
 		System.clearProperty("stubrunner.classifier")
+	}
+
+	def setup() {
+		println "StubRunner properties are [$stubRunnerProperties]"
 	}
 
 	// tag::test[]

@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.stubrunner.spring;
 
+import java.util.Arrays;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.Resource;
 
@@ -104,4 +106,10 @@ public class StubRunnerProperties {
 		this.classifier = classifier;
 	}
 
+	@Override public String toString() {
+		return "StubRunnerProperties{" + "minPort=" + minPort + ", maxPort=" + maxPort
+				+ ", workOffline=" + workOffline + ", repositoryRoot=" + repositoryRoot
+				+ ", ids=" + Arrays.toString(ids) + ", classifier='" + classifier + '\''
+				+ '}';
+	}
 }
