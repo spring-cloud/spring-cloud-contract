@@ -35,16 +35,10 @@ import org.springframework.context.annotation.Primary;
  * @since 1.0.0
  */
 @Configuration
-@EnableConfigurationProperties
+@EnableConfigurationProperties(StubMapperProperties.class)
 @ConditionalOnClass(DiscoveryClient.class)
 @ConditionalOnProperty(value = "stubrunner.cloud.enabled", matchIfMissing = true)
 public class StubRunnerSpringCloudAutoConfiguration {
-
-	@Bean
-	@ConditionalOnMissingBean
-	public StubMapperProperties stubMapperProperties() {
-		return new StubMapperProperties();
-	}
 
 	@Bean
 	@ConditionalOnBean(DiscoveryClient.class)
