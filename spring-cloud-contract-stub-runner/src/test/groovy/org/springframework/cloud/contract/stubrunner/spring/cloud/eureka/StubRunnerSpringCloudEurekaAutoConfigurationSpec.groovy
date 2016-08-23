@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.stubrunner.spring.cloud.eureka
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
@@ -43,13 +44,16 @@ import spock.lang.Specification
 		properties = ["stubrunner.camel.enabled=false",
 				"spring.cloud.zookeeper.enabled=false",
 				"spring.cloud.zookeeper.discovery.enabled=false",
-				"stubrunner.cloud.stubbed.discovery.enabled=false"])
+				"stubrunner.cloud.stubbed.discovery.enabled=false",
+				"stubrunner.cloud.ribbon.enabled=false",
+				"debug=true"])
 @AutoConfigureStubRunner
 @DirtiesContext
 class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
 	@Autowired @LoadBalanced RestTemplate restTemplate
+	@Value('${local.server.port}') int port
 
 	@BeforeClass
 	@AfterClass

@@ -25,29 +25,33 @@ import org.springframework.cloud.contract.stubrunner.StubRunning;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerConfiguration;
 import org.springframework.cloud.contract.stubrunner.spring.cloud.StubMapperProperties;
 import org.springframework.cloud.contract.stubrunner.spring.cloud.StubsRegistrar;
-import org.springframework.cloud.netflix.eureka.CloudEurekaInstanceConfig;
+import org.springframework.cloud.netflix.eureka.CloudEurekaClient;
+import org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.netflix.discovery.EurekaClient;
-
 /**
- * Autoconfiguration for registering stubs in a Zookeeper Service discovery
+ * Autoconfiguration for registering stubs in a Eureka Service discovery
  *
  * @author Marcin Grzejszczak
  *
  * @since 1.0.0
  */
 @Configuration
-@AutoConfigureAfter(StubRunnerConfiguration.class)
-@ConditionalOnBean({ EurekaClient.class, CloudEurekaInstanceConfig.class})
-@ConditionalOnClass(EurekaClient.class)
+@AutoConfigureAfter({StubRunnerConfiguration.class, EurekaClientAutoConfiguration.class})
+@ConditionalOnBean({ CloudEurekaClient.class })
+@ConditionalOnClass(CloudEurekaClient.class)
 @ConditionalOnProperty(value = "stubrunner.cloud.eureka.enabled", matchIfMissing = true)
 public class StubRunnerSpringCloudEurekaAutoConfiguration {
 
 	@Bean(initMethod = "registerStubs")
-	public StubsRegistrar stubsRegistrar(StubRunning stubRunning, EurekaClient eurekaClient,
-			StubMapperProperties stubMapperProperties, InetUtils inetUtils) {
-		return new EurekaStubsRegistrar(stubRunning, eurekaClient, stubMapperProperties, inetUtils);
+	public StubsRegistrar stubsRegistrar(StubRunning stubRunning, Eureka eureka,
+			StubMapperProperties stubMapperProperties) {
+		return new EurekaStubsRegistrar(stubRunning, eureka, stubMapperProperties);
+	}
+
+	@Bean
+	public Eureka eureka(InetUtils inetUtils, CloudEurekaClient cloudEurekaClient) {
+		return new Eureka(inetUtils, cloudEurekaClient);
 	}
 }

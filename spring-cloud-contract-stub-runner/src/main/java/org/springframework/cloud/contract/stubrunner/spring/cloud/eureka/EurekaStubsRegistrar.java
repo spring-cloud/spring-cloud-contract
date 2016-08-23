@@ -7,17 +7,11 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubRunning;
 import org.springframework.cloud.contract.stubrunner.spring.cloud.StubMapperProperties;
 import org.springframework.cloud.contract.stubrunner.spring.cloud.StubsRegistrar;
-import org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean;
 import org.springframework.util.StringUtils;
-
-import com.netflix.appinfo.ApplicationInfoManager;
-import com.netflix.appinfo.InstanceInfo;
-import com.netflix.discovery.EurekaClient;
 
 /**
  * Registers all stubs in Eureka Service Discovery
@@ -31,30 +25,25 @@ public class EurekaStubsRegistrar implements AutoCloseable, StubsRegistrar {
 	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
 
 	private final StubRunning stubRunning;
-	private final EurekaClient eurekaClient;
+	private final Eureka eurekaClient;
 	private final StubMapperProperties stubMapperProperties;
-	private final InetUtils inetUtils;
-	private final List<ApplicationInfoManager> discoveryList = new LinkedList<>();
+	private final List<Registration> discoveryList = new LinkedList<>();
 
-	protected EurekaStubsRegistrar(StubRunning stubRunning, EurekaClient eurekaClient,
-			StubMapperProperties stubMapperProperties, InetUtils inetUtils) {
+	protected EurekaStubsRegistrar(StubRunning stubRunning, Eureka eureka,
+			StubMapperProperties stubMapperProperties) {
 		this.stubRunning = stubRunning;
-		this.eurekaClient = eurekaClient;
 		this.stubMapperProperties = stubMapperProperties;
-		this.inetUtils = inetUtils;
+		this.eurekaClient = eureka;
 	}
 
 	@Override public void registerStubs() {
 		Map<StubConfiguration, Integer> activeStubs = this.stubRunning.runStubs()
 				.validNamesAndPorts();
 		for (Map.Entry<StubConfiguration, Integer> entry : activeStubs.entrySet()) {
-			EurekaInstanceConfigBean bean = new EurekaInstanceConfigBean(inetUtils);
-			bean.setNonSecurePort(entry.getValue());
-			bean.setHostname(name(entry.getKey()));
+			Application application = new Application(name(entry.getKey()), name(entry.getKey()), "localhost", entry.getValue());
 			try {
-				ApplicationInfoManager manager = new ApplicationInfoManager(bean);
-				this.discoveryList.add(manager);
-				manager.setInstanceStatus(InstanceInfo.InstanceStatus.UP);
+				Registration register = this.eurekaClient.register(application);
+				this.discoveryList.add(register);
 				if (log.isDebugEnabled()) {
 					log.debug("Successfully registered stub [" + entry.getKey().toColonSeparatedDependencyNotation()
 							+ "] in Service Discovery");
@@ -78,9 +67,8 @@ public class EurekaStubsRegistrar implements AutoCloseable, StubsRegistrar {
 
 	@Override
 	public void close() throws Exception {
-		for (ApplicationInfoManager discovery : this.discoveryList) {
-			discovery.setInstanceStatus(InstanceInfo.InstanceStatus.DOWN);
+		for (Registration registration : this.discoveryList) {
+			this.eurekaClient.shutdown(registration);
 		}
-		this.eurekaClient.shutdown();
 	}
 }
