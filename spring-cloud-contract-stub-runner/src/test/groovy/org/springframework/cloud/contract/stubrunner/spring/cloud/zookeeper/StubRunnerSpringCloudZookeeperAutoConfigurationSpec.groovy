@@ -46,6 +46,7 @@ import spock.lang.Specification
 				"eureka.client.enabled=false",
 				"stubrunner.cloud.stubbed.discovery.enabled=false",
 				"stubrunner.cloud.ribbon.enabled=false",
+				"stubrunner.cloud.zookeeper.enabled=true",
 				"debug=true"])
 @AutoConfigureStubRunner( ids =
 		["org.springframework.cloud.contract.verifier.stubs:loanIssuance",

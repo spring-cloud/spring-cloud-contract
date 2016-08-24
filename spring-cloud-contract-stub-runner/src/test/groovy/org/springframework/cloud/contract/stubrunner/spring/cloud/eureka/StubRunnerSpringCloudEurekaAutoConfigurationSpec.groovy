@@ -44,6 +44,7 @@ import spock.lang.Specification
 		properties = ["stubrunner.camel.enabled=false",
 				"spring.cloud.zookeeper.enabled=false",
 				"spring.cloud.zookeeper.discovery.enabled=false",
+				"stubrunner.cloud.eureka.enabled=true",
 				"stubrunner.cloud.stubbed.discovery.enabled=false",
 				"stubrunner.cloud.ribbon.enabled=false",
 				"debug=true"])

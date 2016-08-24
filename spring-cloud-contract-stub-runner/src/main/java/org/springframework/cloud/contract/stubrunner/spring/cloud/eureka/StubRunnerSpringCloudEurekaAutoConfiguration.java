@@ -41,7 +41,7 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureAfter({StubRunnerConfiguration.class, EurekaClientAutoConfiguration.class})
 @ConditionalOnBean({ CloudEurekaClient.class })
 @ConditionalOnClass(CloudEurekaClient.class)
-@ConditionalOnProperty(value = "stubrunner.cloud.eureka.enabled", matchIfMissing = true)
+@ConditionalOnProperty(value = "stubrunner.cloud.eureka.enabled", havingValue = "true")
 public class StubRunnerSpringCloudEurekaAutoConfiguration {
 
 	@Bean(initMethod = "registerStubs")
@@ -50,7 +50,7 @@ public class StubRunnerSpringCloudEurekaAutoConfiguration {
 		return new EurekaStubsRegistrar(stubRunning, eureka, stubMapperProperties);
 	}
 
-	@Bean
+	@Bean(name = "eurekaStubRegistrar")
 	public Eureka eureka(InetUtils inetUtils, CloudEurekaClient cloudEurekaClient) {
 		return new Eureka(inetUtils, cloudEurekaClient);
 	}

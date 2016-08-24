@@ -40,7 +40,7 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureAfter(StubRunnerConfiguration.class)
 @ConditionalOnBean({ CuratorFramework.class, ZookeeperDiscoveryProperties.class})
 @ConditionalOnClass(org.apache.curator.x.discovery.ServiceInstance.class)
-@ConditionalOnProperty(value = "stubrunner.cloud.zookeeper.enabled", matchIfMissing = true)
+@ConditionalOnProperty(value = "stubrunner.cloud.zookeeper.enabled", havingValue = "true")
 public class StubRunnerSpringCloudZookeeperAutoConfiguration {
 
 	@Bean(initMethod = "registerStubs")

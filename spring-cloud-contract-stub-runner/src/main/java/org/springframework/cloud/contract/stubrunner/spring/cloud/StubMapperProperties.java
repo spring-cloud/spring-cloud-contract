@@ -31,7 +31,6 @@ import org.springframework.cloud.contract.stubrunner.util.StringUtils;
  * Just provide in your properties file for example:
  *
  * stubrunner.idsToServiceIds:
- *     ivyNotation: someValueInsideYourCode
  *     fraudDetectionServer: someNameThatShouldMapFraudDetectionServer
  *
  * @author Marcin Grzejszczak
