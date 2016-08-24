@@ -16,7 +16,10 @@
 
 package org.springframework.cloud.contract.stubrunner.spring;
 
+import java.util.Arrays;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 
 /**
@@ -27,21 +30,34 @@ import org.springframework.core.io.Resource;
 public class StubRunnerProperties {
 
 	/**
-	 * 
+	 * Min value of a port for the automatically started WireMock server
 	 */
 	private int minPort = 10000;
 
 	/**
-	 * 
+	 * Max value of a port for the automatically started WireMock server
 	 */
 	private int maxPort = 15000;
 
 	/**
-	 * 
+	 * Should the stubs be checked for presence only locally
 	 */
 	private boolean workOffline;
 
-	private Stubs stubs = new Stubs();
+	/**
+	 * The repository root to use (defaults to local Maven repo).
+	 */
+	private Resource repositoryRoot;
+
+	/**
+	 * The ids of the stubs to run in "ivy" notation (groupId:artifactId[:classifier]:version[:port]).
+	 */
+	private String[] ids = new String[0];
+
+	/**
+	 * The classifier to use by default in ivy co-ordinates for a stub.
+	 */
+	private String classifier = "stubs";
 
 	public int getMinPort() {
 		return minPort;
@@ -67,51 +83,34 @@ public class StubRunnerProperties {
 		this.workOffline = workOffline;
 	}
 
-	public Stubs getStubs() {
-		return stubs;
+	public Resource getRepositoryRoot() {
+		return repositoryRoot;
 	}
 
-	public void setStubs(Stubs stubs) {
-		this.stubs = stubs;
+	public void setRepositoryRoot(String repositoryRoot) {
+		this.repositoryRoot = new DefaultResourceLoader().getResource(repositoryRoot);
 	}
 
-	public static class Stubs {
-		/**
-		 * The repository root to use (defaults to local Maven repo).
-		 */
-		private Resource repositoryRoot;
-		/**
-		 * The ids of the stubs to run in "ivy" notation (groupId:artifactId[:classifier]:version[:port]).
-		 */
-		private String[] ids = new String[0];
-		/**
-		 * The classifier to use by default in ivy co-ordinates for a stub.
-		 */
-		private String classifier = "stubs";
-
-		public Resource getRepositoryRoot() {
-			return repositoryRoot;
-		}
-
-		public void setRepositoryRoot(Resource repositoryRoot) {
-			this.repositoryRoot = repositoryRoot;
-		}
-
-		public String[] getIds() {
-			return ids;
-		}
-
-		public void setIds(String[] ids) {
-			this.ids = ids;
-		}
-
-		public String getClassifier() {
-			return classifier;
-		}
-
-		public void setClassifier(String classifier) {
-			this.classifier = classifier;
-		}
+	public String[] getIds() {
+		return ids;
 	}
 
+	public void setIds(String[] ids) {
+		this.ids = ids;
+	}
+
+	public String getClassifier() {
+		return classifier;
+	}
+
+	public void setClassifier(String classifier) {
+		this.classifier = classifier;
+	}
+
+	@Override public String toString() {
+		return "StubRunnerProperties{" + "minPort=" + minPort + ", maxPort=" + maxPort
+				+ ", workOffline=" + workOffline + ", repositoryRoot=" + repositoryRoot
+				+ ", ids=" + Arrays.toString(ids) + ", classifier='" + classifier + '\''
+				+ '}';
+	}
 }

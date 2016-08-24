@@ -64,12 +64,28 @@ public class AetherStubDownloader implements StubDownloader {
 	private final RepositorySystemSession session;
 
 	public AetherStubDownloader(StubRunnerOptions stubRunnerOptions) {
+		if (log.isDebugEnabled()) {
+			log.debug("Will be resolving versions for the following options: [" + stubRunnerOptions + "]");
+		}
 		this.remoteRepos = remoteRepositories(stubRunnerOptions);
-		if (remoteRepos == null || remoteRepos.isEmpty()) {
-			log.error("Remote repositories for stubs are not specified!");
+		boolean remoteReposMissing = remoteReposMissing();
+		if (remoteReposMissing && stubRunnerOptions.workOffline) {
+			log.info("Remote repos not passed but the switch to work offline was set. "
+					+ "Stubs will be used from your local Maven repository.");
+		}
+		if (remoteReposMissing && !stubRunnerOptions.workOffline) {
+			throw new IllegalStateException("Remote repositories for stubs are not specified and work offline flag wasn't passed");
+		}
+		if (!remoteReposMissing && stubRunnerOptions.workOffline) {
+			throw new IllegalStateException("Remote repositories for stubs are specified and work offline flag is set. "
+					+ "You have to provide one of them.");
 		}
 		this.repositorySystem = newRepositorySystem();
 		this.session = newSession(this.repositorySystem, stubRunnerOptions.workOffline);
+	}
+
+	private boolean remoteReposMissing() {
+		return remoteRepos == null || remoteRepos.isEmpty();
 	}
 
 	/**
@@ -84,15 +100,19 @@ public class AetherStubDownloader implements StubDownloader {
 		this.remoteRepos = remoteRepositories;
 		this.repositorySystem = repositorySystem;
 		this.session = session;
-		if (remoteRepos == null || remoteRepos.isEmpty()) {
-			log.error("Remote remoteRepositories for stubs are not specified!");
+		if (remoteReposMissing()) {
+			log.error("Remote repositories for stubs are not specified and work offline flag wasn't passed");
 		}
 	}
 
 	private List<RemoteRepository> remoteRepositories(
 			StubRunnerOptions stubRunnerOptions) {
-		return newRepositories(
+		List<RemoteRepository>  remoteRepos = newRepositories(
 				Arrays.asList(stubRunnerOptions.stubRepositoryRoot.split(",")));
+		if (log.isDebugEnabled()) {
+			log.debug("Using the following remote repos " + remoteRepos);
+		}
+		return remoteRepos;
 	}
 
 	private File unpackedJar(String resolvedVersion, String stubsGroup,
@@ -146,6 +166,9 @@ public class AetherStubDownloader implements StubDownloader {
 		String version = getVersion(stubConfiguration.groupId,
 				stubConfiguration.artifactId, stubConfiguration.version,
 				stubConfiguration.classifier);
+		if (log.isDebugEnabled()) {
+			log.debug("Will download the stub for version [" + version + "]");
+		}
 		File unpackedJar = unpackedJar(version, stubConfiguration.groupId,
 				stubConfiguration.artifactId, stubConfiguration.classifier);
 		if (unpackedJar == null) {
@@ -166,12 +189,16 @@ public class AetherStubDownloader implements StubDownloader {
 		try {
 			rangeResult = repositorySystem.resolveVersionRange(session,
 					versionRangeRequest);
+			if (log.isDebugEnabled()) {
+				log.debug("Resolved version range is [" + rangeResult + "]");
+			}
 		}
 		catch (VersionRangeResolutionException e) {
 			throw new IllegalStateException("Cannot resolve version range", e);
 		}
 		if (rangeResult.getHighestVersion() == null) {
-			log.error("Version was not resolved!");
+			log.error("For groupId [" + stubsGroup + "] artifactId [" + stubsModule + "] "
+					+ "and classifier [" + classifier + "] the version was not resolved!");
 		}
 		return rangeResult.getHighestVersion() == null ? null : rangeResult.getHighestVersion().toString();
 	}

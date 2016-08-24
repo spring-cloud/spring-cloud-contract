@@ -28,7 +28,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * Just provide in your properties file for example:
  *
- * stubrunner.stubs.idsToServiceIds:
+ * stubrunner.idsToServiceIds:
  *     ivyNotation: someValueInsideYourCode
  *     fraudDetectionServer: someNameThatShouldMapFraudDetectionServer
  *
@@ -36,7 +36,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * @since 1.0.0
  */
-@ConfigurationProperties("stubrunner.stubs")
+@ConfigurationProperties("stubrunner")
 public class StubMapperProperties {
 
 	/**

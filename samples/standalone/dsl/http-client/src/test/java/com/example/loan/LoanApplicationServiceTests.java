@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 // tag::autoconfigure_stubrunner[]
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@AutoConfigureStubRunner
+@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:8080"}, workOffline = true)
 public class LoanApplicationServiceTests {
 // end::autoconfigure_stubrunner[]
 

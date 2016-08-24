@@ -27,9 +27,9 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.zookeeper.ZookeeperProperties
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery
-import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.annotation.DirtiesContext
@@ -37,26 +37,36 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.util.SocketUtils
 import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
+
 /**
  * @author Marcin Grzejszczak
  */
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = ["stubrunner.camel.enabled=false"])
-@AutoConfigureStubRunner
+@AutoConfigureStubRunner(ids =
+		["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
+		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
+		"org.springframework.cloud.contract.verifier.stubs:bootService"],
+		repositoryRoot = "classpath:m2repo/repository/")
 @DirtiesContext
 class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
 	@Autowired @LoadBalanced RestTemplate restTemplate
+	// TODO: this shouldn't be needed?
 	@Autowired ZookeeperServiceDiscovery zookeeperServiceDiscovery
-	@Autowired ConfigurableApplicationContext applicationContext
+	@Autowired StubRunnerProperties stubRunnerProperties
 
 	@BeforeClass
 	@AfterClass
 	static void setupProps() {
-		System.clearProperty("stubrunner.stubs.repository.root");
-		System.clearProperty("stubrunner.stubs.classifier");
+		System.clearProperty("stubrunner.repository.root")
+		System.clearProperty("stubrunner.classifier")
+	}
+
+	def setup() {
+		println "StubRunner properties are [$stubRunnerProperties]"
 	}
 
 	// tag::test[]

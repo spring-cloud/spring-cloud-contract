@@ -1,9 +1,4 @@
-stubrunner.stubs.repositoryRoot: classpath:m2repo/repository/
-stubrunner.stubs.ids:
-  - org.springframework.cloud.contract.verifier.stubs:loanIssuance
-  - org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer
-  - org.springframework.cloud.contract.verifier.stubs:bootService
-
-stubrunner.stubs.idsToServiceIds:
-  ivyNotation: someValueInsideYourCode
-  fraudDetectionServer: someNameThatShouldMapFraudDetectionServer
+stubrunner:
+  idsToServiceIds:
+    ivyNotation: someValueInsideYourCode
+    fraudDetectionServer: someNameThatShouldMapFraudDetectionServer

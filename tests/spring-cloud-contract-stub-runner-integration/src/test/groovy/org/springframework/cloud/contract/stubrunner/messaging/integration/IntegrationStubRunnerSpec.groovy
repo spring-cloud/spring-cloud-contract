@@ -18,9 +18,6 @@ package org.springframework.cloud.contract.stubrunner.messaging.integration
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
-
-import java.util.concurrent.TimeUnit
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
@@ -33,16 +30,13 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.ImportResource
 import org.springframework.messaging.Message
 import org.springframework.test.context.ContextConfiguration
-
 import spock.lang.Specification
 
+import java.util.concurrent.TimeUnit
 /**
  * @author Marcin Grzejszczak
  */
-@Configuration
-@ComponentScan
-@EnableAutoConfiguration
-@ContextConfiguration(classes = IntegrationStubRunnerSpec, loader = SpringBootContextLoader)
+@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @ImportResource("classpath*:integration-context.xml")
 @AutoConfigureStubRunner
 class IntegrationStubRunnerSpec extends Specification {
@@ -225,5 +219,12 @@ class IntegrationStubRunnerSpec extends Specification {
 				}
 			}
 	// end::sample_dsl_3[]
+
+	@Configuration
+	@ComponentScan
+	@EnableAutoConfiguration
+	static class Config {
+
+	}
 
 }

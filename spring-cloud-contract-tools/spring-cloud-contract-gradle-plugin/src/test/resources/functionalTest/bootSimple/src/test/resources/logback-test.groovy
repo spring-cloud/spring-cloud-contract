@@ -27,4 +27,4 @@ appender(console, ConsoleAppender) {
 }
 
 root(INFO, [console])
-logger("org.springframework.cloud.contract.verifier", DEBUG)
+logger("org.springframework.cloud", DEBUG)

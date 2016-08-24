@@ -54,25 +54,17 @@ public class StubRunnerConfiguration {
 	 * Bean that initializes stub runners, runs them and on shutdown closes them. Upon its
 	 * instantiation JAR with stubs is downloaded and unpacked to a temporary folder and
 	 * WireMock server are started for each of those stubs
-	 *
-	 * @param minPortValue min port value of the WireMock instance for stubs
-	 * @param maxPortValue max port value of the WireMock instance for stubs
-	 * @param stubRepositoryRoot root URL from where the JAR with stub mappings will be
-	 * downloaded
-	 * @param stubsSuffix classifier for the jar containing stubs
-	 * @param workOffline forces offline work
-	 * @param stubs comma separated list of stubs presented in Ivy notation
 	 */
 	@Bean
 	public BatchStubRunner batchStubRunner() throws IOException {
 		StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder()
 				.withMinMaxPort(props.getMinPort(), props.getMaxPort())
 				.withStubRepositoryRoot(
-						uriStringOrEmpty(props.getStubs().getRepositoryRoot()))
-				.withWorkOffline(props.getStubs().getRepositoryRoot() == null
+						uriStringOrEmpty(props.getRepositoryRoot()))
+				.withWorkOffline(props.getRepositoryRoot() == null
 						|| props.isWorkOffline())
-				.withStubsClassifier(props.getStubs().getClassifier())
-				.withStubs(props.getStubs().getIds()).build();
+				.withStubsClassifier(props.getClassifier())
+				.withStubs(props.getIds()).build();
 		BatchStubRunner batchStubRunner = new BatchStubRunnerFactory(stubRunnerOptions,
 				stubDownloader != null ? stubDownloader
 						: new AetherStubDownloader(stubRunnerOptions),

@@ -17,10 +17,13 @@
 package org.springframework.cloud.contract.stubrunner;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 
 /**
@@ -28,6 +31,8 @@ import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
  * stubs and returns a list of corresponding stub runners.
  */
 class StubRunnerFactory {
+
+	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
 
 	private final StubRunnerOptions stubRunnerOptions;
 	private final StubDownloader stubDownloader;
@@ -42,10 +47,20 @@ class StubRunnerFactory {
 	}
 
 	public Collection<StubRunner> createStubsFromServiceConfiguration() {
+		if (log.isDebugEnabled()) {
+			log.debug("Will download stubs for dependencies " + this.stubRunnerOptions.getDependencies());
+		}
+		if (this.stubRunnerOptions.getDependencies().isEmpty()) {
+			log.warn("No stubs to download have been passed. Most likely you have forgotten to pass "
+					+ "them either via annotation or a property");
+		}
 		Collection<StubRunner> result = new ArrayList<>();
 		for (StubConfiguration stubsConfiguration : stubRunnerOptions.getDependencies()) {
 			Map.Entry<StubConfiguration, File> entry = stubDownloader
 					.downloadAndUnpackStubJar(stubRunnerOptions, stubsConfiguration);
+			if (log.isDebugEnabled()) {
+				log.debug("For stub configuration [" + stubsConfiguration + "] the downloaded entry is [" + entry + "]");
+			}
 			if (entry != null) {
 				result.add(createStubRunner(entry.getKey(), entry.getValue()));
 			}
