@@ -103,8 +103,12 @@ public class AetherStubDownloader implements StubDownloader {
 
 	private List<RemoteRepository> remoteRepositories(
 			StubRunnerOptions stubRunnerOptions) {
-		return newRepositories(
+		List<RemoteRepository>  remoteRepos = newRepositories(
 				Arrays.asList(stubRunnerOptions.stubRepositoryRoot.split(",")));
+		if (log.isDebugEnabled()) {
+			log.debug("Using the following remote repos " + remoteRepos);
+		}
+		return remoteRepos;
 	}
 
 	private File unpackedJar(String resolvedVersion, String stubsGroup,
@@ -181,6 +185,9 @@ public class AetherStubDownloader implements StubDownloader {
 		try {
 			rangeResult = repositorySystem.resolveVersionRange(session,
 					versionRangeRequest);
+			if (log.isDebugEnabled()) {
+				log.debug("Resolved version range is [" + rangeResult + "]");
+			}
 		}
 		catch (VersionRangeResolutionException e) {
 			throw new IllegalStateException("Cannot resolve version range", e);
