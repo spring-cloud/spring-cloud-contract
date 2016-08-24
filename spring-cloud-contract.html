@@ -3969,9 +3969,24 @@ class StubRunnerConfigurationSpec extends Specification {
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-yml" data-lang="yml">stubrunner:
-  idsToServiceIds:
-    ivyNotation: someValueInsideYourCode
-    fraudDetectionServer: someNameThatShouldMapFraudDetectionServer</code></pre>
+  repositoryRoot: classpath:m2repo/repository/
+  ids:
+    - org.springframework.cloud.contract.verifier.stubs:loanIssuance
+    - org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer
+    - org.springframework.cloud.contract.verifier.stubs:bootService</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Instead of using the properties you can also use the properties inside the <code>@AutoConfigureStubRunner</code>.
+Below you can find an example of achieving the same result by setting values on the annotation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">@AutoConfigureStubRunner(
+		ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
+		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
+		"org.springframework.cloud.contract.verifier.stubs:bootService"],
+		repositoryRoot = "classpath:m2repo/repository/")</code></pre>
 </div>
 </div>
 </div>
@@ -5336,7 +5351,7 @@ number of different ways, including as described above using
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-08-24 12:18:20 UTC
+Last updated 2016-08-24 15:17:56 UTC
 </div>
 </div>
 </body>
