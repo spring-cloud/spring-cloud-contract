@@ -76,6 +76,10 @@ public class AetherStubDownloader implements StubDownloader {
 		if (remoteReposMissing && !stubRunnerOptions.workOffline) {
 			throw new IllegalStateException("Remote repositories for stubs are not specified and work offline flag wasn't passed");
 		}
+		if (!remoteReposMissing && stubRunnerOptions.workOffline) {
+			throw new IllegalStateException("Remote repositories for stubs are specified and work offline flag is set. "
+					+ "You have to provide one of them.");
+		}
 		this.repositorySystem = newRepositorySystem();
 		this.session = newSession(this.repositorySystem, stubRunnerOptions.workOffline);
 	}

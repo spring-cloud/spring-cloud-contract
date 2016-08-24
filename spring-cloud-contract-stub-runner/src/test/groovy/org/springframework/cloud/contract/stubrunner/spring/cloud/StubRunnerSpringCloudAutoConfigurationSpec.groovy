@@ -48,7 +48,6 @@ import spock.lang.Specification
 		["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
 		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
 		"org.springframework.cloud.contract.verifier.stubs:bootService"],
-		workOffline = true,
 		repositoryRoot = "classpath:m2repo/repository/")
 @DirtiesContext
 class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
