@@ -1245,17 +1245,7 @@ for more information.</a> We highly recommend using the map notation!</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Provide the group id and artifact id for the Stub Runner to download stubs of your collaborators. Also provide the offline work switch since you&#8217;re playing with the collaborators offline (optional step).</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml">stubrunner:
-  work-offline: true
-  ids: 'com.example:http-server-dsl:+:stubs:8080'</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Annotate your test class with <code>@AutoConfigureStubRunner</code></p>
+<p>Annotate your test class with <code>@AutoConfigureStubRunner</code>. In the annotation provide the group id and artifact id for the Stub Runner to download stubs of your collaborators. Also provide the offline work switch since you&#8217;re playing with the collaborators offline (optional step).</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1479,7 +1469,9 @@ git merge --no-ff contract-change-pr</code></pre>
 <p><strong>work online</strong></p>
 </div>
 <div class="paragraph">
-<p>Now you can disable the offline work for Spring Cloud Contract Stub Runner ad provide where the repository with your stubs is placed. At this moment the stubs of the server side will be automatically downloaded from Nexus / Artifactory.</p>
+<p>Now you can disable the offline work for Spring Cloud Contract Stub Runner ad provide where the repository with your stubs is placed. At this moment the stubs of the server side will be automatically downloaded from Nexus / Artifactory.
+You can switch off the value of the <code>workOffline</code> parameter in your annotation. Below you can see an
+example of achieving the same by changing the properties.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -5351,7 +5343,7 @@ number of different ways, including as described above using
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-08-24 15:17:56 UTC
+Last updated 2016-08-24 16:09:33 UTC
 </div>
 </div>
 </body>
