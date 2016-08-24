@@ -68,11 +68,15 @@ public class AetherStubDownloader implements StubDownloader {
 			log.debug("Will be resolving versions for the following options: [" + stubRunnerOptions + "]");
 		}
 		this.remoteRepos = remoteRepositories(stubRunnerOptions);
-		if (remoteRepos == null || remoteRepos.isEmpty()) {
-			log.warn("Remote repositories for stubs are not specified! Will work offline");
+		if (remoteReposNotPassed() && !stubRunnerOptions.workOffline) {
+			throw new IllegalStateException("Remote repositories for stubs are not specified and work offline flag wasn't passed");
 		}
 		this.repositorySystem = newRepositorySystem();
 		this.session = newSession(this.repositorySystem, stubRunnerOptions.workOffline);
+	}
+
+	private boolean remoteReposNotPassed() {
+		return remoteRepos == null || remoteRepos.isEmpty();
 	}
 
 	/**
@@ -87,8 +91,8 @@ public class AetherStubDownloader implements StubDownloader {
 		this.remoteRepos = remoteRepositories;
 		this.repositorySystem = repositorySystem;
 		this.session = session;
-		if (remoteRepos == null || remoteRepos.isEmpty()) {
-			log.error("Remote remoteRepositories for stubs are not specified!");
+		if (remoteReposNotPassed()) {
+			throw new IllegalStateException("Remote repositories for stubs are not specified and work offline flag wasn't passed");
 		}
 	}
 
