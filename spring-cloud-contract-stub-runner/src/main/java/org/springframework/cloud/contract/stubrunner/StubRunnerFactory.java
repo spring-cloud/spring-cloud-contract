@@ -58,6 +58,9 @@ class StubRunnerFactory {
 		for (StubConfiguration stubsConfiguration : stubRunnerOptions.getDependencies()) {
 			Map.Entry<StubConfiguration, File> entry = stubDownloader
 					.downloadAndUnpackStubJar(stubRunnerOptions, stubsConfiguration);
+			if (log.isDebugEnabled()) {
+				log.debug("For stub configuration [" + stubsConfiguration + "] the downloaded entry is [" + entry + "]");
+			}
 			if (entry != null) {
 				result.add(createStubRunner(entry.getKey(), entry.getValue()));
 			}
