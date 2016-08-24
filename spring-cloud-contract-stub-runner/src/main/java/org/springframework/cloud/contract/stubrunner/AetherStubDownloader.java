@@ -68,19 +68,19 @@ public class AetherStubDownloader implements StubDownloader {
 			log.debug("Will be resolving versions for the following options: [" + stubRunnerOptions + "]");
 		}
 		this.remoteRepos = remoteRepositories(stubRunnerOptions);
-		boolean remoteReposNotPassed = remoteReposNotPassed();
-		if (!remoteReposNotPassed && stubRunnerOptions.workOffline) {
+		boolean remoteReposMissing = remoteReposMissing();
+		if (remoteReposMissing && stubRunnerOptions.workOffline) {
 			log.info("Remote repos not passed but the switch to work offline was set. "
 					+ "Stubs will be downloaded from your local Maven repository.");
 		}
-		if (remoteReposNotPassed && !stubRunnerOptions.workOffline) {
+		if (remoteReposMissing && !stubRunnerOptions.workOffline) {
 			throw new IllegalStateException("Remote repositories for stubs are not specified and work offline flag wasn't passed");
 		}
 		this.repositorySystem = newRepositorySystem();
 		this.session = newSession(this.repositorySystem, stubRunnerOptions.workOffline);
 	}
 
-	private boolean remoteReposNotPassed() {
+	private boolean remoteReposMissing() {
 		return remoteRepos == null || remoteRepos.isEmpty();
 	}
 
@@ -96,7 +96,7 @@ public class AetherStubDownloader implements StubDownloader {
 		this.remoteRepos = remoteRepositories;
 		this.repositorySystem = repositorySystem;
 		this.session = session;
-		if (remoteReposNotPassed()) {
+		if (remoteReposMissing()) {
 			log.error("Remote repositories for stubs are not specified and work offline flag wasn't passed");
 		}
 	}
@@ -158,6 +158,9 @@ public class AetherStubDownloader implements StubDownloader {
 		String version = getVersion(stubConfiguration.groupId,
 				stubConfiguration.artifactId, stubConfiguration.version,
 				stubConfiguration.classifier);
+		if (log.isDebugEnabled()) {
+			log.debug("Will download the stub for version [" + version + "]");
+		}
 		File unpackedJar = unpackedJar(version, stubConfiguration.groupId,
 				stubConfiguration.artifactId, stubConfiguration.classifier);
 		if (unpackedJar == null) {
