@@ -59,7 +59,6 @@ class StubRunnerSpringCloudAutoConfigurationWithoutDiscoverySpec extends Specifi
 		System.clearProperty("stubrunner.stubs.classifier");
 	}
 
-	// tag::test[]
 	def 'should make service discovery work'() {
 		expect: 'WireMocks are running'
 			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
@@ -68,7 +67,6 @@ class StubRunnerSpringCloudAutoConfigurationWithoutDiscoverySpec extends Specifi
 			restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
 			restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
 	}
-	// end::test[]
 
 	@Configuration
 	@EnableAutoConfiguration(exclude = [RibbonZookeeperAutoConfiguration])

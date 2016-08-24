@@ -148,8 +148,17 @@ for the following configuration file:
 
 [source,yml,indent=0]
 ----
-include::src/test/resources/application.yml[]
+include::src/test/resources/application-test.yml[]
 ----
+
+Instead of using the properties you can also use the properties inside the `@AutoConfigureStubRunner`.
+Below you can find an example of achieving the same result by setting values on the annotation.
+
+[source,groovy,indent=0]
+----
+include::src/test/groovy/org/springframework/cloud/contract/stubrunner/spring/cloud/StubRunnerSpringCloudAutoConfigurationSpec.groovy[tags=autoconfigure]
+----
+
 
 === Stub Runner Spring Cloud
 

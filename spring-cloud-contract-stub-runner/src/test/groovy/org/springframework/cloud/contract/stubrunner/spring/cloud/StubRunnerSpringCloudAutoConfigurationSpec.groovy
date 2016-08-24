@@ -44,11 +44,13 @@ import spock.lang.Specification
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = ["stubrunner.camel.enabled=false"])
-@AutoConfigureStubRunner(ids =
-		["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
+// tag::autoconfigure[]
+@AutoConfigureStubRunner(
+		ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
 		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
 		"org.springframework.cloud.contract.verifier.stubs:bootService"],
 		repositoryRoot = "classpath:m2repo/repository/")
+// end::autoconfigure[]
 @DirtiesContext
 class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 
