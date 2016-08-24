@@ -37,6 +37,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.util.SocketUtils
 import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
+
 /**
  * @author Marcin Grzejszczak
  */
@@ -45,9 +46,10 @@ import spock.lang.Specification
 		properties = ["stubrunner.camel.enabled=false"])
 @AutoConfigureStubRunner(ids =
 		["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
-				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
-				"org.springframework.cloud.contract.verifier.stubs:bootService"],
-		workOffline = true)
+		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
+		"org.springframework.cloud.contract.verifier.stubs:bootService"],
+		workOffline = true,
+		repositoryRoot = "classpath:m2repo/repository/")
 @DirtiesContext
 class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 
@@ -71,11 +73,11 @@ class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 	// tag::test[]
 	def 'should make service discovery work'() {
 		expect: 'WireMocks are running'
-		"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
-		"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
+			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
+			"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
 		and: 'Stubs can be reached via load service discovery'
-		restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
-		restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
+			restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
+			restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
 	}
 	// end::test[]
 

@@ -24,6 +24,7 @@ import java.lang.annotation.Target;
 
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.properties.PropertyMapping;
+import org.springframework.boot.test.autoconfigure.properties.SkipPropertyMapping;
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier;
 
 /**
@@ -35,7 +36,7 @@ import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureM
 @Documented
 @ImportAutoConfiguration
 @AutoConfigureMessageVerifier
-@PropertyMapping("stubrunner")
+@PropertyMapping(value = "stubrunner", skip = SkipPropertyMapping.ON_DEFAULT_VALUE)
 public @interface AutoConfigureStubRunner {
 
 	/**
@@ -52,6 +53,11 @@ public @interface AutoConfigureStubRunner {
 	 * Should the stubs be checked for presence only locally
 	 */
 	boolean workOffline() default false;
+
+	/**
+	 * The repository root to use (defaults to local Maven repo).
+	 */
+	String repositoryRoot() default "";
 
 	/**
 	 * The ids of the stubs to run in "ivy" notation (groupId:artifactId[:classifier]:version[:port]).

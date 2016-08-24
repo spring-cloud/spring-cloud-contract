@@ -1,5 +1,4 @@
 stubrunner:
-  repositoryRoot: classpath:m2repo/repository/
   idsToServiceIds:
     ivyNotation: someValueInsideYourCode
     fraudDetectionServer: someNameThatShouldMapFraudDetectionServer

@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.stubrunner.spring;
 import java.util.Arrays;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 
 /**
@@ -86,8 +87,8 @@ public class StubRunnerProperties {
 		return repositoryRoot;
 	}
 
-	public void setRepositoryRoot(Resource repositoryRoot) {
-		this.repositoryRoot = repositoryRoot;
+	public void setRepositoryRoot(String repositoryRoot) {
+		this.repositoryRoot = new DefaultResourceLoader().getResource(repositoryRoot);
 	}
 
 	public String[] getIds() {

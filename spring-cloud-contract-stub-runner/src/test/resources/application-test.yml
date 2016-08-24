@@ -1,4 +1,5 @@
 stubrunner:
+  repositoryRoot: classpath:m2repo/repository/
   ids:
     - org.springframework.cloud.contract.verifier.stubs:loanIssuance
     - org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer
