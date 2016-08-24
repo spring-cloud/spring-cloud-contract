@@ -64,9 +64,12 @@ public class AetherStubDownloader implements StubDownloader {
 	private final RepositorySystemSession session;
 
 	public AetherStubDownloader(StubRunnerOptions stubRunnerOptions) {
+		if (log.isDebugEnabled()) {
+			log.debug("Will be resolving versions for the following options: [" + stubRunnerOptions + "]");
+		}
 		this.remoteRepos = remoteRepositories(stubRunnerOptions);
 		if (remoteRepos == null || remoteRepos.isEmpty()) {
-			log.error("Remote repositories for stubs are not specified!");
+			log.warn("Remote repositories for stubs are not specified! Will work offline");
 		}
 		this.repositorySystem = newRepositorySystem();
 		this.session = newSession(this.repositorySystem, stubRunnerOptions.workOffline);
