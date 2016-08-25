@@ -17,7 +17,6 @@
 package org.springframework.cloud.contract.stubrunner.spring.cloud.eureka;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.commons.util.InetUtils;
@@ -27,8 +26,12 @@ import org.springframework.cloud.contract.stubrunner.spring.cloud.StubMapperProp
 import org.springframework.cloud.contract.stubrunner.spring.cloud.StubsRegistrar;
 import org.springframework.cloud.netflix.eureka.CloudEurekaClient;
 import org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.netflix.appinfo.ApplicationInfoManager;
+import com.netflix.discovery.EurekaClientConfig;
 
 /**
  * Autoconfiguration for registering stubs in a Eureka Service discovery
@@ -39,7 +42,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @AutoConfigureAfter({StubRunnerConfiguration.class, EurekaClientAutoConfiguration.class})
-@ConditionalOnBean({ CloudEurekaClient.class })
 @ConditionalOnClass(CloudEurekaClient.class)
 @ConditionalOnProperty(value = "stubrunner.cloud.eureka.enabled", havingValue = "true")
 public class StubRunnerSpringCloudEurekaAutoConfiguration {
@@ -50,8 +52,9 @@ public class StubRunnerSpringCloudEurekaAutoConfiguration {
 		return new EurekaStubsRegistrar(stubRunning, eureka, stubMapperProperties);
 	}
 
-	@Bean(name = "eurekaStubRegistrar")
-	public Eureka eureka(InetUtils inetUtils, CloudEurekaClient cloudEurekaClient) {
-		return new Eureka(inetUtils, cloudEurekaClient);
+	@Bean(name = "eurekaRegistrar")
+	public Eureka eureka(InetUtils inetUtils, ApplicationInfoManager manager,
+			EurekaClientConfig config, ApplicationContext applicationContext) {
+		return new Eureka(inetUtils, new CloudEurekaClient(manager, config, applicationContext));
 	}
 }

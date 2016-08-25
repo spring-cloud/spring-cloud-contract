@@ -40,7 +40,7 @@ public class EurekaStubsRegistrar implements AutoCloseable, StubsRegistrar {
 		Map<StubConfiguration, Integer> activeStubs = this.stubRunning.runStubs()
 				.validNamesAndPorts();
 		for (Map.Entry<StubConfiguration, Integer> entry : activeStubs.entrySet()) {
-			Application application = new Application(name(entry.getKey()), name(entry.getKey()), "localhost", entry.getValue());
+			Application application = new Application(entry.getKey().getArtifactId(), name(entry.getKey()), "localhost", entry.getValue());
 			try {
 				Registration register = this.eurekaClient.register(application);
 				this.discoveryList.add(register);

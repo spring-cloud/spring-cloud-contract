@@ -16,10 +16,8 @@
 
 package org.springframework.cloud.contract.stubrunner.spring.cloud.eureka
 
-import org.junit.AfterClass
-import org.junit.BeforeClass
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
@@ -29,13 +27,15 @@ import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRun
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer
 import org.springframework.cloud.zookeeper.discovery.RibbonZookeeperAutoConfiguration
+import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.RestTemplate
+import spock.lang.Shared
 import spock.lang.Specification
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -48,19 +48,38 @@ import spock.lang.Specification
 				"stubrunner.cloud.stubbed.discovery.enabled=false",
 				"stubrunner.cloud.ribbon.enabled=false",
 				"debug=true"])
-@AutoConfigureStubRunner
+@AutoConfigureStubRunner( ids =
+		["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
+				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
+				"org.springframework.cloud.contract.verifier.stubs:bootService"],
+		repositoryRoot = "classpath:m2repo/repository/")
 @DirtiesContext
+@ActiveProfiles("eureka")
 class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
 	@Autowired @LoadBalanced RestTemplate restTemplate
-	@Value('${local.server.port}') int port
+	@Shared ConfigurableApplicationContext eurekaServer
 
-	@BeforeClass
-	@AfterClass
-	static void setupProps() {
-		System.clearProperty("stubrunner.stubs.repository.root");
-		System.clearProperty("stubrunner.stubs.classifier");
+	void setupSpec() {
+		System.clearProperty("stubrunner.stubs.repository.root")
+		System.clearProperty("stubrunner.stubs.classifier")
+		eurekaServer = SpringApplication.run(EurekaServer,
+				"--stubrunner.camel.enabled=false",
+				"--spring.cloud.zookeeper.enabled=false",
+				"--spring.cloud.zookeeper.discovery.enabled=false",
+				"--stubrunner.cloud.eureka.enabled=true",
+				"--stubrunner.cloud.stubbed.discovery.enabled=false",
+				"--stubrunner.cloud.ribbon.enabled=false",
+				"--debug=true",
+				"--server.port=8761",
+				"--spring.profiles.active=eureka")
+	}
+
+	void cleanupSpec() {
+		System.clearProperty("stubrunner.stubs.repository.root")
+		System.clearProperty("stubrunner.stubs.classifier")
+		eurekaServer.close()
 	}
 
 	def 'should make service discovery work'() {
@@ -75,7 +94,6 @@ class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
 	@Configuration
 	@EnableAutoConfiguration(exclude = [RibbonZookeeperAutoConfiguration])
 	@EnableEurekaClient
-	@EnableEurekaServer
 	static class Config {
 
 		@Bean
@@ -83,5 +101,12 @@ class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
 		RestTemplate restTemplate() {
 			return new RestTemplate()
 		}
+	}
+
+	@Configuration
+	@EnableAutoConfiguration(exclude = [RibbonZookeeperAutoConfiguration])
+	@EnableEurekaServer
+	static class EurekaServer {
+
 	}
 }

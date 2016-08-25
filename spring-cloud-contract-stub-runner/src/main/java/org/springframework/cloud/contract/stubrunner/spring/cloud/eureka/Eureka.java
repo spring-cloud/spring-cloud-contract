@@ -7,14 +7,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.netflix.eureka.CloudEurekaClient;
 import org.springframework.cloud.netflix.eureka.EurekaClientConfigBean;
 import org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean;
 import org.springframework.cloud.netflix.eureka.InstanceInfoFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.http.HttpStatus;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -42,13 +39,12 @@ import com.sun.jersey.api.client.filter.ClientFilter;
  *
  * @since 1.0.0
  */
-public class Eureka implements ApplicationContextAware {
+public class Eureka {
 
 	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
 
 	private InetUtils inetUtils;
 	private CloudEurekaClient eurekaClient;
-	private ApplicationContext context;
 	private EurekaClientConfigBean clientConfig;
 	private EurekaTransport transport;
 
@@ -207,11 +203,6 @@ public class Eureka implements ApplicationContextAware {
 			log.error("EurekaLite_"+instanceInfo.getAppName()+"/"+ instanceInfo.getId() + " - de-registration failed " + e.getMessage(), e);
 		}
 		this.transport.shutdown();
-	}
-
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		context = applicationContext;
 	}
 }
 

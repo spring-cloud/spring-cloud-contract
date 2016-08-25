@@ -1,0 +1,10 @@
+eureka:
+  client:
+    fetchRegistry: false
+    initialInstanceInfoReplicationIntervalSeconds: 1
+  instance:
+      registryFetchIntervalSeconds: 100
+      leaseRenewalIntervalInSeconds: 100
+      leaseExpirationDurationInSeconds: 100
+ribbon:
+    ServerListRefreshInterval: 100

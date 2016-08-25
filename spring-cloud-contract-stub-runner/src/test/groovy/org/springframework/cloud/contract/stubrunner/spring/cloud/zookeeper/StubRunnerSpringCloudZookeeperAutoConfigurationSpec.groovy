@@ -53,7 +53,6 @@ import spock.lang.Specification
 		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
 		"org.springframework.cloud.contract.verifier.stubs:bootService"],
 		repositoryRoot = "classpath:m2repo/repository/")
-@AutoConfigureStubRunner
 @DirtiesContext
 class StubRunnerSpringCloudZookeeperAutoConfigurationSpec extends Specification {
 
