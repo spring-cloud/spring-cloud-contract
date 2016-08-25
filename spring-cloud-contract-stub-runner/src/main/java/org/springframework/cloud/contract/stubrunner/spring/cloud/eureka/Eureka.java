@@ -3,6 +3,8 @@ package org.springframework.cloud.contract.stubrunner.spring.cloud.eureka;
 import java.lang.invoke.MethodHandles;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
@@ -32,6 +34,8 @@ import com.netflix.discovery.shared.transport.decorator.MetricsCollectingEurekaH
 import com.netflix.discovery.shared.transport.jersey.JerseyEurekaHttpClientFactory;
 import com.sun.jersey.api.client.filter.ClientFilter;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 /**
  * Taken from https://github.com/spencergibb/spring-cloud-netflix-eureka-lite
  *
@@ -39,14 +43,14 @@ import com.sun.jersey.api.client.filter.ClientFilter;
  *
  * @since 1.0.0
  */
-public class Eureka {
+class Eureka {
 
 	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
 
-	private InetUtils inetUtils;
-	private CloudEurekaClient eurekaClient;
-	private EurekaClientConfigBean clientConfig;
-	private EurekaTransport transport;
+	private final InetUtils inetUtils;
+	final CloudEurekaClient eurekaClient;
+	final EurekaClientConfigBean clientConfig;
+	final EurekaTransport transport;
 
 	public Eureka(InetUtils inetUtils, CloudEurekaClient eurekaClient) {
 		this.inetUtils = inetUtils;
@@ -274,6 +278,11 @@ class Registration {
 	public ApplicationStatus getApplicationStatus() {
 		return applicationStatus;
 	}
+
+	@Override public String toString() {
+		return "Registration{" + "instanceInfo=" + instanceInfo + ", applicationStatus="
+				+ applicationStatus + '}';
+	}
 }
 
 class Application {
@@ -337,5 +346,29 @@ class ApplicationStatus {
 
 	public InstanceInfo.InstanceStatus getStatus() {
 		return status;
+	}
+}
+
+class Renewer implements Runnable {
+
+	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
+
+	final Eureka eureka;
+	final Registration registration;
+	final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+	Renewer(int flushInterval, Eureka eureka,
+			Registration registration) {
+		this.eureka = eureka;
+		this.registration = registration;
+		this.scheduler.scheduleWithFixedDelay(this, 0, flushInterval, SECONDS);
+	}
+
+	@Override
+	public void run() {
+		if (log.isDebugEnabled()) {
+			log.debug("Renewing registration [" + this.registration + "]");
+		}
+		this.eureka.renew(this.registration);
 	}
 }

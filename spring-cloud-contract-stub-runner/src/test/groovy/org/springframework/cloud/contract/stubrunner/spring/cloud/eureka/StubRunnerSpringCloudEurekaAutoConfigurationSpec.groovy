@@ -30,15 +30,19 @@ import org.springframework.cloud.zookeeper.discovery.RibbonZookeeperAutoConfigur
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
+import org.springframework.http.client.ClientHttpResponse
 import org.springframework.test.annotation.DirtiesContext
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.web.client.RestTemplate
+import org.springframework.web.client.*
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.util.concurrent.PollingConditions
+
 /**
  * @author Marcin Grzejszczak
  */
+//TODO: Speed up this test somehow
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = ["stubrunner.camel.enabled=false",
@@ -47,14 +51,15 @@ import spock.lang.Specification
 				"stubrunner.cloud.eureka.enabled=true",
 				"stubrunner.cloud.stubbed.discovery.enabled=false",
 				"stubrunner.cloud.ribbon.enabled=false",
-				"debug=true"])
+				"debug=true",
+				"eureka.instance.leaseRenewalIntervalInSeconds=1",
+				"ribbon.ServerListRefreshInterval=100"])
 @AutoConfigureStubRunner( ids =
 		["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
 				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
 				"org.springframework.cloud.contract.verifier.stubs:bootService"],
 		repositoryRoot = "classpath:m2repo/repository/")
 @DirtiesContext
-@ActiveProfiles("eureka")
 class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
@@ -82,12 +87,16 @@ class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
 		eurekaServer.close()
 	}
 
+	PollingConditions conditions = new PollingConditions(timeout: 40, delay: 1)
+
 	def 'should make service discovery work'() {
 		expect: 'WireMocks are running'
 			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
 			"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
 		and: 'Stubs can be reached via load service discovery'
-			restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
+			conditions.eventually {
+				restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
+			}
 			restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
 	}
 
@@ -99,8 +108,30 @@ class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
 		@Bean
 		@LoadBalanced
 		RestTemplate restTemplate() {
-			return new RestTemplate()
+			def template = new RestTemplate() {
+
+				@Override
+				protected <T> T doExecute(URI url, HttpMethod method, RequestCallback requestCallback, ResponseExtractor<T> responseExtractor) throws RestClientException {
+					try {
+						return super.doExecute(url, method, requestCallback, responseExtractor)
+					} catch (Exception e) {
+						throw new AssertionError(e)
+					}
+				}
+			}
+			template.errorHandler = new DefaultResponseErrorHandler() {
+				@Override
+				void handleError(ClientHttpResponse response) throws IOException {
+					try {
+						super.handleError(response)
+					} catch (Exception e) {
+						throw new AssertionError(e)
+					}
+				}
+			}
+			return template
 		}
+
 	}
 
 	@Configuration

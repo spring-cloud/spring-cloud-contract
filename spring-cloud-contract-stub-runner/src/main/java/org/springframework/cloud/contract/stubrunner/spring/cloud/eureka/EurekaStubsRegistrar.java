@@ -27,7 +27,7 @@ public class EurekaStubsRegistrar implements AutoCloseable, StubsRegistrar {
 	private final StubRunning stubRunning;
 	private final Eureka eurekaClient;
 	private final StubMapperProperties stubMapperProperties;
-	private final List<Registration> discoveryList = new LinkedList<>();
+	private final List<Renewer> discoveryList = new LinkedList<>();
 
 	protected EurekaStubsRegistrar(StubRunning stubRunning, Eureka eureka,
 			StubMapperProperties stubMapperProperties) {
@@ -40,10 +40,10 @@ public class EurekaStubsRegistrar implements AutoCloseable, StubsRegistrar {
 		Map<StubConfiguration, Integer> activeStubs = this.stubRunning.runStubs()
 				.validNamesAndPorts();
 		for (Map.Entry<StubConfiguration, Integer> entry : activeStubs.entrySet()) {
-			Application application = new Application(entry.getKey().getArtifactId(), name(entry.getKey()), "localhost", entry.getValue());
+			Application application = new Application(name(entry.getKey()), entry.getKey().getArtifactId(), "localhost", entry.getValue());
 			try {
 				Registration register = this.eurekaClient.register(application);
-				this.discoveryList.add(register);
+				this.discoveryList.add(new Renewer(this.eurekaClient.clientConfig.getInstanceInfoReplicationIntervalSeconds() / 2, this.eurekaClient, register));
 				if (log.isDebugEnabled()) {
 					log.debug("Successfully registered stub [" + entry.getKey().toColonSeparatedDependencyNotation()
 							+ "] in Service Discovery");
@@ -67,8 +67,9 @@ public class EurekaStubsRegistrar implements AutoCloseable, StubsRegistrar {
 
 	@Override
 	public void close() throws Exception {
-		for (Registration registration : this.discoveryList) {
-			this.eurekaClient.shutdown(registration);
+		for (Renewer renewer : this.discoveryList) {
+			this.eurekaClient.shutdown(renewer.registration);
+			renewer.scheduler.shutdown();
 		}
 	}
 }
