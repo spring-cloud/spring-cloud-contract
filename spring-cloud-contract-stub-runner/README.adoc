@@ -255,7 +255,7 @@ The problem with this approach is such that if you're doing microservices most l
 
 [source,java,indent=0]
 ----
-include::src/test/groovy/org/springframework/cloud/contract/stubrunner/server/StubRunnerBootEurekaExample.java[tags=stubrunnereureka]
+include::src/test/groovy/org/springframework/cloud/contract/stubrunner/serverexamples/StubRunnerBootEurekaExample.java[tags=stubrunnereureka]
 ----
 
 As you can see we want to start a Stub Runner Boot server `@EnableStubRunnerServer`, enable Eureka client `@EnableEurekaClient`
@@ -267,7 +267,7 @@ Now let's assume that we want to start this application so that the stubs get au
 
 [source,bash,indent=0]
 ----
-include::src/test/groovy/org/springframework/cloud/contract/stubrunner/server/StubRunnerBootEurekaExample.java[tags=stubrunnereureka_args]
+include::src/test/groovy/org/springframework/cloud/contract/stubrunner/serverexamples/StubRunnerBootEurekaExample.java[tags=stubrunnereureka_args]
 ----
 
 That way your deployed application can send requests to started WireMock servers via the service

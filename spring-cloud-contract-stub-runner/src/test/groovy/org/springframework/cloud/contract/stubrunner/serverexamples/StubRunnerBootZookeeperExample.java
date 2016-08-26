@@ -14,11 +14,12 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.stubrunner.server;
+package org.springframework.cloud.contract.stubrunner.serverexamples;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.contract.stubrunner.server.EnableStubRunnerServer;
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
 
 /**

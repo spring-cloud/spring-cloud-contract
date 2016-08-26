@@ -7,4 +7,5 @@ org.springframework.cloud.contract.stubrunner.messaging.stream.StubRunnerStreamC
 org.springframework.cloud.contract.stubrunner.messaging.integration.StubRunnerIntegrationConfiguration,\
 org.springframework.cloud.contract.stubrunner.messaging.camel.StubRunnerCamelConfiguration,\
 org.springframework.cloud.contract.stubrunner.spring.cloud.zookeeper.StubRunnerSpringCloudZookeeperAutoConfiguration,\
-org.springframework.cloud.contract.stubrunner.spring.cloud.eureka.StubRunnerSpringCloudEurekaAutoConfiguration
+org.springframework.cloud.contract.stubrunner.spring.cloud.eureka.StubRunnerSpringCloudEurekaAutoConfiguration,\
+org.springframework.cloud.contract.stubrunner.spring.cloud.consul.StubRunnerSpringCloudConsulAutoConfiguration

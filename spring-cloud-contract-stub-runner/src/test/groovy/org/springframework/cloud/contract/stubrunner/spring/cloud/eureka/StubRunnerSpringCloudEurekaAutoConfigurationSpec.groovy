@@ -74,6 +74,8 @@ class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
 				"--spring.cloud.zookeeper.enabled=false",
 				"--spring.cloud.zookeeper.discovery.enabled=false",
 				"--stubrunner.cloud.eureka.enabled=true",
+				"--stubrunner.cloud.zookeeper.enabled=false",
+				"--stubrunner.cloud.consul.enabled=false",
 				"--stubrunner.cloud.stubbed.discovery.enabled=false",
 				"--debug=true",
 				"--server.port=8761",
@@ -83,7 +85,7 @@ class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
 	void cleanupSpec() {
 		System.clearProperty("stubrunner.stubs.repository.root")
 		System.clearProperty("stubrunner.stubs.classifier")
-		eurekaServer.close()
+		eurekaServer?.close()
 	}
 
 	PollingConditions conditions = new PollingConditions(timeout: 40, delay: 1)

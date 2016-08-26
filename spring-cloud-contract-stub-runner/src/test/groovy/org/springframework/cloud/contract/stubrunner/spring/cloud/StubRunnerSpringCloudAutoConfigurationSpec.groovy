@@ -41,6 +41,9 @@ import spock.lang.Specification
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = ["stubrunner.camel.enabled=false",
 				"spring.cloud.zookeeper.enabled=false",
+				"spring.cloud.consul.enabled=false",
+				"eureka.client.enabled=false",
+				"stubrunner.cloud.stubbed.discovery.enabled=true",
 				"spring.cloud.zookeeper.discovery.enabled=false"])
 // tag::autoconfigure[]
 @AutoConfigureStubRunner(
