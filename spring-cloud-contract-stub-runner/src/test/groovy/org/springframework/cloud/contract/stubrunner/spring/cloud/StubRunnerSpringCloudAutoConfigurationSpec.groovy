@@ -38,12 +38,14 @@ import spock.lang.Specification
 /**
  * @author Marcin Grzejszczak
  */
+//TODO: Document that ribbon.eureka.enabled=false needs to be set or override it somehow
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = ["stubrunner.camel.enabled=false",
 				"spring.cloud.zookeeper.enabled=false",
 				"spring.cloud.consul.enabled=false",
 				"eureka.client.enabled=false",
+				"ribbon.eureka.enabled=false",
 				"stubrunner.cloud.stubbed.discovery.enabled=true",
 				"spring.cloud.consul.discovery.enabled=false",
 				"spring.cloud.zookeeper.discovery.enabled=false"])

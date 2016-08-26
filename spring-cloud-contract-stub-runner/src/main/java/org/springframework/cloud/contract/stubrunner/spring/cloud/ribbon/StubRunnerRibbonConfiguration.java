@@ -16,15 +16,16 @@
 
 package org.springframework.cloud.contract.stubrunner.spring.cloud.ribbon;
 
-import com.netflix.loadbalancer.Server;
-import com.netflix.loadbalancer.ServerList;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.netflix.loadbalancer.Server;
+import com.netflix.loadbalancer.ServerList;
 
 @Configuration
 class StubRunnerRibbonConfiguration {
@@ -48,4 +49,5 @@ class StubRunnerRibbonConfiguration {
 			}
 		};
 	}
+
 }
