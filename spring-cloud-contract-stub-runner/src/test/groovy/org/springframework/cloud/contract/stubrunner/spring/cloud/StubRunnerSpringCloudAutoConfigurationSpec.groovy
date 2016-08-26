@@ -27,7 +27,6 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
-import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery
 import org.springframework.cloud.zookeeper.discovery.RibbonZookeeperAutoConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -35,7 +34,6 @@ import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -56,8 +54,6 @@ class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
 	@Autowired @LoadBalanced RestTemplate restTemplate
-	// TODO: this shouldn't be needed?
-	@Autowired ZookeeperServiceDiscovery zookeeperServiceDiscovery
 	@Autowired StubRunnerProperties stubRunnerProperties
 
 	@BeforeClass
