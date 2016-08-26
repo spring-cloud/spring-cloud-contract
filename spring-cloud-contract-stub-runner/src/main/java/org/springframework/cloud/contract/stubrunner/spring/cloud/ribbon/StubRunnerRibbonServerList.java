@@ -16,11 +16,14 @@
 
 package org.springframework.cloud.contract.stubrunner.spring.cloud.ribbon;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.stubrunner.RunningStubs;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubFinder;
@@ -39,6 +42,8 @@ import com.netflix.loadbalancer.ServerList;
  * @since 1.0.0
  */
 class StubRunnerRibbonServerList implements ServerList<Server> {
+
+	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
 
 	private final ServerList<Server> serverList;
 
@@ -85,7 +90,13 @@ class StubRunnerRibbonServerList implements ServerList<Server> {
 			public List<Server> getInitialListOfServers() {
 				List<Server> combinedList = new ArrayList<>();
 				combinedList.addAll(servers);
-				combinedList.addAll(delegate.getInitialListOfServers());
+				try {
+					combinedList.addAll(delegate.getInitialListOfServers());
+				} catch (Exception e) {
+					if (log.isDebugEnabled()) {
+						log.debug("Exception occurred while trying to get list of servers", e);
+					}
+				}
 				return combinedList;
 			}
 
@@ -93,7 +104,13 @@ class StubRunnerRibbonServerList implements ServerList<Server> {
 			public List<Server> getUpdatedListOfServers() {
 				List<Server> combinedList = new ArrayList<>();
 				combinedList.addAll(servers);
-				combinedList.addAll(delegate.getUpdatedListOfServers());
+				try {
+					combinedList.addAll(delegate.getUpdatedListOfServers());
+				} catch (Exception e) {
+					if (log.isDebugEnabled()) {
+						log.debug("Exception occurred while trying to get list of servers", e);
+					}
+				}
 				return combinedList;
 			}
 		};

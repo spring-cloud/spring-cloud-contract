@@ -45,7 +45,6 @@ import spock.lang.Specification
 				"spring.cloud.zookeeper.enabled=false",
 				"spring.cloud.consul.enabled=false",
 				"eureka.client.enabled=false",
-				"ribbon.eureka.enabled=false",
 				"stubrunner.cloud.stubbed.discovery.enabled=true",
 				"spring.cloud.consul.discovery.enabled=false",
 				"spring.cloud.zookeeper.discovery.enabled=false"])
