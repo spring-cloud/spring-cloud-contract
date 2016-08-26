@@ -22,6 +22,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.contract.stubrunner.StubRunning;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerConfiguration;
+import org.springframework.cloud.contract.stubrunner.spring.cloud.ConditionalOnStubbedDiscoveryDisabled;
 import org.springframework.cloud.contract.stubrunner.spring.cloud.StubMapperProperties;
 import org.springframework.cloud.contract.stubrunner.spring.cloud.StubsRegistrar;
 import org.springframework.cloud.netflix.eureka.CloudEurekaClient;
@@ -43,7 +44,9 @@ import com.netflix.discovery.EurekaClientConfig;
 @Configuration
 @AutoConfigureAfter({StubRunnerConfiguration.class, EurekaClientAutoConfiguration.class})
 @ConditionalOnClass(CloudEurekaClient.class)
-@ConditionalOnProperty(value = "stubrunner.cloud.eureka.enabled", havingValue = "true")
+@ConditionalOnStubbedDiscoveryDisabled
+@ConditionalOnEurekaEnabled
+@ConditionalOnProperty(value = "stubrunner.cloud.eureka.enabled", matchIfMissing = true)
 public class StubRunnerSpringCloudEurekaAutoConfiguration {
 
 	@Bean(initMethod = "registerStubs")

@@ -45,7 +45,7 @@ import spock.lang.Specification
 		properties = ["stubrunner.camel.enabled=false",
 				"eureka.client.enabled=false",
 				"stubrunner.cloud.stubbed.discovery.enabled=false",
-				"stubrunner.cloud.ribbon.enabled=false",
+				"stubrunner.cloud.eureka.enabled=false",
 				"stubrunner.cloud.zookeeper.enabled=true",
 				"debug=true"])
 @AutoConfigureStubRunner( ids =

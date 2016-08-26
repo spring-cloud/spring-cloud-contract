@@ -23,6 +23,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.contract.stubrunner.StubRunning;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerConfiguration;
+import org.springframework.cloud.contract.stubrunner.spring.cloud.ConditionalOnStubbedDiscoveryDisabled;
 import org.springframework.cloud.contract.stubrunner.spring.cloud.StubMapperProperties;
 import org.springframework.cloud.contract.stubrunner.spring.cloud.StubsRegistrar;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
@@ -40,7 +41,8 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureAfter(StubRunnerConfiguration.class)
 @ConditionalOnBean({ CuratorFramework.class, ZookeeperDiscoveryProperties.class})
 @ConditionalOnClass(org.apache.curator.x.discovery.ServiceInstance.class)
-@ConditionalOnProperty(value = "stubrunner.cloud.zookeeper.enabled", havingValue = "true")
+@ConditionalOnStubbedDiscoveryDisabled
+@ConditionalOnProperty(value = "stubrunner.cloud.zookeeper.enabled", matchIfMissing = true)
 public class StubRunnerSpringCloudZookeeperAutoConfiguration {
 
 	@Bean(initMethod = "registerStubs")

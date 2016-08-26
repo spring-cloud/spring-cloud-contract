@@ -75,7 +75,6 @@ class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
 				"--spring.cloud.zookeeper.discovery.enabled=false",
 				"--stubrunner.cloud.eureka.enabled=true",
 				"--stubrunner.cloud.stubbed.discovery.enabled=false",
-				"--stubrunner.cloud.ribbon.enabled=false",
 				"--debug=true",
 				"--server.port=8761",
 				"--spring.profiles.active=eureka")
