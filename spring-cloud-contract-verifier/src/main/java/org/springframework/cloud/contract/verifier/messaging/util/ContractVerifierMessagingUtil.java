@@ -43,72 +43,72 @@ public class ContractVerifierMessagingUtil {
 
 		@Override
 		public int size() {
-			return delegate.size();
+			return this.delegate.size();
 		}
 
 		@Override
 		public boolean isEmpty() {
-			return delegate.isEmpty();
+			return this.delegate.isEmpty();
 		}
 
 		@Override
 		public boolean containsKey(Object key) {
-			return delegate.containsKey(key);
+			return this.delegate.containsKey(key);
 		}
 
 		@Override
 		public boolean containsValue(Object value) {
-			return delegate.containsValue(value);
+			return this.delegate.containsValue(value);
 		}
 
 		@Override
 		public Object get(Object key) {
-			return delegate.get(key);
+			return this.delegate.get(key);
 		}
 
 		@Override
 		public Object put(String key, Object value) {
-			return delegate.put(key, value);
+			return this.delegate.put(key, value);
 		}
 
 		@Override
 		public Object remove(Object key) {
-			return delegate.remove(key);
+			return this.delegate.remove(key);
 		}
 
 		@Override
 		public void putAll(Map<? extends String, ?> m) {
-			delegate.putAll(m);
+			this.delegate.putAll(m);
 		}
 
 		@Override
 		public void clear() {
-			delegate.clear();
+			this.delegate.clear();
 		}
 
 		@Override
 		public Set<String> keySet() {
-			return delegate.keySet();
+			return this.delegate.keySet();
 		}
 
 		@Override
 		public Collection<Object> values() {
-			return delegate.values();
+			return this.delegate.values();
 		}
 
 		@Override
 		public Set<Entry<String, Object>> entrySet() {
-			return delegate.entrySet();
+			return this.delegate.entrySet();
 		}
 
 		@Override
 		public boolean equals(Object o) {
-			return delegate.equals(o);
+			return this.delegate.equals(o);
 		}
 
 		@Override
 		public int hashCode() {
-			return delegate.hashCode();
+			return this.delegate.hashCode();
 		}
 	}
 }

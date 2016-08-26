@@ -34,4 +34,13 @@ class StubConfigurationSpec extends Specification {
 			stubConfiguration.classifier == 'classifier'
 			stubConfiguration.version == 'version'
 	}
+
+	def 'should return ivy notation'() {
+		given:
+			String ivy = 'group:artifact:version:classifier'
+		when:
+			StubConfiguration stubConfiguration = new StubConfiguration(ivy)
+		then:
+			stubConfiguration.toColonSeparatedDependencyNotation() == ivy
+	}
 }

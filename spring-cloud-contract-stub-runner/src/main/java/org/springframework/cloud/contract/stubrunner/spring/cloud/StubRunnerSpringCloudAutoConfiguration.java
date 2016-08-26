@@ -43,6 +43,7 @@ public class StubRunnerSpringCloudAutoConfiguration {
 	@Bean
 	@ConditionalOnBean(DiscoveryClient.class)
 	@Primary
+	@ConditionalOnStubbedDiscoveryEnabled
 	public DiscoveryClient stubRunnerDiscoveryClientWrapper(DiscoveryClient discoveryClient,
 			StubFinder stubFinder,
 			StubMapperProperties stubMapperProperties,
@@ -51,7 +52,9 @@ public class StubRunnerSpringCloudAutoConfiguration {
 	}
 
 	@Bean
+	@Primary
 	@ConditionalOnMissingBean(DiscoveryClient.class)
+	@ConditionalOnStubbedDiscoveryEnabled
 	public DiscoveryClient stubRunnerDiscoveryClient(StubFinder stubFinder,
 			StubMapperProperties stubMapperProperties,
 			@Value("${spring.application.name:unknown}") String springAppName) {

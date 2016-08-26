@@ -1,0 +1,9 @@
+eureka:
+  enableSelfPreservation: false
+  client:
+    fetchRegistry: false
+    initialInstanceInfoReplicationIntervalSeconds: 1
+  instance:
+      registryFetchIntervalSeconds: 5
+      leaseRenewalIntervalInSeconds: 5
+      leaseExpirationDurationInSeconds: 5

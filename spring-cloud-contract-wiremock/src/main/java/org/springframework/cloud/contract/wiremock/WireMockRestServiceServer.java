@@ -16,9 +16,6 @@
 
 package org.springframework.cloud.contract.wiremock;
 
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -44,6 +41,9 @@ import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.matching.MultiValuePattern;
 import com.github.tomakehurst.wiremock.matching.RequestPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
 /**
  * Convenience class for loading WireMock stubs into a {@link MockRestServiceServer}. In
@@ -136,7 +136,7 @@ public class WireMockRestServiceServer {
 	 * @return a MockRestServiceServer
 	 */
 	public MockRestServiceServer build() {
-		MockRestServiceServer server = builder.build();
+		MockRestServiceServer server = this.builder.build();
 		for (String location : this.locations) {
 			try {
 				for (Resource resource : this.resolver.getResources(pattern(location))) {

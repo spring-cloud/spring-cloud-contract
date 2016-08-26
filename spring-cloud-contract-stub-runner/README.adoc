@@ -237,3 +237,40 @@ For Messaging
 ----
 include::src/test/groovy/org/springframework/cloud/contract/stubrunner/server/StubRunnerBootSpec.groovy[tags=boot_usage]
 ----
+
+==== Stub Runner Boot with Service Discovery
+
+One of the possibilities of using Stub Runner Boot is to use it as a feed of stubs for "smoke-tests". What does it mean?
+ Let's assume that you don't want to deploy 50 microservice to a test environment in order
+ to check if your application is working fine. You've already executed a suite of tests during the build process
+ but you would also like to ensure that the packaging of your application is fine. What you can do
+ is to deploy your application to an environment, start it and run a couple of tests on it to see if
+ it's working fine. We can call those tests smoke-tests since their idea is to check only a handful
+ of testing scenarios.
+
+The problem with this approach is such that if you're doing microservices most likely you're
+ using a service discovery tool. Stub Runner Boot allows you to solve this issue by starting the
+ required stubs and register them in a service discovery tool. Let's take a look at an example of
+ such a setup with Eureka. Let's assume that Eureka was already running.
+
+[source,java,indent=0]
+----
+include::src/test/groovy/org/springframework/cloud/contract/stubrunner/serverexamples/StubRunnerBootEurekaExample.java[tags=stubrunnereureka]
+----
+
+As you can see we want to start a Stub Runner Boot server `@EnableStubRunnerServer`, enable Eureka client `@EnableEurekaClient`
+and we want to have the stub runner feature turned on `@AutoConfigureStubRunner`.
+
+Now let's assume that we want to start this application so that the stubs get automatically registered.
+ We can do it by running the app `java -jar ${SYSTEM_PROPS} stub-runner-boot-eureka-example.jar` where
+ `${SYSTEM_PROPS}` would contain the following list of properties
+
+[source,bash,indent=0]
+----
+include::src/test/groovy/org/springframework/cloud/contract/stubrunner/serverexamples/StubRunnerBootEurekaExample.java[tags=stubrunnereureka_args]
+----
+
+That way your deployed application can send requests to started WireMock servers via the service
+discovery. Most likely points 1-3 could be set by default in `application.yml` cause they are not
+likely to change. That way you can provide only the list of stubs to download whenever you start
+the Stub Runner Boot.

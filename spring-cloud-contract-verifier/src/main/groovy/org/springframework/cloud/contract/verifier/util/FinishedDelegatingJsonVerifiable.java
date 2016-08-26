@@ -31,7 +31,7 @@ import com.toomuchcoding.jsonassert.JsonVerifiable;
 class FinishedDelegatingJsonVerifiable extends DelegatingJsonVerifiable {
 
 	FinishedDelegatingJsonVerifiable(JsonVerifiable delegate,
-									 LinkedList<String> methodsBuffer) {
+			LinkedList<String> methodsBuffer) {
 		super(delegate, methodsBuffer);
 	}
 

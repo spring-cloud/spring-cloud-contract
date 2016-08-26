@@ -139,9 +139,9 @@ class SpringBootHttpServer
 
 	private ContainerProperties container() {
 		if (this.context != null) {
-			return context.getBean(ContainerProperties.class);
+			return this.context.getBean(ContainerProperties.class);
 		}
-		return new ContainerProperties(options);
+		return new ContainerProperties(this.options);
 	}
 
 	@Override
@@ -253,7 +253,7 @@ class WiremockServerConfiguration {
 						WiremockServerConfiguration.this.adminRequestHandler);
 				servletContext.setAttribute(StubRequestHandler.class.getName(),
 						WiremockServerConfiguration.this.stubRequestHandler);
-				servletContext.setAttribute(Notifier.KEY, options.notifier());
+				servletContext.setAttribute(Notifier.KEY, WiremockServerConfiguration.this.options.notifier());
 			}
 		};
 	}
@@ -278,13 +278,13 @@ class ContainerProperties {
 	}
 
 	public int port() {
-		if (options.httpsSettings().enabled()) {
-			return options.portNumber();
+		if (this.options.httpsSettings().enabled()) {
+			return this.options.portNumber();
 		}
 		if (this.localPort != null) {
 			return this.localPort;
 		}
-		EmbeddedWebApplicationContext embedded = (EmbeddedWebApplicationContext) context;
+		EmbeddedWebApplicationContext embedded = (EmbeddedWebApplicationContext) this.context;
 		return embedded.getEmbeddedServletContainer().getPort();
 	}
 
@@ -330,9 +330,9 @@ class ContainerConfiguration {
 
 		@EventListener
 		public void serverUp(EmbeddedServletContainerInitializedEvent event) {
-			if (connector != null) {
-				container.setLocalPort(connector.getLocalPort());
-				container
+			if (this.connector != null) {
+				this.container.setLocalPort(this.connector.getLocalPort());
+				this.container
 						.setLocalHttpsPort(event.getEmbeddedServletContainer().getPort());
 			}
 		}
@@ -367,8 +367,8 @@ class ContainerConfiguration {
 				undertow.addBuilderCustomizers(new UndertowBuilderCustomizer() {
 					@Override
 					public void customize(Builder builder) {
-						builder.addHttpListener(options.portNumber(), "localhost");
-						UndertowContainerConfiguration.this.port = options.portNumber();
+						builder.addHttpListener(UndertowContainerConfiguration.this.options.portNumber(), "localhost");
+						UndertowContainerConfiguration.this.port = UndertowContainerConfiguration.this.options.portNumber();
 					}
 				});
 			}
@@ -377,10 +377,10 @@ class ContainerConfiguration {
 
 		@EventListener
 		public void serverUp(EmbeddedServletContainerInitializedEvent event) {
-			if (port != null) {
+			if (this.port != null) {
 				// TODO: make it dynamic as well
-				container.setLocalPort(port);
-				container
+				this.container.setLocalPort(this.port);
+				this.container
 						.setLocalHttpsPort(event.getEmbeddedServletContainer().getPort());
 			}
 		}
@@ -419,7 +419,7 @@ class ContainerConfiguration {
 				Server server) {
 			ServerConnector connector = new ServerConnector(server, -1, -1);
 			connector.setHost("localhost");
-			connector.setPort(options.portNumber());
+			connector.setPort(this.options.portNumber());
 			for (ConnectionFactory connectionFactory : connector
 					.getConnectionFactories()) {
 				if (connectionFactory instanceof HttpConfiguration.ConnectionFactory) {
@@ -433,9 +433,9 @@ class ContainerConfiguration {
 
 		@EventListener
 		public void serverUp(EmbeddedServletContainerInitializedEvent event) {
-			if (connector != null) {
-				container.setLocalPort(connector.getLocalPort());
-				container
+			if (this.connector != null) {
+				this.container.setLocalPort(this.connector.getLocalPort());
+				this.container
 						.setLocalHttpsPort(event.getEmbeddedServletContainer().getPort());
 			}
 		}

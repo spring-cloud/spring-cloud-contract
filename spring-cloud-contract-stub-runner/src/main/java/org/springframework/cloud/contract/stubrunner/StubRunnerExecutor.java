@@ -60,11 +60,21 @@ class StubRunnerExecutor implements StubFinder {
 
 	public RunningStubs runStubs(StubRunnerOptions stubRunnerOptions,
 			StubRepository repository, StubConfiguration stubConfiguration) {
+		if (this.stubServer != null) {
+			if (log.isDebugEnabled()) {
+				log.debug("Returning cached version of stubs [" + stubConfiguration.toColonSeparatedDependencyNotation() + "]");
+			}
+			return runningStubs();
+		}
 		startStubServers(stubRunnerOptions, stubConfiguration, repository);
-		RunningStubs runningCollaborators = new RunningStubs(Collections
-				.singletonMap(stubServer.getStubConfiguration(), stubServer.getPort()));
+		RunningStubs runningCollaborators = runningStubs();
 		log.info("All stubs are now running " + runningCollaborators.toString());
 		return runningCollaborators;
+	}
+
+	private RunningStubs runningStubs() {
+		return new RunningStubs(Collections
+					.singletonMap(stubServer.getStubConfiguration(), stubServer.getPort()));
 	}
 
 	public void shutdown() {

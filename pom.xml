@@ -27,6 +27,8 @@
 		<camel.version>2.17.0</camel.version>
 		<spring-cloud-stream.version>1.0.2.RELEASE</spring-cloud-stream.version>
 		<spring-boot.version>1.4.0.RELEASE</spring-boot.version>
+		<checkstyle.version>2.17</checkstyle.version>
+		<spring-cloud-build.version>1.2.0.BUILD-SNAPSHOT</spring-cloud-build.version>
 	</properties>
 
 	<modules>
@@ -309,6 +311,55 @@
 					</plugin>
 				</plugins>
 			</build>
+		</profile>
+		<profile>
+			<id>checkstyle</id>
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-checkstyle-plugin</artifactId>
+						<version>${checkstyle.version}</version>
+						<dependencies>
+							<dependency>
+								<groupId>org.springframework.cloud</groupId>
+								<artifactId>spring-cloud-build-tools</artifactId>
+								<version>${spring-cloud-build.version}</version>
+							</dependency>
+						</dependencies>
+						<executions>
+							<execution>
+								<id>validate</id>
+								<phase>validate</phase>
+								<configuration>
+									<configLocation>checkstyle.xml</configLocation>
+									<headerLocation>LICENSE.txt</headerLocation>
+									<consoleOutput>true</consoleOutput>
+									<failsOnError>true</failsOnError>
+								</configuration>
+								<goals>
+									<goal>check</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+
+			<reporting>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-checkstyle-plugin</artifactId>
+						<version>${checkstyle.version}</version>
+						<configuration>
+							<configLocation>checkstyle.xml</configLocation>
+							<headerLocation>LICENSE.txt</headerLocation>
+						</configuration>
+					</plugin>
+				</plugins>
+			</reporting>
 		</profile>
 	</profiles>
 

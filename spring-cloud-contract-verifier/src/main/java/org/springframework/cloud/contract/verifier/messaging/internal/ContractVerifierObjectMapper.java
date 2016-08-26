@@ -41,6 +41,6 @@ public class ContractVerifierObjectMapper {
 		if (payload instanceof String) {
 			return payload.toString();
 		}
-		return objectMapper.writeValueAsString(payload);
+		return this.objectMapper.writeValueAsString(payload);
 	}
 }

@@ -25,13 +25,11 @@ import java.lang.annotation.Target;
 import org.springframework.boot.test.autoconfigure.properties.PropertyMapping;
 import org.springframework.context.annotation.Import;
 
-import com.github.tomakehurst.wiremock.core.Options;
-
 /**
  * Annotation for test classes that want to start a WireMock server as part of the Spring
  * Application Context. The port, https port and stub locations (if any) can all be
  * controlled directly here. For more fine-grained control of the server instance add a
- * bean of type {@link Options} to the application context.
+ * bean of type {@link com.github.tomakehurst.wiremock.core.Options} to the application context.
  * 
  * @author Dave Syer
  *

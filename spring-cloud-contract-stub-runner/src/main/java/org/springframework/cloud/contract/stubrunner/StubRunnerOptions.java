@@ -61,8 +61,10 @@ public class StubRunnerOptions {
 	 */
 	final Map<StubConfiguration, Integer> stubIdsToPortMapping;
 
-	public StubRunnerOptions(Integer minPortValue, Integer maxPortValue, String stubRepositoryRoot,
-	                  boolean workOffline, String stubsClassifier, Collection<StubConfiguration> dependencies, Map<StubConfiguration, Integer> stubIdsToPortMapping) {
+	public StubRunnerOptions(Integer minPortValue, Integer maxPortValue,
+			String stubRepositoryRoot, boolean workOffline, String stubsClassifier,
+			Collection<StubConfiguration> dependencies,
+			Map<StubConfiguration, Integer> stubIdsToPortMapping) {
 		this.minPortValue = minPortValue;
 		this.maxPortValue = maxPortValue;
 		this.stubRepositoryRoot = stubRepositoryRoot;

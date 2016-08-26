@@ -49,13 +49,13 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 
 	@Override
 	public <T> void send(T payload, Map<String, Object> headers, String destination) {
-		send(builder.create(payload, headers), destination);
+		send(this.builder.create(payload, headers), destination);
 	}
 
 	@Override
 	public void send(Message<?> message, String destination) {
 		try {
-			MessageChannel messageChannel = context
+			MessageChannel messageChannel = this.context
 					.getBean(resolvedDestination(destination), MessageChannel.class);
 			messageChannel.send(message);
 		}
@@ -69,9 +69,9 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 	@Override
 	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit) {
 		try {
-			MessageChannel messageChannel = context
+			MessageChannel messageChannel = this.context
 					.getBean(resolvedDestination(destination), MessageChannel.class);
-			return messageCollector.forChannel(messageChannel).poll(timeout, timeUnit);
+			return this.messageCollector.forChannel(messageChannel).poll(timeout, timeUnit);
 		}
 		catch (Exception e) {
 			log.error("Exception occurred while trying to read a message from "
@@ -81,7 +81,7 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 	}
 
 	private String resolvedDestination(String destination) {
-		ChannelBindingServiceProperties channelBindingServiceProperties = context
+		ChannelBindingServiceProperties channelBindingServiceProperties = this.context
 				.getBean(ChannelBindingServiceProperties.class);
 		for (Map.Entry<String, BindingProperties> entry : channelBindingServiceProperties
 				.getBindings().entrySet()) {

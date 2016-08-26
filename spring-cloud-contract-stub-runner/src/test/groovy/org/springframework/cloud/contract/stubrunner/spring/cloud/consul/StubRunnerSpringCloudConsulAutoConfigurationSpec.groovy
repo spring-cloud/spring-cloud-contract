@@ -14,8 +14,12 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.stubrunner.spring.cloud
+package org.springframework.cloud.contract.stubrunner.spring.cloud.consul
 
+import com.ecwid.consul.v1.ConsulClient
+import com.ecwid.consul.v1.agent.model.NewService
+import org.hamcrest.Description
+import org.hamcrest.TypeSafeMatcher
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,34 +27,39 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
-import org.springframework.cloud.client.loadbalancer.LoadBalanced
-import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
-import org.springframework.cloud.zookeeper.discovery.RibbonZookeeperAutoConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
+
+import static org.mockito.BDDMockito.then
+import static org.mockito.Matchers.argThat
+import static org.mockito.Mockito.mock
 /**
  * @author Marcin Grzejszczak
  */
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = ["stubrunner.camel.enabled=false",
+				"eureka.client.enabled=false",
 				"spring.cloud.zookeeper.enabled=false",
-				"spring.cloud.zookeeper.discovery.enabled=false"])
+				"stubrunner.cloud.stubbed.discovery.enabled=false",
+				"stubrunner.cloud.eureka.enabled=false",
+				"spring.cloud.zookeeper.discovery.enabled=false",
+				"stubrunner.cloud.consul.enabled=true",
+				"stubrunner.cloud.zookeeper.enabled=false",
+				"debug=true"])
 @AutoConfigureStubRunner( ids =
 		["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
 		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
 		"org.springframework.cloud.contract.verifier.stubs:bootService"],
 		repositoryRoot = "classpath:m2repo/repository/")
 @DirtiesContext
-class StubRunnerSpringCloudAutoConfigurationWithoutDiscoverySpec extends Specification {
+class StubRunnerSpringCloudConsulAutoConfigurationSpec extends Specification {
 
-	@Autowired StubFinder stubFinder
-	@Autowired @LoadBalanced RestTemplate restTemplate
+	@Autowired ConsulClient client
 
 	@BeforeClass
 	@AfterClass
@@ -59,24 +68,47 @@ class StubRunnerSpringCloudAutoConfigurationWithoutDiscoverySpec extends Specifi
 		System.clearProperty("stubrunner.stubs.classifier");
 	}
 
-	def 'should make service discovery work'() {
-		expect: 'WireMocks are running'
-			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
-			"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
-		and: 'Stubs can be reached via load service discovery'
-			restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
-			restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
+	def 'should make service discovery work for #serviceName'() {
+		given:
+			final String expectedId = serviceName.split(':')[0]
+			final String expectedName = serviceName.split(':')[1]
+		when: 'Consul registration took place for 3 stubs'
+			then(client).should().agentServiceRegister(argThat(new NewServiceMatcher(expectedId, expectedName)))
+		then:
+			noExceptionThrown()
+		where:
+			serviceName << ['loanIssuance:loanIssuance', 'bootService:bootService', 'fraudDetectionServer:someNameThatShouldMapFraudDetectionServer']
+	}
+
+	private static class NewServiceMatcher extends TypeSafeMatcher<NewService> {
+
+		private final String expectedId
+		private final String expectedName
+
+		NewServiceMatcher(String expectedId, String expectedName) {
+			this.expectedId = expectedId
+			this.expectedName = expectedName
+		}
+
+		@Override
+		protected boolean matchesSafely(NewService item) {
+			return item.id == expectedId && item.name == expectedName
+		}
+
+		@Override
+		void describeTo(Description description) {
+
+		}
 	}
 
 	@Configuration
-	@EnableAutoConfiguration(exclude = [RibbonZookeeperAutoConfiguration])
+	@EnableAutoConfiguration
 	@EnableDiscoveryClient
 	static class Config {
 
 		@Bean
-		@LoadBalanced
-		RestTemplate restTemplate() {
-			return new RestTemplate()
+		ConsulClient mockedConsulClient() {
+			return mock(ConsulClient)
 		}
 	}
 }
