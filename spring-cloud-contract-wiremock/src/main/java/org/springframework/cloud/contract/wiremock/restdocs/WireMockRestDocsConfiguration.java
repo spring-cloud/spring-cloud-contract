@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.contract.wiremock.restdocs;
 
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.restdocs.RestDocsMockMvcConfigurationCustomizer;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentationConfigurer;
@@ -24,7 +23,7 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentationConfigurer;
 /**
  * Custom configuration for Spring RestDocs that adds a WireMock snippet (for generating
  * JSON stubs). Applied automatically if you use
- * {@link AutoConfigureRestDocs @AutoConfigureRestDocs} in your test case and this class
+ * {@link org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs @AutoConfigureRestDocs} in your test case and this class
  * is available. JSON stubs are generated and added to the restdocs path under "stubs".
  * 
  * @see WireMockRestDocs for a convenient entry point for customizing and asserting the

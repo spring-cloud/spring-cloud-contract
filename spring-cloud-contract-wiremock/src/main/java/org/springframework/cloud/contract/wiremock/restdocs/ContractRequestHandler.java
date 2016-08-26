@@ -67,20 +67,20 @@ public class ContractRequestHandler implements ResultHandler {
 		Map<String, Object> configuration = getConfiguration(result);
 		String actual = StreamUtils.copyToString(request.getInputStream(),
 				Charset.forName("UTF-8"));
-		for (JsonPath jsonPath : jsonPaths.values()) {
+		for (JsonPath jsonPath : this.jsonPaths.values()) {
 			new JsonPathValue(jsonPath, actual).assertHasValue(Object.class, "an object");
 		}
-		configuration.put("contract.jsonPaths", jsonPaths.keySet());
-		if (contentType != null) {
-			configuration.put("contract.contentType", contentType);
+		configuration.put("contract.jsonPaths", this.jsonPaths.keySet());
+		if (this.contentType != null) {
+			configuration.put("contract.contentType", this.contentType);
 			String resultType = request.getContentType();
 			assertThat(resultType).isNotNull().as("no content type");
-			assertThat(contentType.includes(MediaType.valueOf(resultType))).isTrue()
+			assertThat(this.contentType.includes(MediaType.valueOf(resultType))).isTrue()
 					.as("content type did not match");
 		}
-		if (builder != null) {
-			builder.willReturn(getResponseDefinition(result));
-			StubMapping stubMapping = builder.build();
+		if (this.builder != null) {
+			this.builder.willReturn(getResponseDefinition(result));
+			StubMapping stubMapping = this.builder.build();
 			MatchResult match = stubMapping.getRequest()
 					.match(new WireMockHttpServletRequestAdapter(request));
 			assertThat(match.isExactMatch()).as("wiremock did not match request").isTrue();
@@ -137,7 +137,7 @@ public class ContractRequestHandler implements ResultHandler {
 				(expression == null ? null : expression),
 				"expression must not be null or empty");
 		expression = String.format(expression, args);
-		jsonPaths.put(expression, JsonPath.compile(expression));
+		this.jsonPaths.put(expression, JsonPath.compile(expression));
 	}
 
 }

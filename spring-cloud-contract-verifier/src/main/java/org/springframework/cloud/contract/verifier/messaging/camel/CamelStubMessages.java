@@ -51,8 +51,8 @@ public class CamelStubMessages implements MessageVerifier<Message> {
 	@Override
 	public void send(Message message, String destination) {
 		try {
-			ProducerTemplate producerTemplate = context.createProducerTemplate();
-			Exchange exchange = new DefaultExchange(context);
+			ProducerTemplate producerTemplate = this.context.createProducerTemplate();
+			Exchange exchange = new DefaultExchange(this.context);
 			exchange.setIn(message);
 			producerTemplate.send(destination, exchange);
 		} catch (Exception e) {
@@ -64,13 +64,13 @@ public class CamelStubMessages implements MessageVerifier<Message> {
 
 	@Override
 	public <T> void send(T payload, Map<String, Object> headers, String destination) {
-		send(builder.create(payload, headers), destination);
+		send(this.builder.create(payload, headers), destination);
 	}
 
 	@Override
 	public Message receive(String destination, long timeout, TimeUnit timeUnit) {
 		try {
-			ConsumerTemplate consumerTemplate = context.createConsumerTemplate();
+			ConsumerTemplate consumerTemplate = this.context.createConsumerTemplate();
 			Exchange exchange = consumerTemplate.receive(destination, timeUnit.toMillis(timeout));
 			return exchange.getIn();
 		} catch (Exception e) {

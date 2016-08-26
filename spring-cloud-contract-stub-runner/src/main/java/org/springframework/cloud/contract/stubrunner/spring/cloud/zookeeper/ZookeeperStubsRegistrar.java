@@ -26,7 +26,7 @@ import org.springframework.util.StringUtils;
  *
  * @since 1.0.0
  */
-public class ZookeeperStubsRegistrar implements AutoCloseable, StubsRegistrar {
+public class ZookeeperStubsRegistrar implements StubsRegistrar {
 
 	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
 
@@ -36,7 +36,7 @@ public class ZookeeperStubsRegistrar implements AutoCloseable, StubsRegistrar {
 	private final ZookeeperDiscoveryProperties zookeeperDiscoveryProperties;
 	private final List<ServiceDiscovery> discoveryList = new LinkedList<>();
 
-	protected ZookeeperStubsRegistrar(StubRunning stubRunning, CuratorFramework curatorFramework,
+	public ZookeeperStubsRegistrar(StubRunning stubRunning, CuratorFramework curatorFramework,
 			StubMapperProperties stubMapperProperties,
 			ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
 		this.stubRunning = stubRunning;

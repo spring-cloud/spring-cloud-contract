@@ -24,7 +24,6 @@ import org.apache.http.ssl.SSLContexts;
 import org.junit.Assert;
 import org.springframework.util.ClassUtils;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 
 /**
@@ -37,7 +36,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
  * 		WireMockSpring.config());
  * </pre>
  * 
- * and then use {@link WireMock} as normal in your test methods.
+ * and then use {@link com.github.tomakehurst.wiremock.client.WireMock} as normal in your test methods.
  * 
  * @author Dave Syer
  *

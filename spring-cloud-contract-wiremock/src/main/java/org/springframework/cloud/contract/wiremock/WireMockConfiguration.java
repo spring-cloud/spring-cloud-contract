@@ -71,29 +71,29 @@ public class WireMockConfiguration implements SmartLifecycle {
 
 	@PostConstruct
 	public void init() throws IOException {
-		if (options == null) {
+		if (this.options == null) {
 			com.github.tomakehurst.wiremock.core.WireMockConfiguration factory = WireMockSpring
 					.options();
-			if (wireMock.getPort() != 8080) {
-				factory.port(wireMock.getPort());
+			if (this.wireMock.getPort() != 8080) {
+				factory.port(this.wireMock.getPort());
 			}
-			if (wireMock.getHttpsPort() != -1) {
-				factory.httpsPort(wireMock.getHttpsPort());
+			if (this.wireMock.getHttpsPort() != -1) {
+				factory.httpsPort(this.wireMock.getHttpsPort());
 			}
 			this.options = factory;
 		}
-		server = new WireMockServer(options);
+		this.server = new WireMockServer(this.options);
 		registerStubs();
-		if (!beanFactory.containsBean("wireMockServer")) {
-			beanFactory.registerSingleton("wireMockServer", server);
+		if (!this.beanFactory.containsBean("wireMockServer")) {
+			this.beanFactory.registerSingleton("wireMockServer", this.server);
 		}
 	}
 
 	private void registerStubs() throws IOException {
-		if (StringUtils.hasText(wireMock.getStubs())) {
+		if (StringUtils.hasText(this.wireMock.getStubs())) {
 			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(
-					resourceLoader);
-			String pattern = wireMock.getStubs();
+					this.resourceLoader);
+			String pattern = this.wireMock.getStubs();
 			if (!pattern.contains("*")) {
 				if (!pattern.endsWith("/")) {
 					pattern = pattern + "/";
@@ -101,7 +101,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 				pattern = pattern + "**/*.json";
 			}
 			for (Resource resource : resolver.getResources(pattern)) {
-				server.addStubMapping(StubMapping.buildFrom(StreamUtils.copyToString(
+				this.server.addStubMapping(StubMapping.buildFrom(StreamUtils.copyToString(
 						resource.getInputStream(), Charset.forName("UTF-8"))));
 			}
 		}
@@ -109,22 +109,22 @@ public class WireMockConfiguration implements SmartLifecycle {
 
 	@Override
 	public void start() {
-		server.start();
-		WireMock.configureFor("localhost", server.port());
-		running = true;
+		this.server.start();
+		WireMock.configureFor("localhost", this.server.port());
+		this.running = true;
 	}
 
 	@Override
 	public void stop() {
-		if (running) {
-			server.stop();
-			running = false;
+		if (this.running) {
+			this.server.stop();
+			this.running = false;
 		}
 	}
 
 	@Override
 	public boolean isRunning() {
-		return running;
+		return this.running;
 	}
 
 	@Override
@@ -154,7 +154,7 @@ class WireMockProperties {
 	private String stubs;
 
 	public int getPort() {
-		return port;
+		return this.port;
 	}
 
 	public void setPort(int port) {
@@ -162,7 +162,7 @@ class WireMockProperties {
 	}
 
 	public int getHttpsPort() {
-		return httpsPort;
+		return this.httpsPort;
 	}
 
 	public void setHttpsPort(int httpsPort) {
@@ -170,7 +170,7 @@ class WireMockProperties {
 	}
 
 	public String getStubs() {
-		return stubs;
+		return this.stubs;
 	}
 
 	public void setStubs(String stubs) {

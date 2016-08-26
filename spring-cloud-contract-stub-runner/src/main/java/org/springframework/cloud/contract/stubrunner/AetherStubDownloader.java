@@ -85,7 +85,7 @@ public class AetherStubDownloader implements StubDownloader {
 	}
 
 	private boolean remoteReposMissing() {
-		return remoteRepos == null || remoteRepos.isEmpty();
+		return this.remoteRepos == null || this.remoteRepos.isEmpty();
 	}
 
 	/**
@@ -121,16 +121,16 @@ public class AetherStubDownloader implements StubDownloader {
 		if (!StringUtils.hasText(resolvedVersion)) {
 			log.warn("Stub for group [" + stubsGroup + "] module [" + stubsModule
 					+ "] and classifier [" + classifier + "] not found in "
-					+ remoteRepos);
+					+ this.remoteRepos);
 			return null;
 		}
 		Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier,
 				ARTIFACT_EXTENSION, resolvedVersion);
-		ArtifactRequest request = new ArtifactRequest(artifact, remoteRepos, null);
+		ArtifactRequest request = new ArtifactRequest(artifact, this.remoteRepos, null);
 		log.info("Resolving artifact [" + artifact
-				+ "] using remote repositories " + remoteRepos);
+				+ "] using remote repositories " + this.remoteRepos);
 		try {
-			ArtifactResult result = repositorySystem.resolveArtifact(session, request);
+			ArtifactResult result = this.repositorySystem.resolveArtifact(this.session, request);
 			log.info("Resolved artifact [" + artifact + "] to "
 					+ result.getArtifact().getFile());
 			File temporaryFile = unpackStubJarToATemporaryFolder(
@@ -142,7 +142,7 @@ public class AetherStubDownloader implements StubDownloader {
 			log.warn(
 					"Exception occurred while trying to download a stub for group ["
 							+ stubsGroup + "] module [" + stubsModule
-							+ "] and classifier [" + classifier + "] in " + remoteRepos,
+							+ "] and classifier [" + classifier + "] in " + this.remoteRepos,
 					e);
 			return null;
 		}
@@ -187,7 +187,7 @@ public class AetherStubDownloader implements StubDownloader {
 				remoteRepos, null);
 		VersionRangeResult rangeResult;
 		try {
-			rangeResult = repositorySystem.resolveVersionRange(session,
+			rangeResult = this.repositorySystem.resolveVersionRange(this.session,
 					versionRangeRequest);
 			if (log.isDebugEnabled()) {
 				log.debug("Resolved version range is [" + rangeResult + "]");
@@ -210,7 +210,7 @@ public class AetherStubDownloader implements StubDownloader {
 		VersionRequest versionRequest = new VersionRequest(artifact, remoteRepos, null);
 		VersionResult versionResult;
 		try {
-			versionResult = repositorySystem.resolveVersion(session, versionRequest);
+			versionResult = this.repositorySystem.resolveVersion(this.session, versionRequest);
 		}
 		catch (VersionResolutionException e) {
 			throw new IllegalStateException("Cannot resolve version", e);

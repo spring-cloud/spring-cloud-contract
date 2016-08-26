@@ -16,16 +16,6 @@
 
 package org.springframework.cloud.contract.wiremock.restdocs;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.delete;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.matching;
-import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -50,6 +40,16 @@ import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.matching;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+
 public class WireMockSnippet implements Snippet {
 
 	private String snippetName = "stubs";
@@ -66,10 +66,10 @@ public class WireMockSnippet implements Snippet {
 	@Override
 	public void document(Operation operation) throws IOException {
 		extractMatchers(operation);
-		if (stubMapping == null) {
-			stubMapping = request(operation).willReturn(response(operation)).build();
+		if (this.stubMapping == null) {
+			this.stubMapping = request(operation).willReturn(response(operation)).build();
 		}
-		String json = Json.write(stubMapping);
+		String json = Json.write(this.stubMapping);
 		RestDocumentationContext context = (RestDocumentationContext) operation
 				.getAttributes().get(RestDocumentationContext.class.getName());
 		File output = new File(context.getOutputDirectory(),
@@ -81,15 +81,15 @@ public class WireMockSnippet implements Snippet {
 	}
 
 	private void extractMatchers(Operation operation) {
-		stubMapping = (StubMapping) operation.getAttributes().get("contract.stubMapping");
-		if (stubMapping != null) {
+		this.stubMapping = (StubMapping) operation.getAttributes().get("contract.stubMapping");
+		if (this.stubMapping != null) {
 			return;
 		}
 		@SuppressWarnings("unchecked")
 		Set<String> jsonPaths = (Set<String>) operation.getAttributes()
 				.get("contract.jsonPaths");
 		this.jsonPaths = jsonPaths;
-		contentType = (MediaType) operation.getAttributes().get("contract.contentType");
+		this.contentType = (MediaType) operation.getAttributes().get("contract.contentType");
 	}
 
 	private ResponseDefinitionBuilder response(Operation operation) {
@@ -107,7 +107,7 @@ public class WireMockSnippet implements Snippet {
 				.getHeaders();
 		// TODO: whitelist headers
 		for (String name : headers.keySet()) {
-			if (!headerBlackList.contains(name.toLowerCase())) {
+			if (!this.headerBlackList.contains(name.toLowerCase())) {
 				if ("content-type".equalsIgnoreCase(name) && this.contentType != null) {
 					continue;
 				}
@@ -138,8 +138,8 @@ public class WireMockSnippet implements Snippet {
 
 	private RemoteMappingBuilder<?, ?> bodyPattern(RemoteMappingBuilder<?, ?> builder,
 			String content) {
-		if (jsonPaths != null) {
-			for (String jsonPath : jsonPaths) {
+		if (this.jsonPaths != null) {
+			for (String jsonPath : this.jsonPaths) {
 				builder.withRequestBody(matchingJsonPath(jsonPath));
 			}
 		}
@@ -158,7 +158,7 @@ public class WireMockSnippet implements Snippet {
 				.getHeaders();
 		HttpHeaders result = new HttpHeaders();
 		for (String name : headers.keySet()) {
-			if (!headerBlackList.contains(name.toLowerCase())) {
+			if (!this.headerBlackList.contains(name.toLowerCase())) {
 				result = result.plus(new HttpHeader(name, headers.get(name)));
 			}
 		}

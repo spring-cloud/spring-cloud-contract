@@ -43,7 +43,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  *
  * @since 1.0.0
  */
-class Eureka {
+public class Eureka {
 
 	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
 
@@ -136,9 +136,9 @@ class Eureka {
 		return new EurekaTransport(httpClientFactory, httpClientFactory.newClient(), transportClientFactory, bootstrapResolver);
 	}
 
-	public static TransportClientFactory newTransportClientFactory(final EurekaClientConfig clientConfig,
-																   final Collection<ClientFilter> additionalFilters
-																   ) {
+	public static TransportClientFactory newTransportClientFactory(
+			final EurekaClientConfig clientConfig,
+			final Collection<ClientFilter> additionalFilters) {
 		final TransportClientFactory jerseyFactory = JerseyEurekaHttpClientFactory.create(
 				clientConfig, additionalFilters, null, null);
 		final TransportClientFactory metricsFactory = MetricsCollectingEurekaHttpClient.createFactory(jerseyFactory);
@@ -210,6 +210,13 @@ class Eureka {
 	}
 }
 
+/**
+ * Taken from https://github.com/spencergibb/spring-cloud-netflix-eureka-lite
+ *
+ * @author Spencer Gibb
+ *
+ * @since 1.0.0
+ */
 class EurekaTransport {
 	private final EurekaHttpClientFactory eurekaHttpClientFactory;
 	private final EurekaHttpClient eurekaHttpClient;
@@ -250,41 +257,13 @@ class EurekaTransport {
 	}
 }
 
-class Registration {
-	private final InstanceInfo instanceInfo;
-	private final ApplicationStatus applicationStatus;
-
-	public Registration(InstanceInfo instanceInfo, ApplicationStatus applicationStatus) {
-		this.instanceInfo = instanceInfo;
-		this.applicationStatus = applicationStatus;
-	}
-
-	public Registration(InstanceInfo instanceInfo, Application application) {
-		this(instanceInfo, new ApplicationStatus(application, InstanceInfo.InstanceStatus.UP));
-	}
-
-	public String getRegistrationKey() {
-		return this.applicationStatus.getApplication().getRegistrationKey();
-	}
-
-	public String getApplicationName() {
-		return this.applicationStatus.getApplication().getName();
-	}
-
-	public InstanceInfo getInstanceInfo() {
-		return instanceInfo;
-	}
-
-	public ApplicationStatus getApplicationStatus() {
-		return applicationStatus;
-	}
-
-	@Override public String toString() {
-		return "Registration{" + "instanceInfo=" + instanceInfo + ", applicationStatus="
-				+ applicationStatus + '}';
-	}
-}
-
+/**
+ * Taken from https://github.com/spencergibb/spring-cloud-netflix-eureka-lite
+ *
+ * @author Spencer Gibb
+ *
+ * @since 1.0.0
+ */
 class Application {
 	private String name;
 	private String instance_id;
@@ -303,7 +282,7 @@ class Application {
 
 	@JsonIgnore
 	public String getRegistrationKey() {
-		return computeRegistrationKey(name, instance_id);
+		return computeRegistrationKey(this.name, instance_id);
 	}
 
 	static String computeRegistrationKey(String name, String instanceId) {
@@ -327,28 +306,9 @@ class Application {
 	}
 }
 
-class ApplicationStatus {
-	private Application application;
-	private InstanceInfo.InstanceStatus status;
-
-	public ApplicationStatus(Application application,
-			InstanceInfo.InstanceStatus status) {
-		this.application = application;
-		this.status = status;
-	}
-
-	public ApplicationStatus() {
-	}
-
-	public Application getApplication() {
-		return application;
-	}
-
-	public InstanceInfo.InstanceStatus getStatus() {
-		return status;
-	}
-}
-
+/**
+ * Scheduled service that automatically will renew registrations in Eureka
+ */
 class Renewer implements Runnable {
 
 	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
@@ -366,8 +326,8 @@ class Renewer implements Runnable {
 
 	@Override
 	public void run() {
-		if (log.isDebugEnabled()) {
-			log.debug("Renewing registration [" + this.registration + "]");
+		if (log.isTraceEnabled()) {
+			log.trace("Renewing registration [" + this.registration + "]");
 		}
 		this.eureka.renew(this.registration);
 	}

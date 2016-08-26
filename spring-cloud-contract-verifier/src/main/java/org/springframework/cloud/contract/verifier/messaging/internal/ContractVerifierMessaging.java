@@ -33,11 +33,11 @@ public class ContractVerifierMessaging<M> {
 	}
 
 	public void send(ContractVerifierMessage message, String destination) {
-		exchange.send(message.getPayload(), message.getHeaders(), destination);
+		this.exchange.send(message.getPayload(), message.getHeaders(), destination);
 	}
 	
 	public ContractVerifierMessage receive(String destination) {
-		return convert(exchange.receive(destination));
+		return convert(this.exchange.receive(destination));
 	}
 
 	public <T> ContractVerifierMessage create(T payload, Map<String, Object> headers) {

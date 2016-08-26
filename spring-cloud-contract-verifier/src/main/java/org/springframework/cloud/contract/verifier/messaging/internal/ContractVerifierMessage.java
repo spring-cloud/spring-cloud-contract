@@ -43,7 +43,7 @@ public class ContractVerifierMessage {
 	}
 
 	public Object getPayload() {
-		return payload;
+		return this.payload;
 	}
 
 	public void setPayload(Object payload) {
@@ -51,11 +51,11 @@ public class ContractVerifierMessage {
 	}
 
 	public Map<String, Object> getHeaders() {
-		return headers;
+		return this.headers;
 	}
 	
 	public Object getHeader(String name) {
-		return headers.get(name);
+		return this.headers.get(name);
 	}
 
 	public void setHeaders(Map<String, Object> headers) {

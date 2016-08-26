@@ -20,7 +20,7 @@ import org.springframework.util.StringUtils;
  *
  * @since 1.0.0
  */
-public class EurekaStubsRegistrar implements AutoCloseable, StubsRegistrar {
+public class EurekaStubsRegistrar implements StubsRegistrar {
 
 	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
 
@@ -29,7 +29,7 @@ public class EurekaStubsRegistrar implements AutoCloseable, StubsRegistrar {
 	private final StubMapperProperties stubMapperProperties;
 	private final List<Renewer> discoveryList = new LinkedList<>();
 
-	protected EurekaStubsRegistrar(StubRunning stubRunning, Eureka eureka,
+	public EurekaStubsRegistrar(StubRunning stubRunning, Eureka eureka,
 			StubMapperProperties stubMapperProperties) {
 		this.stubRunning = stubRunning;
 		this.stubMapperProperties = stubMapperProperties;

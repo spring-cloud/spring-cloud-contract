@@ -49,13 +49,13 @@ public class SpringIntegrationStubMessages implements
 
 	@Override
 	public <T> void send(T payload, Map<String, Object> headers, String destination) {
-		send(builder.create(payload, headers), destination);
+		send(this.builder.create(payload, headers), destination);
 	}
 
 	@Override
 	public void send(Message<?> message, String destination) {
 		try {
-			MessageChannel messageChannel = context.getBean(destination, MessageChannel.class);
+			MessageChannel messageChannel = this.context.getBean(destination, MessageChannel.class);
 			messageChannel.send(message);
 		} catch (Exception e) {
 			log.error("Exception occurred while trying to send a message [" + message + "] " +
@@ -67,7 +67,7 @@ public class SpringIntegrationStubMessages implements
 	@Override
 	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit) {
 		try {
-			PollableChannel messageChannel = context.getBean(destination, PollableChannel.class);
+			PollableChannel messageChannel = this.context.getBean(destination, PollableChannel.class);
 			return messageChannel.receive(timeUnit.toMillis(timeout));
 		} catch (Exception e) {
 			log.error("Exception occurred while trying to read a message from " +

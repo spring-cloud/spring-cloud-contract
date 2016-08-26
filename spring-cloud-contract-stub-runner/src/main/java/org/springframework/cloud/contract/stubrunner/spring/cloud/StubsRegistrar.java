@@ -7,6 +7,6 @@ package org.springframework.cloud.contract.stubrunner.spring.cloud;
  *
  * @since 1.0.0
  */
-public interface StubsRegistrar {
+public interface StubsRegistrar extends AutoCloseable {
 	void registerStubs();
 }
