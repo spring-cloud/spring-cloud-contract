@@ -26,7 +26,6 @@ import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer
-import org.springframework.cloud.zookeeper.discovery.RibbonZookeeperAutoConfiguration
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -35,6 +34,7 @@ import org.springframework.http.client.ClientHttpResponse
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.*
+import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
@@ -45,13 +45,10 @@ import spock.util.concurrent.PollingConditions
 //TODO: Speed up this test somehow
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = ["stubrunner.camel.enabled=false",
-				"spring.cloud.zookeeper.enabled=false",
-				"spring.cloud.zookeeper.discovery.enabled=false",
-				"stubrunner.cloud.eureka.enabled=true",
+		properties = ["stubrunner.cloud.eureka.enabled=true",
 				"stubrunner.cloud.stubbed.discovery.enabled=false",
 				"stubrunner.cloud.ribbon.enabled=false",
-				"debug=true",
+				"eureka.client.enabled=true",
 				"eureka.instance.leaseRenewalIntervalInSeconds=1",
 				"ribbon.ServerListRefreshInterval=100"])
 @AutoConfigureStubRunner( ids =
@@ -64,20 +61,15 @@ class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
 	@Autowired @LoadBalanced RestTemplate restTemplate
-	@Shared ConfigurableApplicationContext eurekaServer
+	@Shared @AutoCleanup ConfigurableApplicationContext eurekaServer
 
 	void setupSpec() {
 		System.clearProperty("stubrunner.stubs.repository.root")
 		System.clearProperty("stubrunner.stubs.classifier")
 		eurekaServer = SpringApplication.run(EurekaServer,
-				"--stubrunner.camel.enabled=false",
-				"--spring.cloud.zookeeper.enabled=false",
-				"--spring.cloud.zookeeper.discovery.enabled=false",
 				"--stubrunner.cloud.eureka.enabled=true",
-				"--stubrunner.cloud.zookeeper.enabled=false",
-				"--stubrunner.cloud.consul.enabled=false",
 				"--stubrunner.cloud.stubbed.discovery.enabled=false",
-				"--debug=true",
+				"--eureka.client.enabled=true",
 				"--server.port=8761",
 				"--spring.profiles.active=eureka")
 	}
@@ -85,7 +77,6 @@ class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
 	void cleanupSpec() {
 		System.clearProperty("stubrunner.stubs.repository.root")
 		System.clearProperty("stubrunner.stubs.classifier")
-		eurekaServer?.close()
 	}
 
 	PollingConditions conditions = new PollingConditions(timeout: 40, delay: 1)
@@ -96,13 +87,13 @@ class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
 			"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
 		and: 'Stubs can be reached via load service discovery'
 			conditions.eventually {
-				restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
+				assert restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
 			}
 			restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
 	}
 
 	@Configuration
-	@EnableAutoConfiguration(exclude = [RibbonZookeeperAutoConfiguration])
+	@EnableAutoConfiguration
 	@EnableEurekaClient
 	static class Config {
 
@@ -136,7 +127,7 @@ class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
 	}
 
 	@Configuration
-	@EnableAutoConfiguration(exclude = [RibbonZookeeperAutoConfiguration])
+	@EnableAutoConfiguration
 	@EnableEurekaServer
 	static class EurekaServer {
 

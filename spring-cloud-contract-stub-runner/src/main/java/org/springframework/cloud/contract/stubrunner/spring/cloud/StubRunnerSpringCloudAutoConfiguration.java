@@ -52,6 +52,7 @@ public class StubRunnerSpringCloudAutoConfiguration {
 	}
 
 	@Bean
+	@Primary
 	@ConditionalOnMissingBean(DiscoveryClient.class)
 	@ConditionalOnStubbedDiscoveryEnabled
 	public DiscoveryClient stubRunnerDiscoveryClient(StubFinder stubFinder,

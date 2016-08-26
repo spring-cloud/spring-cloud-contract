@@ -43,12 +43,7 @@ import spock.lang.Specification
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = ["stubrunner.camel.enabled=false",
-				"eureka.client.enabled=false",
-				"spring.cloud.consul.enabled=false",
 				"stubrunner.cloud.stubbed.discovery.enabled=false",
-				"stubrunner.cloud.eureka.enabled=false",
-				"stubrunner.cloud.consul.enabled=false",
-				"stubrunner.cloud.zookeeper.enabled=true",
 				"debug=true"])
 @AutoConfigureStubRunner( ids =
 		["org.springframework.cloud.contract.verifier.stubs:loanIssuance",

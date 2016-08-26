@@ -22,11 +22,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
+import org.springframework.cloud.consul.ConsulAutoConfiguration
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
-import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
+import org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration
+import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration
 import org.springframework.cloud.zookeeper.discovery.RibbonZookeeperAutoConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -44,6 +45,7 @@ import spock.lang.Specification
 				"spring.cloud.consul.enabled=false",
 				"eureka.client.enabled=false",
 				"stubrunner.cloud.stubbed.discovery.enabled=true",
+				"spring.cloud.consul.discovery.enabled=false",
 				"spring.cloud.zookeeper.discovery.enabled=false"])
 // tag::autoconfigure[]
 @AutoConfigureStubRunner(
@@ -57,17 +59,12 @@ class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
 	@Autowired @LoadBalanced RestTemplate restTemplate
-	@Autowired StubRunnerProperties stubRunnerProperties
 
 	@BeforeClass
 	@AfterClass
 	static void setupProps() {
 		System.clearProperty("stubrunner.repository.root")
 		System.clearProperty("stubrunner.classifier")
-	}
-
-	def setup() {
-		println "StubRunner properties are [$stubRunnerProperties]"
 	}
 
 	// tag::test[]
@@ -82,8 +79,8 @@ class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 	// end::test[]
 
 	@Configuration
-	@EnableAutoConfiguration(exclude = [RibbonZookeeperAutoConfiguration])
-	@EnableDiscoveryClient
+	@EnableAutoConfiguration(exclude = [RibbonZookeeperAutoConfiguration, EurekaClientAutoConfiguration,
+			ConsulAutoConfiguration, ZookeeperAutoConfiguration])
 	static class Config {
 
 		@Bean
