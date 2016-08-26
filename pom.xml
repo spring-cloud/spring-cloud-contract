@@ -7,13 +7,13 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-build</artifactId>
-		<version>1.2.0.RELEASE</version>
+		<version>1.2.0.BUILD-SNAPSHOT</version>
 		<relativePath/>
 	</parent>
 
 	<artifactId>spring-cloud-contract-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.0.M2</version>
+	<version>1.0.0.BUILD-SNAPSHOT</version>
 
 	<name>Spring Cloud Contract</name>
 	<description>Spring Cloud Contract</description>
@@ -25,10 +25,10 @@
 	<properties>
 		<activemq.version>5.12.1</activemq.version>
 		<camel.version>2.17.0</camel.version>
-		<spring-cloud-stream.version>Brooklyn.M1</spring-cloud-stream.version>
-		<spring-boot.version>1.4.0.RELEASE</spring-boot.version>
+		<spring-cloud-stream.version>Brooklyn.BUILD-SNAPSHOT</spring-cloud-stream.version>
+		<spring-boot.version>1.4.0.BUILD-SNAPSHOT</spring-boot.version>
 		<checkstyle.version>2.17</checkstyle.version>
-		<spring-cloud-build.version>1.2.0.RELEASE</spring-cloud-build.version>
+		<spring-cloud-build.version>1.2.0.BUILD-SNAPSHOT</spring-cloud-build.version>
 	</properties>
 
 	<modules>

@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-tools</artifactId>
-		<version>1.0.0.M2</version>
+		<version>1.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
@@ -89,6 +89,21 @@
 								<artifact>
 									<file>build/libs/${project.artifactId}-${project.version}.jar</file>
 									<type>jar</type>
+								</artifact>
+								<artifact>
+									<file>build/libs/${project.artifactId}-${project.version}-groovydoc.jar</file>
+									<type>jar</type>
+									<classifier>groovydoc</classifier>
+								</artifact>
+								<artifact>
+									<file>build/libs/${project.artifactId}-${project.version}-javadoc.jar</file>
+									<type>jar</type>
+									<classifier>javadoc</classifier>
+								</artifact>
+								<artifact>
+									<file>build/libs/${project.artifactId}-${project.version}-sources.jar</file>
+									<type>jar</type>
+									<classifier>sources</classifier>
 								</artifact>
 							</artifacts>
 						</configuration>

@@ -5,11 +5,11 @@
 	<parent>
 		<artifactId>spring-cloud-dependencies-parent</artifactId>
 		<groupId>org.springframework.cloud</groupId>
-		<version>1.2.0.RELEASE</version>
+		<version>1.2.0.BUILD-SNAPSHOT</version>
         <relativePath/>
 	</parent>
 	<artifactId>spring-cloud-contract-dependencies</artifactId>
-	<version>1.0.0.M2</version>
+	<version>1.0.0.BUILD-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>spring-cloud-contract-dependencies</name>
 	<description>Spring Cloud Contract Dependencies</description>
@@ -17,10 +17,10 @@
 		<wiremock.version>2.1.7</wiremock.version>
 		<jsonassert.version>0.4.7</jsonassert.version>
 		<aether.version>1.1.0</aether.version>
-		<spring-cloud-stream.version>Brooklyn.M1</spring-cloud-stream.version>
-		<spring-cloud-zookeeper.version>1.0.2.RELEASE</spring-cloud-zookeeper.version>
-		<spring-cloud-netflix.version>1.2.0.M1</spring-cloud-netflix.version>
-		<spring-cloud-consul.version>1.1.0.M1</spring-cloud-consul.version>
+		<spring-cloud-stream.version>Brooklyn.BUILD-SNAPSHOT</spring-cloud-stream.version>
+		<spring-cloud-zookeeper.version>1.0.3.BUILD-SNAPSHOT</spring-cloud-zookeeper.version>
+		<spring-cloud-netflix.version>1.2.0.BUILD-SNAPSHOT</spring-cloud-netflix.version>
+		<spring-cloud-consul.version>1.1.0.BUILD-SNAPSHOT</spring-cloud-consul.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
