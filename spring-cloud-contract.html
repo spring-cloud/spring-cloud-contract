@@ -591,6 +591,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ul>
 </li>
 <li><a href="#_example">Example</a></li>
+<li><a href="#_stub_runner_boot_with_service_discovery">Stub Runner Boot with Service Discovery</a></li>
 <li><a href="#_common_properties_for_junit_and_spring">Common properties for JUnit and Spring</a>
 <ul class="sectlevel4">
 <li><a href="#_stub_runner_stubs_ids">Stub runner stubs ids</a></li>
@@ -4028,7 +4029,12 @@ or <code>DiscoveryClient</code> directly, to call those stubbed servers instead 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-yml" data-lang="yml">stubrunner:
+<pre class="highlight"><code class="language-yml" data-lang="yml">spring.cloud:
+  zookeeper.enabled: false
+  consul.enabled: false
+eureka.client.enabled: false
+stubrunner:
+  camel.enabled: false
   idsToServiceIds:
     ivyNotation: someValueInsideYourCode
     fraudDetectionServer: someNameThatShouldMapFraudDetectionServer</code></pre>
@@ -4196,6 +4202,67 @@ class StubRunnerBootSpec extends Specification {
 
 }</code></pre>
 </div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_stub_runner_boot_with_service_discovery">Stub Runner Boot with Service Discovery</h4>
+<div class="paragraph">
+<p>One of the possibilities of using Stub Runner Boot is to use it as a feed of stubs for "smoke-tests". What does it mean?
+ Let&#8217;s assume that you don&#8217;t want to deploy 50 microservice to a test environment in order
+ to check if your application is working fine. You&#8217;ve already executed a suite of tests during the build process
+ but you would also like to ensure that the packaging of your application is fine. What you can do
+ is to deploy your application to an environment, start it and run a couple of tests on it to see if
+ it&#8217;s working fine. We can call those tests smoke-tests since their idea is to check only a handful
+ of testing scenarios.</p>
+</div>
+<div class="paragraph">
+<p>The problem with this approach is such that if you&#8217;re doing microservices most likely you&#8217;re
+ using a service discovery tool. Stub Runner Boot allows you to solve this issue by starting the
+ required stubs and register them in a service discovery tool. Let&#8217;s take a look at an example of
+ such a setup with Eureka. Let&#8217;s assume that Eureka was already running.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@SpringBootApplication
+@EnableStubRunnerServer
+@EnableEurekaClient
+@AutoConfigureStubRunner
+public class StubRunnerBootEurekaExample {
+
+	public static void main(String[] args) {
+		SpringApplication.run(StubRunnerBootEurekaExample.class, args);
+	}
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As you can see we want to start a Stub Runner Boot server <code>@EnableStubRunnerServer</code>, enable Eureka client <code>@EnableEurekaClient</code>
+and we want to have the stub runner feature turned on <code>@AutoConfigureStubRunner</code>.</p>
+</div>
+<div class="paragraph">
+<p>Now let&#8217;s assume that we want to start this application so that the stubs get automatically registered.
+ We can do it by running the app <code>java -jar ${SYSTEM_PROPS} stub-runner-boot-eureka-example.jar</code> where
+ <code>${SYSTEM_PROPS}</code> would contain the following list of properties</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">-Dstubrunner.repositoryRoot=http://repo.spring.io/snapshots (1)
+-Dstubrunner.cloud.stubbed.discovery.enabled=false (2)
+-Dstubrunner.ids=org.springframework.cloud.contract.verifier.stubs:loanIssuance,org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer,org.springframework.cloud.contract.verifier.stubs:bootService (3)
+-Dstubrunner.idsToServiceIds.fraudDetectionServer=someNameThatShouldMapFraudDetectionServer (4)
+
+(1) - we tell Stub Runner where all the stubs reside
+(2) - we don't want the default behaviour where the discovery service is stubbed. That's why the stub registration will be picked
+(3) - we provide a list of stubs to download
+(4) - we provide a list of artifactId to serviceId mapping</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That way your deployed application can send requests to started WireMock servers via the service
+discovery. Most likely points 1-3 could be set by default in <code>application.yml</code> cause they are not
+likely to change. That way you can provide only the list of stubs to download whenever you start
+the Stub Runner Boot.</p>
 </div>
 </div>
 <div class="sect3">
@@ -5343,7 +5410,7 @@ number of different ways, including as described above using
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-08-26 09:17:39 UTC
+Last updated 2016-08-26 12:17:55 UTC
 </div>
 </div>
 </body>
