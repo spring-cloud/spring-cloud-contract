@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.plugins.GroovyPlugin
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.tasks.Copy
@@ -59,6 +60,9 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	@Override
 	void apply(Project project) {
 		this.project = project
+
+		project.plugins.apply(GroovyPlugin)
+
 		ContractVerifierConfigProperties extension = project.extensions.create(EXTENSION_NAME, ContractVerifierConfigProperties)
 
 		project.check.dependsOn(GENERATE_SERVER_TESTS_TASK_NAME)
