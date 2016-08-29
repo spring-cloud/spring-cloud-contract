@@ -41,6 +41,7 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
  * </ul>
  *
  * @author Jakub Kubrynski, codearte.io
+ * @author Marcin Grzejszczak
  *
  * @since 1.0.0
  */
@@ -60,23 +61,20 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	@Override
 	void apply(Project project) {
 		this.project = project
-
 		project.plugins.apply(GroovyPlugin)
-
 		ContractVerifierConfigProperties extension = project.extensions.create(EXTENSION_NAME, ContractVerifierConfigProperties)
-
 		project.check.dependsOn(GENERATE_SERVER_TESTS_TASK_NAME)
-
 		setConfigurationDefaults(extension)
 		createGenerateTestsTask(extension)
 		createAndConfigureGenerateWireMockClientStubsFromDslTask(extension)
 		Task stubsJar = createAndConfigureStubsJarTasks(extension)
 		createAndConfigureCopyContractsTask(stubsJar, extension)
 		createAndConfigureMavenPublishPlugin(stubsJar, extension)
-		project.dependencies.add("testCompile", "com.github.tomakehurst:wiremock:2.1.7")
-		project.dependencies.add("testCompile", "com.toomuchcoding.jsonassert:jsonassert:0.4.7")
-		project.dependencies.add("testCompile", "org.assertj:assertj-core:2.3.0")
+		addProjectDependencies(project)
+		addIdeaTestSources(project, extension)
+	}
 
+	private addIdeaTestSources(Project project, extension) {
 		project.afterEvaluate {
 			def hasIdea = project.plugins.findPlugin(IDEA_PLUGIN_CLASS)
 			if (hasIdea) {
@@ -90,6 +88,12 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		}
 	}
 
+	private void addProjectDependencies(Project project) {
+		project.dependencies.add("testCompile", "com.github.tomakehurst:wiremock:2.1.7")
+		project.dependencies.add("testCompile", "com.toomuchcoding.jsonassert:jsonassert:0.4.7")
+		project.dependencies.add("testCompile", "org.assertj:assertj-core:2.3.0")
+	}
+
 	private void setConfigurationDefaults(ContractVerifierConfigProperties extension) {
 		extension.with {
 			generatedTestSourcesDir = project.file("${project.buildDir}/generated-test-sources/contracts")
@@ -100,7 +104,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	}
 
 	private File defaultContractsDir() {
-		project.file("${project.rootDir}/src/test/resources/contracts")
+		return project.file("${project.rootDir}/src/test/resources/contracts")
 	}
 
 	private void createGenerateTestsTask(ContractVerifierConfigProperties extension) {
@@ -139,7 +143,6 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 			}
 			task.description = "Creates the stubs JAR task"
 			task.group = GROUP_NAME
-
 			project.artifacts {
 				archives task
 			}
