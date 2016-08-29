@@ -31,15 +31,15 @@ public class Registration {
 	}
 
 	public InstanceInfo getInstanceInfo() {
-		return instanceInfo;
+		return this.instanceInfo;
 	}
 
 	public ApplicationStatus getApplicationStatus() {
-		return applicationStatus;
+		return this.applicationStatus;
 	}
 
 	@Override public String toString() {
-		return "Registration{" + "instanceInfo=" + instanceInfo + ", applicationStatus="
-				+ applicationStatus + '}';
+		return "Registration{" + "instanceInfo=" + this.instanceInfo + ", applicationStatus="
+				+ this.applicationStatus + '}';
 	}
 }

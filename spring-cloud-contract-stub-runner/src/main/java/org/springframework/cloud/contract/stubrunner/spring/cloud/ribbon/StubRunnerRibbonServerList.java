@@ -85,7 +85,7 @@ class StubRunnerRibbonServerList implements ServerList<Server> {
 				}
 			});
 		}
-		serverList = new ServerList<Server>() {
+		this.serverList = new ServerList<Server>() {
 			@Override
 			public List<Server> getInitialListOfServers() {
 				List<Server> combinedList = new ArrayList<>();
@@ -118,11 +118,11 @@ class StubRunnerRibbonServerList implements ServerList<Server> {
 
 	@Override
 	public List<Server> getInitialListOfServers() {
-		return serverList.getInitialListOfServers();
+		return this.serverList.getInitialListOfServers();
 	}
 
 	@Override
 	public List<Server> getUpdatedListOfServers() {
-		return serverList.getUpdatedListOfServers();
+		return this.serverList.getUpdatedListOfServers();
 	}
 }

@@ -52,6 +52,6 @@ public class BookService {
 				return message;
 			}
 		};
-		jmsTemplate.send("output", messageCreator);
+		this.jmsTemplate.send("output", messageCreator);
 	}
 }

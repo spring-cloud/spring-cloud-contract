@@ -39,7 +39,7 @@ public class RemoteStubRunner {
 	}
 
 	public BatchStubRunner run(StubRunnerOptions options, RepositorySystemSession repositorySystemSession) {
-		AetherStubDownloader stubDownloader = aetherStubDownloaderFactory.build(repositorySystemSession);
+		AetherStubDownloader stubDownloader = this.aetherStubDownloaderFactory.build(repositorySystemSession);
 		try {
 			if (log.isDebugEnabled()) {
 				log.debug("Launching StubRunner with args: " + options);

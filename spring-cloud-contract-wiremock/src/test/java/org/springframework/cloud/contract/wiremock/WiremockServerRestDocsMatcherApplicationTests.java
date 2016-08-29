@@ -41,7 +41,7 @@ public class WiremockServerRestDocsMatcherApplicationTests {
 
 	@Test
 	public void matchesRequest() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.post("/resource").content("greeting")
+		this.mockMvc.perform(MockMvcRequestBuilders.post("/resource").content("greeting")
 				.contentType(MediaType.TEXT_PLAIN))
 				.andExpect(MockMvcResultMatchers.content().string("Hello World"))
 				.andDo(WireMockRestDocs.verify()
@@ -52,9 +52,9 @@ public class WiremockServerRestDocsMatcherApplicationTests {
 
 	@Test
 	public void doesNotMatch() throws Exception {
-		expected.expect(ComparisonFailure.class);
-		expected.expectMessage("wiremock did not match");
-		mockMvc.perform(MockMvcRequestBuilders.post("/resource").content("greeting")
+		this.expected.expect(ComparisonFailure.class);
+		this.expected.expectMessage("wiremock did not match");
+		this.mockMvc.perform(MockMvcRequestBuilders.post("/resource").content("greeting")
 				.contentType(MediaType.TEXT_PLAIN))
 				.andExpect(MockMvcResultMatchers.content().string("Hello World"))
 				.andDo(WireMockRestDocs.verify()

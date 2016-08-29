@@ -77,20 +77,20 @@ public class ConvertMojo extends AbstractMojo {
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
-		if (skip) {
+		if (this.skip) {
 			getLog().info(String.format(
 					"Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip=%s",
-					skip));
+					this.skip));
 			return;
 		}
 
-		new CopyContracts(project, mavenSession, mavenResourcesFiltering)
-				.copy(contractsDirectory, outputDirectory);
+		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering)
+				.copy(this.contractsDirectory, this.outputDirectory);
 
 		final ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
-		config.setContractsDslDir(isInsideProject() ? contractsDirectory : source);
+		config.setContractsDslDir(isInsideProject() ? this.contractsDirectory : this.source);
 		config.setStubsOutputDir(
-				isInsideProject() ? new File(outputDirectory, "mappings") : destination);
+				isInsideProject() ? new File(this.outputDirectory, "mappings") : this.destination);
 
 		getLog().info(
 				"Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings");
@@ -106,7 +106,7 @@ public class ConvertMojo extends AbstractMojo {
 	}
 
 	private boolean isInsideProject() {
-		return mavenSession.getRequest().isProjectPresent();
+		return this.mavenSession.getRequest().isProjectPresent();
 	}
 
 }

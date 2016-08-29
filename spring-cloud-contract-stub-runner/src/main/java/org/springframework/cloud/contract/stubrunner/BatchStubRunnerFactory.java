@@ -46,7 +46,7 @@ public class BatchStubRunnerFactory {
 	}
 
 	public BatchStubRunner buildBatchStubRunner() {
-		StubRunnerFactory stubRunnerFactory = new StubRunnerFactory(stubRunnerOptions, stubDownloader, contractVerifierMessaging);
+		StubRunnerFactory stubRunnerFactory = new StubRunnerFactory(this.stubRunnerOptions, this.stubDownloader, this.contractVerifierMessaging);
 		return new BatchStubRunner(stubRunnerFactory.createStubsFromServiceConfiguration());
 	}
 

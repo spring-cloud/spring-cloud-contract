@@ -46,7 +46,7 @@ public class RunningStubs {
 	}
 
 	public Map.Entry<StubConfiguration, Integer> getEntry(String artifactId) {
-		for (Entry<StubConfiguration, Integer> it : namesAndPorts.entrySet()) {
+		for (Entry<StubConfiguration, Integer> it : this.namesAndPorts.entrySet()) {
 			if (it.getKey().matchesIvyNotation(artifactId)) {
 				return it;
 			}
@@ -55,7 +55,7 @@ public class RunningStubs {
 	}
 
 	public Integer getPort(String groupId, String artifactId) {
-		for (Entry<StubConfiguration, Integer> it : namesAndPorts.entrySet()) {
+		for (Entry<StubConfiguration, Integer> it : this.namesAndPorts.entrySet()) {
 			if (it.getKey().matchesIvyNotation(groupId + ":" + artifactId)) {
 				return it.getValue();
 			}
@@ -72,12 +72,12 @@ public class RunningStubs {
 	}
 
 	public Set<StubConfiguration> getAllServices() {
-		return namesAndPorts.keySet();
+		return this.namesAndPorts.keySet();
 	}
 
 	public Set<String> getAllServicesNames() {
 		Set<String> result = new LinkedHashSet<>();
-		for (Entry<StubConfiguration, Integer> it : namesAndPorts.entrySet()) {
+		for (Entry<StubConfiguration, Integer> it : this.namesAndPorts.entrySet()) {
 			result.add(it.getKey().artifactId);
 		}
 		return result;
@@ -85,7 +85,7 @@ public class RunningStubs {
 
 	public Map<String, Integer> toIvyToPortMapping() {
 		Map<String, Integer> result = new LinkedHashMap<>();
-		for (Entry<StubConfiguration, Integer> it : namesAndPorts.entrySet()) {
+		for (Entry<StubConfiguration, Integer> it : this.namesAndPorts.entrySet()) {
 			result.put(it.getKey().toColonSeparatedDependencyNotation(), it.getValue());
 		}
 		return result;
@@ -93,7 +93,7 @@ public class RunningStubs {
 
 	public Map<StubConfiguration, Integer> validNamesAndPorts() {
 		Map<StubConfiguration, Integer> result = new LinkedHashMap<>();
-		for (Entry<StubConfiguration, Integer> it : namesAndPorts.entrySet()) {
+		for (Entry<StubConfiguration, Integer> it : this.namesAndPorts.entrySet()) {
 			if (it.getValue() != null && it.getValue() >= 0) {
 				result.put(it.getKey(), it.getValue());
 			}
@@ -103,7 +103,7 @@ public class RunningStubs {
 
 	@Override
 	public String toString() {
-		return "RunningStubs [namesAndPorts=" + namesAndPorts + "]";
+		return "RunningStubs [namesAndPorts=" + this.namesAndPorts + "]";
 	}
 
 	@Override
@@ -111,7 +111,7 @@ public class RunningStubs {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((namesAndPorts == null) ? 0 : namesAndPorts.hashCode());
+				+ ((this.namesAndPorts == null) ? 0 : this.namesAndPorts.hashCode());
 		return result;
 	}
 
@@ -124,11 +124,11 @@ public class RunningStubs {
 		if (getClass() != obj.getClass())
 			return false;
 		RunningStubs other = (RunningStubs) obj;
-		if (namesAndPorts == null) {
+		if (this.namesAndPorts == null) {
 			if (other.namesAndPorts != null)
 				return false;
 		}
-		else if (!namesAndPorts.equals(other.namesAndPorts))
+		else if (!this.namesAndPorts.equals(other.namesAndPorts))
 			return false;
 		return true;
 	}

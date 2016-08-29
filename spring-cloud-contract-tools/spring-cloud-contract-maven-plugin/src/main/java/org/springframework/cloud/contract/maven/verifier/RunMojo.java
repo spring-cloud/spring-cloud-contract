@@ -97,25 +97,25 @@ public class RunMojo extends AbstractMojo {
 	}
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		if (skip || skipTestOnly) {
-			getLog().info("Skipping verifier execution: spring.cloud.contract.verifier.skip=" + skip);
+		if (this.skip || this.skipTestOnly) {
+			getLog().info("Skipping verifier execution: spring.cloud.contract.verifier.skip=" + this.skip);
 			return;
 		}
 		BatchStubRunner batchStubRunner = null;
 		StubRunnerOptionsBuilder optionsBuilder = new StubRunnerOptionsBuilder()
-				.withStubsClassifier(stubsClassifier);
-		if (isNullOrEmpty(stubs)) {
+				.withStubsClassifier(this.stubsClassifier);
+		if (isNullOrEmpty(this.stubs)) {
 			StubRunnerOptions options = optionsBuilder
-					.withPort(httpPort)
+					.withPort(this.httpPort)
 					.build();
-			StubRunner stubRunner = localStubRunner.run(resolveStubsDirectory().getAbsolutePath(), options);
+			StubRunner stubRunner = this.localStubRunner.run(resolveStubsDirectory().getAbsolutePath(), options);
 			batchStubRunner = new BatchStubRunner(Collections.singleton(stubRunner));
 		} else {
 			StubRunnerOptions options = optionsBuilder
-					.withStubs(stubs)
-					.withMinMaxPort(minPort, maxPort)
+					.withStubs(this.stubs)
+					.withMinMaxPort(this.minPort, this.maxPort)
 					.build();
-			batchStubRunner = remoteStubRunner.run(options, repoSession);
+			batchStubRunner = this.remoteStubRunner.run(options, this.repoSession);
 		}
 		pressAnyKeyToContinue();
 		if (batchStubRunner != null) {
@@ -129,9 +129,9 @@ public class RunMojo extends AbstractMojo {
 
 	private File resolveStubsDirectory() {
 		if (isInsideProject()) {
-			return stubsDirectory;
+			return this.stubsDirectory;
 		} else {
-			return destination;
+			return this.destination;
 		}
 	}
 
@@ -144,7 +144,7 @@ public class RunMojo extends AbstractMojo {
 	}
 
 	private boolean isInsideProject() {
-		return mavenSession.getRequest().isProjectPresent();
+		return this.mavenSession.getRequest().isProjectPresent();
 	}
 
 }

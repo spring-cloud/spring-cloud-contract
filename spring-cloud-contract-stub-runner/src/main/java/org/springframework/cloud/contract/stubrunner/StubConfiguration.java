@@ -83,7 +83,7 @@ public class StubConfiguration {
 	}
 
 	private boolean isDefined() {
-		return StringUtils.hasText(groupId) && StringUtils.hasText(this.artifactId);
+		return StringUtils.hasText(this.groupId) && StringUtils.hasText(this.artifactId);
 	}
 
 	public String toColonSeparatedDependencyNotation() {
@@ -91,7 +91,7 @@ public class StubConfiguration {
 			return "";
 		}
 		return StringUtils.arrayToDelimitedString(
-				new String[] { groupId, artifactId, version, classifier },
+				new String[] { this.groupId, this.artifactId, this.version, this.classifier },
 				STUB_COLON_DELIMITER);
 	}
 
@@ -106,23 +106,23 @@ public class StubConfiguration {
 	}
 
 	public String getGroupId() {
-		return groupId;
+		return this.groupId;
 	}
 
 	public String getArtifactId() {
-		return artifactId;
+		return this.artifactId;
 	}
 
 	public String getClassifier() {
-		return classifier;
+		return this.classifier;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((artifactId == null) ? 0 : artifactId.hashCode());
-		result = prime * result + ((groupId == null) ? 0 : groupId.hashCode());
+		result = prime * result + ((this.artifactId == null) ? 0 : this.artifactId.hashCode());
+		result = prime * result + ((this.groupId == null) ? 0 : this.groupId.hashCode());
 		return result;
 	}
 
@@ -135,17 +135,17 @@ public class StubConfiguration {
 		if (getClass() != obj.getClass())
 			return false;
 		StubConfiguration other = (StubConfiguration) obj;
-		if (artifactId == null) {
+		if (this.artifactId == null) {
 			if (other.artifactId != null)
 				return false;
 		}
-		else if (!artifactId.equals(other.artifactId))
+		else if (!this.artifactId.equals(other.artifactId))
 			return false;
-		if (groupId == null) {
+		if (this.groupId == null) {
 			if (other.groupId != null)
 				return false;
 		}
-		else if (!groupId.equals(other.groupId))
+		else if (!this.groupId.equals(other.groupId))
 			return false;
 		return true;
 	}
@@ -153,18 +153,18 @@ public class StubConfiguration {
 	public boolean matchesIvyNotation(String ivyNotationAsString) {
 		String[] strings = ivyNotationAsString.split(":");
 		if (strings.length == 1) {
-			return artifactId.equals(ivyNotationAsString);
+			return this.artifactId.equals(ivyNotationAsString);
 		}
 		else if (strings.length == 2) {
-			return groupId.equals(strings[0]) && artifactId.equals(strings[1]);
+			return this.groupId.equals(strings[0]) && this.artifactId.equals(strings[1]);
 		}
 		else if (strings.length == 3) {
-			return groupId.equals(strings[0]) && artifactId.equals(strings[1])
-					&& (strings[2].equals(DEFAULT_VERSION) || version.equals(strings[2]));
+			return this.groupId.equals(strings[0]) && this.artifactId.equals(strings[1])
+					&& (strings[2].equals(DEFAULT_VERSION) || this.version.equals(strings[2]));
 		}
-		return groupId.equals(strings[0]) && artifactId.equals(strings[1])
-				&& (strings[2].equals(DEFAULT_VERSION) || version.equals(strings[2]))
-				&& classifier.equals(strings[3]);
+		return this.groupId.equals(strings[0]) && this.artifactId.equals(strings[1])
+				&& (strings[2].equals(DEFAULT_VERSION) || this.version.equals(strings[2]))
+				&& this.classifier.equals(strings[3]);
 	}
 
 	private String[] ivyNotationFrom(String ivyNotation) {

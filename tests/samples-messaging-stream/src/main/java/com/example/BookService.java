@@ -45,7 +45,7 @@ public class BookService {
 	 */
 	public void returnBook(BookReturned bookReturned) {
 		log.info("Returning book " + bookReturned);
-		source.output().send(MessageBuilder.withPayload(bookReturned)
+		this.source.output().send(MessageBuilder.withPayload(bookReturned)
 				.setHeader("BOOK-NAME", bookReturned.bookName).build());
 	}
 }

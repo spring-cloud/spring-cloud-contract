@@ -100,9 +100,9 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 
 	@Override
 	public List<ServiceInstance> getInstances(String serviceId) {
-		String ivyNotation = stubMapperProperties.fromServiceIdToIvyNotation(serviceId);
+		String ivyNotation = this.stubMapperProperties.fromServiceIdToIvyNotation(serviceId);
 		String serviceToFind = StringUtils.hasText(ivyNotation) ? ivyNotation : serviceId;
-		URL stubUrl = stubFinder.findStubUrl(serviceToFind);
+		URL stubUrl = this.stubFinder.findStubUrl(serviceToFind);
 		log.info("Resolved from ivy [" + ivyNotation + "] service to find [" + serviceToFind + "]. "
 				+ "Found stub is available under URL [" + stubUrl + "]");
 		if (stubUrl == null) {

@@ -54,22 +54,22 @@ class AvailablePortScanner {
 	}
 
 	public <T> T tryToExecuteWithFreePort(PortCallback<T> closure) {
-		for (int i = 0; i < maxRetryCount; i++) {
+		for (int i = 0; i < this.maxRetryCount; i++) {
 			try {
-				int numberOfPortsToBind = maxPortNumber - minPortNumber + 1;
+				int numberOfPortsToBind = this.maxPortNumber - this.minPortNumber + 1;
 				int portToScan = new Random().nextInt(numberOfPortsToBind)
-						+ minPortNumber;
+						+ this.minPortNumber;
 				checkIfPortIsAvailable(portToScan);
 				return executeLogicForAvailablePort(portToScan, closure);
 			}
 			catch (IOException exception) {
 				if (log.isDebugEnabled()) {
-					log.debug("Failed to execute callback (try: " + i + "/" + maxRetryCount
+					log.debug("Failed to execute callback (try: " + i + "/" + this.maxRetryCount
 							+ ")", exception);
 				}
 			}
 		}
-		throw new NoPortAvailableException(minPortNumber, maxPortNumber);
+		throw new NoPortAvailableException(this.minPortNumber, this.maxPortNumber);
 	}
 
 	private <T> T executeLogicForAvailablePort(int portToScan, PortCallback<T> closure) throws IOException {

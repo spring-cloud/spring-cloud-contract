@@ -27,7 +27,7 @@ public class LoanApplication {
 	private String loanApplicationId;
 
 	public Client getClient() {
-		return client;
+		return this.client;
 	}
 
 	public void setClient(Client client) {
@@ -35,7 +35,7 @@ public class LoanApplication {
 	}
 
 	public BigDecimal getAmount() {
-		return amount;
+		return this.amount;
 	}
 
 	public void setAmount(BigDecimal amount) {
@@ -43,7 +43,7 @@ public class LoanApplication {
 	}
 
 	public String getLoanApplicationId() {
-		return loanApplicationId;
+		return this.loanApplicationId;
 	}
 
 	public void setLoanApplicationId(String loanApplicationId) {

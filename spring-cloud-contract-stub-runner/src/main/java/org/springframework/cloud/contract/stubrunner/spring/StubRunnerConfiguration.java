@@ -25,7 +25,6 @@ import org.springframework.cloud.contract.stubrunner.AetherStubDownloader;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunnerFactory;
 import org.springframework.cloud.contract.stubrunner.StubDownloader;
-import org.springframework.cloud.contract.stubrunner.StubRunner;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
@@ -35,8 +34,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
 /**
- * Configuration that initializes a {@link BatchStubRunner} that runs {@link StubRunner}
- * instance for each stub
+ * Configuration that initializes a {@link BatchStubRunner} that runs
+ * {@link org.springframework.cloud.contract.stubrunner.StubRunner} instance for each stub
  */
 @Configuration
 @EnableConfigurationProperties(StubRunnerProperties.class)
@@ -58,17 +57,17 @@ public class StubRunnerConfiguration {
 	@Bean
 	public BatchStubRunner batchStubRunner() throws IOException {
 		StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder()
-				.withMinMaxPort(props.getMinPort(), props.getMaxPort())
+				.withMinMaxPort(this.props.getMinPort(), this.props.getMaxPort())
 				.withStubRepositoryRoot(
-						uriStringOrEmpty(props.getRepositoryRoot()))
-				.withWorkOffline(props.getRepositoryRoot() == null
-						|| props.isWorkOffline())
-				.withStubsClassifier(props.getClassifier())
-				.withStubs(props.getIds()).build();
+						uriStringOrEmpty(this.props.getRepositoryRoot()))
+				.withWorkOffline(this.props.getRepositoryRoot() == null
+						|| this.props.isWorkOffline())
+				.withStubsClassifier(this.props.getClassifier())
+				.withStubs(this.props.getIds()).build();
 		BatchStubRunner batchStubRunner = new BatchStubRunnerFactory(stubRunnerOptions,
-				stubDownloader != null ? stubDownloader
+				this.stubDownloader != null ? this.stubDownloader
 						: new AetherStubDownloader(stubRunnerOptions),
-				contractVerifierMessaging != null ? contractVerifierMessaging
+				this.contractVerifierMessaging != null ? this.contractVerifierMessaging
 						: new NoOpStubMessages()).buildBatchStubRunner();
 		// TODO: Consider running it in a separate thread
 		batchStubRunner.runStubs();

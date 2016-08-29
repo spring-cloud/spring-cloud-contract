@@ -51,15 +51,15 @@ class CopyContracts {
 		MavenResourcesExecution execution = new MavenResourcesExecution();
 		execution.setResources(Collections.singletonList(resource));
 		execution.setOutputDirectory(new File(outputDirectory, "contracts"));
-		execution.setMavenProject(project);
+		execution.setMavenProject(this.project);
 		execution.setEncoding("UTF-8");
-		execution.setMavenSession(mavenSession);
+		execution.setMavenSession(this.mavenSession);
 		execution.setInjectProjectBuildFilters(false);
 		execution.setOverwrite(true);
 		execution.setIncludeEmptyDirs(false);
 		execution.setFilterFilenames(false);
 		try {
-			mavenResourcesFiltering.filterResources(execution);
+			this.mavenResourcesFiltering.filterResources(execution);
 		}
 		catch (MavenFilteringException e) {
 			throw new MojoExecutionException(e.getMessage(), e);

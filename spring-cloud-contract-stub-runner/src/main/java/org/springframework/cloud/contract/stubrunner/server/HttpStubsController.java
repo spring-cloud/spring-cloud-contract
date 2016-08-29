@@ -43,12 +43,12 @@ public class HttpStubsController {
 
 	@RequestMapping
 	public Map<String, Integer> stubs() {
-		return stubRunning.runStubs().toIvyToPortMapping();
+		return this.stubRunning.runStubs().toIvyToPortMapping();
 	}
 
 	@RequestMapping(path = "/{ivy:.*}")
 	public ResponseEntity<Integer> consumer(@PathVariable String ivy) {
-		Integer port = stubRunning.runStubs().getPort(ivy);
+		Integer port = this.stubRunning.runStubs().getPort(ivy);
 		if (port!=null) {
 			return ResponseEntity.ok(port);
 		}

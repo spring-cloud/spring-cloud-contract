@@ -91,7 +91,7 @@ public class StubsParser {
 		}
 
 		public boolean hasPort() {
-			return port != null;
+			return this.port != null;
 		}
 		
 		private static StubSpecification parse(String id, String defaultClassifier) {

@@ -25,6 +25,7 @@ import java.util.Map;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunnerFactory;
 import org.springframework.cloud.contract.stubrunner.RunningStubs;
@@ -32,7 +33,6 @@ import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubFinder;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
-import org.springframework.cloud.contract.spec.Contract;
 
 /**
  * JUnit class rule that allows you to download the provided stubs.
@@ -53,12 +53,13 @@ public class StubRunnerRule implements TestRule, StubFinder {
 			public void evaluate() throws Throwable {
 				before();
 				base.evaluate();
-				stubFinder.close();
+				StubRunnerRule.this.stubFinder.close();
 			}
 
 			private void before() {
-				stubFinder = new BatchStubRunnerFactory(stubRunnerOptionsBuilder.build()).buildBatchStubRunner();
-				stubFinder.runStubs();
+				StubRunnerRule.this.stubFinder = new BatchStubRunnerFactory(
+						StubRunnerRule.this.stubRunnerOptionsBuilder.build()).buildBatchStubRunner();
+				StubRunnerRule.this.stubFinder.runStubs();
 			}
 		};
 	}
@@ -80,7 +81,7 @@ public class StubRunnerRule implements TestRule, StubFinder {
 	 * @see StubRunnerOptions
 	 */
 	public StubRunnerRule options(StubRunnerOptions stubRunnerOptions) {
-		stubRunnerOptionsBuilder.withOptions(stubRunnerOptions);
+		this.stubRunnerOptionsBuilder.withOptions(stubRunnerOptions);
 		return this;
 	}
 
@@ -88,7 +89,7 @@ public class StubRunnerRule implements TestRule, StubFinder {
 	 * Min value of port for WireMock server
 	 */
 	public StubRunnerRule minPort(int minPort) {
-		stubRunnerOptionsBuilder.withMinPort(minPort);
+		this.stubRunnerOptionsBuilder.withMinPort(minPort);
 		return this;
 	}
 
@@ -96,7 +97,7 @@ public class StubRunnerRule implements TestRule, StubFinder {
 	 * Max value of port for WireMock server
 	 */
 	public StubRunnerRule maxPort(int maxPort) {
-		stubRunnerOptionsBuilder.withMaxPort(maxPort);
+		this.stubRunnerOptionsBuilder.withMaxPort(maxPort);
 		return this;
 	}
 
@@ -104,7 +105,7 @@ public class StubRunnerRule implements TestRule, StubFinder {
 	 * String URI of repository containing stubs
 	 */
 	public StubRunnerRule repoRoot(String repoRoot) {
-		stubRunnerOptionsBuilder.withStubRepositoryRoot(repoRoot);
+		this.stubRunnerOptionsBuilder.withStubRepositoryRoot(repoRoot);
 		return this;
 	}
 
@@ -112,7 +113,7 @@ public class StubRunnerRule implements TestRule, StubFinder {
 	 * Should download stubs or use only the local repository
 	 */
 	public StubRunnerRule workOffline(boolean workOffline) {
-		stubRunnerOptionsBuilder.withWorkOffline(workOffline);
+		this.stubRunnerOptionsBuilder.withWorkOffline(workOffline);
 		return this;
 	}
 
@@ -120,7 +121,7 @@ public class StubRunnerRule implements TestRule, StubFinder {
 	 * Group Id, artifact Id, version and classifier of a single stub to download
 	 */
 	public StubRunnerRule downloadStub(String groupId, String artifactId, String version, String classifier) {
-		stubRunnerOptionsBuilder.withStubs(groupId + DELIMITER + artifactId + DELIMITER + version + DELIMITER + classifier);
+		this.stubRunnerOptionsBuilder.withStubs(groupId + DELIMITER + artifactId + DELIMITER + version + DELIMITER + classifier);
 		return this;
 	}
 
@@ -128,7 +129,7 @@ public class StubRunnerRule implements TestRule, StubFinder {
 	 * Group Id, artifact Id and classifier of a single stub to download in the latest version
 	 */
 	public StubRunnerRule downloadLatestStub(String groupId, String artifactId, String classifier) {
-		stubRunnerOptionsBuilder.withStubs(groupId + DELIMITER + artifactId + DELIMITER + LATEST_VERSION + DELIMITER + classifier);
+		this.stubRunnerOptionsBuilder.withStubs(groupId + DELIMITER + artifactId + DELIMITER + LATEST_VERSION + DELIMITER + classifier);
 		return this;
 	}
 
@@ -136,7 +137,7 @@ public class StubRunnerRule implements TestRule, StubFinder {
 	 * Group Id, artifact Id and version of a single stub to download
 	 */
 	public StubRunnerRule downloadStub(String groupId, String artifactId, String version) {
-		stubRunnerOptionsBuilder.withStubs(groupId + DELIMITER + artifactId + DELIMITER + version);
+		this.stubRunnerOptionsBuilder.withStubs(groupId + DELIMITER + artifactId + DELIMITER + version);
 		return this;
 	}
 
@@ -144,7 +145,7 @@ public class StubRunnerRule implements TestRule, StubFinder {
 	 * Group Id, artifact Id of a single stub to download. Default classifier will be picked.
 	 */
 	public StubRunnerRule downloadStub(String groupId, String artifactId) {
-		stubRunnerOptionsBuilder.withStubs(groupId + DELIMITER + artifactId);
+		this.stubRunnerOptionsBuilder.withStubs(groupId + DELIMITER + artifactId);
 		return this;
 	}
 
@@ -152,7 +153,7 @@ public class StubRunnerRule implements TestRule, StubFinder {
 	 * Ivy notation of a single stub to download.
 	 */
 	public StubRunnerRule downloadStub(String ivyNotation) {
-		stubRunnerOptionsBuilder.withStubs(ivyNotation);
+		this.stubRunnerOptionsBuilder.withStubs(ivyNotation);
 		return this;
 	}
 
@@ -160,7 +161,7 @@ public class StubRunnerRule implements TestRule, StubFinder {
 	 * Stubs to download in Ivy notations
 	 */
 	public StubRunnerRule downloadStubs(String... ivyNotations) {
-		stubRunnerOptionsBuilder.withStubs(Arrays.asList(ivyNotations));
+		this.stubRunnerOptionsBuilder.withStubs(Arrays.asList(ivyNotations));
 		return this;
 	}
 
@@ -168,7 +169,7 @@ public class StubRunnerRule implements TestRule, StubFinder {
 	 * Stubs to download in Ivy notations
 	 */
 	public StubRunnerRule downloadStubs(List<String> ivyNotations) {
-		stubRunnerOptionsBuilder.withStubs(ivyNotations);
+		this.stubRunnerOptionsBuilder.withStubs(ivyNotations);
 		return this;
 	}
 
@@ -176,48 +177,48 @@ public class StubRunnerRule implements TestRule, StubFinder {
 	 * Appends port to last added stub
 	 */
 	public StubRunnerRule withPort(Integer port) {
-		stubRunnerOptionsBuilder.withPort(port);
+		this.stubRunnerOptionsBuilder.withPort(port);
 		return this;
 	}
 
 	@Override
 	public URL findStubUrl(String groupId, String artifactId) {
-		return stubFinder.findStubUrl(groupId, artifactId);
+		return this.stubFinder.findStubUrl(groupId, artifactId);
 	}
 
 	@Override
 	public URL findStubUrl(String ivyNotation) {
-		return stubFinder.findStubUrl(ivyNotation);
+		return this.stubFinder.findStubUrl(ivyNotation);
 	}
 
 	@Override
 	public RunningStubs findAllRunningStubs() {
-		return stubFinder.findAllRunningStubs();
+		return this.stubFinder.findAllRunningStubs();
 	}
 
 	@Override
 	public Map<StubConfiguration, Collection<Contract>> getContracts() {
-		return stubFinder.getContracts();
+		return this.stubFinder.getContracts();
 	}
 
 	@Override
 	public boolean trigger(String ivyNotation, String labelName) {
-		return stubFinder.trigger(ivyNotation, labelName);
+		return this.stubFinder.trigger(ivyNotation, labelName);
 	}
 
 	@Override
 	public boolean trigger(String labelName) {
-		return stubFinder.trigger(labelName);
+		return this.stubFinder.trigger(labelName);
 	}
 
 	@Override
 	public boolean trigger() {
-		return stubFinder.trigger();
+		return this.stubFinder.trigger();
 	}
 
 	@Override
 	public Map<String, Collection<String>> labels() {
-		return stubFinder.labels();
+		return this.stubFinder.labels();
 	}
 
 }

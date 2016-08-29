@@ -46,8 +46,8 @@ public class PluginIT {
 
 	@Test
 	public void should_build_project_Spring_Boot_Groovy_with_Accurest() throws Exception {
-		File basedir = resources.getBasedir("spring-boot-groovy");
-		maven.forProject(basedir)
+		File basedir = this.resources.getBasedir("spring-boot-groovy");
+		this.maven.forProject(basedir)
 				.execute("package")
 				.assertErrorFreeLog()
 				.assertLogText("Generating server tests source code for Spring Cloud Contract Verifier contract verification")
@@ -60,8 +60,8 @@ public class PluginIT {
 
 	@Test
 	public void should_build_project_Spring_Boot_Java_with_Accurest() throws Exception {
-		File basedir = resources.getBasedir("spring-boot-java");
-		maven.forProject(basedir)
+		File basedir = this.resources.getBasedir("spring-boot-java");
+		this.maven.forProject(basedir)
 				.execute("package")
 				.assertErrorFreeLog()
 				.assertLogText("Generating server tests source code for Spring Cloud Contract Verifier contract verification")
@@ -74,8 +74,8 @@ public class PluginIT {
 
 	@Test
 	public void should_build_project_with_plugin_extension() throws Exception {
-		File basedir = resources.getBasedir("plugin-extension");
-		maven.forProject(basedir)
+		File basedir = this.resources.getBasedir("plugin-extension");
+		this.maven.forProject(basedir)
 				.execute("package")
 				.assertErrorFreeLog()
 				.assertLogText("Generating server tests source code for Spring Cloud Contract Verifier contract verification")
@@ -89,8 +89,8 @@ public class PluginIT {
 	@Test
 	@Ignore("Ignored, because of bug accurest#245")
 	public void should_build_project_project_with_complex_configuration() throws Exception {
-		File basedir = resources.getBasedir("complex-configuration");
-		maven.forProject(basedir)
+		File basedir = this.resources.getBasedir("complex-configuration");
+		this.maven.forProject(basedir)
 				.execute("package")
 				.assertErrorFreeLog()
 				.assertLogText("Tests run: 2, Failures: 0, Errors: 0, Skipped: 1")
@@ -100,12 +100,12 @@ public class PluginIT {
 
 	@Test
 	public void should_convert_Accurest_Contracts_to_WireMock_Stubs_mappings() throws Exception {
-		File basedir = resources.getBasedir("pomless");
-		properties.getPluginVersion();
-		maven.forProject(basedir)
+		File basedir = this.resources.getBasedir("pomless");
+		this.properties.getPluginVersion();
+		this.maven.forProject(basedir)
 				.withCliOption("-X")
 				.execute(String.format("org.springframework.cloud:spring-cloud-contract-maven-plugin:%s:convert",
-						properties.getPluginVersion()))
+						this.properties.getPluginVersion()))
 				.assertLogText("Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings")
 				.assertLogText("Creating new json")
 				.assertErrorFreeLog();

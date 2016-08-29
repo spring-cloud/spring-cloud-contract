@@ -45,17 +45,17 @@ class StubRunnerServiceInstance implements ServiceInstance {
 
 	@Override
 	public String getServiceId() {
-		return serviceId;
+		return this.serviceId;
 	}
 
 	@Override
 	public String getHost() {
-		return host;
+		return this.host;
 	}
 
 	@Override
 	public int getPort() {
-		return port;
+		return this.port;
 	}
 
 	@Override
@@ -65,7 +65,7 @@ class StubRunnerServiceInstance implements ServiceInstance {
 
 	@Override
 	public URI getUri() {
-		return uri;
+		return this.uri;
 	}
 
 	@Override

@@ -59,7 +59,7 @@ public class LoanApplicationService {
 		httpHeaders.add(HttpHeaders.CONTENT_TYPE, FRAUD_SERVICE_JSON_VERSION_1);
 
 		ResponseEntity<FraudServiceResponse> response =
-				restTemplate.exchange("http://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
+				this.restTemplate.exchange("http://localhost:" + this.port + "/fraudcheck", HttpMethod.PUT,
 						new HttpEntity<>(request, httpHeaders),
 						FraudServiceResponse.class);
 

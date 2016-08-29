@@ -44,7 +44,7 @@ public class BookListener {
 	@StreamListener(Sink.INPUT)
 	public void returnBook(BookReturned bookReturned) {
 		log.info("Returning book " + bookReturned);
-		source.output().send(MessageBuilder.withPayload(bookReturned)
+		this.source.output().send(MessageBuilder.withPayload(bookReturned)
 				.setHeader("BOOK-NAME", bookReturned.bookName).build());
 	}
 
@@ -58,7 +58,7 @@ public class BookListener {
 	public void bookDeleted(BookDeleted bookDeleted) {
 		log.info("Deleting book " + bookDeleted);
 		// ... doing some work
-		bookSuccessfulyDeleted.set(true);
+		this.bookSuccessfulyDeleted.set(true);
 	}
 
 	public AtomicBoolean bookSuccessfulyDeleted = new AtomicBoolean(false);

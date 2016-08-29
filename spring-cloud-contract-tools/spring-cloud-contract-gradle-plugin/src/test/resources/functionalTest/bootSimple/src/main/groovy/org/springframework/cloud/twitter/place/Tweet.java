@@ -4,7 +4,7 @@ public class Tweet {
 	private String text;
 
 	public String getText() {
-		return text;
+		return this.text;
 	}
 
 	public void setText(String text) {

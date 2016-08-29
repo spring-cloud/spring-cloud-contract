@@ -37,8 +37,8 @@ public class BookDeleter {
 	public void bookDeleted(Exchange exchange) {
 		BookDeleted bookDeleted = exchange.getIn().getBody(BookDeleted.class);
 		log.info("Deleting book " + bookDeleted);
-		bookSuccessfulyDeleted.set(true);
-		log.info("Book successfuly deleted [$bookSuccessfulyDeleted]");
+		this.bookSuccessfulyDeleted.set(true);
+		log.info("Book successfuly deleted [" + this.bookSuccessfulyDeleted + "]");
 	}
 
 	private AtomicBoolean bookSuccessfulyDeleted = new AtomicBoolean(false);

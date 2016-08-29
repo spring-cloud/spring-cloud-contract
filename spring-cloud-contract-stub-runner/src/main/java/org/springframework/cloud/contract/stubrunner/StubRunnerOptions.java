@@ -75,48 +75,48 @@ public class StubRunnerOptions {
 	}
 
 	public Integer port(StubConfiguration stubConfiguration) {
-		if (stubIdsToPortMapping!=null) {
-			return stubIdsToPortMapping.get(stubConfiguration);
+		if (this.stubIdsToPortMapping!=null) {
+			return this.stubIdsToPortMapping.get(stubConfiguration);
 		} else {
 			return null;
 		}
 	}
 
 	public Integer getMinPortValue() {
-		return minPortValue;
+		return this.minPortValue;
 	}
 
 	public Integer getMaxPortValue() {
-		return maxPortValue;
+		return this.maxPortValue;
 	}
 
 	public String getStubRepositoryRoot() {
-		return stubRepositoryRoot;
+		return this.stubRepositoryRoot;
 	}
 
 	public boolean isWorkOffline() {
-		return workOffline;
+		return this.workOffline;
 	}
 
 	public String getStubsClassifier() {
-		return stubsClassifier;
+		return this.stubsClassifier;
 	}
 
 	public Collection<StubConfiguration> getDependencies() {
-		return dependencies;
+		return this.dependencies;
 	}
 
 	public Map<StubConfiguration, Integer> getStubIdsToPortMapping() {
-		return stubIdsToPortMapping;
+		return this.stubIdsToPortMapping;
 	}
 
 	@Override
 	public String toString() {
-		return "StubRunnerOptions [minPortValue=" + minPortValue + ", maxPortValue="
-				+ maxPortValue + ", stubRepositoryRoot=" + stubRepositoryRoot
-				+ ", workOffline=" + workOffline + ", stubsClassifier=" + stubsClassifier
-				+ ", dependencies=" + dependencies + ", stubIdsToPortMapping="
-				+ stubIdsToPortMapping + "]";
+		return "StubRunnerOptions [minPortValue=" + this.minPortValue + ", maxPortValue="
+				+ this.maxPortValue + ", stubRepositoryRoot=" + this.stubRepositoryRoot
+				+ ", workOffline=" + this.workOffline + ", stubsClassifier=" + this.stubsClassifier
+				+ ", dependencies=" + this.dependencies + ", stubIdsToPortMapping="
+				+ this.stubIdsToPortMapping + "]";
 	}
 
 }

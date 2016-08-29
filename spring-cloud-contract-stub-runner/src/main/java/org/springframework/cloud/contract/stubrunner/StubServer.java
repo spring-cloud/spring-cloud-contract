@@ -45,8 +45,8 @@ class StubServer {
 
 	public StubServer start() {
 		this.httpServerStub.start();
-		log.info("Started stub server for project [" + stubConfiguration.toColonSeparatedDependencyNotation() +
-				"] on port " + httpServerStub.port());
+		log.info("Started stub server for project [" + this.stubConfiguration.toColonSeparatedDependencyNotation() +
+				"] on port " + this.httpServerStub.port());
 		registerStubMappings();
 		return this;
 	}
@@ -56,8 +56,8 @@ class StubServer {
 	}
 
 	public int getPort() {
-		if (httpServerStub.isRunning()) {
-			return httpServerStub.port();
+		if (this.httpServerStub.isRunning()) {
+			return this.httpServerStub.port();
 		}
 		if (log.isDebugEnabled()) {
 			log.debug("The HTTP Server stub is not running... That means that the " +
@@ -76,17 +76,17 @@ class StubServer {
 	}
 
 	public StubConfiguration getStubConfiguration() {
-		return stubConfiguration;
+		return this.stubConfiguration;
 	}
 
 	public Collection<Contract> getContracts() {
-		return contracts;
+		return this.contracts;
 	}
 
 	private void registerStubMappings() {
-		WireMock wireMock = new WireMock("localhost", httpServerStub.port());
+		WireMock wireMock = new WireMock("localhost", this.httpServerStub.port());
 		registerDefaultHealthChecks(wireMock);
-		registerStubs(mappings, wireMock);
+		registerStubs(this.mappings, wireMock);
 	}
 
 	private void registerDefaultHealthChecks(WireMock wireMock) {

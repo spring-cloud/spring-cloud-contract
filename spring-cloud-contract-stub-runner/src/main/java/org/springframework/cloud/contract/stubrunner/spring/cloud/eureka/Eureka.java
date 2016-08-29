@@ -85,7 +85,7 @@ public class Eureka {
 	}
 
 	public InstanceInfo getInstanceInfo(Application application) {
-		EurekaInstanceConfigBean instanceConfig = new EurekaInstanceConfigBean(inetUtils);
+		EurekaInstanceConfigBean instanceConfig = new EurekaInstanceConfigBean(this.inetUtils);
 		instanceConfig.setInstanceEnabledOnit(true);
 		instanceConfig.setAppname(application.getName());
 		instanceConfig.setVirtualHostName(application.getName());
@@ -97,11 +97,11 @@ public class Eureka {
 	}
 
 	public EurekaTransport createTransport() {
-		TransportClientFactory transportClientFactory = newTransportClientFactory(clientConfig, Collections.<ClientFilter>emptyList());
-		EurekaTransportConfig transportConfig = clientConfig.getTransportConfig();
+		TransportClientFactory transportClientFactory = newTransportClientFactory(this.clientConfig, Collections.<ClientFilter>emptyList());
+		EurekaTransportConfig transportConfig = this.clientConfig.getTransportConfig();
 
 		ClosableResolver<AwsEndpoint> bootstrapResolver = EurekaHttpClients.newBootstrapResolver(
-				clientConfig,
+				this.clientConfig,
 				transportConfig,
 				transportClientFactory,
 				null,
@@ -109,13 +109,13 @@ public class Eureka {
 					@Override
 					public Applications getApplications(int stalenessThreshold, TimeUnit timeUnit) {
 						long thresholdInMs = TimeUnit.MILLISECONDS.convert(stalenessThreshold, timeUnit);
-						long delay = eurekaClient.getLastSuccessfulRegistryFetchTimePeriod();
+						long delay = Eureka.this.eurekaClient.getLastSuccessfulRegistryFetchTimePeriod();
 						if (delay > thresholdInMs) {
 							log.info(String.format("Local registry is too stale for local lookup. Threshold:%s, actual:%s",
 									thresholdInMs, delay));
 							return null;
 						} else {
-							return eurekaClient.getApplications();
+							return Eureka.this.eurekaClient.getApplications();
 						}
 					}
 				}
@@ -234,26 +234,26 @@ class EurekaTransport {
 	}
 
 	public void shutdown() {
-		eurekaHttpClientFactory.shutdown();
-		eurekaHttpClient.shutdown();
-		transportClientFactory.shutdown();
-		closableResolver.shutdown();
+		this.eurekaHttpClientFactory.shutdown();
+		this.eurekaHttpClient.shutdown();
+		this.transportClientFactory.shutdown();
+		this.closableResolver.shutdown();
 	}
 
 	public EurekaHttpClientFactory getEurekaHttpClientFactory() {
-		return eurekaHttpClientFactory;
+		return this.eurekaHttpClientFactory;
 	}
 
 	public EurekaHttpClient getEurekaHttpClient() {
-		return eurekaHttpClient;
+		return this.eurekaHttpClient;
 	}
 
 	public TransportClientFactory getTransportClientFactory() {
-		return transportClientFactory;
+		return this.transportClientFactory;
 	}
 
 	public ClosableResolver getClosableResolver() {
-		return closableResolver;
+		return this.closableResolver;
 	}
 }
 
@@ -282,7 +282,7 @@ class Application {
 
 	@JsonIgnore
 	public String getRegistrationKey() {
-		return computeRegistrationKey(this.name, instance_id);
+		return computeRegistrationKey(this.name, this.instance_id);
 	}
 
 	static String computeRegistrationKey(String name, String instanceId) {
@@ -290,19 +290,19 @@ class Application {
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	public String getInstance_id() {
-		return instance_id;
+		return this.instance_id;
 	}
 
 	public String getHostname() {
-		return hostname;
+		return this.hostname;
 	}
 
 	public int getPort() {
-		return port;
+		return this.port;
 	}
 }
 

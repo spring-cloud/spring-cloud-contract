@@ -1,7 +1,5 @@
 package org.springframework.cloud.contract.wiremock;
 
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestConfiguration.class)
 @AutoConfigureRestDocs(outputDir = "target/snippets")
@@ -31,7 +31,7 @@ public class WiremockServerRestDocsApplicationTests {
 
 	@Test
 	public void contextLoads() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.get("/resource"))
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/resource"))
 				.andExpect(MockMvcResultMatchers.content().string("Hello World"))
 				.andDo(document("resource"));
 	}

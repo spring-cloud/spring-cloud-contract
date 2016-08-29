@@ -33,7 +33,7 @@ public class FraudServiceRequest {
 	}
 
 	public String getClientPesel() {
-		return clientPesel;
+		return this.clientPesel;
 	}
 
 	public void setClientPesel(String clientPesel) {
@@ -41,7 +41,7 @@ public class FraudServiceRequest {
 	}
 
 	public BigDecimal getLoanAmount() {
-		return loanAmount;
+		return this.loanAmount;
 	}
 
 	public void setLoanAmount(BigDecimal loanAmount) {

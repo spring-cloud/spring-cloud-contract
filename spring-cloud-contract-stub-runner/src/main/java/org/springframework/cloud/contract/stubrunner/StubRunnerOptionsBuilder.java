@@ -90,7 +90,7 @@ public class StubRunnerOptionsBuilder {
 	}
 
 	public StubRunnerOptionsBuilder withPort(Integer port) {
-		String lastStub = stubs.peekLast();
+		String lastStub = this.stubs.peekLast();
 		addPort(lastStub + DELIMITER + port);
 		return this;
 	}
@@ -105,12 +105,12 @@ public class StubRunnerOptionsBuilder {
 	}
 
 	public StubRunnerOptions build() {
-		return new StubRunnerOptions(minPortValue, maxPortValue, stubRepositoryRoot,
-				workOffline, stubsClassifier, buildDependencies(), stubIdsToPortMapping);
+		return new StubRunnerOptions(this.minPortValue, this.maxPortValue, this.stubRepositoryRoot,
+				this.workOffline, this.stubsClassifier, buildDependencies(), this.stubIdsToPortMapping);
 	}
 
 	private Collection<StubConfiguration> buildDependencies() {
-		return StubsParser.fromString(stubs, stubsClassifier);
+		return StubsParser.fromString(this.stubs, this.stubsClassifier);
 	}
 
 	private static List<String> stubsToList(String[] stubIdsToPortMapping) {
@@ -130,10 +130,10 @@ public class StubRunnerOptionsBuilder {
 	private void addStub(String notation) {
 		if (StubsParser.hasPort(notation)) {
 			addPort(notation);
-			stubs.add(StubsParser.ivyFromStringWithPort(notation));
+			this.stubs.add(StubsParser.ivyFromStringWithPort(notation));
 		}
 		else {
-			stubs.add(notation);
+			this.stubs.add(notation);
 		}
 	}
 

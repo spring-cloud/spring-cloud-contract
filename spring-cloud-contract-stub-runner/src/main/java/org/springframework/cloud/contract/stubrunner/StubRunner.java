@@ -64,13 +64,13 @@ public class StubRunner implements StubRunning {
 	@Override
 	public RunningStubs runStubs() {
 		registerShutdownHook();
-		return localStubRunner.runStubs(stubRunnerOptions, stubRepository,
-				stubsConfiguration);
+		return this.localStubRunner.runStubs(this.stubRunnerOptions, this.stubRepository,
+				this.stubsConfiguration);
 	}
 
 	@Override
 	public URL findStubUrl(String groupId, String artifactId) {
-		return localStubRunner.findStubUrl(groupId, artifactId);
+		return this.localStubRunner.findStubUrl(groupId, artifactId);
 	}
 
 	@Override
@@ -85,32 +85,32 @@ public class StubRunner implements StubRunning {
 
 	@Override
 	public RunningStubs findAllRunningStubs() {
-		return localStubRunner.findAllRunningStubs();
+		return this.localStubRunner.findAllRunningStubs();
 	}
 
 	@Override
 	public Map<StubConfiguration, Collection<Contract>> getContracts() {
-		return localStubRunner.getContracts();
+		return this.localStubRunner.getContracts();
 	}
 
 	@Override
 	public boolean trigger(String ivyNotation, String labelName) {
-		return localStubRunner.trigger(ivyNotation, labelName);
+		return this.localStubRunner.trigger(ivyNotation, labelName);
 	}
 
 	@Override
 	public boolean trigger(String labelName) {
-		return localStubRunner.trigger(labelName);
+		return this.localStubRunner.trigger(labelName);
 	}
 
 	@Override
 	public boolean trigger() {
-		return localStubRunner.trigger();
+		return this.localStubRunner.trigger();
 	}
 
 	@Override
 	public Map<String, Collection<String>> labels() {
-		return localStubRunner.labels();
+		return this.localStubRunner.labels();
 	}
 
 	private void registerShutdownHook() {
@@ -129,8 +129,8 @@ public class StubRunner implements StubRunning {
 
 	@Override
 	public void close() throws IOException {
-		if (localStubRunner != null) {
-			localStubRunner.shutdown();
+		if (this.localStubRunner != null) {
+			this.localStubRunner.shutdown();
 		}
 	}
 }

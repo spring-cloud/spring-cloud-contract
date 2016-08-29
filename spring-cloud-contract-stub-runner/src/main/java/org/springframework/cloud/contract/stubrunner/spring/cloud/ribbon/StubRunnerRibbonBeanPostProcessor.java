@@ -16,13 +16,14 @@
 
 package org.springframework.cloud.contract.stubrunner.spring.cloud.ribbon;
 
-import com.netflix.client.config.IClientConfig;
-import com.netflix.loadbalancer.ServerList;
-import org.springframework.cloud.contract.stubrunner.StubFinder;
-import org.springframework.cloud.contract.stubrunner.spring.cloud.StubMapperProperties;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.cloud.contract.stubrunner.StubFinder;
+import org.springframework.cloud.contract.stubrunner.spring.cloud.StubMapperProperties;
+
+import com.netflix.client.config.IClientConfig;
+import com.netflix.loadbalancer.ServerList;
 
 /**
  * Ribbon AutoConfiguration that manipulates the service id to make the service
@@ -44,24 +45,24 @@ class StubRunnerRibbonBeanPostProcessor implements BeanPostProcessor {
 	}
 
 	private StubFinder stubFinder() {
-		if (stubFinder == null) {
-			stubFinder = this.beanFactory.getBean(StubFinder.class);
+		if (this.stubFinder == null) {
+			this.stubFinder = this.beanFactory.getBean(StubFinder.class);
 		}
-		return stubFinder;
+		return this.stubFinder;
 	}
 
 	private StubMapperProperties stubMapperProperties() {
-		if (stubMapperProperties == null) {
-			stubMapperProperties = this.beanFactory.getBean(StubMapperProperties.class);
+		if (this.stubMapperProperties == null) {
+			this.stubMapperProperties = this.beanFactory.getBean(StubMapperProperties.class);
 		}
-		return stubMapperProperties;
+		return this.stubMapperProperties;
 	}
 
 	private IClientConfig clientConfig() {
-		if (clientConfig == null) {
-			clientConfig = this.beanFactory.getBean(IClientConfig.class);
+		if (this.clientConfig == null) {
+			this.clientConfig = this.beanFactory.getBean(IClientConfig.class);
 		}
-		return clientConfig;
+		return this.clientConfig;
 	}
 
 	@Override

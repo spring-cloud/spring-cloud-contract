@@ -16,10 +16,10 @@ public class ApplicationStatus {
 	}
 
 	public Application getApplication() {
-		return application;
+		return this.application;
 	}
 
 	public InstanceInfo.InstanceStatus getStatus() {
-		return status;
+		return this.status;
 	}
 }

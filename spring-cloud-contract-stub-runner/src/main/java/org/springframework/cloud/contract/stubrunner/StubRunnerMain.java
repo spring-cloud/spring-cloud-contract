@@ -93,11 +93,11 @@ public class StubRunnerMain {
 	private void execute() {
 		try {
 			if (log.isDebugEnabled()) {
-				log.debug("Launching StubRunner with args: " + arguments);
+				log.debug("Launching StubRunner with args: " + this.arguments);
 			}
 			// TODO: Pass StubsToRun either from String or File
 			BatchStubRunner stubRunner = new BatchStubRunnerFactory(
-					arguments.getStubRunnerOptions()).buildBatchStubRunner();
+					this.arguments.getStubRunnerOptions()).buildBatchStubRunner();
 			RunningStubs runningCollaborators = stubRunner.runStubs();
 			log.info(runningCollaborators.toString());
 		}

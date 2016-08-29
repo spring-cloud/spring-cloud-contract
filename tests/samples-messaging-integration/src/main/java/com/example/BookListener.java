@@ -49,6 +49,6 @@ public class BookListener {
 	 */
 	public void bookDeleted(BookDeleted bookDeleted) {
 		log.info("Deleting book [ "+ bookDeleted + "]");
-		bookSuccessfullyDeleted.set(true);
+		this.bookSuccessfullyDeleted.set(true);
 	}
 }

@@ -106,32 +106,32 @@ public class GenerateTestsMojo extends AbstractMojo {
 	@Parameter(property = "skipTests", defaultValue = "false") private boolean skipTests;
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		if (skip || mavenTestSkip || skipTests) {
-			if (skip) getLog().info("Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip=" + skip);
-			if (mavenTestSkip) getLog().info("Skipping Spring Cloud Contract Verifier execution: maven.test.skip=" + mavenTestSkip);
-			if (skipTests) getLog().info("Skipping Spring Cloud Contract Verifier execution: skipTests" + skipTests);
+		if (this.skip || this.mavenTestSkip || this.skipTests) {
+			if (this.skip) getLog().info("Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip=" + this.skip);
+			if (this.mavenTestSkip) getLog().info("Skipping Spring Cloud Contract Verifier execution: maven.test.skip=" + this.mavenTestSkip);
+			if (this.skipTests) getLog().info("Skipping Spring Cloud Contract Verifier execution: skipTests" + this.skipTests);
 			return;
 		}
 		getLog().info(
 				"Generating server tests source code for Spring Cloud Contract Verifier contract verification");
 		final ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
-		config.setContractsDslDir(contractsDirectory);
-		config.setGeneratedTestSourcesDir(generatedTestSourcesDir);
-		config.setTargetFramework(testFramework);
-		config.setTestMode(testMode);
-		config.setBasePackageForTests(basePackageForTests);
-		config.setBaseClassForTests(baseClassForTests);
-		config.setRuleClassForTests(ruleClassForTests);
-		config.setNameSuffixForTests(nameSuffixForTests);
-		config.setImports(imports);
-		config.setStaticImports(staticImports);
-		config.setIgnoredFiles(ignoredFiles);
-		config.setExcludedFiles(excludedFiles);
-		config.setAssertJsonSize(assertJsonSize);
-		project.addTestCompileSourceRoot(generatedTestSourcesDir.getAbsolutePath());
+		config.setContractsDslDir(this.contractsDirectory);
+		config.setGeneratedTestSourcesDir(this.generatedTestSourcesDir);
+		config.setTargetFramework(this.testFramework);
+		config.setTestMode(this.testMode);
+		config.setBasePackageForTests(this.basePackageForTests);
+		config.setBaseClassForTests(this.baseClassForTests);
+		config.setRuleClassForTests(this.ruleClassForTests);
+		config.setNameSuffixForTests(this.nameSuffixForTests);
+		config.setImports(this.imports);
+		config.setStaticImports(this.staticImports);
+		config.setIgnoredFiles(this.ignoredFiles);
+		config.setExcludedFiles(this.excludedFiles);
+		config.setAssertJsonSize(this.assertJsonSize);
+		this.project.addTestCompileSourceRoot(this.generatedTestSourcesDir.getAbsolutePath());
 		if (getLog().isInfoEnabled()) {
 			getLog().info(
-					"Test Source directory: " + generatedTestSourcesDir.getAbsolutePath()
+					"Test Source directory: " + this.generatedTestSourcesDir.getAbsolutePath()
 							+ " added.");
 			getLog().info("Using " + config.getBaseClassForTests()
 					+ " as base class for test classes");
@@ -149,7 +149,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 	}
 
 	public List<String> getExcludedFiles() {
-		return excludedFiles;
+		return this.excludedFiles;
 	}
 
 	public void setExcludedFiles(List<String> excludedFiles) {
@@ -157,7 +157,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 	}
 
 	public List<String> getIgnoredFiles() {
-		return ignoredFiles;
+		return this.ignoredFiles;
 	}
 
 	public void setIgnoredFiles(List<String> ignoredFiles) {
@@ -165,7 +165,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 	}
 
 	public boolean isAssertJsonSize() {
-		return assertJsonSize;
+		return this.assertJsonSize;
 	}
 
 	public void setAssertJsonSize(boolean assertJsonSize) {

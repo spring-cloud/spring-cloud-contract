@@ -38,14 +38,14 @@ class Arguments {
 	}
 
 	public StubRunnerOptions getStubRunnerOptions() {
-		return stubRunnerOptions;
+		return this.stubRunnerOptions;
 	}
 
 	public String getRepositoryPath() {
-		return repositoryPath;
+		return this.repositoryPath;
 	}
 
 	public StubConfiguration getStub() {
-		return stub;
+		return this.stub;
 	}
 }

@@ -40,7 +40,7 @@ class WiremockMappingDescriptor {
 	public StubMapping getMapping() {
 		try {
 			return StubMapping.buildFrom(StreamUtils.copyToString(
-					new FileInputStream(descriptor), Charset.forName("UTF-8")));
+					new FileInputStream(this.descriptor), Charset.forName("UTF-8")));
 		}
 		catch (IOException e) {
 			throw new IllegalStateException("Cannot read file", e);
@@ -49,14 +49,14 @@ class WiremockMappingDescriptor {
 
 	@Override
 	public String toString() {
-		return "WiremockMappingDescriptor [descriptor=" + descriptor + "]";
+		return "WiremockMappingDescriptor [descriptor=" + this.descriptor + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((descriptor == null) ? 0 : descriptor.hashCode());
+		result = prime * result + ((this.descriptor == null) ? 0 : this.descriptor.hashCode());
 		return result;
 	}
 
@@ -69,11 +69,11 @@ class WiremockMappingDescriptor {
 		if (getClass() != obj.getClass())
 			return false;
 		WiremockMappingDescriptor other = (WiremockMappingDescriptor) obj;
-		if (descriptor == null) {
+		if (this.descriptor == null) {
 			if (other.descriptor != null)
 				return false;
 		}
-		else if (!descriptor.equals(other.descriptor))
+		else if (!this.descriptor.equals(other.descriptor))
 			return false;
 		return true;
 	}

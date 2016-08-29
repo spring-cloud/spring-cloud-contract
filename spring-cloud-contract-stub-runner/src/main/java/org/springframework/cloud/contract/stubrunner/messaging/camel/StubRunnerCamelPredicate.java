@@ -56,11 +56,11 @@ class StubRunnerCamelPredicate implements Predicate {
 		Object inputMessage = exchange.getIn().getBody();
 		JsonPaths jsonPaths = JsonToJsonPathsConverter
 				.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(
-						groovyDsl.getInput().getMessageBody());
+						this.groovyDsl.getInput().getMessageBody());
 		DocumentContext parsedJson;
 		try {
 			parsedJson = JsonPath
-					.parse(objectMapper.writeValueAsString(inputMessage));
+					.parse(this.objectMapper.writeValueAsString(inputMessage));
 		}
 		catch (JsonProcessingException e) {
 			throw new IllegalStateException("Cannot serialize to JSON", e);
@@ -84,7 +84,7 @@ class StubRunnerCamelPredicate implements Predicate {
 	private boolean headersMatch(Exchange exchange) {
 		Map<String, Object> headers = exchange.getIn().getHeaders();
 		boolean matches = true;
-		for (Header it : groovyDsl.getInput().getMessageHeaders().getEntries()) {
+		for (Header it : this.groovyDsl.getInput().getMessageHeaders().getEntries()) {
 			String name = it.getName();
 			Object value = it.getClientValue();
 			Object valueInHeader = headers.get(name);

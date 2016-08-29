@@ -31,7 +31,7 @@ public class LoanApplicationResult {
 	}
 
 	public LoanApplicationStatus getLoanApplicationStatus() {
-		return loanApplicationStatus;
+		return this.loanApplicationStatus;
 	}
 
 	public void setLoanApplicationStatus(LoanApplicationStatus loanApplicationStatus) {
@@ -39,7 +39,7 @@ public class LoanApplicationResult {
 	}
 
 	public String getRejectionReason() {
-		return rejectionReason;
+		return this.rejectionReason;
 	}
 
 	public void setRejectionReason(String rejectionReason) {

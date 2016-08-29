@@ -42,7 +42,7 @@ public class BatchStubRunner implements StubRunning {
 	@Override
 	public RunningStubs runStubs() {
 		Map<StubConfiguration, Integer> map = new LinkedHashMap<>();
-		for (StubRunner value : stubRunners) {
+		for (StubRunner value : this.stubRunners) {
 			RunningStubs runningStubs = value.runStubs();
 			map.putAll(runningStubs.validNamesAndPorts());
 		}
@@ -51,7 +51,7 @@ public class BatchStubRunner implements StubRunning {
 
 	@Override
 	public URL findStubUrl(String groupId, String artifactId) {
-		for (StubRunner stubRunner : stubRunners) {
+		for (StubRunner stubRunner : this.stubRunners) {
 			URL url = stubRunner.findStubUrl(groupId, artifactId);
 			if (url != null) {
 				return url;
@@ -75,7 +75,7 @@ public class BatchStubRunner implements StubRunning {
 	@Override
 	public RunningStubs findAllRunningStubs() {
 		Collection<RunningStubs> running = new LinkedHashSet<>();
-		for (StubRunner stubRunner : stubRunners) {
+		for (StubRunner stubRunner : this.stubRunners) {
 			running.add(stubRunner.findAllRunningStubs());
 		}
 		return new RunningStubs(running);
@@ -84,7 +84,7 @@ public class BatchStubRunner implements StubRunning {
 	@Override
 	public Map<StubConfiguration, Collection<Contract>> getContracts() {
 		Map<StubConfiguration, Collection<Contract>> map = new LinkedHashMap<>();
-		for (StubRunner stubRunner : stubRunners) {
+		for (StubRunner stubRunner : this.stubRunners) {
 			for (Entry<StubConfiguration, Collection<Contract>> entry : stubRunner
 					.getContracts().entrySet()) {
 				if (map.containsKey(entry.getKey())) {
@@ -101,7 +101,7 @@ public class BatchStubRunner implements StubRunning {
 	@Override
 	public boolean trigger(String ivyNotation, String labelName) {
 		boolean success = false;
-		for (StubRunner stubRunner : stubRunners) {
+		for (StubRunner stubRunner : this.stubRunners) {
 			if (stubRunner.trigger(ivyNotation, labelName)) {
 				success = true;
 			}
@@ -130,7 +130,7 @@ public class BatchStubRunner implements StubRunning {
 	@Override
 	public boolean trigger(String labelName) {
 		boolean success = false;
-		for (StubRunner stubRunner : stubRunners) {
+		for (StubRunner stubRunner : this.stubRunners) {
 			if (stubRunner.trigger(labelName)) {
 				success = true;
 			}
@@ -147,7 +147,7 @@ public class BatchStubRunner implements StubRunning {
 	@Override
 	public boolean trigger() {
 		boolean success = false;
-		for (StubRunner stubRunner : stubRunners) {
+		for (StubRunner stubRunner : this.stubRunners) {
 			if (stubRunner.trigger()) {
 				success = true;
 			}
@@ -158,7 +158,7 @@ public class BatchStubRunner implements StubRunning {
 	@Override
 	public Map<String, Collection<String>> labels() {
 		Map<String, Collection<String>> map = new LinkedHashMap<>();
-		for (StubRunner stubRunner : stubRunners) {
+		for (StubRunner stubRunner : this.stubRunners) {
 			for (Entry<String, Collection<String>> entry : stubRunner.labels()
 					.entrySet()) {
 				if (map.containsKey(entry.getKey())) {
@@ -174,7 +174,7 @@ public class BatchStubRunner implements StubRunning {
 
 	@Override
 	public void close() throws IOException {
-		for (StubRunner stubRunner : stubRunners) {
+		for (StubRunner stubRunner : this.stubRunners) {
 			stubRunner.close();
 		}
 	}

@@ -40,18 +40,18 @@ class StubRunnerCamelProcessor implements Processor {
 	@Override
 	public void process(Exchange exchange) throws Exception {
 		Message input = exchange.getIn();
-		if (groovyDsl.getInput().getMessageHeaders() != null) {
-			for (Header entry : groovyDsl.getInput().getMessageHeaders().getEntries()) {
+		if (this.groovyDsl.getInput().getMessageHeaders() != null) {
+			for (Header entry : this.groovyDsl.getInput().getMessageHeaders().getEntries()) {
 				input.removeHeader(entry.getName());
 			}
 		}
-		if (groovyDsl.getOutputMessage() == null) {
+		if (this.groovyDsl.getOutputMessage() == null) {
 			return;
 		}
 		input.setBody(BodyExtractor
-				.extractStubValueFrom(groovyDsl.getOutputMessage().getBody()));
-		if (groovyDsl.getOutputMessage().getHeaders() != null) {
-			for (Header entry : groovyDsl.getOutputMessage().getHeaders().getEntries()) {
+				.extractStubValueFrom(this.groovyDsl.getOutputMessage().getBody()));
+		if (this.groovyDsl.getOutputMessage().getHeaders() != null) {
+			for (Header entry : this.groovyDsl.getOutputMessage().getHeaders().getEntries()) {
 				input.setHeader(entry.getName(), entry.getClientValue());
 			}
 		}

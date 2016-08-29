@@ -184,7 +184,7 @@ public class AetherStubDownloader implements StubDownloader {
 		Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier,
 				ARTIFACT_EXTENSION, LATEST_ARTIFACT_VERSION);
 		VersionRangeRequest versionRangeRequest = new VersionRangeRequest(artifact,
-				remoteRepos, null);
+				this.remoteRepos, null);
 		VersionRangeResult rangeResult;
 		try {
 			rangeResult = this.repositorySystem.resolveVersionRange(this.session,
@@ -207,7 +207,7 @@ public class AetherStubDownloader implements StubDownloader {
 			String version, String classifier) {
 		Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier,
 				ARTIFACT_EXTENSION, version);
-		VersionRequest versionRequest = new VersionRequest(artifact, remoteRepos, null);
+		VersionRequest versionRequest = new VersionRequest(artifact, this.remoteRepos, null);
 		VersionResult versionResult;
 		try {
 			versionResult = this.repositorySystem.resolveVersion(this.session, versionRequest);

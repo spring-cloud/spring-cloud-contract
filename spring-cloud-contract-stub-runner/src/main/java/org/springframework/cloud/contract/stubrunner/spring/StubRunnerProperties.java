@@ -60,7 +60,7 @@ public class StubRunnerProperties {
 	private String classifier = "stubs";
 
 	public int getMinPort() {
-		return minPort;
+		return this.minPort;
 	}
 
 	public void setMinPort(int minPort) {
@@ -68,7 +68,7 @@ public class StubRunnerProperties {
 	}
 
 	public int getMaxPort() {
-		return maxPort;
+		return this.maxPort;
 	}
 
 	public void setMaxPort(int maxPort) {
@@ -76,7 +76,7 @@ public class StubRunnerProperties {
 	}
 
 	public boolean isWorkOffline() {
-		return workOffline;
+		return this.workOffline;
 	}
 
 	public void setWorkOffline(boolean workOffline) {
@@ -84,7 +84,7 @@ public class StubRunnerProperties {
 	}
 
 	public Resource getRepositoryRoot() {
-		return repositoryRoot;
+		return this.repositoryRoot;
 	}
 
 	public void setRepositoryRoot(String repositoryRoot) {
@@ -92,7 +92,7 @@ public class StubRunnerProperties {
 	}
 
 	public String[] getIds() {
-		return ids;
+		return this.ids;
 	}
 
 	public void setIds(String[] ids) {
@@ -100,7 +100,7 @@ public class StubRunnerProperties {
 	}
 
 	public String getClassifier() {
-		return classifier;
+		return this.classifier;
 	}
 
 	public void setClassifier(String classifier) {
@@ -108,9 +108,9 @@ public class StubRunnerProperties {
 	}
 
 	@Override public String toString() {
-		return "StubRunnerProperties{" + "minPort=" + minPort + ", maxPort=" + maxPort
-				+ ", workOffline=" + workOffline + ", repositoryRoot=" + repositoryRoot
-				+ ", ids=" + Arrays.toString(ids) + ", classifier='" + classifier + '\''
+		return "StubRunnerProperties{" + "minPort=" + this.minPort + ", maxPort=" + this.maxPort
+				+ ", workOffline=" + this.workOffline + ", repositoryRoot=" + this.repositoryRoot
+				+ ", ids=" + Arrays.toString(this.ids) + ", classifier='" + this.classifier + '\''
 				+ '}';
 	}
 }

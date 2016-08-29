@@ -52,32 +52,32 @@ public class TriggerController {
 	@PostMapping("/{label:.*}")
 	public ResponseEntity<Map<String, Collection<String>>> trigger(@PathVariable String label) {
 		try {
-			stubFinder.trigger(label);
+			this.stubFinder.trigger(label);
 			return ResponseEntity.ok().body(Collections.<String, Collection<String>>emptyMap());
 		} catch (Exception e) {
 			if (log.isDebugEnabled()) {
 				log.debug("Exception occurred while trying to return " + label + " label", e);
 			}
-			return new ResponseEntity<>(stubFinder.labels(), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(this.stubFinder.labels(), HttpStatus.NOT_FOUND);
 		}
 	}
 
 	@PostMapping("/{ivyNotation:.*}/{label:.*}")
 	public ResponseEntity<Map<String, Collection<String>>> triggerByArtifact(@PathVariable String ivyNotation, @PathVariable String label) {
 		try {
-			stubFinder.trigger(ivyNotation, label);
+			this.stubFinder.trigger(ivyNotation, label);
 			return ResponseEntity.ok().body(Collections.<String, Collection<String>>emptyMap());
 		} catch (Exception e) {
 			if (log.isDebugEnabled()) {
 				log.debug("Exception occurred while trying to return " + label + " label", e);
 			}
-			return new ResponseEntity<>(stubFinder.labels(), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(this.stubFinder.labels(), HttpStatus.NOT_FOUND);
 		}
 	}
 
 	@GetMapping
 	public Map<String, Collection<String>> labels() {
-		return stubFinder.labels();
+		return this.stubFinder.labels();
 	}
 
 }

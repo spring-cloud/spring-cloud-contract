@@ -15,7 +15,7 @@ public class FraudCheckResult {
 	}
 
 	public FraudCheckStatus getFraudCheckStatus() {
-		return fraudCheckStatus;
+		return this.fraudCheckStatus;
 	}
 
 	public void setFraudCheckStatus(FraudCheckStatus fraudCheckStatus) {
@@ -23,7 +23,7 @@ public class FraudCheckResult {
 	}
 
 	public String getRejectionReason() {
-		return rejectionReason;
+		return this.rejectionReason;
 	}
 
 	public void setRejectionReason(String rejectionReason) {

@@ -54,7 +54,7 @@ class Service {
 	}
 
 	public String getBase() {
-		return base;
+		return this.base;
 	}
 
 	public void setBase(String base) {

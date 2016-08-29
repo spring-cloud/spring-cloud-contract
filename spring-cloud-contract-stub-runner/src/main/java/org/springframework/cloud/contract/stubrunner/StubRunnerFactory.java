@@ -55,9 +55,9 @@ class StubRunnerFactory {
 					+ "them either via annotation or a property");
 		}
 		Collection<StubRunner> result = new ArrayList<>();
-		for (StubConfiguration stubsConfiguration : stubRunnerOptions.getDependencies()) {
-			Map.Entry<StubConfiguration, File> entry = stubDownloader
-					.downloadAndUnpackStubJar(stubRunnerOptions, stubsConfiguration);
+		for (StubConfiguration stubsConfiguration : this.stubRunnerOptions.getDependencies()) {
+			Map.Entry<StubConfiguration, File> entry = this.stubDownloader
+					.downloadAndUnpackStubJar(this.stubRunnerOptions, stubsConfiguration);
 			if (log.isDebugEnabled()) {
 				log.debug("For stub configuration [" + stubsConfiguration + "] the downloaded entry is [" + entry + "]");
 			}
@@ -74,13 +74,13 @@ class StubRunnerFactory {
 		if (unzipedStubDir == null) {
 			return null;
 		}
-		return createStubRunner(unzipedStubDir, stubsConfiguration, stubRunnerOptions);
+		return createStubRunner(unzipedStubDir, stubsConfiguration, this.stubRunnerOptions);
 	}
 
 	private StubRunner createStubRunner(File unzippedStubsDir,
 			StubConfiguration stubsConfiguration, StubRunnerOptions stubRunnerOptions) {
 		return new StubRunner(stubRunnerOptions, unzippedStubsDir.getPath(),
-				stubsConfiguration, contractVerifierMessaging);
+				stubsConfiguration, this.contractVerifierMessaging);
 	}
 
 }

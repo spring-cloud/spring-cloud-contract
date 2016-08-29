@@ -74,12 +74,12 @@ class StubRunnerExecutor implements StubFinder {
 
 	private RunningStubs runningStubs() {
 		return new RunningStubs(Collections
-					.singletonMap(stubServer.getStubConfiguration(), stubServer.getPort()));
+					.singletonMap(this.stubServer.getStubConfiguration(), this.stubServer.getPort()));
 	}
 
 	public void shutdown() {
-		if (stubServer != null) {
-			stubServer.stop();
+		if (this.stubServer != null) {
+			this.stubServer.stop();
 		}
 	}
 
@@ -87,11 +87,11 @@ class StubRunnerExecutor implements StubFinder {
 	public URL findStubUrl(String groupId, String artifactId) {
 		if (groupId == null) {
 			return returnStubUrlIfMatches(
-					artifactId.equals(stubServer.stubConfiguration.artifactId));
+					artifactId.equals(this.stubServer.stubConfiguration.artifactId));
 		}
 		return returnStubUrlIfMatches(
-				artifactId.equals(stubServer.stubConfiguration.artifactId)
-						&& groupId.equals(stubServer.stubConfiguration.groupId));
+				artifactId.equals(this.stubServer.stubConfiguration.artifactId)
+						&& groupId.equals(this.stubServer.stubConfiguration.groupId));
 	}
 
 	@Override
@@ -105,14 +105,14 @@ class StubRunnerExecutor implements StubFinder {
 
 	@Override
 	public RunningStubs findAllRunningStubs() {
-		return new RunningStubs(Collections.singletonMap(stubServer.stubConfiguration,
-				stubServer.getPort()));
+		return new RunningStubs(Collections.singletonMap(this.stubServer.stubConfiguration,
+				this.stubServer.getPort()));
 	}
 
 	@Override
 	public Map<StubConfiguration, Collection<Contract>> getContracts() {
-		return Collections.singletonMap(stubServer.stubConfiguration,
-				stubServer.getContracts());
+		return Collections.singletonMap(this.stubServer.stubConfiguration,
+				this.stubServer.getContracts());
 	}
 
 	@Override
@@ -185,7 +185,7 @@ class StubRunnerExecutor implements StubFinder {
 		}
 		DslProperty<?> body = outputMessage.getBody();
 		Headers headers = outputMessage.getHeaders();
-		contractVerifierMessaging.send(
+		this.contractVerifierMessaging.send(
 				JsonOutput.toJson(BodyExtractor.extractClientValueFromBody(
 						body == null ? null : body.getClientValue())),
 				headers == null ? null : headers.asStubSideMap(),
@@ -193,7 +193,7 @@ class StubRunnerExecutor implements StubFinder {
 	}
 
 	private URL returnStubUrlIfMatches(boolean condition) {
-		return condition ? stubServer.getStubUrl() : null;
+		return condition ? this.stubServer.getStubUrl() : null;
 	}
 
 	private void startStubServers(StubRunnerOptions stubRunnerOptions,
@@ -206,7 +206,7 @@ class StubRunnerExecutor implements StubFinder {
 			if (log.isDebugEnabled()) {
 				log.debug("There are no HTTP related contracts. Won't start any servers");
 			}
-			stubServer = new StubServer(stubConfiguration, mappings, contracts, new NoOpHttpServerStub());
+			this.stubServer = new StubServer(stubConfiguration, mappings, contracts, new NoOpHttpServerStub());
 			return;
 		}
 		if (contracts.isEmpty()) {
@@ -215,10 +215,10 @@ class StubRunnerExecutor implements StubFinder {
 							+ "that's why will start the server - maybe you know what you're doing...");
 		}
 		if (port != null && port >= 0) {
-			stubServer = new StubServer(stubConfiguration, mappings, contracts,
+			this.stubServer = new StubServer(stubConfiguration, mappings, contracts,
 					new WireMockHttpServerStub(port));
 		} else {
-			stubServer = portScanner
+			this.stubServer = this.portScanner
 					.tryToExecuteWithFreePort(new PortCallback<StubServer>() {
 						@Override
 						public StubServer call(int availablePort) {
@@ -228,7 +228,7 @@ class StubRunnerExecutor implements StubFinder {
 						}
 					});
 		}
-		stubServer = stubServer.start();
+		this.stubServer = this.stubServer.start();
 	}
 
 	private boolean hasRequest(Collection<Contract> contracts) {

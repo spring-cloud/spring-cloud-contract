@@ -61,20 +61,20 @@ public class StubMapperProperties {
 
 	public String fromIvyNotationToId(String ivyNotation) {
 		StubConfiguration stubConfiguration = new StubConfiguration(ivyNotation);
-		String id = idsToServiceIds.get(ivyNotation);
+		String id = this.idsToServiceIds.get(ivyNotation);
 		if (StringUtils.hasText(id)) {
 			return id;
 		}
-		String groupAndArtifact = idsToServiceIds.get(stubConfiguration.getGroupId() +
+		String groupAndArtifact = this.idsToServiceIds.get(stubConfiguration.getGroupId() +
 				":" + stubConfiguration.getArtifactId());
 		if (StringUtils.hasText(groupAndArtifact)) {
 			return groupAndArtifact;
 		}
-		return idsToServiceIds.get(stubConfiguration.getArtifactId());
+		return this.idsToServiceIds.get(stubConfiguration.getArtifactId());
 	}
 
 	public String fromServiceIdToIvyNotation(String serviceId) {
-		for (Map.Entry<String, String> entry : idsToServiceIds.entrySet()) {
+		for (Map.Entry<String, String> entry : this.idsToServiceIds.entrySet()) {
 			if (entry.getValue().equals(serviceId)) {
 				return entry.getKey();
 			}

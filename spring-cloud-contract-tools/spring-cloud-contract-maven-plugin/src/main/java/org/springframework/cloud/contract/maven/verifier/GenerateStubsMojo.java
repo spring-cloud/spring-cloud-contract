@@ -66,14 +66,14 @@ public class GenerateStubsMojo extends AbstractMojo {
 	private String classifier;
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		if (skip) {
+		if (this.skip) {
 			getLog().info(
 					"Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip="
-							+ skip);
+							+ this.skip);
 			return;
 		}
-		File stubsJarFile = createStubJar(outputDirectory);
-		projectHelper.attachArtifact(project, "jar", classifier, stubsJarFile);
+		File stubsJarFile = createStubJar(this.outputDirectory);
+		this.projectHelper.attachArtifact(this.project, "jar", this.classifier, stubsJarFile);
 	}
 
 	private File createStubJar(File stubsOutputDir)
@@ -84,29 +84,29 @@ public class GenerateStubsMojo extends AbstractMojo {
 							+ "] .\nPlease make sure that spring-cloud-contract:convert was invoked");
 		}
 		String stubArchiveName =
-				project.getBuild().getFinalName() + "-" + classifier + ".jar";
-		File stubsJarFile = new File(projectBuildDirectory, stubArchiveName);
+				this.project.getBuild().getFinalName() + "-" + this.classifier + ".jar";
+		File stubsJarFile = new File(this.projectBuildDirectory, stubArchiveName);
 		try {
-			if (attachContracts) {
-				archiver.addDirectory(stubsOutputDir,
+			if (this.attachContracts) {
+				this.archiver.addDirectory(stubsOutputDir,
 						new String[] { STUB_MAPPING_FILE_PATTERN, CONTRACT_FILE_PATTERN },
 						new String[0]);
 			}
 			else {
 				getLog().info(
 						"Skipping attaching Spring Cloud Contract Verifier contracts");
-				archiver.addDirectory(stubsOutputDir,
+				this.archiver.addDirectory(stubsOutputDir,
 						new String[] { STUB_MAPPING_FILE_PATTERN },
 						new String[] { CONTRACT_FILE_PATTERN });
 			}
-			archiver.setCompress(true);
-			archiver.setDestFile(stubsJarFile);
-			archiver.addConfiguredManifest(ManifestCreator.createManifest(project));
-			archiver.createArchive();
+			this.archiver.setCompress(true);
+			this.archiver.setDestFile(stubsJarFile);
+			this.archiver.addConfiguredManifest(ManifestCreator.createManifest(this.project));
+			this.archiver.createArchive();
 		}
 		catch (Exception e) {
 			throw new MojoFailureException(
-					"Exception while packaging " + classifier + " jar.", e);
+					"Exception while packaging " + this.classifier + " jar.", e);
 		}
 		return stubsJarFile;
 	}

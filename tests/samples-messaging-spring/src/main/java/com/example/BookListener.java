@@ -16,7 +16,6 @@
 
 package com.example;
 
-import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.jms.JMSException;
@@ -31,7 +30,6 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -52,7 +50,7 @@ public class BookListener {
 	 */
 	@JmsListener(destination = "input")
 	public void returnBook(String messageAsString) throws Exception {
-		final BookReturned bookReturned = objectMapper.readerFor(BookReturned.class).readValue(messageAsString);
+		final BookReturned bookReturned = this.objectMapper.readerFor(BookReturned.class).readValue(messageAsString);
 		log.info("Returning book [$bookReturned]");
 		MessageCreator messageCreator = new MessageCreator() {
 			@Override
@@ -62,21 +60,21 @@ public class BookListener {
 				return message;
 			}
 		};
-		jmsTemplate.send("output", messageCreator);
+		this.jmsTemplate.send("output", messageCreator);
 	}
 
 	/**
 	   Scenario for "should generate tests triggered by a message":
 	     client side: if sends a message to input.messageFrom then message will be sent to output.messageFrom
 	     server side: will send a message to input, verify the message contents and await upon receiving message on the output messageFrom
-	 * @throws IOException 
-	 * @throws JsonProcessingException 
+	 * @throws java.io.IOException
+	 * @throws com.fasterxml.jackson.core.JsonProcessingException
 	 */
 	@JmsListener(destination = "delete")
 	public void bookDeleted(String bookDeletedAsString) throws Exception {
-		BookDeleted bookDeleted = objectMapper.readerFor(BookDeleted.class).readValue(bookDeletedAsString);
+		BookDeleted bookDeleted = this.objectMapper.readerFor(BookDeleted.class).readValue(bookDeletedAsString);
 		log.info("Deleting book " + bookDeleted);
-		bookSuccessfulyDeleted.set(true);
+		this.bookSuccessfulyDeleted.set(true);
 	}
 
 	AtomicBoolean bookSuccessfulyDeleted = new AtomicBoolean(false);

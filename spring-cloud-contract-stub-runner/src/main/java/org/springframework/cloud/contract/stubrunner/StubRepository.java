@@ -56,15 +56,15 @@ class StubRepository {
 	}
 
 	public File getPath() {
-		return path;
+		return this.path;
 	}
 
 	public List<WiremockMappingDescriptor> getProjectDescriptors() {
-		return projectDescriptors;
+		return this.projectDescriptors;
 	}
 
 	public Collection<Contract> getContracts() {
-		return contracts;
+		return this.contracts;
 	}
 
 	/**
@@ -87,7 +87,7 @@ class StubRepository {
 	}
 
 	private List<WiremockMappingDescriptor> contextDescriptors() {
-		return path.exists() ? collectMappingDescriptors(path)
+		return this.path.exists() ? collectMappingDescriptors(this.path)
 				: Collections.<WiremockMappingDescriptor>emptyList();
 	}
 
@@ -116,7 +116,7 @@ class StubRepository {
 	}
 
 	private Collection<Contract> contractDescriptors() {
-		return (path.exists() ? collectContractDescriptors(path)
+		return (this.path.exists() ? collectContractDescriptors(this.path)
 				: Collections.<Contract>emptySet());
 	}
 

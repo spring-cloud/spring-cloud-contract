@@ -56,10 +56,10 @@ class StubRunnerIntegrationMessageSelector implements MessageSelector {
 		Object inputMessage = message.getPayload();
 		JsonPaths jsonPaths = JsonToJsonPathsConverter
 				.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(
-						groovyDsl.getInput().getMessageBody());
+						this.groovyDsl.getInput().getMessageBody());
 		DocumentContext parsedJson;
 		try {
-			parsedJson = JsonPath.parse(objectMapper.writeValueAsString(inputMessage));
+			parsedJson = JsonPath.parse(this.objectMapper.writeValueAsString(inputMessage));
 		}
 		catch (JsonProcessingException e) {
 			throw new IllegalStateException("Cannot serialize to JSON", e);
@@ -86,7 +86,7 @@ class StubRunnerIntegrationMessageSelector implements MessageSelector {
 	private boolean headersMatch(Message<?> message) {
 		Map<String, Object> headers = message.getHeaders();
 		boolean matches = true;
-		for (Header it : groovyDsl.getInput().getMessageHeaders().getEntries()) {
+		for (Header it : this.groovyDsl.getInput().getMessageHeaders().getEntries()) {
 			String name = it.getName();
 			Object value = it.getClientValue();
 			Object valueInHeader = headers.get(name);
