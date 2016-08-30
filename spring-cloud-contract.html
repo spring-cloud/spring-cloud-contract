@@ -1891,9 +1891,30 @@ Groovy Map notation.
 	request {
 		//...
 
-		// Currently only JSON format of request body is supported.
+		// JSON and XML formats of request body are supported.
 		// Format will be determined from a header or body's content.
 		body '''{ "login" : "john", "name": "John The Contract" }'''
+	}
+
+	response {
+		//...
+	}
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Body&#8217;s format</strong> can also be specified explicitly by invoking one of format functions.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
+	request {
+		//...
+
+		// In this case body will be formatted as XML.
+		body equalToXml(
+				'''&lt;user&gt;&lt;login&gt;john&lt;/login&gt;&lt;name&gt;John The Contract&lt;/name&gt;&lt;/user&gt;'''
+		)
 	}
 
 	response {
@@ -5389,7 +5410,7 @@ number of different ways, including as described above using
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-08-22 11:33:40 CEST
+Last updated 2016-08-30 06:20:00 UTC
 </div>
 </div>
 </body>
