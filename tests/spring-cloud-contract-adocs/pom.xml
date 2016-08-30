@@ -45,7 +45,7 @@
 			<version>1.5.4</version>
 		</dependency>-->
 	</dependencies>
-	<build>
+	<!--<build>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.gmavenplus</groupId>
@@ -98,5 +98,5 @@
 				</executions>
 			</plugin>
 		</plugins>
-	</build>
+	</build>-->
 </project>
