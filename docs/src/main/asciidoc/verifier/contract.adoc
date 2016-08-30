@@ -83,12 +83,12 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=body,indent=0]
 ----
 
-**Body's format** can also be specified explicitly by invoking one of format functions.
-
-[source,groovy,indent=0]
-----
-include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=bodyAsXml,indent=0]
-----
+//**Body's format** can also be specified explicitly by invoking one of format functions.
+//
+//[source,groovy,indent=0]
+//----
+//include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=bodyAsXml,indent=0]
+//----
 
 ==== Response
 

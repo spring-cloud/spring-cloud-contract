@@ -157,7 +157,7 @@ class ContractHttpDocsSpec extends Specification {
 			request {
 				//...
 
-				// JSON and XML formats of request body are supported.
+				// Currently only JSON format of request body is supported.
 				// Format will be determined from a header or body's content.
 				body '''{ "login" : "john", "name": "John The Contract" }'''
 			}
