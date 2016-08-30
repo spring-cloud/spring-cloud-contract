@@ -1,0 +1,6 @@
+= Application Contracts
+
+In the following document you'll be able to see all the contracts that are present for this application.
+
+== Contracts
+

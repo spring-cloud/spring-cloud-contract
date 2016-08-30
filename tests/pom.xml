@@ -22,6 +22,7 @@
 		<module>samples-messaging-spring</module>
 		<module>samples-messaging-stream</module>
 		<module>samples-messaging-integration</module>
+		<module>spring-cloud-contract-adocs</module>
 		<module>spring-cloud-contract-stub-runner-boot-eureka</module>
 		<module>spring-cloud-contract-stub-runner-boot-zookeeper</module>
 		<module>spring-cloud-contract-stub-runner-camel</module>
