@@ -18,7 +18,8 @@ ext {
 
 	contractVerifierGradlePluginLibsDir ="$buildDir/contractVerifier-gradle-plugin-libs"
 	testSystemProperties = [
-			'contract-gradle-plugin-libs-dir': contractVerifierGradlePluginLibsDir
+			'contract-gradle-plugin-libs-dir': contractVerifierGradlePluginLibsDir,
+			"WORK_OFFLINE" : gradle.startParameter.isOffline() ? 'TRUE' : 'FALSE'
 	]
 }
 
@@ -27,6 +28,7 @@ apply plugin: 'groovy'
 apply from: "$rootDir/gradle/release.gradle"
 apply plugin: 'eclipse'
 apply plugin: "jacoco"
+apply plugin: 'checkstyle'
 
 group = 'org.springframework.cloud'
 
@@ -68,6 +70,7 @@ dependencies {
 	}
 	testCompile 'info.solidsoft.spock:spock-global-unroll:0.5.0'
 	testCompile gradleTestKit()
+	checkstyle 'org.springframework.cloud:spring-cloud-build:1.0.2.RELEASE'
 
 }
 
@@ -84,6 +87,7 @@ groovydoc {
 	def title = "IPDS ${version}"
 	groovyClasspath = project.configurations.jansi
 }
+
 dependencies {
 	contractVerifierGradlePluginLibs project
 	jansi 'org.fusesource.jansi:jansi:1.11'
@@ -96,20 +100,6 @@ task archiveContractVerifierGradlePluginLibsDependencies(type: Sync) {
 
 archiveContractVerifierGradlePluginLibsDependencies.dependsOn project.tasks.jar
 test.dependsOn archiveContractVerifierGradlePluginLibsDependencies
-
-configurations {
-	all {
-		resolutionStrategy {
-			eachDependency { DependencyResolveDetails details ->
-				// To prevent an accidental usage of groovy-all.jar and groovy.jar in different versions
-				// all modularized Groovy jars are replaced with groovy-all.jar by default.
-				if (details.requested.group == 'org.codehaus.groovy' && details.requested.name != "groovy-all") {
-					details.useTarget("org.codehaus.groovy:groovy-all:${details.requested.version}")
-				}
-			}
-		}
-	}
-}
 
 jacoco {
 	toolVersion = "0.7.7.201606060606"

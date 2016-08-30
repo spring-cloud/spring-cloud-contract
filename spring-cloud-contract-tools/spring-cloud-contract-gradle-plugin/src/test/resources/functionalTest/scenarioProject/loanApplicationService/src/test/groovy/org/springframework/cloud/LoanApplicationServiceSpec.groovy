@@ -16,6 +16,7 @@
 
 package org.springframework.cloud
 
+import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.frauddetection.Application
 import org.springframework.cloud.frauddetection.LoanApplicationService
 import org.springframework.cloud.frauddetection.model.Client
@@ -25,13 +26,12 @@ import org.springframework.cloud.frauddetection.model.LoanApplicationStatus
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule
 import org.junit.ClassRule
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.SpringApplicationContextLoader
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Stepwise
 
-@ContextConfiguration(loader = SpringApplicationContextLoader, classes = Application)
+@ContextConfiguration(loader = SpringBootContextLoader, classes = Application)
 @Stepwise
 class LoanApplicationServiceSpec extends Specification {
 

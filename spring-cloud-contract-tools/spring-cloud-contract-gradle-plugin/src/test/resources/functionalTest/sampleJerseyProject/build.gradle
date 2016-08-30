@@ -20,7 +20,7 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.2.6.RELEASE"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE"
 	}
 }
 
@@ -59,6 +59,7 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 		contractsDir = file("mappings")
 		stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
 	}
+	ext['jetty.version'] = '9.2.17.v20160517'
 
 	contracts {
 		targetFramework = 'Spock'
@@ -78,14 +79,23 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 	}
 
 	dependencies {
-		compile 'org.glassfish.jersey.containers:jersey-container-jetty-http:2.15'
+		compile('org.glassfish.jersey.containers:jersey-container-jetty-http:2.23.2')  {
+			exclude group: 'org.eclipse.jetty'
+		}
 		compile 'org.springframework.boot:spring-boot-starter-jersey'
 		compile 'org.springframework.boot:spring-boot-starter-jetty'
 
 		testRuntime "org.spockframework:spock-spring:$spockVersion"
 
-		compile 'org.glassfish.jersey.connectors:jersey-apache-connector:2.15'
-		testCompile 'org.springframework:spring-test'
+		compile('org.glassfish.jersey.connectors:jersey-apache-connector:2.23.2') {
+			exclude group: 'org.eclipse.jetty'
+		}
+		testCompile "org.mockito:mockito-core"
+		testCompile "org.springframework:spring-test"
+		testCompile "org.springframework.boot:spring-boot-test"
+		testCompile("com.github.tomakehurst:wiremock:2.1.7") {
+			exclude group: 'org.eclipse.jetty'
+		}
 	}
 
 	task cleanup(type: Delete) {

@@ -37,7 +37,10 @@ Contract.make {
 	"rejectionReason": "Amount too high"
 }""")
 				headers {
-					 header('Content-Type': 'application/vnd.fraud.v1+json')
+						header('Content-Type': value(
+								producer(regex('application/vnd.fraud.v1.json.*')),
+								consumer('application/vnd.fraud.v1+json'))
+						)
 					}
 			}
 

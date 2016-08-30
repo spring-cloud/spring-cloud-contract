@@ -1,7 +1,7 @@
 package org.springframework.cloud.contract.verifier.plugin
 
 import org.gradle.api.Task
-import org.gradle.api.internal.project.AbstractProject
+import org.gradle.api.internal.project.DefaultProject
 import org.gradle.api.plugins.GroovyPlugin
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
@@ -10,13 +10,13 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import spock.lang.Specification
 
 class ContractVerifierSpec extends Specification {
-	AbstractProject project
+	DefaultProject project
 
 	def setup() {
 		def dateString = new Date().format("yyyy-MM-dd_HH-mm-ss")
 		def testFolder = new File("build/generated-tests/${getClass().simpleName}/${dateString}")
 		testFolder.mkdirs()
-		project = (AbstractProject) ProjectBuilder.builder().withProjectDir(testFolder).build()
+		project = (DefaultProject) ProjectBuilder.builder().withProjectDir(testFolder).build()
 	}
 
 	def "should apply groovy plugin"() {

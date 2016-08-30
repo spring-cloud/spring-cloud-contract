@@ -30,7 +30,7 @@ class BasicFunctionalSpec extends ContractVerifierIntegrationSpec {
 	private static final String GENERATED_TEST = "build//generated-test-sources//contracts//contracts//spring//cloud//twitter_places_analyzer//PairIdSpec.groovy"
 	private static final String GENERATED_CLIENT_JSON_STUB = "build//production//bootSimple-stubs//repository//mappings//spring//cloud//twitter-places-analyzer//pairId//collerate_PlacesFrom_Tweet.json"
 	private static final String GROOVY_DSL_CONTRACT = "repository//mappings//spring//cloud//twitter-places-analyzer//pairId//collerate_PlacesFrom_Tweet.groovy"
-	private static final String TEST_EXECUTION_XML_REPORT = "build/test-results/TEST-contracts.spring.cloud.twitter_places_analyzer.PairIdSpec.xml"
+	private static final String TEST_EXECUTION_XML_REPORT = "build/test-results/test/TEST-contracts.spring.cloud.twitter_places_analyzer.PairIdSpec.xml"
 
 	def setup() {
 		setupForProject("functionalTest/bootSimple")
@@ -39,7 +39,7 @@ class BasicFunctionalSpec extends ContractVerifierIntegrationSpec {
 
 	def "should pass basic flow"() {
 		when:
-			BuildResult result = run("check", "publishToMavenLocal")
+			BuildResult result = run(checkAndPublishToMavenLocal())
 		then:
 			result.task(":generateWireMockClientStubs").outcome == SUCCESS
 			result.task(":generateContractTests").outcome == SUCCESS

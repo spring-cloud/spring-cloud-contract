@@ -20,7 +20,7 @@ buildscript {
 		mavenLocal()
 	}
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.6.RELEASE")
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE")
 	}
 }
 
@@ -81,7 +81,9 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 		compile("org.springframework.boot:spring-boot-starter-actuator")
 
 		testRuntime "org.spockframework:spock-spring:$spockVersion"
+		testCompile "org.mockito:mockito-core"
 		testCompile "org.springframework:spring-test"
+		testCompile "org.springframework.boot:spring-boot-test"
 		testCompile "com.jayway.restassured:rest-assured:$restAssuredVersion"
 		testCompile "com.jayway.restassured:spring-mock-mvc:$restAssuredVersion"
 	}

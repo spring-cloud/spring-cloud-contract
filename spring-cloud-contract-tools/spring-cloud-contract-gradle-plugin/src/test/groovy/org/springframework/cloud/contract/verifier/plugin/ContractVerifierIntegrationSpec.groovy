@@ -35,6 +35,7 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 	public static final String JUNIT = "targetFramework = 'JUnit'"
 	public static final String MVC_SPEC = "baseClassForTests = 'org.springframework.cloud.MvcSpec'"
 	public static final String MVC_TEST = "baseClassForTests = 'org.springframework.cloud.MvcTest'"
+	protected static final boolean WORK_OFFLINE = Boolean.parseBoolean(System.getProperty('WORK_OFFLINE', 'false'))
 
 	File testProjectDir
 
@@ -89,6 +90,12 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 		return result
 	}
 
+	protected String[] checkAndPublishToMavenLocal() {
+		String[] args = ["check", "publishToMavenLocal", "--info"] as String[]
+		if (WORK_OFFLINE) args << "--offline"
+		return args
+	}
+
 	protected BuildResult run(String... tasks) {
 		return GradleRunner.create()
 				.withProjectDir(testProjectDir)
@@ -118,7 +125,9 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 	}
 
 	protected File file(String path) {
-		return new File(testProjectDir, path)
+		File file = new File(testProjectDir, path)
+		println "Resolved path is [$file]"
+		return file
 	}
 
 	protected boolean fileExists(String path) {
