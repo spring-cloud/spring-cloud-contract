@@ -86,15 +86,7 @@
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-contract-maven-plugin</artifactId>
                 <version>${spring-cloud-verifier-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>convert</goal>
-                            <goal>generateStubs</goal>
-                            <goal>generateTests</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <extensions>true</extensions>
                 <configuration>
                     <baseClassForTests>hello.BaseAccurest</baseClassForTests>
                     <testFramework>SPOCK</testFramework>
