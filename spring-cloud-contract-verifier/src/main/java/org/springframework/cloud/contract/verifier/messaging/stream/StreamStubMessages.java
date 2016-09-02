@@ -81,21 +81,25 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 	}
 
 	private String resolvedDestination(String destination) {
-		ChannelBindingServiceProperties channelBindingServiceProperties = this.context
-				.getBean(ChannelBindingServiceProperties.class);
-		for (Map.Entry<String, BindingProperties> entry : channelBindingServiceProperties
-				.getBindings().entrySet()) {
-			if (entry.getValue().getDestination().equals(destination)) {
-				if (log.isDebugEnabled()) {
-					log.debug("Found a channel named [{}] with destination [{}]",
-							entry.getKey(), destination);
+		try {
+			ChannelBindingServiceProperties channelBindingServiceProperties = this.context
+					.getBean(ChannelBindingServiceProperties.class);
+			for (Map.Entry<String, BindingProperties> entry : channelBindingServiceProperties
+					.getBindings().entrySet()) {
+				if (entry.getValue().getDestination().equals(destination)) {
+					if (log.isDebugEnabled()) {
+						log.debug("Found a channel named [{}] with destination [{}]",
+								entry.getKey(), destination);
+					}
+					return entry.getKey();
 				}
-				return entry.getKey();
 			}
+		} catch (Exception e) {
+			log.error("Exception took place while trying to resolve the destination. Will assume the name [" + destination + "]", e);
 		}
 		if (log.isDebugEnabled()) {
 			log.debug(
-					"No destination named [{}] was found. Assuming that the destination equals the channel name",
+					"No destination named [" + destination + "] was found. Assuming that the destination equals the channel name",
 					destination);
 		}
 		return destination;
