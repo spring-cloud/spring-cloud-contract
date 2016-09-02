@@ -25,6 +25,8 @@ import java.util.concurrent.TimeUnit;
  * Destination is relevant to the underlying implementation. Might be a channel, queue, topic etc.
  *
  * @author Marcin Grzejszczak
+ *
+ * @since 1.0.0
  */
 public interface MessageVerifier<M> {
 	/**
