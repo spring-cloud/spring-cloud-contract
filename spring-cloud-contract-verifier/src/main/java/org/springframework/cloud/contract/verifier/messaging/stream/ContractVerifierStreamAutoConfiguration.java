@@ -44,7 +44,7 @@ public class ContractVerifierStreamAutoConfiguration {
 	@Bean
 	@ConditionalOnClass(name = "org.springframework.cloud.stream.test.binder.TestSupportBinder")
 	@ConditionalOnMissingBean
-	public MessageCollector contractVerifierMessageCollector() {
+	public MessageCollector messageCollector() {
 		return new TestSupportBinder().messageCollector();
 	}
 
