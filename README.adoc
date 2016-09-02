@@ -410,6 +410,74 @@ going through the process. CDC is all about communication.
 
 The https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-server[server side code is available here] and https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-client[the client side code here].
 
+===== Technical note
+
+If using the *SNAPSHOT* / *Milestone* / *Release Candidate* versions please add the following section to your
+
+Maven POM
+
+[source,xml,indent=0]
+----
+<repositories>
+    <repository>
+        <id>spring-snapshots</id>
+        <name>Spring Snapshots</name>
+        <url>https://repo.spring.io/snapshot</url>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
+    <repository>
+        <id>spring-milestones</id>
+        <name>Spring Milestones</name>
+        <url>https://repo.spring.io/milestone</url>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+    </repository>
+    <repository>
+        <id>spring-releases</id>
+        <name>Spring Releases</name>
+        <url>https://repo.spring.io/release</url>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+    </repository>
+</repositories>
+<pluginRepositories>
+    <pluginRepository>
+        <id>spring-snapshots</id>
+        <name>Spring Snapshots</name>
+        <url>https://repo.spring.io/snapshot</url>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+        <id>spring-milestones</id>
+        <name>Spring Milestones</name>
+        <url>https://repo.spring.io/milestone</url>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+        <id>spring-releases</id>
+        <name>Spring Releases</name>
+        <url>https://repo.spring.io/release</url>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+    </pluginRepository>
+</pluginRepositories>
+----
+
+Gradle build
+
+[source,groovy,indent=0]
+----
+----
+
 ===== Consumer side (Loan Issuance)
 
 As a developer of the Loan Issuance service (a consumer of the Fraud Detection server):

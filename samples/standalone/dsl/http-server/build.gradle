@@ -17,6 +17,7 @@ buildscript {
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
+// tag::deps_repos[]
 repositories {
 	mavenCentral()
 	mavenLocal()
@@ -24,6 +25,7 @@ repositories {
 	maven { url "http://repo.spring.io/milestone" }
 	maven { url "http://repo.spring.io/release" }
 }
+// end::deps_repos[]
 
 apply plugin: 'groovy'
 apply plugin: 'spring-boot'
@@ -33,7 +35,6 @@ apply plugin: 'maven-publish'
 dependencyManagement {
 	imports {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:$BOM_VERSION"
-		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${project.findProperty('verifierVersion') ?: verifierVersion}"
 	}
 }
 

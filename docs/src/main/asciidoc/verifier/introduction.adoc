@@ -116,6 +116,24 @@ going through the process. CDC is all about communication.
 
 The https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-server[server side code is available here] and https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-client[the client side code here].
 
+===== Technical note
+
+If using the *SNAPSHOT* / *Milestone* / *Release Candidate* versions please add the following section to your
+
+Maven POM
+
+[source,xml,indent=0]
+----
+include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=repos,indent=0]
+----
+
+Gradle build
+
+[source,groovy,indent=0]
+----
+include::{introduction_url}/samples/standalone/dsl/http-server/build.gradle[tags=deps_repos,indent=0]
+----
+
 ===== Consumer side (Loan Issuance)
 
 As a developer of the Loan Issuance service (a consumer of the Fraud Detection server):
