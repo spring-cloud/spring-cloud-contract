@@ -438,6 +438,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_server_side">Server Side</a></li>
 <li><a href="#_step_by_step_guide_to_cdc">Step by step guide to CDC</a>
 <ul class="sectlevel4">
+<li><a href="#_technical_note">Technical note</a></li>
 <li><a href="#_consumer_side_loan_issuance">Consumer side (Loan Issuance)</a></li>
 <li><a href="#_producer_side_fraud_detection_server">Producer side (Fraud Detection server)</a></li>
 <li><a href="#_consumer_side_loan_issuance_final_step">Consumer side (Loan Issuance) final step</a></li>
@@ -929,6 +930,85 @@ going through the process. CDC is all about communication.</p>
 <p>The <a href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-server">server side code is available here</a> and <a href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-client">the client side code here</a>.</p>
 </div>
 <div class="sect4">
+<h5 id="_technical_note">Technical note</h5>
+<div class="paragraph">
+<p>If using the <strong>SNAPSHOT</strong> / <strong>Milestone</strong> / <strong>Release Candidate</strong> versions please add the following section to your</p>
+</div>
+<div class="paragraph">
+<p>Maven POM</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;repositories&gt;
+	&lt;repository&gt;
+		&lt;id&gt;spring-snapshots&lt;/id&gt;
+		&lt;name&gt;Spring Snapshots&lt;/name&gt;
+		&lt;url&gt;https://repo.spring.io/snapshot&lt;/url&gt;
+		&lt;snapshots&gt;
+			&lt;enabled&gt;true&lt;/enabled&gt;
+		&lt;/snapshots&gt;
+	&lt;/repository&gt;
+	&lt;repository&gt;
+		&lt;id&gt;spring-milestones&lt;/id&gt;
+		&lt;name&gt;Spring Milestones&lt;/name&gt;
+		&lt;url&gt;https://repo.spring.io/milestone&lt;/url&gt;
+		&lt;snapshots&gt;
+			&lt;enabled&gt;false&lt;/enabled&gt;
+		&lt;/snapshots&gt;
+	&lt;/repository&gt;
+	&lt;repository&gt;
+		&lt;id&gt;spring-releases&lt;/id&gt;
+		&lt;name&gt;Spring Releases&lt;/name&gt;
+		&lt;url&gt;https://repo.spring.io/release&lt;/url&gt;
+		&lt;snapshots&gt;
+			&lt;enabled&gt;false&lt;/enabled&gt;
+		&lt;/snapshots&gt;
+	&lt;/repository&gt;
+&lt;/repositories&gt;
+&lt;pluginRepositories&gt;
+	&lt;pluginRepository&gt;
+		&lt;id&gt;spring-snapshots&lt;/id&gt;
+		&lt;name&gt;Spring Snapshots&lt;/name&gt;
+		&lt;url&gt;https://repo.spring.io/snapshot&lt;/url&gt;
+		&lt;snapshots&gt;
+			&lt;enabled&gt;true&lt;/enabled&gt;
+		&lt;/snapshots&gt;
+	&lt;/pluginRepository&gt;
+	&lt;pluginRepository&gt;
+		&lt;id&gt;spring-milestones&lt;/id&gt;
+		&lt;name&gt;Spring Milestones&lt;/name&gt;
+		&lt;url&gt;https://repo.spring.io/milestone&lt;/url&gt;
+		&lt;snapshots&gt;
+			&lt;enabled&gt;false&lt;/enabled&gt;
+		&lt;/snapshots&gt;
+	&lt;/pluginRepository&gt;
+	&lt;pluginRepository&gt;
+		&lt;id&gt;spring-releases&lt;/id&gt;
+		&lt;name&gt;Spring Releases&lt;/name&gt;
+		&lt;url&gt;https://repo.spring.io/release&lt;/url&gt;
+		&lt;snapshots&gt;
+			&lt;enabled&gt;false&lt;/enabled&gt;
+		&lt;/snapshots&gt;
+	&lt;/pluginRepository&gt;
+&lt;/pluginRepositories&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Gradle build</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">repositories {
+	mavenCentral()
+	mavenLocal()
+	maven { url "http://repo.spring.io/snapshot" }
+	maven { url "http://repo.spring.io/milestone" }
+	maven { url "http://repo.spring.io/release" }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
 <h5 id="_consumer_side_loan_issuance">Consumer side (Loan Issuance)</h5>
 <div class="paragraph">
 <p>As a developer of the Loan Issuance service (a consumer of the Fraud Detection server):</p>
@@ -1127,8 +1207,8 @@ for more information.</a> We highly recommend using the map notation!</p>
 	&lt;dependencies&gt;
 		&lt;dependency&gt;
 			&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-			&lt;artifactId&gt;spring-cloud-contract-dependencies&lt;/artifactId&gt;
-			&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+			&lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
+			&lt;version&gt;${spring-cloud-dependencies.version}&lt;/version&gt;
 			&lt;type&gt;pom&lt;/type&gt;
 			&lt;scope&gt;import&lt;/scope&gt;
 		&lt;/dependency&gt;
@@ -1219,8 +1299,8 @@ for more information.</a> We highly recommend using the map notation!</p>
 	&lt;dependencies&gt;
 		&lt;dependency&gt;
 			&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-			&lt;artifactId&gt;spring-cloud-contract-dependencies&lt;/artifactId&gt;
-			&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+			&lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
+			&lt;version&gt;${spring-cloud-dependencies.version}&lt;/version&gt;
 			&lt;type&gt;pom&lt;/type&gt;
 			&lt;scope&gt;import&lt;/scope&gt;
 		&lt;/dependency&gt;
@@ -1234,11 +1314,6 @@ for more information.</a> We highly recommend using the map notation!</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
-	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-	&lt;artifactId&gt;spring-cloud-contract-wiremock&lt;/artifactId&gt;
-	&lt;scope&gt;test&lt;/scope&gt;
-&lt;/dependency&gt;
-&lt;dependency&gt;
 	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 	&lt;artifactId&gt;spring-cloud-starter-contract-stub-runner&lt;/artifactId&gt;
 	&lt;scope&gt;test&lt;/scope&gt;
@@ -2784,8 +2859,8 @@ class LoanApplicationServiceSpec extends Specification {
 	&lt;dependencies&gt;
 		&lt;dependency&gt;
 			&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-			&lt;artifactId&gt;spring-cloud-contract-dependencies&lt;/artifactId&gt;
-			&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+			&lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
+			&lt;version&gt;${spring-cloud-dependencies.version}&lt;/version&gt;
 			&lt;type&gt;pom&lt;/type&gt;
 			&lt;scope&gt;import&lt;/scope&gt;
 		&lt;/dependency&gt;
@@ -5389,7 +5464,7 @@ number of different ways, including as described above using
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-09-02 08:05:51 UTC
+Last updated 2016-09-02 09:21:20 UTC
 </div>
 </div>
 </body>
