@@ -34,6 +34,7 @@ import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.messaging.integration.StubRunnerIntegrationConfiguration;
 import org.springframework.cloud.contract.stubrunner.messaging.stream.StubRunnerStreamConfiguration.FlowRegistrar;
 import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.binding.BinderAwareChannelResolver;
 import org.springframework.cloud.stream.config.BindingProperties;
 import org.springframework.cloud.stream.config.ChannelBindingServiceProperties;
 import org.springframework.context.Lifecycle;
@@ -76,7 +77,10 @@ public class StubRunnerStreamConfiguration {
 			Collection<Contract> value = entry.getValue();
 			String name = key.getGroupId() + "_" + key.getArtifactId();
 			for (Contract dsl : value) {
-				if (dsl != null && dsl.getInput() != null
+				if (dsl == null) {
+					continue;
+				}
+				if (dsl.getInput() != null
 							&& dsl.getInput().getMessageFrom() != null
 							&& StringUtils.hasText(
 									dsl.getInput().getMessageFrom().getClientValue())) {
@@ -113,6 +117,12 @@ public class StubRunnerStreamConfiguration {
 							.start();
 					beanFactory.getBean(flowName + ".transformer", Lifecycle.class)
 							.start();
+				} else if (dsl.getOutputMessage() != null
+						&& dsl.getOutputMessage().getSentTo() != null
+						&& StringUtils.hasText(
+						dsl.getOutputMessage().getSentTo().getClientValue())) {
+					BinderAwareChannelResolver resolver = beanFactory.getBean(BinderAwareChannelResolver.class);
+					resolver.resolveDestination(dsl.getOutputMessage().getSentTo().getClientValue());
 				}
 			}
 		}

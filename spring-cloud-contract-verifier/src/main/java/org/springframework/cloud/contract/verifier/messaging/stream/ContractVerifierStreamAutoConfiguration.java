@@ -25,6 +25,8 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierAutoConfiguration;
 import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.test.binder.MessageCollector;
+import org.springframework.cloud.stream.test.binder.TestSupportBinder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,6 +40,13 @@ import org.springframework.messaging.Message;
 @ConditionalOnProperty(name="stubrunner.stream.enabled", havingValue="true", matchIfMissing=true)
 @AutoConfigureBefore(NoOpContractVerifierAutoConfiguration.class)
 public class ContractVerifierStreamAutoConfiguration {
+
+	@Bean
+	@ConditionalOnClass(name = "org.springframework.cloud.stream.test.binder.TestSupportBinder")
+	@ConditionalOnMissingBean
+	public MessageCollector contractVerifierMessageCollector() {
+		return new TestSupportBinder().messageCollector();
+	}
 
 	@Bean
 	@ConditionalOnMissingBean
