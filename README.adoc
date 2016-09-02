@@ -476,6 +476,13 @@ Gradle build
 
 [source,groovy,indent=0]
 ----
+repositories {
+	mavenCentral()
+	mavenLocal()
+	maven { url "http://repo.spring.io/snapshot" }
+	maven { url "http://repo.spring.io/milestone" }
+	maven { url "http://repo.spring.io/release" }
+}
 ----
 
 ===== Consumer side (Loan Issuance)
@@ -634,8 +641,8 @@ We can add either Maven or Gradle plugin - in this example we'll show how to add
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-contract-dependencies</artifactId>
-            <version>${spring-cloud-contract.version}</version>
+            <artifactId>spring-cloud-dependencies</artifactId>
+            <version>${spring-cloud-dependencies.version}</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -710,8 +717,8 @@ Add the `Spring Cloud Contract` BOM
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-contract-dependencies</artifactId>
-            <version>${spring-cloud-contract.version}</version>
+            <artifactId>spring-cloud-dependencies</artifactId>
+            <version>${spring-cloud-dependencies.version}</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -723,11 +730,6 @@ Add the dependency to `Spring Cloud Contract Stub Runner`
 
 [source,xml,indent=0]
 ----
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-contract-wiremock</artifactId>
-    <scope>test</scope>
-</dependency>
 <dependency>
     <groupId>org.springframework.cloud</groupId>
     <artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
@@ -1010,7 +1012,7 @@ Here you can find interesting links related to Spring Cloud Contract Verifier:
 - https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/#spring-cloud-contract-stub-runner[Spring Cloud Contract Stub Runner Documentation]
 - https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/#stub-runner-for-messaging[Spring Cloud Contract Stub Runner Messaging Documentation]
 - https://gitter.im/spring-cloud/spring-cloud-contract[Spring Cloud Contract Verifier Gitter]
-- https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/[Spring Cloud Contract Verifier Maven Plugin]
+- https://github.com/spring-cloud/spring-cloud-contract[Spring Cloud Contract Verifier Maven Plugin]
 
 == Documentation
 

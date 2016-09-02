@@ -42,10 +42,10 @@
 
 		<!-- tag::verifier_test_dependencies[] -->
 		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-contract-verifier</artifactId>
-			<scope>test</scope>
-		</dependency>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-starter-contract-verifier</artifactId>
+		<scope>test</scope>
+	</dependency>
 		<!-- end::verifier_test_dependencies[] -->
 	</dependencies>
 
