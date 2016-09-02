@@ -1,0 +1,32 @@
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>{@= groupId @}</groupId>
+            <artifactId>spring-cloud-contract-dependencies</artifactId>
+            <version>{@= version @}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+<dependencies>
+    <dependency>
+        <groupId>{@= groupId @}</groupId>
+        <artifactId>spring-cloud-starter-contract-verifier</artifactId>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+
+<build>
+    <plugin>
+        <groupId>{@= groupId @}</groupId>
+        <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+        <version>{@= version @}</version>
+        <!-- Don't forget about this value !! -->
+        <extensions>true</extensions>
+        <configuration>
+            <!-- Provide the base class for your auto-generated tests -->
+            <baseClassForTests>com.example.MvcTest</baseClassForTests>
+        </configuration>
+    </plugin>
+</build>

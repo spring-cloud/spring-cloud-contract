@@ -106,76 +106,34 @@ Spring Cloud Contract Verifier features:
 
 ## Quick Start
 
+<script type="text/javascript">{% include custom.js %}</script>
+{% include download_widget.md %}
+
 [For a very detailed step by step guide check out the docs](https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_step_by_step_guide_to_cdc). Below you can find a simplified verstion.
 
 ### Server / Producer side
 
 On the server (HTTP) / producer (Messaging) side add the Spring Cloud Contract Verifier Maven / Gradle plugin. Let us assume that our project's group id is `com.example` and artifact id is `http-server`.
 
-Gradle Setup
+Gradle Setup of the Plugin
 
 ```groovy
-buildscript {
-  repositories {
-    mavenCentral()
-  }
-  dependencies {
-    classpath 'org.springframework.cloud:spring-cloud-contract-verifier-gradle-plugin:${verifier_version}'
-    classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootPlugin}
-  }
-}
-
-apply plugin: 'spring-boot'
-apply plugin: 'contract-verifier'
-
-dependencyManagement {
-  imports {
-    mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"
-  }
-}
-
 contractVerifier {
   baseClassForTests = 'com.example.MvcTest'
   // fully qualified name to a class that will be the base class for your generated test classes
 }
-
-dependencies {
-  testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
-}
 ```
 
-Maven Setup
+Maven Setup of the Plugin
 
 ```xml
 <plugin>
-    <groupId>org.springframework.cloud.contract.verifier</groupId>
-    <artifactId>spring-cloud-contract-verifier-maven-plugin</artifactId>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
     <configuration>
         <baseClassForTests>com.example.MvcTest</baseClassForTests> <!-- fully qualified name to a class that will be the base class for your generated test classes -->
     </configuration>
 </plugin>
-```
-
-and the required test dependencies
-
-```xml
-<dependencyManagement>
-  <dependencies>
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-contract-dependencies</artifactId>
-      <version>${spring-cloud-contract.version}</version>
-      <type>pom</type>
-      <scope>import</scope>
-    </dependency>
-  </dependencies>
-</dependencyManagement>
-
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-contract-verifier</artifactId>
-    <scope>test</scope>
-</dependency>
 ```
 
 where the `com.example.MvcTest` could look like this (we're assuming that we're using [Rest Assured](http://rest-assured.io/) and we want to do CDC for
@@ -311,8 +269,8 @@ Maven
   <dependencies>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-contract-dependencies</artifactId>
-      <version>${spring-cloud-contract.version}</version>
+      <artifactId>spring-cloud-dependencies</artifactId>
+      <version>${spring-cloud-dependencies.version}</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -337,33 +295,37 @@ Gradle
 
 ```groovy
 buildscript {
-  repositories {
-    mavenCentral()
-  }
-  dependencies {
-    classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootPluginVersion}"
-  }
+    repositories {
+      mavenCentral()
+    }
+    dependencies {
+      classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootPluginVersion}"
+    }
 }
 
 apply plugin: 'spring-boot'
 
 dependencyManagement {
-  imports {
-    mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"
-  }
+    imports {
+      mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${springCloudDependencies}"
+    }
 }
 
 dependencies {
-  testCompile "org.springframework.cloud:spring-cloud-contract-wiremock"
-  testCompile "org.springframework.cloud:spring-cloud-starter-contract-stub-runner"
+    testCompile "org.springframework.cloud:spring-cloud-contract-wiremock"
+    testCompile "org.springframework.cloud:spring-cloud-starter-contract-stub-runner"
 }
 ```
 
-The last step is to provide the property for the Stub Runner to automatically download the required stubs. If you're using Spring Boot it's enough to add the following section to your project test properties:
+The last step is to setup Stub Runner in your tests to automatically download the required stubs. To achieve that
+you have to pass the `@AutoConfigureStubRunner` annotation. That annotation has a bunch of properties that you can
+set. If you don't like such an approach you can set those values in your test properties too. 
 
-```yaml
-stubrunner:
-  stubs.ids: 'com.example:http-server:+:stubs:8080'
+```java
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureStubRunner(ids = {"com.example:http-server:+:stubs:8080"}, workOffline = true)
+public class LoanApplicationServiceTests {
 ```
 
 That way an artifact with group id `com.example`, artifact id `http-server`, in `latest` version, with `stubs` classifier will be registered at port `8080`. Once your test context got booted up, executing the following code will not lead to a 404 because the Spring Cloud Contract Stub Runner will automatically start a WireMock server inside your test and feed it with the stubs generated from the server side.

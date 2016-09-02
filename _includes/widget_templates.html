@@ -100,6 +100,17 @@
         </snapshots>
     </repository>
 </repositories>
+<!-- Unnecessary if you're using Spring Cloud Stub Runner only -->
+<pluginRepositories>
+    <repository>
+        <id>{@= repository.id @}</id>
+        <name>{@= repository.name @}</name>
+        <url>{@= repository.url @}</url>
+        <snapshots>
+            <enabled>{@= repository.snapshotsEnabled @}</enabled>
+        </snapshots>
+    </repository>
+</pluginRepositories>
 {% endhighlight %}
 </script>
 
@@ -123,6 +134,16 @@ dependencies {
 
 <script type="text/html" id="project-repository-gradle-widget-template">
 {% highlight groovy %}
+
+// Unnecessary if you're using Spring Cloud Stub Runner only
+buildscript {
+    repositories {
+        maven {
+            url '{@= repository.url @}'
+        }
+    }
+}
+
 repositories {
     maven {
         url '{@= repository.url @}'
