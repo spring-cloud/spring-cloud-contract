@@ -90,6 +90,8 @@
 
 <script type="text/html" id="project-repository-maven-widget-template">
 {% highlight xml %}
+
+
 <repositories>
     <repository>
         <id>{@= repository.id @}</id>
@@ -100,6 +102,7 @@
         </snapshots>
     </repository>
 </repositories>
+
 <!-- Unnecessary if you're using Spring Cloud Stub Runner only -->
 <pluginRepositories>
     <repository>
@@ -134,6 +137,7 @@ dependencies {
 
 <script type="text/html" id="project-repository-gradle-widget-template">
 {% highlight groovy %}
+
 
 // Unnecessary if you're using Spring Cloud Stub Runner only
 buildscript {
