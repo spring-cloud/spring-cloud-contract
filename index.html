@@ -115,28 +115,7 @@ Spring Cloud Contract Verifier features:
 
 On the server (HTTP) / producer (Messaging) side add the Spring Cloud Contract Verifier Maven / Gradle plugin. Let us assume that our project's group id is `com.example` and artifact id is `http-server`.
 
-Gradle Setup of the Plugin
-
-```groovy
-contractVerifier {
-  baseClassForTests = 'com.example.MvcTest'
-  // fully qualified name to a class that will be the base class for your generated test classes
-}
-```
-
-Maven Setup of the Plugin
-
-```xml
-<plugin>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
-    <configuration>
-        <baseClassForTests>com.example.MvcTest</baseClassForTests> <!-- fully qualified name to a class that will be the base class for your generated test classes -->
-    </configuration>
-</plugin>
-```
-
-where the `com.example.MvcTest` could look like this (we're assuming that we're using [Rest Assured](http://rest-assured.io/) and we want to do CDC for
+The base class for the tests passed in the configuration could look like this (we're assuming that we're using [Rest Assured](http://rest-assured.io/) and we want to do CDC for
 a `FraudDetectionController` that you're writing)
 
 ```java
@@ -319,7 +298,7 @@ dependencies {
 
 The last step is to setup Stub Runner in your tests to automatically download the required stubs. To achieve that
 you have to pass the `@AutoConfigureStubRunner` annotation. That annotation has a bunch of properties that you can
-set. If you don't like such an approach you can set those values in your test properties too. 
+set. If you don't like such an approach you can set those values in your test properties too.
 
 ```java
 @RunWith(SpringRunner.class)
@@ -328,7 +307,7 @@ set. If you don't like such an approach you can set those values in your test pr
 public class LoanApplicationServiceTests {
 ```
 
-That way an artifact with group id `com.example`, artifact id `http-server`, in `latest` version, with `stubs` classifier will be registered at port `8080`. Once your test context got booted up, executing the following code will not lead to a 404 because the Spring Cloud Contract Stub Runner will automatically start a WireMock server inside your test and feed it with the stubs generated from the server side.
+That way an artifact with group id `com.example`, artifact id `http-server`, in `latest` version, with `stubs` classifier will be registered at port `8080`. Since the `workOffline` flag was passed then the stubs will not be downloaded from a remote repository - it will be searched for in the local Maven repo. Once your test context got booted up, executing the following code will not lead to a 404 because the Spring Cloud Contract Stub Runner will automatically start a WireMock server inside your test and feed it with the stubs generated from the server side.
 
 ```java
 HttpHeaders httpHeaders = new HttpHeaders();
