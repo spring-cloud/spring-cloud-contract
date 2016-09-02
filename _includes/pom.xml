@@ -20,15 +20,17 @@
 </dependencies>
 
 <build>
-    <plugin>
-        <groupId>{@= groupId @}</groupId>
-        <artifactId>spring-cloud-contract-maven-plugin</artifactId>
-        <version>{@= version @}</version>
-        <!-- Don't forget about this value !! -->
-        <extensions>true</extensions>
-        <configuration>
-            <!-- Provide the base class for your auto-generated tests -->
-            <baseClassForTests>com.example.MvcTest</baseClassForTests>
-        </configuration>
-    </plugin>
+    <plugins>
+        <plugin>
+            <groupId>{@= groupId @}</groupId>
+            <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+            <version>{@= version @}</version>
+            <!-- Don't forget about this value !! -->
+            <extensions>true</extensions>
+            <configuration>
+                <!-- Provide the base class for your auto-generated tests -->
+                <baseClassForTests>com.example.MvcTest</baseClassForTests>
+            </configuration>
+        </plugin>
+    <plugins>
 </build>
