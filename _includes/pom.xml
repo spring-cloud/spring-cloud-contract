@@ -1,6 +1,7 @@
 <dependencyManagement>
     <dependencies>
-        <!-- If you're adding this dependency explicitly you have to add *BEFORE* the Release Train BOM-->
+        <!-- If you're adding this dependency explicitly you have to
+        add it *BEFORE* the Release Train BOM-->
         <dependency>
             <groupId>{@= groupId @}</groupId>
             <artifactId>spring-cloud-contract-dependencies</artifactId>
