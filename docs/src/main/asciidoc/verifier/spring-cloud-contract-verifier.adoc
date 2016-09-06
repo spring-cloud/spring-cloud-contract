@@ -10,8 +10,6 @@
 
 include::introduction.adoc[]
 
-include::contract.adoc[]
-
 include::rest.adoc[]
 
 include::messaging.adoc[]
@@ -19,5 +17,7 @@ include::messaging.adoc[]
 include::stubrunner.adoc[]
 
 include::stubrunner_msg.adoc[]
+
+include::contract.adoc[]
 
 include::links.adoc[]
