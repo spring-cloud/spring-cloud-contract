@@ -477,3 +477,38 @@ Such tree will cause Spring Cloud Contract Verifier generating WireMock's scenar
 More details about WireMock scenarios can be found under http://wiremock.org/stateful-behaviour.html[http://wiremock.org/stateful-behaviour.html]
 
 Spring Cloud Contract Verifier will also generate tests with guaranteed order of execution.
+
+==== Stubs and transitive dependencies
+
+The Maven and Gradle plugin that we're created are adding the tasks that create the stubs jar for you. What can be problematic
+is that when reusing the stubs you can by mistake import all of that stub dependencies! When building a Maven artifact
+even though you have a couple of different jars, all of them share one pom:
+
+[source,bash,indent=0]
+----
+├── github-webhook-0.0.1.BUILD-20160903.075506-1-stubs.jar
+├── github-webhook-0.0.1.BUILD-20160903.075506-1-stubs.jar.sha1
+├── github-webhook-0.0.1.BUILD-20160903.075655-2-stubs.jar
+├── github-webhook-0.0.1.BUILD-20160903.075655-2-stubs.jar.sha1
+├── github-webhook-0.0.1.BUILD-SNAPSHOT.jar
+├── github-webhook-0.0.1.BUILD-SNAPSHOT.pom
+├── github-webhook-0.0.1.BUILD-SNAPSHOT-stubs.jar
+├── ...
+└── ...
+----
+
+There are three possibilities of working with those dependencies so as not to have any issues with transitive dependencies.
+
+*Mark all application dependencies as optional*
+
+If in the `github-webhook` application we would mark all of our dependencies as optional, when you include the
+`github-webhook` stubs in another application (or when that dependency gets downloaded by Stub Runner) then, since
+all of the depenencies are optional, they will not get downloaded.
+
+*Create a separate artifactid for stubs*
+
+If you create a separate artifactid then you can set it up in whatever way you wish. For example by having no dependencies at all.
+
+*Exclude dependencies on the consumer side*
+
+As a consumer, if you add the stub dependency to your classpath you can explicitly exclude the unwanted dependencies.
