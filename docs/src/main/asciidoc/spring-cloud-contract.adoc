@@ -1,5 +1,6 @@
 :toc: left
 :toclevels: 8
+:nofooter:
 
 = Spring Cloud Contract
 
