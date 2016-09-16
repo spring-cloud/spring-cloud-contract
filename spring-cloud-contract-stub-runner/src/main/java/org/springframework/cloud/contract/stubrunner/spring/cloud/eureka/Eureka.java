@@ -52,11 +52,12 @@ public class Eureka {
 	final EurekaClientConfigBean clientConfig;
 	final EurekaTransport transport;
 
-	public Eureka(InetUtils inetUtils, CloudEurekaClient eurekaClient) {
+	public Eureka(InetUtils inetUtils, EurekaClientConfigBean eurekaClientConfigBean, CloudEurekaClient eurekaClient) {
 		this.inetUtils = inetUtils;
 		this.eurekaClient = eurekaClient;
 		this.clientConfig = new EurekaClientConfigBean();
 		this.clientConfig.setRegisterWithEureka(false); // turn off registering with eureka, let apps send heartbeats.
+		this.clientConfig.setServiceUrl(eurekaClientConfigBean.getServiceUrl());
 		this.transport = createTransport();
 	}
 
