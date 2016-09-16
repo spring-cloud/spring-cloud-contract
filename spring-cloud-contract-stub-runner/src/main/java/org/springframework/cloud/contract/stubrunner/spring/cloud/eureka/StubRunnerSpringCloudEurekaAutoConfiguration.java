@@ -28,6 +28,7 @@ import org.springframework.cloud.contract.stubrunner.spring.cloud.StubsRegistrar
 import org.springframework.cloud.netflix.eureka.CloudEurekaClient;
 import org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration;
 import org.springframework.cloud.netflix.eureka.EurekaClientConfigBean;
+import org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,13 +53,14 @@ public class StubRunnerSpringCloudEurekaAutoConfiguration {
 
 	@Bean(initMethod = "registerStubs")
 	public StubsRegistrar stubsRegistrar(StubRunning stubRunning, Eureka eureka,
-			StubMapperProperties stubMapperProperties) {
-		return new EurekaStubsRegistrar(stubRunning, eureka, stubMapperProperties);
+			StubMapperProperties stubMapperProperties, InetUtils inetUtils, EurekaInstanceConfigBean eurekaInstanceConfigBean) {
+		return new EurekaStubsRegistrar(stubRunning, eureka, stubMapperProperties, inetUtils, eurekaInstanceConfigBean);
 	}
 
 	@Bean(name = "eurekaRegistrar")
 	public Eureka eureka(InetUtils inetUtils, ApplicationInfoManager manager,
-			EurekaClientConfig config, ApplicationContext applicationContext, EurekaClientConfigBean eurekaClientConfigBean) {
+			EurekaClientConfig config, ApplicationContext applicationContext,
+			EurekaClientConfigBean eurekaClientConfigBean) {
 		return new Eureka(inetUtils, eurekaClientConfigBean, new CloudEurekaClient(manager, config, applicationContext));
 	}
 }

@@ -7,10 +7,12 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubRunning;
 import org.springframework.cloud.contract.stubrunner.spring.cloud.StubMapperProperties;
 import org.springframework.cloud.contract.stubrunner.spring.cloud.StubsRegistrar;
+import org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean;
 import org.springframework.util.StringUtils;
 
 /**
@@ -27,23 +29,32 @@ public class EurekaStubsRegistrar implements StubsRegistrar {
 	private final StubRunning stubRunning;
 	private final Eureka eurekaClient;
 	private final StubMapperProperties stubMapperProperties;
+	private final InetUtils inetUtils;
+	private final EurekaInstanceConfigBean eurekaInstanceConfigBean;
 	private final List<Renewer> discoveryList = new LinkedList<>();
 
 	public EurekaStubsRegistrar(StubRunning stubRunning, Eureka eureka,
-			StubMapperProperties stubMapperProperties) {
+			StubMapperProperties stubMapperProperties, InetUtils inetUtils,
+			EurekaInstanceConfigBean eurekaInstanceConfigBean) {
 		this.stubRunning = stubRunning;
 		this.stubMapperProperties = stubMapperProperties;
 		this.eurekaClient = eureka;
+		this.inetUtils = inetUtils;
+		this.eurekaInstanceConfigBean = eurekaInstanceConfigBean;
 	}
 
 	@Override public void registerStubs() {
 		Map<StubConfiguration, Integer> activeStubs = this.stubRunning.runStubs()
 				.validNamesAndPorts();
 		for (Map.Entry<StubConfiguration, Integer> entry : activeStubs.entrySet()) {
-			Application application = new Application(name(entry.getKey()), entry.getKey().getArtifactId(), "localhost", entry.getValue());
+			Application application = new Application(name(entry.getKey()), entry.getKey().getArtifactId(),
+					StringUtils.hasText(this.eurekaInstanceConfigBean.getHostname()) ?
+							this.eurekaInstanceConfigBean.getHostname() :
+							this.inetUtils.findFirstNonLoopbackAddress().getHostName(), entry.getValue());
 			try {
 				Registration register = this.eurekaClient.register(application);
-				this.discoveryList.add(new Renewer(this.eurekaClient.clientConfig.getInstanceInfoReplicationIntervalSeconds() / 2, this.eurekaClient, register));
+				this.discoveryList.add(new Renewer(
+						this.eurekaClient.clientConfig.getInstanceInfoReplicationIntervalSeconds() / 2, this.eurekaClient, register));
 				if (log.isDebugEnabled()) {
 					log.debug("Successfully registered stub [" + entry.getKey().toColonSeparatedDependencyNotation()
 							+ "] in Service Discovery");
