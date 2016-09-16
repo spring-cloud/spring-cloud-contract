@@ -42,10 +42,16 @@
 
 		<!-- tag::verifier_test_dependencies[] -->
 		<dependency>
-		<groupId>org.springframework.cloud</groupId>
-		<artifactId>spring-cloud-starter-contract-verifier</artifactId>
-		<scope>test</scope>
-	</dependency>
+		   <groupId>org.springframework.cloud</groupId>
+		   <artifactId>spring-cloud-starter-contract-verifier</artifactId>
+		   <scope>test</scope>
+	   </dependency>
+		<dependency>
+			<groupId>com.example</groupId>
+			<artifactId>shared-contracts</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>
 		<!-- end::verifier_test_dependencies[] -->
 	</dependencies>
 
@@ -74,10 +80,27 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-maven-plugin</artifactId>
 				<version>${spring-cloud-contract.version}</version>
-				<extensions>true</extensions>
+				<extensions>false</extensions>
+				<executions>
+					<execution>
+						<id>convert-stubs</id>
+						<phase>process-test-resources</phase>
+						<goals>
+							<goal>convert</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>generate-tests</id>
+						<phase>generate-test-sources</phase>
+						<goals>
+							<goal>generateTests</goal>
+						</goals>
+					</execution>
+				</executions>
 				<configuration>
 					<baseClassForTests>com.example.fraud.MvcTest</baseClassForTests>
 				</configuration>
+
 			</plugin>
 			<!-- end::contract_maven_plugin[] -->
 			<plugin>
