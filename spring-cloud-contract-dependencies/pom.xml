@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>spring-cloud-dependencies-parent</artifactId>
 		<groupId>org.springframework.cloud</groupId>
-		<version>1.2.0.BUILD-SNAPSHOT</version>
+		<version>1.2.1.BUILD-SNAPSHOT</version>
         <relativePath/>
 	</parent>
 	<artifactId>spring-cloud-contract-dependencies</artifactId>
@@ -17,10 +17,6 @@
 		<wiremock.version>2.1.7</wiremock.version>
 		<jsonassert.version>0.4.7</jsonassert.version>
 		<aether.version>1.0.2.v20150114</aether.version>
-		<spring-cloud-stream.version>Brooklyn.BUILD-SNAPSHOT</spring-cloud-stream.version>
-		<spring-cloud-zookeeper.version>1.0.3.BUILD-SNAPSHOT</spring-cloud-zookeeper.version>
-		<spring-cloud-netflix.version>1.2.0.BUILD-SNAPSHOT</spring-cloud-netflix.version>
-		<spring-cloud-consul.version>1.1.0.BUILD-SNAPSHOT</spring-cloud-consul.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -104,24 +100,19 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>com.jayway.restassured</groupId>
-				<artifactId>spring-mock-mvc</artifactId>
-				<version>2.9.0</version>
-			</dependency>
-			<dependency>
 				<groupId>com.toomuchcoding.jsonassert</groupId>
 				<artifactId>jsonassert</artifactId>
 				<version>${jsonassert.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>com.jayway.restassured</groupId>
+				<artifactId>spring-mock-mvc</artifactId>
+				<version>2.9.0</version>
+			</dependency>
+			<dependency>
 				<groupId>org.skyscreamer</groupId>
 				<artifactId>jsonassert</artifactId>
 				<version>1.2.3</version>
-			</dependency>
-			<dependency>
-				<groupId>args4j</groupId>
-				<artifactId>args4j</artifactId>
-				<version>2.32</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.aether</groupId>
@@ -152,34 +143,6 @@
 				<groupId>org.apache.maven</groupId>
 				<artifactId>maven-aether-provider</artifactId>
 				<version>3.2.1</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-netflix-dependencies</artifactId>
-				<version>${spring-cloud-netflix.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-stream-dependencies</artifactId>
-				<version>${spring-cloud-stream.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-zookeeper-dependencies</artifactId>
-				<version>${spring-cloud-zookeeper.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-consul-dependencies</artifactId>
-				<version>${spring-cloud-consul.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
