@@ -81,6 +81,7 @@ test {
 		exceptionFormat = 'full'
 	}
 	systemProperties = testSystemProperties
+	enabled = !project.hasProperty('fast')
 }
 
 groovydoc {
