@@ -255,8 +255,6 @@ org.springframework.cloud.contract.spec.Contract.make {
 ----
 
 
-
-
 ==== Messaging Top-Level Elements
 
 The DSL for messaging looks a little bit different than the one that focuses on HTTP.
