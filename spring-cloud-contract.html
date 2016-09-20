@@ -658,6 +658,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ul>
 </li>
 <li><a href="#_jax_rs_support">JAX-RS support</a></li>
+<li><a href="#_async_support">Async support</a></li>
 <li><a href="#_messaging_top_level_elements">Messaging Top-Level Elements</a>
 <ul class="sectlevel4">
 <li><a href="#_output_triggered_by_a_method">Output triggered by a method</a></li>
@@ -5366,6 +5367,29 @@ in the configuration. Please see the examples below:</p>
   DocumentContext parsedJson = JsonPath.parse(responseAsString);
   assertThatJson(parsedJson).field("property1").isEqualTo("a");
 '''</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_async_support">Async support</h4>
+<div class="paragraph">
+<p>If you&#8217;re using asynchronous communication on the server side (your controllers are returning
+<code>Callable</code>, <code>DeferredResult</code> etc. then inside your contract you have to provide in the <code>response</code>
+section a <code>async()</code> method. Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
+    request {
+        method 'GET'
+        url '/get'
+    }
+    response {
+        status 200
+        body 'Passed'
+        async()
+    }
+}</code></pre>
 </div>
 </div>
 </div>
