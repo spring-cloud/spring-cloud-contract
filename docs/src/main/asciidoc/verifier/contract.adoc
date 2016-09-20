@@ -233,6 +233,30 @@ Example of a test API generated:
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/JaxRsClientMethodBuilderSpec.groovy[tags=jaxrs,indent=0]
 ----
 
+==== Async support
+
+If you're using asynchronous communication on the server side (your controllers are returning
+`Callable`, `DeferredResult` etc. then inside your contract you have to provide in the `response`
+section a `async()` method. Example:
+
+[source,groovy,indent=0]
+----
+org.springframework.cloud.contract.spec.Contract.make {
+    request {
+        method 'GET'
+        url '/get'
+    }
+    response {
+        status 200
+        body 'Passed'
+        async()
+    }
+}
+----
+
+
+
+
 ==== Messaging Top-Level Elements
 
 The DSL for messaging looks a little bit different than the one that focuses on HTTP.
