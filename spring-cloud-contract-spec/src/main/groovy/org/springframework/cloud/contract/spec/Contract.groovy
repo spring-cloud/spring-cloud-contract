@@ -47,7 +47,7 @@ class Contract {
 	/**
 	 * Factory method to create the DSL
 	 */
-	static Contract make(Closure closure) {
+	static Contract make(@DelegatesTo(Contract) Closure closure) {
 		Contract dsl = new Contract()
 		closure.delegate = dsl
 		closure()
