@@ -134,5 +134,13 @@ public class PluginUnitTest {
 		assertFilesPresent(basedir, "target/sample-project-0.1-foo.jar");
 	}
 
+	@Test
+	public void shouldGenerateTheStubsByDownloadingThemFromARepo() throws Exception {
+		File basedir = this.resources.getBasedir("basic-remote-contracts");
+		this.maven.executeMojo(basedir, "convert");
+		assertFilesPresent(basedir, "target/stubs/mappings/Sample.json");
+		assertFilesNotPresent(basedir, "target/stubs/mappings/Messaging.json");
+	}
+
 
 }

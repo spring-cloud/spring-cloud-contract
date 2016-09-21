@@ -16,6 +16,7 @@
 package org.springframework.cloud.contract.maven.verifier;
 
 import java.io.File;
+import java.util.Map;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -27,9 +28,13 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
+import org.springframework.cloud.contract.stubrunner.AetherStubDownloader;
+import org.springframework.cloud.contract.stubrunner.StubConfiguration;
+import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverter;
 import org.springframework.cloud.contract.verifier.wiremock.RecursiveFilesConverter;
+import org.springframework.util.StringUtils;
 
 /**
  * Convert Spring Cloud Contract Verifier contracts into WireMock stubs mappings.
@@ -72,6 +77,9 @@ public class ConvertMojo extends AbstractMojo {
 
 	@Parameter(defaultValue = "${project}", readonly = true) private MavenProject project;
 
+	@Parameter
+	private DownloadContracts downloadContracts;
+
 	@Component(role = MavenResourcesFiltering.class, hint = "default")
 	private MavenResourcesFiltering mavenResourcesFiltering;
 
@@ -83,9 +91,15 @@ public class ConvertMojo extends AbstractMojo {
 					this.skip));
 			return;
 		}
+		// download contracts, unzip them and pass as output directory
+		File contractsDirectory = this.contractsDirectory;
+		if (this.downloadContracts != null) {
+			contractsDirectory = unpackedDownloadedContracts();
+		}
+		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 
 		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering)
-				.copy(this.contractsDirectory, this.outputDirectory);
+				.copy(contractsDirectory, this.outputDirectory);
 
 		final ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
 		config.setContractsDslDir(isInsideProject() ? this.contractsDirectory : this.source);
@@ -103,6 +117,34 @@ public class ConvertMojo extends AbstractMojo {
 		RecursiveFilesConverter converter = new RecursiveFilesConverter(
 				new DslToWireMockClientConverter(), config);
 		converter.processFiles();
+	}
+
+	private File unpackedDownloadedContracts() {
+		AetherStubDownloader stubDownloader = new AetherStubDownloader(
+				new StubRunnerOptionsBuilder()
+						.withStubRepositoryRoot(this.downloadContracts.getRepositoryUrl())
+						.withWorkOffline(false)
+						.build());
+		StubConfiguration stubConfiguration = stubConfiguration();
+		getLog().info("Download contracts section present. Will download stubs for [" + stubConfiguration + "]");
+		Map.Entry<StubConfiguration, File> unpackedContractStubs = stubDownloader
+				.downloadAndUnpackStubJar(null, stubConfiguration);
+		if (unpackedContractStubs.getValue() == null) {
+			throw new IllegalStateException("The stubs failed to be downloaded!");
+		}
+		return unpackedContractStubs.getValue();
+	}
+
+	private StubConfiguration stubConfiguration() {
+		String groupId = this.downloadContracts.getGroupId();
+		String artifactId = this.downloadContracts.getArtifactId();
+		String version = this.downloadContracts.getVersion();
+		String classifier = this.downloadContracts.getClassifier();
+		String ivy = this.downloadContracts.getIvy();
+		if (StringUtils.hasText(ivy)) {
+			return new StubConfiguration(ivy);
+		}
+		return new StubConfiguration(groupId, artifactId, version, classifier);
 	}
 
 	private boolean isInsideProject() {
