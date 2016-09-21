@@ -18,7 +18,7 @@ package org.springframework.cloud.contract.verifier.dsl.wiremock
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 
 import com.github.tomakehurst.wiremock.http.ResponseDefinition
@@ -41,7 +41,7 @@ class WireMockStubStrategy {
 	private final ContractMetadata contract
 	private final String rootName
 
-	WireMockStubStrategy(String rootName, ContractMetadata contract, org.springframework.cloud.contract.spec.Contract groovyDsl) {
+	WireMockStubStrategy(String rootName, ContractMetadata contract, Contract groovyDsl) {
 		this.rootName = rootName
 		this.contract = contract
 		this.wireMockRequestStubStrategy = new WireMockRequestStubStrategy(groovyDsl)
