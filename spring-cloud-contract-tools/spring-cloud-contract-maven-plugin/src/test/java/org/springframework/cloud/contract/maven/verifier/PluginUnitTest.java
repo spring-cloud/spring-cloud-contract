@@ -137,10 +137,15 @@ public class PluginUnitTest {
 	@Test
 	public void shouldGenerateTheStubsByDownloadingThemFromARepo() throws Exception {
 		File basedir = this.resources.getBasedir("basic-remote-contracts");
-		this.maven.executeMojo(basedir, "convert");
-		assertFilesPresent(basedir, "target/stubs/mappings/Sample.json");
-		assertFilesNotPresent(basedir, "target/stubs/mappings/Messaging.json");
+		this.maven.executeMojo(basedir, "convert", newParameter("contractsRepositoryUrl", "file://" + PluginUnitTest.class.getClassLoader().getResource("m2repo/repository").getFile()));
+		assertFilesPresent(basedir, "target/stubs/mappings/com/example/server/client1/contracts/shouldMarkClientAsFraud.json");
 	}
 
+	@Test
+	public void shouldGenerateTheStubsByDownloadingThemFromARepoWhenCustomPathIsProvided() throws Exception {
+		File basedir = this.resources.getBasedir("complex-remote-contracts");
+		this.maven.executeMojo(basedir, "convert", newParameter("contractsRepositoryUrl", "file://" + PluginUnitTest.class.getClassLoader().getResource("m2repo/repository").getFile()));
+		assertFilesPresent(basedir, "target/stubs/mappings/com/example/server/client1/contracts/shouldMarkClientAsFraud.json");
+	}
 
 }

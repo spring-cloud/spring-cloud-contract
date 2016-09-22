@@ -16,19 +16,17 @@
 
 package org.springframework.cloud.contract.verifier.file
 
+import com.google.common.collect.ArrayListMultimap
+import com.google.common.collect.ListMultimap
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
+import org.apache.commons.lang3.SystemUtils
 
 import java.nio.file.FileSystem
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.PathMatcher
 import java.util.regex.Pattern
-
-import org.apache.commons.lang3.SystemUtils
-
-import com.google.common.collect.ArrayListMultimap
-import com.google.common.collect.ListMultimap
-
 /**
  * Scans the provided file path for the DSLs. There's a possibility to provide
  * inclusion and exclusion filters.
@@ -38,6 +36,7 @@ import com.google.common.collect.ListMultimap
  * @since 1.0.0
  */
 @CompileStatic
+@Slf4j
 class ContractFileScanner {
 
 	private static final String MATCH_PREFIX = "glob:"
@@ -45,11 +44,13 @@ class ContractFileScanner {
 	private final File baseDir
 	private final Set<PathMatcher> excludeMatchers
 	private final Set<PathMatcher> ignoreMatchers
+	private final String includeMatcher
 
-	ContractFileScanner(File baseDir, Set<String> excluded, Set<String> ignored) {
+	ContractFileScanner(File baseDir, Set<String> excluded, Set<String> ignored, String includeMatcher = "") {
 		this.baseDir = baseDir
-		excludeMatchers = processPatterns(excluded ?: [] as Set<String>)
-		ignoreMatchers = processPatterns(ignored ?: [] as Set<String>)
+		this.excludeMatchers = processPatterns(excluded ?: [] as Set<String>)
+		this.ignoreMatchers = processPatterns(ignored ?: [] as Set<String>)
+		this.includeMatcher = includeMatcher
 	}
 
 	private Set<PathMatcher> processPatterns(Set<String> patterns) {
@@ -79,8 +80,11 @@ class ContractFileScanner {
 			return;
 		}
 		files.sort().eachWithIndex { File file, int index ->
-			if (!matchesPattern(file, excludeMatchers)) {
-				if (isContractFile(file)) {
+			boolean excluded = matchesPattern(file, excludeMatchers)
+			if (!excluded) {
+				boolean contractFile = isContractFile(file);
+				boolean included = includeMatcher ? file.absolutePath.matches(includeMatcher) : true
+				if (contractFile && included) {
 					Path path = file.toPath()
 					Integer order = null
 					if (hasScenarioFilenamePattern(path)) {
@@ -89,6 +93,13 @@ class ContractFileScanner {
 					result.put(file.parentFile.toPath(), new ContractMetadata(path, matchesPattern(file, ignoreMatchers), files.size(), order))
 				} else {
 					appendRecursively(file, result)
+					if (log.isDebugEnabled()) {
+						log.debug("File [$file] is ignored. Is a contract file? [$contractFile]. Should be included by pattern? [$included]")
+					}
+				}
+			} else {
+				if (log.isDebugEnabled()) {
+					log.debug("File [$file] is ignored. Should be excluded? [$excluded]")
 				}
 			}
 		}
@@ -98,8 +109,8 @@ class ContractFileScanner {
 		return SCENARIO_STEP_FILENAME_PATTERN.matcher(path.fileName.toString()).matches()
 	}
 
-	private boolean matchesPattern(File file, Set<PathMatcher> excludeMatchers) {
-		for (PathMatcher matcher : excludeMatchers) {
+	private boolean matchesPattern(File file, Set<PathMatcher> matchers) {
+		for (PathMatcher matcher : matchers) {
 			if (matcher.matches(file.toPath())) {
 				return true;
 			}

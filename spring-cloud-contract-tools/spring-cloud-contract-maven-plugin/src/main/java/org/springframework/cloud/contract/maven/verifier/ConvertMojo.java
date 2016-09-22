@@ -16,9 +16,10 @@
 package org.springframework.cloud.contract.maven.verifier;
 
 import java.io.File;
-import java.util.Map;
+import javax.inject.Inject;
 
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -28,7 +29,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
+import org.eclipse.aether.RepositorySystemSession;
+import org.springframework.cloud.contract.maven.verifier.stubrunner.AetherStubDownloaderFactory;
 import org.springframework.cloud.contract.stubrunner.AetherStubDownloader;
+import org.springframework.cloud.contract.stubrunner.ContractDownloader;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
@@ -44,6 +48,11 @@ import org.springframework.util.StringUtils;
 @Mojo(name = "convert", requiresProject = false,
 		defaultPhase = LifecyclePhase.PROCESS_TEST_RESOURCES)
 public class ConvertMojo extends AbstractMojo {
+
+	private static final String LATEST_VERSION = "+";
+
+	@Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
+	private RepositorySystemSession repoSession;
 
 	/**
 	 * Directory containing Spring Cloud Contract Verifier contracts written using the GroovyDSL
@@ -77,11 +86,42 @@ public class ConvertMojo extends AbstractMojo {
 
 	@Parameter(defaultValue = "${project}", readonly = true) private MavenProject project;
 
-	@Parameter
-	private DownloadContracts downloadContracts;
+	/**
+	 * The URL from which a JAR containing the contracts should get downloaded. If not provided
+	 * but artifactid / coordinates notation was provided then the current Maven's build repositories will be
+	 * taken into consideration
+	 */
+	@Parameter(property = "contractsRepositoryUrl")
+	private String contractsRepositoryUrl;
+
+	@Parameter(property = "contractDependency")
+	private Dependency contractDependency;
+
+	/**
+	 * The path in the JAR with all the contracts where contracts for this particular service lay.
+	 * If not provided will be resolved to {@code groupid/artifactid}. Example:
+	 * </p>
+	 * If {@code groupid} is {@code com.example} and {@code artifactid} is {@code service} then the resolved path will be
+	 * {@code /com/example/artifactid}
+	 */
+	@Parameter(property = "contractsPath")
+	private String contractsPath;
+
+	/**
+	 * If {@code true} then JAR with contracts will be taken from local maven repository
+	 */
+	@Parameter(property = "contractsWorkOffline", defaultValue = "false")
+	private boolean contractsWorkOffline;
 
 	@Component(role = MavenResourcesFiltering.class, hint = "default")
 	private MavenResourcesFiltering mavenResourcesFiltering;
+
+	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
+
+	@Inject
+	public ConvertMojo(AetherStubDownloaderFactory aetherStubDownloaderFactory) {
+		this.aetherStubDownloaderFactory = aetherStubDownloaderFactory;
+	}
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
@@ -93,16 +133,19 @@ public class ConvertMojo extends AbstractMojo {
 		}
 		// download contracts, unzip them and pass as output directory
 		File contractsDirectory = this.contractsDirectory;
-		if (this.downloadContracts != null) {
-			contractsDirectory = unpackedDownloadedContracts();
+		final ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
+		if (shouldDownloadContracts()) {
+			ContractDownloader contractDownloader = new ContractDownloader(stubDownloader(), stubConfiguration(),
+					this.contractsPath, this.project.getGroupId(), this.project.getArtifactId());
+			contractsDirectory = contractDownloader.unpackedDownloadedContracts(config);
 		}
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 
 		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering)
 				.copy(contractsDirectory, this.outputDirectory);
 
-		final ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
-		config.setContractsDslDir(isInsideProject() ? this.contractsDirectory : this.source);
+
+		config.setContractsDslDir(isInsideProject() ? contractsDirectory : this.source);
 		config.setStubsOutputDir(
 				isInsideProject() ? new File(this.outputDirectory, "mappings") : this.destination);
 
@@ -114,41 +157,41 @@ public class ConvertMojo extends AbstractMojo {
 		getLog().info(String.format("WireMock stubs mappings directory: %s",
 				config.getStubsOutputDir()));
 
+
 		RecursiveFilesConverter converter = new RecursiveFilesConverter(
 				new DslToWireMockClientConverter(), config);
 		converter.processFiles();
 	}
 
-	private File unpackedDownloadedContracts() {
-		AetherStubDownloader stubDownloader = new AetherStubDownloader(
-				new StubRunnerOptionsBuilder()
-						.withStubRepositoryRoot(this.downloadContracts.getRepositoryUrl())
-						.withWorkOffline(false)
-						.build());
-		StubConfiguration stubConfiguration = stubConfiguration();
-		getLog().info("Download contracts section present. Will download stubs for [" + stubConfiguration + "]");
-		Map.Entry<StubConfiguration, File> unpackedContractStubs = stubDownloader
-				.downloadAndUnpackStubJar(null, stubConfiguration);
-		if (unpackedContractStubs.getValue() == null) {
-			throw new IllegalStateException("The stubs failed to be downloaded!");
+	private AetherStubDownloader stubDownloader() {
+		if (StringUtils.hasText(this.contractsRepositoryUrl) || this.contractsWorkOffline) {
+			getLog().info("Will download contracts from [" + this.contractsRepositoryUrl + "]. "
+					+ "Work offline switch equals to [" + this.contractsWorkOffline + "]");
+			return new AetherStubDownloader(
+					new StubRunnerOptionsBuilder()
+							.withStubRepositoryRoot(this.contractsRepositoryUrl)
+							.withWorkOffline(this.contractsWorkOffline)
+							.build());
 		}
-		return unpackedContractStubs.getValue();
+		getLog().info("Will download contracts using current build's Maven repository setup");
+		return this.aetherStubDownloaderFactory.build(this.repoSession);
 	}
 
 	private StubConfiguration stubConfiguration() {
-		String groupId = this.downloadContracts.getGroupId();
-		String artifactId = this.downloadContracts.getArtifactId();
-		String version = this.downloadContracts.getVersion();
-		String classifier = this.downloadContracts.getClassifier();
-		String ivy = this.downloadContracts.getIvy();
-		if (StringUtils.hasText(ivy)) {
-			return new StubConfiguration(ivy);
-		}
+		String groupId = this.contractDependency.getGroupId();
+		String artifactId = this.contractDependency.getArtifactId();
+		String version = StringUtils.hasText(this.contractDependency.getVersion()) ?
+				this.contractDependency.getVersion() : LATEST_VERSION;
+		String classifier = this.contractDependency.getClassifier();
 		return new StubConfiguration(groupId, artifactId, version, classifier);
 	}
 
 	private boolean isInsideProject() {
 		return this.mavenSession.getRequest().isProjectPresent();
+	}
+
+	private boolean shouldDownloadContracts() {
+		return this.contractDependency != null && StringUtils.hasText(this.contractDependency.getArtifactId());
 	}
 
 }
