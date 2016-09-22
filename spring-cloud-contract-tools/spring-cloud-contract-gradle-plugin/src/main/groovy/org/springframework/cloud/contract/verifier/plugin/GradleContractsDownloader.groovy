@@ -47,7 +47,9 @@ class GradleContractsDownloader {
 	}
 
 	private boolean shouldDownloadContracts(ContractVerifierExtension extension) {
-		return StringUtils.hasText(extension.contractDependency.artifactId)
+		return StringUtils.hasText(extension.contractsRepositoryUrl) &&
+				(StringUtils.hasText(extension.contractDependency.artifactId) ||
+						StringUtils.hasText(extension.contractDependency.stringNotation))
 	}
 
 	private ContractDownloader contractDownloader(ContractVerifierExtension extension, StubConfiguration configuration) {
@@ -71,7 +73,9 @@ class GradleContractsDownloader {
 		String classifier = contractDependency.classifier
 		String stringNotation = contractDependency.stringNotation
 		if (StringUtils.hasText(stringNotation)) {
-			return new StubConfiguration(stringNotation)
+			StubConfiguration stubConfiguration = new StubConfiguration(stringNotation)
+			return new StubConfiguration(stubConfiguration.groupId, stubConfiguration.artifactId,
+					stubConfiguration.version, contractDependency.classifier)
 		}
 		return new StubConfiguration(groupId, artifactId, version, classifier)
 	}

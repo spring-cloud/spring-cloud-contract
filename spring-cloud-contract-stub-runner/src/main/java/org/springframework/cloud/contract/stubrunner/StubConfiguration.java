@@ -124,6 +124,10 @@ public class StubConfiguration {
 		return this.classifier;
 	}
 
+	public String getVersion() {
+		return this.version;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

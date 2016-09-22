@@ -65,7 +65,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		GradleContractsDownloader downloader = new GradleContractsDownloader(this.project, this.project.logger)
 		project.check.dependsOn(GENERATE_SERVER_TESTS_TASK_NAME)
 		setConfigurationDefaults(extension)
-		createGenerateTestsTask(extension)
+		createGenerateTestsTask(downloader, extension)
 		createAndConfigureGenerateWireMockClientStubsFromDslTask(downloader, extension)
 		Task stubsJar = createAndConfigureStubsJarTasks(extension)
 		createAndConfigureCopyContractsTask(stubsJar, downloader, extension)
@@ -107,12 +107,13 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		return project.file("${project.rootDir}/src/test/resources/contracts")
 	}
 
-	private void createGenerateTestsTask(ContractVerifierExtension extension) {
+	private void createGenerateTestsTask(GradleContractsDownloader downloader,
+										 ContractVerifierExtension extension) {
 		Task task = project.tasks.create(GENERATE_SERVER_TESTS_TASK_NAME, GenerateServerTestsTask)
 		task.description = "Generate server tests from the contracts"
 		task.group = GROUP_NAME
 		task.conventionMapping.with {
-			contractsDslDir = { extension.contractsDslDir }
+			contractsDslDir = { downloader.downloadAndUnpackContractsIfRequired(extension) }
 			generatedTestSourcesDir = { extension.generatedTestSourcesDir }
 			configProperties = { extension }
 		}

@@ -52,23 +52,9 @@ subprojects {
 
 configure([project(':fraudDetectionService'), project(':loanApplicationService')]) {
 	apply plugin: 'spring-boot'
-	apply plugin: 'spring-cloud-contract'
 	apply plugin: 'maven-publish'
 
-	ext {
-		contractsDir = file("mappings")
-		stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
-	}
 	ext['jetty.version'] = '9.2.17.v20160517'
-
-	contracts {
-		targetFramework = 'Spock'
-		testMode = 'JaxRsClient'
-		baseClassForTests = 'org.springframework.cloud.MvcSpec'
-		contractsDslDir = file("${project.projectDir.absolutePath}/mappings/")
-		generatedTestSourcesDir = file("${project.buildDir}/generated-test-sources/")
-		stubsOutputDir = stubsOutputDirRoot
-	}
 
 	jar {
 		version = '0.0.1'
@@ -114,16 +100,38 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 
 configure(project(':fraudDetectionService')) {
 	test.dependsOn('generateWireMockClientStubs')
+
+	apply plugin: 'spring-cloud-contract'
+
+	ext {
+		contractsDir = file("mappings")
+		stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
+	}
+	ext['jetty.version'] = '9.2.17.v20160517'
+
+	contracts {
+		targetFramework = 'Spock'
+		testMode = 'JaxRsClient'
+		baseClassForTests = 'org.springframework.cloud.MvcSpec'
+		contractsRepositoryUrl = "file://" + file("${project.rootDir.absolutePath}/m2repo/repository").absolutePath
+		contractDependency {
+			stringNotation = "com.example:jersey-contracts"
+		}
+		generatedTestSourcesDir = file("${project.buildDir}/generated-test-sources/")
+		stubsOutputDir = stubsOutputDirRoot
+	}
 }
 
 configure(project(':loanApplicationService')) {
 
 	task copyCollaboratorStubs(type: Copy) {
 		File fraudBuildDir = project(':fraudDetectionService').buildDir
-		from(new File(fraudBuildDir, "/production/${project(':fraudDetectionService').name}-stubs/"))
-		into "src/test/resources/"
+		from(new File(fraudBuildDir, "/production/${project(':fraudDetectionService').name}-stubs/")) {
+			include '**/*.json'
+		}
+		into "src/test/resources/mappings"
 	}
 
-	generateContractTests.dependsOn('copyCollaboratorStubs')
+	test.dependsOn('copyCollaboratorStubs')
 }
 

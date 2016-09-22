@@ -45,6 +45,7 @@ class GenerateWireMockClientStubsFromDslTask extends ConventionTask {
 		logger.info("Spring Cloud Contract Verifier Plugin: Invoking DSL to WireMock client stubs conversion")
 		logger.debug("From '${getContractsDslDir()}' to '${getStubsOutputDir()}'")
 		ContractVerifierConfigProperties props = ExtensionToProperties.fromExtension(getConfigProperties())
+		props.contractsDslDir = getContractsDslDir()
 		File outMappingsDir = props.stubsOutputDir != null ? new File(props.stubsOutputDir, DEFAULT_MAPPINGS_FOLDER)
 				: new File(project.buildDir, "stubs/$DEFAULT_MAPPINGS_FOLDER")
 		RecursiveFilesConverter converter = new RecursiveFilesConverter(

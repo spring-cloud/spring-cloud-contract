@@ -23,6 +23,8 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.springframework.cloud.contract.spec.ContractVerifierException
 import org.springframework.cloud.contract.verifier.TestGenerator
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+
 /**
  * Task used to generate server side tests
  *
@@ -49,7 +51,9 @@ class GenerateServerTestsTask extends ConventionTask {
 
 		try {
 			//TODO: What with that? How to pass?
-			TestGenerator generator = new TestGenerator(ExtensionToProperties.fromExtension(getConfigProperties()))
+			ContractVerifierConfigProperties props = ExtensionToProperties.fromExtension(getConfigProperties())
+			props.contractsDslDir = getContractsDslDir()
+			TestGenerator generator = new TestGenerator(props)
 			int generatedClasses = generator.generate()
 			project.logger.info("Generated {} test classes", generatedClasses)
 		} catch (ContractVerifierException e) {
