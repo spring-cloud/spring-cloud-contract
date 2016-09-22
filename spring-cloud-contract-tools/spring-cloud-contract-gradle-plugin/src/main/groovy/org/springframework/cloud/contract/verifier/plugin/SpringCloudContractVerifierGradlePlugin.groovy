@@ -24,7 +24,6 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.tasks.Copy
 import org.gradle.jvm.tasks.Jar
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 /**
  * Gradle plugin for Spring Cloud Contract Verifier that from the DSL contract can
  * <ul>
@@ -62,14 +61,15 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	void apply(Project project) {
 		this.project = project
 		project.plugins.apply(GroovyPlugin)
-		ContractVerifierConfigProperties extension = project.extensions.create(EXTENSION_NAME, ContractVerifierConfigProperties)
+		ContractVerifierExtension extension = project.extensions.create(EXTENSION_NAME, ContractVerifierExtension)
+		GradleContractsDownloader downloader = new GradleContractsDownloader(this.project, this.project.logger)
 		project.check.dependsOn(GENERATE_SERVER_TESTS_TASK_NAME)
 		setConfigurationDefaults(extension)
 		createGenerateTestsTask(extension)
-		createAndConfigureGenerateWireMockClientStubsFromDslTask(extension)
+		createAndConfigureGenerateWireMockClientStubsFromDslTask(downloader, extension)
 		Task stubsJar = createAndConfigureStubsJarTasks(extension)
-		createAndConfigureCopyContractsTask(stubsJar, extension)
-		createAndConfigureMavenPublishPlugin(stubsJar, extension)
+		createAndConfigureCopyContractsTask(stubsJar, downloader, extension)
+		createAndConfigureMavenPublishPlugin(stubsJar)
 		addProjectDependencies(project)
 		addIdeaTestSources(project, extension)
 	}
@@ -94,11 +94,11 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		project.dependencies.add("testCompile", "org.assertj:assertj-core:2.3.0")
 	}
 
-	private void setConfigurationDefaults(ContractVerifierConfigProperties extension) {
+	private void setConfigurationDefaults(ContractVerifierExtension extension) {
 		extension.with {
-			generatedTestSourcesDir = project.file("${project.buildDir}/generated-test-sources/contracts")
-			contractsDslDir = defaultContractsDir() //TODO: Use sourceset
-			basePackageForTests = 'org.springframework.cloud.contract.verifier.tests'
+			generatedTestSourcesDir = generatedTestSourcesDir ?: project.file("${project.buildDir}/generated-test-sources/contracts")
+			contractsDslDir = contractsDslDir ?: defaultContractsDir() //TODO: Use sourceset
+			basePackageForTests = basePackageForTests ?: 'org.springframework.cloud.contract.verifier.tests'
 			stubsOutputDir = stubsOutputDir ?: project.file("${project.buildDir}/stubs")
 		}
 	}
@@ -107,7 +107,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		return project.file("${project.rootDir}/src/test/resources/contracts")
 	}
 
-	private void createGenerateTestsTask(ContractVerifierConfigProperties extension) {
+	private void createGenerateTestsTask(ContractVerifierExtension extension) {
 		Task task = project.tasks.create(GENERATE_SERVER_TESTS_TASK_NAME, GenerateServerTestsTask)
 		task.description = "Generate server tests from the contracts"
 		task.group = GROUP_NAME
@@ -118,18 +118,19 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		}
 	}
 
-	private void createAndConfigureGenerateWireMockClientStubsFromDslTask(ContractVerifierConfigProperties extension) {
+	private void createAndConfigureGenerateWireMockClientStubsFromDslTask(
+			GradleContractsDownloader downloader, ContractVerifierExtension extension) {
 		Task task = project.tasks.create(DSL_TO_WIREMOCK_CLIENT_TASK_NAME, GenerateWireMockClientStubsFromDslTask)
 		task.description = "Generate WireMock client stubs from the contracts"
 		task.group = GROUP_NAME
 		task.conventionMapping.with {
-			contractsDslDir = { extension.contractsDslDir }
+			contractsDslDir = { downloader.downloadAndUnpackContractsIfRequired(extension) }
 			stubsOutputDir = { extension.stubsOutputDir }
 			configProperties = { extension }
 		}
 	}
 
-	private Task createAndConfigureStubsJarTasks(ContractVerifierConfigProperties extension) {
+	private Task createAndConfigureStubsJarTasks(ContractVerifierExtension extension) {
 		Task task = stubsTask()
 		if (task) {
 			project.logger.info("Spring Cloud Contract Verifier Plugin: Stubs jar task was present - won't create one. Remember about adding it to artifacts as an archive!")
@@ -158,9 +159,11 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		}
 	}
 
-	private Task createAndConfigureCopyContractsTask(Task stubs, ContractVerifierConfigProperties extension) {
+	private Task createAndConfigureCopyContractsTask(Task stubs,
+													GradleContractsDownloader downloader,
+													ContractVerifierExtension extension) {
 		Task task = project.tasks.create(type: Copy, name: COPY_CONTRACTS_TASK_NAME) {
-			from { extension.contractsDslDir }
+			from { downloader.downloadAndUnpackContractsIfRequired(extension) }
 			into { extension.stubsOutputDir != null ?
 					project.file("${extension.stubsOutputDir}/contracts") : project.file("${project.buildDir}/stubs/contracts") }
 		}
@@ -170,7 +173,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		return task
 	}
 
-	private void createAndConfigureMavenPublishPlugin(Task stubsTask, ContractVerifierConfigProperties extension) {
+	private void createAndConfigureMavenPublishPlugin(Task stubsTask) {
 		if (!classIsOnClasspath("org.gradle.api.publish.maven.plugins.MavenPublishPlugin")) {
 			project.logger.debug("Maven Publish Plugin is not present - won't add default publication")
 			return

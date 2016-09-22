@@ -91,7 +91,7 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 	}
 
 	protected String[] checkAndPublishToMavenLocal() {
-		String[] args = ["check", "publishToMavenLocal", "--info"] as String[]
+		String[] args = ["check", "publishToMavenLocal", "--info", "--stacktrace"] as String[]
 		if (WORK_OFFLINE) args << "--offline"
 		return args
 	}

@@ -23,8 +23,6 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.springframework.cloud.contract.spec.ContractVerifierException
 import org.springframework.cloud.contract.verifier.TestGenerator
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
-
 /**
  * Task used to generate server side tests
  *
@@ -38,7 +36,7 @@ class GenerateServerTestsTask extends ConventionTask {
 	File generatedTestSourcesDir
 
 	//TODO: How to deal with @Input*, @Output* and that domain object?
-	ContractVerifierConfigProperties configProperties
+	ContractVerifierExtension configProperties
 
 	@TaskAction
 	void generate() {
@@ -51,7 +49,7 @@ class GenerateServerTestsTask extends ConventionTask {
 
 		try {
 			//TODO: What with that? How to pass?
-			TestGenerator generator = new TestGenerator(getConfigProperties())
+			TestGenerator generator = new TestGenerator(ExtensionToProperties.fromExtension(getConfigProperties()))
 			int generatedClasses = generator.generate()
 			project.logger.info("Generated {} test classes", generatedClasses)
 		} catch (ContractVerifierException e) {
