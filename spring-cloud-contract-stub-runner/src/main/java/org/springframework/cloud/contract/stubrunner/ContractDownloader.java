@@ -47,11 +47,17 @@ public class ContractDownloader {
 	 */
 	public File unpackedDownloadedContracts(ContractVerifierConfigProperties config) {
 		File contractsDirectory = unpackAndDownloadContracts();
+		updatePropertiesWithInclusion(contractsDirectory, config);
+		return contractsDirectory;
+	}
+
+	public ContractVerifierConfigProperties updatePropertiesWithInclusion(File contractsDirectory,
+			ContractVerifierConfigProperties config) {
 		String pattern = StringUtils.hasText(this.contractsPath) ? patternFromProperty(contractsDirectory) :
-					groupArtifactToPattern(contractsDirectory);
+				groupArtifactToPattern(contractsDirectory);
 		log.info("Pattern to pick contracts equals [" + pattern + "]");
 		config.setIncludedContracts(pattern);
-		return contractsDirectory;
+		return config;
 	}
 
 	private String patternFromProperty(File contractsDirectory) {

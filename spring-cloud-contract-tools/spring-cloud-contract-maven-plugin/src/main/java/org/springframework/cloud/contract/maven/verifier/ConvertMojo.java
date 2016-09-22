@@ -31,14 +31,9 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
 import org.eclipse.aether.RepositorySystemSession;
 import org.springframework.cloud.contract.maven.verifier.stubrunner.AetherStubDownloaderFactory;
-import org.springframework.cloud.contract.stubrunner.AetherStubDownloader;
-import org.springframework.cloud.contract.stubrunner.ContractDownloader;
-import org.springframework.cloud.contract.stubrunner.StubConfiguration;
-import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverter;
 import org.springframework.cloud.contract.verifier.wiremock.RecursiveFilesConverter;
-import org.springframework.util.StringUtils;
 
 /**
  * Convert Spring Cloud Contract Verifier contracts into WireMock stubs mappings.
@@ -48,8 +43,6 @@ import org.springframework.util.StringUtils;
 @Mojo(name = "convert", requiresProject = false,
 		defaultPhase = LifecyclePhase.PROCESS_TEST_RESOURCES)
 public class ConvertMojo extends AbstractMojo {
-
-	private static final String LATEST_VERSION = "+";
 
 	@Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
 	private RepositorySystemSession repoSession;
@@ -132,13 +125,10 @@ public class ConvertMojo extends AbstractMojo {
 			return;
 		}
 		// download contracts, unzip them and pass as output directory
-		File contractsDirectory = this.contractsDirectory;
-		final ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
-		if (shouldDownloadContracts()) {
-			ContractDownloader contractDownloader = new ContractDownloader(stubDownloader(), stubConfiguration(),
-					this.contractsPath, this.project.getGroupId(), this.project.getArtifactId());
-			contractsDirectory = contractDownloader.unpackedDownloadedContracts(config);
-		}
+		ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
+		File contractsDirectory = new MavenContractsDownloader(this.project, this.contractDependency,
+				this.contractsPath, this.contractsRepositoryUrl, this.contractsWorkOffline, getLog(),
+				this.aetherStubDownloaderFactory, this.repoSession).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 
 		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering)
@@ -163,35 +153,8 @@ public class ConvertMojo extends AbstractMojo {
 		converter.processFiles();
 	}
 
-	private AetherStubDownloader stubDownloader() {
-		if (StringUtils.hasText(this.contractsRepositoryUrl) || this.contractsWorkOffline) {
-			getLog().info("Will download contracts from [" + this.contractsRepositoryUrl + "]. "
-					+ "Work offline switch equals to [" + this.contractsWorkOffline + "]");
-			return new AetherStubDownloader(
-					new StubRunnerOptionsBuilder()
-							.withStubRepositoryRoot(this.contractsRepositoryUrl)
-							.withWorkOffline(this.contractsWorkOffline)
-							.build());
-		}
-		getLog().info("Will download contracts using current build's Maven repository setup");
-		return this.aetherStubDownloaderFactory.build(this.repoSession);
-	}
-
-	private StubConfiguration stubConfiguration() {
-		String groupId = this.contractDependency.getGroupId();
-		String artifactId = this.contractDependency.getArtifactId();
-		String version = StringUtils.hasText(this.contractDependency.getVersion()) ?
-				this.contractDependency.getVersion() : LATEST_VERSION;
-		String classifier = this.contractDependency.getClassifier();
-		return new StubConfiguration(groupId, artifactId, version, classifier);
-	}
-
 	private boolean isInsideProject() {
 		return this.mavenSession.getRequest().isProjectPresent();
-	}
-
-	private boolean shouldDownloadContracts() {
-		return this.contractDependency != null && StringUtils.hasText(this.contractDependency.getArtifactId());
 	}
 
 }
