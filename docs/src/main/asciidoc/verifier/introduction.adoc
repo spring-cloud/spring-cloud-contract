@@ -120,6 +120,9 @@ going through the process. CDC is all about communication.
 
 The https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-server[server side code is available here] and https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-client[the client side code here].
 
+TIP: In this case the ownership of the contracts lays on the producer side. It means that physically
+all the contract are present in the producer's repository
+
 ===== Technical note
 
 If using the *SNAPSHOT* / *Milestone* / *Release Candidate* versions please add the following section to your
@@ -721,3 +724,164 @@ Example of tests using production version of stubs
 ----
 
 You can pass those values also via properties from your deployment pipeline.
+
+===== Common repo with contracts
+
+Another way of storing contracts other than having them with the producer is keeping them in a common place.
+It can be related to security issues where the consumers can't clone the producer's code. Also if you keep
+contracts in a single place then you, as a producer, will know how many consumers you have and which
+consumer will you break with your local changes.
+
+* Repo structure *
+
+Let's assume that we have a producer with coordinates `com.example:server` and 3 consumers: `client1`,
+`client2`, `client3`. Then in the repository with common contracts you would have the following setup:
+
+[source,bash,indent=0]
+----
+└── com
+    └── example
+        └── server
+            ├── client1
+            │   └── expectation.groovy
+            ├── client2
+            │   └── expectation.groovy
+            ├── client3
+            │   └── expectation.groovy
+            └── pom-standalone.xml
+----
+
+As you can see the under the slash-delimited groupid `/` artifact id folder (`com/example/server`) you have
+expectations of the 3 consumers (`client1`, `client2` and `client3`). Expectations are the standard Groovy DSL
+contract files as described throughout this documentation. This repository has to produce a JAR file that maps
+one to one to the contents of the repo.
+
+Example of a `pom-standalone.xml`
+
+[source,xml,indent=0]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.example</groupId>
+	<artifactId>server</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<name>Server Stubs</name>
+	<description>POM used to install locally stubs for consumer side</description>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.4.0.BUILD-SNAPSHOT</version>
+		<relativePath />
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.8</java.version>
+		<spring-cloud-contract.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-contract.version>
+		<spring-cloud-dependencies.version>Camden.BUILD-SNAPSHOT</spring-cloud-dependencies.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-starter-contract-verifier</artifactId>
+		<scope>test</scope>
+	</dependency>
+	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud-dependencies.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<!-- tag::contract_maven_plugin[] -->
+			<plugin>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-contract-maven-plugin</artifactId>
+				<version>${spring-cloud-contract.version}</version>
+				<extensions>true</extensions>
+			</plugin>
+			<!-- end::contract_maven_plugin[] -->
+		</plugins>
+	</build>
+
+	<!-- tag::repos[] -->
+	<repositories>
+		<repository>
+			<id>spring-snapshots</id>
+			<name>Spring Snapshots</name>
+			<url>https://repo.spring.io/snapshot</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>spring-releases</id>
+			<name>Spring Releases</name>
+			<url>https://repo.spring.io/release</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>spring-snapshots</id>
+			<name>Spring Snapshots</name>
+			<url>https://repo.spring.io/snapshot</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>spring-releases</id>
+			<name>Spring Releases</name>
+			<url>https://repo.spring.io/release</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+</project>
+----
+
+* Workflow *
+
+The workflow would look similar to the one presented in the `Step by step guide to CDC`. The only difference
+ is that the producer doesn't own the contracts anymore. So the consumer and the producer have to work on
+ common contracts in a common repository.
