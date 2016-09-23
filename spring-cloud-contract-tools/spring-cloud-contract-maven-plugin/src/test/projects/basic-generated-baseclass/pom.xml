@@ -35,7 +35,7 @@
 					<packageWithBaseClasses>hello</packageWithBaseClasses>
 				</configuration>
 			</plugin>
-			<!-- tag::convention[] -->
+			<!-- end::convention[] -->
 		</plugins>
 	</build>
 
