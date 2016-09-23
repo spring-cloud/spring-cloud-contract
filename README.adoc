@@ -1234,7 +1234,7 @@ Example of tests using production version of stubs
 
 You can pass those values also via properties from your deployment pipeline.
 
-===== Common repo with contracts
+==== Common repo with contracts
 
 Another way of storing contracts other than having them with the producer is keeping them in a common place.
 It can be related to security issues where the consumers can't clone the producer's code. Also if you keep
@@ -1465,13 +1465,13 @@ It's using the assembly plugin in order to build the JAR with all the contracts.
 </assembly>
 ----
 
-*Workflow*
+===== Workflow
 
 The workflow would look similar to the one presented in the `Step by step guide to CDC`. The only difference
  is that the producer doesn't own the contracts anymore. So the consumer and the producer have to work on
  common contracts in a common repository.
 
-_Consumer_
+====== Consumer
 
 When the *consumer* wants to work on the contracts offline, instead of cloning the producer code, the
 consumer team clones the common repository, goes to the required producer's folder (e.g. `com/example/server`)
@@ -1479,7 +1479,7 @@ and runs `mvn clean install -DskipTests` to install locally the stubs converted 
 
 TIP: You need to have http://maven.apache.org/download.cgi[Maven installed locally]
 
-_Producer_
+====== Producer
 
 As a *producer* it's enough to alter the Spring Cloud Contract Verifier to provide the URL and the dependency
 of the JAR containing the contracts:
