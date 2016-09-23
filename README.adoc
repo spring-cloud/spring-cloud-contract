@@ -1241,7 +1241,7 @@ It can be related to security issues where the consumers can't clone the produce
 contracts in a single place then you, as a producer, will know how many consumers you have and which
 consumer will you break with your local changes.
 
-* Repo structure *
+===== Repo structure
 
 Let's assume that we have a producer with coordinates `com.example:server` and 3 consumers: `client1`,
 `client2`, `client3`. Then in the repository with common contracts you would have the following setup
