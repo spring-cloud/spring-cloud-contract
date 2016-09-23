@@ -463,7 +463,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_api_versioning">API Versioning</a></li>
 <li><a href="#_jar_versioning">JAR versioning</a></li>
 <li><a href="#_dev_or_prod_stubs">Dev or prod stubs</a></li>
-<li><a href="#_common_repo_with_contracts">Common repo with contracts</a></li>
+</ul>
+</li>
+<li><a href="#_common_repo_with_contracts">Common repo with contracts</a>
+<ul class="sectlevel4">
+<li><a href="#_workflow">Workflow</a>
+<ul class="sectlevel5">
+<li><a href="#_consumer">Consumer</a></li>
+<li><a href="#_producer">Producer</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -2013,8 +2022,9 @@ version. Example for 2.1.1.</p>
 <p>You can pass those values also via properties from your deployment pipeline.</p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="_common_repo_with_contracts">Common repo with contracts</h5>
+</div>
+<div class="sect3">
+<h4 id="_common_repo_with_contracts">Common repo with contracts</h4>
 <div class="paragraph">
 <p>Another way of storing contracts other than having them with the producer is keeping them in a common place.
 It can be related to security issues where the consumers can&#8217;t clone the producer&#8217;s code. Also if you keep
@@ -2256,17 +2266,15 @@ Those poms are necessary for the consumer side to run <code>mvn clean install -D
 &lt;/assembly&gt;</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p><strong>Workflow</strong></p>
-</div>
+<div class="sect4">
+<h5 id="_workflow">Workflow</h5>
 <div class="paragraph">
 <p>The workflow would look similar to the one presented in the <code>Step by step guide to CDC</code>. The only difference
  is that the producer doesn&#8217;t own the contracts anymore. So the consumer and the producer have to work on
  common contracts in a common repository.</p>
 </div>
-<div class="paragraph">
-<p><em>Consumer</em></p>
-</div>
+<div class="sect5">
+<h6 id="_consumer">Consumer</h6>
 <div class="paragraph">
 <p>When the <strong>consumer</strong> wants to work on the contracts offline, instead of cloning the producer code, the
 consumer team clones the common repository, goes to the required producer&#8217;s folder (e.g. <code>com/example/server</code>)
@@ -2284,9 +2292,9 @@ You need to have <a href="http://maven.apache.org/download.cgi">Maven installed 
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p><em>Producer</em></p>
 </div>
+<div class="sect5">
+<h6 id="_producer">Producer</h6>
 <div class="paragraph">
 <p>As a <strong>producer</strong> it&#8217;s enough to alter the Spring Cloud Contract Verifier to provide the URL and the dependency
 of the JAR containing the contracts:</p>
@@ -2315,6 +2323,7 @@ when some incompatible changes are done.</p>
 </div>
 <div class="paragraph">
 <p>The rest of the flow looks the same.</p>
+</div>
 </div>
 </div>
 </div>
@@ -3998,6 +4007,21 @@ stubrunner:
 <p>You can match the artifactId of the stub with the name of your app by using the <code>stubrunner.idsToServiceIds:</code> map.
 You can disable Stub Runner Ribbon support by providing: <code>stubrunner.cloud.ribbon.enabled</code> equal to <code>false</code>
 You can disable Stub Runner support by providing: <code>stubrunner.cloud.enabled</code> equal to <code>false</code></p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+By default all service discovery will be stubbed. That means that regardless of the fact if you have
+an existing <code>DiscoveryClient</code> its results will be ignored. However, if you want to reuse it, just set
+ <code>stubrunner.cloud.delegate.enabled</code> to <code>true</code> and then your existing <code>DiscoveryClient</code> results will be
+ merged with the stubbed ones.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
