@@ -35,6 +35,7 @@ ext {
 	isReleaseVersion = version.endsWith("RELEASE")
 	isMilestoneVersion = version.matches('[0-9].[0-9].[0-9].M[0-9]+') || version.matches('[0-9].[0-9].[0-9].RC[0-9]+')
 	isSnapshotVersion = !(isReleaseVersion || isMilestoneVersion)
+	isReleaseToCentral = project.hasProperty('central')
 
 	resolveVersion = { String version ->
 		if (isMilestoneVersion) return 'milestone'
@@ -42,7 +43,15 @@ ext {
 		return 'snapshot'
 	}
 
-	repoUrl = "https://repo.spring.io/${resolveRepoName(project)}"
+	repoUrl = isReleaseToCentral ?
+			"https://oss.sonatype.org/service/local/staging/deploy/maven2/" :
+			"https://repo.spring.io/${resolveRepoName(project)}"
+}
+
+if (isReleaseToCentral) {
+	signing {
+		sign configurations.archives
+	}
 }
 
 afterEvaluate {
@@ -50,17 +59,19 @@ afterEvaluate {
 		repositories {
 			mavenDeployer {
 				// POM signature
-				if (isReleaseVersion) {
+				if (isReleaseVersion && isReleaseToCentral) {
 					beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 				}
 				// Target repository
+				String repoUserName = isReleaseToCentral ? sonatypeUsername : repoUser
+				String repoPass = isReleaseToCentral ? sonatypePassword : repoPass
 				repository(url: repoUrl) {
-					authentication(userName: repoUser, password: repoPass)
+					authentication(userName: repoUserName, password: repoPass)
 				}
 				pom.project {
 					name "$project.name"
 					packaging 'jar'
-					description 'Spring Cloud Contract'
+					description 'Spring Cloud Contract Gradle Plugin'
 					url 'https://github.com/spring-cloud/spring-cloud-contract'
 					inceptionYear '2014'
 
