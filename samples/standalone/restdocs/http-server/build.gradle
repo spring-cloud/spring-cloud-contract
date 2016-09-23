@@ -10,7 +10,7 @@ buildscript {
 		maven { url "http://repo.spring.io/plugins-staging-local/" }
 	}
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.4.0.BUILD-SNAPSHOT"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE"
 	}
 }
 
