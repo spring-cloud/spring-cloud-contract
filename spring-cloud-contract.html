@@ -463,6 +463,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_api_versioning">API Versioning</a></li>
 <li><a href="#_jar_versioning">JAR versioning</a></li>
 <li><a href="#_dev_or_prod_stubs">Dev or prod stubs</a></li>
+<li><a href="#_common_repo_with_contracts">Common repo with contracts</a></li>
 </ul>
 </li>
 </ul>
@@ -957,6 +958,19 @@ going through the process. CDC is all about communication.</p>
 </div>
 <div class="paragraph">
 <p>The <a href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-server">server side code is available here</a> and <a href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-client">the client side code here</a>.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+In this case the ownership of the contracts lays on the producer side. It means that physically
+all the contract are present in the producer&#8217;s repository
+</td>
+</tr>
+</table>
 </div>
 <div class="sect4">
 <h5 id="_technical_note">Technical note</h5>
@@ -1999,6 +2013,310 @@ version. Example for 2.1.1.</p>
 <p>You can pass those values also via properties from your deployment pipeline.</p>
 </div>
 </div>
+<div class="sect4">
+<h5 id="_common_repo_with_contracts">Common repo with contracts</h5>
+<div class="paragraph">
+<p>Another way of storing contracts other than having them with the producer is keeping them in a common place.
+It can be related to security issues where the consumers can&#8217;t clone the producer&#8217;s code. Also if you keep
+contracts in a single place then you, as a producer, will know how many consumers you have and which
+consumer will you break with your local changes.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Repo structure *</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s assume that we have a producer with coordinates <code>com.example:server</code> and 3 consumers: <code>client1</code>,
+<code>client2</code>, <code>client3</code>. Then in the repository with common contracts you would have the following setup
+(which you can checkout <a href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/contracts">here</a>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">├── com
+│   └── example
+│       └── server
+│           ├── client1
+│           │   └── expectation.groovy
+│           ├── client2
+│           │   └── expectation.groovy
+│           ├── client3
+│           │   └── expectation.groovy
+│           └── pom.xml
+├── mvnw
+├── mvnw.cmd
+├── pom.xml
+└── src
+    └── assembly
+        └── contracts.xml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As you can see the under the slash-delimited groupid <code>/</code> artifact id folder (<code>com/example/server</code>) you have
+expectations of the 3 consumers (<code>client1</code>, <code>client2</code> and <code>client3</code>). Expectations are the standard Groovy DSL
+contract files as described throughout this documentation. This repository has to produce a JAR file that maps
+one to one to the contents of the repo.</p>
+</div>
+<div class="paragraph">
+<p>Example of a <code>pom.xml</code> inside the <code>server</code> folder.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+	&lt;groupId&gt;com.example&lt;/groupId&gt;
+	&lt;artifactId&gt;server&lt;/artifactId&gt;
+	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+
+	&lt;name&gt;Server Stubs&lt;/name&gt;
+	&lt;description&gt;POM used to install locally stubs for consumer side&lt;/description&gt;
+
+	&lt;parent&gt;
+		&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+		&lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+		&lt;version&gt;1.4.0.BUILD-SNAPSHOT&lt;/version&gt;
+		&lt;relativePath /&gt;
+	&lt;/parent&gt;
+
+	&lt;properties&gt;
+		&lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+		&lt;java.version&gt;1.8&lt;/java.version&gt;
+		&lt;spring-cloud-contract.version&gt;1.0.0.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
+		&lt;spring-cloud-dependencies.version&gt;Camden.BUILD-SNAPSHOT&lt;/spring-cloud-dependencies.version&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencyManagement&gt;
+		&lt;dependencies&gt;
+			&lt;dependency&gt;
+				&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+				&lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
+				&lt;version&gt;${spring-cloud-dependencies.version}&lt;/version&gt;
+				&lt;type&gt;pom&lt;/type&gt;
+				&lt;scope&gt;import&lt;/scope&gt;
+			&lt;/dependency&gt;
+		&lt;/dependencies&gt;
+	&lt;/dependencyManagement&gt;
+
+	&lt;build&gt;
+		&lt;plugins&gt;
+			&lt;plugin&gt;
+				&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+				&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+				&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+				&lt;extensions&gt;true&lt;/extensions&gt;
+				&lt;configuration&gt;
+					&lt;!-- By default it would search under src/test/resources/ --&gt;
+					&lt;contractsDirectory&gt;${project.basedir}&lt;/contractsDirectory&gt;
+				&lt;/configuration&gt;
+			&lt;/plugin&gt;
+		&lt;/plugins&gt;
+	&lt;/build&gt;
+
+	&lt;repositories&gt;
+		&lt;repository&gt;
+			&lt;id&gt;spring-snapshots&lt;/id&gt;
+			&lt;name&gt;Spring Snapshots&lt;/name&gt;
+			&lt;url&gt;https://repo.spring.io/snapshot&lt;/url&gt;
+			&lt;snapshots&gt;
+				&lt;enabled&gt;true&lt;/enabled&gt;
+			&lt;/snapshots&gt;
+		&lt;/repository&gt;
+		&lt;repository&gt;
+			&lt;id&gt;spring-milestones&lt;/id&gt;
+			&lt;name&gt;Spring Milestones&lt;/name&gt;
+			&lt;url&gt;https://repo.spring.io/milestone&lt;/url&gt;
+			&lt;snapshots&gt;
+				&lt;enabled&gt;false&lt;/enabled&gt;
+			&lt;/snapshots&gt;
+		&lt;/repository&gt;
+		&lt;repository&gt;
+			&lt;id&gt;spring-releases&lt;/id&gt;
+			&lt;name&gt;Spring Releases&lt;/name&gt;
+			&lt;url&gt;https://repo.spring.io/release&lt;/url&gt;
+			&lt;snapshots&gt;
+				&lt;enabled&gt;false&lt;/enabled&gt;
+			&lt;/snapshots&gt;
+		&lt;/repository&gt;
+	&lt;/repositories&gt;
+	&lt;pluginRepositories&gt;
+		&lt;pluginRepository&gt;
+			&lt;id&gt;spring-snapshots&lt;/id&gt;
+			&lt;name&gt;Spring Snapshots&lt;/name&gt;
+			&lt;url&gt;https://repo.spring.io/snapshot&lt;/url&gt;
+			&lt;snapshots&gt;
+				&lt;enabled&gt;true&lt;/enabled&gt;
+			&lt;/snapshots&gt;
+		&lt;/pluginRepository&gt;
+		&lt;pluginRepository&gt;
+			&lt;id&gt;spring-milestones&lt;/id&gt;
+			&lt;name&gt;Spring Milestones&lt;/name&gt;
+			&lt;url&gt;https://repo.spring.io/milestone&lt;/url&gt;
+			&lt;snapshots&gt;
+				&lt;enabled&gt;false&lt;/enabled&gt;
+			&lt;/snapshots&gt;
+		&lt;/pluginRepository&gt;
+		&lt;pluginRepository&gt;
+			&lt;id&gt;spring-releases&lt;/id&gt;
+			&lt;name&gt;Spring Releases&lt;/name&gt;
+			&lt;url&gt;https://repo.spring.io/release&lt;/url&gt;
+			&lt;snapshots&gt;
+				&lt;enabled&gt;false&lt;/enabled&gt;
+			&lt;/snapshots&gt;
+		&lt;/pluginRepository&gt;
+	&lt;/pluginRepositories&gt;
+
+&lt;/project&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As you can see there are no dependencies other than the Spring Cloud Contract Verifier Maven plugin.
+Those poms are necessary for the consumer side to run <code>mvn clean install -DskipTests</code> to locally install
+ stubs of the producer project.</p>
+</div>
+<div class="paragraph">
+<p>The <code>pom.xml</code> in the root folder can look like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+	&lt;groupId&gt;com.example.standalone&lt;/groupId&gt;
+	&lt;artifactId&gt;contracts&lt;/artifactId&gt;
+	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+
+	&lt;name&gt;Spring Cloud Contract Verifier Http Server Sample&lt;/name&gt;
+	&lt;description&gt;Spring Cloud Contract Verifier Http Server Sample&lt;/description&gt;
+
+	&lt;properties&gt;
+		&lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+	&lt;/properties&gt;
+
+	&lt;build&gt;
+		&lt;plugins&gt;
+			&lt;plugin&gt;
+				&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+				&lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
+				&lt;executions&gt;
+					&lt;execution&gt;
+						&lt;id&gt;contracts&lt;/id&gt;
+						&lt;phase&gt;prepare-package&lt;/phase&gt;
+						&lt;goals&gt;
+							&lt;goal&gt;single&lt;/goal&gt;
+						&lt;/goals&gt;
+						&lt;configuration&gt;
+							&lt;attach&gt;true&lt;/attach&gt;
+							&lt;descriptor&gt;${basedir}/src/assembly/contracts.xml&lt;/descriptor&gt;
+							&lt;!-- If you want an explicit classifier remove the following line --&gt;
+							&lt;appendAssemblyId&gt;false&lt;/appendAssemblyId&gt;
+						&lt;/configuration&gt;
+					&lt;/execution&gt;
+				&lt;/executions&gt;
+			&lt;/plugin&gt;
+		&lt;/plugins&gt;
+	&lt;/build&gt;
+
+&lt;/project&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It&#8217;s using the assembly plugin in order to build the JAR with all the contracts. Example of such setup is here:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
+		  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
+	&lt;id&gt;project&lt;/id&gt;
+	&lt;formats&gt;
+		&lt;format&gt;jar&lt;/format&gt;
+	&lt;/formats&gt;
+	&lt;includeBaseDirectory&gt;false&lt;/includeBaseDirectory&gt;
+	&lt;fileSets&gt;
+		&lt;fileSet&gt;
+			&lt;directory&gt;${project.basedir}&lt;/directory&gt;
+			&lt;outputDirectory&gt;/&lt;/outputDirectory&gt;
+			&lt;useDefaultExcludes&gt;true&lt;/useDefaultExcludes&gt;
+			&lt;excludes&gt;
+				&lt;exclude&gt;**/${project.build.directory}/**&lt;/exclude&gt;
+				&lt;exclude&gt;mvnw&lt;/exclude&gt;
+				&lt;exclude&gt;mvnw.cmd&lt;/exclude&gt;
+				&lt;exclude&gt;.mvn/**&lt;/exclude&gt;
+				&lt;exclude&gt;src/**&lt;/exclude&gt;
+			&lt;/excludes&gt;
+		&lt;/fileSet&gt;
+	&lt;/fileSets&gt;
+&lt;/assembly&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Workflow</strong></p>
+</div>
+<div class="paragraph">
+<p>The workflow would look similar to the one presented in the <code>Step by step guide to CDC</code>. The only difference
+ is that the producer doesn&#8217;t own the contracts anymore. So the consumer and the producer have to work on
+ common contracts in a common repository.</p>
+</div>
+<div class="paragraph">
+<p><em>Consumer</em></p>
+</div>
+<div class="paragraph">
+<p>When the <strong>consumer</strong> wants to work on the contracts offline, instead of cloning the producer code, the
+consumer team clones the common repository, goes to the required producer&#8217;s folder (e.g. <code>com/example/server</code>)
+and runs <code>mvn clean install -DskipTests</code> to install locally the stubs converted from the contracts.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+You need to have <a href="http://maven.apache.org/download.cgi">Maven installed locally</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><em>Producer</em></p>
+</div>
+<div class="paragraph">
+<p>As a <strong>producer</strong> it&#8217;s enough to alter the Spring Cloud Contract Verifier to provide the URL and the dependency
+of the JAR containing the contracts:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
+	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+	&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+	&lt;configuration&gt;
+		&lt;contractsRepositoryUrl&gt;http://link/to/your/nexus/or/artifactory/or/sth&lt;/contractsRepositoryUrl&gt;
+		&lt;contractDependency&gt;
+			&lt;groupId&gt;com.example.standalone&lt;/groupId&gt;
+			&lt;artifactId&gt;contracts&lt;/artifactId&gt;
+		&lt;/contractDependency&gt;
+	&lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>With this setup the JAR with groupid <code>com.example.standalone</code> and artifactid <code>contracts</code> will be downloaded
+from <code><a href="http://link/to/your/nexus/or/artifactory/or/sth" class="bare">http://link/to/your/nexus/or/artifactory/or/sth</a></code>. It will be then unpacked in a local temporary folder
+and contracts present under the <code>com/example/server</code> will be picked as the ones used to generate the
+tests and the stubs. Due to this convention the producer team will know which consumer teams will be broken
+when some incompatible changes are done.</p>
+</div>
+<div class="paragraph">
+<p>The rest of the flow looks the same.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -2169,6 +2487,11 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
     contractsDslDir = "${project.rootDir}/src/test/resources/contracts"
     basePackageForTests = 'org.springframework.cloud.verifier.tests'
     stubsOutputDir = project.file("${project.buildDir}/stubs")
+
+    // the following properties are used when you want to provide where the JAR with contract lays
+    contractDependency = new org.springframework.cloud.contract.verifier.plugin.ContractVerifierExtension.Dependency()
+    contractsPath = ''
+    contractsWorkOffline = false
 }
 
 tasks.create(type: Jar, name: 'verifierStubsJar', dependsOn: 'generateWireMockClientStubs') {
@@ -2249,6 +2572,22 @@ publishing {
 </li>
 <li>
 <p><strong>targetFramework</strong> - the target test framework to be used; currently Spock and JUnit are supported with JUnit being the default framework</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The following properties are used when you want to provide where the JAR with contract lays</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>contractDependency</strong> - the Dependency that provides <code>groupid:artifactid:version:classifier</code> coordinates. You can use the <code>contractDependency</code> closure to set it up</p>
+</li>
+<li>
+<p><strong>contractsPath</strong> - if contract deps are downloaded will default to <code>groupid/artifactid</code> where <code>groupid</code> will be slash separated. Otherwise will scan contracts under provided directory</p>
+</li>
+<li>
+<p><strong>contractsWorkOffline</strong> - in order not to download the dependencies each time you can download them once and work offline afterwards (reuse local Maven repo)</p>
 </li>
 </ul>
 </div>
@@ -2518,6 +2857,25 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
 </li>
 <li>
 <p><strong>testFramework</strong> - the target test framework to be used; currently Spock and JUnit are supported with JUnit being the default framework</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If you want to download your contract definitions from a Maven repository you can use</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>contractsRepositoryUrl</strong> - URL to a repo with the artifacts with contracts, if not provided should use the current Maven ones</p>
+</li>
+<li>
+<p><strong>contractDependency</strong> - the contract dependency that contains all the packaged contracts</p>
+</li>
+<li>
+<p><strong>contractsPath</strong> - path to concrete contracts in the JAR with packaged contracts. Defaults to <code>groupid/artifactid</code> where <code>gropuid</code> is slash separated.</p>
+</li>
+<li>
+<p><strong>contractsWorkOffline</strong> - if the dependencies should be downloaded or local Maven only should be reused</p>
 </li>
 </ul>
 </div>
