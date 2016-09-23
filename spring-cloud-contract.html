@@ -3999,6 +3999,21 @@ stubrunner:
 You can disable Stub Runner Ribbon support by providing: <code>stubrunner.cloud.ribbon.enabled</code> equal to <code>false</code>
 You can disable Stub Runner support by providing: <code>stubrunner.cloud.enabled</code> equal to <code>false</code></p>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+By default all service discovery will be stubbed. That means that regardless of the fact if you have
+an existing <code>DiscoveryClient</code> its results will be ignored. However, if you want to reuse it, just set
+ <code>stubrunner.cloud.delegate.enabled</code> to <code>true</code> and then your existing <code>DiscoveryClient</code> results will be
+ merged with the stubbed ones.
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect2">
