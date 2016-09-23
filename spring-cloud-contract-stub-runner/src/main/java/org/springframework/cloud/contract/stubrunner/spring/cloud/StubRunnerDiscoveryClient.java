@@ -115,7 +115,7 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 
 	private List<ServiceInstance> getInstancesFromDelegate(String serviceId) {
 		try {
-			return this.delegate.getInstances(serviceId);
+			return new ArrayList<>(this.delegate.getInstances(serviceId));
 		} catch (Exception e) {
 			if (log.isDebugEnabled()) {
 				log.debug("Failed to fetch instances from delegate", e);
@@ -134,15 +134,17 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 
 	@Override
 	public List<String> getServices() {
+		List<String> list = new ArrayList<>();
 		List<String> services = getServicesFromDelegate();
 		RunningStubs runningStubs = this.stubFinder.findAllRunningStubs();
-		services.addAll(runningStubs.getAllServicesNames());
-		return services;
+		list.addAll(services);
+		list.addAll(runningStubs.getAllServicesNames());
+		return list;
 	}
 
 	private List<String> getServicesFromDelegate() {
 		try {
-			return this.delegate.getServices();
+			return new ArrayList<>(this.delegate.getServices());
 		} catch (Exception e) {
 			if (log.isDebugEnabled()) {
 				log.debug("Failed to fetch services from delegate", e);

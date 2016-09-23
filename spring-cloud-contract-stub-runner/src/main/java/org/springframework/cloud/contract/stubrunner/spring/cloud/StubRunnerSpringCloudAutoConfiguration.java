@@ -19,7 +19,6 @@ package org.springframework.cloud.contract.stubrunner.spring.cloud;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -41,9 +40,10 @@ import org.springframework.context.annotation.Primary;
 public class StubRunnerSpringCloudAutoConfiguration {
 
 	@Bean
-	@ConditionalOnBean(DiscoveryClient.class)
 	@Primary
+	@ConditionalOnBean(DiscoveryClient.class)
 	@ConditionalOnStubbedDiscoveryEnabled
+	@ConditionalOnProperty(value = "stubrunner.cloud.delegate.enabled", havingValue = "true")
 	public DiscoveryClient stubRunnerDiscoveryClientWrapper(DiscoveryClient discoveryClient,
 			StubFinder stubFinder,
 			StubMapperProperties stubMapperProperties,
@@ -53,9 +53,9 @@ public class StubRunnerSpringCloudAutoConfiguration {
 
 	@Bean
 	@Primary
-	@ConditionalOnMissingBean(DiscoveryClient.class)
 	@ConditionalOnStubbedDiscoveryEnabled
-	public DiscoveryClient stubRunnerDiscoveryClient(StubFinder stubFinder,
+	@ConditionalOnProperty(value = "stubrunner.cloud.delegate.enabled", havingValue = "false", matchIfMissing = true)
+	public DiscoveryClient noOpStubRunnerDiscoveryClient(StubFinder stubFinder,
 			StubMapperProperties stubMapperProperties,
 			@Value("${spring.application.name:unknown}") String springAppName) {
 		return new StubRunnerDiscoveryClient(stubFinder, stubMapperProperties, springAppName);

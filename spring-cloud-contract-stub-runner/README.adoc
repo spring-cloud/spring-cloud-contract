@@ -195,6 +195,11 @@ You can match the artifactId of the stub with the name of your app by using the 
 You can disable Stub Runner Ribbon support by providing: `stubrunner.cloud.ribbon.enabled` equal to `false`
 You can disable Stub Runner support by providing: `stubrunner.cloud.enabled` equal to `false`
 
+TIP: By default all service discovery will be stubbed. That means that regardless of the fact if you have
+an existing `DiscoveryClient` its results will be ignored. However, if you want to reuse it, just set
+ `stubrunner.cloud.delegate.enabled` to `true` and then your existing `DiscoveryClient` results will be
+ merged with the stubbed ones.
+
 === Stub Runner Boot Application
 
 Spring Cloud Contract Verifier Stub Runner Boot is a Spring Boot application that exposes REST endpoints to
