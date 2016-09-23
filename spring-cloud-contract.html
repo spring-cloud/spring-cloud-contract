@@ -474,6 +474,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_producer">Producer</a></li>
 </ul>
 </li>
+<li><a href="#_can_i_have_multiple_base_classes_for_tests">Can I have multiple base classes for tests?</a></li>
 </ul>
 </li>
 </ul>
@@ -495,7 +496,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_configure_plugin">Configure plugin</a>
 <ul class="sectlevel5">
 <li><a href="#_configuration_options">Configuration options</a></li>
-<li><a href="#_base_class_for_tests">Base class for tests</a></li>
+<li><a href="#_single_base_class_for_all_tests">Single base class for all tests</a></li>
+<li><a href="#_different_base_classes_for_contracts">Different base classes for contracts</a></li>
 </ul>
 </li>
 <li><a href="#_invoking_generated_tests">Invoking generated tests</a></li>
@@ -514,7 +516,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_configure_plugin_2">Configure plugin</a>
 <ul class="sectlevel5">
 <li><a href="#_important_configuration_options">Important configuration options</a></li>
-<li><a href="#_base_class_for_tests_2">Base class for tests</a></li>
+<li><a href="#_single_base_class_for_all_tests_2">Single base class for all tests</a></li>
+<li><a href="#_different_base_classes_for_contracts_2">Different base classes for contracts</a></li>
 </ul>
 </li>
 <li><a href="#_invoking_generated_tests_2">Invoking generated tests</a></li>
@@ -1293,7 +1296,7 @@ It&#8217;s really important that you understand the map notation to set up contr
 	&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
 	&lt;extensions&gt;true&lt;/extensions&gt;
 	&lt;configuration&gt;
-		&lt;baseClassForTests&gt;com.example.fraud.MvcTest&lt;/baseClassForTests&gt;
+		&lt;packageWithBaseClasses&gt;com.example.fraud&lt;/packageWithBaseClasses&gt;
 	&lt;/configuration&gt;
 &lt;/plugin&gt;</code></pre>
 </div>
@@ -1479,7 +1482,7 @@ git pull https://your-git-server.com/server-side-fork.git contract-change-pr</co
 	&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
 	&lt;extensions&gt;true&lt;/extensions&gt;
 	&lt;configuration&gt;
-		&lt;baseClassForTests&gt;com.example.fraud.MvcTest&lt;/baseClassForTests&gt;
+		&lt;packageWithBaseClasses&gt;com.example.fraud&lt;/packageWithBaseClasses&gt;
 	&lt;/configuration&gt;
 &lt;/plugin&gt;</code></pre>
 </div>
@@ -1496,7 +1499,7 @@ import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc;
 
 import org.junit.Before;
 
-public class MvcTest {
+public class FraudBase {
 
 	@Before
 	public void setup() {
@@ -2323,6 +2326,13 @@ when some incompatible changes are done.</p>
 </div>
 </div>
 </div>
+<div class="sect4">
+<h5 id="_can_i_have_multiple_base_classes_for_tests">Can I have multiple base classes for tests?</h5>
+<div class="paragraph">
+<p>Yes! Check out the <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#different_base_classes_for_contracts">Different base classes for contracts</a> sections
+of either Gradle or Maven plugins.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -2559,7 +2569,13 @@ publishing {
 <p><strong>basePackageForTests</strong> - specifies base package for all generated tests. By default set to org.springframework.cloud.verifier.tests</p>
 </li>
 <li>
-<p><strong>baseClassForTests</strong> - base class for generated tests. By default <code>spock.lang.Specification</code> if using Spock tests.</p>
+<p><strong>baseClassForTests</strong> - base class for all generated tests. By default <code>spock.lang.Specification</code> if using Spock tests.</p>
+</li>
+<li>
+<p><strong>packageWithBaseClasses</strong> - instead of providing a fixed value for base class you can provide a package where all the base classes lay. Takes precedence over <strong>baseClassForTests</strong>.</p>
+</li>
+<li>
+<p><strong>baseClassMappings</strong> - explicitly map contract package to a FQN of a base class. Takes precedence over <strong>packageWithBaseClasses</strong> and <strong>baseClassForTests</strong>.</p>
 </li>
 <li>
 <p><strong>ruleClassForTests</strong> - specifies Rule which should be added to generated test classes.</p>
@@ -2599,7 +2615,7 @@ publishing {
 </div>
 </div>
 <div class="sect5">
-<h6 id="_base_class_for_tests">Base class for tests</h6>
+<h6 id="_single_base_class_for_all_tests">Single base class for all tests</h6>
 <div class="paragraph">
 <p>When using Spring Cloud Contract Verifier in default MockMvc you need to create a base specification for all generated acceptance tests. In this class you need to point to endpoint which should be verified.</p>
 </div>
@@ -2625,6 +2641,62 @@ publishing {
 <div class="paragraph">
 <p>In case of using <code>Explicit</code> mode, you can use base class to initialize the whole tested app similarly as in regular integration tests. In case of <code>JAXRSCLIENT</code> mode this base class
 should also contain <code>protected WebTarget webTarget</code> field, right now the only option to test JAX-RS API is to start a web server.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_different_base_classes_for_contracts">Different base classes for contracts</h6>
+<div class="paragraph">
+<p>If your base classes differ between contracts you can tell the Spring Cloud Contract plugin which class should get
+extended by the autogenerated tests. You have two options:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>follow a convention by providing the <code>packageWithBaseClasses</code></p>
+</li>
+<li>
+<p>provide explicit mapping via <code>baseClassMappings</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Convention</strong></p>
+</div>
+<div class="paragraph">
+<p>The convention is such that if you have a contract under e.g. <code>src/test/resources/contract/foo/bar/baz/</code> and provide the value of the <code>packageWithBaseClasses</code> property
+to <code>com.example.base</code> then we will assume that there is a <code>BarBazBase</code> class under <code>com.example.base</code> package. In other words we take last two parts of package
+if they exist and form a class with a <code>Base</code> suffix. Takes precedence over <strong>baseClassForTests</strong>. Example of usage in the <code>contracts</code> closure:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">packageWithBaseClasses = 'com.example.base'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Mapping</strong></p>
+</div>
+<div class="paragraph">
+<p>You can manually map a regular expression of the contract&#8217;s package to fully qualified name of the base class for the matched contract.
+Let&#8217;s take a look at the following example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">baseClassForTests = "com.example.FooBase"
+baseClassMappings {
+	baseClassMapping('.*/com/.*', 'com.example.ComBase')
+	baseClassMapping('.*/bar/.*':'com.example.BarBase')
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s assume that you have contracts under
+ - <code>src/test/resources/contract/com/</code>
+ - <code>src/test/resources/contract/foo/</code></p>
+</div>
+<div class="paragraph">
+<p>By providing the <code>baseClassForTests</code> we have a fallback in case mapping didn&#8217;t succeed (you could also provide
+the <code>packageWithBaseClasses</code> as fallback). That way the tests generated from <code>src/test/resources/contract/com/</code> contracts
+will be extending the <code>com.example.ComBase</code> whereas the rest of tests will extend <code>com.example.FooBase</code>.</p>
 </div>
 </div>
 </div>
@@ -2719,7 +2791,7 @@ class LoanApplicationServiceSpec extends Specification {
 	&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
 	&lt;extensions&gt;true&lt;/extensions&gt;
 	&lt;configuration&gt;
-		&lt;baseClassForTests&gt;com.example.fraud.MvcTest&lt;/baseClassForTests&gt;
+		&lt;packageWithBaseClasses&gt;com.example.fraud&lt;/packageWithBaseClasses&gt;
 	&lt;/configuration&gt;
 &lt;/plugin&gt;</code></pre>
 </div>
@@ -2864,6 +2936,19 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
 <li>
 <p><strong>testFramework</strong> - the target test framework to be used; currently Spock and JUnit are supported with JUnit being the default framework</p>
 </li>
+<li>
+<p><strong>packageWithBaseClasses</strong> - instead of providing a fixed value for base class you can provide a package where all the base classes lay.
+The convention is such that if you have a contract under <code>src/test/resources/contract/foo/bar/baz/</code> and provide the value of this property
+to <code>com.example.base</code> then we will assume that there is a <code>BarBazBase</code> class under <code>com.example.base</code> package. Takes precedence
+over <strong>baseClassForTests</strong></p>
+</li>
+<li>
+<p><strong>baseClassMappings</strong> - list of base class mappings that where you have to provide <code>contractPackageRegex</code> which is checked
+against the package in which the contract lays and <code>baseClassFQN</code> that maps to fully qualified name of the base class for the matched
+contract. If you have a contract under <code>src/test/resources/contract/foo/bar/baz/</code> and map the property <code>.*</code> &#8594; <code>com.example.base.BaseClass</code> then
+the test class generated from these contracts will extend <code>com.example.base.BaseClass</code>. Takes precedence over <strong>packageWithBaseClasses</strong>
+ and <strong>baseClassForTests</strong>.</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
@@ -2890,7 +2975,7 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_base_class_for_tests_2">Base class for tests</h6>
+<h6 id="_single_base_class_for_all_tests_2">Single base class for all tests</h6>
 <div class="paragraph">
 <p>When using Spring Cloud Contract Verifier in default MockMvc you need to create a base specification for all generated acceptance tests.
 In this class you need to point to endpoint which should be verified.</p>
@@ -2912,6 +2997,81 @@ class  MvcSpec extends Specification {
 </div>
 <div class="paragraph">
 <p>In case of using <code>Explicit</code> mode, you can use base class to initialize the whole tested app similarly as in regular integration tests. In case of <code>JAXRSCLIENT</code> mode this base class should also contain <code>protected WebTarget webTarget</code> field, right now the only option to test JAX-RS API is to start a web server.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_different_base_classes_for_contracts_2">Different base classes for contracts</h6>
+<div class="paragraph">
+<p>If your base classes differ between contracts you can tell the Spring Cloud Contract plugin which class should get
+extended by the autogenerated tests. You have two options:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>follow a convention by providing the <code>packageWithBaseClasses</code></p>
+</li>
+<li>
+<p>provide explicit mapping via <code>baseClassMappings</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Convention</strong></p>
+</div>
+<div class="paragraph">
+<p>The convention is such that if you have a contract under e.g. <code>src/test/resources/contract/hello/v1/</code> and provide the value of the <code>packageWithBaseClasses</code> property
+to <code>hello</code> then we will assume that there is a <code>HelloV1Base</code> class under <code>hello</code> package. In other words we take last two parts of package
+if they exist and form a class with a <code>Base</code> suffix. Takes precedence over <strong>baseClassForTests</strong>. Example of usage in the <code>contracts</code> closure:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">			&lt;plugin&gt;
+				&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+				&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+				&lt;configuration&gt;
+					&lt;packageWithBaseClasses&gt;hello&lt;/packageWithBaseClasses&gt;
+				&lt;/configuration&gt;
+			&lt;/plugin&gt;
+		&lt;/plugins&gt;
+	&lt;/build&gt;
+
+&lt;/project&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Mapping</strong></p>
+</div>
+<div class="paragraph">
+<p>You can manually map a regular expression of the contract&#8217;s package to fully qualified name of the base class for the matched contract.
+You have to provide a list <code>baseClassMappings</code> of <code>baseClassMapping</code> that takes a <code>contractPackageRegex</code> to <code>baseClassFQN</code> mapping.
+Let&#8217;s take a look at the following example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
+	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+	&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+	&lt;configuration&gt;
+		&lt;baseClassForTests&gt;com.example.FooBase&lt;/baseClassForTests&gt;
+		&lt;baseClassMappings&gt;
+			&lt;baseClassMapping&gt;
+				&lt;contractPackageRegex&gt;.*com.*&lt;/contractPackageRegex&gt;
+				&lt;baseClassFQN&gt;com.example.TestBase&lt;/baseClassFQN&gt;
+			&lt;/baseClassMapping &gt;
+		&lt;/baseClassMappings&gt;
+	&lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s assume that you have contracts under
+ - <code>src/test/resources/contract/com/</code>
+ - <code>src/test/resources/contract/foo/</code></p>
+</div>
+<div class="paragraph">
+<p>By providing the <code>baseClassForTests</code> we have a fallback in case mapping didn&#8217;t succeed (you could also provide
+the <code>packageWithBaseClasses</code> as fallback). That way the tests generated from <code>src/test/resources/contract/com/</code> contracts
+will be extending the <code>com.example.ComBase</code> whereas the rest of tests will extend <code>com.example.FooBase</code>.</p>
 </div>
 </div>
 </div>
