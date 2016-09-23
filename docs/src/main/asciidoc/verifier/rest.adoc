@@ -129,6 +129,11 @@ contracts {
     contractsDslDir = "${project.rootDir}/src/test/resources/contracts"
     basePackageForTests = 'org.springframework.cloud.verifier.tests'
     stubsOutputDir = project.file("${project.buildDir}/stubs")
+
+    // the following properties are used when you want to provide where the JAR with contract lays
+    contractDependency = new org.springframework.cloud.contract.verifier.plugin.ContractVerifierExtension.Dependency()
+    contractsPath = ''
+    contractsWorkOffline = false
 }
 
 tasks.create(type: Jar, name: 'verifierStubsJar', dependsOn: 'generateWireMockClientStubs') {
@@ -184,6 +189,12 @@ contracts {
  - **generatedTestSourcesDir** - test source directory where tests generated from Groovy DSL should be placed. By default `$buildDir/generated-test-sources/contractVerifier`
  - **stubsOutputDir** - dir where the generated WireMock stubs from Groovy DSL should be placed
  - **targetFramework** - the target test framework to be used; currently Spock and JUnit are supported with JUnit being the default framework
+
+The following properties are used when you want to provide where the JAR with contract lays
+
+ - **contractDependency** - the Dependency that provides `groupid:artifactid:version:classifier` coordinates. You can use the `contractDependency` closure to set it up
+ - **contractsPath** - if contract deps are downloaded will default to `groupid/artifactid` where `groupid` will be slash separated. Otherwise will scan contracts under provided directory
+ - **contractsWorkOffline** - in order not to download the dependencies each time you can download them once and work offline afterwards (reuse local Maven repo)
 
 ====== Base class for tests
 
@@ -330,6 +341,13 @@ To change default configuration just add `configuration` section to plugin defin
  - **baseClassForTests** - base class for generated tests. By default `spock.lang.Specification` if using Spock tests.
  - **contractsDir** - directory containing contracts written using the GroovyDSL. By default `/src/test/resources/contracts`.
  - **testFramework** - the target test framework to be used; currently Spock and JUnit are supported with JUnit being the default framework
+
+If you want to download your contract definitions from a Maven repository you can use
+
+ - **contractsRepositoryUrl** - URL to a repo with the artifacts with contracts, if not provided should use the current Maven ones
+ - **contractDependency** - the contract dependency that contains all the packaged contracts
+ - **contractsPath** - path to concrete contracts in the JAR with packaged contracts. Defaults to `groupid/artifactid` where `gropuid` is slash separated.
+ - **contractsWorkOffline** - if the dependencies should be downloaded or local Maven only should be reused
 
 For complete information take a look at https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/plugin-info.html[Plugin Documentation]
 

@@ -27,16 +27,19 @@
 
 	<build>
 		<plugins>
+			<!-- tag::remote_config[] -->
 			<plugin>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-maven-plugin</artifactId>
 				<configuration>
+					<contractsRepositoryUrl>http://link/to/your/nexus/or/artifactory/or/sth</contractsRepositoryUrl>
 					<contractDependency>
-						<groupId>com.example</groupId>
+						<groupId>com.example.standalone</groupId>
 						<artifactId>contracts</artifactId>
 					</contractDependency>
 				</configuration>
 			</plugin>
+			<!-- end::remote_config[] -->
 		</plugins>
 	</build>
 
