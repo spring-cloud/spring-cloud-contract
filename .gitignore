@@ -31,3 +31,6 @@ hs_err_pid*
 # Maven
 log/
 target/
+
+interpolated-settings.xml
+interpolated-pom.xml
