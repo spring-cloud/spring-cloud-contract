@@ -39,7 +39,9 @@ ext {
 }
 
 contracts {
-	baseClassForTests = 'com.example.source.SensorSourceTestBase'
+	baseClassMappings {
+		baseClassMapping('.*', 'com.example.source.SensorSourceTestBase')
+	}
 	stubsOutputDir = stubsOutputDirRoot
 }
 

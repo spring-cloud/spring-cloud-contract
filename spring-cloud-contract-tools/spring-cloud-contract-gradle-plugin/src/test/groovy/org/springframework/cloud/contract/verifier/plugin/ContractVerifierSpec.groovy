@@ -138,4 +138,25 @@ class ContractVerifierSpec extends Specification {
 				it.group == "org.assertj" && it.name == "assertj-core"
 			} != null
 	}
+
+	def "should compile"() {
+		given:
+			ContractVerifierExtension extension = new ContractVerifierExtension()
+			extension.with {
+
+				// tag::package_with_base_classes[]
+				packageWithBaseClasses = 'com.example.base'
+				// end::package_with_base_classes[]
+
+				// tag::base_class_mappings[]
+				baseClassForTests = "com.example.FooBase"
+				baseClassMappings {
+					baseClassMapping('.*/com/.*', 'com.example.ComBase')
+					baseClassMapping('.*/bar/.*':'com.example.BarBase')
+				}
+				// end::base_class_mappings[]
+			}
+		expect:
+			extension
+	}
 }

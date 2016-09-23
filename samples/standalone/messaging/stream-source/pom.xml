@@ -70,7 +70,12 @@
 				<version>${spring-cloud-contract.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-					<baseClassForTests>com.example.source.SensorSourceTestBase</baseClassForTests>
+					<baseClassMappings>
+						<baseClassMapping>
+							<contractPackageRegex>.*</contractPackageRegex>
+							<baseClassFQN>com.example.source.SensorSourceTestBase</baseClassFQN>
+						</baseClassMapping>
+					</baseClassMappings>
 				</configuration>
 			</plugin>
 

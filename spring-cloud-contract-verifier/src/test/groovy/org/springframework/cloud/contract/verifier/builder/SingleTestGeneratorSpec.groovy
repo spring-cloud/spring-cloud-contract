@@ -68,7 +68,7 @@ class SingleTestGeneratorSpec extends Specification {
 			SingleTestGenerator testGenerator = new SingleTestGenerator(properties)
 
 		when:
-			String clazz = testGenerator.buildClass([contract], "test", "test")
+			String clazz = testGenerator.buildClass([contract], "test", "test", 'com/foo')
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -90,7 +90,7 @@ class SingleTestGeneratorSpec extends Specification {
 			SingleTestGenerator testGenerator = new SingleTestGenerator(properties)
 
 		when:
-			String clazz = testGenerator.buildClass([contract], "test", "test")
+			String clazz = testGenerator.buildClass([contract], "test", "test", 'com/foo')
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -133,7 +133,7 @@ class SingleTestGeneratorSpec extends Specification {
 			SingleTestGenerator testGenerator = new SingleTestGenerator(properties)
 
 		when:
-			String clazz = testGenerator.buildClass([contract, contract2], "test", "test")
+			String clazz = testGenerator.buildClass([contract, contract2], "test", "test", 'com/foo')
 
 		then:
 			classStrings.each { clazz.contains(it) }

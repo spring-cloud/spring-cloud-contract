@@ -162,4 +162,51 @@ public class PluginUnitTest {
 		assertFilesPresent(basedir, "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/com/example/server/client1/ContractsTest.java");
 	}
 
+	@Test
+	public void shouldGenerateContractTestsWithBaseClassResolvedFromConvention() throws Exception {
+		File basedir = this.resources.getBasedir("basic-generated-baseclass");
+
+		this.maven.executeMojo(basedir, "generateTests", newParameter("testFramework", "JUNIT"));
+
+		String path = "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/hello/V1Test.java";
+		assertFilesPresent(basedir, path);
+		File test = new File(basedir, path);
+		then(FileUtils.readFileToString(test)).contains("extends HelloV1Base").contains("import hello.HelloV1Base");
+	}
+
+	@Test
+	public void shouldGenerateContractTestsWithBaseClassResolvedFromConventionForSpock() throws Exception {
+		File basedir = this.resources.getBasedir("basic-generated-baseclass");
+
+		this.maven.executeMojo(basedir, "generateTests", newParameter("testFramework", "SPOCK"));
+
+		String path = "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/hello/V1Spec.groovy";
+		assertFilesPresent(basedir, path);
+		File test = new File(basedir, path);
+		then(FileUtils.readFileToString(test)).contains("extends HelloV1Base").contains("import hello.HelloV1Base");
+	}
+
+	@Test
+	public void shouldGenerateContractTestsWithBaseClassResolvedFromMapping() throws Exception {
+		File basedir = this.resources.getBasedir("basic-baseclass-from-mappings");
+
+		this.maven.executeMojo(basedir, "generateTests", newParameter("testFramework", "JUNIT"));
+
+		String path = "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/com/hello/V1Test.java";
+		assertFilesPresent(basedir, path);
+		File test = new File(basedir, path);
+		then(FileUtils.readFileToString(test)).contains("extends TestBase").contains("import com.example.TestBase");
+	}
+
+	@Test
+	public void shouldGenerateContractTestsWithBaseClassResolvedFromMappingNameForSpock() throws Exception {
+		File basedir = this.resources.getBasedir("basic-baseclass-from-mappings");
+
+		this.maven.executeMojo(basedir, "generateTests", newParameter("testFramework", "SPOCK"));
+
+		String path = "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/com/hello/V1Spec.groovy";
+		assertFilesPresent(basedir, path);
+		File test = new File(basedir, path);
+		then(FileUtils.readFileToString(test)).contains("extends TestBase").contains("import com.example.TestBase");
+	}
 }

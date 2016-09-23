@@ -134,7 +134,6 @@ public class ConvertMojo extends AbstractMojo {
 		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering)
 				.copy(contractsDirectory, this.outputDirectory);
 
-
 		config.setContractsDslDir(isInsideProject() ? contractsDirectory : this.source);
 		config.setStubsOutputDir(
 				isInsideProject() ? new File(this.outputDirectory, "mappings") : this.destination);

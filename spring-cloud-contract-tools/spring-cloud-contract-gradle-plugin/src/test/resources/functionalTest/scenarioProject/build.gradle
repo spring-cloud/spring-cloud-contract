@@ -81,7 +81,12 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 		targetFramework = 'Spock'
 		// end::target_framework[]
 		testMode = 'MockMvc'
-		baseClassForTests = 'org.springframework.cloud.MvcSpec'
+		//baseClassForTests = 'org.springframework.cloud.MvcSpec'
+		// tag::base_class_mapping[]
+		baseClassMappings {
+			baseClassMapping('.*', 'org.springframework.cloud.MvcSpec')
+		}
+		// end::base_class_mapping[]
 		contractsDslDir = file("${project.projectDir.absolutePath}/mappings/")
 		generatedTestSourcesDir = file("${project.buildDir}/generated-test-sources/")
 		stubsOutputDir = stubsOutputDirRoot

@@ -25,7 +25,9 @@ class ExtensionToProperties {
 				generatedTestSourcesDir: extension.generatedTestSourcesDir,
 				stubsOutputDir: extension.stubsOutputDir,
 				stubsSuffix: extension.stubsSuffix,
-				assertJsonSize: extension.assertJsonSize
+				assertJsonSize: extension.assertJsonSize,
+				packageWithBaseClasses: extension.packageWithBaseClasses,
+				baseClassMappings: extension.baseClassMappings
 		)
 	}
 }

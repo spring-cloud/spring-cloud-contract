@@ -16,8 +16,9 @@
 package org.springframework.cloud.contract.maven.verifier;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.maven.model.Dependency;
@@ -140,6 +141,30 @@ public class GenerateTestsMojo extends AbstractMojo {
 	@Parameter(property = "contractsWorkOffline", defaultValue = "false")
 	private boolean contractsWorkOffline;
 
+	/**
+	 * A package that contains all the base clases for generated tests. If your contract resides in a location
+	 * {@code src/test/resources/contracts/com/example/v1/} and you provide the {@code packageWithBaseClasses}
+	 * value to {@code com.example.contracts.base} then we will search for a test source file that will
+	 * have the package {@code com.example.contracts.base} and name {@code ExampleV1Base}. As you can see
+	 * it will take the two last folders to and attach {@code Base} to its name.
+	 */
+	@Parameter(property = "packageWithBaseClasses")
+	private String packageWithBaseClasses;
+
+	/**
+	 * A way to override any base class mappings. The keys are regular expressions on the package name of the contract
+	 * and the values FQN to a base class for that given expression.
+	 * </p>
+	 * Example of a mapping
+	 * </p>
+	 * {@code .*.com.example.v1..*} -> {@code com.example.SomeBaseClass}
+	 * </p>
+	 * When a contract's package matches the provided regular expression then extending class will be the one
+	 * provided in the map - in this case {@code com.example.SomeBaseClass}
+	 */
+	@Parameter(property = "baseClassMappings")
+	private List<BaseClassMapping> baseClassMappings;
+
 	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
 
 	@Inject
@@ -175,6 +200,10 @@ public class GenerateTestsMojo extends AbstractMojo {
 		config.setIgnoredFiles(this.ignoredFiles);
 		config.setExcludedFiles(this.excludedFiles);
 		config.setAssertJsonSize(this.assertJsonSize);
+		config.setPackageWithBaseClasses(this.packageWithBaseClasses);
+		if (this.baseClassMappings != null) {
+			config.setBaseClassMappings(mappingsToMap());
+		}
 		this.project.addTestCompileSourceRoot(this.generatedTestSourcesDir.getAbsolutePath());
 		if (getLog().isInfoEnabled()) {
 			getLog().info(
@@ -193,6 +222,17 @@ public class GenerateTestsMojo extends AbstractMojo {
 					String.format("Spring Cloud Contract Verifier Plugin exception: %s",
 							e.getMessage()), e);
 		}
+	}
+
+	public Map<String, String> mappingsToMap() {
+		Map<String, String> map = new HashMap<>();
+		if (this.baseClassMappings == null) {
+			return map;
+		}
+		for (BaseClassMapping mapping : this.baseClassMappings) {
+			map.put(mapping.getContractPackageRegex(), mapping.getBaseClassFQN());
+		}
+		return map;
 	}
 
 	public List<String> getExcludedFiles() {

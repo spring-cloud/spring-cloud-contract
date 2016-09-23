@@ -87,7 +87,7 @@ class TestGenerator {
 		if (contracts.size()) {
 			def className = afterLast(includedDirectoryRelativePath.toString(), File.separator) + resolveNameSuffix()
 			def packageName = buildPackage(basePackageNameForClass, includedDirectoryRelativePath)
-			def classBytes = generator.buildClass(contracts, className, packageName).getBytes(StandardCharsets.UTF_8)
+			def classBytes = generator.buildClass(contracts, className, packageName, includedDirectoryRelativePath).getBytes(StandardCharsets.UTF_8)
 			saver.saveClassFile(className, basePackageNameForClass, convertIllegalPackageChars(includedDirectoryRelativePath.toString()), classBytes)
 			counter.incrementAndGet()
 		}

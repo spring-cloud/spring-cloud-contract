@@ -23,14 +23,12 @@ import groovy.util.logging.Slf4j
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
+import org.springframework.cloud.contract.verifier.config.TestMode
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
-import org.springframework.cloud.contract.verifier.config.TestMode
 
 import static ClassBuilder.createClass
-import static MethodBuilder.createTestMethod
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.capitalize
-
 /**
  * Builds a single test for the given {@link ContractVerifierConfigProperties properties}
  *
@@ -53,8 +51,8 @@ class SingleTestGenerator {
 	 * each {@link ContractMetadata}
 	 */
 	@PackageScope
-	String buildClass(Collection<ContractMetadata> listOfFiles, String className, String classPackage) {
-		ClassBuilder clazz = createClass(capitalize(className), classPackage, configProperties)
+	String buildClass(Collection<ContractMetadata> listOfFiles, String className, String classPackage, String includedDirectoryRelativePath) {
+		ClassBuilder clazz = createClass(capitalize(className), classPackage, configProperties, includedDirectoryRelativePath)
 
 		if (configProperties.imports) {
 			configProperties.imports.each {
@@ -112,7 +110,7 @@ class SingleTestGenerator {
 				}
 				conditionalImportsAdded = true
 			}
-			clazz.addMethod(createTestMethod(key.contract, key.stubsFile, key.groovyDsl, configProperties))
+			clazz.addMethod(MethodBuilder.createTestMethod(key.contract, key.stubsFile, key.groovyDsl, configProperties))
 		}
 		return clazz.build()
 	}
@@ -123,7 +121,7 @@ class SingleTestGenerator {
 			if (log.isDebugEnabled()) {
 				log.debug("Stub content from file [${stubsFile.text}]")
 			}
-			org.springframework.cloud.contract.spec.Contract stubContent = ContractVerifierDslConverter.convert(stubsFile)
+			Contract stubContent = ContractVerifierDslConverter.convert(stubsFile)
 			TestType testType = (stubContent.input || stubContent.outputMessage) ? TestType.MESSAGING : TestType.HTTP
 			return [(new ParsedDsl(it, stubContent, stubsFile)): testType]
 		}

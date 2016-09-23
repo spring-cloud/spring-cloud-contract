@@ -109,4 +109,26 @@ class ContractVerifierConfigProperties {
 	 */
 	String includedContracts = ".*"
 
+	/**
+	 * A package that contains all the base clases for generated tests. If your contract resides in a location
+	 * {@code src/test/resources/contracts/com/example/v1/} and you provide the {@code packageWithBaseClasses}
+	 * value to {@code com.example.contracts.base} then we will search for a test source file that will
+	 * have the package {@code com.example.contracts.base} and name {@code ExampleV1Base}. As you can see
+	 * it will take the two last folders to and attach {@code Base} to its name.
+	 */
+	String packageWithBaseClasses
+
+	/**
+	 * A way to override any base class mappings. The keys are regular expressions on the package name of the contract
+	 * and the values FQN to a base class for that given expression.
+	 * </p>
+	 * Example of a mapping
+	 * </p>
+	 * {@code .*.com.example.v1..*} -> {@code com.example.SomeBaseClass}
+	 * </p>
+	 * When a contract's package matches the provided regular expression then extending class will be the one
+	 * provided in the map - in this case {@code com.example.SomeBaseClass}
+	 */
+	Map<String, String> baseClassMappings
+
 }

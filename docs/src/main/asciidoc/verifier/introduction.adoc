@@ -819,3 +819,8 @@ tests and the stubs. Due to this convention the producer team will know which co
 when some incompatible changes are done.
 
 The rest of the flow looks the same.
+
+===== Can I have multiple base classes for tests?
+
+Yes! Check out the https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#different_base_classes_for_contracts[Different base classes for contracts] sections
+of either Gradle or Maven plugins.

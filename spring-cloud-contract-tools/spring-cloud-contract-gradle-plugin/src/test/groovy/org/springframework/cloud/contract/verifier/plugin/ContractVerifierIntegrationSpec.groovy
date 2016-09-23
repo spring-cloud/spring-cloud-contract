@@ -33,8 +33,8 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 
 	public static final String SPOCK = "targetFramework = 'Spock'"
 	public static final String JUNIT = "targetFramework = 'JUnit'"
-	public static final String MVC_SPEC = "baseClassForTests = 'org.springframework.cloud.MvcSpec'"
-	public static final String MVC_TEST = "baseClassForTests = 'org.springframework.cloud.MvcTest'"
+	public static final String MVC_SPEC = "'org.springframework.cloud.MvcSpec'"
+	public static final String MVC_TEST = "'org.springframework.cloud.MvcTest'"
 	protected static final boolean WORK_OFFLINE = Boolean.parseBoolean(System.getProperty('WORK_OFFLINE', 'false'))
 
 	File testProjectDir

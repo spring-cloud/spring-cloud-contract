@@ -76,7 +76,7 @@
 				<version>${spring-cloud-contract.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-					<baseClassForTests>com.example.fraud.MvcTest</baseClassForTests>
+					<packageWithBaseClasses>com.example.fraud</packageWithBaseClasses>
 				</configuration>
 			</plugin>
 			<!-- end::contract_maven_plugin[] -->

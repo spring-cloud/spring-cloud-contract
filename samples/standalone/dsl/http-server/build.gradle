@@ -39,7 +39,7 @@ dependencyManagement {
 }
 
 contracts {
-	baseClassForTests = 'com.example.fraud.MvcTest'
+	packageWithBaseClasses = 'com.example.fraud'
 }
 
 dependencies {
