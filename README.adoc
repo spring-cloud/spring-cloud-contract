@@ -1402,8 +1402,8 @@ The `pom.xml` in the root folder can look like this:
 	<artifactId>contracts</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<name>Spring Cloud Contract Verifier Http Server Sample</name>
-	<description>Spring Cloud Contract Verifier Http Server Sample</description>
+	<name>Contracts</name>
+	<description>Contains all the Spring Cloud Contracts, well, contracts. JAR used by the producers to generate tests and stubs</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
