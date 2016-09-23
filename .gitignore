@@ -19,3 +19,15 @@ src/s
 hs_err_pid*
 .DS_Store
 *.log
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Intellij
+*.iws
+
+# Maven
+log/
+target/
