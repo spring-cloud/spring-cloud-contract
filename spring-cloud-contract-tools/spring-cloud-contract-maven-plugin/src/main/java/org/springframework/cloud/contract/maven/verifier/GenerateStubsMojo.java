@@ -29,6 +29,9 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 
+/**
+ * Picks the converted .json files and creates a jar. Requires convert to be executed first
+ */
 @Mojo(name = "generateStubs", defaultPhase = LifecyclePhase.PACKAGE,
 		requiresProject = true)
 public class GenerateStubsMojo extends AbstractMojo {

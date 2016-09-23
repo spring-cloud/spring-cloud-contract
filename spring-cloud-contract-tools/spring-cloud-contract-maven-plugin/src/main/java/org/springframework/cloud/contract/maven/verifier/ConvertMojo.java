@@ -16,8 +16,10 @@
 package org.springframework.cloud.contract.maven.verifier;
 
 import java.io.File;
+import javax.inject.Inject;
 
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -27,6 +29,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
+import org.eclipse.aether.RepositorySystemSession;
+import org.springframework.cloud.contract.maven.verifier.stubrunner.AetherStubDownloaderFactory;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverter;
 import org.springframework.cloud.contract.verifier.wiremock.RecursiveFilesConverter;
@@ -39,6 +43,9 @@ import org.springframework.cloud.contract.verifier.wiremock.RecursiveFilesConver
 @Mojo(name = "convert", requiresProject = false,
 		defaultPhase = LifecyclePhase.PROCESS_TEST_RESOURCES)
 public class ConvertMojo extends AbstractMojo {
+
+	@Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
+	private RepositorySystemSession repoSession;
 
 	/**
 	 * Directory containing Spring Cloud Contract Verifier contracts written using the GroovyDSL
@@ -72,8 +79,42 @@ public class ConvertMojo extends AbstractMojo {
 
 	@Parameter(defaultValue = "${project}", readonly = true) private MavenProject project;
 
+	/**
+	 * The URL from which a JAR containing the contracts should get downloaded. If not provided
+	 * but artifactid / coordinates notation was provided then the current Maven's build repositories will be
+	 * taken into consideration
+	 */
+	@Parameter(property = "contractsRepositoryUrl")
+	private String contractsRepositoryUrl;
+
+	@Parameter(property = "contractDependency")
+	private Dependency contractDependency;
+
+	/**
+	 * The path in the JAR with all the contracts where contracts for this particular service lay.
+	 * If not provided will be resolved to {@code groupid/artifactid}. Example:
+	 * </p>
+	 * If {@code groupid} is {@code com.example} and {@code artifactid} is {@code service} then the resolved path will be
+	 * {@code /com/example/artifactid}
+	 */
+	@Parameter(property = "contractsPath")
+	private String contractsPath;
+
+	/**
+	 * If {@code true} then JAR with contracts will be taken from local maven repository
+	 */
+	@Parameter(property = "contractsWorkOffline", defaultValue = "false")
+	private boolean contractsWorkOffline;
+
 	@Component(role = MavenResourcesFiltering.class, hint = "default")
 	private MavenResourcesFiltering mavenResourcesFiltering;
+
+	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
+
+	@Inject
+	public ConvertMojo(AetherStubDownloaderFactory aetherStubDownloaderFactory) {
+		this.aetherStubDownloaderFactory = aetherStubDownloaderFactory;
+	}
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
@@ -83,12 +124,18 @@ public class ConvertMojo extends AbstractMojo {
 					this.skip));
 			return;
 		}
+		// download contracts, unzip them and pass as output directory
+		ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
+		File contractsDirectory = new MavenContractsDownloader(this.project, this.contractDependency,
+				this.contractsPath, this.contractsRepositoryUrl, this.contractsWorkOffline, getLog(),
+				this.aetherStubDownloaderFactory, this.repoSession).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
+		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 
 		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering)
-				.copy(this.contractsDirectory, this.outputDirectory);
+				.copy(contractsDirectory, this.outputDirectory);
 
-		final ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
-		config.setContractsDslDir(isInsideProject() ? this.contractsDirectory : this.source);
+
+		config.setContractsDslDir(isInsideProject() ? contractsDirectory : this.source);
 		config.setStubsOutputDir(
 				isInsideProject() ? new File(this.outputDirectory, "mappings") : this.destination);
 
@@ -99,6 +146,7 @@ public class ConvertMojo extends AbstractMojo {
 				config.getContractsDslDir()));
 		getLog().info(String.format("WireMock stubs mappings directory: %s",
 				config.getStubsOutputDir()));
+
 
 		RecursiveFilesConverter converter = new RecursiveFilesConverter(
 				new DslToWireMockClientConverter(), config);

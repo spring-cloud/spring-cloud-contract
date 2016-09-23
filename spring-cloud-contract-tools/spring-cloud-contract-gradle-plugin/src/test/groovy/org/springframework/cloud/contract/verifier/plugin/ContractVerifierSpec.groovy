@@ -6,7 +6,6 @@ import org.gradle.api.plugins.GroovyPlugin
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.testfixtures.ProjectBuilder
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import spock.lang.Specification
 
 class ContractVerifierSpec extends Specification {
@@ -32,7 +31,7 @@ class ContractVerifierSpec extends Specification {
 			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
 
 		expect:
-			project.extensions.findByType(ContractVerifierConfigProperties) != null
+			project.extensions.findByType(ContractVerifierExtension) != null
 	}
 
 	def "should create generateContractTests task"() {

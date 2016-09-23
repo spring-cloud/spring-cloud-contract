@@ -91,8 +91,15 @@ public class StubConfiguration {
 			return "";
 		}
 		return StringUtils.arrayToDelimitedString(
-				new String[] { this.groupId, this.artifactId, this.version, this.classifier },
+				new String[] { nullCheck(this.groupId),
+						nullCheck(this.artifactId),
+						nullCheck(this.version),
+						nullCheck(this.classifier) },
 				STUB_COLON_DELIMITER);
+	}
+
+	private String nullCheck(String value) {
+		return StringUtils.hasText(value) ? value : "";
 	}
 
 	public boolean groupIdAndArtifactMatches(String ivyNotationAsString) {
@@ -115,6 +122,10 @@ public class StubConfiguration {
 
 	public String getClassifier() {
 		return this.classifier;
+	}
+
+	public String getVersion() {
+		return this.version;
 	}
 
 	@Override

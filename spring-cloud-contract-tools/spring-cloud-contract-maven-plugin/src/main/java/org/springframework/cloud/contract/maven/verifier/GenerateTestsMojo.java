@@ -18,6 +18,9 @@ package org.springframework.cloud.contract.maven.verifier;
 import java.io.File;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -26,6 +29,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.eclipse.aether.RepositorySystemSession;
+import org.springframework.cloud.contract.maven.verifier.stubrunner.AetherStubDownloaderFactory;
 import org.springframework.cloud.contract.spec.ContractVerifierException;
 import org.springframework.cloud.contract.verifier.TestGenerator;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
@@ -35,6 +40,9 @@ import org.springframework.cloud.contract.verifier.config.TestMode;
 @Mojo(name = "generateTests", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES,
 		requiresDependencyResolution = ResolutionScope.TEST)
 public class GenerateTestsMojo extends AbstractMojo {
+
+	@Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
+	private RepositorySystemSession repoSession;
 
 	@Parameter(property = "spring.cloud.contract.verifier.contractsDirectory",
 			defaultValue = "${project.basedir}/src/test/resources/contracts")
@@ -105,6 +113,40 @@ public class GenerateTestsMojo extends AbstractMojo {
 
 	@Parameter(property = "skipTests", defaultValue = "false") private boolean skipTests;
 
+	/**
+	 * The URL from which a JAR containing the contracts should get downloaded. If not provided
+	 * but artifactid / coordinates notation was provided then the current Maven's build repositories will be
+	 * taken into consideration
+	 */
+	@Parameter(property = "contractsRepositoryUrl")
+	private String contractsRepositoryUrl;
+
+	@Parameter(property = "contractDependency")
+	private Dependency contractDependency;
+
+	/**
+	 * The path in the JAR with all the contracts where contracts for this particular service lay.
+	 * If not provided will be resolved to {@code groupid/artifactid}. Example:
+	 * </p>
+	 * If {@code groupid} is {@code com.example} and {@code artifactid} is {@code service} then the resolved path will be
+	 * {@code /com/example/artifactid}
+	 */
+	@Parameter(property = "contractsPath")
+	private String contractsPath;
+
+	/**
+	 * If {@code true} then JAR with contracts will be taken from local maven repository
+	 */
+	@Parameter(property = "contractsWorkOffline", defaultValue = "false")
+	private boolean contractsWorkOffline;
+
+	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
+
+	@Inject
+	public GenerateTestsMojo(AetherStubDownloaderFactory aetherStubDownloaderFactory) {
+		this.aetherStubDownloaderFactory = aetherStubDownloaderFactory;
+	}
+
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (this.skip || this.mavenTestSkip || this.skipTests) {
 			if (this.skip) getLog().info("Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip=" + this.skip);
@@ -115,7 +157,12 @@ public class GenerateTestsMojo extends AbstractMojo {
 		getLog().info(
 				"Generating server tests source code for Spring Cloud Contract Verifier contract verification");
 		final ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
-		config.setContractsDslDir(this.contractsDirectory);
+		// download contracts, unzip them and pass as output directory
+		File contractsDirectory = new MavenContractsDownloader(this.project, this.contractDependency,
+				this.contractsPath, this.contractsRepositoryUrl, this.contractsWorkOffline, getLog(),
+				this.aetherStubDownloaderFactory, this.repoSession).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
+		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
+		config.setContractsDslDir(contractsDirectory);
 		config.setGeneratedTestSourcesDir(this.generatedTestSourcesDir);
 		config.setTargetFramework(this.testFramework);
 		config.setTestMode(this.testMode);

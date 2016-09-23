@@ -54,7 +54,8 @@ class RecursiveFilesConverter {
 	}
 
 	void processFiles() {
-		ContractFileScanner scanner = new ContractFileScanner(properties.contractsDslDir, properties.excludedFiles as Set, [] as Set)
+		ContractFileScanner scanner = new ContractFileScanner(properties.contractsDslDir,
+				properties.excludedFiles as Set, [] as Set, properties.includedContracts)
 		ListMultimap<Path, ContractMetadata> contracts = scanner.findContracts()
 		if (log.isDebugEnabled()) {
 			log.debug("Found the following contracts $contracts")

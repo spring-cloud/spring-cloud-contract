@@ -38,7 +38,7 @@ class GenerateServerTestsTask extends ConventionTask {
 	File generatedTestSourcesDir
 
 	//TODO: How to deal with @Input*, @Output* and that domain object?
-	ContractVerifierConfigProperties configProperties
+	ContractVerifierExtension configProperties
 
 	@TaskAction
 	void generate() {
@@ -51,7 +51,9 @@ class GenerateServerTestsTask extends ConventionTask {
 
 		try {
 			//TODO: What with that? How to pass?
-			TestGenerator generator = new TestGenerator(getConfigProperties())
+			ContractVerifierConfigProperties props = ExtensionToProperties.fromExtension(getConfigProperties())
+			props.contractsDslDir = getContractsDslDir()
+			TestGenerator generator = new TestGenerator(props)
 			int generatedClasses = generator.generate()
 			project.logger.info("Generated {} test classes", generatedClasses)
 		} catch (ContractVerifierException e) {

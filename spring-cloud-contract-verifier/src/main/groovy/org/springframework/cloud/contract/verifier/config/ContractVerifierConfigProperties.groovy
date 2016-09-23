@@ -102,4 +102,11 @@ class ContractVerifierConfigProperties {
 	 */
 	Boolean assertJsonSize = false
 
+	/**
+	 * A regular expression that matches contracts. Especially useful when using a single JAR containing
+	 * all the contracts in the system. In this case you'd like to take into consideration only some of them.
+	 * Defaults to picking all files.
+	 */
+	String includedContracts = ".*"
+
 }
