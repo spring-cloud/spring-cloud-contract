@@ -182,7 +182,7 @@ As consumers we need to define what exactly we want to achieve. We need to formu
 
 [source,groovy,indent=0]
 ----
-include::{introduction_url}/samples/standalone/dsl/http-server/src/test/resources/contracts/shouldMarkClientAsFraud.groovy[]
+include::{introduction_url}/samples/standalone/dsl/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.groovy[]
 ----
 
 The Contract is written using a statically typed Groovy DSL. You might be wondering what are those
@@ -353,7 +353,7 @@ That's because all the generated tests will extend that class. Over there you ca
 
 [source,java,indent=0]
 ----
-include::{introduction_url}/samples/standalone/dsl/http-server/src/test/java/com/example/fraud/MvcTest.java[]
+include::{introduction_url}/samples/standalone/dsl/http-server/src/test/java/com/example/fraud/FraudBase.java[]
 ----
 
 Now, if you run the `./mvnw clean install` you would get sth like this:
