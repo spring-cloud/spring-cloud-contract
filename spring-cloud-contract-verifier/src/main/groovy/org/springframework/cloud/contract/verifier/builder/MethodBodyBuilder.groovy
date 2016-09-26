@@ -242,26 +242,28 @@ abstract class MethodBodyBuilder {
 	 */
 	protected void validateResponseBodyBlock(BlockBuilder bb, Object responseBody) {
 		ContentType contentType = getResponseContentType()
-		if (responseBody instanceof GString) {
-			responseBody = extractValue(responseBody, contentType, { DslProperty dslProperty -> dslProperty.serverValue })
+		Object convertedResponseBody = responseBody
+		if (convertedResponseBody instanceof GString) {
+			convertedResponseBody = extractValue(convertedResponseBody, contentType, { DslProperty dslProperty -> dslProperty.serverValue })
 		}
+		convertedResponseBody = MapConverter.getTestSideValues(convertedResponseBody)
 		if (contentType == ContentType.JSON) {
 			appendJsonPath(bb, getResponseAsString())
-			JsonPaths jsonPaths = new JsonToJsonPathsConverter(configProperties).transformToJsonPathWithTestsSideValues(responseBody)
+			JsonPaths jsonPaths = new JsonToJsonPathsConverter(configProperties).transformToJsonPathWithTestsSideValues(convertedResponseBody)
 			jsonPaths.each {
 				String method = it.method()
 				String postProcessedMethod = postProcessJsonPathCall(method)
 				bb.addLine("assertThatJson(parsedJson)" + postProcessedMethod)
 				addColonIfRequired(bb)
 			}
-			processBodyElement(bb, "", responseBody)
+			processBodyElement(bb, "", convertedResponseBody)
 		} else if (contentType == ContentType.XML) {
 			bb.addLine(getParsedXmlResponseBodyString(getResponseAsString()))
 			addColonIfRequired(bb)
 			// TODO xml validation
 		} else {
 			bb.addLine(getSimpleResponseBodyString(getResponseAsString()))
-			processText(bb, "", responseBody as String)
+			processText(bb, "", convertedResponseBody as String)
 			addColonIfRequired(bb)
 		}
 	}

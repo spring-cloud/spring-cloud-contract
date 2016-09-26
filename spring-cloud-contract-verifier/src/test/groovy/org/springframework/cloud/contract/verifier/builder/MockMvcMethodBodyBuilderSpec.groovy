@@ -1565,4 +1565,31 @@ World.'''"""
 			strippedTest.contains("""assertThatJson(parsedJson).field("responseElement").matches("[0-9]{7}")""")
 	}
 
+	@Issue('#85')
+	def "should execute custom method for complex structures on the response side"() {
+		given:
+		Contract contractDsl = Contract.make {
+			request {
+				method 'GET'
+				urlPath '/get'
+			}
+			response {
+				status 200
+				body([
+					fraudCheckStatus: "OK",
+					rejectionReason : [
+							title: $(consumer(null), producer(execute('assertThatRejectionReasonIsNull($it)')))
+					]
+				])
+			}
+		}
+			MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.then(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('assertThatRejectionReasonIsNull(parsedJson.read(\'$.rejectionReason.title\'))')
+	}
+
 }
