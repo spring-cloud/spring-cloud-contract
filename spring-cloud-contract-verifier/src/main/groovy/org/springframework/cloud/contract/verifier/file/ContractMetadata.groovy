@@ -1,7 +1,7 @@
 /*
  *  Copyright 2013-2016 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  Licensed under the Apache License, Version 2.0 (the "License")
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
@@ -29,10 +29,10 @@ import java.nio.file.Path
  */
 @CompileStatic
 class ContractMetadata {
-	final Path path;
-	final boolean ignored;
+	final Path path
+	final boolean ignored
 	final int groupSize
-	final Integer order;
+	final Integer order
 
 	ContractMetadata(Path path, boolean ignored, int groupSize, Integer order) {
 		this.groupSize = groupSize
@@ -48,6 +48,6 @@ class ContractMetadata {
 				", ignored=" + ignored +
 				", groupSize=" + groupSize +
 				", order=" + order +
-				'}';
+				'}'
 	}
 }

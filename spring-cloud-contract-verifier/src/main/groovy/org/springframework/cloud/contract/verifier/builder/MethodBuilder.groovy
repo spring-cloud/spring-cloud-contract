@@ -58,7 +58,7 @@ class MethodBuilder {
 			log.debug("Stub content Groovy DSL [$stubContent]")
 		}
 		String methodName = NamesUtil.camelCase(NamesUtil.toLastDot(NamesUtil.afterLast(stubsFile.path, File.separator)))
-		return new MethodBuilder(methodName, stubContent, configProperties, contract.ignored)
+		return new MethodBuilder(methodName, stubContent, configProperties, contract.ignored || stubContent.ignored)
 	}
 
 	/**

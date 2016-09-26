@@ -40,6 +40,7 @@ class WireMockStubStrategy {
 	private final Integer priority
 	private final ContractMetadata contract
 	private final String rootName
+	private final Contract groovyDsl
 
 	WireMockStubStrategy(String rootName, ContractMetadata contract, Contract groovyDsl) {
 		this.rootName = rootName
@@ -47,6 +48,7 @@ class WireMockStubStrategy {
 		this.wireMockRequestStubStrategy = new WireMockRequestStubStrategy(groovyDsl)
 		this.wireMockResponseStubStrategy = new WireMockResponseStubStrategy(groovyDsl)
 		this.priority = groovyDsl.priority
+		this.groovyDsl = groovyDsl
 	}
 
 	/**
@@ -66,6 +68,10 @@ class WireMockStubStrategy {
 		stubMapping.response = response
 
 		if (!request || !response) {
+			return ''
+		}
+
+		if (groovyDsl.ignored || contract.ignored) {
 			return ''
 		}
 

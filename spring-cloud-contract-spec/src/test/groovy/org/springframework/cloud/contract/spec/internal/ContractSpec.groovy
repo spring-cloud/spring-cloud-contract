@@ -77,4 +77,29 @@ class ContractSpec extends Specification {
 		then:
 			(property.serverValue as String).matches(/[0-9]{5}/)
 	}
+
+	def 'should set a description'() {
+		given:
+		// tag::description[]
+		org.springframework.cloud.contract.spec.Contract.make {
+			description('''
+given:
+	An input
+when:
+	Sth happens
+then:
+	Output
+''')
+		}
+		// end::description[]
+	}
+
+	def 'should mark a contract ignored'() {
+		given:
+		// tag::ignored[]
+		org.springframework.cloud.contract.spec.Contract.make {
+			ignored()
+		}
+		// end::ignored[]
+	}
 }

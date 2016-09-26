@@ -34,6 +34,11 @@ import org.springframework.cloud.contract.spec.internal.Response
 @ToString(includeFields = true, includePackage = false, includeNames = true)
 class Contract {
 
+	/**
+	 * You can set the level of priority of this contract. If there are two contracts
+	 * mapped for example to the same endpoint, then the one with greater priority should
+	 * take precedence
+	 */
 	Integer priority
 	Request request
 	Response response
@@ -41,6 +46,11 @@ class Contract {
 	String description
 	Input input
 	OutputMessage outputMessage
+
+	/**
+	 * Whether the contract should be ignored or not
+	 */
+	boolean ignored
 
 	protected Contract() {}
 
@@ -88,6 +98,10 @@ class Contract {
 		this.outputMessage = new OutputMessage()
 		closure.delegate = outputMessage
 		closure()
+	}
+
+	void ignored() {
+		this.ignored = true
 	}
 
 }

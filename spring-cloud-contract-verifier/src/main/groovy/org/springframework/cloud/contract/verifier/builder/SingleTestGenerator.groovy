@@ -60,10 +60,6 @@ class SingleTestGenerator {
 			}
 		}
 
-		if (listOfFiles.ignored.find { it }) {
-			clazz.addImport(configProperties.targetFramework.getIgnoreClass())
-		}
-
 		if (configProperties.staticImports) {
 			configProperties.staticImports.each {
 				clazz.addStaticImport(it)
@@ -80,6 +76,7 @@ class SingleTestGenerator {
 		Map<ParsedDsl, TestType> contracts = mapContractsToTheirTestTypes(listOfFiles)
 
 		boolean conditionalImportsAdded = false
+		boolean toIgnore = listOfFiles.ignored.find { it }
 		contracts.each { ParsedDsl key, TestType value ->
 			if (!conditionalImportsAdded) {
 				if (contracts.values().contains(TestType.HTTP)) {
@@ -109,9 +106,15 @@ class SingleTestGenerator {
 					addMessagingRelatedEntries(clazz)
 				}
 				conditionalImportsAdded = true
+				toIgnore = toIgnore ? true: key.groovyDsl.ignored
 			}
 			clazz.addMethod(MethodBuilder.createTestMethod(key.contract, key.stubsFile, key.groovyDsl, configProperties))
 		}
+
+		if (toIgnore) {
+			clazz.addImport(configProperties.targetFramework.getIgnoreClass())
+		}
+
 		return clazz.build()
 	}
 

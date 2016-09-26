@@ -21,6 +21,7 @@ import org.junit.rules.TemporaryFolder
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestMode
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
+import spock.lang.Issue
 import spock.lang.Specification
 
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
@@ -138,6 +139,45 @@ class SingleTestGeneratorSpec extends Specification {
 		then:
 			classStrings.each { clazz.contains(it) }
 			clazz.contains('@Inject ContractVerifierMessaging')
+
+		where:
+			testFramework | classStrings
+			JUNIT         | jUnitClassStrings
+			SPOCK         | spockClassStrings
+	}
+
+	@Issue('#30')
+	def "should ignore a test if the contract is ignored in the dsl"() {
+		given:
+			File secondFile = tmpFolder.newFile()
+			secondFile.write("""
+						org.springframework.cloud.contract.spec.Contract.make {
+							ignored()
+							request {
+								method 'PUT'
+								url 'url'
+							}
+							response {
+								status 200
+							}
+						}
+		""")
+		and:
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties();
+			properties.targetFramework = testFramework
+		and:
+			ContractMetadata contract2 = new ContractMetadata(secondFile.toPath(), true, 1, 2)
+			contract2.ignored >> false
+			contract2.order >> 2
+		and:
+			SingleTestGenerator testGenerator = new SingleTestGenerator(properties)
+
+		when:
+			String clazz = testGenerator.buildClass([contract2], "test", "test", 'com/foo')
+
+		then:
+			classStrings.each { clazz.contains(it) }
+			clazz.contains('@Ignore')
 
 		where:
 			testFramework | classStrings

@@ -1575,4 +1575,57 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		and:
 		stubMappingIsValidWireMockStub(json)
 	}
+
+	@Issue('#30')
+	def "should not create a stub for a skipped contract"() {
+		given:
+		org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
+			request {
+				ignored()
+				method 'GET'
+				urlPath ('/some/api') {
+					queryParameters {
+						parameter 'size': value(
+								consumer(regex('[0-9]+')),
+								producer(1)
+						)
+					}
+				}
+			}
+			response {
+				status 200
+				body('')
+			}
+		}
+		when:
+			def json = toWireMockClientJsonStub(groovyDsl)
+		then:
+			json == ''
+	}
+
+	@Issue('#30')
+	def "should not create a stub for a contract matching ignored pattern"() {
+		given:
+		org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
+			request {
+				method 'GET'
+				urlPath ('/some/api') {
+					queryParameters {
+						parameter 'size': value(
+								consumer(regex('[0-9]+')),
+								producer(1)
+						)
+					}
+				}
+			}
+			response {
+				status 200
+				body('')
+			}
+		}
+		when:
+			def json = new WireMockStubStrategy("Test", new ContractMetadata(null, true, 0, null), groovyDsl).toWireMockClientStub()
+		then:
+			json == ''
+	}
 }

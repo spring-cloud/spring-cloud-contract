@@ -36,6 +36,27 @@ WARNING: Due to the fact that JSON structure can have any form it's sometimes im
 the `value(consumer(...), producer(...))` notation when using that in GString. That's why we highly recommend using the
 Groovy Map notation.
 
+==== Common Top-Level elements
+
+===== Description
+
+You can add a `description` to your contract that is nothing else but an arbitrary text. Example:
+
+[source,groovy,indent=0]
+----
+include::{contract_spec_path}/src/test/groovy/org/springframework/cloud/contract/spec/internal/ContractSpec.groovy[tags=description,indent=0]
+----
+
+===== Ignoring contracts
+
+If you want to ignore a contract you can either set a value of ignored contracts in the plugin configuration
+or just set the `ignored` property on the contract itself:
+
+[source,groovy,indent=0]
+----
+include::{contract_spec_path}/src/test/groovy/org/springframework/cloud/contract/spec/internal/ContractSpec.groovy[tags=ignored,indent=0]
+----
+
 ==== HTTP Top-Level Elements
 
 Following methods can be called in the top-level closure of a contract definition. Request and response are mandatory, priority is optional.
