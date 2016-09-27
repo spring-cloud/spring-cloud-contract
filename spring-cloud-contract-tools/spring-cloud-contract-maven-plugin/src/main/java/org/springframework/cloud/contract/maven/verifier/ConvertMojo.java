@@ -44,6 +44,9 @@ import org.springframework.cloud.contract.verifier.wiremock.RecursiveFilesConver
 		defaultPhase = LifecyclePhase.PROCESS_TEST_RESOURCES)
 public class ConvertMojo extends AbstractMojo {
 
+	public static final String DEFAULT_STUBS_DIR = "${project.build.directory}/stubs/";
+	public static final String DEFAULT_MAPPINGS_PATH = "mappings";
+
 	@Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
 	private RepositorySystemSession repoSession;
 
@@ -57,8 +60,8 @@ public class ConvertMojo extends AbstractMojo {
 	 * Directory where the generated WireMock stubs from Groovy DSL should be placed.
 	 * You can then mention them in your packaging task to create jar with stubs
 	 */
-	@Parameter(defaultValue = "${project.build.directory}/stubs")
-	private File outputDirectory;
+	@Parameter(defaultValue = DEFAULT_STUBS_DIR)
+	private File stubsDirectory;
 
 	/**
 	 * Directory containing contracts written using the GroovyDSL
@@ -132,11 +135,11 @@ public class ConvertMojo extends AbstractMojo {
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 
 		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering)
-				.copy(contractsDirectory, this.outputDirectory);
+				.copy(contractsDirectory, this.stubsDirectory);
 
 		config.setContractsDslDir(isInsideProject() ? contractsDirectory : this.source);
 		config.setStubsOutputDir(
-				isInsideProject() ? new File(this.outputDirectory, "mappings") : this.destination);
+				isInsideProject() ? new File(this.stubsDirectory, DEFAULT_MAPPINGS_PATH) : this.destination);
 
 		getLog().info(
 				"Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings");
