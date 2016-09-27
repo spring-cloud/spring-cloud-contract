@@ -58,7 +58,7 @@ public class ConvertMojo extends AbstractMojo {
 	 * You can then mention them in your packaging task to create jar with stubs
 	 */
 	@Parameter(defaultValue = "${project.build.directory}/stubs")
-	private File outputDirectory;
+	private File stubsDirectory;
 
 	/**
 	 * Directory containing contracts written using the GroovyDSL
@@ -132,11 +132,11 @@ public class ConvertMojo extends AbstractMojo {
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 
 		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering)
-				.copy(contractsDirectory, this.outputDirectory);
+				.copy(contractsDirectory, this.stubsDirectory);
 
 		config.setContractsDslDir(isInsideProject() ? contractsDirectory : this.source);
 		config.setStubsOutputDir(
-				isInsideProject() ? new File(this.outputDirectory, "mappings") : this.destination);
+				isInsideProject() ? new File(this.stubsDirectory, "mappings") : this.destination);
 
 		getLog().info(
 				"Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings");
