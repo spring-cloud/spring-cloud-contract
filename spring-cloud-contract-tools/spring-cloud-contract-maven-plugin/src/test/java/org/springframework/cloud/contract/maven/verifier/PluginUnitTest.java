@@ -64,7 +64,7 @@ public class PluginUnitTest {
 	@Test
 	public void shouldGenerateWireMockStubsInSelectedLocation() throws Exception {
 		File basedir = this.resources.getBasedir("basic");
-		this.maven.executeMojo(basedir, "convert", newParameter("outputDirectory", "target/foo"));
+		this.maven.executeMojo(basedir, "convert", newParameter("stubsDirectory", "target/foo"));
 		assertFilesPresent(basedir, "target/foo/mappings/Sample.json");
 	}
 
