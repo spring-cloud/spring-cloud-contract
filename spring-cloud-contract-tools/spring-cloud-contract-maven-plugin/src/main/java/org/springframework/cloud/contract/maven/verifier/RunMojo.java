@@ -44,7 +44,7 @@ public class RunMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
 	private RepositorySystemSession repoSession;
 
-	@Parameter(defaultValue = "${project.build.directory}/stubs/mappings")
+	@Parameter(defaultValue = ConvertMojo.DEFAULT_STUBS_DIR + ConvertMojo.DEFAULT_MAPPINGS_PATH)
 	private File stubsDirectory;
 
 	@Parameter(property = "stubsDirectory", defaultValue = "${basedir}")
