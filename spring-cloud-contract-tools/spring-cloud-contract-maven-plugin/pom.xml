@@ -10,6 +10,10 @@
 		<relativePath>..</relativePath>
 	</parent>
 
+	<prerequisites>
+		<maven>3.2.5</maven>
+	</prerequisites>
+
 	<artifactId>spring-cloud-contract-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
 
