@@ -182,6 +182,10 @@ class Request extends Common {
 		return new DslProperty(client.clientValue, clientValue)
 	}
 
+	DslProperty $(ClientDslProperty client) {
+		return value(client)
+	}
+
 	@Override
 	DslProperty value(ClientDslProperty client, ServerDslProperty server) {
 		if (server.clientValue instanceof Pattern) {

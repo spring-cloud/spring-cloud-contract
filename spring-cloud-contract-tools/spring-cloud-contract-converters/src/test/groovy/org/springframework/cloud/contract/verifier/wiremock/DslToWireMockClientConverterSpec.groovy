@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.wiremock
 
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.skyscreamer.jsonassert.JSONAssert
@@ -221,6 +222,37 @@ class DslToWireMockClientConverterSpec extends Specification {
 			JSONAssert.assertEquals('''
 {"request":{"urlPath":"/foos","method":"GET"},"response":{"body":"[{\\"id\\":\\"123\\"},{\\"id\\":\\"567\\"}]"}}
 ''', json, false)
+	}
+
+
+	@Issue("94")
+	def "should create stub when response has only one side of the dynamic value"() {
+		given:
+			def converter = new DslToWireMockClientConverter()
+		and:
+			File file = tmpFolder.newFile("dsl-dynamic.groovy")
+			file.write("""
+				org.springframework.cloud.contract.spec.Contract.make {
+					request {
+                method 'GET'
+                urlPath '/foos'
+            }
+            response {
+				status 200
+				body(
+					digit: \$(producer(regex('[0-9]{1}'))),
+					id: \$(producer(regex(number())))
+				)
+			}
+			}
+""")
+		when:
+			String json = converter.convertContent("test", new ContractMetadata(file.toPath(), false, 0, null))
+			StubMapping.buildFrom(json)
+		then:
+			noExceptionThrown()
+		and:
+			!json.contains('cursor')
 	}
 
 	def 'should convert dsl to wiremock to show it in the docs'() {

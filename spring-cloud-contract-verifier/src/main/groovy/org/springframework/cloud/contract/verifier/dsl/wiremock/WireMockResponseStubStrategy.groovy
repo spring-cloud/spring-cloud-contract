@@ -29,7 +29,6 @@ import org.springframework.cloud.contract.verifier.util.ContentType
 
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromContent
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromHeader
-
 /**
  * Converts a {@link Request} into {@link ResponseDefinition}
  *
