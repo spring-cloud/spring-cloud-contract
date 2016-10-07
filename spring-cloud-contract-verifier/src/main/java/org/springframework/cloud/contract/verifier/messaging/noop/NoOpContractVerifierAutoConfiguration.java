@@ -16,20 +16,28 @@
 
 package org.springframework.cloud.contract.verifier.messaging.noop;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
+ * Verifier auto configuration containing default beans for messaging
+ *
  * @author Marcin Grzejszczak
  */
 @Configuration
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
 public class NoOpContractVerifierAutoConfiguration {
+
+	@Autowired(required = false) ObjectMapper objectMapper;
 
 	@Bean
 	@ConditionalOnMissingBean
@@ -42,6 +50,15 @@ public class NoOpContractVerifierAutoConfiguration {
 	public ContractVerifierMessaging<?> contractVerifierMessaging(
 			MessageVerifier<Object> exchange) {
 		return new ContractVerifierMessaging<>(exchange);
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	public ContractVerifierObjectMapper contractVerifierObjectMapper() {
+		if (this.objectMapper != null) {
+			return new ContractVerifierObjectMapper(this.objectMapper);
+		}
+		return new ContractVerifierObjectMapper();
 	}
 
 }

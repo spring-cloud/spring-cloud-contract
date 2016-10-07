@@ -157,7 +157,7 @@ class SingleTestGenerator {
 
 	private void addMessagingRelatedEntries(ClassBuilder clazz) {
 		clazz.addField(['@Inject ContractVerifierMessaging contractVerifierMessaging',
-						'ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()'
+						'@Inject ContractVerifierObjectMapper contractVerifierObjectMapper'
 		])
 		clazz.addImport([ 'javax.inject.Inject',
 						  'org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper',

@@ -1516,13 +1516,13 @@ of either Gradle or Maven plugins.
 
 Here you can find interesting links related to Spring Cloud Contract Verifier:
 
-- https://github.com/spring-cloud/spring-cloud-contract/[Spring Cloud Contract Verifier Github Repository]
-- https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html[Spring Cloud Contract Verifier Documentation]
+- https://github.com/spring-cloud/spring-cloud-contract/[Spring Cloud Contract Github Repository]
+- https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html[Spring Cloud Contract Documentation]
 - https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/deprecated[Accurest Legacy Documentation]
 - https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/#spring-cloud-contract-stub-runner[Spring Cloud Contract Stub Runner Documentation]
 - https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/#stub-runner-for-messaging[Spring Cloud Contract Stub Runner Messaging Documentation]
-- https://gitter.im/spring-cloud/spring-cloud-contract[Spring Cloud Contract Verifier Gitter]
-- https://github.com/spring-cloud/spring-cloud-contract[Spring Cloud Contract Verifier Maven Plugin]
+- https://gitter.im/spring-cloud/spring-cloud-contract[Spring Cloud Contract Gitter]
+- https://github.com/spring-cloud/spring-cloud-contract[Spring Cloud Contract Maven Plugin]
 
 == Documentation
 
