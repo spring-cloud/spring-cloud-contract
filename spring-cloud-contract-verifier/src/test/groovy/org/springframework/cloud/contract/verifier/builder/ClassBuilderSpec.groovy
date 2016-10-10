@@ -18,7 +18,7 @@ class ClassBuilderSpec extends Specification {
 	def "should return a class from the generated path by taking two last folders when package with base classes is provided"() {
 		given:
 			ContractVerifierConfigProperties props = new ContractVerifierConfigProperties(packageWithBaseClasses: 'com.example.base')
-			String contractRelativeFolder = 'com/example/some/superpackage'
+			String contractRelativeFolder = ['com','example','some','superpackage'].join(File.separator)
 		expect:
 			ClassBuilder.retrieveBaseClass(props, contractRelativeFolder) == 'com.example.base.SomeSuperpackageBase'
 	}
