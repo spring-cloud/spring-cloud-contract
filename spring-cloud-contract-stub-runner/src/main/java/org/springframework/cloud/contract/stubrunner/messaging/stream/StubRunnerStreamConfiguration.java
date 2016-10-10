@@ -32,7 +32,6 @@ import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.messaging.integration.StubRunnerIntegrationConfiguration;
-import org.springframework.cloud.contract.stubrunner.messaging.stream.StubRunnerStreamConfiguration.FlowRegistrar;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.binding.BinderAwareChannelResolver;
 import org.springframework.cloud.stream.config.BindingProperties;
@@ -56,7 +55,7 @@ import org.springframework.util.StringUtils;
  * @author Marcin Grzejszczak
  */
 @Configuration
-@ConditionalOnClass({FlowRegistrar.class, EnableBinding.class})
+@ConditionalOnClass({IntegrationFlows.class, EnableBinding.class})
 @ConditionalOnProperty(name="stubrunner.stream.enabled", havingValue="true", matchIfMissing=true)
 @AutoConfigureBefore(StubRunnerIntegrationConfiguration.class)
 public class StubRunnerStreamConfiguration {
