@@ -3916,18 +3916,18 @@ public interface StubFinder extends StubTrigger {
 	 * URL of the running stub.
 	 *
 	 * @param groupId - might be null. In that case a search only via artifactId takes place
-	 * @return URL of a running stub or null if not found
+	 * @return URL of a running stub or throws exception if not found
 	 */
-	URL findStubUrl(String groupId, String artifactId);
+	URL findStubUrl(String groupId, String artifactId) throws StubNotFoundException;
 
 	/**
-	 * For the given Ivy notation {@code groupId:artifactId} tries to find the matching
-	 * URL of the running stub. You can also pass only {@code artifactId}.
+	 * For the given Ivy notation {@code [groupId]:artifactId:[version]:[classifier]} tries to
+	 * find the matching URL of the running stub. You can also pass only {@code artifactId}.
 	 *
 	 * @param ivyNotation - Ivy representation of the Maven artifact
-	 * @return URL of a running stub or null if not found
+	 * @return URL of a running stub or throws exception if not found
 	 */
-	URL findStubUrl(String ivyNotation);
+	URL findStubUrl(String ivyNotation) throws StubNotFoundException;
 
 	/**
 	 * Returns all running stubs
@@ -4059,6 +4059,8 @@ class StubRunnerConfigurationSpec extends Specification {
 			stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs', 'loanIssuance') != null
 			stubFinder.findStubUrl('loanIssuance') != null
 			stubFinder.findStubUrl('loanIssuance') == stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs', 'loanIssuance')
+			stubFinder.findStubUrl('loanIssuance') == stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs:loanIssuance')
+			stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs:loanIssuance:0.0.1-SNAPSHOT') == stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs:loanIssuance:0.0.1-SNAPSHOT:stubs')
 			stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer') != null
 		and:
 			stubFinder.findAllRunningStubs().isPresent('loanIssuance')
@@ -4067,6 +4069,17 @@ class StubRunnerConfigurationSpec extends Specification {
 		and: 'Stubs were registered'
 			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
 			"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
+	}
+
+	def 'should throw an exception when stub is not found'() {
+		when:
+			stubFinder.findStubUrl('nonExistingService')
+		then:
+			thrown(StubNotFoundException)
+		when:
+			stubFinder.findStubUrl('nonExistingGroupId', 'nonExistingArtifactId')
+		then:
+			thrown(StubNotFoundException)
 	}
 
 	@Configuration
