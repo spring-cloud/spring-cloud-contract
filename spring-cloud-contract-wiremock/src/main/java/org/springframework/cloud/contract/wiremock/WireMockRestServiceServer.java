@@ -209,7 +209,7 @@ public class WireMockRestServiceServer {
 		String value = null;
 		if (response.getHeaders() != null) {
 			HttpHeader header = response.getHeaders().getHeader("Content-Type");
-			if (header != null) {
+			if (header != null && header.isPresent()) {
 				value = header.firstValue();
 			}
 		}
