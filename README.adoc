@@ -632,7 +632,7 @@ The aforementioned contract is an agreement between two sides that:
 
 - if an HTTP request is sent with
 ** a method `PUT` on an endpoint `/fraudcheck`
-** JSON body with `clientId` matching the regular expression `[0-9]{10}` and `loanAmount` equal to `99999`
+** JSON body with `clientPesel` matching the regular expression `[0-9]{10}` and `loanAmount` equal to `99999`
 ** and with a header `Content-Type` equal to `application/vnd.fraud.v1+json`
 - then an HTTP response would be sent to the consumer that
 ** has status `200`
@@ -875,7 +875,7 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
     // given:
         MockMvcRequestSpecification request = given()
                 .header("Content-Type", "application/vnd.fraud.v1+json")
-                .body("{\"clientId\":\"1234567890\",\"loanAmount\":99999}");
+                .body("{\"clientPesel\":\"1234567890\",\"loanAmount\":99999}");
 
     // when:
         ResponseOptions response = given().spec(request)

@@ -23,6 +23,7 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.spec.Contract;
+import org.springframework.util.StringUtils;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 
@@ -34,9 +35,11 @@ class StubServer {
 	final StubConfiguration stubConfiguration;
 	final Collection<WiremockMappingDescriptor> mappings;
 	final Collection<Contract> contracts;
+	private final StubRunnerOptions stubRunnerOptions;
 
-	StubServer(StubConfiguration stubConfiguration, Collection<WiremockMappingDescriptor> mappings,
-	Collection<Contract> contracts, HttpServerStub httpServerStub) {
+	StubServer(StubRunnerOptions stubRunnerOptions, StubConfiguration stubConfiguration,
+			Collection<WiremockMappingDescriptor> mappings, Collection<Contract> contracts, HttpServerStub httpServerStub) {
+		this.stubRunnerOptions = stubRunnerOptions;
 		this.stubConfiguration = stubConfiguration;
 		this.mappings = mappings;
 		this.httpServerStub = httpServerStub;
@@ -68,11 +71,21 @@ class StubServer {
 
 	public URL getStubUrl() {
 		try {
-			return new URL("http://localhost:" + getPort());
+			return new URL("http://localhost:" + getPort() + prependSlashIfNecessary(this.stubRunnerOptions.contextPath));
 		}
 		catch (MalformedURLException e) {
 			throw new IllegalStateException("Cannot parse URL", e);
 		}
+	}
+
+	private String prependSlashIfNecessary(String contextPath) {
+		if (!StringUtils.hasText(contextPath)) {
+			return "";
+		}
+		if (contextPath.startsWith("/")) {
+			return contextPath;
+		}
+		return "/" + contextPath;
 	}
 
 	public StubConfiguration getStubConfiguration() {
@@ -84,7 +97,7 @@ class StubServer {
 	}
 
 	private void registerStubMappings() {
-		WireMock wireMock = new WireMock("localhost", this.httpServerStub.port());
+		WireMock wireMock = new WireMock("localhost", this.httpServerStub.port(), prependSlashIfNecessary(this.stubRunnerOptions.contextPath));
 		registerDefaultHealthChecks(wireMock);
 		registerStubs(this.mappings, wireMock);
 	}

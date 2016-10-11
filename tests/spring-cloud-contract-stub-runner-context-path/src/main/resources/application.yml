@@ -1,0 +1,2 @@
+server.port: 0
+server.context-path: /my-path

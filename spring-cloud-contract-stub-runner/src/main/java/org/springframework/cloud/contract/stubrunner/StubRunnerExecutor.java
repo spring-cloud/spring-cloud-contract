@@ -196,7 +196,7 @@ class StubRunnerExecutor implements StubFinder {
 		return condition ? this.stubServer.getStubUrl() : null;
 	}
 
-	private void startStubServers(StubRunnerOptions stubRunnerOptions,
+	private void startStubServers(final StubRunnerOptions stubRunnerOptions,
 			final StubConfiguration stubConfiguration, StubRepository repository) {
 		final List<WiremockMappingDescriptor> mappings = repository
 				.getProjectDescriptors();
@@ -206,7 +206,7 @@ class StubRunnerExecutor implements StubFinder {
 			if (log.isDebugEnabled()) {
 				log.debug("There are no HTTP related contracts. Won't start any servers");
 			}
-			this.stubServer = new StubServer(stubConfiguration, mappings, contracts, new NoOpHttpServerStub());
+			this.stubServer = new StubServer(stubRunnerOptions, stubConfiguration, mappings, contracts, new NoOpHttpServerStub());
 			return;
 		}
 		if (contracts.isEmpty()) {
@@ -215,14 +215,14 @@ class StubRunnerExecutor implements StubFinder {
 							+ "that's why will start the server - maybe you know what you're doing...");
 		}
 		if (port != null && port >= 0) {
-			this.stubServer = new StubServer(stubConfiguration, mappings, contracts,
+			this.stubServer = new StubServer(stubRunnerOptions, stubConfiguration, mappings, contracts,
 					new WireMockHttpServerStub(port));
 		} else {
 			this.stubServer = this.portScanner
 					.tryToExecuteWithFreePort(new PortCallback<StubServer>() {
 						@Override
 						public StubServer call(int availablePort) {
-							return new StubServer(stubConfiguration,
+							return new StubServer(stubRunnerOptions, stubConfiguration,
 									mappings, contracts,
 									new WireMockHttpServerStub(availablePort));
 						}

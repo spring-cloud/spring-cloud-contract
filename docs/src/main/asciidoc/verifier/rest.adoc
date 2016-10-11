@@ -285,7 +285,7 @@ class LoanApplicationServiceSpec extends Specification {
  def 'should successfully apply for loan'() {
    given:
  	LoanApplication application =
-			new LoanApplication(client: new Client(pesel: '12345678901'), amount: 123.123)
+			new LoanApplication(client: new Client(clientPesel: '12345678901'), amount: 123.123)
    when:
 	LoanApplicationResult loanApplication == sut.loanApplication(application)
    then:

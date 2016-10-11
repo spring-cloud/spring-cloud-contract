@@ -61,6 +61,11 @@ public class StubRunnerOptions {
 	 */
 	final Map<StubConfiguration, Integer> stubIdsToPortMapping;
 
+	/**
+	 * Context Path of the server
+	 */
+	final String contextPath;
+
 	public StubRunnerOptions(Integer minPortValue, Integer maxPortValue,
 			String stubRepositoryRoot, boolean workOffline, String stubsClassifier,
 			Collection<StubConfiguration> dependencies,
@@ -72,6 +77,21 @@ public class StubRunnerOptions {
 		this.stubsClassifier = stubsClassifier;
 		this.dependencies = dependencies;
 		this.stubIdsToPortMapping = stubIdsToPortMapping;
+		this.contextPath = "";
+	}
+
+	public StubRunnerOptions(Integer minPortValue, Integer maxPortValue,
+			String stubRepositoryRoot, boolean workOffline, String stubsClassifier,
+			Collection<StubConfiguration> dependencies,
+			Map<StubConfiguration, Integer> stubIdsToPortMapping, String contextPath) {
+		this.minPortValue = minPortValue;
+		this.maxPortValue = maxPortValue;
+		this.stubRepositoryRoot = stubRepositoryRoot;
+		this.workOffline = workOffline;
+		this.stubsClassifier = stubsClassifier;
+		this.dependencies = dependencies;
+		this.stubIdsToPortMapping = stubIdsToPortMapping;
+		this.contextPath = contextPath;
 	}
 
 	public Integer port(StubConfiguration stubConfiguration) {
@@ -88,18 +108,6 @@ public class StubRunnerOptions {
 
 	public Integer getMaxPortValue() {
 		return this.maxPortValue;
-	}
-
-	public String getStubRepositoryRoot() {
-		return this.stubRepositoryRoot;
-	}
-
-	public boolean isWorkOffline() {
-		return this.workOffline;
-	}
-
-	public String getStubsClassifier() {
-		return this.stubsClassifier;
 	}
 
 	public Collection<StubConfiguration> getDependencies() {
