@@ -1241,7 +1241,7 @@ It&#8217;s really important that you understand the map notation to set up contr
 <p>a method <code>PUT</code> on an endpoint <code>/fraudcheck</code></p>
 </li>
 <li>
-<p>JSON body with <code>clientId</code> matching the regular expression <code>[0-9]{10}</code> and <code>loanAmount</code> equal to <code>99999</code></p>
+<p>JSON body with <code>clientPesel</code> matching the regular expression <code>[0-9]{10}</code> and <code>loanAmount</code> equal to <code>99999</code></p>
 </li>
 <li>
 <p>and with a header <code>Content-Type</code> equal to <code>application/vnd.fraud.v1+json</code></p>
@@ -1539,7 +1539,7 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
     // given:
         MockMvcRequestSpecification request = given()
                 .header("Content-Type", "application/vnd.fraud.v1+json")
-                .body("{\"clientId\":\"1234567890\",\"loanAmount\":99999}");
+                .body("{\"clientPesel\":\"1234567890\",\"loanAmount\":99999}");
 
     // when:
         ResponseOptions response = given().spec(request)
@@ -2749,7 +2749,7 @@ class LoanApplicationServiceSpec extends Specification {
  def 'should successfully apply for loan'() {
    given:
  	LoanApplication application =
-			new LoanApplication(client: new Client(pesel: '12345678901'), amount: 123.123)
+			new LoanApplication(client: new Client(clientPesel: '12345678901'), amount: 123.123)
    when:
 	LoanApplicationResult loanApplication == sut.loanApplication(application)
    then:
