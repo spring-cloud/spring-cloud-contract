@@ -23,6 +23,16 @@ public class WiremockMockServerApplicationTests {
 	}
 
 	@Test
+	public void simpleGetWithContentType() throws Exception {
+		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
+				.baseUrl("http://example.org") //
+				.stubs("classpath:/mappings/resource-with-content-type.json").build();
+		assertThat(this.restTemplate.getForObject("http://example.org/resource", String.class))
+				.isEqualTo("Hello World");
+		server.verify();
+	}
+
+	@Test
 	public void simplePost() throws Exception {
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("http://example.org") //
@@ -46,6 +56,15 @@ public class WiremockMockServerApplicationTests {
 		WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("http://example.org") //
 				.stubs("classpath:/mappings").ignoreExpectOrder(true).build();
+		assertThat(this.restTemplate.getForObject("http://example.org/resource", String.class))
+				.isEqualTo("Hello World");
+	}
+
+	@Test
+	public void simpleGetWithAllStubsInDirectoryWithPeriod() throws Exception {
+		WireMockRestServiceServer.with(this.restTemplate) //
+				.baseUrl("http://example.org") //
+				.stubs("classpath:/io.stubs/mappings").ignoreExpectOrder(true).build();
 		assertThat(this.restTemplate.getForObject("http://example.org/resource", String.class))
 				.isEqualTo("Hello World");
 	}

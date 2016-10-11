@@ -16,6 +16,9 @@
 
 package org.springframework.cloud.contract.wiremock;
 
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -41,9 +44,6 @@ import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.matching.MultiValuePattern;
 import com.github.tomakehurst.wiremock.matching.RequestPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
-
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
 /**
  * Convenience class for loading WireMock stubs into a {@link MockRestServiceServer}. In
@@ -119,7 +119,16 @@ public class WireMockRestServiceServer {
 	/**
 	 * Add some resource locations for stubs. Each location can be a resource path (to a
 	 * single JSON file), or a pattern with ant-style wildcards to load all stubs that
-	 * match.
+	 * match, or a plain directory name (which will have
+	 * <code>&#42;&#42;/&#42;.json</code> appended, where ".json" is the value of the
+	 * {@link #suffix(String) suffix}). Examples:
+	 * 
+	 * <pre>
+	 * classpath:/mappings/foo.json
+	 * classpath:/mappings/*.json
+	 * classpath:META-INF/com.example/stubs/1.0.0/mappings/&#42;&#42;/&#42;.json
+	 * file:src/test/resources/stubs
+	 * </pre>
 	 * 
 	 * @param locations a set of resource locations
 	 * @return this
@@ -141,15 +150,13 @@ public class WireMockRestServiceServer {
 			try {
 				for (Resource resource : this.resolver.getResources(pattern(location))) {
 					StubMapping mapping = mapping(resource);
-					ResponseActions expect = server.expect(
-							requestTo(this.baseUrl + mapping.getRequest().getUrlPath()));
+					ResponseActions expect = server.expect(requestTo(this.baseUrl + mapping.getRequest().getUrlPath()));
 					requestHeaders(expect, mapping.getRequest());
 					expect.andRespond(response(mapping.getResponse()));
 				}
 			}
 			catch (IOException e) {
-				throw new IllegalStateException("Cannot load resources for: " + location,
-						e);
+				throw new IllegalStateException("Cannot load resources for: " + location, e);
 			}
 		}
 		return server;
@@ -160,20 +167,19 @@ public class WireMockRestServiceServer {
 			if (!location.endsWith("/")) {
 				location = location + "/";
 			}
-			location = location + "/**/*" + this.suffix;
+			location = location + "**/*" + this.suffix;
 		}
 		return location;
 	}
 
 	private StubMapping mapping(Resource resource) throws IOException {
-		return Json.read(StreamUtils.copyToString(resource.getInputStream(),
-				Charset.defaultCharset()), StubMapping.class);
+		return Json.read(StreamUtils.copyToString(resource.getInputStream(), Charset.defaultCharset()),
+				StubMapping.class);
 	}
 
 	private DefaultResponseCreator response(ResponseDefinition response) {
-		return withStatus(HttpStatus.valueOf(response.getStatus()))
-				.body(response.getBody()).contentType(contentType(response))
-				.headers(responseHeaders(response));
+		return withStatus(HttpStatus.valueOf(response.getStatus())).body(response.getBody())
+				.contentType(contentType(response)).headers(responseHeaders(response));
 	}
 
 	private void requestHeaders(ResponseActions expect, RequestPattern request) {
