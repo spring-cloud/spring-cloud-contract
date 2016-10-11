@@ -42,6 +42,7 @@ import com.github.tomakehurst.wiremock.matching.MultiValuePattern;
 import com.github.tomakehurst.wiremock.matching.RequestPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
@@ -150,14 +151,15 @@ public class WireMockRestServiceServer {
 			try {
 				for (Resource resource : this.resolver.getResources(pattern(location))) {
 					StubMapping mapping = mapping(resource);
-					ResponseActions expect = server.expect(
-							requestTo(request(mapping.getRequest())));
+					ResponseActions expect = server
+							.expect(requestTo(request(mapping.getRequest())));
 					requestHeaders(expect, mapping.getRequest());
 					expect.andRespond(response(mapping.getResponse()));
 				}
 			}
 			catch (IOException e) {
-				throw new IllegalStateException("Cannot load resources for: " + location, e);
+				throw new IllegalStateException("Cannot load resources for: " + location,
+						e);
 			}
 		}
 		return server;
@@ -178,13 +180,14 @@ public class WireMockRestServiceServer {
 	}
 
 	private StubMapping mapping(Resource resource) throws IOException {
-		return Json.read(StreamUtils.copyToString(resource.getInputStream(), Charset.defaultCharset()),
-				StubMapping.class);
+		return Json.read(StreamUtils.copyToString(resource.getInputStream(),
+				Charset.defaultCharset()), StubMapping.class);
 	}
 
 	private DefaultResponseCreator response(ResponseDefinition response) {
-		return withStatus(HttpStatus.valueOf(response.getStatus())).body(response.getBody())
-				.contentType(contentType(response)).headers(responseHeaders(response));
+		return withStatus(HttpStatus.valueOf(response.getStatus()))
+				.body(response.getBody()).contentType(contentType(response))
+				.headers(responseHeaders(response));
 	}
 
 	private void requestHeaders(ResponseActions expect, RequestPattern request) {
@@ -192,6 +195,9 @@ public class WireMockRestServiceServer {
 			for (final String header : request.getHeaders().keySet()) {
 				final MultiValuePattern pattern = request.getHeaders().get(header);
 				// TODO: match the headers
+				if ("equalTo".equals(pattern.getName())) {
+					expect.andExpect(header(header, pattern.getExpected()));
+				}
 			}
 		}
 	}
