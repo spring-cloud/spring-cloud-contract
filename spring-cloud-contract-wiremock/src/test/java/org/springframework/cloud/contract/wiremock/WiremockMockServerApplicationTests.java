@@ -67,10 +67,10 @@ public class WiremockMockServerApplicationTests {
 	@Test
 	public void postWithHeader() throws Exception {
 		WireMockRestServiceServer.with(this.restTemplate) //
-				.baseUrl("http://example.org") // order matters...
+				.baseUrl("http://example.org") // order determined by content...
 				.stubs("classpath:/mappings/poster.json",
 						"classpath:/mappings/accept.json")
-				.ignoreExpectOrder(true).build();
+				.build();
 		assertThat(
 				this.restTemplate
 						.exchange(
@@ -83,10 +83,10 @@ public class WiremockMockServerApplicationTests {
 	@Test
 	public void postWithHeaderContains() throws Exception {
 		WireMockRestServiceServer.with(this.restTemplate) //
-				.baseUrl("http://example.org") // order matters...
+				.baseUrl("http://example.org") // order determined by content...
 				.stubs("classpath:/mappings/poster.json",
 						"classpath:/mappings/header-contains.json")
-				.ignoreExpectOrder(true).build();
+				.build();
 		assertThat(this.restTemplate.exchange(
 				RequestEntity.post(new URI("http://example.org/poster"))
 						.accept(MediaType.valueOf("application/v.foo")).build(),
@@ -96,10 +96,10 @@ public class WiremockMockServerApplicationTests {
 	@Test
 	public void postWithHeaderMatches() throws Exception {
 		WireMockRestServiceServer.with(this.restTemplate) //
-				.baseUrl("http://example.org") // order matters...
+				.baseUrl("http://example.org") // order determined by content...
 				.stubs("classpath:/mappings/poster.json",
 						"classpath:/mappings/header-matches.json")
-				.ignoreExpectOrder(true).build();
+				.build();
 		assertThat(this.restTemplate.exchange(
 				RequestEntity.post(new URI("http://example.org/poster"))
 						.accept(MediaType.valueOf("application/v.bar")).build(),
@@ -109,10 +109,10 @@ public class WiremockMockServerApplicationTests {
 	@Test
 	public void postWithMoreExactHeaderMatch() throws Exception {
 		WireMockRestServiceServer.with(this.restTemplate) //
-				.baseUrl("http://example.org") // order matters...
+				.baseUrl("http://example.org") // order determined by content...
 				.stubs("classpath:/mappings/header-matches.json",
 						"classpath:/mappings/header-matches-precise.json")
-				.ignoreExpectOrder(true).build();
+				.build();
 		assertThat(this.restTemplate
 				.exchange(RequestEntity.post(new URI("http://example.org/poster"))
 						.accept(MediaType.valueOf("application/v.bar"))
@@ -121,10 +121,25 @@ public class WiremockMockServerApplicationTests {
 	}
 
 	@Test
+	public void postWithMoreExactHeaderMatchButOrdered() throws Exception {
+		WireMockRestServiceServer.with(this.restTemplate) //
+				.baseUrl("http://example.org") // order matters...
+				.stubs("classpath:/mappings/header-matches.json",
+						"classpath:/mappings/header-matches-precise.json")
+				.ignoreExpectOrder(false).build();
+		assertThat(this.restTemplate
+				.exchange(RequestEntity.post(new URI("http://example.org/poster"))
+						.accept(MediaType.valueOf("application/v.bar"))
+						.header("X-Precise", "true").build(), String.class)
+				.getBody()).isEqualTo("Bar World");
+		// The first one matches, not the most precise!
+	}
+
+	@Test
 	public void simpleGetWithAllStubs() throws Exception {
 		WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("http://example.org") //
-				.stubs("classpath:/mappings").ignoreExpectOrder(true).build();
+				.stubs("classpath:/mappings").build();
 		assertThat(this.restTemplate.getForObject("http://example.org/resource",
 				String.class)).isEqualTo("Hello World");
 	}
@@ -133,7 +148,7 @@ public class WiremockMockServerApplicationTests {
 	public void simpleGetWithAllStubsInDirectoryWithPeriod() throws Exception {
 		WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("http://example.org") //
-				.stubs("classpath:/io.stubs/mappings").ignoreExpectOrder(true).build();
+				.stubs("classpath:/io.stubs/mappings").build();
 		assertThat(this.restTemplate.getForObject("http://example.org/resource",
 				String.class)).isEqualTo("Hello World");
 	}

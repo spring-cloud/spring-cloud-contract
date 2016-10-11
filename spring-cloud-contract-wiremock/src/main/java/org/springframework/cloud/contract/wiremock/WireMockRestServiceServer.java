@@ -71,6 +71,8 @@ public class WireMockRestServiceServer {
 
 	private List<String> locations = new ArrayList<String>();
 
+	private boolean ignoreExpectOrder = true;
+
 	private WireMockRestServiceServer(RestTemplate restTemplate) {
 		this.builder = MockRestServiceServer.bindTo(restTemplate);
 	}
@@ -87,12 +89,14 @@ public class WireMockRestServiceServer {
 
 	/**
 	 * Flag to tell the MockRestServiceServer to ignore the order of calls when matching
-	 * requests.
+	 * requests. The default is true because there is an impleid ordering in the stubs
+	 * (by url path and with more specific request matchers first).
 	 * 
-	 * @param ignoreExpectOrder flag value
+	 * @param ignoreExpectOrder flag value (default true)
 	 * @return this
 	 */
 	public WireMockRestServiceServer ignoreExpectOrder(boolean ignoreExpectOrder) {
+		this.ignoreExpectOrder = ignoreExpectOrder;
 		this.builder.ignoreExpectOrder(ignoreExpectOrder);
 		return this;
 	}
@@ -151,6 +155,9 @@ public class WireMockRestServiceServer {
 	 * @return a MockRestServiceServer
 	 */
 	public MockRestServiceServer build() {
+		if (this.ignoreExpectOrder) {
+			builder.ignoreExpectOrder(true); // default is false
+		}
 		MockRestServiceServer server = this.builder.build();
 		List<StubMapping> mappings = new ArrayList<>();
 		for (String location : this.locations) {
@@ -165,7 +172,9 @@ public class WireMockRestServiceServer {
 						e);
 			}
 		}
-		Collections.sort(mappings, new StubMappingComparator());
+		if (this.ignoreExpectOrder) {
+			Collections.sort(mappings, new StubMappingComparator());
+		}
 		for (StubMapping mapping : mappings) {
 			ResponseActions expect = server
 					.expect(requestTo(request(mapping.getRequest())));
@@ -176,7 +185,9 @@ public class WireMockRestServiceServer {
 	}
 
 	private String request(RequestPattern request) {
-		return this.baseUrl + (request.getUrlPath() == null ? "/" : request.getUrlPath());
+		return this.baseUrl + (request.getUrlPath() == null
+				? (request.getUrl() == null ? "/" : request.getUrl())
+				: request.getUrlPath());
 	}
 
 	private String pattern(String location) {
@@ -253,7 +264,7 @@ public class WireMockRestServiceServer {
 
 		@Override
 		public int compare(StubMapping one, StubMapping two) {
-			if (one==two) {
+			if (one == two) {
 				return 0;
 			}
 			int value = request(one.getRequest()).compareTo(request(two.getRequest()));
@@ -282,7 +293,9 @@ public class WireMockRestServiceServer {
 		}
 
 		private String request(RequestPattern request) {
-			return (request.getUrlPath() == null ? (request.getUrl() == null ? "/" : request.getUrl()) : request.getUrlPath());
+			return (request.getUrlPath() == null
+					? (request.getUrl() == null ? "/" : request.getUrl())
+					: request.getUrlPath());
 		}
 
 	}
