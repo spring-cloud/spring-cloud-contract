@@ -23,6 +23,16 @@ public class WiremockMockServerApplicationTests {
 	}
 
 	@Test
+	public void simpleGetWithEmptyPath() throws Exception {
+		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
+				.baseUrl("http://example.org") //
+				.stubs("classpath:/mappings/resource-with-empty-path.json").build();
+		assertThat(this.restTemplate.getForObject("http://example.org/", String.class))
+				.isEqualTo("Hello World");
+		server.verify();
+	}
+
+	@Test
 	public void simpleGetWithContentType() throws Exception {
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("http://example.org") //

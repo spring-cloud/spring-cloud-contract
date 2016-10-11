@@ -1,0 +1,14 @@
+{
+  "request" : {
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "Hello World",
+    "headers" : {
+      "ETag" : "\"356b53e9c9e124a7772d88f087a58838\"",
+      "Content-Type" : "application/json",
+      "Cache-Control" : "max-age=604800"
+    }
+  }
+}
