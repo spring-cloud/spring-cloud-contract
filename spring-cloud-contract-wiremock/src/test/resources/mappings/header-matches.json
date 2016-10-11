@@ -1,0 +1,11 @@
+{
+  "request" : {
+    "urlPath" : "/poster",
+    "method" : "POST",
+    "headers" : { "Accept" : { "matches" : ".*/v.bar" }}
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "Bar World"
+  }
+}

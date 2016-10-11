@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.wiremock;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.HttpHeaders;
@@ -37,9 +39,11 @@ import java.util.List;
 
 import com.github.tomakehurst.wiremock.common.Json;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
+import com.github.tomakehurst.wiremock.http.MultiValue;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.matching.MultiValuePattern;
 import com.github.tomakehurst.wiremock.matching.RequestPattern;
+import com.github.tomakehurst.wiremock.stubbing.SortedConcurrentMappingSet;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
@@ -147,20 +151,24 @@ public class WireMockRestServiceServer {
 	 */
 	public MockRestServiceServer build() {
 		MockRestServiceServer server = this.builder.build();
+		SortedConcurrentMappingSet mappings = new SortedConcurrentMappingSet();
 		for (String location : this.locations) {
 			try {
 				for (Resource resource : this.resolver.getResources(pattern(location))) {
 					StubMapping mapping = mapping(resource);
-					ResponseActions expect = server
-							.expect(requestTo(request(mapping.getRequest())));
-					requestHeaders(expect, mapping.getRequest());
-					expect.andRespond(response(mapping.getResponse()));
+					mappings.add(mapping);
 				}
 			}
 			catch (IOException e) {
 				throw new IllegalStateException("Cannot load resources for: " + location,
 						e);
 			}
+		}
+		for (StubMapping mapping : mappings) {
+			ResponseActions expect = server
+					.expect(requestTo(request(mapping.getRequest())));
+			requestHeaders(expect, mapping.getRequest());
+			expect.andRespond(response(mapping.getResponse()));
 		}
 		return server;
 	}
@@ -194,10 +202,22 @@ public class WireMockRestServiceServer {
 		if (request.getHeaders() != null) {
 			for (final String header : request.getHeaders().keySet()) {
 				final MultiValuePattern pattern = request.getHeaders().get(header);
-				// TODO: match the headers
-				if ("equalTo".equals(pattern.getName())) {
-					expect.andExpect(header(header, pattern.getExpected()));
-				}
+				expect.andExpect(header(header, new BaseMatcher<String>() {
+
+					@Override
+					public boolean matches(Object item) {
+						return pattern.match(
+								new MultiValue(header, Arrays.asList((String) item)))
+								.isExactMatch();
+					}
+
+					@Override
+					public void describeTo(Description description) {
+						description
+								.appendText("should match header: " + header + " with ")
+								.appendText(pattern.getExpected());
+					}
+				}));
 			}
 		}
 	}

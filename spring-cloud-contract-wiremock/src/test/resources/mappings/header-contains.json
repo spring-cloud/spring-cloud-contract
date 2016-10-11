@@ -1,0 +1,11 @@
+{
+  "request" : {
+    "urlPath" : "/poster",
+    "method" : "POST",
+    "headers" : { "Accept" : { "contains" : "v.foo" }}
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "Foo World"
+  }
+}
