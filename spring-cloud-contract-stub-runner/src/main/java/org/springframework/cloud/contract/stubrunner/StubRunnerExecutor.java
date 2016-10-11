@@ -85,22 +85,48 @@ class StubRunnerExecutor implements StubFinder {
 
 	@Override
 	public URL findStubUrl(String groupId, String artifactId) {
+		URL url = null;
 		if (groupId == null) {
-			return returnStubUrlIfMatches(
-					artifactId.equals(this.stubServer.stubConfiguration.artifactId));
+			url = findStubUrl(
+					this.stubServer.stubConfiguration.artifactId.equals(artifactId));
 		}
-		return returnStubUrlIfMatches(
-				artifactId.equals(this.stubServer.stubConfiguration.artifactId)
-						&& groupId.equals(this.stubServer.stubConfiguration.groupId));
+		if (url == null) {
+			url = findStubUrl(this.stubServer.stubConfiguration.artifactId.equals(artifactId)
+					&& this.stubServer.stubConfiguration.groupId.equals(groupId));
+		}
+		if (url == null) {
+			throw new StubNotFoundException(groupId, artifactId);
+		}
+		return url;
 	}
 
 	@Override
 	public URL findStubUrl(String ivyNotation) {
 		String[] splitString = ivyNotation.split(":");
-		if (splitString.length == 1) {
-			throw new IllegalArgumentException("$ivyNotation is invalid");
+		if (splitString.length > 4) {
+			throw new IllegalArgumentException("[" + ivyNotation + "] is an invalid notation. Pass [groupId]:artifactId[:version][:classifier].");
+		} else if (splitString.length == 1) {
+			return findStubUrl(null, splitString[0]);
+		} else if (splitString.length == 2) {
+			return findStubUrl(splitString[0], splitString[1]);
+		} else if (splitString.length == 3) {
+			return findStubUrl(groupIdArtifactVersionMatches(splitString));
 		}
-		return findStubUrl(splitString[0], splitString[1]);
+		return findStubUrl(groupIdArtifactVersionMatches(splitString) && classifierMatches(splitString));
+	}
+
+	private boolean classifierMatches(String[] splitString) {
+		return this.stubServer.stubConfiguration.classifier.equals(splitString[3]);
+	}
+
+	private boolean groupIdArtifactVersionMatches(String[] splitString) {
+		return this.stubServer.stubConfiguration.artifactId.equals(splitString[0])
+				&& this.stubServer.stubConfiguration.groupId.equals(splitString[1])
+				&& this.stubServer.stubConfiguration.version.equals(splitString[2]);
+	}
+
+	private URL findStubUrl(boolean condition) {
+		return returnStubUrlIfMatches(condition);
 	}
 
 	@Override

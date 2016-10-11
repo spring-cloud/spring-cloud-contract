@@ -23,6 +23,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.stubrunner.StubFinder
+import org.springframework.cloud.contract.stubrunner.StubNotFoundException
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
@@ -57,6 +58,8 @@ class StubRunnerConfigurationSpec extends Specification {
 			stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs', 'loanIssuance') != null
 			stubFinder.findStubUrl('loanIssuance') != null
 			stubFinder.findStubUrl('loanIssuance') == stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs', 'loanIssuance')
+			stubFinder.findStubUrl('loanIssuance') == stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs:loanIssuance')
+			stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs:loanIssuance:0.0.1-SNAPSHOT') == stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs:loanIssuance:0.0.1-SNAPSHOT:stubs')
 			stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer') != null
 		and:
 			stubFinder.findAllRunningStubs().isPresent('loanIssuance')
@@ -65,6 +68,17 @@ class StubRunnerConfigurationSpec extends Specification {
 		and: 'Stubs were registered'
 			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
 			"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
+	}
+
+	def 'should throw an exception when stub is not found'() {
+		when:
+			stubFinder.findStubUrl('nonExistingService')
+		then:
+			thrown(StubNotFoundException)
+		when:
+			stubFinder.findStubUrl('nonExistingGroupId', 'nonExistingArtifactId')
+		then:
+			thrown(StubNotFoundException)
 	}
 
 	@Configuration

@@ -20,7 +20,7 @@ import org.springframework.util.StringUtils;
 
 /**
  * Represents a configuration of a single stub. The stub can be described by
- * groupId:artifactId:classifier notation
+ * groupId:artifactId:version:classifier notation
  */
 public class StubConfiguration {
 	private static final String STUB_COLON_DELIMITER = ":";

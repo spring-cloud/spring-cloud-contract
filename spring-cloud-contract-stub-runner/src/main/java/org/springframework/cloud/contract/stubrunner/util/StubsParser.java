@@ -34,7 +34,9 @@ public class StubsParser {
 	 * that contains a list of Strings in the format
 	 *
 	 * <ul>
-	 * <li>groupid:artifactid:classifier</li>
+	 * <li>groupid:artifactid:version:classifier:port</li>
+	 * <li>groupid:artifactid:version:classifier</li>
+	 * <li>groupid:artifactid:version</li>
 	 * <li>groupid:artifactid</li>
 	 * </ul>
 	 *

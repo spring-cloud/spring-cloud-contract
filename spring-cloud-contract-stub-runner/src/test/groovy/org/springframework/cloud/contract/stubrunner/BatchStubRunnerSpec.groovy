@@ -31,11 +31,13 @@ class BatchStubRunnerSpec extends Specification {
 		batchStubRunner.findStubUrl(KNOWN_STUB_PATH) == KNOWN_STUB_URL
 	}
 
-	def 'should return empty optional for unknown stub path'() {
+	def 'should throw an exception for unknown stub path'() {
 		given:
 		BatchStubRunner batchStubRunner = new BatchStubRunner(runners())
-		expect:
-		!batchStubRunner.findStubUrl(UNKNOWN_STUB_PATH)
+		when:
+		batchStubRunner.findStubUrl(UNKNOWN_STUB_PATH)
+		then:
+		thrown(StubNotFoundException)
 	}
 
 	def 'should throw exception if trying to execute not available trigger'() {
@@ -51,7 +53,8 @@ class BatchStubRunnerSpec extends Specification {
 	Collection<StubRunner> runners() {
 		StubRunner runner = Mock(StubRunner)
 		runner.findStubUrl("group", "knownArtifact") >> KNOWN_STUB_URL
-		runner.findStubUrl("group", "unknownArtifact") >> null
+		runner.findStubUrl("group:knownArtifact") >> KNOWN_STUB_URL
+		runner.findStubUrl("group:unknownArtifact") >> { throw new StubNotFoundException(UNKNOWN_STUB_PATH) }
 		runner.labels() >> ['a:b:c' : ['foo']]
 		return [runner]
 	}

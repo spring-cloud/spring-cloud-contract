@@ -52,24 +52,21 @@ public class BatchStubRunner implements StubRunning {
 	@Override
 	public URL findStubUrl(String groupId, String artifactId) {
 		for (StubRunner stubRunner : this.stubRunners) {
-			URL url = stubRunner.findStubUrl(groupId, artifactId);
-			if (url != null) {
-				return url;
-			}
+			try {
+				return stubRunner.findStubUrl(groupId, artifactId);
+			} catch (StubNotFoundException e) {}
 		}
-		return null;
+		throw new StubNotFoundException(groupId, artifactId);
 	}
 
 	@Override
 	public URL findStubUrl(String ivyNotation) {
-		String[] splitString = ivyNotation.split(":");
-		if (splitString.length > 3) {
-			throw new IllegalArgumentException(ivyNotation + " is invalid");
+		for (StubRunner stubRunner : this.stubRunners) {
+			try {
+				return stubRunner.findStubUrl(ivyNotation);
+			} catch (StubNotFoundException e) {}
 		}
-		else if (splitString.length == 2) {
-			return findStubUrl(splitString[0], splitString[1]);
-		}
-		return findStubUrl(null, splitString[0]);
+		throw new StubNotFoundException(ivyNotation);
 	}
 
 	@Override

@@ -75,12 +75,7 @@ public class StubRunner implements StubRunning {
 
 	@Override
 	public URL findStubUrl(String ivyNotation) {
-		String[] splitString = ivyNotation.split(":");
-		if (splitString.length == 1) {
-			// assuming that ivy notation represents artifactId only
-			return findStubUrl(null, splitString[0]);
-		}
-		return findStubUrl(splitString[0], splitString[1]);
+		return this.localStubRunner.findStubUrl(ivyNotation);
 	}
 
 	@Override

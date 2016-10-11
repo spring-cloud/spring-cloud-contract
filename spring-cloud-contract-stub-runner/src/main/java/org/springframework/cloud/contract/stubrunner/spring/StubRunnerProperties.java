@@ -50,7 +50,8 @@ public class StubRunnerProperties {
 	private Resource repositoryRoot;
 
 	/**
-	 * The ids of the stubs to run in "ivy" notation (groupId:artifactId[:classifier]:version[:port]).
+	 * The ids of the stubs to run in "ivy" notation ([groupId]:artifactId:[classifier]:[version][:port]).
+	 * {@code groupId}, {@code classifier}, {@code version} and {@code port} can be optional.
 	 */
 	private String[] ids = new String[0];
 

@@ -62,8 +62,10 @@ class StubRunnerExecutorSpec extends Specification {
 		StubRunnerExecutor executor = new StubRunnerExecutor(portScanner)
 		when:
 		executor.runStubs(stubRunnerOptions, repository, stub)
+		and:
+		executor.findStubUrl("unkowngroup", "unknownartifact")
 		then:
-		!executor.findStubUrl("unkowngroup", "unknownartifact")
+		thrown(StubNotFoundException)
 		cleanup:
 		executor.shutdown()
 	}
