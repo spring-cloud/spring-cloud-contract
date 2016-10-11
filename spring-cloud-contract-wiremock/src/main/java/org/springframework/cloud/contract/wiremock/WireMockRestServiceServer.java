@@ -35,6 +35,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.github.tomakehurst.wiremock.common.Json;
@@ -43,7 +45,6 @@ import com.github.tomakehurst.wiremock.http.MultiValue;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.matching.MultiValuePattern;
 import com.github.tomakehurst.wiremock.matching.RequestPattern;
-import com.github.tomakehurst.wiremock.stubbing.SortedConcurrentMappingSet;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
@@ -151,7 +152,7 @@ public class WireMockRestServiceServer {
 	 */
 	public MockRestServiceServer build() {
 		MockRestServiceServer server = this.builder.build();
-		SortedConcurrentMappingSet mappings = new SortedConcurrentMappingSet();
+		List<StubMapping> mappings = new ArrayList<>();
 		for (String location : this.locations) {
 			try {
 				for (Resource resource : this.resolver.getResources(pattern(location))) {
@@ -164,6 +165,7 @@ public class WireMockRestServiceServer {
 						e);
 			}
 		}
+		Collections.sort(mappings, new StubMappingComparator());
 		for (StubMapping mapping : mappings) {
 			ResponseActions expect = server
 					.expect(requestTo(request(mapping.getRequest())));
@@ -245,6 +247,44 @@ public class WireMockRestServiceServer {
 			}
 		}
 		return value == null ? MediaType.TEXT_PLAIN : MediaType.valueOf(value);
+	}
+
+	private static class StubMappingComparator implements Comparator<StubMapping> {
+
+		@Override
+		public int compare(StubMapping one, StubMapping two) {
+			if (one==two) {
+				return 0;
+			}
+			int value = request(one.getRequest()).compareTo(request(two.getRequest()));
+			if (value == 0) {
+
+				// Every mapping has a url pattern, and zero or more header patterns
+				int twos = 0;
+				if (two.getRequest().getHeaders() != null) {
+					twos = two.getRequest().getHeaders().size();
+				}
+				int ones = 0;
+				if (one.getRequest().getHeaders() != null) {
+					ones = one.getRequest().getHeaders().size();
+				}
+				value = twos - ones;
+				if (value == 0) {
+					// Same number of header matchers
+					if (two.getPriority() != null) {
+						return one.getPriority() != null
+								? one.getPriority() - two.getPriority() : 1;
+					}
+					value = (int) (one.getInsertionIndex() - two.getInsertionIndex());
+				}
+			}
+			return value;
+		}
+
+		private String request(RequestPattern request) {
+			return (request.getUrlPath() == null ? (request.getUrl() == null ? "/" : request.getUrl()) : request.getUrlPath());
+		}
+
 	}
 
 }

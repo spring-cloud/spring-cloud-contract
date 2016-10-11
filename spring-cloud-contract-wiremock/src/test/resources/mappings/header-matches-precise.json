@@ -1,0 +1,11 @@
+{
+  "request" : {
+    "urlPath" : "/poster",
+    "method" : "POST",
+    "headers" : { "Accept" : { "matches" : ".*/v.bar" }, "X-Precise" : { "equalTo" : "true" }}
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "Precise World"
+  }
+}

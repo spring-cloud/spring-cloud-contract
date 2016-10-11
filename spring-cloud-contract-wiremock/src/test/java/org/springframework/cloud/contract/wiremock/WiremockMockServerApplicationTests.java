@@ -68,33 +68,56 @@ public class WiremockMockServerApplicationTests {
 	public void postWithHeader() throws Exception {
 		WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("http://example.org") // order matters...
-				.stubs("classpath:/mappings/poster.json", "classpath:/mappings/accept.json").ignoreExpectOrder(true).build();
-		assertThat(this.restTemplate
-				.exchange(RequestEntity.post(new URI("http://example.org/poster"))
-						.accept(MediaType.TEXT_PLAIN).build(), String.class)
-				.getBody()).isEqualTo("Accepted World");
+				.stubs("classpath:/mappings/poster.json",
+						"classpath:/mappings/accept.json")
+				.ignoreExpectOrder(true).build();
+		assertThat(
+				this.restTemplate
+						.exchange(
+								RequestEntity.post(new URI("http://example.org/poster"))
+										.accept(MediaType.TEXT_PLAIN).build(),
+								String.class)
+						.getBody()).isEqualTo("Accepted World");
 	}
 
 	@Test
 	public void postWithHeaderContains() throws Exception {
 		WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("http://example.org") // order matters...
-				.stubs("classpath:/mappings/poster.json", "classpath:/mappings/header-contains.json").ignoreExpectOrder(true).build();
-		assertThat(this.restTemplate
-				.exchange(RequestEntity.post(new URI("http://example.org/poster"))
-						.accept(MediaType.valueOf("application/v.foo")).build(), String.class)
-				.getBody()).isEqualTo("Foo World");
+				.stubs("classpath:/mappings/poster.json",
+						"classpath:/mappings/header-contains.json")
+				.ignoreExpectOrder(true).build();
+		assertThat(this.restTemplate.exchange(
+				RequestEntity.post(new URI("http://example.org/poster"))
+						.accept(MediaType.valueOf("application/v.foo")).build(),
+				String.class).getBody()).isEqualTo("Foo World");
 	}
 
 	@Test
 	public void postWithHeaderMatches() throws Exception {
 		WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("http://example.org") // order matters...
-				.stubs("classpath:/mappings/poster.json", "classpath:/mappings/header-matches.json").ignoreExpectOrder(true).build();
+				.stubs("classpath:/mappings/poster.json",
+						"classpath:/mappings/header-matches.json")
+				.ignoreExpectOrder(true).build();
+		assertThat(this.restTemplate.exchange(
+				RequestEntity.post(new URI("http://example.org/poster"))
+						.accept(MediaType.valueOf("application/v.bar")).build(),
+				String.class).getBody()).isEqualTo("Bar World");
+	}
+
+	@Test
+	public void postWithMoreExactHeaderMatch() throws Exception {
+		WireMockRestServiceServer.with(this.restTemplate) //
+				.baseUrl("http://example.org") // order matters...
+				.stubs("classpath:/mappings/header-matches.json",
+						"classpath:/mappings/header-matches-precise.json")
+				.ignoreExpectOrder(true).build();
 		assertThat(this.restTemplate
 				.exchange(RequestEntity.post(new URI("http://example.org/poster"))
-						.accept(MediaType.valueOf("application/v.bar")).build(), String.class)
-				.getBody()).isEqualTo("Bar World");
+						.accept(MediaType.valueOf("application/v.bar"))
+						.header("X-Precise", "true").build(), String.class)
+				.getBody()).isEqualTo("Precise World");
 	}
 
 	@Test
