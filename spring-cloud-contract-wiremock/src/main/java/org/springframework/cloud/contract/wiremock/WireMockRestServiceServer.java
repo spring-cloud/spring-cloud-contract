@@ -97,7 +97,6 @@ public class WireMockRestServiceServer {
 	 */
 	public WireMockRestServiceServer ignoreExpectOrder(boolean ignoreExpectOrder) {
 		this.ignoreExpectOrder = ignoreExpectOrder;
-		this.builder.ignoreExpectOrder(ignoreExpectOrder);
 		return this;
 	}
 
