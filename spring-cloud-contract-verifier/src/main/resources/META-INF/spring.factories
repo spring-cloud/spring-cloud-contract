@@ -2,5 +2,6 @@
 org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier=\
 org.springframework.cloud.contract.verifier.messaging.stream.ContractVerifierStreamAutoConfiguration,\
 org.springframework.cloud.contract.verifier.messaging.integration.ContractVerifierIntegrationConfiguration,\
+org.springframework.cloud.contract.verifier.messaging.amqp.ContractVerifierAmqpAutoConfiguration,\
 org.springframework.cloud.contract.verifier.messaging.camel.ContractVerifierCamelConfiguration,\
 org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierAutoConfiguration
