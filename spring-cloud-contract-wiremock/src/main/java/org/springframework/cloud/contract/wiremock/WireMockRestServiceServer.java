@@ -16,6 +16,14 @@
 
 package org.springframework.cloud.contract.wiremock;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.springframework.core.io.Resource;
@@ -30,14 +38,6 @@ import org.springframework.test.web.client.response.DefaultResponseCreator;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 import com.github.tomakehurst.wiremock.common.Json;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
@@ -156,7 +156,7 @@ public class WireMockRestServiceServer {
 	 */
 	public MockRestServiceServer build() {
 		if (this.ignoreExpectOrder) {
-			builder.ignoreExpectOrder(true); // default is false
+			this.builder.ignoreExpectOrder(true); // default is false
 		}
 		MockRestServiceServer server = this.builder.build();
 		List<StubMapping> mappings = new ArrayList<>();

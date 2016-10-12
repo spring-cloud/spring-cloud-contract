@@ -38,7 +38,7 @@ public class LoanApplicationServiceTests {
 		LoanApplication application = new LoanApplication(new Client("1234567890"),
 				123.123);
 		// when:
-		LoanApplicationResult loanApplication = service.loanApplication(application);
+		LoanApplicationResult loanApplication = this.service.loanApplication(application);
 		// then:
 		assertThat(loanApplication.getLoanApplicationStatus())
 				.isEqualTo(LoanApplicationStatus.LOAN_APPLIED);
@@ -52,7 +52,7 @@ public class LoanApplicationServiceTests {
 		LoanApplication application = new LoanApplication(new Client("1234567890"),
 				99999);
 		// when:
-		LoanApplicationResult loanApplication = service.loanApplication(application);
+		LoanApplicationResult loanApplication = this.service.loanApplication(application);
 		// then:
 		assertThat(loanApplication.getLoanApplicationStatus())
 				.isEqualTo(LoanApplicationStatus.LOAN_APPLICATION_REJECTED);
