@@ -86,7 +86,7 @@ public class StubRunnerMain {
 				"Example: java -jar stub-runner.jar ${parser.printExample(ALL)}");
 	}
 
-	static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 		new StubRunnerMain(args).execute();
 	}
 
