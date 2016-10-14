@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.messaging.amqp;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mockingDetails;
 import static org.mockito.Mockito.verify;
 import static org.springframework.amqp.support.converter.DefaultClassMapper.DEFAULT_CLASSID_FIELD_NAME;
 
@@ -26,7 +27,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -61,16 +61,20 @@ public class SpringAmqpStubMessages implements
 	@Autowired
 	public SpringAmqpStubMessages(RabbitTemplate rabbitTemplate, MessageListenerAdapter messageListenerAdapter) {
 		Assert.notNull(rabbitTemplate);
-		Assert.isTrue(Mockito.mockingDetails(rabbitTemplate).isSpy());
+		Assert.isTrue(mockingDetails(rabbitTemplate).isSpy() || mockingDetails(rabbitTemplate).isMock()); //we get send messages by capturing arguments on the spy
 		this.rabbitTemplate = rabbitTemplate;
 		this.messageListenerAdapter = messageListenerAdapter;
 	}
 
 	@Override
 	public <T> void send(T payload, Map<String, Object> headers, String destination) {
-		Message message = org.springframework.amqp.core.MessageBuilder.withBody(((String) payload).getBytes()).andProperties(MessagePropertiesBuilder.newInstance()
-				.setContentType((String) headers.get("contentType"))
-				.copyHeaders(headers).build()).build();
+		Message message = org.springframework.amqp.core.MessageBuilder
+				.withBody(((String) payload).getBytes())
+				.andProperties(
+						MessagePropertiesBuilder.newInstance()
+								.setContentType((String) headers.get("contentType"))
+								.copyHeaders(headers).build())
+				.build();
 		if (headers.containsKey(DEFAULT_CLASSID_FIELD_NAME)) {
 			message.getMessageProperties().setHeader(DEFAULT_CLASSID_FIELD_NAME, headers.get(DEFAULT_CLASSID_FIELD_NAME));
 		}

@@ -29,6 +29,7 @@
 		<module>spring-cloud-contract-stub-runner-context-path</module>
 		<module>spring-cloud-contract-stub-runner-integration</module>
 		<module>spring-cloud-contract-stub-runner-stream</module>
+		<module>spring-cloud-contract-stub-runner-amqp</module>
 	</modules>
 
  	<build>

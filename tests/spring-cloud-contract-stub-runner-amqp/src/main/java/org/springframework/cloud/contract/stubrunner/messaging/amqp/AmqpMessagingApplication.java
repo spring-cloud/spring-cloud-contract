@@ -1,4 +1,4 @@
-package com.example;
+package org.springframework.cloud.contract.stubrunner.messaging.amqp;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -11,6 +11,7 @@ import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.amqp.support.converter.ContentTypeDelegatingMessageConverter;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
@@ -49,6 +50,11 @@ public class AmqpMessagingApplication {
 	@Bean
 	public Exchange testExchange() {
 		return new TopicExchange("test-exchange");
+	}
+
+	@Bean
+	public MessageListenerAdapter messageListenerAdapter(MessageSubscriber messageSubscriber, MessageConverter messageConverter) {
+		return new MessageListenerAdapter(messageSubscriber, messageConverter);
 	}
 
 	@Bean

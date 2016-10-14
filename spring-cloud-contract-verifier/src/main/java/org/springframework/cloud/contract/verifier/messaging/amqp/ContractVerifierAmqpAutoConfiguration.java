@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.messaging.amqp;
 
-import org.mockito.Mockito;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
@@ -28,6 +27,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.integration.ContractVerifierIntegrationConfiguration;
@@ -43,7 +43,8 @@ import org.springframework.context.annotation.Configuration;
  * @author Mathias Düsterhöft
  */
 @Configuration
-@ConditionalOnClass({Message.class, Mockito.class})
+@ConditionalOnClass({Message.class, RabbitTemplate.class})
+@ConditionalOnMissingClass("org.springframework.integration.core.MessageSource")
 @AutoConfigureBefore(ContractVerifierIntegrationConfiguration.class)
 @AutoConfigureAfter(ContractVerifierStreamAutoConfiguration.class)
 public class ContractVerifierAmqpAutoConfiguration {

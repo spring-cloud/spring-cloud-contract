@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.springframework.cloud.contract.verifier.stubs.amqp</groupId>
+  <artifactId>spring-cloud-contract-amqp-test</artifactId>
+  <version>0.4.0-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <localCopy>true</localCopy>
+    </snapshot>
+    <lastUpdated>20161007155639</lastUpdated>
+  </versioning>
+</metadata>
