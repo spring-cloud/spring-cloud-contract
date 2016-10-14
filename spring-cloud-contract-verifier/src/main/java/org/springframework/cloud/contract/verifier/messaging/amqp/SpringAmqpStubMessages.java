@@ -48,6 +48,7 @@ import org.springframework.util.Assert;
  * allows us to test the full deserialization and listener invocation.
  *
  * @author Mathias Düsterhöft
+ * @since 1.0.1
  */
 public class SpringAmqpStubMessages implements
 		MessageVerifier<Message> {

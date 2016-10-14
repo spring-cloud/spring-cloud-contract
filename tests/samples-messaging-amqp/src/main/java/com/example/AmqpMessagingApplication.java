@@ -1,14 +1,9 @@
 package com.example;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.springframework.amqp.core.MessageProperties.CONTENT_TYPE_JSON;
-
-import java.util.concurrent.ExecutorService;
 
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.ContentTypeDelegatingMessageConverter;
@@ -19,8 +14,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
 
 @SpringBootApplication
 public class AmqpMessagingApplication {
@@ -49,20 +42,5 @@ public class AmqpMessagingApplication {
 	@Bean
 	public Exchange testExchange() {
 		return new TopicExchange("test-exchange");
-	}
-
-	@Bean
-	public ConnectionFactory connectionFactory() {
-		com.rabbitmq.client.ConnectionFactory mockConnectionFactory = mock(com.rabbitmq.client.ConnectionFactory.class);
-		Connection mockConnection = mock(Connection.class);
-		Channel mockChannel = mock(Channel.class);
-		try {
-			when(mockConnectionFactory.newConnection((ExecutorService) null)).thenReturn(mockConnection);
-			when(mockConnection.isOpen()).thenReturn(true);
-			when(mockConnection.createChannel()).thenReturn(mockChannel);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		return new CachingConnectionFactory(mockConnectionFactory);
 	}
 }

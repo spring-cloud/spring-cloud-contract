@@ -18,20 +18,28 @@ package com.example
 
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
+import com.rabbitmq.client.Channel
+import com.rabbitmq.client.Connection
 import com.toomuchcoding.jsonassert.JsonAssertion
-import org.springframework.amqp.core.Message
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory
+import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
 import javax.inject.Inject
+import java.util.concurrent.ExecutorService
+
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.when
 // Context configuration would end up in base class
 @ContextConfiguration(classes = [AmqpMessagingApplication], loader = SpringBootContextLoader)
 @DirtiesContext
@@ -85,4 +93,27 @@ public class AmqpMessagingApplicationSpec extends Specification {
 	void publishBook() {
 		this.messagePublisher.sendMessage(new Book("some"))
 	}
+
+
+	@Configuration
+	static class TestConfig {
+		/**
+		 * Do not connect to a real bus - so we mock the connection factory
+		 */
+		@Bean
+		public ConnectionFactory connectionFactory() {
+			com.rabbitmq.client.ConnectionFactory mockConnectionFactory = mock(com.rabbitmq.client.ConnectionFactory.class);
+			Connection mockConnection = mock(Connection.class);
+			Channel mockChannel = mock(Channel.class);
+			try {
+				when(mockConnectionFactory.newConnection((ExecutorService) null)).thenReturn(mockConnection);
+				when(mockConnection.isOpen()).thenReturn(true);
+				when(mockConnection.createChannel()).thenReturn(mockChannel);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			return new CachingConnectionFactory(mockConnectionFactory);
+		}
+	}
+
 }

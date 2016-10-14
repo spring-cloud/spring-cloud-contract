@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.messaging.amqp;
 
+import org.mockito.Mockito;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
@@ -41,9 +42,10 @@ import org.springframework.context.annotation.Configuration;
  * Configuration setting up {@link MessageVerifier} for use with plain spring-rabbit/spring-amqp
  *
  * @author Mathias Düsterhöft
+ * @since 1.0.1
  */
 @Configuration
-@ConditionalOnClass({Message.class, RabbitTemplate.class})
+@ConditionalOnClass({Message.class, RabbitTemplate.class, Mockito.class})
 @ConditionalOnMissingClass("org.springframework.integration.core.MessageSource")
 @AutoConfigureBefore(ContractVerifierIntegrationConfiguration.class)
 @AutoConfigureAfter(ContractVerifierStreamAutoConfiguration.class)

@@ -7,7 +7,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter
 import spock.lang.Specification
 
-import static org.mockito.BDDMockito.then
 import static org.mockito.Mockito.mock
 import static org.springframework.amqp.core.MessageProperties.CONTENT_TYPE_JSON
 import static org.springframework.amqp.support.converter.DefaultClassMapper.DEFAULT_CLASSID_FIELD_NAME
@@ -17,7 +16,7 @@ import static org.springframework.amqp.support.converter.DefaultClassMapper.DEFA
 class SpringAmqpStubMessagesSpec extends Specification {
 
     RabbitTemplate rabbitTemplate = mock(RabbitTemplate.class)
-    MessageListenerAdapter messageListenerAdapter = mock(MessageListenerAdapter.class)
+    MessageListenerAdapter messageListenerAdapter = Mock(MessageListenerAdapter.class)
 
     def "should send amqp message with type id"() {
         given:
@@ -32,8 +31,9 @@ class SpringAmqpStubMessagesSpec extends Specification {
                             .build(),
                     "test-exchange")
         then:
-            then(messageListenerAdapter).should().onMessage(messageArgumentCaptor.capture())
-            messageArgumentCaptor.getValue().getMessageProperties().getContentType() == CONTENT_TYPE_JSON
-            messageArgumentCaptor.getValue().getMessageProperties().getHeaders().get(DEFAULT_CLASSID_FIELD_NAME) == "org.example.Some"
+            1 * messageListenerAdapter.onMessage({
+                it.getMessageProperties().getContentType() == CONTENT_TYPE_JSON &&
+                it.getMessageProperties().getHeaders().get(DEFAULT_CLASSID_FIELD_NAME) == "org.example.Some"
+            })
     }
 }
