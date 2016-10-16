@@ -61,7 +61,8 @@ public class ContractDownloader {
 	}
 
 	private String patternFromProperty(File contractsDirectory) {
-		return "^" + contractsDirectory.getAbsolutePath() + contractsPath() + ".*$";
+		return ("^" + contractsDirectory.getAbsolutePath() +
+				contractsPath().replace("/", File.separator) + ".*$").replace("\\", "\\\\");
 	}
 
 	private String contractsPath() {
@@ -79,13 +80,13 @@ public class ContractDownloader {
 	}
 
 	private String groupArtifactToPattern(File contractsDirectory) {
-		return "^" +
+		return ("^" +
 				contractsDirectory.getAbsolutePath() +
 				File.separator +
 				this.projectGroupId.replace(".", File.separator) +
 				File.separator +
 				this.projectArtifactId
 				+ File.separator +
-				".*$";
+				".*$").replace("\\", "\\\\");
 	}
 }

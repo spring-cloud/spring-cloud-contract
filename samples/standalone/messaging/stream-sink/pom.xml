@@ -167,5 +167,34 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>windows</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>gradle</id>
+								<phase>test</phase>
+								<configuration>
+									<executable>gradlew.bat</executable>
+									<arguments>
+										<argument>clean</argument>
+										<argument>build</argument>
+										<argument>publishToMavenLocal</argument>
+										<argument>-PverifierVersion=${spring-cloud-contract.version}</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 </project>

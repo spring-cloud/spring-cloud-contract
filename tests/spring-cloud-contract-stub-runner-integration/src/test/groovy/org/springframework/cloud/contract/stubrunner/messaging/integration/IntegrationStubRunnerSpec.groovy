@@ -30,6 +30,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.ImportResource
 import org.springframework.messaging.Message
 import org.springframework.test.context.ContextConfiguration
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 import java.util.concurrent.TimeUnit
@@ -39,6 +40,7 @@ import java.util.concurrent.TimeUnit
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @ImportResource("classpath*:integration-context.xml")
 @AutoConfigureStubRunner
+@IgnoreIf({ os.windows })
 class IntegrationStubRunnerSpec extends Specification {
 
 	@Autowired StubFinder stubFinder

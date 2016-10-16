@@ -30,7 +30,7 @@ class ContractDownloaderSpec extends Specification {
 
 	def 'should set inclusion pattern on config when path pattern was explicitly provided without a separator at the beginning'() {
 		given:
-			String contractPath = fileSeparated('a/b/c/d')
+			String contractPath = File.separator + ['a','b','c','d'].join(File.separator)
 			ContractDownloader contractDownloader = new ContractDownloader(stubDownloader,
 					stubConfiguration, contractPath, '', '')
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
@@ -45,6 +45,6 @@ class ContractDownloaderSpec extends Specification {
 	}
 
 	private static String fileSeparated(String string) {
-		return string.replace('/', File.separator)
+		return string.replace('/', File.separator).replace("\\", "\\\\")
 	}
 }

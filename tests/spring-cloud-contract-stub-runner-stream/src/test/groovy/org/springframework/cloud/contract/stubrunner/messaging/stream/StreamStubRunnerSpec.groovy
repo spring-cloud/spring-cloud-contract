@@ -18,28 +18,25 @@ package org.springframework.cloud.contract.stubrunner.messaging.stream
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
-
-import java.util.concurrent.TimeUnit
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.IntegrationTest;
+import org.springframework.boot.test.IntegrationTest
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
-import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.messaging.Sink
 import org.springframework.cloud.stream.messaging.Source
-import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.Message
 import org.springframework.test.context.ContextConfiguration
-
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
+import java.util.concurrent.TimeUnit
 /**
  * @author Marcin Grzejszczak
  */
@@ -47,6 +44,7 @@ import spock.lang.Specification
 @IntegrationTest("debug=true")
 @AutoConfigureStubRunner
 @AutoConfigureMessageVerifier
+@IgnoreIf({ os.windows })
 class StreamStubRunnerSpec extends Specification {
 
 	@Autowired StubFinder stubFinder

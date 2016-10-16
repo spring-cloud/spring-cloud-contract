@@ -99,7 +99,7 @@ class RegexpBuilders {
 
 	private final static Pattern SPECIAL_REGEX_CHARS = Pattern.compile('[{}()\\[\\].+*?^$\\\\|]')
 
-	private static String escapeSpecialRegexChars(String str) {
+	static String escapeSpecialRegexChars(String str) {
 		return SPECIAL_REGEX_CHARS.matcher(str).replaceAll('\\\\\\\\$0')
 	}
 
