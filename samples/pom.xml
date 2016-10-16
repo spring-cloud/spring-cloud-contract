@@ -78,6 +78,43 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>windows</id>
+			<build>
+				<plugins>
+					<plugin>
+						<!-- Invoke integration tests in the install phase, after the maven-plugin
+							 is available -->
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-invoker-plugin</artifactId>
+						<configuration>
+							<settingsFile>src/it/settings.xml</settingsFile>
+							<projectsDirectory>standalone</projectsDirectory>
+							<skipInvocation>${skipTests}</skipInvocation>
+							<streamLogs>true</streamLogs>
+							<profiles>
+								<profile>windows</profile>
+							</profiles>
+							<pomIncludes>
+								<pomInclude>*/pom.xml</pomInclude>
+							</pomIncludes>
+							<goals>
+								<goal>clean</goal>
+								<goal>install</goal>
+							</goals>
+						</configuration>
+						<executions>
+							<execution>
+								<id>integration</id>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 
 </project>

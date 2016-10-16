@@ -18,6 +18,8 @@ package org.springframework.cloud.contract.maven.verifier;
 
 import java.io.File;
 
+import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -39,6 +41,15 @@ public class PluginIT {
 	private final TestProperties properties = new TestProperties();
 
 	private final MavenRuntime maven;
+
+	@Before
+	public void doNotRunForWindows() {
+		Assume.assumeFalse(isWindows());
+	}
+
+	private boolean isWindows() {
+		return System.getProperty("os.name").startsWith("Windows");
+	}
 
 	public PluginIT(MavenRuntime.MavenRuntimeBuilder mavenBuilder) throws Exception {
 		this.maven = mavenBuilder.withCliOptions("-B", "-U").build();

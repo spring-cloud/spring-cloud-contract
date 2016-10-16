@@ -19,6 +19,8 @@ package org.springframework.cloud.contract.maven.verifier;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
