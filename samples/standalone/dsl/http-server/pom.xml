@@ -20,7 +20,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<spring-cloud-contract.version>1.0.1.BUILD-SNAPSHOT</spring-cloud-contract.version>
+		<spring-cloud-contract.version>1.0.1.RELEASE</spring-cloud-contract.version>
 		<spring-cloud-dependencies.version>Camden.BUILD-SNAPSHOT</spring-cloud-dependencies.version>
 	</properties>
 
@@ -117,7 +117,7 @@
 									<pluginExecutionFilter>
 										<groupId>org.springframework.cloud</groupId>
 										<artifactId>spring-cloud-contract-maven-plugin</artifactId>
-										<versionRange>[1.0.1.BUILD-SNAPSHOT,)</versionRange>
+										<versionRange>[1.0.1.RELEASE,)</versionRange>
 										<goals>
 											<goal>convert</goal>
 											<goal>generateTests</goal>
