@@ -36,6 +36,7 @@ class RegexPatterns {
 	private static final Pattern HOSTNAME_PATTERN = Pattern.compile('((http[s]?|ftp):\\/)\\/?([^:\\/\\s]+)(:[0-9]{1,5})?');
 	private static final Pattern EMAIL = Pattern.compile('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}');
 	private static final Pattern URL = Pattern.compile('((www\\.|(http|https|ftp|news|file)+\\:\\/\\/)[_.a-z0-9-]+\\.[a-z0-9\\/_:@=.+?,##%&~-]*[^.|\\\'|\\# |!|\\(|?|,| |>|<|;|\\)])')
+	private static final Pattern UUID = Pattern.compile('[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}')
 
 	String onlyAlphaUnicode() {
 		return ONLY_ALPHA_UNICODE.pattern()
@@ -63,6 +64,10 @@ class RegexPatterns {
 
 	String url() {
 		return URL.pattern()
+	}
+
+	String uuid(){
+		return UUID.pattern()
 	}
 	// end::regexps[]
 	
