@@ -66,13 +66,25 @@ class RegexPatternsSpec extends Specification {
 
 	def "should generate a regex for a number [#textToMatch] that is a match [#shouldMatch]"() {
 		expect:
-			shouldMatch == Pattern.compile(regexPatterns.number()).matcher(textToMatch).matches()
+		shouldMatch == Pattern.compile(regexPatterns.number()).matcher(textToMatch).matches()
 		where:
-			textToMatch || shouldMatch
-			'1'         || true
-			'1.0'       || true
-			'0.1'       || true
-			'.1'        || true
-			'1.'        || false
+		textToMatch || shouldMatch
+		'1'         || true
+		'1.0'       || true
+		'0.1'       || true
+		'.1'        || true
+		'1.'        || false
+	}
+
+	def "should generate a regex for a uuid [#textToMatch] that is a match [#shouldMatch]"() {
+		expect:
+		shouldMatch == Pattern.compile(regexPatterns.uuid()).matcher(textToMatch).matches()
+		where:
+		textToMatch							|| shouldMatch
+		UUID.randomUUID().toString()   		|| true
+		UUID.randomUUID().toString()   		|| true
+		UUID.randomUUID().toString() + "!" 	|| false
+		'dog'       						|| false
+		'5'          						|| false
 	}
 }
