@@ -42,4 +42,9 @@ class ExecutionProperty {
 	String insertValue(String valueToInsert) {
 		return executionCommand.replaceAll(PLACEHOLDER_VALUE, valueToInsert)
 	}
+
+	@Override
+	public String toString() {
+		return executionCommand;
+	}
 }

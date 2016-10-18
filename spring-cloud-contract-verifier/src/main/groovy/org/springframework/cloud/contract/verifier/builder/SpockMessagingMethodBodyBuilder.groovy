@@ -150,7 +150,7 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	@Override
 	protected String getHeaderString(Header header) {
-		return "'${getTestSideValue(header.name)}': '${getTestSideValue(header.serverValue)}'"
+		return "${getTestSideValue(header.name)}: ${getTestSideValue(header.serverValue)}"
 	}
 
 	@Override

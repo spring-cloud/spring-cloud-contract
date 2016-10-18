@@ -359,8 +359,17 @@ abstract class MethodBodyBuilder {
 	 * combines them into a String representation
 	 */
 	protected String getTestSideValue(Object object) {
-		return MapConverter.getTestSideValues(object).toString()
+		return '"' + MapConverter.getTestSideValues(object).toString() + '"'
 	}
+
+	/**
+	 * Extracts the executable test side values and
+	 * returns the code of the executable
+	 */
+	protected String getTestSideValue(ExecutionProperty executionProperty) {
+		return executionProperty.toString()
+	}
+
 
 	/**
 	 * Appends to the {@link BlockBuilder} the assertion for the given body element

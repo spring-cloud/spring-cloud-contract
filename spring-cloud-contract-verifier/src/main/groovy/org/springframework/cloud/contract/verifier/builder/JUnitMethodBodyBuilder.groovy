@@ -125,7 +125,7 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 
 	@Override
 	protected String getHeaderString(Header header) {
-		return ".header(\"${getTestSideValue(header.name)}\", \"${getTestSideValue(header.serverValue)}\")"
+		return ".header(${getTestSideValue(header.name)}, ${getTestSideValue(header.serverValue)})"
 	}
 
 	@Override
