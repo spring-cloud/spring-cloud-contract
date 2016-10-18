@@ -1,0 +1,106 @@
+=== Stub Runner Spring AMQP
+
+Spring Cloud Contract Verifier Stub Runner's messaging module gives you an easy way to integrate with using plain Spring AMQP's Rabbit Template.
+For the provided artifacts it will automatically download the stubs and register the required
+routes.
+
+The integration tries to work standalone, that is without interaction with a running RabbitMQ server. It expects a `RabbitTemplate` on the application context and makes it a spring boot test `@SpyBean`.
+Thus it can use the mockito spy to intercept messages sent by the application.
+
+IMPORTANT: In the current status of the implementation tries to find a `MessageListenerAdapter` on the application context to send messages into the application, because we want to avoid interacting with a running bus.
+Using annotation driven listener endpoints (e.g. `@RabbitListener` annotated listener methods) is currently not supported.
+
+==== Adding it to the project
+
+It's enough to have both Spring AMQP and Spring Cloud Contract Stub Runner on classpath.
+Remember to annotate your test class with `@AutoConfigureMessageVerifier`.
+
+==== Examples
+
+===== Stubs structure
+
+Let us assume that we have the following Maven repository with a deployed stubs for the
+`spring-cloud-contract-amqp-test` application.
+
+[source,bash,indent=0]
+----
+└── .m2
+    └── repository
+        └── com
+            └── example
+                └── spring-cloud-contract-amqp-test
+                    ├── 0.4.0-SNAPSHOT
+                    │   ├── spring-cloud-contract-amqp-test-0.4.0-SNAPSHOT.pom
+                    │   ├── spring-cloud-contract-amqp-test-0.4.0-SNAPSHOT-stubs.jar
+                    │   └── maven-metadata-local.xml
+                    └── maven-metadata-local.xml
+----
+
+And the stubs contain the following structure:
+
+[source,bash,indent=0]
+----
+├── META-INF
+│   └── MANIFEST.MF
+└── contracts
+    └── shouldProduceValidPersonData.groovy
+----
+
+Let's consider the following contract:
+
+[source,groovy]
+----
+package contracts
+
+org.springframework.cloud.contract.spec.Contract.make {
+    // Human readable description
+    description 'Should produce valid person data'
+    // Label by means of which the output message can be triggered
+    label 'contract-test.person.created.event'
+    // input to the contract
+    input {
+        // the contract will be triggered by a method
+        triggeredBy('createPerson()')
+    }
+    // output message of the contract
+    outputMessage {
+        // destination to which the output message will be sent
+        sentTo 'contract-test.exchange'
+        headers {
+            header('contentType': 'application/json')
+            header('__TypeId__': 'org.springframework.cloud.contract.stubrunner.messaging.amqp.Person')
+        }
+        // the body of the output message
+        body ([
+                id: $(consumer(9), producer(regex("[0-9]+"))),
+                name: "me"
+        ])
+    }
+}----
+
+
+and the following Spring configuration:
+
+[source,yaml]
+----
+include::src/test/resources/application.yml[tags=stub_runner_config,indent=0]
+----
+
+===== Triggering the message
+
+So as to trigger a message via the `contract-test.person.created.event` label we'll use the `StubTrigger` interface as follows
+
+[source,groovy]
+----
+include::src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/amqp/AmqpStubRunnerSpec.groovy[tags=client_trigger,indent=0]
+----
+
+===== Spring AMQP Test Configuration
+
+In order to avoid that Spring AMQP is trying to connect to a running broker during our tests we can configure a mock `ConnectionFactory`.
+
+To enable the mocked ConnectionFactory set the property `verifier.amqp.mockConnection=true`
+[source,yaml]
+----
+include::src/test/resources/application.yml[tags=rabbit_mock_connection_config,indent=0]
+----

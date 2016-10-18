@@ -5,6 +5,7 @@ Stub Runner has the functionality to run the published stubs in memory. It can i
 - Spring Integration
 - Spring Cloud Stream
 - Apache Camel
+- Spring AMQP
 
 It also provides points of entry to integrate with any other solution on the market.
 
@@ -54,3 +55,5 @@ include::{tests_path}/spring-cloud-contract-stub-runner-camel/README.adoc[]
 include::{tests_path}/spring-cloud-contract-stub-runner-integration/README.adoc[]
 
 include::{tests_path}/spring-cloud-contract-stub-runner-stream/README.adoc[]
+
+include::{tests_path}/spring-cloud-contract-stub-runner-amqp/README.adoc[]

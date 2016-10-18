@@ -37,7 +37,9 @@ class AmqpStubRunnerSpec extends Specification {
     
     def "should trigger stub amqp message"() {
         when:
+        // tag::client_trigger[]
             stubTrigger.trigger("contract-test.person.created.event")
+        // end::client_trigger[]
         then:
             then(messageSubscriber).should().handleMessage(personArgumentCaptor.capture())
             personArgumentCaptor.value.name != null
@@ -50,17 +52,17 @@ class AmqpStubRunnerSpec extends Specification {
          */
         @Bean
         public ConnectionFactory connectionFactory() {
-            com.rabbitmq.client.ConnectionFactory mockConnectionFactory = mock(com.rabbitmq.client.ConnectionFactory.class);
-            Connection mockConnection = mock(Connection.class);
-            Channel mockChannel = mock(Channel.class);
+            com.rabbitmq.client.ConnectionFactory mockConnectionFactory = mock(com.rabbitmq.client.ConnectionFactory.class)
+            Connection mockConnection = mock(Connection.class)
+            Channel mockChannel = mock(Channel.class)
             try {
-                when(mockConnectionFactory.newConnection((ExecutorService) null)).thenReturn(mockConnection);
-                when(mockConnection.isOpen()).thenReturn(true);
-                when(mockConnection.createChannel()).thenReturn(mockChannel);
+                when(mockConnectionFactory.newConnection((ExecutorService) null)).thenReturn(mockConnection)
+                when(mockConnection.isOpen()).thenReturn(true)
+                when(mockConnection.createChannel()).thenReturn(mockChannel)
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException(e)
             }
-            return new CachingConnectionFactory(mockConnectionFactory);
+            return new CachingConnectionFactory(mockConnectionFactory)
         }
     }
 }
