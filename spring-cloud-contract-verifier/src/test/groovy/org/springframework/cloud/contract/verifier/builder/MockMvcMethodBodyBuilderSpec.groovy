@@ -1557,7 +1557,7 @@ World.'''"""
 			def test = blockBuilder.toString()
 			def strippedTest = test.replace('\n', '').stripIndent().stripMargin()
 		then:
-			strippedTest.matches(""".*header\\('header', 'application\\/vnd\\.fraud\\.v1\\+json;.*'\\).*""")
+			strippedTest.matches(""".*header\\("header", "application\\/vnd\\.fraud\\.v1\\+json;.*"\\).*""")
 			strippedTest.matches(""".*body\\('''\\{"requestElement":"[0-9]{5}"\\}'''\\).*""")
 			strippedTest.matches(""".*put\\("/foo/[0-9]{5}"\\).*""")
 			strippedTest.contains("""response.header('Content-Type') ==~ java.util.regex.Pattern.compile('application/vnd.fraud.v1.json.*')""")
@@ -1590,6 +1590,36 @@ World.'''"""
 			def test = blockBuilder.toString()
 		then:
 			test.contains('assertThatRejectionReasonIsNull(parsedJson.read(\'$.rejectionReason.title\'))')
+	}
+
+	@Issue('#111')
+	def "should execute custom method for request headers"() {
+		given:
+		Contract contractDsl = Contract.make {
+			request {
+				method 'GET'
+				urlPath '/get'
+				headers {
+					header('authorization', value(consumer('Bearer token'), producer(execute('getOAuthTokenHeader()'))))
+				}
+			}
+			response {
+				status 200
+				body([
+						fraudCheckStatus: "OK",
+						rejectionReason : [
+								title: $(consumer(null), producer(execute('assertThatRejectionReasonIsNull($it)')))
+						]
+				])
+			}
+		}
+			MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.given(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('.header("authorization", getOAuthTokenHeader())')
 	}
 
 }

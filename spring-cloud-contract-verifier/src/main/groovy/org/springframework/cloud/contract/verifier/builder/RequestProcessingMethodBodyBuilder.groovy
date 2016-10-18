@@ -109,7 +109,7 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 		String url = buildUrl(request)
 		String method = request.method.serverValue.toString().toLowerCase()
 
-		bb.addLine(/.${method}("$url")/)
+		bb.addLine(/.${method}($url)/)
 		addColonIfRequired(bb)
 		bb.unindent()
 	}

@@ -268,7 +268,7 @@ class ContractHttpDocsSpec extends Specification {
 """
  given:
   def request = given()
-    .header('Content-Type', 'application/json')
+    .header("Content-Type", "application/json")
     .body('''{"email":"abc@abc.com","callback_url":"http://partners.com"}''')
 
  when:
