@@ -98,10 +98,13 @@ include::src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging
 
 ===== Spring AMQP Test Configuration
 
-In order to avoid that Spring AMQP is trying to connect to a running broker during our tests we can configure a mock `ConnectionFactory`.
+In order to avoid that Spring AMQP is trying to connect to a running broker during our tests we configure a mock `ConnectionFactory`.
 
-To enable the mocked ConnectionFactory set the property `verifier.amqp.mockConnection=true`
+To disable the mocked ConnectionFactory set the property `verifier.amqp.mockConnection=false`
+
 [source,yaml]
 ----
-include::../samples-messaging-amqp/src/test/resources/application.yml[]
+verifier:
+  amqp:
+    mockConnection: false
 ----

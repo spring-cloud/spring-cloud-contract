@@ -23,7 +23,7 @@ import com.rabbitmq.client.Connection;
  * @since 1.0.2
  */
 @Configuration
-@ConditionalOnProperty(value = "verifier.amqp.mockConnection", havingValue = "true")
+@ConditionalOnProperty(value = "verifier.amqp.mockConnection", havingValue = "true", matchIfMissing = true)
 public class RabbitMockConnectionFactoryAutoConfiguration {
 
 	@Bean
