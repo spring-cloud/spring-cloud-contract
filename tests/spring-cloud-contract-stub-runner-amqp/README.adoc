@@ -84,7 +84,7 @@ and the following Spring configuration:
 
 [source,yaml]
 ----
-include::src/test/resources/application.yml[tags=stub_runner_config,indent=0]
+include::src/test/resources/application.yml[]
 ----
 
 ===== Triggering the message
@@ -103,5 +103,5 @@ In order to avoid that Spring AMQP is trying to connect to a running broker duri
 To enable the mocked ConnectionFactory set the property `verifier.amqp.mockConnection=true`
 [source,yaml]
 ----
-include::src/test/resources/application.yml[tags=rabbit_mock_connection_config,indent=0]
+include::../samples-messaging-amqp/src/test/resources/application.yml[]
 ----
