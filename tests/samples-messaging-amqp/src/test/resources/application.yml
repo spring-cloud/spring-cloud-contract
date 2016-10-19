@@ -1,0 +1,3 @@
+verifier:
+  amqp:
+    mockConnection: true
