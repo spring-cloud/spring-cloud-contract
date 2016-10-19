@@ -20,7 +20,7 @@ import com.rabbitmq.client.Connection;
  * Set verifier.amqp.mockConnection=true to enable the mocked ConnectionFactory
  *
  * @author Mathias Düsterhöft
- * @since 1.0.1
+ * @since 1.0.2
  */
 @Configuration
 @ConditionalOnProperty(value = "verifier.amqp.mockConnection", havingValue = "true")

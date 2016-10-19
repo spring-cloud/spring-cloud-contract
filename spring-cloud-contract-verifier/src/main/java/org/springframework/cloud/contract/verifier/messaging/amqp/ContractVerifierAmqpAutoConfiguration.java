@@ -42,7 +42,7 @@ import org.springframework.context.annotation.Configuration;
  * Configuration setting up {@link MessageVerifier} for use with plain spring-rabbit/spring-amqp
  *
  * @author Mathias Düsterhöft
- * @since 1.0.1
+ * @since 1.0.2
  */
 @Configuration
 @ConditionalOnClass({Message.class, RabbitTemplate.class, Mockito.class})
