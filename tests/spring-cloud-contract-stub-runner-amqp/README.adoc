@@ -1,11 +1,11 @@
 === Stub Runner Spring AMQP
 
-Spring Cloud Contract Verifier Stub Runner's messaging module gives you an easy way to integrate with using plain Spring AMQP's Rabbit Template.
+Spring Cloud Contract Verifier Stub Runner's messaging module provides an easy way to integrate with Spring AMQP's Rabbit Template.
 For the provided artifacts it will automatically download the stubs and register the required
 routes.
 
-The integration tries to work standalone, that is without interaction with a running RabbitMQ server. It expects a `RabbitTemplate` on the application context and makes it a spring boot test `@SpyBean`.
-Thus it can use the mockito spy to intercept messages sent by the application.
+The integration tries to work standalone, that is without interaction with a running RabbitMQ message broker. It expects a `RabbitTemplate` on the application context and uses it as a spring boot test `@SpyBean`.
+Thus it can use the mockito spy functionality to verify and introspect messages sent by the application.
 
 IMPORTANT: In the current status of the implementation tries to find a `MessageListenerAdapter` on the application context to send messages into the application, because we want to avoid interacting with a running bus.
 Using annotation driven listener endpoints (e.g. `@RabbitListener` annotated listener methods) is currently not supported.
@@ -76,7 +76,8 @@ org.springframework.cloud.contract.spec.Contract.make {
                 name: "me"
         ])
     }
-}----
+}
+----
 
 
 and the following Spring configuration:
@@ -88,7 +89,7 @@ include::src/test/resources/application.yml[tags=stub_runner_config,indent=0]
 
 ===== Triggering the message
 
-So as to trigger a message via the `contract-test.person.created.event` label we'll use the `StubTrigger` interface as follows
+So to trigger a message using the contract above we'll use the `StubTrigger` interface as follows.
 
 [source,groovy]
 ----

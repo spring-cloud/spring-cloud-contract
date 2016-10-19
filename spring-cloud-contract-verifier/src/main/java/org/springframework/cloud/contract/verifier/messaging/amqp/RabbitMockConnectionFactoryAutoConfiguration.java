@@ -18,6 +18,9 @@ import com.rabbitmq.client.Connection;
  * Spring rabbit test utility that provides a mock ConnectionFactory to avoid having to connect against a running broker.
  *
  * Set verifier.amqp.mockConnection=true to enable the mocked ConnectionFactory
+ *
+ * @author Mathias Düsterhöft
+ * @since 1.0.1
  */
 @Configuration
 @ConditionalOnProperty(value = "verifier.amqp.mockConnection", havingValue = "true")
