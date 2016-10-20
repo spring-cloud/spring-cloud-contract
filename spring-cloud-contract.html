@@ -656,6 +656,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 </ul>
 </li>
+<li><a href="#_stub_runner_spring_amqp">Stub Runner Spring AMQP</a>
+<ul class="sectlevel3">
+<li><a href="#_adding_it_to_the_project_4">Adding it to the project</a></li>
+<li><a href="#_examples_4">Examples</a>
+<ul class="sectlevel4">
+<li><a href="#_stubs_structure_4">Stubs structure</a></li>
+<li><a href="#_triggering_the_message">Triggering the message</a></li>
+<li><a href="#_spring_amqp_test_configuration">Spring AMQP Test Configuration</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a href="#_contract_dsl">Contract DSL</a>
 <ul class="sectlevel3">
 <li><a href="#_limitations">Limitations</a></li>
@@ -765,7 +777,7 @@ with <em>Contract Definition Language</em> (DSL). Contract definitions are used 
 Test code must still be written by hand, test data is produced by Spring Cloud Contract Verifier.</p>
 </li>
 <li>
-<p>Messaging routes if you&#8217;re using one. We&#8217;re integrating with Spring Integration, Spring Cloud Stream and Apache Camel. You can however set your own integrations if you want to</p>
+<p>Messaging routes if you&#8217;re using one. We&#8217;re integrating with Spring Integration, Spring Cloud Stream, Spring AMQP and Apache Camel. You can however set your own integrations if you want to</p>
 </li>
 <li>
 <p>Acceptance tests (in JUnit or Spock) used to verify if server-side implementation of the API is compliant with the contract (<em>server tests</em>).
@@ -3278,7 +3290,7 @@ All of our integrations are working with Spring but you can also create one your
 <div class="sect3">
 <h4 id="_integrations">Integrations</h4>
 <div class="paragraph">
-<p>You can use one of the three integration configurations:</p>
+<p>You can use one of the four integration configurations:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -3290,6 +3302,9 @@ All of our integrations are working with Spring but you can also create one your
 </li>
 <li>
 <p>Spring Cloud Stream</p>
+</li>
+<li>
+<p>Spring AMQP</p>
 </li>
 </ul>
 </div>
@@ -4511,6 +4526,9 @@ the Stub Runner Boot.</p>
 <li>
 <p>Apache Camel</p>
 </li>
+<li>
+<p>Spring AMQP</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
@@ -5202,6 +5220,141 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">messaging.send(new BookReturned('foo'), [sample: 'header'], 'delete')</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_stub_runner_spring_amqp">Stub Runner Spring AMQP</h3>
+<div class="paragraph">
+<p>Spring Cloud Contract Verifier Stub Runner&#8217;s messaging module provides an easy way to integrate with Spring AMQP&#8217;s Rabbit Template.
+For the provided artifacts it will automatically download the stubs and register the required
+routes.</p>
+</div>
+<div class="paragraph">
+<p>The integration tries to work standalone, that is without interaction with a running RabbitMQ message broker. It expects a <code>RabbitTemplate</code> on the application context and uses it as a spring boot test <code>@SpyBean</code>.
+Thus it can use the mockito spy functionality to verify and introspect messages sent by the application.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+In the current status of the implementation tries to find a <code>MessageListenerAdapter</code> on the application context to send messages into the application, because we want to avoid interacting with a running bus.
+Using annotation driven listener endpoints (e.g. <code>@RabbitListener</code> annotated listener methods) is currently not supported.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_adding_it_to_the_project_4">Adding it to the project</h4>
+<div class="paragraph">
+<p>It&#8217;s enough to have both Spring AMQP and Spring Cloud Contract Stub Runner on classpath.
+Remember to annotate your test class with <code>@AutoConfigureMessageVerifier</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_examples_4">Examples</h4>
+<div class="sect4">
+<h5 id="_stubs_structure_4">Stubs structure</h5>
+<div class="paragraph">
+<p>Let us assume that we have the following Maven repository with a deployed stubs for the
+<code>spring-cloud-contract-amqp-test</code> application.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">└── .m2
+    └── repository
+        └── com
+            └── example
+                └── spring-cloud-contract-amqp-test
+                    ├── 0.4.0-SNAPSHOT
+                    │   ├── spring-cloud-contract-amqp-test-0.4.0-SNAPSHOT.pom
+                    │   ├── spring-cloud-contract-amqp-test-0.4.0-SNAPSHOT-stubs.jar
+                    │   └── maven-metadata-local.xml
+                    └── maven-metadata-local.xml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And the stubs contain the following structure:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">├── META-INF
+│   └── MANIFEST.MF
+└── contracts
+    └── shouldProduceValidPersonData.groovy</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s consider the following contract:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">Contract.make {
+    // Human readable description
+    description 'Should produce valid person data'
+    // Label by means of which the output message can be triggered
+    label 'contract-test.person.created.event'
+    // input to the contract
+    input {
+        // the contract will be triggered by a method
+        triggeredBy('createPerson()')
+    }
+    // output message of the contract
+    outputMessage {
+        // destination to which the output message will be sent
+        sentTo 'contract-test.exchange'
+        headers {
+            header('contentType': 'application/json')
+            header('__TypeId__': 'org.springframework.cloud.contract.stubrunner.messaging.amqp.Person')
+        }
+        // the body of the output message
+        body ([
+                id: $(consumer(9), producer(regex("[0-9]+"))),
+                name: "me"
+        ])
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and the following Spring configuration:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">stubrunner.repositoryRoot: classpath:m2repo/repository/
+stubrunner.ids: org.springframework.cloud.contract.verifier.stubs.amqp:spring-cloud-contract-amqp-test:0.4.0-SNAPSHOT:stubs</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_triggering_the_message">Triggering the message</h5>
+<div class="paragraph">
+<p>So to trigger a message using the contract above we&#8217;ll use the <code>StubTrigger</code> interface as follows.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">stubTrigger.trigger("contract-test.person.created.event")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_spring_amqp_test_configuration">Spring AMQP Test Configuration</h5>
+<div class="paragraph">
+<p>In order to avoid that Spring AMQP is trying to connect to a running broker during our tests we configure a mock <code>ConnectionFactory</code>.</p>
+</div>
+<div class="paragraph">
+<p>To disable the mocked ConnectionFactory set the property <code>verifier.amqp.mockConnection=false</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">verifier:
+  amqp:
+    mockConnection: false</code></pre>
 </div>
 </div>
 </div>
