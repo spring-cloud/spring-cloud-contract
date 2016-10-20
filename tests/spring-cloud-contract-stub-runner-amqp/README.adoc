@@ -50,33 +50,7 @@ Let's consider the following contract:
 
 [source,groovy]
 ----
-package contracts
-
-org.springframework.cloud.contract.spec.Contract.make {
-    // Human readable description
-    description 'Should produce valid person data'
-    // Label by means of which the output message can be triggered
-    label 'contract-test.person.created.event'
-    // input to the contract
-    input {
-        // the contract will be triggered by a method
-        triggeredBy('createPerson()')
-    }
-    // output message of the contract
-    outputMessage {
-        // destination to which the output message will be sent
-        sentTo 'contract-test.exchange'
-        headers {
-            header('contentType': 'application/json')
-            header('__TypeId__': 'org.springframework.cloud.contract.stubrunner.messaging.amqp.Person')
-        }
-        // the body of the output message
-        body ([
-                id: $(consumer(9), producer(regex("[0-9]+"))),
-                name: "me"
-        ])
-    }
-}
+include::src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/amqp/AmqpStubRunnerSpec.groovy[tags=amqp_contract,indent=0]
 ----
 
 
