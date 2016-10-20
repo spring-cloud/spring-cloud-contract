@@ -5,11 +5,12 @@ All of our integrations are working with Spring but you can also create one your
 
 ==== Integrations
 
-You can use one of the three integration configurations:
+You can use one of the four integration configurations:
 
 - Apache Camel
 - Spring Integration
 - Spring Cloud Stream
+- Spring AMQP
 
 Since we're using Spring Boot then if you have added one of the aforementioned libraries
 to the classpath then automatically all the messaging configuration will be set up.
