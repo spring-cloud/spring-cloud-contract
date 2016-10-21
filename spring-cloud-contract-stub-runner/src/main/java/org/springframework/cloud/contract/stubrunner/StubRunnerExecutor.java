@@ -197,7 +197,9 @@ class StubRunnerExecutor implements StubFinder {
 				.entrySet()) {
 			Collection<String> values = new ArrayList<>();
 			for (Contract contract : it.getValue()) {
-				values.add(contract.getLabel());
+				if (contract.getLabel() != null) {
+					values.add(contract.getLabel());
+				}
 			}
 			labels.put(it.getKey().toColonSeparatedDependencyNotation(), values);
 		}

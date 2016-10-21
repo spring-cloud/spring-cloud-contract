@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.stubrunner.StubFinder;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,10 +54,7 @@ public class TriggerController {
 			this.stubFinder.trigger(label);
 			return ResponseEntity.ok().body(Collections.<String, Collection<String>>emptyMap());
 		} catch (Exception e) {
-			if (log.isDebugEnabled()) {
-				log.debug("Exception occurred while trying to return " + label + " label", e);
-			}
-			return new ResponseEntity<>(this.stubFinder.labels(), HttpStatus.NOT_FOUND);
+			throw new RuntimeException("Exception occurred while trying to return [" + label + "] label. \n\nAvailable labels are [" + this.stubFinder.labels() +" ]", e);
 		}
 	}
 
@@ -68,10 +64,7 @@ public class TriggerController {
 			this.stubFinder.trigger(ivyNotation, label);
 			return ResponseEntity.ok().body(Collections.<String, Collection<String>>emptyMap());
 		} catch (Exception e) {
-			if (log.isDebugEnabled()) {
-				log.debug("Exception occurred while trying to return " + label + " label", e);
-			}
-			return new ResponseEntity<>(this.stubFinder.labels(), HttpStatus.NOT_FOUND);
+			throw new RuntimeException("Exception occurred while trying to return [" + label + "] label. \n\nAvailable labels are [" + this.stubFinder.labels() +" ]", e);
 		}
 	}
 
