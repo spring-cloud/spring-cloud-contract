@@ -104,13 +104,15 @@ class StubRunnerBootSpec extends Specification {
 			stubId << ['org.springframework.cloud.contract.verifier.stubs:bootService:stubs', 'org.springframework.cloud.contract.verifier.stubs:bootService', 'bootService']
 	}
 
-	def 'should return when trigger is missing'() {
+	def 'should throw exception when trigger is missing'() {
 		when:
-			def response = RestAssuredMockMvc.post("/triggers/missing_label")
+			RestAssuredMockMvc.post("/triggers/missing_label")
 		then:
-			response.statusCode == 404
-			def root = new JsonSlurper().parseText(response.body.asString())
-			root.'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs'?.containsAll(["delete_book","return_book_1","return_book_2"])
+			Exception e = thrown(Exception)
+			e.message.contains("Exception occurred while trying to return [missing_label] label.")
+			e.message.contains("Available labels are")
+			e.message.contains("org.springframework.cloud.contract.verifier.stubs:loanIssuance:0.0.1-SNAPSHOT:stubs=[]")
+			e.message.contains("org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs=")
 	}
 
 }
