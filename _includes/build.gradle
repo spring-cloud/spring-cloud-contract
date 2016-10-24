@@ -7,7 +7,7 @@ buildscript {
 }
 
 apply plugin: "io.spring.dependency-management"
-apply plugin: 'contract-verifier'
+apply plugin: 'spring-cloud-contract'
 
 dependencyManagement {
      imports {
