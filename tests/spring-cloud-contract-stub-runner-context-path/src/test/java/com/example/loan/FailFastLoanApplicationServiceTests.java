@@ -17,14 +17,14 @@ public class FailFastLoanApplicationServiceTests {
 
     @Test
     public void shouldFailToStartContextWhenNoStubCanBeFound() {
-        // Given
+        // When
         final Throwable throwable = catchThrowable(() -> new SpringApplicationBuilder(Application.class, StubRunnerConfiguration.class)
                 .properties(ImmutableMap.of(
                         "stubrunner.repositoryRoot", "classpath:m2repo/repository/",
                         "stubrunner.ids", new String[]{"org.springframework.cloud.contract.verifier.stubs:should-not-be-found"}))
                 .run());
 
-        // When
+        // Then
         assertThat(throwable).isInstanceOf(BeanCreationException.class);
         assertThat(throwable.getCause()).isInstanceOf(BeanInstantiationException.class);
         assertThat(throwable.getCause().getCause())
