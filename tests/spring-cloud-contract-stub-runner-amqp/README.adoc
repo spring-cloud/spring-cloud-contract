@@ -4,15 +4,21 @@ Spring Cloud Contract Verifier Stub Runner's messaging module provides an easy w
 For the provided artifacts it will automatically download the stubs and register the required
 routes.
 
-The integration tries to work standalone, that is without interaction with a running RabbitMQ message broker. It expects a `RabbitTemplate` on the application context and uses it as a spring boot test `@SpyBean`.
+The integration tries to work standalone, that is without interaction with a running RabbitMQ message broker.
+It expects a `RabbitTemplate` on the application context and uses it as a spring boot test `@SpyBean`.
 Thus it can use the mockito spy functionality to verify and introspect messages sent by the application.
 
-IMPORTANT: In the current status of the implementation tries to find a `MessageListenerAdapter` on the application context to send messages into the application, because we want to avoid interacting with a running bus.
-Using annotation driven listener endpoints (e.g. `@RabbitListener` annotated listener methods) is currently not supported.
+On the message consumer side, it considers all `@RabbitListener` annotated endpoints as well as all `SimpleMessageListenerContainer`s on the application context.
+
+As messages are usually sent to exchanges in AMQP the message contract contains the exchange name as the destination.
+Message listeners on the other side are bound to queues. Bindings connect an exchange to a queue.
+If message contracts are triggered the Spring AMQP stub runner integration will look for bindings on the application context that match this exchange.
+Then it collects the queues from the Spring exchanges and tries to find messages listeners bound to these queues.
+The message is triggered to all matching message listeners.
 
 ==== Adding it to the project
 
-It's enough to have both Spring AMQP and Spring Cloud Contract Stub Runner on classpath.
+It's enough to have both Spring AMQP and Spring Cloud Contract Stub Runner on the classpath.
 Remember to annotate your test class with `@AutoConfigureMessageVerifier`.
 
 ==== Examples
@@ -53,7 +59,6 @@ Let's consider the following contract:
 include::src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/amqp/AmqpStubRunnerSpec.groovy[tags=amqp_contract,indent=0]
 ----
 
-
 and the following Spring configuration:
 
 [source,yaml]
@@ -69,6 +74,29 @@ So to trigger a message using the contract above we'll use the `StubTrigger` int
 ----
 include::src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/amqp/AmqpStubRunnerSpec.groovy[tags=client_trigger,indent=0]
 ----
+
+The message has the destination `contract-test.exchange` so the Spring AMQP stub runner integration looks for bindings related to this exchange.
+
+[source,java]
+----
+include::src/main/java/org/springframework/cloud/contract/stubrunner/messaging/amqp/AmqpMessagingApplication.java[tags=amqp_binding,indent=0]
+----
+
+The binding definition binds the queue `test.queue`.
+So the following listener definition is a match and is invoked with the contract message.
+
+[source,java]
+----
+include::src/main/java/org/springframework/cloud/contract/stubrunner/messaging/amqp/AmqpMessagingApplication.java[tags=amqp_listener,indent=0]
+----
+
+Also, the following annotated listener represents a match and would be invoked.
+[source,java]
+----
+include::src/main/java/org/springframework/cloud/contract/stubrunner/messaging/amqp/MessageSubscriberRabbitListener.java[tags=amqp_annotated_listener,indent=0]
+----
+
+NOTE: The message is directly handed over to the `onMessage` method of the `MessageListener` associated with the matching `SimpleMessageListenerContainer`.
 
 ===== Spring AMQP Test Configuration
 

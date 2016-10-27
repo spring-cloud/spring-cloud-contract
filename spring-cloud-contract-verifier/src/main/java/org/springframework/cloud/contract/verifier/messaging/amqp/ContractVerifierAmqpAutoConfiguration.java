@@ -16,10 +16,16 @@
 
 package org.springframework.cloud.contract.verifier.messaging.amqp;
 
+import static java.util.Collections.emptyList;
+
+import java.util.List;
+
 import org.mockito.Mockito;
+import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
+import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistry;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.support.SimpleAmqpHeaderMapper;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.amqp.support.converter.MessagingMessageConverter;
@@ -55,12 +61,20 @@ public class ContractVerifierAmqpAutoConfiguration {
 	private RabbitTemplate rabbitTemplate;
 
 	@Autowired(required = false)
-	private MessageListenerAdapter messageListenerAdapter;
+	private RabbitListenerEndpointRegistry rabbitListenerEndpointRegistry;
+
+	@Autowired(required = false)
+	private List<SimpleMessageListenerContainer> simpleMessageListenerContainers = emptyList();
+
+	@Autowired(required = false)
+	private List<Binding> bindings = emptyList();
 
 	@Bean
 	@ConditionalOnMissingBean
 	public MessageVerifier<Message> contractVerifierMessageExchange() {
-		return new SpringAmqpStubMessages(this.rabbitTemplate, this.messageListenerAdapter);
+
+		return new SpringAmqpStubMessages(this.rabbitTemplate,
+				new MessageListenerAccessor(this.rabbitListenerEndpointRegistry, this.simpleMessageListenerContainers, this.bindings));
 	}
 
 	@Bean

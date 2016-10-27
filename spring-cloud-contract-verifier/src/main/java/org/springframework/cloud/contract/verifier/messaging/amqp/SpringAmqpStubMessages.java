@@ -23,6 +23,7 @@ import static org.mockito.Mockito.mockingDetails;
 import static org.mockito.Mockito.verify;
 import static org.springframework.amqp.support.converter.DefaultClassMapper.DEFAULT_CLASSID_FIELD_NAME;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -30,9 +31,10 @@ import org.mockito.ArgumentCaptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.core.MessagePropertiesBuilder;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.support.CorrelationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
@@ -44,7 +46,7 @@ import org.springframework.util.Assert;
  *
  * It relies on the RabbitTemplate to be a spy to be able to capture send messages.
  *
- * Messages are not sent to the bus - but are handed over to the {@link MessageListenerAdapter} which
+ * Messages are not sent to the bus - but are handed over to a {@link SimpleMessageListenerContainer} which
  * allows us to test the full deserialization and listener invocation.
  *
  * @author Mathias Düsterhöft
@@ -57,14 +59,14 @@ public class SpringAmqpStubMessages implements
 
 	private final RabbitTemplate rabbitTemplate;
 
-	private final MessageListenerAdapter messageListenerAdapter;
+	private final MessageListenerAccessor messageListenerAccessor;
 
 	@Autowired
-	public SpringAmqpStubMessages(RabbitTemplate rabbitTemplate, MessageListenerAdapter messageListenerAdapter) {
+	public SpringAmqpStubMessages(RabbitTemplate rabbitTemplate, MessageListenerAccessor messageListenerAccessor) {
 		Assert.notNull(rabbitTemplate);
 		Assert.isTrue(mockingDetails(rabbitTemplate).isSpy() || mockingDetails(rabbitTemplate).isMock()); //we get send messages by capturing arguments on the spy
 		this.rabbitTemplate = rabbitTemplate;
-		this.messageListenerAdapter = messageListenerAdapter;
+		this.messageListenerAccessor = messageListenerAccessor;
 	}
 
 	@Override
@@ -84,10 +86,14 @@ public class SpringAmqpStubMessages implements
 
 	@Override
 	public void send(Message message, String destination) {
-		if (this.messageListenerAdapter == null) {
-			throw new IllegalStateException("no MessageListenerAdapter wired - cannot send message");
+		List<SimpleMessageListenerContainer> listenerContainers = this.messageListenerAccessor.getListenerContainersForDestination(destination);
+		if (listenerContainers.isEmpty()) {
+			log.warn("no message listener container(s) found for destination {}", destination);
 		}
-		this.messageListenerAdapter.onMessage(message);
+		for (SimpleMessageListenerContainer listenerContainer : listenerContainers) {
+			MessageListener messageListener = (MessageListener) listenerContainer.getMessageListener();
+			messageListener.onMessage(message);
+		}
 	}
 
 	@Override
