@@ -63,8 +63,7 @@ public class StubRunnerConfiguration {
 				.withMinMaxPort(this.props.getMinPort(), this.props.getMaxPort())
 				.withStubRepositoryRoot(
 						uriStringOrEmpty(this.props.getRepositoryRoot()))
-				.withWorkOffline(this.props.getRepositoryRoot() == null
-						|| this.props.isWorkOffline())
+				.withWorkOffline(this.props.isWorkOffline())
 				.withStubsClassifier(this.props.getClassifier())
 				.withStubs(this.props.getIds())
 				.withContextPath(contextPath())

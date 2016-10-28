@@ -32,4 +32,21 @@ public class FailFastLoanApplicationServiceTests {
                 .hasMessage("For groupId [org.springframework.cloud.contract.verifier.stubs] artifactId [should-not-be-found] and classifier [stubs] the version was not resolved!");
     }
 
+    @Test
+    public void shouldNotTryAndWorkOfflineWhenWorkOfflineIsSetToFalse() {
+        // When
+        final Throwable throwable = catchThrowable(() -> new SpringApplicationBuilder(Application.class, StubRunnerConfiguration.class)
+                .properties(ImmutableMap.of(
+                        "stubrunner.workOffline", "false",
+                        "stubrunner.ids", new String[]{"org.springframework.cloud.contract.verifier.stubs:should-not-be-found"}))
+                .run());
+
+        // Then
+        assertThat(throwable).isInstanceOf(BeanCreationException.class);
+        assertThat(throwable.getCause()).isInstanceOf(BeanInstantiationException.class);
+        assertThat(throwable.getCause().getCause())
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Remote repositories for stubs are not specified and work offline flag wasn't passed");
+    }
+
 }
