@@ -5,7 +5,7 @@
 = Spring Cloud Contract
 
 _Documentation Authors: Adam Dudczak, Marcin Grzejszczak, Jakub Kubryński, Karol Lassak,
-Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer_
+Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer, Mathias Düsterhöft_
 
 {spring-cloud-version}
 
