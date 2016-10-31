@@ -88,7 +88,7 @@ public class SpringAmqpStubMessages implements
 	public void send(Message message, String destination) {
 		List<SimpleMessageListenerContainer> listenerContainers = this.messageListenerAccessor.getListenerContainersForDestination(destination);
 		if (listenerContainers.isEmpty()) {
-			log.warn("no message listener container(s) found for destination {}", destination);
+			throw new IllegalStateException("no listeners found for destination " + destination);
 		}
 		for (SimpleMessageListenerContainer listenerContainer : listenerContainers) {
 			MessageListener messageListener = (MessageListener) listenerContainer.getMessageListener();

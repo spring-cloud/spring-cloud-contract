@@ -1,5 +1,6 @@
 package org.springframework.cloud.contract.verifier.messaging.amqp
 
+import org.springframework.amqp.core.Binding
 import org.springframework.amqp.core.BindingBuilder
 import org.springframework.amqp.core.DirectExchange
 import org.springframework.amqp.core.Queue
@@ -9,28 +10,28 @@ import spock.lang.Specification
 
 class MessageListenerAccessorSpec extends Specification {
 
-    def queueName = "test.queue"
-    def exchange = "test-exchange"
-    def listenerContainer
-    def binding
+    String queueName = "test.queue"
+    String exchange = "test-exchange"
+    SimpleMessageListenerContainer listenerContainer
+    Binding binding
 
     def "should get single simple listener container"(){
         given:
             givenSimpleMessageListenerContainer()
-            def messageListenerAccessor = new MessageListenerAccessor(null, [listenerContainer], [binding])
+        MessageListenerAccessor messageListenerAccessor = new MessageListenerAccessor(null, [this.listenerContainer], [this.binding])
         when:
-            def listenerContainersForDestination = messageListenerAccessor.getListenerContainersForDestination(exchange)
+            List<SimpleMessageListenerContainer> listenerContainersForDestination = messageListenerAccessor.getListenerContainersForDestination(this.exchange)
         then:
             listenerContainersForDestination.size() == 1
-            listenerContainersForDestination.get(0) == listenerContainer
+            listenerContainersForDestination.get(0) == this.listenerContainer
     }
 
     def "should get empty listener container list for unknown destination"(){
         given:
             givenSimpleMessageListenerContainer()
-            def messageListenerAccessor = new MessageListenerAccessor(null, [listenerContainer], [binding])
+            MessageListenerAccessor messageListenerAccessor = new MessageListenerAccessor(null, [this.listenerContainer], [this.binding])
         when:
-            def listenerContainersForDestination = messageListenerAccessor.getListenerContainersForDestination("some-exchange")
+            List<SimpleMessageListenerContainer> listenerContainersForDestination = messageListenerAccessor.getListenerContainersForDestination("some-exchange")
         then:
             listenerContainersForDestination.isEmpty()
     }
@@ -38,10 +39,10 @@ class MessageListenerAccessorSpec extends Specification {
     def "should get empty listener container list for queue with no matching listener"(){
         given:
             givenSimpleMessageListenerContainer()
-            binding = BindingBuilder.bind(new Queue("some.queue")).to(new DirectExchange(exchange)).with("#")
-            def messageListenerAccessor = new MessageListenerAccessor(null, [listenerContainer], [binding])
+            this.binding = BindingBuilder.bind(new Queue("some.queue")).to(new DirectExchange(this.exchange)).with("#")
+            MessageListenerAccessor messageListenerAccessor = new MessageListenerAccessor(null, [this.listenerContainer], [this.binding])
         when:
-            def listenerContainersForDestination = messageListenerAccessor.getListenerContainersForDestination(exchange)
+            List<SimpleMessageListenerContainer> listenerContainersForDestination = messageListenerAccessor.getListenerContainersForDestination(this.exchange)
         then:
             listenerContainersForDestination.isEmpty()
     }
@@ -49,19 +50,19 @@ class MessageListenerAccessorSpec extends Specification {
     def "should get single simple listener container from RabbitListenerEndpointRegistry"(){
         given:
             givenSimpleMessageListenerContainer()
-            def rabbitListenerEndpointRegistryMock = Mock(RabbitListenerEndpointRegistry)
-            rabbitListenerEndpointRegistryMock.getListenerContainers() >> [listenerContainer]
-            def messageListenerAccessor = new MessageListenerAccessor(rabbitListenerEndpointRegistryMock, [], [binding])
+            RabbitListenerEndpointRegistry rabbitListenerEndpointRegistryMock = Mock(RabbitListenerEndpointRegistry)
+            rabbitListenerEndpointRegistryMock.getListenerContainers() >> [this.listenerContainer]
+            MessageListenerAccessor messageListenerAccessor = new MessageListenerAccessor(rabbitListenerEndpointRegistryMock, [], [this.binding])
         when:
-            def listenerContainersForDestination = messageListenerAccessor.getListenerContainersForDestination(exchange)
+            List<SimpleMessageListenerContainer> listenerContainersForDestination = messageListenerAccessor.getListenerContainersForDestination(this.exchange)
         then:
             listenerContainersForDestination.size() == 1
-            listenerContainersForDestination.get(0) == listenerContainer
+            listenerContainersForDestination.get(0) == this.listenerContainer
     }
 
     def givenSimpleMessageListenerContainer() {
-        listenerContainer = new SimpleMessageListenerContainer()
-        listenerContainer.setQueueNames(queueName)
-        binding = BindingBuilder.bind(new Queue(queueName)).to(new DirectExchange(exchange)).with("#")
+        this.listenerContainer = new SimpleMessageListenerContainer()
+        this.listenerContainer.setQueueNames(this.queueName)
+        this.binding = BindingBuilder.bind(new Queue(this.queueName)).to(new DirectExchange(this.exchange)).with("#")
     }
 }

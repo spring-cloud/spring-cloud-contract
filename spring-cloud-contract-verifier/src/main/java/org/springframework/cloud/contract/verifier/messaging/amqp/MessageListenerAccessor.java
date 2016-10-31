@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.Binding.DestinationType;
 import org.springframework.amqp.rabbit.listener.MessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistry;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
@@ -20,21 +21,20 @@ import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
  * @author Mathias Düsterhöft
  * @since 1.0.2
  */
-public class MessageListenerAccessor {
+class MessageListenerAccessor {
 
 	private final RabbitListenerEndpointRegistry rabbitListenerEndpointRegistry;
-
 	private final List<SimpleMessageListenerContainer> simpleMessageListenerContainers;
 	private final List<Binding> bindings;
 
-	public MessageListenerAccessor(RabbitListenerEndpointRegistry rabbitListenerEndpointRegistry,
+	MessageListenerAccessor(RabbitListenerEndpointRegistry rabbitListenerEndpointRegistry,
 									List<SimpleMessageListenerContainer> simpleMessageListenerContainers, List<Binding> bindings) {
 		this.rabbitListenerEndpointRegistry = rabbitListenerEndpointRegistry;
 		this.simpleMessageListenerContainers = simpleMessageListenerContainers;
 		this.bindings = bindings;
 	}
 
-	public List<SimpleMessageListenerContainer> getListenerContainersForDestination(String destination) {
+	List<SimpleMessageListenerContainer> getListenerContainersForDestination(String destination) {
 		List<SimpleMessageListenerContainer> listenerContainers = collectListenerContainers();
 		//we interpret the destination as exchange name and collect all the queues bound to this exchange
 		Set<String> queueNames = collectQueuesBoundToDestination(destination);
@@ -60,7 +60,7 @@ public class MessageListenerAccessor {
 	private Set<String> collectQueuesBoundToDestination(String destination) {
 		Set<String> queueNames = new HashSet<>();
 		for (Binding binding: this.bindings) {
-			if (binding.getExchange().equals(destination) && binding.getDestinationType().equals(Binding.DestinationType.QUEUE)) {
+			if (destination.equals(binding.getExchange()) && DestinationType.QUEUE.equals(binding.getDestinationType())) {
 				queueNames.add(binding.getDestination());
 			}
 		}
