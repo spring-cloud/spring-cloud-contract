@@ -20,21 +20,21 @@ import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.IntegrationTest
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
 import javax.inject.Inject
 // Context configuration would end up in base class
 @ContextConfiguration(classes = [AmqpMessagingApplication], loader = SpringBootContextLoader)
-@DirtiesContext
 @AutoConfigureMessageVerifier
-public class AmqpMessagingApplicationSpec extends Specification {
+@IntegrationTest("stubrunner.amqp.enabled=true")
+class AmqpMessagingApplicationSpec extends Specification {
 
 	// ALL CASES
 	@Inject ContractVerifierMessaging contractVerifierMessaging
