@@ -18,7 +18,7 @@ The message is triggered to all matching message listeners.
 
 ==== Adding it to the project
 
-It's enough to have both Spring AMQP and Spring Cloud Contract Stub Runner on the classpath.
+It's enough to have both Spring AMQP and Spring Cloud Contract Stub Runner on the classpath and set the property `stubrunner.amqp.enabled=true`.
 Remember to annotate your test class with `@AutoConfigureMessageVerifier`.
 
 ==== Examples
@@ -102,11 +102,11 @@ NOTE: The message is directly handed over to the `onMessage` method of the `Mess
 
 In order to avoid that Spring AMQP is trying to connect to a running broker during our tests we configure a mock `ConnectionFactory`.
 
-To disable the mocked ConnectionFactory set the property `verifier.amqp.mockConnection=false`
+To disable the mocked ConnectionFactory set the property `stubrunner.amqp.mockConnection=false`
 
 [source,yaml]
 ----
-verifier:
+stubrunner:
   amqp:
     mockConnection: false
 ----

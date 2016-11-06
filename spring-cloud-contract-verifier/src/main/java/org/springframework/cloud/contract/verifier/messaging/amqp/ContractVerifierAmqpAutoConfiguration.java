@@ -20,7 +20,6 @@ import static java.util.Collections.emptyList;
 
 import java.util.List;
 
-import org.mockito.Mockito;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -34,7 +33,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.integration.ContractVerifierIntegrationConfiguration;
@@ -51,8 +50,8 @@ import org.springframework.context.annotation.Configuration;
  * @since 1.0.2
  */
 @Configuration
-@ConditionalOnClass({Message.class, RabbitTemplate.class, Mockito.class})
-@ConditionalOnMissingClass("org.springframework.integration.core.MessageSource")
+@ConditionalOnClass(RabbitTemplate.class)
+@ConditionalOnProperty(name="stubrunner.amqp.enabled", havingValue="true")
 @AutoConfigureBefore(ContractVerifierIntegrationConfiguration.class)
 @AutoConfigureAfter(ContractVerifierStreamAutoConfiguration.class)
 public class ContractVerifierAmqpAutoConfiguration {
