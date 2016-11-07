@@ -314,7 +314,7 @@ Spring Cloud Contract Verifier moves TDD to the level of software architecture.
 ==== Spring Cloud Contract Webinar
 
 You can check out the video from the Spring Cloud Contract Webinar to watch the
-explanation of the project and the concept of Spring Cloud Contract. Video was recorded
+explanation of the project and the concept of Consuner Driven Contracts. Video was recorded
 on 25.10.2016.
 
 video::4fJiz0woxAc[youtube]

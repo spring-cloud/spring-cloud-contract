@@ -4,11 +4,17 @@ Projects that contain different samples of Spring Cloud Contract Verifier.
 
 Below you can find a list of samples:
 
-include::http-server/README.adoc[]
+`include::contracts/README.adoc[]
 
-include::http-client/README.adoc[]
+include::dsl/http-server/README.adoc[]
 
-include::contract-verifier-sample-stream-sink/README.adoc[]
+include::dsl/http-client/README.adoc[]
 
-include::contract-verifier-sample-stream-source/README.adoc[]
+include::messaging/stream-sink/README.adoc[]
+
+include::messaging/stream-source/README.adoc[]
+
+include::restdocs/http-server/README.adoc[]
+
+include::restdocs/http-client/README.adoc[]
 
