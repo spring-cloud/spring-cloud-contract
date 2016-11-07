@@ -5266,7 +5266,7 @@ The message is triggered to all matching message listeners.</p>
 <div class="sect3">
 <h4 id="_adding_it_to_the_project_4">Adding it to the project</h4>
 <div class="paragraph">
-<p>It&#8217;s enough to have both Spring AMQP and Spring Cloud Contract Stub Runner on the classpath.
+<p>It&#8217;s enough to have both Spring AMQP and Spring Cloud Contract Stub Runner on the classpath and set the property <code>stubrunner.amqp.enabled=true</code>.
 Remember to annotate your test class with <code>@AutoConfigureMessageVerifier</code>.</p>
 </div>
 </div>
@@ -5340,8 +5340,11 @@ Remember to annotate your test class with <code>@AutoConfigureMessageVerifier</c
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml">stubrunner.repositoryRoot: classpath:m2repo/repository/
-stubrunner.ids: org.springframework.cloud.contract.verifier.stubs.amqp:spring-cloud-contract-amqp-test:0.4.0-SNAPSHOT:stubs</code></pre>
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">stubrunner:
+  repositoryRoot: classpath:m2repo/repository/
+  ids: org.springframework.cloud.contract.verifier.stubs.amqp:spring-cloud-contract-amqp-test:0.4.0-SNAPSHOT:stubs
+  amqp:
+    enabled: true</code></pre>
 </div>
 </div>
 </div>
@@ -5416,11 +5419,11 @@ The message is directly handed over to the <code>onMessage</code> method of the 
 <p>In order to avoid that Spring AMQP is trying to connect to a running broker during our tests we configure a mock <code>ConnectionFactory</code>.</p>
 </div>
 <div class="paragraph">
-<p>To disable the mocked ConnectionFactory set the property <code>verifier.amqp.mockConnection=false</code></p>
+<p>To disable the mocked ConnectionFactory set the property <code>stubrunner.amqp.mockConnection=false</code></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml">verifier:
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">stubrunner:
   amqp:
     mockConnection: false</code></pre>
 </div>
