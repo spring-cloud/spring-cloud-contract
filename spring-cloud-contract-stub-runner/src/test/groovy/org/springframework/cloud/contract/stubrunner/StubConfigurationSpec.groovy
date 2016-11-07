@@ -17,30 +17,32 @@
 package org.springframework.cloud.contract.stubrunner
 
 import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author Marcin Grzejszczak
  */
 class StubConfigurationSpec extends Specification {
 
-	def 'should parse ivy notation'() {
-		given:
-			String ivy = 'group:artifact:version:classifier'
+	@Unroll
+	def 'should parse (#ivy) and match ivy notation'() {
 		when:
 			StubConfiguration stubConfiguration = new StubConfiguration(ivy)
 		then:
-			stubConfiguration.artifactId == 'artifact'
-			stubConfiguration.groupId == 'group'
-			stubConfiguration.classifier == 'classifier'
-			stubConfiguration.version == 'version'
+			stubConfiguration.artifactId == artifactId
+			stubConfiguration.groupId == groupId
+			stubConfiguration.classifier == classifier
+			stubConfiguration.version == version
+		and:
+			stubConfiguration.toColonSeparatedDependencyNotation() == ivyNotation
+		and:
+			stubConfiguration.matchesIvyNotation(ivy)
+		where:
+			ivy                                 || ivyNotation                         | artifactId | groupId | classifier   | version
+			'group:artifact:version:classifier' || 'group:artifact:version:classifier' | 'artifact' | 'group' | 'classifier' | 'version'
+			'group:artifact:version:'           || 'group:artifact:version:'           | 'artifact' | 'group' | ''           | 'version'
+			'group:artifact:version'            || 'group:artifact:version:stubs'      | 'artifact' | 'group' | 'stubs'      | 'version'
+
 	}
 
-	def 'should return ivy notation'() {
-		given:
-			String ivy = 'group:artifact:version:classifier'
-		when:
-			StubConfiguration stubConfiguration = new StubConfiguration(ivy)
-		then:
-			stubConfiguration.toColonSeparatedDependencyNotation() == ivy
-	}
 }

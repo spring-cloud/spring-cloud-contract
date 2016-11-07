@@ -67,7 +67,7 @@ public class StubConfiguration {
 
 	private String[] parsedPathEmptyByDefault(String path, String delimiter,
 			String defaultClassifier) {
-		String[] splitPath = path.split(delimiter);
+		String[] splitPath = path.split(delimiter, -1);
 		String stubsGroupId = "";
 		String stubsArtifactId = "";
 		String stubsVersion = "";
@@ -162,20 +162,20 @@ public class StubConfiguration {
 	}
 
 	public boolean matchesIvyNotation(String ivyNotationAsString) {
-		String[] strings = ivyNotationAsString.split(":");
+		String[] strings = ivyNotationAsString.split(":", -1);
 		if (strings.length == 1) {
 			return this.artifactId.equals(ivyNotationAsString);
 		}
-		else if (strings.length == 2) {
-			return this.groupId.equals(strings[0]) && this.artifactId.equals(strings[1]);
+		if (strings.length >= 2 && !(this.groupId.equals(strings[0]) && this.artifactId.equals(strings[1]))) {
+			return false;
 		}
-		else if (strings.length == 3) {
-			return this.groupId.equals(strings[0]) && this.artifactId.equals(strings[1])
-					&& (strings[2].equals(DEFAULT_VERSION) || this.version.equals(strings[2]));
+		if (strings.length >= 3 && !(this.version.equals(strings[2]) || DEFAULT_VERSION.equals(strings[2]))) {
+			return false;
 		}
-		return this.groupId.equals(strings[0]) && this.artifactId.equals(strings[1])
-				&& (strings[2].equals(DEFAULT_VERSION) || this.version.equals(strings[2]))
-				&& this.classifier.equals(strings[3]);
+		if (strings.length == 4 && !(this.classifier.equals(strings[3]) || DEFAULT_CLASSIFIER.equals(strings[3]))) {
+			return false;
+		}
+		return true;
 	}
 
 	private String[] ivyNotationFrom(String ivyNotation) {

@@ -102,7 +102,7 @@ class StubRunnerExecutor implements StubFinder {
 
 	@Override
 	public URL findStubUrl(String ivyNotation) {
-		String[] splitString = ivyNotation.split(":");
+		String[] splitString = ivyNotation.split(":", -1);
 		if (splitString.length > 4) {
 			throw new IllegalArgumentException("[" + ivyNotation + "] is an invalid notation. Pass [groupId]:artifactId[:version][:classifier].");
 		} else if (splitString.length == 1) {
@@ -120,8 +120,8 @@ class StubRunnerExecutor implements StubFinder {
 	}
 
 	private boolean groupIdArtifactVersionMatches(String[] splitString) {
-		return this.stubServer.stubConfiguration.artifactId.equals(splitString[0])
-				&& this.stubServer.stubConfiguration.groupId.equals(splitString[1])
+		return this.stubServer.stubConfiguration.groupId.equals(splitString[0])
+				&& this.stubServer.stubConfiguration.artifactId.equals(splitString[1])
 				&& this.stubServer.stubConfiguration.version.equals(splitString[2]);
 	}
 

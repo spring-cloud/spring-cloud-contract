@@ -95,6 +95,24 @@ class StubRunnerExecutorSpec extends Specification {
 		executor.shutdown()
 	}
 
+	def 'should match stub with empty classifier'() {
+		given:
+			def stubConf = new StubConfiguration('groupX', 'artifactX', 'versionX', '')
+			StubRunnerExecutor executor = new StubRunnerExecutor(portScanner)
+		when:
+			executor.runStubs(stubRunnerOptions, repository, stubConf)
+		then:
+			URL url = executor.findStubUrl('groupX:artifactX:versionX:')
+			url.port >= MIN_PORT
+			url.port <= MAX_PORT
+		and:
+			executor.findAllRunningStubs().isPresent('artifactX')
+			executor.findAllRunningStubs().isPresent('groupX', 'artifactX')
+			executor.findAllRunningStubs().isPresent('groupX:artifactX')
+		cleanup:
+			executor.shutdown()
+	}
+
 	Map<StubConfiguration, Integer> stubIdsWithPortsFromString(String stubIdsToPortMapping) {
 		return stubIdsToPortMapping.split(',').collectEntries { String entry ->
 			return StubsParser.fromStringWithPort(entry)
