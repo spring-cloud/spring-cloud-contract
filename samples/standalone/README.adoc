@@ -4,7 +4,7 @@ Projects that contain different samples of Spring Cloud Contract Verifier.
 
 Below you can find a list of samples:
 
-`include::contracts/README.adoc[]
+include::contracts/README.adoc[]
 
 include::dsl/http-server/README.adoc[]
 
