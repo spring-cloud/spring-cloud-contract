@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -107,6 +108,9 @@ public class AetherStubDownloader implements StubDownloader {
 
 	private List<RemoteRepository> remoteRepositories(
 			StubRunnerOptions stubRunnerOptions) {
+		if (stubRunnerOptions.stubRepositoryRoot == null) {
+			return new ArrayList<>();
+		}
 		List<RemoteRepository>  remoteRepos = newRepositories(
 				Arrays.asList(stubRunnerOptions.stubRepositoryRoot.split(",")));
 		if (log.isDebugEnabled()) {
