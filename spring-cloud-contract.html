@@ -2120,7 +2120,7 @@ one to one to the contents of the repo.</p>
 	&lt;parent&gt;
 		&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
 		&lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
-		&lt;version&gt;1.4.0.BUILD-SNAPSHOT&lt;/version&gt;
+		&lt;version&gt;1.4.2.BUILD-SNAPSHOT&lt;/version&gt;
 		&lt;relativePath /&gt;
 	&lt;/parent&gt;
 
@@ -2537,7 +2537,9 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
     stubsOutputDir = project.file("${project.buildDir}/stubs")
 
     // the following properties are used when you want to provide where the JAR with contract lays
-    contractDependency = new org.springframework.cloud.contract.verifier.plugin.ContractVerifierExtension.Dependency()
+    contractDependency {
+        stringNotation = ''
+    }
     contractsPath = ''
     contractsWorkOffline = false
 }
