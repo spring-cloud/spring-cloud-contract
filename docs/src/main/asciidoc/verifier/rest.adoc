@@ -131,7 +131,9 @@ contracts {
     stubsOutputDir = project.file("${project.buildDir}/stubs")
 
     // the following properties are used when you want to provide where the JAR with contract lays
-    contractDependency = new org.springframework.cloud.contract.verifier.plugin.ContractVerifierExtension.Dependency()
+    contractDependency {
+        stringNotation = ''
+    }
     contractsPath = ''
     contractsWorkOffline = false
 }
