@@ -23,6 +23,14 @@ class ClassBuilderSpec extends Specification {
 			ClassBuilder.retrieveBaseClass(props, contractRelativeFolder) == 'com.example.base.SomeSuperpackageBase'
 	}
 
+	def "should return a class from the generated path by taking two last folders when package with base classes is provided and contains invalid chars"() {
+		given:
+			ContractVerifierConfigProperties props = new ContractVerifierConfigProperties(packageWithBaseClasses: 'com.example.base')
+			String contractRelativeFolder = ['com','example','beer-api-producer-external','beer-api-consumer'].join(File.separator)
+		expect:
+			ClassBuilder.retrieveBaseClass(props, contractRelativeFolder) == 'com.example.base.Beer_api_producer_externalBeer_api_consumerBase'
+	}
+
 	def "should return a class from the generated path by taking a single folder when package with base classes is provided and there are not enough package elements"() {
 		given:
 			ContractVerifierConfigProperties props = new ContractVerifierConfigProperties(packageWithBaseClasses: 'com.example.base')

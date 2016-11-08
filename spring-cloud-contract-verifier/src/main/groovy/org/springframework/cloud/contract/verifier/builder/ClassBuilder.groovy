@@ -88,7 +88,7 @@ class ClassBuilder {
 	}
 
 	private static String generateDefaultBaseClassName(String classPackage, ContractVerifierConfigProperties properties) {
-		String[] splitPackage = classPackage.split("\\.")
+		String[] splitPackage = NamesUtil.convertIllegalPackageChars(classPackage).split("\\.")
 		if (splitPackage.size() > 1) {
 			String last = NamesUtil.capitalize(splitPackage[-1])
 			String butLast = NamesUtil.capitalize(splitPackage[-2])

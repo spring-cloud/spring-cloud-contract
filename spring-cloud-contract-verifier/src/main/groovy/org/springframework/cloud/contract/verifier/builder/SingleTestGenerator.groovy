@@ -27,7 +27,6 @@ import org.springframework.cloud.contract.verifier.config.TestMode
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 
-import static ClassBuilder.createClass
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.capitalize
 /**
  * Builds a single test for the given {@link ContractVerifierConfigProperties properties}
@@ -52,7 +51,7 @@ class SingleTestGenerator {
 	 */
 	@PackageScope
 	String buildClass(Collection<ContractMetadata> listOfFiles, String className, String classPackage, String includedDirectoryRelativePath) {
-		ClassBuilder clazz = createClass(capitalize(className), classPackage, configProperties, includedDirectoryRelativePath)
+		ClassBuilder clazz = ClassBuilder.createClass(capitalize(className), classPackage, configProperties, includedDirectoryRelativePath)
 
 		if (configProperties.imports) {
 			configProperties.imports.each {
