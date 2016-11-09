@@ -19,7 +19,6 @@ package org.springframework.cloud.contract.stubrunner;
 import java.util.Collection;
 import java.util.Map;
 
-
 /**
  * Technical options related to running StubRunner
  *
@@ -61,14 +60,8 @@ public class StubRunnerOptions {
 	 */
 	final Map<StubConfiguration, Integer> stubIdsToPortMapping;
 
-	/**
-	 * Context Path of the server
-	 */
-	final String contextPath;
-
-	public StubRunnerOptions(Integer minPortValue, Integer maxPortValue,
-			String stubRepositoryRoot, boolean workOffline, String stubsClassifier,
-			Collection<StubConfiguration> dependencies,
+	public StubRunnerOptions(Integer minPortValue, Integer maxPortValue, String stubRepositoryRoot, boolean workOffline,
+			String stubsClassifier, Collection<StubConfiguration> dependencies,
 			Map<StubConfiguration, Integer> stubIdsToPortMapping) {
 		this.minPortValue = minPortValue;
 		this.maxPortValue = maxPortValue;
@@ -77,27 +70,24 @@ public class StubRunnerOptions {
 		this.stubsClassifier = stubsClassifier;
 		this.dependencies = dependencies;
 		this.stubIdsToPortMapping = stubIdsToPortMapping;
-		this.contextPath = "";
 	}
 
-	public StubRunnerOptions(Integer minPortValue, Integer maxPortValue,
-			String stubRepositoryRoot, boolean workOffline, String stubsClassifier,
-			Collection<StubConfiguration> dependencies,
+	/**
+	 * @deprecated there is no context path any longer
+	 */
+	@Deprecated
+	public StubRunnerOptions(Integer minPortValue, Integer maxPortValue, String stubRepositoryRoot, boolean workOffline,
+			String stubsClassifier, Collection<StubConfiguration> dependencies,
 			Map<StubConfiguration, Integer> stubIdsToPortMapping, String contextPath) {
-		this.minPortValue = minPortValue;
-		this.maxPortValue = maxPortValue;
-		this.stubRepositoryRoot = stubRepositoryRoot;
-		this.workOffline = workOffline;
-		this.stubsClassifier = stubsClassifier;
-		this.dependencies = dependencies;
-		this.stubIdsToPortMapping = stubIdsToPortMapping;
-		this.contextPath = contextPath;
+		this(minPortValue, maxPortValue, stubRepositoryRoot, workOffline, stubsClassifier, dependencies,
+				stubIdsToPortMapping);
 	}
 
 	public Integer port(StubConfiguration stubConfiguration) {
-		if (this.stubIdsToPortMapping!=null) {
+		if (this.stubIdsToPortMapping != null) {
 			return this.stubIdsToPortMapping.get(stubConfiguration);
-		} else {
+		}
+		else {
 			return null;
 		}
 	}
@@ -120,11 +110,10 @@ public class StubRunnerOptions {
 
 	@Override
 	public String toString() {
-		return "StubRunnerOptions [minPortValue=" + this.minPortValue + ", maxPortValue="
-				+ this.maxPortValue + ", stubRepositoryRoot=" + this.stubRepositoryRoot
-				+ ", workOffline=" + this.workOffline + ", stubsClassifier=" + this.stubsClassifier
-				+ ", dependencies=" + this.dependencies + ", stubIdsToPortMapping="
-				+ this.stubIdsToPortMapping + "]";
+		return "StubRunnerOptions [minPortValue=" + this.minPortValue + ", maxPortValue=" + this.maxPortValue
+				+ ", stubRepositoryRoot=" + this.stubRepositoryRoot + ", workOffline=" + this.workOffline
+				+ ", stubsClassifier=" + this.stubsClassifier + ", dependencies=" + this.dependencies
+				+ ", stubIdsToPortMapping=" + this.stubIdsToPortMapping + "]";
 	}
 
 }

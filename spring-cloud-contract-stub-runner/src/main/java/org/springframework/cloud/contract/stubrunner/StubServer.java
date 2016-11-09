@@ -23,23 +23,20 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.spec.Contract;
-import org.springframework.util.StringUtils;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 
 class StubServer {
-	
+
 	private static final Logger log = LoggerFactory.getLogger(StubServer.class);
-	
+
 	private final HttpServerStub httpServerStub;
 	final StubConfiguration stubConfiguration;
 	final Collection<WiremockMappingDescriptor> mappings;
 	final Collection<Contract> contracts;
-	private final StubRunnerOptions stubRunnerOptions;
 
-	StubServer(StubRunnerOptions stubRunnerOptions, StubConfiguration stubConfiguration,
-			Collection<WiremockMappingDescriptor> mappings, Collection<Contract> contracts, HttpServerStub httpServerStub) {
-		this.stubRunnerOptions = stubRunnerOptions;
+	StubServer(StubConfiguration stubConfiguration, Collection<WiremockMappingDescriptor> mappings,
+			Collection<Contract> contracts, HttpServerStub httpServerStub) {
 		this.stubConfiguration = stubConfiguration;
 		this.mappings = mappings;
 		this.httpServerStub = httpServerStub;
@@ -48,8 +45,8 @@ class StubServer {
 
 	public StubServer start() {
 		this.httpServerStub.start();
-		log.info("Started stub server for project [" + this.stubConfiguration.toColonSeparatedDependencyNotation() +
-				"] on port " + this.httpServerStub.port());
+		log.info("Started stub server for project [" + this.stubConfiguration.toColonSeparatedDependencyNotation()
+				+ "] on port " + this.httpServerStub.port());
 		registerStubMappings();
 		return this;
 	}
@@ -63,29 +60,19 @@ class StubServer {
 			return this.httpServerStub.port();
 		}
 		if (log.isDebugEnabled()) {
-			log.debug("The HTTP Server stub is not running... That means that the " +
-					"artifact is running a messaging module. Returning back -1 value of the port.");
+			log.debug("The HTTP Server stub is not running... That means that the "
+					+ "artifact is running a messaging module. Returning back -1 value of the port.");
 		}
 		return -1;
 	}
 
 	public URL getStubUrl() {
 		try {
-			return new URL("http://localhost:" + getPort() + prependSlashIfNecessary(this.stubRunnerOptions.contextPath));
+			return new URL("http://localhost:" + getPort());
 		}
 		catch (MalformedURLException e) {
 			throw new IllegalStateException("Cannot parse URL", e);
 		}
-	}
-
-	private String prependSlashIfNecessary(String contextPath) {
-		if (!StringUtils.hasText(contextPath)) {
-			return "";
-		}
-		if (contextPath.startsWith("/")) {
-			return contextPath;
-		}
-		return "/" + contextPath;
 	}
 
 	public StubConfiguration getStubConfiguration() {
@@ -97,7 +84,7 @@ class StubServer {
 	}
 
 	private void registerStubMappings() {
-		WireMock wireMock = new WireMock("localhost", this.httpServerStub.port(), prependSlashIfNecessary(this.stubRunnerOptions.contextPath));
+		WireMock wireMock = new WireMock("localhost", this.httpServerStub.port(), "");
 		registerDefaultHealthChecks(wireMock);
 		registerStubs(this.mappings, wireMock);
 	}
@@ -108,14 +95,15 @@ class StubServer {
 	}
 
 	private void registerStubs(Collection<WiremockMappingDescriptor> sortedMappings, WireMock wireMock) {
-		for (WiremockMappingDescriptor mappingDescriptor : sortedMappings) {		
+		for (WiremockMappingDescriptor mappingDescriptor : sortedMappings) {
 			try {
 				wireMock.register(mappingDescriptor.getMapping());
 				if (log.isDebugEnabled()) {
 					log.debug("Registered stub mappings from [" + mappingDescriptor.descriptor + "]");
 				}
-			} catch (Exception e) {
-				log.warn("Failed to register the stub mapping ["+ mappingDescriptor + "]", e);
+			}
+			catch (Exception e) {
+				log.warn("Failed to register the stub mapping [" + mappingDescriptor + "]", e);
 			}
 		}
 	}
@@ -123,8 +111,9 @@ class StubServer {
 	private void registerHealthCheck(WireMock wireMock, String url) {
 		registerHealthCheck(wireMock, url, "OK");
 	}
-	
+
 	private void registerHealthCheck(WireMock wireMock, String url, String body) {
-		wireMock.register(WireMock.get(WireMock.urlEqualTo(url)).willReturn(WireMock.aResponse().withBody(body).withStatus(200)));
+		wireMock.register(
+				WireMock.get(WireMock.urlEqualTo(url)).willReturn(WireMock.aResponse().withBody(body).withStatus(200)));
 	}
 }

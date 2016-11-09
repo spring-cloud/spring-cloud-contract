@@ -25,7 +25,7 @@
 	<properties>
 		<activemq.version>5.12.1</activemq.version>
 		<camel.version>2.17.0</camel.version>
-		<spring-boot.version>1.4.1.BUILD-SNAPSHOT</spring-boot.version>
+		<spring-boot.version>1.4.2.RELEASE</spring-boot.version>
 		<checkstyle.version>2.17</checkstyle.version>
 		<spring-cloud-build.version>1.2.2.BUILD-SNAPSHOT</spring-cloud-build.version>
 		<spring-cloud-zookeeper.version>1.0.4.BUILD-SNAPSHOT</spring-cloud-zookeeper.version>

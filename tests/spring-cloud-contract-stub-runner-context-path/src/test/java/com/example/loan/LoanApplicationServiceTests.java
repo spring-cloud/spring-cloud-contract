@@ -5,8 +5,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.contract.stubrunner.StubFinder;
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.example.loan.model.Client;
@@ -18,9 +20,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 // tag::autoconfigure_stubrunner[]
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment=WebEnvironment.NONE)
 @AutoConfigureStubRunner(repositoryRoot = "classpath:m2repo/repository/",
 		ids = { "org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer" })
+@DirtiesContext
 public class LoanApplicationServiceTests {
 // end::autoconfigure_stubrunner[]
 

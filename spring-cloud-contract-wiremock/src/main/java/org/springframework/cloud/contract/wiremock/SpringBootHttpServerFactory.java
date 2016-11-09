@@ -37,8 +37,9 @@ import org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfigura
 import org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration.BeanPostProcessorsRegistrar;
 import org.springframework.boot.autoconfigure.web.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerInitializedEvent;
 import org.springframework.boot.context.embedded.EmbeddedWebApplicationContext;
@@ -170,8 +171,8 @@ class SpringBootHttpServer
 		@Override
 		public Object postProcessAfterInitialization(Object bean, String beanName)
 				throws BeansException {
-			if (bean instanceof ServerProperties) {
-				ServerProperties server = (ServerProperties) bean;
+			if (bean instanceof WiremockServerProperties) {
+				WiremockServerProperties server = (WiremockServerProperties) bean;
 				server.setPort(getPort());
 				setupHttps(server, SpringBootHttpServer.this.options.httpsSettings());
 				// TODO: other options
@@ -179,7 +180,7 @@ class SpringBootHttpServer
 			return bean;
 		}
 
-		private void setupHttps(ServerProperties server, HttpsSettings httpsSettings) {
+		private void setupHttps(WiremockServerProperties server, HttpsSettings httpsSettings) {
 			if (httpsSettings.port() < 0 || !httpsSettings.enabled()) {
 				return;
 			}
@@ -207,9 +208,44 @@ class SpringBootHttpServer
 
 }
 
+class WiremockServerProperties implements EmbeddedServletContainerCustomizer {
+	
+	private ServerProperties delegate = new ServerProperties();
+
+	public Integer getPort() {
+		return this.delegate.getPort();
+	}
+
+	public void setPort(Integer port) {
+		this.delegate.setPort(port);
+	}
+
+	public Ssl getSsl() {
+		return this.delegate.getSsl();
+	}
+
+	public void setSsl(Ssl ssl) {
+		this.delegate.setSsl(ssl);
+	}
+
+	@Override
+	public void customize(ConfigurableEmbeddedServletContainer container) {
+		this.delegate.customize(container);
+	}
+}
+
+@Configuration
+class ServerPropertiesConfiguration {
+	@Bean
+	public WiremockServerProperties serverProperties() {
+		// Needs to be something that doesn't bind to "server.*"
+		return new WiremockServerProperties();
+	}
+}
+
 @Configuration
 @Import({ TomcatContainerConfiguration.class, JettyContainerConfiguration.class,
-		UndertowContainerConfiguration.class, ServerPropertiesAutoConfiguration.class,
+		UndertowContainerConfiguration.class, ServerPropertiesConfiguration.class,
 		BeanPostProcessorsRegistrar.class, ConfigurationPropertiesAutoConfiguration.class,
 		JacksonAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class,
 		PropertyPlaceholderAutoConfiguration.class, ContainerProperties.class })

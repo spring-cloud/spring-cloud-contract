@@ -60,6 +60,11 @@ public class StubRunnerProperties {
 	 */
 	private String classifier = "stubs";
 
+	/**
+	 * The context path that the stub server will run under.
+	 */
+	private String contextPath = "";
+
 	public int getMinPort() {
 		return this.minPort;
 	}
@@ -106,6 +111,14 @@ public class StubRunnerProperties {
 
 	public void setClassifier(String classifier) {
 		this.classifier = classifier;
+	}
+
+	public String getContextPath() {
+		return this.contextPath;
+	}
+
+	public void setContextPath(String contextPath) {
+		this.contextPath = contextPath;
 	}
 
 	@Override public String toString() {

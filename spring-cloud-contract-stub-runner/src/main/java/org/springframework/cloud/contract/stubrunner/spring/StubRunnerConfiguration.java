@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.contract.stubrunner.AetherStubDownloader;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
@@ -49,8 +48,6 @@ public class StubRunnerConfiguration {
 	private StubDownloader stubDownloader;
 	@Autowired
 	private StubRunnerProperties props;
-	@Autowired(required = false)
-	private ServerProperties serverProperties;
 
 	/**
 	 * Bean that initializes stub runners, runs them and on shutdown closes them. Upon its
@@ -66,7 +63,6 @@ public class StubRunnerConfiguration {
 				.withWorkOffline(this.props.isWorkOffline())
 				.withStubsClassifier(this.props.getClassifier())
 				.withStubs(this.props.getIds())
-				.withContextPath(contextPath())
 				.build();
 		BatchStubRunner batchStubRunner = new BatchStubRunnerFactory(stubRunnerOptions,
 				this.stubDownloader != null ? this.stubDownloader
@@ -80,13 +76,6 @@ public class StubRunnerConfiguration {
 
 	private String uriStringOrEmpty(Resource stubRepositoryRoot) throws IOException {
 		return stubRepositoryRoot != null ? stubRepositoryRoot.getURI().toString() : "";
-	}
-
-	private String contextPath() {
-		if (this.serverProperties == null) {
-			return "";
-		}
-		return this.serverProperties.getContextPath();
 	}
 
 }

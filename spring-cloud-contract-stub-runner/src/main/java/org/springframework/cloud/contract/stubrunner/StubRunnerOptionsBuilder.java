@@ -37,7 +37,6 @@ public class StubRunnerOptionsBuilder {
 	private String stubRepositoryRoot;
 	private boolean workOffline = false;
 	private String stubsClassifier = "stubs";
-	private String contextPath = "";
 
 	public StubRunnerOptionsBuilder() {
 	}
@@ -96,8 +95,11 @@ public class StubRunnerOptionsBuilder {
 		return this;
 	}
 
+	/**
+	 * @deprecated there is no context path for the stub server
+	 */
+	@Deprecated
 	public StubRunnerOptionsBuilder withContextPath(String contextPath) {
-		this.contextPath = contextPath;
 		return this;
 	}
 
@@ -107,14 +109,12 @@ public class StubRunnerOptionsBuilder {
 		this.stubRepositoryRoot = options.stubRepositoryRoot;
 		this.workOffline = options.workOffline;
 		this.stubsClassifier = options.stubsClassifier;
-		this.contextPath = options.contextPath;
 		return this;
 	}
 
 	public StubRunnerOptions build() {
 		return new StubRunnerOptions(this.minPortValue, this.maxPortValue, this.stubRepositoryRoot,
-				this.workOffline, this.stubsClassifier, buildDependencies(), this.stubIdsToPortMapping,
-				this.contextPath);
+				this.workOffline, this.stubsClassifier, buildDependencies(), this.stubIdsToPortMapping);
 	}
 
 	private Collection<StubConfiguration> buildDependencies() {
