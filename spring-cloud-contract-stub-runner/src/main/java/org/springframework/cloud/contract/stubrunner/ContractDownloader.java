@@ -72,7 +72,7 @@ public class ContractDownloader {
 	private File unpackAndDownloadContracts() {
 		log.info("Will download contracts for [" + this.contractsJarStubConfiguration + "]");
 		Map.Entry<StubConfiguration, File> unpackedContractStubs = this.stubDownloader
-				.downloadAndUnpackStubJar(null, this.contractsJarStubConfiguration);
+				.downloadAndUnpackStubJar(this.contractsJarStubConfiguration);
 		if (unpackedContractStubs == null) {
 			throw new IllegalStateException("The contracts failed to be downloaded!");
 		}
