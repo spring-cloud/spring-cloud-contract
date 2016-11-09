@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +28,7 @@ import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.repository.Proxy;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResult;
@@ -38,12 +38,14 @@ import org.eclipse.aether.resolution.VersionRangeResult;
 import org.eclipse.aether.resolution.VersionRequest;
 import org.eclipse.aether.resolution.VersionResolutionException;
 import org.eclipse.aether.resolution.VersionResult;
+import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.contract.stubrunner.StubRunnerOptions.StubRunnerProxyOptions;
 import org.springframework.util.StringUtils;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static java.nio.file.Files.createTempDirectory;
-import static org.springframework.cloud.contract.stubrunner.AetherFactories.newRepositories;
 import static org.springframework.cloud.contract.stubrunner.AetherFactories.newRepositorySystem;
 import static org.springframework.cloud.contract.stubrunner.AetherFactories.newSession;
 import static org.springframework.cloud.contract.stubrunner.util.ZipCategory.unzipTo;
@@ -106,16 +108,37 @@ public class AetherStubDownloader implements StubDownloader {
 		}
 	}
 
-	private List<RemoteRepository> remoteRepositories(
-			StubRunnerOptions stubRunnerOptions) {
+	private List<RemoteRepository> remoteRepositories(StubRunnerOptions stubRunnerOptions) {
+
 		if (stubRunnerOptions.stubRepositoryRoot == null) {
 			return new ArrayList<>();
 		}
-		List<RemoteRepository>  remoteRepos = newRepositories(
-				Arrays.asList(stubRunnerOptions.stubRepositoryRoot.split(",")));
+
+		final String[] repos = stubRunnerOptions.stubRepositoryRoot.split(",");
+
+		final List<RemoteRepository> remoteRepos = newArrayList();
+
+		for (int i = 0; i < repos.length; i++) {
+			if(StringUtils.hasText(repos[i])) {
+				final RemoteRepository.Builder builder = new RemoteRepository.Builder("remote" + i, "default", repos[i])
+						.setAuthentication(new AuthenticationBuilder()
+								.addUsername(stubRunnerOptions.username)
+								.addPassword(stubRunnerOptions.password)
+								.build());
+
+				if(stubRunnerOptions.getProxyOptions().isPresent()) {
+					final StubRunnerProxyOptions p = stubRunnerOptions.getProxyOptions().get();
+					builder.setProxy(new Proxy(null, p.getProxyHost(), p.getProxyPort()));
+				}
+
+				remoteRepos.add(builder.build());
+			}
+		}
+
 		if (log.isDebugEnabled()) {
 			log.debug("Using the following remote repos " + remoteRepos);
 		}
+
 		return remoteRepos;
 	}
 
@@ -165,8 +188,7 @@ public class AetherStubDownloader implements StubDownloader {
 	}
 
 	@Override
-	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
-			StubRunnerOptions options, StubConfiguration stubConfiguration) {
+	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(StubConfiguration stubConfiguration) {
 		String version = getVersion(stubConfiguration.groupId,
 				stubConfiguration.artifactId, stubConfiguration.version,
 				stubConfiguration.classifier);

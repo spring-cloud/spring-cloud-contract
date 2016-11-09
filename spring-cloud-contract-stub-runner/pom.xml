@@ -95,6 +95,12 @@
 			<artifactId>junit</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>io.specto</groupId>
+			<artifactId>hoverfly-junit</artifactId>
+			<version>0.1.8</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-client</artifactId>
 			<optional>true</optional>

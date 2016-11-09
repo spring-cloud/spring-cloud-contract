@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
+import com.google.common.base.Optional;
+
 import java.util.Collection;
 import java.util.Map;
 
@@ -60,9 +62,26 @@ public class StubRunnerOptions {
 	 */
 	final Map<StubConfiguration, Integer> stubIdsToPortMapping;
 
-	public StubRunnerOptions(Integer minPortValue, Integer maxPortValue, String stubRepositoryRoot, boolean workOffline,
-			String stubsClassifier, Collection<StubConfiguration> dependencies,
-			Map<StubConfiguration, Integer> stubIdsToPortMapping) {
+	/**
+	 * Optional username for authorization header
+	 */
+	final String username;
+
+	/**
+	 * Optional password for authorization header
+	 */
+	final String password;
+
+	/**
+	 * Optional proxy settings
+	 */
+	private final StubRunnerProxyOptions stubRunnerProxyOptions;
+
+	StubRunnerOptions(Integer minPortValue, Integer maxPortValue,
+			String stubRepositoryRoot, boolean workOffline, String stubsClassifier,
+			Collection<StubConfiguration> dependencies,
+			Map<StubConfiguration, Integer> stubIdsToPortMapping,
+			String username, String password, final StubRunnerProxyOptions stubRunnerProxyOptions) {
 		this.minPortValue = minPortValue;
 		this.maxPortValue = maxPortValue;
 		this.stubRepositoryRoot = stubRepositoryRoot;
@@ -70,17 +89,9 @@ public class StubRunnerOptions {
 		this.stubsClassifier = stubsClassifier;
 		this.dependencies = dependencies;
 		this.stubIdsToPortMapping = stubIdsToPortMapping;
-	}
-
-	/**
-	 * @deprecated there is no context path any longer
-	 */
-	@Deprecated
-	public StubRunnerOptions(Integer minPortValue, Integer maxPortValue, String stubRepositoryRoot, boolean workOffline,
-			String stubsClassifier, Collection<StubConfiguration> dependencies,
-			Map<StubConfiguration, Integer> stubIdsToPortMapping, String contextPath) {
-		this(minPortValue, maxPortValue, stubRepositoryRoot, workOffline, stubsClassifier, dependencies,
-				stubIdsToPortMapping);
+		this.username = username;
+		this.password = password;
+		this.stubRunnerProxyOptions = stubRunnerProxyOptions;
 	}
 
 	public Integer port(StubConfiguration stubConfiguration) {
@@ -107,6 +118,30 @@ public class StubRunnerOptions {
 	public Map<StubConfiguration, Integer> getStubIdsToPortMapping() {
 		return this.stubIdsToPortMapping;
 	}
+
+	public Optional<StubRunnerProxyOptions> getProxyOptions() {
+		return Optional.fromNullable(this.stubRunnerProxyOptions);
+	}
+
+	public static class StubRunnerProxyOptions {
+
+		private final String proxyHost;
+		private final int proxyPort;
+
+		public StubRunnerProxyOptions(final String proxyHost, final int proxyPort) {
+			this.proxyHost = proxyHost;
+			this.proxyPort = proxyPort;
+		}
+
+		public String getProxyHost() {
+			return this.proxyHost;
+		}
+
+		public int getProxyPort() {
+			return this.proxyPort;
+		}
+	}
+
 
 	@Override
 	public String toString() {
