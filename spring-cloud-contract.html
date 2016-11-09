@@ -1427,8 +1427,9 @@ It&#8217;s really important that you understand the map notation to set up contr
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">@RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment=WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:8080"}, workOffline = true)
+@DirtiesContext
 public class LoanApplicationServiceTests {</code></pre>
 </div>
 </div>
