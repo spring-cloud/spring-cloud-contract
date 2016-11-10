@@ -16,8 +16,6 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
-import com.google.common.base.Optional;
-
 import java.util.Collection;
 import java.util.Map;
 
@@ -119,8 +117,8 @@ public class StubRunnerOptions {
 		return this.stubIdsToPortMapping;
 	}
 
-	public Optional<StubRunnerProxyOptions> getProxyOptions() {
-		return Optional.fromNullable(this.stubRunnerProxyOptions);
+	public StubRunnerProxyOptions getProxyOptions() {
+		return this.stubRunnerProxyOptions;
 	}
 
 	public static class StubRunnerProxyOptions {
