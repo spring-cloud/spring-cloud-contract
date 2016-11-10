@@ -44,7 +44,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions.StubRunnerProxyOptions;
 import org.springframework.util.StringUtils;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static java.nio.file.Files.createTempDirectory;
 import static org.springframework.cloud.contract.stubrunner.AetherFactories.newRepositorySystem;
 import static org.springframework.cloud.contract.stubrunner.AetherFactories.newSession;
@@ -116,7 +115,7 @@ public class AetherStubDownloader implements StubDownloader {
 
 		final String[] repos = stubRunnerOptions.stubRepositoryRoot.split(",");
 
-		final List<RemoteRepository> remoteRepos = newArrayList();
+		final List<RemoteRepository> remoteRepos = new ArrayList<>();
 
 		for (int i = 0; i < repos.length; i++) {
 			if(StringUtils.hasText(repos[i])) {
@@ -126,8 +125,8 @@ public class AetherStubDownloader implements StubDownloader {
 								.addPassword(stubRunnerOptions.password)
 								.build());
 
-				if(stubRunnerOptions.getProxyOptions().isPresent()) {
-					final StubRunnerProxyOptions p = stubRunnerOptions.getProxyOptions().get();
+				if(stubRunnerOptions.getProxyOptions() != null) {
+					final StubRunnerProxyOptions p = stubRunnerOptions.getProxyOptions();
 					builder.setProxy(new Proxy(null, p.getProxyHost(), p.getProxyPort()));
 				}
 
