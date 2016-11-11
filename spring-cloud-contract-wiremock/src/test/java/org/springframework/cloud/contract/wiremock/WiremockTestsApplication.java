@@ -55,6 +55,6 @@ class Service {
 	}
 
 	public String go() {
-		return this.restTemplate.getForEntity(this.base + "/resource", String.class).getBody();
+		return this.restTemplate.getForEntity(this.base + "/test", String.class).getBody();
 	}
 }

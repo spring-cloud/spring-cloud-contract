@@ -25,7 +25,7 @@ public class AutoConfigureWireMockPortApplicationTests {
 
 	@Test
 	public void contextLoads() throws Exception {
-		stubFor(get(urlEqualTo("/resource")).willReturn(aResponse()
+		stubFor(get(urlEqualTo("/test")).willReturn(aResponse()
 				.withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 	}
