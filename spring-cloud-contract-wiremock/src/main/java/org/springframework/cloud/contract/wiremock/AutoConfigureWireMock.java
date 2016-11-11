@@ -45,6 +45,8 @@ public @interface AutoConfigureWireMock {
 
 	int httpsPort() default -1;
 
-	String stubs() default "";
+	String[] stubs() default {""};
+
+	String[] files() default {""};
 
 }

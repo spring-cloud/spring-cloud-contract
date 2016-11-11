@@ -232,7 +232,7 @@ public class WireMockRestServiceServer {
 					if (!location.endsWith("/")) {
 						location = location + "/";
 					}
-					for (Resource files : resolver.getResources(location)) {
+					for (Resource files : this.resolver.getResources(location)) {
 						if (files.exists()) {
 							try {
 								Resource resource = files.createRelative(file);

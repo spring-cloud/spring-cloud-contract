@@ -18,6 +18,8 @@ package org.springframework.cloud.contract.wiremock;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 
@@ -25,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.contract.wiremock.file.ResourcesFileSource;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -72,14 +75,14 @@ public class WireMockConfiguration implements SmartLifecycle {
 	@PostConstruct
 	public void init() throws IOException {
 		if (this.options == null) {
-			com.github.tomakehurst.wiremock.core.WireMockConfiguration factory = WireMockSpring
-					.options();
+			com.github.tomakehurst.wiremock.core.WireMockConfiguration factory = WireMockSpring.options();
 			if (this.wireMock.getPort() != 8080) {
 				factory.port(this.wireMock.getPort());
 			}
 			if (this.wireMock.getHttpsPort() != -1) {
 				factory.httpsPort(this.wireMock.getHttpsPort());
 			}
+			registerFiles(factory);
 			this.options = factory;
 		}
 		this.server = new WireMockServer(this.options);
@@ -90,19 +93,42 @@ public class WireMockConfiguration implements SmartLifecycle {
 	}
 
 	private void registerStubs() throws IOException {
-		if (StringUtils.hasText(this.wireMock.getStubs())) {
-			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(
-					this.resourceLoader);
-			String pattern = this.wireMock.getStubs();
-			if (!pattern.contains("*")) {
+		for (String stubs : this.wireMock.getStubs()) {
+			if (StringUtils.hasText(stubs)) {
+				PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(
+						this.resourceLoader);
+				String pattern = stubs;
+				if (!pattern.contains("*")) {
+					if (!pattern.endsWith("/")) {
+						pattern = pattern + "/";
+					}
+					pattern = pattern + "**/*.json";
+				}
+				for (Resource resource : resolver.getResources(pattern)) {
+					this.server.addStubMapping(StubMapping
+							.buildFrom(StreamUtils.copyToString(resource.getInputStream(), Charset.forName("UTF-8"))));
+				}
+			}
+		}
+	}
+
+	private void registerFiles(com.github.tomakehurst.wiremock.core.WireMockConfiguration factory) throws IOException {
+		for (String files : this.wireMock.getFiles()) {
+			if (StringUtils.hasText(files)) {
+				PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(
+						this.resourceLoader);
+				String pattern = files;
 				if (!pattern.endsWith("/")) {
 					pattern = pattern + "/";
 				}
-				pattern = pattern + "**/*.json";
-			}
-			for (Resource resource : resolver.getResources(pattern)) {
-				this.server.addStubMapping(StubMapping.buildFrom(StreamUtils.copyToString(
-						resource.getInputStream(), Charset.forName("UTF-8"))));
+				List<Resource> resources = new ArrayList<>();
+				for (Resource resource : resolver.getResources(pattern)) {
+					if (resource.exists()) {
+						resources.add(resource);
+					}
+				}
+				ResourcesFileSource fileSource = new ResourcesFileSource(resources.toArray(new Resource[0]));
+				factory.fileSource(fileSource);
 			}
 		}
 	}
@@ -151,7 +177,9 @@ class WireMockProperties {
 
 	private int httpsPort = -1;
 
-	private String stubs;
+	private String[] stubs;
+
+	private String[] files;
 
 	public int getPort() {
 		return this.port;
@@ -169,12 +197,20 @@ class WireMockProperties {
 		this.httpsPort = httpsPort;
 	}
 
-	public String getStubs() {
+	public String[] getStubs() {
 		return this.stubs;
 	}
 
-	public void setStubs(String stubs) {
+	public void setStubs(String[] stubs) {
 		this.stubs = stubs;
+	}
+
+	public String[] getFiles() {
+		return this.files;
+	}
+
+	public void setFiles(String[] files) {
+		this.files = files;
 	}
 
 }
