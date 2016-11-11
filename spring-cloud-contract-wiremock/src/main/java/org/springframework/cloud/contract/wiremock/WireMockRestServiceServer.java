@@ -16,6 +16,10 @@
 
 package org.springframework.cloud.contract.wiremock;
 
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -26,7 +30,6 @@ import java.util.List;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.HttpHeaders;
@@ -48,10 +51,6 @@ import com.github.tomakehurst.wiremock.matching.MultiValuePattern;
 import com.github.tomakehurst.wiremock.matching.RequestPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
-
 /**
  * Convenience class for loading WireMock stubs into a {@link MockRestServiceServer}. In
  * this way using a {@link RestTemplate} can mock the responses from a server using
@@ -72,6 +71,8 @@ public class WireMockRestServiceServer {
 
 	private List<String> locations = new ArrayList<String>();
 
+	private List<String> files = new ArrayList<String>();
+
 	private boolean ignoreExpectOrder = true;
 
 	private WireMockRestServiceServer(RestTemplate restTemplate) {
@@ -90,8 +91,8 @@ public class WireMockRestServiceServer {
 
 	/**
 	 * Flag to tell the MockRestServiceServer to ignore the order of calls when matching
-	 * requests. The default is true because there is an implied ordering in the stubs
-	 * (by url path and with more specific request matchers first).
+	 * requests. The default is true because there is an implied ordering in the stubs (by
+	 * url path and with more specific request matchers first).
 	 * 
 	 * @param ignoreExpectOrder flag value (default true)
 	 * @return this
@@ -149,6 +150,18 @@ public class WireMockRestServiceServer {
 	}
 
 	/**
+	 * Add some resource locations for files that represent response bodies. Wiremock
+	 * defaults to "file:src/test/resources/__files".
+	 * 
+	 * @param locations
+	 * @return this
+	 */
+	public WireMockRestServiceServer files(String... locations) {
+		this.files.addAll(Arrays.asList(locations));
+		return this;
+	}
+
+	/**
 	 * Build a MockRestServiceServer from the configured stubs. The server can later be
 	 * verified (optionally), if you need to check that all expected requests were made.
 	 * 
@@ -168,16 +181,14 @@ public class WireMockRestServiceServer {
 				}
 			}
 			catch (IOException e) {
-				throw new IllegalStateException("Cannot load resources for: " + location,
-						e);
+				throw new IllegalStateException("Cannot load resources for: " + location, e);
 			}
 		}
 		if (this.ignoreExpectOrder) {
 			Collections.sort(mappings, new StubMappingComparator());
 		}
 		for (StubMapping mapping : mappings) {
-			ResponseActions expect = server
-					.expect(requestTo(request(mapping.getRequest())));
+			ResponseActions expect = server.expect(requestTo(request(mapping.getRequest())));
 			requestHeaders(expect, mapping.getRequest());
 			expect.andRespond(response(mapping.getResponse()));
 		}
@@ -185,8 +196,7 @@ public class WireMockRestServiceServer {
 	}
 
 	private String request(RequestPattern request) {
-		return this.baseUrl + (request.getUrlPath() == null
-				? (request.getUrl() == null ? "/" : request.getUrl())
+		return this.baseUrl + (request.getUrlPath() == null ? (request.getUrl() == null ? "/" : request.getUrl())
 				: request.getUrlPath());
 	}
 
@@ -201,29 +211,44 @@ public class WireMockRestServiceServer {
 	}
 
 	private StubMapping mapping(Resource resource) throws IOException {
-		return Json.read(StreamUtils.copyToString(resource.getInputStream(),
-				Charset.defaultCharset()), StubMapping.class);
+		return Json.read(StreamUtils.copyToString(resource.getInputStream(), Charset.defaultCharset()),
+				StubMapping.class);
 	}
 
 	private DefaultResponseCreator response(ResponseDefinition response) {
-		return withStatus(HttpStatus.valueOf(response.getStatus()))
-				.body(body(response)).contentType(contentType(response))
-				.headers(responseHeaders(response));
+		return withStatus(HttpStatus.valueOf(response.getStatus())).body(body(response))
+				.contentType(contentType(response)).headers(responseHeaders(response));
 	}
 
 	private String body(ResponseDefinition response) {
-		if (response.getBody()!=null) {
+		if (response.getBody() != null) {
 			return response.getBody();
 		}
 		String file = response.getBodyFileName();
-		if (file!=null) {
-			ClassPathResource files = new ClassPathResource("__files/");
-			if (files.exists()) {
+		if (file != null) {
+			List<String> locations = this.files.isEmpty() ? Arrays.asList("classpath:/__files/") : this.files;
+			for (String location : locations) {
 				try {
-					return StreamUtils.copyToString(files.createRelative(file).getInputStream(), Charset.forName("UTF-8"));
+					if (!location.endsWith("/")) {
+						location = location + "/";
+					}
+					for (Resource files : resolver.getResources(location)) {
+						if (files.exists()) {
+							try {
+								Resource resource = files.createRelative(file);
+								if (resource.exists()) {
+									return StreamUtils.copyToString(resource.getInputStream(),
+											Charset.forName("UTF-8"));
+								}
+							}
+							catch (IOException e) {
+								throw new IllegalStateException("Cannot locate body file: " + file, e);
+							}
+						}
+					}
 				}
 				catch (IOException e) {
-					throw new IllegalStateException("Cannot locate body file: " + file, e);
+					// Ignore
 				}
 			}
 		}
@@ -238,15 +263,12 @@ public class WireMockRestServiceServer {
 
 					@Override
 					public boolean matches(Object item) {
-						return pattern.match(
-								new MultiValue(header, Arrays.asList((String) item)))
-								.isExactMatch();
+						return pattern.match(new MultiValue(header, Arrays.asList((String) item))).isExactMatch();
 					}
 
 					@Override
 					public void describeTo(Description description) {
-						description
-								.appendText("should match header: " + header + " with ")
+						description.appendText("should match header: " + header + " with ")
 								.appendText(pattern.getExpected());
 					}
 				}));
@@ -289,14 +311,15 @@ public class WireMockRestServiceServer {
 			int value = request(one.getRequest()).compareTo(request(two.getRequest()));
 			if (value == 0) {
 
-				if (one.getPriority()!=null) {
-					if (two.getPriority()!=null) {
+				if (one.getPriority() != null) {
+					if (two.getPriority() != null) {
 						return one.getPriority().compareTo(two.getPriority());
-					} else {
+					}
+					else {
 						return -one.getPriority();
 					}
 				}
-				if (two.getPriority()!=null) {
+				if (two.getPriority() != null) {
 					return -two.getPriority();
 				}
 
@@ -313,8 +336,7 @@ public class WireMockRestServiceServer {
 				if (value == 0) {
 					// Same number of header matchers
 					if (two.getPriority() != null) {
-						return one.getPriority() != null
-								? one.getPriority() - two.getPriority() : 1;
+						return one.getPriority() != null ? one.getPriority() - two.getPriority() : 1;
 					}
 					value = (int) (one.getInsertionIndex() - two.getInsertionIndex());
 				}
@@ -323,8 +345,7 @@ public class WireMockRestServiceServer {
 		}
 
 		private String request(RequestPattern request) {
-			return (request.getUrlPath() == null
-					? (request.getUrl() == null ? "/" : request.getUrl())
+			return (request.getUrlPath() == null ? (request.getUrl() == null ? "/" : request.getUrl())
 					: request.getUrlPath());
 		}
 

@@ -35,6 +35,28 @@ public class WiremockMockServerApplicationTests {
 	}
 
 	@Test
+	public void simpleGetWithBodyFileCustomLocation() throws Exception {
+		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
+				.baseUrl("http://example.org") //
+				.stubs("classpath:/mappings/resource-with-body-file.json")
+				.files("classpath:/custom/").build();
+		assertThat(this.restTemplate.getForObject("http://example.org/resource",
+				String.class)).isEqualTo("{\"message\":\"Hello Custom\"}");
+		server.verify();
+	}
+
+	@Test
+	public void simpleGetWithBodyFileCustomLocationDirectory() throws Exception {
+		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
+				.baseUrl("http://example.org") //
+				.stubs("classpath:/mappings/resource-with-body-file.json")
+				.files("file:src/test/resources/custom").build();
+		assertThat(this.restTemplate.getForObject("http://example.org/resource",
+				String.class)).isEqualTo("{\"message\":\"Hello Custom\"}");
+		server.verify();
+	}
+
+	@Test
 	public void simpleGetWithEmptyPath() throws Exception {
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("http://example.org") //
