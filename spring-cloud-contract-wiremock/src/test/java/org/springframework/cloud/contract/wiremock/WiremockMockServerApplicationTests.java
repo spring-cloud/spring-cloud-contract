@@ -25,6 +25,16 @@ public class WiremockMockServerApplicationTests {
 	}
 
 	@Test
+	public void simpleGetWithBodyFile() throws Exception {
+		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
+				.baseUrl("http://example.org") //
+				.stubs("classpath:/mappings/resource-with-body-file.json").build();
+		assertThat(this.restTemplate.getForObject("http://example.org/resource",
+				String.class)).isEqualTo("{\"message\":\"Hello World\"}");
+		server.verify();
+	}
+
+	@Test
 	public void simpleGetWithEmptyPath() throws Exception {
 		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
 				.baseUrl("http://example.org") //
@@ -133,6 +143,16 @@ public class WiremockMockServerApplicationTests {
 						.header("X-Precise", "true").build(), String.class)
 				.getBody()).isEqualTo("Bar World");
 		// The first one matches, not the most precise!
+	}
+
+	@Test
+	public void getWithPriortyOrder() throws Exception {
+		WireMockRestServiceServer.with(this.restTemplate) //
+				.baseUrl("http://example.org") //
+				.stubs("classpath:/mappings/resource-with-low-priority.json",
+						"classpath:/mappings/resource-with-high-priority.json").build();
+		assertThat(this.restTemplate.getForObject("http://example.org/resource",
+				String.class)).isEqualTo("Hello High");
 	}
 
 	@Test

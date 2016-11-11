@@ -1,11 +1,11 @@
 {
-  "priority": 1,
+  "priority": 100,
   "request" : {
     "urlPath" : "/resource",
     "method" : "GET"
   },
   "response" : {
     "status" : 200,
-    "body" : "Hello World"
+    "bodyFileName" : "hello.json"
   }
 }

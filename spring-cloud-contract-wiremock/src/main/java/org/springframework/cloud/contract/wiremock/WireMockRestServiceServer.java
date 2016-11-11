@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.HttpHeaders;
@@ -89,7 +90,7 @@ public class WireMockRestServiceServer {
 
 	/**
 	 * Flag to tell the MockRestServiceServer to ignore the order of calls when matching
-	 * requests. The default is true because there is an impleid ordering in the stubs
+	 * requests. The default is true because there is an implied ordering in the stubs
 	 * (by url path and with more specific request matchers first).
 	 * 
 	 * @param ignoreExpectOrder flag value (default true)
@@ -206,8 +207,27 @@ public class WireMockRestServiceServer {
 
 	private DefaultResponseCreator response(ResponseDefinition response) {
 		return withStatus(HttpStatus.valueOf(response.getStatus()))
-				.body(response.getBody()).contentType(contentType(response))
+				.body(body(response)).contentType(contentType(response))
 				.headers(responseHeaders(response));
+	}
+
+	private String body(ResponseDefinition response) {
+		if (response.getBody()!=null) {
+			return response.getBody();
+		}
+		String file = response.getBodyFileName();
+		if (file!=null) {
+			ClassPathResource files = new ClassPathResource("__files/");
+			if (files.exists()) {
+				try {
+					return StreamUtils.copyToString(files.createRelative(file).getInputStream(), Charset.forName("UTF-8"));
+				}
+				catch (IOException e) {
+					throw new IllegalStateException("Cannot locate body file: " + file, e);
+				}
+			}
+		}
+		return "";
 	}
 
 	private void requestHeaders(ResponseActions expect, RequestPattern request) {
@@ -268,6 +288,17 @@ public class WireMockRestServiceServer {
 			}
 			int value = request(one.getRequest()).compareTo(request(two.getRequest()));
 			if (value == 0) {
+
+				if (one.getPriority()!=null) {
+					if (two.getPriority()!=null) {
+						return one.getPriority().compareTo(two.getPriority());
+					} else {
+						return -one.getPriority();
+					}
+				}
+				if (two.getPriority()!=null) {
+					return -two.getPriority();
+				}
 
 				// Every mapping has a url pattern, and zero or more header patterns
 				int twos = 0;
