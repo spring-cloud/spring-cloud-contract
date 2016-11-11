@@ -707,6 +707,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_spring_cloud_contract_wiremock">Spring Cloud Contract WireMock</a>
 <ul class="sectlevel2">
 <li><a href="#_registering_stubs_automatically">Registering Stubs Automatically</a></li>
+<li><a href="#_using_files_to_specify_the_stub_bodies">Using Files to Specify the Stub Bodies</a></li>
 <li><a href="#_alternative_using_junit_rules">Alternative: Using JUnit Rules</a></li>
 </ul>
 </li>
@@ -6409,10 +6410,12 @@ public class WiremockForDocsTests {
 <div class="sect2">
 <h3 id="_registering_stubs_automatically">Registering Stubs Automatically</h3>
 <div class="paragraph">
-<p>If you add a <code>stubs</code> attribute to your <code>@AutoConfigureWireMock</code> then
-it will register WireMock JSON stubs from the file system or
-classpath. The stubs attribute can be a resource pattern (ant-style)
-or a directory, in which case <code><strong>*/</strong>.json</code> is appended. Example:</p>
+<p>If you use <code>@AutoConfigureWireMock</code> then it will register WireMock
+JSON stubs from the file system or classpath, by default from
+<code>file:src/test/resources/mappings</code>. You can customize the locations
+using the <code>stubs</code> attribute in the annotation, which can be a resource
+pattern (ant-style) or a directory, in which case <code><strong>*/</strong>.json</code> is
+appended. Example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -6431,6 +6434,52 @@ public class WiremockImportApplicationTests {
 
 }</pre>
 </div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Actually WireMock always loads mappings from
+<code>src/test/resources/mappings</code> <strong>as well as</strong> the custom locations in the
+stubs attribute. To change this behaviour you have to also specify a
+files root as described next.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_using_files_to_specify_the_stub_bodies">Using Files to Specify the Stub Bodies</h3>
+<div class="paragraph">
+<p>WireMock can read response bodies from files on the classpath or file
+system. In that case you will see in the JSON DSL that the response
+has a "bodyFileName" instead of a (literal) "body". The files are
+resolved relative to a root directory <code>src/test/resources/<em>files</code> by
+default. To customize this location you can set the <code>files</code> attribute
+in the <code>@AutoConfigureWireMock</code> annotation to the location of the
+parent directory (i.e. the place where <code></em>files</code> is a
+subdirectory). You can use Spring resource notation to refer to
+<code>file:&#8230;&#8203;</code> or <code>classpath:&#8230;&#8203;</code> locations (but generic URLs are not
+supported). A list of values can be given and WireMock will resolve
+the first file that exists when it needs to find a response body.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+when you configure the <code>files</code> root, then it affects the
+automatic loading of stubs as well (they come from the root location
+in a subdirectory called "mappings"). The value of <code>files</code> has no
+effect on the stubs loaded explicitly from the <code>stubs</code> attribute.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
