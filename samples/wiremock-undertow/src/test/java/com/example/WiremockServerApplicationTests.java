@@ -19,12 +19,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(properties="app.baseUrl=http://localhost:8080", webEnvironment=WebEnvironment.NONE)
+@SpringBootTest(properties="app.baseUrl=http://localhost:7071", webEnvironment=WebEnvironment.NONE)
 @DirtiesContext
 public class WiremockServerApplicationTests {
 
 	@ClassRule
-	public static WireMockClassRule wiremock = new WireMockClassRule(WireMockSpring.options());
+	public static WireMockClassRule wiremock = new WireMockClassRule(WireMockSpring.options().port(7071));
 
 	@Autowired
 	private Service service;

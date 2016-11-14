@@ -1,2 +1,4 @@
 stubrunner.repositoryRoot: classpath:m2repo/repository/
 stubrunner.ids: org.springframework.cloud.contract.verifier.stubs:integrationService:0.0.1-SNAPSHOT
+server:
+  port: 0

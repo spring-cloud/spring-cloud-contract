@@ -20,14 +20,14 @@ import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest("app.baseUrl=https://localhost:8443")
+@SpringBootTest("app.baseUrl=https://localhost:7443")
 @DirtiesContext
 @ActiveProfiles("ssl")
 public class WiremockHttpsServerApplicationTests {
 
 	@ClassRule
 	public static WireMockClassRule wiremock = new WireMockClassRule(
-			WireMockSpring.options().httpsPort(8443));
+			WireMockSpring.options().httpsPort(7443));
 
 	@Autowired
 	private Service service;

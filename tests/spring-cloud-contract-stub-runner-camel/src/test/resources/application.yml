@@ -1,2 +1,4 @@
 stubrunner.repositoryRoot: classpath:m2repo/repository/
 stubrunner.ids: org.springframework.cloud.contract.verifier.stubs:camelService
+server:
+  port: 0

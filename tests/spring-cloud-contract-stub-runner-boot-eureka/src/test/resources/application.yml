@@ -2,3 +2,5 @@ stubrunner:
   camel.enabled: false
   idsToServiceIds:
     fraudDetectionServer: someNameThatShouldMapFraudDetectionServer
+server:
+  port: 0

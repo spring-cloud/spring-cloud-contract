@@ -3,3 +3,5 @@ stubrunner:
   ids: org.springframework.cloud.contract.verifier.stubs.amqp:spring-cloud-contract-amqp-test:0.4.0-SNAPSHOT:stubs
   amqp:
     enabled: true
+server:
+  port: 0

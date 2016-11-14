@@ -9,3 +9,6 @@ spring:
           destination: returnBook
         input:
           destination: bookStorage
+
+server:
+  port: 0
