@@ -16,6 +16,9 @@
 package org.springframework.cloud.contract.maven.verifier;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -48,13 +51,25 @@ public class GenerateStubsMojo extends AbstractMojo {
 	private File outputDirectory;
 
 	/**
-	 * Set this to "true" to bypass Verifier execution..
+	 * Set this to "true" to bypass the whole Verifier execution
 	 */
 	@Parameter(property = "spring.cloud.contract.verifier.skip", defaultValue = "false")
 	private boolean skip;
 
+	/**
+	 * Set this to "true" to bypass only JAR creation
+	 */
+	@Parameter(property = "spring.cloud.contract.verifier.jar.skip", defaultValue = "false")
+	private boolean jarSkip;
+
 	@Component
 	private MavenProjectHelper projectHelper;
+
+	/**
+	 * Patterns that should not be taken into account for processing
+	 */
+	@Parameter
+	private String[] excludedFiles;
 
 	@Parameter(defaultValue = "${project}", readonly = true)
 	private MavenProject project;
@@ -69,10 +84,10 @@ public class GenerateStubsMojo extends AbstractMojo {
 	private String classifier;
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		if (this.skip) {
+		if (this.skip || this.jarSkip) {
 			getLog().info(
 					"Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip="
-							+ this.skip);
+							+ this.skip + ", spring.cloud.contract.verifier.jar.skip=" + this.jarSkip);
 			return;
 		}
 		File stubsJarFile = createStubJar(this.outputDirectory);
@@ -89,18 +104,21 @@ public class GenerateStubsMojo extends AbstractMojo {
 		String stubArchiveName =
 				this.project.getBuild().getFinalName() + "-" + this.classifier + ".jar";
 		File stubsJarFile = new File(this.projectBuildDirectory, stubArchiveName);
+		String[] excludes = excludes();
+		getLog().info("Files matching this pattern will be excluded from "
+				+ "stubs generation " + Arrays.toString(excludes));
 		try {
 			if (this.attachContracts) {
 				this.archiver.addDirectory(stubsOutputDir,
 						new String[] { STUB_MAPPING_FILE_PATTERN, CONTRACT_FILE_PATTERN },
-						new String[0]);
+						excludedFilesEmpty() ? new String[0] : this.excludedFiles);
 			}
 			else {
 				getLog().info(
 						"Skipping attaching Spring Cloud Contract Verifier contracts");
 				this.archiver.addDirectory(stubsOutputDir,
 						new String[] { STUB_MAPPING_FILE_PATTERN },
-						new String[] { CONTRACT_FILE_PATTERN });
+						excludes);
 			}
 			this.archiver.setCompress(true);
 			this.archiver.setDestFile(stubsJarFile);
@@ -112,6 +130,21 @@ public class GenerateStubsMojo extends AbstractMojo {
 					"Exception while packaging " + this.classifier + " jar.", e);
 		}
 		return stubsJarFile;
+	}
+
+	private String[] excludes() {
+		List<String> excludes = new ArrayList<>();
+		excludes.add(CONTRACT_FILE_PATTERN);
+		if (!excludedFilesEmpty()) {
+			excludes.addAll(Arrays.asList(this.excludedFiles));
+		}
+		String[] array = new String[excludes.size()];
+		array = excludes.toArray(array);
+		return array;
+	}
+
+	private boolean excludedFilesEmpty() {
+		return this.excludedFiles == null || this.excludedFiles.length == 0;
 	}
 
 }

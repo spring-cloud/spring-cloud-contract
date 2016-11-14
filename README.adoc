@@ -787,7 +787,7 @@ Annotate your test class with `@AutoConfigureStubRunner`. In the annotation prov
 ----
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.NONE)
-@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:8080"}, workOffline = true)
+@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"}, workOffline = true)
 @DirtiesContext
 public class LoanApplicationServiceTests {
 ----
