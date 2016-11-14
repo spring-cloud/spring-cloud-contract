@@ -1,3 +1,2 @@
-stubrunner:
-  work-offline: true
-  ids: 'com.example:http-server-dsl:+:stubs:8080'
+server:
+  port: 6565

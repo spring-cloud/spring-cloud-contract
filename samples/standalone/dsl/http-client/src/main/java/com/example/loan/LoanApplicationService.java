@@ -22,7 +22,7 @@ public class LoanApplicationService {
 
 	private final RestTemplate restTemplate;
 
-	private int port = 8080;
+	private int port = 6565;
 
 	public LoanApplicationService() {
 		this.restTemplate = new RestTemplate();

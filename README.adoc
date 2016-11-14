@@ -56,10 +56,12 @@ To start the stub server on a different port use `@AutoConfigureWireMock(port=99
 
 === Registering Stubs Automatically
 
-If you add a `stubs` attribute to your `@AutoConfigureWireMock` then
-it will register WireMock JSON stubs from the file system or
-classpath. The stubs attribute can be a resource pattern (ant-style)
-or a directory, in which case `**/*.json` is appended. Example:
+If you use `@AutoConfigureWireMock` then it will register WireMock
+JSON stubs from the file system or classpath, by default from
+`file:src/test/resources/mappings`. You can customize the locations
+using the `stubs` attribute in the annotation, which can be a resource
+pattern (ant-style) or a directory, in which case `**/*.json` is
+appended. Example:
 
 ----
 @RunWith(SpringRunner.class)
@@ -77,6 +79,30 @@ public class WiremockImportApplicationTests {
 
 }
 ----
+
+NOTE: Actually WireMock always loads mappings from
+`src/test/resources/mappings` *as well as* the custom locations in the
+stubs attribute. To change this behaviour you have to also specify a
+files root as described next.
+
+=== Using Files to Specify the Stub Bodies
+
+WireMock can read response bodies from files on the classpath or file
+system. In that case you will see in the JSON DSL that the response
+has a "bodyFileName" instead of a (literal) "body". The files are
+resolved relative to a root directory `src/test/resources/__files` by
+default. To customize this location you can set the `files` attribute
+in the `@AutoConfigureWireMock` annotation to the location of the
+parent directory (i.e. the place where `__files` is a
+subdirectory). You can use Spring resource notation to refer to
+`file:...` or `classpath:...` locations (but generic URLs are not
+supported). A list of values can be given and WireMock will resolve
+the first file that exists when it needs to find a response body.
+
+NOTE: when you configure the `files` root, then it affects the
+automatic loading of stubs as well (they come from the root location
+in a subdirectory called "mappings"). The value of `files` has no
+effect on the stubs loaded explicitly from the `stubs` attribute.
 
 === Alternative: Using JUnit Rules
 
@@ -760,8 +786,9 @@ Annotate your test class with `@AutoConfigureStubRunner`. In the annotation prov
 [source,groovy,indent=0]
 ----
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment=WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:8080"}, workOffline = true)
+@DirtiesContext
 public class LoanApplicationServiceTests {
 ----
 
