@@ -5170,7 +5170,10 @@ spring:
         output:
           destination: returnBook
         input:
-          destination: bookStorage</code></pre>
+          destination: bookStorage
+
+server:
+  port: 0</code></pre>
 </div>
 </div>
 </div>
@@ -5348,7 +5351,9 @@ Remember to annotate your test class with <code>@AutoConfigureMessageVerifier</c
   repositoryRoot: classpath:m2repo/repository/
   ids: org.springframework.cloud.contract.verifier.stubs.amqp:spring-cloud-contract-amqp-test:0.4.0-SNAPSHOT:stubs
   amqp:
-    enabled: true</code></pre>
+    enabled: true
+server:
+  port: 0</code></pre>
 </div>
 </div>
 </div>
