@@ -16,13 +16,11 @@ import com.example.loan.model.LoanApplication;
 import com.example.loan.model.LoanApplicationResult;
 import com.example.loan.model.LoanApplicationStatus;
 
-// tag::autoconfigure_stubrunner[]
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.NONE, properties="server.context-path=/app")
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"}, workOffline = true)
 @DirtiesContext
 public class LoanApplicationServiceContextPathTests {
-// end::autoconfigure_stubrunner[]
 
 	@Autowired
 	private LoanApplicationService service;
@@ -40,7 +38,6 @@ public class LoanApplicationServiceContextPathTests {
 		assertThat(loanApplication.getRejectionReason()).isNull();
 	}
 
-	// tag::client_tdd[]
 	@Test
 	public void shouldBeRejectedDueToAbnormalLoanAmount() {
 		// given:
@@ -53,6 +50,5 @@ public class LoanApplicationServiceContextPathTests {
 				.isEqualTo(LoanApplicationStatus.LOAN_APPLICATION_REJECTED);
 		assertThat(loanApplication.getRejectionReason()).isEqualTo("Amount too high");
 	}
-	// end::client_tdd[]
 
 }

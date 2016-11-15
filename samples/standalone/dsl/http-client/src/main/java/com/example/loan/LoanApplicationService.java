@@ -1,5 +1,7 @@
 package com.example.loan;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -24,8 +26,9 @@ public class LoanApplicationService {
 
 	private int port = 6565;
 
-	public LoanApplicationService() {
-		this.restTemplate = new RestTemplate();
+	@Autowired
+	public LoanApplicationService(RestTemplateBuilder builder) {
+		this.restTemplate = builder.build();
 	}
 
 	public LoanApplicationResult loanApplication(LoanApplication loanApplication) {
