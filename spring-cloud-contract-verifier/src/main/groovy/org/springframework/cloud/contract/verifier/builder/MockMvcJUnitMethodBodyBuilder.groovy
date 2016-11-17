@@ -53,6 +53,16 @@ class MockMvcJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 	}
 
 	@Override
+	protected String getResponseBodyPropertyComparisonString(String property, Object value) {
+		return null
+	}
+
+	@Override
+	protected String getResponseBodyPropertyComparisonString(String property, Pattern value) {
+		return null
+	}
+
+	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, String value) {
 		blockBuilder.addLine("assertThat(response.header(\"$property\")).${createHeaderComparison(value)}")
 	}

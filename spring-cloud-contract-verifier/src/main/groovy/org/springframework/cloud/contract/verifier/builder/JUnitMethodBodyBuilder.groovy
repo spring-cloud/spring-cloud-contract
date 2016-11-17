@@ -72,6 +72,16 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 	}
 
 	@Override
+	protected String getResponseBodyPropertyComparisonString(String property, Object value) {
+		return getResponseBodyPropertyComparisonString(property, value as String)
+	}
+
+	@Override
+	protected String getResponseBodyPropertyComparisonString(String property, Pattern value) {
+		return "assertThat(responseBody${property}).${buildEscapedMatchesMethod(value)}"
+	}
+
+	@Override
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
 		blockBuilder.addLine("${exec.insertValue("parsedJson.read(\"\\\$$property\")")};")
 	}
@@ -149,8 +159,12 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 	}
 
 	protected String createHeaderComparison(Pattern headerValue) {
+		return buildEscapedMatchesMethod(headerValue) + ";"
+	}
+
+	private String buildEscapedMatchesMethod(Pattern headerValue) {
 		String escapedHeader = convertUnicodeEscapesIfRequired("$headerValue")
-		return "matches(\"$escapedHeader\");"
+		return "matches(\"$escapedHeader\")"
 	}
 
 }

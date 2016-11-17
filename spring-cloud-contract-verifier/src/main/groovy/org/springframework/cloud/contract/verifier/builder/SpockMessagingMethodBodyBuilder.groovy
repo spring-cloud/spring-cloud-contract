@@ -52,6 +52,11 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	}
 
 	@Override
+	protected String getResponseBodyPropertyComparisonString(String property, Pattern value) {
+		return null
+	}
+
+	@Override
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
 		blockBuilder.addLine("${exec.insertValue("parsedJson.read('\\\$$property')")}")
 	}
@@ -109,8 +114,13 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	}
 
 	@Override
+	protected String getResponseBodyPropertyComparisonString(String property, Object value) {
+		return ""
+	}
+
+	@Override
 	protected String getPropertyInListString(String property, Integer listIndex) {
-		"$property[$listIndex]" ?: ''
+		return "$property[$listIndex]" ?: ''
 	}
 
 	@Override

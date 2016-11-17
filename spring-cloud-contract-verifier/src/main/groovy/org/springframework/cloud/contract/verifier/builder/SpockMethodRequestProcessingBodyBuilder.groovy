@@ -51,6 +51,16 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 	}
 
 	@Override
+	protected String getResponseBodyPropertyComparisonString(String property, Object value) {
+		return getResponseBodyPropertyComparisonString(property, value as String)
+	}
+
+	@Override
+	protected String getResponseBodyPropertyComparisonString(String property, Pattern value) {
+		return "responseBody$property ${patternComparison(value)}"
+	}
+
+	@Override
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
 		blockBuilder.addLine("${exec.insertValue("parsedJson.read('\\\$$property')")}")
 	}
@@ -129,7 +139,11 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 	}
 
 	protected String convertHeaderComparison(Pattern headerValue) {
-		return "==~ java.util.regex.Pattern.compile('$headerValue')"
+		return patternComparison(headerValue)
+	}
+
+	private String patternComparison(Pattern pattern) {
+		return "==~ java.util.regex.Pattern.compile('$pattern')"
 	}
 
 }

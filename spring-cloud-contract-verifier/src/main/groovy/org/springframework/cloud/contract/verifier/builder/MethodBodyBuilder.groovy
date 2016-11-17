@@ -75,9 +75,21 @@ abstract class MethodBodyBuilder {
 
 	/**
 	 * Builds the code that for the given {@code property} will compare it to
-	 * the given {@code value}
+	 * the given Object {@code value}
+	 */
+	protected abstract String getResponseBodyPropertyComparisonString(String property, Object value)
+
+	/**
+	 * Builds the code that for the given {@code property} will compare it to
+	 * the given String {@code value}
 	 */
 	protected abstract String getResponseBodyPropertyComparisonString(String property, String value)
+
+	/**
+	 * Builds the code that for the given {@code property} will match it to
+	 * the given regular expression {@code value}
+	 */
+	protected abstract String getResponseBodyPropertyComparisonString(String property, Pattern value)
 
 	/**
 	 * Appends to the {@link BlockBuilder} the assertion for the given body element
@@ -263,7 +275,7 @@ abstract class MethodBodyBuilder {
 			// TODO xml validation
 		} else {
 			bb.addLine(getSimpleResponseBodyString(getResponseAsString()))
-			processText(bb, "", convertedResponseBody as String)
+			processText(bb, "", convertedResponseBody)
 			addColonIfRequired(bb)
 		}
 	}
@@ -286,10 +298,10 @@ abstract class MethodBodyBuilder {
 	/**
 	 * Appends to {@link BlockBuilder} processing of the given String value.
 	 */
-	protected void processText(BlockBuilder blockBuilder, String property, String value) {
-		if (value.startsWith('$')) {
-			value = stripFirstChar(value).replaceAll('\\$value', "responseBody$property")
-			blockBuilder.addLine(value)
+	protected void processText(BlockBuilder blockBuilder, String property, Object value) {
+		if (value instanceof String && value.startsWith('$')) {
+			String newValue = stripFirstChar(value).replaceAll('\\$value', "responseBody$property")
+			blockBuilder.addLine(newValue)
 			addColonIfRequired(blockBuilder)
 		} else {
 			blockBuilder.addLine(getResponseBodyPropertyComparisonString(property, value))

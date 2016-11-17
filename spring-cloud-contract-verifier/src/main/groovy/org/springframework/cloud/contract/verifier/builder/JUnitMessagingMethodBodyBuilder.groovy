@@ -57,8 +57,18 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	}
 
 	@Override
+	protected String getResponseBodyPropertyComparisonString(String property, Object value) {
+		return ""
+	}
+
+	@Override
 	protected String getResponseBodyPropertyComparisonString(String property, String value) {
-		return "responseBody$property == \"${value}\""
+		return ""
+	}
+
+	@Override
+	protected String getResponseBodyPropertyComparisonString(String property, Pattern value) {
+		return ""
 	}
 
 	@Override
@@ -158,7 +168,7 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	@Override
 	protected String getBodyString(String bodyAsString) {
-		return ''
+		return ""
 	}
 
 	@Override
@@ -172,11 +182,11 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	}
 
 	protected String convertHeaderComparison(String headerValue) {
-		return " == '$headerValue'"
+		return ""
 	}
 
 	protected String convertHeaderComparison(Pattern headerValue) {
-		return "==~ java.util.regex.Pattern.compile('$headerValue')"
+		return ""
 	}
 
 	protected String createHeaderComparison(Object headerValue) {
@@ -189,4 +199,7 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 		return "matches(\"$escapedHeader\");"
 	}
 
+	private String patternText(Pattern value) {
+		return "==~ java.util.regex.Pattern.compile('$value')"
+	}
 }

@@ -1622,4 +1622,27 @@ World.'''"""
 			test.contains('.header("authorization", getOAuthTokenHeader())')
 	}
 
+	@Issue('#150')
+	def "should support body matching in response"() {
+		given:
+		Contract contractDsl = Contract.make {
+			request {
+				method 'GET'
+				url '/get'
+			}
+			response {
+				status 200
+				status 200
+				body(value(stub("HELLO FROM STUB"), server(regex(".*"))))
+			}
+		}
+			MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.then(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains("responseBody ==~ java.util.regex.Pattern.compile('.*')")
+	}
+
 }

@@ -743,6 +743,29 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			test.contains('assertThatRejectionReasonIsNull(parsedJson.read("$.get("rejectionReason").title"));')
 	}
 
+	@Issue('#150')
+	def "should support body matching in response"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url '/get'
+				}
+				response {
+					status 200
+					status 200
+					body(value(stub("HELLO FROM STUB"), server(regex(".*"))))
+				}
+			}
+			MethodBodyBuilder builder = new JaxRsClientJUnitMethodBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.then(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains("assertThat(responseBody).matches(\".*\");")
+	}
+
 	private String stripped(String string) {
 		return string.stripMargin().stripIndent().replace('\t', '').replace('\n', '').replace(' ','')
 	}
