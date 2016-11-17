@@ -92,6 +92,12 @@ abstract class MethodBodyBuilder {
 	protected abstract String getResponseBodyPropertyComparisonString(String property, Pattern value)
 
 	/**
+	 * Builds the code that for the given {@code property} will match it to
+	 * the given {@link ExecutionProperty} value
+	 */
+	protected abstract String getResponseBodyPropertyComparisonString(String property, ExecutionProperty value)
+
+	/**
 	 * Appends to the {@link BlockBuilder} the assertion for the given body element
 	 */
 	protected abstract void processBodyElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec)

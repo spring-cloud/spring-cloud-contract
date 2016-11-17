@@ -53,7 +53,12 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	@Override
 	protected String getResponseBodyPropertyComparisonString(String property, Pattern value) {
-		return null
+		return ""
+	}
+
+	@Override
+	protected String getResponseBodyPropertyComparisonString(String property, ExecutionProperty value) {
+		return ""
 	}
 
 	@Override

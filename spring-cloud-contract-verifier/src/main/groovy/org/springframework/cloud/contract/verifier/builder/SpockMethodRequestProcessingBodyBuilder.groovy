@@ -61,6 +61,11 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 	}
 
 	@Override
+	protected String getResponseBodyPropertyComparisonString(String property, ExecutionProperty value) {
+		return value.insertValue("responseBody${property}")
+	}
+
+	@Override
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
 		blockBuilder.addLine("${exec.insertValue("parsedJson.read('\\\$$property')")}")
 	}

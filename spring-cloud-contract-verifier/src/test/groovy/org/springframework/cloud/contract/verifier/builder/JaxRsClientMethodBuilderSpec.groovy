@@ -766,6 +766,29 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			test.contains("assertThat(responseBody).matches(\".*\");")
 	}
 
+	@Issue('#150')
+	def "should support custom method execution in response"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url '/get'
+				}
+				response {
+					status 200
+					status 200
+					body(value(stub("HELLO FROM STUB"), server(execute('foo($it)'))))
+				}
+			}
+			MethodBodyBuilder builder = new JaxRsClientJUnitMethodBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.then(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains("foo(responseBody);")
+	}
+
 	private String stripped(String string) {
 		return string.stripMargin().stripIndent().replace('\t', '').replace('\n', '').replace(' ','')
 	}
