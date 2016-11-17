@@ -42,4 +42,10 @@ class DslProperty<T> {
 		this.clientValue = singleValue
 		this.serverValue = singleValue
 	}
+
+	boolean isSingleValue() {
+		return this.clientValue == this.serverValue ||
+				(this.clientValue != null && this.serverValue == null ) ||
+				(this.serverValue != null && this.clientValue == null )
+	}
 }

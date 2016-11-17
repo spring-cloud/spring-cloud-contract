@@ -1525,22 +1525,19 @@ World.'''"""
 				method 'PUT'
 				url value(consumer(regex('/foo/[0-9]{5}')))
 				body([
-					requestElement: value(consumer(regex('[0-9]{5}')))
+					requestElement: $(consumer(regex('[0-9]{5}')))
 				])
 				headers {
-					header('header', value(consumer(regex('application\\/vnd\\.fraud\\.v1\\+json;.*'))))
+					header('header', $(consumer(regex('application\\/vnd\\.fraud\\.v1\\+json;.*'))))
 				}
 			}
 			response {
 				status 200
 				body([
-					responseElement: value(producer(regex('[0-9]{7}')))
+					responseElement: $(producer(regex('[0-9]{7}')))
 				])
 				headers {
-					header('Content-Type': value(
-							producer(regex('application/vnd.fraud.v1.json.*')),
-							consumer('application/vnd.fraud.v1+json'))
-					)
+					contentType("application/vnd.fraud.v1.json")
 				}
 			}
 		}
@@ -1668,4 +1665,88 @@ World.'''"""
 			test.contains("foo(responseBody)")
 	}
 
+	@Issue('#149')
+	def "should allow c/p version of consumer producer"() {
+		given:
+		Contract contractDsl = Contract.make {
+			request {
+				method 'GET'
+				urlPath '/get'
+				headers {
+					header('authorization', $(c('Bearer token'), p(execute('getOAuthTokenHeader()'))))
+				}
+			}
+			response {
+				status 200
+				body([
+						fraudCheckStatus: "OK",
+						rejectionReason : [
+								title: $(c(null), p(execute('assertThatRejectionReasonIsNull($it)')))
+						]
+				])
+			}
+		}
+			MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.given(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('.header("authorization", getOAuthTokenHeader())')
+	}
+
+	@Issue('#149')
+	def "should allow easier way of providing dynamic values"() {
+		given:
+		Contract contractDsl = Contract.make {
+			request {
+				method 'GET'
+				urlPath '/get'
+				body([
+						alpha: $(anyAlphaUnicode()),
+				        number: $(anyNumber()),
+						aBoolean: $(aBoolean()),
+						ip: $(anyIpAddress()),
+						hostname: $(anyHostname()),
+						email: $(anyEmail()),
+						url: $(anyUrl()),
+						uuid: $(anyUuid())
+				])
+				headers {
+					contentTypeApplicationJson()
+				}
+			}
+			response {
+				status 200
+				body([
+						alpha: $(anyAlphaUnicode()),
+						number: $(anyNumber()),
+						aBoolean: $(aBoolean()),
+						ip: $(anyIpAddress()),
+						hostname: $(anyHostname()),
+						email: $(anyEmail()),
+						url: $(anyUrl()),
+						uuid: $(anyUuid())
+				])
+				headers {
+					contentTypeApplicationJson()
+				}
+			}
+		}
+			MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('assertThatJson(parsedJson).field("aBoolean").matches("(true|false)")')
+			test.contains('assertThatJson(parsedJson).field("alpha").matches("[\\\\p{L}]*")')
+			test.contains('assertThatJson(parsedJson).field("hostname").matches("((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?")')
+			test.contains('assertThatJson(parsedJson).field("url").matches("((www\\\\.|(http|https|ftp|news|file)+\\\\:\\\\/\\\\/)[_.a-z0-9-]+\\\\.[a-z0-9\\\\/_:@=.+?,##%&~-]*[^.|\\\\\'|\\\\# |!|\\\\(|?|,| |>|<|;|\\\\)])")')
+			test.contains('assertThatJson(parsedJson).field("number").matches("-?\\\\d*(\\\\.\\\\d+)?")')
+			test.contains('assertThatJson(parsedJson).field("email").matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4}")')
+			test.contains('assertThatJson(parsedJson).field("ip").matches("([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])")')
+			test.contains('assertThatJson(parsedJson).field("uuid").matches("[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}")')
+			!test.contains('cursor')
+	}
 }

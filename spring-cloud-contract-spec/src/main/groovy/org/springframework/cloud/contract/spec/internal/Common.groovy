@@ -145,6 +145,17 @@ class Common {
 	}
 
 	/**
+	 * Helper method to provide a better name for the consumer side
+	 */
+	ClientDslProperty c(Object clientValue) {
+		return new ClientDslProperty(clientValue)
+	}
+
+	ServerDslProperty p(Object serverValue) {
+		return new ServerDslProperty(serverValue)
+	}
+
+	/**
 	 * Helper method to provide a better name for the producer side
 	 */
 	ServerDslProperty test(Object serverValue) {

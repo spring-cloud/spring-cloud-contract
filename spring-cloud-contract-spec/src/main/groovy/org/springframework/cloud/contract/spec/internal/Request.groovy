@@ -33,10 +33,12 @@ import java.util.regex.Pattern
 @ToString(includePackage = false, includeNames = true)
 class Request extends Common {
 
+	@Delegate ClientPatternValueDslProperty property = new ClientPatternValueDslProperty()
+
 	DslProperty method
 	Url url
 	UrlPath urlPath
-	Headers headers
+	RequestHeaders headers
 	Body body
 	Multipart multipart
 
@@ -100,8 +102,8 @@ class Request extends Common {
 		closure()
 	}
 
-	void headers(@DelegatesTo(Headers) Closure closure) {
-		this.headers = new Headers()
+	void headers(@DelegatesTo(RequestHeaders) Closure closure) {
+		this.headers = new RequestHeaders()
 		closure.delegate = headers
 		closure()
 	}
@@ -176,8 +178,10 @@ class Request extends Common {
 
 	DslProperty value(ClientDslProperty client) {
 		Object clientValue = client.clientValue
-		if (client.clientValue instanceof Pattern) {
+		if (client.clientValue instanceof Pattern && client.isSingleValue()) {
 			clientValue = new Xeger(((Pattern)client.clientValue).pattern()).generate()
+		} else if (client.clientValue instanceof Pattern && !client.isSingleValue()) {
+			clientValue = client.serverValue
 		}
 		return new DslProperty(client.clientValue, clientValue)
 	}
@@ -202,22 +206,46 @@ class Request extends Common {
 		return super.value(server, client)
 	}
 
-}
-
-@CompileStatic
-@EqualsAndHashCode
-@ToString(includePackage = false)
-class ServerRequest extends Request {
-	ServerRequest(Request request) {
-		super(request)
+	@CompileStatic
+	@EqualsAndHashCode
+	@ToString(includePackage = false)
+	private class ServerRequest extends Request {
+		ServerRequest(Request request) {
+			super(request)
+		}
 	}
-}
 
-@CompileStatic
-@EqualsAndHashCode
-@ToString(includePackage = false)
-class ClientRequest extends Request {
-	ClientRequest(Request request) {
-		super(request)
+	@CompileStatic
+	@EqualsAndHashCode
+	@ToString(includePackage = false)
+	private class ClientRequest extends Request {
+		ClientRequest(Request request) {
+			super(request)
+		}
+	}
+
+	@CompileStatic
+	@EqualsAndHashCode
+	@ToString(includePackage = false)
+	private class RequestHeaders extends Headers {
+
+		void contentTypeApplicationJson() {
+			contentType("application/json")
+		}
+
+		void contentType(String contentType) {
+			header('Content-Type', $(c(Pattern.compile("${contentType}.*")), p(contentType)))
+		}
+	}
+
+	@CompileStatic
+	@EqualsAndHashCode
+	@ToString(includePackage = false)
+	private class ClientPatternValueDslProperty extends PatternValueDslProperty<ClientDslProperty> {
+
+		@Override
+		protected ClientDslProperty createProperty(Pattern pattern, Object generatedValue) {
+			return new ClientDslProperty(pattern, generatedValue)
+		}
 	}
 }
