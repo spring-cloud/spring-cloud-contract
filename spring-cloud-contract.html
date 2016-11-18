@@ -5745,8 +5745,10 @@ or just set the <code>ignored</code> property on the contract itself:</p>
 		//...
 
 		// Each header is added in form `'Header-Name' : 'Header-Value'`.
+		// there are also some helper methods
 		headers {
-			header 'Content-Type': 'application/json'
+			header 'key': 'value'
+			contentType(applicationJson())
 		}
 
 		//...
@@ -5854,10 +5856,7 @@ for your test and your server side tests.</p>
 	response {
 		status 200
 		body(
-				id: value(
-						consumer('123'),
-						producer(regex('[0-9]+'))
-				),
+				id: $(anyNumber()),
 				surname: $(
 						consumer('Kowalsky'),
 						producer(regex('[a-zA-Z]+'))
@@ -5886,22 +5885,19 @@ provide the generated string that matches the provided regular expression. For e
 		method 'PUT'
 		url value(consumer(regex('/foo/[0-9]{5}')))
 		body([
-			requestElement: value(consumer(regex('[0-9]{5}')))
+			requestElement: $(consumer(regex('[0-9]{5}')))
 		])
 		headers {
-			header('header', value(consumer(regex('application\\/vnd\\.fraud\\.v1\\+json;.*'))))
+			header('header', $(consumer(regex('application\\/vnd\\.fraud\\.v1\\+json;.*'))))
 		}
 	}
 	response {
 		status 200
 		body([
-			responseElement: value(producer(regex('[0-9]{7}')))
+			responseElement: $(producer(regex('[0-9]{7}')))
 		])
 		headers {
-			header('Content-Type': value(
-					producer(regex('application/vnd.fraud.v1.json.*')),
-					consumer('application/vnd.fraud.v1+json'))
-			)
+			contentType("application/vnd.fraud.v1.json")
 		}
 	}
 }</code></pre>
@@ -5915,14 +5911,14 @@ provide the generated string that matches the provided regular expression. For e
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">private static final Pattern TRUE_OR_FALSE = Pattern.compile(/(true|false)/)
-private static final Pattern ONLY_ALPHA_UNICODE = Pattern.compile(/[\p{L}]*/)
-private static final Pattern NUMBER = Pattern.compile('-?\\d*(\\.\\d+)?')
-private static final Pattern IP_ADDRESS = Pattern.compile('([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])');
-private static final Pattern HOSTNAME_PATTERN = Pattern.compile('((http[s]?|ftp):\\/)\\/?([^:\\/\\s]+)(:[0-9]{1,5})?');
-private static final Pattern EMAIL = Pattern.compile('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}');
-private static final Pattern URL = Pattern.compile('((www\\.|(http|https|ftp|news|file)+\\:\\/\\/)[_.a-z0-9-]+\\.[a-z0-9\\/_:@=.+?,##%&amp;~-]*[^.|\\\'|\\# |!|\\(|?|,| |&gt;|&lt;|;|\\)])')
-private static final Pattern UUID = Pattern.compile('[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}')
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">protected static final Pattern TRUE_OR_FALSE = Pattern.compile(/(true|false)/)
+protected static final Pattern ONLY_ALPHA_UNICODE = Pattern.compile(/[\p{L}]*/)
+protected static final Pattern NUMBER = Pattern.compile('-?\\d*(\\.\\d+)?')
+protected static final Pattern IP_ADDRESS = Pattern.compile('([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])');
+protected static final Pattern HOSTNAME_PATTERN = Pattern.compile('((http[s]?|ftp):\\/)\\/?([^:\\/\\s]+)(:[0-9]{1,5})?');
+protected static final Pattern EMAIL = Pattern.compile('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}');
+protected static final Pattern URL = Pattern.compile('((www\\.|(http|https|ftp|news|file)+\\:\\/\\/)[_.a-z0-9-]+\\.[a-z0-9\\/_:@=.+?,##%&amp;~-]*[^.|\\\'|\\# |!|\\(|?|,| |&gt;|&lt;|;|\\)])')
+protected static final Pattern UUID = Pattern.compile('[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}')
 
 String onlyAlphaUnicode() {
 	return ONLY_ALPHA_UNICODE.pattern()
@@ -5968,7 +5964,7 @@ String uuid(){
 		method 'POST'
 		url '/users/password'
 		headers {
-			header 'Content-Type': 'application/json'
+			contentType(applicationJson())
 		}
 		body(
 				email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),
@@ -5978,7 +5974,7 @@ String uuid(){
 	response {
 		status 404
 		headers {
-			header 'Content-Type': 'application/json'
+			contentType(applicationJson())
 		}
 		body(
 				code: value(consumer("123123"), producer(optional("123123"))),
@@ -6015,7 +6011,7 @@ String uuid(){
 		method 'POST'
 		url '/users/password'
 		headers {
-			header 'Content-Type': 'application/json'
+			contentType(applicationJson())
 		}
 		body(
 				email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),
