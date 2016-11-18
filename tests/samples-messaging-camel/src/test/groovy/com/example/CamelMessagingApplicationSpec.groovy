@@ -94,7 +94,7 @@ class CamelMessagingApplicationSpec extends Specification {
 					])
 					messageHeaders {
 						header('sample', 'header')
-						header('Content-Type', 'application/json')
+
 					}
 				}
 				outputMessage {

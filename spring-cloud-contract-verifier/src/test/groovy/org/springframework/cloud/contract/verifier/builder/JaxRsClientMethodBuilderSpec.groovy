@@ -625,7 +625,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 				response {
 					status 200
 					headers {
-						contentTypeApplicationJson()
+						contentType(applicationJson())
 					}
 					body """
 {"id":"789fgh","other_data":1268}
@@ -887,7 +887,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 							uuid: $(anyUuid())
 					])
 					headers {
-						contentTypeApplicationJson()
+						contentType(applicationJson())
 					}
 				}
 				response {
@@ -903,7 +903,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 							uuid: $(anyUuid())
 					])
 					headers {
-						contentTypeApplicationJson()
+						contentType(applicationJson())
 					}
 				}
 			}

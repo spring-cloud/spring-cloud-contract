@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.util
 import groovy.transform.TypeChecked
 import org.codehaus.groovy.runtime.GStringImpl
 import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.util.RegexpUtils
 
 import java.util.regex.Pattern
 
@@ -97,10 +98,8 @@ class RegexpBuilders {
 		return o.toString().replaceAll('\\\\', '\\\\\\\\')
 	}
 
-	private final static Pattern SPECIAL_REGEX_CHARS = Pattern.compile('[{}()\\[\\].+*?^$\\\\|]')
-
 	static String escapeSpecialRegexChars(String str) {
-		return SPECIAL_REGEX_CHARS.matcher(str).replaceAll('\\\\\\\\$0')
+		return RegexpUtils.escapeSpecialRegexChars(str)
 	}
 
 	private final static String WS = /\s*/

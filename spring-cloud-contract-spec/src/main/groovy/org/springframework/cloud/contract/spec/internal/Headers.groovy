@@ -30,6 +30,9 @@ import groovy.transform.TypeChecked
 @TypeChecked
 class Headers {
 
+	@Delegate MediaTypes mediaTypes = new MediaTypes()
+	@Delegate HttpHeaders httpHeaders = new HttpHeaders()
+
 	Set<Header> entries = []
 
 	void header(Map<String, Object> singleHeader) {
@@ -45,6 +48,24 @@ class Headers {
 		entries?.each {
 			header -> closure(header)
 		}
+	}
+
+	void accept(String contentType) {
+		header(accept(), matching(contentType))
+	}
+
+	void contentType(String contentType) {
+		header(httpHeaders.contentType(), matching(contentType))
+	}
+
+	/**
+	 * If for the consumer / producer you want to match exactly only
+	 * the root of content type. I.e. {@code application/json;charset=UTF8}
+	 * you care only about {@code application/json} then you should
+	 * use this method
+	 */
+	DslProperty matching(String value) {
+		return new DslProperty(value)
 	}
 
 	/**

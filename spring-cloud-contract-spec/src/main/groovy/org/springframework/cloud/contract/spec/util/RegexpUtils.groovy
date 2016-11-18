@@ -1,5 +1,3 @@
-import org.springframework.cloud.contract.spec.Contract
-
 /*
  *  Copyright 2013-2016 the original author or authors.
  *
@@ -16,33 +14,28 @@ import org.springframework.cloud.contract.spec.Contract
  *  limitations under the License.
  */
 
-Contract.make {
-	request {
-		method('PUT')
-		headers {
-			contentType(applicationJson())
-		}
-		body("""\
-		  {
-			"name": "Jan",
-			"id": "${value(consumer('abc'), producer('def'))}",
-		  }
-		  """
-		)
-		url $(consumer('/[0-9]{2}'), producer('/12'))
+package org.springframework.cloud.contract.spec.util
+
+import groovy.transform.CompileStatic
+
+import java.util.regex.Pattern
+
+/**
+ * Useful utility methods to work with regular expresisons
+ *
+ * @since 1.0.2
+ */
+@CompileStatic
+class RegexpUtils {
+
+	private final static Pattern SPECIAL_REGEX_CHARS = Pattern.compile('[{}()\\[\\].+*?^$\\\\|]')
+
+	static String escapeSpecialRegexChars(String str) {
+		return SPECIAL_REGEX_CHARS.matcher(str).replaceAll('\\\\\\\\$0')
 	}
-	response {
-		status 200
-		body("""\
-		  {
-			"name": "Jan",
-			"id": "${value(consumer('123'), producer('321'))}",
-						"surname": "${value(consumer('Kowalsky'), producer('$checkIfSurnameValid($value)'))}"
-		  }
-		  """
-		)
-		headers {
-			contentType(textPlain())
-		}
+
+	static String escapeSpecialRegexWithSingleEscape(String str) {
+		return SPECIAL_REGEX_CHARS.matcher(str).replaceAll('\\\\$0')
 	}
+
 }

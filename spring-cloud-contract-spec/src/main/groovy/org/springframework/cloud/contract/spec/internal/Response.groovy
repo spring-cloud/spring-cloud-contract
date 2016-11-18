@@ -20,6 +20,7 @@ import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
+import org.springframework.cloud.contract.spec.util.RegexpUtils
 import repackaged.nl.flotsam.xeger.Xeger
 
 import java.util.regex.Pattern
@@ -141,12 +142,10 @@ class Response extends Common {
 	@ToString(includePackage = false)
 	private class ResponseHeaders extends Headers {
 
-		void contentTypeApplicationJson() {
-			contentType("application/json")
-		}
-
-		void contentType(String contentType) {
-			header('Content-Type', $(p(Pattern.compile("${contentType}.*")), c(contentType)))
+		@Override
+		DslProperty matching(String value) {
+			return $(p(Pattern.compile("${RegexpUtils.escapeSpecialRegexWithSingleEscape(value)}.*")),
+					c(value))
 		}
 	}
 
