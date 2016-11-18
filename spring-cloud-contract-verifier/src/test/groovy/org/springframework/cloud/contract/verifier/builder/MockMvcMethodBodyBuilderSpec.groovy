@@ -40,7 +40,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			method 'POST'
 			url '/users/password'
 			headers {
-				header 'Content-Type': 'application/json'
+				contentType(applicationJson())
 			}
 			body(
 					email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),
@@ -50,7 +50,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		response {
 			status 404
 			headers {
-				header 'Content-Type': 'application/json'
+				contentType(applicationJson())
 			}
 			body(
 					code: value(consumer("123123"), producer(optional("123123"))),
@@ -67,7 +67,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			method 'POST'
 			url '/users/password'
 			headers {
-				header 'Content-Type': 'application/json'
+				contentType(applicationJson())
 			}
 			body(
 					""" {
@@ -84,7 +84,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		response {
 			status 404
 			headers {
-				header 'Content-Type': 'application/json'
+				contentType(applicationJson())
 			}
 			body(
 					""" {
@@ -102,7 +102,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		given:
 		Contract contractDsl = Contract.make {
 			request {
-				method "GET"
+				method GET()
 				url "test"
 			}
 			response {
@@ -133,7 +133,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		given:
 		Contract contractDsl = Contract.make {
 			request {
-				method "GET"
+				method GET()
 				url "test"
 			}
 			response {
@@ -439,7 +439,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 						)
 				)
 				headers {
-					header('Content-Type': 'application/json')
+					contentType(applicationJson())
 				}
 			}
 		}
@@ -471,7 +471,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 					value(consumer('123'), producer(regex('[0-9]{3}')))
 				}"}""")
 				headers {
-					header('Content-Type': 'application/json')
+					contentType(applicationJson())
 				}
 			}
 		}
@@ -504,7 +504,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 					value(consumer('123'), producer(regex('\\d+')))
 				}"}""")
 				headers {
-					header('Content-Type': 'application/json')
+					contentType(applicationJson())
 				}
 			}
 		}
@@ -621,7 +621,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		given:
 		Contract contractDsl = Contract.make {
 			request {
-				method('POST')
+				method(POST())
 				url("/ws/payments")
 				body("")
 			}
@@ -679,7 +679,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			request {
 				method 'POST'
 				url $(consumer(regex('/partners/[0-9]+/users')), producer('/partners/1000/users'))
-				headers { header 'Content-Type': 'application/json' }
+				headers { contentType(applicationJson()) }
 				body(
 						first_name: 'John',
 						last_name: 'Smith',
@@ -718,7 +718,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			request {
 				method 'POST'
 				url $(consumer(regex('/partners/[0-9]+/users')), producer('/partners/1000/users'))
-				headers { header 'Content-Type': 'application/json' }
+				headers { contentType(applicationJson()) }
 				body(
 						first_name: 'John',
 						last_name: 'Smith',
@@ -758,7 +758,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				method 'POST'
 				url '/validation/client'
 				headers {
-					header 'Content-Type': 'application/json'
+					contentType(applicationJson())
 				}
 				body(
 						bank_account_number: '0014282912345698765432161182',
@@ -796,10 +796,10 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		Contract contractDsl = Contract.make {
 
 			request {
-				method 'PUT'
+				method PUT()
 				url "/partners/${value(consumer(regex('^[0-9]*$')), producer('11'))}/agents/11/customers/09665703Z"
 				headers {
-					header 'Content-Type': 'application/json'
+					contentType(applicationJson())
 				}
 				body(
 						first_name: 'Josef',
@@ -829,10 +829,10 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		Contract contractDsl = Contract.make {
 			priority 1
 			request {
-				method 'POST'
+				method POST()
 				url '/users/password'
 				headers {
-					header 'Content-Type': 'application/json'
+					contentType(applicationJson())
 				}
 				body(
 						email: $(consumer(regex(email())), producer('not.existing@user.com')),
@@ -842,7 +842,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			response {
 				status 404
 				headers {
-					header 'Content-Type': 'application/json'
+					contentType(applicationJson())
 				}
 				body(
 						code: 4,
@@ -965,7 +965,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				method "PUT"
 				url "/v1/payments/e86df6f693de4b35ae648464c5b0dc09/client_data"
 				headers {
-					header('Content-Type': 'application/json')
+					contentType(applicationJson())
 				}
 				body(
 						client: [
@@ -1000,7 +1000,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			response {
 				status 200
 				headers {
-					header('Content-Type': 'application/json')
+					contentType(applicationJson())
 				}
 			}
 		}
@@ -1029,7 +1029,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				method "PUT"
 				url "/v1/payments/e86df6f693de4b35ae648464c5b0dc09/енев"
 				headers {
-					header('Content-Type': 'application/json')
+					contentType(applicationJson())
 				}
 				body(
 						client: [
@@ -1041,7 +1041,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			response {
 				status 200
 				headers {
-					header('Content-Type': 'application/json')
+					contentType(applicationJson())
 				}
 			}
 		}
@@ -1094,7 +1094,7 @@ World.'''"""
 				method "PUT"
 				url "/multipart"
 				headers {
-					header('content-type', 'multipart/form-data;boundary=AaB03x')
+					contentType('multipart/form-data;boundary=AaB03x')
 				}
 				multipart(
 						formParameter: value(consumer(regex('.+')), producer('"formParameterValue"')),
@@ -1275,7 +1275,7 @@ World.'''"""
 							producer(regex('[0-9]+'))
 					)]])
 					headers {
-						header('Content-Type': 'application/json;charset=UTF-8')
+						contentType(applicationJsonUtf8())
 					}
 				}
 			}
@@ -1525,22 +1525,19 @@ World.'''"""
 				method 'PUT'
 				url value(consumer(regex('/foo/[0-9]{5}')))
 				body([
-					requestElement: value(consumer(regex('[0-9]{5}')))
+					requestElement: $(consumer(regex('[0-9]{5}')))
 				])
 				headers {
-					header('header', value(consumer(regex('application\\/vnd\\.fraud\\.v1\\+json;.*'))))
+					header('header', $(consumer(regex('application\\/vnd\\.fraud\\.v1\\+json;.*'))))
 				}
 			}
 			response {
 				status 200
 				body([
-					responseElement: value(producer(regex('[0-9]{7}')))
+					responseElement: $(producer(regex('[0-9]{7}')))
 				])
 				headers {
-					header('Content-Type': value(
-							producer(regex('application/vnd.fraud.v1.json.*')),
-							consumer('application/vnd.fraud.v1+json'))
-					)
+					contentType("application/vnd.fraud.v1.json")
 				}
 			}
 		}
@@ -1560,7 +1557,7 @@ World.'''"""
 			strippedTest.matches(""".*header\\("header", "application\\/vnd\\.fraud\\.v1\\+json;.*"\\).*""")
 			strippedTest.matches(""".*body\\('''\\{"requestElement":"[0-9]{5}"\\}'''\\).*""")
 			strippedTest.matches(""".*put\\("/foo/[0-9]{5}"\\).*""")
-			strippedTest.contains("""response.header('Content-Type') ==~ java.util.regex.Pattern.compile('application/vnd.fraud.v1.json.*')""")
+			strippedTest.contains("""response.header('Content-Type') ==~ java.util.regex.Pattern.compile('application/vnd\\.fraud\\.v1\\.json.*')""")
 			"application/vnd.fraud.v1+json;charset=UTF-8".matches('application/vnd.fraud.v1.json.*')
 			strippedTest.contains("""assertThatJson(parsedJson).field("responseElement").matches("[0-9]{7}")""")
 	}
@@ -1668,4 +1665,88 @@ World.'''"""
 			test.contains("foo(responseBody)")
 	}
 
+	@Issue('#149')
+	def "should allow c/p version of consumer producer"() {
+		given:
+		Contract contractDsl = Contract.make {
+			request {
+				method 'GET'
+				urlPath '/get'
+				headers {
+					header('authorization', $(c('Bearer token'), p(execute('getOAuthTokenHeader()'))))
+				}
+			}
+			response {
+				status 200
+				body([
+						fraudCheckStatus: "OK",
+						rejectionReason : [
+								title: $(c(null), p(execute('assertThatRejectionReasonIsNull($it)')))
+						]
+				])
+			}
+		}
+			MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.given(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('.header("authorization", getOAuthTokenHeader())')
+	}
+
+	@Issue('#149')
+	def "should allow easier way of providing dynamic values"() {
+		given:
+		Contract contractDsl = Contract.make {
+			request {
+				method 'GET'
+				urlPath '/get'
+				body([
+						alpha: $(anyAlphaUnicode()),
+				        number: $(anyNumber()),
+						aBoolean: $(aBoolean()),
+						ip: $(anyIpAddress()),
+						hostname: $(anyHostname()),
+						email: $(anyEmail()),
+						url: $(anyUrl()),
+						uuid: $(anyUuid())
+				])
+				headers {
+					contentType(applicationJson())
+				}
+			}
+			response {
+				status 200
+				body([
+						alpha: $(anyAlphaUnicode()),
+						number: $(anyNumber()),
+						aBoolean: $(aBoolean()),
+						ip: $(anyIpAddress()),
+						hostname: $(anyHostname()),
+						email: $(anyEmail()),
+						url: $(anyUrl()),
+						uuid: $(anyUuid())
+				])
+				headers {
+					contentType(applicationJson())
+				}
+			}
+		}
+			MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('assertThatJson(parsedJson).field("aBoolean").matches("(true|false)")')
+			test.contains('assertThatJson(parsedJson).field("alpha").matches("[\\\\p{L}]*")')
+			test.contains('assertThatJson(parsedJson).field("hostname").matches("((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?")')
+			test.contains('assertThatJson(parsedJson).field("url").matches("((www\\\\.|(http|https|ftp|news|file)+\\\\:\\\\/\\\\/)[_.a-z0-9-]+\\\\.[a-z0-9\\\\/_:@=.+?,##%&~-]*[^.|\\\\\'|\\\\# |!|\\\\(|?|,| |>|<|;|\\\\)])")')
+			test.contains('assertThatJson(parsedJson).field("number").matches("-?\\\\d*(\\\\.\\\\d+)?")')
+			test.contains('assertThatJson(parsedJson).field("email").matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4}")')
+			test.contains('assertThatJson(parsedJson).field("ip").matches("([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])")')
+			test.contains('assertThatJson(parsedJson).field("uuid").matches("[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}")')
+			!test.contains('cursor')
+	}
 }

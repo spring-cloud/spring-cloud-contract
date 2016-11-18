@@ -33,4 +33,8 @@ class ServerDslProperty extends DslProperty {
 	ServerDslProperty(Object singleValue) {
 		super(singleValue)
 	}
+
+	ServerDslProperty(Object server, Object client) {
+		super(client, server)
+	}
 }

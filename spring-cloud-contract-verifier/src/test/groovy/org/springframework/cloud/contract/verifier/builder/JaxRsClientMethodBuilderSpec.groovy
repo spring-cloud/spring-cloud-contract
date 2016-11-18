@@ -339,7 +339,6 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					)
 					headers {
 						header('Content-Type': 'application/json')
-
 					}
 
 				}
@@ -371,9 +370,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					body("""{"property1":"a","property2":"${value(consumer('123'), producer(regex('[0-9]{3}')))}"}""")
 					headers {
 						header('Content-Type': 'application/json')
-
 					}
-
 				}
 			}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -628,7 +625,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 				response {
 					status 200
 					headers {
-						header('Content-Type': 'application/json;charset=UTF-8')
+						contentType(applicationJson())
 					}
 					body """
 {"id":"789fgh","other_data":1268}
@@ -767,6 +764,29 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 	}
 
 	@Issue('#150')
+	def "should support body matching in response in Spock"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url '/get'
+				}
+				response {
+					status 200
+					status 200
+					body(value(stub("HELLO FROM STUB"), server(regex(".*"))))
+				}
+			}
+			MethodBodyBuilder builder = new JaxRsClientSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.then(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains("responseBody ==~ java.util.regex.Pattern.compile('.*')")
+	}
+
+	@Issue('#150')
 	def "should support custom method execution in response"() {
 		given:
 			Contract contractDsl = Contract.make {
@@ -787,6 +807,125 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			def test = blockBuilder.toString()
 		then:
 			test.contains("foo(responseBody);")
+	}
+
+	@Issue('#150')
+	def "should support custom method execution in response in Spock"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url '/get'
+				}
+				response {
+					status 200
+					status 200
+					body(value(stub("HELLO FROM STUB"), server(execute('foo($it)'))))
+				}
+			}
+			MethodBodyBuilder builder = new JaxRsClientSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.then(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains("foo(responseBody)")
+	}
+
+	def "should allow c/p version of consumer producer"() {
+		given:
+		Contract contractDsl = Contract.make {
+			request {
+				method "GET"
+				url "test"
+			}
+			response {
+				status 200
+				body(
+						property1: "a",
+						property2: $(
+								c('123'),
+								p(regex('[0-9]{3}'))
+						)
+				)
+				headers {
+					header('Content-Type': 'application/json')
+				}
+
+			}
+		}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").matches("[0-9]{3}")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName                                    | methodBuilder
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
+	@Issue('#149')
+	def "should allow easier way of providing dynamic values"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					urlPath '/get'
+					body([
+							alpha: $(anyAlphaUnicode()),
+							number: $(anyNumber()),
+							aBoolean: $(aBoolean()),
+							ip: $(anyIpAddress()),
+							hostname: $(anyHostname()),
+							email: $(anyEmail()),
+							url: $(anyUrl()),
+							uuid: $(anyUuid())
+					])
+					headers {
+						contentType(applicationJson())
+					}
+				}
+				response {
+					status 200
+					body([
+							alpha: $(anyAlphaUnicode()),
+							number: $(anyNumber()),
+							aBoolean: $(aBoolean()),
+							ip: $(anyIpAddress()),
+							hostname: $(anyHostname()),
+							email: $(anyEmail()),
+							url: $(anyUrl()),
+							uuid: $(anyUuid())
+					])
+					headers {
+						contentType(applicationJson())
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('assertThatJson(parsedJson).field("aBoolean").matches("(true|false)")')
+			test.contains('assertThatJson(parsedJson).field("alpha").matches("[\\\\p{L}]*")')
+			test.contains('assertThatJson(parsedJson).field("hostname").matches("((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?")')
+			test.contains('assertThatJson(parsedJson).field("url").matches("((www\\\\.|(http|https|ftp|news|file)+\\\\:\\\\/\\\\/)[_.a-z0-9-]+\\\\.[a-z0-9\\\\/_:@=.+?,##%&~-]*[^.|\\\\\'|\\\\# |!|\\\\(|?|,| |>|<|;|\\\\)])")')
+			test.contains('assertThatJson(parsedJson).field("number").matches("-?\\\\d*(\\\\.\\\\d+)?")')
+			test.contains('assertThatJson(parsedJson).field("email").matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4}")')
+			test.contains('assertThatJson(parsedJson).field("ip").matches("([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])")')
+			test.contains('assertThatJson(parsedJson).field("uuid").matches("[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}")')
+			!test.contains('cursor')
+		where:
+			methodBuilderName                                    | methodBuilder
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
 
 	private String stripped(String string) {

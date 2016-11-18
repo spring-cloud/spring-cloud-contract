@@ -20,10 +20,10 @@ import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
+import org.springframework.cloud.contract.spec.util.RegexpUtils
 import repackaged.nl.flotsam.xeger.Xeger
 
 import java.util.regex.Pattern
-
 /**
  * Represents the response side of the HTTP communication
  *
@@ -34,9 +34,11 @@ import java.util.regex.Pattern
 @ToString(includePackage = false, includeFields = true)
 class Response extends Common {
 
+	@Delegate ServerPatternValueDslProperty property = new ServerPatternValueDslProperty()
+
 	DslProperty status
 	DslProperty delay
-	Headers headers
+	ResponseHeaders headers
 	Body body
 	boolean async
 
@@ -57,8 +59,8 @@ class Response extends Common {
 		this.status = toDslProperty(status)
 	}
 
-	void headers(@DelegatesTo(Headers) Closure closure) {
-		this.headers = new Headers()
+	void headers(@DelegatesTo(ResponseHeaders) Closure closure) {
+		this.headers = new ResponseHeaders()
 		closure.delegate = headers
 		closure()
 	}
@@ -89,8 +91,10 @@ class Response extends Common {
 
 	DslProperty value(ServerDslProperty server) {
 		Object value = server.clientValue
-		if (server.clientValue instanceof Pattern) {
+		if (server.clientValue instanceof Pattern && server.isSingleValue()) {
 			value = new Xeger(((Pattern)server.clientValue).pattern()).generate()
+		} else if (server.clientValue instanceof Pattern && !server.isSingleValue()) {
+			value = server.serverValue
 		}
 		return new DslProperty(value, server.serverValue)
 	}
@@ -114,22 +118,46 @@ class Response extends Common {
 		}
 		return super.value(server, client)
 	}
-}
 
-@CompileStatic
-@EqualsAndHashCode
-@ToString(includePackage = false)
-class ServerResponse extends Response {
-	ServerResponse(Response request) {
-		super(request)
+	@CompileStatic
+	@EqualsAndHashCode
+	@ToString(includePackage = false)
+	private class ServerResponse extends Response {
+		ServerResponse(Response request) {
+			super(request)
+		}
+	}
+
+	@CompileStatic
+	@EqualsAndHashCode
+	@ToString(includePackage = false)
+	private class ClientResponse extends Response {
+		ClientResponse(Response request) {
+			super(request)
+		}
+	}
+
+	@CompileStatic
+	@EqualsAndHashCode
+	@ToString(includePackage = false)
+	private class ResponseHeaders extends Headers {
+
+		@Override
+		DslProperty matching(String value) {
+			return $(p(Pattern.compile("${RegexpUtils.escapeSpecialRegexWithSingleEscape(value)}.*")),
+					c(value))
+		}
+	}
+
+	@CompileStatic
+	@EqualsAndHashCode
+	@ToString(includePackage = false)
+	private class ServerPatternValueDslProperty extends PatternValueDslProperty<ServerDslProperty> {
+
+		@Override
+		protected ServerDslProperty createProperty(Pattern pattern, Object generatedValue) {
+			return new ServerDslProperty(pattern, generatedValue)
+		}
 	}
 }
 
-@CompileStatic
-@EqualsAndHashCode
-@ToString(includePackage = false)
-class ClientResponse extends Response {
-	ClientResponse(Response request) {
-		super(request)
-	}
-}

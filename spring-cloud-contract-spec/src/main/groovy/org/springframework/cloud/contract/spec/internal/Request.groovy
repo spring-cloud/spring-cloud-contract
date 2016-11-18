@@ -20,6 +20,7 @@ import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
+import org.springframework.cloud.contract.spec.util.RegexpUtils
 import repackaged.nl.flotsam.xeger.Xeger
 
 import java.util.regex.Pattern
@@ -33,10 +34,13 @@ import java.util.regex.Pattern
 @ToString(includePackage = false, includeNames = true)
 class Request extends Common {
 
+	@Delegate ClientPatternValueDslProperty property = new ClientPatternValueDslProperty()
+	@Delegate HttpMethods httpMethods = new HttpMethods()
+
 	DslProperty method
 	Url url
 	UrlPath urlPath
-	Headers headers
+	RequestHeaders headers
 	Body body
 	Multipart multipart
 
@@ -54,6 +58,10 @@ class Request extends Common {
 
 	void method(String method) {
 		this.method = toDslProperty(method)
+	}
+
+	void method(HttpMethods.HttpMethod httpMethod) {
+		this.method = toDslProperty(httpMethod.toString())
 	}
 
 	void method(DslProperty method) {
@@ -100,8 +108,8 @@ class Request extends Common {
 		closure()
 	}
 
-	void headers(@DelegatesTo(Headers) Closure closure) {
-		this.headers = new Headers()
+	void headers(@DelegatesTo(RequestHeaders) Closure closure) {
+		this.headers = new RequestHeaders()
 		closure.delegate = headers
 		closure()
 	}
@@ -176,8 +184,10 @@ class Request extends Common {
 
 	DslProperty value(ClientDslProperty client) {
 		Object clientValue = client.clientValue
-		if (client.clientValue instanceof Pattern) {
+		if (client.clientValue instanceof Pattern && client.isSingleValue()) {
 			clientValue = new Xeger(((Pattern)client.clientValue).pattern()).generate()
+		} else if (client.clientValue instanceof Pattern && !client.isSingleValue()) {
+			clientValue = client.serverValue
 		}
 		return new DslProperty(client.clientValue, clientValue)
 	}
@@ -202,22 +212,44 @@ class Request extends Common {
 		return super.value(server, client)
 	}
 
-}
-
-@CompileStatic
-@EqualsAndHashCode
-@ToString(includePackage = false)
-class ServerRequest extends Request {
-	ServerRequest(Request request) {
-		super(request)
+	@CompileStatic
+	@EqualsAndHashCode
+	@ToString(includePackage = false)
+	private class ServerRequest extends Request {
+		ServerRequest(Request request) {
+			super(request)
+		}
 	}
-}
 
-@CompileStatic
-@EqualsAndHashCode
-@ToString(includePackage = false)
-class ClientRequest extends Request {
-	ClientRequest(Request request) {
-		super(request)
+	@CompileStatic
+	@EqualsAndHashCode
+	@ToString(includePackage = false)
+	private class ClientRequest extends Request {
+		ClientRequest(Request request) {
+			super(request)
+		}
+	}
+
+	@CompileStatic
+	@EqualsAndHashCode
+	@ToString(includePackage = false)
+	private class RequestHeaders extends Headers {
+
+		@Override
+		DslProperty matching(String value) {
+			return $(c(regex("${RegexpUtils.escapeSpecialRegexWithSingleEscape(value)}.*")),
+					p(value))
+		}
+	}
+
+	@CompileStatic
+	@EqualsAndHashCode
+	@ToString(includePackage = false)
+	private class ClientPatternValueDslProperty extends PatternValueDslProperty<ClientDslProperty> {
+
+		@Override
+		protected ClientDslProperty createProperty(Pattern pattern, Object generatedValue) {
+			return new ClientDslProperty(pattern, generatedValue)
+		}
 	}
 }

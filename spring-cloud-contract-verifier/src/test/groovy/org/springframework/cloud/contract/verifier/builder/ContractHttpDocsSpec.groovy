@@ -138,8 +138,10 @@ class ContractHttpDocsSpec extends Specification {
 				//...
 
 				// Each header is added in form `'Header-Name' : 'Header-Value'`.
+				// there are also some helper methods
 				headers {
-					header 'Content-Type': 'application/json'
+					header 'key': 'value'
+					contentType(applicationJson())
 				}
 
 				//...
@@ -210,10 +212,7 @@ class ContractHttpDocsSpec extends Specification {
 			response {
 				status 200
 				body(
-						id: value(
-								consumer('123'),
-								producer(regex('[0-9]+'))
-						),
+						id: $(anyNumber()),
 						surname: $(
 								consumer('Kowalsky'),
 								producer(regex('[a-zA-Z]+'))
@@ -239,7 +238,7 @@ class ContractHttpDocsSpec extends Specification {
 				method 'POST'
 				url '/users/password'
 				headers {
-					header 'Content-Type': 'application/json'
+					contentType(applicationJson())
 				}
 				body(
 						email: $(consumer(optional(regex(email()))), producer('abc@abc.com')),

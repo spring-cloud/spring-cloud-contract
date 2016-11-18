@@ -9,18 +9,18 @@ org.springframework.cloud.contract.spec.Contract.make {
 				"""
 		)
 		headers {
-			header("""Content-Type""", """application/vnd.fraud.v1+json""")
+			contentType("application/vnd.fraud.v1+json")
 		}
 
 	}
 	response {
 		status 200
 		body( """{
-	"fraudCheckStatus": "${value(consumer('FRAUD'), producer(regex('[A-Z]{5}')))}",
+	"fraudCheckStatus": "${value(c('FRAUD'), p(regex('[A-Z]{5}')))}",
 	"rejectionReason": "Amount too high"
 }""")
 		headers {
-			header('Content-Type': value(producer(regex('application/vnd.fraud.v1.json.*')), consumer('application/vnd.fraud.v1+json')))
+			contentType("application/vnd.fraud.v1+json")
 		}
 	}
 
