@@ -102,7 +102,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		given:
 		Contract contractDsl = Contract.make {
 			request {
-				method "GET"
+				method GET()
 				url "test"
 			}
 			response {
@@ -133,7 +133,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		given:
 		Contract contractDsl = Contract.make {
 			request {
-				method "GET"
+				method GET()
 				url "test"
 			}
 			response {
@@ -621,7 +621,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		given:
 		Contract contractDsl = Contract.make {
 			request {
-				method('POST')
+				method(POST())
 				url("/ws/payments")
 				body("")
 			}
@@ -796,7 +796,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		Contract contractDsl = Contract.make {
 
 			request {
-				method 'PUT'
+				method PUT()
 				url "/partners/${value(consumer(regex('^[0-9]*$')), producer('11'))}/agents/11/customers/09665703Z"
 				headers {
 					contentType(applicationJson())
@@ -829,7 +829,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		Contract contractDsl = Contract.make {
 			priority 1
 			request {
-				method 'POST'
+				method POST()
 				url '/users/password'
 				headers {
 					contentType(applicationJson())

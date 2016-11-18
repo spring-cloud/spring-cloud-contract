@@ -1,6 +1,8 @@
 package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.CompileStatic
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
 /**
  * Contains most commonly used http headers 
@@ -9,6 +11,8 @@ import groovy.transform.CompileStatic
  * @since 1.0.2
  */
 @CompileStatic
+@EqualsAndHashCode
+@ToString(includePackage = false)
 class HttpHeaders {
 
 	/**

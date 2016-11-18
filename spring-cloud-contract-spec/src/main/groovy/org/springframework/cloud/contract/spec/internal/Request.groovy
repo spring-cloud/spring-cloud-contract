@@ -35,6 +35,7 @@ import java.util.regex.Pattern
 class Request extends Common {
 
 	@Delegate ClientPatternValueDslProperty property = new ClientPatternValueDslProperty()
+	@Delegate HttpMethods httpMethods = new HttpMethods()
 
 	DslProperty method
 	Url url
@@ -57,6 +58,10 @@ class Request extends Common {
 
 	void method(String method) {
 		this.method = toDslProperty(method)
+	}
+
+	void method(HttpMethods.HttpMethod httpMethod) {
+		this.method = toDslProperty(httpMethod.toString())
 	}
 
 	void method(DslProperty method) {
