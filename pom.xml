@@ -37,7 +37,6 @@
 
 	<modules>
 		<module>spring-cloud-contract-dependencies</module>
-		<module>docs-extensions</module>
 		<module>docs</module>
 		<module>spring-cloud-contract-wiremock</module>
 		<module>spring-cloud-contract-verifier</module>

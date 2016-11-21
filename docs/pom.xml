@@ -39,9 +39,9 @@
 						<inherited>false</inherited>
 						<dependencies>
 							<dependency>
-								<groupId>org.springframework.cloud</groupId>
-								<artifactId>spring-cloud-contract-docs-extensions</artifactId>
-								<version>${project.version}</version>
+								<groupId>io.spring.asciidoctor</groupId>
+								<artifactId>spring-asciidoctor-extensions</artifactId>
+								<version>0.1.0.BUILD-SNAPSHOT</version>
 							</dependency>
 						</dependencies>
 					</plugin>
