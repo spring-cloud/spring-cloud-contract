@@ -424,6 +424,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#_spring_cloud_contract">Spring Cloud Contract</a></li>
+<li><a href="#_spring_cloud_contract_wiremock">Spring Cloud Contract WireMock</a>
+<ul class="sectlevel2">
+<li><a href="#_registering_stubs_automatically">Registering Stubs Automatically</a></li>
+<li><a href="#_using_files_to_specify_the_stub_bodies">Using Files to Specify the Stub Bodies</a></li>
+<li><a href="#_alternative_using_junit_rules">Alternative: Using JUnit Rules</a></li>
+</ul>
+</li>
+<li><a href="#_wiremock_and_spring_mvc_mocks">WireMock and Spring MVC Mocks</a></li>
+<li><a href="#_generating_stubs_using_restdocs">Generating Stubs using RestDocs</a></li>
 <li><a href="#_spring_cloud_contract_verifier">Spring Cloud Contract Verifier</a>
 <ul class="sectlevel2">
 <li><a href="#_introduction">Introduction</a>
@@ -701,18 +710,31 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 </ul>
 </li>
+<li><a href="#_extending_the_dsl">Extending the DSL</a>
+<ul class="sectlevel3">
+<li><a href="#_common_jar">Common JAR</a></li>
+<li><a href="#_adding_the_dependency_to_project">Adding the dependency to project</a>
+<ul class="sectlevel4">
+<li><a href="#_test_dependency_in_project_s_dependencies">Test dependency in project&#8217;s dependencies</a>
+<ul class="sectlevel5">
+<li><a href="#_adding_test_dependency_in_maven">Adding test dependency in Maven</a></li>
+<li><a href="#_adding_test_dependency_in_gradle">Adding test dependency in Gradle</a></li>
+</ul>
+</li>
+<li><a href="#_test_dependency_in_plugin_s_dependencies">Test dependency in plugin&#8217;s dependencies</a>
+<ul class="sectlevel5">
+<li><a href="#_adding_test_plugin_dependency_in_maven">Adding test plugin dependency in Maven</a></li>
+<li><a href="#_adding_test_plugin_dependency_in_gradle">Adding test plugin dependency in Gradle</a></li>
+</ul>
+</li>
+<li><a href="#_referencing_classes_in_dsls">Referencing classes in DSLs</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a href="#_links">Links</a></li>
 </ul>
 </li>
-<li><a href="#_spring_cloud_contract_wiremock">Spring Cloud Contract WireMock</a>
-<ul class="sectlevel2">
-<li><a href="#_registering_stubs_automatically">Registering Stubs Automatically</a></li>
-<li><a href="#_using_files_to_specify_the_stub_bodies">Using Files to Specify the Stub Bodies</a></li>
-<li><a href="#_alternative_using_junit_rules">Alternative: Using JUnit Rules</a></li>
-</ul>
-</li>
-<li><a href="#_wiremock_and_spring_mvc_mocks">WireMock and Spring MVC Mocks</a></li>
-<li><a href="#_generating_stubs_using_restdocs">Generating Stubs using RestDocs</a></li>
 </ul>
 </div>
 </div>
@@ -720,8 +742,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Documentation Authors: Adam Dudczak, Marcin Grzejszczak, Jakub Kubryński, Karol Lassak,
-Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer, Mathias Düsterhöft</em></p>
+<p><em>Documentation Authors: Adam Dudczak, Mathias Düsterhöft, Marcin Grzejszczak, Jakub Kubryński, Karol Lassak,
+Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer</em></p>
 </div>
 <div class="paragraph">
 <p>1.0.2.BUILD-SNAPSHOT</p>
@@ -736,6 +758,368 @@ Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer, Mathias Düsterhöft</em></p
 This project provides support for Consumer Driven Contracts and service schemas in Spring applications, covering a
 range of options for writing tests, publishing them as assets, asserting that a contract is kept by producers
 and consumers, for HTTP and message-based interactions.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_spring_cloud_contract_wiremock">Spring Cloud Contract WireMock</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Modules giving you the possibility to use
+<a href="http://wiremock.org">WireMock</a> with different servers by using the
+"ambient" server embedded in a Spring Boot application. Check out the
+<a href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples">samples</a>
+for more details.</p>
+</div>
+<div class="paragraph">
+<p>If you have a Spring Boot application that uses Tomcat as an embedded
+server, for example (the default with <code>spring-boot-starter-web</code>), then
+you can simply add <code>spring-cloud-contract-wiremock</code> to your classpath
+and add <code>@AutoConfigureWireMock</code> in order to be able to use Wiremock
+in your tests. Wiremock runs as a stub server and you can register
+stub behaviour using a Java API or via static JSON declarations as
+part of your test. Here&#8217;s a simple example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@AutoConfigureWireMock(port = 0)
+public class WiremockForDocsTests {
+	// A service that calls out over HTTP
+	@Autowired private Service service;
+
+	// Using the WireMock APIs in the normal way:
+	@Test
+	public void contextLoads() throws Exception {
+		// Stubbing WireMock
+		stubFor(get(urlEqualTo("/resource"))
+				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
+		// We're asserting if WireMock responded properly
+		assertThat(this.service.go()).isEqualTo("Hello World!");
+	}
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To start the stub server on a different port use <code>@AutoConfigureWireMock(port=9999)</code> (for example), and for a random port use the value 0. The stub server port will be bindable in the test application context as "wiremock.server.port". Using <code>@AutoConfigureWireMock</code> adds a bean of type <code>WiremockConfiguration</code> to your test application context, where it will be cached in between methods and classes having the same context, just like for normal Spring integration tests.</p>
+</div>
+<div class="sect2">
+<h3 id="_registering_stubs_automatically">Registering Stubs Automatically</h3>
+<div class="paragraph">
+<p>If you use <code>@AutoConfigureWireMock</code> then it will register WireMock
+JSON stubs from the file system or classpath, by default from
+<code>file:src/test/resources/mappings</code>. You can customize the locations
+using the <code>stubs</code> attribute in the annotation, which can be a resource
+pattern (ant-style) or a directory, in which case <code><strong>*/</strong>.json</code> is
+appended. Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureWireMock(stubs="classpath:/stubs")
+public class WiremockImportApplicationTests {
+
+	@Autowired
+	private Service service;
+
+	@Test
+	public void contextLoads() throws Exception {
+		assertThat(this.service.go()).isEqualTo("Hello World!");
+	}
+
+}</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Actually WireMock always loads mappings from
+<code>src/test/resources/mappings</code> <strong>as well as</strong> the custom locations in the
+stubs attribute. To change this behaviour you have to also specify a
+files root as described next.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_using_files_to_specify_the_stub_bodies">Using Files to Specify the Stub Bodies</h3>
+<div class="paragraph">
+<p>WireMock can read response bodies from files on the classpath or file
+system. In that case you will see in the JSON DSL that the response
+has a "bodyFileName" instead of a (literal) "body". The files are
+resolved relative to a root directory <code>src/test/resources/<em>files</code> by
+default. To customize this location you can set the <code>files</code> attribute
+in the <code>@AutoConfigureWireMock</code> annotation to the location of the
+parent directory (i.e. the place where <code></em>files</code> is a
+subdirectory). You can use Spring resource notation to refer to
+<code>file:&#8230;&#8203;</code> or <code>classpath:&#8230;&#8203;</code> locations (but generic URLs are not
+supported). A list of values can be given and WireMock will resolve
+the first file that exists when it needs to find a response body.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+when you configure the <code>files</code> root, then it affects the
+automatic loading of stubs as well (they come from the root location
+in a subdirectory called "mappings"). The value of <code>files</code> has no
+effect on the stubs loaded explicitly from the <code>stubs</code> attribute.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_alternative_using_junit_rules">Alternative: Using JUnit Rules</h3>
+<div class="paragraph">
+<p>For a more conventional WireMock experience, using JUnit <code>@Rules</code> to
+start and stop the server, just use the <code>WireMockSpring</code> convenience
+class to obtain an <code>Options</code> instance:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@AutoConfigureWireMock
+public class WiremockForDocsClassRuleTests {
+
+	// Start WireMock on some dynamic port
+	@ClassRule
+	public static WireMockClassRule wiremock = new WireMockClassRule(
+			WireMockSpring.options().dynamicPort());
+	// A service that calls out over HTTP to localhost:${wiremock.port}
+	@Autowired
+	private Service service;
+
+	// Using the WireMock APIs in the normal way:
+	@Test
+	public void contextLoads() throws Exception {
+		// Stubbing WireMock
+		wiremock.stubFor(get(urlEqualTo("/resource"))
+				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
+		// We're asserting if WireMock responded properly
+		assertThat(this.service.go()).isEqualTo("Hello World!");
+	}
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The use <code>@ClassRule</code> means that the server will shut down after all the methods in this class.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_wiremock_and_spring_mvc_mocks">WireMock and Spring MVC Mocks</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Spring Cloud Contract provides a convenience class that can load JSON WireMock stubs into a
+Spring <code>MockRestServiceServer</code>. Here&#8217;s an example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
+public class WiremockForDocsMockServerApplicationTests {
+
+	@Autowired
+	private RestTemplate restTemplate;
+
+	@Autowired
+	private Service service;
+
+	@Test
+	public void contextLoads() throws Exception {
+		// will read stubs classpath
+		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate)
+				.baseUrl("http://example.org").stubs("classpath:/stubs/resource.json")
+				.build();
+		// We're asserting if WireMock responded properly
+		assertThat(this.service.go()).isEqualTo("Hello World");
+		server.verify();
+	}
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>baseUrl</code> is prepended to all mock calls, and the <code>stubs()</code>
+method takes a stub path resource pattern as an argument. So in this
+example the stub defined at <code>/stubs/resource.json</code> is loaded into the
+mock server, so if the <code>RestTemplate</code> is asked to visit
+<code><a href="http://example.org/" class="bare">http://example.org/</a></code> it will get the responses as declared
+there. More than one stub pattern can be specified, and each one can
+be a directory (for a recursive list of all ".json"), or a fixed
+filename (like in the example above) or an ant-style pattern. The JSON
+format is the normal WireMock format which you can read about in the
+WireMock website.</p>
+</div>
+<div class="paragraph">
+<p>Currently we support Tomcat, Jetty and Undertow as Spring Boot
+embedded servers, and Wiremock itself has "native" support for a
+particular version of Jetty (currently 9.2). To use the native Jetty
+you need to add the native wiremock dependencies and exclude the
+Spring Boot container if there is one.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_generating_stubs_using_restdocs">Generating Stubs using RestDocs</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="https://projects.spring.io/spring-restdocs">Spring RestDocs</a> can be
+used to generate documentation (e.g. in asciidoctor format) for an
+HTTP API with Spring MockMvc or RestEasy. At the same time as you
+generate documentation for your API, you can also generate WireMock
+stubs, by using Spring Cloud Contract WireMock. Just write your normal
+RestDocs test cases and use <code>@AutoConfigureRestDocs</code> to have stubs
+automatically in the restdocs output directory. For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureRestDocs(outputDir = "target/snippets")
+@AutoConfigureMockMvc
+public class ApplicationTests {
+
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Test
+	public void contextLoads() throws Exception {
+		mockMvc.perform(get("/resource"))
+				.andExpect(content().string("Hello World"))
+				.andDo(document("resource"));
+	}
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>From this test will be generated a WireMock stub at
+"target/snippets/stubs/resource.json". It matches all GET requests to
+the "/resource" path.</p>
+</div>
+<div class="paragraph">
+<p>Without any additional configuration this will create a stub with a
+request matcher for the HTTP method and all headers except "host" and
+"content-length". To match the request more precisely, for example to
+match the body of a POST or PUT, we need to explicitly create a
+request matcher. This will do two things: 1) create a stub that only
+matches the way you specify, 2) assert that the request in the test
+case also matches the same conditions.</p>
+</div>
+<div class="paragraph">
+<p>The main entry point for this is <code>WireMockRestDocs.verify()</code> which can
+be used as a substitute for the <code>document()</code> convenience method. For
+example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureRestDocs(outputDir = "target/snippets")
+@AutoConfigureMockMvc
+public class ApplicationTests {
+
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Test
+	public void contextLoads() throws Exception {
+		mockMvc.perform(post("/resource")
+                .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
+				.andExpect(status.isOk())
+				.andDo(verify().jsonPath("$.id")
+                        .stub("resource"));
+	}
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So this contract is saying: any valid POST with an "id" field will get
+back an the same response as in this test. You can chain together
+calls to <code>.jsonPath()</code> to add additional matchers. The
+<a href="https://github.com/jayway/JsonPath">JayWay documentation</a> can help you
+to get up to speed with JSON Path if it is unfamiliar to you.</p>
+</div>
+<div class="paragraph">
+<p>Instead of the <code>jsonPath</code> and <code>contentType</code> convenience methods, you
+can also use the WireMock APIs to verify the request matches the
+created stub. Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@Test
+public void contextLoads() throws Exception {
+	mockMvc.perform(post("/resource")
+               .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
+			.andExpect(status.isOk())
+			.andDo(verify()
+					.wiremock(WireMock.post(
+						urlPathEquals("/resource"))
+						.withRequestBody(matchingJsonPath("$.id"))
+                       .stub("post-resource"));
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The WireMock API is rich - you can match headers, query parameters,
+and request body by regex as well as by json path - so this can useful
+to create stubs with a wider range of parameters. The above example
+will generate a stub something like this:</p>
+</div>
+<div class="listingblock">
+<div class="title">post-resource.json</div>
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "request" : {
+    "url" : "/resource",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$.id"
+    }]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "Hello World",
+    "headers" : {
+      "X-Application-Context" : "application:-1",
+      "Content-Type" : "text/plain"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+You can use either the <code>wiremock()</code> method or the <code>jsonPath()</code>
+and <code>contentType()</code> methods to create request matchers, but not both.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>On the consumer side, assuming the <code>resource.json</code> generated above is
+available on the classpath, you can create a stub using WireMock in a
+number of different ways, including as described above using
+<code>@AutoConfigureWireMock(stubs="classpath:resource.json")</code>.</p>
 </div>
 </div>
 </div>
@@ -1748,7 +2132,7 @@ is under constant development.</p>
 <div class="sect3">
 <h4 id="_samples">Samples</h4>
 <div class="paragraph">
-<p>Here you can find some <a href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/">samples</a>.</p>
+<p>Here you can find some <a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples">samples</a>.</p>
 </div>
 </div>
 </div>
@@ -6332,6 +6716,330 @@ as presented below (note you can use either <code>$</code> or <code>value</code>
 </div>
 </div>
 <div class="sect2">
+<h3 id="_extending_the_dsl">Extending the DSL</h3>
+<div class="paragraph">
+<p>It is possible to provide your own functions to the DSL. The key requirement for this
+feature was to maintain the static compatibility. Below you will be able to see an example
+of:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>creation of a JAR with reusable classes</p>
+</li>
+<li>
+<p>referencing of these classes in the DSLs</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The full example can be found <a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples">here</a>.</p>
+</div>
+<div class="sect3">
+<h4 id="_common_jar">Common JAR</h4>
+<div class="paragraph">
+<p>Below you can find three classes that we will reuse in the DSLs.</p>
+</div>
+<div class="paragraph">
+<p><strong>PatternUtils</strong> contains functions used by both the <strong>consumer</strong> and the <strong>producer</strong>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">package com.example;
+
+import java.util.regex.Pattern;
+
+/**
+ * If you want to use {@link Pattern} directly in your tests
+ * then you can create a class resembling this one. It can
+ * contain all the {@link Pattern} you want to use in the DSL.
+ *
+ * &lt;pre&gt;
+ * {@code
+ * request {
+ *     body(
+ *         [ age: $(c(PatternUtils.oldEnough()))]
+ *     )
+ * }
+ * &lt;/pre&gt;
+ *
+ * Notice that we're using both {@code $()} for dynamic values
+ * and {@code c()} for the consumer side.
+ *
+ * @author Marcin Grzejszczak
+ */
+public class PatternUtils {
+	public static Pattern tooYoung() {
+		return Pattern.compile("[0-1][0-9]");
+	}
+
+	public static Pattern oldEnough() {
+		return Pattern.compile("[2-9][0-9]");
+	}
+
+	public static Pattern anyName() {
+		return Pattern.compile("[a-zA-Z]+");
+	}
+
+	/**
+	 * Makes little sense but it's just an example ;)
+	 */
+	public static Pattern ok() {
+		return Pattern.compile("OK");
+	}
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>ConsumerUtils</strong> contains functions used by the <strong>consumer</strong>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">package com.example;
+
+import org.springframework.cloud.contract.spec.internal.ClientDslProperty;
+import org.springframework.cloud.contract.spec.internal.DslProperty;
+
+/**
+ * DSL Properties passed to the DSL from the consumer's perspective.
+ * That means that on the input side {@code Request} for HTTP
+ * or {@code Input} for messaging you can have a regular expression.
+ * On the {@code Response} for HTTP or {@code Output} for messaging
+ * you have to have a concrete value.
+ *
+ * @author Marcin Grzejszczak
+ */
+public class ConsumerUtils {
+	/**
+	 * Consumer side property. By using the {@link ClientDslProperty}
+	 * you can omit most of boilerplate code from the perspective
+	 * of dynamic values. Example
+	 *
+	 * &lt;pre&gt;
+	 * {@code
+	 * request {
+	 *     body(
+	 *         [ age: $(ConsumerUtils.oldEnough())]
+	 *     )
+	 * }
+	 * &lt;/pre&gt;
+	 *
+	 * That way the consumer side value of age field will be
+	 * a regular expression and the producer side will be generated.
+	 *
+	 * @author Marcin Grzejszczak
+	 */
+	public static ClientDslProperty oldEnough() {
+		return new ClientDslProperty(PatternUtils.oldEnough());
+	}
+
+	/**
+	 * Consumer side property. By using the {@link ClientDslProperty}
+	 * you can omit most of boilerplate code from the perspective
+	 * of dynamic values. Example
+	 *
+	 * &lt;pre&gt;
+	 * {@code
+	 * request {
+	 *     body(
+	 *         [ name: $(ConsumerUtils.anyName())]
+	 *     )
+	 * }
+	 * &lt;/pre&gt;
+	 *
+	 * That way the consumer will be a regular expression and the
+	 * producer side value will be equal to {@code marcin}
+	 */
+	public static DslProperty anyName() {
+		return new DslProperty&lt;&gt;(PatternUtils.anyName(), "marcin");
+	}
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>ProducerUtils</strong> contains functions used by the <strong>producer</strong>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">package com.example;
+
+import org.springframework.cloud.contract.spec.internal.ServerDslProperty;
+
+/**
+ * DSL Properties passed to the DSL from the producer's perspective.
+ * That means that on the input side {@code Request} for HTTP
+ * or {@code Input} for messaging you have to have a concrete value.
+ * On the {@code Response} for HTTP or {@code Output} for messaging
+ * you can have a regular expression.
+ *
+ * @author Marcin Grzejszczak
+ */
+public class ProducerUtils {
+
+	/**
+	 * Producer side property. By using the {@link ProducerUtils}
+	 * you can omit most of boilerplate code from the perspective
+	 * of dynamic values. Example
+	 *
+	 * &lt;pre&gt;
+	 * {@code
+	 * response {
+	 *     body(
+	 *         [ status: $(ProducerUtils.ok())]
+	 *     )
+	 * }
+	 * &lt;/pre&gt;
+	 *
+	 * That way the producer side value of age field will be
+	 * a regular expression and the consumer side will be generated.
+	 */
+	public static ServerDslProperty ok() {
+		return new ServerDslProperty(PatternUtils.ok());
+	}
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_adding_the_dependency_to_project">Adding the dependency to project</h4>
+<div class="paragraph">
+<p>In order for the plugins and IDE to be able to reference the common JAR classes you need
+to pass the dependency to your project.</p>
+</div>
+<div class="sect4">
+<h5 id="_test_dependency_in_project_s_dependencies">Test dependency in project&#8217;s dependencies</h5>
+<div class="paragraph">
+<p>First add the common jar dependency as a test dependency. That way since your
+contracts files are available at test resources path, automatically the
+common jar classes will be visible in your Groovy files.</p>
+</div>
+<div class="sect5">
+<h6 id="_adding_test_dependency_in_maven">Adding test dependency in Maven</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+	&lt;groupId&gt;com.example&lt;/groupId&gt;
+	&lt;artifactId&gt;beer-common&lt;/artifactId&gt;
+	&lt;version&gt;${project.version}&lt;/version&gt;
+	&lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_adding_test_dependency_in_gradle">Adding test dependency in Gradle</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">testCompile("com.example:beer-common:0.0.1-SNAPSHOT")</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_test_dependency_in_plugin_s_dependencies">Test dependency in plugin&#8217;s dependencies</h5>
+<div class="paragraph">
+<p>Now you have to add the dependency for the plugin to reuse at runtime.</p>
+</div>
+<div class="sect5">
+<h6 id="_adding_test_plugin_dependency_in_maven">Adding test plugin dependency in Maven</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
+	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+	&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+	&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+	&lt;extensions&gt;true&lt;/extensions&gt;
+	&lt;configuration&gt;
+		&lt;packageWithBaseClasses&gt;com.example&lt;/packageWithBaseClasses&gt;
+	&lt;/configuration&gt;
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-cloud-contract-verifier&lt;/artifactId&gt;
+			&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;com.example&lt;/groupId&gt;
+			&lt;artifactId&gt;beer-common&lt;/artifactId&gt;
+			&lt;version&gt;${project.version}&lt;/version&gt;
+			&lt;scope&gt;compile&lt;/scope&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_adding_test_plugin_dependency_in_gradle">Adding test plugin dependency in Gradle</h6>
+<div class="paragraph">
+<p>Inside your <code>buildscript {}</code> section pass the following:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">dependencies {
+	classpath "org.springframework.boot:spring-boot-gradle-plugin:1.4.1.RELEASE"
+	classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
+	classpath "com.example:beer-common:0.0.1-SNAPSHOT"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_referencing_classes_in_dsls">Referencing classes in DSLs</h5>
+<div class="paragraph">
+<p>Now you can reference your classes in your DSL. Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">package contracts.beer.rest
+
+import org.springframework.cloud.contract.spec.Contract
+
+import static com.example.ConsumerUtils.oldEnough
+import static com.example.ProducerUtils.ok
+
+Contract.make {
+	request {
+		description("""
+Represents a successful scenario of getting a beer
+
+given:
+	client is old enough
+when:
+	he applies for a beer
+then:
+	we'll grant him the beer
+""")
+		method 'POST'
+		url '/check'
+		body(
+				age: $(oldEnough())
+		)
+		headers {
+			header 'Content-Type', 'application/json'
+		}
+	}
+	response {
+		status 200
+		body("""
+			{
+				"status": "${value(ok())}"
+			}
+			""")
+		headers {
+			header(
+					'Content-Type', value(consumer('application/json'),producer(regex('application/json.*')))
+			)
+		}
+	}
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_links">Links</h3>
 <div class="paragraph">
 <p>Here you can find interesting links related to Spring Cloud Contract Verifier:</p>
@@ -6340,6 +7048,9 @@ as presented below (note you can use either <code>$</code> or <code>value</code>
 <ul>
 <li>
 <p><a href="https://github.com/spring-cloud/spring-cloud-contract/">Spring Cloud Contract Github Repository</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/">Spring Cloud Contract Samples</a></p>
 </li>
 <li>
 <p><a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html">Spring Cloud Contract Documentation</a></p>
@@ -6357,372 +7068,10 @@ as presented below (note you can use either <code>$</code> or <code>value</code>
 <p><a href="https://gitter.im/spring-cloud/spring-cloud-contract">Spring Cloud Contract Gitter</a></p>
 </li>
 <li>
-<p><a href="https://github.com/spring-cloud/spring-cloud-contract">Spring Cloud Contract Maven Plugin</a></p>
+<p><a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/">Spring Cloud Contract Maven Plugin</a></p>
 </li>
 </ul>
 </div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_spring_cloud_contract_wiremock">Spring Cloud Contract WireMock</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Modules giving you the possibility to use
-<a href="http://wiremock.org">WireMock</a> with different servers by using the
-"ambient" server embedded in a Spring Boot application. Check out the
-<a href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples">samples</a>
-for more details.</p>
-</div>
-<div class="paragraph">
-<p>If you have a Spring Boot application that uses Tomcat as an embedded
-server, for example (the default with <code>spring-boot-starter-web</code>), then
-you can simply add <code>spring-cloud-contract-wiremock</code> to your classpath
-and add <code>@AutoConfigureWireMock</code> in order to be able to use Wiremock
-in your tests. Wiremock runs as a stub server and you can register
-stub behaviour using a Java API or via static JSON declarations as
-part of your test. Here&#8217;s a simple example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@AutoConfigureWireMock(port = 0)
-public class WiremockForDocsTests {
-	// A service that calls out over HTTP
-	@Autowired private Service service;
-
-	// Using the WireMock APIs in the normal way:
-	@Test
-	public void contextLoads() throws Exception {
-		// Stubbing WireMock
-		stubFor(get(urlEqualTo("/resource"))
-				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
-		// We're asserting if WireMock responded properly
-		assertThat(this.service.go()).isEqualTo("Hello World!");
-	}
-
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>To start the stub server on a different port use <code>@AutoConfigureWireMock(port=9999)</code> (for example), and for a random port use the value 0. The stub server port will be bindable in the test application context as "wiremock.server.port". Using <code>@AutoConfigureWireMock</code> adds a bean of type <code>WiremockConfiguration</code> to your test application context, where it will be cached in between methods and classes having the same context, just like for normal Spring integration tests.</p>
-</div>
-<div class="sect2">
-<h3 id="_registering_stubs_automatically">Registering Stubs Automatically</h3>
-<div class="paragraph">
-<p>If you use <code>@AutoConfigureWireMock</code> then it will register WireMock
-JSON stubs from the file system or classpath, by default from
-<code>file:src/test/resources/mappings</code>. You can customize the locations
-using the <code>stubs</code> attribute in the annotation, which can be a resource
-pattern (ant-style) or a directory, in which case <code><strong>*/</strong>.json</code> is
-appended. Example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>@RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureWireMock(stubs="classpath:/stubs")
-public class WiremockImportApplicationTests {
-
-	@Autowired
-	private Service service;
-
-	@Test
-	public void contextLoads() throws Exception {
-		assertThat(this.service.go()).isEqualTo("Hello World!");
-	}
-
-}</pre>
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-Actually WireMock always loads mappings from
-<code>src/test/resources/mappings</code> <strong>as well as</strong> the custom locations in the
-stubs attribute. To change this behaviour you have to also specify a
-files root as described next.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_using_files_to_specify_the_stub_bodies">Using Files to Specify the Stub Bodies</h3>
-<div class="paragraph">
-<p>WireMock can read response bodies from files on the classpath or file
-system. In that case you will see in the JSON DSL that the response
-has a "bodyFileName" instead of a (literal) "body". The files are
-resolved relative to a root directory <code>src/test/resources/<em>files</code> by
-default. To customize this location you can set the <code>files</code> attribute
-in the <code>@AutoConfigureWireMock</code> annotation to the location of the
-parent directory (i.e. the place where <code></em>files</code> is a
-subdirectory). You can use Spring resource notation to refer to
-<code>file:&#8230;&#8203;</code> or <code>classpath:&#8230;&#8203;</code> locations (but generic URLs are not
-supported). A list of values can be given and WireMock will resolve
-the first file that exists when it needs to find a response body.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-when you configure the <code>files</code> root, then it affects the
-automatic loading of stubs as well (they come from the root location
-in a subdirectory called "mappings"). The value of <code>files</code> has no
-effect on the stubs loaded explicitly from the <code>stubs</code> attribute.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_alternative_using_junit_rules">Alternative: Using JUnit Rules</h3>
-<div class="paragraph">
-<p>For a more conventional WireMock experience, using JUnit <code>@Rules</code> to
-start and stop the server, just use the <code>WireMockSpring</code> convenience
-class to obtain an <code>Options</code> instance:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@AutoConfigureWireMock
-public class WiremockForDocsClassRuleTests {
-
-	// Start WireMock on some dynamic port
-	@ClassRule
-	public static WireMockClassRule wiremock = new WireMockClassRule(
-			WireMockSpring.options().dynamicPort());
-	// A service that calls out over HTTP to localhost:${wiremock.port}
-	@Autowired
-	private Service service;
-
-	// Using the WireMock APIs in the normal way:
-	@Test
-	public void contextLoads() throws Exception {
-		// Stubbing WireMock
-		wiremock.stubFor(get(urlEqualTo("/resource"))
-				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
-		// We're asserting if WireMock responded properly
-		assertThat(this.service.go()).isEqualTo("Hello World!");
-	}
-
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The use <code>@ClassRule</code> means that the server will shut down after all the methods in this class.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_wiremock_and_spring_mvc_mocks">WireMock and Spring MVC Mocks</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Spring Cloud Contract provides a convenience class that can load JSON WireMock stubs into a
-Spring <code>MockRestServiceServer</code>. Here&#8217;s an example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.NONE)
-public class WiremockForDocsMockServerApplicationTests {
-
-	@Autowired
-	private RestTemplate restTemplate;
-
-	@Autowired
-	private Service service;
-
-	@Test
-	public void contextLoads() throws Exception {
-		// will read stubs classpath
-		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate)
-				.baseUrl("http://example.org").stubs("classpath:/stubs/resource.json")
-				.build();
-		// We're asserting if WireMock responded properly
-		assertThat(this.service.go()).isEqualTo("Hello World");
-		server.verify();
-	}
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The <code>baseUrl</code> is prepended to all mock calls, and the <code>stubs()</code>
-method takes a stub path resource pattern as an argument. So in this
-example the stub defined at <code>/stubs/resource.json</code> is loaded into the
-mock server, so if the <code>RestTemplate</code> is asked to visit
-<code><a href="http://example.org/" class="bare">http://example.org/</a></code> it will get the responses as declared
-there. More than one stub pattern can be specified, and each one can
-be a directory (for a recursive list of all ".json"), or a fixed
-filename (like in the example above) or an ant-style pattern. The JSON
-format is the normal WireMock format which you can read about in the
-WireMock website.</p>
-</div>
-<div class="paragraph">
-<p>Currently we support Tomcat, Jetty and Undertow as Spring Boot
-embedded servers, and Wiremock itself has "native" support for a
-particular version of Jetty (currently 9.2). To use the native Jetty
-you need to add the native wiremock dependencies and exclude the
-Spring Boot container if there is one.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_generating_stubs_using_restdocs">Generating Stubs using RestDocs</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><a href="https://projects.spring.io/spring-restdocs">Spring RestDocs</a> can be
-used to generate documentation (e.g. in asciidoctor format) for an
-HTTP API with Spring MockMvc or RestEasy. At the same time as you
-generate documentation for your API, you can also generate WireMock
-stubs, by using Spring Cloud Contract WireMock. Just write your normal
-RestDocs test cases and use <code>@AutoConfigureRestDocs</code> to have stubs
-automatically in the restdocs output directory. For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureRestDocs(outputDir = "target/snippets")
-@AutoConfigureMockMvc
-public class ApplicationTests {
-
-	@Autowired
-	private MockMvc mockMvc;
-
-	@Test
-	public void contextLoads() throws Exception {
-		mockMvc.perform(get("/resource"))
-				.andExpect(content().string("Hello World"))
-				.andDo(document("resource"));
-	}
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>From this test will be generated a WireMock stub at
-"target/snippets/stubs/resource.json". It matches all GET requests to
-the "/resource" path.</p>
-</div>
-<div class="paragraph">
-<p>Without any additional configuration this will create a stub with a
-request matcher for the HTTP method and all headers except "host" and
-"content-length". To match the request more precisely, for example to
-match the body of a POST or PUT, we need to explicitly create a
-request matcher. This will do two things: 1) create a stub that only
-matches the way you specify, 2) assert that the request in the test
-case also matches the same conditions.</p>
-</div>
-<div class="paragraph">
-<p>The main entry point for this is <code>WireMockRestDocs.verify()</code> which can
-be used as a substitute for the <code>document()</code> convenience method. For
-example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureRestDocs(outputDir = "target/snippets")
-@AutoConfigureMockMvc
-public class ApplicationTests {
-
-	@Autowired
-	private MockMvc mockMvc;
-
-	@Test
-	public void contextLoads() throws Exception {
-		mockMvc.perform(post("/resource")
-                .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
-				.andExpect(status.isOk())
-				.andDo(verify().jsonPath("$.id")
-                        .stub("resource"));
-	}
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>So this contract is saying: any valid POST with an "id" field will get
-back an the same response as in this test. You can chain together
-calls to <code>.jsonPath()</code> to add additional matchers. The
-<a href="https://github.com/jayway/JsonPath">JayWay documentation</a> can help you
-to get up to speed with JSON Path if it is unfamiliar to you.</p>
-</div>
-<div class="paragraph">
-<p>Instead of the <code>jsonPath</code> and <code>contentType</code> convenience methods, you
-can also use the WireMock APIs to verify the request matches the
-created stub. Example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@Test
-public void contextLoads() throws Exception {
-	mockMvc.perform(post("/resource")
-               .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
-			.andExpect(status.isOk())
-			.andDo(verify()
-					.wiremock(WireMock.post(
-						urlPathEquals("/resource"))
-						.withRequestBody(matchingJsonPath("$.id"))
-                       .stub("post-resource"));
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The WireMock API is rich - you can match headers, query parameters,
-and request body by regex as well as by json path - so this can useful
-to create stubs with a wider range of parameters. The above example
-will generate a stub something like this:</p>
-</div>
-<div class="listingblock">
-<div class="title">post-resource.json</div>
-<div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
-  "request" : {
-    "url" : "/resource",
-    "method" : "POST",
-    "bodyPatterns" : [ {
-      "matchesJsonPath" : "$.id"
-    }]
-  },
-  "response" : {
-    "status" : 200,
-    "body" : "Hello World",
-    "headers" : {
-      "X-Application-Context" : "application:-1",
-      "Content-Type" : "text/plain"
-    }
-  }
-}</code></pre>
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-You can use either the <code>wiremock()</code> method or the <code>jsonPath()</code>
-and <code>contentType()</code> methods to create request matchers, but not both.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>On the consumer side, assuming the <code>resource.json</code> generated above is
-available on the classpath, you can create a stub using WireMock in a
-number of different ways, including as described above using
-<code>@AutoConfigureWireMock(stubs="classpath:resource.json")</code>.</p>
 </div>
 </div>
 </div>
