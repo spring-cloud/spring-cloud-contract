@@ -132,15 +132,14 @@ and proper stubbed routes are created.
 
 For more information please consult the Stub Runner Messaging sections.
 
-===== Gradle Setup
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+include::{standalone_messaging_samples_path}/stream-sink/pom.xml[tags=jars,indent=0]
+----
 
-Example of Spring Cloud Contract Verifier Gradle setup:
-
-[source,groovy,indent=0]
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
 ----
 include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/resources/functionalTest/scenarioProject/build.gradle[tags=jar_setup,indent=0]
 ----
-
-===== Maven Setup
-
-Example of Maven can be found in the https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/messaging/stream-sink/pom.xml[Stream Sink sample]

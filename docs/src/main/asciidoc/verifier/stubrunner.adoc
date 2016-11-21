@@ -12,35 +12,42 @@ automatically for you.
 
 Add the additional snapshot repository to your build.gradle to use snapshot versions which are automatically uploaded after every successful build:
 
-[source,groovy,indent=0]
-----
-include::{standalone_samples_path}/http-server/build.gradle[tags=repos,indent=0]
-}
-----
-
-for Maven
-
-[source,xml,indent=0]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
 ----
 include::{standalone_samples_path}/http-server/pom.xml[tags=repos,indent=0]
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
+----
+include::{standalone_samples_path}/http-server/build.gradle[tags=repos,indent=0]
 ----
 
 ==== Publishing stubs as JARs
 
 The easiest approach would be to centralize the way stubs are kept. For example you can keep them as JARs in a Maven repository.
 
-===== Gradle
+TIP: For both Maven and Gradle the setup comes out of the box. But you can customize it if you want to.
 
-Example of Spring Cloud Contract Verifier Gradle setup:
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+<!-- First disable the default jar setup in the properties section-->
+include::{samples_url}/producer_with_restdocs/pom.xml[tags=skip_jar,indent=0]
 
-[source,groovy,indent=0]
+<!-- Next add the assembly plugin to your build -->
+include::{samples_url}/producer_with_restdocs/pom.xml[tags=assembly,indent=0]
+
+<!-- Finally setup your assembly. Below you can find the contents of src/main/assembly/stub.xml -->
+include::{samples_url}/producer_with_restdocs/src/assembly/stub.xml[indent=0]
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
 ----
 include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/resources/functionalTest/scenarioProject/build.gradle[tags=jar_setup,indent=0]
 ----
-
-===== Maven
-
-Example of Maven can be found in the https://github.com/spring-cloud/spring-cloud-contract/[Spring Cloud Contract Verifier README]
 
 ==== Modules
 

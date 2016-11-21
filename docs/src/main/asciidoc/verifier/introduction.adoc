@@ -135,16 +135,14 @@ all the contract are present in the producer's repository
 
 If using the *SNAPSHOT* / *Milestone* / *Release Candidate* versions please add the following section to your
 
-Maven POM
-
-[source,xml,indent=0]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
 ----
 include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=repos,indent=0]
 ----
 
-Gradle build
-
-[source,groovy,indent=0]
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
 ----
 include::{introduction_url}/samples/standalone/dsl/http-server/build.gradle[tags=deps_repos,indent=0]
 ----
@@ -467,26 +465,6 @@ Spring Cloud Contract Verifier and Stub Runner are using the following libraries
 
 Below you can find some resources related to Spring Cloud Contract Verifier and Stub Runner. Note that some can be outdated since the Spring Cloud Contract Verifier project
 is under constant development.
-
-===== Videos
-
-*Marcin Grzejszczak and Jakub Kubryński talking about Spring Cloud Contract Verifier*
-
-video::msRFcQM07-Y[youtube]
-
-https://www.youtube.com/watch?v=msRFcQM07-Y[click here to see the video]
-
-*Olga Maciaszek-Sharma talking about Accurest (Spring Cloud Contract Verifier predecessor)*
-
-video::daafmTYFoDU[youtube]
-
-https://www.youtube.com/watch?v=daafmTYFoDU[click here to see the video]
-
-*Marcin Grzejszczak and Jakub Kubryński talking about Accurest (Spring Cloud Contract Verifier predecessor)*
-
-video::130779882[vimeo]
-
-https://vimeo.com/130779882[click here to see the video]
 
 ===== Readings
 

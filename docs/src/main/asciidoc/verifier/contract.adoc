@@ -1,5 +1,3 @@
-:samples_url: https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master
-
 === Contract DSL
 
 IMPORTANT: Remember that inside the contract file you have to provide the fully qualified name to
@@ -113,6 +111,8 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 //include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=bodyAsXml,indent=0]
 //----
 
+
+
 ==== Response
 
 Minimal response must contain **HTTP status code**.
@@ -135,6 +135,7 @@ either via the `value` method
 [source,groovy,indent=0]
 ----
 value(consumer(...), producer(...))
+value(c(...), p(...))
 value(stub(...), test(...))
 value(client(...), server(...))
 ----
@@ -144,6 +145,7 @@ or if you're using the Groovy map notation for body you can use the `$()` method
 [source,groovy,indent=0]
 ----
 $(consumer(...), producer(...))
+$(c(...), p(...))
 $(stub(...), test(...))
 $(client(...), server(...))
 ----
@@ -364,16 +366,14 @@ First add the common jar dependency as a test dependency. That way since your
 contracts files are available at test resources path, automatically the
 common jar classes will be visible in your Groovy files.
 
-====== Adding test dependency in Maven
-
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
 ----
 include::{samples_url}/producer/pom.xml[tags=test_dep,indent=0]
 ----
 
-====== Adding test dependency in Gradle
-
-[source,xml]
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
 ----
 include::{samples_url}/producer/build.gradle[tags=test_dep,indent=0]
 ----
@@ -382,18 +382,14 @@ include::{samples_url}/producer/build.gradle[tags=test_dep,indent=0]
 
 Now you have to add the dependency for the plugin to reuse at runtime.
 
-====== Adding test plugin dependency in Maven
-
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
 ----
 include::{samples_url}/producer/pom.xml[tags=test_dep_in_plugin,indent=0]
 ----
 
-====== Adding test plugin dependency in Gradle
-
-Inside your `buildscript { dependencies {} }` section pass the following:
-
-[source,groovy]
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
 ----
 include::{samples_url}/producer/build.gradle[tags=test_dep_in_plugin,indent=0]
 ----
