@@ -497,7 +497,7 @@ https://vimeo.com/130779882[click here to see the video]
 
 ==== Samples
 
-Here you can find some https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/[samples].
+Here you can find some https://github.com/spring-cloud-samples/spring-cloud-contract-samples[samples].
 
 === FAQ
 

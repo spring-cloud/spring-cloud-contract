@@ -1,3 +1,5 @@
+:samples_url: https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master
+
 === Contract DSL
 
 IMPORTANT: Remember that inside the contract file you have to provide the fully qualified name to
@@ -313,4 +315,94 @@ as presented below (note you can use either `$` or `value` methods to provide `c
 [source,groovy]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=consumer_producer]
+----
+
+=== Extending the DSL
+
+It is possible to provide your own functions to the DSL. The key requirement for this
+feature was to maintain the static compatibility. Below you will be able to see an example
+of:
+
+- creation of a JAR with reusable classes
+- referencing of these classes in the DSLs
+
+The full example can be found https://github.com/spring-cloud-samples/spring-cloud-contract-samples[here].
+
+==== Common JAR
+
+Below you can find three classes that we will reuse in the DSLs.
+
+*PatternUtils* contains functions used by both the **consumer** and the **producer**.
+
+[source,java]
+----
+include::{samples_url}/common/src/main/java/com/example/PatternUtils.java[]
+----
+
+*ConsumerUtils* contains functions used by the **consumer**.
+
+[source,java]
+----
+include::{samples_url}/common/src/main/java/com/example/ConsumerUtils.java[]
+----
+
+*ProducerUtils* contains functions used by the **producer**.
+
+[source,java]
+----
+include::{samples_url}/common/src/main/java/com/example/ProducerUtils.java[]
+----
+
+==== Adding the dependency to project
+
+In order for the plugins and IDE to be able to reference the common JAR classes you need
+to pass the dependency to your project.
+
+===== Test dependency in project's dependencies
+
+First add the common jar dependency as a test dependency. That way since your
+contracts files are available at test resources path, automatically the
+common jar classes will be visible in your Groovy files.
+
+====== Adding test dependency in Maven
+
+[source,xml]
+----
+include::{samples_url}/producer/pom.xml[tags=test_dep,indent=0]
+----
+
+====== Adding test dependency in Gradle
+
+[source,xml]
+----
+include::{samples_url}/producer/build.gradle[tags=test_dep,indent=0]
+----
+
+===== Test dependency in plugin's dependencies
+
+Now you have to add the dependency for the plugin to reuse at runtime.
+
+====== Adding test plugin dependency in Maven
+
+[source,xml]
+----
+include::{samples_url}/producer/pom.xml[tags=test_dep_in_plugin,indent=0]
+----
+
+====== Adding test plugin dependency in Gradle
+
+Inside your `buildscript { dependencies {} }` section pass the following:
+
+[source,groovy]
+----
+include::{samples_url}/producer/build.gradle[tags=test_dep_in_plugin,indent=0]
+----
+
+===== Referencing classes in DSLs
+
+Now you can reference your classes in your DSL. Example:
+
+[source,groovy]
+----
+include::{samples_url}/producer/src/test/resources/contracts/beer/rest/shouldGrantABeerIfOldEnough.groovy[indent=0]
 ----

@@ -4,8 +4,8 @@
 
 = Spring Cloud Contract
 
-_Documentation Authors: Adam Dudczak, Marcin Grzejszczak, Jakub Kubryński, Karol Lassak,
-Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer, Mathias Düsterhöft_
+_Documentation Authors: Adam Dudczak, Mathias Düsterhöft, Marcin Grzejszczak, Jakub Kubryński, Karol Lassak,
+Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer_
 
 {spring-cloud-version}
 
@@ -16,10 +16,10 @@ This project provides support for Consumer Driven Contracts and service schemas 
 range of options for writing tests, publishing them as assets, asserting that a contract is kept by producers
 and consumers, for HTTP and message-based interactions.
 
-== Spring Cloud Contract Verifier
-
-include::verifier/spring-cloud-contract-verifier.adoc[]
-
 == Spring Cloud Contract WireMock
 
 include::spring-cloud-wiremock.adoc[]
+
+== Spring Cloud Contract Verifier
+
+include::verifier/spring-cloud-contract-verifier.adoc[]
