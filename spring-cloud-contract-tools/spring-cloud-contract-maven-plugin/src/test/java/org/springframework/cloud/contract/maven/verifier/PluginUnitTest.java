@@ -19,8 +19,6 @@ package org.springframework.cloud.contract.maven.verifier;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Assume;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -148,6 +146,7 @@ public class PluginUnitTest {
 		File basedir = this.resources.getBasedir("complex-remote-contracts");
 		this.maven.executeMojo(basedir, "convert", newParameter("contractsRepositoryUrl", "file://" + PluginUnitTest.class.getClassLoader().getResource("m2repo/repository").getFile().replace("/", File.separator)));
 		assertFilesPresent(basedir, "target/stubs/mappings/com/example/server/client1/contracts/shouldMarkClientAsFraud.json");
+		assertFilesNotPresent(basedir, "target/stubs/mappings/com/foo/bar/baz/shouldBeIgnoredByPlugin.json");
 	}
 
 	@Test
@@ -162,6 +161,7 @@ public class PluginUnitTest {
 		File basedir = this.resources.getBasedir("complex-remote-contracts");
 		this.maven.executeMojo(basedir, "generateTests", newParameter("contractsRepositoryUrl", "file://" + PluginUnitTest.class.getClassLoader().getResource("m2repo/repository").getFile().replace("/", File.separator)));
 		assertFilesPresent(basedir, "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/com/example/server/client1/ContractsTest.java");
+		assertFilesNotPresent(basedir, "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/com/foo/bar/BazTest.java");
 	}
 
 	@Test

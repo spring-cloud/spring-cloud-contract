@@ -28,6 +28,7 @@ import org.apache.maven.shared.filtering.MavenResourcesExecution;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 
 class CopyContracts {
 	private static final Logger log = LoggerFactory
@@ -35,17 +36,22 @@ class CopyContracts {
 	private final MavenProject project;
 	private final MavenSession mavenSession;
 	private final MavenResourcesFiltering mavenResourcesFiltering;
+	private final ContractVerifierConfigProperties config;
 
 	public CopyContracts(MavenProject project, MavenSession mavenSession,
-			MavenResourcesFiltering mavenResourcesFiltering) {
+			MavenResourcesFiltering mavenResourcesFiltering,
+			ContractVerifierConfigProperties config) {
 		this.project = project;
 		this.mavenSession = mavenSession;
 		this.mavenResourcesFiltering = mavenResourcesFiltering;
+		this.config = config;
 	}
 
 	public void copy(File contractsDirectory, File outputDirectory)
 			throws MojoExecutionException {
-		log.info("Copying Spring Cloud Contract Verifier contracts");
+		log.info("Copying Spring Cloud Contract Verifier contracts. Only files matching "
+				+ "[" + this.config.getIncludedContracts() + "] pattern will end up in "
+				+ "the final JAR with stubs.");
 		Resource resource = new Resource();
 		resource.setDirectory(contractsDirectory.getAbsolutePath());
 		MavenResourcesExecution execution = new MavenResourcesExecution();

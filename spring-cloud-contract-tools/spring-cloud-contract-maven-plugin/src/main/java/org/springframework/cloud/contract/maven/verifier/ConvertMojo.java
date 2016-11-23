@@ -134,7 +134,7 @@ public class ConvertMojo extends AbstractMojo {
 				this.aetherStubDownloaderFactory, this.repoSession).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 
-		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering)
+		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering, config)
 				.copy(contractsDirectory, this.stubsDirectory);
 
 		config.setContractsDslDir(isInsideProject() ? contractsDirectory : this.source);

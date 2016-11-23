@@ -58,7 +58,8 @@ class TestGenerator {
 		this.saver = saver
 		contractFileScanner = new ContractFileScanner(configProperties.contractsDslDir,
 				configProperties.excludedFiles as Set,
-				configProperties.ignoredFiles as Set)
+				configProperties.ignoredFiles as Set,
+				this.configProperties.includedContracts)
 	}
 
 	int generate() {
