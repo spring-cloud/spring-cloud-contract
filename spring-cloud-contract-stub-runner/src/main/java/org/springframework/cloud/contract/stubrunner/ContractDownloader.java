@@ -53,10 +53,19 @@ public class ContractDownloader {
 
 	public ContractVerifierConfigProperties updatePropertiesWithInclusion(File contractsDirectory,
 			ContractVerifierConfigProperties config) {
-		String pattern = StringUtils.hasText(this.contractsPath) ? patternFromProperty(contractsDirectory) :
-				groupArtifactToPattern(contractsDirectory);
+		String pattern;
+		String includedAntPattern;
+		if (StringUtils.hasText(this.contractsPath)) {
+			pattern = patternFromProperty(contractsDirectory);
+			includedAntPattern = wrapWithAntPattern(contractsPath());
+		} else {
+			pattern = groupArtifactToPattern(contractsDirectory);
+			includedAntPattern = wrapWithAntPattern(slashSeparatedGroupId() + "/" + this.projectArtifactId);
+		}
 		log.info("Pattern to pick contracts equals [" + pattern + "]");
+		log.info("Ant Pattern to pick files equals [" + includedAntPattern + "]");
 		config.setIncludedContracts(pattern);
+		config.setIncludedRootFolderAntPattern(includedAntPattern);
 		return config;
 	}
 
@@ -66,7 +75,17 @@ public class ContractDownloader {
 	}
 
 	private String contractsPath() {
-		return this.contractsPath.startsWith(File.separator) ? this.contractsPath : File.separator + this.contractsPath;
+		return surroundWithSeparator(this.contractsPath);
+	}
+
+	private String surroundWithSeparator(String string) {
+		String path = string.startsWith(File.separator) ? string : File.separator + string;
+		return path.endsWith(File.separator) ? path : path + File.separator;
+	}
+
+	private String wrapWithAntPattern(String path) {
+		String changedPath = path.replace(File.separator, "/");
+		return "**" + surroundWithSeparator(changedPath) + "**/";
 	}
 
 	private File unpackAndDownloadContracts() {
@@ -83,10 +102,14 @@ public class ContractDownloader {
 		return ("^" +
 				contractsDirectory.getAbsolutePath() +
 				File.separator +
-				this.projectGroupId.replace(".", File.separator) +
+				slashSeparatedGroupId() +
 				File.separator +
 				this.projectArtifactId
 				+ File.separator +
 				".*$").replace("\\", "\\\\");
+	}
+
+	private String slashSeparatedGroupId() {
+		return this.projectGroupId.replace(".", File.separator);
 	}
 }

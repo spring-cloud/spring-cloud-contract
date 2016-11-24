@@ -147,6 +147,7 @@ public class PluginUnitTest {
 		this.maven.executeMojo(basedir, "convert", newParameter("contractsRepositoryUrl", "file://" + PluginUnitTest.class.getClassLoader().getResource("m2repo/repository").getFile().replace("/", File.separator)));
 		assertFilesPresent(basedir, "target/stubs/mappings/com/example/server/client1/contracts/shouldMarkClientAsFraud.json");
 		assertFilesNotPresent(basedir, "target/stubs/mappings/com/foo/bar/baz/shouldBeIgnoredByPlugin.json");
+		assertFilesNotPresent(basedir, "target/stubs/contracts/com/foo/bar/baz/shouldBeIgnoredByPlugin.groovy");
 	}
 
 	@Test
@@ -162,6 +163,7 @@ public class PluginUnitTest {
 		this.maven.executeMojo(basedir, "generateTests", newParameter("contractsRepositoryUrl", "file://" + PluginUnitTest.class.getClassLoader().getResource("m2repo/repository").getFile().replace("/", File.separator)));
 		assertFilesPresent(basedir, "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/com/example/server/client1/ContractsTest.java");
 		assertFilesNotPresent(basedir, "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/com/foo/bar/BazTest.java");
+		assertFilesNotPresent(basedir, "target/stubs/contracts/com/foo/bar/baz/shouldBeIgnoredByPlugin.groovy");
 	}
 
 	@Test

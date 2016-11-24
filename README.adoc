@@ -90,10 +90,10 @@ files root as described next.
 WireMock can read response bodies from files on the classpath or file
 system. In that case you will see in the JSON DSL that the response
 has a "bodyFileName" instead of a (literal) "body". The files are
-resolved relative to a root directory `src/test/resources/__files` by
+resolved relative to a root directory `src/test/resources/\__files` by
 default. To customize this location you can set the `files` attribute
 in the `@AutoConfigureWireMock` annotation to the location of the
-parent directory (i.e. the place where `__files` is a
+parent directory (i.e. the place `__files` is a
 subdirectory). You can use Spring resource notation to refer to
 `file:...` or `classpath:...` locations (but generic URLs are not
 supported). A list of values can be given and WireMock will resolve

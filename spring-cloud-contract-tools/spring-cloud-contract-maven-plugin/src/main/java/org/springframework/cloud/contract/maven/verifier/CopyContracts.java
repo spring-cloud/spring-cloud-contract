@@ -53,6 +53,7 @@ class CopyContracts {
 				+ "[" + this.config.getIncludedContracts() + "] pattern will end up in "
 				+ "the final JAR with stubs.");
 		Resource resource = new Resource();
+		resource.addInclude(this.config.getIncludedRootFolderAntPattern() + "*.*");
 		resource.setDirectory(contractsDirectory.getAbsolutePath());
 		MavenResourcesExecution execution = new MavenResourcesExecution();
 		execution.setResources(Collections.singletonList(resource));
@@ -70,6 +71,6 @@ class CopyContracts {
 		catch (MavenFilteringException e) {
 			throw new MojoExecutionException(e.getMessage(), e);
 		}
-
 	}
+
 }

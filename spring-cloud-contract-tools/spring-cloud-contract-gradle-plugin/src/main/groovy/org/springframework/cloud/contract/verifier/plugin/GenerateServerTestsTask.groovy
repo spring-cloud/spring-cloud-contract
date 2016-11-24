@@ -17,13 +17,15 @@
 package org.springframework.cloud.contract.verifier.plugin
 
 import org.gradle.api.GradleException
+import org.gradle.api.Task
 import org.gradle.api.internal.ConventionTask
-import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.springframework.cloud.contract.spec.ContractVerifierException
 import org.springframework.cloud.contract.verifier.TestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+
+import static org.springframework.cloud.contract.verifier.plugin.SpringCloudContractVerifierGradlePlugin.COPY_CONTRACTS_TASK_NAME
 
 /**
  * Task used to generate server side tests
@@ -32,17 +34,22 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
  */
 class GenerateServerTestsTask extends ConventionTask {
 
-	@InputDirectory
-	File contractsDslDir
 	@OutputDirectory
 	File generatedTestSourcesDir
 
 	//TODO: How to deal with @Input*, @Output* and that domain object?
 	ContractVerifierExtension configProperties
+	GradleContractsDownloader downloader
 
 	@TaskAction
 	void generate() {
+		Task copyContractsTask = project.getTasksByName(COPY_CONTRACTS_TASK_NAME, false).first()
+		ContractVerifierConfigProperties props = props(copyContractsTask)
+		File contractsDslDir = contractsDslDir(copyContractsTask, props)
+
 		project.logger.info("Spring Cloud Contract Verifier Plugin: Invoking test sources generation")
+		project.logger.info("Contracts are unpacked to [${contractsDslDir}]")
+		project.logger.info("Included contracts are [${props.includedContracts}]")
 
 		project.sourceSets.test.groovy {
 			project.logger.info("Registering ${getConfigProperties().generatedTestSourcesDir} as test source directory")
@@ -50,14 +57,33 @@ class GenerateServerTestsTask extends ConventionTask {
 		}
 
 		try {
-			//TODO: What with that? How to pass?
-			ContractVerifierConfigProperties props = ExtensionToProperties.fromExtension(getConfigProperties())
-			props.contractsDslDir = getContractsDslDir()
+			props = props ?: ExtensionToProperties.fromExtension(getConfigProperties())
+			props.contractsDslDir = contractsDslDir
 			TestGenerator generator = new TestGenerator(props)
 			int generatedClasses = generator.generate()
 			project.logger.info("Generated {} test classes", generatedClasses)
 		} catch (ContractVerifierException e) {
 			throw new GradleException("Spring Cloud Contract Verifier Plugin exception: ${e.message}", e)
+		}
+	}
+
+	private ContractVerifierConfigProperties props(Task task) {
+		try {
+			return task.ext.contractVerifierConfigProperties
+		} catch (Exception e) {
+			project.logger.error("Couldn't retrieve the configuration property set by the copy contracts task", e)
+			ContractVerifierConfigProperties props = ExtensionToProperties.fromExtension(getConfigProperties())
+			getDownloader().downloadAndUnpackContractsIfRequired(getConfigProperties(), props)
+			return props
+		}
+	}
+
+	private File contractsDslDir(Task task, ContractVerifierConfigProperties props) {
+		try {
+			return task.ext.contractsDslDir
+		} catch (Exception e) {
+			project.logger.error("Couldn't retrieve the contractdsl property set by the copy contracts task", e)
+			return props.contractsDslDir
 		}
 	}
 }

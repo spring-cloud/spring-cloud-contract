@@ -7,6 +7,7 @@ import org.springframework.cloud.contract.stubrunner.AetherStubDownloader
 import org.springframework.cloud.contract.stubrunner.ContractDownloader
 import org.springframework.cloud.contract.stubrunner.StubConfiguration
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.util.StringUtils
 
 import java.util.concurrent.ConcurrentHashMap
@@ -27,18 +28,21 @@ class GradleContractsDownloader {
 		this.log = log
 	}
 	
-	File downloadAndUnpackContractsIfRequired(ContractVerifierExtension extension) {
+	File downloadAndUnpackContractsIfRequired(ContractVerifierExtension extension,
+											  ContractVerifierConfigProperties config) {
 		File defaultContractsDir = extension.contractsDslDir
+		this.log.info("Project has group id [${this.project.group}], artifact id [${this.project.name}]")
 		// download contracts, unzip them and pass as output directory
 		if (shouldDownloadContracts(extension)) {
 			this.log.info("For project [${this.project.name}] Download dependency is provided - will download contract jars")
 			StubConfiguration configuration = stubConfiguration(extension.contractDependency)
-			if (downloadedContract.get(configuration)) {
+			File cachedFolder = downloadedContract.get(configuration)
+			if (cachedFolder) {
 				this.log.info("For project [${this.project.name}] Returning the cached location of the contracts")
-				return downloadedContract.get(configuration)
+				contractDownloader(extension, configuration).updatePropertiesWithInclusion(cachedFolder, config)
+				return cachedFolder
 			}
-			File downloadedContracts = contractDownloader(extension, configuration).unpackedDownloadedContracts(
-					ExtensionToProperties.fromExtension(extension))
+			File downloadedContracts = contractDownloader(extension, configuration).unpackedDownloadedContracts(config)
 			downloadedContract.put(configuration, downloadedContracts)
 			return downloadedContracts
 		}

@@ -110,6 +110,12 @@ class ContractVerifierConfigProperties {
 	String includedContracts = ".*"
 
 	/**
+	 * A ant pattern to match files. Relates to contracts, stubs etc. You can append
+	 * any kind of files you wish e.g {@code $includedRootFolderAntPattern/*.groovy}
+	 */
+	String includedRootFolderAntPattern = "**/"
+
+	/**
 	 * A package that contains all the base clases for generated tests. If your contract resides in a location
 	 * {@code src/test/resources/contracts/com/example/v1/} and you provide the {@code packageWithBaseClasses}
 	 * value to {@code com.example.contracts.base} then we will search for a test source file that will

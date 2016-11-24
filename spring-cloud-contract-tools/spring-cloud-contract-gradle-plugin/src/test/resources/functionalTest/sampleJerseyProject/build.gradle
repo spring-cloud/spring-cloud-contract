@@ -24,7 +24,9 @@ buildscript {
 	}
 }
 
-group = 'org.springframework.cloud.testprojects'
+allprojects {
+	group = 'com.example.jersey'
+}
 
 ext {
 	restAssuredVersion = '2.5.0'

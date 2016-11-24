@@ -16,13 +16,13 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
+import groovy.transform.PackageScope
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.GroovyPlugin
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
-import org.gradle.api.tasks.Copy
 import org.gradle.jvm.tasks.Jar
 /**
  * Gradle plugin for Spring Cloud Contract Verifier that from the DSL contract can
@@ -48,7 +48,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 
 	private static final String GENERATE_SERVER_TESTS_TASK_NAME = 'generateContractTests'
 	private static final String DSL_TO_WIREMOCK_CLIENT_TASK_NAME = 'generateWireMockClientStubs'
-	private static final String COPY_CONTRACTS_TASK_NAME = 'copyContracts'
+	@PackageScope static final String COPY_CONTRACTS_TASK_NAME = 'copyContracts'
 	private static final String VERIFIER_STUBS_JAR_TASK_NAME = 'verifierStubsJar'
 
 	private static final Class IDEA_PLUGIN_CLASS = org.gradle.plugins.ide.idea.IdeaPlugin
@@ -65,11 +65,11 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		GradleContractsDownloader downloader = new GradleContractsDownloader(this.project, this.project.logger)
 		project.check.dependsOn(GENERATE_SERVER_TESTS_TASK_NAME)
 		setConfigurationDefaults(extension)
-		createGenerateTestsTask(downloader, extension)
-		createAndConfigureGenerateWireMockClientStubsFromDslTask(downloader, extension)
 		Task stubsJar = createAndConfigureStubsJarTasks(extension)
-		createAndConfigureCopyContractsTask(stubsJar, downloader, extension)
+		Task copyContracts = createAndConfigureCopyContractsTask(stubsJar, downloader, extension)
 		createAndConfigureMavenPublishPlugin(stubsJar)
+		createGenerateTestsTask(extension, copyContracts)
+		createAndConfigureGenerateWireMockClientStubsFromDslTask(extension, copyContracts)
 		addProjectDependencies(project)
 		addIdeaTestSources(project, extension)
 	}
@@ -107,28 +107,29 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		return project.file("${project.rootDir}/src/test/resources/contracts")
 	}
 
-	private void createGenerateTestsTask(GradleContractsDownloader downloader,
-										 ContractVerifierExtension extension) {
+	private void createGenerateTestsTask(ContractVerifierExtension extension, Task copyContracts) {
 		Task task = project.tasks.create(GENERATE_SERVER_TESTS_TASK_NAME, GenerateServerTestsTask)
 		task.description = "Generate server tests from the contracts"
 		task.group = GROUP_NAME
 		task.conventionMapping.with {
-			contractsDslDir = { downloader.downloadAndUnpackContractsIfRequired(extension) }
+			downloader = { gradleContractsDownloader }
 			generatedTestSourcesDir = { extension.generatedTestSourcesDir }
 			configProperties = { extension }
 		}
+		task.dependsOn copyContracts
 	}
 
-	private void createAndConfigureGenerateWireMockClientStubsFromDslTask(
-			GradleContractsDownloader downloader, ContractVerifierExtension extension) {
+	private void createAndConfigureGenerateWireMockClientStubsFromDslTask(ContractVerifierExtension extension,
+																		  Task copyContracts) {
 		Task task = project.tasks.create(DSL_TO_WIREMOCK_CLIENT_TASK_NAME, GenerateWireMockClientStubsFromDslTask)
 		task.description = "Generate WireMock client stubs from the contracts"
 		task.group = GROUP_NAME
 		task.conventionMapping.with {
-			contractsDslDir = { downloader.downloadAndUnpackContractsIfRequired(extension) }
+			downloader = { gradleContractsDownloader }
 			stubsOutputDir = { extension.stubsOutputDir }
 			configProperties = { extension }
 		}
+		task.dependsOn copyContracts
 	}
 
 	private Task createAndConfigureStubsJarTasks(ContractVerifierExtension extension) {
@@ -161,15 +162,15 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	}
 
 	private Task createAndConfigureCopyContractsTask(Task stubs,
-													GradleContractsDownloader downloader,
-													ContractVerifierExtension extension) {
-		Task task = project.tasks.create(type: Copy, name: COPY_CONTRACTS_TASK_NAME) {
-			from { downloader.downloadAndUnpackContractsIfRequired(extension) }
-			into { extension.stubsOutputDir != null ?
-					project.file("${extension.stubsOutputDir}/contracts") : project.file("${project.buildDir}/stubs/contracts") }
-		}
+													GradleContractsDownloader gradleContractsDownloader,
+													ContractVerifierExtension contractVerifierExtension) {
+		Task task = project.tasks.create(COPY_CONTRACTS_TASK_NAME, ContractsCopyTask)
 		task.description = "Copies contracts to the output folder"
 		task.group = GROUP_NAME
+		task.conventionMapping.with {
+			downloader = { gradleContractsDownloader }
+			extension = { contractVerifierExtension }
+		}
 		stubs.dependsOn task
 		return task
 	}
