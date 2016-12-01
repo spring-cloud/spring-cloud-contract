@@ -17,6 +17,8 @@
 package org.springframework.cloud.contract.stubrunner.spring;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,6 +26,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.contract.stubrunner.AetherStubDownloader;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunnerFactory;
+import org.springframework.cloud.contract.stubrunner.RunningStubs;
+import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubDownloader;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
@@ -31,6 +35,9 @@ import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.io.Resource;
 
 /**
@@ -42,12 +49,16 @@ import org.springframework.core.io.Resource;
 @ConditionalOnMissingBean(type = "org.springframework.cloud.contract.wiremock.WiremockServerConfiguration")
 public class StubRunnerConfiguration {
 
+	private static final String STUBRUNNER_PREFIX = "stubrunner.runningstubs";
+
 	@Autowired(required = false)
 	private MessageVerifier<?> contractVerifierMessaging;
 	@Autowired(required = false)
 	private StubDownloader stubDownloader;
 	@Autowired
 	private StubRunnerProperties props;
+	@Autowired
+	private ConfigurableEnvironment environment;
 
 	/**
 	 * Bean that initializes stub runners, runs them and on shutdown closes them. Upon its
@@ -70,12 +81,26 @@ public class StubRunnerConfiguration {
 				this.contractVerifierMessaging != null ? this.contractVerifierMessaging
 						: new NoOpStubMessages()).buildBatchStubRunner();
 		// TODO: Consider running it in a separate thread
-		batchStubRunner.runStubs();
+		RunningStubs runningStubs = batchStubRunner.runStubs();
+		registerPort(runningStubs);
 		return batchStubRunner;
 	}
 
 	private String uriStringOrEmpty(Resource stubRepositoryRoot) throws IOException {
 		return stubRepositoryRoot != null ? stubRepositoryRoot.getURI().toString() : "";
+	}
+
+	private void registerPort(RunningStubs runStubs) {
+		MutablePropertySources propertySources = this.environment.getPropertySources();
+		if (!propertySources.contains(STUBRUNNER_PREFIX)) {
+			propertySources.addFirst(
+					new MapPropertySource(STUBRUNNER_PREFIX, new HashMap<String, Object>()));
+		}
+		Map<String, Object> source = ((MapPropertySource) propertySources
+				.get(STUBRUNNER_PREFIX)).getSource();
+		for (Map.Entry<StubConfiguration, Integer> entry : runStubs.validNamesAndPorts().entrySet()) {
+			source.put(STUBRUNNER_PREFIX + "." + entry.getKey().getArtifactId() + ".port", entry.getValue());
+		}
 	}
 
 }
