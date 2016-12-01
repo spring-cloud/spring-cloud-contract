@@ -65,7 +65,7 @@ public class StubRunnerRule implements TestRule, StubFinder {
 	}
 
 	private StubRunnerOptions defaultStubRunnerOptions() {
-		final StubRunnerOptionsBuilder builder = new StubRunnerOptionsBuilder()
+		StubRunnerOptionsBuilder builder = new StubRunnerOptionsBuilder()
 				.withMinPort(Integer.valueOf(System.getProperty("stubrunner.port.range.min", "10000")))
 				.withMaxPort(Integer.valueOf(System.getProperty("stubrunner.port.range.max", "15000")))
 				.withStubRepositoryRoot(System.getProperty("stubrunner.repository.root", ""))
@@ -74,12 +74,10 @@ public class StubRunnerRule implements TestRule, StubFinder {
 				.withStubs(System.getProperty("stubrunner.ids", ""))
 				.withUsername(System.getProperty("stubrunner.username"))
 				.withPassword(System.getProperty("stubrunner.password"));
-
-		final String proxyHost = System.getProperty("stubrunner.proxy.host");
+		String proxyHost = System.getProperty("stubrunner.proxy.host");
 		if (proxyHost != null) {
 			builder.withProxy(proxyHost, Integer.parseInt(System.getProperty("stubrunner.proxy.port")));
 		}
-
 		return builder.build();
 	}
 
