@@ -108,15 +108,11 @@ public class AetherStubDownloader implements StubDownloader {
 	}
 
 	private List<RemoteRepository> remoteRepositories(StubRunnerOptions stubRunnerOptions) {
-
 		if (stubRunnerOptions.stubRepositoryRoot == null) {
 			return new ArrayList<>();
 		}
-
 		final String[] repos = stubRunnerOptions.stubRepositoryRoot.split(",");
-
 		final List<RemoteRepository> remoteRepos = new ArrayList<>();
-
 		for (int i = 0; i < repos.length; i++) {
 			if(StringUtils.hasText(repos[i])) {
 				final RemoteRepository.Builder builder = new RemoteRepository.Builder("remote" + i, "default", repos[i])
@@ -124,7 +120,6 @@ public class AetherStubDownloader implements StubDownloader {
 								.addUsername(stubRunnerOptions.username)
 								.addPassword(stubRunnerOptions.password)
 								.build());
-
 				if(stubRunnerOptions.getProxyOptions() != null) {
 					final StubRunnerProxyOptions p = stubRunnerOptions.getProxyOptions();
 					builder.setProxy(new Proxy(null, p.getProxyHost(), p.getProxyPort()));
@@ -133,11 +128,9 @@ public class AetherStubDownloader implements StubDownloader {
 				remoteRepos.add(builder.build());
 			}
 		}
-
 		if (log.isDebugEnabled()) {
 			log.debug("Using the following remote repos " + remoteRepos);
 		}
-
 		return remoteRepos;
 	}
 
