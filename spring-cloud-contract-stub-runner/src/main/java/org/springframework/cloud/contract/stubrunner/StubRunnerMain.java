@@ -87,7 +87,7 @@ public class StubRunnerMain {
 					.withUsername(username)
 					.withPassword(password)
 					.withStubs(stubs);
-			if(proxyHost != null) {
+			if (proxyHost != null) {
 				builder.withProxy(proxyHost, proxyPort);
 			}
 			StubRunnerOptions stubRunnerOptions = builder.build();
