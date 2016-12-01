@@ -138,15 +138,20 @@ public class StubRunnerOptions {
 		public int getProxyPort() {
 			return this.proxyPort;
 		}
+
+		@Override public String toString() {
+			return "StubRunnerProxyOptions{" + "proxyHost='" + this.proxyHost + '\''
+					+ ", proxyPort=" + this.proxyPort + '}';
+		}
 	}
 
-
-	@Override
-	public String toString() {
-		return "StubRunnerOptions [minPortValue=" + this.minPortValue + ", maxPortValue=" + this.maxPortValue
-				+ ", stubRepositoryRoot=" + this.stubRepositoryRoot + ", workOffline=" + this.workOffline
-				+ ", stubsClassifier=" + this.stubsClassifier + ", dependencies=" + this.dependencies
-				+ ", stubIdsToPortMapping=" + this.stubIdsToPortMapping + "]";
+	@Override public String toString() {
+		return "StubRunnerOptions{" + "minPortValue=" + this.minPortValue + ", maxPortValue="
+				+ this.maxPortValue + ", stubRepositoryRoot='" + this.stubRepositoryRoot + '\''
+				+ ", workOffline=" + this.workOffline + ", stubsClassifier='" + this.stubsClassifier
+				+ '\'' + ", dependencies=" + this.dependencies + ", stubIdsToPortMapping="
+				+ this.stubIdsToPortMapping + ", username='" + this.username + '\'' + ", password='"
+				+ this.password + '\'' + ", stubRunnerProxyOptions=" + this.stubRunnerProxyOptions
+				+ '}';
 	}
-
 }
