@@ -38,11 +38,11 @@ public class StubRunnerMain {
 			ArgumentAcceptingOptionSpec<Integer> minPortValueOpt = parser
 					.acceptsAll(Arrays.asList("minp", "minPort"),
 							"Minimum port value to be assigned to the WireMock instance. Defaults to 10000")
-					.withRequiredArg().ofType(Integer.class);
+					.withRequiredArg().ofType(Integer.class).defaultsTo(10000);
 			ArgumentAcceptingOptionSpec<Integer> maxPortValueOpt = parser
 					.acceptsAll(Arrays.asList("maxp", "maxPort"),
 							"Maximum port value to be assigned to the WireMock instance. Defaults to 15000")
-					.withRequiredArg().ofType(Integer.class);
+					.withRequiredArg().ofType(Integer.class).defaultsTo(15000);
 			ArgumentAcceptingOptionSpec<String> stubsOpt = parser
 					.acceptsAll(Arrays.asList("s", "stubs"),
 							"Comma separated list of Ivy representation of jars with stubs. Eg. groupid:artifactid1,groupid2:artifactid2:classifier")
@@ -54,24 +54,19 @@ public class StubRunnerMain {
 			ArgumentAcceptingOptionSpec<String> rootOpt = parser
 					.acceptsAll(Arrays.asList("r", "root"),"Location of a Jar containing server where you keep your stubs (e.g. http://nexus.net/content/repositories/repository)")
 					.withRequiredArg();
-
 			ArgumentAcceptingOptionSpec<String> usernameOpt = parser
 					.acceptsAll(Arrays.asList("u", "username"),"Username to user when connecting to repository")
 					.withOptionalArg();
-
 			ArgumentAcceptingOptionSpec<String> passwordOpt = parser
 					.acceptsAll(Arrays.asList("p", "password"),"Password to user when connecting to repository")
 					.withOptionalArg();
-
 			ArgumentAcceptingOptionSpec<String> proxyHostOpt = parser
 					.acceptsAll(Arrays.asList("phost", "proxyHost"),"Proxy host to use for repository requests")
 					.withOptionalArg();
-
 			ArgumentAcceptingOptionSpec<Integer> proxyPortOpt = parser
 					.acceptsAll(Arrays.asList("pport", "proxyPort"),"Proxy port to use for repository requests")
 					.withOptionalArg()
 					.ofType(Integer.class);
-
 			parser.acceptsAll(Arrays.asList("wo", "workOffline"),
 					"Switch to work offline. Defaults to 'false'");
 			OptionSet options = parser.parse(args);
@@ -81,13 +76,10 @@ public class StubRunnerMain {
 			Integer maxPortValue = options.valueOf(maxPortValueOpt);
 			String stubRepositoryRoot= options.valueOf(rootOpt);
 			String stubsSuffix = options.valueOf(classifierOpt);
-
 			final String username = options.valueOf(usernameOpt);
 			final String password = options.valueOf(passwordOpt);
-
 			final String proxyHost = options.valueOf(proxyHostOpt);
 			final Integer proxyPort = options.valueOf(proxyPortOpt);
-
 			final StubRunnerOptionsBuilder builder = new StubRunnerOptionsBuilder()
 					.withMinMaxPort(minPortValue, maxPortValue)
 					.withStubRepositoryRoot(stubRepositoryRoot)
@@ -95,11 +87,9 @@ public class StubRunnerMain {
 					.withUsername(username)
 					.withPassword(password)
 					.withStubs(stubs);
-
 			if(proxyHost != null) {
 				builder.withProxy(proxyHost, proxyPort);
 			}
-
 			StubRunnerOptions stubRunnerOptions = builder.build();
 			this.arguments = new Arguments(stubRunnerOptions);
 		}

@@ -14,24 +14,35 @@ You can set the following options to the main class:
 
 [source,groovy,indent=0]
 ----
- -maxp (--maxPort) N            : Maximum port value to be assigned to the
-                                  Wiremock instance. Defaults to 15000
-                                  (default: 15000)
- -minp (--minPort) N            : Minimal port value to be assigned to the
-                                  Wiremock instance. Defaults to 10000
-                                  (default: 10000)
- -s (--stubs) VAL               : Comma separated list of Ivy representation of
-                                  jars with stubs. Eg. groupid:artifactid1,group
-                                  id2:artifactid2:version:classifier
- -sr (--stubRepositoryRoot) VAL : Location of a Jar containing server where you
-                                  keep your stubs (e.g. http://nexus.net/content
-                                  /repositories/repository)
- -ss (--stubsSuffix) VAL        : Suffix for the jar containing stubs (e.g.
-                                  'stubs' if the stub jar would have a 'stubs'
-                                  classifier for stubs: foobar-stubs ).
-                                  Defaults to 'stubs' (default: stubs)
- -wo (--workOffline)            : Switch to work offline. Defaults to 'false'
-                                  (default: false)
+-c, --classifier                Suffix for the jar containing stubs (e.
+                                  g. 'stubs' if the stub jar would
+                                  have a 'stubs' classifier for stubs:
+                                  foobar-stubs ). Defaults to 'stubs'
+                                  (default: stubs)
+--maxPort, --maxp <Integer>     Maximum port value to be assigned to
+                                  the WireMock instance. Defaults to
+                                  15000 (default: 15000)
+--minPort, --minp <Integer>     Minimum port value to be assigned to
+                                  the WireMock instance. Defaults to
+                                  10000 (default: 10000)
+-p, --password                  Password to user when connecting to
+                                  repository
+--phost, --proxyHost            Proxy host to use for repository
+                                  requests
+--pport, --proxyPort [Integer]  Proxy port to use for repository
+                                  requests
+-r, --root                      Location of a Jar containing server
+                                  where you keep your stubs (e.g. http:
+                                  //nexus.
+                                  net/content/repositories/repository)
+-s, --stubs                     Comma separated list of Ivy
+                                  representation of jars with stubs.
+                                  Eg. groupid:artifactid1,groupid2:
+                                  artifactid2:classifier
+-u, --username                  Username to user when connecting to
+                                  repository
+--wo, --workOffline             Switch to work offline. Defaults to
+                                  'false'
 ----
 
 ===== HTTP Stubs

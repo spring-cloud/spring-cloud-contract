@@ -72,8 +72,8 @@ public class StubRunnerRule implements TestRule, StubFinder {
 				.withWorkOffline(Boolean.parseBoolean(System.getProperty("stubrunner.work-offline", "false")))
 				.withStubsClassifier(System.getProperty("stubrunner.classifier", "stubs"))
 				.withStubs(System.getProperty("stubrunner.ids", ""))
-				.withUsername(System.getProperty("stubrunner.authentication.username"))
-				.withPassword(System.getProperty("stubrunner.authentication.password"));
+				.withUsername(System.getProperty("stubrunner.username"))
+				.withPassword(System.getProperty("stubrunner.password"));
 
 		final String proxyHost = System.getProperty("stubrunner.proxy.host");
 		if (proxyHost != null) {

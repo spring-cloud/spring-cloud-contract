@@ -47,7 +47,7 @@ class AetherFactories {
 		if (!workOffline) {
 			session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_ALWAYS);
 		}
-		session.setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_FAIL);
+		session.setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_WARN);
 		LocalRepository localRepo = new LocalRepository(localRepositoryDirectory());
 		session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
 		return session;

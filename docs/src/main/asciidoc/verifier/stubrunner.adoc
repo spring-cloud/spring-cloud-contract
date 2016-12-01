@@ -66,6 +66,8 @@ Some of the properties that are repetitive can be set using system properties or
 |stubrunner.classifier|stubs| Default classifier for the stub artifacts
 |stubrunner.workOffline|false| If true then will not contact any remote repositories to download stubs
 |stubrunner.ids|| Array of Ivy notation stubs to download
+|stubrunner.username|| Optional username to access the tool that stores the JARs with stubs
+|stubrunner.password|| Optional password to access the tool that stores the JARs with stubs
 |======================
 
 ===== Stub runner stubs ids
@@ -80,7 +82,7 @@ groupId:artifactId:version:classifier:port
 `version`, `classifier` and `port` are optional.
 
 * If you don't provide the `port` then a random one will be picked
-* If you don't provide the `classifier` then the default one will be taken.
+* If you don't provide the `classifier` then the default one will be taken. (NOTE that you can pass an empty classifier like this `groupId:artifactId:version:`)
 * If you don't provide the `version` then the `+` will be passed and the latest one will be downloaded
 
 Where `port` means the port of the WireMock server.
