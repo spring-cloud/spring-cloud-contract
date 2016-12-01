@@ -4568,6 +4568,7 @@ its methods as presented below:</p>
 class StubRunnerConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
+	@Autowired Environment environment
 
 	@BeforeClass
 	@AfterClass
@@ -4604,6 +4605,15 @@ class StubRunnerConfigurationSpec extends Specification {
 			thrown(StubNotFoundException)
 	}
 
+	def 'should register started servers as environment variables'() {
+		expect:
+			environment.getProperty("stubrunner.runningstubs.loanIssuance.port") != null
+			stubFinder.findAllRunningStubs().getPort("loanIssuance") == (environment.getProperty("stubrunner.runningstubs.loanIssuance.port") as Integer)
+		and:
+			environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") != null
+			stubFinder.findAllRunningStubs().getPort("fraudDetectionServer") == (environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") as Integer)
+	}
+
 	@Configuration
 	@EnableAutoConfiguration
 	static class Config {}
@@ -4635,6 +4645,24 @@ Below you can find an example of achieving the same result by setting values on 
 		"org.springframework.cloud.contract.verifier.stubs:bootService"],
 		repositoryRoot = "classpath:m2repo/repository/")</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Stub Runner Spring registers environment variables in the following manner
+for every registered WireMock server. Example for Stub Runner ids
+ <code>com.example:foo</code>, <code>com.example:bar</code>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>stubrunner.runningstubs.foo.port</code></p>
+</li>
+<li>
+<p><code>stubrunner.runningstubs.bar.port</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Which you can reference in your code.</p>
 </div>
 </div>
 </div>
@@ -7109,7 +7137,7 @@ then:
 				age: $(oldEnough())
 		)
 		headers {
-			header 'Content-Type', 'application/json'
+			contentType(applicationJson())
 		}
 	}
 	response {
@@ -7120,9 +7148,7 @@ then:
 			}
 			""")
 		headers {
-			header(
-					'Content-Type', value(consumer('application/json'),producer(regex('application/json.*')))
-			)
+			contentType(applicationJson())
 		}
 	}
 }</code></pre>
