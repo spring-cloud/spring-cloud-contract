@@ -159,6 +159,15 @@ Below you can find an example of achieving the same result by setting values on 
 include::src/test/groovy/org/springframework/cloud/contract/stubrunner/spring/cloud/StubRunnerSpringCloudAutoConfigurationSpec.groovy[tags=autoconfigure]
 ----
 
+Stub Runner Spring registers environment variables in the following manner
+for every registered WireMock server. Example for Stub Runner ids
+ `com.example:foo`, `com.example:bar`.
+
+- `stubrunner.runningstubs.foo.port`
+- `stubrunner.runningstubs.bar.port`
+
+Which you can reference in your code.
+
 
 === Stub Runner Spring Cloud
 

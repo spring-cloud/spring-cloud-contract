@@ -25,6 +25,7 @@ import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.StubNotFoundException
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.env.Environment
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
@@ -45,6 +46,7 @@ import spock.lang.Specification
 class StubRunnerConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
+	@Autowired Environment environment
 
 	@BeforeClass
 	@AfterClass
@@ -79,6 +81,15 @@ class StubRunnerConfigurationSpec extends Specification {
 			stubFinder.findStubUrl('nonExistingGroupId', 'nonExistingArtifactId')
 		then:
 			thrown(StubNotFoundException)
+	}
+
+	def 'should register started servers as environment variables'() {
+		expect:
+			environment.getProperty("stubrunner.runningstubs.loanIssuance.port") != null
+			stubFinder.findAllRunningStubs().getPort("loanIssuance") == (environment.getProperty("stubrunner.runningstubs.loanIssuance.port") as Integer)
+		and:
+			environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") != null
+			stubFinder.findAllRunningStubs().getPort("fraudDetectionServer") == (environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") as Integer)
 	}
 
 	@Configuration
