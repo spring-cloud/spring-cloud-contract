@@ -73,4 +73,16 @@ class ContractFileScannerSpec extends Specification {
 			contracts.values().find { it.path.fileName.toString().startsWith('02') }.order == 1
 			contracts.values().find { it.path.fileName.toString().startsWith('03') }.order == 2
 	}
+
+	def "should find contract files with converters"() {
+		given:
+			File baseDir = new File(this.getClass().getResource("/directory/with/mixed").toURI())
+			ContractFileScanner scanner = new ContractFileScanner(baseDir, null, null)
+		when:
+			ListMultimap<Path, ContractMetadata> result = scanner.findContracts()
+		then:
+			result.keySet().size() == 1
+			result.entries().find { it.value.convertedContract && it.value.convertedContract.request.method.clientValue == "PUT" }
+			result.entries().find { !it.value.convertedContract && !it.value.ignored }
+	}
 }

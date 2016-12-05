@@ -1,4 +1,4 @@
-package org.springframework.cloud.contract.verifier.dsl
+package org.springframework.cloud.contract.verifier.converter
 
 import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.Contract
@@ -27,23 +27,23 @@ class YamlContractConverter implements ContractConverter<YamlContract> {
 			YamlContract yamlContract = new Yaml().loadAs(new FileInputStream(file), YamlContract.class)
 			return Contract.make {
 				request {
-					method(yamlContract.request.method)
-					url(yamlContract.request.url)
+					method(yamlContract?.request?.method)
+					url(yamlContract?.request?.url)
 					headers {
-						yamlContract.request.headers.each { String key, Object value ->
+						yamlContract?.request?.headers?.each { String key, Object value ->
 							header(key, value)
 						}
 					}
-					body(yamlContract.request.body)
+					body(yamlContract?.request?.body)
 				}
 				response {
-					status(yamlContract.response.status)
+					status(yamlContract?.response?.status)
 					headers {
-						yamlContract.response.headers.each { String key, Object value ->
+						yamlContract?.response?.headers?.each { String key, Object value ->
 							header(key, value)
 						}
 					}
-					body(yamlContract.response.body)
+					body(yamlContract?.response?.body)
 				}
 			}
 		}
@@ -57,15 +57,15 @@ class YamlContractConverter implements ContractConverter<YamlContract> {
 		// TODO: Pick one of the sides - consumer / producer
 		YamlContract yamlContract = new YamlContract()
 		yamlContract.request.with {
-			method = contract.request.method.clientValue
-			url = contract.request.url.clientValue
-			headers = (contract.request.headers as Headers).asStubSideMap()
-			body = contract.request.body.clientValue as Map
+			method = contract?.request?.method?.clientValue
+			url = contract?.request?.url?.clientValue
+			headers = (contract?.request?.headers as Headers)?.asStubSideMap()
+			body = contract?.request?.body?.clientValue as Map
 		}
 		yamlContract.response.with {
-			status = contract.response.status.clientValue as Integer
-			headers = (contract.response.headers as Headers).asStubSideMap()
-			body = contract.response.body.clientValue as Map
+			status = contract?.response?.status?.clientValue as Integer
+			headers = (contract?.response?.headers as Headers)?.asStubSideMap()
+			body = contract?.response?.body?.clientValue as Map
 		}
 		return yamlContract
 	}
