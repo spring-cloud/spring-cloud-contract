@@ -4303,24 +4303,35 @@ For messaging, special stub routes are defined.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">-maxp (--maxPort) N            : Maximum port value to be assigned to the
-                                 Wiremock instance. Defaults to 15000
-                                 (default: 15000)
--minp (--minPort) N            : Minimal port value to be assigned to the
-                                 Wiremock instance. Defaults to 10000
-                                 (default: 10000)
--s (--stubs) VAL               : Comma separated list of Ivy representation of
-                                 jars with stubs. Eg. groupid:artifactid1,group
-                                 id2:artifactid2:version:classifier
--sr (--stubRepositoryRoot) VAL : Location of a Jar containing server where you
-                                 keep your stubs (e.g. http://nexus.net/content
-                                 /repositories/repository)
--ss (--stubsSuffix) VAL        : Suffix for the jar containing stubs (e.g.
-                                 'stubs' if the stub jar would have a 'stubs'
-                                 classifier for stubs: foobar-stubs ).
-                                 Defaults to 'stubs' (default: stubs)
--wo (--workOffline)            : Switch to work offline. Defaults to 'false'
-                                 (default: false)</code></pre>
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">-c, --classifier                Suffix for the jar containing stubs (e.
+                                  g. 'stubs' if the stub jar would
+                                  have a 'stubs' classifier for stubs:
+                                  foobar-stubs ). Defaults to 'stubs'
+                                  (default: stubs)
+--maxPort, --maxp &lt;Integer&gt;     Maximum port value to be assigned to
+                                  the WireMock instance. Defaults to
+                                  15000 (default: 15000)
+--minPort, --minp &lt;Integer&gt;     Minimum port value to be assigned to
+                                  the WireMock instance. Defaults to
+                                  10000 (default: 10000)
+-p, --password                  Password to user when connecting to
+                                  repository
+--phost, --proxyHost            Proxy host to use for repository
+                                  requests
+--pport, --proxyPort [Integer]  Proxy port to use for repository
+                                  requests
+-r, --root                      Location of a Jar containing server
+                                  where you keep your stubs (e.g. http:
+                                  //nexus.
+                                  net/content/repositories/repository)
+-s, --stubs                     Comma separated list of Ivy
+                                  representation of jars with stubs.
+                                  Eg. groupid:artifactid1,groupid2:
+                                  artifactid2:classifier
+-u, --username                  Username to user when connecting to
+                                  repository
+--wo, --workOffline             Switch to work offline. Defaults to
+                                  'false'</code></pre>
 </div>
 </div>
 </div>
@@ -5013,6 +5024,16 @@ the Stub Runner Boot.</p>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Array of Ivy notation stubs to download</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">stubrunner.username</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional username to access the tool that stores the JARs with stubs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">stubrunner.password</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional password to access the tool that stores the JARs with stubs</p></td>
+</tr>
 </tbody>
 </table>
 <div class="sect4">
@@ -5034,7 +5055,7 @@ the Stub Runner Boot.</p>
 <p>If you don&#8217;t provide the <code>port</code> then a random one will be picked</p>
 </li>
 <li>
-<p>If you don&#8217;t provide the <code>classifier</code> then the default one will be taken.</p>
+<p>If you don&#8217;t provide the <code>classifier</code> then the default one will be taken. (NOTE that you can pass an empty classifier like this <code>groupId:artifactId:version:</code>)</p>
 </li>
 <li>
 <p>If you don&#8217;t provide the <code>version</code> then the <code>+</code> will be passed and the latest one will be downloaded</p>
