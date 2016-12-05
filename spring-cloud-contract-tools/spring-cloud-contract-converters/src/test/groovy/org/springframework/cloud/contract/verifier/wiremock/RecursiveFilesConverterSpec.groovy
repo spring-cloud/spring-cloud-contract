@@ -17,8 +17,8 @@
 package org.springframework.cloud.contract.verifier.wiremock
 
 import groovy.io.FileType
+import org.springframework.cloud.contract.verifier.converter.SingleFileConvertersHolder
 
-import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -100,7 +100,7 @@ class RecursiveFilesConverterSpec extends Specification {
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.contractsDslDir = tmpFolder.root
 			properties.stubsOutputDir = tmpFolder.root
-			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(singleFileConverterStub, properties)
+			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(properties, new SingleFileConvertersHolder([singleFileConverterStub]))
 		when:
 			recursiveFilesConverter.processFiles()
 		then:

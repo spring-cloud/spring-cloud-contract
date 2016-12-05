@@ -29,10 +29,26 @@ import java.nio.file.Path
  */
 @CompileStatic
 class ContractMetadata {
+	/**
+	 * Path to the file
+	 */
 	final Path path
+	/**
+	 * Should the contract be ignored
+	 */
 	final boolean ignored
+	/**
+	 * How many files are there in the folder
+	 */
 	final int groupSize
+	/**
+	 * If scenario related will
+	 */
 	final Integer order
+	/**
+	 * When we have already converted a contract via a converter this
+	 * field will be set
+	 */
 	final Contract convertedContract
 
 	ContractMetadata(Path path, boolean ignored, int groupSize, Integer order, Contract convertedContract = null) {

@@ -32,7 +32,6 @@ import org.apache.maven.shared.filtering.MavenResourcesFiltering;
 import org.eclipse.aether.RepositorySystemSession;
 import org.springframework.cloud.contract.maven.verifier.stubrunner.AetherStubDownloaderFactory;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
-import org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverter;
 import org.springframework.cloud.contract.verifier.wiremock.RecursiveFilesConverter;
 
 /**
@@ -150,8 +149,7 @@ public class ConvertMojo extends AbstractMojo {
 				config.getStubsOutputDir()));
 
 
-		RecursiveFilesConverter converter = new RecursiveFilesConverter(
-				new DslToWireMockClientConverter(), config);
+		RecursiveFilesConverter converter = new RecursiveFilesConverter(config);
 		converter.processFiles();
 	}
 

@@ -1,0 +1,3 @@
+# Stub converters
+org.springframework.cloud.contract.verifier.converter.SingleFileConverter=\
+org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverter

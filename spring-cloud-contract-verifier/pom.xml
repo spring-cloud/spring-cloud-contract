@@ -48,7 +48,8 @@
 		<dependency>
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
-			<scope>optional</scope>
+			<!-- TODO: If I make this optional Groovy can't compile -->
+			<!--<scope>optional</scope>-->
 		</dependency>
 		<dependency>
 			<groupId>javax.inject</groupId>
