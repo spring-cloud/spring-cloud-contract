@@ -82,7 +82,7 @@ class ContractFileScanner {
 		files.sort().eachWithIndex { File file, int index ->
 			boolean excluded = matchesPattern(file, excludeMatchers)
 			if (!excluded) {
-				boolean contractFile = isContractFile(file);
+				boolean contractFile = isContractFile(file)
 				boolean included = includeMatcher ? file.absolutePath.matches(includeMatcher) : true
 				if (contractFile && included) {
 					Path path = file.toPath()
