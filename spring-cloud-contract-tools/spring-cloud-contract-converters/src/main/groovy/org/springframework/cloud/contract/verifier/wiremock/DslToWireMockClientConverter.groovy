@@ -33,7 +33,8 @@ class DslToWireMockClientConverter extends DslToWireMockConverter {
 	@Override
 	String convertContent(String rootName, ContractMetadata contract) {
 		return new WireMockStubStrategy(rootName, contract,
-				contract.convertedContract ?: createGroovyDSLFromStringContent(contract.path.getText(StandardCharsets.UTF_8.toString()))
+				contract.convertedContract ?: createGroovyDSLFromStringContent(
+						contract.path.getText(StandardCharsets.UTF_8.toString()))
 		).toWireMockClientStub()
 	}
 }
