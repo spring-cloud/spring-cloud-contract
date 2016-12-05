@@ -36,7 +36,15 @@ abstract class DslToWireMockConverter implements SingleFileConverter {
 
 	@Override
 	String generateOutputFileNameForInput(String inputFileName) {
-		return inputFileName.replaceAll('.groovy', '.json')
+		return inputFileName.replaceAll(extension(inputFileName), 'json')
+	}
+
+	private String extension(String inputFileName) {
+		int i = inputFileName.lastIndexOf('.')
+		if (i > 0) {
+			return inputFileName.substring(i + 1)
+		}
+		return ""
 	}
 
 	protected Contract createGroovyDSLFromStringContent(String groovyDslAsString) {
