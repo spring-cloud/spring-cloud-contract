@@ -56,7 +56,6 @@ class RecursiveFilesConverter {
 		this.holder = holder ?: new SingleFileConvertersHolder()
 	}
 
-
 	@Deprecated
 	RecursiveFilesConverter(SingleFileConverter singleFileConverter, ContractVerifierConfigProperties properties) {
 		this.properties = properties
@@ -83,7 +82,7 @@ class RecursiveFilesConverter {
 				File sourceFile = contract.path.toFile()
 				SingleFileConverter singleFileConverter = holder.converterForName(sourceFile.name);
 				try {
-					if (!contract.convertedContract && !singleFileConverter.canHandleFileName(sourceFile.name)) {
+					if (!contract.convertedContract && !singleFileConverter) {
 						return
 					}
 					String convertedContent = singleFileConverter.convertContent(entry.key.last().toString(), contract)

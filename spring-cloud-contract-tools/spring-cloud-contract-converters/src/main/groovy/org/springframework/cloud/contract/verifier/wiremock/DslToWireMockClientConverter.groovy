@@ -21,6 +21,7 @@ import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubStra
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 
 import java.nio.charset.StandardCharsets
+
 /**
  * Converts DSLs to WireMock stubs
  *
@@ -31,8 +32,8 @@ class DslToWireMockClientConverter extends DslToWireMockConverter {
 
 	@Override
 	String convertContent(String rootName, ContractMetadata contract) {
-		String dslContent = contract.path.getText(StandardCharsets.UTF_8.toString())
 		return new WireMockStubStrategy(rootName, contract,
-				createGroovyDSLFromStringContent(dslContent)).toWireMockClientStub()
+				contract.convertedContract ?: createGroovyDSLFromStringContent(contract.path.getText(StandardCharsets.UTF_8.toString()))
+		).toWireMockClientStub()
 	}
 }
