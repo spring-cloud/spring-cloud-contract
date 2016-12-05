@@ -319,7 +319,9 @@ as presented below (note you can use either `$` or `value` methods to provide `c
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=consumer_producer]
 ----
 
-=== Extending the DSL
+=== Cutomization
+
+==== Extending the DSL
 
 It is possible to provide your own functions to the DSL. The key requirement for this
 feature was to maintain the static compatibility. Below you will be able to see an example
@@ -330,7 +332,7 @@ of:
 
 The full example can be found https://github.com/spring-cloud-samples/spring-cloud-contract-samples[here].
 
-==== Common JAR
+===== Common JAR
 
 Below you can find three classes that we will reuse in the DSLs.
 
@@ -355,12 +357,12 @@ include::{samples_url}/common/src/main/java/com/example/ConsumerUtils.java[]
 include::{samples_url}/common/src/main/java/com/example/ProducerUtils.java[]
 ----
 
-==== Adding the dependency to project
+===== Adding the dependency to project
 
 In order for the plugins and IDE to be able to reference the common JAR classes you need
 to pass the dependency to your project.
 
-===== Test dependency in project's dependencies
+====== Test dependency in project's dependencies
 
 First add the common jar dependency as a test dependency. That way since your
 contracts files are available at test resources path, automatically the
@@ -378,7 +380,7 @@ include::{samples_url}/producer/pom.xml[tags=test_dep,indent=0]
 include::{samples_url}/producer/build.gradle[tags=test_dep,indent=0]
 ----
 
-===== Test dependency in plugin's dependencies
+====== Test dependency in plugin's dependencies
 
 Now you have to add the dependency for the plugin to reuse at runtime.
 
@@ -394,7 +396,7 @@ include::{samples_url}/producer/pom.xml[tags=test_dep_in_plugin,indent=0]
 include::{samples_url}/producer/build.gradle[tags=test_dep_in_plugin,indent=0]
 ----
 
-===== Referencing classes in DSLs
+====== Referencing classes in DSLs
 
 Now you can reference your classes in your DSL. Example:
 
@@ -402,3 +404,91 @@ Now you can reference your classes in your DSL. Example:
 ----
 include::{samples_url}/producer/src/test/resources/contracts/beer/rest/shouldGrantABeerIfOldEnough.groovy[indent=0]
 ----
+
+=== Pluggable architecture
+
+There are cases where you have your contracts defined in other formats
+like YAML, RAML or PACT. On the other hand you'd like to profit from
+the test and stubs generation. It's really easy to add your own implementation
+of either of those. Also you can customize the way tests are generated (for example you can generate
+tests for other languages) and you can do the same for stubs generation (you can generate
+stubs for other stub http server implementations).
+
+==== Custom contract converter
+
+Let's assume that your contract is written in a YAML file like this:
+
+[source,yml]
+----
+include::{verifier_core_path}/src/test/resources/contract.yml[indent=0]
+----
+
+Thanks to the interface
+
+[source,groovy]
+----
+include::{contract_spec_path}/src/main/groovy/org/springframework/cloud/contract/spec/ContractConverter.groovy[indent=0]
+----
+
+you can register your own implementation of a contract structure converter.
+Your implementation needs to state the condition on which it should start the
+conversion. Also you have to define how to perform that conversion in both ways.
+
+IMPORTANT: Once you create your implementation you have to create a `/META-INF/spring.factories`
+file in which you provide the fully qualified name of your implementation.
+
+Example of a `spring.factories` file
+
+[source]
+----
+include::{verifier_core_path}/src/main/resources/META-INF/spring.factories[indent=0]
+----
+
+and the YAML implementation
+
+[source,groovy]
+----
+include::{verifier_core_path}/src/main/groovy/org/springframework/cloud/contract/verifier/converter/YamlContractConverter.groovy[indent=0]
+----
+
+==== Custom test generator
+
+If you want to generate tests for different languages than Java or you're
+not happy with the way we're building Java tests for you then you can register
+your own implementation to do that.
+
+Thanks to the interface
+
+[source,groovy]
+----
+include::{verifier_core_path}/src/main/groovy/org/springframework/cloud/contract/verifier/builder/SingleTestGenerator.groovy[indent=0]
+----
+
+you can register your own implementation that generates a test. Again, it's enough to provide
+a proper `spring.factories` file. Example:
+
+[source]
+----
+org.springframework.cloud.contract.verifier.builder.SingleTestGenerator=/
+com.example.MyGenerator
+----
+
+==== Custom stub generator
+
+If you want to generate stubs for other stub server than WireMock it's enough to
+ plug in your own implementation of this interface:
+
+[source,groovy]
+----
+include::{converters_path}/src/main/groovy/org/springframework/cloud/contract/verifier/converter/SingleFileConverter.groovy[indent=0]
+----
+
+you can register your own implementation that generate Stubs. Again, it's enough to provide
+a proper `spring.factories` file. Example:
+
+[source]
+----
+include::{converters_path}/src/main/resources/META-INF/spring.factories[indent=0]
+----
+
+The default implementation is the WireMock stub generation.

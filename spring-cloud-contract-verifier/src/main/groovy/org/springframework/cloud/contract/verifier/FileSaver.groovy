@@ -42,7 +42,6 @@ class FileSaver {
 	}
 
 	void saveClassFile(String fileName, String basePackageClass, String includedDirectoryRelativePath, byte[] classBytes) {
-
 		Path testBaseDir = Paths.get(targetDirectory.absolutePath, packageToDirectory(basePackageClass),
 				beforeLast(includedDirectoryRelativePath, File.separator))
 		Files.createDirectories(testBaseDir)

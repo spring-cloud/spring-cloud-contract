@@ -20,10 +20,12 @@ import com.google.common.collect.ListMultimap
 import groovy.transform.PackageScope
 import org.apache.commons.lang3.StringUtils
 import org.springframework.cloud.contract.spec.ContractVerifierException
+import org.springframework.cloud.contract.verifier.builder.JavaTestGenerator
 import org.springframework.cloud.contract.verifier.builder.SingleTestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.file.ContractFileScanner
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
+import org.springframework.core.io.support.SpringFactoriesLoader
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
@@ -45,8 +47,16 @@ class TestGenerator {
 	private ContractFileScanner contractFileScanner
 
 	TestGenerator(ContractVerifierConfigProperties configProperties) {
-		this(configProperties, new SingleTestGenerator(configProperties),
+		this(configProperties, singleTestGenerator(),
 				new FileSaver(configProperties.generatedTestSourcesDir, configProperties.targetFramework))
+	}
+
+	private static SingleTestGenerator singleTestGenerator() {
+		List<SingleTestGenerator> factories = SpringFactoriesLoader.loadFactories(SingleTestGenerator, null)
+		if (factories.empty) {
+			return new JavaTestGenerator()
+		}
+		return factories.first()
 	}
 
 	TestGenerator(ContractVerifierConfigProperties configProperties, SingleTestGenerator generator, FileSaver saver) {
@@ -88,7 +98,7 @@ class TestGenerator {
 		if (contracts.size()) {
 			def className = afterLast(includedDirectoryRelativePath.toString(), File.separator) + resolveNameSuffix()
 			def packageName = buildPackage(basePackageNameForClass, includedDirectoryRelativePath)
-			def classBytes = generator.buildClass(contracts, className, packageName, includedDirectoryRelativePath).getBytes(StandardCharsets.UTF_8)
+			def classBytes = generator.buildClass(configProperties, contracts, className, packageName, includedDirectoryRelativePath).getBytes(StandardCharsets.UTF_8)
 			saver.saveClassFile(className, basePackageNameForClass, convertIllegalPackageChars(includedDirectoryRelativePath.toString()), classBytes)
 			counter.incrementAndGet()
 		}

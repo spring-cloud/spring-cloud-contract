@@ -23,6 +23,7 @@ import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.SystemUtils
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
+import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 import org.springframework.core.io.support.SpringFactoriesLoader
 
 import java.nio.file.FileSystem
@@ -93,7 +94,7 @@ class ContractFileScanner {
 				boolean contractFile = isContractFile(file)
 				boolean included = includeMatcher ? file.absolutePath.matches(includeMatcher) : true
 				if (contractFile && included) {
-					addContractToTestGeneration(result, files, file, index)
+					addContractToTestGeneration(result, files, file, index, ContractVerifierDslConverter.convert(file))
 				} else if (!contractFile && included) {
 					addContractToTestGeneration(converters, result, files, file, index)
 				} else {
@@ -129,7 +130,7 @@ class ContractFileScanner {
 	}
 
 	private void addContractToTestGeneration(ListMultimap<Path, ContractMetadata> result, File[] files, File file,
-											int index, Contract convertedContract = null) {
+											int index, Contract convertedContract) {
 		Path path = file.toPath()
 		Integer order = null
 		if (hasScenarioFilenamePattern(path)) {
