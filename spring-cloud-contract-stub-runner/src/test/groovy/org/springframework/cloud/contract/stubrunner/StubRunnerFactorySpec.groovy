@@ -42,8 +42,8 @@ class StubRunnerFactorySpec extends Specification {
 	def "Should download stub definitions many times"() {
 		given:
 		folder.newFolder("mappings")
-		1 * downloader.downloadAndUnpackStubJar(_, _) >> new AbstractMap.SimpleEntry(new StubConfiguration('a:b'), folder.root)
-		1 * downloader.downloadAndUnpackStubJar(_, _) >> new AbstractMap.SimpleEntry(new StubConfiguration('c:d'), folder.root)
+		1 * downloader.downloadAndUnpackStubJar(_) >> new AbstractMap.SimpleEntry(new StubConfiguration('a:b'), folder.root)
+		1 * downloader.downloadAndUnpackStubJar(_) >> new AbstractMap.SimpleEntry(new StubConfiguration('c:d'), folder.root)
 		when:
 		Collection<StubRunner> stubRunners = collectOnlyPresentValues(factory.createStubsFromServiceConfiguration())
 		then:

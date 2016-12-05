@@ -57,7 +57,7 @@ class StubRunnerFactory {
 		Collection<StubRunner> result = new ArrayList<>();
 		for (StubConfiguration stubsConfiguration : this.stubRunnerOptions.getDependencies()) {
 			Map.Entry<StubConfiguration, File> entry = this.stubDownloader
-					.downloadAndUnpackStubJar(this.stubRunnerOptions, stubsConfiguration);
+					.downloadAndUnpackStubJar(stubsConfiguration);
 			if (log.isDebugEnabled()) {
 				log.debug("For stub configuration [" + stubsConfiguration + "] the downloaded entry is [" + entry + "]");
 			}

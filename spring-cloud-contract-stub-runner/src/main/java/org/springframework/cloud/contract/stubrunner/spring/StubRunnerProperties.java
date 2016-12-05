@@ -65,6 +65,26 @@ public class StubRunnerProperties {
 	 */
 	private String contextPath = "";
 
+	/**
+	 * Repository username
+	 */
+	private String username;
+
+	/**
+	 * Repository password
+	 */
+	private String password;
+
+	/**
+	 * Repository proxy port
+	 */
+	private Integer proxyPort;
+
+	/**
+	 * Repository proxy host
+	 */
+	private String proxyHost;
+
 	public int getMinPort() {
 		return this.minPort;
 	}
@@ -95,6 +115,38 @@ public class StubRunnerProperties {
 
 	public void setRepositoryRoot(String repositoryRoot) {
 		this.repositoryRoot = new DefaultResourceLoader().getResource(repositoryRoot);
+	}
+
+	public String getUsername() {
+		return this.username;
+	}
+
+	public void setUsername(final String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return this.password;
+	}
+
+	public void setPassword(final String password) {
+		this.password = password;
+	}
+
+	public Integer getProxyPort() {
+		return this.proxyPort;
+	}
+
+	public void setProxyPort(final Integer proxyPort) {
+		this.proxyPort = proxyPort;
+	}
+
+	public String getProxyHost() {
+		return this.proxyHost;
+	}
+
+	public void setProxyHost(final String proxyHost) {
+		this.proxyHost = proxyHost;
 	}
 
 	public String[] getIds() {

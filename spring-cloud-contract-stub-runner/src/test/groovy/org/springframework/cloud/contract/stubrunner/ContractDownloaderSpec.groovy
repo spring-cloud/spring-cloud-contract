@@ -19,7 +19,7 @@ class ContractDownloaderSpec extends Specification {
 					stubConfiguration, contractPath, '', '')
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 		and:
-			stubDownloader.downloadAndUnpackStubJar(_, _) >> new AbstractMap.SimpleEntry(stubConfiguration, file)
+			stubDownloader.downloadAndUnpackStubJar(_) >> new AbstractMap.SimpleEntry(stubConfiguration, file)
 		when:
 			contractDownloader.unpackedDownloadedContracts(properties)
 		then:
@@ -35,7 +35,7 @@ class ContractDownloaderSpec extends Specification {
 					stubConfiguration, contractPath, '', '')
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 		and:
-			stubDownloader.downloadAndUnpackStubJar(_, _) >> new AbstractMap.SimpleEntry(stubConfiguration, file)
+			stubDownloader.downloadAndUnpackStubJar(_) >> new AbstractMap.SimpleEntry(stubConfiguration, file)
 		when:
 			contractDownloader.unpackedDownloadedContracts(properties)
 		then:

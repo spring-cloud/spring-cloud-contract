@@ -16,15 +16,15 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
+import org.springframework.cloud.contract.stubrunner.util.StubsParser;
+import org.springframework.util.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.cloud.contract.stubrunner.util.StubsParser;
-import org.springframework.util.StringUtils;
 
 public class StubRunnerOptionsBuilder {
 
@@ -37,6 +37,9 @@ public class StubRunnerOptionsBuilder {
 	private String stubRepositoryRoot;
 	private boolean workOffline = false;
 	private String stubsClassifier = "stubs";
+	private String username;
+	private String password;
+	private StubRunnerOptions.StubRunnerProxyOptions stubRunnerProxyOptions;
 
 	public StubRunnerOptionsBuilder() {
 	}
@@ -57,8 +60,7 @@ public class StubRunnerOptionsBuilder {
 		return this;
 	}
 
-	public StubRunnerOptionsBuilder withMinMaxPort(Integer minPortValue,
-			Integer maxPortValue) {
+	public StubRunnerOptionsBuilder withMinMaxPort(Integer minPortValue, Integer maxPortValue) {
 		this.minPortValue = minPortValue;
 		this.maxPortValue = maxPortValue;
 		return this;
@@ -114,7 +116,8 @@ public class StubRunnerOptionsBuilder {
 
 	public StubRunnerOptions build() {
 		return new StubRunnerOptions(this.minPortValue, this.maxPortValue, this.stubRepositoryRoot,
-				this.workOffline, this.stubsClassifier, buildDependencies(), this.stubIdsToPortMapping);
+				this.workOffline, this.stubsClassifier, buildDependencies(), this.stubIdsToPortMapping,
+				this.username, this.password, this.stubRunnerProxyOptions);
 	}
 
 	private Collection<StubConfiguration> buildDependencies() {
@@ -139,8 +142,7 @@ public class StubRunnerOptionsBuilder {
 		if (StubsParser.hasPort(notation)) {
 			addPort(notation);
 			this.stubs.add(StubsParser.ivyFromStringWithPort(notation));
-		}
-		else {
+		} else {
 			this.stubs.add(notation);
 		}
 	}
@@ -154,4 +156,18 @@ public class StubRunnerOptionsBuilder {
 		this.stubIdsToPortMapping.putAll(stubIdsToPortMapping);
 	}
 
+	public StubRunnerOptionsBuilder withUsername(final String username) {
+		this.username = username;
+		return this;
+	}
+
+	public StubRunnerOptionsBuilder withPassword(final String password) {
+		this.password = password;
+		return this;
+	}
+
+	public StubRunnerOptionsBuilder withProxy(final String proxyHost, final int proxyPort) {
+		this.stubRunnerProxyOptions = new StubRunnerOptions.StubRunnerProxyOptions(proxyHost, proxyPort);
+		return this;
+	}
 }
