@@ -67,14 +67,11 @@ public class StubRunnerConfiguration {
 	 */
 	@Bean
 	public BatchStubRunner batchStubRunner() throws IOException {
-		StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder()
-				.withMinMaxPort(this.props.getMinPort(), this.props.getMaxPort())
-				.withStubRepositoryRoot(
-						uriStringOrEmpty(this.props.getRepositoryRoot()))
-				.withWorkOffline(this.props.isWorkOffline())
-				.withStubsClassifier(this.props.getClassifier())
-				.withStubs(this.props.getIds())
-				.build();
+		StubRunnerOptionsBuilder builder = builder();
+		if (this.props.getProxyHost() != null) {
+			builder.withProxy(this.props.getProxyHost(), this.props.getProxyPort());
+		}
+		StubRunnerOptions stubRunnerOptions = builder.build();
 		BatchStubRunner batchStubRunner = new BatchStubRunnerFactory(stubRunnerOptions,
 				this.stubDownloader != null ? this.stubDownloader
 						: new AetherStubDownloader(stubRunnerOptions),
@@ -84,6 +81,18 @@ public class StubRunnerConfiguration {
 		RunningStubs runningStubs = batchStubRunner.runStubs();
 		registerPort(runningStubs);
 		return batchStubRunner;
+	}
+
+	private StubRunnerOptionsBuilder builder() throws IOException {
+		return new StubRunnerOptionsBuilder()
+					.withMinMaxPort(this.props.getMinPort(), this.props.getMaxPort())
+					.withStubRepositoryRoot(
+							uriStringOrEmpty(this.props.getRepositoryRoot()))
+					.withWorkOffline(this.props.isWorkOffline())
+					.withStubsClassifier(this.props.getClassifier())
+					.withStubs(this.props.getIds())
+					.withUsername(this.props.getUsername())
+					.withPassword(this.props.getPassword());
 	}
 
 	private String uriStringOrEmpty(Resource stubRepositoryRoot) throws IOException {

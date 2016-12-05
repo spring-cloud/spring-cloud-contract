@@ -16,9 +16,6 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
@@ -26,13 +23,11 @@ import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.impl.DefaultServiceLocator;
 import org.eclipse.aether.repository.LocalRepository;
-import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
-import org.springframework.util.StringUtils;
 
 class AetherFactories {
 
@@ -52,20 +47,10 @@ class AetherFactories {
 		if (!workOffline) {
 			session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_ALWAYS);
 		}
+		session.setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_WARN);
 		LocalRepository localRepo = new LocalRepository(localRepositoryDirectory());
 		session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
 		return session;
-	}
-
-	public static List<RemoteRepository> newRepositories(List<String> repositories) {
-		List<RemoteRepository> result = new ArrayList<>();
-		for (int index = 0; index < repositories.size(); index++) {
-			String repo = repositories.get(index);
-			if (StringUtils.hasText(repo)) {
-				result.add(new RemoteRepository.Builder("remote" + index, "default", repo).build());
-			}
-		}
-		return result;
 	}
 
 	private static String localRepositoryDirectory() {

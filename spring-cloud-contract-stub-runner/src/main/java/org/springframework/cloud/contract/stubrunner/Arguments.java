@@ -48,4 +48,9 @@ class Arguments {
 	public StubConfiguration getStub() {
 		return this.stub;
 	}
+
+	@Override public String toString() {
+		return "Arguments{" + "stubRunnerOptions=" + this.stubRunnerOptions
+				+ ", repositoryPath='" + this.repositoryPath + '\'' + ", stub=" + this.stub + '}';
+	}
 }
