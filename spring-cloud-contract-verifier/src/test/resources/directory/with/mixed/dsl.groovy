@@ -1,3 +1,5 @@
+import org.springframework.cloud.contract.spec.Contract
+
 /*
  *  Copyright 2013-2016 the original author or authors.
  *
@@ -14,3 +16,33 @@
  *  limitations under the License.
  */
 
+Contract.make {
+	request {
+		method('PUT')
+		headers {
+			contentType(applicationJson())
+		}
+		body("""\
+		  {
+			"name": "Jan",
+			"id": "${value(consumer('abc'), producer('def'))}",
+		  }
+		  """
+		)
+		url $(consumer('/[0-9]{2}'), producer('/12'))
+	}
+	response {
+		status 200
+		body("""\
+		  {
+			"name": "Jan",
+			"id": "${value(consumer('123'), producer('321'))}",
+						"surname": "${value(consumer('Kowalsky'), producer('$checkIfSurnameValid($value)'))}"
+		  }
+		  """
+		)
+		headers {
+			contentType(textPlain())
+		}
+	}
+}

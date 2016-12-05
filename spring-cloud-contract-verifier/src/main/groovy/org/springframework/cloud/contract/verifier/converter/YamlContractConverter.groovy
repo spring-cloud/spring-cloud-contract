@@ -7,7 +7,8 @@ import org.springframework.cloud.contract.spec.internal.Headers
 import org.yaml.snakeyaml.Yaml
 
 /**
- * Converter from and to a {@link YamlContract} to a
+ * Converter from and to a {@link YamlContract} to a {@link Contract}
+ *
  * @author Marcin Grzejszczak
  * @since 1.0.3
  */

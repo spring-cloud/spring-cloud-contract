@@ -82,7 +82,7 @@ class ContractFileScannerSpec extends Specification {
 			ListMultimap<Path, ContractMetadata> result = scanner.findContracts()
 		then:
 			result.keySet().size() == 1
-			result.entries().find { it.value.convertedContract && it.value.convertedContract.request.method.clientValue == "PUT" }
-			result.entries().find { !it.value.convertedContract && !it.value.ignored }
+			result.entries().every { it.value.convertedContract }
+			result.entries().find { it.value.convertedContract.request.method.clientValue == "PUT" }
 	}
 }

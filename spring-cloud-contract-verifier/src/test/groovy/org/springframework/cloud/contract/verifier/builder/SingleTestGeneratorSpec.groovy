@@ -26,6 +26,7 @@ import spock.lang.Specification
 
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
 import static org.springframework.cloud.contract.verifier.config.TestFramework.SPOCK
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter.convert
 
 class SingleTestGeneratorSpec extends Specification {
 
@@ -63,13 +64,13 @@ class SingleTestGeneratorSpec extends Specification {
 		given:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties();
 			properties.targetFramework = testFramework
-			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2)
+			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2, convert(file))
 			contract.ignored >> true
 			contract.order >> 2
-			SingleTestGenerator testGenerator = new SingleTestGenerator(properties)
+			JavaTestGenerator testGenerator = new JavaTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass([contract], "test", "test", 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], "test", "test", 'com/foo')
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -85,13 +86,13 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties();
 			properties.testMode = TestMode.JAXRSCLIENT
 			properties.targetFramework = testFramework
-			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2)
+			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2, convert(file))
 			contract.ignored >> true
 			contract.order >> 2
-			SingleTestGenerator testGenerator = new SingleTestGenerator(properties)
+			JavaTestGenerator testGenerator = new JavaTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass([contract], "test", "test", 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], "test", "test", 'com/foo')
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -123,18 +124,18 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties();
 			properties.targetFramework = testFramework
-			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2)
+			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2, convert(file))
 			contract.ignored >> true
 			contract.order >> 2
 		and:
-			ContractMetadata contract2 = new ContractMetadata(secondFile.toPath(), true, 1, 2)
+			ContractMetadata contract2 = new ContractMetadata(secondFile.toPath(), true, 1, 2, convert(secondFile))
 			contract2.ignored >> true
 			contract2.order >> 2
 		and:
-			SingleTestGenerator testGenerator = new SingleTestGenerator(properties)
+			JavaTestGenerator testGenerator = new JavaTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass([contract, contract2], "test", "test", 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract, contract2], "test", "test", 'com/foo')
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -166,14 +167,14 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties();
 			properties.targetFramework = testFramework
 		and:
-			ContractMetadata contract2 = new ContractMetadata(secondFile.toPath(), true, 1, 2)
+			ContractMetadata contract2 = new ContractMetadata(secondFile.toPath(), true, 1, 2, convert(file))
 			contract2.ignored >> false
 			contract2.order >> 2
 		and:
-			SingleTestGenerator testGenerator = new SingleTestGenerator(properties)
+			JavaTestGenerator testGenerator = new JavaTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass([contract2], "test", "test", 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract2], "test", "test", 'com/foo')
 
 		then:
 			classStrings.each { clazz.contains(it) }
