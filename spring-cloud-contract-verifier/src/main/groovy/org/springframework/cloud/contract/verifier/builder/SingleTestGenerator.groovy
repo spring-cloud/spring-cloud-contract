@@ -123,7 +123,7 @@ class SingleTestGenerator {
 			if (log.isDebugEnabled()) {
 				log.debug("Stub content from file [${stubsFile.text}]")
 			}
-			Contract stubContent = ContractVerifierDslConverter.convert(stubsFile)
+			Contract stubContent = it.convertedContract ?: ContractVerifierDslConverter.convert(stubsFile)
 			TestType testType = (stubContent.input || stubContent.outputMessage) ? TestType.MESSAGING : TestType.HTTP
 			return [(new ParsedDsl(it, stubContent, stubsFile)): testType]
 		}

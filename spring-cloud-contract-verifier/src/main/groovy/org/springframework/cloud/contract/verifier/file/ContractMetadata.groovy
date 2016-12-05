@@ -17,9 +17,9 @@
 package org.springframework.cloud.contract.verifier.file
 
 import groovy.transform.CompileStatic
+import org.springframework.cloud.contract.spec.Contract
 
 import java.nio.file.Path
-
 /**
  * Contains metadata for a particular file with a DSL
  *
@@ -33,12 +33,14 @@ class ContractMetadata {
 	final boolean ignored
 	final int groupSize
 	final Integer order
+	final Contract convertedContract
 
-	ContractMetadata(Path path, boolean ignored, int groupSize, Integer order) {
+	ContractMetadata(Path path, boolean ignored, int groupSize, Integer order, Contract convertedContract = null) {
 		this.groupSize = groupSize
 		this.path = path
 		this.ignored = ignored
 		this.order = order
+		this.convertedContract = convertedContract
 	}
 
 	@Override
@@ -48,6 +50,7 @@ class ContractMetadata {
 				", ignored=" + ignored +
 				", groupSize=" + groupSize +
 				", order=" + order +
+				", convertedContract=" + convertedContract +
 				'}'
 	}
 }

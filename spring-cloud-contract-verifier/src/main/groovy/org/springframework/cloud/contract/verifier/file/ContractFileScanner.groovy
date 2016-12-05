@@ -21,6 +21,9 @@ import com.google.common.collect.ListMultimap
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.SystemUtils
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.ContractConverter
+import org.springframework.core.io.support.SpringFactoriesLoader
 
 import java.nio.file.FileSystem
 import java.nio.file.FileSystems
@@ -74,7 +77,12 @@ class ContractFileScanner {
 		return result
 	}
 
+	/**
+	 * We iterate over found contracts, filter out those that should be excluded
+	 * and try to convert via pluggable Contract Converters any possible contracts
+	 */
 	private void appendRecursively(File baseDir, ListMultimap<Path, ContractMetadata> result) {
+		List<ContractConverter> converters = SpringFactoriesLoader.loadFactories(ContractConverter, null)
 		File[] files = baseDir.listFiles()
 		if (!files) {
 			return;
@@ -85,12 +93,9 @@ class ContractFileScanner {
 				boolean contractFile = isContractFile(file)
 				boolean included = includeMatcher ? file.absolutePath.matches(includeMatcher) : true
 				if (contractFile && included) {
-					Path path = file.toPath()
-					Integer order = null
-					if (hasScenarioFilenamePattern(path)) {
-						order = index
-					}
-					result.put(file.parentFile.toPath(), new ContractMetadata(path, matchesPattern(file, ignoreMatchers), files.size(), order))
+					addContractToTestGeneration(result, files, file, index)
+				} else if (!contractFile && included) {
+					addContractToTestGeneration(converters, result, files, file, index)
 				} else {
 					appendRecursively(file, result)
 					if (log.isDebugEnabled()) {
@@ -103,6 +108,35 @@ class ContractFileScanner {
 				}
 			}
 		}
+	}
+
+	private void addContractToTestGeneration(List<ContractConverter> converters, ListMultimap<Path, ContractMetadata> result,
+											File[] files, File file, int index) {
+		boolean converted = false
+		for (ContractConverter converter : converters) {
+			if (converter.isAccepted(file)) {
+				addContractToTestGeneration(result, files, file, index, converter.convertFrom(file))
+				converted = true
+				break
+			}
+		}
+		if (!converted) {
+			appendRecursively(file, result)
+			if (log.isDebugEnabled()) {
+				log.debug("File [$file] wasn't ignored but no converter was applicable.")
+			}
+		}
+	}
+
+	private void addContractToTestGeneration(ListMultimap<Path, ContractMetadata> result, File[] files, File file,
+											int index, Contract convertedContract = null) {
+		Path path = file.toPath()
+		Integer order = null
+		if (hasScenarioFilenamePattern(path)) {
+			order = index
+		}
+		result.put(file.parentFile.toPath(), new ContractMetadata(path, matchesPattern(file, ignoreMatchers),
+				files.size(), order, convertedContract))
 	}
 
 	private boolean hasScenarioFilenamePattern(Path path) {

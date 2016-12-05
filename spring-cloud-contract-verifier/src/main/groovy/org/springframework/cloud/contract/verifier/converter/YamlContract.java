@@ -1,4 +1,4 @@
-package org.springframework.cloud.contract.verifier.dsl;
+package org.springframework.cloud.contract.verifier.converter;
 
 import java.util.HashMap;
 import java.util.Map;

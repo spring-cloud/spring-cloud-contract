@@ -1,10 +1,8 @@
-package org.springframework.cloud.contract.spec;
-
-import java.io.File;
+package org.springframework.cloud.contract.spec
 
 /**
  * Converter to be used to convert FROM {@link File} TO {@link Contract}
- * and from {@link Contract} to {@link T}
+ * and from {@link Contract} to {@code T}
  *
  * @param <T> - type to which we want to convert the contract
  *
@@ -20,7 +18,7 @@ public interface ContractConverter<T> {
 	 * @param file - file to be considered for conversion
 	 * @return - {@code true} if the given implementation can convert the file
 	 */
-	boolean isAccepted(File file);
+	boolean isAccepted(File file)
 
 	/**
 	 * Converts the given {@link File} to its {@link Contract} representation
@@ -28,7 +26,7 @@ public interface ContractConverter<T> {
 	 * @param file - file to convert
 	 * @return - {@link Contract} representation of the file
 	 */
-	Contract convertFrom(File file);
+	Contract convertFrom(File file)
 
 	/**
 	 * Converts the given {@link Contract} to a {@link T} representation
@@ -36,5 +34,5 @@ public interface ContractConverter<T> {
 	 * @param contract - the parsed contract
 	 * @return - {@link T} the type to which we do the conversion
 	 */
-	T convertTo(Contract contract);
+	T convertTo(Contract contract)
 }
