@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.converter.SingleFileConverter
+import org.springframework.cloud.contract.verifier.converter.SingleFileConvertersHolder
 import org.springframework.cloud.contract.verifier.file.ContractFileScanner
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 
@@ -28,29 +29,46 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+
 /**
  * Recursively converts contracts into their stub representations
  *
  * @since 1.0.0
  */
+//TODO: Move out of here to converter package
 @Slf4j
 @CompileStatic
 class RecursiveFilesConverter {
 
-	private final SingleFileConverter singleFileConverter
+	private final SingleFileConvertersHolder holder
 	private final ContractVerifierConfigProperties properties
 	private final File outMappingsDir
 
-	RecursiveFilesConverter(SingleFileConverter singleFileConverter, ContractVerifierConfigProperties properties) {
+	RecursiveFilesConverter(ContractVerifierConfigProperties properties, SingleFileConvertersHolder holder = null) {
 		this.properties = properties
-		this.singleFileConverter = singleFileConverter
 		this.outMappingsDir = properties.stubsOutputDir
+		this.holder = holder ?: new SingleFileConvertersHolder()
 	}
 
+	RecursiveFilesConverter(ContractVerifierConfigProperties properties, File outMappingsDir, SingleFileConvertersHolder holder = null) {
+		this.properties = properties
+		this.outMappingsDir = outMappingsDir
+		this.holder = holder ?: new SingleFileConvertersHolder()
+	}
+
+
+	@Deprecated
+	RecursiveFilesConverter(SingleFileConverter singleFileConverter, ContractVerifierConfigProperties properties) {
+		this.properties = properties
+		this.outMappingsDir = properties.stubsOutputDir
+		this.holder = new SingleFileConvertersHolder()
+	}
+
+	@Deprecated
 	RecursiveFilesConverter(SingleFileConverter singleFileConverter, ContractVerifierConfigProperties properties, File outMappingsDir) {
 		this.properties = properties
-		this.singleFileConverter = singleFileConverter
 		this.outMappingsDir = outMappingsDir
+		this.holder = new SingleFileConvertersHolder()
 	}
 
 	void processFiles() {
@@ -63,8 +81,9 @@ class RecursiveFilesConverter {
 		contracts.asMap().entrySet().each { entry ->
 			entry.value.each { ContractMetadata contract ->
 				File sourceFile = contract.path.toFile()
+				SingleFileConverter singleFileConverter = holder.converterForName(sourceFile.name);
 				try {
-					if (!singleFileConverter.canHandleFileName(sourceFile.name)) {
+					if (!contract.convertedContract && !singleFileConverter.canHandleFileName(sourceFile.name)) {
 						return
 					}
 					String convertedContent = singleFileConverter.convertContent(entry.key.last().toString(), contract)
@@ -72,7 +91,7 @@ class RecursiveFilesConverter {
 						return
 					}
 					Path absoluteTargetPath = createAndReturnTargetDirectory(sourceFile)
-					File newJsonFile = createTargetFileWithProperName(absoluteTargetPath, sourceFile)
+					File newJsonFile = createTargetFileWithProperName(singleFileConverter, absoluteTargetPath, sourceFile)
 					newJsonFile.setText(convertedContent, StandardCharsets.UTF_8.toString())
 				} catch (Exception e) {
 					throw new ConversionContractVerifierException("Unable to make conversion of ${sourceFile.name}", e)
@@ -88,7 +107,7 @@ class RecursiveFilesConverter {
 		return absoluteTargetPath
 	}
 
-	private File createTargetFileWithProperName(Path absoluteTargetPath, File sourceFile) {
+	private File createTargetFileWithProperName(SingleFileConverter singleFileConverter, Path absoluteTargetPath, File sourceFile) {
 		File newJsonFile = new File(absoluteTargetPath.toFile(), singleFileConverter.generateOutputFileNameForInput(sourceFile.name))
 		log.info("Creating new json [$newJsonFile.path]")
 		return newJsonFile

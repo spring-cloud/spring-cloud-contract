@@ -28,7 +28,7 @@ import org.springframework.cloud.contract.verifier.file.ContractMetadata
 interface SingleFileConverter {
 
 	/**
-	 * Returns {@code true} if the converter can handle the file
+	 * Returns {@code true} if the converter can handle the file.
 	 */
 	boolean canHandleFileName(String fileName)
 
