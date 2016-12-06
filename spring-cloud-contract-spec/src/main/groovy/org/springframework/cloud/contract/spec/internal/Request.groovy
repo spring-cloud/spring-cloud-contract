@@ -213,7 +213,7 @@ class Request extends Common {
 	}
 
 	@CompileStatic
-	@EqualsAndHashCode
+	@EqualsAndHashCode(includeFields = true)
 	@ToString(includePackage = false)
 	private class ServerRequest extends Request {
 		ServerRequest(Request request) {
@@ -222,7 +222,7 @@ class Request extends Common {
 	}
 
 	@CompileStatic
-	@EqualsAndHashCode
+	@EqualsAndHashCode(includeFields = true)
 	@ToString(includePackage = false)
 	private class ClientRequest extends Request {
 		ClientRequest(Request request) {
@@ -231,7 +231,7 @@ class Request extends Common {
 	}
 
 	@CompileStatic
-	@EqualsAndHashCode
+	@EqualsAndHashCode(includeFields = true)
 	@ToString(includePackage = false)
 	private class RequestHeaders extends Headers {
 
@@ -243,7 +243,7 @@ class Request extends Common {
 	}
 
 	@CompileStatic
-	@EqualsAndHashCode
+	@EqualsAndHashCode(includeFields = true)
 	@ToString(includePackage = false)
 	private class ClientPatternValueDslProperty extends PatternValueDslProperty<ClientDslProperty> {
 

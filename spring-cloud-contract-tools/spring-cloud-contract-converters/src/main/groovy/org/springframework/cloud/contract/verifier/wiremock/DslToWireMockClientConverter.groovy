@@ -20,6 +20,7 @@ import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubStrategy
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
+import org.springframework.cloud.contract.verifier.util.NamesUtil
 
 import java.nio.charset.StandardCharsets
 
@@ -49,7 +50,7 @@ class DslToWireMockClientConverter extends DslToWireMockConverter {
 		}
 		List<String> convertedContracts = []
 		contract.convertedContract.eachWithIndex { Contract dsl, int index ->
-			String name = "${rootName}_${index}"
+			String name = dsl.name ? NamesUtil.convertIllegalPackageChars(dsl.name) : "${rootName}_${index}"
 			convertedContracts << convertASingleContract(name, contract, dsl)
 		}
 		return convertedContracts

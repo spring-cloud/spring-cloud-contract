@@ -25,8 +25,8 @@ import groovy.transform.ToString
  *
  * @since 1.0.0
  */
-@ToString(includePackage = false, includeFields = true, includeNames = true)
-@EqualsAndHashCode(includeFields = true)
+@ToString(includePackage = false, includeFields = true, includeNames = true, includeSuper = true)
+@EqualsAndHashCode(includeFields = true, callSuper = true)
 @CompileStatic
 class UrlPath extends Url {
 

@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.CompileStatic
+import groovy.transform.EqualsAndHashCode
 
 /**
  * Represents a property that will become an executable method in the
@@ -25,6 +26,7 @@ import groovy.transform.CompileStatic
  * @since 1.0.0
  */
 @CompileStatic
+@EqualsAndHashCode
 class ExecutionProperty {
 
 	private static final String PLACEHOLDER_VALUE = '\\$it'

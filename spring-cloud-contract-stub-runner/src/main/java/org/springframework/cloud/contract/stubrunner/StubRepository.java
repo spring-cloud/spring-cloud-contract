@@ -131,7 +131,7 @@ class StubRepository {
 							File file = path.toFile();
 							if (isContractDescriptor(file)) {
 								mappingDescriptors
-								.add(ContractVerifierDslConverter.convert(file));
+								.addAll(ContractVerifierDslConverter.convertAsCollection(file));
 							}
 							return super.visitFile(path, attrs);
 						}

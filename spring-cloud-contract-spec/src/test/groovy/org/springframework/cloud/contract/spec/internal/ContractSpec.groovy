@@ -102,4 +102,154 @@ then:
 		}
 		// end::ignored[]
 	}
+
+	def 'should make equals and hashcode work properly for URL'() {
+		expect:
+			def a = Contract.make {
+				request {
+					url("/1")
+			 	}
+			}
+			def b = Contract.make {
+					request {
+						url("/1")
+					}
+				}
+			a == b
+	}
+
+	def 'should make equals and hashcode work properly for URL with consumer producer'() {
+		expect:
+			Contract.make {
+				request {
+					url($(c("/1"), p("/1")))
+			 	}
+			} == Contract.make {
+				request {
+					url($(c("/1"), p("/1")))
+				}
+			}
+	}
+
+	def 'should return true when comparing two equal contracts with gstring'() {
+		expect:
+			int index = 1
+			def a = Contract.make {
+				request {
+					method(PUT())
+					headers {
+						contentType(applicationJson())
+					}
+					url "/${index}"
+				}
+				response {
+					status 200
+				}
+			}
+			def b = Contract.make {
+				request {
+					method(PUT())
+					headers {
+						contentType(applicationJson())
+					}
+					url "/${index}"
+				}
+				response {
+					status 200
+				}
+			}
+			a == b
+	}
+
+	def 'should return false when comparing two unequal contracts with gstring'() {
+		expect:
+			int index = 1
+			def a = Contract.make {
+				request {
+					method(PUT())
+					headers {
+						contentType(applicationJson())
+					}
+					url "/${index}"
+				}
+				response {
+					status 200
+				}
+			}
+			int index2 = 2
+			def b = Contract.make {
+				request {
+					method(PUT())
+					headers {
+						contentType(applicationJson())
+					}
+					url "/${index2}"
+				}
+				response {
+					status 200
+				}
+			}
+			a != b
+	}
+
+	def 'should return true when comparing two equal complex contracts'() {
+		expect:
+			def a = Contract.make {
+				request {
+					method 'GET'
+					url '/path'
+					headers {
+						header('Accept': $(
+								consumer(regex('text/.*')),
+								producer('text/plain')
+						))
+						header('X-Custom-Header': $(
+								consumer(regex('^.*2134.*$')),
+								producer('121345')
+						))
+					}
+				}
+				response {
+					status 200
+					body(
+							id: [value: '132'],
+							surname: 'Kowalsky',
+							name: 'Jan',
+							created: '2014-02-02 12:23:43'
+					)
+					headers {
+						header 'Content-Type': 'text/plain'
+					}
+				}
+			}
+			def b = Contract.make {
+				request {
+					method 'GET'
+					url '/path'
+					headers {
+						header('Accept': $(
+								consumer(regex('text/.*')),
+								producer('text/plain')
+						))
+						header('X-Custom-Header': $(
+								consumer(regex('^.*2134.*$')),
+								producer('121345')
+						))
+					}
+				}
+				response {
+					status 200
+					body(
+							id: [value: '132'],
+							surname: 'Kowalsky',
+							name: 'Jan',
+							created: '2014-02-02 12:23:43'
+					)
+					headers {
+						header 'Content-Type': 'text/plain'
+					}
+				}
+			}
+			a == b
+	}
 }

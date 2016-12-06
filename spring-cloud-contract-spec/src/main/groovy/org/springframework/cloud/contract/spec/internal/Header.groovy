@@ -24,8 +24,8 @@ import groovy.transform.ToString
  *
  * @since 1.0.0
  */
-@EqualsAndHashCode(includeFields = true)
-@ToString(includePackage = false, includeFields = true, ignoreNulls = true, includeNames = true)
+@EqualsAndHashCode(includeFields = true, callSuper = true)
+@ToString(includePackage = false, includeFields = true, ignoreNulls = true, includeNames = true, includeSuper = true)
 @CompileStatic
 class Header extends DslProperty {
 

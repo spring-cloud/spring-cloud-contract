@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.verifier.file
 
 import groovy.transform.CompileStatic
+import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
@@ -30,6 +31,7 @@ import java.nio.file.Path
  * @since 1.0.0
  */
 @CompileStatic
+@EqualsAndHashCode
 @ToString
 class ContractMetadata {
 	/**
