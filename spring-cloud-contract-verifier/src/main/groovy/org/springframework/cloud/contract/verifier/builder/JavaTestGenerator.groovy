@@ -26,10 +26,11 @@ import org.springframework.cloud.contract.verifier.config.TestMode
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.capitalize
+
 /**
  * Builds a single test for the given {@link ContractVerifierConfigProperties properties}
  *
- * @since 1.0.0
+ * @since 1.1.0
  */
 @Slf4j
 class JavaTestGenerator implements SingleTestGenerator {

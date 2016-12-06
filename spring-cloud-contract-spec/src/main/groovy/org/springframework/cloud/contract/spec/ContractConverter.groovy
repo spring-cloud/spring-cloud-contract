@@ -23,7 +23,7 @@ package org.springframework.cloud.contract.spec
  * @param <T> - type to which we want to convert the contract
  *
  * @author Marcin Grzejszczak
- * @since 1.0.3
+ * @since 1.1.0
  */
 public interface ContractConverter<T> {
 

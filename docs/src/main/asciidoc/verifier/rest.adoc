@@ -138,7 +138,7 @@ contracts {
     contractsWorkOffline = false
 }
 
-tasks.create(type: Jar, name: 'verifierStubsJar', dependsOn: 'convert') {
+tasks.create(type: Jar, name: 'verifierStubsJar', dependsOn: 'generateClientStubs') {
     baseName = project.name
     classifier = contracts.stubsSuffix
     from contractVerifier.stubsOutputDir

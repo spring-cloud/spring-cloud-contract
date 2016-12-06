@@ -23,7 +23,7 @@ import org.springframework.cloud.contract.verifier.file.ContractMetadata
 /**
  * Builds a single test.
  *
- * @since 1.0.3
+ * @since 1.1.0
  */
 @CompileStatic
 interface SingleTestGenerator {

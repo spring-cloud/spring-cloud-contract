@@ -7,7 +7,7 @@ import org.springframework.core.io.support.SpringFactoriesLoader
  * Retrieves file converters from the class path and operates on them.
  * 
  * @author Marcin Grzejszczak
- * @since 1.0.3
+ * @since 1.1.0
  */
 @CompileStatic
 class SingleFileConvertersHolder {
