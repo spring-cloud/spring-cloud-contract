@@ -22,7 +22,7 @@ import groovy.transform.InheritConstructors
  * Exception occurring when we're trying to parse the DSL
  *
  * @author Marcin Grzejszczak
- * @since 1.0.3
+ * @since 1.1.0
  */
 @InheritConstructors
 class DslParseException extends RuntimeException {
