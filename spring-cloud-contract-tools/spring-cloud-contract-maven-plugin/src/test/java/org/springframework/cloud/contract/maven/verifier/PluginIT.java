@@ -64,7 +64,7 @@ public class PluginIT {
 				.assertLogText("Generating server tests source code for Spring Cloud Contract Verifier contract verification")
 				.assertLogText("Generated 1 test classes.")
 				.assertLogText("Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings")
-				.assertLogText("Creating new json")
+				.assertLogText("Creating new stub")
 				.assertLogText("Running org.springframework.cloud.contract.verifier.tests.ContractVerifierSpec")
 				.assertErrorFreeLog();
 	}
@@ -78,7 +78,7 @@ public class PluginIT {
 				.assertLogText("Generating server tests source code for Spring Cloud Contract Verifier contract verification")
 				.assertLogText("Generated 1 test classes.")
 				.assertLogText("Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings")
-				.assertLogText("Creating new json")
+				.assertLogText("Creating new stub")
 				.assertLogText("Running org.springframework.cloud.contract.verifier.tests.ContractVerifierTest")
 				.assertErrorFreeLog();
 	}
@@ -92,7 +92,7 @@ public class PluginIT {
 				.assertLogText("Generating server tests source code for Spring Cloud Contract Verifier contract verification")
 				.assertLogText("Generated 1 test classes.")
 				.assertLogText("Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings")
-				.assertLogText("Creating new json")
+				.assertLogText("Creating new stub")
 				.assertLogText("Running org.springframework.cloud.contract.verifier.tests.ContractVerifierTest")
 				.assertErrorFreeLog();
 	}
@@ -118,7 +118,7 @@ public class PluginIT {
 				.execute(String.format("org.springframework.cloud:spring-cloud-contract-maven-plugin:%s:convert",
 						this.properties.getPluginVersion()))
 				.assertLogText("Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings")
-				.assertLogText("Creating new json")
+				.assertLogText("Creating new stub")
 				.assertErrorFreeLog();
 	}
 }
