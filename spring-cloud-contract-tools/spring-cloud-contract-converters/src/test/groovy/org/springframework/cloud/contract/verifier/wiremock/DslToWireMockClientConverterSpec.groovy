@@ -20,6 +20,7 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.skyscreamer.jsonassert.JSONAssert
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import spock.lang.Issue
 import spock.lang.Specification
@@ -46,7 +47,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 				}
 """)
 		when:
-			String json = converter.convertContent("Test", new ContractMetadata(file.toPath(), false, 0, null))
+			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null)).values().first()
 		then:
 		JSONAssert.assertEquals('''
 {"request":{"method":"PUT","urlPattern":"/[0-9]{2}"},"response":{"status":200}}
@@ -75,15 +76,35 @@ class DslToWireMockClientConverterSpec extends Specification {
 }
 ''')
 		when:
-			List<String> json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null))
+			Map<Contract, String> convertedContents = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null))
 		then:
-			json.size() == 2
-			JSONAssert.assertEquals(jsonResponse(1), json.first(), false)
-			JSONAssert.assertEquals(jsonResponse(2), json.last(), false)
+			convertedContents.size() == 2
+			JSONAssert.assertEquals(jsonResponse(1), convertedContents.values().first(), false)
+			JSONAssert.assertEquals(jsonResponse(2), convertedContents.values().last(), false)
 	}
 
 	private String jsonResponse(int index) {
 		return """{"request":{"method":"PUT","url":"/${index}"},"response":{"status":200}}"""
+	}
+
+	def "should not convert if contract is messaging related"() {
+		given:
+			def converter = new DslToWireMockClientConverter()
+		and:
+			File file = tmpFolder.newFile("dsl1_list.groovy")
+			file.write('''
+	(1..2).collect { int index ->
+		org.springframework.cloud.contract.spec.Contract.make {
+			input {
+
+			}
+		}
+	}
+	''')
+		when:
+			Map<Contract, String> convertedContents = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null))
+		then:
+			convertedContents.isEmpty()
 	}
 
 	@Issue("196")
@@ -105,7 +126,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 			}
 """)
 		when:
-			String json = converter.convertContent("test", new ContractMetadata(file.toPath(), false, 0, null))
+			String json = converter.convertContents("test", new ContractMetadata(file.toPath(), false, 0, null)).values().first()
 		then:
 			JSONAssert.assertEquals('''
 {"request":{
@@ -168,7 +189,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 				}
 """)
 		when:
-			String json = converter.convertContent("Test", new ContractMetadata(file.toPath(), false, 0, null))
+			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null)).values().first()
 		then:
 		JSONAssert.assertEquals('''
 {
@@ -250,7 +271,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 			}
 """)
 		when:
-			String json = converter.convertContent("test", new ContractMetadata(file.toPath(), false, 0, null))
+			String json = converter.convertContents("test", new ContractMetadata(file.toPath(), false, 0, null)).values().first()
 		then:
 			JSONAssert.assertEquals('''
 {"request":{"urlPath":"/foos","method":"GET"},"response":{"body":"[{\\"id\\":\\"123\\"},{\\"id\\":\\"567\\"}]"}}
@@ -280,7 +301,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 			}
 """)
 		when:
-			String json = converter.convertContent("test", new ContractMetadata(file.toPath(), false, 0, null))
+			String json = converter.convertContents("test", new ContractMetadata(file.toPath(), false, 0, null)).values().first()
 			StubMapping.buildFrom(json)
 		then:
 			noExceptionThrown()
@@ -320,7 +341,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 			}
 	''')
 		when:
-		String json = converter.convertContent("Test", new ContractMetadata(file.toPath(), false, 0, null))
+		String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null)).values().first()
 		then:
 		JSONAssert.assertEquals( // tag::wiremock[]
 '''

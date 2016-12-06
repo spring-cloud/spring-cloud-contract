@@ -17,18 +17,16 @@
 package org.springframework.cloud.contract.verifier.wiremock
 
 import groovy.io.FileType
-import org.springframework.cloud.contract.verifier.converter.SingleFileConvertersHolder
-
-import java.nio.file.Path
-import java.nio.file.Paths
-
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.converter.SingleFileConverter
+import org.springframework.cloud.contract.verifier.converter.SingleFileConvertersHolder
 import org.springframework.util.FileSystemUtils
-
 import spock.lang.Specification
+
+import java.nio.file.Path
+import java.nio.file.Paths
 
 class RecursiveFilesConverterSpec extends Specification {
 
@@ -49,12 +47,7 @@ class RecursiveFilesConverterSpec extends Specification {
 			properties.stubsOutputDir = tmpFolder.newFolder("target")
 			FileSystemUtils.copyRecursively(originalSourceRootDirectory, properties.contractsDslDir)
 		and:
-			def singleFileConverterStub = Stub(SingleFileConverter)
-			singleFileConverterStub.canHandleFileName(_) >> { String fileName -> fileName.endsWith(".groovy") }
-			singleFileConverterStub.convertContent(_, _) >> { "converted" }
-			singleFileConverterStub.generateOutputFileNameForInput(_) >> { String inputFileName -> inputFileName.replaceAll('.groovy', '.json') }
-
-			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(singleFileConverterStub, properties)
+			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(properties)
 		when:
 			recursiveFilesConverter.processFiles()
 		then:
@@ -63,7 +56,7 @@ class RecursiveFilesConverterSpec extends Specification {
 			Set<String> relativizedCreatedFiles = getRelativePathsForFilesInDirectory(createdFiles, properties.stubsOutputDir)
 			EXPECTED_TARGET_FILES == relativizedCreatedFiles
 		and:
-			createdFiles.each { it.text == "converted" }
+			createdFiles.each { assert it.text.contains("uuid") }
 	}
 
 	def "should recursively convert matching files with exlusions"() {
@@ -98,7 +91,7 @@ class RecursiveFilesConverterSpec extends Specification {
 		and:
 			def singleFileConverterStub = Stub(SingleFileConverter)
 			singleFileConverterStub.canHandleFileName(_) >> { true }
-			singleFileConverterStub.convertContent(_, _) >> { throw new NullPointerException("Test conversion error") }
+			singleFileConverterStub.convertContents(_, _) >> { throw new NullPointerException("Test conversion error") }
 			singleFileConverterStub.generateOutputFileNameForInput(_) >> { String inputFileName -> "${inputFileName}2" }
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.contractsDslDir = tmpFolder.root

@@ -23,7 +23,6 @@ import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.NamesUtil
 
 import java.nio.charset.StandardCharsets
-
 /**
  * Converts DSLs to WireMock stubs
  *
@@ -44,15 +43,19 @@ class DslToWireMockClientConverter extends DslToWireMockConverter {
 	}
 
 	@Override
-	Collection<String> convertContents(String rootName, ContractMetadata contract) {
-		if (contract.convertedContract.size() == 1) {
-			return [convertASingleContract(rootName, contract, contract.convertedContract.first())]
+	Map<Contract, String> convertContents(String rootName, ContractMetadata contract) {
+		if (!(contract.convertedContract.any { it.request })) {
+			return [:]
 		}
-		List<String> convertedContracts = []
-		contract.convertedContract.eachWithIndex { Contract dsl, int index ->
+		if (contract.convertedContract.size() == 1) {
+			return [(contract.convertedContract.first()): convertASingleContract(rootName, contract, contract.convertedContract.first())]
+		}
+		Map<Contract, String> convertedContracts = [:]
+		contract.convertedContract.findAll { it.request }.eachWithIndex { Contract dsl, int index ->
 			String name = dsl.name ? NamesUtil.convertIllegalPackageChars(dsl.name) : "${rootName}_${index}"
-			convertedContracts << convertASingleContract(name, contract, dsl)
+			convertedContracts << [(dsl) : convertASingleContract(name, contract, dsl)]
 		}
 		return convertedContracts
 	}
+
 }

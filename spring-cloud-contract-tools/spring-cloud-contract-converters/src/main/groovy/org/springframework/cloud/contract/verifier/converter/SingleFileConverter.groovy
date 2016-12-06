@@ -43,7 +43,7 @@ interface SingleFileConverter {
 	 * Returns the collection of converted contracts into stubs. One contract can
 	 * result in multiple stubs.
 	 */
-	Collection<String> convertContents(String rootName, ContractMetadata content)
+	Map<Contract, String> convertContents(String rootName, ContractMetadata content)
 
 	/**
 	 * Returns the name of the converted stub file. If you have multiple contracts

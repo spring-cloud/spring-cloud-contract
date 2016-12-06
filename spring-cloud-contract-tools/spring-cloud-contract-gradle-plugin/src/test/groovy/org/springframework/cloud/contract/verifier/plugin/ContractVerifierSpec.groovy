@@ -55,7 +55,7 @@ class ContractVerifierSpec extends Specification {
 			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
 
 		expect:
-			project.tasks.findByName("generateWireMockClientStubs") != null
+			project.tasks.findByName("generateClientStubs") != null
 	}
 
 	def "should create verifierStubsJar task"() {
@@ -71,7 +71,7 @@ class ContractVerifierSpec extends Specification {
 			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
 
 		expect:
-			project.tasks.verifierStubsJar.getDependsOn().contains("generateWireMockClientStubs")
+			project.tasks.verifierStubsJar.getDependsOn().contains("generateClientStubs")
 	}
 
 	def "should create copyContracts task"() {

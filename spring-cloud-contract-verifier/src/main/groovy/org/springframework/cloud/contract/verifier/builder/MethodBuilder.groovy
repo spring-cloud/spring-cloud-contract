@@ -63,7 +63,7 @@ class MethodBuilder {
 
 	private static String methodName(ContractMetadata contract, File stubsFile, Contract stubContent) {
 		if (stubContent.name) {
-			return NamesUtil.camelCase(stubContent.name)
+			return NamesUtil.camelCase(NamesUtil.convertIllegalPackageChars(stubContent.name))
 		} else if (contract.convertedContract.size() > 1) {
 			int index = contract.convertedContract.findIndexOf { it == stubContent}
 			return "${camelCasedMethodFromFileName(stubsFile)}_${index}"
