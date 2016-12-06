@@ -94,7 +94,7 @@ class ContractFileScanner {
 				boolean contractFile = isContractFile(file)
 				boolean included = includeMatcher ? file.absolutePath.matches(includeMatcher) : true
 				if (contractFile && included) {
-					addContractToTestGeneration(result, files, file, index, ContractVerifierDslConverter.convert(file))
+					addContractToTestGeneration(result, files, file, index, ContractVerifierDslConverter.convertAsCollection(file))
 				} else if (!contractFile && included) {
 					addContractToTestGeneration(converters, result, files, file, index)
 				} else {
@@ -130,7 +130,7 @@ class ContractFileScanner {
 	}
 
 	private void addContractToTestGeneration(ListMultimap<Path, ContractMetadata> result, File[] files, File file,
-											int index, Contract convertedContract) {
+											int index, Collection<Contract> convertedContract) {
 		Path path = file.toPath()
 		Integer order = null
 		if (hasScenarioFilenamePattern(path)) {

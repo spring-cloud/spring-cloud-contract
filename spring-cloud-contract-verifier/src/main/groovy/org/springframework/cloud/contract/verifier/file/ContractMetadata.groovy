@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.file
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 
 import java.nio.file.Path
 /**
@@ -44,20 +45,28 @@ class ContractMetadata {
 	 */
 	final int groupSize
 	/**
-	 * If scenario related will
+	 * If scenario related will contain an order of execution
 	 */
 	final Integer order
 	/**
-	 * When we have already converted a contract via a converter this
-	 * field will be set
+	 * The list of contracts for the given file
 	 */
-	final Contract convertedContract
+	final Collection<Contract> convertedContract = []
 
-	ContractMetadata(Path path, boolean ignored, int groupSize, Integer order, Contract convertedContract = null) {
+	@Deprecated
+	ContractMetadata(Path path, boolean ignored, int groupSize, Integer order) {
+		this(path, ignored, groupSize, order, ContractVerifierDslConverter.convertAsCollection(path.toFile()))
+	}
+
+	ContractMetadata(Path path, boolean ignored, int groupSize, Integer order, Contract convertedContract) {
+		this(path, ignored, groupSize, order, [convertedContract])
+	}
+
+	ContractMetadata(Path path, boolean ignored, int groupSize, Integer order, Collection<Contract> convertedContract) {
 		this.groupSize = groupSize
 		this.path = path
 		this.ignored = ignored
 		this.order = order
-		this.convertedContract = convertedContract
+		this.convertedContract.addAll(convertedContract)
 	}
 }

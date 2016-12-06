@@ -106,15 +106,19 @@ class JavaTestGenerator implements SingleTestGenerator {
 	}
 
 	private Map<ParsedDsl, TestType> mapContractsToTheirTestTypes(Collection<ContractMetadata> listOfFiles) {
-		return listOfFiles.collectEntries {
-			File stubsFile = it.path.toFile()
+		Map<ParsedDsl, TestType> dsls = [:]
+		listOfFiles.each { ContractMetadata metadata ->
+			File stubsFile = metadata.path.toFile()
 			if (log.isDebugEnabled()) {
 				log.debug("Stub content from file [${stubsFile.text}]")
 			}
-			Contract stubContent = it.convertedContract
-			TestType testType = (stubContent.input || stubContent.outputMessage) ? TestType.MESSAGING : TestType.HTTP
-			return [(new ParsedDsl(it, stubContent, stubsFile)): testType]
+			List<Contract> stubContents = metadata.convertedContract
+			dsls << stubContents.collectEntries { Contract stubContent ->
+				TestType testType = (stubContent.input || stubContent.outputMessage) ? TestType.MESSAGING : TestType.HTTP
+				return [(new ParsedDsl(metadata, stubContent, stubsFile)): testType]
+			}
 		}
+		return dsls
 	}
 
 	@Canonical

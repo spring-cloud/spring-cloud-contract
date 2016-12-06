@@ -33,7 +33,9 @@ import spock.lang.Specification
 class RecursiveFilesConverterSpec extends Specification {
 
 	private static
-	final Set<Path> EXPECTED_TARGET_FILES = [Paths.get("dslRoot.json"), Paths.get("dir1/dsl1.json"), Paths.get("dir1/dsl1b.json"), Paths.get("dir2/dsl2.json")]
+	final Set<Path> EXPECTED_TARGET_FILES = [Paths.get("dslRoot.json"), Paths.get("dir1/dsl1.json"),
+											 Paths.get("dir1/dsl1b.json"), Paths.get("dir2/dsl2.json"),
+											 Paths.get("dir1/0_dsl1_list.json"), Paths.get("dir1/1_dsl1_list.json")]
 
 	@Rule
 	public TemporaryFolder tmpFolder = new TemporaryFolder();

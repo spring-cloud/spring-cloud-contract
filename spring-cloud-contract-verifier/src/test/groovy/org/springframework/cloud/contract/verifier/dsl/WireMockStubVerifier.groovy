@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.verifier.dsl
 
 import com.github.tomakehurst.wiremock.matching.RegexPattern
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubStrategy
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 
@@ -33,8 +34,8 @@ trait WireMockStubVerifier {
 		assert !mappingDefinition.contains('org.springframework.cloud.contract.spec.internal')
 	}
 
-	void stubMappingIsValidWireMockStub(org.springframework.cloud.contract.spec.Contract contractDsl) {
-		stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), contractDsl).toWireMockClientStub())
+	void stubMappingIsValidWireMockStub(Contract contractDsl) {
+		stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, contractDsl), contractDsl).toWireMockClientStub())
 	}
 
 }

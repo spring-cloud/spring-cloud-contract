@@ -83,6 +83,6 @@ class ContractFileScannerSpec extends Specification {
 		then:
 			result.keySet().size() == 1
 			result.entries().every { it.value.convertedContract }
-			result.entries().find { it.value.convertedContract.request.method.clientValue == "PUT" }
+			result.entries().find { it.value.convertedContract.any { it.request.method.clientValue == "PUT" } }
 	}
 }

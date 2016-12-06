@@ -27,7 +27,7 @@ import spock.lang.Specification
 class DslToWireMockClientConverterSpec extends Specification {
 
 	@Rule
-	public TemporaryFolder tmpFolder = new TemporaryFolder();
+	public TemporaryFolder tmpFolder = new TemporaryFolder()
 
 	def "should convert DSL file to WireMock JSON"() {
 		given:
@@ -51,6 +51,39 @@ class DslToWireMockClientConverterSpec extends Specification {
 		JSONAssert.assertEquals('''
 {"request":{"method":"PUT","urlPattern":"/[0-9]{2}"},"response":{"status":200}}
 ''', json, false)
+	}
+
+	def "should convert DSL file with list of contracts to WireMock JSONs"() {
+		given:
+			def converter = new DslToWireMockClientConverter()
+		and:
+			File file = tmpFolder.newFile("dsl1_list.groovy")
+			file.write('''
+(1..2).collect { int index ->
+    org.springframework.cloud.contract.spec.Contract.make {
+        request {
+            method(PUT())
+            headers {
+                contentType(applicationJson())
+            }
+            url "/${index}"
+        }
+        response {
+            status 200
+        }
+    }
+}
+''')
+		when:
+			List<String> json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null))
+		then:
+			json.size() == 2
+			JSONAssert.assertEquals(jsonResponse(1), json.first(), false)
+			JSONAssert.assertEquals(jsonResponse(2), json.last(), false)
+	}
+
+	private String jsonResponse(int index) {
+		return """{"request":{"method":"PUT","url":"/${index}"},"response":{"status":200}}"""
 	}
 
 	@Issue("196")

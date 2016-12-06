@@ -1,3 +1,19 @@
+/*
+ *  Copyright 2013-2016 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package org.springframework.cloud.contract.verifier.converter
 
 import org.springframework.cloud.contract.spec.Contract
@@ -16,8 +32,10 @@ class YamlContractConverterSpec extends Specification {
 		given:
 			assert converter.isAccepted(yml)
 		when:
-			Contract contract = converter.convertFrom(yml)
+			Collection<Contract> contracts = converter.convertFrom(yml)
 		then:
+			contracts.size() == 1
+			Contract contract = contracts.first()
 			contract.request.url.clientValue == "/foo"
 			contract.request.method.clientValue == "PUT"
 			contract.request.headers.entries.find { it.name == "foo" && it.clientValue == "bar" }
@@ -31,7 +49,7 @@ class YamlContractConverterSpec extends Specification {
 		given:
 			assert converter.isAccepted(yml)
 		and:
-			Contract contract = Contract.make {
+			List<Contract> contracts = [Contract.make {
 				request {
 					url("/foo")
 					method("PUT")
@@ -47,10 +65,12 @@ class YamlContractConverterSpec extends Specification {
 					}
 					body([foo2: "bar"])
 				}
-			}
+			}]
 		when:
-			YamlContract yamlContract = converter.convertTo(contract)
+			Collection<YamlContract> yamlContracts = converter.convertTo(contracts)
 		then:
+			yamlContracts.size() == 1
+			YamlContract yamlContract = yamlContracts.first()
 			yamlContract.request.url == "/foo"
 			yamlContract.request.method == "PUT"
 			yamlContract.request.headers.find { it.key == "foo" && it.value == "bar" }

@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.wiremock
 import com.google.common.collect.ListMultimap
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.converter.SingleFileConverter
 import org.springframework.cloud.contract.verifier.converter.SingleFileConvertersHolder
@@ -85,13 +86,17 @@ class RecursiveFilesConverter {
 					if (!contract.convertedContract && !singleFileConverter) {
 						return
 					}
-					String convertedContent = singleFileConverter.convertContent(entry.key.last().toString(), contract)
-					if (!convertedContent) {
-						return
+					int contractsSize = contract.convertedContract.size()
+					contract.convertedContract.eachWithIndex { Contract dsl, int index ->
+						String convertedContent = singleFileConverter.convertContent(entry.key.last().toString(), contract)
+						if (!convertedContent) {
+							return
+						}
+						Path absoluteTargetPath = createAndReturnTargetDirectory(sourceFile)
+						File newJsonFile = createTargetFileWithProperName(singleFileConverter, absoluteTargetPath,
+								sourceFile, contractsSize, index)
+						newJsonFile.setText(convertedContent, StandardCharsets.UTF_8.toString())
 					}
-					Path absoluteTargetPath = createAndReturnTargetDirectory(sourceFile)
-					File newJsonFile = createTargetFileWithProperName(singleFileConverter, absoluteTargetPath, sourceFile)
-					newJsonFile.setText(convertedContent, StandardCharsets.UTF_8.toString())
 				} catch (Exception e) {
 					throw new ConversionContractVerifierException("Unable to make conversion of ${sourceFile.name}", e)
 				}
@@ -106,8 +111,11 @@ class RecursiveFilesConverter {
 		return absoluteTargetPath
 	}
 
-	private File createTargetFileWithProperName(SingleFileConverter singleFileConverter, Path absoluteTargetPath, File sourceFile) {
-		File newJsonFile = new File(absoluteTargetPath.toFile(), singleFileConverter.generateOutputFileNameForInput(sourceFile.name))
+	private File createTargetFileWithProperName(SingleFileConverter singleFileConverter, Path absoluteTargetPath,
+												File sourceFile, int contractsSize, int index) {
+		String generatedName = singleFileConverter.generateOutputFileNameForInput(sourceFile.name)
+		String name = contractsSize == 1 ? generatedName : "${index}_${generatedName}"
+		File newJsonFile = new File(absoluteTargetPath.toFile(), name)
 		log.info("Creating new json [$newJsonFile.path]")
 		return newJsonFile
 	}
