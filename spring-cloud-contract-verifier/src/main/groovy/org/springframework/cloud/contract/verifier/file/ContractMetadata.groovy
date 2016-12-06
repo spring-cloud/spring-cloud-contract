@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.verifier.file
 
 import groovy.transform.CompileStatic
+import groovy.transform.ToString
 import org.springframework.cloud.contract.spec.Contract
 
 import java.nio.file.Path
@@ -28,6 +29,7 @@ import java.nio.file.Path
  * @since 1.0.0
  */
 @CompileStatic
+@ToString
 class ContractMetadata {
 	/**
 	 * Path to the file
@@ -57,16 +59,5 @@ class ContractMetadata {
 		this.ignored = ignored
 		this.order = order
 		this.convertedContract = convertedContract
-	}
-
-	@Override
-	public String toString() {
-		return "ContractMetadata{" +
-				"fileName=" + path.fileName +
-				", ignored=" + ignored +
-				", groupSize=" + groupSize +
-				", order=" + order +
-				", convertedContract=" + convertedContract +
-				'}'
 	}
 }
