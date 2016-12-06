@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.verifier.wiremock
 
 import groovy.transform.CompileStatic
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubStrategy
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 
@@ -31,10 +32,26 @@ import java.nio.charset.StandardCharsets
 class DslToWireMockClientConverter extends DslToWireMockConverter {
 
 	@Override
+	@Deprecated
 	String convertContent(String rootName, ContractMetadata contract) {
-		return new WireMockStubStrategy(rootName, contract,
-				contract.convertedContract ?: createGroovyDSLFromStringContent(
-						contract.path.getText(StandardCharsets.UTF_8.toString()))
-		).toWireMockClientStub()
+		return convertASingleContract(rootName, contract, contract.convertedContract.first() ?: createGroovyDSLFromStringContent(
+				contract.path.getText(StandardCharsets.UTF_8.toString())).first())
+	}
+
+	private String convertASingleContract(String rootName, ContractMetadata contract, Contract dsl) {
+		return new WireMockStubStrategy(rootName, contract, dsl).toWireMockClientStub()
+	}
+
+	@Override
+	Collection<String> convertContents(String rootName, ContractMetadata contract) {
+		if (contract.convertedContract.size() == 1) {
+			return [convertASingleContract(rootName, contract, contract.convertedContract.first())]
+		}
+		List<String> convertedContracts = []
+		contract.convertedContract.eachWithIndex { Contract dsl, int index ->
+			String name = "${rootName}_${index}"
+			convertedContracts << convertASingleContract(name, contract, dsl)
+		}
+		return convertedContracts
 	}
 }

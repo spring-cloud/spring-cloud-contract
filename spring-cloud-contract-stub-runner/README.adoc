@@ -100,7 +100,7 @@ Since the `StubRunnerRule` implements the `StubFinder` it allows you to find the
 
 [source,groovy,indent=0]
 ----
-include::src/main/java/org/springframework/cloud/contract/stubrunner/StubFinder.java[]
+include::src/main/java/org/springframework/cloud/contract/stubrunner/StubFinder.java[lines=16..-1]
 ----
 
 Example of usage in Spock tests:

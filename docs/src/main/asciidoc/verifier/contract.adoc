@@ -427,7 +427,7 @@ Thanks to the interface
 
 [source,groovy]
 ----
-include::{contract_spec_path}/src/main/groovy/org/springframework/cloud/contract/spec/ContractConverter.groovy[indent=0]
+include::{contract_spec_path}/src/main/groovy/org/springframework/cloud/contract/spec/ContractConverter.groovy[indent=0,lines=17..-1]
 ----
 
 you can register your own implementation of a contract structure converter.
@@ -441,14 +441,14 @@ Example of a `spring.factories` file
 
 [source]
 ----
-include::{verifier_core_path}/src/main/resources/META-INF/spring.factories[indent=0]
+include::{verifier_core_path}/src/test/resources/META-INF/spring.factories[indent=0]
 ----
 
 and the YAML implementation
 
 [source,groovy]
 ----
-include::{verifier_core_path}/src/main/groovy/org/springframework/cloud/contract/verifier/converter/YamlContractConverter.groovy[indent=0]
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/converter/YamlContractConverter.groovy[indent=0,lines=16..-1]
 ----
 
 ==== Custom test generator
@@ -461,7 +461,7 @@ Thanks to the interface
 
 [source,groovy]
 ----
-include::{verifier_core_path}/src/main/groovy/org/springframework/cloud/contract/verifier/builder/SingleTestGenerator.groovy[indent=0]
+include::{verifier_core_path}/src/main/groovy/org/springframework/cloud/contract/verifier/builder/SingleTestGenerator.groovy[indent=0,lines=17..-1]
 ----
 
 you can register your own implementation that generates a test. Again, it's enough to provide
@@ -480,7 +480,7 @@ If you want to generate stubs for other stub server than WireMock it's enough to
 
 [source,groovy]
 ----
-include::{converters_path}/src/main/groovy/org/springframework/cloud/contract/verifier/converter/SingleFileConverter.groovy[indent=0]
+include::{converters_path}/src/main/groovy/org/springframework/cloud/contract/verifier/converter/SingleFileConverter.groovy[indent=0,lines=16..-1]
 ----
 
 you can register your own implementation that generate Stubs. Again, it's enough to provide

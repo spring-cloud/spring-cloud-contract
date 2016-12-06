@@ -33,12 +33,24 @@ interface SingleFileConverter {
 	boolean canHandleFileName(String fileName)
 
 	/**
-	 * Returns the content of the converted file. The content will be the stub.
+	 * Returns the content of the converted file. The content will be a single stub.
 	 */
+	@Deprecated
 	String convertContent(String rootName, ContractMetadata content)
 
 	/**
-	 * Returns the name of the converted stub file.
+	 * Returns the collection of converted contracts into stubs. One contract can
+	 * result in multiple stubs.
+	 */
+	Collection<String> convertContents(String rootName, ContractMetadata content)
+
+	/**
+	 * Returns the name of the converted stub file. If you have multiple contracts
+	 * in a single file then a prefix will be added to the generated file.
+	 *
+	 * Example: name of file with 2 contracts is {@code foo.groovy}, it will be
+	 * converted by the implementation to {@code foo.json}. The recursive file
+	 * converter will create two files {@code 0_foo.json} and {@code 1_foo.json}
 	 */
 	String generateOutputFileNameForInput(String inputFileName)
 }

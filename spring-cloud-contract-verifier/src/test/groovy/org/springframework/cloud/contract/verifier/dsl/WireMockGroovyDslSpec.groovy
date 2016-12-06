@@ -45,7 +45,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 									producer(regex('[a-zA-Z]+'))
 							),
 							name: 'Jan',
-							created: $(consumer('2014-02-02 12:23:43'), producer({ currentDate(it) }))
+							created: $(consumer('2014-02-02 12:23:43'), producer(execute('currentDate($it)')))
 					)
 					headers {
 						header 'Content-Type': 'text/plain'
@@ -53,7 +53,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), groovyDsl).toWireMockClientStub()
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
 		then:
 			AssertionUtil.assertThatJsonsAreEqual('''
 			{
@@ -98,7 +98,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), groovyDsl).toWireMockClientStub()
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
 		then:
 		AssertionUtil.assertThatJsonsAreEqual('''
 {
@@ -146,7 +146,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), groovyDsl).toWireMockClientStub()
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
 		then:
 		AssertionUtil.assertThatJsonsAreEqual('''
 {
@@ -198,7 +198,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), groovyDsl).toWireMockClientStub()
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
 		then:
 		AssertionUtil.assertThatJsonsAreEqual(('''
 {
@@ -245,7 +245,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), groovyDsl).toWireMockClientStub()
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
 		then:
 		AssertionUtil.assertThatJsonsAreEqual('''
 {
@@ -293,7 +293,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), groovyDsl).toWireMockClientStub()
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
 		then:
 		AssertionUtil.assertThatJsonsAreEqual(('''
 {
@@ -577,7 +577,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), groovyDsl).toWireMockClientStub()
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
 		then:
 		AssertionUtil.assertThatJsonsAreEqual(('''
 {
@@ -632,7 +632,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 			}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), groovyDsl).toWireMockClientStub()
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
 		then:
 		AssertionUtil.assertThatJsonsAreEqual(('''
 {
@@ -1020,7 +1020,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), groovyDsl).toWireMockClientStub()
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
 		then:
 		AssertionUtil.assertThatJsonsAreEqual(('''
 {
@@ -1190,7 +1190,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), groovyDsl).toWireMockClientStub()
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
 		then:
 		AssertionUtil.assertThatJsonsAreEqual(('''
 {
@@ -1225,7 +1225,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), groovyDsl).toWireMockClientStub()
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
 		then:
 		AssertionUtil.assertThatJsonsAreEqual(('''
 				{
@@ -1273,7 +1273,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), groovyDsl).toWireMockClientStub()
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
 		then:
 		AssertionUtil.assertThatJsonsAreEqual(('''
 		{
@@ -1324,7 +1324,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), groovyDsl).toWireMockClientStub()
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
 		then:
 		AssertionUtil.assertThatJsonsAreEqual(('''
 		{
@@ -1352,7 +1352,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue('42')
 	def 'should generate stub without optional parameters'() {
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), contractDsl).toWireMockClientStub()
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, contractDsl), contractDsl).toWireMockClientStub()
 		then:
 		AssertionUtil.assertThatJsonsAreEqual(('''
 			{
@@ -1450,7 +1450,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	}
 
 	String toWireMockClientJsonStub(groovyDsl) {
-		new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), groovyDsl).toWireMockClientStub()
+		new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
 	}
 
 	@Issue('180')
@@ -1473,7 +1473,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), contractDsl).toWireMockClientStub()
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, contractDsl), contractDsl).toWireMockClientStub()
 		then:
 			println wireMockStub
 			AssertionUtil.assertThatJsonsAreEqual(('''
@@ -1624,7 +1624,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			}
 		}
 		when:
-			def json = new WireMockStubStrategy("Test", new ContractMetadata(null, true, 0, null), groovyDsl).toWireMockClientStub()
+			def json = new WireMockStubStrategy("Test", new ContractMetadata(null, true, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
 		then:
 			json == ''
 	}

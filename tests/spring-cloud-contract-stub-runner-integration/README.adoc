@@ -67,7 +67,7 @@ and the following Spring Integration Route:
 
 [source,xml]
 ----
-include::src/test/resources/integration-context.xml[]
+include::src/test/resources/integration-context.xml[lines=1;18..-1]
 ----
 
 
