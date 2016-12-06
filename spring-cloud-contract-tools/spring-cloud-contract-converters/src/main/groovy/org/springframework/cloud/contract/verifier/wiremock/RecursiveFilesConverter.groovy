@@ -25,6 +25,7 @@ import org.springframework.cloud.contract.verifier.converter.SingleFileConverter
 import org.springframework.cloud.contract.verifier.converter.SingleFileConvertersHolder
 import org.springframework.cloud.contract.verifier.file.ContractFileScanner
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
+import org.springframework.cloud.contract.verifier.util.NamesUtil
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -94,7 +95,7 @@ class RecursiveFilesConverter {
 						}
 						Path absoluteTargetPath = createAndReturnTargetDirectory(sourceFile)
 						File newJsonFile = createTargetFileWithProperName(singleFileConverter, absoluteTargetPath,
-								sourceFile, contractsSize, index)
+								sourceFile, contractsSize, index, dsl)
 						newJsonFile.setText(convertedContent, StandardCharsets.UTF_8.toString())
 					}
 				} catch (Exception e) {
@@ -112,11 +113,22 @@ class RecursiveFilesConverter {
 	}
 
 	private File createTargetFileWithProperName(SingleFileConverter singleFileConverter, Path absoluteTargetPath,
-												File sourceFile, int contractsSize, int index) {
-		String generatedName = singleFileConverter.generateOutputFileNameForInput(sourceFile.name)
-		String name = contractsSize == 1 ? generatedName : "${index}_${generatedName}"
+												File sourceFile, int contractsSize, int index, Contract dsl) {
+		String name = generateName(dsl, contractsSize, singleFileConverter, sourceFile, index)
 		File newJsonFile = new File(absoluteTargetPath.toFile(), name)
-		log.info("Creating new json [$newJsonFile.path]")
+		log.info("Creating new stub [$newJsonFile.path]")
 		return newJsonFile
+	}
+
+	private String generateName(Contract dsl, int contractsSize, SingleFileConverter converter,
+								File sourceFile, int index) {
+		String generatedName = converter.generateOutputFileNameForInput(sourceFile.name)
+		String extension = NamesUtil.afterLastDot(generatedName)
+		if (dsl.name) {
+			return "${dsl.name}.${extension}"
+		} else if (contractsSize == 1) {
+			return generatedName
+		}
+		return "${index}_${generatedName}"
 	}
 }

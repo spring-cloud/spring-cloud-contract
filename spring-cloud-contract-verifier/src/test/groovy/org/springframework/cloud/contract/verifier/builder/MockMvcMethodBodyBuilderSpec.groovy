@@ -38,7 +38,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 	Contract dslWithOptionalsInString = Contract.make {
 		priority 1
 		request {
-			method 'POST'
+			method POST()
 			url '/users/password'
 			headers {
 				contentType(applicationJson())
@@ -65,7 +65,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 	Contract dslWithOptionals = Contract.make {
 		priority 1
 		request {
-			method 'POST'
+			method POST()
 			url '/users/password'
 			headers {
 				contentType(applicationJson())

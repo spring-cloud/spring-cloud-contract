@@ -19,14 +19,13 @@ package org.springframework.cloud.contract.spec.internal
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
-
 /**
  * Represents an element of a DSL that can contain client or sever side values
  *
  * @since 1.0.0
  */
 @CompileStatic
-@EqualsAndHashCode(includeFields = true)
+@EqualsAndHashCode
 @ToString(includePackage = false, includeNames = true)
 class DslProperty<T> {
 

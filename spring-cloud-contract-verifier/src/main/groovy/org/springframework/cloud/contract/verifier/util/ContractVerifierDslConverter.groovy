@@ -80,7 +80,7 @@ class ContractVerifierDslConverter {
 		return new GroovyShell(ContractVerifierDslConverter.classLoader, new Binding(), new CompilerConfiguration(sourceEncoding: 'UTF-8'))
 	}
 
-	private static List<Contract> listOfContracts(object) {
+	private static Collection<Contract> listOfContracts(object) {
 		if (object instanceof Collection) {
 			return object as Collection<Contract>
 		} else if (!object instanceof Contract) {

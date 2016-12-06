@@ -47,7 +47,7 @@ abstract class DslToWireMockConverter implements SingleFileConverter {
 		return ""
 	}
 
-	protected List<Contract> createGroovyDSLFromStringContent(String groovyDslAsString) {
+	protected Collection<Contract> createGroovyDSLFromStringContent(String groovyDslAsString) {
 		return ContractVerifierDslConverter.convertAsCollection(groovyDslAsString)
 	}
 }

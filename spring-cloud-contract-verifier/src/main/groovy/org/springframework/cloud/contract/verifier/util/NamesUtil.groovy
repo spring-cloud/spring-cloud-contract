@@ -106,6 +106,6 @@ class NamesUtil {
 	 * Converts illegal package characters to underscores
 	 */
 	static String convertIllegalPackageChars(String packageName) {
-		return packageName.replace('-', '_')
+		return packageName.replace('-', '_').replace(" ", "_")
 	}
 }

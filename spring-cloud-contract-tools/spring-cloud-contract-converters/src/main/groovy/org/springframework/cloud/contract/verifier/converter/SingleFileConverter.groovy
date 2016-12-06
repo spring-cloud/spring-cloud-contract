@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.verifier.converter
 
 import groovy.transform.CompileStatic
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 
 /**
@@ -46,7 +47,9 @@ interface SingleFileConverter {
 
 	/**
 	 * Returns the name of the converted stub file. If you have multiple contracts
-	 * in a single file then a prefix will be added to the generated file.
+	 * in a single file then a prefix will be added to the generated file. If you
+	 * provide the {@link Contract#name} field then that field will override the
+	 * generated file name.
 	 *
 	 * Example: name of file with 2 contracts is {@code foo.groovy}, it will be
 	 * converted by the implementation to {@code foo.json}. The recursive file

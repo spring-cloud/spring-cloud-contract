@@ -113,16 +113,17 @@ class JavaTestGenerator implements SingleTestGenerator {
 				log.debug("Stub content from file [${stubsFile.text}]")
 			}
 			List<Contract> stubContents = metadata.convertedContract
-			dsls << stubContents.collectEntries { Contract stubContent ->
+			Map<ParsedDsl, TestType> entries = stubContents.collectEntries { Contract stubContent ->
 				TestType testType = (stubContent.input || stubContent.outputMessage) ? TestType.MESSAGING : TestType.HTTP
 				return [(new ParsedDsl(metadata, stubContent, stubsFile)): testType]
 			}
+			dsls.putAll(entries)
 		}
 		return dsls
 	}
 
 	@Canonical
-	@EqualsAndHashCode
+	@EqualsAndHashCode(includeFields = true)
 	private static class ParsedDsl {
 		ContractMetadata contract
 		Contract groovyDsl

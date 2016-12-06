@@ -1,3 +1,5 @@
+import org.springframework.cloud.contract.spec.Contract
+
 /*
  *  Copyright 2013-2016 the original author or authors.
  *
@@ -14,27 +16,18 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.spec.internal
-
-import groovy.transform.CompileStatic
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
-
-/**
- * Represents a client side {@link DslProperty}
- *
- * @since 1.0.0
- */
-@CompileStatic
-@EqualsAndHashCode(callSuper = true)
-@ToString(includeSuper = true)
-class ClientDslProperty extends DslProperty {
-
-	ClientDslProperty(Object singleValue) {
-		super(singleValue)
-	}
-
-	ClientDslProperty(Object client, Object server) {
-		super(client, server)
+(1..2).collect { int index ->
+	Contract.make {
+		name("shouldHaveIndex${index}")
+		request {
+			method(PUT())
+			headers {
+				contentType(applicationJson())
+			}
+			url "/${index}"
+		}
+		response {
+			status 200
+		}
 	}
 }

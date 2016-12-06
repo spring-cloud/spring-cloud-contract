@@ -11,7 +11,7 @@ import groovy.transform.ToString
  * @since 1.0.2
  */
 @CompileStatic
-@EqualsAndHashCode
+@EqualsAndHashCode(includeFields = true)
 @ToString(includePackage = false)
 class HttpMethods {
 
