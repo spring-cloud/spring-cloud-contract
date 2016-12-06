@@ -70,7 +70,7 @@ class ContractVerifierExtension {
 	File generatedTestSourcesDir
 
 	/**
-	 * Dir where the generated WireMock stubs from Groovy DSL should be placed.
+	 * Dir where the generated stubs from Groovy DSL should be placed.
 	 * You can then mention them in your packaging task to create jar with stubs
 	 */
 	File stubsOutputDir

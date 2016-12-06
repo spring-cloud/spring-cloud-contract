@@ -138,7 +138,7 @@ contracts {
     contractsWorkOffline = false
 }
 
-tasks.create(type: Jar, name: 'verifierStubsJar', dependsOn: 'generateWireMockClientStubs') {
+tasks.create(type: Jar, name: 'verifierStubsJar', dependsOn: 'convert') {
     baseName = project.name
     classifier = contracts.stubsSuffix
     from contractVerifier.stubsOutputDir
@@ -265,7 +265,7 @@ In consumer service you need to configure Spring Cloud Contract Verifier plugin 
 
 [source,bash,indent=0]
 ----
-./gradlew generateWireMockClientStubs
+./gradlew generateClientStubs
 ----
 
 Note that `stubsOutputDir` option has to be set for stub generation to work.

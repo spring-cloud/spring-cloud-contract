@@ -16,6 +16,11 @@
  */
 package org.springframework.cloud.contract.maven.verifier;
 
+import static io.takari.maven.testing.TestMavenRuntime.newParameter;
+import static io.takari.maven.testing.TestResources.assertFilesNotPresent;
+import static io.takari.maven.testing.TestResources.assertFilesPresent;
+import static org.assertj.core.api.BDDAssertions.then;
+
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
@@ -24,11 +29,6 @@ import org.junit.Test;
 
 import io.takari.maven.testing.TestMavenRuntime;
 import io.takari.maven.testing.TestResources;
-
-import static io.takari.maven.testing.TestMavenRuntime.newParameter;
-import static io.takari.maven.testing.TestResources.assertFilesNotPresent;
-import static io.takari.maven.testing.TestResources.assertFilesPresent;
-import static org.assertj.core.api.BDDAssertions.then;
 
 public class PluginUnitTest {
 
@@ -212,5 +212,35 @@ public class PluginUnitTest {
 		assertFilesPresent(basedir, path);
 		File test = new File(basedir, path);
 		then(FileUtils.readFileToString(test)).contains("extends TestBase").contains("import com.example.TestBase");
+	}
+
+	@Test
+	public void shouldGenerateContractTestsWithAFileContainingAListOfContracts() throws Exception {
+		File basedir = this.resources.getBasedir("multiple-contracts");
+
+		this.maven.executeMojo(basedir, "generateTests", newParameter("testFramework", "JUNIT"));
+
+		String path = "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/com/hello/V1Test.java";
+		assertFilesPresent(basedir, path);
+		File test = new File(basedir, path);
+		then(FileUtils.readFileToString(test))
+				.contains("public void validate_should_post_a_user() throws Exception {")
+				.contains("public void validate_withList_1() throws Exception {");
+	}
+
+	@Test
+	public void shouldGenerateStubsWithAFileContainingAListOfContracts() throws Exception {
+		File basedir = this.resources.getBasedir("multiple-contracts");
+
+		this.maven.executeMojo(basedir, "convert", newParameter("stubsDirectory", "target/foo"));
+
+		String firstFile = "target/foo/mappings/com/hello/v1/should post a user.json";
+		File test = new File(basedir, firstFile);
+		assertFilesPresent(basedir, "target/foo/mappings/com/hello/v1/1_WithList.json");
+		then(FileUtils.readFileToString(test)).contains("/users/1");
+		String secondFile = "target/foo/mappings/com/hello/v1/1_WithList.json";
+		File test2 = new File(basedir, secondFile);
+		assertFilesPresent(basedir, "target/foo/mappings/com/hello/v1/should post a user.json");
+		then(FileUtils.readFileToString(test2)).contains("/users/2");
 	}
 }

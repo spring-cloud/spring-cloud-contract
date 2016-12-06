@@ -26,7 +26,8 @@ import org.springframework.cloud.contract.verifier.wiremock.RecursiveFilesConver
 import static org.springframework.cloud.contract.verifier.plugin.SpringCloudContractVerifierGradlePlugin.COPY_CONTRACTS_TASK_NAME
 //TODO: Implement as an incremental task: https://gradle.org/docs/current/userguide/custom_tasks.html#incremental_tasks ?
 /**
- * Generates WireMock stubs from the contracts
+ * Generates stubs from the contracts. The name is WireMock related but the implementation
+ * can differ
  *
  * @since 1.0.0
  */
@@ -45,7 +46,7 @@ class GenerateWireMockClientStubsFromDslTask extends ConventionTask {
 		Task copyContractsTask = project.getTasksByName(COPY_CONTRACTS_TASK_NAME, false).first()
 		ContractVerifierConfigProperties props = props(copyContractsTask)
 		File contractsDslDir = contractsDslDir(copyContractsTask, props)
-		logger.info("Spring Cloud Contract Verifier Plugin: Invoking DSL to WireMock client stubs conversion")
+		logger.info("Spring Cloud Contract Verifier Plugin: Invoking DSL to client stubs conversion")
 		props.contractsDslDir = contractsDslDir
 		props.includedContracts = ".*"
 		File outMappingsDir = getStubsOutputDir() != null ? new File(getStubsOutputDir(), DEFAULT_MAPPINGS_FOLDER)
@@ -71,7 +72,7 @@ class GenerateWireMockClientStubsFromDslTask extends ConventionTask {
 		try {
 			return task.ext.contractsDslDir
 		} catch (Exception e) {
-			project.logger.error("Couldn't retrieve the contractdsl property set by the copy contracts task", e)
+			project.logger.error("Couldn't retrieve the contract dsl property set by the copy contracts task", e)
 			return props.contractsDslDir
 		}
 	}

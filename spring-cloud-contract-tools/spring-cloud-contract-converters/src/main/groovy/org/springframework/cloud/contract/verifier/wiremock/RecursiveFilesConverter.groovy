@@ -88,15 +88,17 @@ class RecursiveFilesConverter {
 						return
 					}
 					int contractsSize = contract.convertedContract.size()
-					contract.convertedContract.eachWithIndex { Contract dsl, int index ->
-						String convertedContent = singleFileConverter.convertContent(entry.key.last().toString(), contract)
-						if (!convertedContent) {
-							return
-						}
+					Map<Contract, String> convertedContent = singleFileConverter.convertContents(entry.key.last().toString(), contract)
+					if (!convertedContent) {
+						return
+					}
+					convertedContent.entrySet().eachWithIndex { Map.Entry<Contract, String> content, int index ->
+						Contract dsl = content.key
+						String converted = content.value
 						Path absoluteTargetPath = createAndReturnTargetDirectory(sourceFile)
 						File newJsonFile = createTargetFileWithProperName(singleFileConverter, absoluteTargetPath,
 								sourceFile, contractsSize, index, dsl)
-						newJsonFile.setText(convertedContent, StandardCharsets.UTF_8.toString())
+						newJsonFile.setText(converted, StandardCharsets.UTF_8.toString())
 					}
 				} catch (Exception e) {
 					throw new ConversionContractVerifierException("Unable to make conversion of ${sourceFile.name}", e)

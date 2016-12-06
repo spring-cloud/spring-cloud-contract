@@ -47,7 +47,8 @@ import org.gradle.jvm.tasks.Jar
 class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 
 	private static final String GENERATE_SERVER_TESTS_TASK_NAME = 'generateContractTests'
-	private static final String DSL_TO_WIREMOCK_CLIENT_TASK_NAME = 'generateWireMockClientStubs'
+	private static final String DEPRECATED_DSL_TO_WIREMOCK_CLIENT_TASK_NAME = 'generateWireMockClientStubs'
+	private static final String DSL_TO_CLIENT_TASK_NAME = 'generateClientStubs'
 	@PackageScope static final String COPY_CONTRACTS_TASK_NAME = 'copyContracts'
 	private static final String VERIFIER_STUBS_JAR_TASK_NAME = 'verifierStubsJar'
 
@@ -69,7 +70,8 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		Task copyContracts = createAndConfigureCopyContractsTask(stubsJar, downloader, extension)
 		createAndConfigureMavenPublishPlugin(stubsJar)
 		createGenerateTestsTask(extension, copyContracts)
-		createAndConfigureGenerateWireMockClientStubsFromDslTask(extension, copyContracts)
+		Task clientTask = createAndConfigureGenerateClientStubsFromDslTask(extension, copyContracts)
+		createAndConfigureGenerateWireMockClientStubsFromDslTask(extension, clientTask)
 		addProjectDependencies(project)
 		addIdeaTestSources(project, extension)
 	}
@@ -89,6 +91,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	}
 
 	private void addProjectDependencies(Project project) {
+		//TODO: Consider removing this at some point
 		project.dependencies.add("testCompile", "com.github.tomakehurst:wiremock:2.1.7")
 		project.dependencies.add("testCompile", "com.toomuchcoding.jsonassert:jsonassert:0.4.7")
 		project.dependencies.add("testCompile", "org.assertj:assertj-core:2.3.0")
@@ -119,10 +122,19 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		task.dependsOn copyContracts
 	}
 
+	// TODO: Remove this task at some point
 	private void createAndConfigureGenerateWireMockClientStubsFromDslTask(ContractVerifierExtension extension,
+																		  Task mainTask) {
+		Task task = project.tasks.create(DEPRECATED_DSL_TO_WIREMOCK_CLIENT_TASK_NAME)
+		task.description = "DEPRECATED: Generate WireMock client stubs from the contracts. Use ${DSL_TO_CLIENT_TASK_NAME} task."
+		task.group = GROUP_NAME
+		task.dependsOn mainTask
+	}
+
+	private Task createAndConfigureGenerateClientStubsFromDslTask(ContractVerifierExtension extension,
 																		  Task copyContracts) {
-		Task task = project.tasks.create(DSL_TO_WIREMOCK_CLIENT_TASK_NAME, GenerateWireMockClientStubsFromDslTask)
-		task.description = "Generate WireMock client stubs from the contracts"
+		Task task = project.tasks.create(DSL_TO_CLIENT_TASK_NAME, GenerateWireMockClientStubsFromDslTask)
+		task.description = "Generate client stubs from the contracts"
 		task.group = GROUP_NAME
 		task.conventionMapping.with {
 			downloader = { gradleContractsDownloader }
@@ -130,6 +142,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 			configProperties = { extension }
 		}
 		task.dependsOn copyContracts
+		return task
 	}
 
 	private Task createAndConfigureStubsJarTasks(ContractVerifierExtension extension) {
@@ -139,7 +152,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 			return task
 		} else {
 			task = project.tasks.create(type: Jar, name: VERIFIER_STUBS_JAR_TASK_NAME,
-					dependsOn: DSL_TO_WIREMOCK_CLIENT_TASK_NAME) {
+					dependsOn: DSL_TO_CLIENT_TASK_NAME) {
 				baseName = project.name
 				classifier = extension.stubsSuffix
 				from { extension.stubsOutputDir ?: project.file("${project.buildDir}/stubs") }
