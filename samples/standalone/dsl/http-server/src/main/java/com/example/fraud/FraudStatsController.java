@@ -17,17 +17,16 @@ public class FraudStatsController {
 	@GetMapping(
 			value = "/frauds",
 			produces = FRAUD_SERVICE_JSON_VERSION_1)
-	public int countAllFrauds() {
-		return this.statsProvider.count(FraudType.ALL);
+	public Response countAllFrauds() {
+		return new Response(this.statsProvider.count(FraudType.ALL));
 	}
 
 	@GetMapping(
 			value = "/drunks",
 			produces = FRAUD_SERVICE_JSON_VERSION_1)
-	public int countAllDrunks() {
-		return this.statsProvider.count(FraudType.DRUNKS);
+	public Response countAllDrunks() {
+		return new Response(this.statsProvider.count(FraudType.DRUNKS));
 	}
-
 }
 
 enum FraudType {
@@ -37,3 +36,23 @@ enum FraudType {
 interface StatsProvider {
 	int count(FraudType fraudType);
 }
+
+class Response {
+	private int count;
+
+	public Response(int count) {
+		this.count = count;
+	}
+
+	public Response() {
+	}
+
+	public int getCount() {
+		return this.count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+	}
+}
+
