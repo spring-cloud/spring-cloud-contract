@@ -1,0 +1,2 @@
+org.springframework.cloud.contract.stubrunner.HttpServerStub=\
+org.springframework.cloud.contract.stubrunner.provider.moco.MocoHttpServerStub
