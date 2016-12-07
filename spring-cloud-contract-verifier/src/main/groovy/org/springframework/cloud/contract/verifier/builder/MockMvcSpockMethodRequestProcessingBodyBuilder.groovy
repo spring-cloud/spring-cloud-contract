@@ -59,7 +59,8 @@ class MockMvcSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestP
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Object value) {
 		if (value instanceof NotToEscapePattern) {
-			blockBuilder.addLine("response.header('$property') ${patternComparison(value.serverValue)}")
+			blockBuilder.addLine("response.header('$property') " +
+					"${patternComparison(value.serverValue.pattern().replace("\\", "\\\\"))}")
 		}
 	}
 	@Override
