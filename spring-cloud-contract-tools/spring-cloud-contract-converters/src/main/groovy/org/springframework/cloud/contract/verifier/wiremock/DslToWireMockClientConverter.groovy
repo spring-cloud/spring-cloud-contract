@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.wiremock
 
+
 import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubStrategy
@@ -31,7 +32,6 @@ import java.nio.charset.StandardCharsets
 @CompileStatic
 class DslToWireMockClientConverter extends DslToWireMockConverter {
 
-	@Override
 	@Deprecated
 	String convertContent(String rootName, ContractMetadata contract) {
 		return convertASingleContract(rootName, contract, contract.convertedContract.first() ?: createGroovyDSLFromStringContent(

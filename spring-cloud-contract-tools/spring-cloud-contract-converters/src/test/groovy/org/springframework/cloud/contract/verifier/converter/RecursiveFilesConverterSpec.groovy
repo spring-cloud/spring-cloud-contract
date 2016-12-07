@@ -14,14 +14,12 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.wiremock
+package org.springframework.cloud.contract.verifier.converter
 
 import groovy.io.FileType
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
-import org.springframework.cloud.contract.verifier.converter.SingleFileConverter
-import org.springframework.cloud.contract.verifier.converter.SingleFileConvertersHolder
 import org.springframework.util.FileSystemUtils
 import spock.lang.Specification
 
@@ -68,12 +66,7 @@ class RecursiveFilesConverterSpec extends Specification {
 			properties.excludedFiles = ["dir1/**"]
 			FileSystemUtils.copyRecursively(originalSourceRootDirectory, properties.contractsDslDir)
 		and:
-			def singleFileConverterStub = Stub(SingleFileConverter)
-			singleFileConverterStub.canHandleFileName(_) >> { String fileName -> fileName.endsWith(".groovy") }
-			singleFileConverterStub.convertContent(_, _) >> { "converted" }
-			singleFileConverterStub.generateOutputFileNameForInput(_) >> { String inputFileName -> inputFileName.replaceAll('.groovy', '.json') }
-
-			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(singleFileConverterStub, properties)
+			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(properties)
 		when:
 			recursiveFilesConverter.processFiles()
 		then:
@@ -82,21 +75,21 @@ class RecursiveFilesConverterSpec extends Specification {
 			Set<String> relativizedCreatedFiles = getRelativePathsForFilesInDirectory(createdFiles, properties.stubsOutputDir)
 			[Paths.get("dslRoot.json"), Paths.get("dir2/dsl2.json")] as Set == relativizedCreatedFiles as Set
 		and:
-			createdFiles.each { it.text == "converted" }
+			createdFiles.each { assert it.text.contains("uuid") }
 	}
 
 	def "on failure should break processing and throw meaningful exception"() {
 		given:
 			def sourceFile = tmpFolder.newFile("test.groovy")
 		and:
-			def singleFileConverterStub = Stub(SingleFileConverter)
-			singleFileConverterStub.canHandleFileName(_) >> { true }
-			singleFileConverterStub.convertContents(_, _) >> { throw new NullPointerException("Test conversion error") }
-			singleFileConverterStub.generateOutputFileNameForInput(_) >> { String inputFileName -> "${inputFileName}2" }
+			def stubGenerator = Stub(StubGenerator)
+			stubGenerator.canHandleFileName(_) >> { true }
+			stubGenerator.convertContents(_, _) >> { throw new NullPointerException("Test conversion error") }
+			stubGenerator.generateOutputFileNameForInput(_) >> { String inputFileName -> "${inputFileName}2" }
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.contractsDslDir = tmpFolder.root
 			properties.stubsOutputDir = tmpFolder.root
-			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(properties, new SingleFileConvertersHolder([singleFileConverterStub]))
+			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(properties, new StubGeneratorHolder([stubGenerator]))
 		when:
 			recursiveFilesConverter.processFiles()
 		then:

@@ -14,17 +14,13 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.wiremock
+package org.springframework.cloud.contract.verifier.converter
 
 import com.google.common.collect.ListMultimap
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
-import org.springframework.cloud.contract.verifier.converter.ConversionContractVerifierException
-import org.springframework.cloud.contract.verifier.converter.SingleFileConverter
-import org.springframework.cloud.contract.verifier.converter.StubGenerator
-import org.springframework.cloud.contract.verifier.converter.StubGeneratorHolder
 import org.springframework.cloud.contract.verifier.file.ContractFileScanner
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.NamesUtil
@@ -37,12 +33,10 @@ import java.nio.file.Paths
 /**
  * Recursively converts contracts into their stub representations
  *
- * @since 1.0.0
- * @deprecated use {@link org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter}
+ * @since 1.1.0
  */
 @Slf4j
 @CompileStatic
-@Deprecated
 class RecursiveFilesConverter {
 
 	private final StubGeneratorHolder holder

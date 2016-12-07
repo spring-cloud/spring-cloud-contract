@@ -569,7 +569,7 @@ If you want to generate stubs for other stub server than WireMock it's enough to
 
 [source,groovy]
 ----
-include::{converters_path}/src/main/groovy/org/springframework/cloud/contract/verifier/converter/SingleFileConverter.groovy[indent=0,lines=16..-1]
+include::{converters_path}/src/main/groovy/org/springframework/cloud/contract/verifier/converter/StubGenerator.groovy[indent=0,lines=16..-1]
 ----
 
 you can register your own implementation that generate Stubs. Again, it's enough to provide
