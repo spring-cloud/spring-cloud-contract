@@ -19,13 +19,12 @@ package org.springframework.cloud.contract.verifier.builder
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 import java.util.regex.Pattern
-
 /**
  * A {@link JUnitMethodBodyBuilder} implementation that uses MockMvc to send requests.
  *
@@ -66,7 +65,8 @@ class MockMvcJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Object value) {
 		if (value instanceof NotToEscapePattern) {
-			blockBuilder.addLine("assertThat(response.header(\"$property\")).${createMatchesMethod(value.serverValue.pattern())};")
+			blockBuilder.addLine("assertThat(response.header(\"$property\"))." +
+					"${createMatchesMethod(value.serverValue.pattern().replace("\\", "\\\\"))};")
 		}
 	}
 
