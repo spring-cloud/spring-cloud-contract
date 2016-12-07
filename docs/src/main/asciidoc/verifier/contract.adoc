@@ -581,3 +581,31 @@ include::{converters_path}/src/main/resources/META-INF/spring.factories[indent=0
 ----
 
 The default implementation is the WireMock stub generation.
+
+==== Custom Stub Runner
+
+If you decide to have a custom stub generation you also need a custom way of running
+stubs with your different stub provider.
+
+Let us assume that you're using https://github.com/dreamhead/moco[Moco] to build your stubs.
+You wrote a proper stub generator and your stubs got placed in a JAR file.
+
+In order for Stub Runner to know how to run your stubs you have to define a custom
+ HTTP Stub server implementation. It can look like this:
+
+[source,groovy]
+----
+include::{converters_path}/spring-cloud-contract-stub-runner-moco/test/groovy/org/springframework/cloud/contract/stubrunner/provider/moco/MocoHttpServerStub.groovy[indent=0,lines=16..-1]
+----
+
+and just register it in your `spring.factories` file
+
+[source]
+----
+include::{tests_path}/spring-cloud-contract-stub-runner-moco/src/test/resources/META-INF/spring.factories[indent=0]
+----
+
+that way you'll be able to run stubs using Moco.
+
+IMPORTANT: If you don't provide any implementation then the default one - WireMock based
+will be picked. If you provide more than one then the first one on the list will be picked.
