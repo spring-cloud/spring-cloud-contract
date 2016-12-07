@@ -23,7 +23,7 @@ import org.springframework.cloud.contract.verifier.file.ContractMetadata
 /**
  * Converts contracts into their stub representation.
  *
- * @since 1.0.0
+ * @since 1.1.0
  */
 @CompileStatic
 interface StubGenerator {
