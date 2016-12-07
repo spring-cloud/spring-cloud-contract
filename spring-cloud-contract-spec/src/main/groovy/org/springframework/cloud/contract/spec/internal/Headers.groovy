@@ -20,6 +20,8 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
 
+import java.util.regex.Pattern
+
 /**
  * Represents a set of headers of a request / response or a message
  *
@@ -66,6 +68,10 @@ class Headers {
 	 */
 	DslProperty matching(String value) {
 		return new DslProperty(value)
+	}
+
+	protected NotToEscapePattern notEscaped(Pattern pattern) {
+		return new NotToEscapePattern(pattern)
 	}
 
 	/**

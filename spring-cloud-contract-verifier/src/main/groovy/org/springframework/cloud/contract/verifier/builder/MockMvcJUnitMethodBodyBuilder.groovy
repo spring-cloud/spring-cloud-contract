@@ -21,6 +21,7 @@ import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 import java.util.regex.Pattern
@@ -60,6 +61,13 @@ class MockMvcJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 	@Override
 	protected String getResponseBodyPropertyComparisonString(String property, Pattern value) {
 		return null
+	}
+
+	@Override
+	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Object value) {
+		if (value instanceof NotToEscapePattern) {
+			blockBuilder.addLine("assertThat(response.header(\"$property\")).${createMatchesMethod(value.serverValue.pattern())};")
+		}
 	}
 
 	@Override

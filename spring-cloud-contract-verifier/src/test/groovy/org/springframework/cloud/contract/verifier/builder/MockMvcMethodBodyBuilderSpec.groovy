@@ -22,6 +22,7 @@ import org.springframework.cloud.contract.verifier.dsl.WireMockStubVerifier
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Unroll
 import spock.util.environment.RestoreSystemProperties
 
 import java.util.regex.Pattern
@@ -1537,7 +1538,7 @@ World.'''"""
 					responseElement: $(producer(regex('[0-9]{7}')))
 				])
 				headers {
-					contentType("application/vnd.fraud.v1.json")
+					contentType("application/vnd.fraud.v1+json")
 				}
 			}
 		}
@@ -1557,8 +1558,8 @@ World.'''"""
 			strippedTest.matches(""".*header\\("header", "application\\/vnd\\.fraud\\.v1\\+json;.*"\\).*""")
 			strippedTest.matches(""".*body\\('''\\{"requestElement":"[0-9]{5}"\\}'''\\).*""")
 			strippedTest.matches(""".*put\\("/foo/[0-9]{5}"\\).*""")
-			strippedTest.contains("""response.header('Content-Type') ==~ java.util.regex.Pattern.compile('application/vnd\\.fraud\\.v1\\.json.*')""")
-			"application/vnd.fraud.v1+json;charset=UTF-8".matches('application/vnd.fraud.v1.json.*')
+			strippedTest.contains("""response.header('Content-Type') ==~ java.util.regex.Pattern.compile('application/vnd\\.fraud\\.v1\\+json.*')""")
+			"application/vnd.fraud.v1+json;charset=UTF-8".matches('application/vnd\\.fraud\\.v1\\+json.*')
 			strippedTest.contains("""assertThatJson(parsedJson).field("responseElement").matches("[0-9]{7}")""")
 	}
 
@@ -1748,5 +1749,36 @@ World.'''"""
 			test.contains('assertThatJson(parsedJson).field("ip").matches("([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])")')
 			test.contains('assertThatJson(parsedJson).field("uuid").matches("[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}")')
 			!test.contains('cursor')
+	}
+
+	@Issue('#162')
+	@Unroll
+	def "should escape regex properly for content type"() {
+		given:
+		Contract contractDsl = Contract.make {
+			request {
+				method GET()
+				url 'get'
+				headers {
+					contentType("application/vnd.fraud.v1+json")
+				}
+			}
+			response {
+				status 200
+				headers {
+					contentType("application/vnd.fraud.v1+json")
+				}
+			}
+		}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('application/vnd\\.fraud\\.v1\\+json.*')
+		where:
+			methodBuilder << [{ Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties)},
+						{ Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties)}]
 	}
 }

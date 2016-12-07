@@ -147,7 +147,7 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 		return patternComparison(headerValue)
 	}
 
-	private String patternComparison(Pattern pattern) {
+	protected String patternComparison(Pattern pattern) {
 		return "==~ java.util.regex.Pattern.compile('$pattern')"
 	}
 

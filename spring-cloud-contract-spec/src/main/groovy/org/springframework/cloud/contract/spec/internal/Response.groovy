@@ -144,7 +144,7 @@ class Response extends Common {
 
 		@Override
 		DslProperty matching(String value) {
-			return $(p(Pattern.compile("${RegexpUtils.escapeSpecialRegexWithSingleEscape(value)}.*")),
+			return $(p(notEscaped(Pattern.compile("${RegexpUtils.escapeSpecialRegexWithSingleEscape(value)}.*"))),
 					c(value))
 		}
 	}

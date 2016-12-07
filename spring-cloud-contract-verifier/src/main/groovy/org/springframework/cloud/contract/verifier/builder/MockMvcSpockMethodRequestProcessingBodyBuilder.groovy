@@ -21,6 +21,7 @@ import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Header
+import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 import java.util.regex.Pattern
@@ -55,6 +56,12 @@ class MockMvcSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestP
 		return 'response.body.asString()'
 	}
 
+	@Override
+	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Object value) {
+		if (value instanceof NotToEscapePattern) {
+			blockBuilder.addLine("response.header('$property') ${patternComparison(value.serverValue)}")
+		}
+	}
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
 		blockBuilder.addLine("${exec.insertValue("response.header(\'$property\')")}")
