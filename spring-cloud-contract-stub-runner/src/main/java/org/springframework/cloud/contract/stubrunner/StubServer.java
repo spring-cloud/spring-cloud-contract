@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
@@ -24,18 +25,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.spec.Contract;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
-
 class StubServer {
 
 	private static final Logger log = LoggerFactory.getLogger(StubServer.class);
 
 	private final HttpServerStub httpServerStub;
 	final StubConfiguration stubConfiguration;
-	final Collection<WiremockMappingDescriptor> mappings;
+	final Collection<File> mappings;
 	final Collection<Contract> contracts;
 
-	StubServer(StubConfiguration stubConfiguration, Collection<WiremockMappingDescriptor> mappings,
+	StubServer(StubConfiguration stubConfiguration, Collection<File> mappings,
 			Collection<Contract> contracts, HttpServerStub httpServerStub) {
 		this.stubConfiguration = stubConfiguration;
 		this.mappings = mappings;
@@ -45,9 +44,18 @@ class StubServer {
 
 	public StubServer start() {
 		this.httpServerStub.start();
+		return stubServer();
+	}
+
+	public StubServer start(int port) {
+		this.httpServerStub.start(port);
+		return stubServer();
+	}
+
+	private StubServer stubServer() {
 		log.info("Started stub server for project [" + this.stubConfiguration.toColonSeparatedDependencyNotation()
 				+ "] on port " + this.httpServerStub.port());
-		registerStubMappings();
+		this.httpServerStub.registerMappings(this.mappings);
 		return this;
 	}
 
@@ -83,37 +91,5 @@ class StubServer {
 		return this.contracts;
 	}
 
-	private void registerStubMappings() {
-		WireMock wireMock = new WireMock("localhost", this.httpServerStub.port(), "");
-		registerDefaultHealthChecks(wireMock);
-		registerStubs(this.mappings, wireMock);
-	}
 
-	private void registerDefaultHealthChecks(WireMock wireMock) {
-		registerHealthCheck(wireMock, "/ping");
-		registerHealthCheck(wireMock, "/health");
-	}
-
-	private void registerStubs(Collection<WiremockMappingDescriptor> sortedMappings, WireMock wireMock) {
-		for (WiremockMappingDescriptor mappingDescriptor : sortedMappings) {
-			try {
-				wireMock.register(mappingDescriptor.getMapping());
-				if (log.isDebugEnabled()) {
-					log.debug("Registered stub mappings from [" + mappingDescriptor.descriptor + "]");
-				}
-			}
-			catch (Exception e) {
-				log.warn("Failed to register the stub mapping [" + mappingDescriptor + "]", e);
-			}
-		}
-	}
-
-	private void registerHealthCheck(WireMock wireMock, String url) {
-		registerHealthCheck(wireMock, url, "OK");
-	}
-
-	private void registerHealthCheck(WireMock wireMock, String url, String body) {
-		wireMock.register(
-				WireMock.get(WireMock.urlEqualTo(url)).willReturn(WireMock.aResponse().withBody(body).withStatus(200)));
-	}
 }
