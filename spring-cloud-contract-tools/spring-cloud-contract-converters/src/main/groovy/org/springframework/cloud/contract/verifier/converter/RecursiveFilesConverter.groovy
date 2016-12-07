@@ -55,20 +55,6 @@ class RecursiveFilesConverter {
 		this.holder = holder ?: new StubGeneratorHolder()
 	}
 
-	@Deprecated
-	RecursiveFilesConverter(SingleFileConverter singleFileConverter, ContractVerifierConfigProperties properties) {
-		this.properties = properties
-		this.outMappingsDir = properties.stubsOutputDir
-		this.holder = new StubGeneratorHolder()
-	}
-
-	@Deprecated
-	RecursiveFilesConverter(SingleFileConverter singleFileConverter, ContractVerifierConfigProperties properties, File outMappingsDir) {
-		this.properties = properties
-		this.outMappingsDir = outMappingsDir
-		this.holder = new StubGeneratorHolder()
-	}
-
 	void processFiles() {
 		ContractFileScanner scanner = new ContractFileScanner(properties.contractsDslDir,
 				properties.excludedFiles as Set, [] as Set, properties.includedContracts)
