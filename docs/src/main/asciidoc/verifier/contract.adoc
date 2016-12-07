@@ -595,7 +595,7 @@ In order for Stub Runner to know how to run your stubs you have to define a cust
 
 [source,groovy]
 ----
-include::{converters_path}/spring-cloud-contract-stub-runner-moco/test/groovy/org/springframework/cloud/contract/stubrunner/provider/moco/MocoHttpServerStub.groovy[indent=0,lines=16..-1]
+include::{tests_path}/spring-cloud-contract-stub-runner-moco/src/test/groovy/org/springframework/cloud/contract/stubrunner/provider/moco/MocoHttpServerStub.groovy[indent=0,lines=16..-1]
 ----
 
 and just register it in your `spring.factories` file
