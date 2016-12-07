@@ -1,7 +1,5 @@
 package com.example.loan;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +13,8 @@ import com.example.loan.model.Client;
 import com.example.loan.model.LoanApplication;
 import com.example.loan.model.LoanApplicationResult;
 import com.example.loan.model.LoanApplicationStatus;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 // tag::autoconfigure_stubrunner[]
 @RunWith(SpringRunner.class)
@@ -54,5 +54,21 @@ public class LoanApplicationServiceTests {
 		assertThat(loanApplication.getRejectionReason()).isEqualTo("Amount too high");
 	}
 	// end::client_tdd[]
+
+	@Test
+	public void shouldSuccessfullyGetAllFrauds() {
+		// when:
+		int count = service.countAllFrauds();
+		// then:
+		assertThat(count).isEqualTo(200);
+	}
+
+	@Test
+	public void shouldSuccessfullyGetAllDrunks() {
+		// when:
+		int count = service.countDrunks();
+		// then:
+		assertThat(count).isEqualTo(100);
+	}
 
 }

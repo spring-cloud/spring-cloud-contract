@@ -15,6 +15,7 @@ import com.example.loan.model.FraudServiceResponse;
 import com.example.loan.model.LoanApplication;
 import com.example.loan.model.LoanApplicationResult;
 import com.example.loan.model.LoanApplicationStatus;
+import com.example.loan.model.Response;
 
 @Service
 public class LoanApplicationService {
@@ -65,6 +66,26 @@ public class LoanApplicationService {
 		}
 
 		return new LoanApplicationResult(applicationStatus, response.getRejectionReason());
+	}
+
+	public int countAllFrauds() {
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.add(HttpHeaders.CONTENT_TYPE, FRAUD_SERVICE_JSON_VERSION_1);
+		ResponseEntity<Response> response =
+				restTemplate.exchange("http://localhost:" + port + "/frauds", HttpMethod.GET,
+						new HttpEntity<>(httpHeaders),
+						Response.class);
+		return response.getBody().getCount();
+	}
+
+	public int countDrunks() {
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.add(HttpHeaders.CONTENT_TYPE, FRAUD_SERVICE_JSON_VERSION_1);
+		ResponseEntity<Response> response =
+				restTemplate.exchange("http://localhost:" + port + "/drunks", HttpMethod.GET,
+						new HttpEntity<>(httpHeaders),
+						Response.class);
+		return response.getBody().getCount();
 	}
 
 	public void setPort(int port) {
