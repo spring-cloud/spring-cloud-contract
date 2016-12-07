@@ -9,7 +9,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 					loanAmount: 99999
 					])
 				headers { // (5)
-					header('Content-Type', 'application/vnd.fraud.v1+json')
+					contentType("application/vnd.fraud.v1+json")
 				}
 			}
 			response { // (6)
@@ -19,10 +19,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 					rejectionReason: "Amount too high"
 				])
 				headers { // (9)
-					 header('Content-Type': value(
-							 producer(regex('application/vnd.fraud.v1.json.*')),
-							 consumer('application/vnd.fraud.v1+json'))
-					 )
+					contentType("application/vnd.fraud.v1+json")
 				}
 			}
 }
