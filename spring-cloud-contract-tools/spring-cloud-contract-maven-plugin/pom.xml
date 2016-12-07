@@ -66,26 +66,6 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<artifactId>maven-plugin-plugin</artifactId>
-				<configuration>
-					<skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-				</configuration>
-				<executions>
-					<execution>
-						<id>generated-helpmojo</id>
-						<goals>
-							<goal>helpmojo</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>generate-descriptor</id>
-						<goals>
-							<goal>descriptor</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>io.takari.maven.plugins</groupId>
 				<artifactId>takari-lifecycle-plugin</artifactId>
 				<extensions>true</extensions>
