@@ -1607,7 +1607,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 					loanAmount: 99999
 					])
 				headers { // (5)
-					header('Content-Type', 'application/vnd.fraud.v1+json')
+					contentType("application/vnd.fraud.v1+json")
 				}
 			}
 			response { // (6)
@@ -1617,10 +1617,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 					rejectionReason: "Amount too high"
 				])
 				headers { // (9)
-					 header('Content-Type': value(
-							 producer(regex('application/vnd.fraud.v1.json.*')),
-							 consumer('application/vnd.fraud.v1+json'))
-					 )
+					contentType("application/vnd.fraud.v1+json")
 				}
 			}
 }
@@ -1961,16 +1958,28 @@ git pull https://your-git-server.com/server-side-fork.git contract-change-pr</co
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java">package com.example.fraud;
 
-import com.example.fraud.FraudDetectionController;
-import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc;
-
 import org.junit.Before;
+
+import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc;
 
 public class FraudBase {
 
 	@Before
 	public void setup() {
-		RestAssuredMockMvc.standaloneSetup(new FraudDetectionController());
+		RestAssuredMockMvc.standaloneSetup(new FraudDetectionController(),
+				new FraudStatsController(stubbedStatsProvider()));
+	}
+
+	private StatsProvider stubbedStatsProvider() {
+		return fraudType -&gt; {
+			switch (fraudType) {
+			case DRUNKS:
+				return 100;
+			case ALL:
+				return 200;
+			}
+			return 0;
+		};
 	}
 
 	public void assertThatRejectionReasonIsNull(Object rejectionReason) {
@@ -2527,7 +2536,7 @@ one to one to the contents of the repo.</p>
 		&lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
 		&lt;java.version&gt;1.8&lt;/java.version&gt;
 		&lt;spring-cloud-contract.version&gt;1.1.0.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
-		&lt;spring-cloud-dependencies.version&gt;Camden.BUILD-SNAPSHOT&lt;/spring-cloud-dependencies.version&gt;
+		&lt;spring-cloud-dependencies.version&gt;Dalston.BUILD-SNAPSHOT&lt;/spring-cloud-dependencies.version&gt;
 	&lt;/properties&gt;
 
 	&lt;dependencyManagement&gt;
