@@ -24,22 +24,14 @@ import org.springframework.cloud.contract.verifier.file.ContractMetadata
  * Converts contracts into their stub representation.
  *
  * @since 1.0.0
- * @deprecated use {@link StubGenerator}
  */
 @CompileStatic
-@Deprecated
-interface SingleFileConverter {
+interface StubGenerator {
 
 	/**
 	 * Returns {@code true} if the converter can handle the file to convert it into a stub.
 	 */
 	boolean canHandleFileName(String fileName)
-
-	/**
-	 * Returns the content of the converted file. The content will be a single stub.
-	 */
-	@Deprecated
-	String convertContent(String rootName, ContractMetadata content)
 
 	/**
 	 * Returns the collection of converted contracts into stubs. One contract can

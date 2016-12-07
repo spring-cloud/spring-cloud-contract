@@ -18,16 +18,16 @@ package org.springframework.cloud.contract.verifier.wiremock
 
 import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.converter.SingleFileConverter
+import org.springframework.cloud.contract.verifier.converter.StubGenerator
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 
 /**
- * WireMock implementation of the {@link SingleFileConverter}
+ * WireMock implementation of the {@link StubGenerator}
  *
  * @since 1.0.0
  */
 @CompileStatic
-abstract class DslToWireMockConverter implements SingleFileConverter {
+abstract class DslToWireMockConverter implements StubGenerator {
 
 	@Override
 	boolean canHandleFileName(String fileName) {

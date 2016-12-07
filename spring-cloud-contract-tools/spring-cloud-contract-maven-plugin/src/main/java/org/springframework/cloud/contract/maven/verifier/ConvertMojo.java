@@ -32,7 +32,7 @@ import org.apache.maven.shared.filtering.MavenResourcesFiltering;
 import org.eclipse.aether.RepositorySystemSession;
 import org.springframework.cloud.contract.maven.verifier.stubrunner.AetherStubDownloaderFactory;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
-import org.springframework.cloud.contract.verifier.wiremock.RecursiveFilesConverter;
+import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter;
 
 /**
  * Convert Spring Cloud Contract Verifier contracts into WireMock stubs mappings.

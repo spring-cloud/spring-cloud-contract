@@ -10,19 +10,19 @@ import org.springframework.core.io.support.SpringFactoriesLoader
  * @since 1.1.0
  */
 @CompileStatic
-class SingleFileConvertersHolder {
+class StubGeneratorHolder {
 	
-	private final List<SingleFileConverter> converters = []
+	private final List<StubGenerator> converters = []
 
-	SingleFileConvertersHolder() {
-		this.converters.addAll(SpringFactoriesLoader.loadFactories(SingleFileConverter, null))
+	StubGeneratorHolder() {
+		this.converters.addAll(SpringFactoriesLoader.loadFactories(StubGenerator, null))
 	}
 
-	SingleFileConvertersHolder(List<SingleFileConverter> converters) {
+	StubGeneratorHolder(List<StubGenerator> converters) {
 		this.converters.addAll(converters)
 	}
 
-	SingleFileConverter converterForName(String fileName) {
+	StubGenerator converterForName(String fileName) {
 		return this.converters.find { it.canHandleFileName(fileName) }
 	}
 }
