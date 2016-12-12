@@ -4,3 +4,11 @@ stubrunner:
     - org.springframework.cloud.contract.verifier.stubs:loanIssuance
     - org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer
     - org.springframework.cloud.contract.verifier.stubs:bootService
+  cloud:
+    enabled: false
+  camel:
+    enabled: false
+
+spring.cloud:
+  consul.enabled: false
+  service-registry.enabled: false

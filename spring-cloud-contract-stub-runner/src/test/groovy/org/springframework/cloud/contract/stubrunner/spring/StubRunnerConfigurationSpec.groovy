@@ -16,11 +16,10 @@
 
 package org.springframework.cloud.contract.stubrunner.spring
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.AfterClass
+import org.junit.BeforeClass
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.StubNotFoundException
@@ -29,9 +28,7 @@ import org.springframework.core.env.Environment
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
-
 import spock.lang.Specification
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -39,7 +36,6 @@ import spock.lang.Specification
 // Not necessary if Spring Cloud is used. TODO: make it work without this.
 // tag::test[]
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
-@IntegrationTest(["stubrunner.cloud.enabled=false", "stubrunner.camel.enabled=false"])
 @AutoConfigureStubRunner
 @DirtiesContext
 @ActiveProfiles("test")

@@ -19,7 +19,6 @@ package org.springframework.cloud.contract.stubrunner.server
 import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc
 import groovy.json.JsonSlurper
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.IntegrationTest
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.stubrunner.StubRunning
 import org.springframework.test.context.ActiveProfiles
@@ -30,7 +29,6 @@ import spock.lang.Specification
  */
 // tag::boot_usage[]
 @ContextConfiguration(classes = StubRunnerBoot, loader = SpringBootContextLoader)
-@IntegrationTest("spring.cloud.zookeeper.enabled=false")
 @ActiveProfiles("test")
 class StubRunnerBootSpec extends Specification {
 

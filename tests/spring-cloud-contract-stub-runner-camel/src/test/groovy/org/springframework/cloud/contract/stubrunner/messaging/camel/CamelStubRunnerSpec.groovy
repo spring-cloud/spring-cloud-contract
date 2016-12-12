@@ -18,7 +18,6 @@ package org.springframework.cloud.contract.stubrunner.messaging.camel
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
-
 import org.apache.activemq.camel.component.ActiveMQComponent
 import org.apache.activemq.spring.ActiveMQConnectionFactory
 import org.apache.camel.CamelContext
@@ -27,7 +26,6 @@ import org.apache.camel.component.jms.JmsConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.IntegrationTest
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubFinder
@@ -38,12 +36,10 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.IgnoreIf
 import spock.lang.Specification
-
 /**
  * @author Marcin Grzejszczak
  */
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
-@IntegrationTest("debug=true")
 @AutoConfigureStubRunner
 @IgnoreIf({ os.windows })
 class CamelStubRunnerSpec extends Specification {
