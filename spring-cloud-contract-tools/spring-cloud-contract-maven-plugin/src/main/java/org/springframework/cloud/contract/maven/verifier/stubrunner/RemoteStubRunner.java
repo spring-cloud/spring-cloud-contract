@@ -22,10 +22,10 @@ import javax.inject.Named;
 import org.eclipse.aether.RepositorySystemSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.contract.stubrunner.AetherStubDownloader;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunnerFactory;
 import org.springframework.cloud.contract.stubrunner.RunningStubs;
+import org.springframework.cloud.contract.stubrunner.StubDownloader;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 
 @Named
@@ -39,7 +39,7 @@ public class RemoteStubRunner {
 	}
 
 	public BatchStubRunner run(StubRunnerOptions options, RepositorySystemSession repositorySystemSession) {
-		AetherStubDownloader stubDownloader = this.aetherStubDownloaderFactory.build(repositorySystemSession);
+		StubDownloader stubDownloader = this.aetherStubDownloaderFactory.build(repositorySystemSession);
 		try {
 			if (log.isDebugEnabled()) {
 				log.debug("Launching StubRunner with args: " + options);

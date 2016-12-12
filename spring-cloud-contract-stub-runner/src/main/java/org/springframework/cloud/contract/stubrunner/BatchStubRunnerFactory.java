@@ -32,7 +32,12 @@ public class BatchStubRunnerFactory {
 	private final MessageVerifier<?> contractVerifierMessaging;
 
 	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions) {
-		this(stubRunnerOptions, new AetherStubDownloader(stubRunnerOptions), new NoOpStubMessages());
+		this(stubRunnerOptions, aetherStubDownloader(stubRunnerOptions), new NoOpStubMessages());
+	}
+
+	private static StubDownloader aetherStubDownloader(StubRunnerOptions stubRunnerOptions) {
+		StubDownloaderBuilderProvider provider = new StubDownloaderBuilderProvider();
+		return provider.hasBuilder() ? provider.get().build(stubRunnerOptions) : new AetherStubDownloader(stubRunnerOptions);
 	}
 
 	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, StubDownloader stubDownloader) {
