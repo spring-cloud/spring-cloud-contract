@@ -4579,7 +4579,6 @@ its methods as presented below:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
-@IntegrationTest(["stubrunner.cloud.enabled=false", "stubrunner.camel.enabled=false"])
 @AutoConfigureStubRunner
 @DirtiesContext
 @ActiveProfiles("test")
@@ -4648,7 +4647,15 @@ class StubRunnerConfigurationSpec extends Specification {
   ids:
     - org.springframework.cloud.contract.verifier.stubs:loanIssuance
     - org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer
-    - org.springframework.cloud.contract.verifier.stubs:bootService</code></pre>
+    - org.springframework.cloud.contract.verifier.stubs:bootService
+  cloud:
+    enabled: false
+  camel:
+    enabled: false
+
+spring.cloud:
+  consul.enabled: false
+  service-registry.enabled: false</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4832,7 +4839,6 @@ trigger the messaging labels and to access started WireMock servers.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">@ContextConfiguration(classes = StubRunnerBoot, loader = SpringBootContextLoader)
-@IntegrationTest("spring.cloud.zookeeper.enabled=false")
 @ActiveProfiles("test")
 class StubRunnerBootSpec extends Specification {
 
@@ -5686,7 +5692,9 @@ spring:
           destination: bookStorage
 
 server:
-  port: 0</code></pre>
+  port: 0
+
+debug: true</code></pre>
 </div>
 </div>
 </div>
