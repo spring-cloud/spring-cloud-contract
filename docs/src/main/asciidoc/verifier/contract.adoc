@@ -602,7 +602,7 @@ and just register it in your `spring.factories` file
 
 [source]
 ----
-include::{tests_path}/spring-cloud-contract-stub-runner-moco/src/test/resources/META-INF/spring.factories[indent=0,lines=1,4]
+include::{tests_path}/spring-cloud-contract-stub-runner-moco/src/test/resources/META-INF/spring.factories[indent=0,lines=1..4]
 ----
 
 that way you'll be able to run stubs using Moco.
@@ -620,7 +620,7 @@ from classpath, copies them to a temp file and then passes that temporary folder
 
 [source,java]
 ----
-include::{tests_path}/spring-cloud-contract-stub-runner-moco/src/test/groovy/org/springframework/cloud/contract/stubrunner/provider/moco/ClasspathStubProvider.groovy[indent=0]
+include::{tests_path}/spring-cloud-contract-stub-runner-moco/src/test/groovy/org/springframework/cloud/contract/stubrunner/provider/moco/ClasspathStubProvider.groovy[indent=0,lines=16..-1]
 ----
 
 and just register it in your `spring.factories` file
