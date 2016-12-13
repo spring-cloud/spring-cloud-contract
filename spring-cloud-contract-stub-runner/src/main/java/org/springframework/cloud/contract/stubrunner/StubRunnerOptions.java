@@ -117,6 +117,30 @@ public class StubRunnerOptions {
 		return this.stubIdsToPortMapping;
 	}
 
+	public String getStubRepositoryRoot() {
+		return this.stubRepositoryRoot;
+	}
+
+	public boolean isWorkOffline() {
+		return this.workOffline;
+	}
+
+	public String getStubsClassifier() {
+		return this.stubsClassifier;
+	}
+
+	public String getUsername() {
+		return this.username;
+	}
+
+	public String getPassword() {
+		return this.password;
+	}
+
+	public StubRunnerProxyOptions getStubRunnerProxyOptions() {
+		return this.stubRunnerProxyOptions;
+	}
+
 	public StubRunnerProxyOptions getProxyOptions() {
 		return this.stubRunnerProxyOptions;
 	}

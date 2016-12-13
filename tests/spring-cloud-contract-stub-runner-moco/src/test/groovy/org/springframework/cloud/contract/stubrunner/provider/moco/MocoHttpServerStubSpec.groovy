@@ -34,7 +34,7 @@ import spock.lang.Specification
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @AutoConfigureStubRunner( ids =
 		["com.example:fraudDetectionServerMoco"],
-		repositoryRoot = "classpath:m2repo/repository/")
+		repositoryRoot = "classpath:unpacked/")
 @DirtiesContext
 class MocoHttpServerStubSpec extends Specification {
 
