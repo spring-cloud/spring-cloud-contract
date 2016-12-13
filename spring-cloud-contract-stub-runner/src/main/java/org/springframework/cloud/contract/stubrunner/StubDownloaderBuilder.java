@@ -16,24 +16,17 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
-import java.io.File;
-import java.util.Map;
-
 /**
- * Contract for providing a tuple containing configuration of a downloaded
- * and unpacked stub, together with the file location of that extracted artifact.
- *
- * Note: Actually the artifact doesn't have to be a JAR. method name contains
- * that suffix for historical reasons.
+ * Builder for a {@link StubDownloader}. Can't allow direct usage
+ * of {@link StubDownloader} cause in order to register instances
+ * of this interface in {@link org.springframework.core.io.support.SpringFactoriesLoader}
+ * one needs a default constructor whereas the {@link StubDownloader}
+ * instances need to be constructed from stub related options.
  *
  * @author Marcin Grzejszczak
- * @since 1.0.0
+ * @since 1.1.0
  */
-public interface StubDownloader {
+public interface StubDownloaderBuilder {
 
-	/**
-	 * Returns a mapping of updated StubConfiguration (it will contain the resolved version) and the location of the downloaded JAR.
-	 * If there was no artifact this method will return {@code null}.
-	 */
-	Map.Entry<StubConfiguration,File> downloadAndUnpackStubJar(StubConfiguration stubConfiguration);
+	StubDownloader build(StubRunnerOptions stubRunnerOptions);
 }

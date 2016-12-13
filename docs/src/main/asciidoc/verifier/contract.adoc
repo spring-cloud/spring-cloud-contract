@@ -602,10 +602,35 @@ and just register it in your `spring.factories` file
 
 [source]
 ----
-include::{tests_path}/spring-cloud-contract-stub-runner-moco/src/test/resources/META-INF/spring.factories[indent=0]
+include::{tests_path}/spring-cloud-contract-stub-runner-moco/src/test/resources/META-INF/spring.factories[indent=0,lines=1,4]
 ----
 
 that way you'll be able to run stubs using Moco.
 
 IMPORTANT: If you don't provide any implementation then the default one - WireMock based
+will be picked. If you provide more than one then the first one on the list will be picked.
+
+==== Custom Stub Downloader
+
+You can customize the way your stubs are downloaded. If you don't want to download the JARs
+from Nexus / Artifactory in the way we do by default you can set your own implementation.
+Below you can find an example of a Stub Downloader Provider that takes `json` files from the test resources
+from classpath, copies them to a temp file and then passes that temporary folder
+ as a root for the stubs.
+
+[source,java]
+----
+include::{tests_path}/spring-cloud-contract-stub-runner-moco/src/test/groovy/org/springframework/cloud/contract/stubrunner/provider/moco/ClasspathStubProvider.groovy[indent=0]
+----
+
+and just register it in your `spring.factories` file
+
+[source]
+----
+include::{tests_path}/spring-cloud-contract-stub-runner-moco/src/test/resources/META-INF/spring.factories[indent=0,lines=5..-1]
+----
+
+that way you'll be able to pick a folder with the source of your stubs.
+
+IMPORTANT: If you don't provide any implementation then the default one - Aether based that will download stubs from a remote repo
 will be picked. If you provide more than one then the first one on the list will be picked.

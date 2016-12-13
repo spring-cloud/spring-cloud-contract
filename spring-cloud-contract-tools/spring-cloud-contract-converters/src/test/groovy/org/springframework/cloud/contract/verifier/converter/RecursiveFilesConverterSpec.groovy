@@ -89,7 +89,7 @@ class RecursiveFilesConverterSpec extends Specification {
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.contractsDslDir = tmpFolder.root
 			properties.stubsOutputDir = tmpFolder.root
-			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(properties, new StubGeneratorHolder([stubGenerator]))
+			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(properties, new StubGeneratorProvider([stubGenerator]))
 		when:
 			recursiveFilesConverter.processFiles()
 		then:

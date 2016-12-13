@@ -1,0 +1,12 @@
+[
+{
+    "request": {
+        "method" : "get",
+        "uri": "/name"
+    },
+    "response": {
+        "text" : "fraudDetectionServerMoco",
+        "status": 200
+    }
+}
+]

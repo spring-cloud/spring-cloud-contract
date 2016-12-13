@@ -24,7 +24,7 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.cloud.contract.verifier.converter.ConversionContractVerifierException
 import org.springframework.cloud.contract.verifier.converter.SingleFileConverter
 import org.springframework.cloud.contract.verifier.converter.StubGenerator
-import org.springframework.cloud.contract.verifier.converter.StubGeneratorHolder
+import org.springframework.cloud.contract.verifier.converter.StubGeneratorProvider
 import org.springframework.cloud.contract.verifier.file.ContractFileScanner
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.NamesUtil
@@ -45,34 +45,34 @@ import java.nio.file.Paths
 @Deprecated
 class RecursiveFilesConverter {
 
-	private final StubGeneratorHolder holder
+	private final StubGeneratorProvider holder
 	private final ContractVerifierConfigProperties properties
 	private final File outMappingsDir
 
-	RecursiveFilesConverter(ContractVerifierConfigProperties properties, StubGeneratorHolder holder = null) {
+	RecursiveFilesConverter(ContractVerifierConfigProperties properties, StubGeneratorProvider holder = null) {
 		this.properties = properties
 		this.outMappingsDir = properties.stubsOutputDir
-		this.holder = holder ?: new StubGeneratorHolder()
+		this.holder = holder ?: new StubGeneratorProvider()
 	}
 
-	RecursiveFilesConverter(ContractVerifierConfigProperties properties, File outMappingsDir, StubGeneratorHolder holder = null) {
+	RecursiveFilesConverter(ContractVerifierConfigProperties properties, File outMappingsDir, StubGeneratorProvider holder = null) {
 		this.properties = properties
 		this.outMappingsDir = outMappingsDir
-		this.holder = holder ?: new StubGeneratorHolder()
+		this.holder = holder ?: new StubGeneratorProvider()
 	}
 
 	@Deprecated
 	RecursiveFilesConverter(SingleFileConverter singleFileConverter, ContractVerifierConfigProperties properties) {
 		this.properties = properties
 		this.outMappingsDir = properties.stubsOutputDir
-		this.holder = new StubGeneratorHolder()
+		this.holder = new StubGeneratorProvider()
 	}
 
 	@Deprecated
 	RecursiveFilesConverter(SingleFileConverter singleFileConverter, ContractVerifierConfigProperties properties, File outMappingsDir) {
 		this.properties = properties
 		this.outMappingsDir = outMappingsDir
-		this.holder = new StubGeneratorHolder()
+		this.holder = new StubGeneratorProvider()
 	}
 
 	void processFiles() {

@@ -39,20 +39,20 @@ import java.nio.file.Paths
 @CompileStatic
 class RecursiveFilesConverter {
 
-	private final StubGeneratorHolder holder
+	private final StubGeneratorProvider holder
 	private final ContractVerifierConfigProperties properties
 	private final File outMappingsDir
 
-	RecursiveFilesConverter(ContractVerifierConfigProperties properties, StubGeneratorHolder holder = null) {
+	RecursiveFilesConverter(ContractVerifierConfigProperties properties, StubGeneratorProvider holder = null) {
 		this.properties = properties
 		this.outMappingsDir = properties.stubsOutputDir
-		this.holder = holder ?: new StubGeneratorHolder()
+		this.holder = holder ?: new StubGeneratorProvider()
 	}
 
-	RecursiveFilesConverter(ContractVerifierConfigProperties properties, File outMappingsDir, StubGeneratorHolder holder = null) {
+	RecursiveFilesConverter(ContractVerifierConfigProperties properties, File outMappingsDir, StubGeneratorProvider holder = null) {
 		this.properties = properties
 		this.outMappingsDir = outMappingsDir
-		this.holder = holder ?: new StubGeneratorHolder()
+		this.holder = holder ?: new StubGeneratorProvider()
 	}
 
 	void processFiles() {

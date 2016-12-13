@@ -10,15 +10,15 @@ import org.springframework.core.io.support.SpringFactoriesLoader
  * @since 1.1.0
  */
 @CompileStatic
-class StubGeneratorHolder {
+class StubGeneratorProvider {
 	
 	private final List<StubGenerator> converters = []
 
-	StubGeneratorHolder() {
+	StubGeneratorProvider() {
 		this.converters.addAll(SpringFactoriesLoader.loadFactories(StubGenerator, null))
 	}
 
-	StubGeneratorHolder(List<StubGenerator> converters) {
+	StubGeneratorProvider(List<StubGenerator> converters) {
 		this.converters.addAll(converters)
 	}
 

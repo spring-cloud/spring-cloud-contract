@@ -23,6 +23,7 @@ import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.springframework.cloud.contract.stubrunner.AetherStubDownloader;
+import org.springframework.cloud.contract.stubrunner.StubDownloader;
 
 @Named
 @Singleton
@@ -37,7 +38,7 @@ public class AetherStubDownloaderFactory {
 		this.project = project;
 	}
 
-	public AetherStubDownloader build(RepositorySystemSession repoSession) {
+	public StubDownloader build(RepositorySystemSession repoSession) {
 		return new AetherStubDownloader(this.repoSystem,
 				this.project.getRemoteProjectRepositories(), repoSession);
 	}
