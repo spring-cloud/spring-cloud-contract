@@ -1697,6 +1697,7 @@ World.'''"""
 	}
 
 	@Issue('#149')
+	@Unroll
 	def "should allow easier way of providing dynamic values"() {
 		given:
 		Contract contractDsl = Contract.make {
@@ -1704,6 +1705,7 @@ World.'''"""
 				method 'GET'
 				urlPath '/get'
 				body([
+						duck: $(regex("[0-9]")),
 						alpha: $(anyAlphaUnicode()),
 				        number: $(anyNumber()),
 						aBoolean: $(aBoolean()),
@@ -1734,7 +1736,7 @@ World.'''"""
 				}
 			}
 		}
-			MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
@@ -1749,6 +1751,10 @@ World.'''"""
 			test.contains('assertThatJson(parsedJson).field("ip").matches("([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])")')
 			test.contains('assertThatJson(parsedJson).field("uuid").matches("[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}")')
 			!test.contains('cursor')
+		where:
+			methodBuilder << [{ Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties)},
+							  { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties)}]
+
 	}
 
 	@Issue('#162')
