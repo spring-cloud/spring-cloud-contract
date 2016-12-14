@@ -103,6 +103,14 @@ class Response extends Common {
 		return value(server)
 	}
 
+	DslProperty value(Pattern server) {
+		return value(new ServerDslProperty(server))
+	}
+
+	DslProperty $(Pattern server) {
+		return value(server)
+	}
+
 	@Override
 	DslProperty value(ClientDslProperty client, ServerDslProperty server) {
 		if (client.clientValue instanceof Pattern) {
