@@ -1,0 +1,20 @@
+<lifecycleMappingMetadata>
+	<pluginExecutions>
+		<pluginExecution>
+			<pluginExecutionFilter>
+				<goals>
+					<goal>convert</goal>
+					<goal>run</goal>
+					<goal>generateTests</goal>
+					<goal>generateStubs</goal>
+				</goals>
+			</pluginExecutionFilter>
+			<action>
+				<execute>
+					<runOnIncremental>true</runOnIncremental>
+					<runOnConfiguration>false</runOnConfiguration>
+				</execute>
+			</action>
+		</pluginExecution>
+	</pluginExecutions>
+</lifecycleMappingMetadata>
