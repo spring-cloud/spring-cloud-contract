@@ -559,7 +559,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		builder.appendTo(blockBuilder)
 		def test = blockBuilder.toString()
 		then:
-		test.contains('get("/users?limit=10&offset=20&filter=email&sort=name&search=55&age=99&name=Denis.Stepanov&email=bob@email.com")')
+		test.contains('get("/users?limit={limit}&offset={offset}&filter={filter}&sort={sort}&search={search}&age={age}&name={name}&email={email}","10","20","email","name","55","99","Denis.Stepanov","bob@email.com")')
 		test.contains('assertThatJson(parsedJson).field("property1").isEqualTo("a")')
 		test.contains('assertThatJson(parsedJson).field("property2").isEqualTo("b")')
 		and:
@@ -607,7 +607,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		builder.appendTo(blockBuilder)
 		def test = blockBuilder.toString()
 		then:
-		test.contains('get("/foo/123456?limit=10&offset=20&filter=email&sort=name&search=55&age=99&name=Denis.Stepanov&email=bob@email.com")')
+		test.contains('get("/foo/123456?limit={limit}&offset={offset}&filter={filter}&sort={sort}&search={search}&age={age}&name={name}&email={email}","10","20","email","name","55","99","Denis.Stepanov","bob@email.com")')
 		test.contains('assertThatJson(parsedJson).field("property1").isEqualTo("a")')
 		test.contains('assertThatJson(parsedJson).field("property2").isEqualTo("b")')
 		and:
