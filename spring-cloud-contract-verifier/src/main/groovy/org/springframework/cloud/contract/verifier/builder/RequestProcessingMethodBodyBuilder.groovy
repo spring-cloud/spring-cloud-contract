@@ -52,6 +52,9 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	protected final Request request
 	protected final Response response
 	private static final String DOUBLE_QUOTE = '"'
+	private static final String QUERY_PARAM_METHOD = 'queryParam'
+	
+	
 
 	RequestProcessingMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
 		super(configProperties)
@@ -109,47 +112,31 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 		bb.indent()
 
 		Url url = getUrl(request)
-		
-		addUrlParameters(url, bb)
+		addQueryParameters(url, bb)
+		addUrl(url, bb)	
 		addColonIfRequired(bb)
-
 		bb.unindent()
 	}
 
 	@TypeChecked(TypeCheckingMode.SKIP)
-	private addUrlParameters(Url buildUrl, BlockBuilder bb) {
+	protected addQueryParameters(Url buildUrl, BlockBuilder bb) {
+		if(hasQueryParams(buildUrl)){
+			List<QueryParameter> queryParameters = buildUrl.queryParameters.parameters.findAll(this.&allowedQueryParameter)
+			for (queryParam in queryParameters) {
+				addQueryParameter(queryParam, bb)
+			}
+		}
+	}
+
+	@TypeChecked(TypeCheckingMode.SKIP)
+	protected addQueryParameter(QueryParameter queryParam, BlockBuilder bb) {
+		bb.addLine(/.${QUERY_PARAM_METHOD}(${DOUBLE_QUOTE}${queryParam.name}${DOUBLE_QUOTE},${DOUBLE_QUOTE}${resolveParamValue(queryParam).toString()}${DOUBLE_QUOTE})/)
+	}
+	
+	protected addUrl(Url buildUrl, BlockBuilder bb){
 		String url =MapConverter.getTestSideValues(buildUrl)
 		String method = request.method.serverValue.toString().toLowerCase()
-	
-		if(hasQueryParams(buildUrl)){
-			 List<QueryParameter> queryParameters = buildUrl.queryParameters.parameters.findAll(this.&allowedQueryParameter)
-			 bb.addLine(/.${method}(${DOUBLE_QUOTE}${url}?${buildQueryParameterTemplates(queryParameters)}${DOUBLE_QUOTE},${buildQueryParameterValues(queryParameters)})/)
-		}
-		else
-			 bb.addLine(/.${method}(${DOUBLE_QUOTE}${url}${DOUBLE_QUOTE})/)
-	}
-	
-	
-	@TypeChecked(TypeCheckingMode.SKIP)
-	protected String buildQueryParameterTemplates(List<QueryParameters> queryParameters){
-		final String open = '{'
-		final String close ='}'
-		String params = queryParameters
-				.inject([] as List<String>) { List<String> result, QueryParameter param ->
-			result << "${param.name}=${open}${param.name}${close}"
-		}
-		.join('&')
-		return "$params"
-	}
-	
-	@TypeChecked(TypeCheckingMode.SKIP)
-	protected String buildQueryParameterValues(List<QueryParameters> queryParameters){
-		String params = queryParameters
-				.inject([] as List<String>) { List<String> result, QueryParameter param ->
-			result << "${DOUBLE_QUOTE}${resolveParamValue(param).toString()}${DOUBLE_QUOTE}"
-		}
-		.join(',')
-		return "$params"
+		bb.addLine(/.${method}(${DOUBLE_QUOTE}${url}${DOUBLE_QUOTE})/)
 	}
 
 	@Override
