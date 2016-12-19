@@ -559,7 +559,15 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		builder.appendTo(blockBuilder)
 		def test = blockBuilder.toString()
 		then:
-		test.contains('get("/users?limit=10&offset=20&filter=email&sort=name&search=55&age=99&name=Denis.Stepanov&email=bob@email.com")')
+		test.contains('''.queryParam("limit","10")''')
+		test.contains('''.queryParam("offset","20")''')
+		test.contains('''.queryParam("filter","email")''')
+		test.contains('''.queryParam("sort","name")''')
+		test.contains('''.queryParam("search","55")''')
+		test.contains('''.queryParam("age","99")''')
+		test.contains('''.queryParam("name","Denis.Stepanov")''')
+		test.contains('''.queryParam("email","bob@email.com")''')
+		test.contains('''.get("/users")''')
 		test.contains('assertThatJson(parsedJson).field("property1").isEqualTo("a")')
 		test.contains('assertThatJson(parsedJson).field("property2").isEqualTo("b")')
 		and:
@@ -607,7 +615,15 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		builder.appendTo(blockBuilder)
 		def test = blockBuilder.toString()
 		then:
-		test.contains('get("/foo/123456?limit=10&offset=20&filter=email&sort=name&search=55&age=99&name=Denis.Stepanov&email=bob@email.com")')
+		test.contains('''.queryParam("limit","10")''')
+		test.contains('''.queryParam("offset","20")''')
+		test.contains('''.queryParam("filter","email")''')
+		test.contains('''.queryParam("sort","name")''')
+		test.contains('''.queryParam("search","55")''')
+		test.contains('''.queryParam("age","99")''')
+		test.contains('''.queryParam("name","Denis.Stepanov")''')
+		test.contains('''.queryParam("email","bob@email.com")''')
+		test.contains('''.get("/foo/123456")''')
 		test.contains('assertThatJson(parsedJson).field("property1").isEqualTo("a")')
 		test.contains('assertThatJson(parsedJson).field("property2").isEqualTo("b")')
 		and:

@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2016 the original author or authors.
+ *Copyright 2013-2016 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ *Licensed under the Apache License, Version 2.0 (the "License");
+ *you may not use this file except in compliance with the License.
+ *You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *	http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ *Unless required by applicable law or agreed to in writing, software
+ *distributed under the License is distributed on an "AS IS" BASIS,
+ *WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *See the License for the specific language governing permissions and
+ *limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.builder
@@ -26,6 +26,7 @@ import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.QueryParameter
+import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.Response
 import org.springframework.cloud.contract.spec.internal.Url
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
@@ -50,6 +51,10 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 
 	protected final Request request
 	protected final Response response
+	private static final String DOUBLE_QUOTE = '"'
+	private static final String QUERY_PARAM_METHOD = 'queryParam'
+	
+	
 
 	RequestProcessingMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
 		super(configProperties)
@@ -106,12 +111,32 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 		bb.addLine(getInputString(request))
 		bb.indent()
 
-		String url = buildUrl(request)
-		String method = request.method.serverValue.toString().toLowerCase()
-
-		bb.addLine(/.${method}($url)/)
+		Url url = getUrl(request)
+		addQueryParameters(url, bb)
+		addUrl(url, bb)	
 		addColonIfRequired(bb)
 		bb.unindent()
+	}
+
+	@TypeChecked(TypeCheckingMode.SKIP)
+	protected addQueryParameters(Url buildUrl, BlockBuilder bb) {
+		if(hasQueryParams(buildUrl)){
+			List<QueryParameter> queryParameters = buildUrl.queryParameters.parameters.findAll(this.&allowedQueryParameter)
+			for (queryParam in queryParameters) {
+				addQueryParameter(queryParam, bb)
+			}
+		}
+	}
+
+	@TypeChecked(TypeCheckingMode.SKIP)
+	protected addQueryParameter(QueryParameter queryParam, BlockBuilder bb) {
+		bb.addLine(/.${QUERY_PARAM_METHOD}(${DOUBLE_QUOTE}${queryParam.name}${DOUBLE_QUOTE},${DOUBLE_QUOTE}${resolveParamValue(queryParam).toString()}${DOUBLE_QUOTE})/)
+	}
+	
+	protected addUrl(Url buildUrl, BlockBuilder bb){
+		String url =MapConverter.getTestSideValues(buildUrl)
+		String method = request.method.serverValue.toString().toLowerCase()
+		bb.addLine(/.${method}(${DOUBLE_QUOTE}${url}${DOUBLE_QUOTE})/)
 	}
 
 	@Override
@@ -163,33 +188,15 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	}
 
 	/**
-	 * Builds a String URL from {@link Request}'s test side values. It can be
+	 * Returns a String URL from {@link Request}'s test side values. It can be
 	 * a concrete value of the URL or a path.
 	 */
-	protected String buildUrl(Request request) {
+	protected Url getUrl(Request request) {
 		if (request.url)
-			return getTestSideValue(buildUrlFromUrlPath(request.url))
+			return request.url
 		if (request.urlPath)
-			return getTestSideValue(buildUrlFromUrlPath(request.urlPath))
+			return request.urlPath
 		throw new IllegalStateException("URL is not set!")
-	}
-
-	/**
-	 * Depending on the presence of query parameters builds the String value
-	 * of the URL. Retrieves any present test side values
-	 */
-	@TypeChecked(TypeCheckingMode.SKIP)
-	protected String buildUrlFromUrlPath(Url url) {
-		if (hasQueryParams(url)) {
-			String params = url.queryParameters.parameters
-					.findAll(this.&allowedQueryParameter)
-					.inject([] as List<String>) { List<String> result, QueryParameter param ->
-				result << "${param.name}=${resolveParamValue(param).toString()}"
-			}
-			.join('&')
-			return "${MapConverter.getTestSideValues(url.serverValue)}?$params"
-		}
-		return MapConverter.getTestSideValues(url.serverValue)
 	}
 
 	/**
@@ -201,7 +208,6 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 		}
 		return getParameterString(parameter)
 	}
-
 
 	private boolean hasQueryParams(Url url) {
 		return url.queryParameters
