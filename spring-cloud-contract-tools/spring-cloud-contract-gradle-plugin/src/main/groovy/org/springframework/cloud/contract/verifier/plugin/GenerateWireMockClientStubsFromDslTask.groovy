@@ -18,7 +18,6 @@ package org.springframework.cloud.contract.verifier.plugin
 
 import org.gradle.api.Task
 import org.gradle.api.internal.ConventionTask
-import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter
@@ -35,7 +34,6 @@ class GenerateWireMockClientStubsFromDslTask extends ConventionTask {
 
 	private static final String DEFAULT_MAPPINGS_FOLDER = 'mappings'
 
-	@OutputDirectory
 	File stubsOutputDir
 
 	ContractVerifierExtension configProperties
@@ -43,6 +41,7 @@ class GenerateWireMockClientStubsFromDslTask extends ConventionTask {
 
 	@TaskAction
 	void generate() {
+		logger.info("Stubs output dir [${getStubsOutputDir()}")
 		Task copyContractsTask = project.getTasksByName(COPY_CONTRACTS_TASK_NAME, false).first()
 		ContractVerifierConfigProperties props = props(copyContractsTask)
 		File contractsDslDir = contractsDslDir(copyContractsTask, props)

@@ -102,12 +102,12 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 			generatedTestSourcesDir = generatedTestSourcesDir ?: project.file("${project.buildDir}/generated-test-sources/contracts")
 			contractsDslDir = contractsDslDir ?: defaultContractsDir() //TODO: Use sourceset
 			basePackageForTests = basePackageForTests ?: 'org.springframework.cloud.contract.verifier.tests'
-			stubsOutputDir = stubsOutputDir ?: project.file("${project.buildDir}/stubs")
+			stubsOutputDir = stubsOutputDir ?: project.file("${project.buildDir}/stubs/")
 		}
 	}
 
 	private File defaultContractsDir() {
-		return project.file("${project.rootDir}/src/test/resources/contracts")
+		return project.file("${project.projectDir}/src/test/resources/contracts")
 	}
 
 	private void createGenerateTestsTask(ContractVerifierExtension extension, Task copyContracts) {

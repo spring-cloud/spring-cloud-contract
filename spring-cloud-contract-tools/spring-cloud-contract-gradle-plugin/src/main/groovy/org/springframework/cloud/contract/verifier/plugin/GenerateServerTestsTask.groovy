@@ -19,14 +19,12 @@ package org.springframework.cloud.contract.verifier.plugin
 import org.gradle.api.GradleException
 import org.gradle.api.Task
 import org.gradle.api.internal.ConventionTask
-import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.springframework.cloud.contract.spec.ContractVerifierException
 import org.springframework.cloud.contract.verifier.TestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 import static org.springframework.cloud.contract.verifier.plugin.SpringCloudContractVerifierGradlePlugin.COPY_CONTRACTS_TASK_NAME
-
 /**
  * Task used to generate server side tests
  *
@@ -34,7 +32,6 @@ import static org.springframework.cloud.contract.verifier.plugin.SpringCloudCont
  */
 class GenerateServerTestsTask extends ConventionTask {
 
-	@OutputDirectory
 	File generatedTestSourcesDir
 
 	//TODO: How to deal with @Input*, @Output* and that domain object?
@@ -43,6 +40,7 @@ class GenerateServerTestsTask extends ConventionTask {
 
 	@TaskAction
 	void generate() {
+		logger.info("Generated test sources dir [${getGeneratedTestSourcesDir()}]")
 		Task copyContractsTask = project.getTasksByName(COPY_CONTRACTS_TASK_NAME, false).first()
 		ContractVerifierConfigProperties props = props(copyContractsTask)
 		File contractsDslDir = contractsDslDir(copyContractsTask, props)
@@ -82,7 +80,7 @@ class GenerateServerTestsTask extends ConventionTask {
 		try {
 			return task.ext.contractsDslDir
 		} catch (Exception e) {
-			project.logger.error("Couldn't retrieve the contractdsl property set by the copy contracts task", e)
+			project.logger.error("Couldn't retrieve the contract dsl property set by the copy contracts task", e)
 			return props.contractsDslDir
 		}
 	}
