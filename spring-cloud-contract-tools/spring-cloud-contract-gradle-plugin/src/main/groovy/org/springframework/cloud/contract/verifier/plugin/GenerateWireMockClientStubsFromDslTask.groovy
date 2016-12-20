@@ -18,14 +18,12 @@ package org.springframework.cloud.contract.verifier.plugin
 
 import org.gradle.api.Task
 import org.gradle.api.internal.ConventionTask
-import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverter
 import org.springframework.cloud.contract.verifier.wiremock.RecursiveFilesConverter
 
 import static org.springframework.cloud.contract.verifier.plugin.SpringCloudContractVerifierGradlePlugin.COPY_CONTRACTS_TASK_NAME
-
 //TODO: Implement as an incremental task: https://gradle.org/docs/current/userguide/custom_tasks.html#incremental_tasks ?
 /**
  * Generates WireMock stubs from the contracts
@@ -36,7 +34,6 @@ class GenerateWireMockClientStubsFromDslTask extends ConventionTask {
 
 	private static final String DEFAULT_MAPPINGS_FOLDER = 'mappings'
 
-	@OutputDirectory
 	File stubsOutputDir
 
 	ContractVerifierExtension configProperties
@@ -44,6 +41,7 @@ class GenerateWireMockClientStubsFromDslTask extends ConventionTask {
 
 	@TaskAction
 	void generate() {
+		logger.info("Stubs output dir [${getStubsOutputDir()}")
 		Task copyContractsTask = project.getTasksByName(COPY_CONTRACTS_TASK_NAME, false).first()
 		ContractVerifierConfigProperties props = props(copyContractsTask)
 		File contractsDslDir = contractsDslDir(copyContractsTask, props)
@@ -74,7 +72,7 @@ class GenerateWireMockClientStubsFromDslTask extends ConventionTask {
 		try {
 			return task.ext.contractsDslDir
 		} catch (Exception e) {
-			project.logger.error("Couldn't retrieve the contractdsl property set by the copy contracts task", e)
+			project.logger.error("Couldn't retrieve the contract dsl property set by the copy contracts task", e)
 			return props.contractsDslDir
 		}
 	}
