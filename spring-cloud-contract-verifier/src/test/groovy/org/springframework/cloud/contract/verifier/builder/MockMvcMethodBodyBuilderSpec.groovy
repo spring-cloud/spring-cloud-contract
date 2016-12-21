@@ -31,7 +31,10 @@ import java.util.regex.Pattern
  */
 class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStubVerifier {
 
-	@Shared ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(assertJsonSize: true)
+	@Shared ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
+			assertJsonSize: true
+	)
+
 
 	@Shared
 	// tag::contract_with_regex[]
@@ -1799,6 +1802,41 @@ World.'''"""
 			def test = blockBuilder.toString()
 		then:
 			test.contains('application/vnd\\\\.fraud\\\\.v1\\\\+json.*')
+		where:
+			methodBuilder << [{ Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties)},
+						{ Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties)}]
+	}
+
+	@Issue('#173')
+	@Unroll
+	def "should resolve Optional object when used in query parameters"() {
+		given:
+		Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					urlPath('/blacklist') {
+						queryParameters {
+							parameter 'isActive': value(consumer(optional(regex('(true|false)'))))
+							parameter 'limit': value(consumer(optional(regex('([0-9]{1,10})'))))
+							parameter 'offset': value(consumer(optional(regex('([0-9]{1,10})'))))
+						}
+					}
+					headers {
+						header 'Content-Type': 'application/json'
+					}
+				}
+				response {
+					status(200)
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			!test.contains('org.springframework.cloud.contract.spec.internal.OptionalProperty')
+			test.contains('(([0-9]{1,10}))?')
 		where:
 			methodBuilder << [{ Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties)},
 						{ Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties)}]
