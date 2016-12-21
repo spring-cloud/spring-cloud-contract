@@ -24,6 +24,7 @@ import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Unroll
 import spock.util.environment.RestoreSystemProperties
 
 class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStubVerifier {
@@ -870,7 +871,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 	}
 
 	@Issue('#149')
-	def "should allow easier way of providing dynamic values"() {
+	@Unroll
+	def "should allow easier way of providing dynamic values for [#methodBuilderName]"() {
 		given:
 			Contract contractDsl = Contract.make {
 				request {
@@ -930,5 +932,41 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 
 	private String stripped(String string) {
 		return string.stripMargin().stripIndent().replace('\t', '').replace('\n', '').replace(' ','')
+	}
+
+	@Issue('#173')
+	@Unroll
+	def "should resolve Optional object when used in query parameters for [#methodBuilderName]"() {
+		given:
+		Contract contractDsl = Contract.make {
+			request {
+				method 'GET'
+				urlPath('/blacklist') {
+					queryParameters {
+						parameter 'isActive': value(consumer(optional(regex('(true|false)'))))
+						parameter 'limit': value(consumer(optional(regex('([0-9]{1,10})'))))
+						parameter 'offset': value(consumer(optional(regex('([0-9]{1,10})'))))
+					}
+				}
+				headers {
+					header 'Content-Type': 'application/json'
+				}
+			}
+			response {
+				status(200)
+			}
+		}
+		MethodBodyBuilder builder = methodBuilder(contractDsl)
+		BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+		builder.appendTo(blockBuilder)
+		def test = blockBuilder.toString()
+		then:
+		!test.contains('org.springframework.cloud.contract.spec.internal.OptionalProperty')
+		test.contains('(([0-9]{1,10}))?')
+		where:
+		methodBuilderName                                    | methodBuilder
+		"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+		"JaxRsClientJUnitMethodBodyBuilder"                  | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
 }

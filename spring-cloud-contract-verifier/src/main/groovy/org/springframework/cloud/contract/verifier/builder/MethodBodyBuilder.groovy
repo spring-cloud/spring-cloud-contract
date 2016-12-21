@@ -366,6 +366,13 @@ abstract class MethodBodyBuilder {
 	}
 
 	/**
+	 * Converts the query parameter DSL Property until a concrete value is reached
+	 */
+	protected String resolveParamValue(OptionalProperty value) {
+		return resolveParamValue(value.optionalPattern())
+	}
+
+	/**
 	 * Converts the query parameter value into String
 	 */
 	protected String resolveParamValue(MatchingStrategy matchingStrategy) {
