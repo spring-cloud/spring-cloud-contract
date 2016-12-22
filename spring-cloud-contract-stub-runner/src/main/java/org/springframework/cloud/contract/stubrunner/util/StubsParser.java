@@ -102,8 +102,7 @@ public class StubsParser {
 			try {
 				port = Integer.valueOf(splitEntry[splitEntry.length-1]);
 				id = id.substring(0, id.lastIndexOf(":"));
-			} catch (NumberFormatException e) {
-			}
+			} catch (NumberFormatException e) {}
 			return new StubSpecification(new StubConfiguration(id, defaultClassifier), port);
 		}
 

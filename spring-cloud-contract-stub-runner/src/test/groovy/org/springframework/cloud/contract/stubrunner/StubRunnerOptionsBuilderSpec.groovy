@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.stubrunner
 
+import spock.lang.Issue
 import spock.lang.Specification
 
 class StubRunnerOptionsBuilderSpec extends Specification {
@@ -80,5 +81,18 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 
 		then:
 		options.getDependencies().toString() == '[foo:bar:+:xxx]'
+	}
+
+	@Issue("#176")
+	def shouldCreateDependenciesWithEmptyPort() {
+
+		given:
+		builder.withStubs('groupId:artifactId:version:classifier:')
+
+		when:
+		StubRunnerOptions options = builder.build()
+
+		then:
+		options.getDependencies().toString() == '[groupId:artifactId:version:classifier]'
 	}
 }
