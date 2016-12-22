@@ -76,7 +76,7 @@ public class StubConfiguration {
 			stubsGroupId = splitPath[0];
 			stubsArtifactId = splitPath[1];
 			stubsVersion = splitPath.length >= 3 ? splitPath[2] : DEFAULT_VERSION;
-			stubsClassifier = splitPath.length == 4 ? splitPath[3] : defaultClassifier;
+			stubsClassifier = splitPath.length >= 4 ? splitPath[3] : defaultClassifier;
 		}
 		return new String[] { stubsGroupId, stubsArtifactId, stubsVersion,
 				stubsClassifier };
