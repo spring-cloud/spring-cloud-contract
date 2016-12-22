@@ -21,6 +21,7 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.cloud.contract.verifier.dsl.WireMockStubVerifier
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubStrategy
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
+import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
@@ -55,6 +56,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").isEqualTo("b")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName                   | methodBuilder
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -88,6 +91,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("true")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, contractDsl), contractDsl).toWireMockClientStub())
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName                   | methodBuilder
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -123,6 +128,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("b").isEqualTo("sthElse")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, contractDsl), contractDsl).toWireMockClientStub())
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName                   | methodBuilder
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -161,6 +168,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("b").isEqualTo("sthElse")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, contractDsl), contractDsl).toWireMockClientStub())
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName                   | methodBuilder
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -190,6 +199,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			blockBuilder.toString().contains(bodyString)
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName                   | methodBuilder                                                                                                                                    | bodyString
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | """entity('{\"items\":[\"HOP\"]}', 'application/json')"""
@@ -219,6 +230,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			blockBuilder.toString().contains(bodyString)
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName                   | methodBuilder                                                                                                                                    | bodyString
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | """entity('property1=VAL1', 'application/octet-stream')"""
@@ -252,6 +265,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			blockBuilder.toString().contains("""assertThatJson(parsedJson).array().contains("property2").isEqualTo("b")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName                   | methodBuilder
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -284,6 +299,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property1").contains("property3").isEqualTo("test2")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName                   | methodBuilder
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -316,6 +333,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName                   | methodBuilder
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -353,6 +372,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName                   | methodBuilder
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -383,6 +404,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName                   | methodBuilder
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -411,6 +434,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			blockBuilder.toString().contains(requestString)
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName                   | methodBuilder                                                                                                                                    | requestString
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | "request('text/plain')"
@@ -444,6 +469,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			!blockBuilder.toString().contains("""Content Type""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName                   | methodBuilder                                                                                                                                    | requestStrings
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ["""entity('', 'text/plain')""", """header('Timer', '123')"""]
@@ -498,6 +525,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			test.contains(modifyStringIfRequired.call("""assertThatJson(parsedJson).field("property2").isEqualTo("b")"""))
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName                   | methodBuilder                                                                                                                                    | modifyStringIfRequired
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String paramString -> paramString }
@@ -553,6 +582,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			test.contains(modifyStringIfRequired.call("""assertThatJson(parsedJson).field("property2").isEqualTo("b")"""))
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName                   | methodBuilder                                                                                                                                    | modifyStringIfRequired
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String paramString -> paramString }
@@ -581,6 +612,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			test.contains(bodyString)
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName                   | methodBuilder                                                                                                                                    | bodyString
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | "entity('', 'application/octet-stream')"
@@ -609,10 +642,12 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			test.contains(bodyEvaluationString)
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName                   | methodBuilder                                                                                                                                    | bodyDefinitionString                                    | bodyEvaluationString
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | "String responseAsString = response.readEntity(String)" | 'responseBody == "test"'
-			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                                   | 'Object responseBody = (responseAsString);'             | 'assertThat(responseBody).isEqualTo("test");'
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                                   | 'String responseBody = responseAsString;'             | 'assertThat(responseBody).isEqualTo("test");'
 	}
 
 	@Issue('#171')
@@ -642,6 +677,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			test.contains(methodString)
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName                   | methodBuilder                                                                                                                                    | methodString
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ".method('GET')"
@@ -712,6 +749,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		stripped(test) == stripped(expectedResponse)
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompileJava(blockBuilder.toString())
 	}
 
 	@Issue('#85')
@@ -758,10 +797,12 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			MethodBodyBuilder builder = new JaxRsClientJUnitMethodBodyBuilder(contractDsl, properties)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
-			builder.then(blockBuilder)
+			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
 			test.contains("assertThat(responseBody).matches(\".*\");")
+		and:
+			SyntaxChecker.tryToCompileJava(blockBuilder.toString())
 	}
 
 	@Issue('#150')
@@ -785,6 +826,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			def test = blockBuilder.toString()
 		then:
 			test.contains("responseBody ==~ java.util.regex.Pattern.compile('.*')")
+		and:
+			SyntaxChecker.tryToCompileGroovy(blockBuilder.toString())
 	}
 
 	@Issue('#150')
@@ -804,7 +847,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			MethodBodyBuilder builder = new JaxRsClientJUnitMethodBodyBuilder(contractDsl, properties)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
-			builder.then(blockBuilder)
+			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
 			test.contains("foo(responseBody);")
@@ -831,6 +874,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			def test = blockBuilder.toString()
 		then:
 			test.contains("foo(responseBody)")
+		and:
+			SyntaxChecker.tryToCompileGroovy(blockBuilder.toString())
 	}
 
 	def "should allow c/p version of consumer producer"() {
@@ -864,6 +909,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName                                    | methodBuilder
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -924,6 +971,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			test.contains('assertThatJson(parsedJson).field("ip").matches("([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])")')
 			test.contains('assertThatJson(parsedJson).field("uuid").matches("[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}")')
 			!test.contains('cursor')
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName                                    | methodBuilder
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -938,35 +987,37 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 	@Unroll
 	def "should resolve Optional object when used in query parameters for [#methodBuilderName]"() {
 		given:
-		Contract contractDsl = Contract.make {
-			request {
-				method 'GET'
-				urlPath('/blacklist') {
-					queryParameters {
-						parameter 'isActive': value(consumer(optional(regex('(true|false)'))))
-						parameter 'limit': value(consumer(optional(regex('([0-9]{1,10})'))))
-						parameter 'offset': value(consumer(optional(regex('([0-9]{1,10})'))))
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					urlPath('/blacklist') {
+						queryParameters {
+							parameter 'isActive': value(consumer(optional(regex('(true|false)'))))
+							parameter 'limit': value(consumer(optional(regex('([0-9]{1,10})'))))
+							parameter 'offset': value(consumer(optional(regex('([0-9]{1,10})'))))
+						}
+					}
+					headers {
+						header 'Content-Type': 'application/json'
 					}
 				}
-				headers {
-					header 'Content-Type': 'application/json'
+				response {
+					status(200)
 				}
 			}
-			response {
-				status(200)
-			}
-		}
-		MethodBodyBuilder builder = methodBuilder(contractDsl)
-		BlockBuilder blockBuilder = new BlockBuilder(" ")
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
-		builder.appendTo(blockBuilder)
-		def test = blockBuilder.toString()
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
 		then:
-		!test.contains('org.springframework.cloud.contract.spec.internal.OptionalProperty')
-		test.contains('(([0-9]{1,10}))?')
+			!test.contains('org.springframework.cloud.contract.spec.internal.OptionalProperty')
+			test.contains('(([0-9]{1,10}))?')
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
-		methodBuilderName                                    | methodBuilder
-		"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-		"JaxRsClientJUnitMethodBodyBuilder"                  | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+			methodBuilderName                                    | methodBuilder
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
 }

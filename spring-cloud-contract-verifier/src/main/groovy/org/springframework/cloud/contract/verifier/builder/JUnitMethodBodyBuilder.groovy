@@ -121,7 +121,7 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 
 	@Override
 	protected String getSimpleResponseBodyString(String responseString) {
-		return "Object responseBody = ($responseString);"
+		return "String responseBody = $responseString;"
 	}
 
 	@Override

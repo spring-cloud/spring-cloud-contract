@@ -70,6 +70,9 @@ class ContentUtils {
 		if (bodyAsValue.isEmpty()){
 			return bodyAsValue
 		}
+		if (contentType == ContentType.TEXT) {
+			return extractValueForText(bodyAsValue, valueProvider)
+		}
 		if (contentType == ContentType.JSON) {
 			return extractValueForJSON(bodyAsValue, valueProvider)
 		}
@@ -152,6 +155,14 @@ class ContentUtils {
 
 	public static Object extractValue(GString bodyAsValue, Closure valueProvider) {
 		return extractValue(bodyAsValue, ContentType.UNKNOWN, valueProvider)
+	}
+
+	private static String extractValueForText(GString bodyAsValue, Closure valueProvider) {
+		GString transformedString = new GStringImpl(
+				bodyAsValue.values.collect { valueProvider(it) } as String[],
+				bodyAsValue.strings.clone() as String[]
+		)
+		return transformedString.toString()
 	}
 
 	private static Object extractValueForJSON(GString bodyAsValue, Closure valueProvider) {
@@ -271,6 +282,9 @@ class ContentUtils {
 		}
 		if (content?.endsWith("xml")) {
 			return ContentType.XML
+		}
+		if (content?.contains("text")) {
+			return ContentType.TEXT
 		}
 		return ContentType.UNKNOWN
 	}

@@ -48,7 +48,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 							created: $(consumer('2014-02-02 12:23:43'), producer(execute('currentDate($it)')))
 					)
 					headers {
-						header 'Content-Type': 'text/plain'
+						header 'Content-Type': 'application/json'
 					}
 				}
 			}
@@ -65,7 +65,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				"status" : 200,
 				"body" : "{\\"id\\":\\"123\\",\\"surname\\":\\"Kowalsky\\",\\"name\\":\\"Jan\\",\\"created\\":\\"2014-02-02 12:23:43\\"}",
 				"headers" : {
-				  "Content-Type" : "text/plain"
+				  "Content-Type" : "application/json"
 				}
 			  }
 			}
@@ -193,7 +193,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						"""
 					)
 					headers {
-						header 'Content-Type': 'text/plain'
+						header 'Content-Type': 'application/json'
 					}
 				}
 			}
@@ -210,7 +210,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"status" : 200,
 	"body" : "{\\"created\\":\\"2014-02-02 12:23:43\\",\\"id\\":\\"123\\",\\"name\\":\\"Jan\\",\\"surname\\":\\"Kowalsky\\"}",
 	"headers" : {
-	  "Content-Type" : "text/plain"
+	  "Content-Type" : "application/json"
 	}
   }
 }
@@ -240,7 +240,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						"""
 					)
 					headers {
-						header 'Content-Type': 'text/plain'
+						header 'Content-Type': 'application/json'
 					}
 				}
 			}
@@ -260,7 +260,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"status" : 200,
 	"body" : "{\\"name\\":\\"Jan\\"}",
 	"headers" : {
-	  "Content-Type" : "text/plain"
+	  "Content-Type" : "application/json"
 	}
   }
 }
@@ -572,7 +572,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					 """
 					)
 					headers {
-						header 'Content-Type': 'text/plain'
+						header 'Content-Type': 'application/json'
 					}
 				}
 			}
@@ -592,7 +592,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"status" : 200,
 	"body" : "{\\"name\\":\\"Jan\\"}",
 	"headers" : {
-	  "Content-Type" : "text/plain"
+	  "Content-Type" : "application/json"
 	}
   }
 }
@@ -1015,7 +1015,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 							"""
 					)
 					headers {
-						header 'Content-Type': 'text/plain'
+						header 'Content-Type': 'application/json'
 					}
 				}
 			}
@@ -1045,7 +1045,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"status" : 200,
 	"body" : "{\\"name\\":\\"Jan\\"}",
 	"headers" : {
-	  "Content-Type" : "text/plain"
+	  "Content-Type" : "application/json"
 	}
   }
 }

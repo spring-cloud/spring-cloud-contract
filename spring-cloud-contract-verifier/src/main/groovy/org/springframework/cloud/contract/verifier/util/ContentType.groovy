@@ -25,6 +25,7 @@ enum ContentType {
 
 	JSON("application/json"),
 	XML("application/xml"),
+	TEXT("text/plain"),
 	UNKNOWN("application/octet-stream")
 
 	final String mimeType
