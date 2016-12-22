@@ -28,6 +28,7 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 
 import java.util.regex.Pattern
 
+import static org.apache.commons.lang3.StringEscapeUtils.escapeJava
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getGroovyMultipartFileParameterContent
 
 /**
@@ -152,7 +153,7 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 	}
 
 	protected String patternComparison(String pattern) {
-		return "==~ java.util.regex.Pattern.compile('$pattern')"
+		String converted = escapeJava(convertUnicodeEscapesIfRequired(pattern))
+		return "==~ java.util.regex.Pattern.compile('${converted}')"
 	}
-
 }

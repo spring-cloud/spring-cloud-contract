@@ -91,7 +91,7 @@ abstract class BaseWireMockStubStrategy {
 	 * For the given {@link ContentType} returns the String version of the body
 	 */
 	String parseBody(GString value, ContentType contentType) {
-		Object processedValue = extractValue(value, contentType, { DslProperty dslProperty -> dslProperty.clientValue })
+		Object processedValue = extractValue(value, contentType, { Object o -> o instanceof DslProperty ? o.clientValue : o })
 		if (processedValue instanceof GString) {
 			return parseBody(processedValue.toString(), contentType)
 		}

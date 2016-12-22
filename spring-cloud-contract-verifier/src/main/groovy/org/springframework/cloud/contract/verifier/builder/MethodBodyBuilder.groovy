@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.verifier.builder
 
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
+import org.apache.commons.lang3.StringEscapeUtils
 import org.springframework.cloud.contract.spec.internal.*
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.ContentType
@@ -262,9 +263,13 @@ abstract class MethodBodyBuilder {
 		ContentType contentType = getResponseContentType()
 		Object convertedResponseBody = responseBody
 		if (convertedResponseBody instanceof GString) {
-			convertedResponseBody = extractValue(convertedResponseBody, contentType, { DslProperty dslProperty -> dslProperty.serverValue })
+			convertedResponseBody = extractValue(convertedResponseBody, contentType, { Object o -> o instanceof DslProperty ? o.serverValue : o })
 		}
-		convertedResponseBody = MapConverter.getTestSideValues(convertedResponseBody)
+		if (contentType != ContentType.TEXT) {
+			convertedResponseBody = MapConverter.getTestSideValues(convertedResponseBody)
+		} else {
+			convertedResponseBody = StringEscapeUtils.escapeJava(convertedResponseBody.toString())
+		}
 		if (contentType == ContentType.JSON) {
 			appendJsonPath(bb, getResponseAsString())
 			JsonPaths jsonPaths = new JsonToJsonPathsConverter(configProperties).transformToJsonPathWithTestsSideValues(convertedResponseBody)
