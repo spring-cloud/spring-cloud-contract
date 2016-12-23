@@ -2005,26 +2005,24 @@ World.'''"""
 			"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
 	}
 
-	@Issue('#173')
-	@Unroll
-	def "should resolve Optional object when used in query parameters"() {
+	@Issue('#169')
+	def "should escape quotes properly using [#methodBuilderName]"() {
 		given:
-		Contract contractDsl = Contract.make {
+			Contract contractDsl = Contract.make {
 				request {
-					method 'GET'
-					urlPath('/blacklist') {
-						queryParameters {
-							parameter 'isActive': value(consumer(optional(regex('(true|false)'))))
-							parameter 'limit': value(consumer(optional(regex('([0-9]{1,10})'))))
-							parameter 'offset': value(consumer(optional(regex('([0-9]{1,10})'))))
-						}
-					}
-					headers {
-						header 'Content-Type': 'application/json'
-					}
+					method 'POST'
+					url '/foo'
+					body(
+							xyz: 'abc'
+					)
+					headers { header('Content-Type', 'application/json;charset=UTF-8') }
 				}
 				response {
-					status(200)
+					status 200
+					body(
+							bar: $(producer(regex('some value \u0022with quote\u0022|bar')))
+					)
+					headers { header('Content-Type': 'application/json;charset=UTF-8') }
 				}
 			}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -2033,10 +2031,13 @@ World.'''"""
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			!test.contains('org.springframework.cloud.contract.spec.internal.OptionalProperty')
-			test.contains('(([0-9]{1,10}))?')
+//			test.contains('assertThatJson(parsedJson).field("bar").matches("some value \\"with quote\\"|bar")')
+//		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
-			methodBuilder << [{ Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties)},
-						{ Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties)}]
+			//order is inverted cause Intellij didn't parse this properly
+			methodBuilderName           | methodBuilder                                                                           | expectedAssertion
+			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '''responseBody == "{\\"a\\":1}\\n{\\"a\\":2}"'''
+			"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
 	}
 }
