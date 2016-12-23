@@ -839,6 +839,21 @@ and consumers, for HTTP and message-based interactions.</p>
 <a href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples">samples</a>
 for more details.</p>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+The Spring Cloud Release Train BOM imports <code>spring-cloud-contract-dependencies</code>
+ which in turn has exclusions for the dependencies needed by WireMock. This might lead to a situation that
+ even if you&#8217;re not using Spring Cloud Contract then your dependencies will be influenced
+ anyways.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>If you have a Spring Boot application that uses Tomcat as an embedded
 server, for example (the default with <code>spring-boot-starter-web</code>), then
