@@ -2004,4 +2004,40 @@ World.'''"""
 			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '''responseBody == "{\\"a\\":1}\\n{\\"a\\":2}"'''
 			"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
 	}
+
+	@Issue('#169')
+	def "should escape quotes properly using [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'POST'
+					url '/foo'
+					body(
+							xyz: 'abc'
+					)
+					headers { header('Content-Type', 'application/json;charset=UTF-8') }
+				}
+				response {
+					status 200
+					body(
+							bar: $(producer(regex('some value \u0022with quote\u0022|bar')))
+					)
+					headers { header('Content-Type': 'application/json;charset=UTF-8') }
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+//			test.contains('assertThatJson(parsedJson).field("bar").matches("some value \\"with quote\\"|bar")')
+//		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
+		where:
+			//order is inverted cause Intellij didn't parse this properly
+			methodBuilderName           | methodBuilder                                                                           | expectedAssertion
+			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '''responseBody == "{\\"a\\":1}\\n{\\"a\\":2}"'''
+			"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
+	}
 }

@@ -16,12 +16,12 @@
 
 package org.springframework.cloud.contract.verifier.util;
 
+import static org.apache.commons.lang3.StringEscapeUtils.escapeJava;
+
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
 import com.toomuchcoding.jsonassert.JsonVerifiable;
-
-import static org.apache.commons.lang3.StringEscapeUtils.escapeJava;
 
 /**
  * Implementation of the {@link MethodBufferingJsonVerifiable} that contains a list
@@ -191,12 +191,22 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 	public MethodBufferingJsonVerifiable matches(String value) {
 		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(this.delegate.matches(value), this.methodsBuffer);
 		if (this.delegate.isAssertingAValueInArray()) {
-			readyToCheck.appendMethodWithQuotedValue("matches", escapeJava(value));
+			readyToCheck.appendMethodWithQuotedValue("matches", escapedHackedJavaText(value));
 			readyToCheck.methodsBuffer.offer(".value()");
 		} else {
-			readyToCheck.appendMethodWithQuotedValue("matches", escapeJava(value));
+			readyToCheck.appendMethodWithQuotedValue("matches", escapedHackedJavaText(value));
 		}
 		return readyToCheck;
+	}
+
+	/**
+	 * We need to escape the pattern in order for the produced text to be compilable.
+	 * The problem is that sometimes we get quotes that already escaped. If we escape them
+	 * we get code that doesn't compile. That's why we're doing this hack to unescape
+	 * an double escaped text. Related to https://github.com/spring-cloud/spring-cloud-contract/issues/169
+	 */
+	private String escapedHackedJavaText(String value) {
+		return escapeJava(value).replace("\\\"", "\"");
 	}
 
 	@Override
