@@ -4597,6 +4597,7 @@ its methods as presented below:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
+@SpringBootTest(properties = [" stubrunner.cloud.enabled=false", "stubrunner.camel.enabled=false"])
 @AutoConfigureStubRunner
 @DirtiesContext
 @ActiveProfiles("test")
@@ -4857,6 +4858,7 @@ trigger the messaging labels and to access started WireMock servers.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">@ContextConfiguration(classes = StubRunnerBoot, loader = SpringBootContextLoader)
+@SpringBootTest(properties = "spring.cloud.zookeeper.enabled=false")
 @ActiveProfiles("test")
 class StubRunnerBootSpec extends Specification {
 
