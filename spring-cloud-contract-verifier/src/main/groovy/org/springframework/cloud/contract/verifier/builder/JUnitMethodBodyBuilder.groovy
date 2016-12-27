@@ -93,7 +93,7 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 
 	@Override
 	protected String getPropertyInListString(String property, Integer listIndex) {
-		return "${property}.get($listIndex)" ?: ''
+		return "${property}[$listIndex]" ?: ''
 	}
 
 	@Override
