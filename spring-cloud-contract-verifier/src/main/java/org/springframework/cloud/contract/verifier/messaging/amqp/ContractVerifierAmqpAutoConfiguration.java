@@ -71,7 +71,6 @@ public class ContractVerifierAmqpAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public MessageVerifier<Message> contractVerifierMessageExchange() {
-
 		return new SpringAmqpStubMessages(this.rabbitTemplate,
 				new MessageListenerAccessor(this.rabbitListenerEndpointRegistry, this.simpleMessageListenerContainers, this.bindings));
 	}

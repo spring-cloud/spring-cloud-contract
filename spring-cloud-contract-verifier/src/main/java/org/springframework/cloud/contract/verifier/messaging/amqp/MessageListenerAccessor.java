@@ -14,7 +14,7 @@ import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 /**
  * Abstraction hiding details of the different sources of message listeners
  *
- * Needed because {@link org.springframework.amqp.rabbit.annotation.RabbitListenerAnnotationBeanPostProcessor} adds the listners to the
+ * Needed because {@link org.springframework.amqp.rabbit.annotation.RabbitListenerAnnotationBeanPostProcessor} adds the listeners to the
  * {@link RabbitListenerEndpointRegistry} so that the registry is empty when wired into an auto configuration class
  * so we wrap it in the accessor to access the listeners late at runtime
  *
@@ -38,7 +38,6 @@ class MessageListenerAccessor {
 		List<SimpleMessageListenerContainer> listenerContainers = collectListenerContainers();
 		//we interpret the destination as exchange name and collect all the queues bound to this exchange
 		Set<String> queueNames = collectQueuesBoundToDestination(destination);
-
 		return getListenersByBoundQueues(listenerContainers, queueNames);
 	}
 

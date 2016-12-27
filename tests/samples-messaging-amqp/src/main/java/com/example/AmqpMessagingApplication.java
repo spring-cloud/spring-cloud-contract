@@ -43,4 +43,10 @@ public class AmqpMessagingApplication {
 	public Exchange testExchange() {
 		return new TopicExchange("test-exchange");
 	}
+
+	@Bean
+	MessagePublisher messagePublisher(RabbitTemplate rabbitTemplate) {
+		return new MessagePublisher(rabbitTemplate, testExchange());
+	}
+
 }

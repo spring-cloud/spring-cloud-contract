@@ -21,6 +21,7 @@ import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootContextLoader
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier
@@ -37,6 +38,7 @@ import javax.inject.Inject
 // Context configuration would end up in base class
 @ContextConfiguration(classes = [StreamMessagingApplication], loader = SpringBootContextLoader)
 @DirtiesContext
+@SpringBootTest(properties = "debug=true")
 @AutoConfigureMessageVerifier
 public class StreamMessagingApplicationSpec extends Specification {
 

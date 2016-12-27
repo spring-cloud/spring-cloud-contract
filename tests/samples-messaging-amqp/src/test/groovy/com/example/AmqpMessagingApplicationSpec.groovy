@@ -19,19 +19,24 @@ package com.example
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
+import groovy.json.JsonOutput
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootContextLoader
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.test.context.ContextConfiguration
+import spock.lang.Issue
 import spock.lang.Specification
 
 import javax.inject.Inject
+
 // Context configuration would end up in base class
 @ContextConfiguration(classes = [AmqpMessagingApplication], loader = SpringBootContextLoader)
 @AutoConfigureMessageVerifier
+@SpringBootTest(properties = "stubrunner.amqp.enabled=true")
 class AmqpMessagingApplicationSpec extends Specification {
 
 	// ALL CASES
@@ -72,6 +77,44 @@ class AmqpMessagingApplicationSpec extends Specification {
 		and:
 			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
 			JsonAssertion.assertThat(parsedJson).field('name').isEqualTo('some')
+	}
+
+	@Issue("178")
+	def "should work for input/output when bytes are used"() {
+		given:
+			def inputBody = [
+					ratedItemId: "992e46d8-ab05-4a26-a740-6ef7b0daeab3",
+					eventType: "CREATED"
+			]
+			def dsl = Contract.make {
+				label 'ratedItem-no-metricid'
+				input {
+					messageFrom("rated-item-service.rated-item-event.exchange")
+					messageHeaders {
+						header("X-tenant", "1234")
+						header("contentType", "application/json")
+					}
+					messageBody(inputBody)
+				}
+				outputMessage {
+					sentTo('bill-service.rated-item-event.retry-exchange')
+					body(
+							ratedItemId: "992e46d8-ab05-4a26-a740-6ef7b0daeab3",
+							eventType: "CREATED"
+					)
+				}
+			}
+		when:
+			contractVerifierMessaging.send(contractVerifierMessaging.create(new JsonOutput().toJson(inputBody), [
+					"X-tenant": "1234",
+					"contentType": "application/json"
+			]), "rated-item-service.rated-item-event.exchange")
+		then:
+			def response = contractVerifierMessaging.receive('bill-service.rated-item-event.retry-exchange')
+		and:
+			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
+			JsonAssertion.assertThat(parsedJson).field('ratedItemId').isEqualTo('992e46d8-ab05-4a26-a740-6ef7b0daeab3')
+			JsonAssertion.assertThat(parsedJson).field('eventType').isEqualTo('CREATED')
 	}
 
 	// BASE CLASS WOULD HAVE THIS:

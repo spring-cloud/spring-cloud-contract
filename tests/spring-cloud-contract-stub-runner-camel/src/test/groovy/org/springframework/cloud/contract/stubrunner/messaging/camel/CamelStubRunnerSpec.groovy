@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
@@ -40,6 +41,7 @@ import spock.lang.Specification
  * @author Marcin Grzejszczak
  */
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
+@SpringBootTest(properties = "debug=true")
 @AutoConfigureStubRunner
 @IgnoreIf({ os.windows })
 class CamelStubRunnerSpec extends Specification {
