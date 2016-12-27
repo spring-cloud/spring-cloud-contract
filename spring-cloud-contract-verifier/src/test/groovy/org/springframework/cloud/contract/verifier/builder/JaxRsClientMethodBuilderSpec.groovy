@@ -774,10 +774,70 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			MethodBodyBuilder builder = new JaxRsClientJUnitMethodBodyBuilder(contractDsl, properties)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
-			builder.then(blockBuilder)
+			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
 			test.contains('assertThatRejectionReasonIsNull(parsedJson.read("$.get("rejectionReason").title"));')
+	}
+
+	@Issue('#85')
+	def "should execute custom method for more complex structures on the response side when using Spock"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					urlPath '/get'
+				}
+				response {
+					status 200
+					body([
+							[
+									name: $(consumer("userName 1"), producer(execute('assertThatUserNameIsNotNull($it)')))
+							],
+							[
+									name: $(consumer("userName 2"), producer(execute('assertThatUserNameIsNotNull($it)')))
+							]
+					])
+				}
+			}
+			MethodBodyBuilder builder = new JaxRsClientJUnitMethodBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$[0].name")''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$[1].name")''')
+	}
+
+	@Issue('#85')
+	def "should execute custom method for more complex structures on the response side when using JUnit"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					urlPath '/get'
+				}
+				response {
+					status 200
+					body([
+							[
+									name: $(consumer("userName 1"), producer(execute('assertThatUserNameIsNotNull($it)')))
+							],
+							[
+									name: $(consumer("userName 2"), producer(execute('assertThatUserNameIsNotNull($it)')))
+							]
+					])
+				}
+			}
+			MethodBodyBuilder builder = new JaxRsClientJUnitMethodBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.then(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$[0].name")''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$[1].name")''')
 	}
 
 	@Issue('#150')

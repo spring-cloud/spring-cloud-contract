@@ -1721,6 +1721,66 @@ World.'''"""
 			SyntaxChecker.tryToCompileGroovy(blockBuilder.toString())
 	}
 
+	@Issue('#85')
+	def "should execute custom method for more complex structures on the response side when using Spock"() {
+		given:
+		Contract contractDsl = Contract.make {
+			request {
+				method 'GET'
+				urlPath '/get'
+			}
+			response {
+				status 200
+				body([
+					[
+							name: $(consumer("userName 1"), producer(execute('assertThatUserNameIsNotNull($it)')))
+					],
+					[
+							name: $(consumer("userName 2"), producer(execute('assertThatUserNameIsNotNull($it)')))
+					]
+				])
+			}
+		}
+			MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.then(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read('$[0].name')''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read('$[1].name')''')
+	}
+
+	@Issue('#85')
+	def "should execute custom method for more complex structures on the response side when using JUnit"() {
+		given:
+		Contract contractDsl = Contract.make {
+			request {
+				method 'GET'
+				urlPath '/get'
+			}
+			response {
+				status 200
+				body([
+					[
+							name: $(consumer("userName 1"), producer(execute('assertThatUserNameIsNotNull($it)')))
+					],
+					[
+							name: $(consumer("userName 2"), producer(execute('assertThatUserNameIsNotNull($it)')))
+					]
+				])
+			}
+		}
+			MethodBodyBuilder builder = new MockMvcJUnitMethodBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.then(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$[0].name")''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$[1].name")''')
+	}
+
 	@Issue('#111')
 	def "should execute custom method for request headers"() {
 		given:
