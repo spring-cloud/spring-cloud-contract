@@ -54,6 +54,10 @@ class CopyContracts {
 				+ "the final JAR with stubs.");
 		Resource resource = new Resource();
 		resource.addInclude(this.config.getIncludedRootFolderAntPattern() + "*.*");
+		if (this.config.isExcludeBuildFolders()) {
+			resource.addExclude("**/target/**");
+			resource.addExclude("**/build/**");
+		}
 		resource.setDirectory(contractsDirectory.getAbsolutePath());
 		MavenResourcesExecution execution = new MavenResourcesExecution();
 		execution.setResources(Collections.singletonList(resource));

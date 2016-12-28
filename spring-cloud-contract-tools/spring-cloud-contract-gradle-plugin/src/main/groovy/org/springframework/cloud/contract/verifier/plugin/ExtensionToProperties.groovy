@@ -27,7 +27,8 @@ class ExtensionToProperties {
 				stubsSuffix: extension.stubsSuffix,
 				assertJsonSize: extension.assertJsonSize,
 				packageWithBaseClasses: extension.packageWithBaseClasses,
-				baseClassMappings: extension.baseClassMappings
+				baseClassMappings: extension.baseClassMappings,
+				excludeBuildFolders: extension.excludeBuildFolders
 		)
 	}
 }

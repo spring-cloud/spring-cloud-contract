@@ -58,12 +58,20 @@ class RecursiveFilesConverter {
 				properties.excludedFiles as Set, [] as Set, properties.includedContracts)
 		ListMultimap<Path, ContractMetadata> contracts = scanner.findContracts()
 		if (log.isDebugEnabled()) {
-			log.debug("Found the following contracts $contracts")
+			log.debug("Found the following contracts ${contracts}")
+			log.debug("Exclude build folder: [${properties.isExcludeBuildFolders()}]")
 		}
 		contracts.asMap().entrySet().each { entry ->
 			entry.value.each { ContractMetadata contract ->
 				File sourceFile = contract.path.toFile()
 				try {
+					String path = sourceFile.path
+					if (properties.isExcludeBuildFolders() && (matchesPath(path, "target") || matchesPath(path, "build"))) {
+						if (log.isDebugEnabled()) {
+							log.debug("Exclude build folder is set. Path [${path}] contains [target] or [build] in its path")
+						}
+						return
+					}
 					if (!singleFileConverter.canHandleFileName(sourceFile.name)) {
 						return
 					}
@@ -79,6 +87,10 @@ class RecursiveFilesConverter {
 				}
 			}
 		}
+	}
+
+	private boolean matchesPath(String path, String folder) {
+		return path.matches("^.*${File.separator}${folder}${File.separator}.*\$")
 	}
 
 	private Path createAndReturnTargetDirectory(File sourceFile) {

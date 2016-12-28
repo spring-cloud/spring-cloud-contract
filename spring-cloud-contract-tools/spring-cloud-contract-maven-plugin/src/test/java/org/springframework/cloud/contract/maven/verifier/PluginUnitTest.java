@@ -213,4 +213,17 @@ public class PluginUnitTest {
 		File test = new File(basedir, path);
 		then(FileUtils.readFileToString(test)).contains("extends TestBase").contains("import com.example.TestBase");
 	}
+
+	@Test
+	public void shouldGenerateStubsForCommonRepoWithTargetFolder() throws Exception {
+		File basedir = this.resources.getBasedir("common-repo");
+
+		this.maven.executeMojo(basedir, "convert");
+
+		assertFilesNotPresent(basedir, "target/generated-test-sources/contracts/");
+		// there will be no stubs cause all files are copied to `target` folder
+		assertFilesNotPresent(basedir, "target/stubs/mappings/");
+		assertFilesPresent(basedir, "target/stubs/contracts/consumer1/Messaging.groovy");
+		assertFilesPresent(basedir, "target/stubs/contracts/pom.xml");
+	}
 }

@@ -134,6 +134,13 @@ class ContractVerifierExtension {
 	 */
 	Map<String, String> baseClassMappings = [:]
 
+	/**
+	 * If set to true then the {@code target} or {@code build} folders are getting
+	 * excluded from any operations. This is used out of the box when working with
+	 * common repo with contracts.
+	 */
+	boolean excludeBuildFolders
+
 	void contractDependency(@DelegatesTo(Dependency) Closure closure) {
 		closure.delegate = contractDependency
 		closure.call()

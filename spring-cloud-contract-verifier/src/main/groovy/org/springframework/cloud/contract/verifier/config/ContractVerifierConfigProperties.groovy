@@ -110,8 +110,8 @@ class ContractVerifierConfigProperties {
 	String includedContracts = ".*"
 
 	/**
-	 * A ant pattern to match files. Relates to contracts, stubs etc. You can append
-	 * any kind of files you wish e.g {@code $includedRootFolderAntPattern/*.groovy}
+	 * A ant pattern to match files. Gets updated when using repo with common contracts
+	 * to reflect the path to proper folder with contracts.
 	 */
 	String includedRootFolderAntPattern = "**/"
 
@@ -136,5 +136,12 @@ class ContractVerifierConfigProperties {
 	 * provided in the map - in this case {@code com.example.SomeBaseClass}
 	 */
 	Map<String, String> baseClassMappings
+
+	/**
+	 * If set to true then the {@code target} or {@code build} folders are getting
+	 * excluded from any operations. This is used out of the box when working with
+	 * common repo with contracts.
+	 */
+	boolean excludeBuildFolders
 
 }
