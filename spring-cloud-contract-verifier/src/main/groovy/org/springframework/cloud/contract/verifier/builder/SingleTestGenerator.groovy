@@ -94,6 +94,9 @@ class SingleTestGenerator {
 					if (contracts.values().contains(TestType.HTTP) && configProperties.testMode == TestMode.MOCKMVC) {
 						clazz.addImport('com.jayway.restassured.module.mockmvc.specification.MockMvcRequestSpecification')
 						clazz.addImport('com.jayway.restassured.response.ResponseOptions')
+					} else if (contracts.values().contains(TestType.HTTP) && configProperties.testMode == TestMode.EXPLICIT) {
+						clazz.addImport('com.jayway.restassured.specification.RequestSpecification')
+						clazz.addImport('com.jayway.restassured.response.Response')
 					}
 					clazz.addImport('org.junit.Test')
 					clazz.addStaticImport('org.assertj.core.api.Assertions.assertThat')

@@ -15,11 +15,14 @@
   ~  limitations under the License.
   -->
 
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
+<metadata>
   <groupId>org.springframework.cloud.contract.verifier.stubs</groupId>
-  <artifactId>fraudDetectionServer</artifactId>
+  <artifactId>contextPathFraudDetectionServer</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <packaging>pom</packaging>
-</project>
+  <versioning>
+    <versions>
+      <version>0.0.1-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20160409062112</lastUpdated>
+  </versioning>
+</metadata>

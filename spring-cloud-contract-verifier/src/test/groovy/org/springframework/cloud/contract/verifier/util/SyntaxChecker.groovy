@@ -43,7 +43,7 @@ class SyntaxChecker {
 	].collect { "import static ${it};"}.join("\n")
 
 
-	public static void tryToCompile(String builderName, String test) {
+	static void tryToCompile(String builderName, String test) {
 		if (builderName.toLowerCase().contains("spock")) {
 			tryToCompileGroovy(test)
 		} else {
@@ -51,7 +51,7 @@ class SyntaxChecker {
 		}
 	}
 
-	public static void tryToCompileGroovy(String test) {
+	static void tryToCompileGroovy(String test) {
 		def imports = new ImportCustomizer()
 		CompilerConfiguration configuration = new CompilerConfiguration()
 		configuration.addCompilationCustomizers(imports)
@@ -65,7 +65,7 @@ class SyntaxChecker {
 		new GroovyShell(SyntaxChecker.classLoader, configuration).parse(sourceCode.toString())
 	}
 
-	public static Class tryToCompileJava(String test) {
+	static Class tryToCompileJava(String test) {
 		Random random = new Random()
 		int first = Math.abs(random.nextInt())
 		int hashCode = Math.abs(test.hashCode())
@@ -76,15 +76,25 @@ class SyntaxChecker {
 		sourceCode.append("${DEFAULT_IMPORTS_AS_STRING}\n")
 		sourceCode.append("${STATIC_IMPORTS}\n")
 		sourceCode.append("\n")
-		sourceCode.append("public class ${className} {\n")
+		sourceCode.append("class ${className} {\n")
 		sourceCode.append("\n")
 		sourceCode.append("   WebTarget webTarget;")
 		sourceCode.append("\n")
-		sourceCode.append("   public void method() {\n")
+		sourceCode.append("   void method() {\n")
 		sourceCode.append("   ${test}\n")
 		sourceCode.append("   }\n")
 		sourceCode.append("}")
 		return InMemoryJavaCompiler.compile(fqnClassName, sourceCode.toString())
+	}
+
+	static boolean tryToCompileJavaWithoutImports(String fqn, String test) {
+		InMemoryJavaCompiler.compile(fqn, test)
+		return true
+	}
+
+	static boolean tryToCompileGroovyWithoutImports(String test) {
+		new GroovyShell(SyntaxChecker.classLoader).parse(test)
+		return true
 	}
 
 }
