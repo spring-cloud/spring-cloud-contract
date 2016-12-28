@@ -22,28 +22,28 @@ import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 /**
- * A {@link JUnitMethodBodyBuilder} implementation that uses MockMvc to send requests.
+ * A {@link JUnitMethodBodyBuilder} implementation that uses Rest Assured in explicit mode
  *
- * @author Olga Maciaszek-Sharma, codearte.io
+ * @author Marcin Grzejszczak
  *
- * @since 1.0.0
+ * @since 1.0.3
  */
 @TypeChecked
 @PackageScope
-class MockMvcJUnitMethodBodyBuilder extends RestAssuredJUnitMethodBodyBuilder {
+class ExplicitJUnitMethodBodyBuilder extends RestAssuredJUnitMethodBodyBuilder {
 
-	MockMvcJUnitMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
+	ExplicitJUnitMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
 		super(stubDefinition, configProperties)
 	}
 
 	@Override
 	protected String returnedResponseType() {
-		return "ResponseOptions"
+		return "Response"
 	}
 
 	@Override
 	protected String returnedRequestType() {
-		return "MockMvcRequestSpecification"
+		return "RequestSpecification"
 	}
 
 }

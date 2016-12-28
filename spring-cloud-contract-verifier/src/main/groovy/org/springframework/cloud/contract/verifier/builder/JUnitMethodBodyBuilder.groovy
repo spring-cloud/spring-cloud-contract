@@ -126,16 +126,24 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 
 	@Override
 	protected String getInputString(Request request) {
-		def inputString =  'ResponseOptions response = given().spec(request)'
+		def inputString = "${returnedResponseType()} response = given().spec(request)"
 		if (response.async){
 			inputString = inputString + '.when().async()'
 		}
 		return inputString
 	}
 
+	protected String returnedResponseType() {
+		return "ResponseOptions"
+	}
+
 	@Override
 	protected String getInputString() {
-		return 'MockMvcRequestSpecification request = given()'
+		return "${returnedRequestType()} request = given()"
+	}
+
+	protected String returnedRequestType() {
+		return "MockMvcRequestSpecification"
 	}
 
 	@Override
