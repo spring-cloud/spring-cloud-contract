@@ -108,6 +108,13 @@ public class ConvertMojo extends AbstractMojo {
 	@Parameter(property = "contractsWorkOffline", defaultValue = "false")
 	private boolean contractsWorkOffline;
 
+	/**
+	 * If {@code true} then any file laying in a path that contains {@code build} or {@code target}
+	 * will get excluded in further processing.
+	 */
+	@Parameter(property = "excludeBuildFolders", defaultValue = "false")
+	private boolean excludeBuildFolders;
+
 	@Component(role = MavenResourcesFiltering.class, hint = "default")
 	private MavenResourcesFiltering mavenResourcesFiltering;
 
@@ -128,6 +135,7 @@ public class ConvertMojo extends AbstractMojo {
 		}
 		// download contracts, unzip them and pass as output directory
 		ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
+		config.setExcludeBuildFolders(this.excludeBuildFolders);
 		File contractsDirectory = new MavenContractsDownloader(this.project, this.contractDependency,
 				this.contractsPath, this.contractsRepositoryUrl, this.contractsWorkOffline, getLog(),
 				this.aetherStubDownloaderFactory, this.repoSession).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);

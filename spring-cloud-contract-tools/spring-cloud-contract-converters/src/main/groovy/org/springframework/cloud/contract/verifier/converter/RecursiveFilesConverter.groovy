@@ -67,6 +67,13 @@ class RecursiveFilesConverter {
 				File sourceFile = contract.path.toFile()
 				StubGenerator stubGenerator = holder.converterForName(sourceFile.name);
 				try {
+					String path = sourceFile.path
+					if (properties.isExcludeBuildFolders() && (matchesPath(path, "target") || matchesPath(path, "build"))) {
+						if (log.isDebugEnabled()) {
+							log.debug("Exclude build folder is set. Path [${path}] contains [target] or [build] in its path")
+						}
+						return
+					}
 					if (!contract.convertedContract && !stubGenerator) {
 						return
 					}
@@ -88,6 +95,10 @@ class RecursiveFilesConverter {
 				}
 			}
 		}
+	}
+
+	private boolean matchesPath(String path, String folder) {
+		return path.matches("^.*${File.separator}${folder}${File.separator}.*\$")
 	}
 
 	private Path createAndReturnTargetDirectory(File sourceFile) {

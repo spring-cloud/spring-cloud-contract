@@ -32,6 +32,9 @@ class ContractsCopyTask extends ConventionTask {
 		project.copy {
 			from(file)
 			include(antPattern)
+			if (props.isExcludeBuildFolders()) {
+				exclude "**/target/**", "**/build/**"
+			}
 			into(outputContractsFolder)
 		}
 	}

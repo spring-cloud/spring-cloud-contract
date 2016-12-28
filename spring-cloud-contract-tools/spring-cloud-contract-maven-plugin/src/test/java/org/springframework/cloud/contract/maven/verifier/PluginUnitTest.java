@@ -243,4 +243,17 @@ public class PluginUnitTest {
 		assertFilesPresent(basedir, "target/foo/mappings/com/hello/v1/should post a user.json");
 		then(FileUtils.readFileToString(test2)).contains("/users/2");
 	}
+
+	@Test
+	public void shouldGenerateStubsForCommonRepoWithTargetFolder() throws Exception {
+		File basedir = this.resources.getBasedir("common-repo");
+
+		this.maven.executeMojo(basedir, "convert");
+
+		assertFilesNotPresent(basedir, "target/generated-test-sources/contracts/");
+		// there will be no stubs cause all files are copied to `target` folder
+		assertFilesNotPresent(basedir, "target/stubs/mappings/");
+		assertFilesPresent(basedir, "target/stubs/contracts/consumer1/Messaging.groovy");
+		assertFilesPresent(basedir, "target/stubs/contracts/pom.xml");
+	}
 }

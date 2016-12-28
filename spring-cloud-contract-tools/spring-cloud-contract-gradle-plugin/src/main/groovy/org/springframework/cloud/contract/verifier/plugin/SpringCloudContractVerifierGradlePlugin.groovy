@@ -90,6 +90,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		}
 	}
 
+	//TODO: Deprecate this since starting with 1.1.x
 	private void addProjectDependencies(Project project) {
 		//TODO: Consider removing this at some point
 		project.dependencies.add("testCompile", "com.github.tomakehurst:wiremock:2.1.7")
