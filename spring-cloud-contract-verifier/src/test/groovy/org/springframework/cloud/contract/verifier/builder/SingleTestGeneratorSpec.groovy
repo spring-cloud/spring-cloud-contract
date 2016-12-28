@@ -274,9 +274,9 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			ContractMetadata contract = new ContractMetadata(file.toPath(), false, 1, null)
 		and:
-			SingleTestGenerator testGenerator = new SingleTestGenerator(properties)
+			SingleTestGenerator testGenerator = new JavaTestGenerator()
 		when:
-			String clazz = testGenerator.buildClass([contract], "test", "test", 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], "test", "test", 'com/foo')
 		then:
 			clazz.contains("RequestSpecification request = given();")
 			clazz.contains("Response response = given().spec(request)")
