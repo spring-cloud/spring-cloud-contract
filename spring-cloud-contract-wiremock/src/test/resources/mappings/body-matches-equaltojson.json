@@ -1,0 +1,13 @@
+{
+  "request" : {
+    "urlPath" : "/body",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "equalToJson" : "{ \"things\": [ { \"name\" : \"RequiredThing\" } ] }"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "Hello Body"
+  }
+}

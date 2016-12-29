@@ -1,0 +1,13 @@
+{
+  "request" : {
+    "urlPath" : "/body",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "matchesXPath" : "//things"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "Hello Body"
+  }
+}
