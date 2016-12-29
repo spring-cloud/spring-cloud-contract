@@ -1,0 +1,13 @@
+{
+  "request" : {
+    "urlPath" : "/body",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "equalToXml" : "<things><thing><name>RequiredThing</name></thing></things>"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "Hello Body"
+  }
+}

@@ -23,18 +23,24 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.hamcrest.MatcherAssert;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.ClientHttpRequest;
+import org.springframework.mock.http.client.MockClientHttpRequest;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.MockRestServiceServer.MockRestServiceServerBuilder;
+import org.springframework.test.web.client.RequestMatcher;
 import org.springframework.test.web.client.ResponseActions;
+import org.springframework.test.web.client.match.MockRestRequestMatchers;
 import org.springframework.test.web.client.response.DefaultResponseCreator;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
@@ -44,8 +50,12 @@ import com.github.tomakehurst.wiremock.common.Json;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.MultiValue;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
+import com.github.tomakehurst.wiremock.matching.MatchResult;
+import com.github.tomakehurst.wiremock.matching.MatchesJsonPathPattern;
+import com.github.tomakehurst.wiremock.matching.MatchesXPathPattern;
 import com.github.tomakehurst.wiremock.matching.MultiValuePattern;
 import com.github.tomakehurst.wiremock.matching.RequestPattern;
+import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
@@ -192,10 +202,45 @@ public class WireMockRestServiceServer {
 		for (StubMapping mapping : mappings) {
 			ResponseActions expect = server.expect(requestTo(request(mapping.getRequest())));
 			expect.andExpect(method(HttpMethod.valueOf(mapping.getRequest().getMethod().getName())));
+			mapping.getRequest().getBodyPatterns();
+			bodyPatterns(expect, mapping.getRequest());
 			requestHeaders(expect, mapping.getRequest());
 			expect.andRespond(response(mapping.getResponse()));
 		}
 		return server;
+	}
+
+	private void bodyPatterns(ResponseActions expect, RequestPattern request) {
+		if (request.getBodyPatterns() == null) {
+			return;
+		}
+		for (final StringValuePattern pattern : request.getBodyPatterns()) {
+			if (pattern instanceof MatchesJsonPathPattern) {
+				expect.andExpect(MockRestRequestMatchers.jsonPath(((MatchesJsonPathPattern) pattern).getMatchesJsonPath()).exists());
+			} else if (pattern instanceof MatchesXPathPattern) {
+				expect.andExpect(xpath((MatchesXPathPattern) pattern));
+			}
+			expect.andExpect(matchContents(pattern));
+		}
+	}
+
+	private RequestMatcher matchContents(final StringValuePattern pattern) {
+		return new RequestMatcher() {
+			@Override public void match(ClientHttpRequest request)
+					throws IOException, AssertionError {
+				MockClientHttpRequest mockRequest = (MockClientHttpRequest) request;;
+				MatchResult result = pattern.match(mockRequest.getBodyAsString());
+				MatcherAssert.assertThat("Request as string [" + mockRequest.getBodyAsString() + "]", result.isExactMatch());
+			}
+		};
+	}
+
+	private RequestMatcher xpath(MatchesXPathPattern pattern) {
+		try {
+			return MockRestRequestMatchers.xpath(pattern.getMatchesXPath()).exists();
+		} catch (XPathExpressionException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	private String request(RequestPattern request) {
