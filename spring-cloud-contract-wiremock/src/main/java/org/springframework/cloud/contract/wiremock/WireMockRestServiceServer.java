@@ -16,10 +16,6 @@
 
 package org.springframework.cloud.contract.wiremock;
 
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -33,6 +29,7 @@ import org.hamcrest.Description;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -50,6 +47,11 @@ import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.matching.MultiValuePattern;
 import com.github.tomakehurst.wiremock.matching.RequestPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
 /**
  * Convenience class for loading WireMock stubs into a {@link MockRestServiceServer}. In
@@ -189,6 +191,7 @@ public class WireMockRestServiceServer {
 		}
 		for (StubMapping mapping : mappings) {
 			ResponseActions expect = server.expect(requestTo(request(mapping.getRequest())));
+			expect.andExpect(method(HttpMethod.valueOf(mapping.getRequest().getMethod().getName())));
 			requestHeaders(expect, mapping.getRequest());
 			expect.andRespond(response(mapping.getResponse()));
 		}

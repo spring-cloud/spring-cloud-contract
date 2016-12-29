@@ -1,14 +1,16 @@
 package org.springframework.cloud.contract.wiremock;
 
+import java.net.URI;
+
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public class WiremockMockServerApplicationTests {
 
@@ -22,6 +24,26 @@ public class WiremockMockServerApplicationTests {
 		assertThat(this.restTemplate.getForObject("http://example.org/resource",
 				String.class)).isEqualTo("Hello World");
 		server.verify();
+	}
+
+	@Test
+	public void simplePutShouldFail() throws Exception {
+		MockRestServiceServer server = WireMockRestServiceServer.with(this.restTemplate) //
+				.baseUrl("http://example.org") //
+				.stubs("classpath:/mappings/resource.json")
+				.build();
+		RequestEntity<Void> postRequest = RequestEntity.post(URI.create("http://example.org/resource"))
+				.accept(MediaType.TEXT_PLAIN)
+				.build();
+		ResponseEntity<String> response;
+		try {
+			response = this.restTemplate.exchange(postRequest, String.class);
+		} catch (AssertionError e) {
+			response = null;
+		}
+		if (null != response) {
+			fail("There was a response for POST request: " + postRequest + "\n\tresponse: " + response);
+		}
 	}
 
 	@Test
