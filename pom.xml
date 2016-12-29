@@ -98,6 +98,11 @@
 				<version>3.2.4</version>
 			</dependency>
 			<dependency>
+				<groupId>org.raml</groupId>
+				<artifactId>raml-parser-2</artifactId>
+				<version>1.0.5</version>
+			</dependency>
+			<dependency>
 				<groupId>org.spockframework</groupId>
 				<artifactId>spock-spring</artifactId>
 				<version>1.0-groovy-2.4</version>

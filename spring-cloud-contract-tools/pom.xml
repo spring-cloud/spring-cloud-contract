@@ -22,6 +22,7 @@
 		<module>spring-cloud-contract-spec-pact</module>
 		<module>spring-cloud-contract-maven-plugin</module>
 		<module>spring-cloud-contract-gradle-plugin</module>
+		<module>spring-cloud-contract-spec-raml</module>
 	</modules>
 
 </project>
