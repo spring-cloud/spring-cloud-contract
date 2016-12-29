@@ -1,0 +1,23 @@
+#%RAML 1.0
+title: MUA Flights API
+version: 1.0
+baseUri: http://localhost:8081/api/{version}
+
+/flights:
+  /{destination}:
+    xxx:
+    get:
+      headers:
+        Content-Encoding:
+          default: UTF-8
+        Content-Language:
+          default: es_ES
+      responses:
+              200:
+                headers:
+                  Content-Encoding:
+                    default: UTF-8
+                body:
+                  application/json:
+                    example: |
+                      {"foo" : "bar"}
