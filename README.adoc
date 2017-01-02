@@ -1600,6 +1600,11 @@ added after the original pull request but before a merge.
 
 == How to build it
 
+IMPORTANT: You need to have all the necessary Groovy plugins
+ installed for your IDE to properly resolve the sources. For example in
+ Intellij IDEA having both Eclipse Groovy Compiler Plugin & GMavenPlus Intellij Plugin
+ results in properly imported project.
+
 === Project structure
 
 Here you can find the Spring Cloud Contract folder structure
