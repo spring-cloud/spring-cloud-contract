@@ -30,7 +30,7 @@ import java.util.regex.Pattern
  * @since 1.0.0
  */
 @TypeChecked
-@EqualsAndHashCode(includeFields = true)
+@EqualsAndHashCode
 @ToString(includePackage = false, includeFields = true)
 class Response extends Common {
 

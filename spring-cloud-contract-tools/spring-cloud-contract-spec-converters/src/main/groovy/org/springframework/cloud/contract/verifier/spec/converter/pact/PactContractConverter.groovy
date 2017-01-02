@@ -14,7 +14,12 @@ import org.springframework.cloud.contract.spec.ContractConverter
 class PactContractConverter implements ContractConverter<Pact> {
 	@Override
 	boolean isAccepted(File file) {
-		return file.name.endsWith(".json")
+		try {
+			PactReader.loadPact(file)
+			return true
+		} catch (UnsupportedOperationException e) {
+			return false
+		}
 	}
 
 	@Override
@@ -24,18 +29,24 @@ class PactContractConverter implements ContractConverter<Pact> {
 		return interactions.withIndex().collect { Interaction interaction, int index ->
 			Contract.make {
 				if (interaction instanceof RequestResponseInteraction) {
-					RequestResponseInteraction requestResponseInteraction = interaction
+					RequestResponseInteraction requestResponseInteraction = (RequestResponseInteraction) interaction
 					description("${defaultDescription(pact, index)}\n\n$requestResponseInteraction.description")
 					request {
 						method(requestResponseInteraction.request.method)
 						url(requestResponseInteraction.request.path)
-						headers {
-							requestResponseInteraction.request.headers.each {
-								header(it.key, it.value)
+						requestResponseInteraction.request.headers?.each { String key, String value ->
+							headers {
+								header(key, value)
 							}
 						}
+
 						if (requestResponseInteraction.request.body.state == OptionalBody.State.PRESENT) {
-							body(BasePact.parseBody(requestResponseInteraction.request))
+							def parsedBody = BasePact.parseBody(requestResponseInteraction.request)
+							if (parsedBody instanceof Map) {
+								body(parsedBody as Map)
+							} else {
+								body(parsedBody.toString())
+							}
 						}
 					}
 					response {
@@ -43,9 +54,9 @@ class PactContractConverter implements ContractConverter<Pact> {
 						if (requestResponseInteraction.response.body.state == OptionalBody.State.PRESENT) {
 							body(BasePact.parseBody(requestResponseInteraction.response))
 						}
-						headers {
-							requestResponseInteraction.response.headers.each {
-								header(it.key, it.value)
+						requestResponseInteraction.response.headers?.each { String key, String value ->
+							headers {
+								header(key, value)
 							}
 						}
 					}
@@ -57,7 +68,7 @@ class PactContractConverter implements ContractConverter<Pact> {
 	protected String defaultDescription(Pact pact, int index) {
 		Provider provider = pact.provider
 		Consumer consumer = pact.consumer
-		return """Consumer [${consumer.name}] & provider [${provider.name}] interaction no [${index}]"""
+		return """Consumer [${consumer.name}] -> provider [${provider.name}] interaction no [${index}]"""
 	}
 
 	@Override
