@@ -8,6 +8,14 @@ For messaging, special stub routes are defined.
 
 ==== Running stubs
 
+===== Limitations
+
+IMPORTANT: There might be a problem with StubRunner shutting down ports between tests. You might
+ have a situation in which you get port conflicts. As long as you use the same context across tests
+ everything works fine. But when the context are different (e.g. different stubs or different profiles)
+ then you have to either use `@DirtiesContext` to shut down the stub servers, or else run them on
+ different ports per test.
+
 ===== Running using main app
 
 You can set the following options to the main class:
