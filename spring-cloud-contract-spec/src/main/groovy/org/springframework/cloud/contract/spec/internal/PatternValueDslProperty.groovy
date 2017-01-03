@@ -64,8 +64,23 @@ abstract class PatternValueDslProperty<T extends DslProperty> {
 		return createAndValidateProperty(RegexPatterns.URL, "http://foo" + this.random.nextInt() + ".com")
 	}
 
-	T anyUuid(){
+	T anyUuid() {
 		return createAndValidateProperty(RegexPatterns.UUID, UUID.randomUUID().toString())
+	}
+
+	T anyDate() {
+		int d = this.random.nextInt(8) + 1
+		return createAndValidateProperty(RegexPatterns.ANY_DATE, "201$d-0$d-1$d")
+	}
+
+	T anyDateTime() {
+		int d = this.random.nextInt(8) + 1
+		return createAndValidateProperty(RegexPatterns.ANY_DATE_TIME, "201$d-0$d-1${d}T12:23:34")
+	}
+
+	T anyTime() {
+		int d = this.random.nextInt(9)
+		return createAndValidateProperty(RegexPatterns.ANY_TIME, "12:2$d:3$d")
 	}
 
 	private static String randomString(int length) {

@@ -993,7 +993,10 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 							hostname: $(anyHostname()),
 							email: $(anyEmail()),
 							url: $(anyUrl()),
-							uuid: $(anyUuid())
+							uuid: $(anyUuid()),
+							date: $(anyDate()),
+							dateTime: $(anyDateTime()),
+							time: $(anyTime())
 					])
 					headers {
 						contentType(applicationJson())
@@ -1009,7 +1012,10 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 							hostname: $(anyHostname()),
 							email: $(anyEmail()),
 							url: $(anyUrl()),
-							uuid: $(anyUuid())
+							uuid: $(anyUuid()),
+							date: $(anyDate()),
+							dateTime: $(anyDateTime()),
+							time: $(anyTime())
 					])
 					headers {
 						contentType(applicationJson())
@@ -1030,6 +1036,9 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			test.contains('assertThatJson(parsedJson).field("email").matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4}")')
 			test.contains('assertThatJson(parsedJson).field("ip").matches("([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])")')
 			test.contains('assertThatJson(parsedJson).field("uuid").matches("[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}")')
+			test.contains('assertThatJson(parsedJson).field("date").matches("(\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])")')
+			test.contains('assertThatJson(parsedJson).field("dateTime").matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])")')
+			test.contains('assertThatJson(parsedJson).field("time").matches("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])")')
 			!test.contains('cursor')
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
