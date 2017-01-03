@@ -2,6 +2,7 @@ package org.springframework.cloud.contract.verifier.spec.converter.pact
 
 import au.com.dius.pact.model.*
 import groovy.transform.CompileStatic
+import groovy.transform.PackageScope
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
 
@@ -33,10 +34,24 @@ class PactContractConverter implements ContractConverter<Pact> {
 					description("${defaultDescription(pact, index)}\n\n$requestResponseInteraction.description")
 					request {
 						method(requestResponseInteraction.request.method)
-						url(requestResponseInteraction.request.path)
-						requestResponseInteraction.request.headers?.each { String key, String value ->
+						if (requestResponseInteraction.request.query) {
+							url(requestResponseInteraction.request.path) {
+								queryParameters {
+									requestResponseInteraction.request.query.each { String key, List<String> value ->
+										value.each { String singleValue ->
+											parameter(key, singleValue)
+										}
+									}
+								}
+							}
+						} else {
+							url(requestResponseInteraction.request.path)
+						}
+						if (requestResponseInteraction.request.headers) {
 							headers {
-								header(key, value)
+								requestResponseInteraction.request.headers.each { String key, String value ->
+									header(key, value)
+								}
 							}
 						}
 
@@ -63,6 +78,10 @@ class PactContractConverter implements ContractConverter<Pact> {
 				}
 			}
 		}
+	}
+
+	@PackageScope enum MatchingType {
+		TYPE, REGEX, DATE, TIMESTAMP, LIKE
 	}
 
 	protected String defaultDescription(Pact pact, int index) {

@@ -30,7 +30,12 @@ class PactContractConverterSpec extends Specification {
 				description("Consumer [Consumer] -> provider [Alice Service] interaction no [0]\n\na retrieve Mallory request")
 				request {
 					method(GET())
-					url("/mallory")
+					url("/mallory") {
+						queryParameters {
+							parameter("name", "ron")
+							parameter("status", "good")
+						}
+					}
 					body(id: "123", method: "create")
 				}
 				response {
