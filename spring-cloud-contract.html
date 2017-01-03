@@ -636,6 +636,7 @@ $(addBlockSwitches);
 <ul class="sectlevel3">
 <li><a href="#_running_stubs">Running stubs</a>
 <ul class="sectlevel4">
+<li><a href="#_limitations">Limitations</a></li>
 <li><a href="#_running_using_main_app">Running using main app</a></li>
 <li><a href="#_http_stubs">HTTP Stubs</a></li>
 <li><a href="#_viewing_registered_mappings">Viewing registered mappings</a></li>
@@ -743,7 +744,7 @@ $(addBlockSwitches);
 </li>
 <li><a href="#_contract_dsl">Contract DSL</a>
 <ul class="sectlevel3">
-<li><a href="#_limitations">Limitations</a></li>
+<li><a href="#_limitations_2">Limitations</a></li>
 <li><a href="#_common_top_level_elements">Common Top-Level elements</a>
 <ul class="sectlevel4">
 <li><a href="#_description">Description</a></li>
@@ -4337,6 +4338,25 @@ For messaging, special stub routes are defined.</p>
 <div class="sect3">
 <h4 id="_running_stubs">Running stubs</h4>
 <div class="sect4">
+<h5 id="_limitations">Limitations</h5>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+There might be a problem with StubRunner shutting down ports between tests. You might
+ have a situation in which you get port conflicts. As long as you use the same context across tests
+ everything works fine. But when the context are different (e.g. different stubs or different profiles)
+ then you have to either use <code>@DirtiesContext</code> to shut down the stub servers, or else run them on
+ different ports per test.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
 <h5 id="_running_using_main_app">Running using main app</h5>
 <div class="paragraph">
 <p>You can set the following options to the main class:</p>
@@ -6077,7 +6097,7 @@ Spring Cloud Contract supports defining multiple contracts in a single file!
 </blockquote>
 </div>
 <div class="sect3">
-<h4 id="_limitations">Limitations</h4>
+<h4 id="_limitations_2">Limitations</h4>
 <div class="admonitionblock warning">
 <table>
 <tr>
@@ -6478,11 +6498,14 @@ provide the generated string that matches the provided regular expression. For e
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">protected static final Pattern TRUE_OR_FALSE = Pattern.compile(/(true|false)/)
 protected static final Pattern ONLY_ALPHA_UNICODE = Pattern.compile(/[\p{L}]*/)
 protected static final Pattern NUMBER = Pattern.compile('-?\\d*(\\.\\d+)?')
-protected static final Pattern IP_ADDRESS = Pattern.compile('([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])');
-protected static final Pattern HOSTNAME_PATTERN = Pattern.compile('((http[s]?|ftp):\\/)\\/?([^:\\/\\s]+)(:[0-9]{1,5})?');
+protected static final Pattern IP_ADDRESS = Pattern.compile('([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])')
+protected static final Pattern HOSTNAME_PATTERN = Pattern.compile('((http[s]?|ftp):\\/)\\/?([^:\\/\\s]+)(:[0-9]{1,5})?')
 protected static final Pattern EMAIL = Pattern.compile('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}');
 protected static final Pattern URL = Pattern.compile('((www\\.|(http|https|ftp|news|file)+\\:\\/\\/)[_.a-z0-9-]+\\.[a-z0-9\\/_:@=.+?,##%&amp;~-]*[^.|\\\'|\\# |!|\\(|?|,| |&gt;|&lt;|;|\\)])')
 protected static final Pattern UUID = Pattern.compile('[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}')
+protected static final Pattern ANY_DATE = Pattern.compile('(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])')
+protected static final Pattern ANY_DATE_TIME = Pattern.compile('([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
+protected static final Pattern ANY_TIME = Pattern.compile('(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
 
 String onlyAlphaUnicode() {
 	return ONLY_ALPHA_UNICODE.pattern()
@@ -6514,6 +6537,18 @@ String url() {
 
 String uuid(){
 	return UUID.pattern()
+}
+
+String isoDate() {
+	return ANY_DATE.pattern()
+}
+
+String isoDateTime() {
+	return ANY_DATE_TIME.pattern()
+}
+
+String isoTime() {
+	return ANY_TIME.pattern()
 }</code></pre>
 </div>
 </div>
