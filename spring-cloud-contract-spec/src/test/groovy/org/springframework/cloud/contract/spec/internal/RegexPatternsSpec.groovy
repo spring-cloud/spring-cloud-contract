@@ -66,25 +66,84 @@ class RegexPatternsSpec extends Specification {
 
 	def "should generate a regex for a number [#textToMatch] that is a match [#shouldMatch]"() {
 		expect:
-		shouldMatch == Pattern.compile(regexPatterns.number()).matcher(textToMatch).matches()
+			shouldMatch == Pattern.compile(regexPatterns.number()).matcher(textToMatch).matches()
 		where:
-		textToMatch || shouldMatch
-		'1'         || true
-		'1.0'       || true
-		'0.1'       || true
-		'.1'        || true
-		'1.'        || false
+			textToMatch || shouldMatch
+			'1'         || true
+			'1.0'       || true
+			'0.1'       || true
+			'.1'        || true
+			'1.'        || false
 	}
 
 	def "should generate a regex for a uuid [#textToMatch] that is a match [#shouldMatch]"() {
 		expect:
-		shouldMatch == Pattern.compile(regexPatterns.uuid()).matcher(textToMatch).matches()
+			shouldMatch == Pattern.compile(regexPatterns.uuid()).matcher(textToMatch).matches()
 		where:
 		textToMatch							|| shouldMatch
-		UUID.randomUUID().toString()   		|| true
-		UUID.randomUUID().toString()   		|| true
-		UUID.randomUUID().toString() + "!" 	|| false
-		'dog'       						|| false
-		'5'          						|| false
+			UUID.randomUUID().toString()   		|| true
+			UUID.randomUUID().toString()   		|| true
+			UUID.randomUUID().toString() + "!" 	|| false
+			'dog'       						|| false
+			'5'          						|| false
+	}
+
+	def "should generate a regex with date [#textToMatch] in YYYY-MM-DD format that should match [#shouldMatch]"() {
+		expect:
+			shouldMatch == Pattern.compile(regexPatterns.isoDate()).matcher(textToMatch).matches()
+		where:
+			textToMatch  || shouldMatch
+			"2014-03-01" || true
+			"1014-03-01" || true
+			"1014-3-01"  || false
+			"14-03-01"   || false
+			"1014-12-01" || true
+			"1014-12-31" || true
+			"1014-12-1"  || false
+			"1014-12-32" || false
+			"1014-13-31" || false
+			"1014-20-30" || false
+			'5'          || false
+	}
+
+	def "should generate a regex with datetime [#textToMatch] in YYYY-MM-DDTHH:mm:ss format that should match [#shouldMatch]"() {
+		expect:
+			shouldMatch == Pattern.compile(regexPatterns.isoDateTime()).matcher(textToMatch).matches()
+		where:
+			textToMatch           || shouldMatch
+			"2014-03-01T12:23:45" || true
+			"1014-03-01T23:59:59" || true
+			"1014-3-01T01:01:01"  || false
+			"1014-03-01T00:00:00" || true
+			"1014-03-01T00:00:0"  || false
+			"1014-03-01T00:0:01"  || false
+			"1014-03-01T0:01:01"  || false
+			"1014-03-0100:01:01"  || false
+			"14-03-01T12:23:45"   || false
+			"1014-12-01T12:23:45" || true
+			"1014-12-31T12:23:45" || true
+			"1014-12-1T12:23:45"  || false
+			"1014-12-32T12:23:45" || false
+			"1014-13-31T12:23:45" || false
+			"1014-20-30T12:23:45" || false
+			"1014-20-30T24:23:45" || false
+			"1014-20-30T23:60:45" || false
+			"1014-20-30T23:59:60" || false
+	}
+
+	def "should generate a regex with time [#textToMatch] in HH:mm:ss format that should match [#shouldMatch]"() {
+		expect:
+			shouldMatch == Pattern.compile(regexPatterns.isoTime()).matcher(textToMatch).matches()
+		where:
+			textToMatch || shouldMatch
+			"12:23:45"  || true
+			"23:59:59"  || true
+			"00:00:00"  || true
+			"00:00:0"   || false
+			"00:0:01"   || false
+			"0:01:01"   || false
+			"24:23:45"  || false
+			"23:60:45"  || false
+			"23:59:60"  || false
 	}
 }
