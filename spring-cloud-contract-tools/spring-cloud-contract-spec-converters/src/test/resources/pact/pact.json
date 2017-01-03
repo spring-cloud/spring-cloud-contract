@@ -17,10 +17,34 @@
       "response": {
         "status": 200,
         "headers": {
-          "Content-Type": "text/html"
+          "Content-Type": "application/json"
         },
-        "body": "\"That is some good Mallory.\""
+        "body": [
+          [
+            {
+              "email": "rddtGwwWMEhnkAPEmsyE",
+              "id": "eb0f8c17-c06a-479e-9204-14f7c95b63a6",
+              "userName": "AJQrokEGPAVdOHprQpKP"
+            }
+          ]
+        ],
+        "matchingRules": {
+          "$.body[0][*].email": {
+            "match": "type"
+          },
+          "$.body[0][*].id": {
+            "regex": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+          },
+          "$.body[0]": {
+            "max": 5,
+            "match": "type"
+          },
+          "$.body[0][*].userName": {
+            "match": "type"
+          }
+        }
+      },
+      "providerState": "a user with an id named 'user' exists"
       }
-    }
   ]
 }

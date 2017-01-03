@@ -21,7 +21,7 @@ import groovy.transform.ToString
 import groovy.transform.TypeChecked
 
 @EqualsAndHashCode
-@ToString(includePackage = false, includeFields = true, ignoreNulls = true, includeNames = true)
+@ToString(includePackage = false, ignoreNulls = true, includeNames = true)
 @TypeChecked
 class QueryParameters  {
 

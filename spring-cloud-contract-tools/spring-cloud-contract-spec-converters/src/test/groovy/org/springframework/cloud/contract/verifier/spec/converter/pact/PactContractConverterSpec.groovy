@@ -41,9 +41,13 @@ class PactContractConverterSpec extends Specification {
 				response {
 					status(200)
 					headers {
-						header("Content-Type", textHtml())
+						header("Content-Type", applicationJson())
 					}
-					body('"That is some good Mallory."')
+					body([[
+							[email: "rddtGwwWMEhnkAPEmsyE",
+							id: "eb0f8c17-c06a-479e-9204-14f7c95b63a6",
+							userName: "AJQrokEGPAVdOHprQpKP"]
+						]])
 				}
 			}
 		when:

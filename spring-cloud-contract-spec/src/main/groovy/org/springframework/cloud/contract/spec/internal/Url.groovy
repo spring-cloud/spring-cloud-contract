@@ -27,7 +27,7 @@ import static org.springframework.cloud.contract.spec.util.ValidateUtils.validat
  *
  * @since 1.0.0
  */
-@ToString(includePackage = false, includeFields = true, includeNames = true, includeSuper = true)
+@ToString(includePackage = false, includeNames = true, includeSuper = true)
 @EqualsAndHashCode(includeFields = true, callSuper = true)
 @CompileStatic
 class Url extends DslProperty {

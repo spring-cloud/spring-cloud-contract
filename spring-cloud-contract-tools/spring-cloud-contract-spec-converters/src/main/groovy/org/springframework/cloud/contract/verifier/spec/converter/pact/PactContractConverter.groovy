@@ -59,6 +59,8 @@ class PactContractConverter implements ContractConverter<Pact> {
 							def parsedBody = BasePact.parseBody(requestResponseInteraction.request)
 							if (parsedBody instanceof Map) {
 								body(parsedBody as Map)
+							} else if (parsedBody instanceof List) {
+								body(parsedBody as List)
 							} else {
 								body(parsedBody.toString())
 							}
@@ -67,7 +69,14 @@ class PactContractConverter implements ContractConverter<Pact> {
 					response {
 						status(requestResponseInteraction.response.status)
 						if (requestResponseInteraction.response.body.state == OptionalBody.State.PRESENT) {
-							body(BasePact.parseBody(requestResponseInteraction.response))
+							def parsedBody = BasePact.parseBody(requestResponseInteraction.response)
+							if (parsedBody instanceof Map) {
+								body(parsedBody as Map)
+							} else if (parsedBody instanceof List) {
+								body(parsedBody as List)
+							} else {
+								body(parsedBody.toString())
+							}
 						}
 						requestResponseInteraction.response.headers?.each { String key, String value ->
 							headers {

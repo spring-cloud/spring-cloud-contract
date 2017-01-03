@@ -31,7 +31,7 @@ import org.springframework.cloud.contract.spec.internal.Response
  */
 @TypeChecked
 @EqualsAndHashCode
-@ToString(includeFields = true, includePackage = false, includeNames = true)
+@ToString(includePackage = false, includeNames = true)
 class Contract {
 
 	/**

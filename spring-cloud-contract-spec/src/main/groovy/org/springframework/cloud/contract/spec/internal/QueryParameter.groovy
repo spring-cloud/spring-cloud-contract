@@ -28,7 +28,7 @@ import static org.springframework.cloud.contract.spec.util.ValidateUtils.validat
  * @since 1.0.0
  */
 @EqualsAndHashCode(callSuper = true)
-@ToString(includePackage = false, includeFields = true, ignoreNulls = true, includeNames = true, includeSuper = true)
+@ToString(includePackage = false, ignoreNulls = true, includeNames = true, includeSuper = true)
 @CompileStatic
 class QueryParameter extends DslProperty {
 
