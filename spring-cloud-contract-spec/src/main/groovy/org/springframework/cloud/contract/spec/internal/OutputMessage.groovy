@@ -33,6 +33,7 @@ class OutputMessage extends Common {
 	Headers headers
 	DslProperty body
 	ExecutionProperty assertThat
+	BodyMatchers matchers
 
 	OutputMessage() {}
 
@@ -74,6 +75,12 @@ class OutputMessage extends Common {
 			value = new Xeger(((Pattern)server.clientValue).pattern()).generate()
 		}
 		return new DslProperty(value, server.serverValue)
+	}
+
+	void testMatchers(@DelegatesTo(BodyMatchers) Closure closure) {
+		this.matchers = new BodyMatchers()
+		closure.delegate = this.matchers
+		closure()
 	}
 }
 

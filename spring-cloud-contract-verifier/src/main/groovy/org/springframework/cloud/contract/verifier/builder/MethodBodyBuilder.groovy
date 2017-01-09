@@ -16,9 +16,12 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+import com.jayway.jsonpath.JsonPath
+import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.apache.commons.lang3.StringEscapeUtils
+import org.assertj.core.api.Assertions
 import org.springframework.cloud.contract.spec.internal.*
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.ContentType
@@ -99,27 +102,27 @@ abstract class MethodBodyBuilder {
 	protected abstract String getResponseBodyPropertyComparisonString(String property, ExecutionProperty value)
 
 	/**
-	 * Appends to the {@link BlockBuilder} the assertion for the given body element
+	 * Appends to the {@link BlockBuilder} the assertion for the given body path
 	 */
 	protected abstract void processBodyElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec)
 
 	/**
-	 * Appends to the {@link BlockBuilder} the assertion for the given body element
+	 * Appends to the {@link BlockBuilder} the assertion for the given body path
 	 */
 	protected abstract void processBodyElement(BlockBuilder blockBuilder, String property, Map.Entry entry)
 
 	/**
-	 * Appends to the {@link BlockBuilder} the assertion for the given header element
+	 * Appends to the {@link BlockBuilder} the assertion for the given header path
 	 */
 	protected abstract void processHeaderElement(BlockBuilder blockBuilder, String property, Pattern pattern)
 
 	/**
-	 * Appends to the {@link BlockBuilder} the assertion for the given header element
+	 * Appends to the {@link BlockBuilder} the assertion for the given header path
 	 */
 	protected abstract void processHeaderElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec)
 
 	/**
-	 * Appends to the {@link BlockBuilder} the assertion for the given header element
+	 * Appends to the {@link BlockBuilder} the assertion for the given header path
 	 */
 	protected abstract void processHeaderElement(BlockBuilder blockBuilder, String property, String value)
 
@@ -258,8 +261,18 @@ abstract class MethodBodyBuilder {
 	/**
 	 * Builds the response body verification part. The code will differ depending on the
 	 * ContentType, type of response etc. The result will be appended to {@link BlockBuilder}
+	 * @deprecated - use {@link MethodBodyBuilder#validateResponseBodyBlock(org.springframework.cloud.contract.verifier.builder.BlockBuilder, org.springframework.cloud.contract.spec.internal.BodyMatchers, java.lang.Object)}
 	 */
+	@Deprecated
 	protected void validateResponseBodyBlock(BlockBuilder bb, Object responseBody) {
+		validateResponseBodyBlock(bb, null, responseBody)
+	}
+
+	/**
+	 * Builds the response body verification part. The code will differ depending on the
+	 * ContentType, type of response etc. The result will be appended to {@link BlockBuilder}
+	 */
+	protected void validateResponseBodyBlock(BlockBuilder bb, BodyMatchers bodyMatchers, Object responseBody) {
 		ContentType contentType = getResponseContentType()
 		Object convertedResponseBody = responseBody
 		if (convertedResponseBody instanceof GString) {
@@ -271,15 +284,7 @@ abstract class MethodBodyBuilder {
 			convertedResponseBody = StringEscapeUtils.escapeJava(convertedResponseBody.toString())
 		}
 		if (contentType == ContentType.JSON) {
-			appendJsonPath(bb, getResponseAsString())
-			JsonPaths jsonPaths = new JsonToJsonPathsConverter(configProperties).transformToJsonPathWithTestsSideValues(convertedResponseBody)
-			jsonPaths.each {
-				String method = it.method()
-				String postProcessedMethod = postProcessJsonPathCall(method)
-				bb.addLine("assertThatJson(parsedJson)" + postProcessedMethod)
-				addColonIfRequired(bb)
-			}
-			processBodyElement(bb, "", convertedResponseBody)
+			addJsonResponseBodyCheck(bb, convertedResponseBody, bodyMatchers)
 		} else if (contentType == ContentType.XML) {
 			bb.addLine(getParsedXmlResponseBodyString(getResponseAsString()))
 			addColonIfRequired(bb)
@@ -289,6 +294,50 @@ abstract class MethodBodyBuilder {
 			processText(bb, "", convertedResponseBody)
 			addColonIfRequired(bb)
 		}
+	}
+
+	private void addJsonResponseBodyCheck(BlockBuilder bb, convertedResponseBody, BodyMatchers bodyMatchers) {
+		appendJsonPath(bb, getResponseAsString())
+		Object copiedBody = convertedResponseBody.clone()
+		if (bodyMatchers) {
+			// remove all jsonpaths from the body - for those that remain we continue as usual
+			bodyMatchers.jsonPathMatchers().each {
+				JsonPath.parse(convertedResponseBody).delete(it.path())
+			}
+		}
+		JsonPaths jsonPaths = new JsonToJsonPathsConverter(configProperties).transformToJsonPathWithTestsSideValues(convertedResponseBody)
+		jsonPaths.each {
+			String method = it.method()
+			String postProcessedMethod = postProcessJsonPathCall(method)
+			bb.addLine("assertThatJson(parsedJson)" + postProcessedMethod)
+			addColonIfRequired(bb)
+			bb.endBlock()
+		}
+		if (bodyMatchers) {
+			bb.addLine(addCommentSignIfRequired('and:'))
+			bb.startBlock()
+			// for the rest we'll do JsonPath matching in brute force
+			bodyMatchers.jsonPathMatchers().each {
+				if (it.value()) {
+					String method = "assertThat(parsedJson.read(${quotedAndEscaped(it.path())}, String.class)).matches(${quotedAndEscaped(it.value())})"
+					bb.addLine(postProcessJsonPathCall(method))
+					addColonIfRequired(bb)
+				} else {
+					Object elementFromBody = JsonPath.parse(copiedBody).read(it.path())
+					if (!elementFromBody) {
+						throw new IllegalStateException("Entry for the provided JSON path [${it.path()}] doesn't exist in the body [${JsonOutput.toJson(copiedBody)}]")
+					}
+					String method = "assertThat((Object) parsedJson.read(${quotedAndEscaped(it.path())})).isExactlyInstanceOf(${elementFromBody.class.name}.class)"
+					bb.addLine(postProcessJsonPathCall(method))
+					addColonIfRequired(bb)
+				}
+			}
+		}
+		processBodyElement(bb, "", convertedResponseBody)
+	}
+
+	protected String quotedAndEscaped(String string) {
+		return '"' + StringEscapeUtils.escapeJava(string) + '"'
 	}
 
 	/**
@@ -324,13 +373,13 @@ abstract class MethodBodyBuilder {
 	}
 
 	/**
-	 * Appends to the {@link BlockBuilder} the assertion for the given header element
+	 * Appends to the {@link BlockBuilder} the assertion for the given header path
 	 */
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Object value) {
 	}
 
 	/**
-	 * Appends to the {@link BlockBuilder} the assertion for the given body element
+	 * Appends to the {@link BlockBuilder} the assertion for the given body path
 	 */
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, Object value) {
 	}
@@ -402,7 +451,7 @@ abstract class MethodBodyBuilder {
 
 
 	/**
-	 * Appends to the {@link BlockBuilder} the assertion for the given body element
+	 * Appends to the {@link BlockBuilder} the assertion for the given body path
 	 */
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, Map map) {
 		map.each {
@@ -411,7 +460,7 @@ abstract class MethodBodyBuilder {
 	}
 
 	/**
-	 * Appends to the {@link BlockBuilder} the assertion for the given body element
+	 * Appends to the {@link BlockBuilder} the assertion for the given body path
 	 */
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, List list) {
 		list.eachWithIndex { listElement, listIndex ->

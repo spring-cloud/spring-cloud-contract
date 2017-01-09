@@ -41,6 +41,7 @@ class Response extends Common {
 	ResponseHeaders headers
 	Body body
 	boolean async
+	BodyMatchers matchers
 
 	Response() {
 	}
@@ -109,6 +110,12 @@ class Response extends Common {
 
 	DslProperty $(Pattern server) {
 		return value(server)
+	}
+
+	void testMatchers(@DelegatesTo(BodyMatchers) Closure closure) {
+		this.matchers = new BodyMatchers()
+		closure.delegate = this.matchers
+		closure()
 	}
 
 	@Override
