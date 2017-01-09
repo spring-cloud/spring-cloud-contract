@@ -1,7 +1,6 @@
 package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.CompileStatic
-import groovy.transform.PackageScope
 
 /**
  * Represents the type of matching the should be done against
@@ -11,7 +10,6 @@ import groovy.transform.PackageScope
  * @since 1.0.3
  */
 @CompileStatic
-@PackageScope
 enum MatchingType {
-	TYPE, DATE, TIME, TIMESTAMP, REGEX
+	EQUALITY, TYPE, DATE, TIME, TIMESTAMP, REGEX
 }

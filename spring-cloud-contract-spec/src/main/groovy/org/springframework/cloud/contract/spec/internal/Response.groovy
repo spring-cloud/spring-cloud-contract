@@ -174,15 +174,5 @@ class Response extends Common {
 			return new ServerDslProperty(pattern, generatedValue)
 		}
 	}
-
-	@CompileStatic
-	@EqualsAndHashCode
-	@ToString(includePackage = false)
-	private class ResponseBodyMatchers extends BodyMatchers {
-
-		MatchingTypeValue byType() {
-			return new MatchingTypeValue(MatchingType.TYPE)
-		}
-	}
 }
 

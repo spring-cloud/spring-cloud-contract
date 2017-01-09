@@ -72,7 +72,16 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							dateTime: "2017-01-01T01:23:45",
 							time: "01:02:34",
 							valueWithoutAMatcher: "foo",
-							valueWithTypeMatch: "string"
+							valueWithTypeMatch: "string",
+							valueWithMin: [
+								1,2,3
+							],
+							valueWithMax: [
+								1,2,3
+							],
+							valueWithMinMax: [
+								1,2,3
+							],
 					])
 					testMatchers {
 						jsonPath('$.duck', byRegex("[0-9]{3}"))
@@ -83,6 +92,16 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 						jsonPath('$.dateTime', byTimestamp())
 						jsonPath('$.time', byTime())
 						jsonPath('$.valueWithTypeMatch', byType())
+						jsonPath('$.valueWithMin', byType {
+							minOccurrence(1)
+						})
+						jsonPath('$.valueWithMax', byType {
+							maxOccurrence(3)
+						})
+						jsonPath('$.valueWithMinMax', byType {
+							minOccurrence(1)
+							maxOccurrence(3)
+						})
 					}
 					headers {
 						contentType(applicationJson())
@@ -103,6 +122,9 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.dateTime", String.class)).matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])")')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.time", String.class)).matches("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])")')
 			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithTypeMatch")).isExactlyInstanceOf(java.lang.String.class)')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMin", java.util.Collection.class).size()).isLessThanOrEqualTo(1)')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMax", java.util.Collection.class).size()).isGreaterThanOrEqualTo(3)')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMinMax", java.util.Collection.class).size()).isStrictlyBetween(1, 3)')
 			!test.contains('cursor')
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())

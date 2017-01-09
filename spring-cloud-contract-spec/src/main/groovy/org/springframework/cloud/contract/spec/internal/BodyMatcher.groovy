@@ -7,6 +7,12 @@ package org.springframework.cloud.contract.spec.internal
  * @since 1.0.3
  */
 interface BodyMatcher {
+
+	/**
+	 * What kind of matching are we dealing with
+	 */
+	MatchingType matchingType()
+
 	/**
 	 * Path to the path. Example for JSON it will be JSON Path
 	 */
@@ -20,4 +26,14 @@ interface BodyMatcher {
 	 * contained a string then the assertion should fail
 	 */
 	String value()
+
+	/**
+	 * Min no of occurrence when matching by type. In all other cases it will be ignored
+	 */
+	Integer minTypeOccurrence()
+
+	/**
+	 * Max no of occurrence when matching by type. In all other cases it will be ignored
+	 */
+	Integer maxTypeOccurrence()
 }

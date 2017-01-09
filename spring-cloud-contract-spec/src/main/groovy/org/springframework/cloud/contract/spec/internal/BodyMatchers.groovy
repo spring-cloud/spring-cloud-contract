@@ -13,14 +13,18 @@ import groovy.transform.ToString
 @CompileStatic
 class BodyMatchers {
 	private final RegexPatterns regexPatterns = new RegexPatterns()
-	private final List<BodyMatcher> jsonPathMatchers = []
+	private final List<BodyMatcher> jsonPathRegexMatchers = []
 
 	void jsonPath(String path, MatchingTypeValue matchingType) {
-		this.jsonPathMatchers << new JsonPathBodyMatcher(path, matchingType.value)
+		this.jsonPathRegexMatchers << new JsonPathBodyMatcher(path, matchingType)
+	}
+
+	boolean hasMatchers() {
+		return !this.jsonPathRegexMatchers.empty
 	}
 
 	List<BodyMatcher> jsonPathMatchers() {
-		return this.jsonPathMatchers
+		return this.jsonPathRegexMatchers
 	}
 
 	MatchingTypeValue byDate() {
@@ -46,7 +50,12 @@ class BodyMatchers {
 @CompileStatic
 class JsonPathBodyMatcher implements BodyMatcher {
 	String jsonPath
-	String value
+	MatchingTypeValue matchingTypeValue
+
+	@Override
+	MatchingType matchingType() {
+		return this.matchingTypeValue.type
+	}
 
 	@Override
 	String path() {
@@ -55,12 +64,39 @@ class JsonPathBodyMatcher implements BodyMatcher {
 
 	@Override
 	String value() {
-		return this.value
+		return this.matchingTypeValue.value
+	}
+
+	@Override
+	Integer minTypeOccurrence() {
+		return this.matchingTypeValue.minTypeOccurrence
+	}
+
+	@Override
+	Integer maxTypeOccurrence() {
+		return this.matchingTypeValue.maxTypeOccurrence
 	}
 }
 
+/**
+ * Matching type with corresponding values
+ */
 @Canonical
 class MatchingTypeValue {
 	MatchingType type
+
+	/**
+	 * Value of regular expression
+	 */
 	String value
+
+	/**
+	 * Min occurrence when matching by type
+	 */
+	Integer minTypeOccurrence
+
+	/**
+	 * Max occurrence when matching by type
+	 */
+	Integer maxTypeOccurrence
 }

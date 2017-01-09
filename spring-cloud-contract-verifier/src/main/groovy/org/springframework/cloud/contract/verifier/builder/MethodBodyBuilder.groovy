@@ -21,7 +21,6 @@ import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.apache.commons.lang3.StringEscapeUtils
-import org.assertj.core.api.Assertions
 import org.springframework.cloud.contract.spec.internal.*
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.ContentType
@@ -32,7 +31,6 @@ import org.springframework.cloud.contract.verifier.util.MapConverter
 import java.util.regex.Pattern
 
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.extractValue
-
 /**
  * Main class for building method body.
  *
@@ -276,7 +274,7 @@ abstract class MethodBodyBuilder {
 		ContentType contentType = getResponseContentType()
 		Object convertedResponseBody = responseBody
 		if (convertedResponseBody instanceof GString) {
-			convertedResponseBody = extractValue(convertedResponseBody, contentType, { Object o -> o instanceof DslProperty ? o.serverValue : o })
+			convertedResponseBody = extractValue(convertedResponseBody as GString, contentType, { Object o -> o instanceof DslProperty ? o.serverValue : o })
 		}
 		if (contentType != ContentType.TEXT) {
 			convertedResponseBody = MapConverter.getTestSideValues(convertedResponseBody)
@@ -299,10 +297,10 @@ abstract class MethodBodyBuilder {
 	private void addJsonResponseBodyCheck(BlockBuilder bb, convertedResponseBody, BodyMatchers bodyMatchers) {
 		appendJsonPath(bb, getResponseAsString())
 		Object copiedBody = convertedResponseBody.clone()
-		if (bodyMatchers) {
+		if (bodyMatchers?.hasMatchers()) {
 			// remove all jsonpaths from the body - for those that remain we continue as usual
-			bodyMatchers.jsonPathMatchers().each {
-				JsonPath.parse(convertedResponseBody).delete(it.path())
+			bodyMatchers.jsonPathMatchers().findAll { it.matchingType() != MatchingType.EQUALITY }.each { BodyMatcher matcher ->
+				JsonPath.parse(convertedResponseBody).delete(matcher.path())
 			}
 		}
 		JsonPaths jsonPaths = new JsonToJsonPathsConverter(configProperties).transformToJsonPathWithTestsSideValues(convertedResponseBody)
@@ -313,7 +311,7 @@ abstract class MethodBodyBuilder {
 			addColonIfRequired(bb)
 			bb.endBlock()
 		}
-		if (bodyMatchers) {
+		if (bodyMatchers?.hasMatchers()) {
 			bb.addLine(addCommentSignIfRequired('and:'))
 			bb.startBlock()
 			// for the rest we'll do JsonPath matching in brute force
@@ -327,13 +325,30 @@ abstract class MethodBodyBuilder {
 					if (!elementFromBody) {
 						throw new IllegalStateException("Entry for the provided JSON path [${it.path()}] doesn't exist in the body [${JsonOutput.toJson(copiedBody)}]")
 					}
-					String method = "assertThat((Object) parsedJson.read(${quotedAndEscaped(it.path())})).isExactlyInstanceOf(${elementFromBody.class.name}.class)"
-					bb.addLine(postProcessJsonPathCall(method))
-					addColonIfRequired(bb)
+					if (it.minTypeOccurrence() || it.maxTypeOccurrence()) {
+						String method = "assertThat(parsedJson.read(${quotedAndEscaped(it.path())}, java.util.Collection.class).size()).${sizeCheckMethod(it)}"
+						bb.addLine(postProcessJsonPathCall(method))
+						addColonIfRequired(bb)
+					} else {
+						String method = "assertThat((Object) parsedJson.read(${quotedAndEscaped(it.path())})).isExactlyInstanceOf(${elementFromBody.class.name}.class)"
+						bb.addLine(postProcessJsonPathCall(method))
+						addColonIfRequired(bb)
+					}
 				}
 			}
+
 		}
 		processBodyElement(bb, "", convertedResponseBody)
+	}
+
+	protected String sizeCheckMethod(BodyMatcher bodyMatcher) {
+		if (bodyMatcher.minTypeOccurrence() != null && bodyMatcher.maxTypeOccurrence() != null) {
+			return "isStrictlyBetween(${bodyMatcher.minTypeOccurrence()}, ${bodyMatcher.maxTypeOccurrence()})"
+		} else if (bodyMatcher.minTypeOccurrence() != null ) {
+			return "isLessThanOrEqualTo(${bodyMatcher.minTypeOccurrence()})"
+		} else if (bodyMatcher.maxTypeOccurrence() != null) {
+			return "isGreaterThanOrEqualTo(${bodyMatcher.maxTypeOccurrence()})"
+		}
 	}
 
 	protected String quotedAndEscaped(String string) {
