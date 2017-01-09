@@ -23,10 +23,6 @@ class BodyMatchers {
 		return this.jsonPathMatchers
 	}
 
-	MatchingTypeValue byType() {
-		return new MatchingTypeValue(MatchingType.TYPE)
-	}
-
 	MatchingTypeValue byDate() {
 		return new MatchingTypeValue(MatchingType.DATE, this.regexPatterns.isoDate())
 	}

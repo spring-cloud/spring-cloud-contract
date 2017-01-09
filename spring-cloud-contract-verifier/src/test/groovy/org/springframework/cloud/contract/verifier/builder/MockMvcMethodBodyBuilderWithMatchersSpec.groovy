@@ -56,7 +56,6 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 						jsonPath('$.date', byDate())
 						jsonPath('$.dateTime', byTimestamp())
 						jsonPath('$.time', byTime())
-						jsonPath('$.valueWithTypeMatch', byType())
 					}
 					headers {
 						contentType(applicationJson())
@@ -108,10 +107,11 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
-			methodBuilderName           | methodBuilder                                                                           | rootElement
-			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '\\$'
-			"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | '$'
-
+			methodBuilderName                                    | methodBuilder                                                                                                                       | rootElement
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }                                             | '\\$'
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                                                              | '$'
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '\\$'
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | '$'
 	}
 
 }

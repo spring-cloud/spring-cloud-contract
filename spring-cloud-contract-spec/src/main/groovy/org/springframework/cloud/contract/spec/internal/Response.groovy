@@ -41,7 +41,7 @@ class Response extends Common {
 	ResponseHeaders headers
 	Body body
 	boolean async
-	BodyMatchers matchers
+	ResponseBodyMatchers matchers
 
 	Response() {
 	}
@@ -112,8 +112,8 @@ class Response extends Common {
 		return value(server)
 	}
 
-	void testMatchers(@DelegatesTo(BodyMatchers) Closure closure) {
-		this.matchers = new BodyMatchers()
+	void testMatchers(@DelegatesTo(ResponseBodyMatchers) Closure closure) {
+		this.matchers = new ResponseBodyMatchers()
 		closure.delegate = this.matchers
 		closure()
 	}
@@ -172,6 +172,16 @@ class Response extends Common {
 		@Override
 		protected ServerDslProperty createProperty(Pattern pattern, Object generatedValue) {
 			return new ServerDslProperty(pattern, generatedValue)
+		}
+	}
+
+	@CompileStatic
+	@EqualsAndHashCode
+	@ToString(includePackage = false)
+	private class ResponseBodyMatchers extends BodyMatchers {
+
+		MatchingTypeValue byType() {
+			return new MatchingTypeValue(MatchingType.TYPE)
 		}
 	}
 }
