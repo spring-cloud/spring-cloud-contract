@@ -17,14 +17,19 @@
 package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.CompileStatic
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
 import java.util.regex.Pattern
+
 /**
  * Contains most common regular expression patterns
  *
  * @since 1.0.0
  */
 @CompileStatic
+@EqualsAndHashCode
+@ToString(includePackage = false)
 class RegexPatterns {
 
 	// tag::regexps[]

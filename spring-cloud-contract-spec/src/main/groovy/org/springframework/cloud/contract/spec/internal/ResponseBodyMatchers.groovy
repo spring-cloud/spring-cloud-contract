@@ -11,24 +11,26 @@ import groovy.transform.ToString
  * @since 1.0.3
  */
 @CompileStatic
-@EqualsAndHashCode
-@ToString(includePackage = false)
+@ToString(includePackage = false, includeSuper = true)
 class ResponseBodyMatchers extends BodyMatchers {
 
 	MatchingTypeValue byType() {
-		return new MatchingTypeValue(MatchingType.TYPE)
+		return new MatchingTypeValue(type: MatchingType.TYPE)
 	}
 
 	MatchingTypeValue byType(@DelegatesTo(MatchingTypeValueHolder) Closure closure) {
 		MatchingTypeValueHolder matchingTypeValue = new MatchingTypeValueHolder()
 		closure.delegate = matchingTypeValue
-		return closure() as MatchingTypeValue
+		closure()
+		return matchingTypeValue.matchingTypeValue
 	}
 }
 
 @CompileStatic
+@ToString(includePackage = false)
+@EqualsAndHashCode
 class MatchingTypeValueHolder {
-	MatchingTypeValue matchingTypeValue = new MatchingTypeValue()
+	MatchingTypeValue matchingTypeValue = new MatchingTypeValue(type: MatchingType.TYPE)
 
 	MatchingTypeValue minOccurrence(int number) {
 		this.matchingTypeValue.minTypeOccurrence = number
