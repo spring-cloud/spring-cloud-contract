@@ -427,7 +427,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 		when:
 		String json = converter.convertContent("Test", new ContractMetadata(file.toPath(), false, 0, null))
 		then:
-		JSONAssert.assertEquals(
+		JSONAssert.assertEquals(//tag::matchers[]
 				'''
 {
   "request" : {
@@ -475,6 +475,7 @@ class DslToWireMockClientConverterSpec extends Specification {
   }
 }
 '''
+//end::matchers[]
 				, json, false)
 	}
 

@@ -321,19 +321,37 @@ abstract class MethodBodyBuilder {
 						throw new IllegalStateException("Entry for the provided JSON path [${it.path()}] doesn't exist in the body [${JsonOutput.toJson(copiedBody)}]")
 					}
 					if (it.minTypeOccurrence() || it.maxTypeOccurrence()) {
+						checkType(bb, it, elementFromBody)
 						String method = "assertThat(parsedJson.read(${quotedAndEscaped(it.path())}, java.util.Collection.class).size()).${sizeCheckMethod(it)}"
 						bb.addLine(postProcessJsonPathCall(method))
 						addColonIfRequired(bb)
 					} else {
-						String method = "assertThat((Object) parsedJson.read(${quotedAndEscaped(it.path())})).isExactlyInstanceOf(${elementFromBody.class.name}.class)"
-						bb.addLine(postProcessJsonPathCall(method))
-						addColonIfRequired(bb)
+						checkType(bb, it, elementFromBody)
 					}
 				}
 			}
-
 		}
 		processBodyElement(bb, "", convertedResponseBody)
+	}
+
+	protected void checkType(BlockBuilder bb, BodyMatcher it, Object elementFromBody) {
+		String method = "assertThat((Object) parsedJson.read(${quotedAndEscaped(it.path())})).isInstanceOf(${classToCheck(elementFromBody).name}.class)"
+		bb.addLine(postProcessJsonPathCall(method))
+		addColonIfRequired(bb)
+	}
+
+
+	protected Class classToCheck(Object elementFromBody) {
+		switch (elementFromBody.class) {
+			case List:
+				return List
+			case Set:
+				return Set
+			case Map:
+				return Map
+			default:
+				return elementFromBody.class
+		}
 	}
 
 	protected String sizeCheckMethod(BodyMatcher bodyMatcher) {

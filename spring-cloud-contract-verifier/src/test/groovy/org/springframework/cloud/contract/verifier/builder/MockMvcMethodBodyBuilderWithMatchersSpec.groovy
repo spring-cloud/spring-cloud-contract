@@ -130,9 +130,12 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.date", String.class)).matches("(\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])")')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.dateTime", String.class)).matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])")')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.time", String.class)).matches("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])")')
-			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithTypeMatch")).isExactlyInstanceOf(java.lang.String.class)')
+			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithTypeMatch")).isInstanceOf(java.lang.String.class)')
+			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMin")).isInstanceOf(java.util.List.class)')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMin", java.util.Collection.class).size()).isLessThanOrEqualTo(1)')
+			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMax")).isInstanceOf(java.util.List.class)')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMax", java.util.Collection.class).size()).isGreaterThanOrEqualTo(3)')
+			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMinMax")).isInstanceOf(java.util.List.class)')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMinMax", java.util.Collection.class).size()).isStrictlyBetween(1, 3)')
 			!test.contains('cursor')
 		and:
