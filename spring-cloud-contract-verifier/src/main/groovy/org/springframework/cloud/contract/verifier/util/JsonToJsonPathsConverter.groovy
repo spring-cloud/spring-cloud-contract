@@ -58,6 +58,15 @@ class JsonToJsonPathsConverter {
 		}
 	}
 
+	/**
+	 * Removes from the parsed json any JSON path matching entries.
+	 * That way we remain with values that should be checked in the auto-generated
+	 * fashion.
+	 *
+	 * @param json - parsed JSON
+	 * @param bodyMatchers - the part of request / response that contains matchers
+	 * @return json with removed entries
+	 */
 	static def removeMatchingJsonPaths(def json, BodyMatchers bodyMatchers) {
 		if (bodyMatchers?.hasMatchers()) {
 			// remove all jsonpaths from the body - for those that remain we continue as usual
@@ -66,6 +75,24 @@ class JsonToJsonPathsConverter {
 			}
 		}
 		return json
+	}
+
+	/**
+	 * For the given JSON path and regex pattern converts it into a JSON path
+	 * that checks the Pattern
+	 *
+	 * @param path - JSON path
+	 * @param pattern - pattern to check for the last element of JSON path
+	 * @return JSON path that checks the regex for its last element
+	 */
+	static String convertJsonPathAndRegexToAJsonPath(String path, String pattern) {
+		if (!pattern) {
+			return path
+		}
+		int lastIndexOfDot = path.lastIndexOf(".")
+		String toLastDot = path.substring(0, lastIndexOfDot)
+		String fromLastDot = path.substring(lastIndexOfDot + 1)
+		return "${toLastDot}[?(@.${fromLastDot} =~ /(${pattern})/)]"
 	}
 
 	JsonPaths transformToJsonPathWithTestsSideValues(def json) {

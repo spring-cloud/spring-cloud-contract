@@ -87,11 +87,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			}
 			if (request.matchers?.hasMatchers()) {
 				request.matchers.jsonPathMatchers().each {
-					String path = it.path()
-					int lastIndexOfDot = path.lastIndexOf(".")
-					String toLastDot = path.substring(0, lastIndexOfDot)
-					String fromLastDot = path.substring(lastIndexOfDot + 1)
-					String newPath = "${toLastDot}[?(@.${fromLastDot} =~ /(${it.value()})/)]"
+					String newPath = JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(it.path(), it.value())
 					requestPattern.withRequestBody(WireMock.matchingJsonPath(newPath.replace("\\\\", "\\")))
 				}
 			}
