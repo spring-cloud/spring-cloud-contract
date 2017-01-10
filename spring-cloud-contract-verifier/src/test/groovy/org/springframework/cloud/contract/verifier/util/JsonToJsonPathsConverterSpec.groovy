@@ -753,6 +753,21 @@ class JsonToJsonPathsConverterSpec extends Specification {
 			}
 	}
 
+	def "should convert a json path with regex to a regex checking json path"() {
+		given:
+			String jsonPath = '$.a.b.c.d'
+			String regexPattern = ".*"
+		expect:
+			'$.a.b.c[?(@.d =~ /(.*)/)]' == JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(jsonPath, regexPattern)
+	}
+
+	def "should return the path if no regex pattern is provided"() {
+		given:
+			String jsonPath = '$.a.b.c.d'
+		expect:
+			'$.a.b.c.d' == JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(jsonPath, null)
+	}
+
 	private void assertThatJsonPathsInMapAreValid(String json, JsonPaths pathAndValues) {
 		DocumentContext parsedJson = JsonPath.using(Configuration.builder().options(Option.ALWAYS_RETURN_LIST).build()).parse(json);
 		pathAndValues.each {

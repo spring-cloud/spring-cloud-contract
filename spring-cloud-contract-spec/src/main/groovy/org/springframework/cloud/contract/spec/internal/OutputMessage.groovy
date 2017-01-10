@@ -33,6 +33,7 @@ class OutputMessage extends Common {
 	Headers headers
 	DslProperty body
 	ExecutionProperty assertThat
+	ResponseBodyMatchers matchers
 
 	OutputMessage() {}
 
@@ -75,6 +76,12 @@ class OutputMessage extends Common {
 		}
 		return new DslProperty(value, server.serverValue)
 	}
+
+	void testMatchers(@DelegatesTo(ResponseBodyMatchers) Closure closure) {
+		this.matchers = new ResponseBodyMatchers()
+		closure.delegate = this.matchers
+		closure()
+	}
 }
 
 @CompileStatic
@@ -94,3 +101,4 @@ class ClientOutputMessage extends OutputMessage {
 		super(request)
 	}
 }
+

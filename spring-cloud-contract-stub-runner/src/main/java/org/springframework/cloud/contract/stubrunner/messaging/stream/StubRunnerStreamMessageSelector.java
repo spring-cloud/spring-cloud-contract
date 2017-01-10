@@ -20,10 +20,13 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.springframework.cloud.contract.spec.Contract;
+import org.springframework.cloud.contract.spec.internal.BodyMatcher;
+import org.springframework.cloud.contract.spec.internal.BodyMatchers;
 import org.springframework.cloud.contract.spec.internal.Header;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
 import org.springframework.cloud.contract.verifier.util.JsonPaths;
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter;
+import org.springframework.cloud.contract.verifier.util.MapConverter;
 import org.springframework.cloud.contract.verifier.util.MethodBufferingJsonVerifiable;
 import org.springframework.integration.core.MessageSelector;
 import org.springframework.messaging.Message;
@@ -32,7 +35,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.toomuchcoding.jsonassert.JsonAssertion;
-import com.toomuchcoding.jsonassert.JsonVerifiable;
 
 /**
  * Passes through a message that matches the one defined in the DSL
@@ -50,31 +52,40 @@ class StubRunnerStreamMessageSelector implements MessageSelector {
 
 	@Override
 	public boolean accept(Message<?> message) {
-		if(!headersMatch(message)){
+		if (!headersMatch(message)) {
 			return false;
 		}
 		Object inputMessage = message.getPayload();
+		BodyMatchers matchers = this.groovyDsl.getInput().getMatchers();
+		Object dslBody = MapConverter.getStubSideValues(this.groovyDsl.getInput().getMessageBody());
+		Object matchingInputMessage = JsonToJsonPathsConverter
+				.removeMatchingJsonPaths(dslBody, matchers);
 		JsonPaths jsonPaths = JsonToJsonPathsConverter
 				.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(
-						this.groovyDsl.getInput().getMessageBody());
+						matchingInputMessage);
 		DocumentContext parsedJson;
 		try {
 			parsedJson = JsonPath.parse(this.objectMapper.writeValueAsString(inputMessage));
-			for (MethodBufferingJsonVerifiable it : jsonPaths) {
-				if (!matchesJsonPath(parsedJson, it)) {
-					return false;
-				}
-			}
 		}
 		catch (JsonProcessingException e) {
-			throw new IllegalStateException("Cannot parse JSON", e);
+			throw new IllegalStateException("Cannot serialize to JSON", e);
 		}
-		return true;
+		boolean matches = true;
+		for (MethodBufferingJsonVerifiable path : jsonPaths) {
+			matches &= matchesJsonPath(parsedJson, path.jsonPath());
+		}
+		if (matchers != null && matchers.hasMatchers()) {
+			for (BodyMatcher matcher : matchers.jsonPathMatchers()) {
+				String jsonPath = JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher.path(), matcher.value());
+				matches &= matchesJsonPath(parsedJson, jsonPath);
+			}
+		}
+		return matches;
 	}
 
-	private boolean matchesJsonPath(DocumentContext parsedJson, JsonVerifiable jsonVerifiable) {
+	private boolean matchesJsonPath(DocumentContext parsedJson, String jsonPath) {
 		try {
-			JsonAssertion.assertThat(parsedJson).matchesJsonPath(jsonVerifiable.jsonPath());
+			JsonAssertion.assertThat(parsedJson).matchesJsonPath(jsonPath);
 			return true;
 		} catch (Exception e) {
 			return false;

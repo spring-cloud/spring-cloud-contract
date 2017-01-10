@@ -148,4 +148,8 @@ class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequ
 		blockBuilder.addLine("response.getHeaderString('$property') ${convertHeaderComparison(value)}")
 	}
 
+	@Override
+	protected String postProcessJsonPathCall(String jsonPath) {
+		return jsonPath.replace('$', '\\$')
+	}
 }

@@ -145,7 +145,7 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 		if (response.body) {
 			bb.endBlock()
 			bb.addLine(addCommentSignIfRequired('and:')).startBlock()
-			validateResponseBodyBlock(bb, response.body.serverValue)
+			validateResponseBodyBlock(bb, response.matchers, response.body.serverValue)
 		}
 	}
 
