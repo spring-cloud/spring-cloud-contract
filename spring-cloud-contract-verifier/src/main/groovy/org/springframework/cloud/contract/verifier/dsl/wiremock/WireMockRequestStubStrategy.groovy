@@ -75,13 +75,24 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 		ContentType contentType = tryToGetContentType(request.body.clientValue, request.headers)
 		if (contentType == ContentType.JSON) {
-			JsonPaths values = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(
-					getMatchingStrategyFromBody(request.body)?.clientValue)
-			if (values.empty) {
+			def body = getMatchingStrategyFromBody(request.body)?.clientValue
+			body = JsonToJsonPathsConverter.removeMatchingJsonPaths(body, request.matchers)
+			JsonPaths values = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(body)
+			if (values.empty && !request.matchers?.hasMatchers()) {
 				requestPattern.withRequestBody(WireMock.equalToJson(JsonOutput.toJson(getMatchingStrategy(request.body.clientValue).clientValue), false, false))
 			} else {
 				values.findAll{ !it.assertsSize() }.each {
 					requestPattern.withRequestBody(WireMock.matchingJsonPath(it.jsonPath().replace("\\\\", "\\")))
+				}
+			}
+			if (request.matchers?.hasMatchers()) {
+				request.matchers.jsonPathMatchers().each {
+					String path = it.path()
+					int lastIndexOfDot = path.lastIndexOf(".")
+					String toLastDot = path.substring(0, lastIndexOfDot)
+					String fromLastDot = path.substring(lastIndexOfDot + 1)
+					String newPath = "${toLastDot}[?(@.${fromLastDot} =~ /(${it.value()})/)]"
+					requestPattern.withRequestBody(WireMock.matchingJsonPath(newPath.replace("\\\\", "\\")))
 				}
 			}
 		} else if (contentType == ContentType.XML) {

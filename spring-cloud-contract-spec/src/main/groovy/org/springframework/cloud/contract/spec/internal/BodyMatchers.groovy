@@ -40,6 +40,7 @@ class BodyMatchers {
 	}
 
 	MatchingTypeValue byRegex(String regex) {
+		assert regex
 		return new MatchingTypeValue(MatchingType.REGEX, regex)
 	}
 }

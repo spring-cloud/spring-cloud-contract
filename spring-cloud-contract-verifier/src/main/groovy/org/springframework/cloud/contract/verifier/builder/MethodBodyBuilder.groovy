@@ -297,12 +297,7 @@ abstract class MethodBodyBuilder {
 	private void addJsonResponseBodyCheck(BlockBuilder bb, convertedResponseBody, BodyMatchers bodyMatchers) {
 		appendJsonPath(bb, getResponseAsString())
 		Object copiedBody = convertedResponseBody.clone()
-		if (bodyMatchers?.hasMatchers()) {
-			// remove all jsonpaths from the body - for those that remain we continue as usual
-			bodyMatchers.jsonPathMatchers().findAll { it.matchingType() != MatchingType.EQUALITY }.each { BodyMatcher matcher ->
-				JsonPath.parse(convertedResponseBody).delete(matcher.path())
-			}
-		}
+		convertedResponseBody = JsonToJsonPathsConverter.removeMatchingJsonPaths(convertedResponseBody, bodyMatchers)
 		JsonPaths jsonPaths = new JsonToJsonPathsConverter(configProperties).transformToJsonPathWithTestsSideValues(convertedResponseBody)
 		jsonPaths.each {
 			String method = it.method()

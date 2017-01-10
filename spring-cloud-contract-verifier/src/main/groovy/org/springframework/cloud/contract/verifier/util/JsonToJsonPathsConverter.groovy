@@ -16,12 +16,12 @@
 
 package org.springframework.cloud.contract.verifier.util
 
+import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
-import org.springframework.cloud.contract.spec.internal.OptionalProperty
-import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.*
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 import java.util.regex.Pattern
@@ -58,15 +58,25 @@ class JsonToJsonPathsConverter {
 		}
 	}
 
-	public JsonPaths transformToJsonPathWithTestsSideValues(def json) {
+	static def removeMatchingJsonPaths(def json, BodyMatchers bodyMatchers) {
+		if (bodyMatchers?.hasMatchers()) {
+			// remove all jsonpaths from the body - for those that remain we continue as usual
+			bodyMatchers.jsonPathMatchers().findAll { it.matchingType() != MatchingType.EQUALITY }.each { BodyMatcher matcher ->
+				JsonPath.parse(json).delete(matcher.path())
+			}
+		}
+		return json
+	}
+
+	JsonPaths transformToJsonPathWithTestsSideValues(def json) {
 		return transformToJsonPathWithValues(json, SERVER_SIDE)
 	}
 
-	public JsonPaths transformToJsonPathWithStubsSideValues(def json) {
+	JsonPaths transformToJsonPathWithStubsSideValues(def json) {
 		return transformToJsonPathWithValues(json, CLIENT_SIDE)
 	}
 
-	public static JsonPaths transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(def json) {
+	static JsonPaths transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(def json) {
 		return new JsonToJsonPathsConverter()
 				.transformToJsonPathWithValues(json, CLIENT_SIDE)
 	}

@@ -39,9 +39,8 @@ class OptionalProperty {
 		return "($value)?"
 	}
 
-
 	@Override
-	public String toString() {
+	String toString() {
 		return optionalPattern()
 	}
 }

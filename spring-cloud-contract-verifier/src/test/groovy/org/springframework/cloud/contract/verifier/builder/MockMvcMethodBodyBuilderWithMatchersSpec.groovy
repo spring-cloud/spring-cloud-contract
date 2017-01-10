@@ -33,6 +33,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 	@Issue('#185')
 	def "should allow to set dynamic values via stub / test matchers for [#methodBuilderName]"() {
 		given:
+		//tag::matchers[]
 			Contract contractDsl = Contract.make {
 				request {
 					method 'GET'
@@ -84,21 +85,28 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							],
 					])
 					testMatchers {
+						// asserts the jsonpath value against manual regex
 						jsonPath('$.duck', byRegex("[0-9]{3}"))
+						// asserts the jsonpath value against some default regex
 						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
 						jsonPath('$.number', byRegex(number()))
 						jsonPath('$.aBoolean', byRegex(anyBoolean()))
+						// asserts vs inbuilt time related regex
 						jsonPath('$.date', byDate())
 						jsonPath('$.dateTime', byTimestamp())
 						jsonPath('$.time', byTime())
+						// asserts that the resulting type is the same as in response body
 						jsonPath('$.valueWithTypeMatch', byType())
 						jsonPath('$.valueWithMin', byType {
+							// results in verification of size of array (min 1)
 							minOccurrence(1)
 						})
 						jsonPath('$.valueWithMax', byType {
+							// results in verification of size of array (max 3)
 							maxOccurrence(3)
 						})
 						jsonPath('$.valueWithMinMax', byType {
+							// results in verification of size of array (min 1 & max 3)
 							minOccurrence(1)
 							maxOccurrence(3)
 						})
@@ -108,6 +116,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					}
 				}
 			}
+			//end::matchers[]
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
