@@ -765,8 +765,6 @@ $(addBlockSwitches);
 </ul>
 </li>
 <li><a href="#_dynamic_properties_in_matchers_sections">Dynamic properties in matchers sections</a></li>
-<li><a href="#_contract_dsl_2">Contract DSL</a></li>
-<li><a href="#_base_mock_spec">Base Mock Spec</a></li>
 </ul>
 </li>
 <li><a href="#_jax_rs_support">JAX-RS support</a></li>
@@ -6701,7 +6699,57 @@ String isoTime() {
 <h6 id="_executing_custom_methods_on_server_side">Executing custom methods on server side</h6>
 <div class="paragraph">
 <p>It is also possible to define a method call to be executed on the server side during the test. Such a method can be added to the class defined as "baseClassForTests"
-in the configuration. Please see the examples below:</p>
+in the configuration. Example:</p>
+</div>
+<div class="paragraph">
+<p><strong>Contract</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
+	request {
+		method 'PUT'
+		url $(consumer(regex('^/api/[0-9]{2}$')), producer('/api/12'))
+		headers {
+			header 'Content-Type': 'application/json'
+		}
+		body '''\
+				[{
+					"text": "Gonna see you at Warsaw"
+				}]
+			'''
+	}
+	response {
+		body (
+				path: $(consumer('/api/12'), producer(regex('^/api/[0-9]{2}$'))),
+				correlationId: $(consumer('1223456'), producer(execute('isProperCorrelationId($it)')))
+		)
+		status 200
+	}
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Base class</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">abstract class BaseMockMvcSpec extends Specification {
+
+	def setup() {
+		RestAssuredMockMvc.standaloneSetup(new PairIdController())
+	}
+
+	void isProperCorrelationId(Integer correlationId) {
+		assert correlationId == 123456
+	}
+
+	void isEmpty(String value) {
+		assert value == null
+	}
+
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -6978,56 +7026,6 @@ assertions and the one from matchers with an <code>and</code> section):</p>
   }
 }
 '''</code></pre>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_contract_dsl_2">Contract DSL</h5>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
-	request {
-		method 'PUT'
-		url $(consumer(regex('^/api/[0-9]{2}$')), producer('/api/12'))
-		headers {
-			header 'Content-Type': 'application/json'
-		}
-		body '''\
-				[{
-					"text": "Gonna see you at Warsaw"
-				}]
-			'''
-	}
-	response {
-		body (
-				path: $(consumer('/api/12'), producer(regex('^/api/[0-9]{2}$'))),
-				correlationId: $(consumer('1223456'), producer(execute('isProperCorrelationId($it)')))
-		)
-		status 200
-	}
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_base_mock_spec">Base Mock Spec</h5>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">abstract class BaseMockMvcSpec extends Specification {
-
-	def setup() {
-		RestAssuredMockMvc.standaloneSetup(new PairIdController())
-	}
-
-	void isProperCorrelationId(Integer correlationId) {
-		assert correlationId == 123456
-	}
-
-	void isEmpty(String value) {
-		assert value == null
-	}
-
-}</code></pre>
 </div>
 </div>
 </div>
