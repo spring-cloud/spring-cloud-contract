@@ -12,7 +12,13 @@
         "method": "GET",
         "path": "/mallory",
         "query": "name=ron&status=good",
-        "body" : {"id": "123", "method": "create"}
+        "body" : {"id": "123", "method": "create"},
+        "matchingRules": {
+          "$.body.id": {
+            "match": "regex",
+            "regex": "[0-9]{3}"
+          }
+        }
       },
       "response": {
         "status": 200,

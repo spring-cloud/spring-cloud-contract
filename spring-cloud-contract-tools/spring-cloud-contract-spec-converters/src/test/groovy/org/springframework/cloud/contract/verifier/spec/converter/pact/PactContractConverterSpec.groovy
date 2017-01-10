@@ -37,6 +37,9 @@ class PactContractConverterSpec extends Specification {
 						}
 					}
 					body(id: "123", method: "create")
+					stubMatchers {
+						jsonPath('$.id', byRegex("[0-9]{3}"))
+					}
 				}
 				response {
 					status(200)
@@ -48,6 +51,14 @@ class PactContractConverterSpec extends Specification {
 							id: "eb0f8c17-c06a-479e-9204-14f7c95b63a6",
 							userName: "AJQrokEGPAVdOHprQpKP"]
 						]])
+					testMatchers {
+						jsonPath('$[0][*].email', byType())
+						jsonPath('$[0][*].id', byRegex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
+						jsonPath('$[0]', byType() {
+							maxOccurrence(5)
+						})
+						jsonPath('$[0][*].userName', byType())
+					}
 				}
 			}
 		when:

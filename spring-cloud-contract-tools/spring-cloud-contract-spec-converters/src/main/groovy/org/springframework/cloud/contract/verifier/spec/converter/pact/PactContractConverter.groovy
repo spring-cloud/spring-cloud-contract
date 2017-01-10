@@ -2,23 +2,29 @@ package org.springframework.cloud.contract.verifier.spec.converter.pact
 
 import au.com.dius.pact.model.*
 import groovy.transform.CompileStatic
-import groovy.transform.PackageScope
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
-
+import org.springframework.cloud.contract.spec.internal.MatchingType
 /**
- * Converter of JSON PACT
+ * Converter of JSON PACT file
+ *
  * @author Marcin Grzejszczak
  * @since 1.1.0
  */
 @CompileStatic
 class PactContractConverter implements ContractConverter<Pact> {
+
+	private static final String MATCH_KEY = "match"
+	private static final String REGEX_KEY = "regex"
+	private static final String MAX_KEY = "max"
+	private static final String MIN_KEY = "min"
+
 	@Override
 	boolean isAccepted(File file) {
 		try {
 			PactReader.loadPact(file)
 			return true
-		} catch (UnsupportedOperationException e) {
+		} catch (Exception e) {
 			return false
 		}
 	}
@@ -54,7 +60,6 @@ class PactContractConverter implements ContractConverter<Pact> {
 								}
 							}
 						}
-
 						if (requestResponseInteraction.request.body.state == OptionalBody.State.PRESENT) {
 							def parsedBody = BasePact.parseBody(requestResponseInteraction.request)
 							if (parsedBody instanceof Map) {
@@ -63,6 +68,35 @@ class PactContractConverter implements ContractConverter<Pact> {
 								body(parsedBody as List)
 							} else {
 								body(parsedBody.toString())
+							}
+						}
+						if (requestResponseInteraction.request?.matchingRules) {
+							stubMatchers {
+								requestResponseInteraction.request.matchingRules.each { String key, Map<String, Object> value ->
+									String keyFromBody = toKeyStartingFromBody(key)
+									if (value.containsKey(MATCH_KEY)) {
+										MatchingType matchingType = MatchingType.valueOf((value.get(MATCH_KEY) as String).toUpperCase())
+										switch (matchingType) {
+											case MatchingType.EQUALITY:
+												// equality is checked by default in the standard way
+												break
+											case MatchingType.DATE:
+												jsonPath(keyFromBody, byDate())
+												break
+											case MatchingType.TIME:
+												jsonPath(keyFromBody, byTime())
+												break
+											case MatchingType.TIMESTAMP:
+												jsonPath(keyFromBody, byTimestamp())
+												break
+											case MatchingType.REGEX:
+												jsonPath(keyFromBody, byRegex(value.get(REGEX_KEY) as String))
+												break
+										}
+									} else if (value.containsKey(REGEX_KEY)) {
+										jsonPath(keyFromBody, byRegex(value.get(REGEX_KEY) as String))
+									}
+								}
 							}
 						}
 					}
@@ -78,6 +112,45 @@ class PactContractConverter implements ContractConverter<Pact> {
 								body(parsedBody.toString())
 							}
 						}
+						if (requestResponseInteraction.response?.matchingRules) {
+							testMatchers {
+								requestResponseInteraction.response.matchingRules.each { String key, Map<String, Object> value ->
+									String keyFromBody = toKeyStartingFromBody(key)
+									if (value.containsKey(MATCH_KEY)) {
+										MatchingType matchingType = MatchingType.valueOf((value.get(MATCH_KEY) as String).toUpperCase())
+										switch (matchingType) {
+											case MatchingType.EQUALITY:
+												// equality is checked by default in the standard way
+												break
+											case MatchingType.DATE:
+												jsonPath(keyFromBody, byDate())
+												break
+											case MatchingType.TIME:
+												jsonPath(keyFromBody, byTime())
+												break
+											case MatchingType.TIMESTAMP:
+												jsonPath(keyFromBody, byTimestamp())
+												break
+											case MatchingType.REGEX:
+												jsonPath(keyFromBody, byRegex(value.get(REGEX_KEY) as String))
+												break
+											case MatchingType.TYPE:
+												jsonPath(keyFromBody, byType() {
+													if (value.containsKey(MIN_KEY)) {
+														minOccurrence(value.get(MIN_KEY) as Integer)
+													}
+													if (value.containsKey(MAX_KEY)) {
+														maxOccurrence(value.get(MAX_KEY) as Integer)
+													}
+												})
+												break
+										}
+									} else if (value.containsKey(REGEX_KEY)) {
+										jsonPath(keyFromBody, byRegex(value.get(REGEX_KEY) as String))
+									}
+								}
+							}
+						}
 						requestResponseInteraction.response.headers?.each { String key, String value ->
 							headers {
 								header(key, value)
@@ -89,8 +162,8 @@ class PactContractConverter implements ContractConverter<Pact> {
 		}
 	}
 
-	@PackageScope enum MatchingType {
-		TYPE, REGEX, DATE, TIMESTAMP, LIKE
+	protected String toKeyStartingFromBody(String key) {
+		return key.replace('$.body', '$')
 	}
 
 	protected String defaultDescription(Pact pact, int index) {
