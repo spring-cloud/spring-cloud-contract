@@ -100,12 +100,12 @@ abstract class MethodBodyBuilder {
 	protected abstract String getResponseBodyPropertyComparisonString(String property, ExecutionProperty value)
 
 	/**
-	 * Appends to the {@link BlockBuilder} the assertion for the given body path
+	 * Appends to the {@link BlockBuilder} the assertion for the given body element
 	 */
 	protected abstract void processBodyElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec)
 
 	/**
-	 * Appends to the {@link BlockBuilder} the assertion for the given body path
+	 * Appends to the {@link BlockBuilder} the assertion for the given body element
 	 */
 	protected abstract void processBodyElement(BlockBuilder blockBuilder, String property, Map.Entry entry)
 
@@ -340,7 +340,7 @@ abstract class MethodBodyBuilder {
 		addColonIfRequired(bb)
 	}
 
-
+	// we want to make the type more generic (e.g. not ArrayList but List)
 	protected Class classToCheck(Object elementFromBody) {
 		switch (elementFromBody.class) {
 			case List:
@@ -407,7 +407,7 @@ abstract class MethodBodyBuilder {
 	}
 
 	/**
-	 * Appends to the {@link BlockBuilder} the assertion for the given body path
+	 * Appends to the {@link BlockBuilder} the assertion for the given body element
 	 */
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, Object value) {
 	}
@@ -479,7 +479,7 @@ abstract class MethodBodyBuilder {
 
 
 	/**
-	 * Appends to the {@link BlockBuilder} the assertion for the given body path
+	 * Appends to the {@link BlockBuilder} the assertion for the given body element
 	 */
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, Map map) {
 		map.each {
@@ -488,7 +488,7 @@ abstract class MethodBodyBuilder {
 	}
 
 	/**
-	 * Appends to the {@link BlockBuilder} the assertion for the given body path
+	 * Appends to the {@link BlockBuilder} the assertion for the given body element
 	 */
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, List list) {
 		list.eachWithIndex { listElement, listIndex ->
