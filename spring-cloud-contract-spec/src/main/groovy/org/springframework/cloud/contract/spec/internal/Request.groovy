@@ -43,6 +43,7 @@ class Request extends Common {
 	RequestHeaders headers
 	Body body
 	Multipart multipart
+	BodyMatchers matchers
 
 	Request() {
 	}
@@ -202,6 +203,12 @@ class Request extends Common {
 
 	DslProperty $(Pattern client) {
 		return value(client)
+	}
+
+	void stubMatchers(@DelegatesTo(BodyMatchers) Closure closure) {
+		this.matchers = new BodyMatchers()
+		closure.delegate = this.matchers
+		closure()
 	}
 
 	@Override

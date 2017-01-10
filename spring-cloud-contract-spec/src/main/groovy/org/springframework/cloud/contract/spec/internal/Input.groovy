@@ -40,6 +40,7 @@ class Input extends Common {
 	Headers messageHeaders
 	BodyType messageBody
 	ExecutionProperty assertThat
+	BodyMatchers matchers
 
 	Input() {}
 
@@ -101,6 +102,12 @@ class Input extends Common {
 
 	void assertThat(String assertThat) {
 		this.assertThat = new ExecutionProperty(assertThat)
+	}
+
+	void stubMatchers(@DelegatesTo(BodyMatchers) Closure closure) {
+		this.matchers = new BodyMatchers()
+		closure.delegate = this.matchers
+		closure()
 	}
 }
 

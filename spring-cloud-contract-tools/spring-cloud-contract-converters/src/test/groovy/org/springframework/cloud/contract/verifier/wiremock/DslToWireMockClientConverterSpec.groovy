@@ -27,7 +27,7 @@ import spock.lang.Specification
 class DslToWireMockClientConverterSpec extends Specification {
 
 	@Rule
-	public TemporaryFolder tmpFolder = new TemporaryFolder();
+	public TemporaryFolder tmpFolder = new TemporaryFolder()
 
 	def "should convert DSL file to WireMock JSON"() {
 		given:
@@ -317,6 +317,237 @@ class DslToWireMockClientConverterSpec extends Specification {
 }
 '''
 // end::wiremock[]
+				, json, false)
+	}
+
+	def 'should convert dsl to wiremock with stub matchers'() {
+		given:
+		def converter = new DslToWireMockClientConverter()
+		and:
+		File file = tmpFolder.newFile("dsl_from_docs.groovy")
+		file.write('''
+			org.springframework.cloud.contract.spec.Contract.make {
+				request {
+					method 'GET'
+					urlPath '/get'
+					body([
+							duck: 123,
+							alpha: "abc",
+							number: 123,
+							aBoolean: true,
+							date: "2017-01-01",
+							dateTime: "2017-01-01T01:23:45",
+							time: "01:02:34",
+							valueWithoutAMatcher: "foo",
+							valueWithTypeMatch: "string",
+							list: [
+								some: [
+									nested: [
+										json: "with value",
+										anothervalue: 4
+									]
+								],
+								someother: [
+									nested: [
+										json: "with value",
+										anothervalue: 4
+									]
+								]
+							]
+					])
+					stubMatchers {
+						jsonPath('$.duck', byRegex("[0-9]{3}"))
+						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+						jsonPath('$.number', byRegex(number()))
+						jsonPath('$.aBoolean', byRegex(anyBoolean()))
+						jsonPath('$.date', byDate())
+						jsonPath('$.dateTime', byTimestamp())
+						jsonPath('$.time', byTime())
+						jsonPath('$.list.some.nested.json', byRegex(".*"))
+					}
+					headers {
+						contentType(applicationJson())
+					}
+				}
+				response {
+					status 200
+					body([
+							duck: 123,
+							alpha: "abc",
+							number: 123,
+							aBoolean: true,
+							date: "2017-01-01",
+							dateTime: "2017-01-01T01:23:45",
+							time: "01:02:34",
+							valueWithoutAMatcher: "foo",
+							valueWithTypeMatch: "string",
+							valueWithMin: [
+								1,2,3
+							],
+							valueWithMax: [
+								1,2,3
+							],
+							valueWithMinMax: [
+								1,2,3
+							],
+					])
+					testMatchers {
+						// asserts the jsonpath value against manual regex
+						jsonPath('$.duck', byRegex("[0-9]{3}"))
+						// asserts the jsonpath value against some default regex
+						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+						jsonPath('$.number', byRegex(number()))
+						jsonPath('$.aBoolean', byRegex(anyBoolean()))
+						// asserts vs inbuilt time related regex
+						jsonPath('$.date', byDate())
+						jsonPath('$.dateTime', byTimestamp())
+						jsonPath('$.time', byTime())
+						// asserts that the resulting type is the same as in response body
+						jsonPath('$.valueWithTypeMatch', byType())
+						jsonPath('$.valueWithMin', byType {
+							// results in verification of size of array (min 1)
+							minOccurrence(1)
+						})
+						jsonPath('$.valueWithMax', byType {
+							// results in verification of size of array (max 3)
+							maxOccurrence(3)
+						})
+						jsonPath('$.valueWithMinMax', byType {
+							// results in verification of size of array (min 1 & max 3)
+							minOccurrence(1)
+							maxOccurrence(3)
+						})
+					}
+					headers {
+						contentType(applicationJson())
+					}
+				}
+			}
+	''')
+		when:
+		String json = converter.convertContent("Test", new ContractMetadata(file.toPath(), false, 0, null))
+		then:
+		JSONAssert.assertEquals(//tag::matchers[]
+				'''
+{
+  "request" : {
+    "urlPath" : "/get",
+    "method" : "GET",
+    "headers" : {
+      "Content-Type" : {
+        "matches" : "application/json.*"
+      }
+    },
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[?(@.valueWithoutAMatcher == 'foo')]"
+    }, {
+      "matchesJsonPath" : "$[?(@.valueWithTypeMatch == 'string')]"
+    }, {
+      "matchesJsonPath" : "$.list.some.nested[?(@.anothervalue == 4)]"
+    }, {
+      "matchesJsonPath" : "$.list.someother.nested[?(@.anothervalue == 4)]"
+    }, {
+      "matchesJsonPath" : "$.list.someother.nested[?(@.json == 'with value')]"
+    }, {
+      "matchesJsonPath" : "$[?(@.duck =~ /([0-9]{3})/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.alpha =~ /([\\\\p{L}]*)/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.number =~ /(-?\\\\d*(\\\\.\\\\d+)?)/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.aBoolean =~ /((true|false))/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.date =~ /((\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]))/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.dateTime =~ /(([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9]))/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.time =~ /((2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9]))/)]"
+    }, {
+      "matchesJsonPath" : "$.list.some.nested[?(@.json =~ /(.*)/)]"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\\"duck\\":123,\\"alpha\\":\\"abc\\",\\"number\\":123,\\"aBoolean\\":true,\\"date\\":\\"2017-01-01\\",\\"dateTime\\":\\"2017-01-01T01:23:45\\",\\"time\\":\\"01:02:34\\",\\"valueWithoutAMatcher\\":\\"foo\\",\\"valueWithTypeMatch\\":\\"string\\",\\"valueWithMin\\":[1,2,3],\\"valueWithMax\\":[1,2,3],\\"valueWithMinMax\\":[1,2,3]}",
+    "headers" : {
+      "Content-Type" : "application/json"
+    }
+  }
+}
+'''
+//end::matchers[]
+				, json, false)
+	}
+
+	def 'should convert dsl to wiremock with stub matchers with docs example'() {
+		given:
+			def converter = new DslToWireMockClientConverter()
+		and:
+			File file = tmpFolder.newFile("dsl_from_docs.groovy")
+			file.write('''
+				org.springframework.cloud.contract.spec.Contract.make {
+					priority 1
+					request {
+						method 'POST'
+						url '/users/password'
+						headers {
+							header 'Content-Type': 'application/json'
+						}
+						body(
+							email: 'abc@abc.com',
+							callback_url: 'http://partners.com'
+						)
+						stubMatchers {
+							jsonPath('$.email', byRegex(email()))
+							jsonPath('$.callback_url', byRegex(hostname()))
+						}
+					}
+					response {
+						status 404
+						headers {
+							header 'Content-Type': 'application/json'
+						}
+						body(
+							code: "123123",
+							message: "User not found by email == [not.existing@user.com]"
+						)
+						testMatchers {
+							jsonPath('$.code', byRegex("123123"))
+							jsonPath('$.message', byRegex("User not found by email == ${email()}"))
+						}
+					}
+				}
+		''')
+		when:
+			String json = converter.convertContent("Test", new ContractMetadata(file.toPath(), false, 0, null))
+		then:
+			JSONAssert.assertEquals(
+					'''
+	{
+	  "request" : {
+		"url" : "/users/password",
+		"method" : "POST",
+		"bodyPatterns" : [ {
+		  "matchesJsonPath" : "$[?(@.email =~ /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4})/)]"
+		}, {
+		  "matchesJsonPath" : "$[?(@.callback_url =~ /(((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?)/)]"
+		} ],
+		"headers" : {
+		  "Content-Type" : {
+			"equalTo" : "application/json"
+		  }
+		}
+	  },
+	  "response" : {
+		"status" : 404,
+		"body" : "{\\"code\\":\\"123123\\",\\"message\\":\\"User not found by email == [not.existing@user.com]\\"}",
+		"headers" : {
+		  "Content-Type" : "application/json"
+		}
+	  },
+	  "priority" : 1
+	}
+	'''
 				, json, false)
 	}
 

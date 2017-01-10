@@ -128,9 +128,12 @@ Besides status response may contain **headers** and **body**, which are specifie
 
 The contract can contain some dynamic properties - timestamps / ids etc. You don't want to enforce the consumers to stub their
 clocks to always return the same value of time so that it gets matched by the stub. That's why we allow you to provide the dynamic
-parts in your contracts in the following way
+parts in your contracts in two ways. One is to pass them directly in the
+body and one to set them in a separate section called `testMatchers` and `stubMatchers`.
 
-either via the `value` method
+===== Dynamic properties inside the body
+
+You can set the properties inside the body either via the `value` method
 
 [source,groovy,indent=0]
 ----
@@ -153,7 +156,7 @@ $(client(...), server(...))
 All of the aforementioned approaches are equal. That means that `stub` and `client` methods are aliases over the `consumer`
 method. Let's take a closer look at what we can do with those values in the subsequent sections.
 
-==== Regular expressions
+====== Regular expressions
 
 You can use regular expressions to write your requests in Contract DSL. It is particularly useful when you want to indicate that a given response
 should be provided for requests that follow a given pattern. Also, you can use it when you need to use patterns and not exact values both
@@ -190,8 +193,7 @@ so in your contract you can use it like this
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderSpec.groovy[tags=contract_with_regex,indent=0]
 ----
 
-
-==== Passing optional parameters
+====== Passing optional parameters
 
 It is possible to provide optional parameters in your contract. It's only possible to have optional parameter for the:
 
@@ -221,9 +223,115 @@ and the following stub:
 include::{plugins_path}/spring-cloud-contract-converters/src/test/groovy/org/springframework/cloud/contract/verifier/wiremock/DslToWireMockClientConverterSpec.groovy[tags=wiremock,indent=0]
 ----
 
-==== Executing custom methods on server side
+====== Executing custom methods on server side
+
 It is also possible to define a method call to be executed on the server side during the test. Such a method can be added to the class defined as "baseClassForTests"
 in the configuration. Please see the examples below:
+
+===== Dynamic properties in matchers sections
+
+If you've been working with https://docs.pact.io/[Pact] this might seem familiar. Quite a few users
+are used to having a separation between the body and setting dynamic parts of your contract.
+
+That's why you can profit from two separate sections. One is called `stubMatchers` where you can
+define the dynamic values that should end up in a stub. You can set it in the `request` or `inputMessage`
+part of your contract. The other is called `testMatchers` which is present in the `response` or
+`outputMessage` side of the contract.
+
+Currently we support only JSON Path based matchers with the following matching possibilities.
+For `stubMatchers`:
+
+- `byRegex(...)` - the value taken from the response via the provided JSON Path needs
+to match the regex
+- `byDate()` - the value taken from the response via the provided JSON Path needs to
+match the regex for ISO Date
+- `byTimestamp()` - the value taken from the response via the provided JSON Path needs
+to match the regex for ISO DateTime
+- `byTime()` - the value taken from the response via the provided JSON Path needs to
+match the regex for ISO Time
+
+For `testMatchers`:
+
+- `byRegex(...)` - the value taken from the response via the provided JSON Path needs
+to match the regex
+- `byDate()` - the value taken from the response via the provided JSON Path needs to
+match the regex for ISO Date
+- `byTimestamp()` - the value taken from the response via the provided JSON Path needs
+to match the regex for ISO DateTime
+- `byTime()` - the value taken from the response via the provided JSON Path needs to
+match the regex for ISO Time
+- `byType()` - the value taken from the response via the provided JSON Path needs to
+be of the same type as the type defined in the body of the response in the contract.
+`byType` can take a closure where you can set `minOccurrence` and `maxOccurrence`.
+That way you can assert on the size of the collection.
+
+Let's take a look at the following example:
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderWithMatchersSpec.groovy[tags=matchers,indent=0]
+----
+
+In this example we're providing the dynamic portions of the contract in the matchers sections.
+ For the request part you can see that for all fields but `valueWithoutAMatcher` we're setting
+ explicitly the values of regular expressions we'd like the stub to contain. For the `valueWithoutAMatcher`
+ the verification will take place in the same way as without the usage of matchers - the test
+ will perform an equality check in this case.
+
+For the response side in the `testMatchers` section we're defining all the dynamic parts
+ in a similar manner. The only difference is that we have the `byType` matchers too. In that
+ case we're checking 4 fields in the way that we're verifying whether the response from the test
+ has a value whose JSON path matching the given field is of the same type as the one defined in the response body and:
+
+ - for `$.valueWithTypeMatch` - we're just checking the whether the type is the same
+ - for `$.valueWithMin` - we're checking the type and assert if the size is greater or equal to the min occurrence
+ - for `$.valueWithMax` - we're checking the type and assert if the size is smaller or equal to the max occurrence
+ - for `$.valueWithMinMax` - we're checking the type and assert if the size is between the min and max occurrence
+
+The resulting test would look more or less like this (note that we're separating the autogenerated
+assertions and the one from matchers with an `and` section):
+
+[source,java,indent=0]
+----
+ // given:
+  MockMvcRequestSpecification request = given()
+    .header("Content-Type", "application/json")
+    .body("{\"duck\":123,\"alpha\":\"abc\",\"number\":123,\"aBoolean\":true,\"date\":\"2017-01-01\",\"dateTime\":\"2017-01-01T01:23:45\",\"time\":\"01:02:34\",\"valueWithoutAMatcher\":\"foo\",\"valueWithTypeMatch\":\"string\"}");
+
+ // when:
+  ResponseOptions response = given().spec(request)
+    .get("/get");
+
+ // then:
+  assertThat(response.statusCode()).isEqualTo(200);
+  assertThat(response.header("Content-Type")).matches("application/json.*");
+ // and:
+  DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+  assertThatJson(parsedJson).field("valueWithoutAMatcher").isEqualTo("foo");
+ // and:
+  assertThat(parsedJson.read("$.duck", String.class)).matches("[0-9]{3}");
+  assertThat(parsedJson.read("$.alpha", String.class)).matches("[\\p{L}]*");
+  assertThat(parsedJson.read("$.number", String.class)).matches("-?\\d*(\\.\\d+)?");
+  assertThat(parsedJson.read("$.aBoolean", String.class)).matches("(true|false)");
+  assertThat(parsedJson.read("$.date", String.class)).matches("(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])");
+  assertThat(parsedJson.read("$.dateTime", String.class)).matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
+  assertThat(parsedJson.read("$.time", String.class)).matches("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
+  assertThat((Object) parsedJson.read("$.valueWithTypeMatch")).isInstanceOf(class java.lang.String.class);
+  assertThat((Object) parsedJson.read("$.valueWithMin")).isInstanceOf(java.util.List.class);
+  assertThat(parsedJson.read("$.valueWithMin", java.util.Collection.class).size()).isLessThanOrEqualTo(1);
+  assertThat((Object) parsedJson.read("$.valueWithMax")).isInstanceOf(java.util.List.class);
+  assertThat(parsedJson.read("$.valueWithMax", java.util.Collection.class).size()).isGreaterThanOrEqualTo(3);
+  assertThat((Object) parsedJson.read("$.valueWithMinMax")).isInstanceOf(java.util.List.class);
+  assertThat(parsedJson.read("$.valueWithMinMax", java.util.Collection.class).size()).isStrictlyBetween(1, 3);
+----
+
+and the WireMock stub like this:
+
+[source,json,indent=0]
+----
+include::{plugins_path}/spring-cloud-contract-converters/src/test/groovy/org/springframework/cloud/contract/verifier/wiremock/DslToWireMockClientConverterSpec.groovy[tags=matchers,indent=0]
+----
+
 
 ===== Contract DSL
 
