@@ -226,7 +226,21 @@ include::{plugins_path}/spring-cloud-contract-converters/src/test/groovy/org/spr
 ====== Executing custom methods on server side
 
 It is also possible to define a method call to be executed on the server side during the test. Such a method can be added to the class defined as "baseClassForTests"
-in the configuration. Please see the examples below:
+in the configuration. Example:
+
+*Contract*
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=method,indent=0]
+----
+
+*Base class*
+
+[source,groovy,indent=0]
+----
+include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/org/springframework/cloud/contract/verifier/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
+----
 
 ===== Dynamic properties in matchers sections
 
@@ -332,22 +346,8 @@ and the WireMock stub like this:
 include::{plugins_path}/spring-cloud-contract-converters/src/test/groovy/org/springframework/cloud/contract/verifier/wiremock/DslToWireMockClientConverterSpec.groovy[tags=matchers,indent=0]
 ----
 
-
-===== Contract DSL
-
-[source,groovy,indent=0]
-----
-include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=method,indent=0]
-----
-
-===== Base Mock Spec
-
-[source,groovy,indent=0]
-----
-include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/org/springframework/cloud/contract/verifier/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
-----
-
 ==== JAX-RS support
+
 Starting with release 0.8.0 we support JAX-RS 2 Client API. Base class needs to define `protected WebTarget webTarget` and server initialization, right now the only option how to test JAX-RS API is to start a web server.
 
 Request with a body needs to have a content type set otherwise `application/octet-stream` is going to be used.

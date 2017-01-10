@@ -4,6 +4,7 @@ import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+
 /**
  * Matching strategy of dynamic parts of the body.
  *
@@ -11,6 +12,7 @@ import groovy.transform.ToString
  * @since 1.0.3
  */
 @CompileStatic
+@ToString(includeFields = true, includePackage = false)
 class BodyMatchers {
 	private final RegexPatterns regexPatterns = new RegexPatterns()
 	private final List<BodyMatcher> jsonPathRegexMatchers = []
@@ -43,9 +45,24 @@ class BodyMatchers {
 		assert regex
 		return new MatchingTypeValue(MatchingType.REGEX, regex)
 	}
+
+	boolean equals(o) {
+		if (this.is(o)) return true
+		if (this.getClass() != o.class) return false
+		BodyMatchers that = (BodyMatchers) o
+		List<BodyMatcher> thisMatchers = this.jsonPathRegexMatchers
+		List<BodyMatcher> thatMatchers = that.jsonPathRegexMatchers
+		if (thisMatchers.size() != thatMatchers.size()) return false
+		if (new HashSet<>(thisMatchers) != new HashSet(thatMatchers)) return false
+		return true
+	}
+
+	int hashCode() {
+		return (this.jsonPathRegexMatchers != null ? this.jsonPathRegexMatchers.hashCode() : 0)
+	}
 }
 
-@ToString
+@ToString(includePackage = false)
 @EqualsAndHashCode
 @Canonical
 @CompileStatic
@@ -83,6 +100,8 @@ class JsonPathBodyMatcher implements BodyMatcher {
  * Matching type with corresponding values
  */
 @Canonical
+@ToString(includePackage = false)
+@EqualsAndHashCode
 class MatchingTypeValue {
 	MatchingType type
 
