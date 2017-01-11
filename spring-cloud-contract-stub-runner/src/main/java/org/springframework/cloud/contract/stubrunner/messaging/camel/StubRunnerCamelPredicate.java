@@ -77,7 +77,7 @@ class StubRunnerCamelPredicate implements Predicate {
 		}
 		if (matchers != null && matchers.hasMatchers()) {
 			for (BodyMatcher matcher : matchers.jsonPathMatchers()) {
-				String jsonPath = JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher);
+				String jsonPath = JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher, dslBody);
 				matches &= matchesJsonPath(parsedJson, jsonPath);
 			}
 		}

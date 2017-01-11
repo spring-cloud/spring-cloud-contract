@@ -75,8 +75,8 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 		ContentType contentType = tryToGetContentType(request.body.clientValue, request.headers)
 		if (contentType == ContentType.JSON) {
-			def body = getMatchingStrategyFromBody(request.body)?.clientValue
-			body = JsonToJsonPathsConverter.removeMatchingJsonPaths(body, request.matchers)
+			def originalBody = getMatchingStrategyFromBody(request.body)?.clientValue
+			def body = JsonToJsonPathsConverter.removeMatchingJsonPaths(originalBody, request.matchers)
 			JsonPaths values = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(body)
 			if (values.empty && !request.matchers?.hasMatchers()) {
 				requestPattern.withRequestBody(WireMock.equalToJson(JsonOutput.toJson(getMatchingStrategy(request.body.clientValue).clientValue), false, false))
@@ -87,7 +87,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			}
 			if (request.matchers?.hasMatchers()) {
 				request.matchers.jsonPathMatchers().each {
-					String newPath = JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(it)
+					String newPath = JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(it, originalBody)
 					requestPattern.withRequestBody(WireMock.matchingJsonPath(newPath.replace("\\\\", "\\")))
 				}
 			}

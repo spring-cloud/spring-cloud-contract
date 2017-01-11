@@ -766,17 +766,19 @@ class JsonToJsonPathsConverterSpec extends Specification {
 	def "should convert a json path with value to a equality checking json path without quotes for numbers"() {
 		given:
 			String jsonPath = '$.a.b.c.d'
-			Integer value = 1234
+		and:
+			def body = [ a: [ b: [ c: [ d: 1234 ] ] ] ]
 		expect:
-			'$.a.b.c[?(@.d == 1234)]' == JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher(MatchingType.EQUALITY, jsonPath, value))
+			'$.a.b.c[?(@.d == 1234)]' == JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher(MatchingType.EQUALITY, jsonPath, null), body)
 	}
 
 	def "should convert a json path with value to a equality checking json path with quotes for strings"() {
 		given:
 			String jsonPath = '$.a.b.c.d'
-			String value = "foo"
+		and:
+			def body = [ a: [ b: [ c: [ d: "foo" ] ] ] ]
 		expect:
-			'$.a.b.c[?(@.d == \'foo\')]' == JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher(MatchingType.EQUALITY, jsonPath, value))
+			'$.a.b.c[?(@.d == \'foo\')]' == JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher(MatchingType.EQUALITY, jsonPath, null), body)
 	}
 
 	def "should return the path if no value is provided"() {
@@ -784,6 +786,30 @@ class JsonToJsonPathsConverterSpec extends Specification {
 			String jsonPath = '$.a.b.c.d'
 		expect:
 			'$.a.b.c.d' == JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher(MatchingType.REGEX, jsonPath, null))
+	}
+
+	def "should throw an exception when null body is passed to check for equality"() {
+		given:
+			String jsonPath = '$.a.b.c.d'
+		and:
+			def body = null
+		when:
+			JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher(MatchingType.EQUALITY, jsonPath, null), body)
+		then:
+			IllegalStateException e = thrown(IllegalStateException)
+			e.message.contains("Body")
+	}
+
+	def "should throw an exception when nonexisting jsonpath is passed to check for equality"() {
+		given:
+			String jsonPath = '$.a.b.c.d'
+		and:
+			def body = [ foo: "bar" ]
+		when:
+			JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher(MatchingType.EQUALITY, jsonPath, null), body)
+		then:
+			IllegalStateException e = thrown(IllegalStateException)
+			e.message.contains("not found")
 	}
 
 	private BodyMatcher matcher(final MatchingType matchingType, final String jsonPath, final Object value) {

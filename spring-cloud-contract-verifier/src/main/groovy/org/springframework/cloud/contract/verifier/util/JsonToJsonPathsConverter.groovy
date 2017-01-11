@@ -16,19 +16,18 @@
 
 package org.springframework.cloud.contract.verifier.util
 
+import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
+import com.jayway.jsonpath.PathNotFoundException
 import com.toomuchcoding.jsonassert.JsonAssertion
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
-import org.springframework.cloud.contract.spec.internal.BodyMatcher
-import org.springframework.cloud.contract.spec.internal.BodyMatchers
-import org.springframework.cloud.contract.spec.internal.ExecutionProperty
-import org.springframework.cloud.contract.spec.internal.MatchingType
-import org.springframework.cloud.contract.spec.internal.OptionalProperty
+import org.springframework.cloud.contract.spec.internal.*
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 import java.util.regex.Pattern
+
 /**
  * I would like to apologize to anyone who is reading this class. Since JSON is a hectic structure
  * this class is also hectic. The idea is to traverse the JSON structure and build a set of
@@ -71,12 +70,14 @@ class JsonToJsonPathsConverter {
 	 * @return json with removed entries
 	 */
 	static def removeMatchingJsonPaths(def json, BodyMatchers bodyMatchers) {
+		def jsonCopy = json.clone()
+		DocumentContext context = JsonPath.parse(jsonCopy)
 		if (bodyMatchers?.hasMatchers()) {
 			bodyMatchers.jsonPathMatchers().each { BodyMatcher matcher ->
-				JsonPath.parse(json).delete(matcher.path())
+				context.delete(matcher.path())
 			}
 		}
-		return json
+		return jsonCopy
 	}
 
 	/**
@@ -86,23 +87,31 @@ class JsonToJsonPathsConverter {
 	 * @param bodyMatcher
 	 * @return JSON path that checks the regex for its last element
 	 */
-	static String convertJsonPathAndRegexToAJsonPath(BodyMatcher bodyMatcher) {
+	static String convertJsonPathAndRegexToAJsonPath(BodyMatcher bodyMatcher, def body = null) {
 		String path = bodyMatcher.path()
 		Object value = bodyMatcher.value()
-		if (!value) {
+		if (value == null && bodyMatcher.matchingType() != MatchingType.EQUALITY) {
 			return path
 		}
 		int lastIndexOfDot = path.lastIndexOf(".")
 		String toLastDot = path.substring(0, lastIndexOfDot)
 		String fromLastDot = path.substring(lastIndexOfDot + 1)
-		String comparison = createComparison(bodyMatcher, value)
+		String comparison = createComparison(bodyMatcher, value, body)
 		return "${toLastDot}[?(@.${fromLastDot} ${comparison})]"
 	}
 
-	private static String createComparison(BodyMatcher bodyMatcher, Object value) {
+	private static String createComparison(BodyMatcher bodyMatcher, Object value, def body) {
 		if (bodyMatcher.matchingType() == MatchingType.EQUALITY) {
-			String wrappedValue = value instanceof Number ? value : "'${value.toString()}'"
-			return "== ${wrappedValue}"
+			if (!body) {
+				throw new IllegalStateException("Body hasn't been passed")
+			}
+			try {
+				Object retrievedValue = JsonPath.parse(body).read(bodyMatcher.path())
+				String wrappedValue = retrievedValue instanceof Number ? retrievedValue : "'${retrievedValue.toString()}'"
+				return "== ${wrappedValue}"
+			} catch (PathNotFoundException e) {
+				throw new IllegalStateException("Value [${bodyMatcher.path()}] not found in JSON [${JsonOutput.toJson(body)}]", e)
+			}
 		} else {
 			return "=~ /(${value})/"
 		}

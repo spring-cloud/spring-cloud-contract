@@ -255,8 +255,8 @@ part of your contract. The other is called `testMatchers` which is present in th
 Currently we support only JSON Path based matchers with the following matching possibilities.
 For `stubMatchers`:
 
-- `byValue(...)` - the value taken from the response via the provided JSON Path needs
-to be equal to the provided value
+- `byEquality()` - the value taken from the response via the provided JSON Path needs
+to be equal to the provided value in the contract
 - `byRegex(...)` - the value taken from the response via the provided JSON Path needs
 to match the regex
 - `byDate()` - the value taken from the response via the provided JSON Path needs to
@@ -268,8 +268,8 @@ match the regex for ISO Time
 
 For `testMatchers`:
 
-- `byValue(...)` - the value taken from the response via the provided JSON Path needs
-to be equal to the provided value
+- `byEquality()` - the value taken from the response via the provided JSON Path needs
+to be equal to the provided value in the contract
 - `byRegex(...)` - the value taken from the response via the provided JSON Path needs
 to match the regex
 - `byDate()` - the value taken from the response via the provided JSON Path needs to
@@ -311,38 +311,38 @@ assertions and the one from matchers with an `and` section):
 
 [source,java,indent=0]
 ----
-  // given:
-   MockMvcRequestSpecification request = given()
-     .header("Content-Type", "application/json")
-     .body("{\"duck\":123,\"alpha\":\"abc\",\"number\":123,\"aBoolean\":true,\"date\":\"2017-01-01\",\"dateTime\":\"2017-01-01T01:23:45\",\"time\":\"01:02:34\",\"valueWithoutAMatcher\":\"foo\",\"valueWithTypeMatch\":\"string\"}");
+   // given:
+    MockMvcRequestSpecification request = given()
+      .header("Content-Type", "application/json")
+      .body("{\"duck\":123,\"alpha\":\"abc\",\"number\":123,\"aBoolean\":true,\"date\":\"2017-01-01\",\"dateTime\":\"2017-01-01T01:23:45\",\"time\":\"01:02:34\",\"valueWithoutAMatcher\":\"foo\",\"valueWithTypeMatch\":\"string\"}");
 
-  // when:
-   ResponseOptions response = given().spec(request)
-     .get("/get");
+   // when:
+    ResponseOptions response = given().spec(request)
+      .get("/get");
 
-  // then:
-   assertThat(response.statusCode()).isEqualTo(200);
-   assertThat(response.header("Content-Type")).matches("application/json.*");
-  // and:
-   DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
-   assertThatJson(parsedJson).field("valueWithoutAMatcher").isEqualTo("foo");
-  // and:
-   assertThat(parsedJson.read("$.duck", String.class)).matches("[0-9]{3}");
-   assertThat(parsedJson.read("$.duck", Integer.class)).isEqualTo(123);
-   assertThat(parsedJson.read("$.alpha", String.class)).matches("[\\p{L}]*");
-   assertThat(parsedJson.read("$.alpha", String.class)).isEqualTo("abc");
-   assertThat(parsedJson.read("$.number", String.class)).matches("-?\\d*(\\.\\d+)?");
-   assertThat(parsedJson.read("$.aBoolean", String.class)).matches("(true|false)");
-   assertThat(parsedJson.read("$.date", String.class)).matches("(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])");
-   assertThat(parsedJson.read("$.dateTime", String.class)).matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
-   assertThat(parsedJson.read("$.time", String.class)).matches("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
-   assertThat((Object) parsedJson.read("$.valueWithTypeMatch")).isInstanceOf(java.lang.String.class);
-   assertThat((Object) parsedJson.read("$.valueWithMin")).isInstanceOf(java.util.List.class);
-   assertThat(parsedJson.read("$.valueWithMin", java.util.Collection.class).size()).isLessThanOrEqualTo(1);
-   assertThat((Object) parsedJson.read("$.valueWithMax")).isInstanceOf(java.util.List.class);
-   assertThat(parsedJson.read("$.valueWithMax", java.util.Collection.class).size()).isGreaterThanOrEqualTo(3);
-   assertThat((Object) parsedJson.read("$.valueWithMinMax")).isInstanceOf(java.util.List.class);
-   assertThat(parsedJson.read("$.valueWithMinMax", java.util.Collection.class).size()).isStrictlyBetween(1, 3);
+   // then:
+    assertThat(response.statusCode()).isEqualTo(200);
+    assertThat(response.header("Content-Type")).matches("application/json.*");
+   // and:
+    DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+    assertThatJson(parsedJson).field("valueWithoutAMatcher").isEqualTo("foo");
+   // and:
+    assertThat(parsedJson.read("$.duck", String.class)).matches("[0-9]{3}");
+    assertThat(parsedJson.read("$.duck", Integer.class)).isEqualTo(123);
+    assertThat(parsedJson.read("$.alpha", String.class)).matches("[\\p{L}]*");
+    assertThat(parsedJson.read("$.alpha", String.class)).isEqualTo("abc");
+    assertThat(parsedJson.read("$.number", String.class)).matches("-?\\d*(\\.\\d+)?");
+    assertThat(parsedJson.read("$.aBoolean", String.class)).matches("(true|false)");
+    assertThat(parsedJson.read("$.date", String.class)).matches("(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])");
+    assertThat(parsedJson.read("$.dateTime", String.class)).matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
+    assertThat(parsedJson.read("$.time", String.class)).matches("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
+    assertThat((Object) parsedJson.read("$.valueWithTypeMatch")).isInstanceOf(java.lang.String.class);
+    assertThat((Object) parsedJson.read("$.valueWithMin")).isInstanceOf(java.util.List.class);
+    assertThat(parsedJson.read("$.valueWithMin", java.util.Collection.class).size()).isLessThanOrEqualTo(1);
+    assertThat((Object) parsedJson.read("$.valueWithMax")).isInstanceOf(java.util.List.class);
+    assertThat(parsedJson.read("$.valueWithMax", java.util.Collection.class).size()).isGreaterThanOrEqualTo(3);
+    assertThat((Object) parsedJson.read("$.valueWithMinMax")).isInstanceOf(java.util.List.class);
+    assertThat(parsedJson.read("$.valueWithMinMax", java.util.Collection.class).size()).isStrictlyBetween(1, 3);
 ----
 
 and the WireMock stub like this:
