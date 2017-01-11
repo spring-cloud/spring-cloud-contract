@@ -6773,8 +6773,8 @@ For <code>stubMatchers</code>:</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>byValue(&#8230;&#8203;)</code> - the value taken from the response via the provided JSON Path needs
-to be equal to the provided value</p>
+<p><code>byEquality()</code> - the value taken from the response via the provided JSON Path needs
+to be equal to the provided value in the contract</p>
 </li>
 <li>
 <p><code>byRegex(&#8230;&#8203;)</code> - the value taken from the response via the provided JSON Path needs
@@ -6800,8 +6800,8 @@ match the regex for ISO Time</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>byValue(&#8230;&#8203;)</code> - the value taken from the response via the provided JSON Path needs
-to be equal to the provided value</p>
+<p><code>byEquality()</code> - the value taken from the response via the provided JSON Path needs
+to be equal to the provided value in the contract</p>
 </li>
 <li>
 <p><code>byRegex(&#8230;&#8203;)</code> - the value taken from the response via the provided JSON Path needs
@@ -6849,9 +6849,9 @@ That way you can assert on the size of the collection.</p>
 		])
 		stubMatchers {
 			jsonPath('$.duck', byRegex("[0-9]{3}"))
-			jsonPath('$.duck', byValue(123))
+			jsonPath('$.duck', byEquality())
 			jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
-			jsonPath('$.alpha', byValue("abc"))
+			jsonPath('$.alpha', byEquality())
 			jsonPath('$.number', byRegex(number()))
 			jsonPath('$.aBoolean', byRegex(anyBoolean()))
 			jsonPath('$.date', byDate())
@@ -6888,10 +6888,10 @@ That way you can assert on the size of the collection.</p>
 			// asserts the jsonpath value against manual regex
 			jsonPath('$.duck', byRegex("[0-9]{3}"))
 			// asserts the jsonpath value against the provided value
-			jsonPath('$.duck', byValue(123))
+			jsonPath('$.duck', byEquality())
 			// asserts the jsonpath value against some default regex
 			jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
-			jsonPath('$.alpha', byValue("abc"))
+			jsonPath('$.alpha', byEquality())
 			jsonPath('$.number', byRegex(number()))
 			jsonPath('$.aBoolean', byRegex(anyBoolean()))
 			// asserts vs inbuilt time related regex
