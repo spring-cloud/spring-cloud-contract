@@ -90,7 +90,7 @@ class PactContractConverterSpec extends Specification {
 							)
 							stubMatchers {
 								jsonPath('$.id', byRegex("[0-9]{3}"))
-								jsonPath('$.something', byValue("foo"))
+								jsonPath('$.something', byEquality())
 							}
 						}
 						response {
@@ -102,6 +102,7 @@ class PactContractConverterSpec extends Specification {
 										  [email: "rddtGwwWMEhnkAPEmsyE",
 										   id: "eb0f8c17-c06a-479e-9204-14f7c95b63a6",
 										   number: $(producer(regex("[0-9]{3}")), consumer(923)),
+										   something: "foo",
 										   userName: "AJQrokEGPAVdOHprQpKP"]
 								  ]])
 							testMatchers {
@@ -112,6 +113,7 @@ class PactContractConverterSpec extends Specification {
 									maxOccurrence(5)
 								})
 								jsonPath('$[0][*].userName', byType())
+								jsonPath('$[0][*].something', byEquality())
 							}
 						}
 					}
@@ -176,6 +178,9 @@ class PactContractConverterSpec extends Specification {
           },
           "$[0][*].userName": {
             "match": "type"
+          },
+          "$[0][*].something": {
+            "match": "equality"
           }
         }
       }
