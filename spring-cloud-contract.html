@@ -6772,6 +6772,10 @@ For <code>stubMatchers</code>:</p>
 <div class="ulist">
 <ul>
 <li>
+<p><code>byValue(&#8230;&#8203;)</code> - the value taken from the response via the provided JSON Path needs
+to be equal to the provided value</p>
+</li>
+<li>
 <p><code>byRegex(&#8230;&#8203;)</code> - the value taken from the response via the provided JSON Path needs
 to match the regex</p>
 </li>
@@ -6794,6 +6798,10 @@ match the regex for ISO Time</p>
 </div>
 <div class="ulist">
 <ul>
+<li>
+<p><code>byValue(&#8230;&#8203;)</code> - the value taken from the response via the provided JSON Path needs
+to be equal to the provided value</p>
+</li>
 <li>
 <p><code>byRegex(&#8230;&#8203;)</code> - the value taken from the response via the provided JSON Path needs
 to match the regex</p>
@@ -6840,7 +6848,9 @@ That way you can assert on the size of the collection.</p>
 		])
 		stubMatchers {
 			jsonPath('$.duck', byRegex("[0-9]{3}"))
+			jsonPath('$.duck', byValue(123))
 			jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+			jsonPath('$.alpha', byValue("abc"))
 			jsonPath('$.number', byRegex(number()))
 			jsonPath('$.aBoolean', byRegex(anyBoolean()))
 			jsonPath('$.date', byDate())
@@ -6876,8 +6886,11 @@ That way you can assert on the size of the collection.</p>
 		testMatchers {
 			// asserts the jsonpath value against manual regex
 			jsonPath('$.duck', byRegex("[0-9]{3}"))
+			// asserts the jsonpath value against the provided value
+			jsonPath('$.duck', byValue(123))
 			// asserts the jsonpath value against some default regex
 			jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+			jsonPath('$.alpha', byValue("abc"))
 			jsonPath('$.number', byRegex(number()))
 			jsonPath('$.aBoolean', byRegex(anyBoolean()))
 			// asserts vs inbuilt time related regex
@@ -6959,13 +6972,15 @@ assertions and the one from matchers with an <code>and</code> section):</p>
  assertThatJson(parsedJson).field("valueWithoutAMatcher").isEqualTo("foo");
 // and:
  assertThat(parsedJson.read("$.duck", String.class)).matches("[0-9]{3}");
+ assertThat(parsedJson.read("$.duck", Integer.class)).isEqualTo(123);
  assertThat(parsedJson.read("$.alpha", String.class)).matches("[\\p{L}]*");
+ assertThat(parsedJson.read("$.alpha", String.class)).isEqualTo("abc");
  assertThat(parsedJson.read("$.number", String.class)).matches("-?\\d*(\\.\\d+)?");
  assertThat(parsedJson.read("$.aBoolean", String.class)).matches("(true|false)");
  assertThat(parsedJson.read("$.date", String.class)).matches("(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])");
  assertThat(parsedJson.read("$.dateTime", String.class)).matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
  assertThat(parsedJson.read("$.time", String.class)).matches("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
- assertThat((Object) parsedJson.read("$.valueWithTypeMatch")).isInstanceOf(class java.lang.String.class);
+ assertThat((Object) parsedJson.read("$.valueWithTypeMatch")).isInstanceOf(java.lang.String.class);
  assertThat((Object) parsedJson.read("$.valueWithMin")).isInstanceOf(java.util.List.class);
  assertThat(parsedJson.read("$.valueWithMin", java.util.Collection.class).size()).isLessThanOrEqualTo(1);
  assertThat((Object) parsedJson.read("$.valueWithMax")).isInstanceOf(java.util.List.class);
@@ -7002,7 +7017,11 @@ assertions and the one from matchers with an <code>and</code> section):</p>
     }, {
       "matchesJsonPath" : "$[?(@.duck =~ /([0-9]{3})/)]"
     }, {
+      "matchesJsonPath" : "$[?(@.duck == 123)]"
+    }, {
       "matchesJsonPath" : "$[?(@.alpha =~ /([\\\\p{L}]*)/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.alpha == 'abc')]"
     }, {
       "matchesJsonPath" : "$[?(@.number =~ /(-?\\\\d*(\\\\.\\\\d+)?)/)]"
     }, {
