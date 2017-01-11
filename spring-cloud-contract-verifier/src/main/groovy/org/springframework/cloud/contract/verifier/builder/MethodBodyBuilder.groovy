@@ -312,7 +312,11 @@ abstract class MethodBodyBuilder {
 			// for the rest we'll do JsonPath matching in brute force
 			bodyMatchers.jsonPathMatchers().each {
 				if (it.value()) {
-					String method = "assertThat(parsedJson.read(${quotedAndEscaped(it.path())}, String.class)).matches(${quotedAndEscaped(it.value())})"
+					String comparisonMethod = it.matchingType() == MatchingType.EQUALITY ? "isEqualTo" : "matches"
+					String valueAsParam = it.value() instanceof String ? quotedAndEscaped(it.value().toString()) : it.value().toString()
+					String classToCastTo = "${it.value().class.simpleName}.class"
+					String path = quotedAndEscaped(it.path())
+					String method = "assertThat(parsedJson.read(${path}, ${classToCastTo})).${comparisonMethod}(${valueAsParam})"
 					bb.addLine(postProcessJsonPathCall(method))
 					addColonIfRequired(bb)
 				} else {

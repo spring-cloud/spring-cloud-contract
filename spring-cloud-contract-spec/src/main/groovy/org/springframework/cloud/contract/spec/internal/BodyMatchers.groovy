@@ -46,6 +46,11 @@ class BodyMatchers {
 		return new MatchingTypeValue(MatchingType.REGEX, regex)
 	}
 
+	MatchingTypeValue byValue(Object value) {
+		assert value
+		return new MatchingTypeValue(MatchingType.EQUALITY, value)
+	}
+
 	boolean equals(o) {
 		if (this.is(o)) return true
 		if (this.getClass() != o.class) return false
@@ -81,7 +86,7 @@ class JsonPathBodyMatcher implements BodyMatcher {
 	}
 
 	@Override
-	String value() {
+	Object value() {
 		return this.matchingTypeValue.value
 	}
 
@@ -106,9 +111,9 @@ class MatchingTypeValue {
 	MatchingType type
 
 	/**
-	 * Value of regular expression
+	 * Value to check
 	 */
-	String value
+	Object value
 
 	/**
 	 * Min occurrence when matching by type

@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.wiremock
 
+import com.github.tomakehurst.wiremock.matching.RegexPattern
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -23,6 +24,8 @@ import org.skyscreamer.jsonassert.JSONAssert
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import spock.lang.Issue
 import spock.lang.Specification
+
+import java.util.regex.Pattern
 
 class DslToWireMockClientConverterSpec extends Specification {
 
@@ -51,6 +54,8 @@ class DslToWireMockClientConverterSpec extends Specification {
 		JSONAssert.assertEquals('''
 {"request":{"method":"PUT","urlPattern":"/[0-9]{2}"},"response":{"status":200}}
 ''', json, false)
+		and:
+			stubMappingIsValidWireMockStub(json)
 	}
 
 	@Issue("196")
@@ -82,6 +87,8 @@ class DslToWireMockClientConverterSpec extends Specification {
 "status":200,"fixedDelayMilliseconds":1000
 }}
 ''', json, false)
+		and:
+			stubMappingIsValidWireMockStub(json)
 	}
 
 	def "should convert DSL file with a nested list to WireMock JSON"() {
@@ -186,6 +193,8 @@ class DslToWireMockClientConverterSpec extends Specification {
   }
 }
 ''', json, false)
+		and:
+			stubMappingIsValidWireMockStub(json)
 	}
 
 
@@ -222,6 +231,8 @@ class DslToWireMockClientConverterSpec extends Specification {
 			JSONAssert.assertEquals('''
 {"request":{"urlPath":"/foos","method":"GET"},"response":{"body":"[{\\"id\\":\\"123\\"},{\\"id\\":\\"567\\"}]"}}
 ''', json, false)
+		and:
+			stubMappingIsValidWireMockStub(json)
 	}
 
 
@@ -248,11 +259,12 @@ class DslToWireMockClientConverterSpec extends Specification {
 """)
 		when:
 			String json = converter.convertContent("test", new ContractMetadata(file.toPath(), false, 0, null))
-			StubMapping.buildFrom(json)
 		then:
 			noExceptionThrown()
 		and:
 			!json.contains('cursor')
+		and:
+			stubMappingIsValidWireMockStub(json)
 	}
 
 	def 'should convert dsl to wiremock to show it in the docs'() {
@@ -287,9 +299,9 @@ class DslToWireMockClientConverterSpec extends Specification {
 			}
 	''')
 		when:
-		String json = converter.convertContent("Test", new ContractMetadata(file.toPath(), false, 0, null))
+			String json = converter.convertContent("Test", new ContractMetadata(file.toPath(), false, 0, null))
 		then:
-		JSONAssert.assertEquals( // tag::wiremock[]
+			JSONAssert.assertEquals( // tag::wiremock[]
 '''
 {
   "request" : {
@@ -318,14 +330,16 @@ class DslToWireMockClientConverterSpec extends Specification {
 '''
 // end::wiremock[]
 				, json, false)
+		and:
+			stubMappingIsValidWireMockStub(json)
 	}
 
 	def 'should convert dsl to wiremock with stub matchers'() {
 		given:
-		def converter = new DslToWireMockClientConverter()
+			def converter = new DslToWireMockClientConverter()
 		and:
-		File file = tmpFolder.newFile("dsl_from_docs.groovy")
-		file.write('''
+			File file = tmpFolder.newFile("dsl_from_docs.groovy")
+			file.write('''
 			org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
@@ -357,7 +371,9 @@ class DslToWireMockClientConverterSpec extends Specification {
 					])
 					stubMatchers {
 						jsonPath('$.duck', byRegex("[0-9]{3}"))
+						jsonPath('$.duck', byValue(123))
 						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+						jsonPath('$.alpha', byValue("abc"))
 						jsonPath('$.number', byRegex(number()))
 						jsonPath('$.aBoolean', byRegex(anyBoolean()))
 						jsonPath('$.date', byDate())
@@ -394,8 +410,10 @@ class DslToWireMockClientConverterSpec extends Specification {
 					testMatchers {
 						// asserts the jsonpath value against manual regex
 						jsonPath('$.duck', byRegex("[0-9]{3}"))
+						jsonPath('$.duck', byValue(123))
 						// asserts the jsonpath value against some default regex
 						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+						jsonPath('$.alpha', byValue("abc"))
 						jsonPath('$.number', byRegex(number()))
 						jsonPath('$.aBoolean', byRegex(anyBoolean()))
 						// asserts vs inbuilt time related regex
@@ -425,9 +443,9 @@ class DslToWireMockClientConverterSpec extends Specification {
 			}
 	''')
 		when:
-		String json = converter.convertContent("Test", new ContractMetadata(file.toPath(), false, 0, null))
+			String json = converter.convertContent("Test", new ContractMetadata(file.toPath(), false, 0, null))
 		then:
-		JSONAssert.assertEquals(//tag::matchers[]
+			JSONAssert.assertEquals(//tag::matchers[]
 				'''
 {
   "request" : {
@@ -451,7 +469,11 @@ class DslToWireMockClientConverterSpec extends Specification {
     }, {
       "matchesJsonPath" : "$[?(@.duck =~ /([0-9]{3})/)]"
     }, {
+      "matchesJsonPath" : "$[?(@.duck == 123)]"
+    }, {
       "matchesJsonPath" : "$[?(@.alpha =~ /([\\\\p{L}]*)/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.alpha == 'abc')]"
     }, {
       "matchesJsonPath" : "$[?(@.number =~ /(-?\\\\d*(\\\\.\\\\d+)?)/)]"
     }, {
@@ -477,6 +499,8 @@ class DslToWireMockClientConverterSpec extends Specification {
 '''
 //end::matchers[]
 				, json, false)
+		and:
+			stubMappingIsValidWireMockStub(json)
 	}
 
 	def 'should convert dsl to wiremock with stub matchers with docs example'() {
@@ -549,6 +573,16 @@ class DslToWireMockClientConverterSpec extends Specification {
 	}
 	'''
 				, json, false)
+		and:
+			stubMappingIsValidWireMockStub(json)
+	}
+	
+	void stubMappingIsValidWireMockStub(String mappingDefinition) {
+		StubMapping stubMapping = StubMapping.buildFrom(mappingDefinition)
+		stubMapping.request.bodyPatterns.findAll { it.isPresent() && it instanceof RegexPattern }.every {
+			Pattern.compile(it.getValue())
+		}
+		assert !mappingDefinition.contains('org.springframework.cloud.contract.spec.internal')
 	}
 
 }

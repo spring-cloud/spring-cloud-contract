@@ -51,7 +51,9 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					])
 					stubMatchers {
 						jsonPath('$.duck', byRegex("[0-9]{3}"))
+						jsonPath('$.duck', byValue(123))
 						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+						jsonPath('$.alpha', byValue("abc"))
 						jsonPath('$.number', byRegex(number()))
 						jsonPath('$.aBoolean', byRegex(anyBoolean()))
 						jsonPath('$.date', byDate())
@@ -87,8 +89,11 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					testMatchers {
 						// asserts the jsonpath value against manual regex
 						jsonPath('$.duck', byRegex("[0-9]{3}"))
+						// asserts the jsonpath value against the provided value
+						jsonPath('$.duck', byValue(123))
 						// asserts the jsonpath value against some default regex
 						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+						jsonPath('$.alpha', byValue("abc"))
 						jsonPath('$.number', byRegex(number()))
 						jsonPath('$.aBoolean', byRegex(anyBoolean()))
 						// asserts vs inbuilt time related regex
@@ -124,7 +129,9 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			def test = blockBuilder.toString()
 		then:
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.duck", String.class)).matches("[0-9]{3}")')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.duck", Integer.class)).isEqualTo(123)')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.alpha", String.class)).matches("[\\\\p{L}]*")')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.alpha", String.class)).isEqualTo("abc")')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.number", String.class)).matches("-?\\\\d*(\\\\.\\\\d+)?")')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.aBoolean", String.class)).matches("(true|false)")')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.date", String.class)).matches("(\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])")')
