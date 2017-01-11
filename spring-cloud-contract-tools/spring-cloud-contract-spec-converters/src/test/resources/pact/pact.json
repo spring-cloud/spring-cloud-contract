@@ -50,8 +50,7 @@
             "match": "type"
           }
         }
-      },
-      "providerState": "a user with an id named 'user' exists"
       }
+    }
   ]
 }

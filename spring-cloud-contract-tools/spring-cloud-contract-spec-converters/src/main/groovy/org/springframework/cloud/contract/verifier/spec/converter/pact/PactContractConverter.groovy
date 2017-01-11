@@ -1,10 +1,16 @@
 package org.springframework.cloud.contract.verifier.spec.converter.pact
 
 import au.com.dius.pact.model.*
+import groovy.json.JsonOutput
 import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
+import org.springframework.cloud.contract.spec.internal.BodyMatchers
+import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingType
+import org.springframework.cloud.contract.spec.internal.QueryParameters
+import org.springframework.cloud.contract.verifier.util.MapConverter
+
 /**
  * Converter of JSON PACT file
  *
@@ -184,6 +190,114 @@ class PactContractConverter implements ContractConverter<Pact> {
 
 	@Override
 	Pact convertTo(Collection<Contract> contract) {
-		return null
+		Provider provider = new Provider()
+		provider.name = "Provider"
+		Consumer consumer = new Consumer()
+		consumer.name = "Consumer"
+		List<RequestResponseInteraction> interactions = contract.find { it.request }.collect { Contract dsl ->
+			RequestResponseInteraction interaction = new RequestResponseInteraction()
+			interaction.description = dsl.description
+			Request request = new Request().with {
+				method = dsl.request.method.serverValue.toString()
+				path = url(dsl)
+				QueryParameters params = queryParams(dsl)
+				if (params) {
+					query = params.parameters.collectEntries {
+						String name = it.name
+						String value = it.serverValue
+						return [(name) : value]
+					}
+				}
+				if (dsl.request.headers) {
+					headers = headers(dsl.request.headers)
+				}
+				if (dsl.request.body) {
+					def json = MapConverter.getTestSideValues(dsl.request.body.serverValue)
+					String jsonBody = JsonOutput.toJson(json)
+					body = new OptionalBody(OptionalBody.State.PRESENT, jsonBody)
+				}
+				if (dsl.request.matchers && dsl.request.matchers.hasMatchers()) {
+					matchingRules = matchingRules(dsl.request.matchers)
+				}
+				return it
+			}
+			Response response = new Response().with {
+				status = dsl.response.status.clientValue as Integer
+				if (dsl.response.headers) {
+					headers = headers(dsl.response.headers)
+				}
+				if (dsl.response.body) {
+					def json = MapConverter.getStubSideValues(dsl.response.body.serverValue)
+					String jsonBody = JsonOutput.toJson(json)
+					body = new OptionalBody(OptionalBody.State.PRESENT, jsonBody)
+				}
+				if (dsl.response.matchers && dsl.response.matchers.hasMatchers()) {
+					matchingRules = matchingRules(dsl.response.matchers)
+				}
+				return it
+			}
+			interaction.request = request
+			interaction.response = response
+			return interaction
+		}
+		return new RequestResponsePact(provider, consumer, interactions)
+	}
+
+	protected Map<String, String> headers(Headers headers) {
+		return headers.entries.collectEntries {
+			String name = it.name
+			String value = it.serverValue
+			return [(name) : value]
+		}
+	}
+
+	protected Map<String, Map<String, Object>> matchingRules(BodyMatchers bodyMatchers) {
+		return bodyMatchers.jsonPathMatchers().collectEntries {
+			MatchingType matchingType = it.matchingType()
+			String key = it.path()
+			Object value = it.value()
+			Integer minTypeOccurrence = it.minTypeOccurrence()
+			Integer maxTypeOccurrence = it.maxTypeOccurrence()
+			Map<String, Object> matchingRule = [:]
+			switch (matchingType) {
+				case MatchingType.EQUALITY:
+					matchingRule << [(MATCH_KEY) : MatchingType.EQUALITY.toString().toLowerCase() as Object]
+					break
+				case MatchingType.TYPE:
+					Map<String, Object> map = [(MATCH_KEY) : MatchingType.TYPE.toString().toLowerCase() as Object]
+					if (minTypeOccurrence) map.put(MIN_KEY, minTypeOccurrence)
+					if (maxTypeOccurrence) map.put(MAX_KEY, maxTypeOccurrence)
+					matchingRule << map
+					break
+				case MatchingType.DATE:
+				case MatchingType.TIME:
+				case MatchingType.TIMESTAMP:
+				case MatchingType.REGEX:
+					matchingRule << [
+							(MATCH_KEY) : MatchingType.REGEX.toString().toLowerCase() as Object,
+							(REGEX_KEY) : value
+					]
+					break
+			}
+			return [(key) : matchingRule]
+		}
+	}
+
+	protected String url(Contract dsl) {
+		if (dsl.request.urlPath) {
+			return dsl.request.urlPath.serverValue.toString()
+		} else if (dsl.request.url) {
+			return dsl.request.url.serverValue.toString()
+		}
+		throw new IllegalStateException("No url provided")
+	}
+
+	protected QueryParameters queryParams(Contract dsl) {
+		if (dsl.request.urlPath) {
+			return dsl.request.urlPath.queryParameters
+		} else if (dsl.request.url) {
+			return dsl.request.url.queryParameters
+		}
+		throw new IllegalStateException("No url provided")
 	}
 }
