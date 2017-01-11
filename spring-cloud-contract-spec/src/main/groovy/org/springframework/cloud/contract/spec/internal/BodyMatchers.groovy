@@ -46,9 +46,8 @@ class BodyMatchers {
 		return new MatchingTypeValue(MatchingType.REGEX, regex)
 	}
 
-	MatchingTypeValue byValue(Object value) {
-		assert value
-		return new MatchingTypeValue(MatchingType.EQUALITY, value)
+	MatchingTypeValue byEquality() {
+		return new MatchingTypeValue(MatchingType.EQUALITY, null)
 	}
 
 	boolean equals(o) {

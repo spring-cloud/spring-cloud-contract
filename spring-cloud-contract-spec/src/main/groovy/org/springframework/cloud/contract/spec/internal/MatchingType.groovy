@@ -11,5 +11,32 @@ import groovy.transform.CompileStatic
  */
 @CompileStatic
 enum MatchingType {
-	EQUALITY, TYPE, DATE, TIME, TIMESTAMP, REGEX
+	/**
+	 * The default approach - ensures that the value received
+	 * in a body for the given path is as presented in the contract body
+	 */
+	EQUALITY,
+	/**
+	 * Verification by type - is the type received in a body
+	 * for the given path is of the same type. If it's a collection
+	 * you can verify number of occurrences
+	 */
+	TYPE,
+	/**
+	 * Special version of regex for date check
+	 */
+	DATE,
+	/**
+	 * Special version of regex for time check
+	 */
+	TIME,
+	/**
+	 * Special version of regex for timestamp check
+	 */
+	TIMESTAMP,
+	/**
+	 * Verification if the value for the given path matches the
+	 * provided regex
+	 */
+	REGEX
 }

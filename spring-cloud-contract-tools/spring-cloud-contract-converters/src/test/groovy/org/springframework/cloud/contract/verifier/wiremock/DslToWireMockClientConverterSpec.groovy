@@ -425,9 +425,9 @@ class DslToWireMockClientConverterSpec extends Specification {
 					])
 					stubMatchers {
 						jsonPath('$.duck', byRegex("[0-9]{3}"))
-						jsonPath('$.duck', byValue(123))
+						jsonPath('$.duck', byEquality())
 						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
-						jsonPath('$.alpha', byValue("abc"))
+						jsonPath('$.alpha', byEquality())
 						jsonPath('$.number', byRegex(number()))
 						jsonPath('$.aBoolean', byRegex(anyBoolean()))
 						jsonPath('$.date', byDate())
@@ -464,10 +464,10 @@ class DslToWireMockClientConverterSpec extends Specification {
 					testMatchers {
 						// asserts the jsonpath value against manual regex
 						jsonPath('$.duck', byRegex("[0-9]{3}"))
-						jsonPath('$.duck', byValue(123))
+						jsonPath('$.duck', byEquality())
 						// asserts the jsonpath value against some default regex
 						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
-						jsonPath('$.alpha', byValue("abc"))
+						jsonPath('$.alpha', byEquality())
 						jsonPath('$.number', byRegex(number()))
 						jsonPath('$.aBoolean', byRegex(anyBoolean()))
 						// asserts vs inbuilt time related regex

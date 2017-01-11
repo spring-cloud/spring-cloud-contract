@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.verifier.builder
 
 import com.jayway.jsonpath.JsonPath
+import com.jayway.jsonpath.PathNotFoundException
 import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
@@ -311,19 +312,17 @@ abstract class MethodBodyBuilder {
 			bb.startBlock()
 			// for the rest we'll do JsonPath matching in brute force
 			bodyMatchers.jsonPathMatchers().each {
-				if (it.value()) {
+				if (it.value() || it.matchingType() == MatchingType.EQUALITY) {
 					String comparisonMethod = it.matchingType() == MatchingType.EQUALITY ? "isEqualTo" : "matches"
-					String valueAsParam = it.value() instanceof String ? quotedAndEscaped(it.value().toString()) : it.value().toString()
-					String classToCastTo = "${it.value().class.simpleName}.class"
+					Object retrievedValue = value(copiedBody, it)
+					String valueAsParam = retrievedValue instanceof String ? quotedAndEscaped(retrievedValue.toString()) : retrievedValue.toString()
+					String classToCastTo = "${retrievedValue.class.simpleName}.class"
 					String path = quotedAndEscaped(it.path())
 					String method = "assertThat(parsedJson.read(${path}, ${classToCastTo})).${comparisonMethod}(${valueAsParam})"
 					bb.addLine(postProcessJsonPathCall(method))
 					addColonIfRequired(bb)
 				} else {
-					Object elementFromBody = JsonPath.parse(copiedBody).read(it.path())
-					if (!elementFromBody) {
-						throw new IllegalStateException("Entry for the provided JSON path [${it.path()}] doesn't exist in the body [${JsonOutput.toJson(copiedBody)}]")
-					}
+					Object elementFromBody = value(copiedBody, it)
 					if (it.minTypeOccurrence() || it.maxTypeOccurrence()) {
 						checkType(bb, it, elementFromBody)
 						String method = "assertThat(parsedJson.read(${quotedAndEscaped(it.path())}, java.util.Collection.class).size()).${sizeCheckMethod(it)}"
@@ -336,6 +335,21 @@ abstract class MethodBodyBuilder {
 			}
 		}
 		processBodyElement(bb, "", convertedResponseBody)
+	}
+
+	protected Object value(def body, BodyMatcher bodyMatcher) {
+		if (bodyMatcher.matchingType() == MatchingType.EQUALITY || !bodyMatcher.value()) {
+			return retrieveObjectByPath(body, bodyMatcher.path())
+		}
+		return bodyMatcher.value()
+	}
+
+	protected Object retrieveObjectByPath(def body, String path) {
+		try {
+			return JsonPath.parse(body).read(path)
+		} catch (PathNotFoundException e) {
+			throw new IllegalStateException("Entry for the provided JSON path [${path}] doesn't exist in the body [${JsonOutput.toJson(body)}]", e)
+		}
 	}
 
 	protected void checkType(BlockBuilder bb, BodyMatcher it, Object elementFromBody) {
