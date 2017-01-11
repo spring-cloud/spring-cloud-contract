@@ -87,7 +87,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			}
 			if (request.matchers?.hasMatchers()) {
 				request.matchers.jsonPathMatchers().each {
-					String newPath = JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(it.path(), it.value())
+					String newPath = JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(it)
 					requestPattern.withRequestBody(WireMock.matchingJsonPath(newPath.replace("\\\\", "\\")))
 				}
 			}

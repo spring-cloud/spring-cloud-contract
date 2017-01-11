@@ -25,7 +25,7 @@ interface BodyMatcher {
 	 * by type, the defined response body contained an integer but the actual one
 	 * contained a string then the assertion should fail
 	 */
-	String value()
+	Object value()
 
 	/**
 	 * Min no of occurrence when matching by type. In all other cases it will be ignored

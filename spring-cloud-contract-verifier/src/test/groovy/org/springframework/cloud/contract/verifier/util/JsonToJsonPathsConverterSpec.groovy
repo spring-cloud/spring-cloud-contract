@@ -24,6 +24,8 @@ import com.toomuchcoding.jsonassert.JsonAssertion
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import net.minidev.json.JSONArray
+import org.springframework.cloud.contract.spec.internal.BodyMatcher
+import org.springframework.cloud.contract.spec.internal.MatchingType
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
 
@@ -758,14 +760,59 @@ class JsonToJsonPathsConverterSpec extends Specification {
 			String jsonPath = '$.a.b.c.d'
 			String regexPattern = ".*"
 		expect:
-			'$.a.b.c[?(@.d =~ /(.*)/)]' == JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(jsonPath, regexPattern)
+			'$.a.b.c[?(@.d =~ /(.*)/)]' == JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher(MatchingType.REGEX, jsonPath, regexPattern))
 	}
 
-	def "should return the path if no regex pattern is provided"() {
+	def "should convert a json path with value to a equality checking json path without quotes for numbers"() {
+		given:
+			String jsonPath = '$.a.b.c.d'
+			Integer value = 1234
+		expect:
+			'$.a.b.c[?(@.d == 1234)]' == JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher(MatchingType.EQUALITY, jsonPath, value))
+	}
+
+	def "should convert a json path with value to a equality checking json path with quotes for strings"() {
+		given:
+			String jsonPath = '$.a.b.c.d'
+			String value = "foo"
+		expect:
+			'$.a.b.c[?(@.d == \'foo\')]' == JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher(MatchingType.EQUALITY, jsonPath, value))
+	}
+
+	def "should return the path if no value is provided"() {
 		given:
 			String jsonPath = '$.a.b.c.d'
 		expect:
-			'$.a.b.c.d' == JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(jsonPath, null)
+			'$.a.b.c.d' == JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher(MatchingType.REGEX, jsonPath, null))
+	}
+
+	private BodyMatcher matcher(final MatchingType matchingType, final String jsonPath, final Object value) {
+		return new BodyMatcher() {
+			@Override
+			MatchingType matchingType() {
+				return matchingType
+			}
+
+			@Override
+			String path() {
+				return jsonPath
+			}
+
+			@Override
+			Object value() {
+				return value
+			}
+
+			@Override
+			Integer minTypeOccurrence() {
+				return null
+			}
+
+			@Override
+			Integer maxTypeOccurrence() {
+				return null
+			}
+		}
 	}
 
 	private void assertThatJsonPathsInMapAreValid(String json, JsonPaths pathAndValues) {

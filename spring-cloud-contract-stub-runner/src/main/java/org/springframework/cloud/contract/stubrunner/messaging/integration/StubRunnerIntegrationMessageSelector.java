@@ -76,7 +76,7 @@ class StubRunnerIntegrationMessageSelector implements MessageSelector {
 		}
 		if (matchers != null && matchers.hasMatchers()) {
 			for (BodyMatcher matcher : matchers.jsonPathMatchers()) {
-				String jsonPath = JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher.path(), matcher.value());
+				String jsonPath = JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher);
 				matches &= matchesJsonPath(parsedJson, jsonPath);
 			}
 		}

@@ -21,15 +21,14 @@ import com.toomuchcoding.jsonassert.JsonAssertion
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
-import org.springframework.cloud.contract.spec.internal.OptionalProperty
 import org.springframework.cloud.contract.spec.internal.BodyMatcher
 import org.springframework.cloud.contract.spec.internal.BodyMatchers
-import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.MatchingType
+import org.springframework.cloud.contract.spec.internal.OptionalProperty
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 import java.util.regex.Pattern
-
 /**
  * I would like to apologize to anyone who is reading this class. Since JSON is a hectic structure
  * this class is also hectic. The idea is to traverse the JSON structure and build a set of
@@ -73,8 +72,7 @@ class JsonToJsonPathsConverter {
 	 */
 	static def removeMatchingJsonPaths(def json, BodyMatchers bodyMatchers) {
 		if (bodyMatchers?.hasMatchers()) {
-			// remove all jsonpaths from the body - for those that remain we continue as usual
-			bodyMatchers.jsonPathMatchers().findAll { it.matchingType() != MatchingType.EQUALITY }.each { BodyMatcher matcher ->
+			bodyMatchers.jsonPathMatchers().each { BodyMatcher matcher ->
 				JsonPath.parse(json).delete(matcher.path())
 			}
 		}
@@ -82,21 +80,32 @@ class JsonToJsonPathsConverter {
 	}
 
 	/**
-	 * For the given JSON path and regex pattern converts it into a JSON path
-	 * that checks the Pattern
+	 * For the given matcher converts it into a JSON path
+	 * that checks the regex pattern or equality
 	 *
-	 * @param path - JSON path
-	 * @param pattern - pattern to check for the last element of JSON path
+	 * @param bodyMatcher
 	 * @return JSON path that checks the regex for its last element
 	 */
-	static String convertJsonPathAndRegexToAJsonPath(String path, String pattern) {
-		if (!pattern) {
+	static String convertJsonPathAndRegexToAJsonPath(BodyMatcher bodyMatcher) {
+		String path = bodyMatcher.path()
+		Object value = bodyMatcher.value()
+		if (!value) {
 			return path
 		}
 		int lastIndexOfDot = path.lastIndexOf(".")
 		String toLastDot = path.substring(0, lastIndexOfDot)
 		String fromLastDot = path.substring(lastIndexOfDot + 1)
-		return "${toLastDot}[?(@.${fromLastDot} =~ /(${pattern})/)]"
+		String comparison = createComparison(bodyMatcher, value)
+		return "${toLastDot}[?(@.${fromLastDot} ${comparison})]"
+	}
+
+	private static String createComparison(BodyMatcher bodyMatcher, Object value) {
+		if (bodyMatcher.matchingType() == MatchingType.EQUALITY) {
+			String wrappedValue = value instanceof Number ? value : "'${value.toString()}'"
+			return "== ${wrappedValue}"
+		} else {
+			return "=~ /(${value})/"
+		}
 	}
 
 	JsonPaths transformToJsonPathWithTestsSideValues(def json) {
