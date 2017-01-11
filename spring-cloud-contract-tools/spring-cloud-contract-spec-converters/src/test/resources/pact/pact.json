@@ -8,6 +8,7 @@
   "interactions": [
     {
       "description": "a retrieve Mallory request",
+      "provider_state": "a user with username 'username' and password 'password' exists",
       "request": {
         "method": "GET",
         "path": "/mallory",

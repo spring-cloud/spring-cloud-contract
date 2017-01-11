@@ -45,11 +45,11 @@ class PactContractConverter implements ContractConverter<Pact> {
 	Collection<Contract> convertFrom(File file) {
 		Pact pact = PactReader.loadPact(file)
 		List<Interaction> interactions = pact.interactions
-		return interactions.withIndex().collect { Interaction interaction, int index ->
+		return interactions.collect { Interaction interaction ->
 			Contract.make {
 				if (interaction instanceof RequestResponseInteraction) {
 					RequestResponseInteraction requestResponseInteraction = (RequestResponseInteraction) interaction
-					description("${defaultDescription(pact, index)}\n\n$requestResponseInteraction.description")
+					description("$requestResponseInteraction.description${providerState(interaction)}")
 					request {
 						method(requestResponseInteraction.request.method)
 						if (requestResponseInteraction.request.query) {
@@ -174,14 +174,12 @@ class PactContractConverter implements ContractConverter<Pact> {
 		}
 	}
 
-	protected String toKeyStartingFromBody(String key) {
-		return key.replace('$.body', '$')
+	protected String providerState(Interaction interaction) {
+		return interaction.providerState ? " ${interaction.providerState}" : ""
 	}
 
-	protected String defaultDescription(Pact pact, int index) {
-		Provider provider = pact.provider
-		Consumer consumer = pact.consumer
-		return """Consumer [${consumer.name}] -> provider [${provider.name}] interaction no [${index}]"""
+	protected String toKeyStartingFromBody(String key) {
+		return key.replace('$.body', '$')
 	}
 
 	@Override

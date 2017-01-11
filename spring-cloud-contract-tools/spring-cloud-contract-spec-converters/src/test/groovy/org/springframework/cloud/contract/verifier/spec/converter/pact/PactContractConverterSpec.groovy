@@ -24,10 +24,10 @@ class PactContractConverterSpec extends Specification {
 			converter.isAccepted(invalidPact)
 	}
 
-	def "should convert from pact to contract"() {
+	def "should convert from contract to pact"() {
 		given:
 			Contract expectedContract = Contract.make {
-				description("Consumer [Consumer] -> provider [Alice Service] interaction no [0]\n\na retrieve Mallory request")
+				description("a retrieve Mallory request a user with username 'username' and password 'password' exists")
 				request {
 					method(GET())
 					url("/mallory") {
