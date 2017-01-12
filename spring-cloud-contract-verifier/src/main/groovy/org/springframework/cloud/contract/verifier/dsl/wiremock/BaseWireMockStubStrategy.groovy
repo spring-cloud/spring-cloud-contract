@@ -20,8 +20,8 @@ import groovy.json.JsonBuilder
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.internal.Headers
-import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.util.MapConverter
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.ContentUtils
 

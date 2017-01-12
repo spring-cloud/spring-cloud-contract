@@ -15,7 +15,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy</artifactId>
+			<artifactId>groovy-json</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>dk.brics.automaton</groupId>

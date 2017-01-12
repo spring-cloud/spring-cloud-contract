@@ -20,7 +20,7 @@ import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.QueryParameters
-import org.springframework.cloud.contract.verifier.util.MapConverter
+import org.springframework.cloud.contract.spec.util.MapConverter
 
 /**
  * Converter of JSON PACT file

@@ -5,6 +5,9 @@ import au.com.dius.pact.model.PactSpecVersion
 import groovy.json.JsonOutput
 import org.skyscreamer.jsonassert.JSONAssert
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.core.io.Resource
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver
+import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Subject
 /**
@@ -210,6 +213,14 @@ class PactContractConverterSpec extends Specification {
 		then:
 			String actual = JsonOutput.toJson(pact.toMap(PactSpecVersion.V2))
 			JSONAssert.assertEquals(expectedJson, actual, false)
+	}
 
+	// TODO: Convert from the dsls to pact and reuse those pacts in samples/pact
+	@Ignore
+	def "should convert contracts from samples to pacts"() {
+		given:
+			Resource[] resources = new PathMatchingResourcePatternResolver().getResources("contracts/*.groovy")
+		expect:
+			converter.isAccepted(invalidPact)
 	}
 }

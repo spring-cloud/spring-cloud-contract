@@ -25,6 +25,7 @@ import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.*
+import org.springframework.cloud.contract.spec.util.MapConverter
 import org.springframework.cloud.contract.verifier.util.*
 
 import java.util.regex.Pattern

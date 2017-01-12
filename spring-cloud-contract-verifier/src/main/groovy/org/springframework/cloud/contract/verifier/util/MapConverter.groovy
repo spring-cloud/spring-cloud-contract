@@ -28,7 +28,9 @@ import org.springframework.cloud.contract.spec.internal.DslProperty
  * @author Marcin Grzejszczak
  *
  * @since 1.0.0
+ * @deprecated use {@link org.springframework.cloud.contract.spec.util.MapConverter}
  */
+@Deprecated
 class MapConverter {
 
 	public static final boolean STUB_SIDE = true

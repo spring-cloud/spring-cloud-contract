@@ -20,6 +20,7 @@ import groovy.json.JsonOutput
 import groovy.json.StringEscapeUtils
 import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.util.MapConverter
 
 import static ContentUtils.extractValue
 /**

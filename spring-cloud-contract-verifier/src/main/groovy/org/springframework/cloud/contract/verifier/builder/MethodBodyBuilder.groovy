@@ -23,11 +23,11 @@ import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.apache.commons.lang3.StringEscapeUtils
 import org.springframework.cloud.contract.spec.internal.*
+import org.springframework.cloud.contract.spec.util.MapConverter;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
-import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import java.util.regex.Pattern
 
