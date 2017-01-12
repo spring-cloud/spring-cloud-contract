@@ -25,10 +25,11 @@ import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.Response
-import org.springframework.cloud.contract.verifier.util.ContentType
+import org.springframework.cloud.contract.spec.util.ContentType
 
-import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromContent
-import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromHeader
+import static org.springframework.cloud.contract.spec.util.ContentUtils.recognizeContentTypeFromContent
+
+import static org.springframework.cloud.contract.spec.util.ContentUtils.recognizeContentTypeFromHeader
 /**
  * Converts a {@link Request} into {@link ResponseDefinition}
  *

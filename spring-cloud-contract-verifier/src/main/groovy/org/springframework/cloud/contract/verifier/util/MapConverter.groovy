@@ -109,7 +109,7 @@ class MapConverter {
 				return clientSide ?
 						getClientOrServerSideValues(dslProperty.clientValue, clientSide) : getClientOrServerSideValues(dslProperty.serverValue, clientSide)
 			} else if (it instanceof GString) {
-				return ContentUtils.extractValue(it , null, {
+				return org.springframework.cloud.contract.spec.util.ContentUtils.extractValue(it , null, {
 					if (it instanceof DslProperty) {
 						return clientSide ?
 								getClientOrServerSideValues((it as DslProperty).clientValue, clientSide) : getClientOrServerSideValues((it as DslProperty).serverValue, clientSide)

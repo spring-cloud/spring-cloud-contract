@@ -18,15 +18,28 @@ package org.springframework.cloud.contract.verifier.dsl.wiremock
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.http.RequestMethod
-import com.github.tomakehurst.wiremock.matching.*
+import com.github.tomakehurst.wiremock.matching.RequestPattern
+import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
+import com.github.tomakehurst.wiremock.matching.StringValuePattern
+import com.github.tomakehurst.wiremock.matching.UrlPattern
 import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.spec.internal.*
+import org.springframework.cloud.contract.spec.internal.Body
+import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.internal.MatchingStrategy
+import org.springframework.cloud.contract.spec.internal.NamedProperty
+import org.springframework.cloud.contract.spec.internal.OptionalProperty
+import org.springframework.cloud.contract.spec.internal.QueryParameters
+import org.springframework.cloud.contract.spec.internal.RegexPatterns
+import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.util.MapConverter
-import org.springframework.cloud.contract.verifier.util.*
+import org.springframework.cloud.contract.spec.util.ContentType
+import org.springframework.cloud.contract.spec.util.ContentUtils
+import org.springframework.cloud.contract.verifier.util.JsonPaths
+import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 
 import java.util.regex.Pattern
 
@@ -109,7 +122,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		
 		if (request.multipart.clientValue instanceof Map) {
 			List<StringValuePattern> multipartPatterns = (request.multipart.clientValue as Map).collect {
-				(it.value instanceof NamedProperty 
+				(it.value instanceof NamedProperty
 				? WireMock.matching(RegexPatterns.multipartFile(it.key, (it.value as NamedProperty).name.clientValue, (it.value as NamedProperty).value.clientValue))
 				: WireMock.matching(RegexPatterns.multipartParam(it.key, it.value)) )
 			}
@@ -142,7 +155,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 		Object url = getUrlIfGstring(request?.url?.clientValue)
 		if (url instanceof Pattern) {
-			return WireMock.urlMatching(url.pattern())
+			return WireMock.urlMatching((url as Pattern).pattern())
 		}
 		return WireMock.urlEqualTo(url.toString())
 	}

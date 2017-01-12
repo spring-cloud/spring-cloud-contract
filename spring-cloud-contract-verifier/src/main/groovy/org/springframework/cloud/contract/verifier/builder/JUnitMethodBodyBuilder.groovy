@@ -30,7 +30,7 @@ import java.util.regex.Pattern
 
 import static groovy.json.StringEscapeUtils.escapeJava
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
-import static org.springframework.cloud.contract.verifier.util.ContentUtils.getJavaMultipartFileParameterContent
+import static org.springframework.cloud.contract.spec.util.ContentUtils.getJavaMultipartFileParameterContent
 
 /**
  * Root class for JUnit method building

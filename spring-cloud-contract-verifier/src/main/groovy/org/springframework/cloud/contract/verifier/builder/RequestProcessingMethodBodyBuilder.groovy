@@ -30,10 +30,10 @@ import org.springframework.cloud.contract.spec.internal.Response
 import org.springframework.cloud.contract.spec.internal.Url
 import org.springframework.cloud.contract.spec.util.MapConverter
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
-import org.springframework.cloud.contract.verifier.util.ContentType
+import org.springframework.cloud.contract.spec.util.ContentType
 
-import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromContent
-import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromHeader
+import static org.springframework.cloud.contract.spec.util.ContentUtils.recognizeContentTypeFromContent
+import static org.springframework.cloud.contract.spec.util.ContentUtils.recognizeContentTypeFromHeader
 
 /**
  * An abstraction for creating a test method that includes processing of an HTTP request

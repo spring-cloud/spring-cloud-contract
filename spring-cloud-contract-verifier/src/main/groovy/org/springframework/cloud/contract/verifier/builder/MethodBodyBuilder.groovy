@@ -25,13 +25,13 @@ import org.apache.commons.lang3.StringEscapeUtils
 import org.springframework.cloud.contract.spec.internal.*
 import org.springframework.cloud.contract.spec.util.MapConverter;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
-import org.springframework.cloud.contract.verifier.util.ContentType
+import org.springframework.cloud.contract.spec.util.ContentType
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 
 import java.util.regex.Pattern
 
-import static org.springframework.cloud.contract.verifier.util.ContentUtils.extractValue
+import static org.springframework.cloud.contract.spec.util.ContentUtils.extractValue
 /**
  * Main class for building method body.
  *
@@ -187,7 +187,7 @@ abstract class MethodBodyBuilder {
 	protected abstract void then(BlockBuilder bb)
 
 	/**
-	 * Returns a {@link org.springframework.cloud.contract.verifier.util.ContentType} for the given request
+	 * Returns a {@link org.springframework.cloud.contract.spec.util.ContentType} for the given request
 	 */
 	protected abstract ContentType getResponseContentType()
 

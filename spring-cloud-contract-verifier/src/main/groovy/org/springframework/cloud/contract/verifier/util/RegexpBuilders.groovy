@@ -23,8 +23,9 @@ import org.springframework.cloud.contract.spec.util.RegexpUtils
 
 import java.util.regex.Pattern
 
-import static ContentUtils.extractValue
 import static org.apache.commons.lang3.StringEscapeUtils.escapeJson
+import static org.springframework.cloud.contract.spec.util.ContentType.*
+import static org.springframework.cloud.contract.spec.util.ContentUtils.extractValue
 
 /**
  * Useful utility methods to work with regular expresisons
@@ -105,7 +106,7 @@ class RegexpBuilders {
 	private final static String WS = /\s*/
 
 	static String buildJSONRegexpMatch(GString gString) {
-		return buildJSONRegexpMatch(extractValue(gString, ContentType.JSON, { DslProperty dslProperty -> dslProperty.clientValue }))
+		return buildJSONRegexpMatch(extractValue(gString, JSON, { DslProperty dslProperty -> dslProperty.clientValue }))
 	}
 
 	static String buildJSONRegexpMatch(Map jsonMap) {

@@ -141,7 +141,7 @@ class JsonToJsonPathsConverter {
 		}
 		JsonPaths pathsAndValues = [] as Set
 		Object convertedJson = MapConverter.getClientOrServerSideValues(json, clientSide)
-		Object jsonWithPatterns = ContentUtils.convertDslPropsToTemporaryRegexPatterns(convertedJson)
+		Object jsonWithPatterns = org.springframework.cloud.contract.spec.util.ContentUtils.convertDslPropsToTemporaryRegexPatterns(convertedJson)
 		MethodBufferingJsonVerifiable methodBufferingJsonPathVerifiable =
 				new DelegatingJsonVerifiable(JsonAssertion.assertThat(JsonOutput.toJson(jsonWithPatterns)).withoutThrowingException())
 		traverseRecursivelyForKey(jsonWithPatterns, methodBufferingJsonPathVerifiable)
@@ -155,7 +155,7 @@ class JsonToJsonPathsConverter {
 	}
 
 	protected def traverseRecursively(Class parentType, MethodBufferingJsonVerifiable key, def value, Closure closure) {
-		value = ContentUtils.returnParsedObject(value)
+		value = org.springframework.cloud.contract.spec.util.ContentUtils.returnParsedObject(value)
 		if (value instanceof String && value) {
 			try {
 				def json = new JsonSlurper().parseText(value)
@@ -175,27 +175,27 @@ class JsonToJsonPathsConverter {
 		} else if (key.isIteratingOverNamelessArray() && value instanceof List && listContainsOnlyPrimitives(value)) {
 			addSizeVerificationForListWithPrimitives(key, closure, value)
 			value.each {
-				traverseRecursively(Object, key.arrayField().contains(ContentUtils.returnParsedObject(it)),
-						ContentUtils.returnParsedObject(it), closure)
+				traverseRecursively(Object, key.arrayField().contains(org.springframework.cloud.contract.spec.util.ContentUtils.returnParsedObject(it)),
+						org.springframework.cloud.contract.spec.util.ContentUtils.returnParsedObject(it), closure)
 			}
 		// JSON containing list of primitives { "partners":[ { "role":"AGENT", "payment_methods":[ "BANK", "CASH" ]	} ]
 		} else if (value instanceof List && listContainsOnlyPrimitives(value)) {
 			addSizeVerificationForListWithPrimitives(key, closure, value)
 			value.each {
-				traverseRecursively(Object, valueToAsserter(key.arrayField(), ContentUtils.returnParsedObject(it)),
-						ContentUtils.returnParsedObject(it), closure)
+				traverseRecursively(Object, valueToAsserter(key.arrayField(), org.springframework.cloud.contract.spec.util.ContentUtils.returnParsedObject(it)),
+						org.springframework.cloud.contract.spec.util.ContentUtils.returnParsedObject(it), closure)
 			}
 		} else if (value instanceof List) {
 			MethodBufferingJsonVerifiable jsonPathVerifiable = createAsserterFromList(key, value)
 			addSizeVerificationForListWithPrimitives(key, closure, value)
 			value.each { def element ->
-				traverseRecursively(List, createAsserterFromListElement(jsonPathVerifiable, ContentUtils.returnParsedObject(element)),
-						ContentUtils.returnParsedObject(element), closure)
+				traverseRecursively(List, createAsserterFromListElement(jsonPathVerifiable, org.springframework.cloud.contract.spec.util.ContentUtils.returnParsedObject(element)),
+						org.springframework.cloud.contract.spec.util.ContentUtils.returnParsedObject(element), closure)
 			}
 			return value
 		} else if (key.isIteratingOverArray()) {
-			traverseRecursively(Object, key.arrayField().contains(ContentUtils.returnParsedObject(value)),
-					ContentUtils.returnParsedObject(value), closure)
+			traverseRecursively(Object, key.arrayField().contains(org.springframework.cloud.contract.spec.util.ContentUtils.returnParsedObject(value)),
+					org.springframework.cloud.contract.spec.util.ContentUtils.returnParsedObject(value), closure)
 		}
 		try {
 			return runClosure(closure, key, value)
@@ -253,7 +253,7 @@ class JsonToJsonPathsConverter {
 
 	private MethodBufferingJsonVerifiable createAsserterFromListElement(MethodBufferingJsonVerifiable jsonPathVerifiable, def element) {
 		if (jsonPathVerifiable.isAssertingAValueInArray()) {
-			def object = ContentUtils.returnParsedObject(element)
+			def object = org.springframework.cloud.contract.spec.util.ContentUtils.returnParsedObject(element)
 			if (object instanceof Pattern) {
 				return jsonPathVerifiable.matches((object as Pattern).pattern())
 			}
@@ -311,7 +311,7 @@ class JsonToJsonPathsConverter {
 	private Map convertWithKey(Class parentType, MethodBufferingJsonVerifiable parentKey, Map map, Closure closureToExecute) {
 		return map.collectEntries {
 			Object entrykey, value ->
-				def convertedValue = ContentUtils.returnParsedObject(value)
+				def convertedValue = org.springframework.cloud.contract.spec.util.ContentUtils.returnParsedObject(value)
 				[entrykey, traverseRecursively(parentType,
 							convertedValue instanceof List ? listContainsOnlyPrimitives(convertedValue) ?
 									parentKey.arrayField(entrykey) :
@@ -327,7 +327,7 @@ class JsonToJsonPathsConverter {
 	}
 
 	protected MethodBufferingJsonVerifiable valueToAsserter(MethodBufferingJsonVerifiable key, Object value) {
-		def convertedValue = ContentUtils.returnParsedObject(value)
+		def convertedValue = org.springframework.cloud.contract.spec.util.ContentUtils.returnParsedObject(value)
 		if (key instanceof FinishedDelegatingJsonVerifiable) {
 			return key
 		}

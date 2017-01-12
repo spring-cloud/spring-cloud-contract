@@ -14,15 +14,13 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.util
+package org.springframework.cloud.contract.spec.util
 
 /**
  * Represents content type
  *
- * @since 1.0.0
- * @deprecated use {@link org.springframework.cloud.contract.spec.util.ContentType}
+ * @since 1.1.0
  */
-@Deprecated
 enum ContentType {
 
 	JSON("application/json"),

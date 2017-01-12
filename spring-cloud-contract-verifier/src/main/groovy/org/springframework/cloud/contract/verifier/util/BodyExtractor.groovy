@@ -22,7 +22,7 @@ import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.util.MapConverter
 
-import static ContentUtils.extractValue
+import static org.springframework.cloud.contract.spec.util.ContentUtils.extractValue
 /**
  * Class that constructs a String from a body. The body can be a GString
  * or a map.
