@@ -3,11 +3,11 @@ package org.springframework.cloud.contract.verifier.spec.converter.pact
 import au.com.dius.pact.model.Pact
 import au.com.dius.pact.model.PactSpecVersion
 import groovy.json.JsonOutput
+import org.codehaus.groovy.control.CompilerConfiguration
 import org.skyscreamer.jsonassert.JSONAssert
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.core.io.Resource
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
-import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Subject
 /**
@@ -215,12 +215,94 @@ class PactContractConverterSpec extends Specification {
 			JSONAssert.assertEquals(expectedJson, actual, false)
 	}
 
-	// TODO: Convert from the dsls to pact and reuse those pacts in samples/pact
-	@Ignore
+	def "should fail to convert from contract to pact when contract has execution property in request"() {
+		given:
+			Collection<Contract> inputContracts = [
+					Contract.make {
+						request {
+							method(GET())
+							url("/mallory")
+							body(
+									id: $(c("foo"), p(execute("foo")))
+							)
+						}
+						response {
+							status(200)
+
+						}
+					}
+			]
+		when:
+			converter.convertTo(inputContracts)
+		then:
+			def e = thrown(UnsupportedOperationException)
+			e.message.contains("execution property")
+	}
+
+	def "should fail to convert from contract to pact when contract has execution property in response"() {
+		given:
+			Collection<Contract> inputContracts = [
+					Contract.make {
+						request {
+							method(GET())
+							url("/mallory")
+						}
+						response {
+							status(200)
+							body(
+									id: $(c(execute("foo")), p("foo"))
+							)
+						}
+					}
+			]
+		when:
+			converter.convertTo(inputContracts)
+		then:
+			def e = thrown(UnsupportedOperationException)
+			e.message.contains("execution property")
+	}
+
 	def "should convert contracts from samples to pacts"() {
 		given:
-			Resource[] resources = new PathMatchingResourcePatternResolver().getResources("contracts/*.groovy")
-		expect:
-			converter.isAccepted(invalidPact)
+			Resource[] contractResources = new PathMatchingResourcePatternResolver().getResources("contracts/*.groovy")
+			Resource[] pactResources = new PathMatchingResourcePatternResolver().getResources("contracts/*.json")
+			Map<String, Collection<Contract>> contracts = contractResources.collectEntries { [(it.filename) : convertAsCollection(it.file)] }
+			Map<String, String> jsonPacts = pactResources.collectEntries { [(it.filename) : it.file.text] }
+		when:
+			Map<String, Pact> pacts = contracts.entrySet().collectEntries { [(it.key) : converter.convertTo(it.value)] }
+		then:
+			pacts.entrySet().each {
+				String convertedPactAsText = JsonOutput.toJson(it.value.toMap(PactSpecVersion.V2))
+				String pactFileName = it.key.replace("groovy", "json")
+				println "File name [${it.key}]"
+				JSONAssert.assertEquals(jsonPacts.get(pactFileName), convertedPactAsText, false)
+			}
+	}
+
+	static Collection<Contract> convertAsCollection(File dsl) {
+		Object object = groovyShell().evaluate(dsl)
+		return listOfContracts(object)
+	}
+
+	private static GroovyShell groovyShell() {
+		return new GroovyShell(PactContractConverterSpec.classLoader, new Binding(), new CompilerConfiguration(sourceEncoding: 'UTF-8'))
+	}
+
+	private static Collection<Contract> listOfContracts(object) {
+		if (object instanceof Collection) {
+			return object as Collection<Contract>
+		} else if (!object instanceof Contract) {
+			throw new RuntimeException("Contract is not returning a Contract or list of Contracts")
+		}
+		return [object] as Collection<Contract>
 	}
 }
+
+
+
+// file creator
+/*
+pacts.entrySet().each {
+	new File("target/${it.key.replace("groovy", "json")}").text = JsonOutput.toJson(it.value.toMap(PactSpecVersion.V2))
+}
+ */

@@ -1,0 +1,42 @@
+{
+  "provider": {
+    "name": "Provider"
+  },
+  "consumer": {
+    "name": "Consumer"
+  },
+  "interactions": [
+    {
+      "description": "",
+      "request": {
+        "method": "PUT",
+        "path": "/fraudcheck",
+        "headers": {
+          "Content-Type": "application/vnd.fraud.v1+json"
+        },
+        "body": {
+          "clientId": "8532032713",
+          "loanAmount": 99999
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/vnd.fraud.v1+json"
+        },
+        "body": {
+          "fraudCheckStatus": "FRAUD",
+          "rejectionReason": "Amount too high"
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pact-specification": {
+      "version": "2.0.0"
+    },
+    "pact-jvm": {
+      "version": "2.4.18"
+    }
+  }
+}

@@ -25,4 +25,8 @@ class StubGeneratorProvider {
 	StubGenerator converterForName(String fileName) {
 		return this.converters.find { it.canHandleFileName(fileName) }
 	}
+
+	StubGenerator firstOrDefault(StubGenerator defaultStubGenerator) {
+		return this.converters.empty ? defaultStubGenerator : this.converters.first()
+	}
 }

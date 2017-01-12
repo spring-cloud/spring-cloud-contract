@@ -17,6 +17,7 @@ import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
 import org.springframework.cloud.contract.spec.internal.BodyMatchers
 import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.QueryParameters
@@ -207,7 +208,7 @@ class PactContractConverter implements ContractConverter<Pact> {
 		consumer.name = "Consumer"
 		List<RequestResponseInteraction> interactions = contract.find { it.request }.collect { Contract dsl ->
 			RequestResponseInteraction interaction = new RequestResponseInteraction()
-			interaction.description = dsl.description
+			interaction.description = dsl.description ?: ""
 			Request request = new Request().with {
 				method = dsl.request.method.serverValue.toString()
 				path = url(dsl)
@@ -223,6 +224,7 @@ class PactContractConverter implements ContractConverter<Pact> {
 					headers = headers(dsl.request.headers, { DslProperty property -> property.serverValue })
 				}
 				if (dsl.request.body) {
+					assertInputContract(dsl.request.body.serverValue)
 					def json = MapConverter.getTestSideValues(dsl.request.body.serverValue)
 					String jsonBody = JsonOutput.toJson(json)
 					body = new OptionalBody(OptionalBody.State.PRESENT, jsonBody)
@@ -238,7 +240,8 @@ class PactContractConverter implements ContractConverter<Pact> {
 					headers = headers(dsl.response.headers, { DslProperty property -> property.clientValue })
 				}
 				if (dsl.response.body) {
-					def json = MapConverter.getStubSideValues(dsl.response.body.serverValue)
+					assertInputContract(dsl.response.body.clientValue)
+					def json = MapConverter.getStubSideValues(dsl.response.body.clientValue)
 					String jsonBody = JsonOutput.toJson(json)
 					body = new OptionalBody(OptionalBody.State.PRESENT, jsonBody)
 				}
@@ -252,6 +255,19 @@ class PactContractConverter implements ContractConverter<Pact> {
 			return interaction
 		}
 		return new RequestResponsePact(provider, consumer, interactions)
+	}
+
+	protected void assertInputContract(parsedJson) {
+		boolean hasExecutionProp = false
+		MapConverter.transformValues(parsedJson, {
+			if (it instanceof ExecutionProperty) {
+				hasExecutionProp = true
+			}
+			return it
+		})
+		if (hasExecutionProp) {
+			throw new UnsupportedOperationException("We can't convert a contract that has execution property")
+		}
 	}
 
 	protected Map<String, String> headers(Headers headers, Closure closure) {

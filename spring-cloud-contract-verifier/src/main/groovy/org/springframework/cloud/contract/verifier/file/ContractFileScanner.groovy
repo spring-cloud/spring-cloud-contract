@@ -84,6 +84,9 @@ class ContractFileScanner {
 	 */
 	private void appendRecursively(File baseDir, ListMultimap<Path, ContractMetadata> result) {
 		List<ContractConverter> converters = SpringFactoriesLoader.loadFactories(ContractConverter, null)
+		if (log.isDebugEnabled()) {
+			log.debug("Found the following contract converters ${converters}")
+		}
 		File[] files = baseDir.listFiles()
 		if (!files) {
 			return;
@@ -147,10 +150,10 @@ class ContractFileScanner {
 	private boolean matchesPattern(File file, Set<PathMatcher> matchers) {
 		for (PathMatcher matcher : matchers) {
 			if (matcher.matches(file.toPath())) {
-				return true;
+				return true
 			}
 		}
-		return false;
+		return false
 	}
 
 	private boolean isContractFile(File file) {
@@ -159,15 +162,15 @@ class ContractFileScanner {
 	
 	private static String getFilenameExtension(String path) {
 		if (path == null) {
-			return null;
+			return null
 		}
 		int extIndex = path.lastIndexOf('.');
 		if (extIndex == -1) {
-			return null;
+			return null
 		}
 		int folderIndex = path.lastIndexOf('/');
 		if (folderIndex > extIndex) {
-			return null;
+			return null
 		}
 		return path.substring(extIndex + 1);
 	}
