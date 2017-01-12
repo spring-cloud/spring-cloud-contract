@@ -1,11 +1,22 @@
 package org.springframework.cloud.contract.verifier.spec.converter.pact
 
-import au.com.dius.pact.model.*
+import au.com.dius.pact.model.BasePact
+import au.com.dius.pact.model.Consumer
+import au.com.dius.pact.model.Interaction
+import au.com.dius.pact.model.OptionalBody
+import au.com.dius.pact.model.Pact
+import au.com.dius.pact.model.PactReader
+import au.com.dius.pact.model.Provider
+import au.com.dius.pact.model.Request
+import au.com.dius.pact.model.RequestResponseInteraction
+import au.com.dius.pact.model.RequestResponsePact
+import au.com.dius.pact.model.Response
 import groovy.json.JsonOutput
 import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
 import org.springframework.cloud.contract.spec.internal.BodyMatchers
+import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.QueryParameters
@@ -205,11 +216,11 @@ class PactContractConverter implements ContractConverter<Pact> {
 					query = params.parameters.collectEntries {
 						String name = it.name
 						String value = it.serverValue
-						return [(name) : value]
+						return [(name) : [value]]
 					}
 				}
 				if (dsl.request.headers) {
-					headers = headers(dsl.request.headers)
+					headers = headers(dsl.request.headers, { DslProperty property -> property.serverValue })
 				}
 				if (dsl.request.body) {
 					def json = MapConverter.getTestSideValues(dsl.request.body.serverValue)
@@ -224,7 +235,7 @@ class PactContractConverter implements ContractConverter<Pact> {
 			Response response = new Response().with {
 				status = dsl.response.status.clientValue as Integer
 				if (dsl.response.headers) {
-					headers = headers(dsl.response.headers)
+					headers = headers(dsl.response.headers, { DslProperty property -> property.clientValue })
 				}
 				if (dsl.response.body) {
 					def json = MapConverter.getStubSideValues(dsl.response.body.serverValue)
@@ -243,10 +254,10 @@ class PactContractConverter implements ContractConverter<Pact> {
 		return new RequestResponsePact(provider, consumer, interactions)
 	}
 
-	protected Map<String, String> headers(Headers headers) {
+	protected Map<String, String> headers(Headers headers, Closure closure) {
 		return headers.entries.collectEntries {
 			String name = it.name
-			String value = it.serverValue
+			String value = closure(it)
 			return [(name) : value]
 		}
 	}

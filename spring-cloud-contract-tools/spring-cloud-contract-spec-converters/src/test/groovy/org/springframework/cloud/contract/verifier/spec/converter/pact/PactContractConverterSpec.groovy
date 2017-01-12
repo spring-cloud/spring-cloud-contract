@@ -27,7 +27,7 @@ class PactContractConverterSpec extends Specification {
 			converter.isAccepted(invalidPact)
 	}
 
-	def "should convert from contract to pact"() {
+	def "should convert from pact to contract"() {
 		given:
 			Contract expectedContract = Contract.make {
 				description("a retrieve Mallory request a user with username 'username' and password 'password' exists")
@@ -39,6 +39,9 @@ class PactContractConverterSpec extends Specification {
 							parameter("status", "good")
 						}
 					}
+					headers {
+						contentType(applicationJson())
+					}
 					body(id: "123", method: "create")
 					stubMatchers {
 						jsonPath('$.id', byRegex("[0-9]{3}"))
@@ -47,7 +50,7 @@ class PactContractConverterSpec extends Specification {
 				response {
 					status(200)
 					headers {
-						header("Content-Type", applicationJson())
+						contentType(applicationJson())
 					}
 					body([[
 							[email: "rddtGwwWMEhnkAPEmsyE",
@@ -70,7 +73,7 @@ class PactContractConverterSpec extends Specification {
 			contracts == [expectedContract]
 	}
 
-	def "should convert from pact to contract"() {
+	def "should convert from contract to pact"() {
 		given:
 			Collection<Contract> inputContracts = [
 					Contract.make {
@@ -82,6 +85,9 @@ class PactContractConverterSpec extends Specification {
 									parameter("name", "ron")
 									parameter("status", "good")
 								}
+							}
+							headers {
+								contentType(applicationJson())
 							}
 							body(
 									id: 123,
@@ -96,7 +102,7 @@ class PactContractConverterSpec extends Specification {
 						response {
 							status(200)
 							headers {
-								header("Content-Type", applicationJson())
+								contentType(applicationJson())
 							}
 							body([[
 										  [email: "rddtGwwWMEhnkAPEmsyE",
@@ -132,7 +138,10 @@ class PactContractConverterSpec extends Specification {
       "request": {
         "method": "GET",
         "path": "\\/mallory",
-        "query": "name=r&name=o&name=n&status=g&status=o&status=o&status=d",
+        "query": "name=ron&status=good",
+        "headers": {
+          "Content-Type": "application\\/json"
+        },
         "body": {
           "id": 123,
           "method": "012",
