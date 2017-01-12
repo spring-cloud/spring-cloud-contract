@@ -338,9 +338,9 @@ assertions and the one from matchers with an `and` section):
     assertThat(parsedJson.read("$.time", String.class)).matches("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
     assertThat((Object) parsedJson.read("$.valueWithTypeMatch")).isInstanceOf(java.lang.String.class);
     assertThat((Object) parsedJson.read("$.valueWithMin")).isInstanceOf(java.util.List.class);
-    assertThat(parsedJson.read("$.valueWithMin", java.util.Collection.class).size()).isLessThanOrEqualTo(1);
+    assertThat(parsedJson.read("$.valueWithMin", java.util.Collection.class).size()).isGreaterThanOrEqualTo(1);
     assertThat((Object) parsedJson.read("$.valueWithMax")).isInstanceOf(java.util.List.class);
-    assertThat(parsedJson.read("$.valueWithMax", java.util.Collection.class).size()).isGreaterThanOrEqualTo(3);
+    assertThat(parsedJson.read("$.valueWithMax", java.util.Collection.class).size()).isLessThanOrEqualTo(3);
     assertThat((Object) parsedJson.read("$.valueWithMinMax")).isInstanceOf(java.util.List.class);
     assertThat(parsedJson.read("$.valueWithMinMax", java.util.Collection.class).size()).isStrictlyBetween(1, 3);
 ----
