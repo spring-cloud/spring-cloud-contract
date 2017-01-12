@@ -60,8 +60,8 @@ class StubRunnerSpringCloudZookeeperAutoConfigurationSpec extends Specification 
 	@BeforeClass
 	@AfterClass
 	static void setupProps() {
-		System.clearProperty("stubrunner.stubs.repository.root");
-		System.clearProperty("stubrunner.stubs.classifier");
+		System.clearProperty("stubrunner.stubs.repository.root")
+		System.clearProperty("stubrunner.stubs.classifier")
 	}
 
 	def 'should make service discovery work'() {
@@ -75,12 +75,12 @@ class StubRunnerSpringCloudZookeeperAutoConfigurationSpec extends Specification 
 
 	def 'should have all apps registered in Service Discovery'() {
 		expect:
-			!zookeeperServiceDiscovery.getServiceDiscovery().queryForInstances('loanIssuance').empty
-			!zookeeperServiceDiscovery.getServiceDiscovery().queryForInstances('someNameThatShouldMapFraudDetectionServer').empty
+			!zookeeperServiceDiscovery.serviceDiscoveryRef.get().queryForInstances('loanIssuance').empty
+			!zookeeperServiceDiscovery.serviceDiscoveryRef.get().queryForInstances('someNameThatShouldMapFraudDetectionServer').empty
 	}
 
 	def cleanup() {
-		zookeeperServiceDiscovery?.serviceDiscovery?.close()
+		zookeeperServiceDiscovery?.serviceDiscoveryRef?.get()?.close()
 	}
 
 	@Configuration
