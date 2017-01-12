@@ -376,9 +376,9 @@ abstract class MethodBodyBuilder {
 		if (bodyMatcher.minTypeOccurrence() != null && bodyMatcher.maxTypeOccurrence() != null) {
 			return "isStrictlyBetween(${bodyMatcher.minTypeOccurrence()}, ${bodyMatcher.maxTypeOccurrence()})"
 		} else if (bodyMatcher.minTypeOccurrence() != null ) {
-			return "isLessThanOrEqualTo(${bodyMatcher.minTypeOccurrence()})"
+			return "isGreaterThanOrEqualTo(${bodyMatcher.minTypeOccurrence()})"
 		} else if (bodyMatcher.maxTypeOccurrence() != null) {
-			return "isGreaterThanOrEqualTo(${bodyMatcher.maxTypeOccurrence()})"
+			return "isLessThanOrEqualTo(${bodyMatcher.maxTypeOccurrence()})"
 		}
 	}
 
