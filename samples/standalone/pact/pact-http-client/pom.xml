@@ -43,6 +43,7 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- tag::pact_dependency[] -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-spec-pact</artifactId>
@@ -54,6 +55,7 @@
 			<version>2.4.18</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- end::pact_dependency[] -->
 
 	</dependencies>
 	<dependencyManagement>

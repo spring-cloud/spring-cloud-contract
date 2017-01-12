@@ -65,6 +65,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<!-- tag::pact_dependency[] -->
 			<plugin>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-maven-plugin</artifactId>
@@ -86,6 +87,7 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+			<!-- end::pact_dependency[] -->
 			<plugin>
 				<artifactId>maven-deploy-plugin</artifactId>
 				<configuration>
