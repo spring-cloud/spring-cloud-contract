@@ -8,10 +8,10 @@
 		<version>1.1.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<artifactId>spring-cloud-contract-spec-converters</artifactId>
+	<artifactId>spring-cloud-contract-spec-pact</artifactId>
 	<packaging>jar</packaging>
-	<name>Spring Cloud Contract Spec Converters</name>
-	<description>Spring Cloud Contract Spec Converters</description>
+	<name>Spring Cloud Contract Spec Converter For Pact</name>
+	<description>Spring Cloud Contract Spec Converter For Pact</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework</groupId>

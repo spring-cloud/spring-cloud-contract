@@ -42,6 +42,12 @@
 			<artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-contract-spec-pact</artifactId>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>au.com.dius</groupId>
 			<artifactId>pact-jvm-model</artifactId>

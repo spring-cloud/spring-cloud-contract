@@ -9,15 +9,8 @@
     {
       "description": "",
       "request": {
-        "method": "PUT",
-        "path": "/fraudcheck",
-        "headers": {
-          "Content-Type": "application/vnd.fraud.v1+json"
-        },
-        "body": {
-          "clientId": "1234567890",
-          "loanAmount": 99999
-        }
+        "method": "GET",
+        "path": "/drunks"
       },
       "response": {
         "status": 200,
@@ -25,8 +18,7 @@
           "Content-Type": "application/vnd.fraud.v1+json;charset=UTF-8"
         },
         "body": {
-          "fraudCheckStatus": "FRAUD",
-          "rejectionReason": "Amount too high"
+          "count": 100
         }
       }
     }

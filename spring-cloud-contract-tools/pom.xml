@@ -19,7 +19,7 @@
 
 	<modules>
 		<module>spring-cloud-contract-converters</module>
-		<module>spring-cloud-contract-spec-converters</module>
+		<module>spring-cloud-contract-spec-pact</module>
 		<module>spring-cloud-contract-maven-plugin</module>
 		<module>spring-cloud-contract-gradle-plugin</module>
 	</modules>

@@ -39,22 +39,10 @@ class PactContractConverter implements ContractConverter<Pact> {
 
 	@Override
 	boolean isAccepted(File file) {
-		if (!isPactOnClasspath()) {
-			return false
-		}
 		try {
 			PactReader.loadPact(file)
 			return true
 		} catch (Exception e) {
-			return false
-		}
-	}
-
-	private boolean isPactOnClasspath() {
-		try {
-			Class.forName("au.com.dius.pact.model.Pact")
-			return true
-		} catch (ClassNotFoundException e) {
 			return false
 		}
 	}
