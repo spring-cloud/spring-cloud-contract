@@ -20,7 +20,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<spring-cloud-contract.version>1.0.3.BUILD-SNAPSHOT</spring-cloud-contract.version>
+		<spring-cloud-contract.version>1.0.3.RELEASE</spring-cloud-contract.version>
 		<spring-cloud-dependencies.version>Camden.BUILD-SNAPSHOT</spring-cloud-dependencies.version>
 	</properties>
 
