@@ -164,10 +164,10 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractMetadata contract2 = new ContractMetadata(file2.toPath(), false, 1, null)
 			contract2.ignored >> false
 		and:
-			SingleTestGenerator testGenerator = new SingleTestGenerator(properties)
+		JavaTestGenerator testGenerator = new JavaTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass([contract, contract2], "test", "test", 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract, contract2], "test", "test", 'com/foo')
 
 		then:
 			classStrings.each { clazz.contains(it) }
