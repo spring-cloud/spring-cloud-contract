@@ -3,9 +3,9 @@ package org.springframework.cloud.contract.verifier.spec.converter.pact
 import au.com.dius.pact.model.Pact
 import au.com.dius.pact.model.PactSpecVersion
 import groovy.json.JsonOutput
-import org.codehaus.groovy.control.CompilerConfiguration
 import org.skyscreamer.jsonassert.JSONAssert
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 import org.springframework.core.io.Resource
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import spock.lang.Specification
@@ -266,7 +266,7 @@ class PactContractConverterSpec extends Specification {
 		given:
 			Resource[] contractResources = new PathMatchingResourcePatternResolver().getResources("contracts/*.groovy")
 			Resource[] pactResources = new PathMatchingResourcePatternResolver().getResources("contracts/*.json")
-			Map<String, Collection<Contract>> contracts = contractResources.collectEntries { [(it.filename) : convertAsCollection(it.file)] }
+			Map<String, Collection<Contract>> contracts = contractResources.collectEntries { [(it.filename) : ContractVerifierDslConverter.convertAsCollection(it.file)] }
 			Map<String, String> jsonPacts = pactResources.collectEntries { [(it.filename) : it.file.text] }
 		when:
 			Map<String, Pact> pacts = contracts.entrySet().collectEntries { [(it.key) : converter.convertTo(it.value)] }
@@ -277,24 +277,6 @@ class PactContractConverterSpec extends Specification {
 				println "File name [${it.key}]"
 				JSONAssert.assertEquals(jsonPacts.get(pactFileName), convertedPactAsText, false)
 			}
-	}
-
-	static Collection<Contract> convertAsCollection(File dsl) {
-		Object object = groovyShell().evaluate(dsl)
-		return listOfContracts(object)
-	}
-
-	private static GroovyShell groovyShell() {
-		return new GroovyShell(PactContractConverterSpec.classLoader, new Binding(), new CompilerConfiguration(sourceEncoding: 'UTF-8'))
-	}
-
-	private static Collection<Contract> listOfContracts(object) {
-		if (object instanceof Collection) {
-			return object as Collection<Contract>
-		} else if (!object instanceof Contract) {
-			throw new RuntimeException("Contract is not returning a Contract or list of Contracts")
-		}
-		return [object] as Collection<Contract>
 	}
 }
 

@@ -89,7 +89,7 @@ class ContractFileScanner {
 		}
 		File[] files = baseDir.listFiles()
 		if (!files) {
-			return;
+			return
 		}
 		files.sort().eachWithIndex { File file, int index ->
 			boolean excluded = matchesPattern(file, excludeMatchers)
@@ -117,17 +117,19 @@ class ContractFileScanner {
 	private void addContractToTestGeneration(List<ContractConverter> converters, ListMultimap<Path, ContractMetadata> result,
 											File[] files, File file, int index) {
 		boolean converted = false
-		for (ContractConverter converter : converters) {
-			if (converter.isAccepted(file)) {
-				addContractToTestGeneration(result, files, file, index, converter.convertFrom(file))
-				converted = true
-				break
+		if (!file.isDirectory()) {
+			for (ContractConverter converter : converters) {
+				if (converter.isAccepted(file)) {
+					addContractToTestGeneration(result, files, file, index, converter.convertFrom(file))
+					converted = true
+					break
+				}
 			}
 		}
 		if (!converted) {
 			appendRecursively(file, result)
 			if (log.isDebugEnabled()) {
-				log.debug("File [$file] wasn't ignored but no converter was applicable.")
+				log.debug("File [$file] wasn't ignored but no converter was applicable. The file is a directory [${file.isDirectory()}]")
 			}
 		}
 	}

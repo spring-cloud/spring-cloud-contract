@@ -119,7 +119,9 @@ public class WireMockHttpServerStub implements HttpServerStub {
 				}
 			}
 			catch (Exception e) {
-				log.warn("Failed to register the stub mapping [" + mappingDescriptor + "]", e);
+				if (log.isDebugEnabled()) {
+					log.debug("Failed to register the stub mapping [" + mappingDescriptor + "]", e);
+				}
 			}
 		}
 	}

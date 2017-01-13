@@ -415,7 +415,7 @@ abstract class MethodBodyBuilder {
 	}
 
 	private String stripFirstChar(String s) {
-		return s.substring(1);
+		return s.substring(1)
 	}
 
 	/**

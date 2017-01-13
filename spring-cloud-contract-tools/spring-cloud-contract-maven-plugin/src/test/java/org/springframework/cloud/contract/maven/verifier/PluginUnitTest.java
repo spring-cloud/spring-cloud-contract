@@ -16,19 +16,20 @@
  */
 package org.springframework.cloud.contract.maven.verifier;
 
-import static io.takari.maven.testing.TestMavenRuntime.newParameter;
-import static io.takari.maven.testing.TestResources.assertFilesNotPresent;
-import static io.takari.maven.testing.TestResources.assertFilesPresent;
-import static org.assertj.core.api.BDDAssertions.then;
-
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
+import org.springframework.util.StringUtils;
 
 import io.takari.maven.testing.TestMavenRuntime;
 import io.takari.maven.testing.TestResources;
+
+import static io.takari.maven.testing.TestMavenRuntime.newParameter;
+import static io.takari.maven.testing.TestResources.assertFilesNotPresent;
+import static io.takari.maven.testing.TestResources.assertFilesPresent;
+import static org.assertj.core.api.BDDAssertions.then;
 
 public class PluginUnitTest {
 
@@ -255,5 +256,20 @@ public class PluginUnitTest {
 		assertFilesNotPresent(basedir, "target/stubs/mappings/");
 		assertFilesPresent(basedir, "target/stubs/contracts/consumer1/Messaging.groovy");
 		assertFilesPresent(basedir, "target/stubs/contracts/pom.xml");
+	}
+
+	@Test
+	public void shouldGenerateContractTestsForPactAndMaintainIndents() throws Exception {
+		File basedir = this.resources.getBasedir("pact");
+
+		this.maven.executeMojo(basedir, "generateTests");
+
+		assertFilesPresent(basedir,
+				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
+		File test = new File(basedir, "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
+		String testContents = FileUtils.readFileToString(test);
+		int countOccurrencesOf = StringUtils
+				.countOccurrencesOf(testContents, "\t\tMockMvcRequestSpecification");
+		then(countOccurrencesOf).isEqualTo(4);
 	}
 }
