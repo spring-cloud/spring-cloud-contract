@@ -17,6 +17,12 @@
         "body": {
           "clientId": "1234567890",
           "loanAmount": 99999
+        },
+        "matchingRules": {
+          "$.body.clientId": {
+            "match": "regex",
+            "regex": "[0-9]{10}"
+          }
         }
       },
       "response": {
@@ -27,6 +33,12 @@
         "body": {
           "fraudCheckStatus": "FRAUD",
           "rejectionReason": "Amount too high"
+        },
+        "matchingRules": {
+          "$.body.fraudCheckStatus": {
+            "match": "regex",
+            "regex": "FRAUD"
+          }
         }
       }
     }
