@@ -1,2 +1,2 @@
 org.springframework.cloud.contract.spec.ContractConverter=\
-org.springframework.cloud.contract.verifier.spec.converter.pact.PactContractConverter
+org.springframework.cloud.contract.verifier.spec.pact.PactContractConverter

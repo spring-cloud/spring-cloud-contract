@@ -1,4 +1,4 @@
-package org.springframework.cloud.contract.verifier.spec.converter.pact
+package org.springframework.cloud.contract.verifier.spec.pact
 
 import au.com.dius.pact.model.BasePact
 import au.com.dius.pact.model.Consumer
