@@ -61,7 +61,7 @@ task wrapper(type: Wrapper) {
 }
 
 clean.doFirst {
-	delete "~/.m2/repository/com/example/http-server-dsl-gradle"
+	delete "~/.m2/repository/com/example/http-server-pact-gradle"
 }
 
 task resolveDependencies {

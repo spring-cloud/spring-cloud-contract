@@ -705,6 +705,114 @@ and the YAML implementation
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/converter/YamlContractConverter.groovy[indent=0,lines=16..-1]
 ----
 
+===== Pact converter
+
+Spring Cloud Contract comes with an out of the box support for https://docs.pact.io/[Pact] representation of contracts.
+In other words instead of using the Groovy DSL you can use Pact files. In this section
+we will present how to add such a support for your project.
+
+====== Pact contract
+
+We will be working on the following example of a Pact contract. We've placed this file under
+the `src/test/resources/contracts` folder.
+
+[source,javascript,indent=0]
+----
+include::{standalone_pact_path}/pact-http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.json[indent=0]
+----
+
+====== Pact for producers
+
+On the producer side you have add to your plugin configuration two additional dependencies.
+One is the Spring Cloud Contract Pact support and the other represents the current
+Pact version that you're using.
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+include::{standalone_pact_path}/pact-http-server/pom.xml[tags=pact_dependency,indent=0]
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
+----
+include::{standalone_pact_path}/pact-http-server/build.gradle[tags=pact_dependency,indent=0]
+----
+
+When you execute the build of your application a test, looking more or less like this, will be generated
+
+[source,java,indent=0]
+----
+	@Test
+	public void validate_shouldMarkClientAsFraud() throws Exception {
+		// given:
+			MockMvcRequestSpecification request = given()
+					.header("Content-Type", "application/vnd.fraud.v1+json")
+					.body("{\"clientId\":\"1234567890\",\"loanAmount\":99999}");
+
+		// when:
+			ResponseOptions response = given().spec(request)
+					.put("/fraudcheck");
+
+		// then:
+			assertThat(response.statusCode()).isEqualTo(200);
+			assertThat(response.header("Content-Type")).isEqualTo("application/vnd.fraud.v1+json;charset=UTF-8");
+		// and:
+			DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+			assertThatJson(parsedJson).field("rejectionReason").isEqualTo("Amount too high");
+		// and:
+			assertThat(parsedJson.read("$.fraudCheckStatus", String.class)).matches("FRAUD");
+	}
+----
+
+and the stub looking like this
+
+[source,javascript,indent=0]
+----
+{
+  "uuid" : "996ae5ae-6834-4db6-8fac-358ca187ab62",
+  "request" : {
+    "url" : "/fraudcheck",
+    "method" : "PUT",
+    "headers" : {
+      "Content-Type" : {
+        "equalTo" : "application/vnd.fraud.v1+json"
+      }
+    },
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[?(@.loanAmount == 99999)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.clientId =~ /([0-9]{10})/)]"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"fraudCheckStatus\":\"FRAUD\",\"rejectionReason\":\"Amount too high\"}",
+    "headers" : {
+      "Content-Type" : "application/vnd.fraud.v1+json;charset=UTF-8"
+    }
+  }
+}
+----
+
+====== Pact for consumers
+
+On the producer side you have add to your project dependencies two additional dependencies.
+One is the Spring Cloud Contract Pact support and the other represents the current
+Pact version that you're using.
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+include::{standalone_pact_path}/pact-http-client/pom.xml[tags=pact_dependency,indent=0]
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
+----
+include::{standalone_pact_path}/pact-http-client/build.gradle[tags=pact_dependency,indent=0]
+----
+
 ==== Custom test generator
 
 If you want to generate tests for different languages than Java or you're
