@@ -29,7 +29,7 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import java.util.regex.Pattern
 
 import static org.apache.commons.lang3.StringEscapeUtils.escapeJava
-import static org.springframework.cloud.contract.spec.util.ContentUtils.getGroovyMultipartFileParameterContent
+import static org.springframework.cloud.contract.verifier.util.ContentUtils.getGroovyMultipartFileParameterContent
 
 /**
  * A {@link RequestProcessingMethodBodyBuilder} implementation that uses Spock

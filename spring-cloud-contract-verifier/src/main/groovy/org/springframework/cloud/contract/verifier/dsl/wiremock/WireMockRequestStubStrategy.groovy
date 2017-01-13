@@ -35,9 +35,9 @@ import org.springframework.cloud.contract.spec.internal.OptionalProperty
 import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.spec.internal.Request
-import org.springframework.cloud.contract.spec.util.MapConverter
-import org.springframework.cloud.contract.spec.util.ContentType
-import org.springframework.cloud.contract.spec.util.ContentUtils
+import org.springframework.cloud.contract.verifier.util.MapConverter
+import org.springframework.cloud.contract.verifier.util.ContentType
+import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 

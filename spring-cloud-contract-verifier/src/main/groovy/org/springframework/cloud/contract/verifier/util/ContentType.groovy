@@ -20,9 +20,7 @@ package org.springframework.cloud.contract.verifier.util
  * Represents content type
  *
  * @since 1.0.0
- * @deprecated use {@link org.springframework.cloud.contract.spec.util.ContentType}
  */
-@Deprecated
 enum ContentType {
 
 	JSON("application/json"),

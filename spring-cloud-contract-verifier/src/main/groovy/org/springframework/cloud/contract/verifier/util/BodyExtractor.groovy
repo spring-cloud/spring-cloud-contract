@@ -20,9 +20,8 @@ import groovy.json.JsonOutput
 import groovy.json.StringEscapeUtils
 import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.internal.DslProperty
-import org.springframework.cloud.contract.spec.util.MapConverter
 
-import static org.springframework.cloud.contract.spec.util.ContentUtils.extractValue
+import static ContentUtils.extractValue
 /**
  * Class that constructs a String from a body. The body can be a GString
  * or a map.

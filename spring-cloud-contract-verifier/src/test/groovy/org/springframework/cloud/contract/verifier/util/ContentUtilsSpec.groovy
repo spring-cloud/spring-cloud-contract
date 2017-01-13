@@ -1,6 +1,7 @@
-package org.springframework.cloud.contract.spec.util
+package org.springframework.cloud.contract.verifier.util
 
 import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.verifier.util.ContentUtils
 import spock.lang.Specification
 
 /**

@@ -23,10 +23,10 @@ import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Input
 import org.springframework.cloud.contract.spec.internal.OutputMessage
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
-import org.springframework.cloud.contract.spec.util.ContentType
+import org.springframework.cloud.contract.verifier.util.ContentType
 
-import static org.springframework.cloud.contract.spec.util.ContentUtils.recognizeContentTypeFromContent
-import static org.springframework.cloud.contract.spec.util.ContentUtils.recognizeContentTypeFromHeader
+import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromContent
+import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromHeader
 
 /**
  * Root class for messaging method building.

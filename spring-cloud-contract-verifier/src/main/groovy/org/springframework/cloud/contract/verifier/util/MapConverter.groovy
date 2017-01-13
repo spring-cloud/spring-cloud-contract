@@ -27,10 +27,8 @@ import org.springframework.cloud.contract.spec.internal.DslProperty
  *
  * @author Marcin Grzejszczak
  *
- * @since 1.0.0
- * @deprecated use {@link org.springframework.cloud.contract.spec.util.MapConverter}
+ * @since 1.1.0
  */
-@Deprecated
 class MapConverter {
 
 	public static final boolean STUB_SIDE = true
@@ -109,7 +107,7 @@ class MapConverter {
 				return clientSide ?
 						getClientOrServerSideValues(dslProperty.clientValue, clientSide) : getClientOrServerSideValues(dslProperty.serverValue, clientSide)
 			} else if (it instanceof GString) {
-				return org.springframework.cloud.contract.spec.util.ContentUtils.extractValue(it , null, {
+				return ContentUtils.extractValue(it , null, {
 					if (it instanceof DslProperty) {
 						return clientSide ?
 								getClientOrServerSideValues((it as DslProperty).clientValue, clientSide) : getClientOrServerSideValues((it as DslProperty).serverValue, clientSide)
