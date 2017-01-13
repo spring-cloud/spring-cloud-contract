@@ -1,0 +1,653 @@
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.221 sec
+contextLoads(org.springframework.cloud.contract.wiremock.AutoConfigureWireMockApplicationTests)  Time elapsed: 0.312 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.822 sec
+contextLoads(org.springframework.cloud.contract.wiremock.AutoConfigureWireMockAutoStubsApplicationTests)  Time elapsed: 0.033 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.662 sec
+contextLoads(org.springframework.cloud.contract.wiremock.AutoConfigureWireMockFilesApplicationTests)  Time elapsed: 0.011 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.857 sec
+contextLoads(org.springframework.cloud.contract.wiremock.AutoConfigureWireMockHttpsPortApplicationTests)  Time elapsed: 0.132 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.728 sec
+contextLoads(org.springframework.cloud.contract.wiremock.AutoConfigureWireMockPortApplicationTests)  Time elapsed: 0.039 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.85 sec
+contextLoads(org.springframework.cloud.contract.wiremock.AutoConfigureWireMockRandomPortApplicationTests)  Time elapsed: 0.038 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.884 sec
+contextLoads(org.springframework.cloud.contract.wiremock.AutoConfigureWireMockRandomPortHttpsApplicationTests)  Time elapsed: 0.073 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.839 sec
+contextLoads(org.springframework.cloud.contract.wiremock.AutoConfigureWireMockStubsAndFilesApplicationTests)  Time elapsed: 0.011 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.833 sec
+contextLoads(org.springframework.cloud.contract.wiremock.AutoConfigureWireMockStubsAndMultipleFilesApplicationTests)  Time elapsed: 0.01 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.664 sec
+contextLoads(org.springframework.cloud.contract.wiremock.AutoConfigureWireMockStubsApplicationTests)  Time elapsed: 0.012 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.912 sec
+contextLoads(org.springframework.cloud.contract.wiremock.WiremockHttpsServerApplicationTests)  Time elapsed: 0.069 sec
+Tests run: 27, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.544 sec
+simpleGet(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.019 sec
+simpleGetWithContentType(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.001 sec
+simplePost(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.006 sec
+postWithRequestThatHasNonMatchingRegex(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.006 sec
+postWithRequestThatHasNonMatchingJsonPaths(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.1 sec
+postWithRequestThatHasNonMatchingXml(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.142 sec
+simpleGetWithoutContentType(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.003 sec
+simpleGetWithBodyFileCustomLocationDirectory(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.002 sec
+getWithPriortyOrder(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.001 sec
+postWithBodyMatchingJsonPaths(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.007 sec
+postWithBodyMatchingXml(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.021 sec
+postWithBodyMatchingJson(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.004 sec
+simpleGetWithBodyFileCustomLocation(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.002 sec
+simplePutShouldFail(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.001 sec
+postWithBodyMatchingRegex(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.002 sec
+postWithBodyMatchingXPath(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.046 sec
+postWithHeader(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.005 sec
+simpleGetWithAllStubsInDirectoryWithPeriod(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.001 sec
+postWithMoreExactHeaderMatchButOrdered(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.003 sec
+postWithHeaderMatches(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.001 sec
+postWithHeaderContains(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.001 sec
+postWithMoreExactHeaderMatch(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.002 sec
+postWithRequestThatHasNonMatchingJson(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.014 sec
+simpleGetWithEmptyPath(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.001 sec
+simpleGetWithBodyFile(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.001 sec
+simpleGetWithAllStubs(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.007 sec
+postWithRequestThatHasNonMatchingXPaths(org.springframework.cloud.contract.wiremock.WiremockMockServerApplicationTests)  Time elapsed: 0.003 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.761 sec
+contextLoads(org.springframework.cloud.contract.wiremock.WiremockServerApplicationTests)  Time elapsed: 0.028 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.528 sec
+contextLoads(org.springframework.cloud.contract.wiremock.WiremockServerRestDocsApplicationTests)  Time elapsed: 0.149 sec
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.31 sec
+matchesRequest(org.springframework.cloud.contract.wiremock.WiremockServerRestDocsMatcherApplicationTests)  Time elapsed: 0.021 sec
+doesNotMatch(org.springframework.cloud.contract.wiremock.WiremockServerRestDocsMatcherApplicationTests)  Time elapsed: 0.026 sec
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.789 sec
+should work for http(org.springframework.cloud.contract.spec.internal.ContractSpec)  Time elapsed: 0.322 sec
+should work for messaging(org.springframework.cloud.contract.spec.internal.ContractSpec)  Time elapsed: 0.068 sec
+should generate a value if only regex is passed for client(org.springframework.cloud.contract.spec.internal.ContractSpec)  Time elapsed: 0.052 sec
+should set a description(org.springframework.cloud.contract.spec.internal.ContractSpec)  Time elapsed: 0.007 sec
+should mark a contract ignored(org.springframework.cloud.contract.spec.internal.ContractSpec)  Time elapsed: 0.008 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 sec
+should insert passed value in place of $it placeholder(org.springframework.cloud.contract.spec.internal.ExecutionPropertySpec)  Time elapsed: 0.004 sec
+Tests run: 60, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.109 sec
+should generate a regex for ip address [123.123.123.123] that is a match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0.003 sec
+should generate a regex for ip address [a.b.] that is a match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex for hostname [https://asd.com] that is a match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0.002 sec
+should generate a regex for hostname [https://asd.com:8080] that is a match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex for hostname [https://localhost] that is a match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0.001 sec
+should generate a regex for hostname [https://localhost:8080] that is a match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex for hostname [https://asd.com/asd] that is a match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex for hostname [asd.com] that is a match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex for email [asd@asd.com] that is a match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex for email [a.b.] that is a match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex for url [ftp://asd.com:9090/asd/a?a=b] that is a match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0.002 sec
+should generate a regex for url [a.b.] that is a match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex for a number [1] that is a match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0.001 sec
+should generate a regex for a number [1.0] that is a match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex for a number [0.1] that is a match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0.001 sec
+should generate a regex for a number [.1] that is a match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0.001 sec
+should generate a regex for a number [1.] that is a match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex for a uuid [c81a87d0-b0be-4593-a568-fb5c365c755e] that is a match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex for a uuid [cec1a546-7eb1-4aa8-91b7-75f8a06226aa] that is a match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0.001 sec
+should generate a regex for a uuid [afb0017f-f3f0-4991-a85a-8f8c26a63128!] that is a match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex for a uuid [dog] that is a match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0.001 sec
+should generate a regex for a uuid [5] that is a match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0.001 sec
+should generate a regex with date [2014-03-01] in YYYY-MM-DD format that should match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0.001 sec
+should generate a regex with date [1014-03-01] in YYYY-MM-DD format that should match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0.001 sec
+should generate a regex with date [1014-3-01] in YYYY-MM-DD format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with date [14-03-01] in YYYY-MM-DD format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with date [1014-12-01] in YYYY-MM-DD format that should match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0.001 sec
+should generate a regex with date [1014-12-31] in YYYY-MM-DD format that should match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with date [1014-12-1] in YYYY-MM-DD format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with date [1014-12-32] in YYYY-MM-DD format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with date [1014-13-31] in YYYY-MM-DD format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with date [1014-20-30] in YYYY-MM-DD format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with date [5] in YYYY-MM-DD format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with datetime [2014-03-01T12:23:45] in YYYY-MM-DDTHH:mm:ss format that should match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0.001 sec
+should generate a regex with datetime [1014-03-01T23:59:59] in YYYY-MM-DDTHH:mm:ss format that should match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0.001 sec
+should generate a regex with datetime [1014-3-01T01:01:01] in YYYY-MM-DDTHH:mm:ss format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with datetime [1014-03-01T00:00:00] in YYYY-MM-DDTHH:mm:ss format that should match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with datetime [1014-03-01T00:00:0] in YYYY-MM-DDTHH:mm:ss format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with datetime [1014-03-01T00:0:01] in YYYY-MM-DDTHH:mm:ss format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with datetime [1014-03-01T0:01:01] in YYYY-MM-DDTHH:mm:ss format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with datetime [1014-03-0100:01:01] in YYYY-MM-DDTHH:mm:ss format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0.001 sec
+should generate a regex with datetime [14-03-01T12:23:45] in YYYY-MM-DDTHH:mm:ss format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with datetime [1014-12-01T12:23:45] in YYYY-MM-DDTHH:mm:ss format that should match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0.001 sec
+should generate a regex with datetime [1014-12-31T12:23:45] in YYYY-MM-DDTHH:mm:ss format that should match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with datetime [1014-12-1T12:23:45] in YYYY-MM-DDTHH:mm:ss format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with datetime [1014-12-32T12:23:45] in YYYY-MM-DDTHH:mm:ss format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with datetime [1014-13-31T12:23:45] in YYYY-MM-DDTHH:mm:ss format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0.001 sec
+should generate a regex with datetime [1014-20-30T12:23:45] in YYYY-MM-DDTHH:mm:ss format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with datetime [1014-20-30T24:23:45] in YYYY-MM-DDTHH:mm:ss format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with datetime [1014-20-30T23:60:45] in YYYY-MM-DDTHH:mm:ss format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with datetime [1014-20-30T23:59:60] in YYYY-MM-DDTHH:mm:ss format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with time [12:23:45] in HH:mm:ss format that should match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with time [23:59:59] in HH:mm:ss format that should match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with time [00:00:00] in HH:mm:ss format that should match [true](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with time [00:00:0] in HH:mm:ss format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with time [00:0:01] in HH:mm:ss format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with time [0:01:01] in HH:mm:ss format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with time [24:23:45] in HH:mm:ss format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with time [23:60:45] in HH:mm:ss format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+should generate a regex with time [23:59:60] in HH:mm:ss format that should match [false](org.springframework.cloud.contract.spec.internal.RegexPatternsSpec)  Time elapsed: 0 sec
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.038 sec
+should throw exception when on request side a value contains regex for server(org.springframework.cloud.contract.spec.internal.RequestSpec)  Time elapsed: 0.024 sec
+should generate a value if only regex is passed for client(org.springframework.cloud.contract.spec.internal.RequestSpec)  Time elapsed: 0.011 sec
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.036 sec
+should throw exception when on response side a value contains regex for client(org.springframework.cloud.contract.spec.internal.ResponseSpec)  Time elapsed: 0.023 sec
+should generate a value if only regex is passed for server(org.springframework.cloud.contract.spec.internal.ResponseSpec)  Time elapsed: 0.01 sec
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.626 sec
+should return explicit base class if provided and no default package for base classes is provided(org.springframework.cloud.contract.verifier.builder.ClassBuilderSpec)  Time elapsed: 0.166 sec
+should return a class from the generated path by taking two last folders when package with base classes is provided(org.springframework.cloud.contract.verifier.builder.ClassBuilderSpec)  Time elapsed: 0.051 sec
+should return a class from the generated path by taking two last folders when package with base classes is provided and contains invalid chars(org.springframework.cloud.contract.verifier.builder.ClassBuilderSpec)  Time elapsed: 0.001 sec
+should return a class from the generated path by taking a single folder when package with base classes is provided and there are not enough package elements(org.springframework.cloud.contract.verifier.builder.ClassBuilderSpec)  Time elapsed: 0 sec
+should return a class from mappings regardless of other entries if mapping exists(org.springframework.cloud.contract.verifier.builder.ClassBuilderSpec)  Time elapsed: 0.02 sec
+should return the first matching base class when provided mapping doesn't match(org.springframework.cloud.contract.verifier.builder.ClassBuilderSpec)  Time elapsed: 0.002 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.718 sec
+should convert dsl with optionals to proper Spock test(org.springframework.cloud.contract.verifier.builder.ContractHttpDocsSpec)  Time elapsed: 0.707 sec
+Tests run: 50, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.532 sec
+should generate assertions for simple response body with JaxRsClientSpockMethodRequestProcessingBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 1.133 sec
+should generate assertions for simple response body with JaxRsClientJUnitMethodBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 1.03 sec
+should generate assertions for null and boolean values with JaxRsClientSpockMethodRequestProcessingBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.23 sec
+should generate assertions for null and boolean values with JaxRsClientJUnitMethodBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.405 sec
+should generate assertions for simple response body constructed from map with a list with JaxRsClientSpockMethodRequestProcessingBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.27 sec
+should generate assertions for simple response body constructed from map with a list with JaxRsClientJUnitMethodBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.151 sec
+should generate assertions for simple response body constructed from map with a list with JaxRsClientSpockMethodRequestProcessingBodyBuilder with array size check(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.189 sec
+should generate assertions for simple response body constructed from map with a list with JaxRsClientJUnitMethodBodyBuilder with array size check(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.137 sec
+should generate proper request when body constructed from map with a list with JaxRsClientSpockMethodRequestProcessingBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.246 sec
+should generate proper request when body constructed from map with a list with JaxRsClientJUnitMethodBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.098 sec
+should generate proper request when body constructed from GString with JaxRsClientSpockMethodRequestProcessingBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.199 sec
+should generate proper request when body constructed from GString with JaxRsClientJUnitMethodBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.079 sec
+should generate assertions for array in response body with JaxRsClientSpockMethodRequestProcessingBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.153 sec
+should generate assertions for array in response body with JaxRsClientJUnitMethodBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.066 sec
+should generate assertions for array inside response body element with JaxRsClientSpockMethodRequestProcessingBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.148 sec
+should generate assertions for array inside response body element with JaxRsClientJUnitMethodBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.078 sec
+should generate assertions for nested objects in response body with JaxRsClientSpockMethodRequestProcessingBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.167 sec
+should generate assertions for nested objects in response body with JaxRsClientJUnitMethodBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.061 sec
+should generate regex assertions for map objects in response body with #Error:methodBodyName(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.172 sec
+should generate regex assertions for map objects in response body with #Error:methodBodyName(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.089 sec
+should generate regex assertions for string objects in response body with JaxRsClientSpockMethodRequestProcessingBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.229 sec
+should generate regex assertions for string objects in response body with JaxRsClientJUnitMethodBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.074 sec
+should ignore 'Accept' header and use 'request' method with JaxRsClientSpockMethodRequestProcessingBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.201 sec
+should ignore 'Accept' header and use 'request' method with JaxRsClientJUnitMethodBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.062 sec
+should ignore 'Content-Type' header and use 'entity' method with JaxRsClientSpockMethodRequestProcessingBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.139 sec
+should ignore 'Content-Type' header and use 'entity' method with JaxRsClientJUnitMethodBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.056 sec
+should generate a call with an url path and query parameters with JaxRsClientSpockMethodRequestProcessingBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.148 sec
+should generate a call with an url path and query parameters with JaxRsClientJUnitMethodBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.056 sec
+should generate a call with an url path and query parameters with url containing a pattern with JaxRsClientSpockMethodRequestProcessingBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.197 sec
+should generate a call with an url path and query parameters with url containing a pattern with JaxRsClientJUnitMethodBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.058 sec
+should generate test for empty body with JaxRsClientSpockMethodRequestProcessingBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.149 sec
+should generate test for empty body with JaxRsClientJUnitMethodBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.053 sec
+should generate test for String in response body with #Error:methodBodyName(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.234 sec
+should generate test for String in response body with #Error:methodBodyName(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.067 sec
+should generate test with uppercase method name with JaxRsClientSpockMethodRequestProcessingBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.171 sec
+should generate test with uppercase method name with JaxRsClientJUnitMethodBodyBuilder(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.063 sec
+should generate a call with an url path and query parameters with JUnit - we'll put it into docs(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.119 sec
+should execute custom method for complex structures on the response side(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.023 sec
+should execute custom method for more complex structures on the response side when using Spock(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.03 sec
+should execute custom method for more complex structures on the response side when using JUnit(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.045 sec
+should support body matching in response(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.085 sec
+should support body matching in response in Spock(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.226 sec
+should support custom method execution in response(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.04 sec
+should support custom method execution in response in Spock(org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.196 sec
+should allow c/p version of consumer producer[0](org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.177 sec
+should allow c/p version of consumer producer[1](org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.077 sec
+should allow easier way of providing dynamic values for [JaxRsClientSpockMethodRequestProcessingBodyBuilder](org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.247 sec
+should allow easier way of providing dynamic values for [JaxRsClientJUnitMethodBodyBuilder](org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.252 sec
+should resolve Optional object when used in query parameters for [JaxRsClientSpockMethodRequestProcessingBodyBuilder](org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.279 sec
+should resolve Optional object when used in query parameters for [JaxRsClientJUnitMethodBodyBuilder](org.springframework.cloud.contract.verifier.builder.JaxRsClientMethodBuilderSpec)  Time elapsed: 0.058 sec
+Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.605 sec
+should work for triggered based messaging with Spock(org.springframework.cloud.contract.verifier.builder.MessagingMethodBodyBuilderSpec)  Time elapsed: 0.142 sec
+should work for triggered based messaging with JUnit(org.springframework.cloud.contract.verifier.builder.MessagingMethodBodyBuilderSpec)  Time elapsed: 0.061 sec
+should generate tests triggered by a message for Spock(org.springframework.cloud.contract.verifier.builder.MessagingMethodBodyBuilderSpec)  Time elapsed: 0.133 sec
+should generate tests triggered by a message for JUnit(org.springframework.cloud.contract.verifier.builder.MessagingMethodBodyBuilderSpec)  Time elapsed: 0.097 sec
+should generate tests without destination, triggered by a message(org.springframework.cloud.contract.verifier.builder.MessagingMethodBodyBuilderSpec)  Time elapsed: 0.041 sec
+should generate tests without destination, triggered by a message for JUnit(org.springframework.cloud.contract.verifier.builder.MessagingMethodBodyBuilderSpec)  Time elapsed: 0.025 sec
+should generate tests without headers for JUnit(org.springframework.cloud.contract.verifier.builder.MessagingMethodBodyBuilderSpec)  Time elapsed: 0.033 sec
+should generate tests without headers for Spock(org.springframework.cloud.contract.verifier.builder.MessagingMethodBodyBuilderSpec)  Time elapsed: 0.031 sec
+should generate tests without headers for JUnit with consumer / producer notation(org.springframework.cloud.contract.verifier.builder.MessagingMethodBodyBuilderSpec)  Time elapsed: 0.038 sec
+Tests run: 94, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 8.935 sec
+should generate assertions for simple response body with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.124 sec
+should generate assertions for simple response body with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.077 sec
+should generate assertions for null and boolean values with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.107 sec
+should generate assertions for null and boolean values with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.082 sec
+should generate assertions for simple response body constructed from map with a list with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.11 sec
+should generate assertions for simple response body constructed from map with a list with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.051 sec
+should generate assertions for simple response body constructed from map with a list with MockMvcSpockMethodBuilder with array size check(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.183 sec
+should generate assertions for simple response body constructed from map with a list with MockMvcJUnitMethodBuilder with array size check(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.049 sec
+should generate proper request when body constructed from map with a list MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.112 sec
+should generate proper request when body constructed from map with a list MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.047 sec
+should generate proper request when body constructed from GString with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.459 sec
+should generate proper request when body constructed from GString with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.071 sec
+should generate assertions for a response body containing map with integers as keys with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.155 sec
+should generate assertions for a response body containing map with integers as keys with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.066 sec
+should generate assertions for array in response body with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.111 sec
+should generate assertions for array in response body with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.052 sec
+should generate assertions for array inside response body element with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.118 sec
+should generate assertions for array inside response body element with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.09 sec
+should generate assertions for nested objects in response body with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.12 sec
+should generate assertions for nested objects in response body with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.057 sec
+should generate regex assertions for map objects in response body with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.131 sec
+should generate regex assertions for map objects in response body with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.074 sec
+should generate regex assertions for string objects in response body with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.164 sec
+should generate regex assertions for string objects in response body with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.1 sec
+should generate escaped regex assertions for string objects in response body with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.115 sec
+should generate escaped regex assertions for string objects in response body with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.058 sec
+should generate a call with an url path and query parameters with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.118 sec
+should generate a call with an url path and query parameters with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.057 sec
+should generate a call with an url path and query parameters with url containing a pattern with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.142 sec
+should generate a call with an url path and query parameters with url containing a pattern with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.061 sec
+should generate test for empty body with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.125 sec
+should generate test for empty body with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.04 sec
+should generate test for String in response body with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.142 sec
+should generate test for String in response body with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.066 sec
+should generate regex test for String in response header with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.114 sec
+should generate regex test for String in response header with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.055 sec
+should generate regex with helper method with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.122 sec
+should generate regex with helper method with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.061 sec
+should work with more complex stuff and jsonpaths with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.165 sec
+should work with more complex stuff and jsonpaths with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.066 sec
+should work properly with GString url with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.138 sec
+should work properly with GString url with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.05 sec
+should resolve properties in GString with regular expression with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.131 sec
+should resolve properties in GString with regular expression with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.049 sec
+should not omit the optional field in the test creation with MockMvcSpockMethodBodyBuilder[0](org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.107 sec
+should not omit the optional field in the test creation with MockMvcSpockMethodBodyBuilder[1](org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.095 sec
+should not omit the optional field in the test creation with MockMvcJUnitMethodBodyBuilder[0](org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.045 sec
+should not omit the optional field in the test creation with MockMvcJUnitMethodBodyBuilder[1](org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.048 sec
+should make the execute method work with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.012 sec
+should make the execute method work with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.003 sec
+should support inner map and list definitions with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.124 sec
+should support inner map and list definitions with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.044 sec
+shouldn't generate unicode escape characters with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.124 sec
+shouldn't generate unicode escape characters with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.054 sec
+should generate proper test code when having multiline body with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.107 sec
+should generate proper test code when having multiline body with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.034 sec
+should generate proper test code when having multipart parameters with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.111 sec
+should generate proper test code when having multipart parameters with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.04 sec
+should generate proper test code when having multipart parameters with named as map with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.104 sec
+should generate proper test code when having multipart parameters with named as map with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.072 sec
+should parse JSON with arrays using Spock(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.103 sec
+should parse JSON with arrays using JUnit(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.055 sec
+should work with execution property with MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.004 sec
+should work with execution property with MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.002 sec
+should generate proper test code with map inside list(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.112 sec
+should generate proper test code with top level array using MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.095 sec
+should generate proper test code with top level array using MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.039 sec
+should generate proper test code with top level array using MockMvcSpockMethodBuilder with array size check(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.09 sec
+should generate proper test code with top level array using MockMvcJUnitMethodBuilder with array size check(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.042 sec
+should generate proper test code with top level array or arrays using MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.104 sec
+should generate proper test code with top level array or arrays using MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.055 sec
+should generate async body when async flag set in response[0](org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.1 sec
+should generate async body when async flag set in response[1](org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.039 sec
+should generate proper test code with array of primitives using MockMvcSpockMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.111 sec
+should generate proper test code with array of primitives using MockMvcJUnitMethodBuilder(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.046 sec
+should not escape dollar in Spock regex tests(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.118 sec
+should generate the regular expression for the other side of communication(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.126 sec
+should execute custom method for complex structures on the response side(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.101 sec
+should execute custom method for more complex structures on the response side when using Spock(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.009 sec
+should execute custom method for more complex structures on the response side when using JUnit(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.008 sec
+should execute custom method for request headers(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.133 sec
+should support body matching in response(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.135 sec
+should support custom method execution in response(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.153 sec
+should allow c/p version of consumer producer(org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.097 sec
+should allow easier way of providing dynamic values for [MockMvcSpockMethodBuilder](org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.125 sec
+should allow easier way of providing dynamic values for [MockMvcJUnitMethodBuilder](org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.069 sec
+should escape regex properly for content type[0](org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.115 sec
+should escape regex properly for content type[1](org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.045 sec
+should resolve Optional object when used in query parameters[0](org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.097 sec
+should resolve Optional object when used in query parameters[1](org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.036 sec
+should resolve plain text properly via headers[0](org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.088 sec
+should resolve plain text properly via headers[1](org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.038 sec
+should escape quotes properly using [MockMvcSpockMethodBuilder](org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.111 sec
+should escape quotes properly using [MockMvcJUnitMethodBuilder](org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderSpec)  Time elapsed: 0.043 sec
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.917 sec
+should allow to set dynamic values via stub / test matchers for [MockMvcSpockMethodBuilder](org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderWithMatchersSpec)  Time elapsed: 0.198 sec
+should allow to set dynamic values via stub / test matchers for [MockMvcJUnitMethodBuilder](org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderWithMatchersSpec)  Time elapsed: 0.29 sec
+should allow to set dynamic values via stub / test matchers for [JaxRsClientSpockMethodRequestProcessingBodyBuilder](org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderWithMatchersSpec)  Time elapsed: 0.137 sec
+should allow to set dynamic values via stub / test matchers for [JaxRsClientJUnitMethodBodyBuilder](org.springframework.cloud.contract.verifier.builder.MockMvcMethodBodyBuilderWithMatchersSpec)  Time elapsed: 0.286 sec
+Tests run: 15, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.353 sec
+should build test class for JUNIT(org.springframework.cloud.contract.verifier.builder.SingleTestGeneratorSpec)  Time elapsed: 0.277 sec
+should build test class for JUNIT(org.springframework.cloud.contract.verifier.builder.SingleTestGeneratorSpec)  Time elapsed: 0.058 sec
+should build test class for SPOCK(org.springframework.cloud.contract.verifier.builder.SingleTestGeneratorSpec)  Time elapsed: 0.071 sec
+should build test class for SPOCK(org.springframework.cloud.contract.verifier.builder.SingleTestGeneratorSpec)  Time elapsed: 0.039 sec
+should build test class for JUNIT and mode MOCKMVC with two files(org.springframework.cloud.contract.verifier.builder.SingleTestGeneratorSpec)  Time elapsed: 0.134 sec
+should build test class for JUNIT and mode EXPLICIT with two files(org.springframework.cloud.contract.verifier.builder.SingleTestGeneratorSpec)  Time elapsed: 0.122 sec
+should build test class for SPOCK and mode MOCKMVC with two files(org.springframework.cloud.contract.verifier.builder.SingleTestGeneratorSpec)  Time elapsed: 0.08 sec
+should build test class for SPOCK and mode EXPLICIT with two files(org.springframework.cloud.contract.verifier.builder.SingleTestGeneratorSpec)  Time elapsed: 0.087 sec
+should build JaxRs test class for JUNIT(org.springframework.cloud.contract.verifier.builder.SingleTestGeneratorSpec)  Time elapsed: 0.058 sec
+should build JaxRs test class for SPOCK(org.springframework.cloud.contract.verifier.builder.SingleTestGeneratorSpec)  Time elapsed: 0.038 sec
+should work if there is messaging and rest in one folder JUNIT(org.springframework.cloud.contract.verifier.builder.SingleTestGeneratorSpec)  Time elapsed: 0.101 sec
+should work if there is messaging and rest in one folder SPOCK(org.springframework.cloud.contract.verifier.builder.SingleTestGeneratorSpec)  Time elapsed: 0.082 sec
+should ignore a test if the contract is ignored in the dsl[0](org.springframework.cloud.contract.verifier.builder.SingleTestGeneratorSpec)  Time elapsed: 0.066 sec
+should ignore a test if the contract is ignored in the dsl[1](org.springframework.cloud.contract.verifier.builder.SingleTestGeneratorSpec)  Time elapsed: 0.058 sec
+should generate test in explicit test mode using JUnit(org.springframework.cloud.contract.verifier.builder.SingleTestGeneratorSpec)  Time elapsed: 0.061 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 sec
+should insert passed value in place of $it placeholder(org.springframework.cloud.contract.verifier.dsl.internal.ExecutionPropertySpec)  Time elapsed: 0.001 sec
+Tests run: 39, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.352 sec
+should convert groovy dsl stub to wireMock stub for the client side(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.021 sec
+should convert groovy dsl stub to wireMock stub for the client side with a body containing a map(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.006 sec
+should convert groovy dsl stub with GString and regexp(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.015 sec
+should convert groovy dsl stub with Body as String to wireMock stub for the client side(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.005 sec
+should convert groovy dsl stub with simple Body as String to wireMock stub for the client side(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.007 sec
+should use equalToJson when body match is defined as map(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.006 sec
+should use equalToJson when content type ends with json(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.006 sec
+should use equalToXml when content type ends with xml(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.013 sec
+should use equalToXml when content type is parsable xml(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.018 sec
+should support xml as a response body(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.011 sec
+should use equalToJson(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.015 sec
+should use equalToXml(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.006 sec
+should convert groovy dsl stub with regexp Body as String to wireMock stub for the client side(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.008 sec
+should convert groovy dsl stub with a regexp and an integer in request body(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.011 sec
+should generate request with urlPath and queryParameters for client side(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.009 sec
+should generate request with urlPathPattern and queryParameters for client side			when both contains regular expressions(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.007 sec
+should generate request with urlPath for client side(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.004 sec
+should generate simple request with urlPath for client side(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.006 sec
+should not allow regexp in url for server value(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.011 sec
+should not allow regexp in query parameter for server value(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.005 sec
+should not allow query parameter unresolvable for a server value(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.005 sec
+should not allow query parameter with a different absent variation for server/client[0](org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.004 sec
+should not allow query parameter with a different absent variation for server/client[1](org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.004 sec
+should not allow query parameter with a different absent variation for server/client[2](org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.004 sec
+should generate request with url and queryParameters for client side(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.007 sec
+should convert groovy dsl stub with rich tree Body as String to wireMock stub for the client side(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.019 sec
+should use regexp matches when request body match is defined using a map with a pattern(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.011 sec
+should generate stub for empty body(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.005 sec
+should generate stub with priority(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.003 sec
+should use "test" as an alias for "server"(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.006 sec
+should generate stub with empty list as a value of a field(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.008 sec
+should generate stub properly resolving GString with regular expression(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.009 sec
+should generate stub properly resolving GString with regular expression in url(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.005 sec
+should generate stub without optional parameters[0](org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.004 sec
+should generate stub without optional parameters[1](org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.004 sec
+should generate stub with multipart parameters(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.018 sec
+should generate request with an optional queryParameter for client side(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.007 sec
+should not create a stub for a skipped contract(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.007 sec
+should not create a stub for a contract matching ignored pattern(org.springframework.cloud.contract.verifier.dsl.WireMockGroovyDslSpec)  Time elapsed: 0.005 sec
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.084 sec
+should find contract files(org.springframework.cloud.contract.verifier.file.ContractFileScannerSpec)  Time elapsed: 0.059 sec
+should find contract files in strange directories(org.springframework.cloud.contract.verifier.file.ContractFileScannerSpec)  Time elapsed: 0.008 sec
+should find contracts group in scenario(org.springframework.cloud.contract.verifier.file.ContractFileScannerSpec)  Time elapsed: 0.015 sec
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.149 sec
+should find all .json files and generate 6 classes for them(org.springframework.cloud.contract.verifier.GeneratorScannerSpec)  Time elapsed: 0.143 sec
+should create class with full package(org.springframework.cloud.contract.verifier.GeneratorScannerSpec)  Time elapsed: 0.005 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.052 sec
+should convert message(org.springframework.cloud.contract.verifier.messaging.amqp.ContractVerifierHelperSpec)  Time elapsed: 0.051 sec
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.098 sec
+should get single simple listener container(org.springframework.cloud.contract.verifier.messaging.amqp.MessageListenerAccessorSpec)  Time elapsed: 0.074 sec
+should get empty listener container list for unknown destination(org.springframework.cloud.contract.verifier.messaging.amqp.MessageListenerAccessorSpec)  Time elapsed: 0 sec
+should get empty listener container list for queue with no matching listener(org.springframework.cloud.contract.verifier.messaging.amqp.MessageListenerAccessorSpec)  Time elapsed: 0.001 sec
+should get single simple listener container from RabbitListenerEndpointRegistry(org.springframework.cloud.contract.verifier.messaging.amqp.MessageListenerAccessorSpec)  Time elapsed: 0.015 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.188 sec
+should send amqp message with type id(org.springframework.cloud.contract.verifier.messaging.amqp.SpringAmqpStubMessagesSpec)  Time elapsed: 0.182 sec
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 sec
+should convert an object into a json representation(org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapperSpec)  Time elapsed: 0.005 sec
+should convert bytes into a json representation(org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapperSpec)  Time elapsed: 0.001 sec
+Tests run: 30, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.189 sec
+should convert a json with list as root to a map of path to value[0](org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.054 sec
+should convert a json with list as root to a map of path to value[1](org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.009 sec
+should convert a json with a map as root to a map of path to value(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.01 sec
+should convert a json with a list(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.003 sec
+should convert a json with null and boolean values(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.003 sec
+should convert numbers map(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.006 sec
+should convert a json with a list of errors(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.006 sec
+should convert a map json with a regex pattern(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.02 sec
+should generate assertions for simple response body(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.005 sec
+should generate assertions for null and boolean values(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.003 sec
+should generate assertions for simple response body constructed from map with a list(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.005 sec
+should generate assertions for simple response body constructed from map with a list with array size check(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.005 sec
+should generate assertions for a response body containing map with integers as keys(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.003 sec
+should generate assertions for array in response body(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.003 sec
+should generate assertions for array in response body with array size check(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.003 sec
+should generate assertions for array inside response body element(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.004 sec
+should generate assertions for array inside response body element with array size check(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.003 sec
+should generate assertions for nested objects in response body(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.002 sec
+should generate regex assertions for map objects in response body(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.003 sec
+should generate escaped regex assertions for string objects in response body(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.001 sec
+should work with more complex stuff and jsonpaths(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.002 sec
+should work with more complex stuff and jsonpaths with array size check(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.004 sec
+should manage to parse a double array(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.008 sec
+should manage to parse a double array with array size check(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.009 sec
+should convert a json path with regex to a regex checking json path(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.003 sec
+should convert a json path with value to a equality checking json path without quotes for numbers(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0 sec
+should convert a json path with value to a equality checking json path with quotes for strings(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.001 sec
+should return the path if no value is provided(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0 sec
+should throw an exception when null body is passed to check for equality(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0.001 sec
+should throw an exception when nonexisting jsonpath is passed to check for equality(org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverterSpec)  Time elapsed: 0 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.775 sec
+Should be able to download from a repository using username and password authentication(org.springframework.cloud.contract.stubrunner.AetherStubDownloaderSpec)  Time elapsed: 1.404 sec
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.108 sec
+should execute given closure with the next available port number(org.springframework.cloud.contract.stubrunner.AvailablePortScannerSpec)  Time elapsed: 0.03 sec
+should execute given closure with the available port from specified range(org.springframework.cloud.contract.stubrunner.AvailablePortScannerSpec)  Time elapsed: 0.009 sec
+should throw exception when improper range has been provided[0](org.springframework.cloud.contract.stubrunner.AvailablePortScannerSpec)  Time elapsed: 0.017 sec
+should throw exception when there is no available port(org.springframework.cloud.contract.stubrunner.AvailablePortScannerSpec)  Time elapsed: 0.026 sec
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.219 sec
+should provide stub URL from enclosed stub runner(org.springframework.cloud.contract.stubrunner.BatchStubRunnerSpec)  Time elapsed: 0.186 sec
+should throw an exception for unknown stub path(org.springframework.cloud.contract.stubrunner.BatchStubRunnerSpec)  Time elapsed: 0.005 sec
+should throw exception if trying to execute not available trigger(org.springframework.cloud.contract.stubrunner.BatchStubRunnerSpec)  Time elapsed: 0.008 sec
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.076 sec
+should set inclusion pattern on config when path pattern was explicitly provided with a separator at the beginning(org.springframework.cloud.contract.stubrunner.ContractDownloaderSpec)  Time elapsed: 0.068 sec
+should set inclusion pattern on config when path pattern was explicitly provided without a separator at the beginning(org.springframework.cloud.contract.stubrunner.ContractDownloaderSpec)  Time elapsed: 0.003 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.649 sec
+should start WireMock servers(org.springframework.cloud.contract.stubrunner.junit.StubRunnerRuleSpec)  Time elapsed: 0.037 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.07 sec
+should describe stub mapping(org.springframework.cloud.contract.stubrunner.MappingDescriptorSpec)  Time elapsed: 0.057 sec
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.594 sec
+should return false if headers don't match(org.springframework.cloud.contract.stubrunner.messaging.camel.StubRunnerCamelPredicateSpec)  Time elapsed: 0.15 sec
+should return false if headers match and body doesn't(org.springframework.cloud.contract.stubrunner.messaging.camel.StubRunnerCamelPredicateSpec)  Time elapsed: 0.291 sec
+should return false if headers match and body doesn't when it's using matchers(org.springframework.cloud.contract.stubrunner.messaging.camel.StubRunnerCamelPredicateSpec)  Time elapsed: 0.071 sec
+should return true if headers and body match(org.springframework.cloud.contract.stubrunner.messaging.camel.StubRunnerCamelPredicateSpec)  Time elapsed: 0.036 sec
+should return true if headers and body using matchers match(org.springframework.cloud.contract.stubrunner.messaging.camel.StubRunnerCamelPredicateSpec)  Time elapsed: 0.036 sec
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.217 sec
+should return false if headers don't match(org.springframework.cloud.contract.stubrunner.messaging.integration.StubRunnerIntegrationMessageSelectorSpec)  Time elapsed: 0.04 sec
+should return false if headers match and body doesn't(org.springframework.cloud.contract.stubrunner.messaging.integration.StubRunnerIntegrationMessageSelectorSpec)  Time elapsed: 0.031 sec
+should return false if headers match and body doesn't when it's using matchers(org.springframework.cloud.contract.stubrunner.messaging.integration.StubRunnerIntegrationMessageSelectorSpec)  Time elapsed: 0.042 sec
+should return true if headers and body match(org.springframework.cloud.contract.stubrunner.messaging.integration.StubRunnerIntegrationMessageSelectorSpec)  Time elapsed: 0.049 sec
+should return true if headers and body using matchers match(org.springframework.cloud.contract.stubrunner.messaging.integration.StubRunnerIntegrationMessageSelectorSpec)  Time elapsed: 0.05 sec
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.289 sec
+should return false if headers don't match(org.springframework.cloud.contract.stubrunner.messaging.stream.StubRunnerStreamMessageSelectorSpec)  Time elapsed: 0.029 sec
+should return false if headers match and body doesn't(org.springframework.cloud.contract.stubrunner.messaging.stream.StubRunnerStreamMessageSelectorSpec)  Time elapsed: 0.029 sec
+should return false if headers match and body doesn't when it's using matchers(org.springframework.cloud.contract.stubrunner.messaging.stream.StubRunnerStreamMessageSelectorSpec)  Time elapsed: 0.057 sec
+should return true if headers and body match(org.springframework.cloud.contract.stubrunner.messaging.stream.StubRunnerStreamMessageSelectorSpec)  Time elapsed: 0.128 sec
+should return true if headers and body using matchers match(org.springframework.cloud.contract.stubrunner.messaging.stream.StubRunnerStreamMessageSelectorSpec)  Time elapsed: 0.042 sec
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 sec
+should get port by group and artifact id(org.springframework.cloud.contract.stubrunner.RunningStubsSpec)  Time elapsed: 0 sec
+should get port by artifact id(org.springframework.cloud.contract.stubrunner.RunningStubsSpec)  Time elapsed: 0 sec
+should get port by group and artifact id in Ivy notation(org.springframework.cloud.contract.stubrunner.RunningStubsSpec)  Time elapsed: 0 sec
+should get port by group, artifact id and version in Ivy notation(org.springframework.cloud.contract.stubrunner.RunningStubsSpec)  Time elapsed: 0 sec
+should get port by group, artifact id, version and classifier in Ivy notation(org.springframework.cloud.contract.stubrunner.RunningStubsSpec)  Time elapsed: 0.001 sec
+should return null if no stub has been found(org.springframework.cloud.contract.stubrunner.RunningStubsSpec)  Time elapsed: 0 sec
+should find stub by group and artifact id(org.springframework.cloud.contract.stubrunner.RunningStubsSpec)  Time elapsed: 0.001 sec
+should find stub by artifact id(org.springframework.cloud.contract.stubrunner.RunningStubsSpec)  Time elapsed: 0 sec
+should find stub by group and artifact id in Ivy notation(org.springframework.cloud.contract.stubrunner.RunningStubsSpec)  Time elapsed: 0 sec
+should find stub by group, artifact id and version in Ivy notation(org.springframework.cloud.contract.stubrunner.RunningStubsSpec)  Time elapsed: 0 sec
+should find stub by group, artifact id, version and classifier in Ivy notation(org.springframework.cloud.contract.stubrunner.RunningStubsSpec)  Time elapsed: 0 sec
+should return false if no stub has been found(org.springframework.cloud.contract.stubrunner.RunningStubsSpec)  Time elapsed: 0 sec
+Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.008 sec
+should return a list of running stub servers in "full ivy:port" notation(org.springframework.cloud.contract.stubrunner.server.StubRunnerBootSpec)  Time elapsed: 8.139 sec
+should return a port on which a [org.springframework.cloud.contract.verifier.stubs:bootService:+:stubs] stub is running(org.springframework.cloud.contract.stubrunner.server.StubRunnerBootSpec)  Time elapsed: 0.152 sec
+should return a port on which a [org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs] stub is running(org.springframework.cloud.contract.stubrunner.server.StubRunnerBootSpec)  Time elapsed: 0.039 sec
+should return a port on which a [org.springframework.cloud.contract.verifier.stubs:bootService:+] stub is running(org.springframework.cloud.contract.stubrunner.server.StubRunnerBootSpec)  Time elapsed: 0.04 sec
+should return a port on which a [org.springframework.cloud.contract.verifier.stubs:bootService] stub is running(org.springframework.cloud.contract.stubrunner.server.StubRunnerBootSpec)  Time elapsed: 0.043 sec
+should return a port on which a [bootService] stub is running(org.springframework.cloud.contract.stubrunner.server.StubRunnerBootSpec)  Time elapsed: 0.042 sec
+should return 404 when missing stub was called(org.springframework.cloud.contract.stubrunner.server.StubRunnerBootSpec)  Time elapsed: 0.056 sec
+should return a list of messaging labels that can be triggered when version and classifier are passed(org.springframework.cloud.contract.stubrunner.server.StubRunnerBootSpec)  Time elapsed: 0.062 sec
+should trigger a messaging label(org.springframework.cloud.contract.stubrunner.server.StubRunnerBootSpec)  Time elapsed: 0.066 sec
+should trigger a messaging label for a stub with [org.springframework.cloud.contract.verifier.stubs:bootService:stubs] ivy notation(org.springframework.cloud.contract.stubrunner.server.StubRunnerBootSpec)  Time elapsed: 0.059 sec
+should trigger a messaging label for a stub with [org.springframework.cloud.contract.verifier.stubs:bootService] ivy notation(org.springframework.cloud.contract.stubrunner.server.StubRunnerBootSpec)  Time elapsed: 0.054 sec
+should trigger a messaging label for a stub with [bootService] ivy notation(org.springframework.cloud.contract.stubrunner.server.StubRunnerBootSpec)  Time elapsed: 0.068 sec
+should throw exception when trigger is missing(org.springframework.cloud.contract.stubrunner.server.StubRunnerBootSpec)  Time elapsed: 0.046 sec
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.857 sec
+should make service discovery work for loanIssuance:loanIssuance(org.springframework.cloud.contract.stubrunner.spring.cloud.consul.StubRunnerSpringCloudConsulAutoConfigurationSpec)  Time elapsed: 5.528 sec
+should make service discovery work for bootService:bootService(org.springframework.cloud.contract.stubrunner.spring.cloud.consul.StubRunnerSpringCloudConsulAutoConfigurationSpec)  Time elapsed: 0.013 sec
+should make service discovery work for fraudDetectionServer:someNameThatShouldMapFraudDetectionServer(org.springframework.cloud.contract.stubrunner.spring.cloud.consul.StubRunnerSpringCloudConsulAutoConfigurationSpec)  Time elapsed: 0.012 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.012 sec
+should convert ivy notation to serviceId by fallbacking to artifactId if nothing else matches(org.springframework.cloud.contract.stubrunner.spring.cloud.StubMapperPropertiesSpec)  Time elapsed: 0.004 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.525 sec
+should make service discovery work(org.springframework.cloud.contract.stubrunner.spring.cloud.StubRunnerSpringCloudAutoConfigurationSpec)  Time elapsed: 5.292 sec
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.508 sec
+should start WireMock servers(org.springframework.cloud.contract.stubrunner.spring.StubRunnerConfigurationSpec)  Time elapsed: 4.244 sec
+should throw an exception when stub is not found(org.springframework.cloud.contract.stubrunner.spring.StubRunnerConfigurationSpec)  Time elapsed: 0.01 sec
+should register started servers as environment variables(org.springframework.cloud.contract.stubrunner.spring.StubRunnerConfigurationSpec)  Time elapsed: 0.024 sec
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 sec
+should parse (group:artifact:version:classifier) and match ivy notation(org.springframework.cloud.contract.stubrunner.StubConfigurationSpec)  Time elapsed: 0 sec
+should parse (group:artifact:version:) and match ivy notation(org.springframework.cloud.contract.stubrunner.StubConfigurationSpec)  Time elapsed: 0.001 sec
+should parse (group:artifact:version) and match ivy notation(org.springframework.cloud.contract.stubrunner.StubConfigurationSpec)  Time elapsed: 0 sec
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.087 sec
+should retrieve all descriptors for given project(org.springframework.cloud.contract.stubrunner.StubRepositorySpec)  Time elapsed: 0.076 sec
+should return empty list if files are missing(org.springframework.cloud.contract.stubrunner.StubRepositorySpec)  Time elapsed: 0.001 sec
+should throw an exception if directory with mappings is missing(org.springframework.cloud.contract.stubrunner.StubRepositorySpec)  Time elapsed: 0 sec
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.748 sec
+should provide URL for given relative path of stub(org.springframework.cloud.contract.stubrunner.StubRunnerExecutorSpec)  Time elapsed: 0.571 sec
+should provide no URL for unknown dependency path(org.springframework.cloud.contract.stubrunner.StubRunnerExecutorSpec)  Time elapsed: 0.563 sec
+should start a stub on a given port(org.springframework.cloud.contract.stubrunner.StubRunnerExecutorSpec)  Time elapsed: 0.538 sec
+should ensure that triggered contracts have properly parsed message body when a message is sent(org.springframework.cloud.contract.stubrunner.StubRunnerExecutorSpec)  Time elapsed: 0.517 sec
+should match stub with empty classifier(org.springframework.cloud.contract.stubrunner.StubRunnerExecutorSpec)  Time elapsed: 0.557 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.017 sec
+Should download stub definitions many times(org.springframework.cloud.contract.stubrunner.StubRunnerFactorySpec)  Time elapsed: 0.01 sec
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.016 sec
+shouldCreateDependenciesForStub(org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilderSpec)  Time elapsed: 0.003 sec
+shouldCreateDependenciesForCommaSeparatedStubs(org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilderSpec)  Time elapsed: 0 sec
+shouldMapStubsWithPort(org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilderSpec)  Time elapsed: 0.006 sec
+shouldCreateDependenciesWithVersion(org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilderSpec)  Time elapsed: 0 sec
+shouldCreateDependenciesWithClassifier(org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilderSpec)  Time elapsed: 0.001 sec
+shouldCreateDependenciesWithEmptyPort(org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilderSpec)  Time elapsed: 0.001 sec
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.071 sec
+should provide stub URL for provided groupid and artifactId(org.springframework.cloud.contract.stubrunner.StubRunnerSpec)  Time elapsed: 0.526 sec
+should provide stub URL if only artifactId was passed(org.springframework.cloud.contract.stubrunner.StubRunnerSpec)  Time elapsed: 0.542 sec
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.78 sec
+should register stub mappings upon server start(org.springframework.cloud.contract.stubrunner.StubServerSpec)  Time elapsed: 0.4 sec
+should provide stub server URL(org.springframework.cloud.contract.stubrunner.StubServerSpec)  Time elapsed: 0.374 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.039 sec
+should unzip a file to the specified location(org.springframework.cloud.contract.stubrunner.util.ZipCategorySpec)  Time elapsed: 0.034 sec
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.59 sec
+should convert DSL file to WireMock JSON(org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverterSpec)  Time elapsed: 0.995 sec
+should creation of delayed stub responses be possible(org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverterSpec)  Time elapsed: 0.038 sec
+should convert DSL file with a nested list to WireMock JSON(org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverterSpec)  Time elapsed: 0.729 sec
+should create stub with map inside list(org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverterSpec)  Time elapsed: 0.11 sec
+should create stub when response has only one side of the dynamic value(org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverterSpec)  Time elapsed: 0.089 sec
+should convert dsl to wiremock to show it in the docs(org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverterSpec)  Time elapsed: 0.078 sec
+should convert dsl to wiremock with stub matchers(org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverterSpec)  Time elapsed: 0.155 sec
+should convert dsl to wiremock with stub matchers with docs example(org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverterSpec)  Time elapsed: 0.055 sec
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.233 sec
+should recursively convert all matching files(org.springframework.cloud.contract.verifier.wiremock.RecursiveFilesConverterSpec)  Time elapsed: 0.15 sec
+should recursively convert matching files with exlusions(org.springframework.cloud.contract.verifier.wiremock.RecursiveFilesConverterSpec)  Time elapsed: 0.049 sec
+on failure should break processing and throw meaningful exception(org.springframework.cloud.contract.verifier.wiremock.RecursiveFilesConverterSpec)  Time elapsed: 0.029 sec
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.075 sec
+should generate first scenario step(org.springframework.cloud.contract.verifier.wiremock.WiremockScenarioConverterSpec)  Time elapsed: 0.029 sec
+should generate mid scenario step(org.springframework.cloud.contract.verifier.wiremock.WiremockScenarioConverterSpec)  Time elapsed: 0.022 sec
+should generate last scenario step(org.springframework.cloud.contract.verifier.wiremock.WiremockScenarioConverterSpec)  Time elapsed: 0.022 sec
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.678 sec
+should produce a Groovy DSL from WireMock stub(org.springframework.cloud.contract.verifier.wiremock.WireMockToDslConverterSpec)  Time elapsed: 0.135 sec
+should convert WireMock stub with response body containing JSON with escaped double quotes(org.springframework.cloud.contract.verifier.wiremock.WireMockToDslConverterSpec)  Time elapsed: 0.1 sec
+should convert WireMock stub with response body containing integer(org.springframework.cloud.contract.verifier.wiremock.WireMockToDslConverterSpec)  Time elapsed: 0.064 sec
+should convert WireMock stub with response body as a list(org.springframework.cloud.contract.verifier.wiremock.WireMockToDslConverterSpec)  Time elapsed: 0.059 sec
+should convert WireMock stub with response body containing a nested list(org.springframework.cloud.contract.verifier.wiremock.WireMockToDslConverterSpec)  Time elapsed: 0.051 sec
+should convert WireMock stub with request body checking equality to Json(org.springframework.cloud.contract.verifier.wiremock.WireMockToDslConverterSpec)  Time elapsed: 0.043 sec
+should convert WireMock stub with request body checking matching to Json(org.springframework.cloud.contract.verifier.wiremock.WireMockToDslConverterSpec)  Time elapsed: 0.042 sec
+should convert WireMock stub with request body with equalToJson(org.springframework.cloud.contract.verifier.wiremock.WireMockToDslConverterSpec)  Time elapsed: 0.027 sec
+should convert WireMock stub with request body with equalTo(org.springframework.cloud.contract.verifier.wiremock.WireMockToDslConverterSpec)  Time elapsed: 0.042 sec
+should convert WireMock stub with request body with matches(org.springframework.cloud.contract.verifier.wiremock.WireMockToDslConverterSpec)  Time elapsed: 0.059 sec
+should convert WireMock stub with priorities(org.springframework.cloud.contract.verifier.wiremock.WireMockToDslConverterSpec)  Time elapsed: 0.051 sec
+Tests run: 21, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 13.21 sec
+shouldGenerateStubsByDownloadingContractsFromARepoWhenCustomPathIsProvided(org.springframework.cloud.contract.maven.verifier.PluginUnitTest)  Time elapsed: 5.167 sec
+shouldGenerateContractTestsWithBaseClassResolvedFromConvention(org.springframework.cloud.contract.maven.verifier.PluginUnitTest)  Time elapsed: 1.066 sec
+shouldGenerateWireMockFromStubsDirectory(org.springframework.cloud.contract.maven.verifier.PluginUnitTest)  Time elapsed: 0.31 sec
+shouldGenerateStubsWithMappingsOnly(org.springframework.cloud.contract.maven.verifier.PluginUnitTest)  Time elapsed: 0.491 sec
+shouldGenerateStubsByDownloadingContractsFromARepo(org.springframework.cloud.contract.maven.verifier.PluginUnitTest)  Time elapsed: 0.514 sec
+shouldGenerateWireMockStubsInDefaultLocation(org.springframework.cloud.contract.maven.verifier.PluginUnitTest)  Time elapsed: 0.401 sec
+shouldGenerateStubsWithCustomClassifier(org.springframework.cloud.contract.maven.verifier.PluginUnitTest)  Time elapsed: 0.318 sec
+shouldGenerateStubsForCommonRepoWithTargetFolder(org.springframework.cloud.contract.maven.verifier.PluginUnitTest)  Time elapsed: 0.433 sec
+shouldGenerateContractTestsWithBaseClassResolvedFromMapping(org.springframework.cloud.contract.maven.verifier.PluginUnitTest)  Time elapsed: 0.596 sec
+shouldGenerateWireMockStubsInSelectedLocation(org.springframework.cloud.contract.maven.verifier.PluginUnitTest)  Time elapsed: 0.435 sec
+shouldGenerateContractTestsWithCustomImports(org.springframework.cloud.contract.maven.verifier.PluginUnitTest)  Time elapsed: 0.475 sec
+shouldGenerateStubs(org.springframework.cloud.contract.maven.verifier.PluginUnitTest)  Time elapsed: 0.285 sec
+shouldGenerateTestsByDownloadingContractsFromARepoWhenCustomPathIsProvided(org.springframework.cloud.contract.maven.verifier.PluginUnitTest)  Time elapsed: 0.329 sec
+shouldCopyContracts(org.springframework.cloud.contract.maven.verifier.PluginUnitTest)  Time elapsed: 0.257 sec
+shouldGenerateContractTestsWithBaseClassResolvedFromConventionForSpock(org.springframework.cloud.contract.maven.verifier.PluginUnitTest)  Time elapsed: 0.265 sec
+shouldGenerateContractTestsWithBaseClassResolvedFromMappingNameForSpock(org.springframework.cloud.contract.maven.verifier.PluginUnitTest)  Time elapsed: 0.338 sec
+shouldGenerateContractTestsWithArraySize(org.springframework.cloud.contract.maven.verifier.PluginUnitTest)  Time elapsed: 0.216 sec
+shouldGenerateContractSpecificationInDefaultLocation(org.springframework.cloud.contract.maven.verifier.PluginUnitTest)  Time elapsed: 0.248 sec
+shouldGenerateContractTestsInDefaultLocation(org.springframework.cloud.contract.maven.verifier.PluginUnitTest)  Time elapsed: 0.303 sec
+shouldGenerateContractTestsWithoutArraySize(org.springframework.cloud.contract.maven.verifier.PluginUnitTest)  Time elapsed: 0.217 sec
+shouldGenerateTestsByDownloadingContractsFromARepo(org.springframework.cloud.contract.maven.verifier.PluginUnitTest)  Time elapsed: 0.34 sec
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 1, Time elapsed: 54.606 sec - in org.springframework.cloud.contract.maven.verifier.PluginIT
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 47.986 sec
+should make service discovery work(org.springframework.cloud.contract.stubrunner.spring.cloud.eureka.StubRunnerSpringCloudEurekaAutoConfigurationSpec)  Time elapsed: 38.114 sec
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 11.164 sec
+should make service discovery work(org.springframework.cloud.contract.stubrunner.spring.cloud.zookeeper.StubRunnerSpringCloudZookeeperAutoConfigurationSpec)  Time elapsed: 10.055 sec
+should have all apps registered in Service Discovery(org.springframework.cloud.contract.stubrunner.spring.cloud.zookeeper.StubRunnerSpringCloudZookeeperAutoConfigurationSpec)  Time elapsed: 0.016 sec
+Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 8.405 sec
+should download the stub and register a route for it(org.springframework.cloud.contract.stubrunner.messaging.camel.CamelStubRunnerSpec)  Time elapsed: 6.551 sec
+should trigger a message by label(org.springframework.cloud.contract.stubrunner.messaging.camel.CamelStubRunnerSpec)  Time elapsed: 0.142 sec
+should trigger a label for the existing groupId:artifactId(org.springframework.cloud.contract.stubrunner.messaging.camel.CamelStubRunnerSpec)  Time elapsed: 0.132 sec
+should trigger a label for the existing artifactId(org.springframework.cloud.contract.stubrunner.messaging.camel.CamelStubRunnerSpec)  Time elapsed: 0.151 sec
+should throw an exception when missing label is passed(org.springframework.cloud.contract.stubrunner.messaging.camel.CamelStubRunnerSpec)  Time elapsed: 0.119 sec
+should throw an exception when missing label and artifactid is passed(org.springframework.cloud.contract.stubrunner.messaging.camel.CamelStubRunnerSpec)  Time elapsed: 0.117 sec
+should trigger messages by running all triggers(org.springframework.cloud.contract.stubrunner.messaging.camel.CamelStubRunnerSpec)  Time elapsed: 0.144 sec
+should trigger a label with no output message(org.springframework.cloud.contract.stubrunner.messaging.camel.CamelStubRunnerSpec)  Time elapsed: 0.027 sec
+should not trigger a message that does not match input(org.springframework.cloud.contract.stubrunner.messaging.camel.CamelStubRunnerSpec)  Time elapsed: 0.231 sec
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.059 sec
+should not process the message if there is no output message(org.springframework.cloud.contract.stubrunner.messaging.camel.StubRunnerCamelProcessorSpec)  Time elapsed: 0.036 sec
+should process message when it has an output message section(org.springframework.cloud.contract.stubrunner.messaging.camel.StubRunnerCamelProcessorSpec)  Time elapsed: 0.003 sec
+should convert dsl into message with regex in GString(org.springframework.cloud.contract.stubrunner.messaging.camel.StubRunnerCamelProcessorSpec)  Time elapsed: 0.016 sec
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.752 sec
+shouldNotTryAndWorkOfflineWhenWorkOfflineIsSetToFalse(com.example.loan.FailFastLoanApplicationServiceTests)  Time elapsed: 3.538 sec
+shouldFailToStartContextWhenNoStubCanBeFound(com.example.loan.FailFastLoanApplicationServiceTests)  Time elapsed: 1.137 sec
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.931 sec
+shouldSuccessfullyApplyForLoan(com.example.loan.LoanApplicationServiceTests)  Time elapsed: 0.205 sec
+shouldBeRejectedDueToAbnormalLoanAmount(com.example.loan.LoanApplicationServiceTests)  Time elapsed: 0.012 sec
+shouldStartThisAppWithContextPath(com.example.loan.LoanApplicationServiceTests)  Time elapsed: 0.09 sec
+Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.26 sec
+should download the stub and register a route for it(org.springframework.cloud.contract.stubrunner.messaging.integration.IntegrationStubRunnerSpec)  Time elapsed: 4.655 sec
+should trigger a message by label(org.springframework.cloud.contract.stubrunner.messaging.integration.IntegrationStubRunnerSpec)  Time elapsed: 0.126 sec
+should trigger a label for the existing groupId:artifactId(org.springframework.cloud.contract.stubrunner.messaging.integration.IntegrationStubRunnerSpec)  Time elapsed: 0.125 sec
+should trigger a label for the existing artifactId(org.springframework.cloud.contract.stubrunner.messaging.integration.IntegrationStubRunnerSpec)  Time elapsed: 0.121 sec
+should throw exception when missing label is passed(org.springframework.cloud.contract.stubrunner.messaging.integration.IntegrationStubRunnerSpec)  Time elapsed: 0.116 sec
+should throw exception when missing label and artifactid is passed(org.springframework.cloud.contract.stubrunner.messaging.integration.IntegrationStubRunnerSpec)  Time elapsed: 0.116 sec
+should trigger messages by running all triggers(org.springframework.cloud.contract.stubrunner.messaging.integration.IntegrationStubRunnerSpec)  Time elapsed: 0.119 sec
+should trigger a label with no output message(org.springframework.cloud.contract.stubrunner.messaging.integration.IntegrationStubRunnerSpec)  Time elapsed: 0.025 sec
+should not trigger a message that does not match input(org.springframework.cloud.contract.stubrunner.messaging.integration.IntegrationStubRunnerSpec)  Time elapsed: 0.222 sec
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.054 sec
+should not transform the message if there is no output message(org.springframework.cloud.contract.stubrunner.messaging.integration.StubRunnerIntegrationTransformerSpec)  Time elapsed: 0.036 sec
+should convert dsl into message(org.springframework.cloud.contract.stubrunner.messaging.integration.StubRunnerIntegrationTransformerSpec)  Time elapsed: 0.002 sec
+should convert dsl into message with regex in GString(org.springframework.cloud.contract.stubrunner.messaging.integration.StubRunnerIntegrationTransformerSpec)  Time elapsed: 0.014 sec
+Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.956 sec
+should download the stub and register a route for it(org.springframework.cloud.contract.stubrunner.messaging.stream.StreamStubRunnerSpec)  Time elapsed: 8.241 sec
+should trigger a message by label(org.springframework.cloud.contract.stubrunner.messaging.stream.StreamStubRunnerSpec)  Time elapsed: 0.127 sec
+should trigger a label for the existing groupId:artifactId(org.springframework.cloud.contract.stubrunner.messaging.stream.StreamStubRunnerSpec)  Time elapsed: 0.127 sec
+should trigger a label for the existing artifactId(org.springframework.cloud.contract.stubrunner.messaging.stream.StreamStubRunnerSpec)  Time elapsed: 0.144 sec
+should throw exception when missing label is passed(org.springframework.cloud.contract.stubrunner.messaging.stream.StreamStubRunnerSpec)  Time elapsed: 0.137 sec
+should throw exception when missing label and artifactid is passed(org.springframework.cloud.contract.stubrunner.messaging.stream.StreamStubRunnerSpec)  Time elapsed: 0.123 sec
+should trigger messages by running all triggers(org.springframework.cloud.contract.stubrunner.messaging.stream.StreamStubRunnerSpec)  Time elapsed: 0.133 sec
+should trigger a label with no output message(org.springframework.cloud.contract.stubrunner.messaging.stream.StreamStubRunnerSpec)  Time elapsed: 0.029 sec
+should not trigger a message that does not match input(org.springframework.cloud.contract.stubrunner.messaging.stream.StreamStubRunnerSpec)  Time elapsed: 0.222 sec
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.054 sec
+should not transform the message if there is no output message(org.springframework.cloud.contract.stubrunner.messaging.stream.StubRunnerStreamTransformerSpec)  Time elapsed: 0.029 sec
+should convert dsl into message(org.springframework.cloud.contract.stubrunner.messaging.stream.StubRunnerStreamTransformerSpec)  Time elapsed: 0.002 sec
+should convert dsl into message with regex in GString(org.springframework.cloud.contract.stubrunner.messaging.stream.StubRunnerStreamTransformerSpec)  Time elapsed: 0.014 sec
+should parse dsl without DslProperty(org.springframework.cloud.contract.stubrunner.messaging.stream.StubRunnerStreamTransformerSpec)  Time elapsed: 0.007 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.89 sec
+should trigger stub amqp message consumed by annotated listener(org.springframework.cloud.contract.stubrunner.messaging.amqp.AmqpStubRunnerRabbitListenerSpec)  Time elapsed: 4.266 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.83 sec
+should trigger stub amqp message(org.springframework.cloud.contract.stubrunner.messaging.amqp.AmqpStubRunnerSpec)  Time elapsed: 0.814 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.178 sec - in com.example.WiremockServerApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.903 sec - in com.example.WiremockForDocsClassRuleTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.622 sec - in com.example.WiremockForDocsMockServerApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.444 sec - in com.example.WiremockForDocsTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.311 sec - in com.example.WiremockHttpsServerApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.713 sec - in com.example.WiremockImportApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.445 sec - in com.example.WiremockMockServerApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.662 sec - in com.example.WiremockServerApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.92 sec - in com.example.WiremockHttpsServerApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.95 sec - in com.example.WiremockImportApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.827 sec - in com.example.WiremockImportContextPathApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.576 sec - in com.example.WiremockMockServerApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.724 sec - in com.example.WiremockServerApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.524 sec - in com.example.WiremockImportApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.731 sec - in com.example.WiremockMockServerApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.853 sec - in com.example.WiremockServerApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.241 sec - in com.example.WiremockHttpsServerApplicationTests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.588 sec - in org.springframework.cloud.contract.verifier.tests.FraudTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.811 sec - in com.example.loan.LoanApplicationServiceContextPathTests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.348 sec - in com.example.loan.LoanApplicationServiceTests
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.916 sec - in com.example.source.ContractVerifierSampleStreamSourceApplicationTests
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.976 sec - in org.springframework.cloud.contract.verifier.tests.ContractVerifierTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.786 sec - in com.example.sink.ContractVerifierSampleStreamSinkApplicationTests
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.438 sec - in com.example.sink.MessageConsumedTests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.248 sec - in com.example.fraud.StubGeneratorTests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.397 sec - in com.example.loan.LoanApplicationServiceTests

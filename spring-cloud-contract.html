@@ -798,7 +798,17 @@ $(addBlockSwitches);
 </li>
 <li><a href="#_pluggable_architecture">Pluggable architecture</a>
 <ul class="sectlevel3">
-<li><a href="#_custom_contract_converter">Custom contract converter</a></li>
+<li><a href="#_custom_contract_converter">Custom contract converter</a>
+<ul class="sectlevel4">
+<li><a href="#_pact_converter">Pact converter</a>
+<ul class="sectlevel5">
+<li><a href="#_pact_contract">Pact contract</a></li>
+<li><a href="#_pact_for_producers">Pact for producers</a></li>
+<li><a href="#_pact_for_consumers">Pact for consumers</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a href="#_custom_test_generator">Custom test generator</a></li>
 <li><a href="#_custom_stub_generator">Custom stub generator</a></li>
 <li><a href="#_custom_stub_runner">Custom Stub Runner</a></li>
@@ -7807,7 +7817,7 @@ response:
  * @author Marcin Grzejszczak
  * @since 1.1.0
  */
-public interface ContractConverter&lt;T&gt; {
+interface ContractConverter&lt;T&gt; {
 
 	/**
 	 * Should this file be accepted by the converter. Can use the file extension
@@ -7939,6 +7949,209 @@ class YamlContractConverter implements ContractConverter&lt;List&lt;YamlContract
 		}
 	}
 }</code></pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_pact_converter">Pact converter</h5>
+<div class="paragraph">
+<p>Spring Cloud Contract comes with an out of the box support for <a href="https://docs.pact.io/">Pact</a> representation of contracts.
+In other words instead of using the Groovy DSL you can use Pact files. In this section
+we will present how to add such a support for your project.</p>
+</div>
+<div class="sect5">
+<h6 id="_pact_contract">Pact contract</h6>
+<div class="paragraph">
+<p>We will be working on the following example of a Pact contract. We&#8217;ve placed this file under
+the <code>src/test/resources/contracts</code> folder.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">{
+  "provider": {
+    "name": "Provider"
+  },
+  "consumer": {
+    "name": "Consumer"
+  },
+  "interactions": [
+    {
+      "description": "",
+      "request": {
+        "method": "PUT",
+        "path": "/fraudcheck",
+        "headers": {
+          "Content-Type": "application/vnd.fraud.v1+json"
+        },
+        "body": {
+          "clientId": "1234567890",
+          "loanAmount": 99999
+        },
+        "matchingRules": {
+          "$.body.clientId": {
+            "match": "regex",
+            "regex": "[0-9]{10}"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/vnd.fraud.v1+json;charset=UTF-8"
+        },
+        "body": {
+          "fraudCheckStatus": "FRAUD",
+          "rejectionReason": "Amount too high"
+        },
+        "matchingRules": {
+          "$.body.fraudCheckStatus": {
+            "match": "regex",
+            "regex": "FRAUD"
+          }
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pact-specification": {
+      "version": "2.0.0"
+    },
+    "pact-jvm": {
+      "version": "2.4.18"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_pact_for_producers">Pact for producers</h6>
+<div class="paragraph">
+<p>On the producer side you have add to your plugin configuration two additional dependencies.
+One is the Spring Cloud Contract Pact support and the other represents the current
+Pact version that you&#8217;re using.</p>
+</div>
+<div class="listingblock primary">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
+	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+	&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+	&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+	&lt;extensions&gt;true&lt;/extensions&gt;
+	&lt;configuration&gt;
+		&lt;packageWithBaseClasses&gt;com.example.fraud&lt;/packageWithBaseClasses&gt;
+	&lt;/configuration&gt;
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-cloud-contract-spec-pact&lt;/artifactId&gt;
+			&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;au.com.dius&lt;/groupId&gt;
+			&lt;artifactId&gt;pact-jvm-model&lt;/artifactId&gt;
+			&lt;version&gt;2.4.18&lt;/version&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">classpath "org.springframework.cloud:spring-cloud-contract-spec-pact:${findProperty('verifierVersion') ?: verifierVersion}"
+classpath 'au.com.dius:pact-jvm-model:2.4.18'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When you execute the build of your application a test, looking more or less like this, will be generated</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@Test
+public void validate_shouldMarkClientAsFraud() throws Exception {
+	// given:
+		MockMvcRequestSpecification request = given()
+				.header("Content-Type", "application/vnd.fraud.v1+json")
+				.body("{\"clientId\":\"1234567890\",\"loanAmount\":99999}");
+
+	// when:
+		ResponseOptions response = given().spec(request)
+				.put("/fraudcheck");
+
+	// then:
+		assertThat(response.statusCode()).isEqualTo(200);
+		assertThat(response.header("Content-Type")).isEqualTo("application/vnd.fraud.v1+json;charset=UTF-8");
+	// and:
+		DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+		assertThatJson(parsedJson).field("rejectionReason").isEqualTo("Amount too high");
+	// and:
+		assertThat(parsedJson.read("$.fraudCheckStatus", String.class)).matches("FRAUD");
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and the stub looking like this</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">{
+  "uuid" : "996ae5ae-6834-4db6-8fac-358ca187ab62",
+  "request" : {
+    "url" : "/fraudcheck",
+    "method" : "PUT",
+    "headers" : {
+      "Content-Type" : {
+        "equalTo" : "application/vnd.fraud.v1+json"
+      }
+    },
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[?(@.loanAmount == 99999)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.clientId =~ /([0-9]{10})/)]"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"fraudCheckStatus\":\"FRAUD\",\"rejectionReason\":\"Amount too high\"}",
+    "headers" : {
+      "Content-Type" : "application/vnd.fraud.v1+json;charset=UTF-8"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_pact_for_consumers">Pact for consumers</h6>
+<div class="paragraph">
+<p>On the producer side you have add to your project dependencies two additional dependencies.
+One is the Spring Cloud Contract Pact support and the other represents the current
+Pact version that you&#8217;re using.</p>
+</div>
+<div class="listingblock primary">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+	&lt;artifactId&gt;spring-cloud-contract-spec-pact&lt;/artifactId&gt;
+	&lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+	&lt;groupId&gt;au.com.dius&lt;/groupId&gt;
+	&lt;artifactId&gt;pact-jvm-model&lt;/artifactId&gt;
+	&lt;version&gt;2.4.18&lt;/version&gt;
+	&lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">testCompile "org.springframework.cloud:spring-cloud-contract-spec-pact"
+testCompile 'au.com.dius:pact-jvm-model:2.4.18'</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
