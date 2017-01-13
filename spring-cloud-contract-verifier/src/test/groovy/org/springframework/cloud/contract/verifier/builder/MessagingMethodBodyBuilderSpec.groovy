@@ -343,6 +343,9 @@ then:
  assertThatJson(parsedJson).field("bookName").isEqualTo("foo");
 '''
 			stripped(test) == stripped(expectedMsg)
+		and: 'indents are maintained'
+			test.contains("  ContractVerifierMessage response")
+			test.contains("  DocumentContext parsedJson")
 	}
 
 	def "should generate tests without headers for Spock"() {

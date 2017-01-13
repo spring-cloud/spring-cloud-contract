@@ -81,6 +81,8 @@ abstract class MessagingMethodBodyBuilder extends MethodBodyBuilder {
 				bb.endBlock()
 				if (outputMessage.headers) {
 					bb.addLine(addCommentSignIfRequired('and:')).startBlock()
+				} else {
+					bb.startBlock()
 				}
 				validateResponseBodyBlock(bb, outputMessage.matchers, outputMessage.body.serverValue)
 			}
