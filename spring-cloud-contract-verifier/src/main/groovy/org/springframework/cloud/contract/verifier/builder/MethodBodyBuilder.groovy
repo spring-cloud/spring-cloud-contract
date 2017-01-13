@@ -305,9 +305,9 @@ abstract class MethodBodyBuilder {
 			String postProcessedMethod = postProcessJsonPathCall(method)
 			bb.addLine("assertThatJson(parsedJson)" + postProcessedMethod)
 			addColonIfRequired(bb)
-			bb.endBlock()
 		}
 		if (bodyMatchers?.hasMatchers()) {
+			bb.endBlock()
 			bb.addLine(addCommentSignIfRequired('and:'))
 			bb.startBlock()
 			// for the rest we'll do JsonPath matching in brute force
