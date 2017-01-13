@@ -22,6 +22,7 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.cloud.contract.verifier.config.TestMode
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.SyntaxChecker
+import org.springframework.util.StringUtils
 import spock.lang.Issue
 import spock.lang.Specification
 
@@ -111,6 +112,75 @@ class SingleTestGeneratorSpec extends Specification {
 			JUNIT         | TestMode.EXPLICIT | explicitJUnitClassStrings | JAVA_ASSERTER
 			SPOCK         | TestMode.MOCKMVC  | spockClassStrings         | GROOVY_ASSERTER
 			SPOCK         | TestMode.EXPLICIT | explicitSpockClassStrings | GROOVY_ASSERTER
+	}
+
+	def "should build test class for #testFramework and mode #mode with two files"() {
+		given:
+			File file = tmpFolder.newFile()
+			file.write("""
+					org.springframework.cloud.contract.spec.Contract.make {
+						request {
+							method 'PUT'
+							url 'url1'
+							headers {
+								contentType(applicationJson())
+							}
+						}
+						response {
+							status 200
+							body(foo:"foo", bar:"bar")
+							headers {
+								contentType(applicationJson())
+							}
+						}
+					}
+	""")
+		and:
+		File file2 = tmpFolder.newFile()
+		file2.write("""
+				org.springframework.cloud.contract.spec.Contract.make {
+					request {
+						method 'PUT'
+						url 'url2'
+						headers {
+							contentType(applicationJson())
+						}
+					}
+					response {
+						status 200
+						body(foo:"foo", bar:"bar")
+						headers {
+							contentType(applicationJson())
+						}
+					}
+				}
+""")
+		and:
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
+			properties.targetFramework = testFramework
+			ContractMetadata contract = new ContractMetadata(file.toPath(), false, 1, null)
+			contract.ignored >> false
+		and:
+			ContractMetadata contract2 = new ContractMetadata(file2.toPath(), false, 1, null)
+			contract2.ignored >> false
+		and:
+			SingleTestGenerator testGenerator = new SingleTestGenerator(properties)
+
+		when:
+			String clazz = testGenerator.buildClass([contract, contract2], "test", "test", 'com/foo')
+
+		then:
+			classStrings.each { clazz.contains(it) }
+		and:
+			asserter(clazz)
+		and:
+			textAssertion(clazz)
+		where:
+			testFramework | mode              | classStrings              | asserter        | textAssertion
+			JUNIT         | TestMode.MOCKMVC  | mockMvcJUnitClassStrings  | JAVA_ASSERTER   | { String test -> StringUtils.countOccurrencesOf(test, "\t\t\tMockMvcRequestSpecification") == 2 }
+			JUNIT         | TestMode.EXPLICIT | explicitJUnitClassStrings | JAVA_ASSERTER   | { String test -> StringUtils.countOccurrencesOf(test, "\t\t\tMockMvcRequestSpecification") == 2 }
+			SPOCK         | TestMode.MOCKMVC  | spockClassStrings         | GROOVY_ASSERTER | { String test -> StringUtils.countOccurrencesOf(test, "\t\t\tdef request") == 2 }
+			SPOCK         | TestMode.EXPLICIT | explicitSpockClassStrings | GROOVY_ASSERTER | { String test -> StringUtils.countOccurrencesOf(test, "\t\t\tdef request") == 2 }
 	}
 
 	def "should build JaxRs test class for #testFramework"() {
