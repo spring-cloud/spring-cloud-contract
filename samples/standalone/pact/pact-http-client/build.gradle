@@ -38,7 +38,7 @@ dependencies {
 
 	testCompile "org.springframework.cloud:spring-cloud-starter-contract-stub-runner"
 	//tag::pact_dependency[]
-	testCompile "org.springframework.cloud:spring-cloud-contract-pact"
+	testCompile "org.springframework.cloud:spring-cloud-contract-spec-pact"
 	testCompile 'au.com.dius:pact-jvm-model:2.4.18'
 	//end::pact_dependency[]
 }

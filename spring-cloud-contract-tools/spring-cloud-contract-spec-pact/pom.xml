@@ -8,10 +8,10 @@
 		<version>1.1.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<artifactId>spring-cloud-contract-pact</artifactId>
+	<artifactId>spring-cloud-contract-spec-pact</artifactId>
 	<packaging>jar</packaging>
-	<name>Spring Cloud Contract Pact</name>
-	<description>Spring Cloud Contract Pact</description>
+	<name>Spring Cloud Contract Spec Pact</name>
+	<description>Spring Cloud Contract Spec Pact</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework</groupId>

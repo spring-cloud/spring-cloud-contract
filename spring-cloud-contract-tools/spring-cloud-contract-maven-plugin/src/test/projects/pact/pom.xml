@@ -46,7 +46,7 @@
 				<dependencies>
 					<dependency>
 						<groupId>org.springframework.cloud</groupId>
-						<artifactId>spring-cloud-contract-pact</artifactId>
+						<artifactId>spring-cloud-contract-spec-pact</artifactId>
 						<version>${spring.cloud.contract.version}</version>
 					</dependency>
 					<dependency>
