@@ -8,7 +8,7 @@
 :standalone_samples_path: {samples_path}/standalone/dsl
 :standalone_messaging_samples_path: {samples_path}/standalone/messaging
 :tests_path: ../../../../../tests
-:samples_url: https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master
+:samples_url: https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/1.0.x
 
 include::introduction.adoc[]
 

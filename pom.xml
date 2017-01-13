@@ -218,6 +218,7 @@
 							<include>**/*Tests.*</include>
 							<include>**/*Test.*</include>
 						</includes>
+						<reportFormat>plain</reportFormat>
 					</configuration>
 				</plugin>
 				<plugin>
