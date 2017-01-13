@@ -371,7 +371,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-contract-spec-pact</artifactId>
+			<artifactId>spring-cloud-contract-pact</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
