@@ -24,6 +24,7 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.cloud.contract.verifier.file.ContractFileScanner
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.NamesUtil
+import org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverter
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -64,8 +65,12 @@ class RecursiveFilesConverter {
 		}
 		contracts.asMap().entrySet().each { entry ->
 			entry.value.each { ContractMetadata contract ->
+				if (log.isDebugEnabled()) {
+					log.debug("Will create a stub for contract [${contract}]")
+				}
 				File sourceFile = contract.path.toFile()
-				StubGenerator stubGenerator = holder.converterForName(sourceFile.name);
+				StubGenerator stubGenerator = contract.convertedContract ? holder.firstOrDefault(new DslToWireMockClientConverter()) :
+						holder.converterForName(sourceFile.name)
 				try {
 					String path = sourceFile.path
 					if (properties.isExcludeBuildFolders() && (matchesPath(path, "target") || matchesPath(path, "build"))) {
@@ -78,7 +83,11 @@ class RecursiveFilesConverter {
 						return
 					}
 					int contractsSize = contract.convertedContract.size()
-					Map<Contract, String> convertedContent = stubGenerator.convertContents(entry.key.last().toString(), contract)
+					def entryKey = entry.key
+					if (log.isDebugEnabled()) {
+						log.debug("Stub Generator [${stubGenerator}] will convert contents of [${entryKey}]")
+					}
+					Map<Contract, String> convertedContent = stubGenerator.convertContents(entryKey.last().toString(), contract)
 					if (!convertedContent) {
 						return
 					}

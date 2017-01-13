@@ -15,17 +15,18 @@
  */
 
 package org.springframework.cloud.contract.verifier.util
+
 import groovy.json.JsonException
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.transform.TypeChecked
 import groovy.util.logging.Slf4j
-import org.springframework.cloud.contract.spec.internal.Headers
 import org.codehaus.groovy.runtime.GStringImpl
-import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
+import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
 
 import java.util.regex.Matcher
@@ -35,6 +36,11 @@ import static org.apache.commons.lang3.StringEscapeUtils.escapeJava
 import static org.apache.commons.lang3.StringEscapeUtils.escapeJson
 import static org.apache.commons.lang3.StringEscapeUtils.escapeXml11
 
+/**
+ * A utility class that can operate on a message body basing on the provided Content Type.
+ *
+ * @since 1.0.0
+ */
 @TypeChecked
 @Slf4j
 class ContentUtils {
@@ -66,7 +72,7 @@ class ContentUtils {
 	 * @param valueProvider - provider of values either for server or client side
 	 * @return JSON structure with replaced client / server side parts
 	 */
-	public static Object extractValue(GString bodyAsValue, ContentType contentType, Closure valueProvider) {
+	static Object extractValue(GString bodyAsValue, ContentType contentType, Closure valueProvider) {
 		if (bodyAsValue.isEmpty()){
 			return bodyAsValue
 		}
@@ -95,7 +101,7 @@ class ContentUtils {
 		}
 	}
 
-	public static ContentType getClientContentType(GString bodyAsValue) {
+	static ContentType getClientContentType(GString bodyAsValue) {
 		try {
 			extractValueForJSON(bodyAsValue, GET_STUB_SIDE)
 			return ContentType.JSON
@@ -110,7 +116,7 @@ class ContentUtils {
 		}
 	}
 
-	public static ContentType getClientContentType(String bodyAsValue) {
+	static ContentType getClientContentType(String bodyAsValue) {
 		try {
 			new JsonSlurper().parseText(bodyAsValue)
 			return ContentType.JSON
@@ -124,11 +130,11 @@ class ContentUtils {
 		}
 	}
 
-	public static ContentType getClientContentType(Object bodyAsValue) {
+	static ContentType getClientContentType(Object bodyAsValue) {
 		return ContentType.UNKNOWN
 	}
 
-	public static ContentType getClientContentType(Map bodyAsValue) {
+	static ContentType getClientContentType(Map bodyAsValue) {
 		try {
 			JsonOutput.toJson(bodyAsValue)
 			return ContentType.JSON
@@ -137,7 +143,7 @@ class ContentUtils {
 		}
 	}
 
-	public static ContentType getClientContentType(List bodyAsValue) {
+	static ContentType getClientContentType(List bodyAsValue) {
 		try {
 			JsonOutput.toJson(bodyAsValue)
 			return ContentType.JSON
@@ -153,7 +159,7 @@ class ContentUtils {
 		)
 	}
 
-	public static Object extractValue(GString bodyAsValue, Closure valueProvider) {
+	static Object extractValue(GString bodyAsValue, Closure valueProvider) {
 		return extractValue(bodyAsValue, ContentType.UNKNOWN, valueProvider)
 	}
 
@@ -275,7 +281,7 @@ class ContentUtils {
 		return val[1]
 	}
 
-	public static ContentType recognizeContentTypeFromHeader(Headers headers) {
+	static ContentType recognizeContentTypeFromHeader(Headers headers) {
 		String content = headers?.entries.find { it.name == "Content-Type" } ?.clientValue?.toString()
 		if (content?.endsWith("json")) {
 			return ContentType.JSON
@@ -289,7 +295,7 @@ class ContentUtils {
 		return ContentType.UNKNOWN
 	}
 
-	public static MatchingStrategy.Type getEqualsTypeFromContentType(ContentType contentType) {
+	static MatchingStrategy.Type getEqualsTypeFromContentType(ContentType contentType) {
 		switch (contentType) {
 			case ContentType.JSON:
 				return MatchingStrategy.Type.EQUAL_TO_JSON
@@ -299,7 +305,7 @@ class ContentUtils {
 		return MatchingStrategy.Type.EQUAL_TO
 	}
 
-	public static ContentType recognizeContentTypeFromContent(GString gstring) {
+	static ContentType recognizeContentTypeFromContent(GString gstring) {
 		if (isJsonType(gstring)) {
 			return ContentType.JSON
 		}
@@ -309,15 +315,15 @@ class ContentUtils {
 		return ContentType.UNKNOWN
 	}
 
-	public static ContentType recognizeContentTypeFromContent(Map jsonMap) {
+	static ContentType recognizeContentTypeFromContent(Map jsonMap) {
 		return ContentType.JSON
 	}
 
-	public static ContentType recognizeContentTypeFromContent(List jsonList) {
+	static ContentType recognizeContentTypeFromContent(List jsonList) {
 		return ContentType.JSON
 	}
 
-	public static ContentType recognizeContentTypeFromContent(String string) {
+	static ContentType recognizeContentTypeFromContent(String string) {
 		try {
 			new JsonSlurper().parseText(string)
 			return ContentType.JSON
@@ -326,11 +332,11 @@ class ContentUtils {
 		}
 	}
 
-	public static ContentType recognizeContentTypeFromContent(Object gstring) {
+	static ContentType recognizeContentTypeFromContent(Object gstring) {
 		return ContentType.UNKNOWN
 	}
 
-	public static boolean isJsonType(GString gstring) {
+	static boolean isJsonType(GString gstring) {
 		if (gstring.isEmpty()) {
 			return false
 		}
@@ -349,7 +355,7 @@ class ContentUtils {
 		return false
 	}
 
-	public static boolean isXmlType(GString gstring) {
+	static boolean isXmlType(GString gstring) {
 		GString stringWithoutValues = new GStringImpl(
 				gstring.values.collect({
 					it instanceof String || it instanceof GString ? it.toString() : escapeXml11(it.toString())
@@ -365,7 +371,7 @@ class ContentUtils {
 		return false
 	}
 
-	public static ContentType recognizeContentTypeFromMatchingStrategy(MatchingStrategy.Type type) {
+	static ContentType recognizeContentTypeFromMatchingStrategy(MatchingStrategy.Type type) {
 		switch (type) {
 			case MatchingStrategy.Type.EQUAL_TO_XML:
 				return ContentType.XML

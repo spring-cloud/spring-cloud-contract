@@ -1,0 +1,26 @@
+= Pact Http Client
+
+== Prerequisites
+
+First you have to publish to Maven Local the stubs of the *pact-http-server* module
+
+== How to run it?
+
+Run
+
+[source=groovy]
+--------
+./gradlew clean build
+--------
+
+or
+
+--------
+./mvnw clean package
+--------
+
+To
+
+- build the app
+- use spring-cloud-contract-stub-runner-spring[Stub Runner Spring] to download the stub of `Pact Http Server`
+- run the tests against stubbed server

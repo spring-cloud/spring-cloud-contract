@@ -84,9 +84,12 @@ class ContractFileScanner {
 	 */
 	private void appendRecursively(File baseDir, ListMultimap<Path, ContractMetadata> result) {
 		List<ContractConverter> converters = SpringFactoriesLoader.loadFactories(ContractConverter, null)
+		if (log.isDebugEnabled()) {
+			log.debug("Found the following contract converters ${converters}")
+		}
 		File[] files = baseDir.listFiles()
 		if (!files) {
-			return;
+			return
 		}
 		files.sort().eachWithIndex { File file, int index ->
 			boolean excluded = matchesPattern(file, excludeMatchers)
@@ -114,17 +117,19 @@ class ContractFileScanner {
 	private void addContractToTestGeneration(List<ContractConverter> converters, ListMultimap<Path, ContractMetadata> result,
 											File[] files, File file, int index) {
 		boolean converted = false
-		for (ContractConverter converter : converters) {
-			if (converter.isAccepted(file)) {
-				addContractToTestGeneration(result, files, file, index, converter.convertFrom(file))
-				converted = true
-				break
+		if (!file.isDirectory()) {
+			for (ContractConverter converter : converters) {
+				if (converter.isAccepted(file)) {
+					addContractToTestGeneration(result, files, file, index, converter.convertFrom(file))
+					converted = true
+					break
+				}
 			}
 		}
 		if (!converted) {
 			appendRecursively(file, result)
 			if (log.isDebugEnabled()) {
-				log.debug("File [$file] wasn't ignored but no converter was applicable.")
+				log.debug("File [$file] wasn't ignored but no converter was applicable. The file is a directory [${file.isDirectory()}]")
 			}
 		}
 	}
@@ -147,10 +152,10 @@ class ContractFileScanner {
 	private boolean matchesPattern(File file, Set<PathMatcher> matchers) {
 		for (PathMatcher matcher : matchers) {
 			if (matcher.matches(file.toPath())) {
-				return true;
+				return true
 			}
 		}
-		return false;
+		return false
 	}
 
 	private boolean isContractFile(File file) {
@@ -159,15 +164,15 @@ class ContractFileScanner {
 	
 	private static String getFilenameExtension(String path) {
 		if (path == null) {
-			return null;
+			return null
 		}
 		int extIndex = path.lastIndexOf('.');
 		if (extIndex == -1) {
-			return null;
+			return null
 		}
 		int folderIndex = path.lastIndexOf('/');
 		if (folderIndex > extIndex) {
-			return null;
+			return null
 		}
 		return path.substring(extIndex + 1);
 	}

@@ -128,6 +128,16 @@
 				<version>0.1.8</version>
 			</dependency>
 			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>3.4</version>
+			</dependency>
+			<dependency>
+				<groupId>au.com.dius</groupId>
+				<artifactId>pact-jvm-model</artifactId>
+				<version>2.4.18</version>
+			</dependency>
+			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-dependencies</artifactId>
 				<version>${project.version}</version>

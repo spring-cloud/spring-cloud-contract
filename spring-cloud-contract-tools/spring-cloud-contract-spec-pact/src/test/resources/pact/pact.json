@@ -1,0 +1,59 @@
+{
+  "provider": {
+    "name": "Alice Service"
+  },
+  "consumer": {
+    "name": "Consumer"
+  },
+  "interactions": [
+    {
+      "description": "a retrieve Mallory request",
+      "provider_state": "a user with username 'username' and password 'password' exists",
+      "request": {
+        "method": "GET",
+        "path": "/mallory",
+        "query": "name=ron&status=good",
+        "body" : {"id": "123", "method": "create"},
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "$.body.id": {
+            "match": "regex",
+            "regex": "[0-9]{3}"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": [
+          [
+            {
+              "email": "rddtGwwWMEhnkAPEmsyE",
+              "id": "eb0f8c17-c06a-479e-9204-14f7c95b63a6",
+              "userName": "AJQrokEGPAVdOHprQpKP"
+            }
+          ]
+        ],
+        "matchingRules": {
+          "$.body[0][*].email": {
+            "match": "type"
+          },
+          "$.body[0][*].id": {
+            "regex": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+          },
+          "$.body[0]": {
+            "max": 5,
+            "match": "type"
+          },
+          "$.body[0][*].userName": {
+            "match": "type"
+          }
+        }
+      }
+    }
+  ]
+}

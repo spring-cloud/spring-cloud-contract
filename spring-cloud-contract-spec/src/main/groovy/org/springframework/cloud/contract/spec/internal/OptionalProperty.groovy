@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.CompileStatic
+import groovy.transform.ToString
 
 /**
  * Represents a property that may or may not be there
@@ -24,6 +25,7 @@ import groovy.transform.CompileStatic
  * @since 1.0.0
  */
 @CompileStatic
+@ToString(includePackage = false, includeNames = true)
 class OptionalProperty {
 	final Object value
 

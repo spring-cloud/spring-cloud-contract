@@ -23,11 +23,11 @@ import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.apache.commons.lang3.StringEscapeUtils
 import org.springframework.cloud.contract.spec.internal.*
+import org.springframework.cloud.contract.verifier.util.MapConverter;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
-import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import java.util.regex.Pattern
 
@@ -187,7 +187,7 @@ abstract class MethodBodyBuilder {
 	protected abstract void then(BlockBuilder bb)
 
 	/**
-	 * Returns a {@link org.springframework.cloud.contract.verifier.util.ContentType} for the given request
+	 * Returns a {@link ContentType} for the given request
 	 */
 	protected abstract ContentType getResponseContentType()
 
@@ -415,7 +415,7 @@ abstract class MethodBodyBuilder {
 	}
 
 	private String stripFirstChar(String s) {
-		return s.substring(1);
+		return s.substring(1)
 	}
 
 	/**

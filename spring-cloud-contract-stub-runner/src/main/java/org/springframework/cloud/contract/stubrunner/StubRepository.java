@@ -56,6 +56,9 @@ class StubRepository {
 					"Missing descriptor repository under path [" + repository + "]");
 		}
 		this.contractConverters = SpringFactoriesLoader.loadFactories(ContractConverter.class, null);
+		if (log.isDebugEnabled()) {
+			log.debug("Found the following contract converters " + this.contractConverters);
+		}
 		this.httpServerStubs = httpServerStubs;
 		this.path = repository;
 		this.stubs = stubs();

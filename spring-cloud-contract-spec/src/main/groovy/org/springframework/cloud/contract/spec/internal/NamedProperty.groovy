@@ -26,7 +26,7 @@ import groovy.transform.ToString
  *
  * @since 1.0.0
  */
-@ToString(includePackage = false, includeFields = true, includeNames = true)
+@ToString(includePackage = false, includeNames = true)
 @EqualsAndHashCode(includeFields = true)
 @CompileStatic
 class NamedProperty {

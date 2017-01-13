@@ -21,9 +21,11 @@
 	</properties>
 
 	<modules>
+		<module>contracts</module>
 		<module>restdocs</module>
 		<module>dsl</module>
 		<module>messaging</module>
+		<module>pact</module>
 	</modules>
 
 	<build>

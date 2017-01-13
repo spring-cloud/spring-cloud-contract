@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
 /**
  * Represents a property that will become an executable method in the
@@ -27,6 +28,7 @@ import groovy.transform.EqualsAndHashCode
  */
 @CompileStatic
 @EqualsAndHashCode
+@ToString(includePackage = false, includeNames = true)
 class ExecutionProperty {
 
 	private static final String PLACEHOLDER_VALUE = '\\$it'
@@ -46,7 +48,7 @@ class ExecutionProperty {
 	}
 
 	@Override
-	public String toString() {
+	String toString() {
 		return executionCommand
 	}
 }
