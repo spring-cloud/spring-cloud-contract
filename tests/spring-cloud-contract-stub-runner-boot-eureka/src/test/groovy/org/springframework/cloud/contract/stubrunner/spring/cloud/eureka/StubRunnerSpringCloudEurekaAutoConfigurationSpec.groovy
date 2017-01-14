@@ -79,7 +79,7 @@ class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
 		System.clearProperty("stubrunner.stubs.classifier")
 	}
 
-	PollingConditions conditions = new PollingConditions(timeout: 40, delay: 1)
+	PollingConditions conditions = new PollingConditions(timeout: 240, delay: 1)
 
 	def 'should make service discovery work'() {
 		expect: 'WireMocks are running'

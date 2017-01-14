@@ -15,6 +15,7 @@ import org.springframework.cloud.contract.wiremock.WireMockSpring;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.SocketUtils;
 
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 
@@ -27,7 +28,7 @@ public class WiremockHttpsServerApplicationTests {
 
 	@ClassRule
 	public static WireMockClassRule wiremock = new WireMockClassRule(
-			WireMockSpring.options().httpsPort(7443));
+			WireMockSpring.options().httpsPort(7443).port(SocketUtils.findAvailableTcpPort()));
 
 	@Autowired
 	private Service service;
