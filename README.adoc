@@ -19,7 +19,7 @@ and consumers, for HTTP and message-based interactions.
 Modules giving you the possibility to use
 http://wiremock.org[WireMock] with different servers by using the
 "ambient" server embedded in a Spring Boot application. Check out the
-https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples[samples]
+https://github.com/spring-cloud/spring-cloud-contract/tree/1.0.x/samples[samples]
 for more details.
 
 IMPORTANT: The Spring Cloud Release Train BOM imports `spring-cloud-contract-dependencies`
@@ -323,7 +323,7 @@ number of different ways, including as described above using
 
 === Spring Cloud Contract Verifier
 
-:introduction_url: https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master
+:introduction_url: https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x
 
 === Introduction
 
@@ -352,7 +352,7 @@ video::sAAklvxmPmk[youtube,start=538,width=640,height=480]
 
 Let us assume that we have a system comprising of multiple microservices:
 
-image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/Deps.png[Microservices Architecture]
+image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/docs/src/main/asciidoc/images/Deps.png[Microservices Architecture]
 
 ===== Testing issues
 
@@ -393,11 +393,11 @@ Disadvantages:
 To solve the aforementioned issues Spring Cloud Contract Verifier with Stub Runner were created. Their main idea is to give you very fast feedback, without the need
 to set up the whole world of microservices.
 
-image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/Stubs1.png[Stubbed Services]
+image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/docs/src/main/asciidoc/images/Stubs1.png[Stubbed Services]
 
 If you work on stubs then the only applications you need are those that your application is using directly.
 
-image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/Stubs2.png[Stubbed Services]
+image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/docs/src/main/asciidoc/images/Stubs2.png[Stubbed Services]
 
 Spring Cloud Contract Verifier gives you the certainty that the stubs that you're using were created by the service that you're calling. Also if you can use them it means that they were
 tested against the producer's side. In other words - you can trust those stubs.
@@ -449,7 +449,7 @@ Technical remark - Fraud Detection will have artifact id `http-server`, Loan Iss
 Social remark - both client and server development teams need to communicate directly and discuss changes while
 going through the process. CDC is all about communication.
 
-The https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-server[server side code is available here] and https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-client[the client side code here].
+The https://github.com/spring-cloud/spring-cloud-contract/tree/1.0.x/samples/standalone/dsl/http-server[server side code is available here] and https://github.com/spring-cloud/spring-cloud-contract/tree/1.0.x/samples/standalone/dsl/http-client[the client side code here].
 
 TIP: In this case the ownership of the contracts lays on the producer side. It means that physically
 all the contract are present in the producer's repository
@@ -873,28 +873,16 @@ That's because all the generated tests will extend that class. Over there you ca
 ----
 package com.example.fraud;
 
-import org.junit.Before;
-
+import com.example.fraud.FraudDetectionController;
 import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc;
+
+import org.junit.Before;
 
 public class FraudBase {
 
 	@Before
 	public void setup() {
-		RestAssuredMockMvc.standaloneSetup(new FraudDetectionController(),
-				new FraudStatsController(stubbedStatsProvider()));
-	}
-
-	private StatsProvider stubbedStatsProvider() {
-		return fraudType -> {
-			switch (fraudType) {
-			case DRUNKS:
-				return 100;
-			case ALL:
-				return 200;
-			}
-			return 0;
-		};
+		RestAssuredMockMvc.standaloneSetup(new FraudDetectionController());
 	}
 
 	public void assertThatRejectionReasonIsNull(Object rejectionReason) {
@@ -1272,7 +1260,7 @@ consumer will you break with your local changes.
 
 Let's assume that we have a producer with coordinates `com.example:server` and 3 consumers: `client1`,
 `client2`, `client3`. Then in the repository with common contracts you would have the following setup
-(which you can checkout https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/contracts[here]:
+(which you can checkout https://github.com/spring-cloud/spring-cloud-contract/tree/1.0.x/samples/standalone/contracts[here]:
 
 [source,bash,indent=0]
 ----
@@ -1318,15 +1306,15 @@ Example of a `pom.xml` inside the `server` folder.
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.0.BUILD-SNAPSHOT</version>
+		<version>1.4.2.BUILD-SNAPSHOT</version>
 		<relativePath />
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<spring-cloud-contract.version>1.1.0.BUILD-SNAPSHOT</spring-cloud-contract.version>
-		<spring-cloud-dependencies.version>Dalston.BUILD-SNAPSHOT</spring-cloud-dependencies.version>
+		<spring-cloud-contract.version>1.0.4.BUILD-SNAPSHOT</spring-cloud-contract.version>
+		<spring-cloud-dependencies.version>Camden.BUILD-SNAPSHOT</spring-cloud-dependencies.version>
 	</properties>
 
 	<dependencyManagement>
