@@ -20,7 +20,7 @@ dependencies {
 }
 
 // In this section you define all Spring Cloud Contract Verifier Gradle Plugin properties
-contractVerifier {
+contracts {
       baseClassForTests = 'com.example.MvcTest'
   // fully qualified name to a class that will be the base class for your generated test classes
 }
