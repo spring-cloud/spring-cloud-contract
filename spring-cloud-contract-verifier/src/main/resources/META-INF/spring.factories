@@ -6,7 +6,3 @@ org.springframework.cloud.contract.verifier.messaging.amqp.ContractVerifierAmqpA
 org.springframework.cloud.contract.verifier.messaging.amqp.RabbitMockConnectionFactoryAutoConfiguration,\
 org.springframework.cloud.contract.verifier.messaging.camel.ContractVerifierCamelConfiguration,\
 org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierAutoConfiguration
-
-# Converters
-org.springframework.cloud.contract.spec.ContractConverter=\
-org.springframework.cloud.contract.verifier.converter.RamlContractConverter

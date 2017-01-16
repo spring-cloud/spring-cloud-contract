@@ -36,6 +36,12 @@
 		<dependency>
 			<groupId>org.raml</groupId>
 			<artifactId>raml-parser-2</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.raml</groupId>
+			<artifactId>com.mulesoft.jaxrs.raml.generator</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.spockframework</groupId>

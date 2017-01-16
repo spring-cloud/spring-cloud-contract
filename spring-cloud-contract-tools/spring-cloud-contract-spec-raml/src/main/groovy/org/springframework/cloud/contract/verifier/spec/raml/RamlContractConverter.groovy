@@ -18,6 +18,10 @@ package org.springframework.cloud.contract.verifier.spec.raml
 
 import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic
+import groovy.transform.PackageScope
+import org.raml.model.Action
+import org.raml.model.ActionType
+import org.raml.model.Raml2
 import org.raml.v2.api.RamlModelBuilder
 import org.raml.v2.api.RamlModelResult
 import org.raml.v2.api.model.v10.bodies.Response
@@ -25,19 +29,22 @@ import org.raml.v2.api.model.v10.datamodel.ExampleSpec
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration
 import org.raml.v2.api.model.v10.methods.Method
 import org.raml.v2.api.model.v10.resources.Resource
-import org.raml.v2.internal.impl.RamlBuilder
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
-import org.springframework.cloud.contract.spec.internal.Headers
+import org.springframework.cloud.contract.spec.internal.QueryParameter
+import org.springframework.cloud.contract.spec.internal.QueryParameters
+import org.springframework.cloud.contract.spec.internal.RegexPatterns
 
+import java.util.regex.Pattern
 /**
  * Converter of RAML file
  *
  * @author Eddú Meléndez
+ * @author Marcin Grzejszczak
  * @since 1.1.0
  */
 @CompileStatic
-class RamlContractConverter implements ContractConverter<RamlBuilder> {
+class RamlContractConverter implements ContractConverter<Raml2> {
 
     @Override
     boolean isAccepted(File file) {
@@ -165,16 +172,99 @@ class RamlContractConverter implements ContractConverter<RamlBuilder> {
         }
     }
 
-    protected Map<String, String> headers(Headers headers, Closure closure) {
-        return headers.entries.collectEntries {
-            String name = it.name
-            String value = closure(it)
-            return [(name) : value]
+    @Override
+    Raml2 convertTo(Collection<Contract> contracts) {
+        Raml2 raml2 = new Raml2()
+        Contract.make {
+            request {
+                urlPath("asd") {
+
+                }
+            }
+        }
+        raml2.setTitle("A generated RAML from Spring Cloud Contract")
+        raml2.resources = contracts.findAll { it.request }.collectEntries { Contract contract ->
+            org.raml.model.Resource resource = new org.raml.model.Resource()
+            resource.relativeUri = url(contract)
+            ActionType actionType = ActionType.valueOf(contract.request.method.serverValue as String)
+            Action action = new Action()
+            resource.actions << [(actionType) : action]
+            QueryParameters queryParams = queryParams(contract)
+            if (queryParams) {
+                action.queryParameters = queryParams.parameters.collectEntries { QueryParameter param ->
+                    return [(param.name) : new org.raml.model.parameter.QueryParameter(type: RamlType.fromObject(param.serverValue).ramlName)]
+                }
+            }
+            action.description = contract.description
+            //TODO: how to deal with body?
+
+        }
+        return raml2
+    }
+
+    @PackageScope
+    enum RamlType {
+        ANY("any"), NUMBER("number"), BOOLEAN("boolean"), STRING("string"),
+        DATE_ONLY("date-only"), TIME_ONLY("time-only"), DATETIME_ONLY("datetime-only"),
+        DATETIME("datetime"), INTEGER("integer"), NIL("nil")
+
+        final String ramlName
+        private static Pattern ISO_DATE = Pattern.compile(new RegexPatterns().isoDate())
+        private static Pattern ISO_DATE_TIME = Pattern.compile(new RegexPatterns().isoDateTime())
+        private static Pattern ISO_TIME = Pattern.compile(new RegexPatterns().isoTime())
+
+        RamlType(String name) {
+            this.ramlName = name
+        }
+
+        static RamlType fromObject(Object o) {
+            if (o == null) {
+                return NIL
+            }
+            switch (o.class) {
+                case Boolean:
+                    return BOOLEAN
+                case String:
+                    String string = o as String
+                    if (ISO_DATE.matcher(string).matches()) {
+                        return DATE_ONLY
+                    } else if (ISO_DATE_TIME.matcher(string).matches()) {
+                        return DATETIME
+                    } else if (ISO_TIME.matcher(string).matches()) {
+                        return TIME_ONLY
+                    }
+                    return STRING
+                case Integer:
+                    return INTEGER
+                case Number:
+                    return NUMBER
+                default:
+                    return ANY
+            }
+        }
+
+
+        @Override
+        String toString() {
+            return this.ramlName
         }
     }
 
-    @Override
-    RamlBuilder convertTo(Collection<Contract> contracts) {
-        return null
+    protected String url(Contract dsl) {
+        if (dsl.request.urlPath) {
+            return dsl.request.urlPath.serverValue.toString()
+        } else if (dsl.request.url) {
+            return dsl.request.url.serverValue.toString()
+        }
+        throw new IllegalStateException("No url provided")
+    }
+
+    protected QueryParameters queryParams(Contract dsl) {
+        if (dsl.request.urlPath) {
+            return dsl.request.urlPath.queryParameters
+        } else if (dsl.request.url) {
+            return dsl.request.url.queryParameters
+        }
+        throw new IllegalStateException("No url provided")
     }
 }
