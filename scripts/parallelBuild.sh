@@ -7,4 +7,4 @@ set -e
 [[ -z "${CORES}" ]] && CORES=8
 echo -e "\n\nRUNNING PARALLEL BUILD WITH [${CORES}] CORES\n\n"
 
-./mvnw clean install -Pintegration,docs -T ${CORES} -Dinvoker.parallelThreads=${CORES}
+./mvnw clean install -Pdocs -T ${CORES} && ./mvnw install -Pintegration -T ${CORES} -Dinvoker.parallelThreads=${CORES} -pl :spring-cloud-contract-samples
