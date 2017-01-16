@@ -2656,7 +2656,7 @@ one to one to the contents of the repo.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>As you can see there are no dependencies other than the Spring Cloud Contract Verifier Maven plugin.
+<p>As you can see there are no dependencies other than the Spring Cloud Contract Maven Plugin.
 Those poms are necessary for the consumer side to run <code>mvn clean install -DskipTests</code> to locally install
  stubs of the producer project.</p>
 </div>
@@ -3528,7 +3528,7 @@ Let&#8217;s take a look at the following example:</p>
 			&lt;baseClassMapping&gt;
 				&lt;contractPackageRegex&gt;.*com.*&lt;/contractPackageRegex&gt;
 				&lt;baseClassFQN&gt;com.example.TestBase&lt;/baseClassFQN&gt;
-			&lt;/baseClassMapping &gt;
+			&lt;/baseClassMapping&gt;
 		&lt;/baseClassMappings&gt;
 	&lt;/configuration&gt;
 &lt;/plugin&gt;</code></pre>
@@ -3549,7 +3549,7 @@ will be extending the <code>com.example.ComBase</code> whereas the rest of tests
 <div class="sect4">
 <h5 id="_invoking_generated_tests_2">Invoking generated tests</h5>
 <div class="paragraph">
-<p>Spring Cloud Contract Verifier Maven Plugin generates verification code into directory <code>/generated-test-sources/contractVerifier</code> and attach this directory to <code>testCompile</code> goal.</p>
+<p>Spring Cloud Contract Maven Plugin generates verification code into directory <code>/generated-test-sources/contractVerifier</code> and attach this directory to <code>testCompile</code> goal.</p>
 </div>
 <div class="paragraph">
 <p>For Groovy Spock code use:</p>

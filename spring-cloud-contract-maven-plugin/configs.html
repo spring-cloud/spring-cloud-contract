@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="Date-Revision-yyyymmdd" content="20170116" />
     <meta http-equiv="Content-Language" content="en" />
-    <title>Spring Cloud Contract Maven Plugin &#x2013; spring-cloud-contract:help</title>
+    <title>Spring Cloud Contract Maven Plugin &#x2013; </title>
     <link rel="stylesheet" href="./css/apache-maven-fluido-1.5.min.css" />
     <link rel="stylesheet" href="./css/site.css" />
     <link rel="stylesheet" href="./css/print.css" media="print" />
@@ -207,12 +207,10 @@
         Complex Configuration</a>
             </li>
                 
-      <li>
+      <li class="active">
   
-                          <a href="configs.html" title="Configuration snippets">
-          <span class="none"></span>
-        Configuration snippets</a>
-            </li>
+            <a href="#"><span class="none"></span>Configuration snippets</a>
+          </li>
                               <li class="nav-header">Related Projects</li>
                               
       <li>
@@ -256,156 +254,109 @@
                 
         <div id="bodyColumn"  class="span10" >
                                   
-            
-  
-    <div class="section">
-<h2><a name="spring-cloud-contract:help"></a>spring-cloud-contract:help</h2>
-      
-<p><b>Full name</b>:</p>
-      
-<p>org.springframework.cloud:spring-cloud-contract-maven-plugin:1.1.0.BUILD-SNAPSHOT:help</p>
-      
-<p><b>Description</b>:</p>
-      
-<div>Display help information on
-spring-cloud-contract-maven-plugin.<br />
-Call <tt>mvn spring-cloud-contract:help -Ddetail=true
--Dgoal=&lt;goal-name&gt;</tt> to display parameter details.</div>
-      
-<p><b>Attributes</b>:</p>
-      
-<ul>
-        
-<li>The goal is thread-safe and supports parallel builds.</li>
-      </ul>
-      
-<div class="section">
-<h3><a name="Optional_Parameters"></a>Optional Parameters</h3>
-        
-<table class="table table-striped" border="0">
-          
-<tr class="a">
-            
-<th>Name</th>
-            
-<th>Type</th>
-            
-<th>Since</th>
-            
-<th>Description</th>
-          </tr>
-          
-<tr class="b">
-            
-<td><b><a href="#detail">detail</a></b></td>
-            
-<td><tt>boolean</tt></td>
-            
-<td><tt>-</tt></td>
-            
-<td>If <tt>true</tt>, display all settable properties for each
-goal.<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>detail</tt>.</td>
-          </tr>
-          
-<tr class="a">
-            
-<td><b><a href="#goal">goal</a></b></td>
-            
-<td><tt>String</tt></td>
-            
-<td><tt>-</tt></td>
-            
-<td>The name of the goal for which to show help. If unspecified, all
-goals will be displayed.<br /><b>User property is</b>: <tt>goal</tt>.</td>
-          </tr>
-          
-<tr class="b">
-            
-<td><b><a href="#indentSize">indentSize</a></b></td>
-            
-<td><tt>int</tt></td>
-            
-<td><tt>-</tt></td>
-            
-<td>The number of spaces per indentation level, should be positive.<br /><b>Default value is</b>: <tt>2</tt>.<br /><b>User property is</b>: <tt>indentSize</tt>.</td>
-          </tr>
-          
-<tr class="a">
-            
-<td><b><a href="#lineLength">lineLength</a></b></td>
-            
-<td><tt>int</tt></td>
-            
-<td><tt>-</tt></td>
-            
-<td>The maximum length of a display line, should be positive.<br /><b>Default value is</b>: <tt>80</tt>.<br /><b>User property is</b>: <tt>lineLength</tt>.</td>
-          </tr>
-        </table>
-      </div>
-      
-<div class="section">
-<h3><a name="Parameter_Details"></a>Parameter Details</h3>
-        
-<p><b><a name="detail">detail</a>:</b></p>
-        
-<div>If <tt>true</tt>, display all settable properties for each
-goal.</div>
-        
-<ul>
-          
-<li><b>Type</b>: <tt>boolean</tt></li>
-          
-<li><b>Required</b>: <tt>No</tt></li>
-          
-<li><b>User Property</b>: <tt>detail</tt></li>
-          
-<li><b>Default</b>: <tt>false</tt></li>
-        </ul><hr />
-<p><b><a name="goal">goal</a>:</b></p>
-        
-<div>The name of the goal for which to show help. If unspecified, all
-goals will be displayed.</div>
-        
-<ul>
-          
-<li><b>Type</b>: <tt>java.lang.String</tt></li>
-          
-<li><b>Required</b>: <tt>No</tt></li>
-          
-<li><b>User Property</b>: <tt>goal</tt></li>
-        </ul><hr />
-<p><b><a name="indentSize">indentSize</a>:</b></p>
-        
-<div>The number of spaces per indentation level, should be positive.</div>
-        
-<ul>
-          
-<li><b>Type</b>: <tt>int</tt></li>
-          
-<li><b>Required</b>: <tt>No</tt></li>
-          
-<li><b>User Property</b>: <tt>indentSize</tt></li>
-          
-<li><b>Default</b>: <tt>2</tt></li>
-        </ul><hr />
-<p><b><a name="lineLength">lineLength</a>:</b></p>
-        
-<div>The maximum length of a display line, should be positive.</div>
-        
-<ul>
-          
-<li><b>Type</b>: <tt>int</tt></li>
-          
-<li><b>Required</b>: <tt>No</tt></li>
-          
-<li><b>User Property</b>: <tt>lineLength</tt></li>
-          
-<li><b>Default</b>: <tt>80</tt></li>
-        </ul>
-      </div>
-    </div>
-  
+            <div class="sect1">
+<h2 id="configuration_snippets">Configuration snippets</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Here you&#8217;ll be able to see different Spring Cloud Contract Maven plugin configuration</p>
+</div>
+<div class="sect2">
+<h3 id="base_class_from_mappings">Base class from mappings</h3>
+<div class="paragraph">
+<p>Define regular expression mappings to map a contract to its base class.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml">                        <span style="color:#070;font-weight:bold">&lt;plugin&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;configuration&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;baseClassForTests&gt;</span>com.example.FooBase<span style="color:#070;font-weight:bold">&lt;/baseClassForTests&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;baseClassMappings&gt;</span>
+                                                <span style="color:#070;font-weight:bold">&lt;baseClassMapping&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;contractPackageRegex&gt;</span>.*com.*<span style="color:#070;font-weight:bold">&lt;/contractPackageRegex&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;baseClassFQN&gt;</span>com.example.TestBase<span style="color:#070;font-weight:bold">&lt;/baseClassFQN&gt;</span>
+                                                <span style="color:#070;font-weight:bold">&lt;/baseClassMapping&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;/baseClassMappings&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;/configuration&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;/plugin&gt;</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="convention_based_mappings">Convention based mappings</h3>
+<div class="paragraph">
+<p>Define a package in which base classes are placed. In this case we define
+a package called <code>hello</code>. If there&#8217;s a contract under /contracts/hello/V1/Contract.groovy` then
+we&#8217;ll search for a <code>HelloV1Base</code> base class. We&#8217;re taking two last folders
+from the path and combine them into a class name.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml">                        <span style="color:#070;font-weight:bold">&lt;plugin&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;configuration&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;packageWithBaseClasses&gt;</span>hello<span style="color:#070;font-weight:bold">&lt;/packageWithBaseClasses&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;/configuration&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;/plugin&gt;</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="remote_contracts">Remote contracts</h3>
+<div class="paragraph">
+<p>Here you can see a setup where we point to a repository where the JAR with the
+contracts got deployed.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml">                        <span style="color:#070;font-weight:bold">&lt;plugin&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;configuration&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;contractsRepositoryUrl&gt;</span>http://link/to/your/nexus/or/artifactory/or/sth<span style="color:#070;font-weight:bold">&lt;/contractsRepositoryUrl&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;contractDependency&gt;</span>
+                                                <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>com.example.standalone<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
+                                                <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>contracts<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;/contractDependency&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;/configuration&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;/plugin&gt;</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="setting_up_repo_with_common_contracts">Setting up repo with common contracts</h3>
+<div class="paragraph">
+<p>A setup of a repo that contains all common contracts. It can exclude the target / build
+folder that gets created when you&#8217;re installing stubs locally as a consumer.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml">        <span style="color:#070;font-weight:bold">&lt;properties&gt;</span>
+                <span style="color:#777">&lt;!-- We don't want the tests to be executed cause we're just build stubs --&gt;</span>
+                <span style="color:#070;font-weight:bold">&lt;skipTests&gt;</span>true<span style="color:#070;font-weight:bold">&lt;/skipTests&gt;</span>
+                <span style="color:#777">&lt;!-- The target / build folder needs to be excluded - we don't want to check its contents --&gt;</span>
+                <span style="color:#070;font-weight:bold">&lt;excludeBuildFolders&gt;</span>true<span style="color:#070;font-weight:bold">&lt;/excludeBuildFolders&gt;</span>
+        <span style="color:#070;font-weight:bold">&lt;/properties&gt;</span>
 
+        <span style="color:#070;font-weight:bold">&lt;build&gt;</span>
+                <span style="color:#070;font-weight:bold">&lt;plugins&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;plugin&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;configuration&gt;</span>
+                                        <span style="color:#777">&lt;!-- By default it would search under src/test/resources/ --&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;contractsDirectory&gt;</span>${project.basedir}<span style="color:#070;font-weight:bold">&lt;/contractsDirectory&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;/configuration&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;/plugin&gt;</span>
+                <span style="color:#070;font-weight:bold">&lt;/plugins&gt;</span>
+        <span style="color:#070;font-weight:bold">&lt;/build&gt;</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
                   </div>
             </div>
           </div>
