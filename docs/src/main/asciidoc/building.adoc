@@ -51,4 +51,37 @@ cd spring-cloud-contract-tools/spring-cloud-contract-gradle-plugin
 ./gradlew clean build
 ```
 
+=== Helpful scripts
+
+We're providing a couple of helpful scripts to build the project.
+
+To build the project in parallel (by default uses 4 cores but you can change it)
+
+```
+./scripts/parallelBuild.sh
+```
+
+and with 8 cores
+
+```
+CORES=8 ./scripts/parallelBuild.sh
+```
+
+To build the project without any integration tests (by default uses 1 core)
+
+```
+./scripts/noIntegration.sh
+```
+
+and with 8 cores
+
+```
+CORES=8 ./scripts/noIntegration.sh
+```
+
+To generate the documentation (both the root one and the maven plugin one)
+
+```
+./scripts/generateDocs.sh
+```
 

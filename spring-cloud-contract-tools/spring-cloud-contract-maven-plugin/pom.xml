@@ -36,6 +36,7 @@
 		<maven.compiler.target>1.7</maven.compiler.target>
 	</properties>
 
+	<version>${spring.cloud.contract.verifier.version}</version>
 	<inceptionYear>2016</inceptionYear>
 
 	<build>
@@ -140,7 +141,7 @@
 				<configuration>
 					<skipDeploy>true</skipDeploy><!-- don't deploy site with maven-site-plugin -->
 					<!-- disable generateReports if you don't want to include the built-in reports -->
-					<generateReports>false</generateReports>
+					<generateReports>true</generateReports>
 					<generateSitemap>true</generateSitemap>
 					<relativizeDecorationLinks>false</relativizeDecorationLinks>
 					<locales>en</locales>
@@ -242,6 +243,28 @@
 			<plugin>
 				<artifactId>maven-plugin-plugin</artifactId>
 				<version>${maven.plugin.plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.9</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>cim</report>
+							<report>help</report>
+							<report>index</report>
+							<report>issue-tracking</report>
+							<report>license</report>
+							<report>modules</report>
+							<report>plugin-management</report>
+							<report>plugins</report>
+							<report>project-team</report>
+							<report>scm</report>
+							<report>summary</report>
+						</reports>
+					</reportSet>
+				</reportSets>
 			</plugin>
 		</plugins>
 	</reporting>

@@ -119,10 +119,10 @@ class to obtain an `Options` instance:
 ----
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@AutoConfigureWireMock
 public class WiremockForDocsClassRuleTests {
 
 	// Start WireMock on some dynamic port
+	// for some reason `dynamicPort()` is not working properly
 	@ClassRule
 	public static WireMockClassRule wiremock = new WireMockClassRule(
 			WireMockSpring.options().dynamicPort());
@@ -1400,7 +1400,7 @@ Example of a `pom.xml` inside the `server` folder.
 </project>
 ----
 
-As you can see there are no dependencies other than the Spring Cloud Contract Verifier Maven plugin.
+As you can see there are no dependencies other than the Spring Cloud Contract Maven Plugin.
 Those poms are necessary for the consumer side to run `mvn clean install -DskipTests` to locally install
  stubs of the producer project.
 
@@ -1644,3 +1644,36 @@ cd spring-cloud-contract-tools/spring-cloud-contract-gradle-plugin
 ./gradlew clean build
 ```
 
+=== Helpful scripts
+
+We're providing a couple of helpful scripts to build the project.
+
+To build the project in parallel (by default uses 4 cores but you can change it)
+
+```
+./scripts/parallelBuild.sh
+```
+
+and with 8 cores
+
+```
+CORES=8 ./scripts/parallelBuild.sh
+```
+
+To build the project without any integration tests (by default uses 1 core)
+
+```
+./scripts/noIntegration.sh
+```
+
+and with 8 cores
+
+```
+CORES=8 ./scripts/noIntegration.sh
+```
+
+To generate the documentation (both the root one and the maven plugin one)
+
+```
+./scripts/generateDocs.sh
+```

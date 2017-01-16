@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2016 the original author or authors.
+ *  Copyright 2013-2017 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,6 +38,10 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.cloud.contract.verifier.config.TestFramework;
 import org.springframework.cloud.contract.verifier.config.TestMode;
 
+/**
+ * From the provided directory with contracts generates the acceptance
+ * tests on the producer side
+ */
 @Mojo(name = "generateTests", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES,
 		requiresDependencyResolution = ResolutionScope.TEST)
 public class GenerateTestsMojo extends AbstractMojo {
