@@ -119,10 +119,10 @@ class to obtain an `Options` instance:
 ----
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@AutoConfigureWireMock
 public class WiremockForDocsClassRuleTests {
 
 	// Start WireMock on some dynamic port
+	// for some reason `dynamicPort()` is not working properly
 	@ClassRule
 	public static WireMockClassRule wiremock = new WireMockClassRule(
 			WireMockSpring.options().dynamicPort());
@@ -1400,7 +1400,7 @@ Example of a `pom.xml` inside the `server` folder.
 </project>
 ----
 
-As you can see there are no dependencies other than the Spring Cloud Contract Verifier Maven plugin.
+As you can see there are no dependencies other than the Spring Cloud Contract Maven Plugin.
 Those poms are necessary for the consumer side to run `mvn clean install -DskipTests` to locally install
  stubs of the producer project.
 

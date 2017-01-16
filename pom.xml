@@ -185,7 +185,12 @@
 		<developer>
 			<id>marcingrzejszczak</id>
 			<name>Marcin Grzejszczak</name>
-			<email>marcin@grzejszczak.pl</email>
+			<email>mgrzejszczak@pivotal.io</email>
+		</developer>
+		<developer>
+			<id>dsyer</id>
+			<name>David Syer</name>
+			<email>dsyer@pivotal.io</email>
 		</developer>
 	</developers>
 
@@ -197,13 +202,13 @@
 	</scm>
 
 	<issueManagement>
-		<system>GitHub Issues</system>
-		<url>https://github.com/spring-cloud/spring-cloud-contract</url>
+		<system>GitHub</system>
+		<url>https://github.com/spring-cloud/spring-cloud-contract/issues</url>
 	</issueManagement>
 
 	<ciManagement>
-		<system>Travis</system>
-		<url>https://travis-ci.org/spring-cloud/spring-cloud-contract</url>
+		<system>CircleCi</system>
+		<url>https://circleci.com/gh/spring-cloud/spring-cloud-contract</url>
 	</ciManagement>
 
 	<build>

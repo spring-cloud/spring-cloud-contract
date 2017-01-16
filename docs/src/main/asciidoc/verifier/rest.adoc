@@ -463,7 +463,7 @@ will be extending the `com.example.ComBase` whereas the rest of tests will exten
 
 ===== Invoking generated tests
 
-Spring Cloud Contract Verifier Maven Plugin generates verification code into directory `/generated-test-sources/contractVerifier` and attach this directory to `testCompile` goal.
+Spring Cloud Contract Maven Plugin generates verification code into directory `/generated-test-sources/contractVerifier` and attach this directory to `testCompile` goal.
 
 For Groovy Spock code use:
 

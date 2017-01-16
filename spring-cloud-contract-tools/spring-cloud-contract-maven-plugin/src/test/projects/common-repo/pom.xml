@@ -2,7 +2,7 @@
 <!--
 
 
-     Copyright 2013-2016 the original author or authors.
+     Copyright 2013-2017 the original author or authors.
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -25,8 +25,11 @@
 	<artifactId>common-repo</artifactId>
 	<version>0.1</version>
 
+	<!--tag::common_repo[]-->
 	<properties>
+		<!-- We don't want the tests to be executed cause we're just build stubs -->
 		<skipTests>true</skipTests>
+		<!-- The target / build folder needs to be excluded - we don't want to check its contents -->
 		<excludeBuildFolders>true</excludeBuildFolders>
 	</properties>
 
@@ -43,4 +46,5 @@
 		</plugins>
 	</build>
 
+	<!--end::common_repo[]-->
 </project>

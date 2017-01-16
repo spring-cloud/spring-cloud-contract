@@ -1,0 +1,45 @@
+== Configuration snippets
+
+Here you'll be able to see different Spring Cloud Contract Maven plugin configuration
+
+=== Base class from mappings
+
+Define regular expression mappings to map a contract to its base class.
+
+[source,xml]
+----
+include::../../../src/test/projects/basic-baseclass-from-mappings/pom.xml[tags=mapping]
+----
+
+=== Convention based mappings
+
+Define a package in which base classes are placed. In this case we define
+a package called `hello`. If there's a contract under /contracts/hello/V1/Contract.groovy` then
+we'll search for a `HelloV1Base` base class. We're taking two last folders
+from the path and combine them into a class name.
+
+[source,xml]
+----
+include::../../../src/test/projects/basic-generated-baseclass/pom.xml[tags=convention]
+----
+
+=== Remote contracts
+
+Here you can see a setup where we point to a repository where the JAR with the
+contracts got deployed.
+
+[source,xml]
+----
+include::../../../src/test/projects/basic-remote-contracts/pom-with-repo.xml[tags=remote_config]
+----
+
+=== Setting up repo with common contracts
+
+A setup of a repo that contains all common contracts. It can exclude the target / build
+folder that gets created when you're installing stubs locally as a consumer.
+
+[source,xml]
+----
+include::../../../src/test/projects/common-repo/pom.xml[tags=common_repo]
+----
+
