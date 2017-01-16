@@ -22,11 +22,11 @@ class StubGeneratorProvider {
 		this.converters.addAll(converters)
 	}
 
-	StubGenerator converterForName(String fileName) {
-		return this.converters.find { it.canHandleFileName(fileName) }
+	Collection<StubGenerator> converterForName(String fileName) {
+		return this.converters.findAll { it.canHandleFileName(fileName) }
 	}
 
-	StubGenerator firstOrDefault(StubGenerator defaultStubGenerator) {
-		return this.converters.empty ? defaultStubGenerator : this.converters.first()
+	Collection<StubGenerator> allOrDefault(StubGenerator defaultStubGenerator) {
+		return this.converters.empty ? [defaultStubGenerator] : this.converters
 	}
 }

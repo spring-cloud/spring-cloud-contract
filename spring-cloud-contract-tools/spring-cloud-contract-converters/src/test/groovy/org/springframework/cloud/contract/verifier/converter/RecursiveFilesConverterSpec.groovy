@@ -19,7 +19,9 @@ package org.springframework.cloud.contract.verifier.converter
 import groovy.io.FileType
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.util.FileSystemUtils
 import spock.lang.Specification
 
@@ -98,12 +100,62 @@ class RecursiveFilesConverterSpec extends Specification {
 			e.cause?.message == "Test conversion error"
 	}
 
-	private
-	static Set<Path> getRelativePathsForFilesInDirectory(Collection<File> createdFiles, File targetRootDirectory) {
+	def "should convert contract into stub using all possible converters"() {
+		given:
+			def sourceFile = tmpFolder.newFile("test.groovy")
+			sourceFile.text = """
+			org.springframework.cloud.contract.spec.Contract.make {
+				request {
+					url "/baz"
+					method "GET"
+				}
+				response {
+					status 200
+				}
+			}
+			"""
+		and:
+			StubGenerator stubGenerator1 = stubGenerator("foo")
+		and:
+			StubGenerator stubGenerator2 = stubGenerator("bar")
+		and:
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
+			properties.contractsDslDir = tmpFolder.root
+			properties.stubsOutputDir = tmpFolder.root
+		and:
+			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(properties, new StubGeneratorProvider([stubGenerator1, stubGenerator2]))
+		when:
+			recursiveFilesConverter.processFiles()
+		then:
+			tmpFolder.root.list().toList().containsAll("foo", "bar")
+	}
+
+	private static Set<Path> getRelativePathsForFilesInDirectory(Collection<File> createdFiles, File targetRootDirectory) {
 		Path rootSourcePath = Paths.get(targetRootDirectory.toURI())
 		Set<Path> relativizedCreatedFiles = createdFiles.collect { File file ->
 			rootSourcePath.relativize(Paths.get(file.toURI()))
 		}
 		return relativizedCreatedFiles
+	}
+
+	private StubGenerator stubGenerator(String stub) {
+		return new StubGenerator() {
+			@Override
+			boolean canHandleFileName(String fileName) {
+				return true
+			}
+
+			@Override
+			Map<Contract, String> convertContents(String rootName, ContractMetadata content) {
+				return [
+						(content.convertedContract.first()) : stub
+				]
+			}
+
+			@Override
+			String generateOutputFileNameForInput(String inputFileName) {
+				return stub
+			}
+		}
 	}
 }

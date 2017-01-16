@@ -86,7 +86,7 @@ class RecursiveFilesConverter {
 		contracts.asMap().entrySet().each { entry ->
 			entry.value.each { ContractMetadata contract ->
 				File sourceFile = contract.path.toFile()
-				StubGenerator stubGenerator = holder.converterForName(sourceFile.name);
+				StubGenerator stubGenerator = holder.converterForName(sourceFile.name).first()
 				try {
 					String path = sourceFile.path
 					if (properties.isExcludeBuildFolders() && (matchesPath(path, "target") || matchesPath(path, "build"))) {

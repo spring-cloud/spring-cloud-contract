@@ -69,7 +69,7 @@ class RecursiveFilesConverter {
 					log.debug("Will create a stub for contract [${contract}]")
 				}
 				File sourceFile = contract.path.toFile()
-				StubGenerator stubGenerator = contract.convertedContract ? holder.firstOrDefault(new DslToWireMockClientConverter()) :
+				Collection<StubGenerator> stubGenerators = contract.convertedContract ? holder.allOrDefault(new DslToWireMockClientConverter()) :
 						holder.converterForName(sourceFile.name)
 				try {
 					String path = sourceFile.path
@@ -79,25 +79,27 @@ class RecursiveFilesConverter {
 						}
 						return
 					}
-					if (!contract.convertedContract && !stubGenerator) {
+					if (!contract.convertedContract && !stubGenerators) {
 						return
 					}
 					int contractsSize = contract.convertedContract.size()
 					def entryKey = entry.key
 					if (log.isDebugEnabled()) {
-						log.debug("Stub Generator [${stubGenerator}] will convert contents of [${entryKey}]")
+						log.debug("Stub Generators [${stubGenerators}] will convert contents of [${entryKey}]")
 					}
-					Map<Contract, String> convertedContent = stubGenerator.convertContents(entryKey.last().toString(), contract)
-					if (!convertedContent) {
-						return
-					}
-					convertedContent.entrySet().eachWithIndex { Map.Entry<Contract, String> content, int index ->
-						Contract dsl = content.key
-						String converted = content.value
-						Path absoluteTargetPath = createAndReturnTargetDirectory(sourceFile)
-						File newJsonFile = createTargetFileWithProperName(stubGenerator, absoluteTargetPath,
-								sourceFile, contractsSize, index, dsl)
-						newJsonFile.setText(converted, StandardCharsets.UTF_8.toString())
+					stubGenerators.each { StubGenerator stubGenerator ->
+						Map<Contract, String> convertedContent = stubGenerator.convertContents(entryKey.last().toString(), contract)
+						if (!convertedContent) {
+							return
+						}
+						convertedContent.entrySet().eachWithIndex { Map.Entry<Contract, String> content, int index ->
+							Contract dsl = content.key
+							String converted = content.value
+							Path absoluteTargetPath = createAndReturnTargetDirectory(sourceFile)
+							File newJsonFile = createTargetFileWithProperName(stubGenerator, absoluteTargetPath,
+									sourceFile, contractsSize, index, dsl)
+							newJsonFile.setText(converted, StandardCharsets.UTF_8.toString())
+						}
 					}
 				} catch (Exception e) {
 					throw new ConversionContractVerifierException("Unable to make conversion of ${sourceFile.name}", e)

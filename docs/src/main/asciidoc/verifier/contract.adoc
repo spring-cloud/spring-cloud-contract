@@ -855,6 +855,9 @@ include::{converters_path}/src/main/resources/META-INF/spring.factories[indent=0
 
 The default implementation is the WireMock stub generation.
 
+TIP: You can provide multiple stub generator implementations. That way for example from a single
+DSL as input you can e.g. produce WireMock stubs and Pact files too!
+
 ==== Custom Stub Runner
 
 If you decide to have a custom stub generation you also need a custom way of running
