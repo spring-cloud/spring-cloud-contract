@@ -29,6 +29,24 @@
 		<!-- standalone tests get executed separately by invoker plugin -->
     </modules>
 
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-contract-stub-runner</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-contract-maven-plugin</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-contract-gradle-plugin</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
  	<build>
 		<plugins>
 	        <plugin>
