@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="Date-Revision-yyyymmdd" content="20170116" />
     <meta http-equiv="Content-Language" content="en" />
-    <title>Spring Cloud Contract Maven Plugin &#x2013; Sitemap</title>
+    <title>Spring Cloud Contract Maven Plugin &#x2013; spring-cloud-contract:convert</title>
     <link rel="stylesheet" href="./css/apache-maven-fluido-1.5.min.css" />
     <link rel="stylesheet" href="./css/site.css" />
     <link rel="stylesheet" href="./css/print.css" media="print" />
@@ -256,72 +256,331 @@
                 
         <div id="bodyColumn"  class="span10" >
                                   
-            <div class="section">
-<h2><a name="Sitemap"></a>Sitemap</h2>
+            
+  
+    <div class="section">
+<h2><a name="spring-cloud-contract:convert"></a>spring-cloud-contract:convert</h2>
+      
+<p><b>Full name</b>:</p>
+      
+<p>org.springframework.cloud:spring-cloud-contract-maven-plugin:1.0.4.BUILD-SNAPSHOT:convert</p>
+      
+<p><b>Description</b>:</p>
+      
+<div>Convert Spring Cloud Contract Verifier contracts into WireMock
+stubs mappings. 
 
-<p>This page lists all entries of the navigation menu in expanded form.</p>
-
+<p>This goal allows you to generate `stubs-jar` or execute
+`spring-cloud-contract:run` with generated WireMock mappings.</p></div>
+      
+<p><b>Attributes</b>:</p>
+      
+<ul>
+        
+<li>Binds by default to the <a class="externalLink" href="http://maven.apache.org/ref/current/maven-core/lifecycles.html">lifecycle phase</a>: <tt>process-test-resources</tt>.</li>
+      </ul>
+      
 <div class="section">
+<h3><a name="Optional_Parameters"></a>Optional Parameters</h3>
+        
+<table class="table table-striped" border="0">
+          
+<tr class="a">
+            
+<th>Name</th>
+            
+<th>Type</th>
+            
+<th>Since</th>
+            
+<th>Description</th>
+          </tr>
+          
+<tr class="b">
+            
+<td><b><a href="#contractDependency">contractDependency</a></b></td>
+            
+<td><tt>Dependency</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>(no description)<br /><b>User property is</b>: <tt>contractDependency</tt>.</td>
+          </tr>
+          
+<tr class="a">
+            
+<td><b><a href="#contractsDirectory">contractsDirectory</a></b></td>
+            
+<td><tt>File</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>Directory containing Spring Cloud Contract Verifier contracts
+written using the GroovyDSL<br /><b>Default value is</b>: <tt>${basedir}/src/test/resources/contracts</tt>.<br /></td>
+          </tr>
+          
+<tr class="b">
+            
+<td><b><a href="#contractsPath">contractsPath</a></b></td>
+            
+<td><tt>String</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>The path in the JAR with all the contracts where contracts for this
+particular service lay. If not provided will be resolved to
+<tt>groupid/artifactid</tt>. Example: <br />
+<br />
+ If <tt>groupid</tt> is <tt>com.example</tt> and
+<tt>artifactid</tt> is <tt>service</tt> then the resolved
+path will be <tt>/com/example/artifactid</tt><br /><b>User property is</b>: <tt>contractsPath</tt>.</td>
+          </tr>
+          
+<tr class="a">
+            
+<td><b><a href="#contractsRepositoryUrl">contractsRepositoryUrl</a></b></td>
+            
+<td><tt>String</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>The URL from which a JAR containing the contracts should get
+downloaded. If not provided but artifactid / coordinates notation
+was provided then the current Maven's build repositories will be
+taken into consideration<br /><b>User property is</b>: <tt>contractsRepositoryUrl</tt>.</td>
+          </tr>
+          
+<tr class="b">
+            
+<td><b><a href="#contractsWorkOffline">contractsWorkOffline</a></b></td>
+            
+<td><tt>boolean</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>If <tt>true</tt> then JAR with contracts will be taken from
+local maven repository<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>contractsWorkOffline</tt>.</td>
+          </tr>
+          
+<tr class="a">
+            
+<td><b><a href="#destination">destination</a></b></td>
+            
+<td><tt>File</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>(no description)<br /><b>Default value is</b>: <tt>${basedir}</tt>.<br /><b>User property is</b>: <tt>stubsDirectory</tt>.</td>
+          </tr>
+          
+<tr class="b">
+            
+<td><b><a href="#excludeBuildFolders">excludeBuildFolders</a></b></td>
+            
+<td><tt>boolean</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>If <tt>true</tt> then any file laying in a path that contains
+<tt>build</tt> or <tt>target</tt> will get excluded in
+further processing.<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>excludeBuildFolders</tt>.</td>
+          </tr>
+          
+<tr class="a">
+            
+<td><b><a href="#skip">skip</a></b></td>
+            
+<td><tt>boolean</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>(no description)<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>spring.cloud.contract.verifier.skip</tt>.</td>
+          </tr>
+          
+<tr class="b">
+            
+<td><b><a href="#source">source</a></b></td>
+            
+<td><tt>File</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>Directory containing contracts written using the GroovyDSL 
+
+<p>This parameter is only used when goal is executed outside of
+maven project.</p><br /><b>Default value is</b>: <tt>${basedir}</tt>.<br /><b>User property is</b>: <tt>contractsDirectory</tt>.</td>
+          </tr>
+          
+<tr class="a">
+            
+<td><b><a href="#stubsDirectory">stubsDirectory</a></b></td>
+            
+<td><tt>File</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>Directory where the generated WireMock stubs from Groovy DSL should
+be placed. You can then mention them in your packaging task to
+create jar with stubs<br /><b>Default value is</b>: <tt>${project.build.directory}/stubs/</tt>.<br /></td>
+          </tr>
+        </table>
+      </div>
+      
 <div class="section">
-<h4><a name="Overview"></a>Overview</h4><hr />
-
+<h3><a name="Parameter_Details"></a>Parameter Details</h3>
+        
+<p><b><a name="contractDependency">contractDependency</a>:</b></p>
+        
+<div>(no description)</div>
+        
 <ul>
-
-<li><a href="index.html">Introduction</a></li>
-
-<li><a href="usage.html">Usage</a></li>
-
-<li><a href="plugin-info.html">Goals</a></li>
-
-<li><a href="junit.html">JUnit Configuration</a></li>
-
-<li><a href="spock.html">Spock Configuration</a></li>
-
-<li><a href="complex.html">Complex Configuration</a></li>
-
-<li><a href="configs.html">Configuration snippets</a></li></ul>
-</div>
-<div class="section">
-<h4><a name="Related_Projects"></a>Related Projects</h4><hr />
-
+          
+<li><b>Type</b>: <tt>org.apache.maven.model.Dependency</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>contractDependency</tt></li>
+        </ul><hr />
+<p><b><a name="contractsDirectory">contractsDirectory</a>:</b></p>
+        
+<div>Directory containing Spring Cloud Contract Verifier contracts
+written using the GroovyDSL</div>
+        
 <ul>
-
-<li><a class="externalLink" href="https://github.com/spring-cloud/spring-cloud-contract">Spring Cloud Contract</a></li></ul>
-</div>
-<div class="section">
-<h4><a name="Project_Documentation"></a>Project Documentation</h4><hr />
-
+          
+<li><b>Type</b>: <tt>java.io.File</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>Default</b>: <tt>${basedir}/src/test/resources/contracts</tt></li>
+        </ul><hr />
+<p><b><a name="contractsPath">contractsPath</a>:</b></p>
+        
+<div>The path in the JAR with all the contracts where contracts for this
+particular service lay. If not provided will be resolved to
+<tt>groupid/artifactid</tt>. Example: <br />
+<br />
+ If <tt>groupid</tt> is <tt>com.example</tt> and
+<tt>artifactid</tt> is <tt>service</tt> then the resolved
+path will be <tt>/com/example/artifactid</tt></div>
+        
 <ul>
-
-<li><a href="./project-info.html">Project Information</a>
-
+          
+<li><b>Type</b>: <tt>java.lang.String</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>contractsPath</tt></li>
+        </ul><hr />
+<p><b><a name="contractsRepositoryUrl">contractsRepositoryUrl</a>:</b></p>
+        
+<div>The URL from which a JAR containing the contracts should get
+downloaded. If not provided but artifactid / coordinates notation
+was provided then the current Maven's build repositories will be
+taken into consideration</div>
+        
 <ul>
-
-<li><a href="integration.html">CI Management</a></li>
-
-<li><a href="index.html">About</a></li>
-
-<li><a href="issue-tracking.html">Issue Management</a></li>
-
-<li><a href="license.html">Licenses</a></li>
-
-<li><a href="plugin-management.html">Plugin Management</a></li>
-
-<li><a href="plugins.html">Plugins</a></li>
-
-<li><a href="team-list.html">Team</a></li>
-
-<li><a href="source-repository.html">Source Code Management</a></li>
-
-<li><a href="project-summary.html">Summary</a></li></ul></li>
-
-<li><a href="./project-reports.html">Project Reports</a>
-
+          
+<li><b>Type</b>: <tt>java.lang.String</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>contractsRepositoryUrl</tt></li>
+        </ul><hr />
+<p><b><a name="contractsWorkOffline">contractsWorkOffline</a>:</b></p>
+        
+<div>If <tt>true</tt> then JAR with contracts will be taken from
+local maven repository</div>
+        
 <ul>
+          
+<li><b>Type</b>: <tt>boolean</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>contractsWorkOffline</tt></li>
+          
+<li><b>Default</b>: <tt>false</tt></li>
+        </ul><hr />
+<p><b><a name="destination">destination</a>:</b></p>
+        
+<div>(no description)</div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>java.io.File</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>stubsDirectory</tt></li>
+          
+<li><b>Default</b>: <tt>${basedir}</tt></li>
+        </ul><hr />
+<p><b><a name="excludeBuildFolders">excludeBuildFolders</a>:</b></p>
+        
+<div>If <tt>true</tt> then any file laying in a path that contains
+<tt>build</tt> or <tt>target</tt> will get excluded in
+further processing.</div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>boolean</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>excludeBuildFolders</tt></li>
+          
+<li><b>Default</b>: <tt>false</tt></li>
+        </ul><hr />
+<p><b><a name="skip">skip</a>:</b></p>
+        
+<div>(no description)</div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>boolean</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>spring.cloud.contract.verifier.skip</tt></li>
+          
+<li><b>Default</b>: <tt>false</tt></li>
+        </ul><hr />
+<p><b><a name="source">source</a>:</b></p>
+        
+<div>Directory containing contracts written using the GroovyDSL 
 
-<li><a href="checkstyle.html">Checkstyle</a></li>
+<p>This parameter is only used when goal is executed outside of
+maven project.</p></div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>java.io.File</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>contractsDirectory</tt></li>
+          
+<li><b>Default</b>: <tt>${basedir}</tt></li>
+        </ul><hr />
+<p><b><a name="stubsDirectory">stubsDirectory</a>:</b></p>
+        
+<div>Directory where the generated WireMock stubs from Groovy DSL should
+be placed. You can then mention them in your packaging task to
+create jar with stubs</div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>java.io.File</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>Default</b>: <tt>${project.build.directory}/stubs/</tt></li>
+        </ul>
+      </div>
+    </div>
+  
 
-<li><a href="plugin-info.html">Plugin Documentation</a></li></ul></li></ul></div></div></div>
                   </div>
             </div>
           </div>

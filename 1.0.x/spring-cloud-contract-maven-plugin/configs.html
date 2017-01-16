@@ -186,10 +186,12 @@
         Goals</a>
             </li>
                 
-      <li class="active">
+      <li>
   
-            <a href="#"><span class="none"></span>JUnit Configuration</a>
-          </li>
+                          <a href="junit.html" title="JUnit Configuration">
+          <span class="none"></span>
+        JUnit Configuration</a>
+            </li>
                 
       <li>
   
@@ -205,12 +207,10 @@
         Complex Configuration</a>
             </li>
                 
-      <li>
+      <li class="active">
   
-                          <a href="configs.html" title="Configuration snippets">
-          <span class="none"></span>
-        Configuration snippets</a>
-            </li>
+            <a href="#"><span class="none"></span>Configuration snippets</a>
+          </li>
                               <li class="nav-header">Related Projects</li>
                               
       <li>
@@ -255,99 +255,104 @@
         <div id="bodyColumn"  class="span10" >
                                   
             <div class="sect1">
-<h2 id="java_project_with_junit_tests">Java Project with JUnit Tests</h2>
+<h2 id="configuration_snippets">Configuration snippets</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Sample minimal configuration for Java Project with JUnit tests.</p>
+<p>Here you&#8217;ll be able to see different Spring Cloud Contract Maven plugin configuration</p>
 </div>
 <div class="sect2">
-<h3 id="test_dependencies_for_generated_contract_verification_tests">Test dependencies for generated contract verification tests</h3>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml">        <span style="color:#070;font-weight:bold">&lt;dependency&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>com.jayway.restassured<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>rest-assured<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;version&gt;</span>2.9.0<span style="color:#070;font-weight:bold">&lt;/version&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;scope&gt;</span>test<span style="color:#070;font-weight:bold">&lt;/scope&gt;</span>
-        <span style="color:#070;font-weight:bold">&lt;/dependency&gt;</span>
-        <span style="color:#070;font-weight:bold">&lt;dependency&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>com.jayway.restassured<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>spring-mock-mvc<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;version&gt;</span>2.9.0<span style="color:#070;font-weight:bold">&lt;/version&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;scope&gt;</span>test<span style="color:#070;font-weight:bold">&lt;/scope&gt;</span>
-        <span style="color:#070;font-weight:bold">&lt;/dependency&gt;</span>
-        <span style="color:#070;font-weight:bold">&lt;dependency&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>com.toomuchcoding.jsonassert<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>jsonassert<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;version&gt;</span>0.4.7<span style="color:#070;font-weight:bold">&lt;/version&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;scope&gt;</span>test<span style="color:#070;font-weight:bold">&lt;/scope&gt;</span>
-        <span style="color:#070;font-weight:bold">&lt;/dependency&gt;</span>
-        <span style="color:#070;font-weight:bold">&lt;dependency&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.assertj<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>assertj-core<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;version&gt;</span>2.4.1<span style="color:#070;font-weight:bold">&lt;/version&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;scope&gt;</span>test<span style="color:#070;font-weight:bold">&lt;/scope&gt;</span>
-        <span style="color:#070;font-weight:bold">&lt;/dependency&gt;</span></code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="project_configuration_for_spring_cloud_contract_verifier_with_junit_tests_and_stub_publishing">Project configuration for Spring Cloud Contract Verifier with JUnit tests and stub publishing</h3>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml">            <span style="color:#070;font-weight:bold">&lt;plugin&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;version&gt;</span>${spring-cloud-verifier-plugin.version}<span style="color:#070;font-weight:bold">&lt;/version&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;extensions&gt;</span>true<span style="color:#070;font-weight:bold">&lt;/extensions&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;configuration&gt;</span>
-                    <span style="color:#070;font-weight:bold">&lt;baseClassForTests&gt;</span>hello.BaseAccurest<span style="color:#070;font-weight:bold">&lt;/baseClassForTests&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;/configuration&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;/plugin&gt;</span></code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="base_test_class">Base Test class</h3>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#777">/**
- *
- *  Copyright 2013-2017 the original author or authors.
- *
- *  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */</span>
-<span style="color:#080;font-weight:bold">package</span> <span style="color:#707;font-weight:bold">hello</span>;
-
-<span style="color:#080;font-weight:bold">import</span> <span style="color:#B44;font-weight:bold">com.jayway.restassured.module.mockmvc.RestAssuredMockMvc</span>;
-
-<span style="color:#080;font-weight:bold">import</span> <span style="color:#B44;font-weight:bold">org.junit.Before</span>;
-
-<span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">BaseAccurest</span> {
-
-    <span style="color:#007">@Before</span>
-    <span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">void</span> setup() {
-        RestAssuredMockMvc.standaloneSetup(<span style="color:#080;font-weight:bold">new</span> GreetingController());
-    }
-
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="project_source_code">Project source code</h3>
+<h3 id="base_class_from_mappings">Base class from mappings</h3>
 <div class="paragraph">
-<p><a href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/spring-cloud-contract-tools/spring-cloud-contract-maven-plugin/src/test/projects/spring-boot-java" class="bare">https://github.com/spring-cloud/spring-cloud-contract/tree/master/spring-cloud-contract-tools/spring-cloud-contract-maven-plugin/src/test/projects/spring-boot-java</a></p>
+<p>Define regular expression mappings to map a contract to its base class.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml">                        <span style="color:#070;font-weight:bold">&lt;plugin&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;configuration&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;baseClassForTests&gt;</span>com.example.FooBase<span style="color:#070;font-weight:bold">&lt;/baseClassForTests&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;baseClassMappings&gt;</span>
+                                                <span style="color:#070;font-weight:bold">&lt;baseClassMapping&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;contractPackageRegex&gt;</span>.*com.*<span style="color:#070;font-weight:bold">&lt;/contractPackageRegex&gt;</span>
+                                                        <span style="color:#070;font-weight:bold">&lt;baseClassFQN&gt;</span>com.example.TestBase<span style="color:#070;font-weight:bold">&lt;/baseClassFQN&gt;</span>
+                                                <span style="color:#070;font-weight:bold">&lt;/baseClassMapping&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;/baseClassMappings&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;/configuration&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;/plugin&gt;</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="convention_based_mappings">Convention based mappings</h3>
+<div class="paragraph">
+<p>Define a package in which base classes are placed. In this case we define
+a package called <code>hello</code>. If there&#8217;s a contract under /contracts/hello/V1/Contract.groovy` then
+we&#8217;ll search for a <code>HelloV1Base</code> base class. We&#8217;re taking two last folders
+from the path and combine them into a class name.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml">                        <span style="color:#070;font-weight:bold">&lt;plugin&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;configuration&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;packageWithBaseClasses&gt;</span>hello<span style="color:#070;font-weight:bold">&lt;/packageWithBaseClasses&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;/configuration&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;/plugin&gt;</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="remote_contracts">Remote contracts</h3>
+<div class="paragraph">
+<p>Here you can see a setup where we point to a repository where the JAR with the
+contracts got deployed.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml">                        <span style="color:#070;font-weight:bold">&lt;plugin&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;configuration&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;contractsRepositoryUrl&gt;</span>http://link/to/your/nexus/or/artifactory/or/sth<span style="color:#070;font-weight:bold">&lt;/contractsRepositoryUrl&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;contractDependency&gt;</span>
+                                                <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>com.example.standalone<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
+                                                <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>contracts<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;/contractDependency&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;/configuration&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;/plugin&gt;</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="setting_up_repo_with_common_contracts">Setting up repo with common contracts</h3>
+<div class="paragraph">
+<p>A setup of a repo that contains all common contracts. It can exclude the target / build
+folder that gets created when you&#8217;re installing stubs locally as a consumer.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml">        <span style="color:#070;font-weight:bold">&lt;properties&gt;</span>
+                <span style="color:#777">&lt;!-- We don't want the tests to be executed cause we're just build stubs --&gt;</span>
+                <span style="color:#070;font-weight:bold">&lt;skipTests&gt;</span>true<span style="color:#070;font-weight:bold">&lt;/skipTests&gt;</span>
+                <span style="color:#777">&lt;!-- The target / build folder needs to be excluded - we don't want to check its contents --&gt;</span>
+                <span style="color:#070;font-weight:bold">&lt;excludeBuildFolders&gt;</span>true<span style="color:#070;font-weight:bold">&lt;/excludeBuildFolders&gt;</span>
+        <span style="color:#070;font-weight:bold">&lt;/properties&gt;</span>
+
+        <span style="color:#070;font-weight:bold">&lt;build&gt;</span>
+                <span style="color:#070;font-weight:bold">&lt;plugins&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;plugin&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;configuration&gt;</span>
+                                        <span style="color:#777">&lt;!-- By default it would search under src/test/resources/ --&gt;</span>
+                                        <span style="color:#070;font-weight:bold">&lt;contractsDirectory&gt;</span>${project.basedir}<span style="color:#070;font-weight:bold">&lt;/contractsDirectory&gt;</span>
+                                <span style="color:#070;font-weight:bold">&lt;/configuration&gt;</span>
+                        <span style="color:#070;font-weight:bold">&lt;/plugin&gt;</span>
+                <span style="color:#070;font-weight:bold">&lt;/plugins&gt;</span>
+        <span style="color:#070;font-weight:bold">&lt;/build&gt;</span></code></pre>
+</div>
 </div>
 </div>
 </div>

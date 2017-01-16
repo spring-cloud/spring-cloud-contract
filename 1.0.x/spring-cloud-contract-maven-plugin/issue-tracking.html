@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="Date-Revision-yyyymmdd" content="20170116" />
     <meta http-equiv="Content-Language" content="en" />
-    <title>Spring Cloud Contract Maven Plugin &#x2013; </title>
+    <title>Spring Cloud Contract Maven Plugin &#x2013; Issue Management</title>
     <link rel="stylesheet" href="./css/apache-maven-fluido-1.5.min.css" />
     <link rel="stylesheet" href="./css/site.css" />
     <link rel="stylesheet" href="./css/print.css" media="print" />
@@ -186,10 +186,12 @@
         Goals</a>
             </li>
                 
-      <li class="active">
+      <li>
   
-            <a href="#"><span class="none"></span>JUnit Configuration</a>
-          </li>
+                          <a href="junit.html" title="JUnit Configuration">
+          <span class="none"></span>
+        JUnit Configuration</a>
+            </li>
                 
       <li>
   
@@ -220,13 +222,76 @@
         Spring Cloud Contract</a>
             </li>
                               <li class="nav-header">Project Documentation</li>
-                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                          
       <li>
   
                           <a href="project-info.html" title="Project Information">
-          <span class="icon-chevron-right"></span>
+          <span class="icon-chevron-down"></span>
         Project Information</a>
-                  </li>
+                    <ul class="nav nav-list">
+                    
+      <li>
+  
+                          <a href="integration.html" title="CI Management">
+          <span class="none"></span>
+        CI Management</a>
+            </li>
+                    
+      <li>
+  
+                          <a href="index.html" title="About">
+          <span class="none"></span>
+        About</a>
+            </li>
+                    
+      <li class="active">
+  
+            <a href="#"><span class="none"></span>Issue Management</a>
+          </li>
+                    
+      <li>
+  
+                          <a href="license.html" title="Licenses">
+          <span class="none"></span>
+        Licenses</a>
+            </li>
+                    
+      <li>
+  
+                          <a href="plugin-management.html" title="Plugin Management">
+          <span class="none"></span>
+        Plugin Management</a>
+            </li>
+                    
+      <li>
+  
+                          <a href="plugins.html" title="Plugins">
+          <span class="none"></span>
+        Plugins</a>
+            </li>
+                    
+      <li>
+  
+                          <a href="team-list.html" title="Team">
+          <span class="none"></span>
+        Team</a>
+            </li>
+                    
+      <li>
+  
+                          <a href="source-repository.html" title="Source Code Management">
+          <span class="none"></span>
+        Source Code Management</a>
+            </li>
+                    
+      <li>
+  
+                          <a href="project-summary.html" title="Summary">
+          <span class="none"></span>
+        Summary</a>
+            </li>
+              </ul>
+        </li>
                                                                                     
       <li>
   
@@ -254,104 +319,13 @@
                 
         <div id="bodyColumn"  class="span10" >
                                   
-            <div class="sect1">
-<h2 id="java_project_with_junit_tests">Java Project with JUnit Tests</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Sample minimal configuration for Java Project with JUnit tests.</p>
-</div>
-<div class="sect2">
-<h3 id="test_dependencies_for_generated_contract_verification_tests">Test dependencies for generated contract verification tests</h3>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml">        <span style="color:#070;font-weight:bold">&lt;dependency&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>com.jayway.restassured<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>rest-assured<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;version&gt;</span>2.9.0<span style="color:#070;font-weight:bold">&lt;/version&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;scope&gt;</span>test<span style="color:#070;font-weight:bold">&lt;/scope&gt;</span>
-        <span style="color:#070;font-weight:bold">&lt;/dependency&gt;</span>
-        <span style="color:#070;font-weight:bold">&lt;dependency&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>com.jayway.restassured<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>spring-mock-mvc<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;version&gt;</span>2.9.0<span style="color:#070;font-weight:bold">&lt;/version&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;scope&gt;</span>test<span style="color:#070;font-weight:bold">&lt;/scope&gt;</span>
-        <span style="color:#070;font-weight:bold">&lt;/dependency&gt;</span>
-        <span style="color:#070;font-weight:bold">&lt;dependency&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>com.toomuchcoding.jsonassert<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>jsonassert<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;version&gt;</span>0.4.7<span style="color:#070;font-weight:bold">&lt;/version&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;scope&gt;</span>test<span style="color:#070;font-weight:bold">&lt;/scope&gt;</span>
-        <span style="color:#070;font-weight:bold">&lt;/dependency&gt;</span>
-        <span style="color:#070;font-weight:bold">&lt;dependency&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.assertj<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>assertj-core<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;version&gt;</span>2.4.1<span style="color:#070;font-weight:bold">&lt;/version&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;scope&gt;</span>test<span style="color:#070;font-weight:bold">&lt;/scope&gt;</span>
-        <span style="color:#070;font-weight:bold">&lt;/dependency&gt;</span></code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="project_configuration_for_spring_cloud_contract_verifier_with_junit_tests_and_stub_publishing">Project configuration for Spring Cloud Contract Verifier with JUnit tests and stub publishing</h3>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml">            <span style="color:#070;font-weight:bold">&lt;plugin&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;version&gt;</span>${spring-cloud-verifier-plugin.version}<span style="color:#070;font-weight:bold">&lt;/version&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;extensions&gt;</span>true<span style="color:#070;font-weight:bold">&lt;/extensions&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;configuration&gt;</span>
-                    <span style="color:#070;font-weight:bold">&lt;baseClassForTests&gt;</span>hello.BaseAccurest<span style="color:#070;font-weight:bold">&lt;/baseClassForTests&gt;</span>
-                <span style="color:#070;font-weight:bold">&lt;/configuration&gt;</span>
-            <span style="color:#070;font-weight:bold">&lt;/plugin&gt;</span></code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="base_test_class">Base Test class</h3>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#777">/**
- *
- *  Copyright 2013-2017 the original author or authors.
- *
- *  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */</span>
-<span style="color:#080;font-weight:bold">package</span> <span style="color:#707;font-weight:bold">hello</span>;
-
-<span style="color:#080;font-weight:bold">import</span> <span style="color:#B44;font-weight:bold">com.jayway.restassured.module.mockmvc.RestAssuredMockMvc</span>;
-
-<span style="color:#080;font-weight:bold">import</span> <span style="color:#B44;font-weight:bold">org.junit.Before</span>;
-
-<span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">BaseAccurest</span> {
-
-    <span style="color:#007">@Before</span>
-    <span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">void</span> setup() {
-        RestAssuredMockMvc.standaloneSetup(<span style="color:#080;font-weight:bold">new</span> GreetingController());
-    }
-
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="project_source_code">Project source code</h3>
-<div class="paragraph">
-<p><a href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/spring-cloud-contract-tools/spring-cloud-contract-maven-plugin/src/test/projects/spring-boot-java" class="bare">https://github.com/spring-cloud/spring-cloud-contract/tree/master/spring-cloud-contract-tools/spring-cloud-contract-maven-plugin/src/test/projects/spring-boot-java</a></p>
-</div>
-</div>
-</div>
-</div>
+            <div class="section">
+<h2><a name="Overview"></a>Overview</h2><a name="Overview"></a>
+<p>This project uses GitHub to manage its issues.</p></div>
+<div class="section">
+<h2><a name="Issue_Management"></a>Issue Management</h2><a name="Issue_Management"></a>
+<p>Issues, bugs, and feature requests should be submitted to the following issue management system for this project.</p>
+<div class="source"><pre class="prettyprint"><a class="externalLink" href="https://github.com/spring-cloud/spring-cloud-contract/issues">https://github.com/spring-cloud/spring-cloud-contract/issues</a></pre></div></div>
                   </div>
             </div>
           </div>
