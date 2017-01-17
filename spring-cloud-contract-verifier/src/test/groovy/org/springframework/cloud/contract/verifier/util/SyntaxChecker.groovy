@@ -2,6 +2,7 @@ package org.springframework.cloud.contract.verifier.util
 
 import groovy.transform.CompileStatic
 import org.codehaus.groovy.control.CompilerConfiguration
+import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer
 import org.codehaus.groovy.control.customizers.ImportCustomizer
 import org.mdkt.compiler.InMemoryJavaCompiler
 
@@ -42,7 +43,6 @@ class SyntaxChecker {
 			"org.assertj.core.api.Assertions.assertThat"
 	].collect { "import static ${it};"}.join("\n")
 
-
 	static void tryToCompile(String builderName, String test) {
 		if (builderName.toLowerCase().contains("spock")) {
 			tryToCompileGroovy(test)
@@ -51,11 +51,24 @@ class SyntaxChecker {
 		}
 	}
 
-	static void tryToCompileGroovy(String test) {
+	// no static compilation due to bug in Groovy https://issues.apache.org/jira/browse/GROOVY-8055
+	static void tryToCompileWithoutCompileStatic(String builderName, String test) {
+		if (builderName.toLowerCase().contains("spock")) {
+			tryToCompileGroovy(test, false)
+		} else {
+			tryToCompileJava(test)
+		}
+	}
+
+	static void tryToCompileGroovy(String test, boolean compileStatic = true) {
 		def imports = new ImportCustomizer()
 		CompilerConfiguration configuration = new CompilerConfiguration()
+		if (compileStatic) {
+			configuration.addCompilationCustomizers(
+					new ASTTransformationCustomizer(CompileStatic))
+		}
 		configuration.addCompilationCustomizers(imports)
-		StringBuffer sourceCode = new StringBuffer()
+		StringBuilder sourceCode = new StringBuilder()
 		sourceCode.append("${DEFAULT_IMPORTS_AS_STRING}\n")
 		sourceCode.append("${STATIC_IMPORTS}\n")
 		sourceCode.append("\n")

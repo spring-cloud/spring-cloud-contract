@@ -19,11 +19,13 @@ package org.springframework.cloud.contract.verifier.builder
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.QueryParameter
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import java.util.regex.Pattern
 
@@ -73,12 +75,20 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 
 	protected void appendUrlPathAndQueryParameters(BlockBuilder bb) {
 		if (request.url) {
-			bb.addLine(".path(\"$request.url.serverValue\")")
+			bb.addLine(".path(${concreteUrl(request.url)})")
 			appendQueryParams(request.url.queryParameters, bb)
 		} else if (request.urlPath) {
-			bb.addLine(".path(\"$request.urlPath.serverValue\")")
+			bb.addLine(".path(${concreteUrl(request.urlPath)})")
 			appendQueryParams(request.urlPath.queryParameters, bb)
 		}
+	}
+
+	protected String concreteUrl(DslProperty url) {
+		Object testSideUrl = MapConverter.getTestSideValues(url)
+		if (!(testSideUrl instanceof ExecutionProperty)) {
+			return '"' + testSideUrl.toString() + '"'
+		}
+		return testSideUrl.toString()
 	}
 
 	private void appendQueryParams(QueryParameters queryParameters, BlockBuilder bb) {

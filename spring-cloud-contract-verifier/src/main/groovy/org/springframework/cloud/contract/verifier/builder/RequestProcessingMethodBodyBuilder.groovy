@@ -21,6 +21,7 @@ import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
@@ -131,9 +132,13 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	}
 	
 	protected addUrl(Url buildUrl, BlockBuilder bb){
-		String url =MapConverter.getTestSideValues(buildUrl)
+		Object testSideUrl = MapConverter.getTestSideValues(buildUrl)
 		String method = request.method.serverValue.toString().toLowerCase()
-		bb.addLine(/.${method}(${DOUBLE_QUOTE}${url}${DOUBLE_QUOTE})/)
+		String url = testSideUrl.toString()
+		if (!(testSideUrl instanceof ExecutionProperty)) {
+			url = "${DOUBLE_QUOTE}${testSideUrl.toString()}${DOUBLE_QUOTE}"
+		}
+		bb.addLine(/.${method}(${url})/)
 	}
 
 	@Override

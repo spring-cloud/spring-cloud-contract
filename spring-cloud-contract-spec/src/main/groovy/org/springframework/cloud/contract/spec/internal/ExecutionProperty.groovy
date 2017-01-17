@@ -44,7 +44,7 @@ class ExecutionProperty {
 	}
 
 	@Override
-	public String toString() {
+	String toString() {
 		return executionCommand
 	}
 }
