@@ -678,11 +678,11 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		and:
-			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
 		where:
-			methodBuilderName                   | methodBuilder                                                                                                                                    | methodString
+			methodBuilderName                                    | methodBuilder                                                                                                                       | methodString
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ".method('GET')"
-			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                                   | 'method("GET")'
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | 'method("GET")'
 	}
 
 	def "should generate a call with an url path and query parameters with JUnit - we'll put it into docs"() {
@@ -882,7 +882,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			MethodBodyBuilder builder = new JaxRsClientSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
-			builder.then(blockBuilder)
+			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
 			test.contains("responseBody ==~ java.util.regex.Pattern.compile('.*')")
@@ -930,12 +930,13 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			MethodBodyBuilder builder = new JaxRsClientSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
-			builder.then(blockBuilder)
+			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
 			test.contains("foo(responseBody)")
 		and:
-			SyntaxChecker.tryToCompileGroovy(blockBuilder.toString())
+			// no static compilation due to bug in Groovy https://issues.apache.org/jira/browse/GROOVY-8055
+			SyntaxChecker.tryToCompileGroovy(blockBuilder.toString(), false)
 	}
 
 	def "should allow c/p version of consumer producer"() {
