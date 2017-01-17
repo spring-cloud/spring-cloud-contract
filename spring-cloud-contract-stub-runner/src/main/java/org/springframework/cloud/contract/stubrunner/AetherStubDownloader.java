@@ -115,16 +115,12 @@ public class AetherStubDownloader implements StubDownloader {
 		final List<RemoteRepository> remoteRepos = new ArrayList<>();
 		for (int i = 0; i < repos.length; i++) {
 			if(StringUtils.hasText(repos[i])) {
-				final RemoteRepository.Builder builder = new RemoteRepository.Builder("remote" + i, "default", repos[i])
-						.setAuthentication(new AuthenticationBuilder()
-								.addUsername(stubRunnerOptions.username)
-								.addPassword(stubRunnerOptions.password)
-								.build());
+				final RemoteRepository.Builder builder = remoteRepository(stubRunnerOptions,
+						"remote" + i, "default", repos[i]);
 				if(stubRunnerOptions.getProxyOptions() != null) {
 					final StubRunnerProxyOptions p = stubRunnerOptions.getProxyOptions();
 					builder.setProxy(new Proxy(null, p.getProxyHost(), p.getProxyPort()));
 				}
-
 				remoteRepos.add(builder.build());
 			}
 		}
@@ -132,6 +128,26 @@ public class AetherStubDownloader implements StubDownloader {
 			log.debug("Using the following remote repos " + remoteRepos);
 		}
 		return remoteRepos;
+	}
+
+	/**
+	 * Method that allow you to fully customize the way you setup your connection
+	 * to the remote repository
+	 *
+	 * @param options - options from Stub Runner
+	 * @param id -  id of the repo
+	 * @param type - type of the repo
+	 * @param url - url to which the repo is pointing
+	 * @return builder for the remote repository
+	 */
+	protected RemoteRepository.Builder remoteRepository(StubRunnerOptions options, String id,
+			String type, String url) {
+		return new RemoteRepository.Builder(id, type, url)
+				.setAuthentication(new AuthenticationBuilder()
+						.addUsername(options.username)
+						.addPassword(options.password)
+						.addPrivateKey(options.privateKeyPathname, options.privateKeyPassphrase)
+						.build());
 	}
 
 	private File unpackedJar(String resolvedVersion, String stubsGroup,

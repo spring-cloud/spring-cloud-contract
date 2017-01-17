@@ -76,6 +76,16 @@ public class StubRunnerProperties {
 	private String password;
 
 	/**
+	 * The optional (absolute) path to the private key file
+	 */
+	private String privateKeyPathname;
+
+	/**
+	 * The optional passphrase protecting the private key
+	 */
+	private String privateKeyPassphrase;
+
+	/**
 	 * Repository proxy port
 	 */
 	private Integer proxyPort;
@@ -171,6 +181,22 @@ public class StubRunnerProperties {
 
 	public void setContextPath(String contextPath) {
 		this.contextPath = contextPath;
+	}
+
+	public String getPrivateKeyPathname() {
+		return this.privateKeyPathname;
+	}
+
+	public void setPrivateKeyPathname(String privateKeyPathname) {
+		this.privateKeyPathname = privateKeyPathname;
+	}
+
+	public String getPrivateKeyPassphrase() {
+		return this.privateKeyPassphrase;
+	}
+
+	public void setPrivateKeyPassphrase(String privateKeyPassphrase) {
+		this.privateKeyPassphrase = privateKeyPassphrase;
 	}
 
 	@Override public String toString() {

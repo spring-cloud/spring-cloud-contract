@@ -92,7 +92,9 @@ public class StubRunnerConfiguration {
 					.withStubsClassifier(this.props.getClassifier())
 					.withStubs(this.props.getIds())
 					.withUsername(this.props.getUsername())
-					.withPassword(this.props.getPassword());
+					.withPassword(this.props.getPassword())
+					.withPrivateKeyPathname(this.props.getPrivateKeyPathname())
+					.withPrivateKeyPassphrase(this.props.getPrivateKeyPassphrase());
 	}
 
 	private String uriStringOrEmpty(Resource stubRepositoryRoot) throws IOException {

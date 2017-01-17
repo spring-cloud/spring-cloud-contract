@@ -71,6 +71,16 @@ public class StubRunnerOptions {
 	final String password;
 
 	/**
+	 * The optional (absolute) path to the private key file
+	 */
+	final String privateKeyPathname;
+
+	/**
+	 * The optional passphrase protecting the private key
+	 */
+	final String privateKeyPassphrase;
+
+	/**
 	 * Optional proxy settings
 	 */
 	private final StubRunnerProxyOptions stubRunnerProxyOptions;
@@ -78,8 +88,8 @@ public class StubRunnerOptions {
 	StubRunnerOptions(Integer minPortValue, Integer maxPortValue,
 			String stubRepositoryRoot, boolean workOffline, String stubsClassifier,
 			Collection<StubConfiguration> dependencies,
-			Map<StubConfiguration, Integer> stubIdsToPortMapping,
-			String username, String password, final StubRunnerProxyOptions stubRunnerProxyOptions) {
+			Map<StubConfiguration, Integer> stubIdsToPortMapping, String username, String password,
+			String privateKeyPathname, String privateKeyPassphrase, final StubRunnerProxyOptions stubRunnerProxyOptions) {
 		this.minPortValue = minPortValue;
 		this.maxPortValue = maxPortValue;
 		this.stubRepositoryRoot = stubRepositoryRoot;
@@ -89,6 +99,8 @@ public class StubRunnerOptions {
 		this.stubIdsToPortMapping = stubIdsToPortMapping;
 		this.username = username;
 		this.password = password;
+		this.privateKeyPathname = privateKeyPathname;
+		this.privateKeyPassphrase = privateKeyPassphrase;
 		this.stubRunnerProxyOptions = stubRunnerProxyOptions;
 	}
 

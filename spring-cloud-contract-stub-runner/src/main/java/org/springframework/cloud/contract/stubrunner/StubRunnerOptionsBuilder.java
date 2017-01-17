@@ -16,15 +16,15 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
-import org.springframework.cloud.contract.stubrunner.util.StubsParser;
-import org.springframework.util.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.cloud.contract.stubrunner.util.StubsParser;
+import org.springframework.util.StringUtils;
 
 public class StubRunnerOptionsBuilder {
 
@@ -40,6 +40,8 @@ public class StubRunnerOptionsBuilder {
 	private String username;
 	private String password;
 	private StubRunnerOptions.StubRunnerProxyOptions stubRunnerProxyOptions;
+	private String privateKeyPathname;
+	private String privateKeyPassphrase;
 
 	public StubRunnerOptionsBuilder() {
 	}
@@ -97,6 +99,16 @@ public class StubRunnerOptionsBuilder {
 		return this;
 	}
 
+	public StubRunnerOptionsBuilder withPrivateKeyPathname(String privateKeyPathname) {
+		this.privateKeyPathname = privateKeyPathname;
+		return this;
+	}
+
+	public StubRunnerOptionsBuilder withPrivateKeyPassphrase(String privateKeyPassphrase) {
+		this.privateKeyPassphrase = privateKeyPassphrase;
+		return this;
+	}
+
 	/**
 	 * @deprecated there is no context path for the stub server
 	 */
@@ -117,7 +129,8 @@ public class StubRunnerOptionsBuilder {
 	public StubRunnerOptions build() {
 		return new StubRunnerOptions(this.minPortValue, this.maxPortValue, this.stubRepositoryRoot,
 				this.workOffline, this.stubsClassifier, buildDependencies(), this.stubIdsToPortMapping,
-				this.username, this.password, this.stubRunnerProxyOptions);
+				this.username, this.password, this.privateKeyPathname, this.privateKeyPassphrase,
+				this.stubRunnerProxyOptions);
 	}
 
 	private Collection<StubConfiguration> buildDependencies() {
