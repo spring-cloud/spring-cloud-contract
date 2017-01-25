@@ -97,8 +97,8 @@ class JavaTestGenerator implements SingleTestGenerator {
 					addMessagingRelatedEntries(clazz)
 				}
 				conditionalImportsAdded = true
-				toIgnore = toIgnore ? true: key.groovyDsl.ignored
 			}
+			toIgnore = toIgnore ? true : key.groovyDsl.ignored
 			clazz.addMethod(MethodBuilder.createTestMethod(key.contract, key.stubsFile, key.groovyDsl, configProperties))
 		}
 

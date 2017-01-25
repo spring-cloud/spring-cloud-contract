@@ -73,8 +73,10 @@ public class PluginUnitTest {
 	public void shouldGenerateContractSpecificationInDefaultLocation() throws Exception {
 		File basedir = this.resources.getBasedir("basic");
 		this.maven.executeMojo(basedir, "generateTests", newParameter("testFramework", "SPOCK"));
-		assertFilesPresent(basedir,
-				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierSpec.groovy");
+		String path = "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierSpec.groovy";
+		assertFilesPresent(basedir, path);
+		File test = new File(basedir, path);
+		then(FileUtils.readFileToString(test)).contains("spock.lang.Ignore");
 	}
 
 	@Test

@@ -15,6 +15,7 @@
  *  limitations under the License.
  */
 org.springframework.cloud.contract.spec.Contract.make {
+    ignored()
     request {
         method 'POST'
         url('/users') {

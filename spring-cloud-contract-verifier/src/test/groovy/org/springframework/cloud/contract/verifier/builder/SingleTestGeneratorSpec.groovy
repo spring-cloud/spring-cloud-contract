@@ -213,6 +213,7 @@ class SingleTestGeneratorSpec extends Specification {
 			File secondFile = tmpFolder.newFile()
 			secondFile.write("""
 						org.springframework.cloud.contract.spec.Contract.make {
+						  ignored()
 						  label 'some_label'
 						  input {
 							messageFrom('delete')
