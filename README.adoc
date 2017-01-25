@@ -1315,6 +1315,7 @@ Example of a `pom.xml` inside the `server` folder.
 		<java.version>1.8</java.version>
 		<spring-cloud-contract.version>1.0.4.BUILD-SNAPSHOT</spring-cloud-contract.version>
 		<spring-cloud-dependencies.version>Camden.BUILD-SNAPSHOT</spring-cloud-dependencies.version>
+		<excludeBuildFolders>true</excludeBuildFolders>
 	</properties>
 
 	<dependencyManagement>
