@@ -94,7 +94,8 @@ public class WireMockSnippet implements Snippet {
 
 	private ResponseDefinitionBuilder response(Operation operation) {
 		return aResponse().withHeaders(responseHeaders(operation))
-				.withBody(operation.getResponse().getContentAsString());
+				.withBody(operation.getResponse().getContentAsString())
+				.withStatus(operation.getResponse().getStatus().value());
 	}
 
 	private RemoteMappingBuilder<?, ?> request(Operation operation) {

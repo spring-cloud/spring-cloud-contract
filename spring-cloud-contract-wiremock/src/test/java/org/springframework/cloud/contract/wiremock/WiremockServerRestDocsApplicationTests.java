@@ -1,5 +1,6 @@
 package org.springframework.cloud.contract.wiremock;
 
+import org.eclipse.jetty.http.HttpStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.WiremockServerRestDocsApplicationTests.TestConfiguration;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,14 +28,21 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 @DirtiesContext
 public class WiremockServerRestDocsApplicationTests {
 
-	@Autowired
-	private MockMvc mockMvc;
+	@Autowired private MockMvc mockMvc;
 
 	@Test
 	public void contextLoads() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/resource"))
 				.andExpect(MockMvcResultMatchers.content().string("Hello World"))
 				.andDo(document("resource"));
+	}
+
+	@Test
+	public void statusIsMaintained() throws Exception {
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/status"))
+				.andExpect(MockMvcResultMatchers.content().string("Hello World"))
+				.andExpect(MockMvcResultMatchers.status().is(HttpStatus.ACCEPTED_202))
+				.andDo(document("status"));
 	}
 
 	@Configuration
@@ -44,6 +53,12 @@ public class WiremockServerRestDocsApplicationTests {
 		@RequestMapping("/resource")
 		public String resource() {
 			return "Hello World";
+		}
+
+		@ResponseBody
+		@RequestMapping("/status")
+		public ResponseEntity<String> status() {
+			return ResponseEntity.status(HttpStatus.ACCEPTED_202).body("Hello World");
 		}
 
 	}
