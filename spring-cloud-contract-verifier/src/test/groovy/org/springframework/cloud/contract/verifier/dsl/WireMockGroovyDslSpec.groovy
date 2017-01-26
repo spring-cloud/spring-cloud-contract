@@ -200,7 +200,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		when:
 			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
 		then:
-		AssertionUtil.assertThatJsonsAreEqual(('''
+			def actual = new JsonSlurper().parseText(wireMockStub)
+			def expected = new JsonSlurper().parseText('''
 {
   "request" : {
 	"urlPattern" : "/[0-9]{2}",
@@ -214,7 +215,13 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	}
   }
 }
-'''), wireMockStub)
+''')
+			actual.request == expected.request
+			actual.response.status == expected.response.status
+			actual.response.headers == expected.response.headers
+			def actualBody = new JsonSlurper().parseText(actual.response.body)
+			def expectedBody = new JsonSlurper().parseText(expected.response.body)
+			actualBody == expectedBody
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
