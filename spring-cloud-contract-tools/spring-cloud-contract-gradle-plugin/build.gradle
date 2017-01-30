@@ -23,7 +23,7 @@ ext {
 	]
 }
 
-project.version = findProperty('verifierVersion') ?: '1.1.0.M1'
+project.version = findProperty('verifierVersion') ?: '1.1.0.BUILD-SNAPSHOT'
 apply plugin: 'groovy'
 apply from: "$rootDir/gradle/release.gradle"
 apply plugin: 'eclipse'

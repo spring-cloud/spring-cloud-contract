@@ -5,17 +5,14 @@ buildscript {
 		maven { url "http://repo.spring.io/libs-snapshot-local" }
 		maven { url "http://repo.spring.io/libs-release-local" }
 		maven { url "http://repo.spring.io/libs-staging-local" }
-		maven { url 'http://repo.spring.io/plugins-snapshot' }
-		maven { url "http://repo.spring.io/plugins-release-local" }
-		maven { url "http://repo.spring.io/plugins-staging-local/" }
 	}
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.0.RC1"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.0.BUILD-SNAPSHOT"
 	}
 }
 
 group = 'com.example'
-version = '0.0.1.M1'
+version = '0.0.1-SNAPSHOT'
 
 repositories {
 	mavenCentral()
@@ -42,7 +39,7 @@ dependencies {
 
 	testCompile 'org.springframework.cloud:spring-cloud-contract-wiremock'
 	testCompile "org.springframework.boot:spring-boot-starter-test"
-	testCompile "com.example:http-server-restdocs:0.0.1.M1:stubs"
+	testCompile "com.example:http-server-restdocs:0.0.1-SNAPSHOT:stubs"
 }
 
 test {

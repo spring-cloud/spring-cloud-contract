@@ -5,7 +5,7 @@
 
 	<groupId>com.example</groupId>
 	<artifactId>http-client-dsl</artifactId>
-	<version>0.0.1.M1</version>
+	<version>0.0.1-SNAPSHOT</version>
 
 	<name>Spring Cloud Contract Verifier Http Client Sample</name>
 	<description>Spring Cloud Contract Verifier Http Client Sample</description>
@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.0.RC1</version>
+		<version>1.5.0.BUILD-SNAPSHOT</version>
 		<relativePath />
 	</parent>
 
