@@ -16,18 +16,6 @@
 
 package org.springframework.cloud.contract.wiremock.restdocs;
 
-import com.github.tomakehurst.wiremock.client.RemoteMappingBuilder;
-import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
-import com.github.tomakehurst.wiremock.common.Json;
-import com.github.tomakehurst.wiremock.http.HttpHeader;
-import com.github.tomakehurst.wiremock.http.HttpHeaders;
-import com.github.tomakehurst.wiremock.matching.UrlPattern;
-import com.github.tomakehurst.wiremock.stubbing.StubMapping;
-import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationContext;
-import org.springframework.restdocs.operation.Operation;
-import org.springframework.restdocs.snippet.Snippet;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -38,6 +26,19 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
+
+import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContext;
+import org.springframework.restdocs.operation.Operation;
+import org.springframework.restdocs.snippet.Snippet;
+
+import com.github.tomakehurst.wiremock.client.RemoteMappingBuilder;
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
+import com.github.tomakehurst.wiremock.common.Json;
+import com.github.tomakehurst.wiremock.http.HttpHeader;
+import com.github.tomakehurst.wiremock.http.HttpHeaders;
+import com.github.tomakehurst.wiremock.matching.UrlPattern;
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;

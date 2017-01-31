@@ -1,7 +1,12 @@
 package org.springframework.cloud.contract.wiremock.restdocs;
 
-import com.github.tomakehurst.wiremock.matching.EqualToJsonPattern;
-import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.util.Collection;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,12 +26,8 @@ import org.springframework.restdocs.operation.OperationRequestPart;
 import org.springframework.restdocs.operation.OperationResponse;
 import org.springframework.restdocs.operation.Parameters;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.util.Collection;
+import com.github.tomakehurst.wiremock.matching.EqualToJsonPattern;
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
