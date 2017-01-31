@@ -16,22 +16,6 @@
 
 package org.springframework.cloud.contract.wiremock.restdocs;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationContext;
-import org.springframework.restdocs.operation.Operation;
-import org.springframework.restdocs.snippet.Snippet;
-
 import com.github.tomakehurst.wiremock.client.RemoteMappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.common.Json;
@@ -39,16 +23,19 @@ import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContext;
+import org.springframework.restdocs.operation.Operation;
+import org.springframework.restdocs.snippet.Snippet;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.delete;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.matching;
-import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import java.io.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 public class WireMockSnippet implements Snippet {
 
@@ -62,6 +49,8 @@ public class WireMockSnippet implements Snippet {
 	private MediaType contentType;
 
 	private StubMapping stubMapping;
+	
+	private Boolean hasJsonBodyRequestToMatch = false;
 
 	@Override
 	public void document(Operation operation) throws IOException {
@@ -90,8 +79,17 @@ public class WireMockSnippet implements Snippet {
 				.get("contract.jsonPaths");
 		this.jsonPaths = jsonPaths;
 		this.contentType = (MediaType) operation.getAttributes().get("contract.contentType");
+		if (this.contentType == null){
+			this.hasJsonBodyRequestToMatch = hasJsonContentType(operation);
+		}
 	}
 
+	private boolean hasJsonContentType(Operation operation) {
+		return operation.getRequest().getHeaders().getContentType() != null 
+				&& (operation.getRequest().getHeaders().getContentType().equals(MediaType.APPLICATION_JSON_UTF8) 
+					|| operation.getRequest().getHeaders().getContentType().equals(MediaType.APPLICATION_JSON));
+	}
+	
 	private ResponseDefinitionBuilder response(Operation operation) {
 		return aResponse().withHeaders(responseHeaders(operation))
 				.withBody(operation.getResponse().getContentAsString())
@@ -144,7 +142,9 @@ public class WireMockSnippet implements Snippet {
 				builder.withRequestBody(matchingJsonPath(jsonPath));
 			}
 		}
-		else {
+		else if (this.hasJsonBodyRequestToMatch){
+			builder.withRequestBody(equalToJson(content));
+		} else {
 			builder.withRequestBody(equalTo(content));
 		}
 		return builder;
