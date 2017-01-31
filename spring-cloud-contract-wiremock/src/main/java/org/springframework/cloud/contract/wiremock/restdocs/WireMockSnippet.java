@@ -49,7 +49,7 @@ public class WireMockSnippet implements Snippet {
 	private MediaType contentType;
 
 	private StubMapping stubMapping;
-	
+
 	private Boolean hasJsonBodyRequestToMatch = false;
 
 	@Override
@@ -70,7 +70,8 @@ public class WireMockSnippet implements Snippet {
 	}
 
 	private void extractMatchers(Operation operation) {
-		this.stubMapping = (StubMapping) operation.getAttributes().get("contract.stubMapping");
+		this.stubMapping = (StubMapping) operation.getAttributes()
+				.get("contract.stubMapping");
 		if (this.stubMapping != null) {
 			return;
 		}
@@ -78,18 +79,21 @@ public class WireMockSnippet implements Snippet {
 		Set<String> jsonPaths = (Set<String>) operation.getAttributes()
 				.get("contract.jsonPaths");
 		this.jsonPaths = jsonPaths;
-		this.contentType = (MediaType) operation.getAttributes().get("contract.contentType");
-		if (this.contentType == null){
+		this.contentType = (MediaType) operation.getAttributes()
+				.get("contract.contentType");
+		if (this.contentType == null) {
 			this.hasJsonBodyRequestToMatch = hasJsonContentType(operation);
 		}
 	}
 
 	private boolean hasJsonContentType(Operation operation) {
-		return operation.getRequest().getHeaders().getContentType() != null 
-				&& (operation.getRequest().getHeaders().getContentType().equals(MediaType.APPLICATION_JSON_UTF8) 
-					|| operation.getRequest().getHeaders().getContentType().equals(MediaType.APPLICATION_JSON));
+		return operation.getRequest().getHeaders().getContentType() != null
+				&& (operation.getRequest().getHeaders().getContentType()
+						.equals(MediaType.APPLICATION_JSON_UTF8)
+						|| operation.getRequest().getHeaders().getContentType()
+								.equals(MediaType.APPLICATION_JSON));
 	}
-	
+
 	private ResponseDefinitionBuilder response(Operation operation) {
 		return aResponse().withHeaders(responseHeaders(operation))
 				.withBody(operation.getResponse().getContentAsString())
@@ -142,9 +146,10 @@ public class WireMockSnippet implements Snippet {
 				builder.withRequestBody(matchingJsonPath(jsonPath));
 			}
 		}
-		else if (this.hasJsonBodyRequestToMatch){
+		else if (this.hasJsonBodyRequestToMatch) {
 			builder.withRequestBody(equalToJson(content));
-		} else {
+		}
+		else {
 			builder.withRequestBody(equalTo(content));
 		}
 		return builder;
