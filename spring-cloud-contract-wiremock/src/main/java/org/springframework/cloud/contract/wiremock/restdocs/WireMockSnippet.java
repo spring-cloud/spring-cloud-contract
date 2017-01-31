@@ -28,14 +28,27 @@ import org.springframework.restdocs.RestDocumentationContext;
 import org.springframework.restdocs.operation.Operation;
 import org.springframework.restdocs.snippet.Snippet;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.matching;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 
 public class WireMockSnippet implements Snippet {
 
@@ -49,7 +62,7 @@ public class WireMockSnippet implements Snippet {
 	private MediaType contentType;
 
 	private StubMapping stubMapping;
-	
+
 	private Boolean hasJsonBodyRequestToMatch = false;
 
 	@Override
@@ -70,7 +83,8 @@ public class WireMockSnippet implements Snippet {
 	}
 
 	private void extractMatchers(Operation operation) {
-		this.stubMapping = (StubMapping) operation.getAttributes().get("contract.stubMapping");
+		this.stubMapping = (StubMapping) operation.getAttributes()
+				.get("contract.stubMapping");
 		if (this.stubMapping != null) {
 			return;
 		}
@@ -78,18 +92,21 @@ public class WireMockSnippet implements Snippet {
 		Set<String> jsonPaths = (Set<String>) operation.getAttributes()
 				.get("contract.jsonPaths");
 		this.jsonPaths = jsonPaths;
-		this.contentType = (MediaType) operation.getAttributes().get("contract.contentType");
-		if (this.contentType == null){
+		this.contentType = (MediaType) operation.getAttributes()
+				.get("contract.contentType");
+		if (this.contentType == null) {
 			this.hasJsonBodyRequestToMatch = hasJsonContentType(operation);
 		}
 	}
 
 	private boolean hasJsonContentType(Operation operation) {
-		return operation.getRequest().getHeaders().getContentType() != null 
-				&& (operation.getRequest().getHeaders().getContentType().equals(MediaType.APPLICATION_JSON_UTF8) 
-					|| operation.getRequest().getHeaders().getContentType().equals(MediaType.APPLICATION_JSON));
+		return operation.getRequest().getHeaders().getContentType() != null
+				&& (operation.getRequest().getHeaders().getContentType()
+						.equals(MediaType.APPLICATION_JSON_UTF8)
+						|| operation.getRequest().getHeaders().getContentType()
+								.equals(MediaType.APPLICATION_JSON));
 	}
-	
+
 	private ResponseDefinitionBuilder response(Operation operation) {
 		return aResponse().withHeaders(responseHeaders(operation))
 				.withBody(operation.getResponse().getContentAsString())
@@ -142,9 +159,10 @@ public class WireMockSnippet implements Snippet {
 				builder.withRequestBody(matchingJsonPath(jsonPath));
 			}
 		}
-		else if (this.hasJsonBodyRequestToMatch){
+		else if (this.hasJsonBodyRequestToMatch) {
 			builder.withRequestBody(equalToJson(content));
-		} else {
+		}
+		else {
 			builder.withRequestBody(equalTo(content));
 		}
 		return builder;
