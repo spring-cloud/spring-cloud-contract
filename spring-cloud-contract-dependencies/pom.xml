@@ -139,11 +139,6 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>org.skyscreamer</groupId>
-				<artifactId>jsonassert</artifactId>
-				<version>1.2.3</version>
-			</dependency>
-			<dependency>
 				<groupId>org.eclipse.aether</groupId>
 				<artifactId>aether-api</artifactId>
 				<version>${aether.version}</version>
