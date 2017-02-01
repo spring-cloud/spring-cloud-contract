@@ -103,9 +103,7 @@ public class WireMockSnippet implements Snippet {
 	private boolean hasJsonContentType(Operation operation) {
 		return operation.getRequest().getHeaders().getContentType() != null
 				&& (operation.getRequest().getHeaders().getContentType()
-						.equals(MediaType.APPLICATION_JSON_UTF8)
-						|| operation.getRequest().getHeaders().getContentType()
-								.equals(MediaType.APPLICATION_JSON));
+								.isCompatibleWith(MediaType.APPLICATION_JSON));
 	}
 
 	private ResponseDefinitionBuilder response(Operation operation) {
