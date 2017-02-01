@@ -43,6 +43,7 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
@@ -63,6 +64,8 @@ public class WireMockSnippet implements Snippet {
 
 	private StubMapping stubMapping;
 
+	private boolean hasJsonBodyRequestToMatch = false;
+
 	@Override
 	public void document(Operation operation) throws IOException {
 		extractMatchers(operation);
@@ -81,7 +84,8 @@ public class WireMockSnippet implements Snippet {
 	}
 
 	private void extractMatchers(Operation operation) {
-		this.stubMapping = (StubMapping) operation.getAttributes().get("contract.stubMapping");
+		this.stubMapping = (StubMapping) operation.getAttributes()
+				.get("contract.stubMapping");
 		if (this.stubMapping != null) {
 			return;
 		}
@@ -89,7 +93,17 @@ public class WireMockSnippet implements Snippet {
 		Set<String> jsonPaths = (Set<String>) operation.getAttributes()
 				.get("contract.jsonPaths");
 		this.jsonPaths = jsonPaths;
-		this.contentType = (MediaType) operation.getAttributes().get("contract.contentType");
+		this.contentType = (MediaType) operation.getAttributes()
+				.get("contract.contentType");
+		if (this.contentType == null) {
+			this.hasJsonBodyRequestToMatch = hasJsonContentType(operation);
+		}
+	}
+
+	private boolean hasJsonContentType(Operation operation) {
+		return operation.getRequest().getHeaders().getContentType() != null
+				&& (operation.getRequest().getHeaders().getContentType()
+								.isCompatibleWith(MediaType.APPLICATION_JSON));
 	}
 
 	private ResponseDefinitionBuilder response(Operation operation) {
@@ -143,6 +157,9 @@ public class WireMockSnippet implements Snippet {
 			for (String jsonPath : this.jsonPaths) {
 				builder.withRequestBody(matchingJsonPath(jsonPath));
 			}
+		}
+		else if (this.hasJsonBodyRequestToMatch) {
+			builder.withRequestBody(equalToJson(content));
 		}
 		else {
 			builder.withRequestBody(equalTo(content));
