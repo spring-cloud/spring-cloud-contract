@@ -721,7 +721,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					}
 				},
 				"response": {
-					"status": 200,
+					"status": 200
 				}
 			}
 			'''), json)
@@ -761,7 +761,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					}
 				},
 				"response": {
-					"status": 200,
+					"status": 200
 				}
 			}
 			'''), json)
@@ -791,7 +791,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						"urlPath": "boxes"
 					},
 					"response": {
-						"status": 200,
+						"status": 200
 					}
 				}
 				'''), json)
@@ -820,7 +820,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						"urlPath": "boxes"
 					},
 					"response": {
-						"status": 200,
+						"status": 200
 					}
 				}
 				'''), json)
@@ -973,7 +973,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						}
 					},
 					"response": {
-						"status": 200,
+						"status": 200
 					}
 				}
 				'''), json)
