@@ -2,35 +2,48 @@ buildscript {
 	repositories {
 		mavenCentral()
 	}
+	dependencies {
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE"
+	}
 }
 
 apply plugin: 'groovy'
 apply plugin: 'spring-cloud-contract'
 apply plugin: 'maven-publish'
+apply plugin: 'spring-boot'
 
 group = 'org.springframework.cloud.testprojects'
 
 ext {
 	contractsDir = file("repository/mappings")
 	stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/repository/")
+	BOM_VERSION = "Dalston.BUILD-SNAPSHOT"
 }
 
 repositories {
 	mavenCentral()
 	mavenLocal()
+	maven { url "http://repo.spring.io/snapshot" }
+	maven { url "http://repo.spring.io/milestone" }
+	maven { url "http://repo.spring.io/release" }
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:$BOM_VERSION"
+	}
 }
 
 dependencies {
-	compile "org.springframework:spring-web:$springVersion"
+	compile "org.springframework:spring-web"
 	compile "org.springframework:spring-context-support:$springVersion"
-	compile "org.codehaus.groovy:groovy-all:2.4.5"
-	compile 'com.jayway.jsonpath:json-path-assert:2.2.0'
+	compile "org.codehaus.groovy:groovy-all"
+	compile 'com.jayway.jsonpath:json-path-assert'
 
-	testCompile "com.github.tomakehurst:wiremock:2.1.7"
+	testCompile "com.github.tomakehurst:wiremock"
 	testCompile "org.spockframework:spock-spring:1.0-groovy-2.4"
-	testCompile "com.jayway.restassured:rest-assured:$restAssuredVersion"
-	testCompile "com.jayway.restassured:spring-mock-mvc:$restAssuredVersion"
 	testCompile "ch.qos.logback:logback-classic:1.1.2"
+	testCompile("org.springframework.cloud:spring-cloud-starter-contract-verifier")
 }
 
 contracts {

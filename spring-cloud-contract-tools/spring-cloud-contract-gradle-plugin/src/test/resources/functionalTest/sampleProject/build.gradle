@@ -27,7 +27,7 @@ buildscript {
 ext {
 	restAssuredVersion = '2.5.0'
 	spockVersion = '1.0-groovy-2.4'
-	wiremockVersion = '2.0.10-beta'
+	BOM_VERSION = "Dalston.BUILD-SNAPSHOT"
 
 	contractVerifierStubsBaseDirectory = 'src/test/resources/stubs'
 }
@@ -36,17 +36,28 @@ group = 'org.springframework.cloud.testprojects'
 
 subprojects {
 	apply plugin: 'groovy'
+	apply plugin: 'spring-boot'
 
 	repositories {
 		mavenCentral()
 		mavenLocal()
+		maven { url "http://repo.spring.io/snapshot" }
+		maven { url "http://repo.spring.io/milestone" }
+		maven { url "http://repo.spring.io/release" }
+	}
+
+	dependencyManagement {
+		imports {
+			mavenBom "org.springframework.cloud:spring-cloud-dependencies:$BOM_VERSION"
+		}
 	}
 
 	dependencies {
 		testCompile "org.codehaus.groovy:groovy-all:2.4.5"
 		testCompile "org.spockframework:spock-core:$spockVersion"
-		testCompile("junit:junit:4.12")
-		testCompile "com.github.tomakehurst:wiremock:$wiremockVersion"
+		testCompile "junit:junit"
+		testCompile "com.github.tomakehurst:wiremock"
+		testCompile("org.springframework.cloud:spring-cloud-starter-contract-verifier")
 	}
 }
 
@@ -86,6 +97,8 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 		testCompile "org.springframework.boot:spring-boot-test"
 		testCompile "com.jayway.restassured:rest-assured:$restAssuredVersion"
 		testCompile "com.jayway.restassured:spring-mock-mvc:$restAssuredVersion"
+		testCompile "com.jayway.restassured:spring-mock-mvc:$restAssuredVersion"
+		testCompile "com.toomuchcoding.jsonassert:jsonassert:${jsonAssertVersion}"
 	}
 
 	task cleanup(type: Delete) {

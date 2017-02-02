@@ -72,7 +72,6 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		createGenerateTestsTask(extension, copyContracts)
 		Task clientTask = createAndConfigureGenerateClientStubsFromDslTask(extension, copyContracts)
 		createAndConfigureGenerateWireMockClientStubsFromDslTask(extension, clientTask)
-		addProjectDependencies(project)
 		addIdeaTestSources(project, extension)
 	}
 
@@ -88,14 +87,6 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 				}
 			}
 		}
-	}
-
-	//TODO: Deprecate this since starting with 1.1.x
-	private void addProjectDependencies(Project project) {
-		//TODO: Consider removing this at some point
-		project.dependencies.add("testCompile", "com.github.tomakehurst:wiremock:2.1.7")
-		project.dependencies.add("testCompile", "com.toomuchcoding.jsonassert:jsonassert:0.4.8")
-		project.dependencies.add("testCompile", "org.assertj:assertj-core:2.3.0")
 	}
 
 	private void setConfigurationDefaults(ContractVerifierExtension extension) {

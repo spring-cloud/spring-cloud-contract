@@ -57,7 +57,6 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 					classpath fileTree(dir: '$gradlePluginLibsDir', include: '*.jar')
 				}
 			}
-
 		""" + buildFile.text
 		// Extending buildscript is required when 'apply' is used.
 		// 'GradleRunner#withPluginClasspath' can be used when plugin is added using 'plugins { id...'

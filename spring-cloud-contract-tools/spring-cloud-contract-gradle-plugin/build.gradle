@@ -65,6 +65,9 @@ dependencies {
 	compile("org.springframework.cloud:spring-cloud-contract-stub-runner:${project.version}") {
 		exclude(group: 'org.codehaus.groovy')
 	}
+	compile("org.springframework.cloud:spring-cloud-starter-contract-verifier:${project.version}") {
+		exclude(group: 'org.codehaus.groovy')
+	}
 	testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
 		exclude(group: 'org.codehaus.groovy')
 	}
