@@ -78,7 +78,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			def originalBody = getMatchingStrategyFromBody(request.body)?.clientValue
 			def body = JsonToJsonPathsConverter.removeMatchingJsonPaths(originalBody, request.matchers)
 			JsonPaths values = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(body)
-			if (values.empty && !request.matchers?.hasMatchers()) {
+			if ((values.empty && !request.matchers?.hasMatchers()) || onlySizeAssertionsArePresent(values)) {
 				requestPattern.withRequestBody(WireMock.equalToJson(JsonOutput.toJson(getMatchingStrategy(request.body.clientValue).clientValue), false, false))
 			} else {
 				values.findAll{ !it.assertsSize() }.each {
@@ -100,12 +100,15 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			requestPattern.withRequestBody(convertToValuePattern(getMatchingStrategy(request.body.clientValue)))
 		}
 	}
-	
+
+	private boolean onlySizeAssertionsArePresent(JsonPaths values) {
+		return !values.empty && !request.matchers?.hasMatchers() && values.every { it.assertsSize() }
+	}
+
 	private void appendMultipart(RequestPatternBuilder requestPattern) {
 		if (!request.multipart) {
 			return
 		}
-		
 		if (request.multipart.clientValue instanceof Map) {
 			List<StringValuePattern> multipartPatterns = (request.multipart.clientValue as Map).collect {
 				(it.value instanceof NamedProperty 

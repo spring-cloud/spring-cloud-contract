@@ -16,12 +16,12 @@
 
 package org.springframework.cloud.contract.verifier.util;
 
-import static org.apache.commons.lang3.StringEscapeUtils.escapeJava;
-
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
 import com.toomuchcoding.jsonassert.JsonVerifiable;
+
+import static org.apache.commons.lang3.StringEscapeUtils.escapeJava;
 
 /**
  * Implementation of the {@link MethodBufferingJsonVerifiable} that contains a list
@@ -187,6 +187,12 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 		return readyToCheck;
 	}
 
+	@Override public MethodBufferingJsonVerifiable isEmpty() {
+		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(this.delegate.isEmpty(), this.methodsBuffer);
+		readyToCheck.methodsBuffer.offer(".isEmpty()");
+		return readyToCheck;
+	}
+
 	@Override
 	public MethodBufferingJsonVerifiable matches(String value) {
 		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(this.delegate.matches(value), this.methodsBuffer);
@@ -228,7 +234,7 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 	@Override
 	public boolean assertsSize() {
 		for (String s : this.methodsBuffer) {
-			if (s.contains(".hasSize(")) {
+			if (s.contains(".hasSize(") || s.contains(".isEmpty()")) {
 				return true;
 			}
 		}
