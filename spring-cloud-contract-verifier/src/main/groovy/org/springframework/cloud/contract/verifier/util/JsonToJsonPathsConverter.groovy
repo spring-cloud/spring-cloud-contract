@@ -184,7 +184,7 @@ class JsonToJsonPathsConverter {
 				traverseRecursively(Object, valueToAsserter(key.arrayField(), ContentUtils.returnParsedObject(it)),
 						ContentUtils.returnParsedObject(it), closure)
 			}
-		} else if (value instanceof List) {
+		} else if (value instanceof List && !value.empty) {
 			MethodBufferingJsonVerifiable jsonPathVerifiable = createAsserterFromList(key, value)
 			addSizeVerificationForListWithPrimitives(key, closure, value)
 			value.each { def element ->
@@ -192,7 +192,9 @@ class JsonToJsonPathsConverter {
 						ContentUtils.returnParsedObject(element), closure)
 			}
 			return value
-		} else if (key.isIteratingOverArray()) {
+		}  else if (value instanceof List && value.empty) {
+			return runClosure(closure, key, value)
+		}  else if (key.isIteratingOverArray()) {
 			traverseRecursively(Object, key.arrayField().contains(ContentUtils.returnParsedObject(value)),
 					ContentUtils.returnParsedObject(value), closure)
 		}
@@ -292,6 +294,9 @@ class JsonToJsonPathsConverter {
 	}
 
 	private boolean listContainsOnlyPrimitives(List list) {
+		if (list.empty) {
+			return false
+		}
 		return list.every { def element ->
 			[String, Number, Boolean].any {
 				it.isAssignableFrom(element.getClass())
@@ -312,13 +317,20 @@ class JsonToJsonPathsConverter {
 			Object entrykey, value ->
 				def convertedValue = ContentUtils.returnParsedObject(value)
 				[entrykey, traverseRecursively(parentType,
-							convertedValue instanceof List ? listContainsOnlyPrimitives(convertedValue) ?
-									parentKey.arrayField(entrykey) :
-									parentKey.array(entrykey) :
+							convertedValue instanceof List ? list(convertedValue, entrykey, parentKey) :
 							convertedValue instanceof Map ? parentKey.field(new ShouldTraverse(entrykey)) :
 									valueToAsserter(parentKey.field(entrykey), convertedValue)
 							, convertedValue, closureToExecute)]
 		}
+	}
+
+	protected MethodBufferingJsonVerifiable list(List convertedValue, Object entrykey, MethodBufferingJsonVerifiable parentKey) {
+		if (convertedValue.empty) {
+			return parentKey.array(entrykey).isEmpty()
+		}
+		return listContainsOnlyPrimitives(convertedValue) ?
+				parentKey.arrayField(entrykey) :
+				parentKey.array(entrykey)
 	}
 
 	private void traverseRecursivelyForKey(def json, MethodBufferingJsonVerifiable rootKey, Closure closure) {

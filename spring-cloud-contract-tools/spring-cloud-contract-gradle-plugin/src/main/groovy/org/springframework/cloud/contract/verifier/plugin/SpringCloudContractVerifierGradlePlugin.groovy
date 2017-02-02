@@ -94,7 +94,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	private void addProjectDependencies(Project project) {
 		//TODO: Consider removing this at some point
 		project.dependencies.add("testCompile", "com.github.tomakehurst:wiremock:2.1.7")
-		project.dependencies.add("testCompile", "com.toomuchcoding.jsonassert:jsonassert:0.4.7")
+		project.dependencies.add("testCompile", "com.toomuchcoding.jsonassert:jsonassert:0.4.8")
 		project.dependencies.add("testCompile", "org.assertj:assertj-core:2.3.0")
 	}
 

@@ -60,6 +60,9 @@ public interface MethodBufferingJsonVerifiable
 	MethodBufferingJsonVerifiable isNull();
 
 	@Override
+	MethodBufferingJsonVerifiable isEmpty();
+
+	@Override
 	MethodBufferingJsonVerifiable matches(String value);
 
 	@Override
