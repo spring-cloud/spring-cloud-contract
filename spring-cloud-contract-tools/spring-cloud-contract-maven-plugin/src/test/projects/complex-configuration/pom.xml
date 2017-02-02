@@ -63,7 +63,7 @@
         <dependency>
             <groupId>com.toomuchcoding.jsonassert</groupId>
             <artifactId>jsonassert</artifactId>
-            <version>0.4.7</version>
+            <version>0.4.8</version>
             <scope>test</scope>
         </dependency>
         <dependency>
