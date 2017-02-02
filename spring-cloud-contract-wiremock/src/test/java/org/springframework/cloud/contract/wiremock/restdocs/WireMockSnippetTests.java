@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.cloud.contract.wiremock.WireMockStubMapping;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -48,12 +49,6 @@ public class WireMockSnippetTests {
 	@Before
 	public void setup() throws IOException {
 		this.outputFolder = this.tmp.newFolder();
-	}
-
-	@Test
-	public void should_maintain_the_response_status_when_generating_stub()
-			throws Exception {
-		WireMockSnippet snippet = new WireMockSnippet();
 		RestDocumentationContext context = new RestDocumentationContext(this.getClass(),
 				"method", this.outputFolder);
 		given(this.operation.getName()).willReturn("foo");
@@ -62,12 +57,18 @@ public class WireMockSnippetTests {
 				.get(RestDocumentationContext.class.getName())).willReturn(context);
 		given(this.operation.getRequest()).willReturn(request());
 		given(this.operation.getResponse()).willReturn(response());
+	}
+
+	@Test
+	public void should_maintain_the_response_status_when_generating_stub()
+			throws Exception {
+		WireMockSnippet snippet = new WireMockSnippet();
 
 		snippet.document(this.operation);
 
 		File stub = new File(this.outputFolder, "stubs/foo.json");
 		assertThat(stub).exists();
-		StubMapping stubMapping = StubMapping
+		StubMapping stubMapping = WireMockStubMapping
 				.buildFrom(new String(Files.readAllBytes(stub.toPath())));
 		assertThat(stubMapping.getResponse().getStatus())
 				.isEqualTo(HttpStatus.ACCEPTED.value());
@@ -77,20 +78,13 @@ public class WireMockSnippetTests {
 	public void should_use_equal_to_json_pattern_for_body_when_request_content_type_is_json_when_generating_stub()
 			throws Exception {
 		WireMockSnippet snippet = new WireMockSnippet();
-		RestDocumentationContext context = new RestDocumentationContext(this.getClass(),
-				"method", this.outputFolder);
-		given(this.operation.getName()).willReturn("foo");
-		given(this.operation.getAttributes().get(anyString())).willReturn(null);
-		given(this.operation.getAttributes()
-				.get(RestDocumentationContext.class.getName())).willReturn(context);
 		given(this.operation.getRequest()).willReturn(requestPostWithJsonContentType());
-		given(this.operation.getResponse()).willReturn(response());
 
 		snippet.document(this.operation);
 
 		File stub = new File(this.outputFolder, "stubs/foo.json");
 		assertThat(stub).exists();
-		StubMapping stubMapping = StubMapping
+		StubMapping stubMapping = WireMockStubMapping
 				.buildFrom(new String(Files.readAllBytes(stub.toPath())));
 		assertThat(stubMapping.getRequest().getBodyPatterns().get(0))
 				.isInstanceOf(EqualToJsonPattern.class);

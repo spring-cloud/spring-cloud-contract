@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubMapping;
 import org.springframework.util.StreamUtils;
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
@@ -39,7 +40,7 @@ class WiremockMappingDescriptor {
 
 	public StubMapping getMapping() {
 		try {
-			return StubMapping.buildFrom(StreamUtils.copyToString(
+			return WireMockStubMapping.buildFrom(StreamUtils.copyToString(
 					new FileInputStream(this.descriptor), Charset.forName("UTF-8")));
 		}
 		catch (IOException e) {

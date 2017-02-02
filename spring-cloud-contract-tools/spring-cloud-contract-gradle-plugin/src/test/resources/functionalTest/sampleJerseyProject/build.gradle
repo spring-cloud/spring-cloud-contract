@@ -29,40 +29,31 @@ allprojects {
 }
 
 ext {
+	restAssuredVersion = '2.5.0'
 	spockVersion = '1.0-groovy-2.4'
-	BOM_VERSION = "Dalston.BUILD-SNAPSHOT"
+	wiremockVersion = '2.5.1'
 
 	contractVerifierStubsBaseDirectory = 'src/test/resources/stubs'
 }
 
 subprojects {
 	apply plugin: 'groovy'
-	apply plugin: 'spring-boot'
 
 	repositories {
 		mavenCentral()
 		mavenLocal()
-		maven { url "http://repo.spring.io/snapshot" }
-		maven { url "http://repo.spring.io/milestone" }
-		maven { url "http://repo.spring.io/release" }
-	}
-
-	dependencyManagement {
-		imports {
-			mavenBom "org.springframework.cloud:spring-cloud-dependencies:$BOM_VERSION"
-		}
 	}
 
 	dependencies {
-		testCompile 'org.codehaus.groovy:groovy-all'
+		testCompile 'org.codehaus.groovy:groovy-all:2.4.5'
 		testCompile "org.spockframework:spock-core:$spockVersion"
-		testCompile 'junit:junit'
-		testCompile "com.github.tomakehurst:wiremock"
-		testCompile("org.springframework.cloud:spring-cloud-starter-contract-verifier")
+		testCompile 'junit:junit:4.12'
+		testCompile "com.github.tomakehurst:wiremock:$wiremockVersion"
 	}
 }
 
 configure([project(':fraudDetectionService'), project(':loanApplicationService')]) {
+	apply plugin: 'spring-boot'
 	apply plugin: 'maven-publish'
 
 	ext['jetty.version'] = '9.2.17.v20160517'
@@ -90,7 +81,7 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 		testCompile "org.mockito:mockito-core"
 		testCompile "org.springframework:spring-test"
 		testCompile "org.springframework.boot:spring-boot-test"
-		testCompile("com.github.tomakehurst:wiremock") {
+		testCompile("com.github.tomakehurst:wiremock:2.5.1") {
 			exclude group: 'org.eclipse.jetty'
 		}
 	}

@@ -160,12 +160,12 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 	private static class CopyFileVisitor extends SimpleFileVisitor<Path> {
 		private final Path targetPath;
 		private Path sourcePath = null
-		public CopyFileVisitor(Path targetPath) {
+		CopyFileVisitor(Path targetPath) {
 			this.targetPath = targetPath
 		}
 
 		@Override
-		public FileVisitResult preVisitDirectory(final Path dir,
+		FileVisitResult preVisitDirectory(final Path dir,
 												 final BasicFileAttributes attrs) throws IOException {
 			if (sourcePath == null) {
 				sourcePath = dir
@@ -177,7 +177,7 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 		}
 
 		@Override
-		public FileVisitResult visitFile(final Path file,
+		FileVisitResult visitFile(final Path file,
 										 final BasicFileAttributes attrs) throws IOException {
 			Path target = targetPath.resolve(sourcePath.relativize(file))
 			if (!target.toFile().exists()) {

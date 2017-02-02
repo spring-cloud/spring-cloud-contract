@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,6 @@ import org.springframework.util.StringUtils;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.Options;
-import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 /**
  * Configuration and lifecycle for a Spring Application context that wants to run a
@@ -105,7 +103,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 					pattern = pattern + "**/*.json";
 				}
 				for (Resource resource : resolver.getResources(pattern)) {
-					this.server.addStubMapping(StubMapping
+					this.server.addStubMapping(WireMockStubMapping
 							.buildFrom(StreamUtils.copyToString(resource.getInputStream(), Charset.forName("UTF-8"))));
 				}
 			}

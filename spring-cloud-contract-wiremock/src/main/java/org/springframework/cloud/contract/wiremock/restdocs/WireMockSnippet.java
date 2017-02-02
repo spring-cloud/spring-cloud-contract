@@ -32,7 +32,7 @@ import org.springframework.restdocs.RestDocumentationContext;
 import org.springframework.restdocs.operation.Operation;
 import org.springframework.restdocs.snippet.Snippet;
 
-import com.github.tomakehurst.wiremock.client.RemoteMappingBuilder;
+import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.common.Json;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
@@ -112,11 +112,11 @@ public class WireMockSnippet implements Snippet {
 				.withStatus(operation.getResponse().getStatus().value());
 	}
 
-	private RemoteMappingBuilder<?, ?> request(Operation operation) {
+	private MappingBuilder request(Operation operation) {
 		return requestHeaders(requestBuilder(operation), operation);
 	}
 
-	private RemoteMappingBuilder<?, ?> requestHeaders(RemoteMappingBuilder<?, ?> request,
+	private MappingBuilder requestHeaders(MappingBuilder request,
 			Operation operation) {
 		org.springframework.http.HttpHeaders headers = operation.getRequest()
 				.getHeaders();
@@ -136,7 +136,7 @@ public class WireMockSnippet implements Snippet {
 		return request;
 	}
 
-	private RemoteMappingBuilder<?, ?> requestBuilder(Operation operation) {
+	private MappingBuilder requestBuilder(Operation operation) {
 		switch (operation.getRequest().getMethod()) {
 		case DELETE:
 			return delete(requestPattern(operation));
@@ -151,7 +151,7 @@ public class WireMockSnippet implements Snippet {
 		}
 	}
 
-	private RemoteMappingBuilder<?, ?> bodyPattern(RemoteMappingBuilder<?, ?> builder,
+	private MappingBuilder bodyPattern(MappingBuilder builder,
 			String content) {
 		if (this.jsonPaths != null) {
 			for (String jsonPath : this.jsonPaths) {
