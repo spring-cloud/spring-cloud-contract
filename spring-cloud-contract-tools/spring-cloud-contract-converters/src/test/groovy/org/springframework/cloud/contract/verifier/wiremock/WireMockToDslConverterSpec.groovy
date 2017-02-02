@@ -16,9 +16,9 @@
 
 package org.springframework.cloud.contract.verifier.wiremock
 
-import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMock2_1_7_StubMapping
+import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 import spock.lang.Specification
 
 class WireMockToDslConverterSpec extends Specification {
@@ -554,6 +554,6 @@ class WireMockToDslConverterSpec extends Specification {
 	}
 
 	void stubMappingIsValidWireMockStub(String mappingDefinition) {
-		StubMapping.buildFrom(mappingDefinition)
+		WireMock2_1_7_StubMapping.buildFrom(mappingDefinition)
 	}
 }
