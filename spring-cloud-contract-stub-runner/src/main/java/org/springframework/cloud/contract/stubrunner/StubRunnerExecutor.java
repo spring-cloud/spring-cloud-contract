@@ -242,10 +242,6 @@ class StubRunnerExecutor implements StubFinder {
 			this.stubServer = new StubServer(stubConfiguration, mappings, contracts, new NoOpHttpServerStub()).start();
 			return;
 		}
-		if (contracts.isEmpty()) {
-			log.warn("There are no contracts in the published JAR. This is an unusual situation "
-					+ "but we will start the server anyways - maybe you know what you're doing...");
-		}
 		if (port != null && port >= 0) {
 			this.stubServer = new StubServer(stubConfiguration, mappings, contracts, httpServerStub()).start(port);
 		}
