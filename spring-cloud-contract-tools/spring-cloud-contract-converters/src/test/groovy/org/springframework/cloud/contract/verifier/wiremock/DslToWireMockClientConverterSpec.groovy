@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.skyscreamer.jsonassert.JSONAssert
-import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMock2_1_7_StubMapping
+import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubMapping
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import spock.lang.Issue
 import spock.lang.Specification
@@ -579,7 +579,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 	}
 	
 	void stubMappingIsValidWireMockStub(String mappingDefinition) {
-		StubMapping stubMapping = WireMock2_1_7_StubMapping.buildFrom(mappingDefinition)
+		StubMapping stubMapping = WireMockStubMapping.buildFrom(mappingDefinition)
 		stubMapping.request.bodyPatterns.findAll { it.isPresent() && it instanceof RegexPattern }.every {
 			Pattern.compile(it.getValue())
 		}

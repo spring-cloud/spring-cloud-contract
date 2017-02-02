@@ -103,7 +103,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 					pattern = pattern + "**/*.json";
 				}
 				for (Resource resource : resolver.getResources(pattern)) {
-					this.server.addStubMapping(WireMock2_1_7_StubMapping
+					this.server.addStubMapping(WireMockStubMapping
 							.buildFrom(StreamUtils.copyToString(resource.getInputStream(), Charset.forName("UTF-8"))));
 				}
 			}

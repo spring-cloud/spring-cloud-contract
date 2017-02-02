@@ -7,7 +7,7 @@ import spock.lang.Specification
 /**
  * @author Marcin Grzejszczak
  */
-class WireMock2_1_7_StubMappingSpec extends Specification {
+class WireMockStubMappingSpec extends Specification {
 	private static final String stub_2_1_7 = """
 {
   "request" : {
@@ -33,14 +33,14 @@ class WireMock2_1_7_StubMappingSpec extends Specification {
 
 	def "should successfully parse a WireMock 2.1.7 stub"() {
 		when:
-			StubMapping mapping = WireMock2_1_7_StubMapping.buildFrom(stub_2_1_7)
+			StubMapping mapping = WireMockStubMapping.buildFrom(stub_2_1_7)
 		then:
 			JSONAssert.assertEquals(stub_2_1_7, mapping.toString(), false)
 	}
 
 	def "should successfully parse a WireMock 2.5.1 stub"() {
 		when:
-			StubMapping mapping = WireMock2_1_7_StubMapping.buildFrom(stub_2_5_1)
+			StubMapping mapping = WireMockStubMapping.buildFrom(stub_2_5_1)
 		then:
 			JSONAssert.assertEquals(stub_2_1_7, mapping.toString(), false)
 	}

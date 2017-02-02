@@ -1,4 +1,4 @@
-package org.springframework.cloud.contract.wiremock;
+package org.springframework.cloud.contract.verifier.dsl.wiremock;
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.jayway.jsonpath.DocumentContext;
@@ -7,7 +7,7 @@ import com.jayway.jsonpath.JsonPath;
 /**
  * @author Marcin Grzejszczak
  */
-public class WireMock2_1_7_StubMapping {
+public class WireMockStubMapping {
 	public static StubMapping buildFrom(String mappingDefinition) {
 		DocumentContext context = JsonPath.parse(mappingDefinition);
 		context.delete("$.id");

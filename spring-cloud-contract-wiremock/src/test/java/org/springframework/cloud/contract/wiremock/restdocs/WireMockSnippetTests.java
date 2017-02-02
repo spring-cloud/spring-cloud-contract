@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.cloud.contract.wiremock.WireMock2_1_7_StubMapping;
+import org.springframework.cloud.contract.wiremock.WireMockStubMapping;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -68,7 +68,7 @@ public class WireMockSnippetTests {
 
 		File stub = new File(this.outputFolder, "stubs/foo.json");
 		assertThat(stub).exists();
-		StubMapping stubMapping = WireMock2_1_7_StubMapping
+		StubMapping stubMapping = WireMockStubMapping
 				.buildFrom(new String(Files.readAllBytes(stub.toPath())));
 		assertThat(stubMapping.getResponse().getStatus())
 				.isEqualTo(HttpStatus.ACCEPTED.value());
@@ -84,7 +84,7 @@ public class WireMockSnippetTests {
 
 		File stub = new File(this.outputFolder, "stubs/foo.json");
 		assertThat(stub).exists();
-		StubMapping stubMapping = WireMock2_1_7_StubMapping
+		StubMapping stubMapping = WireMockStubMapping
 				.buildFrom(new String(Files.readAllBytes(stub.toPath())));
 		assertThat(stubMapping.getRequest().getBodyPatterns().get(0))
 				.isInstanceOf(EqualToJsonPattern.class);
