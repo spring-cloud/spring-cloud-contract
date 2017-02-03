@@ -1877,7 +1877,11 @@ It&#8217;s really important that you understand the map notation to set up contr
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[tags=autoconfigure_stubrunner,indent=0]</code></pre>
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment=WebEnvironment.NONE)
+@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"}, workOffline = true)
+@DirtiesContext
+public class LoanApplicationServiceTests {</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -7531,7 +7535,7 @@ common jar classes will be visible in your Groovy files.</p>
 <div class="listingblock secondary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">Unresolved directive in verifier/contract.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/1.0.x/producer/build.gradle[tags=test_dep,indent=0]</code></pre>
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">testCompile("com.example:beer-common:0.0.1-SNAPSHOT")</code></pre>
 </div>
 </div>
 </div>
