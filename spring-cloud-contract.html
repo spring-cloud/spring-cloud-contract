@@ -1563,13 +1563,7 @@ all the contract are present in the producer&#8217;s repository
 <div class="listingblock secondary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">repositories {
-	mavenCentral()
-	mavenLocal()
-	maven { url "http://repo.spring.io/snapshot" }
-	maven { url "http://repo.spring.io/milestone" }
-	maven { url "http://repo.spring.io/release" }
-}</code></pre>
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-server/build.gradle[tags=deps_repos,indent=0]</code></pre>
 </div>
 </div>
 </div>
@@ -4236,7 +4230,24 @@ For both Maven and Gradle the setup comes out of the box. But you can customize 
 &lt;spring.cloud.contract.verifier.skip&gt;true&lt;/spring.cloud.contract.verifier.skip&gt;
 
 &lt;!-- Next add the assembly plugin to your build --&gt;
-Unresolved directive in verifier/stubrunner.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer_with_restdocs/pom.xml[tags=assembly,indent=0]
+&lt;plugin&gt;
+	&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+	&lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
+	&lt;executions&gt;
+		&lt;execution&gt;
+			&lt;id&gt;stub&lt;/id&gt;
+			&lt;phase&gt;prepare-package&lt;/phase&gt;
+			&lt;goals&gt;
+				&lt;goal&gt;single&lt;/goal&gt;
+			&lt;/goals&gt;
+			&lt;inherited&gt;false&lt;/inherited&gt;
+			&lt;configuration&gt;
+				&lt;attach&gt;true&lt;/attach&gt;
+				&lt;descriptor&gt;${basedir}/src/assembly/stub.xml&lt;/descriptor&gt;
+			&lt;/configuration&gt;
+		&lt;/execution&gt;
+	&lt;/executions&gt;
+&lt;/plugin&gt;
 
 &lt;!-- Finally setup your assembly. Below you can find the contents of src/main/assembly/stub.xml --&gt;
 &lt;assembly
@@ -5101,6 +5112,43 @@ the Stub Runner Boot.</p>
 </div>
 <div class="paragraph">
 <p>Where <code>port</code> means the port of the WireMock server.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+Starting from version 1.0.4 as a version you can provide a range of versions that you would like
+the Stub Runner to take into consideration. You can read more about the <a href="https://wiki.eclipse.org/Aether/New_and_Noteworthy#Version_Ranges">Aether versioning ranges here</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Taken from <a href="http://download.eclipse.org/aether/aether-core/0.9.0/apidocs/org/eclipse/aether/util/version/GenericVersionScheme.html">Aether Docs</a>:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>This scheme accepts versions of any form, interpreting a version as a sequence of numeric and alphabetic segments. The characters '-', '_', and '.' as well as the mere
+transitions from digit to letter and vice versa delimit the version segments. Delimiters are treated as equivalent.</p>
+</div>
+<div class="paragraph">
+<p>Numeric segments are compared mathematically, alphabetic segments are compared lexicographically and case-insensitively. However, the following qualifier strings are
+recognized and treated specially: "alpha" = "a" &lt; "beta" = "b" &lt; "milestone" = "m" &lt; "cr" = "rc" &lt; "snapshot" &lt; "final" = "ga" &lt; "sp". All of those well-known qualifiers
+are considered smaller/older than other strings. An empty segment/string is equivalent to 0.</p>
+</div>
+<div class="paragraph">
+<p>In addition to the above mentioned qualifiers, the tokens "min" and "max" may be used as final version segment to denote the smallest/greatest version having a given prefix.
+For example, "1.2.min" denotes the smallest version in the 1.2 line, "1.2.max" denotes the greatest version in the 1.2 line. A version range of the form "[M.N.*]" is short for "[M.N.min, M.N.max]".</p>
+</div>
+<div class="paragraph">
+<p>Numbers and strings are considered incomparable against each other. Where version segments of different kind would collide, comparison will instead assume that the previous
+segments are padded with trailing 0 or "ga" segments, respectively, until the kind mismatch is resolved, e.g. "1-alpha" = "1.0.0-alpha" &lt; "1.0.1-ga" = "1.0.1".</p>
+</div>
+</blockquote>
 </div>
 </div>
 </div>
