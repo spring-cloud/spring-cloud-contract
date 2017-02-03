@@ -4236,24 +4236,7 @@ For both Maven and Gradle the setup comes out of the box. But you can customize 
 &lt;spring.cloud.contract.verifier.skip&gt;true&lt;/spring.cloud.contract.verifier.skip&gt;
 
 &lt;!-- Next add the assembly plugin to your build --&gt;
-&lt;plugin&gt;
-	&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-	&lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
-	&lt;executions&gt;
-		&lt;execution&gt;
-			&lt;id&gt;stub&lt;/id&gt;
-			&lt;phase&gt;prepare-package&lt;/phase&gt;
-			&lt;goals&gt;
-				&lt;goal&gt;single&lt;/goal&gt;
-			&lt;/goals&gt;
-			&lt;inherited&gt;false&lt;/inherited&gt;
-			&lt;configuration&gt;
-				&lt;attach&gt;true&lt;/attach&gt;
-				&lt;descriptor&gt;${basedir}/src/assembly/stub.xml&lt;/descriptor&gt;
-			&lt;/configuration&gt;
-		&lt;/execution&gt;
-	&lt;/executions&gt;
-&lt;/plugin&gt;
+Unresolved directive in verifier/stubrunner.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer_with_restdocs/pom.xml[tags=assembly,indent=0]
 
 &lt;!-- Finally setup your assembly. Below you can find the contents of src/main/assembly/stub.xml --&gt;
 &lt;assembly
