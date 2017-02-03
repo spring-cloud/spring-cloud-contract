@@ -323,7 +323,7 @@ abstract class MethodBodyBuilder {
 					addColonIfRequired(bb)
 				} else {
 					Object elementFromBody = value(copiedBody, it)
-					if (it.minTypeOccurrence() || it.maxTypeOccurrence()) {
+					if (it.minTypeOccurrence() != null || it.maxTypeOccurrence() != null) {
 						checkType(bb, it, elementFromBody)
 						String method = "assertThat(parsedJson.read(${quotedAndEscaped(it.path())}, java.util.Collection.class).size()).${sizeCheckMethod(it)}"
 						bb.addLine(postProcessJsonPathCall(method))
