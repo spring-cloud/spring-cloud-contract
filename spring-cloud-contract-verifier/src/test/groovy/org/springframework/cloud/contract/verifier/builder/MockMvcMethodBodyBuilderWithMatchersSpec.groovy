@@ -85,6 +85,8 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							valueWithMinMax: [
 								1,2,3
 							],
+							valueWithMinEmpty: [],
+							valueWithMaxEmpty: [],
 					])
 					testMatchers {
 						// asserts the jsonpath value against manual regex
@@ -115,6 +117,14 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							minOccurrence(1)
 							maxOccurrence(3)
 						})
+						jsonPath('$.valueWithMinEmpty', byType {
+							// results in verification of size of array (min 0)
+							minOccurrence(0)
+						})
+						jsonPath('$.valueWithMaxEmpty', byType {
+							// results in verification of size of array (max 0)
+							maxOccurrence(0)
+						})
 					}
 					headers {
 						contentType(applicationJson())
@@ -144,6 +154,10 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMax", java.util.Collection.class).size()).isLessThanOrEqualTo(3)')
 			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMinMax")).isInstanceOf(java.util.List.class)')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMinMax", java.util.Collection.class).size()).isStrictlyBetween(1, 3)')
+			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMinEmpty")).isInstanceOf(java.util.List.class)')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMinEmpty", java.util.Collection.class).size()).isGreaterThanOrEqualTo(0)')
+			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMaxEmpty")).isInstanceOf(java.util.List.class)')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMaxEmpty", java.util.Collection.class).size()).isLessThanOrEqualTo(0)')
 			!test.contains('cursor')
 		and:
 			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
