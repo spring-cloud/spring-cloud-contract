@@ -16,15 +16,16 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
-import org.springframework.cloud.contract.stubrunner.util.StubsParser;
-import org.springframework.util.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.cloud.contract.stubrunner.util.StubsParser;
+import org.springframework.util.StringUtils;
 
 public class StubRunnerOptionsBuilder {
 
@@ -126,10 +127,32 @@ public class StubRunnerOptionsBuilder {
 
 	private static List<String> stubsToList(String[] stubIdsToPortMapping) {
 		List<String> list = new ArrayList<>();
-		for (String stub : stubIdsToPortMapping) {
-			list.addAll(StringUtils.commaDelimitedListToSet(stub));
+		if (stubIdsToPortMapping.length == 1 && !containsRange(stubIdsToPortMapping[0])) {
+			list.addAll(StringUtils.commaDelimitedListToSet(stubIdsToPortMapping[0]));
+			return list;
+		} else if (stubIdsToPortMapping.length == 1 && containsRange(stubIdsToPortMapping[0])) {
+			LinkedList<String> linkedList = new LinkedList<>();
+			String[] split = stubIdsToPortMapping[0].split(",");
+			for (String string : split) {
+				if (containsClosingRange(string)) {
+					String last = linkedList.pop();
+					linkedList.push(last + "," + string);
+				} else {
+					linkedList.push(string);
+				}
+			}
+			list.addAll(linkedList);
 		}
+		Collections.addAll(list, stubIdsToPortMapping);
 		return list;
+	}
+
+	private static boolean containsRange(String s) {
+		return s.contains("[") || s.contains("(");
+	}
+
+	private static boolean containsClosingRange(String s) {
+		return s.contains("]") || s.contains(")");
 	}
 
 	private void addStub(List<String> notations) {
