@@ -95,4 +95,43 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 		then:
 		options.getDependencies().toString() == '[groupId:artifactId:version:classifier]'
 	}
+
+	@Issue("#210")
+	def shouldCreateDependenciesWithVersionRange() {
+
+		given:
+		builder.withStubs('groupId:artifactId:[,0.0.1]:classifier','groupId2:artifactId2:[,0.0.2]:classifier2')
+
+		when:
+		StubRunnerOptions options = builder.build()
+
+		then:
+		options.getDependencies().toString() == '[groupId:artifactId:[,0.0.1]:classifier, groupId2:artifactId2:[,0.0.2]:classifier2]'
+	}
+
+	@Issue("#210")
+	def shouldCreateDependenciesWithVersionRangeWhenSingleOneWasPassed() {
+
+		given:
+		builder.withStubs('groupId:artifactId:[,0.0.1]:classifier')
+
+		when:
+		StubRunnerOptions options = builder.build()
+
+		then:
+		options.getDependencies().toString() == '[groupId:artifactId:[,0.0.1]:classifier]'
+	}
+
+	@Issue("#210")
+	def shouldCreateDependenciesWithVersionRangeWhenManyWerePassedInASingleLine() {
+
+		given:
+		builder.withStubs('groupId:artifactId:[,0.0.1]:classifier,groupId2:artifactId2:[,0.0.2]:classifier2')
+
+		when:
+		StubRunnerOptions options = builder.build()
+
+		then:
+		options.getDependencies().toString() == '[groupId2:artifactId2:[,0.0.2]:classifier2, groupId:artifactId:[,0.0.1]:classifier]'
+	}
 }

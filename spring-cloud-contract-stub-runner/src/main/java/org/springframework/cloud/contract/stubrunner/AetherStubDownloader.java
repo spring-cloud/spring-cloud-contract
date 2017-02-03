@@ -173,10 +173,9 @@ public class AetherStubDownloader implements StubDownloader {
 		if (!StringUtils.hasText(version) || LATEST_VERSION_IN_IVY.equals(version)) {
 			log.info("Desired version is [" + version
 					+ "] - will try to resolve the latest version");
-			return resolveHighestArtifactVersion(stubsGroup, stubsModule, classifier);
+			return resolveHighestArtifactVersion(stubsGroup, stubsModule, classifier, LATEST_ARTIFACT_VERSION);
 		}
-		log.info("Will try to resolve version " + version);
-		return resolveArtifactVersion(stubsGroup, stubsModule, version, classifier);
+		return resolveHighestArtifactVersion(stubsGroup, stubsModule, classifier, version);
 	}
 
 	@Override
@@ -198,9 +197,9 @@ public class AetherStubDownloader implements StubDownloader {
 	}
 
 	private String resolveHighestArtifactVersion(String stubsGroup, String stubsModule,
-			String classifier) {
+			String classifier, String version) {
 		Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier,
-				ARTIFACT_EXTENSION, LATEST_ARTIFACT_VERSION);
+				ARTIFACT_EXTENSION, version);
 		VersionRangeRequest versionRangeRequest = new VersionRangeRequest(artifact,
 				this.remoteRepos, null);
 		VersionRangeResult rangeResult;
