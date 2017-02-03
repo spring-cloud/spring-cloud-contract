@@ -6909,6 +6909,8 @@ That way you can assert on the size of the collection.</p>
 				valueWithMinMax: [
 					1,2,3
 				],
+				valueWithMinEmpty: [],
+				valueWithMaxEmpty: [],
 		])
 		testMatchers {
 			// asserts the jsonpath value against manual regex
@@ -6938,6 +6940,14 @@ That way you can assert on the size of the collection.</p>
 				// results in verification of size of array (min 1 &amp; max 3)
 				minOccurrence(1)
 				maxOccurrence(3)
+			})
+			jsonPath('$.valueWithMinEmpty', byType {
+				// results in verification of size of array (min 0)
+				minOccurrence(0)
+			})
+			jsonPath('$.valueWithMaxEmpty', byType {
+				// results in verification of size of array (max 0)
+				maxOccurrence(0)
 			})
 		}
 		headers {
