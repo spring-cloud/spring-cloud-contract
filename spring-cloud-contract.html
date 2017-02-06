@@ -2078,7 +2078,9 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
 		consumes = FRAUD_SERVICE_JSON_VERSION_1,
 		produces = FRAUD_SERVICE_JSON_VERSION_1)
 public FraudCheckResult fraudCheck(@RequestBody FraudCheck fraudCheck) {
-Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=new_impl,indent=0]
+if (amountGreaterThanThreshold(fraudCheck)) {
+	return new FraudCheckResult(FraudCheckStatus.FRAUD, AMOUNT_TOO_HIGH);
+}
 return new FraudCheckResult(FraudCheckStatus.OK, NO_REASON);
 }</code></pre>
 </div>
