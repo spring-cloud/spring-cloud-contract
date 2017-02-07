@@ -313,13 +313,17 @@ abstract class MethodBodyBuilder {
 			// for the rest we'll do JsonPath matching in brute force
 			bodyMatchers.jsonPathMatchers().each {
 				if (it.value() || it.matchingType() == MatchingType.EQUALITY) {
-					String comparisonMethod = it.matchingType() == MatchingType.EQUALITY ? "isEqualTo" : "matches"
+					String path = quotedAndEscaped(it.path())
 					Object retrievedValue = value(copiedBody, it)
 					String valueAsParam = retrievedValue instanceof String ? quotedAndEscaped(retrievedValue.toString()) : retrievedValue.toString()
-					String classToCastTo = "${retrievedValue.class.simpleName}.class"
-					String path = quotedAndEscaped(it.path())
-					String method = "assertThat(parsedJson.read(${path}, ${classToCastTo})).${comparisonMethod}(${valueAsParam})"
-					bb.addLine(postProcessJsonPathCall(method))
+					if (path.contains("[*]") && MatchingType.regexRelated(it.matchingType())) {
+						buildCustomMatchingConditionForEachElement(bb, path, valueAsParam)
+					} else {
+						String comparisonMethod = it.matchingType() == MatchingType.EQUALITY ? "isEqualTo" : "matches"
+						String classToCastTo = "${retrievedValue.class.simpleName}.class"
+						String method = "assertThat(parsedJson.read(${path}, ${classToCastTo})).${comparisonMethod}(${valueAsParam})"
+						bb.addLine(postProcessJsonPathCall(method))
+					}
 					addColonIfRequired(bb)
 				} else {
 					Object elementFromBody = value(copiedBody, it)
@@ -335,6 +339,23 @@ abstract class MethodBodyBuilder {
 			}
 		}
 		processBodyElement(bb, "", convertedResponseBody)
+	}
+
+	protected void buildCustomMatchingConditionForEachElement(BlockBuilder bb, String path, String valueAsParam) {
+		String method = "assertThat(parsedJson.read(${path}, java.util.Collection.class)).as(\"All elements match regex\").are("
+		String newCondition = "new org.assertj.core.api.Condition<Object>() {"
+		String overriddenMethod = "@Override public boolean matches(Object o) {"
+		String matches = "return ((String)o).matches(${valueAsParam})"
+		String methodEnd = "}"
+		String classEnd = "})"
+		bb.addLine(postProcessJsonPathCall(method))
+		bb.startBlock().startBlock().addLine(newCondition)
+		bb.startBlock().addLine(overriddenMethod)
+		bb.startBlock().addLine(postProcessJsonPathCall(matches))
+		addColonIfRequired(bb)
+		bb.endBlock().addLine(methodEnd)
+		bb.endBlock().addLine(classEnd)
+		bb.endBlock().endBlock()
 	}
 
 	protected Object value(def body, BodyMatcher bodyMatcher) {

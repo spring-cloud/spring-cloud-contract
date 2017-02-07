@@ -169,4 +169,77 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | '$'
 	}
 
+	@Issue('#217')
+	def "should allow complex matchers for [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url 'person'
+				}
+				response {
+					status 200
+					body([
+							"firstName": "Jane",
+							"lastName": "Doe",
+							"isAlive": true,
+							"address": [
+									"postalCode": "98101",
+							],
+							"phoneNumbers": [
+									[
+											"type": "home",
+											"number": "999 999-9999",
+									]
+							],
+							"gender": [
+									"type": "female",
+							],
+							"children": [
+									[
+											"firstName": "Kid",
+											"age": 55,
+									]
+							],
+					])
+					testMatchers {
+						jsonPath('$.phoneNumbers', byType {
+							minOccurrence(0)				// min occurrence of 1
+							maxOccurrence(4)				// max occurrence of 3
+						})
+						jsonPath('$.phoneNumbers[*].number', byRegex("^[0-9]{3} [0-9]{3}-[0-9]{4}\$"))
+						jsonPath('$..number', byRegex("^[0-9]{3} [0-9]{3}-[0-9]{4}\$"))
+					}
+
+					headers {
+						contentType('application/json')
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.phoneNumbers[*].number", java.util.Collection.class)).as("All elements match regex").are(')
+			test.contains('new org.assertj.core.api.Condition<Object>() {')
+			test.contains('@Override public boolean matches(Object o) {')
+			test.contains('return ((String)o).matches("^[0-9]{3} [0-9]{3}-[0-9]{4}' + rootElement + '")')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '..number", String.class)).matches("^[0-9]{3} [0-9]{3}-[0-9]{4}' + rootElement + '")')
+			!test.contains('cursor')
+		and:
+			try {
+				SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
+			} catch(NoClassDefFoundError error) {
+				// that's actually expected since we're creating an anonymous class
+			}
+		where:
+			methodBuilderName                                    | methodBuilder                                                                               | rootElement
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | '\\$'
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | '$'
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '\\$'
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | '$'
+	}
+
 }
