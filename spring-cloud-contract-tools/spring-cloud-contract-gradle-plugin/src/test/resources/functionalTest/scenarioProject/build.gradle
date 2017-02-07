@@ -20,7 +20,7 @@ buildscript {
 		mavenLocal()
 	}
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE")
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.1.RELEASE")
 	}
 }
 
@@ -48,6 +48,7 @@ subprojects {
 		testCompile "org.spockframework:spock-core:$spockVersion"
 		testCompile("junit:junit:4.12")
 		testCompile "com.github.tomakehurst:wiremock:$wiremockVersion"
+		testCompile "org.assertj:assertj-core:2.4.1"
 	}
 }
 
