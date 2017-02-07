@@ -132,7 +132,7 @@ public class StubRunnerStreamConfiguration {
 			String destination) {
 		Map<String, BindingProperties> bindings = bindingProperties(context);
 		for (Map.Entry<String, BindingProperties> entry : bindings.entrySet()) {
-			if (entry.getValue().getDestination().equals(destination)) {
+			if (destination.equals(entry.getValue().getDestination())) {
 				if (log.isDebugEnabled()) {
 					log.debug("Found a channel named [{}] with destination [{}]",
 							entry.getKey(), destination);
