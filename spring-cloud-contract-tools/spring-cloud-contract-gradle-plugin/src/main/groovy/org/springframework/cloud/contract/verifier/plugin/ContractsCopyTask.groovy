@@ -23,10 +23,11 @@ class ContractsCopyTask extends ConventionTask {
 		ContractVerifierConfigProperties props = ExtensionToProperties.fromExtension(getExtension())
 		File file = getDownloader().downloadAndUnpackContractsIfRequired(getExtension(), props)
 		String antPattern = "${props.includedRootFolderAntPattern}*.*"
+		String root = OutputFolderBuilder.buildRootPath(project)
 		ext.contractVerifierConfigProperties = props
 		File outputContractsFolder = getExtension().stubsOutputDir != null ?
-				project.file("${getExtension().stubsOutputDir}/contracts") :
-				project.file("${project.buildDir}/stubs/contracts")
+				project.file("${getExtension().stubsOutputDir}/${root}/contracts") :
+				project.file("${project.buildDir}/stubs/${root}/contracts")
 		ext.contractsDslDir = outputContractsFolder
 		project.logger.info("Downloading and unpacking files from [$file] to [$outputContractsFolder]. The inclusion ant pattern is [$antPattern]")
 		project.copy {

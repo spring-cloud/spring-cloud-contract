@@ -31,14 +31,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 
 class CopyContracts {
-	private static final Logger log = LoggerFactory
-			.getLogger(MethodHandles.lookup().lookupClass());
+	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	private static final String CONTRACTS_PATH = "/contracts";
 	private final MavenProject project;
 	private final MavenSession mavenSession;
 	private final MavenResourcesFiltering mavenResourcesFiltering;
 	private final ContractVerifierConfigProperties config;
 
-	public CopyContracts(MavenProject project, MavenSession mavenSession,
+	CopyContracts(MavenProject project, MavenSession mavenSession,
 			MavenResourcesFiltering mavenResourcesFiltering,
 			ContractVerifierConfigProperties config) {
 		this.project = project;
@@ -47,7 +47,7 @@ class CopyContracts {
 		this.config = config;
 	}
 
-	public void copy(File contractsDirectory, File outputDirectory)
+	public void copy(File contractsDirectory, File outputDirectory, String rootPath)
 			throws MojoExecutionException {
 		log.info("Copying Spring Cloud Contract Verifier contracts. Only files matching "
 				+ "[" + this.config.getIncludedContracts() + "] pattern will end up in "
@@ -61,7 +61,7 @@ class CopyContracts {
 		resource.setDirectory(contractsDirectory.getAbsolutePath());
 		MavenResourcesExecution execution = new MavenResourcesExecution();
 		execution.setResources(Collections.singletonList(resource));
-		execution.setOutputDirectory(new File(outputDirectory, "contracts"));
+		execution.setOutputDirectory(new File(outputDirectory, rootPath + CONTRACTS_PATH));
 		execution.setMavenProject(this.project);
 		execution.setEncoding("UTF-8");
 		execution.setMavenSession(this.mavenSession);

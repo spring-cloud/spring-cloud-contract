@@ -43,30 +43,30 @@ public class PluginUnitTest {
 	public void shouldGenerateWireMockStubsInDefaultLocation() throws Exception {
 		File basedir = this.resources.getBasedir("basic");
 		this.maven.executeMojo(basedir, "convert");
-		assertFilesPresent(basedir, "target/stubs/mappings/Sample.json".replace("/", File.separator));
-		assertFilesNotPresent(basedir, "target/stubs/mappings/Messaging.json".replace("/", File.separator));
+		assertFilesPresent(basedir, "target/stubs/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/Sample.json".replace("/", File.separator));
+		assertFilesNotPresent(basedir, "target/stubs/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/Messaging.json".replace("/", File.separator));
 	}
 
 	@Test
 	public void shouldGenerateWireMockFromStubsDirectory() throws Exception {
 		File basedir = this.resources.getBasedir("withStubs");
 		this.maven.executeMojo(basedir, "convert", newParameter("contractsDirectory", "src/test/resources/stubs"));
-		assertFilesPresent(basedir, "target/stubs/mappings/Sample.json".replace("/", File.separator));
+		assertFilesPresent(basedir, "target/stubs/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/Sample.json".replace("/", File.separator));
 	}
 
 	@Test
 	public void shouldCopyContracts() throws Exception {
 		File basedir = this.resources.getBasedir("basic");
 		this.maven.executeMojo(basedir, "convert");
-		assertFilesPresent(basedir, "target/stubs/contracts/Sample.groovy".replace("/", File.separator));
-		assertFilesPresent(basedir, "target/stubs/contracts/Messaging.groovy".replace("/", File.separator));
+		assertFilesPresent(basedir, "target/stubs/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/contracts/Sample.groovy".replace("/", File.separator));
+		assertFilesPresent(basedir, "target/stubs/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/contracts/Messaging.groovy".replace("/", File.separator));
 	}
 
 	@Test
 	public void shouldGenerateWireMockStubsInSelectedLocation() throws Exception {
 		File basedir = this.resources.getBasedir("basic");
 		this.maven.executeMojo(basedir, "convert", newParameter("stubsDirectory", "target/foo"));
-		assertFilesPresent(basedir, "target/foo/mappings/Sample.json");
+		assertFilesPresent(basedir, "target/foo/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/Sample.json");
 	}
 
 	@Test
@@ -141,16 +141,16 @@ public class PluginUnitTest {
 	public void shouldGenerateStubsByDownloadingContractsFromARepo() throws Exception {
 		File basedir = this.resources.getBasedir("basic-remote-contracts");
 		this.maven.executeMojo(basedir, "convert", newParameter("contractsRepositoryUrl", "file://" + PluginUnitTest.class.getClassLoader().getResource("m2repo/repository").getFile().replace("/", File.separator)));
-		assertFilesPresent(basedir, "target/stubs/mappings/com/example/server/client1/contracts/shouldMarkClientAsFraud.json");
+		assertFilesPresent(basedir, "target/stubs/META-INF/com.example/server/0.1.BUILD-SNAPSHOT/mappings/com/example/server/client1/contracts/shouldMarkClientAsFraud.json");
 	}
 
 	@Test
 	public void shouldGenerateStubsByDownloadingContractsFromARepoWhenCustomPathIsProvided() throws Exception {
 		File basedir = this.resources.getBasedir("complex-remote-contracts");
 		this.maven.executeMojo(basedir, "convert", newParameter("contractsRepositoryUrl", "file://" + PluginUnitTest.class.getClassLoader().getResource("m2repo/repository").getFile().replace("/", File.separator)));
-		assertFilesPresent(basedir, "target/stubs/mappings/com/example/server/client1/contracts/shouldMarkClientAsFraud.json");
-		assertFilesNotPresent(basedir, "target/stubs/mappings/com/foo/bar/baz/shouldBeIgnoredByPlugin.json");
-		assertFilesNotPresent(basedir, "target/stubs/contracts/com/foo/bar/baz/shouldBeIgnoredByPlugin.groovy");
+		assertFilesPresent(basedir, "target/stubs/META-INF/com.example.foo.bar.baz/someartifact/0.1.BUILD-SNAPSHOT/mappings/com/example/server/client1/contracts/shouldMarkClientAsFraud.json");
+		assertFilesNotPresent(basedir, "target/stubs/META-INF/com.example.foo.bar.baz/someartifact/0.1.BUILD-SNAPSHOT/mappings/com/foo/bar/baz/shouldBeIgnoredByPlugin.json");
+		assertFilesNotPresent(basedir, "target/stubs/META-INF/com.example.foo.bar.baz/someartifact/0.1.BUILD-SNAPSHOT/contracts/com/foo/bar/baz/shouldBeIgnoredByPlugin.groovy");
 	}
 
 	@Test
@@ -237,13 +237,13 @@ public class PluginUnitTest {
 
 		this.maven.executeMojo(basedir, "convert", newParameter("stubsDirectory", "target/foo"));
 
-		String firstFile = "target/foo/mappings/com/hello/v1/should post a user.json";
+		String firstFile = "target/foo/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/com/hello/v1/should post a user.json";
 		File test = new File(basedir, firstFile);
-		assertFilesPresent(basedir, "target/foo/mappings/com/hello/v1/1_WithList.json");
+		assertFilesPresent(basedir, "target/foo/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/com/hello/v1/1_WithList.json");
 		then(FileUtils.readFileToString(test)).contains("/users/1");
-		String secondFile = "target/foo/mappings/com/hello/v1/1_WithList.json";
+		String secondFile = "target/foo/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/com/hello/v1/1_WithList.json";
 		File test2 = new File(basedir, secondFile);
-		assertFilesPresent(basedir, "target/foo/mappings/com/hello/v1/should post a user.json");
+		assertFilesPresent(basedir, "target/foo/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/com/hello/v1/should post a user.json");
 		then(FileUtils.readFileToString(test2)).contains("/users/2");
 	}
 
@@ -255,9 +255,9 @@ public class PluginUnitTest {
 
 		assertFilesNotPresent(basedir, "target/generated-test-sources/contracts/");
 		// there will be no stubs cause all files are copied to `target` folder
-		assertFilesNotPresent(basedir, "target/stubs/mappings/");
-		assertFilesPresent(basedir, "target/stubs/contracts/consumer1/Messaging.groovy");
-		assertFilesPresent(basedir, "target/stubs/contracts/pom.xml");
+		assertFilesNotPresent(basedir, "target/stubs/META-INF/org.springframework.cloud.verifier.sample/common-repo/0.1/mappings/");
+		assertFilesPresent(basedir, "target/stubs/META-INF/org.springframework.cloud.verifier.sample/common-repo/0.1/contracts/consumer1/Messaging.groovy");
+		assertFilesPresent(basedir, "target/stubs/META-INF/org.springframework.cloud.verifier.sample/common-repo/0.1/contracts/pom.xml");
 	}
 
 	@Test
