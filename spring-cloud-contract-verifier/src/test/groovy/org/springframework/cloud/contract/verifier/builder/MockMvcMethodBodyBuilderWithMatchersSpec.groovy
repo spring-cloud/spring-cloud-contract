@@ -153,7 +153,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMax")).isInstanceOf(java.util.List.class)')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMax", java.util.Collection.class).size()).isLessThanOrEqualTo(3)')
 			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMinMax")).isInstanceOf(java.util.List.class)')
-			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMinMax", java.util.Collection.class).size()).isStrictlyBetween(1, 3)')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMinMax", java.util.Collection.class).size()).isBetween(1, 3)')
 			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMinEmpty")).isInstanceOf(java.util.List.class)')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMinEmpty", java.util.Collection.class).size()).isGreaterThanOrEqualTo(0)')
 			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMaxEmpty")).isInstanceOf(java.util.List.class)')

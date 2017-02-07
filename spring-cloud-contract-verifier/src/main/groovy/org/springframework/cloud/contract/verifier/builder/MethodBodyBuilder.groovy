@@ -395,7 +395,7 @@ abstract class MethodBodyBuilder {
 
 	protected String sizeCheckMethod(BodyMatcher bodyMatcher) {
 		if (bodyMatcher.minTypeOccurrence() != null && bodyMatcher.maxTypeOccurrence() != null) {
-			return "isStrictlyBetween(${bodyMatcher.minTypeOccurrence()}, ${bodyMatcher.maxTypeOccurrence()})"
+			return "isBetween(${bodyMatcher.minTypeOccurrence()}, ${bodyMatcher.maxTypeOccurrence()})"
 		} else if (bodyMatcher.minTypeOccurrence() != null ) {
 			return "isGreaterThanOrEqualTo(${bodyMatcher.minTypeOccurrence()})"
 		} else if (bodyMatcher.maxTypeOccurrence() != null) {
