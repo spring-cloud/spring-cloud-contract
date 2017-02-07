@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -35,6 +36,7 @@ import org.springframework.cloud.contract.stubrunner.messaging.integration.StubR
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.binding.BinderAwareChannelResolver;
 import org.springframework.cloud.stream.config.BindingProperties;
+import org.springframework.cloud.stream.config.BindingServiceProperties;
 import org.springframework.cloud.stream.config.ChannelBindingServiceProperties;
 import org.springframework.context.Lifecycle;
 import org.springframework.context.annotation.Bean;
@@ -65,7 +67,7 @@ public class StubRunnerStreamConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean(name="stubFlowRegistrar")
-	@ConditionalOnBean(ChannelBindingServiceProperties.class)
+	@ConditionalOnBean(BindingServiceProperties.class)
 	public FlowRegistrar stubFlowRegistrar(AutowireCapableBeanFactory beanFactory,
 			BatchStubRunner batchStubRunner) {
 		Map<StubConfiguration, Collection<Contract>> contracts = batchStubRunner
@@ -130,10 +132,8 @@ public class StubRunnerStreamConfiguration {
 
 	private String resolvedDestination(AutowireCapableBeanFactory context,
 			String destination) {
-		ChannelBindingServiceProperties channelBindingServiceProperties = context
-				.getBean(ChannelBindingServiceProperties.class);
-		for (Map.Entry<String, BindingProperties> entry : channelBindingServiceProperties
-				.getBindings().entrySet()) {
+		Map<String, BindingProperties> bindings = bindingProperties(context);
+		for (Map.Entry<String, BindingProperties> entry : bindings.entrySet()) {
 			if (entry.getValue().getDestination().equals(destination)) {
 				if (log.isDebugEnabled()) {
 					log.debug("Found a channel named [{}] with destination [{}]",
@@ -148,6 +148,10 @@ public class StubRunnerStreamConfiguration {
 					destination);
 		}
 		return destination;
+	}
+
+	private Map<String, BindingProperties> bindingProperties(AutowireCapableBeanFactory context) {
+		return context.getBean(BindingServiceProperties.class).getBindings();
 	}
 
 	private static class DummyMessageHandler {
