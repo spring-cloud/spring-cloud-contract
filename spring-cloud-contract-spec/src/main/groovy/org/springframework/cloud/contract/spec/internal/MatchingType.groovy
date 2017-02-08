@@ -39,4 +39,11 @@ enum MatchingType {
 	 * provided regex
 	 */
 	REGEX
+
+	static boolean regexRelated(MatchingType type) {
+		if (type == EQUALITY || type == TYPE ) {
+			return false
+		}
+		return true
+	}
 }
