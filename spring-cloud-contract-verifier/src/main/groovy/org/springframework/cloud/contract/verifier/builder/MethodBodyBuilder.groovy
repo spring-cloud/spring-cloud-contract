@@ -342,20 +342,8 @@ abstract class MethodBodyBuilder {
 	}
 
 	protected void buildCustomMatchingConditionForEachElement(BlockBuilder bb, String path, String valueAsParam) {
-		String method = "assertThat(parsedJson.read(${path}, java.util.Collection.class)).as(\"All elements match regex\").are("
-		String newCondition = "new org.assertj.core.api.Condition<Object>() {"
-		String overriddenMethod = "@Override public boolean matches(Object o) {"
-		String matches = "return ((String)o).matches(${valueAsParam})"
-		String methodEnd = "}"
-		String classEnd = "})"
+		String method = "assertThat(parsedJson.read(${path}, java.util.Collection.class)).allElementsMatch(${valueAsParam})"
 		bb.addLine(postProcessJsonPathCall(method))
-		bb.startBlock().startBlock().addLine(newCondition)
-		bb.startBlock().addLine(overriddenMethod)
-		bb.startBlock().addLine(postProcessJsonPathCall(matches))
-		addColonIfRequired(bb)
-		bb.endBlock().addLine(methodEnd)
-		bb.endBlock().addLine(classEnd)
-		bb.endBlock().endBlock()
 	}
 
 	protected Object value(def body, BodyMatcher bodyMatcher) {

@@ -222,11 +222,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('assertThat(parsedJson.read("' + rootElement + '.phoneNumbers[*].number", java.util.Collection.class)).as("All elements match regex").are(')
-			test.contains('new org.assertj.core.api.Condition<Object>() {')
-			test.contains('@Override public boolean matches(Object o) {')
-			test.contains('return ((String)o).matches("^[0-9]{3} [0-9]{3}-[0-9]{4}' + rootElement + '")')
-			test.contains('assertThat(parsedJson.read("' + rootElement + '..number", String.class)).matches("^[0-9]{3} [0-9]{3}-[0-9]{4}' + rootElement + '")')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.phoneNumbers[*].number", java.util.Collection.class)).allElementsMatch("^[0-9]{3} [0-9]{3}-[0-9]{4}' + rootElement + '")')
 			!test.contains('cursor')
 		and:
 			try {
