@@ -97,6 +97,9 @@ public class WireMockConfiguration implements SmartLifecycle {
 						this.resourceLoader);
 				String pattern = stubs;
 				if (!pattern.contains("*")) {
+					if (!pattern.endsWith("/")) {
+						pattern = pattern + "/";
+					}
 					pattern = pattern + "**/*.json";
 				}
 				for (Resource resource : resolver.getResources(pattern)) {
