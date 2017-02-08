@@ -21,12 +21,13 @@ repositories {
 }
 
 dependencies {
-	compile "org.springframework:spring-web:$springVersion"
-	compile "org.springframework:spring-context-support:$springVersion"
+	compile "org.springframework:spring-web"
+	compile "org.springframework:spring-context-support"
 	compile "org.codehaus.groovy:groovy-all:2.4.5"
 	compile 'com.jayway.jsonpath:json-path-assert:2.2.0'
 
-	testCompile "com.github.tomakehurst:wiremock:2.5.1"
+	testCompile "com.github.tomakehurst:wiremock:${wiremockVersion}"
+	testCompile "com.toomuchcoding.jsonassert:jsonassert:${jsonAssertVersion}"
 	testCompile "org.spockframework:spock-spring:1.0-groovy-2.4"
 	testCompile "com.jayway.restassured:rest-assured:$restAssuredVersion"
 	testCompile "com.jayway.restassured:spring-mock-mvc:$restAssuredVersion"

@@ -109,16 +109,6 @@ class ContractVerifierSpec extends Specification {
 			publications.findByName("stubs") != null
 	}
 
-	def "should add jsonassert as a testCompile dependency"() {
-		given:
-			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
-
-		expect:
-			project.configurations.testCompile.dependencies.find {
-				it.group == "com.toomuchcoding.jsonassert" && it.name == "jsonassert"
-			} != null
-	}
-
 	def "should compile"() {
 		given:
 			ContractVerifierExtension extension = new ContractVerifierExtension()

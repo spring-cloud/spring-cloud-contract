@@ -31,12 +31,6 @@ import org.gradle.jvm.tasks.Jar
  *     <li>generate stubs</li>
  * </ul>
  *
- * Also adds the necessary {@code testCompile} dependencies
- *
- * <ul>
- *     <li>JSON Assert</li>
- * </ul>
- *
  * @author Jakub Kubrynski, codearte.io
  * @author Marcin Grzejszczak
  *
@@ -70,7 +64,6 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		createGenerateTestsTask(extension, copyContracts)
 		Task clientTask = createAndConfigureGenerateClientStubsFromDslTask(extension, copyContracts)
 		createAndConfigureGenerateWireMockClientStubsFromDslTask(extension, clientTask)
-		addProjectDependencies(project)
 		addIdeaTestSources(project, extension)
 	}
 
@@ -86,10 +79,6 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 				}
 			}
 		}
-	}
-
-	private void addProjectDependencies(Project project) {
-		project.dependencies.add("testCompile", "com.toomuchcoding.jsonassert:jsonassert:0.4.7")
 	}
 
 	private void setConfigurationDefaults(ContractVerifierExtension extension) {

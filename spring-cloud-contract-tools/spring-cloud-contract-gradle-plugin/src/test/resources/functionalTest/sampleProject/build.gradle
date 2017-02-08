@@ -27,7 +27,6 @@ buildscript {
 ext {
 	restAssuredVersion = '2.5.0'
 	spockVersion = '1.0-groovy-2.4'
-	wiremockVersion = '2.5.1'
 
 	contractVerifierStubsBaseDirectory = 'src/test/resources/stubs'
 }
@@ -46,7 +45,8 @@ subprojects {
 		testCompile "org.codehaus.groovy:groovy-all:2.4.5"
 		testCompile "org.spockframework:spock-core:$spockVersion"
 		testCompile("junit:junit:4.12")
-		testCompile "com.github.tomakehurst:wiremock:$wiremockVersion"
+		testCompile "com.github.tomakehurst:wiremock:${wiremockVersion}"
+		testCompile "com.toomuchcoding.jsonassert:jsonassert:${jsonAssertVersion}"
 	}
 }
 
