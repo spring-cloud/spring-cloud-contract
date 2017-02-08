@@ -90,13 +90,28 @@ class BlockBuilder {
 	}
 
 	BlockBuilder addAtTheEnd(String toAdd) {
-		if (builder.charAt(builder.length() - 1) as String == '\n') {
+		String lastChar = builder.charAt(builder.length() - 1) as String
+		String secondLastChar = builder.length() >= 2 ? builder.charAt(builder.length() - 2) as String : ""
+		if (endsWithNewLine(lastChar) && aSpecialSign(secondLastChar, toAdd)) {
+			return this
+		} else if (endsWithNewLine(lastChar) && !aSpecialSign(secondLastChar, toAdd)) {
 			builder.replace(builder.length() - 1, builder.length(), toAdd)
 			builder << '\n'
 		} else {
 			builder << toAdd
 		}
 		return this
+	}
+
+	private boolean endsWithNewLine(String character) {
+		return character as String == '\n'
+	}
+
+	private boolean aSpecialSign(String character, String toAdd) {
+		if (!character) {
+			return false
+		}
+		return character == "{" || character == toAdd
 	}
 
 	@Override

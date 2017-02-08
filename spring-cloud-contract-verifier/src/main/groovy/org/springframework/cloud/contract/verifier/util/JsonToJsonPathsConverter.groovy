@@ -78,7 +78,13 @@ class JsonToJsonPathsConverter {
 		DocumentContext context = JsonPath.parse(jsonCopy)
 		if (bodyMatchers?.hasMatchers()) {
 			bodyMatchers.jsonPathMatchers().each { BodyMatcher matcher ->
-				context.delete(matcher.path())
+				try {
+					context.delete(matcher.path())
+				} catch (RuntimeException e) {
+					if (log.isDebugEnabled()) {
+						log.debug("Exception occurred while trying to delete path [${matcher.path()}]", e)
+					}
+				}
 			}
 		}
 		return jsonCopy

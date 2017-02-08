@@ -350,7 +350,7 @@ assertions and the one from matchers with an `and` section):
     assertThat((Object) parsedJson.read("$.valueWithMax")).isInstanceOf(java.util.List.class);
     assertThat(parsedJson.read("$.valueWithMax", java.util.Collection.class).size()).isLessThanOrEqualTo(3);
     assertThat((Object) parsedJson.read("$.valueWithMinMax")).isInstanceOf(java.util.List.class);
-    assertThat(parsedJson.read("$.valueWithMinMax", java.util.Collection.class).size()).isStrictlyBetween(1, 3);
+    assertThat(parsedJson.read("$.valueWithMinMax", java.util.Collection.class).size()).isBetween(1, 3);
 ----
 
 and the WireMock stub like this:
