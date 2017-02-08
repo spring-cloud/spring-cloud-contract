@@ -32,6 +32,7 @@ dependencies {
 	testCompile "com.jayway.restassured:rest-assured:$restAssuredVersion"
 	testCompile "com.jayway.restassured:spring-mock-mvc:$restAssuredVersion"
 	testCompile "ch.qos.logback:logback-classic:1.1.2"
+	testCompile "org.springframework.cloud:spring-cloud-contract-verifier:${verifierVersion}"
 }
 
 contracts {
