@@ -993,11 +993,10 @@ And that's it!
 
 ==== Dependencies
 
-Spring Cloud Contract Verifier and Stub Runner are using the following libraries
+The best way to add the dependencies is to just use the proper `starter` dependency.
 
-- http://wiremock.org/[WireMock]
-- https://github.com/jayway/JsonPath[Jayway JSONPath]
-- https://github.com/marcingrzejszczak/jsonassert[JSONAssert from Marcin Grzejszczak]
+For `stub-runner` use `spring-cloud-starter-stub-runner` and when you're using a plugin just add
+`spring-cloud-starter-contract-verifier`.
 
 ==== Additional links
 
