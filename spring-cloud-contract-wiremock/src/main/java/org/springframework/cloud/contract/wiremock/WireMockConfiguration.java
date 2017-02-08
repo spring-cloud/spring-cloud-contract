@@ -115,12 +115,8 @@ public class WireMockConfiguration implements SmartLifecycle {
 			if (StringUtils.hasText(files)) {
 				PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(
 						this.resourceLoader);
-				String pattern = files;
-				if (!pattern.endsWith("/")) {
-					pattern = pattern + "/";
-				}
 				List<Resource> resources = new ArrayList<>();
-				for (Resource resource : resolver.getResources(pattern)) {
+				for (Resource resource : resolver.getResources(files)) {
 					if (resource.exists()) {
 						resources.add(resource);
 					}
