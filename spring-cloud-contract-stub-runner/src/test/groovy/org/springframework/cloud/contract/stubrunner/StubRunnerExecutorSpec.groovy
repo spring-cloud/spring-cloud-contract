@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.stubrunner
 
 import groovy.json.JsonOutput
+import org.springframework.util.SocketUtils
 
 import java.util.concurrent.TimeUnit
 
@@ -72,13 +73,15 @@ class StubRunnerExecutorSpec extends Specification {
 
 	def 'should start a stub on a given port'() {
 		given:
+		int port = SocketUtils.findAvailableTcpPort()
 		StubRunnerExecutor executor = new StubRunnerExecutor(portScanner)
-		stubRunnerOptions = new StubRunnerOptionsBuilder(stubIdsToPortMapping: stubIdsWithPortsFromString('group:artifact:12345,someotherartifact:123'))
+		stubRunnerOptions = new StubRunnerOptionsBuilder(stubIdsToPortMapping:
+				stubIdsWithPortsFromString("group:artifact:${port},someotherartifact:${SocketUtils.findAvailableTcpPort()}"))
 				.build()
 		when:
 		executor.runStubs(stubRunnerOptions, repository, stub)
 		then:
-		executor.findStubUrl("group", "artifact") == 'http://localhost:12345'.toURL()
+		executor.findStubUrl("group", "artifact") == "http://localhost:${port}".toURL()
 		cleanup:
 		executor.shutdown()
 	}
