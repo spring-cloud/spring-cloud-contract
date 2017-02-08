@@ -47,6 +47,7 @@ subprojects {
 		testCompile("junit:junit:4.12")
 		testCompile "com.github.tomakehurst:wiremock:${wiremockVersion}"
 		testCompile "com.toomuchcoding.jsonassert:jsonassert:${jsonAssertVersion}"
+		testCompile "org.springframework.cloud:spring-cloud-contract-verifier:${verifierVersion}"
 	}
 }
 

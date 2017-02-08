@@ -41,10 +41,10 @@ import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConve
  */
 @Mojo(name = "convert", requiresProject = false,
 		defaultPhase = LifecyclePhase.PROCESS_TEST_RESOURCES)
-public class ConvertMojo extends AbstractMojo {
+public class  ConvertMojo extends AbstractMojo {
 
-	public static final String DEFAULT_STUBS_DIR = "${project.build.directory}/stubs/";
-	public static final String MAPPINGS_PATH = "mappings";
+	static final String DEFAULT_STUBS_DIR = "${project.build.directory}/stubs/";
+	static final String MAPPINGS_PATH = "/mappings";
 
 	@Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
 	private RepositorySystemSession repoSession;
@@ -126,13 +126,16 @@ public class ConvertMojo extends AbstractMojo {
 	}
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
-
 		if (this.skip) {
 			getLog().info(String.format(
 					"Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip=%s",
 					this.skip));
 			return;
 		}
+		String groupId = this.project.getGroupId();
+		String artifactId = this.project.getArtifactId();
+		String version = this.project.getVersion();
+		String rootPath = "META-INF/" + groupId + "/" + artifactId + "/" + version;
 		// download contracts, unzip them and pass as output directory
 		ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
 		config.setExcludeBuildFolders(this.excludeBuildFolders);
@@ -142,11 +145,11 @@ public class ConvertMojo extends AbstractMojo {
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 
 		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering, config)
-				.copy(contractsDirectory, this.stubsDirectory);
+				.copy(contractsDirectory, this.stubsDirectory, rootPath);
 
 		config.setContractsDslDir(isInsideProject() ? contractsDirectory : this.source);
 		config.setStubsOutputDir(
-				isInsideProject() ? new File(this.stubsDirectory, MAPPINGS_PATH) : this.destination);
+				isInsideProject() ? new File(this.stubsDirectory, rootPath + MAPPINGS_PATH) : this.destination);
 
 		getLog().info(
 				"Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings");

@@ -49,6 +49,7 @@ subprojects {
 		testCompile "com.github.tomakehurst:wiremock:${wiremockVersion}"
 		testCompile "com.toomuchcoding.jsonassert:jsonassert:${jsonAssertVersion}"
 		testCompile "org.assertj:assertj-core:2.4.1"
+		testCompile "org.springframework.cloud:spring-cloud-contract-verifier:${verifierVersion}"
 	}
 }
 
@@ -134,7 +135,7 @@ configure(project(':loanApplicationService')) {
 	task copyCollaboratorStubs(type: Copy) {
 		File fraudBuildDir = project(':fraudDetectionService').buildDir
 		from(new File(fraudBuildDir, "/production/${project(':fraudDetectionService').name}-stubs/"))
-		into "src/test/resources/"
+		into "src/test/resources/mappings"
 	}
 
 	generateContractTests.dependsOn('copyCollaboratorStubs')
