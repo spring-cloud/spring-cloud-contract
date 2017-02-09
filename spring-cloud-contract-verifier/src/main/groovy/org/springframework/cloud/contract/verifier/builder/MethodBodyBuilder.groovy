@@ -316,7 +316,7 @@ abstract class MethodBodyBuilder {
 					String path = quotedAndEscaped(it.path())
 					Object retrievedValue = value(copiedBody, it)
 					String valueAsParam = retrievedValue instanceof String ? quotedAndEscaped(retrievedValue.toString()) : retrievedValue.toString()
-					if (path.contains("[*]") && MatchingType.regexRelated(it.matchingType())) {
+					if (arrayRelated(path) && MatchingType.regexRelated(it.matchingType())) {
 						buildCustomMatchingConditionForEachElement(bb, path, valueAsParam)
 					} else {
 						String comparisonMethod = it.matchingType() == MatchingType.EQUALITY ? "isEqualTo" : "matches"
@@ -328,7 +328,7 @@ abstract class MethodBodyBuilder {
 				} else {
 					Object elementFromBody = value(copiedBody, it)
 					if (it.minTypeOccurrence() != null || it.maxTypeOccurrence() != null) {
-						if (it.path().contains("[*]")) {
+						if (arrayRelated(it.path())) {
 							throw new UnsupportedOperationException("Version 1.0.x doesn't support checking sizes when JSON Path contains [*]. " +
 									"For more information check out https://github.com/spring-cloud/spring-cloud-contract/issues/217 . " +
 									"Please upgrade to the latest version of Spring Cloud Contract for this feature.")
@@ -344,6 +344,10 @@ abstract class MethodBodyBuilder {
 			}
 		}
 		processBodyElement(bb, "", convertedResponseBody)
+	}
+
+	protected boolean arrayRelated(String path) {
+		return path.contains("[*]") || path.contains("..")
 	}
 
 	protected void buildCustomMatchingConditionForEachElement(BlockBuilder bb, String path, String valueAsParam) {

@@ -225,7 +225,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			test.contains('new org.assertj.core.api.Condition<Object>() {')
 			test.contains('@Override public boolean matches(Object o) {')
 			test.contains('return ((String)o).matches("^[0-9]{3} [0-9]{3}-[0-9]{4}' + rootElement + '")')
-			test.contains('assertThat(parsedJson.read("' + rootElement + '..number", String.class)).matches("^[0-9]{3} [0-9]{3}-[0-9]{4}' + rootElement + '")')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '..number", java.util.Collection.class)).as("All elements match regex").are(')
 			!test.contains('cursor')
 		and:
 			try {
