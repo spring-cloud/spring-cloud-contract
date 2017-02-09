@@ -328,6 +328,11 @@ abstract class MethodBodyBuilder {
 				} else {
 					Object elementFromBody = value(copiedBody, it)
 					if (it.minTypeOccurrence() != null || it.maxTypeOccurrence() != null) {
+						if (it.path().contains("[*]")) {
+							throw new UnsupportedOperationException("Version 1.0.x doesn't support checking sizes when JSON Path contains [*]. " +
+									"For more information check out https://github.com/spring-cloud/spring-cloud-contract/issues/217 . " +
+									"Please upgrade to the latest version of Spring Cloud Contract for this feature.")
+						}
 						checkType(bb, it, elementFromBody)
 						String method = "assertThat(parsedJson.read(${quotedAndEscaped(it.path())}, java.util.Collection.class).size()).${sizeCheckMethod(it)}"
 						bb.addLine(postProcessJsonPathCall(method))
