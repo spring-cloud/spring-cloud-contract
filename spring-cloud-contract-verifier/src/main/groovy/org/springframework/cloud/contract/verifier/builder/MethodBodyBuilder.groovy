@@ -316,7 +316,7 @@ abstract class MethodBodyBuilder {
 					String path = quotedAndEscaped(it.path())
 					Object retrievedValue = value(copiedBody, it)
 					String valueAsParam = retrievedValue instanceof String ? quotedAndEscaped(retrievedValue.toString()) : retrievedValue.toString()
-					if (path.contains("[*]") && MatchingType.regexRelated(it.matchingType())) {
+					if (arrayRelated(path) && MatchingType.regexRelated(it.matchingType())) {
 						buildCustomMatchingConditionForEachElement(bb, path, valueAsParam)
 					} else {
 						String comparisonMethod = it.matchingType() == MatchingType.EQUALITY ? "isEqualTo" : "matches"
@@ -339,6 +339,10 @@ abstract class MethodBodyBuilder {
 			}
 		}
 		processBodyElement(bb, "", convertedResponseBody)
+	}
+
+	protected boolean arrayRelated(String path) {
+		return path.contains("[*]") || path.contains("..")
 	}
 
 	protected void buildCustomMatchingConditionForEachElement(BlockBuilder bb, String path, String valueAsParam) {
@@ -394,7 +398,7 @@ abstract class MethodBodyBuilder {
 
 	private String sizeCheckPrefix(BodyMatcher bodyMatcher) {
 		String prefix = "has"
-		if (bodyMatcher.path().contains("[*]")) {
+		if (arrayRelated(bodyMatcher.path())) {
 			prefix = prefix + "Flattened"
 		}
 		return prefix + "Size"

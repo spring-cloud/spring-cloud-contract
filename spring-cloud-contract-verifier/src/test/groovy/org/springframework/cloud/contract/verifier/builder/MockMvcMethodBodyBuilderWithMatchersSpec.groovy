@@ -223,6 +223,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			def test = blockBuilder.toString()
 		then:
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.phoneNumbers[*].number", java.util.Collection.class)).allElementsMatch("^[0-9]{3} [0-9]{3}-[0-9]{4}' + rootElement + '")')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '..number", java.util.Collection.class)).allElementsMatch("^[0-9]{3} [0-9]{3}-[0-9]{4}' + rootElement + '")')
 			!test.contains('cursor')
 		and:
 			try {
