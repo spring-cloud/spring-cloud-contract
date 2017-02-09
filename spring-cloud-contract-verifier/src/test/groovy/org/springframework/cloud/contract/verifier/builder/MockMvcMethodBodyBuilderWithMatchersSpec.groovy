@@ -204,12 +204,13 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					])
 					testMatchers {
 						jsonPath('$.phoneNumbers', byType {
-							minOccurrence(0)				// min occurrence of 0
-							maxOccurrence(4)				// max occurrence of 4
+							minOccurrence(0)				// min occurrence of 1
+							maxOccurrence(4)				// max occurrence of 3
 						})
 						jsonPath('$.phoneNumbers[*].number', byRegex("^[0-9]{3} [0-9]{3}-[0-9]{4}\$"))
 						jsonPath('$..number', byRegex("^[0-9]{3} [0-9]{3}-[0-9]{4}\$"))
 					}
+
 					headers {
 						contentType('application/json')
 					}
@@ -229,44 +230,6 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			} catch(NoClassDefFoundError error) {
 				// that's actually expected since we're creating an anonymous class
 			}
-		where:
-			methodBuilderName                                    | methodBuilder                                                                               | rootElement
-			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | '\\$'
-			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | '$'
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '\\$'
-			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | '$'
-	}
-
-	@Issue('#217')
-	def "should not allow matcher with jsonpath containing [*] for [#methodBuilderName]"() {
-		given:
-			Contract contractDsl = Contract.make {
-				request {
-					method 'GET'
-					url 'person'
-				}
-				response {
-					status 200
-					body([
-							"phoneNumbers": [
-							        number: "foo"
-							]
-					])
-					testMatchers {
-						jsonPath('$.phoneNumbers[*].number', byType {
-							minOccurrence(0)				// min occurrence of 0
-							maxOccurrence(4)				// max occurrence of 4
-						})
-					}
-				}
-			}
-			MethodBodyBuilder builder = methodBuilder(contractDsl)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
-		when:
-			builder.appendTo(blockBuilder)
-		then:
-			UnsupportedOperationException e = thrown(UnsupportedOperationException)
-			e.message.contains("Version 1.0.x doesn't support checking sizes when JSON Path contains [*]")
 		where:
 			methodBuilderName                                    | methodBuilder                                                                               | rootElement
 			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | '\\$'
