@@ -329,7 +329,7 @@ abstract class MethodBodyBuilder {
 					Object elementFromBody = value(copiedBody, it)
 					if (it.minTypeOccurrence() != null || it.maxTypeOccurrence() != null) {
 						checkType(bb, it, elementFromBody)
-						String method = "assertThat(parsedJson.read(${quotedAndEscaped(it.path())}, java.util.Collection.class).size()).${sizeCheckMethod(it)}"
+						String method = "assertThat(parsedJson.read(${quotedAndEscaped(it.path())}, java.util.Collection.class)).${sizeCheckMethod(it)}"
 						bb.addLine(postProcessJsonPathCall(method))
 						addColonIfRequired(bb)
 					} else {
@@ -382,13 +382,22 @@ abstract class MethodBodyBuilder {
 	}
 
 	protected String sizeCheckMethod(BodyMatcher bodyMatcher) {
+		String prefix = sizeCheckPrefix(bodyMatcher)
 		if (bodyMatcher.minTypeOccurrence() != null && bodyMatcher.maxTypeOccurrence() != null) {
-			return "isBetween(${bodyMatcher.minTypeOccurrence()}, ${bodyMatcher.maxTypeOccurrence()})"
+			return "${prefix}Between(${bodyMatcher.minTypeOccurrence()}, ${bodyMatcher.maxTypeOccurrence()})"
 		} else if (bodyMatcher.minTypeOccurrence() != null ) {
-			return "isGreaterThanOrEqualTo(${bodyMatcher.minTypeOccurrence()})"
+			return "${prefix}GreaterThanOrEqualTo(${bodyMatcher.minTypeOccurrence()})"
 		} else if (bodyMatcher.maxTypeOccurrence() != null) {
-			return "isLessThanOrEqualTo(${bodyMatcher.maxTypeOccurrence()})"
+			return "${prefix}LessThanOrEqualTo(${bodyMatcher.maxTypeOccurrence()})"
 		}
+	}
+
+	private String sizeCheckPrefix(BodyMatcher bodyMatcher) {
+		String prefix = "has"
+		if (bodyMatcher.path().contains("[*]")) {
+			prefix = prefix + "Flattened"
+		}
+		return prefix + "Size"
 	}
 
 	protected String quotedAndEscaped(String string) {
