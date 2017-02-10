@@ -44,7 +44,11 @@ class GenerateServerTestsTask extends ConventionTask {
 		Task copyContractsTask = project.getTasksByName(COPY_CONTRACTS_TASK_NAME, false).first()
 		ContractVerifierConfigProperties props = props(copyContractsTask)
 		File contractsDslDir = contractsDslDir(copyContractsTask, props)
-
+		if (getConfigProperties().getContractDependency()) {
+			project.logger.debug("Updating the stubs locations for the case where we have a JAR with contracts")
+			props.contractsDslDir = contractsDslDir
+			props.includedContracts = ".*"
+		}
 		project.logger.info("Spring Cloud Contract Verifier Plugin: Invoking test sources generation")
 		project.logger.info("Contracts are unpacked to [${contractsDslDir}]")
 		project.logger.info("Included contracts are [${props.includedContracts}]")
