@@ -35,8 +35,8 @@ import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.util.SocketUtils
 import org.springframework.web.client.RestTemplate
+import spock.lang.Ignore
 import spock.lang.Specification
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -64,6 +64,7 @@ class StubRunnerSpringCloudZookeeperAutoConfigurationSpec extends Specification 
 		System.clearProperty("stubrunner.stubs.classifier")
 	}
 
+	@Ignore
 	def 'should make service discovery work'() {
 		expect: 'WireMocks are running'
 			"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
