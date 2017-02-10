@@ -6851,6 +6851,12 @@ be of the same type as the type defined in the body of the response in the contr
 <code>byType</code> can take a closure where you can set <code>minOccurrence</code> and <code>maxOccurrence</code>.
 That way you can assert on the size of the collection.</p>
 </li>
+<li>
+<p><code>byCommand(&#8230;&#8203;)</code> - the value taken from the response via the provided JSON Path will be
+passed as an input to the custom method that you&#8217;re providing. E.g. <code>byCommand('foo($it)')</code>
+will result in calling a <code>foo</code> method to which the value matching the JSON Path will get
+ passed.</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
@@ -6949,6 +6955,8 @@ That way you can assert on the size of the collection.</p>
 				// results in verification of size of array (max 0)
 				maxOccurrence(0)
 			})
+			// will execute a method `assertThatValueIsANumber`
+			jsonPath('$.duck', byCommand('assertThatValueIsANumber($it)'))
 		}
 		headers {
 			contentType(applicationJson())
@@ -7019,11 +7027,16 @@ assertions and the one from matchers with an <code>and</code> section):</p>
  assertThat(parsedJson.read("$.time", String.class)).matches("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
  assertThat((Object) parsedJson.read("$.valueWithTypeMatch")).isInstanceOf(java.lang.String.class);
  assertThat((Object) parsedJson.read("$.valueWithMin")).isInstanceOf(java.util.List.class);
- assertThat(parsedJson.read("$.valueWithMin", java.util.Collection.class).size()).isGreaterThanOrEqualTo(1);
+ assertThat(parsedJson.read("$.valueWithMin", java.util.Collection.class)).hasSizeGreaterThanOrEqualTo(1);
  assertThat((Object) parsedJson.read("$.valueWithMax")).isInstanceOf(java.util.List.class);
- assertThat(parsedJson.read("$.valueWithMax", java.util.Collection.class).size()).isLessThanOrEqualTo(3);
+ assertThat(parsedJson.read("$.valueWithMax", java.util.Collection.class)).hasSizeLessThanOrEqualTo(3);
  assertThat((Object) parsedJson.read("$.valueWithMinMax")).isInstanceOf(java.util.List.class);
- assertThat(parsedJson.read("$.valueWithMinMax", java.util.Collection.class).size()).isBetween(1, 3);</code></pre>
+ assertThat(parsedJson.read("$.valueWithMinMax", java.util.Collection.class)).hasSizeBetween(1, 3);
+ assertThat((Object) parsedJson.read("$.valueWithMinEmpty")).isInstanceOf(java.util.List.class);
+ assertThat(parsedJson.read("$.valueWithMinEmpty", java.util.Collection.class)).hasSizeGreaterThanOrEqualTo(0);
+ assertThat((Object) parsedJson.read("$.valueWithMaxEmpty")).isInstanceOf(java.util.List.class);
+ assertThat(parsedJson.read("$.valueWithMaxEmpty", java.util.Collection.class)).hasSizeLessThanOrEqualTo(0);
+ assertThatValueIsANumber(parsedJson.read("$.duck"));</code></pre>
 </div>
 </div>
 <div class="paragraph">
