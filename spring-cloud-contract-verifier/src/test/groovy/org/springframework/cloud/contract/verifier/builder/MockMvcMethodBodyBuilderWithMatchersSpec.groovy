@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+import org.junit.Rule
+import org.springframework.boot.test.rule.OutputCapture
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.dsl.WireMockStubVerifier
@@ -25,6 +27,8 @@ import spock.lang.Shared
 import spock.lang.Specification
 
 class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements WireMockStubVerifier {
+
+	@Rule OutputCapture outputCapture = new OutputCapture()
 
 	@Shared ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
 			assertJsonSize: true
@@ -125,6 +129,8 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							// results in verification of size of array (max 0)
 							maxOccurrence(0)
 						})
+						// will execute a method `assertThatValueIsANumber`
+						jsonPath('$.duck', byCommand('assertThatValueIsANumber($it)'))
 					}
 					headers {
 						contentType(applicationJson())
@@ -160,7 +166,13 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMaxEmpty", java.util.Collection.class)).hasSizeLessThanOrEqualTo(0)')
 			!test.contains('cursor')
 		and:
-			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
+			try {
+				SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
+			} catch (ClassFormatError classFormatError) {
+				String output = outputCapture.toString()
+				output.contains('error: cannot find symbol')
+				output.contains('assertThatValueIsANumber(parsedJson.read("$.duck"));')
+			}
 		where:
 			methodBuilderName                                    | methodBuilder                                                                               | rootElement
 			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | '\\$'
@@ -285,6 +297,76 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			} catch(NoClassDefFoundError error) {
 				// that's actually expected since we're creating an anonymous class
 			}
+		where:
+			methodBuilderName                                    | methodBuilder                                                                               | rootElement
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | '\\$'
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | '$'
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '\\$'
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | '$'
+	}
+
+	@Issue('#217')
+	def "should allow matcher with command to execute [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url 'person'
+				}
+				response {
+					status 200
+					body([
+							"phoneNumbers": [
+							        number: "foo"
+							]
+					])
+					testMatchers {
+						jsonPath('$.phoneNumbers[*].number', byCommand('foo($it)'))
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('foo(parsedJson.read("' + rootElement + '.phoneNumbers[*].number")')
+		where:
+			methodBuilderName                                    | methodBuilder                                                                               | rootElement
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | '\\$'
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | '$'
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '\\$'
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | '$'
+	}
+
+	@Issue('#217')
+	def "should throw an exception when command to execute references a non existing entry in the body [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url 'person'
+				}
+				response {
+					status 200
+					body([
+							"phoneNumbers": [
+							        number: "foo"
+							]
+					])
+					testMatchers {
+						jsonPath('$.nonExistingPhoneNumbers[*].number', byCommand('foo($it)'))
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			IllegalStateException e = thrown(IllegalStateException)
+			e.message.contains("Entry for the provided JSON path [\$.nonExistingPhoneNumbers[*].number] doesn't exist in the body")
 		where:
 			methodBuilderName                                    | methodBuilder                                                                               | rootElement
 			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | '\\$'

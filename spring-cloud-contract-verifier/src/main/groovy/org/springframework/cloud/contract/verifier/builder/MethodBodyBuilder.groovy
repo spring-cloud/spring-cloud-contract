@@ -187,7 +187,7 @@ abstract class MethodBodyBuilder {
 	protected abstract void then(BlockBuilder bb)
 
 	/**
-	 * Returns a {@link ContentType} for the given request
+	 * Returns a {@link org.springframework.cloud.contract.verifier.util.ContentType} for the given request
 	 */
 	protected abstract ContentType getResponseContentType()
 
@@ -312,33 +312,52 @@ abstract class MethodBodyBuilder {
 			bb.startBlock()
 			// for the rest we'll do JsonPath matching in brute force
 			bodyMatchers.jsonPathMatchers().each {
-				if (it.value() || it.matchingType() == MatchingType.EQUALITY) {
-					String path = quotedAndEscaped(it.path())
-					Object retrievedValue = value(copiedBody, it)
-					String valueAsParam = retrievedValue instanceof String ? quotedAndEscaped(retrievedValue.toString()) : retrievedValue.toString()
-					if (arrayRelated(path) && MatchingType.regexRelated(it.matchingType())) {
-						buildCustomMatchingConditionForEachElement(bb, path, valueAsParam)
-					} else {
-						String comparisonMethod = it.matchingType() == MatchingType.EQUALITY ? "isEqualTo" : "matches"
-						String classToCastTo = "${retrievedValue.class.simpleName}.class"
-						String method = "assertThat(parsedJson.read(${path}, ${classToCastTo})).${comparisonMethod}(${valueAsParam})"
-						bb.addLine(postProcessJsonPathCall(method))
-					}
-					addColonIfRequired(bb)
+				if (MatchingType.regexRelated(it.matchingType()) || it.matchingType() == MatchingType.EQUALITY) {
+					methodForEqualityCheck(it, bb, copiedBody)
+				} else if (it.matchingType() == MatchingType.COMMAND) {
+					methodForCommandExecution(it, bb, copiedBody)
 				} else {
-					Object elementFromBody = value(copiedBody, it)
-					if (it.minTypeOccurrence() != null || it.maxTypeOccurrence() != null) {
-						checkType(bb, it, elementFromBody)
-						String method = "assertThat(parsedJson.read(${quotedAndEscaped(it.path())}, java.util.Collection.class)).${sizeCheckMethod(it)}"
-						bb.addLine(postProcessJsonPathCall(method))
-						addColonIfRequired(bb)
-					} else {
-						checkType(bb, it, elementFromBody)
-					}
+					methodForTypeCheck(it, bb, copiedBody)
 				}
 			}
 		}
 		processBodyElement(bb, "", convertedResponseBody)
+	}
+
+	protected void methodForEqualityCheck(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
+		String path = quotedAndEscaped(bodyMatcher.path())
+		Object retrievedValue = value(copiedBody, bodyMatcher)
+		String valueAsParam = retrievedValue instanceof String ? quotedAndEscaped(retrievedValue.toString()) : retrievedValue.toString()
+		if (arrayRelated(path) && MatchingType.regexRelated(bodyMatcher.matchingType())) {
+			buildCustomMatchingConditionForEachElement(bb, path, valueAsParam)
+		} else {
+			String comparisonMethod = bodyMatcher.matchingType() == MatchingType.EQUALITY ? "isEqualTo" : "matches"
+			String classToCastTo = "${retrievedValue.class.simpleName}.class"
+			String method = "assertThat(parsedJson.read(${path}, ${classToCastTo})).${comparisonMethod}(${valueAsParam})"
+			bb.addLine(postProcessJsonPathCall(method))
+		}
+		addColonIfRequired(bb)
+	}
+
+	protected void methodForCommandExecution(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
+		String path = quotedAndEscaped(bodyMatcher.path())
+		// assert that path exists
+		retrieveObjectByPath(copiedBody, bodyMatcher.path())
+		ExecutionProperty property = bodyMatcher.value() as ExecutionProperty
+		bb.addLine(postProcessJsonPathCall(property.insertValue("parsedJson.read(${path})")))
+		addColonIfRequired(bb)
+	}
+
+	protected void methodForTypeCheck(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
+		Object elementFromBody = value(copiedBody, bodyMatcher)
+		if (bodyMatcher.minTypeOccurrence() != null || bodyMatcher.maxTypeOccurrence() != null) {
+			checkType(bb, bodyMatcher, elementFromBody)
+			String method = "assertThat(parsedJson.read(${quotedAndEscaped(bodyMatcher.path())}, java.util.Collection.class)).${sizeCheckMethod(bodyMatcher)}"
+			bb.addLine(postProcessJsonPathCall(method))
+			addColonIfRequired(bb)
+		} else {
+			checkType(bb, bodyMatcher, elementFromBody)
+		}
 	}
 
 	protected boolean arrayRelated(String path) {

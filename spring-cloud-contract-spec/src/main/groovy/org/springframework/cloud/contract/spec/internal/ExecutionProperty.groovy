@@ -31,7 +31,7 @@ import groovy.transform.ToString
 @ToString(includePackage = false, includeNames = true)
 class ExecutionProperty {
 
-	private static final String PLACEHOLDER_VALUE = '\\$it'
+	private static final String PLACEHOLDER_VALUE = '$it'
 
 	final String executionCommand
 
@@ -44,7 +44,7 @@ class ExecutionProperty {
 	 * the code that represents that method execution
 	 */
 	String insertValue(String valueToInsert) {
-		return executionCommand.replaceAll(PLACEHOLDER_VALUE, valueToInsert)
+		return executionCommand.replace(PLACEHOLDER_VALUE, valueToInsert)
 	}
 
 	@Override

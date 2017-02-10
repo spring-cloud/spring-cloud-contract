@@ -38,10 +38,14 @@ enum MatchingType {
 	 * Verification if the value for the given path matches the
 	 * provided regex
 	 */
-	REGEX
+	REGEX,
+	/**
+	 * The user can provide custom command to execute
+	 */
+	COMMAND
 
 	static boolean regexRelated(MatchingType type) {
-		if (type == EQUALITY || type == TYPE ) {
+		if (type == EQUALITY || type == TYPE || type == COMMAND ) {
 			return false
 		}
 		return true
