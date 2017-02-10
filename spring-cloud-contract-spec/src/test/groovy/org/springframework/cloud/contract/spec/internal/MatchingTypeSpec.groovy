@@ -13,6 +13,7 @@ class MatchingTypeSpec extends Specification {
 			type                   | expected
 			MatchingType.EQUALITY  | false
 			MatchingType.TYPE      | false
+			MatchingType.COMMAND   | false
 			MatchingType.REGEX     | true
 			MatchingType.DATE      | true
 			MatchingType.TIME      | true

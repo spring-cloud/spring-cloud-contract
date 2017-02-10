@@ -18,6 +18,10 @@ class ResponseBodyMatchers extends BodyMatchers {
 		return new MatchingTypeValue(type: MatchingType.TYPE)
 	}
 
+	MatchingTypeValue byCommand(String execute) {
+		return new MatchingTypeValue(MatchingType.COMMAND, new ExecutionProperty(execute))
+	}
+
 	MatchingTypeValue byType(@DelegatesTo(MatchingTypeValueHolder) Closure closure) {
 		MatchingTypeValueHolder matchingTypeValue = new MatchingTypeValueHolder()
 		closure.delegate = matchingTypeValue

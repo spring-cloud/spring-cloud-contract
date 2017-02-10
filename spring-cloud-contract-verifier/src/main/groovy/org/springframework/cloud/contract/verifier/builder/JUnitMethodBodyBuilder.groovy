@@ -31,7 +31,6 @@ import java.util.regex.Pattern
 import static groovy.json.StringEscapeUtils.escapeJava
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getJavaMultipartFileParameterContent
-
 /**
  * Root class for JUnit method building
  *
@@ -88,7 +87,7 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 
 	@Override
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
-		blockBuilder.addLine("${exec.insertValue("parsedJson.read(\"\\\$$property\")")};")
+		blockBuilder.addLine("${exec.insertValue("parsedJson.read(\"\$$property\")")};")
 	}
 
 	@Override
@@ -104,14 +103,18 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 
 	@Override
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, Map.Entry entry) {
-		processBodyElement(blockBuilder, property + getMapKeyReferenceString(entry), entry.value)
+		processBodyElement(blockBuilder, getMapKeyReferenceString(property, entry), entry.value)
 	}
 
-	private String getMapKeyReferenceString(Map.Entry entry) {
+	private String getMapKeyReferenceString(String property, Map.Entry entry) {
 		if (entry.value instanceof ExecutionProperty) {
-			return "." + entry.key
+			return provideProperJsonPathNotation(property) + "." + entry.key
 		}
-		return """.get(\\\"$entry.key\\\")"""
+		return property + """.get(\\\"$entry.key\\\")"""
+	}
+
+	private String provideProperJsonPathNotation(String property) {
+		return property.replaceAll('(get\\(\\\\")(.*)(\\\\"\\))', '$2')
 	}
 
 	@Override

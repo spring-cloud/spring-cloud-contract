@@ -32,4 +32,16 @@ class ExecutionPropertySpec extends Specification {
 			'commandToExecute(someObject.itsValue)' == commandWithInsertedValue
 	}
 
+	def 'should insert passed value with a $ sign in place of $it placeholder'() {
+		given:
+			String commandToExecute = 'commandToExecute($it)'
+			ExecutionProperty executionProperty = new ExecutionProperty(commandToExecute)
+		and:
+			String valueToInsert = '$.someObject.itsValue'
+		when:
+			String commandWithInsertedValue = executionProperty.insertValue(valueToInsert)
+		then:
+			'commandToExecute($.someObject.itsValue)' == commandWithInsertedValue
+	}
+
 }

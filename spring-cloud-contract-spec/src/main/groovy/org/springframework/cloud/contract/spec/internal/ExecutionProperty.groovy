@@ -17,7 +17,6 @@
 package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.CompileStatic
-
 /**
  * Represents a property that will become an executable method in the
  * generated tests
@@ -27,7 +26,7 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class ExecutionProperty {
 
-	private static final String PLACEHOLDER_VALUE = '\\$it'
+	private static final String PLACEHOLDER_VALUE = '$it'
 
 	final String executionCommand
 
@@ -40,7 +39,7 @@ class ExecutionProperty {
 	 * the code that represents that method execution
 	 */
 	String insertValue(String valueToInsert) {
-		return executionCommand.replaceAll(PLACEHOLDER_VALUE, valueToInsert)
+		return executionCommand.replace(PLACEHOLDER_VALUE, valueToInsert)
 	}
 
 	@Override

@@ -777,7 +777,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('assertThatRejectionReasonIsNull(parsedJson.read("$.get("rejectionReason").title"));')
+			test.contains('assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason.title"));')
 	}
 
 	@Issue('#85')
