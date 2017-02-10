@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+import org.junit.Rule
+import org.springframework.boot.test.rule.OutputCapture
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.dsl.WireMockStubVerifier
@@ -25,6 +27,8 @@ import spock.lang.Shared
 import spock.lang.Specification
 
 class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements WireMockStubVerifier {
+
+	@Rule OutputCapture outputCapture = new OutputCapture()
 
 	@Shared ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
 			assertJsonSize: true
@@ -160,9 +164,16 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMinEmpty", java.util.Collection.class).size()).isGreaterThanOrEqualTo(0)')
 			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMaxEmpty")).isInstanceOf(java.util.List.class)')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMaxEmpty", java.util.Collection.class).size()).isLessThanOrEqualTo(0)')
+			test.contains('assertThatValueIsANumber(parsedJson.read("' + rootElement + '.duck")')
 			!test.contains('cursor')
 		and:
-			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
+			try {
+				SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
+			} catch (ClassFormatError classFormatError) {
+				String output = outputCapture.toString()
+				output.contains('error: cannot find symbol')
+				output.contains('assertThatValueIsANumber(parsedJson.read("$.duck"));')
+			}
 		where:
 			methodBuilderName                                    | methodBuilder                                                                               | rootElement
 			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | '\\$'
