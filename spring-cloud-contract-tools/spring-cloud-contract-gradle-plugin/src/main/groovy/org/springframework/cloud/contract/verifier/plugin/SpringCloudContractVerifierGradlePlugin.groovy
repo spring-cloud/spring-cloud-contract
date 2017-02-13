@@ -107,6 +107,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 			configProperties = { extension }
 		}
 		task.dependsOn copyContracts
+		project.tasks.findByName("compileTestJava").dependsOn(task)
 	}
 
 	// TODO: Remove this task at some point
