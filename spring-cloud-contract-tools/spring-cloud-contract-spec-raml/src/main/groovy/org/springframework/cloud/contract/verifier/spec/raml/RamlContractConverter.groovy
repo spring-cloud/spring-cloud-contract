@@ -16,12 +16,15 @@
 
 package org.springframework.cloud.contract.verifier.spec.raml
 
+import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.raml.model.Action
 import org.raml.model.ActionType
+import org.raml.model.ParamType
 import org.raml.model.Raml2
+import org.raml.model.parameter.Header
 import org.raml.v2.api.RamlModelBuilder
 import org.raml.v2.api.RamlModelResult
 import org.raml.v2.api.model.v10.bodies.Response
@@ -31,11 +34,18 @@ import org.raml.v2.api.model.v10.methods.Method
 import org.raml.v2.api.model.v10.resources.Resource
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
+import org.springframework.cloud.contract.spec.internal.Headers
+import org.springframework.cloud.contract.spec.internal.HttpHeaders
+import org.springframework.cloud.contract.spec.internal.MediaTypes
 import org.springframework.cloud.contract.spec.internal.QueryParameter
 import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
+import org.springframework.util.MimeType
 
 import java.util.regex.Pattern
+
+import static org.springframework.cloud.contract.verifier.util.MapConverter.getStubSideValues
+import static org.springframework.cloud.contract.verifier.util.MapConverter.getTestSideValues
 /**
  * Converter of RAML file
  *
@@ -50,7 +60,9 @@ class RamlContractConverter implements ContractConverter<Raml2> {
     boolean isAccepted(File file) {
         RamlModelBuilder ramlContract = new RamlModelBuilder()
         def api = ramlContract.buildApi(file)
-        return !api.hasErrors()
+        boolean errors = api.hasErrors()
+
+        return !errors
     }
 
     @Override
@@ -175,28 +187,57 @@ class RamlContractConverter implements ContractConverter<Raml2> {
     @Override
     Raml2 convertTo(Collection<Contract> contracts) {
         Raml2 raml2 = new Raml2()
-        Contract.make {
-            request {
-                urlPath("asd") {
-
-                }
-            }
-        }
         raml2.setTitle("A generated RAML from Spring Cloud Contract")
         raml2.resources = contracts.findAll { it.request }.collectEntries { Contract contract ->
             org.raml.model.Resource resource = new org.raml.model.Resource()
             resource.relativeUri = url(contract)
-            ActionType actionType = ActionType.valueOf(contract.request.method.serverValue as String)
+            ActionType actionType = ActionType.valueOf(getTestSideValues(contract.request.method) as String)
             Action action = new Action()
             resource.actions << [(actionType) : action]
             QueryParameters queryParams = queryParams(contract)
             if (queryParams) {
                 action.queryParameters = queryParams.parameters.collectEntries { QueryParameter param ->
-                    return [(param.name) : new org.raml.model.parameter.QueryParameter(type: RamlType.fromObject(param.serverValue).ramlName)]
+                    return [(param.name) : new org.raml.model.parameter.QueryParameter(type:
+                            RamlType.fromObject(getTestSideValues(param.serverValue)).paramType())]
                 }
             }
             action.description = contract.description
-            //TODO: how to deal with body?
+            //request
+            def request = getTestSideValues(contract.request.body)
+            org.raml.model.MimeType mimeType = new org.raml.model.MimeType()
+            HttpHeaders headers = new HttpHeaders()
+            MediaTypes mediaTypes = new MediaTypes()
+            MimeType type = MimeType.valueOf(getTestSideValues(
+                    ((contract.request.headers) as Headers).entries.find { it.name == headers.contentType() }).toString())
+            if (MimeType.valueOf(mediaTypes.applicationJson()).isCompatibleWith(type)) {
+                mimeType.example = JsonOutput.toJson(request)
+            } else {
+                mimeType.example = request.toString()
+            }
+            action.headers =  ((contract.request.headers) as Headers).entries.collectEntries {
+                String header = it.name
+                String value = getTestSideValues(it.clientValue)
+                return [(header) : new Header(defaultValue: value)]
+            }
+            action.body << [(type.toString()): mimeType]
+
+            // response
+            org.raml.model.Response ramlResponse = new org.raml.model.Response()
+            ramlResponse.headers =  ((contract.response.headers) as Headers).entries.collectEntries {
+                String header = it.name
+                String value = getStubSideValues(it.serverValue)
+                return [(header) : new Header(defaultValue: value)]
+            }
+            def response = getStubSideValues(contract.response.body)
+            org.raml.model.MimeType responseMimeType = new org.raml.model.MimeType()
+            MimeType responseType = MimeType.valueOf(getStubSideValues(
+                    ((contract.response.headers) as Headers).entries.find { it.name == headers.contentType() }).toString())
+            if (MimeType.valueOf(mediaTypes.applicationJson()).isCompatibleWith(type)) {
+                mimeType.example = JsonOutput.toJson(response)
+            } else {
+                mimeType.example = response.toString()
+            }
+            ramlResponse.body << [(responseType.toString()): responseMimeType]
 
         }
         return raml2
@@ -215,6 +256,10 @@ class RamlContractConverter implements ContractConverter<Raml2> {
 
         RamlType(String name) {
             this.ramlName = name
+        }
+
+        ParamType paramType() {
+            return ParamType.valueOf(this.ramlName.toUpperCase())
         }
 
         static RamlType fromObject(Object o) {
