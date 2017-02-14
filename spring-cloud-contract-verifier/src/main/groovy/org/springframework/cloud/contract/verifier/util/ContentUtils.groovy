@@ -332,6 +332,10 @@ class ContentUtils {
 		}
 	}
 
+	static ContentType recognizeContentTypeFromContent(Number number) {
+		return ContentType.TEXT
+	}
+
 	static ContentType recognizeContentTypeFromContent(Object gstring) {
 		return ContentType.UNKNOWN
 	}

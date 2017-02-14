@@ -297,7 +297,7 @@ abstract class MethodBodyBuilder {
 
 	private void addJsonResponseBodyCheck(BlockBuilder bb, convertedResponseBody, BodyMatchers bodyMatchers) {
 		appendJsonPath(bb, getResponseAsString())
-		Object copiedBody = convertedResponseBody.clone()
+		Object copiedBody = cloneBody(convertedResponseBody)
 		convertedResponseBody = JsonToJsonPathsConverter.removeMatchingJsonPaths(convertedResponseBody, bodyMatchers)
 		JsonPaths jsonPaths = new JsonToJsonPathsConverter(configProperties).transformToJsonPathWithTestsSideValues(convertedResponseBody)
 		jsonPaths.each {
@@ -367,6 +367,14 @@ abstract class MethodBodyBuilder {
 	protected void buildCustomMatchingConditionForEachElement(BlockBuilder bb, String path, String valueAsParam) {
 		String method = "assertThat(parsedJson.read(${path}, java.util.Collection.class)).allElementsMatch(${valueAsParam})"
 		bb.addLine(postProcessJsonPathCall(method))
+	}
+
+	private Object cloneBody(Object object) {
+		try {
+			return object.clone()
+		} catch (CloneNotSupportedException e) {
+			return object
+		}
 	}
 
 	protected Object value(def body, BodyMatcher bodyMatcher) {

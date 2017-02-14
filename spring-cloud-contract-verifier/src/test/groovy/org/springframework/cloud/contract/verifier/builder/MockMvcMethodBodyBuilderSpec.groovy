@@ -2158,4 +2158,36 @@ World.'''"""
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
+
+	@Issue("#226")
+	def "should work properly when body is an integer [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url '/api/v1/xxxx'
+					body(12000)
+				}
+				response {
+					status 200
+					body(12000)
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		and:
+			builder.appendTo(blockBuilder)
+			String test = blockBuilder.toString()
+		when:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		then:
+			requestAssertion(test)
+			responseAssertion(test)
+		where:
+			methodBuilderName                                    | methodBuilder                                                                               | requestAssertion                                                                      | responseAssertion
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | { String body -> body.contains("body('''12000''')") }                                 | { String body -> body.contains('responseBody == "12000"') }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | { String body -> body.contains('body("12000")') }                                     | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String body -> body.contains(""".method('GET', entity('12000', 'text/plain'))""") } | { String body -> body.contains('responseBody == "12000"') }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String body -> body.contains(""".method("GET", entity("12000", "text/plain"))""") } | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000")') }
+	}
 }

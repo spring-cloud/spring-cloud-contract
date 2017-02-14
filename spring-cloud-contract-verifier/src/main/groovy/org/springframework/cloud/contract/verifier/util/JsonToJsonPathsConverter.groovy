@@ -74,7 +74,7 @@ class JsonToJsonPathsConverter {
 	 * @return json with removed entries
 	 */
 	static def removeMatchingJsonPaths(def json, BodyMatchers bodyMatchers) {
-		def jsonCopy = json.clone()
+		def jsonCopy = cloneBody(json)
 		DocumentContext context = JsonPath.parse(jsonCopy)
 		if (bodyMatchers?.hasMatchers()) {
 			bodyMatchers.jsonPathMatchers().each { BodyMatcher matcher ->
@@ -88,6 +88,14 @@ class JsonToJsonPathsConverter {
 			}
 		}
 		return jsonCopy
+	}
+
+	private static Object cloneBody(Object object) {
+		try {
+			return object.clone()
+		} catch (CloneNotSupportedException e) {
+			return object
+		}
 	}
 
 	/**
