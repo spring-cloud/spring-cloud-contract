@@ -223,6 +223,7 @@ class RamlContractConverter implements ContractConverter<Raml2> {
 
             // response
             org.raml.model.Response ramlResponse = new org.raml.model.Response()
+            action.responses = ["asd" : ramlResponse]
             ramlResponse.headers =  ((contract.response.headers) as Headers).entries.collectEntries {
                 String header = it.name
                 String value = getStubSideValues(it.serverValue)
@@ -238,7 +239,7 @@ class RamlContractConverter implements ContractConverter<Raml2> {
                 mimeType.example = response.toString()
             }
             ramlResponse.body << [(responseType.toString()): responseMimeType]
-
+            return [foo: resource]
         }
         return raml2
     }
