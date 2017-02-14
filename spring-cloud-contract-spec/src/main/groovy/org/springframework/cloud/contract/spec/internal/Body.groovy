@@ -48,6 +48,10 @@ class Body extends DslProperty {
 		this("${bodyAsValue}")
 	}
 
+	Body(Number bodyAsValue) {
+		super(bodyAsValue)
+	}
+
 	Body(GString bodyAsValue) {
 		super(bodyAsValue, bodyAsValue)
 	}

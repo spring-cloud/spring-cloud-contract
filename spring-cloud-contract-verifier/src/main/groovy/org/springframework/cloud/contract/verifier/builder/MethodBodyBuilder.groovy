@@ -297,7 +297,7 @@ abstract class MethodBodyBuilder {
 
 	private void addJsonResponseBodyCheck(BlockBuilder bb, convertedResponseBody, BodyMatchers bodyMatchers) {
 		appendJsonPath(bb, getResponseAsString())
-		Object copiedBody = convertedResponseBody.clone()
+		Object copiedBody = cloneBody(convertedResponseBody)
 		convertedResponseBody = JsonToJsonPathsConverter.removeMatchingJsonPaths(convertedResponseBody, bodyMatchers)
 		JsonPaths jsonPaths = new JsonToJsonPathsConverter(configProperties).transformToJsonPathWithTestsSideValues(convertedResponseBody)
 		jsonPaths.each {
@@ -384,6 +384,14 @@ abstract class MethodBodyBuilder {
 		bb.endBlock().addLine(methodEnd)
 		bb.endBlock().addLine(classEnd)
 		bb.endBlock().endBlock()
+	}
+
+	private Object cloneBody(Object object) {
+		try {
+			return object.clone()
+		} catch (CloneNotSupportedException e) {
+			return object
+		}
 	}
 
 	protected Object value(def body, BodyMatcher bodyMatcher) {
