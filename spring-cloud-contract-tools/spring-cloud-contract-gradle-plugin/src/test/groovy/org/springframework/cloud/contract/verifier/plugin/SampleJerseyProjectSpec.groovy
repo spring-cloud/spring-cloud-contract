@@ -32,7 +32,6 @@ class SampleJerseyProjectSpec extends ContractVerifierIntegrationSpec {
 		expect:
 			runTasksSuccessfully(checkAndPublishToMavenLocal())
 			jarContainsContractVerifierContracts('fraudDetectionService/build/libs')
-			fileExists("fraudDetectionService/build/test-results/test/TEST-org.springframework.cloud.contract.verifier.tests.contracts.com.example.jersey.FraudDetectionServiceSpec.xml")
 	}
 
 	def "should pass basic flow for JUnit"() {
@@ -42,7 +41,6 @@ class SampleJerseyProjectSpec extends ContractVerifierIntegrationSpec {
 		expect:
 			runTasksSuccessfully(checkAndPublishToMavenLocal())
 			jarContainsContractVerifierContracts('fraudDetectionService/build/libs')
-			fileExists("fraudDetectionService/build/test-results/test/TEST-org.springframework.cloud.contract.verifier.tests.contracts.com.example.jersey.FraudDetectionServiceTest.xml")
 	}
 
 }
