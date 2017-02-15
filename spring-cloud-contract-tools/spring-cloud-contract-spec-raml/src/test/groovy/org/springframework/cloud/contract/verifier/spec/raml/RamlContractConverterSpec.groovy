@@ -66,7 +66,7 @@ class RamlContractConverterSpec extends Specification {
 			Contract contract = Contract.make {
 				description("a retrieve Mallory request a user with username 'username' and password 'password' exists")
 				request {
-					method(GET())
+					method GET()
 					url("/mallory") {
 						queryParameters {
 							parameter("name", "ron")
@@ -90,12 +90,50 @@ class RamlContractConverterSpec extends Specification {
 						  ]])
 				}
 			}
+		and:
+			String expectedYaml = """#%RAML 0.8
+title: "A generated RAML from Spring Cloud Contract"
+"/mallory": 
+    get: 
+        description: "a retrieve Mallory request a user with username 'username' and password 'password' exists"
+        headers: 
+            "Content-Type": 
+                type: string
+                required: false
+                repeat: false
+                default: "application/json"
+        queryParameters: 
+            "name": 
+                type: string
+                required: false
+                repeat: false
+                default: "ron"
+            "status": 
+                type: string
+                required: false
+                repeat: false
+                default: "good"
+        body: 
+            "application/json": 
+                example: '{"id":"123","method":"create"}'
+        responses: 
+            "200": 
+                body: 
+                    "application/json": 
+                        example: '[[{"email":"rddtGwwWMEhnkAPEmsyE","id":"eb0f8c17-c06a-479e-9204-14f7c95b63a6","userName":"AJQrokEGPAVdOHprQpKP"}]]'
+                headers: 
+                    "Content-Type": 
+                        type: string
+                        required: false
+                        repeat: false
+                        default: "application/json"
+"""
 		when:
 			Raml raml = converter.convertTo([contract])
 		then:
 			String ramlAsFile = new RamlEmitter().dump(raml)
 		and:
-			ramlAsFile
+			ramlAsFile == expectedYaml
 	}
 
 }

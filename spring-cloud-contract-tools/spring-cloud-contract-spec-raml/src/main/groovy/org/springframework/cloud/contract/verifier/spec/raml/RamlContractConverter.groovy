@@ -56,6 +56,9 @@ import static org.springframework.cloud.contract.verifier.util.MapConverter.getT
 @CompileStatic
 class RamlContractConverter implements ContractConverter<Raml2> {
 
+    private HttpHeaders headers = new HttpHeaders()
+    private MediaTypes mediaTypes = new MediaTypes()
+
     @Override
     boolean isAccepted(File file) {
         RamlModelBuilder ramlContract = new RamlModelBuilder()
@@ -190,58 +193,79 @@ class RamlContractConverter implements ContractConverter<Raml2> {
         raml2.setTitle("A generated RAML from Spring Cloud Contract")
         raml2.resources = contracts.findAll { it.request }.collectEntries { Contract contract ->
             org.raml.model.Resource resource = new org.raml.model.Resource()
-            resource.relativeUri = url(contract)
+            String url = url(contract)
             ActionType actionType = ActionType.valueOf(getTestSideValues(contract.request.method) as String)
             Action action = new Action()
             resource.actions << [(actionType) : action]
-            QueryParameters queryParams = queryParams(contract)
-            if (queryParams) {
-                action.queryParameters = queryParams.parameters.collectEntries { QueryParameter param ->
-                    return [(param.name) : new org.raml.model.parameter.QueryParameter(type:
-                            RamlType.fromObject(getTestSideValues(param.serverValue)).paramType())]
-                }
-            }
+            setQueryParameters(contract, action)
             action.description = contract.description
-            //request
-            def request = getTestSideValues(contract.request.body)
-            org.raml.model.MimeType mimeType = new org.raml.model.MimeType()
-            HttpHeaders headers = new HttpHeaders()
-            MediaTypes mediaTypes = new MediaTypes()
-            MimeType type = MimeType.valueOf(getTestSideValues(
-                    ((contract.request.headers) as Headers).entries.find { it.name == headers.contentType() }).toString())
-            if (MimeType.valueOf(mediaTypes.applicationJson()).isCompatibleWith(type)) {
-                mimeType.example = JsonOutput.toJson(request)
-            } else {
-                mimeType.example = request.toString()
-            }
-            action.headers =  ((contract.request.headers) as Headers).entries.collectEntries {
-                String header = it.name
-                String value = getTestSideValues(it.clientValue)
-                return [(header) : new Header(defaultValue: value)]
-            }
-            action.body << [(type.toString()): mimeType]
-
-            // response
-            org.raml.model.Response ramlResponse = new org.raml.model.Response()
-            action.responses = ["asd" : ramlResponse]
-            ramlResponse.headers =  ((contract.response.headers) as Headers).entries.collectEntries {
-                String header = it.name
-                String value = getStubSideValues(it.serverValue)
-                return [(header) : new Header(defaultValue: value)]
-            }
-            def response = getStubSideValues(contract.response.body)
-            org.raml.model.MimeType responseMimeType = new org.raml.model.MimeType()
-            MimeType responseType = MimeType.valueOf(getStubSideValues(
-                    ((contract.response.headers) as Headers).entries.find { it.name == headers.contentType() }).toString())
-            if (MimeType.valueOf(mediaTypes.applicationJson()).isCompatibleWith(type)) {
-                mimeType.example = JsonOutput.toJson(response)
-            } else {
-                mimeType.example = response.toString()
-            }
-            ramlResponse.body << [(responseType.toString()): responseMimeType]
-            return [foo: resource]
+            processRequest(contract, action)
+            processResponse(contract, action)
+            return [(url) : resource]
         }
         return raml2
+    }
+
+    private void setQueryParameters(Contract contract, Action action) {
+        QueryParameters queryParams = queryParams(contract)
+        if (queryParams) {
+            action.queryParameters = queryParams.parameters.collectEntries { QueryParameter param ->
+                return [(param.name): new org.raml.model.parameter.QueryParameter(
+                        type: RamlType.fromObject(getTestSideValues(param)).paramType(),
+                        defaultValue: getTestSideValues(param) as String)]
+            }
+        }
+    }
+
+    private void processRequest(Contract contract, Action action) {
+        def request = getTestSideValues(contract.request.body)
+        org.raml.model.MimeType mimeType = new org.raml.model.MimeType()
+        MimeType type = MimeType.valueOf(getTestSideValues(
+                ((contract.request.headers) as Headers).entries.find {
+                    it.name == headers.contentType()
+                }).toString())
+        setExample(type, request, mimeType)
+        setRequestHeaders(contract, action)
+        action.body << [(type.toString()): mimeType]
+    }
+
+    private void processResponse(Contract contract, Action action) {
+        org.raml.model.Response ramlResponse = new org.raml.model.Response()
+        String status = getStubSideValues(contract.response.status) as String
+        action.responses = [(status): ramlResponse]
+        setResponseHeaders(contract, ramlResponse)
+        def response = getStubSideValues(contract.response.body)
+        org.raml.model.MimeType responseMimeType = new org.raml.model.MimeType()
+        MimeType responseType = MimeType.valueOf(getStubSideValues(
+                ((contract.response.headers) as Headers).entries.find {
+                    it.name == headers.contentType()
+                }).toString())
+        setExample(responseType, response, responseMimeType)
+        ramlResponse.body << [(responseType.toString()): responseMimeType]
+    }
+
+    private void setResponseHeaders(Contract contract, org.raml.model.Response ramlResponse) {
+        ramlResponse.headers = ((contract.response.headers) as Headers).entries.collectEntries {
+            String header = it.name
+            String value = getStubSideValues(it)
+            return [(header): new Header(defaultValue: value)]
+        }
+    }
+
+    private void setRequestHeaders(Contract contract, Action action) {
+        action.headers = ((contract.request.headers) as Headers).entries.collectEntries {
+            String header = it.name
+            String value = getTestSideValues(it)
+            return [(header): new Header(defaultValue: value)]
+        }
+    }
+
+    private void setExample(MimeType type, request, org.raml.model.MimeType mimeType) {
+        if (MimeType.valueOf(mediaTypes.applicationJson()).isCompatibleWith(type)) {
+            mimeType.example = JsonOutput.toJson(request)
+        } else {
+            mimeType.example = request.toString()
+        }
     }
 
     @PackageScope

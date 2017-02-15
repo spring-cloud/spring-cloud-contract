@@ -74,10 +74,6 @@
 			<artifactId>groovy-xml</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.raml</groupId>
-			<artifactId>raml-parser-2</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.skyscreamer</groupId>
 			<artifactId>jsonassert</artifactId>
 		</dependency>
