@@ -822,6 +822,118 @@ include::{standalone_pact_path}/pact-http-client/pom.xml[tags=pact_dependency,in
 include::{standalone_pact_path}/pact-http-client/build.gradle[tags=pact_dependency,indent=0]
 ----
 
+====== RAML converter
+
+WARNING: RAML support is experimental and prone to changes in the future. Also it requires
+ certain conditions on the RAML contract to make the conversion work properly
+
+Spring Cloud Contract comes with an experimental out of the box support for https://raml.org/[RAML] representation of contracts.
+In other words instead of using the Groovy DSL you can use Pact files. In this section
+we will present how to add such a support for your project.
+
+====== RAML constraints
+
+The biggest challenge in making RAML become an input for Spring Cloud Contract is that RAML is
+an extended representation of a schema. It allows you to group a few request examples together
+with some response examples. Spring Cloud Contract doesn't want to bind to a schema thus it
+focuses on presenting a pair of request response examples. That's why not every RAML
+file is possible to be converted into a Spring Cloud Contract example. Of course with time
+and feedback from the users we will try to minimize the number of constraints.
+
+For the RAML contract be considered proper as input for Spring Cloud Contract it has to
+pass the following tests:
+
+- It has to use RAML version 1.0
+- The *baseUri* if present has to contain only the host and no additional path (e.g. *http://localhost:8081* is ok, whereas *http://localhost:8081/api/2.5* is not)
+- Every request that has a body has to have an *example* of a body
+- Every request that has headers has to have *default values* for these headers
+- Every request that has query parameters has to have *default values* for these parameters
+- Every response that has a body has to have an *example* of a body
+- Every response that has headers has to have *default values* for these headers
+
+If you have multiple examples of of bodies only the first one will be taken into consideration.
+The best solution is to have a single pair of request / response in a single RAML file.
+
+====== RAML example
+
+We will be working on the following example of a RAML contract. We've placed this file under
+the `src/test/resources/contracts` folder.
+
+[source,yml,indent=0]
+----
+include::{raml_spec_path}/src/test/resources/api.raml[indent=0]
+----
+
+====== RAML for producers
+
+On the producer side you have add to your project dependencies a couple of dependencies.
+The Spring Cloud Contract RAML support and RAML related dependencies to your Spring Cloud Contract
+Maven plugin / Gradle buildscript classpath:
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-spec-raml</artifactId>
+    <version>${spring-cloud-contract.version}</version>
+</dependency>
+<dependency>
+    <groupId>org.raml</groupId>
+    <artifactId>raml-parser-2</artifactId>
+    <version>1.0.6</version>
+</dependency>
+<dependency>
+    <groupId>org.raml</groupId>
+    <artifactId>com.mulesoft.jaxrs.raml.generator</artifactId>
+    <version>1.3.4</version>
+</dependency>
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
+----
+classpath "org.springframework.cloud:spring-cloud-contract-spec-raml:${verifierVersion}"
+classpath 'org.raml:raml-parser-2:1.0.6'
+classpath 'org.raml:com.mulesoft.jaxrs.raml.generator:1.3.4'
+----
+
+====== RAML for consumers
+
+On the producer side you need to add the following dependencies to your test compile
+classpath.
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-spec-raml</artifactId>
+    <version>${spring-cloud-contract.version}</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.raml</groupId>
+    <artifactId>raml-parser-2</artifactId>
+    <version>1.0.6</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.raml</groupId>
+    <artifactId>com.mulesoft.jaxrs.raml.generator</artifactId>
+    <version>1.3.4</version>
+    <scope>test</scope>
+</dependency>
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
+----
+testCompile "org.springframework.cloud:spring-cloud-contract-spec-raml:${verifierVersion}"
+testCompile 'org.raml:raml-parser-2:1.0.6'
+testCompile 'org.raml:com.mulesoft.jaxrs.raml.generator:1.3.4'
+----
+
 ==== Custom test generator
 
 If you want to generate tests for different languages than Java or you're

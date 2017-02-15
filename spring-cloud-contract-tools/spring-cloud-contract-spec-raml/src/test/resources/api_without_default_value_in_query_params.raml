@@ -1,6 +1,5 @@
 #%RAML 1.0
 title: MUA Flights API
-baseUri: http://localhost:8081/
 
 /mallory:
   description: a retrieve Mallory request a user with username 'username' and password 'password' exists
@@ -10,7 +9,7 @@ baseUri: http://localhost:8081/
         default: application/json
     queryParameters:
       name:
-        default: ron
+        description: The API key needed to create a new job
       status:
         default: good
     body:

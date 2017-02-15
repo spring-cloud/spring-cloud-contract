@@ -20,6 +20,8 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.raml.model.Action
 import org.raml.model.ActionType
 import org.raml.model.ParamType
@@ -42,13 +44,16 @@ import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.util.MimeType
 
+import java.lang.invoke.MethodHandles
 import java.util.regex.Pattern
 
 import static org.springframework.cloud.contract.verifier.util.MapConverter.getStubSideValues
 import static org.springframework.cloud.contract.verifier.util.MapConverter.getTestSideValues
 
 /**
- * Converter of RAML file
+ * Converter of RAML file to and from Contracts.
+ *
+ * WARNING: This functionality is experimental and prone to changes in the future.
  *
  * @author Eddú Meléndez
  * @author Marcin Grzejszczak
@@ -57,16 +62,63 @@ import static org.springframework.cloud.contract.verifier.util.MapConverter.getT
 @CompileStatic
 class RamlContractConverter implements ContractConverter<Raml2> {
 
-	private HttpHeaders headers = new HttpHeaders()
-	private MediaTypes mediaTypes = new MediaTypes()
+	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass())
+
+	private final HttpHeaders headers = new HttpHeaders()
+	private final MediaTypes mediaTypes = new MediaTypes()
 
 	@Override
 	boolean isAccepted(File file) {
 		RamlModelBuilder ramlContract = new RamlModelBuilder()
 		def api = ramlContract.buildApi(file)
 		boolean errors = api.hasErrors()
-
-		return !errors
+		if (errors) {
+			if (log.isDebugEnabled()) {
+				log.debug("Errors [${api.validationResults}] took place while trying to parse RAML [${file}]")
+			}
+			return false
+		}
+		if (api.apiV08 && !api.apiV10) {
+			if (log.isDebugEnabled()) {
+				log.debug("Spring Cloud Contract supports only RAML in version 1.0. File [${file}] is in version 0.8")
+			}
+			return false
+		}
+		boolean exampleIsPresentInRequestBody = false
+		boolean defaultValuesPresentInRequestHeaders = false
+		boolean defaultValuesPresentInRequestQueryParams = false
+		boolean exampleIsPresentInResponseBody = false
+		boolean defaultValuesPresentInResponseHeaders = false
+		api.apiV10.resources().each { Resource resource ->
+			resource.methods().each { Method method ->
+				exampleIsPresentInRequestBody = method.body() ?
+						method.body().every { it.defaultValue() || it.example() || it.examples() } : true
+				defaultValuesPresentInRequestHeaders = method.headers() ?
+						method.headers().every { it.defaultValue() } : true
+				defaultValuesPresentInRequestQueryParams = method.queryParameters() ?
+						method.queryParameters().every { it.defaultValue() } : true
+				method.responses().each { Response response ->
+					exampleIsPresentInResponseBody = response.body() ?
+							response.body().every { it.defaultValue() || it.example() || it.examples() } : true
+					defaultValuesPresentInResponseHeaders = response.headers() ?
+							response.headers().every { it.defaultValue() } : true
+				}
+			}
+		}
+		boolean allMatch = exampleIsPresentInRequestBody && defaultValuesPresentInRequestHeaders &&
+				exampleIsPresentInResponseBody && defaultValuesPresentInResponseHeaders && defaultValuesPresentInRequestQueryParams
+		if (!allMatch) {
+			if (log.isDebugEnabled()) {
+				log.debug("""Ignoring the RAML file [${file}]. Status of the file is 
+- exampleIsPresentInRequestBody = [${exampleIsPresentInRequestBody}]
+- defaultValuesPresentInRequestHeaders = [${defaultValuesPresentInRequestHeaders}]
+- defaultValuesPresentInRequestQueryParams = [${defaultValuesPresentInRequestQueryParams}]
+- exampleIsPresentInResponseBody = [${exampleIsPresentInResponseBody}]
+- defaultValuesPresentInResponseHeaders = [${defaultValuesPresentInResponseHeaders}]
+""")
+			}
+		}
+		return allMatch
 	}
 
 	@Override
@@ -109,15 +161,18 @@ class RamlContractConverter implements ContractConverter<Raml2> {
 									body(parsedBody.toString())
 								}
 							} else if (requestBody.examples()) {
-								requestBody.examples().each { ExampleSpec example ->
-									def parsedBody = parser.parseText(example.value())
-									if (parsedBody instanceof Map) {
-										body(parsedBody as Map)
-									} else if (parsedBody instanceof List) {
-										body(parsedBody as List)
-									} else {
-										body(parsedBody.toString())
-									}
+								if (log.isWarnEnabled()) {
+									log.warn("Multiple request examples are present. Will pick only the first one. " +
+											"That's because it's impossible to correspond that with a proper response")
+								}
+								ExampleSpec example = requestBody.examples().first()
+								def parsedBody = parser.parseText(example.value())
+								if (parsedBody instanceof Map) {
+									body(parsedBody as Map)
+								} else if (parsedBody instanceof List) {
+									body(parsedBody as List)
+								} else {
+									body(parsedBody.toString())
 								}
 							}
 						}
@@ -155,15 +210,17 @@ class RamlContractConverter implements ContractConverter<Raml2> {
 										body(parsedBody.toString())
 									}
 								} else if (responseBody.examples()) {
-									responseBody.examples().each { ExampleSpec example ->
-										def parsedBody = parser.parseText(example.value())
-										if (parsedBody instanceof Map) {
-											body(parsedBody as Map)
-										} else if (parsedBody instanceof List) {
-											body(parsedBody as List)
-										} else {
-											body(parsedBody.toString())
-										}
+									if (log.isWarnEnabled()) {
+										log.warn("Multiple response examples are present. Will pick only the first one.")
+									}
+									ExampleSpec example = responseBody.examples().first()
+									def parsedBody = parser.parseText(example.value())
+									if (parsedBody instanceof Map) {
+										body(parsedBody as Map)
+									} else if (parsedBody instanceof List) {
+										body(parsedBody as List)
+									} else {
+										body(parsedBody.toString())
 									}
 								}
 							}

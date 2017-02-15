@@ -24,9 +24,15 @@ baseUri: http://localhost:8081/
            default: application/json
        body:
          application/json:
-           example: |
-             [[{
-             "email": "rddtGwwWMEhnkAPEmsyE",
-             "id": "eb0f8c17-c06a-479e-9204-14f7c95b63a6",
-             "userName": "AJQrokEGPAVdOHprQpKP"
-             }]]
+            schema: |
+              {
+                "type": "object",
+                "$schema": "http://json-schema.org/draft-03/schema",
+                "id": "http://jsonschema.net",
+                "required": true,
+                "properties": {
+                  "songTitle": {
+                    "type": "string"
+                  }
+                }
+              }

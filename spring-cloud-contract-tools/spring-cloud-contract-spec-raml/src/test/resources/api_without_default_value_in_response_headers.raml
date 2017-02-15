@@ -7,7 +7,7 @@ baseUri: http://localhost:8081/
   get:
     headers:
       Content-Type:
-        default: application/json
+        default: ron
     queryParameters:
       name:
         default: ron
@@ -21,7 +21,7 @@ baseUri: http://localhost:8081/
       200:
        headers:
          Content-Type:
-           default: application/json
+           description: The API key needed to create a new job
        body:
          application/json:
            example: |

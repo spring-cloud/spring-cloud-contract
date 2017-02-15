@@ -15,8 +15,18 @@ baseUri: http://localhost:8081/
         default: good
     body:
       application/json:
-        example: |
-          {"id": "123", "method": "create"}
+        schema: |
+          {
+            "type": "object",
+            "$schema": "http://json-schema.org/draft-03/schema",
+            "id": "http://jsonschema.net",
+            "required": true,
+            "properties": {
+              "songTitle": {
+                "type": "string"
+              }
+            }
+          }
     responses:
       200:
        headers:
