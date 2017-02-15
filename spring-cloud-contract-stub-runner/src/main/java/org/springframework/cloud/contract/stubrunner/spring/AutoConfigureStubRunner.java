@@ -55,7 +55,7 @@ public @interface AutoConfigureStubRunner {
 	boolean workOffline() default false;
 
 	/**
-	 * The repository root to use (defaults to local Maven repo).
+	 * The repository root to use (where the stubs should be downloaded from)
 	 */
 	String repositoryRoot() default "";
 
