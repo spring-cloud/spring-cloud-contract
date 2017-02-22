@@ -28,6 +28,7 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
+import org.springframework.util.SerializationUtils
 
 import java.util.regex.Pattern
 
@@ -369,7 +370,12 @@ abstract class MethodBodyBuilder {
 		bb.addLine(postProcessJsonPathCall(method))
 	}
 
+	// Doing a clone doesn't work for nested lists...
 	private Object cloneBody(Object object) {
+		if (object instanceof List) {
+			byte[] serializedObject = SerializationUtils.serialize(object)
+			return SerializationUtils.deserialize(serializedObject)
+		}
 		try {
 			return object.clone()
 		} catch (CloneNotSupportedException e) {
@@ -388,7 +394,7 @@ abstract class MethodBodyBuilder {
 		try {
 			return JsonPath.parse(body).read(path)
 		} catch (PathNotFoundException e) {
-			throw new IllegalStateException("Entry for the provided JSON path [${path}] doesn't exist in the body [${JsonOutput.toJson(body)}]", e)
+			throw new IllegalStateException("Entry for the provided JSON path <${path}> doesn't exist in the body <${JsonOutput.toJson(body)}>", e)
 		}
 	}
 

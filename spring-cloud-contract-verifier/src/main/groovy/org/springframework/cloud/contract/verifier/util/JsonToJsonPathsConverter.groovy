@@ -29,6 +29,7 @@ import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.util.SerializationUtils
 
 import java.util.regex.Pattern
 
@@ -90,7 +91,12 @@ class JsonToJsonPathsConverter {
 		return jsonCopy
 	}
 
+	// Doing a clone doesn't work for nested lists...
 	private static Object cloneBody(Object object) {
+		if (object instanceof List) {
+			byte[] serializedObject = SerializationUtils.serialize(object)
+			return SerializationUtils.deserialize(serializedObject)
+		}
 		try {
 			return object.clone()
 		} catch (CloneNotSupportedException e) {

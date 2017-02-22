@@ -26,7 +26,7 @@ import groovy.transform.ToString
  */
 @CompileStatic
 @ToString(includePackage = false, includeNames = true)
-class OptionalProperty {
+class OptionalProperty implements Serializable {
 	final Object value
 
 	OptionalProperty(Object value) {

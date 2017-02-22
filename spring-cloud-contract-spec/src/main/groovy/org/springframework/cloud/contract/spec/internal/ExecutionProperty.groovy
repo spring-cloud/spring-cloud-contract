@@ -29,7 +29,7 @@ import groovy.transform.ToString
 @CompileStatic
 @EqualsAndHashCode
 @ToString(includePackage = false, includeNames = true)
-class ExecutionProperty {
+class ExecutionProperty implements Serializable {
 
 	private static final String PLACEHOLDER_VALUE = '$it'
 

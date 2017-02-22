@@ -366,7 +366,46 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			builder.appendTo(blockBuilder)
 		then:
 			IllegalStateException e = thrown(IllegalStateException)
-			e.message.contains("Entry for the provided JSON path [\$.nonExistingPhoneNumbers[*].number] doesn't exist in the body")
+			e.message.contains("Entry for the provided JSON path <\$.nonExistingPhoneNumbers[*].number> doesn't exist in the body")
+		where:
+			methodBuilderName                                    | methodBuilder                                                                               | rootElement
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | '\\$'
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | '$'
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '\\$'
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | '$'
+	}
+
+	@Issue("#229")
+	def "should work for matchers and body with json array[#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url '/api/v1/xxxx'
+					body(12000)
+				}
+				response {
+					status 200
+					body ([[
+								   [ access_token: '123']
+						   ]])
+					headers {
+						contentType(applicationJson())
+					}
+					testMatchers {
+						jsonPath('''$[0][0].access_token''', byEquality())
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		and:
+			builder.appendTo(blockBuilder)
+			String test = blockBuilder.toString()
+		when:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		then:
+			test.contains('assertThat(parsedJson.read("' + rootElement + '[0][0].access_token", String.class)).isEqualTo("123")')
 		where:
 			methodBuilderName                                    | methodBuilder                                                                               | rootElement
 			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | '\\$'
