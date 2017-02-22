@@ -24,7 +24,7 @@ import groovy.transform.CompileStatic
  * @since 1.0.0
  */
 @CompileStatic
-class OptionalProperty {
+class OptionalProperty implements Serializable {
 	final Object value
 
 	OptionalProperty(Object value) {

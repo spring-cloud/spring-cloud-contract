@@ -24,7 +24,7 @@ import groovy.transform.CompileStatic
  * @since 1.0.0
  */
 @CompileStatic
-class ExecutionProperty {
+class ExecutionProperty implements Serializable {
 
 	private static final String PLACEHOLDER_VALUE = '$it'
 

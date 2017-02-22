@@ -22,12 +22,22 @@ import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.apache.commons.lang3.StringEscapeUtils
-import org.springframework.cloud.contract.spec.internal.*
+import org.springframework.cloud.contract.spec.internal.BodyMatcher
+import org.springframework.cloud.contract.spec.internal.BodyMatchers
+import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.Header
+import org.springframework.cloud.contract.spec.internal.MatchingStrategy
+import org.springframework.cloud.contract.spec.internal.MatchingType
+import org.springframework.cloud.contract.spec.internal.NamedProperty
+import org.springframework.cloud.contract.spec.internal.OptionalProperty
+import org.springframework.cloud.contract.spec.internal.QueryParameter
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 import org.springframework.cloud.contract.verifier.util.MapConverter
+import org.springframework.util.SerializationUtils
 
 import java.util.regex.Pattern
 
@@ -386,7 +396,12 @@ abstract class MethodBodyBuilder {
 		bb.endBlock().endBlock()
 	}
 
+	// Doing a clone doesn't work for nested lists...
 	private Object cloneBody(Object object) {
+		if (object instanceof List) {
+			byte[] serializedObject = SerializationUtils.serialize(object)
+			return SerializationUtils.deserialize(serializedObject)
+		}
 		try {
 			return object.clone()
 		} catch (CloneNotSupportedException e) {
@@ -405,7 +420,7 @@ abstract class MethodBodyBuilder {
 		try {
 			return JsonPath.parse(body).read(path)
 		} catch (PathNotFoundException e) {
-			throw new IllegalStateException("Entry for the provided JSON path [${path}] doesn't exist in the body [${JsonOutput.toJson(body)}]", e)
+			throw new IllegalStateException("Entry for the provided JSON path <${path}> doesn't exist in the body <${JsonOutput.toJson(body)}>", e)
 		}
 	}
 
