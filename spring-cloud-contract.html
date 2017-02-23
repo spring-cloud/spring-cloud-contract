@@ -6778,6 +6778,21 @@ in the configuration. Example:</p>
 }</code></pre>
 </div>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+You can&#8217;t use both a String and <code>execute</code> to perform concatenation. E.g. calling
+<code>header('Authorization', 'Bearer ' + execute('authToken()'))</code> will lead to improper results.
+To make this work just call <code>header('Authorization', execute('authToken()'))</code> and ensure that
+the <code>authToken()</code> method returns everything that you need.
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect4">
