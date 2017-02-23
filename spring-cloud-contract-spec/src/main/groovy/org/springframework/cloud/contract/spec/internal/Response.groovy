@@ -155,7 +155,7 @@ class Response extends Common {
 	@CompileStatic
 	@EqualsAndHashCode(includeFields = true)
 	@ToString(includePackage = false)
-	private class ResponseHeaders extends Headers {
+	class ResponseHeaders extends Headers {
 
 		@Override
 		DslProperty matching(String value) {
