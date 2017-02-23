@@ -15,6 +15,8 @@ and consumers, for HTTP and message-based interactions.
 
 :core_path: ../../../..
 :doc_samples: {core_path}/samples/wiremock-jetty
+:wiremock_tests: {core_path}/spring-cloud-contract-wiremock
+
 
 Modules giving you the possibility to use
 http://wiremock.org[WireMock] with different servers by using the
@@ -320,6 +322,78 @@ On the consumer side, assuming the `resource.json` generated above is
 available on the classpath, you can create a stub using WireMock in a
 number of different ways, including as described above using
 `@AutoConfigureWireMock(stubs="classpath:resource.json")`.
+
+== Generating Contracts using RestDocs
+
+Another thing that can be generated with Spring RestDocs is the Spring Cloud
+Contract DSL file and documentation. If you combine that with Spring Cloud
+WireMock then you're getting both the contracts and stubs.
+
+TIP: You might wonder why this functionality is in the WireMock module.
+Come to think of it, it does make sense since it makes little sense to generate
+only contracts and not generate the stubs. That's why we suggest to do both.
+
+Let's imagine the following test:
+
+[source,java]
+----
+		this.mockMvc.perform(post("/foo")
+					.accept(MediaType.APPLICATION_PDF)
+					.accept(MediaType.APPLICATION_JSON)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content("{\"foo\": 23 }"))
+				.andExpect(status().isOk())
+				.andExpect(content().string("bar"))
+				// first WireMock
+				.andDo(WireMockRestDocs.verify()
+						.jsonPath("$[?(@.foo >= 20)]")
+						.contentType(MediaType.valueOf("application/json"))
+						.stub("shouldGrantABeerIfOldEnough"))
+				// then Contract DSL documentation
+				.andDo(document("index", SpringCloudContractRestDocs.dslContract()));
+----
+
+This will lead in the creation of the stub as presented in the previous
+section, contract will get generated and a documentation file too.
+
+The contract will be called `index.groovy` and look more like this.
+
+[souce,groovy]
+----
+import org.springframework.cloud.contract.spec.Contract
+
+Contract.make {
+    request {
+        method 'POST'
+        url 'http://localhost:8080/foo'
+        body('''
+            {"foo": 23 }
+        ''')
+        headers {
+            header('''Accept''', '''application/json''')
+            header('''Content-Type''', '''application/json''')
+            header('''Host''', '''localhost:8080''')
+            header('''Content-Length''', '''12''')
+        }
+    }
+    response {
+        status 200
+        body('''
+        bar
+        ''')
+        headers {
+            header('''Content-Type''', '''application/json;charset=UTF-8''')
+            header('''Content-Length''', '''3''')
+        }
+        testMatchers {
+            jsonPath('$[?(@.foo >= 20)]', byType())
+        }
+    }
+}
+----
+
+the generated document (example for Asciidoc) will contain a formatted contract
+(the location of this file would be `index/dsl-contract.adoc`).
 
 === Spring Cloud Contract Verifier
 

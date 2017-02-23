@@ -1,0 +1,42 @@
+import org.springframework.cloud.contract.spec.Contract
+
+Contract.make {
+    request {
+        method '{{request_method}}'
+        url '{{request_url}}'
+        {{#request_body_present}}
+        body('''
+            {{request_body}}
+        ''')
+        {{/request_body_present}}
+        {{#request_headers_present}}
+        headers {
+            {{#request_headers}}
+            header('''{{key}}''', '''{{value}}''')
+            {{/request_headers}}
+        }
+        {{/request_headers_present}}
+    }
+    response {
+        status {{response_status}}
+    {{#response_body_present}}
+        body('''
+        {{response_body}}
+        ''')
+    {{/response_body_present}}
+    {{#response_headers_present}}
+        headers {
+        {{#response_headers}}
+            header('''{{key}}''', '''{{value}}''')
+        {{/response_headers}}
+        }
+    {{/response_headers_present}}
+    {{#response_json_paths_present}}
+        testMatchers {
+        {{#response_json_paths}}
+            jsonPath('{{jsonPath}}', byType())
+        {{/response_json_paths}}
+        }
+    {{/response_json_paths_present}}
+    }
+}

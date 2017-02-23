@@ -248,7 +248,7 @@ class Request extends Common {
 	@CompileStatic
 	@EqualsAndHashCode
 	@ToString(includePackage = false)
-	private class RequestHeaders extends Headers {
+	class RequestHeaders extends Headers {
 
 		@Override
 		DslProperty matching(String value) {
