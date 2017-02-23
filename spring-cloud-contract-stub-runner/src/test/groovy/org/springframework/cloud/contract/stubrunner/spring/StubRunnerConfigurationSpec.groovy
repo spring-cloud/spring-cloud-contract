@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.stubrunner.spring
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
@@ -37,7 +38,9 @@ import spock.lang.Specification
 // Not necessary if Spring Cloud is used. TODO: make it work without this.
 // tag::test[]
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
-@SpringBootTest(properties = [" stubrunner.cloud.enabled=false", "stubrunner.camel.enabled=false"])
+@SpringBootTest(properties = [" stubrunner.cloud.enabled=false", 
+		"stubrunner.camel.enabled=false",
+		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}'])
 @AutoConfigureStubRunner
 @DirtiesContext
 @ActiveProfiles("test")
@@ -45,12 +48,13 @@ class StubRunnerConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
 	@Autowired Environment environment
+	@Value('${foo}') Integer foo
 
 	@BeforeClass
 	@AfterClass
 	void setupProps() {
-		System.clearProperty("stubrunner.repository.root");
-		System.clearProperty("stubrunner.classifier");
+		System.clearProperty("stubrunner.repository.root")
+		System.clearProperty("stubrunner.classifier")
 	}
 
 	def 'should start WireMock servers'() {
@@ -88,6 +92,15 @@ class StubRunnerConfigurationSpec extends Specification {
 		and:
 			environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") != null
 			stubFinder.findAllRunningStubs().getPort("fraudDetectionServer") == (environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") as Integer)
+	}
+
+	def 'should be able to interpolate a running stub in the passed test property'() {
+		given:
+			int fraudPort = stubFinder.findAllRunningStubs().getPort("fraudDetectionServer")
+		expect:
+			fraudPort > 0
+			environment.getProperty("foo", Integer) == fraudPort
+			foo == fraudPort
 	}
 
 	@Configuration
