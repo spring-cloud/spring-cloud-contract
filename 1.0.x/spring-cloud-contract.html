@@ -4600,7 +4600,9 @@ its methods as presented below:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
-@SpringBootTest(properties = [" stubrunner.cloud.enabled=false", "stubrunner.camel.enabled=false"])
+@SpringBootTest(properties = [" stubrunner.cloud.enabled=false",
+		"stubrunner.camel.enabled=false",
+		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}'])
 @AutoConfigureStubRunner
 @DirtiesContext
 @ActiveProfiles("test")
@@ -4608,12 +4610,13 @@ class StubRunnerConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
 	@Autowired Environment environment
+	@Value('${foo}') Integer foo
 
 	@BeforeClass
 	@AfterClass
 	void setupProps() {
-		System.clearProperty("stubrunner.repository.root");
-		System.clearProperty("stubrunner.classifier");
+		System.clearProperty("stubrunner.repository.root")
+		System.clearProperty("stubrunner.classifier")
 	}
 
 	def 'should start WireMock servers'() {
@@ -4651,6 +4654,15 @@ class StubRunnerConfigurationSpec extends Specification {
 		and:
 			environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") != null
 			stubFinder.findAllRunningStubs().getPort("fraudDetectionServer") == (environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") as Integer)
+	}
+
+	def 'should be able to interpolate a running stub in the passed test property'() {
+		given:
+			int fraudPort = stubFinder.findAllRunningStubs().getPort("fraudDetectionServer")
+		expect:
+			fraudPort &gt; 0
+			environment.getProperty("foo", Integer) == fraudPort
+			foo == fraudPort
 	}
 
 	@Configuration
