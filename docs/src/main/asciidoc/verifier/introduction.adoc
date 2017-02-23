@@ -1,4 +1,4 @@
-:introduction_url: https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x
+:introduction_url: https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master
 
 === Introduction
 
