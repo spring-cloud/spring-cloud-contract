@@ -507,6 +507,7 @@ $(addBlockSwitches);
 </li>
 <li><a href="#_wiremock_and_spring_mvc_mocks">WireMock and Spring MVC Mocks</a></li>
 <li><a href="#_generating_stubs_using_restdocs">Generating Stubs using RestDocs</a></li>
+<li><a href="#_generating_contracts_using_restdocs">Generating Contracts using RestDocs</a></li>
 <li><a href="#_spring_cloud_contract_verifier">Spring Cloud Contract Verifier</a>
 <ul class="sectlevel2">
 <li><a href="#_introduction">Introduction</a>
@@ -1193,6 +1194,96 @@ and <code>contentType()</code> methods to create request matchers, but not both.
 available on the classpath, you can create a stub using WireMock in a
 number of different ways, including as described above using
 <code>@AutoConfigureWireMock(stubs="classpath:resource.json")</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_generating_contracts_using_restdocs">Generating Contracts using RestDocs</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Another thing that can be generated with Spring RestDocs is the Spring Cloud
+Contract DSL file and documentation. If you combine that with Spring Cloud
+WireMock then you&#8217;re getting both the contracts and stubs.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+You might wonder why this functionality is in the WireMock module.
+Come to think of it, it does make sense since it makes little sense to generate
+only contracts and not generate the stubs. That&#8217;s why we suggest to do both.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s imagine the following test:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">		this.mockMvc.perform(post("/foo")
+					.accept(MediaType.APPLICATION_PDF)
+					.accept(MediaType.APPLICATION_JSON)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content("{\"foo\": 23 }"))
+				.andExpect(status().isOk())
+				.andExpect(content().string("bar"))
+				// first WireMock
+				.andDo(WireMockRestDocs.verify()
+						.jsonPath("$[?(@.foo &gt;= 20)]")
+						.contentType(MediaType.valueOf("application/json"))
+						.stub("shouldGrantABeerIfOldEnough"))
+				// then Contract DSL documentation
+				.andDo(document("index", SpringCloudContractRestDocs.dslContract()));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will lead in the creation of the stub as presented in the previous
+section, contract will get generated and a documentation file too.</p>
+</div>
+<div class="paragraph">
+<p>The contract will be called <code>index.groovy</code> and look more like this.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>import org.springframework.cloud.contract.spec.Contract
+
+Contract.make {
+    request {
+        method 'POST'
+        url 'http://localhost:8080/foo'
+        body('''
+            {"foo": 23 }
+        ''')
+        headers {
+            header('''Accept''', '''application/json''')
+            header('''Content-Type''', '''application/json''')
+            header('''Host''', '''localhost:8080''')
+            header('''Content-Length''', '''12''')
+        }
+    }
+    response {
+        status 200
+        body('''
+        bar
+        ''')
+        headers {
+            header('''Content-Type''', '''application/json;charset=UTF-8''')
+            header('''Content-Length''', '''3''')
+        }
+        testMatchers {
+            jsonPath('$[?(@.foo &gt;= 20)]', byType())
+        }
+    }
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>the generated document (example for Asciidoc) will contain a formatted contract
+(the location of this file would be <code>index/dsl-contract.adoc</code>).</p>
 </div>
 </div>
 </div>
