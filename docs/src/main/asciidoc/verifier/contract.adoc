@@ -242,6 +242,12 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/org/springframework/cloud/contract/verifier/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
 ----
 
+
+IMPORTANT: You can't use both a String and `execute` to perform concatenation. E.g. calling
+`header('Authorization', 'Bearer ' + execute('authToken()'))` will lead to improper results.
+To make this work just call `header('Authorization', execute('authToken()'))` and ensure that
+the `authToken()` method returns everything that you need.
+
 ===== Dynamic properties in matchers sections
 
 If you've been working with https://docs.pact.io/[Pact] this might seem familiar. Quite a few users
