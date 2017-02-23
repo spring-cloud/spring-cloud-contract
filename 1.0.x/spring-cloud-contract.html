@@ -1249,7 +1249,7 @@ section, contract will get generated and a documentation file too.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>import org.springframework.cloud.contract.spec.Contract
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">import org.springframework.cloud.contract.spec.Contract
 
 Contract.make {
     request {
@@ -1278,7 +1278,7 @@ Contract.make {
             jsonPath('$[?(@.foo &gt;= 20)]', byType())
         }
     }
-}</pre>
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
