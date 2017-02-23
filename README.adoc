@@ -358,7 +358,7 @@ section, contract will get generated and a documentation file too.
 
 The contract will be called `index.groovy` and look more like this.
 
-[souce,groovy]
+[source,groovy]
 ----
 import org.springframework.cloud.contract.spec.Contract
 
