@@ -507,6 +507,7 @@ $(addBlockSwitches);
 </li>
 <li><a href="#_wiremock_and_spring_mvc_mocks">WireMock and Spring MVC Mocks</a></li>
 <li><a href="#_generating_stubs_using_restdocs">Generating Stubs using RestDocs</a></li>
+<li><a href="#_generating_contracts_using_restdocs">Generating Contracts using RestDocs</a></li>
 <li><a href="#_spring_cloud_contract_verifier">Spring Cloud Contract Verifier</a>
 <ul class="sectlevel2">
 <li><a href="#_introduction">Introduction</a>
@@ -964,10 +965,10 @@ class to obtain an <code>Options</code> instance:</p>
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@AutoConfigureWireMock
 public class WiremockForDocsClassRuleTests {
 
 	// Start WireMock on some dynamic port
+	// for some reason `dynamicPort()` is not working properly
 	@ClassRule
 	public static WireMockClassRule wiremock = new WireMockClassRule(
 			WireMockSpring.options().dynamicPort());
@@ -1193,6 +1194,96 @@ and <code>contentType()</code> methods to create request matchers, but not both.
 available on the classpath, you can create a stub using WireMock in a
 number of different ways, including as described above using
 <code>@AutoConfigureWireMock(stubs="classpath:resource.json")</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_generating_contracts_using_restdocs">Generating Contracts using RestDocs</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Another thing that can be generated with Spring RestDocs is the Spring Cloud
+Contract DSL file and documentation. If you combine that with Spring Cloud
+WireMock then you&#8217;re getting both the contracts and stubs.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+You might wonder why this functionality is in the WireMock module.
+Come to think of it, it does make sense since it makes little sense to generate
+only contracts and not generate the stubs. That&#8217;s why we suggest to do both.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s imagine the following test:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">		this.mockMvc.perform(post("/foo")
+					.accept(MediaType.APPLICATION_PDF)
+					.accept(MediaType.APPLICATION_JSON)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content("{\"foo\": 23 }"))
+				.andExpect(status().isOk())
+				.andExpect(content().string("bar"))
+				// first WireMock
+				.andDo(WireMockRestDocs.verify()
+						.jsonPath("$[?(@.foo &gt;= 20)]")
+						.contentType(MediaType.valueOf("application/json"))
+						.stub("shouldGrantABeerIfOldEnough"))
+				// then Contract DSL documentation
+				.andDo(document("index", SpringCloudContractRestDocs.dslContract()));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will lead in the creation of the stub as presented in the previous
+section, contract will get generated and a documentation file too.</p>
+</div>
+<div class="paragraph">
+<p>The contract will be called <code>index.groovy</code> and look more like this.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">import org.springframework.cloud.contract.spec.Contract
+
+Contract.make {
+    request {
+        method 'POST'
+        url 'http://localhost:8080/foo'
+        body('''
+            {"foo": 23 }
+        ''')
+        headers {
+            header('''Accept''', '''application/json''')
+            header('''Content-Type''', '''application/json''')
+            header('''Host''', '''localhost:8080''')
+            header('''Content-Length''', '''12''')
+        }
+    }
+    response {
+        status 200
+        body('''
+        bar
+        ''')
+        headers {
+            header('''Content-Type''', '''application/json;charset=UTF-8''')
+            header('''Content-Length''', '''3''')
+        }
+        testMatchers {
+            jsonPath('$[?(@.foo &gt;= 20)]', byType())
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>the generated document (example for Asciidoc) will contain a formatted contract
+(the location of this file would be <code>index/dsl-contract.adoc</code>).</p>
 </div>
 </div>
 </div>
@@ -2117,20 +2208,11 @@ example of achieving the same by changing the properties.</p>
 <div class="sect3">
 <h4 id="_dependencies">Dependencies</h4>
 <div class="paragraph">
-<p>Spring Cloud Contract Verifier and Stub Runner are using the following libraries</p>
+<p>The best way to add the dependencies is to just use the proper <code>starter</code> dependency.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="http://wiremock.org/">WireMock</a></p>
-</li>
-<li>
-<p><a href="https://github.com/jayway/JsonPath">Jayway JSONPath</a></p>
-</li>
-<li>
-<p><a href="https://github.com/marcingrzejszczak/jsonassert">JSONAssert from Marcin Grzejszczak</a></p>
-</li>
-</ul>
+<div class="paragraph">
+<p>For <code>stub-runner</code> use <code>spring-cloud-starter-stub-runner</code> and when you&#8217;re using a plugin just add
+<code>spring-cloud-starter-contract-verifier</code>.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2545,6 +2627,7 @@ one to one to the contents of the repo.</p>
 		&lt;java.version&gt;1.8&lt;/java.version&gt;
 		&lt;spring-cloud-contract.version&gt;1.0.4.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
 		&lt;spring-cloud-dependencies.version&gt;Camden.BUILD-SNAPSHOT&lt;/spring-cloud-dependencies.version&gt;
+		&lt;excludeBuildFolders&gt;true&lt;/excludeBuildFolders&gt;
 	&lt;/properties&gt;
 
 	&lt;dependencyManagement&gt;
@@ -2631,7 +2714,7 @@ one to one to the contents of the repo.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>As you can see there are no dependencies other than the Spring Cloud Contract Verifier Maven plugin.
+<p>As you can see there are no dependencies other than the Spring Cloud Contract Maven Plugin.
 Those poms are necessary for the consumer side to run <code>mvn clean install -DskipTests</code> to locally install
  stubs of the producer project.</p>
 </div>
@@ -3503,7 +3586,7 @@ Let&#8217;s take a look at the following example:</p>
 			&lt;baseClassMapping&gt;
 				&lt;contractPackageRegex&gt;.*com.*&lt;/contractPackageRegex&gt;
 				&lt;baseClassFQN&gt;com.example.TestBase&lt;/baseClassFQN&gt;
-			&lt;/baseClassMapping &gt;
+			&lt;/baseClassMapping&gt;
 		&lt;/baseClassMappings&gt;
 	&lt;/configuration&gt;
 &lt;/plugin&gt;</code></pre>
@@ -3524,7 +3607,7 @@ will be extending the <code>com.example.ComBase</code> whereas the rest of tests
 <div class="sect4">
 <h5 id="_invoking_generated_tests_2">Invoking generated tests</h5>
 <div class="paragraph">
-<p>Spring Cloud Contract Verifier Maven Plugin generates verification code into directory <code>/generated-test-sources/contractVerifier</code> and attach this directory to <code>testCompile</code> goal.</p>
+<p>Spring Cloud Contract Maven Plugin generates verification code into directory <code>/generated-test-sources/contractVerifier</code> and attach this directory to <code>testCompile</code> goal.</p>
 </div>
 <div class="paragraph">
 <p>For Groovy Spock code use:</p>
@@ -4456,7 +4539,7 @@ Check their <a href="https://wiki.eclipse.org/Aether">docs</a> for more informat
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">/*
- *  Copyright 2013-2016 the original author or authors.
+ *  Copyright 2013-2017 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -4608,7 +4691,9 @@ its methods as presented below:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
-@SpringBootTest(properties = [" stubrunner.cloud.enabled=false", "stubrunner.camel.enabled=false"])
+@SpringBootTest(properties = [" stubrunner.cloud.enabled=false",
+		"stubrunner.camel.enabled=false",
+		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}'])
 @AutoConfigureStubRunner
 @DirtiesContext
 @ActiveProfiles("test")
@@ -4616,12 +4701,13 @@ class StubRunnerConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
 	@Autowired Environment environment
+	@Value('${foo}') Integer foo
 
 	@BeforeClass
 	@AfterClass
 	void setupProps() {
-		System.clearProperty("stubrunner.repository.root");
-		System.clearProperty("stubrunner.classifier");
+		System.clearProperty("stubrunner.repository.root")
+		System.clearProperty("stubrunner.classifier")
 	}
 
 	def 'should start WireMock servers'() {
@@ -4659,6 +4745,15 @@ class StubRunnerConfigurationSpec extends Specification {
 		and:
 			environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") != null
 			stubFinder.findAllRunningStubs().getPort("fraudDetectionServer") == (environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") as Integer)
+	}
+
+	def 'should be able to interpolate a running stub in the passed test property'() {
+		given:
+			int fraudPort = stubFinder.findAllRunningStubs().getPort("fraudDetectionServer")
+		expect:
+			fraudPort &gt; 0
+			environment.getProperty("foo", Integer) == fraudPort
+			foo == fraudPort
 	}
 
 	@Configuration
@@ -5101,6 +5196,43 @@ the Stub Runner Boot.</p>
 <div class="paragraph">
 <p>Where <code>port</code> means the port of the WireMock server.</p>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+Starting from version 1.0.4 as a version you can provide a range of versions that you would like
+the Stub Runner to take into consideration. You can read more about the <a href="https://wiki.eclipse.org/Aether/New_and_Noteworthy#Version_Ranges">Aether versioning ranges here</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Taken from <a href="http://download.eclipse.org/aether/aether-core/0.9.0/apidocs/org/eclipse/aether/util/version/GenericVersionScheme.html">Aether Docs</a>:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>This scheme accepts versions of any form, interpreting a version as a sequence of numeric and alphabetic segments. The characters '-', '_', and '.' as well as the mere
+transitions from digit to letter and vice versa delimit the version segments. Delimiters are treated as equivalent.</p>
+</div>
+<div class="paragraph">
+<p>Numeric segments are compared mathematically, alphabetic segments are compared lexicographically and case-insensitively. However, the following qualifier strings are
+recognized and treated specially: "alpha" = "a" &lt; "beta" = "b" &lt; "milestone" = "m" &lt; "cr" = "rc" &lt; "snapshot" &lt; "final" = "ga" &lt; "sp". All of those well-known qualifiers
+are considered smaller/older than other strings. An empty segment/string is equivalent to 0.</p>
+</div>
+<div class="paragraph">
+<p>In addition to the above mentioned qualifiers, the tokens "min" and "max" may be used as final version segment to denote the smallest/greatest version having a given prefix.
+For example, "1.2.min" denotes the smallest version in the 1.2 line, "1.2.max" denotes the greatest version in the 1.2 line. A version range of the form "[M.N.*]" is short for "[M.N.min, M.N.max]".</p>
+</div>
+<div class="paragraph">
+<p>Numbers and strings are considered incomparable against each other. Where version segments of different kind would collide, comparison will instead assume that the previous
+segments are padded with trailing 0 or "ga" segments, respectively, until the kind mismatch is resolved, e.g. "1-alpha" = "1.0.0-alpha" &lt; "1.0.1-ga" = "1.0.1".</p>
+</div>
+</blockquote>
+</div>
 </div>
 </div>
 </div>
@@ -5136,7 +5268,7 @@ the Stub Runner Boot.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">/*
- *  Copyright 2013-2016 the original author or authors.
+ *  Copyright 2013-2017 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -5515,7 +5647,7 @@ Remember to annotate your test class with <code>@AutoConfigureMessageVerifier</c
 <div class="content">
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;!--
-  ~  Copyright 2013-2016 the original author or authors.
+  ~  Copyright 2013-2017 the original author or authors.
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
@@ -6740,6 +6872,21 @@ in the configuration. Example:</p>
 }</code></pre>
 </div>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+You can&#8217;t use both a String and <code>execute</code> to perform concatenation. E.g. calling
+<code>header('Authorization', 'Bearer ' + execute('authToken()'))</code> will lead to improper results.
+To make this work just call <code>header('Authorization', execute('authToken()'))</code> and ensure that
+the <code>authToken()</code> method returns everything that you need.
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect4">
@@ -6813,6 +6960,12 @@ be of the same type as the type defined in the body of the response in the contr
 <code>byType</code> can take a closure where you can set <code>minOccurrence</code> and <code>maxOccurrence</code>.
 That way you can assert on the size of the collection.</p>
 </li>
+<li>
+<p><code>byCommand(&#8230;&#8203;)</code> - the value taken from the response via the provided JSON Path will be
+passed as an input to the custom method that you&#8217;re providing. E.g. <code>byCommand('foo($it)')</code>
+will result in calling a <code>foo</code> method to which the value matching the JSON Path will get
+ passed.</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
@@ -6871,6 +7024,8 @@ That way you can assert on the size of the collection.</p>
 				valueWithMinMax: [
 					1,2,3
 				],
+				valueWithMinEmpty: [],
+				valueWithMaxEmpty: [],
 		])
 		testMatchers {
 			// asserts the jsonpath value against manual regex
@@ -6901,6 +7056,16 @@ That way you can assert on the size of the collection.</p>
 				minOccurrence(1)
 				maxOccurrence(3)
 			})
+			jsonPath('$.valueWithMinEmpty', byType {
+				// results in verification of size of array (min 0)
+				minOccurrence(0)
+			})
+			jsonPath('$.valueWithMaxEmpty', byType {
+				// results in verification of size of array (max 0)
+				maxOccurrence(0)
+			})
+			// will execute a method `assertThatValueIsANumber`
+			jsonPath('$.duck', byCommand('assertThatValueIsANumber($it)'))
 		}
 		headers {
 			contentType(applicationJson())
@@ -6975,7 +7140,12 @@ assertions and the one from matchers with an <code>and</code> section):</p>
  assertThat((Object) parsedJson.read("$.valueWithMax")).isInstanceOf(java.util.List.class);
  assertThat(parsedJson.read("$.valueWithMax", java.util.Collection.class).size()).isLessThanOrEqualTo(3);
  assertThat((Object) parsedJson.read("$.valueWithMinMax")).isInstanceOf(java.util.List.class);
- assertThat(parsedJson.read("$.valueWithMinMax", java.util.Collection.class).size()).isStrictlyBetween(1, 3);</code></pre>
+ assertThat(parsedJson.read("$.valueWithMinMax", java.util.Collection.class).size()).isBetween(1, 3);
+ assertThat((Object) parsedJson.read("$.valueWithMinEmpty")).isInstanceOf(java.util.List.class);
+ assertThat(parsedJson.read("$.valueWithMinEmpty", java.util.Collection.class).size()).isGreaterThanOrEqualTo(0);
+ assertThat((Object) parsedJson.read("$.valueWithMaxEmpty")).isInstanceOf(java.util.List.class);
+ assertThat(parsedJson.read("$.valueWithMaxEmpty", java.util.Collection.class).size()).isLessThanOrEqualTo(0);
+ assertThatValueIsANumber(parsedJson.read("$.duck"));</code></pre>
 </div>
 </div>
 <div class="paragraph">
