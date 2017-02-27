@@ -29,7 +29,6 @@ import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
 
 import java.util.regex.Pattern
-
 /**
  * @author Jakub Kubrynski, codearte.io
  */
@@ -2171,6 +2170,47 @@ World.'''"""
 				response {
 					status 200
 					body(12000)
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		and:
+			builder.appendTo(blockBuilder)
+			String test = blockBuilder.toString()
+		when:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		then:
+			requestAssertion(test)
+			responseAssertion(test)
+		where:
+			methodBuilderName                                    | methodBuilder                                                                               | requestAssertion                                                                      | responseAssertion
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | { String body -> body.contains("body('''12000''')") }                                 | { String body -> body.contains('responseBody == "12000"') }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | { String body -> body.contains('body("12000")') }                                     | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000");') }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String body -> body.contains(""".method('GET', entity('12000', 'text/plain'))""") } | { String body -> body.contains('responseBody == "12000"') }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String body -> body.contains(""".method("GET", entity("12000", "text/plain"))""") } | { String body -> body.contains('assertThat(responseBody).isEqualTo("12000")') }
+	}
+
+	@Issue("#230")
+	def "should manage to reference request in response [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url '/api/v1/xxxx'
+					headers {
+						header(authorization(), "secret")
+					}
+					body(foo: "bar")
+				}
+				response {
+					status 200
+					headers {
+						header(authorization(), fromRequest().headers(authorization()))
+					}
+					body(
+							url: fromRequest().url(),
+							headers: fromRequest().headers("Authorization")
+					)
 				}
 			}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)

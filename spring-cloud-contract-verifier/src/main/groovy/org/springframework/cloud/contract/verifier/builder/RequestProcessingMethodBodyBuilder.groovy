@@ -17,25 +17,26 @@
 package org.springframework.cloud.contract.verifier.builder
 
 import groovy.json.JsonOutput
+import groovy.transform.Immutable
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.BodyMatchers
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
-import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.QueryParameter
+import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.Response
 import org.springframework.cloud.contract.spec.internal.Url
-import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.ContentType
+import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromContent
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromHeader
-
 /**
  * An abstraction for creating a test method that includes processing of an HTTP request
  *
@@ -155,6 +156,12 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	}
 
 	@Override
+	protected void validateResponseBodyBlock(BlockBuilder bb, BodyMatchers bodyMatchers, Object responseBody) {
+		super.validateResponseBodyBlock(bb, bodyMatchers, responseBody)
+
+	}
+
+	@Override
 	protected ContentType getResponseContentType() {
 		ContentType contentType = recognizeContentTypeFromHeader(response.headers)
 		if (contentType == ContentType.UNKNOWN) {
@@ -213,5 +220,23 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 
 	private boolean hasQueryParams(Url url) {
 		return url.queryParameters
+	}
+}
+
+@Immutable
+class RequestTemplateModel {
+	final String url
+	final Map<String, String> query
+	final Map<String, String> headers
+	final String body
+
+	static RequestTemplateModel from(final Request request) {
+		String url = MapConverter.getTestSideValues(request.url ?: request.urlPath)
+		Map<String, String> query = (request.url ?: request.urlPath)
+				.queryParameters?.parameters?.collectEntries { [(it.name) : MapConverter.getTestSideValues(it)] }
+		Map<String, String> headers = (request.headers?.entries?.collectEntries {
+			[(it.name) : MapConverter.getTestSideValues(it)] })
+		String body = MapConverter.getTestSideValues(request.body)
+		return new RequestTemplateModel(url, query, headers, body)
 	}
 }

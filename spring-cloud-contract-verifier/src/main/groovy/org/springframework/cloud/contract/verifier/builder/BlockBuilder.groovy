@@ -114,6 +114,11 @@ class BlockBuilder {
 		return character == "{" || character == toAdd
 	}
 
+	BlockBuilder updateContents(String contents) {
+		this.builder.replace(0, this.builder.length(), contents)
+		return this
+	}
+
 	@Override
 	String toString() {
 		return builder.toString()

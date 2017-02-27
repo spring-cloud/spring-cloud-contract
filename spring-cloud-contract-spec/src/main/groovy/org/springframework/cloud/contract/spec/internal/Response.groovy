@@ -118,6 +118,10 @@ class Response extends Common {
 		closure()
 	}
 
+	FromRequest fromRequest() {
+		return new FromRequest()
+	}
+
 	@Override
 	DslProperty value(ClientDslProperty client, ServerDslProperty server) {
 		if (client.clientValue instanceof Pattern) {
