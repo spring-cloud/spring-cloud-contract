@@ -74,6 +74,19 @@ public class ResourcesFileSource implements FileSource {
 		throw new IllegalStateException("Cannot create file for " + name);
 	}
 
+	@Override public TextFile getTextFileNamed(String name) {
+		for (FileSource resource : this.sources) {
+			TextFile file = resource.getTextFileNamed(name);
+			try {
+				file.readContentsAsString();
+				return file;
+			} catch (RuntimeException e) {
+				// Ignore
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public void createIfNecessary() {
 		throw new UnsupportedOperationException("Resource file sources are read-only");
@@ -154,6 +167,10 @@ public class ResourcesFileSource implements FileSource {
 			}
 		}
 		return false;
+	}
+
+	@Override public void deleteFile(String name) {
+
 	}
 
 }

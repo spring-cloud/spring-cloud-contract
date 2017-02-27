@@ -31,7 +31,7 @@ import org.springframework.cloud.contract.spec.internal.Response
  */
 @TypeChecked
 @EqualsAndHashCode
-@ToString(includeFields = true, includePackage = false, includeNames = true)
+@ToString(includePackage = false, includeNames = true)
 class Contract {
 
 	/**
@@ -40,15 +40,43 @@ class Contract {
 	 * take precedence
 	 */
 	Integer priority
+	/**
+	 * The HTTP request part of the contract
+	 */
 	Request request
+	/**
+	 * The HTTP response part of the contract
+	 */
 	Response response
+	/**
+	 * The label by which you'll reference the contract on the message consumer side
+	 */
 	String label
+	/**
+	 * Description of a contract. May be used in the documentation generation.
+	 */
 	String description
+	/**
+	 * Name of the generated test / stub. If not provided then the file name will be used.
+	 * If you have multiple contracts in a single file and you don't provide this value
+	 * then a prefix will be added to the file with the index number while iterating
+	 * over the collection of contracts.
+	 *
+	 * Remember to have a unique name for every single contract. Otherwise you might
+	 * generate tests that have two identical methods or you will override the stubs.
+	 */
+	String name
+	/**
+	 * The input side of a messaging contract.
+	 */
 	Input input
+	/**
+	 * The output side of a messaging contract.
+	 */
 	OutputMessage outputMessage
 
 	/**
-	 * Whether the contract should be ignored or not
+	 * Whether the contract should be ignored or not.
 	 */
 	boolean ignored
 
@@ -66,6 +94,10 @@ class Contract {
 
 	void priority(int priority) {
 		this.priority = priority
+	}
+
+	void name(String name) {
+		this.name = name
 	}
 
 	void label(String label) {

@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.verifier.util
 
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.springframework.cloud.contract.spec.Contract
 
@@ -28,17 +29,63 @@ import org.springframework.cloud.contract.spec.Contract
  * @since 1.0.0
  */
 @CompileStatic
+@Slf4j
 class ContractVerifierDslConverter {
 
+	@Deprecated
 	static Contract convert(String dsl) {
-		return groovyShell().evaluate(dsl) as Contract
+		try {
+			return groovyShell().evaluate(dsl) as Contract
+		} catch (Exception e) {
+			log.error("Exception occurred while trying to evaluate the contract", e)
+			throw new DslParseException(e)
+		}
 	}
 
+	@Deprecated
 	static Contract convert(File dsl) {
-		return groovyShell().evaluate(dsl) as Contract
+		try {
+			return groovyShell().evaluate(dsl) as Contract
+		} catch (Exception e) {
+			log.error("Exception occurred while trying to evaluate the contract", e)
+			throw new DslParseException(e)
+		}
+	}
+
+	static Collection<Contract> convertAsCollection(String dsl) {
+		try {
+			Object object = groovyShell().evaluate(dsl)
+			return listOfContracts(object)
+		} catch (DslParseException e) {
+			throw e
+		} catch (Exception e) {
+			log.error("Exception occurred while trying to evaluate the contract", e)
+			throw new DslParseException(e)
+		}
+	}
+
+	static Collection<Contract> convertAsCollection(File dsl) {
+		try {
+			Object object = groovyShell().evaluate(dsl)
+			return listOfContracts(object)
+		} catch (DslParseException e) {
+			throw e
+		} catch (Exception e) {
+			log.error("Exception occurred while trying to evaluate the contract at path [${dsl.path}]", e)
+			throw new DslParseException(e)
+		}
 	}
 
 	private static GroovyShell groovyShell() {
 		return new GroovyShell(ContractVerifierDslConverter.classLoader, new Binding(), new CompilerConfiguration(sourceEncoding: 'UTF-8'))
+	}
+
+	private static Collection<Contract> listOfContracts(object) {
+		if (object instanceof Collection) {
+			return object as Collection<Contract>
+		} else if (!object instanceof Contract) {
+			throw new DslParseException("Contract is not returning a Contract or list of Contracts")
+		}
+		return [object] as Collection<Contract>
 	}
 }

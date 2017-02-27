@@ -17,6 +17,9 @@
 package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.CompileStatic
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
+
 /**
  * Represents a property that will become an executable method in the
  * generated tests
@@ -24,6 +27,8 @@ import groovy.transform.CompileStatic
  * @since 1.0.0
  */
 @CompileStatic
+@EqualsAndHashCode
+@ToString(includePackage = false, includeNames = true)
 class ExecutionProperty implements Serializable {
 
 	private static final String PLACEHOLDER_VALUE = '$it'

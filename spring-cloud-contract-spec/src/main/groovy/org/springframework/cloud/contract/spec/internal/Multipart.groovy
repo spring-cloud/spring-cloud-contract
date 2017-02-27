@@ -20,8 +20,8 @@ import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
-@ToString(includePackage = false, includeFields = true, includeNames = true)
-@EqualsAndHashCode(includeFields = true)
+@ToString(includePackage = false, includeFields = true, includeNames = true, includeSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @CompileStatic
 class Multipart extends DslProperty {
 

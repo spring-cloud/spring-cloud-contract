@@ -20,8 +20,8 @@ import groovy.json.JsonBuilder
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.internal.Headers
-import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.ContentUtils
 
@@ -51,7 +51,7 @@ abstract class BaseWireMockStubStrategy {
 	}
 
 	/**
-	 * For the given {@link org.springframework.cloud.contract.verifier.util.ContentType} returns the String version of the body
+	 * For the given {@link ContentType} returns the String version of the body
 	 */
 	String parseBody(Object value, ContentType contentType) {
 		return parseBody(value.toString(), contentType)

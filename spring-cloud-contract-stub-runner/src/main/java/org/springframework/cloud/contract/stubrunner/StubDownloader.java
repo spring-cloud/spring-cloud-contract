@@ -19,6 +19,16 @@ package org.springframework.cloud.contract.stubrunner;
 import java.io.File;
 import java.util.Map;
 
+/**
+ * Contract for providing a tuple containing configuration of a downloaded
+ * and unpacked stub, together with the file location of that extracted artifact.
+ *
+ * Note: Actually the artifact doesn't have to be a JAR. method name contains
+ * that suffix for historical reasons.
+ *
+ * @author Marcin Grzejszczak
+ * @since 1.0.0
+ */
 public interface StubDownloader {
 
 	/**

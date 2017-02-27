@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,6 +33,7 @@ import org.springframework.cloud.contract.spec.internal.DslProperty;
 import org.springframework.cloud.contract.spec.internal.Headers;
 import org.springframework.cloud.contract.spec.internal.OutputMessage;
 import org.springframework.cloud.contract.stubrunner.AvailablePortScanner.PortCallback;
+import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStub;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.cloud.contract.verifier.util.BodyExtractor;
@@ -47,14 +49,20 @@ class StubRunnerExecutor implements StubFinder {
 	private final AvailablePortScanner portScanner;
 	private final MessageVerifier<?> contractVerifierMessaging;
 	private StubServer stubServer;
+	private final List<HttpServerStub> serverStubs;
 
-	public StubRunnerExecutor(AvailablePortScanner portScanner, MessageVerifier<?> contractVerifierMessaging) {
+	StubRunnerExecutor(AvailablePortScanner portScanner, MessageVerifier<?> contractVerifierMessaging, List<HttpServerStub> serverStubs) {
 		this.portScanner = portScanner;
 		this.contractVerifierMessaging = contractVerifierMessaging;
+		this.serverStubs = serverStubs;
 	}
 
-	protected StubRunnerExecutor(AvailablePortScanner portScanner) {
-		this(portScanner, new NoOpStubMessages());
+	StubRunnerExecutor(AvailablePortScanner portScanner, List<HttpServerStub> serverStubs) {
+		this(portScanner, new NoOpStubMessages(), serverStubs);
+	}
+
+	StubRunnerExecutor(AvailablePortScanner portScanner) {
+		this(portScanner, new NoOpStubMessages(), new ArrayList<HttpServerStub>());
 	}
 
 	public RunningStubs runStubs(StubRunnerOptions stubRunnerOptions, StubRepository repository,
@@ -224,29 +232,28 @@ class StubRunnerExecutor implements StubFinder {
 
 	private void startStubServers(final StubRunnerOptions stubRunnerOptions, final StubConfiguration stubConfiguration,
 			StubRepository repository) {
-		final List<WiremockMappingDescriptor> mappings = repository.getProjectDescriptors();
+		final List<File> mappings = repository.getStubs();
 		final Collection<Contract> contracts = repository.contracts;
 		Integer port = stubRunnerOptions.port(stubConfiguration);
 		if (!contracts.isEmpty() && !hasRequest(contracts)) {
 			if (log.isDebugEnabled()) {
 				log.debug("There are no HTTP related contracts. Won't start any servers");
 			}
-			this.stubServer = new StubServer(stubConfiguration, mappings, contracts, new NoOpHttpServerStub());
+			this.stubServer = new StubServer(stubConfiguration, mappings, contracts, new NoOpHttpServerStub()).start();
 			return;
 		}
 		if (port != null && port >= 0) {
-			this.stubServer = new StubServer(stubConfiguration, mappings, contracts, new WireMockHttpServerStub(port));
+			this.stubServer = new StubServer(stubConfiguration, mappings, contracts, httpServerStub()).start(port);
 		}
 		else {
 			this.stubServer = this.portScanner.tryToExecuteWithFreePort(new PortCallback<StubServer>() {
 				@Override
 				public StubServer call(int availablePort) {
 					return new StubServer(stubConfiguration, mappings, contracts,
-							new WireMockHttpServerStub(availablePort));
+							httpServerStub()).start(availablePort);
 				}
 			});
 		}
-		this.stubServer = this.stubServer.start();
 	}
 
 	private boolean hasRequest(Collection<Contract> contracts) {
@@ -256,6 +263,15 @@ class StubRunnerExecutor implements StubFinder {
 			}
 		}
 		return false;
+	}
+
+	private HttpServerStub httpServerStub() {
+		// the default impl is the WireMock one
+		if (this.serverStubs.isEmpty()) {
+			return new WireMockHttpServerStub();
+		}
+		// first one wins
+		return this.serverStubs.get(0);
 	}
 
 }

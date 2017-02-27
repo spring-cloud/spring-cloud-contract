@@ -1,5 +1,6 @@
 :core_path: ../../../../..
 :plugins_path: ../../../../../spring-cloud-contract-tools
+:converters_path: {plugins_path}/spring-cloud-contract-converters
 :verifier_root_path: {core_path}/spring-cloud-contract-verifier
 :contract_spec_path: {core_path}/spring-cloud-contract-spec
 :samples_path: {core_path}/samples
@@ -7,8 +8,9 @@
 :stubrunner_core_path: {core_path}/spring-cloud-contract-stub-runner
 :standalone_samples_path: {samples_path}/standalone/dsl
 :standalone_messaging_samples_path: {samples_path}/standalone/messaging
-:tests_path: ../../../../../tests
-:samples_url: https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/1.0.x
+:standalone_pact_path: {samples_path}/standalone/pact
+:tests_path: {core_path}/tests
+:samples_url: https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master
 
 include::introduction.adoc[]
 

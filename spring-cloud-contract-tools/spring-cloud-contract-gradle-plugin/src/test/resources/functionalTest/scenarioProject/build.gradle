@@ -20,14 +20,13 @@ buildscript {
 		mavenLocal()
 	}
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE")
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.1.RELEASE")
 	}
 }
 
 ext {
 	restAssuredVersion = '2.5.0'
 	spockVersion = '1.0-groovy-2.4'
-	wiremockVersion = '2.0.10-beta'
 
 	contractVerifierStubsBaseDirectory = 'src/test/resources/stubs'
 }
@@ -47,7 +46,10 @@ subprojects {
 		testCompile "org.codehaus.groovy:groovy-all:2.4.5"
 		testCompile "org.spockframework:spock-core:$spockVersion"
 		testCompile("junit:junit:4.12")
-		testCompile "com.github.tomakehurst:wiremock:$wiremockVersion"
+		testCompile "com.github.tomakehurst:wiremock:${wiremockVersion}"
+		testCompile "com.toomuchcoding.jsonassert:jsonassert:${jsonAssertVersion}"
+		testCompile "org.assertj:assertj-core:2.4.1"
+		testCompile "org.springframework.cloud:spring-cloud-contract-verifier:${verifierVersion}"
 	}
 }
 
@@ -133,7 +135,7 @@ configure(project(':loanApplicationService')) {
 	task copyCollaboratorStubs(type: Copy) {
 		File fraudBuildDir = project(':fraudDetectionService').buildDir
 		from(new File(fraudBuildDir, "/production/${project(':fraudDetectionService').name}-stubs/"))
-		into "src/test/resources/"
+		into "src/test/resources/mappings"
 	}
 
 	generateContractTests.dependsOn('copyCollaboratorStubs')

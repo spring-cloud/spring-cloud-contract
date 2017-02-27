@@ -25,8 +25,8 @@ import groovy.transform.ToString
  *
  * @since 1.0.0
  */
-@ToString(includePackage = false, includeFields = true, includeNames = true)
-@EqualsAndHashCode(includeFields = true)
+@ToString(includePackage = false, includeNames = true, includeSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @CompileStatic
 class Body extends DslProperty {
 

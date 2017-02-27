@@ -28,7 +28,7 @@ import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunnerFactory;
 import org.springframework.cloud.contract.stubrunner.RunningStubs;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
-import org.springframework.cloud.contract.stubrunner.StubDownloader;
+import org.springframework.cloud.contract.stubrunner.StubDownloaderBuilderProvider;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
@@ -53,8 +53,7 @@ public class StubRunnerConfiguration {
 
 	@Autowired(required = false)
 	private MessageVerifier<?> contractVerifierMessaging;
-	@Autowired(required = false)
-	private StubDownloader stubDownloader;
+	private StubDownloaderBuilderProvider provider = new StubDownloaderBuilderProvider();
 	@Autowired
 	private StubRunnerProperties props;
 	@Autowired
@@ -73,7 +72,7 @@ public class StubRunnerConfiguration {
 		}
 		StubRunnerOptions stubRunnerOptions = builder.build();
 		BatchStubRunner batchStubRunner = new BatchStubRunnerFactory(stubRunnerOptions,
-				this.stubDownloader != null ? this.stubDownloader
+				this.provider.hasBuilder() ? this.provider.get().build(stubRunnerOptions)
 						: new AetherStubDownloader(stubRunnerOptions),
 				this.contractVerifierMessaging != null ? this.contractVerifierMessaging
 						: new NoOpStubMessages()).buildBatchStubRunner();

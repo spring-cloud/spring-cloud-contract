@@ -14,26 +14,30 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.stubrunner
+package org.springframework.cloud.contract.stubrunner.provider.wiremock
 
 import com.github.tomakehurst.wiremock.http.RequestMethod
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import spock.lang.Specification
 
-class MappingDescriptorSpec extends Specification {
+class WireMockHttpServerStubSpec extends Specification {
 	public static
 	final File MAPPING_DESCRIPTOR = new File('src/test/resources/repository/mappings/spring/cloud/ping/ping.json')
 
 	def 'should describe stub mapping'() {
 		given:
-		WiremockMappingDescriptor mappingDescriptor = new WiremockMappingDescriptor(MAPPING_DESCRIPTOR)
+		WireMockHttpServerStub mappingDescriptor = new WireMockHttpServerStub().start() as WireMockHttpServerStub
 
-		expect:
-		with(mappingDescriptor.mapping) {
-			request.method == RequestMethod.GET
-			request.url == '/ping'
-			response.status == 200
-			response.body == 'pong'
-			response.headers.contentTypeHeader.mimeTypePart() == 'text/plain'
+		when:
+		StubMapping mapping = mappingDescriptor.getMapping(MAPPING_DESCRIPTOR)
+
+		then:
+		with(mapping) {
+			assert request.method == RequestMethod.GET
+			assert request.url == '/ping'
+			assert response.status == 200
+			assert response.body == 'pong'
+			assert response.headers.contentTypeHeader.mimeTypePart() == 'text/plain'
 		}
 	}
 }

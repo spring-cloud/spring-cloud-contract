@@ -1,0 +1,8 @@
+# Example of a custom HTTP Server Stub
+org.springframework.cloud.contract.stubrunner.HttpServerStub=\
+org.springframework.cloud.contract.stubrunner.provider.moco.MocoHttpServerStub
+
+# Example of a custom Stub Downloader Provider
+org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder=\
+org.springframework.cloud.contract.stubrunner.provider.moco.ClasspathStubProvider
+

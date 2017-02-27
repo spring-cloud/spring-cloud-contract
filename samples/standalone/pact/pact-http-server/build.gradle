@@ -1,0 +1,78 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		mavenLocal()
+		maven { url "http://repo.spring.io/snapshot" }
+		maven { url "http://repo.spring.io/milestone" }
+		maven { url "http://repo.spring.io/release" }
+	}
+	dependencies {
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.0.BUILD-SNAPSHOT"
+		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
+		//tag::pact_dependency[]
+		classpath "org.springframework.cloud:spring-cloud-contract-spec-pact:${findProperty('verifierVersion') ?: verifierVersion}"
+		classpath 'au.com.dius:pact-jvm-model:2.4.18'
+		//end::pact_dependency[]
+	}
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+	maven { url "http://repo.spring.io/snapshot" }
+	maven { url "http://repo.spring.io/milestone" }
+	maven { url "http://repo.spring.io/release" }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'spring-boot'
+apply plugin: 'spring-cloud-contract'
+apply plugin: 'maven-publish'
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:$BOM_VERSION"
+	}
+}
+
+contracts {
+	packageWithBaseClasses = 'com.example.fraud'
+}
+
+dependencies {
+	compile("org.springframework.boot:spring-boot-starter-web")
+	compile("org.springframework.boot:spring-boot-starter-actuator")
+
+	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+}
+
+test {
+	systemProperty 'spring.profiles.active', 'gradle'
+	testLogging {
+		exceptionFormat = 'full'
+	}
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.14'
+}
+
+clean.doFirst {
+	delete "~/.m2/repository/com/example/http-server-pact-gradle"
+}
+
+task resolveDependencies {
+	doLast {
+		project.rootProject.allprojects.each { subProject ->
+			subProject.buildscript.configurations.each { configuration ->
+				configuration.resolve()
+			}
+			subProject.configurations.each { configuration ->
+				configuration.resolve()
+			}
+		}
+	}
+}

@@ -43,6 +43,7 @@ class BasicFunctionalSpec extends ContractVerifierIntegrationSpec {
 			BuildResult result = run(checkAndPublishToMavenLocal())
 		then:
 			result.task(":generateWireMockClientStubs").outcome == SUCCESS
+			result.task(":generateClientStubs").outcome == SUCCESS
 			result.task(":generateContractTests").outcome == SUCCESS
 
 		and: "tests generated"

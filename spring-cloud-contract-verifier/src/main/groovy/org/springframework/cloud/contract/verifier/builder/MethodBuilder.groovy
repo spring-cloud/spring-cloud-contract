@@ -57,8 +57,22 @@ class MethodBuilder {
 		if (log.isDebugEnabled()) {
 			log.debug("Stub content Groovy DSL [$stubContent]")
 		}
-		String methodName = NamesUtil.camelCase(NamesUtil.toLastDot(NamesUtil.afterLast(stubsFile.path, File.separator)))
+		String methodName = methodName(contract, stubsFile, stubContent)
 		return new MethodBuilder(methodName, stubContent, configProperties, contract.ignored || stubContent.ignored)
+	}
+
+	private static String methodName(ContractMetadata contract, File stubsFile, Contract stubContent) {
+		if (stubContent.name) {
+			return NamesUtil.camelCase(NamesUtil.convertIllegalPackageChars(stubContent.name))
+		} else if (contract.convertedContract.size() > 1) {
+			int index = contract.convertedContract.findIndexOf { it == stubContent}
+			return "${camelCasedMethodFromFileName(stubsFile)}_${index}"
+		}
+		return camelCasedMethodFromFileName(stubsFile)
+	}
+
+	private static String camelCasedMethodFromFileName(File stubsFile) {
+		return NamesUtil.camelCase(NamesUtil.toLastDot(NamesUtil.afterLast(stubsFile.path, File.separator)))
 	}
 
 	/**

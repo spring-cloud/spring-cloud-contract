@@ -20,11 +20,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
+import org.springframework.core.io.support.SpringFactoriesLoader;
 
 /**
  * Represents a single instance of ready-to-run stubs. Can run the stubs and then will
@@ -55,10 +57,11 @@ public class StubRunner implements StubRunning {
 			MessageVerifier<?> contractVerifierMessaging) {
 		this.stubsConfiguration = stubsConfiguration;
 		this.stubRunnerOptions = stubRunnerOptions;
-		this.stubRepository = new StubRepository(new File(repositoryPath));
+		List<HttpServerStub> serverStubs = SpringFactoriesLoader.loadFactories(HttpServerStub.class, null);
+		this.stubRepository = new StubRepository(new File(repositoryPath), serverStubs);
 		AvailablePortScanner portScanner = new AvailablePortScanner(
 				stubRunnerOptions.getMinPortValue(), stubRunnerOptions.getMaxPortValue());
-		this.localStubRunner = new StubRunnerExecutor(portScanner, contractVerifierMessaging);
+		this.localStubRunner = new StubRunnerExecutor(portScanner, contractVerifierMessaging, serverStubs);
 	}
 
 	@Override

@@ -17,6 +17,8 @@
 package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.CompileStatic
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
 /**
  * Represents a client side {@link DslProperty}
@@ -24,6 +26,8 @@ import groovy.transform.CompileStatic
  * @since 1.0.0
  */
 @CompileStatic
+@EqualsAndHashCode(callSuper = true)
+@ToString(includeSuper = true)
 class ClientDslProperty extends DslProperty {
 
 	ClientDslProperty(Object singleValue) {

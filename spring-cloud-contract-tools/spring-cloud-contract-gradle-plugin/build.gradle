@@ -23,7 +23,7 @@ ext {
 	]
 }
 
-project.version = findProperty('verifierVersion') ?: '1.0.4.BUILD-SNAPSHOT'
+project.version = findProperty('verifierVersion') ?: '1.1.0.BUILD-SNAPSHOT'
 apply plugin: 'groovy'
 apply from: "$rootDir/gradle/release.gradle"
 apply plugin: 'eclipse'
@@ -63,6 +63,9 @@ dependencies {
 		exclude(group: 'org.codehaus.groovy')
 	}
 	compile("org.springframework.cloud:spring-cloud-contract-stub-runner:${project.version}") {
+		exclude(group: 'org.codehaus.groovy')
+	}
+	compile("org.springframework.cloud:spring-cloud-starter-contract-verifier:${project.version}") {
 		exclude(group: 'org.codehaus.groovy')
 	}
 	testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {

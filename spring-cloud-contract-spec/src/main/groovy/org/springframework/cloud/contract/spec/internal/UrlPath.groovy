@@ -21,12 +21,13 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
 /**
- * Represents a url path
+ * Represents a url path. Syntactic sugar when working with
+ * {@link QueryParameters}. It's logically equal to {@link Url}
  *
  * @since 1.0.0
  */
-@ToString(includePackage = false, includeFields = true, includeNames = true)
-@EqualsAndHashCode(includeFields = true)
+@ToString(includePackage = false, includeFields = true, includeNames = true, includeSuper = true)
+@EqualsAndHashCode(includeFields = true, callSuper = true)
 @CompileStatic
 class UrlPath extends Url {
 

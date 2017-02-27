@@ -28,6 +28,7 @@ import spock.lang.Specification
 
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
 import static org.springframework.cloud.contract.verifier.config.TestFramework.SPOCK
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter.convertAsCollection
 
 class SingleTestGeneratorSpec extends Specification {
 
@@ -93,13 +94,13 @@ class SingleTestGeneratorSpec extends Specification {
 		given:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.targetFramework = testFramework
-			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2)
+			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2, convertAsCollection(file))
 			contract.ignored >> true
 			contract.order >> 2
-			SingleTestGenerator testGenerator = new SingleTestGenerator(properties)
+			JavaTestGenerator testGenerator = new JavaTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass([contract], "test", "test", 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], "test", "test", 'com/foo')
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -163,10 +164,10 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractMetadata contract2 = new ContractMetadata(file2.toPath(), false, 1, null)
 			contract2.ignored >> false
 		and:
-			SingleTestGenerator testGenerator = new SingleTestGenerator(properties)
+		JavaTestGenerator testGenerator = new JavaTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass([contract, contract2], "test", "test", 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract, contract2], "test", "test", 'com/foo')
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -187,13 +188,13 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.testMode = TestMode.JAXRSCLIENT
 			properties.targetFramework = testFramework
-			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2)
+			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2, convertAsCollection(file))
 			contract.ignored >> true
 			contract.order >> 2
-			SingleTestGenerator testGenerator = new SingleTestGenerator(properties)
+			JavaTestGenerator testGenerator = new JavaTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass([contract], "test", "test", 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], "test", "test", 'com/foo')
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -229,18 +230,18 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.targetFramework = testFramework
-			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2)
+			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2, convertAsCollection(file))
 			contract.ignored >> true
 			contract.order >> 2
 		and:
-			ContractMetadata contract2 = new ContractMetadata(secondFile.toPath(), true, 1, 2)
+			ContractMetadata contract2 = new ContractMetadata(secondFile.toPath(), true, 1, 2, convertAsCollection(secondFile))
 			contract2.ignored >> true
 			contract2.order >> 2
 		and:
-			SingleTestGenerator testGenerator = new SingleTestGenerator(properties)
+			JavaTestGenerator testGenerator = new JavaTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass([contract, contract2], "test", "test", 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract, contract2], "test", "test", 'com/foo')
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -275,14 +276,14 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.targetFramework = testFramework
 		and:
-			ContractMetadata contract2 = new ContractMetadata(secondFile.toPath(), true, 1, 2)
+			ContractMetadata contract2 = new ContractMetadata(secondFile.toPath(), true, 1, 2, convertAsCollection(file))
 			contract2.ignored >> false
 			contract2.order >> 2
 		and:
-			SingleTestGenerator testGenerator = new SingleTestGenerator(properties)
+			JavaTestGenerator testGenerator = new JavaTestGenerator()
 
 		when:
-			String clazz = testGenerator.buildClass([contract2], "test", "test", 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract2], "test", "test", 'com/foo')
 
 		then:
 			classStrings.each { clazz.contains(it) }
@@ -344,12 +345,105 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			ContractMetadata contract = new ContractMetadata(file.toPath(), false, 1, null)
 		and:
-			SingleTestGenerator testGenerator = new SingleTestGenerator(properties)
+			SingleTestGenerator testGenerator = new JavaTestGenerator()
 		when:
-			String clazz = testGenerator.buildClass([contract], "test", "test", 'com/foo')
+			String clazz = testGenerator.buildClass(properties, [contract], "test", "test", 'com/foo')
 		then:
 			clazz.contains("RequestSpecification request = given();")
 			clazz.contains("Response response = given().spec(request)")
+	}
+
+	def "should pick the contract's name as the test method"() {
+		given:
+			File secondFile = tmpFolder.newFile()
+			secondFile.write("""
+							org.springframework.cloud.contract.spec.Contract.make {
+								name("MySuperMethod")
+								request {
+									method 'PUT'
+									url 'url'
+								}
+								response {
+									status 200
+								}
+							}
+			""")
+		and:
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties();
+			properties.targetFramework = testFramework
+			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(secondFile))
+			JavaTestGenerator testGenerator = new JavaTestGenerator()
+		when:
+			String clazz = testGenerator.buildClass(properties, [contract], "test", "test", 'com/foo')
+		then:
+			clazz.contains("validate_mySuperMethod()")
+		where:
+			testFramework << [JUNIT, SPOCK]
+	}
+
+	def "should pick the contract's name as the test method when there are multiple contracts"() {
+		given:
+			File secondFile = tmpFolder.newFile()
+			secondFile.write('''
+							(1..2).collect { int index ->
+	org.springframework.cloud.contract.spec.Contract.make {
+		name("shouldHaveIndex${index}")
+		request {
+			method(PUT())
+			headers {
+				contentType(applicationJson())
+			}
+			url "/${index}"
+		}
+		response {
+			status 200
+		}
+	}
+}''')
+		and:
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties();
+			properties.targetFramework = testFramework
+			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(secondFile))
+			JavaTestGenerator testGenerator = new JavaTestGenerator()
+		when:
+			String clazz = testGenerator.buildClass(properties, [contract], "test", "test", 'com/foo')
+		then:
+			clazz.contains("validate_shouldHaveIndex1()")
+			clazz.contains("validate_shouldHaveIndex2()")
+		where:
+			testFramework << [JUNIT, SPOCK]
+	}
+
+	def "should generate the test method when there are multiple contracts without name field"() {
+		given:
+			File secondFile = tmpFolder.newFile()
+			secondFile.write('''
+							(1..2).collect { int index ->
+	org.springframework.cloud.contract.spec.Contract.make {
+		request {
+			method(PUT())
+			headers {
+				contentType(applicationJson())
+			}
+			url "/${index}"
+		}
+		response {
+			status 200
+		}
+	}
+}''')
+		and:
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties();
+			properties.targetFramework = testFramework
+			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(secondFile))
+			JavaTestGenerator testGenerator = new JavaTestGenerator()
+		when:
+			String clazz = testGenerator.buildClass(properties, [contract], "test", "test", 'com/foo')
+		then:
+			clazz.contains("_0() throws Exception")
+			clazz.contains("_1() throws Exception")
+		where:
+			testFramework << [JUNIT, SPOCK]
 	}
 
 

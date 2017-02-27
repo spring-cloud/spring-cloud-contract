@@ -14,26 +14,27 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.contract.verifier.wiremock
+package org.springframework.cloud.contract.verifier.converter
 
 import groovy.io.FileType
-
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
-import org.springframework.cloud.contract.verifier.converter.SingleFileConverter
+import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.util.FileSystemUtils
-
 import spock.lang.Specification
+
+import java.nio.file.Path
+import java.nio.file.Paths
 
 class RecursiveFilesConverterSpec extends Specification {
 
 	private static
-	final Set<Path> EXPECTED_TARGET_FILES = [Paths.get("dslRoot.json"), Paths.get("dir1/dsl1.json"), Paths.get("dir1/dsl1b.json"), Paths.get("dir2/dsl2.json")]
+	final Set<Path> EXPECTED_TARGET_FILES = [Paths.get("dslRoot.json"), Paths.get("dir1/dsl1.json"),
+											 Paths.get("dir1/dsl1b.json"), Paths.get("dir2/dsl2.json"),
+											 Paths.get("dir1/0_dsl1_list.json"), Paths.get("dir1/1_dsl1_list.json"),
+											 Paths.get("dir1/shouldHaveIndex1.json"), Paths.get("dir1/shouldHaveIndex2.json")]
 
 	@Rule
 	public TemporaryFolder tmpFolder = new TemporaryFolder();
@@ -46,12 +47,7 @@ class RecursiveFilesConverterSpec extends Specification {
 			properties.stubsOutputDir = tmpFolder.newFolder("target")
 			FileSystemUtils.copyRecursively(originalSourceRootDirectory, properties.contractsDslDir)
 		and:
-			def singleFileConverterStub = Stub(SingleFileConverter)
-			singleFileConverterStub.canHandleFileName(_) >> { String fileName -> fileName.endsWith(".groovy") }
-			singleFileConverterStub.convertContent(_, _) >> { "converted" }
-			singleFileConverterStub.generateOutputFileNameForInput(_) >> { String inputFileName -> inputFileName.replaceAll('.groovy', '.json') }
-
-			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(singleFileConverterStub, properties)
+			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(properties)
 		when:
 			recursiveFilesConverter.processFiles()
 		then:
@@ -60,7 +56,7 @@ class RecursiveFilesConverterSpec extends Specification {
 			Set<String> relativizedCreatedFiles = getRelativePathsForFilesInDirectory(createdFiles, properties.stubsOutputDir)
 			EXPECTED_TARGET_FILES == relativizedCreatedFiles
 		and:
-			createdFiles.each { it.text == "converted" }
+			createdFiles.each { assert it.text.contains("uuid") }
 	}
 
 	def "should recursively convert matching files with exlusions"() {
@@ -72,12 +68,7 @@ class RecursiveFilesConverterSpec extends Specification {
 			properties.excludedFiles = ["dir1/**"]
 			FileSystemUtils.copyRecursively(originalSourceRootDirectory, properties.contractsDslDir)
 		and:
-			def singleFileConverterStub = Stub(SingleFileConverter)
-			singleFileConverterStub.canHandleFileName(_) >> { String fileName -> fileName.endsWith(".groovy") }
-			singleFileConverterStub.convertContent(_, _) >> { "converted" }
-			singleFileConverterStub.generateOutputFileNameForInput(_) >> { String inputFileName -> inputFileName.replaceAll('.groovy', '.json') }
-
-			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(singleFileConverterStub, properties)
+			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(properties)
 		when:
 			recursiveFilesConverter.processFiles()
 		then:
@@ -86,21 +77,21 @@ class RecursiveFilesConverterSpec extends Specification {
 			Set<String> relativizedCreatedFiles = getRelativePathsForFilesInDirectory(createdFiles, properties.stubsOutputDir)
 			[Paths.get("dslRoot.json"), Paths.get("dir2/dsl2.json")] as Set == relativizedCreatedFiles as Set
 		and:
-			createdFiles.each { it.text == "converted" }
+			createdFiles.each { assert it.text.contains("uuid") }
 	}
 
 	def "on failure should break processing and throw meaningful exception"() {
 		given:
 			def sourceFile = tmpFolder.newFile("test.groovy")
 		and:
-			def singleFileConverterStub = Stub(SingleFileConverter)
-			singleFileConverterStub.canHandleFileName(_) >> { true }
-			singleFileConverterStub.convertContent(_, _) >> { throw new NullPointerException("Test conversion error") }
-			singleFileConverterStub.generateOutputFileNameForInput(_) >> { String inputFileName -> "${inputFileName}2" }
+			def stubGenerator = Stub(StubGenerator)
+			stubGenerator.canHandleFileName(_) >> { true }
+			stubGenerator.convertContents(_, _) >> { throw new NullPointerException("Test conversion error") }
+			stubGenerator.generateOutputFileNameForInput(_) >> { String inputFileName -> "${inputFileName}2" }
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.contractsDslDir = tmpFolder.root
 			properties.stubsOutputDir = tmpFolder.root
-			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(singleFileConverterStub, properties)
+			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(properties, new StubGeneratorProvider([stubGenerator]))
 		when:
 			recursiveFilesConverter.processFiles()
 		then:
@@ -109,12 +100,62 @@ class RecursiveFilesConverterSpec extends Specification {
 			e.cause?.message == "Test conversion error"
 	}
 
-	private
-	static Set<Path> getRelativePathsForFilesInDirectory(Collection<File> createdFiles, File targetRootDirectory) {
+	def "should convert contract into stub using all possible converters"() {
+		given:
+			def sourceFile = tmpFolder.newFile("test.groovy")
+			sourceFile.text = """
+			org.springframework.cloud.contract.spec.Contract.make {
+				request {
+					url "/baz"
+					method "GET"
+				}
+				response {
+					status 200
+				}
+			}
+			"""
+		and:
+			StubGenerator stubGenerator1 = stubGenerator("foo")
+		and:
+			StubGenerator stubGenerator2 = stubGenerator("bar")
+		and:
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
+			properties.contractsDslDir = tmpFolder.root
+			properties.stubsOutputDir = tmpFolder.root
+		and:
+			RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(properties, new StubGeneratorProvider([stubGenerator1, stubGenerator2]))
+		when:
+			recursiveFilesConverter.processFiles()
+		then:
+			tmpFolder.root.list().toList().containsAll("foo", "bar")
+	}
+
+	private static Set<Path> getRelativePathsForFilesInDirectory(Collection<File> createdFiles, File targetRootDirectory) {
 		Path rootSourcePath = Paths.get(targetRootDirectory.toURI())
 		Set<Path> relativizedCreatedFiles = createdFiles.collect { File file ->
 			rootSourcePath.relativize(Paths.get(file.toURI()))
 		}
 		return relativizedCreatedFiles
+	}
+
+	private StubGenerator stubGenerator(String stub) {
+		return new StubGenerator() {
+			@Override
+			boolean canHandleFileName(String fileName) {
+				return true
+			}
+
+			@Override
+			Map<Contract, String> convertContents(String rootName, ContractMetadata content) {
+				return [
+						(content.convertedContract.first()) : stub
+				]
+			}
+
+			@Override
+			String generateOutputFileNameForInput(String inputFileName) {
+				return stub
+			}
+		}
 	}
 }

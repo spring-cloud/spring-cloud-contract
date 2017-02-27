@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.stubrunner
 
+import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStub
 import spock.lang.Specification
 
 class StubServerSpec extends Specification {
@@ -27,9 +28,9 @@ class StubServerSpec extends Specification {
 
 	def 'should register stub mappings upon server start'() {
 		given:
-		List<WiremockMappingDescriptor> mappingDescriptors = new StubRepository(repository).getProjectDescriptors()
+		List<File> mappingDescriptors = new StubRepository(repository).getStubs()
 		StubServer pingStubServer = new StubServer(stubConfiguration, mappingDescriptors, [],
-				new WireMockHttpServerStub(STUB_SERVER_PORT))
+				new WireMockHttpServerStub()).start(STUB_SERVER_PORT)
 		when:
 		pingStubServer.start()
 		then:
@@ -39,9 +40,9 @@ class StubServerSpec extends Specification {
 
 	def 'should provide stub server URL'() {
 		given:
-		List<WiremockMappingDescriptor> mappingDescriptors = new StubRepository(repository).getProjectDescriptors()
+		List<File> mappingDescriptors = new StubRepository(repository).getStubs()
 		StubServer pingStubServer = new StubServer(stubConfiguration, mappingDescriptors, [],
-				new WireMockHttpServerStub(STUB_SERVER_PORT))
+				new WireMockHttpServerStub()).start(STUB_SERVER_PORT)
 		when:
 		pingStubServer.start()
 		then:

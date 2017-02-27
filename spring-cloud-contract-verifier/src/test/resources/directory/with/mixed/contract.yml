@@ -1,0 +1,13 @@
+request:
+  url: /foo
+  method: PUT
+  headers:
+    foo: bar
+  body:
+    foo: bar
+response:
+  status: 200
+  headers:
+    foo2: bar
+  body:
+    foo2: bar

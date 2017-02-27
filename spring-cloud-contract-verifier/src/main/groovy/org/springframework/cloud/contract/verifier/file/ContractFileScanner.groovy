@@ -21,6 +21,10 @@ import com.google.common.collect.ListMultimap
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.SystemUtils
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.ContractConverter
+import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
+import org.springframework.core.io.support.SpringFactoriesLoader
 
 import java.nio.file.FileSystem
 import java.nio.file.FileSystems
@@ -74,23 +78,28 @@ class ContractFileScanner {
 		return result
 	}
 
+	/**
+	 * We iterate over found contracts, filter out those that should be excluded
+	 * and try to convert via pluggable Contract Converters any possible contracts
+	 */
 	private void appendRecursively(File baseDir, ListMultimap<Path, ContractMetadata> result) {
+		List<ContractConverter> converters = SpringFactoriesLoader.loadFactories(ContractConverter, null)
+		if (log.isDebugEnabled()) {
+			log.debug("Found the following contract converters ${converters}")
+		}
 		File[] files = baseDir.listFiles()
 		if (!files) {
-			return;
+			return
 		}
 		files.sort().eachWithIndex { File file, int index ->
 			boolean excluded = matchesPattern(file, excludeMatchers)
 			if (!excluded) {
-				boolean contractFile = isContractFile(file);
+				boolean contractFile = isContractFile(file)
 				boolean included = includeMatcher ? file.absolutePath.matches(includeMatcher) : true
 				if (contractFile && included) {
-					Path path = file.toPath()
-					Integer order = null
-					if (hasScenarioFilenamePattern(path)) {
-						order = index
-					}
-					result.put(file.parentFile.toPath(), new ContractMetadata(path, matchesPattern(file, ignoreMatchers), files.size(), order))
+					addContractToTestGeneration(result, files, file, index, ContractVerifierDslConverter.convertAsCollection(file))
+				} else if (!contractFile && included) {
+					addContractToTestGeneration(converters, result, files, file, index)
 				} else {
 					appendRecursively(file, result)
 					if (log.isDebugEnabled()) {
@@ -105,6 +114,37 @@ class ContractFileScanner {
 		}
 	}
 
+	private void addContractToTestGeneration(List<ContractConverter> converters, ListMultimap<Path, ContractMetadata> result,
+											File[] files, File file, int index) {
+		boolean converted = false
+		if (!file.isDirectory()) {
+			for (ContractConverter converter : converters) {
+				if (converter.isAccepted(file)) {
+					addContractToTestGeneration(result, files, file, index, converter.convertFrom(file))
+					converted = true
+					break
+				}
+			}
+		}
+		if (!converted) {
+			appendRecursively(file, result)
+			if (log.isDebugEnabled()) {
+				log.debug("File [$file] wasn't ignored but no converter was applicable. The file is a directory [${file.isDirectory()}]")
+			}
+		}
+	}
+
+	private void addContractToTestGeneration(ListMultimap<Path, ContractMetadata> result, File[] files, File file,
+											int index, Collection<Contract> convertedContract) {
+		Path path = file.toPath()
+		Integer order = null
+		if (hasScenarioFilenamePattern(path)) {
+			order = index
+		}
+		result.put(file.parentFile.toPath(), new ContractMetadata(path, matchesPattern(file, ignoreMatchers),
+				files.size(), order, convertedContract))
+	}
+
 	private boolean hasScenarioFilenamePattern(Path path) {
 		return SCENARIO_STEP_FILENAME_PATTERN.matcher(path.fileName.toString()).matches()
 	}
@@ -112,10 +152,10 @@ class ContractFileScanner {
 	private boolean matchesPattern(File file, Set<PathMatcher> matchers) {
 		for (PathMatcher matcher : matchers) {
 			if (matcher.matches(file.toPath())) {
-				return true;
+				return true
 			}
 		}
-		return false;
+		return false
 	}
 
 	private boolean isContractFile(File file) {
@@ -124,15 +164,15 @@ class ContractFileScanner {
 	
 	private static String getFilenameExtension(String path) {
 		if (path == null) {
-			return null;
+			return null
 		}
 		int extIndex = path.lastIndexOf('.');
 		if (extIndex == -1) {
-			return null;
+			return null
 		}
 		int folderIndex = path.lastIndexOf('/');
 		if (folderIndex > extIndex) {
-			return null;
+			return null
 		}
 		return path.substring(extIndex + 1);
 	}

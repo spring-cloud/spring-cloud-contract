@@ -26,8 +26,8 @@ import groovy.transform.ToString
  * @since 1.0.0
  */
 @CompileStatic
-@EqualsAndHashCode(includeFields = true)
-@ToString(includePackage = false)
+@EqualsAndHashCode(callSuper = true)
+@ToString(includePackage = false, includeSuper = true)
 class ServerDslProperty extends DslProperty {
 
 	ServerDslProperty(Object singleValue) {

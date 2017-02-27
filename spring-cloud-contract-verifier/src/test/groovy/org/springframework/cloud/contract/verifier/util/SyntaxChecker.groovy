@@ -40,7 +40,7 @@ class SyntaxChecker {
 			"javax.ws.rs.client.Entity.*",
 			"org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers",
 			"com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson",
-			"org.assertj.core.api.Assertions.assertThat"
+			"org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat"
 	].collect { "import static ${it};"}.join("\n")
 
 	static void tryToCompile(String builderName, String test) {

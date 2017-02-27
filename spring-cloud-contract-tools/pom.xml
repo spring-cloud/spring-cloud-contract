@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-parent</artifactId>
-		<version>1.0.4.BUILD-SNAPSHOT</version>
+		<version>1.1.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
@@ -19,6 +19,7 @@
 
 	<modules>
 		<module>spring-cloud-contract-converters</module>
+		<module>spring-cloud-contract-spec-pact</module>
 		<module>spring-cloud-contract-maven-plugin</module>
 		<module>spring-cloud-contract-gradle-plugin</module>
 	</modules>

@@ -32,35 +32,49 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.spec.Contract;
+import org.springframework.cloud.contract.spec.ContractConverter;
+import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStub;
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter;
+import org.springframework.core.io.support.SpringFactoriesLoader;
 
 /**
- * Wraps the folder with WireMock mappings.
+ * Wraps the folder with stub mappings.
  */
 class StubRepository {
 
 	private static final Logger log = LoggerFactory.getLogger(StubRepository.class);
 
 	private final File path;
-	final List<WiremockMappingDescriptor> projectDescriptors;
+	final List<File> stubs;
 	final Collection<Contract> contracts;
+	private final List<ContractConverter> contractConverters;
+	private final List<HttpServerStub> httpServerStubs;
 
-	public StubRepository(File repository) {
+	StubRepository(File repository, List<HttpServerStub> httpServerStubs) {
 		if (!repository.isDirectory()) {
 			throw new IllegalArgumentException(
 					"Missing descriptor repository under path [" + repository + "]");
 		}
+		this.contractConverters = SpringFactoriesLoader.loadFactories(ContractConverter.class, null);
+		if (log.isDebugEnabled()) {
+			log.debug("Found the following contract converters " + this.contractConverters);
+		}
+		this.httpServerStubs = httpServerStubs;
 		this.path = repository;
-		this.projectDescriptors = projectDescriptors();
+		this.stubs = stubs();
 		this.contracts = contracts();
+	}
+
+	StubRepository(File repository) {
+		this(repository, new ArrayList<HttpServerStub>());
 	}
 
 	public File getPath() {
 		return this.path;
 	}
 
-	public List<WiremockMappingDescriptor> getProjectDescriptors() {
-		return this.projectDescriptors;
+	public List<File> getStubs() {
+		return this.stubs;
 	}
 
 	public Collection<Contract> getContracts() {
@@ -68,7 +82,7 @@ class StubRepository {
 	}
 
 	/**
-	 * Returns a list of {@link Contract}
+	 * Returns a list of contracts
 	 */
 	private Collection<Contract> contracts() {
 		List<Contract> contracts = new ArrayList<>();
@@ -77,23 +91,22 @@ class StubRepository {
 	}
 
 	/**
-	 * Returns the list of WireMock JSON files wrapped in
-	 * {@link WiremockMappingDescriptor}
+	 * Returns the list of stubs
 	 */
-	private List<WiremockMappingDescriptor> projectDescriptors() {
-		List<WiremockMappingDescriptor> mappingDescriptors = new ArrayList<>();
-		mappingDescriptors.addAll(contextDescriptors());
-		return mappingDescriptors;
+	private List<File> stubs() {
+		List<File> stubs = new ArrayList<>();
+		stubs.addAll(collectedStubs());
+		return stubs;
 	}
 
-	private List<WiremockMappingDescriptor> contextDescriptors() {
-		return this.path.exists() ? collectMappingDescriptors(this.path)
-				: Collections.<WiremockMappingDescriptor>emptyList();
+	private List<File> collectedStubs() {
+		return this.path.exists() ? collectMappings(this.path)
+				: Collections.<File>emptyList();
 	}
 
-	private List<WiremockMappingDescriptor> collectMappingDescriptors(
+	private List<File> collectMappings(
 			File descriptorsDirectory) {
-		final List<WiremockMappingDescriptor> mappingDescriptors = new ArrayList<>();
+		final List<File> mappingDescriptors = new ArrayList<>();
 		try {
 			Files.walkFileTree(Paths.get(descriptorsDirectory.toURI()),
 					new SimpleFileVisitor<Path>() {
@@ -101,9 +114,8 @@ class StubRepository {
 						public FileVisitResult visitFile(Path path,
 								BasicFileAttributes attrs) throws IOException {
 							File file = path.toFile();
-							if (isMappingDescriptor(file)) {
-								mappingDescriptors
-										.add(new WiremockMappingDescriptor(file));
+							if (httpServerStubAccepts(file)) {
+								mappingDescriptors.add(file);
 							}
 							return super.visitFile(path, attrs);
 						}
@@ -113,6 +125,25 @@ class StubRepository {
 			log.warn("Exception occurred while trying to parse file", e);
 		}
 		return mappingDescriptors;
+	}
+
+	private ContractConverter contractConverter(File file) {
+		for (ContractConverter converter : this.contractConverters) {
+			if (converter.isAccepted(file)) {
+				return converter;
+			}
+		}
+		return null;
+	}
+
+	private boolean httpServerStubAccepts(File file) {
+		for (HttpServerStub httpServerStub : this.httpServerStubs) {
+			if (httpServerStub.isAccepted(file)) {
+				return true;
+			}
+		}
+		// the default implementation
+		return new WireMockHttpServerStub().isAccepted(file);
 	}
 
 	private Collection<Contract> contractDescriptors() {
@@ -120,8 +151,9 @@ class StubRepository {
 				: Collections.<Contract>emptySet());
 	}
 
+	@SuppressWarnings("unchecked")
 	private Collection<Contract> collectContractDescriptors(File descriptorsDirectory) {
-		final List<Contract> mappingDescriptors = new ArrayList<>();
+		final List<Contract> contractDescriptors = new ArrayList<>();
 		try {
 			Files.walkFileTree(Paths.get(descriptorsDirectory.toURI()),
 					new SimpleFileVisitor<Path>() {
@@ -129,9 +161,12 @@ class StubRepository {
 						public FileVisitResult visitFile(Path path,
 								BasicFileAttributes attrs) throws IOException {
 							File file = path.toFile();
+							ContractConverter converter = contractConverter(file);
 							if (isContractDescriptor(file)) {
-								mappingDescriptors
-								.add(ContractVerifierDslConverter.convert(file));
+								contractDescriptors
+								.addAll(ContractVerifierDslConverter.convertAsCollection(file));
+							} else if (converter != null) {
+								contractDescriptors.addAll(converter.convertFrom(file));
 							}
 							return super.visitFile(path, attrs);
 						}
@@ -140,11 +175,7 @@ class StubRepository {
 		catch (IOException e) {
 			log.warn("Exception occurred while trying to parse file", e);
 		}
-		return mappingDescriptors;
-	}
-
-	private static boolean isMappingDescriptor(File file) {
-		return file.isFile() && file.getName().endsWith(".json");
+		return contractDescriptors;
 	}
 
 	private static boolean isContractDescriptor(File file) {

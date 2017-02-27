@@ -135,7 +135,7 @@ class Response extends Common {
 	}
 
 	@CompileStatic
-	@EqualsAndHashCode
+	@EqualsAndHashCode(callSuper = true)
 	@ToString(includePackage = false)
 	private class ServerResponse extends Response {
 		ServerResponse(Response request) {
@@ -144,7 +144,7 @@ class Response extends Common {
 	}
 
 	@CompileStatic
-	@EqualsAndHashCode
+	@EqualsAndHashCode(callSuper = true)
 	@ToString(includePackage = false)
 	private class ClientResponse extends Response {
 		ClientResponse(Response request) {
@@ -153,7 +153,7 @@ class Response extends Common {
 	}
 
 	@CompileStatic
-	@EqualsAndHashCode
+	@EqualsAndHashCode(includeFields = true)
 	@ToString(includePackage = false)
 	class ResponseHeaders extends Headers {
 
@@ -165,7 +165,7 @@ class Response extends Common {
 	}
 
 	@CompileStatic
-	@EqualsAndHashCode
+	@EqualsAndHashCode(includeFields = true)
 	@ToString(includePackage = false)
 	private class ServerPatternValueDslProperty extends PatternValueDslProperty<ServerDslProperty> {
 

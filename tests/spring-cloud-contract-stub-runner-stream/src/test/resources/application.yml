@@ -12,3 +12,5 @@ spring:
 
 server:
   port: 0
+
+debug: true

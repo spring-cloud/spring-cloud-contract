@@ -88,7 +88,7 @@ class StubRunnerExecutorSpec extends Specification {
 
 	def 'should ensure that triggered contracts have properly parsed message body when a message is sent'() {
 		given:
-			StubRunnerExecutor executor = new StubRunnerExecutor(portScanner, new AssertingStubMessages())
+			StubRunnerExecutor executor = new StubRunnerExecutor(portScanner, new AssertingStubMessages(), [])
 			executor.runStubs(stubRunnerOptions, repository, stub)
 		when:
 			executor.trigger('send_order')

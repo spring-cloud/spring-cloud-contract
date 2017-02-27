@@ -20,7 +20,6 @@ import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 
 import java.util.regex.Pattern
-
 /**
  * Contains useful common methods for the DSL.
  *

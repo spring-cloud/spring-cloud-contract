@@ -1,4 +1,4 @@
-:introduction_url: https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x
+:introduction_url: https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master
 
 === Introduction
 
@@ -253,7 +253,7 @@ In the logs we'll see something like this:
 [INFO] --- maven-jar-plugin:2.6:jar (default-jar) @ http-server ---
 [INFO] Building jar: /some/path/http-server/target/http-server-0.0.1-SNAPSHOT.jar
 [INFO]
-[INFO] --- spring-boot-maven-plugin:1.4.0.BUILD-SNAPSHOT:repackage (default) @ http-server ---
+[INFO] --- spring-boot-maven-plugin:1.5.0.BUILD-SNAPSHOT:repackage (default) @ http-server ---
 [INFO]
 [INFO] --- maven-install-plugin:2.5.2:install (default-install) @ http-server ---
 [INFO] Installing /some/path/http-server/target/http-server-0.0.1-SNAPSHOT.jar to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT.jar

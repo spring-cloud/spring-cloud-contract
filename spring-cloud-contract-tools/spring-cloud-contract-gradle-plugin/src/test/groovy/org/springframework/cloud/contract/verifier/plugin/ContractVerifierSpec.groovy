@@ -55,7 +55,7 @@ class ContractVerifierSpec extends Specification {
 			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
 
 		expect:
-			project.tasks.findByName("generateWireMockClientStubs") != null
+			project.tasks.findByName("generateClientStubs") != null
 	}
 
 	def "should create verifierStubsJar task"() {
@@ -71,7 +71,7 @@ class ContractVerifierSpec extends Specification {
 			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
 
 		expect:
-			project.tasks.verifierStubsJar.getDependsOn().contains("generateWireMockClientStubs")
+			project.tasks.verifierStubsJar.getDependsOn().contains("generateClientStubs")
 	}
 
 	def "should create copyContracts task"() {
@@ -107,36 +107,6 @@ class ContractVerifierSpec extends Specification {
 			def publications = project.extensions.getByType(PublishingExtension).publications
 			publications.size() > 0
 			publications.findByName("stubs") != null
-	}
-
-	def "should add wiremock as a testCompile dependency"() {
-		given:
-			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
-
-		expect:
-			project.configurations.testCompile.dependencies.find {
-				it.group == "com.github.tomakehurst" && it.name == "wiremock"
-			} != null
-	}
-
-	def "should add jsonassert as a testCompile dependency"() {
-		given:
-			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
-
-		expect:
-			project.configurations.testCompile.dependencies.find {
-				it.group == "com.toomuchcoding.jsonassert" && it.name == "jsonassert"
-			} != null
-	}
-
-	def "should add assertj-core as a testCompile dependency"() {
-		given:
-			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
-
-		expect:
-			project.configurations.testCompile.dependencies.find {
-				it.group == "org.assertj" && it.name == "assertj-core"
-			} != null
 	}
 
 	def "should compile"() {

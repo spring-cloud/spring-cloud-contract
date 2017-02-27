@@ -15,17 +15,18 @@
  */
 
 package org.springframework.cloud.contract.verifier.util
+
 import groovy.json.JsonException
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.transform.TypeChecked
 import groovy.util.logging.Slf4j
-import org.springframework.cloud.contract.spec.internal.Headers
 import org.codehaus.groovy.runtime.GStringImpl
-import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
+import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
 
 import java.util.regex.Matcher
@@ -35,6 +36,11 @@ import static org.apache.commons.lang3.StringEscapeUtils.escapeJava
 import static org.apache.commons.lang3.StringEscapeUtils.escapeJson
 import static org.apache.commons.lang3.StringEscapeUtils.escapeXml11
 
+/**
+ * A utility class that can operate on a message body basing on the provided Content Type.
+ *
+ * @since 1.0.0
+ */
 @TypeChecked
 @Slf4j
 class ContentUtils {

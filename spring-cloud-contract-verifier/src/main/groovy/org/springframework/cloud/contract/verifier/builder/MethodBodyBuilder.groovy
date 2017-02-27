@@ -22,21 +22,12 @@ import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.apache.commons.lang3.StringEscapeUtils
-import org.springframework.cloud.contract.spec.internal.BodyMatcher
-import org.springframework.cloud.contract.spec.internal.BodyMatchers
-import org.springframework.cloud.contract.spec.internal.DslProperty
-import org.springframework.cloud.contract.spec.internal.ExecutionProperty
-import org.springframework.cloud.contract.spec.internal.Header
-import org.springframework.cloud.contract.spec.internal.MatchingStrategy
-import org.springframework.cloud.contract.spec.internal.MatchingType
-import org.springframework.cloud.contract.spec.internal.NamedProperty
-import org.springframework.cloud.contract.spec.internal.OptionalProperty
-import org.springframework.cloud.contract.spec.internal.QueryParameter
+import org.springframework.cloud.contract.spec.internal.*
+import org.springframework.cloud.contract.verifier.util.MapConverter;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
-import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.util.SerializationUtils
 
 import java.util.regex.Pattern
@@ -361,13 +352,8 @@ abstract class MethodBodyBuilder {
 	protected void methodForTypeCheck(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
 		Object elementFromBody = value(copiedBody, bodyMatcher)
 		if (bodyMatcher.minTypeOccurrence() != null || bodyMatcher.maxTypeOccurrence() != null) {
-			if (arrayRelated(bodyMatcher.path())) {
-				throw new UnsupportedOperationException("Version 1.0.x doesn't support checking sizes when JSON Path contains [*]. " +
-						"For more information check out https://github.com/spring-cloud/spring-cloud-contract/issues/217 . " +
-						"Please upgrade to the latest version of Spring Cloud Contract for this feature.")
-			}
 			checkType(bb, bodyMatcher, elementFromBody)
-			String method = "assertThat(parsedJson.read(${quotedAndEscaped(bodyMatcher.path())}, java.util.Collection.class).size()).${sizeCheckMethod(bodyMatcher)}"
+			String method = "assertThat(parsedJson.read(${quotedAndEscaped(bodyMatcher.path())}, java.util.Collection.class)).${sizeCheckMethod(bodyMatcher)}"
 			bb.addLine(postProcessJsonPathCall(method))
 			addColonIfRequired(bb)
 		} else {
@@ -380,20 +366,8 @@ abstract class MethodBodyBuilder {
 	}
 
 	protected void buildCustomMatchingConditionForEachElement(BlockBuilder bb, String path, String valueAsParam) {
-		String method = "assertThat(parsedJson.read(${path}, java.util.Collection.class)).as(\"All elements match regex\").are("
-		String newCondition = "new org.assertj.core.api.Condition<Object>() {"
-		String overriddenMethod = "@Override public boolean matches(Object o) {"
-		String matches = "return ((String)o).matches(${valueAsParam})"
-		String methodEnd = "}"
-		String classEnd = "})"
+		String method = "assertThat(parsedJson.read(${path}, java.util.Collection.class)).allElementsMatch(${valueAsParam})"
 		bb.addLine(postProcessJsonPathCall(method))
-		bb.startBlock().startBlock().addLine(newCondition)
-		bb.startBlock().addLine(overriddenMethod)
-		bb.startBlock().addLine(postProcessJsonPathCall(matches))
-		addColonIfRequired(bb)
-		bb.endBlock().addLine(methodEnd)
-		bb.endBlock().addLine(classEnd)
-		bb.endBlock().endBlock()
 	}
 
 	// Doing a clone doesn't work for nested lists...
@@ -445,13 +419,22 @@ abstract class MethodBodyBuilder {
 	}
 
 	protected String sizeCheckMethod(BodyMatcher bodyMatcher) {
+		String prefix = sizeCheckPrefix(bodyMatcher)
 		if (bodyMatcher.minTypeOccurrence() != null && bodyMatcher.maxTypeOccurrence() != null) {
-			return "isBetween(${bodyMatcher.minTypeOccurrence()}, ${bodyMatcher.maxTypeOccurrence()})"
+			return "${prefix}Between(${bodyMatcher.minTypeOccurrence()}, ${bodyMatcher.maxTypeOccurrence()})"
 		} else if (bodyMatcher.minTypeOccurrence() != null ) {
-			return "isGreaterThanOrEqualTo(${bodyMatcher.minTypeOccurrence()})"
+			return "${prefix}GreaterThanOrEqualTo(${bodyMatcher.minTypeOccurrence()})"
 		} else if (bodyMatcher.maxTypeOccurrence() != null) {
-			return "isLessThanOrEqualTo(${bodyMatcher.maxTypeOccurrence()})"
+			return "${prefix}LessThanOrEqualTo(${bodyMatcher.maxTypeOccurrence()})"
 		}
+	}
+
+	private String sizeCheckPrefix(BodyMatcher bodyMatcher) {
+		String prefix = "has"
+		if (arrayRelated(bodyMatcher.path())) {
+			prefix = prefix + "Flattened"
+		}
+		return prefix + "Size"
 	}
 
 	protected String quotedAndEscaped(String string) {

@@ -18,16 +18,16 @@ package org.springframework.cloud.contract.verifier.wiremock
 
 import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.converter.SingleFileConverter
+import org.springframework.cloud.contract.verifier.converter.StubGenerator
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 
 /**
- * WireMock implementation of the {@link SingleFileConverter}
+ * WireMock implementation of the {@link StubGenerator}
  *
  * @since 1.0.0
  */
 @CompileStatic
-abstract class DslToWireMockConverter implements SingleFileConverter {
+abstract class DslToWireMockConverter implements StubGenerator {
 
 	@Override
 	boolean canHandleFileName(String fileName) {
@@ -36,10 +36,18 @@ abstract class DslToWireMockConverter implements SingleFileConverter {
 
 	@Override
 	String generateOutputFileNameForInput(String inputFileName) {
-		return inputFileName.replaceAll('.groovy', '.json')
+		return inputFileName.replaceAll(extension(inputFileName), 'json')
 	}
 
-	protected Contract createGroovyDSLFromStringContent(String groovyDslAsString) {
-		return ContractVerifierDslConverter.convert(groovyDslAsString)
+	private String extension(String inputFileName) {
+		int i = inputFileName.lastIndexOf('.')
+		if (i > 0) {
+			return inputFileName.substring(i + 1)
+		}
+		return ""
+	}
+
+	protected Collection<Contract> createGroovyDSLFromStringContent(String groovyDslAsString) {
+		return ContractVerifierDslConverter.convertAsCollection(groovyDslAsString)
 	}
 }

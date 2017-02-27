@@ -155,15 +155,15 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.time", String.class)).matches("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])")')
 			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithTypeMatch")).isInstanceOf(java.lang.String.class)')
 			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMin")).isInstanceOf(java.util.List.class)')
-			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMin", java.util.Collection.class).size()).isGreaterThanOrEqualTo(1)')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMin", java.util.Collection.class)).hasSizeGreaterThanOrEqualTo(1)')
 			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMax")).isInstanceOf(java.util.List.class)')
-			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMax", java.util.Collection.class).size()).isLessThanOrEqualTo(3)')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMax", java.util.Collection.class)).hasSizeLessThanOrEqualTo(3)')
 			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMinMax")).isInstanceOf(java.util.List.class)')
-			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMinMax", java.util.Collection.class).size()).isBetween(1, 3)')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMinMax", java.util.Collection.class)).hasSizeBetween(1, 3)')
 			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMinEmpty")).isInstanceOf(java.util.List.class)')
-			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMinEmpty", java.util.Collection.class).size()).isGreaterThanOrEqualTo(0)')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMinEmpty", java.util.Collection.class)).hasSizeGreaterThanOrEqualTo(0)')
 			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMaxEmpty")).isInstanceOf(java.util.List.class)')
-			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMaxEmpty", java.util.Collection.class).size()).isLessThanOrEqualTo(0)')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMaxEmpty", java.util.Collection.class)).hasSizeLessThanOrEqualTo(0)')
 			test.contains('assertThatValueIsANumber(parsedJson.read("' + rootElement + '.duck")')
 			!test.contains('cursor')
 		and:
@@ -217,8 +217,8 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					])
 					testMatchers {
 						jsonPath('$.phoneNumbers', byType {
-							minOccurrence(0)				// min occurrence of 0
-							maxOccurrence(4)				// max occurrence of 4
+							minOccurrence(0)				// min occurrence of 1
+							maxOccurrence(4)				// max occurrence of 3
 						})
 						jsonPath('$.phoneNumbers[*].number', byRegex("^[0-9]{3} [0-9]{3}-[0-9]{4}\$"))
 						jsonPath('$..number', byRegex("^[0-9]{3} [0-9]{3}-[0-9]{4}\$"))
@@ -234,11 +234,8 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('assertThat(parsedJson.read("' + rootElement + '.phoneNumbers[*].number", java.util.Collection.class)).as("All elements match regex").are(')
-			test.contains('new org.assertj.core.api.Condition<Object>() {')
-			test.contains('@Override public boolean matches(Object o) {')
-			test.contains('return ((String)o).matches("^[0-9]{3} [0-9]{3}-[0-9]{4}' + rootElement + '")')
-			test.contains('assertThat(parsedJson.read("' + rootElement + '..number", java.util.Collection.class)).as("All elements match regex").are(')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.phoneNumbers[*].number", java.util.Collection.class)).allElementsMatch("^[0-9]{3} [0-9]{3}-[0-9]{4}' + rootElement + '")')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '..number", java.util.Collection.class)).allElementsMatch("^[0-9]{3} [0-9]{3}-[0-9]{4}' + rootElement + '")')
 			!test.contains('cursor')
 		and:
 			try {
@@ -254,36 +251,52 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | '$'
 	}
 
+
 	@Issue('#217')
-	def "should not allow matcher with jsonpath containing [*] for [#methodBuilderName]"() {
+	def "should use the flattened assertions when jsonpath contains [*] for [#methodBuilderName]"() {
 		given:
-			Contract contractDsl = Contract.make {
-				request {
-					method 'GET'
-					url 'person'
-				}
-				response {
-					status 200
-					body([
-							"phoneNumbers": [
-							        number: "foo"
-							]
-					])
-					testMatchers {
-						jsonPath('$.phoneNumbers[*].number', byType {
-							minOccurrence(0)				// min occurrence of 0
-							maxOccurrence(4)				// max occurrence of 4
-						})
-					}
+		Contract contractDsl = Contract.make {
+			request {
+				method 'GET'
+				url 'person'
+			}
+			response {
+				status 200
+				body([
+						"phoneNumbers": [
+								number: "foo"
+						]
+				])
+				testMatchers {
+					jsonPath('$.phoneNumbers[*].number', byType {
+						minOccurrence(0)
+						maxOccurrence(4)
+					})
+					jsonPath('$.phoneNumbers[*].number', byType {
+						minOccurrence(0)
+					})
+					jsonPath('$.phoneNumbers[*].number', byType {
+						maxOccurrence(4)
+					})
 				}
 			}
+		}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
 			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
 		then:
-			UnsupportedOperationException e = thrown(UnsupportedOperationException)
-			e.message.contains("Version 1.0.x doesn't support checking sizes when JSON Path contains [*]")
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.phoneNumbers[*].number", java.util.Collection.class)).hasFlattenedSizeBetween(0, 4)')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.phoneNumbers[*].number", java.util.Collection.class)).hasFlattenedSizeGreaterThanOrEqualTo(0)')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.phoneNumbers[*].number", java.util.Collection.class)).hasFlattenedSizeLessThanOrEqualTo(4)')
+			!test.contains('cursor')
+		and:
+			try {
+				SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
+			} catch(NoClassDefFoundError error) {
+				// that's actually expected since we're creating an anonymous class
+			}
 		where:
 			methodBuilderName                                    | methodBuilder                                                                               | rootElement
 			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | '\\$'

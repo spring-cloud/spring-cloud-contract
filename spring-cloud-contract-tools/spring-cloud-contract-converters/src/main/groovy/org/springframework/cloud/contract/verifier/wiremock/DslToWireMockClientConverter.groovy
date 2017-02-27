@@ -16,9 +16,12 @@
 
 package org.springframework.cloud.contract.verifier.wiremock
 
+
 import groovy.transform.CompileStatic
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubStrategy
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
+import org.springframework.cloud.contract.verifier.util.NamesUtil
 
 import java.nio.charset.StandardCharsets
 /**
@@ -29,10 +32,30 @@ import java.nio.charset.StandardCharsets
 @CompileStatic
 class DslToWireMockClientConverter extends DslToWireMockConverter {
 
-	@Override
+	@Deprecated
 	String convertContent(String rootName, ContractMetadata contract) {
-		String dslContent = contract.path.getText(StandardCharsets.UTF_8.toString())
-		return new WireMockStubStrategy(rootName, contract,
-				createGroovyDSLFromStringContent(dslContent)).toWireMockClientStub()
+		return convertASingleContract(rootName, contract, contract.convertedContract.first() ?: createGroovyDSLFromStringContent(
+				contract.path.getText(StandardCharsets.UTF_8.toString())).first())
 	}
+
+	private String convertASingleContract(String rootName, ContractMetadata contract, Contract dsl) {
+		return new WireMockStubStrategy(rootName, contract, dsl).toWireMockClientStub()
+	}
+
+	@Override
+	Map<Contract, String> convertContents(String rootName, ContractMetadata contract) {
+		if (!(contract.convertedContract.any { it.request })) {
+			return [:]
+		}
+		if (contract.convertedContract.size() == 1) {
+			return [(contract.convertedContract.first()): convertASingleContract(rootName, contract, contract.convertedContract.first())]
+		}
+		Map<Contract, String> convertedContracts = [:]
+		contract.convertedContract.findAll { it.request }.eachWithIndex { Contract dsl, int index ->
+			String name = dsl.name ? NamesUtil.convertIllegalPackageChars(dsl.name) : "${rootName}_${index}"
+			convertedContracts << [(dsl) : convertASingleContract(name, contract, dsl)]
+		}
+		return convertedContracts
+	}
+
 }

@@ -27,7 +27,7 @@ class StubRepositorySpec extends Specification {
 		StubRepository repository = new StubRepository(REPOSITORY_LOCATION)
 		int expectedDescriptorsSize = 8
 		when:
-		List<WiremockMappingDescriptor> descriptors = repository.getProjectDescriptors()
+		List<File> descriptors = repository.getStubs()
 		then:
 		descriptors.size() == expectedDescriptorsSize
 	}
@@ -36,7 +36,7 @@ class StubRepositorySpec extends Specification {
 		given:
 		StubRepository repository = new StubRepository(new File('src/test/resources/emptyrepo'))
 		when:
-		List<WiremockMappingDescriptor> descriptors = repository.getProjectDescriptors()
+		List<File> descriptors = repository.getStubs()
 		then:
 		descriptors.empty
 	}

@@ -37,7 +37,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.IgnoreIf
 import spock.lang.Specification
-
 /**
  * @author Marcin Grzejszczak
  */

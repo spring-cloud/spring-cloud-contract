@@ -21,7 +21,6 @@ import org.junit.BeforeClass
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.cloud.consul.ConsulAutoConfiguration
 import org.springframework.cloud.contract.stubrunner.StubFinder
@@ -32,6 +31,7 @@ import org.springframework.cloud.zookeeper.discovery.RibbonZookeeperAutoConfigur
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
@@ -40,14 +40,7 @@ import spock.lang.Specification
  */
 //TODO: Document that ribbon.eureka.enabled=false needs to be set or override it somehow
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = ["stubrunner.camel.enabled=false",
-				"spring.cloud.zookeeper.enabled=false",
-				"spring.cloud.consul.enabled=false",
-				"eureka.client.enabled=false",
-				"stubrunner.cloud.stubbed.discovery.enabled=true",
-				"spring.cloud.consul.discovery.enabled=false",
-				"spring.cloud.zookeeper.discovery.enabled=false"])
+@ActiveProfiles("cloudtest")
 // tag::autoconfigure[]
 @AutoConfigureStubRunner(
 		ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",

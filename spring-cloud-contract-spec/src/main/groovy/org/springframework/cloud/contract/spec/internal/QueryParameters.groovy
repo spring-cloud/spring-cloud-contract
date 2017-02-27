@@ -20,8 +20,8 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
 
-@EqualsAndHashCode(includeFields = true)
-@ToString(includePackage = false, includeFields = true, ignoreNulls = true, includeNames = true)
+@EqualsAndHashCode
+@ToString(includePackage = false, ignoreNulls = true, includeNames = true)
 @TypeChecked
 class QueryParameters  {
 

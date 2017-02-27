@@ -29,9 +29,9 @@ import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.QueryParameter
 import org.springframework.cloud.contract.spec.internal.Response
 import org.springframework.cloud.contract.spec.internal.Url
+import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.ContentType
-import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromContent
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromHeader

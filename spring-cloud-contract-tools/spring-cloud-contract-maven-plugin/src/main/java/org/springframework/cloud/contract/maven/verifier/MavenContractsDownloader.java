@@ -10,6 +10,10 @@ import org.springframework.cloud.contract.maven.verifier.stubrunner.AetherStubDo
 import org.springframework.cloud.contract.stubrunner.AetherStubDownloader;
 import org.springframework.cloud.contract.stubrunner.ContractDownloader;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
+import org.springframework.cloud.contract.stubrunner.StubDownloader;
+import org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder;
+import org.springframework.cloud.contract.stubrunner.StubDownloaderBuilderProvider;
+import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.util.StringUtils;
@@ -33,6 +37,7 @@ class MavenContractsDownloader {
 	private final Log log;
 	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
 	private final RepositorySystemSession repoSession;
+	private final StubDownloaderBuilderProvider stubDownloaderBuilderProvider;
 
 	MavenContractsDownloader(MavenProject project, Dependency contractDependency,
 			String contractsPath, String contractsRepositoryUrl,
@@ -47,6 +52,7 @@ class MavenContractsDownloader {
 		this.log = log;
 		this.aetherStubDownloaderFactory = aetherStubDownloaderFactory;
 		this.repoSession = repoSession;
+		this.stubDownloaderBuilderProvider = new StubDownloaderBuilderProvider();
 	}
 
 	File downloadAndUnpackContractsIfRequired(ContractVerifierConfigProperties config, File defaultContractsDir) {
@@ -77,18 +83,34 @@ class MavenContractsDownloader {
 				this.contractsPath, this.project.getGroupId(), this.project.getArtifactId());
 	}
 
-	private AetherStubDownloader stubDownloader() {
+	private StubDownloader stubDownloader() {
+		StubDownloaderBuilder builder = this.stubDownloaderBuilderProvider.get();
 		if (StringUtils.hasText(this.contractsRepositoryUrl) || this.contractsWorkOffline) {
 			this.log.info("Will download contracts from [" + this.contractsRepositoryUrl + "]. "
 					+ "Work offline switch equals to [" + this.contractsWorkOffline + "]");
-			return new AetherStubDownloader(
-					new StubRunnerOptionsBuilder()
-							.withStubRepositoryRoot(this.contractsRepositoryUrl)
-							.withWorkOffline(this.contractsWorkOffline)
-							.build());
+			if (builder != null) {
+				logStubDownloader(builder);
+				return builder.build(buildOptions());
+			}
+			return new AetherStubDownloader(buildOptions());
 		}
 		this.log.info("Will download contracts using current build's Maven repository setup");
+		if (builder != null) {
+			logStubDownloader(builder);
+			return builder.build(buildOptions());
+		}
 		return this.aetherStubDownloaderFactory.build(this.repoSession);
+	}
+
+	private void logStubDownloader(StubDownloaderBuilder builder) {
+		this.log.info("A custom stub downloader [" + builder + "] was provided");
+	}
+
+	StubRunnerOptions buildOptions() {
+		return new StubRunnerOptionsBuilder()
+				.withStubRepositoryRoot(this.contractsRepositoryUrl)
+				.withWorkOffline(this.contractsWorkOffline)
+				.build();
 	}
 
 	private StubConfiguration stubConfiguration() {

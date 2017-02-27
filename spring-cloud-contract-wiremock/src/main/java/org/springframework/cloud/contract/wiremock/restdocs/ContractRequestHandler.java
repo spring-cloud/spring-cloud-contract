@@ -32,7 +32,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 
-import com.github.tomakehurst.wiremock.client.RemoteMappingBuilder;
+import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.matching.MatchResult;
 import com.github.tomakehurst.wiremock.servlet.WireMockHttpServletRequestAdapter;
@@ -49,7 +49,7 @@ public class ContractRequestHandler implements ResultHandler {
 	private MediaType contentType;
 	private String name;
 
-	private RemoteMappingBuilder<?, ?> builder;
+	private MappingBuilder builder;
 
 	public ContractRequestHandler() {
 	}
@@ -117,7 +117,7 @@ public class ContractRequestHandler implements ResultHandler {
 		return map;
 	}
 
-	public ContractRequestHandler wiremock(RemoteMappingBuilder<?, ?> builder) {
+	public ContractRequestHandler wiremock(MappingBuilder builder) {
 		this.builder = builder;
 		return this;
 	}
