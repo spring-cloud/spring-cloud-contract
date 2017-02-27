@@ -16,7 +16,16 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
+import java.io.File;
+
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
+import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
+import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuilder;
+import org.apache.maven.settings.building.SettingsBuildingException;
+import org.apache.maven.settings.building.SettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuildingResult;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
@@ -54,7 +63,33 @@ class AetherFactories {
 	}
 
 	private static String localRepositoryDirectory() {
-		return System.getProperty(MAVEN_LOCAL_REPOSITORY_LOCATION, System.getProperty("user.home") + "/.m2/repository");
+		String localRepoLocationFromSettings = settings().getLocalRepository();
+		return System.getProperty(MAVEN_LOCAL_REPOSITORY_LOCATION, localRepoLocationFromSettings != null
+			? localRepoLocationFromSettings : System.getProperty("user.home") + "/.m2/repository");
+	}
+
+	private static Settings settings() {
+		final SettingsBuilder builder = new DefaultSettingsBuilderFactory().newInstance();
+		final SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
+		final String user = System.getProperty("org.apache.maven.user-settings");
+		if (user == null) {
+			request.setUserSettingsFile(new File(new File(System.getProperty("user.home")).getAbsoluteFile(),
+					"/.m2/settings.xml"
+				));
+		} else {
+			request.setUserSettingsFile(new File(user));
+		}
+		final String global = System.getProperty("org.apache.maven.global-settings");
+		if (global != null) {
+			request.setGlobalSettingsFile(new File(global));
+		}
+		final SettingsBuildingResult result;
+		try {
+			result = builder.build(request);
+		} catch (final SettingsBuildingException ex) {
+			throw new IllegalStateException(ex);
+		}
+		return result.getEffectiveSettings();
 	}
 
 }
