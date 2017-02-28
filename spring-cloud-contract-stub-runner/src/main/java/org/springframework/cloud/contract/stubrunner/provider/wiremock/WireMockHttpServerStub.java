@@ -9,6 +9,7 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.stubrunner.HttpServerStub;
+import org.springframework.cloud.contract.verifier.builder.HandlebarsJsonPathHelper;
 import org.springframework.cloud.contract.wiremock.WireMockSpring;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.SocketUtils;
@@ -17,6 +18,7 @@ import org.springframework.util.StreamUtils;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 /**
@@ -34,7 +36,8 @@ public class WireMockHttpServerStub implements HttpServerStub {
 
 	private WireMockConfiguration config() {
 		if (ClassUtils.isPresent("org.springframework.cloud.contract.wiremock.WireMockSpring", null)) {
-			return WireMockSpring.options();
+			return WireMockSpring.options()
+					.extensions(new ResponseTemplateTransformer(false, "jsonpath", new HandlebarsJsonPathHelper()));
 		}
 		return new WireMockConfiguration();
 	}

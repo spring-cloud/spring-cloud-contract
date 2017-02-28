@@ -2210,13 +2210,13 @@ World.'''"""
 				response {
 					status 200
 					headers {
-						header(authorization(), fromRequest().headers(authorization()))
+						header(authorization(), fromRequest().header(authorization()))
 					}
 					body(
 							url: fromRequest().url(),
 							param: fromRequest().query("foo"),
 							paramIndex: fromRequest().query("foo", 1),
-							authorization: fromRequest().headers("Authorization"),
+							authorization: fromRequest().header("Authorization"),
 							fullBody: fromRequest().body(),
 							responseFoo: fromRequest().body('$.foo'),
 							responseBaz: fromRequest().body('$.baz')

@@ -40,7 +40,7 @@ class FromRequest {
 	 * First value of a request header e.g. request.headers.X-Request-Id
 	 * @param key
 	 */
-	DslProperty headers(String key) {
+	DslProperty header(String key) {
 		return new DslProperty("{{{request.headers.${key}}}}".toString())
 	}
 
