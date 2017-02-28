@@ -194,7 +194,7 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	// #273 - should escape $ for Groovy since it will try to make it a GString
 	@Override
 	protected String postProcessJsonPathCall(String method) {
-		if (containsTemplateEntry(method)) {
+		if (templateProcessor.containsTemplateEntry(method)) {
 			return method
 		}
 		return method.replace('$', '\\$')

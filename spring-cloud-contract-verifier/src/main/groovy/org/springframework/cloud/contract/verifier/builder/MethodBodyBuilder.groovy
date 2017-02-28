@@ -28,6 +28,7 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
+import org.springframework.core.io.support.SpringFactoriesLoader
 import org.springframework.util.SerializationUtils
 
 import java.util.regex.Pattern
@@ -47,9 +48,19 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.extr
 abstract class MethodBodyBuilder {
 
 	protected final ContractVerifierConfigProperties configProperties
+	protected final TemplateProcessor templateProcessor
 
 	protected MethodBodyBuilder(ContractVerifierConfigProperties configProperties) {
 		this.configProperties = configProperties
+		this.templateProcessor = processor()
+	}
+
+	private TemplateProcessor processor() {
+		List<TemplateProcessor> factories = SpringFactoriesLoader.loadFactories(TemplateProcessor, null)
+		if (factories.empty) {
+			return new HandlebarsTemplateProcessor()
+		}
+		return factories.first()
 	}
 
 	/**
@@ -303,11 +314,13 @@ abstract class MethodBodyBuilder {
 		JsonPaths jsonPaths = new JsonToJsonPathsConverter(configProperties).transformToJsonPathWithTestsSideValues(convertedResponseBody)
 		jsonPaths.each {
 			String method = it.method()
-			if (containsTemplateEntry(method) && containsJsonPathRelatedTemplate(method)) {
-				// TODO: Move to handlebars implementation
-				method = method.replace('"{{{', '{{{').replace('}}}"', '}}}')
+			if (templateProcessor.containsTemplateEntry(method) &&
+					templateProcessor.containsJsonPathTemplateEntry(method)) {
+				method = method.replace('"' + templateProcessor.openingTemplate(), templateProcessor.openingTemplate())
+						.replace(templateProcessor.closingTemplate() + '"', templateProcessor.closingTemplate())
 			}
-			String postProcessedMethod = containsJsonPathRelatedTemplate(method) ? method : postProcessJsonPathCall(method)
+			String postProcessedMethod = templateProcessor.containsJsonPathTemplateEntry(method) ?
+					method : postProcessJsonPathCall(method)
 			bb.addLine("assertThatJson(parsedJson)" + postProcessedMethod)
 			addColonIfRequired(bb)
 		}
@@ -327,16 +340,6 @@ abstract class MethodBodyBuilder {
 			}
 		}
 		processBodyElement(bb, "", convertedResponseBody)
-	}
-
-	// TODO: Move to handlebars implementation
-	protected boolean containsJsonPathRelatedTemplate(String method) {
-		return method.contains("{{{jsonpath")
-	}
-
-	// TODO: Move to handlebars implementation
-	protected boolean containsTemplateEntry(String method) {
-		return method.matches('^.*\\{\\{\\{.*}}}.*$')
 	}
 
 	protected void methodForEqualityCheck(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {

@@ -1,7 +1,6 @@
 package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.CompileStatic
-
 /**
  * Helper class to reference the request body parameters
  *

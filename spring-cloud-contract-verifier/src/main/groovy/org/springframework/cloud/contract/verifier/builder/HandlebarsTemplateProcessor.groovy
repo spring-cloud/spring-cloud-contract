@@ -24,6 +24,26 @@ class HandlebarsTemplateProcessor implements TemplateProcessor {
 		return templatedResponseBody(model, bodyTemplate)
 	}
 
+	@Override
+	boolean containsTemplateEntry(String line) {
+		return line.matches('^.*\\{\\{\\{.*}}}.*$')
+	}
+
+	@Override
+	boolean containsJsonPathTemplateEntry(String line) {
+		return line.contains(openingTemplate() + "jsonpath")
+	}
+
+	@Override
+	String openingTemplate() {
+		return "{{{"
+	}
+
+	@Override
+	String closingTemplate() {
+		return "}}}"
+	}
+
 	private String templatedResponseBody(Map< String, TestSideRequestTemplateModel> model, Template bodyTemplate) {
 		return uncheckedApplyTemplate(bodyTemplate, model)
 	}

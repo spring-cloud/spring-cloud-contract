@@ -33,7 +33,6 @@ import org.springframework.cloud.contract.spec.internal.Url
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.MapConverter
-import org.springframework.core.io.support.SpringFactoriesLoader
 
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromContent
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromHeader
@@ -158,17 +157,8 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	@Override
 	protected void validateResponseBodyBlock(BlockBuilder bb, BodyMatchers bodyMatchers, Object responseBody) {
 		super.validateResponseBodyBlock(bb, bodyMatchers, responseBody)
-		TemplateProcessor processor = processor()
-		String newBody = processor.transform(request, bb.toString())
+		String newBody = this.templateProcessor.transform(request, bb.toString())
 		bb.updateContents(newBody)
-	}
-
-	protected TemplateProcessor processor() {
-		List<TemplateProcessor> factories = SpringFactoriesLoader.loadFactories(TemplateProcessor, null)
-		if (factories.empty) {
-			return new HandlebarsTemplateProcessor()
-		}
-		return factories.first()
 	}
 
 	@Override

@@ -81,7 +81,7 @@ class MockMvcSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestP
 	// #273 - should escape $ for Groovy since it will try to make it a GString
 	@Override
 	protected String postProcessJsonPathCall(String jsonPath) {
-		if (containsTemplateEntry(jsonPath)) {
+		if (templateProcessor.containsTemplateEntry(jsonPath)) {
 			return jsonPath
 		}
 		return jsonPath.replace('$', '\\$')
