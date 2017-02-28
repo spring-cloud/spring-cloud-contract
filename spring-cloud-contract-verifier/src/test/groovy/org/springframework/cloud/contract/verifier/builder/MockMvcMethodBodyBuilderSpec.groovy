@@ -2200,7 +2200,7 @@ World.'''"""
 					headers {
 						header(authorization(), "secret")
 					}
-					body(foo: "bar")
+					body(foo: "bar", baz: 5)
 				}
 				response {
 					status 200
@@ -2211,7 +2211,8 @@ World.'''"""
 							url: fromRequest().url(),
 							authorization: fromRequest().headers("Authorization"),
 							fullBody: fromRequest().body(),
-							responseFoo: fromRequest().body('$.foo')
+							responseFoo: fromRequest().body('$.foo'),
+							responseBaz: fromRequest().body('$.baz')
 					)
 				}
 			}
@@ -2221,11 +2222,12 @@ World.'''"""
 			builder.appendTo(blockBuilder)
 			String test = blockBuilder.toString()
 		when:
-			SyntaxChecker.tryToCompile(methodBuilderName, test)
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
 		then:
 			test.contains('''assertThatJson(parsedJson).field("url").isEqualTo("/api/v1/xxxx")''')
-			test.contains('''assertThatJson(parsedJson).field("fullBody").isEqualTo("{\\"foo\\":\\"bar\\"}")''')
+			test.contains('''assertThatJson(parsedJson).field("fullBody").isEqualTo("{\\"foo\\":\\"bar\\",\\"baz\\":5}")''')
 			test.contains('''assertThatJson(parsedJson).field("responseFoo").isEqualTo("bar")''')
+			test.contains('''assertThatJson(parsedJson).field("responseBaz").isEqualTo(5)''')
 			test.contains('''assertThatJson(parsedJson).field("authorization").isEqualTo("secret")''')
 			responseAssertion(test)
 		where:
