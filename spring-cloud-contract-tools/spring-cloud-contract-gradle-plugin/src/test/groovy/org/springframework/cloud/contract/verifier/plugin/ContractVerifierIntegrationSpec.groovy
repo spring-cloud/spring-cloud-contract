@@ -76,7 +76,7 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 	protected void runTasksSuccessfully(String... tasks) {
 		BuildResult result = run(tasks)
 		result.tasks.each {
-			assert it.outcome == TaskOutcome.SUCCESS || it.outcome == TaskOutcome.UP_TO_DATE
+			assert it.outcome == TaskOutcome.SUCCESS || it.outcome == TaskOutcome.UP_TO_DATE || it.outcome == TaskOutcome.NO_SOURCE
 		}
 	}
 
