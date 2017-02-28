@@ -16,11 +16,18 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+import com.github.jknack.handlebars.Handlebars
+import com.github.jknack.handlebars.Helper
+import com.github.jknack.handlebars.Options
+import com.github.jknack.handlebars.Template
+import com.jayway.jsonpath.DocumentContext
+import com.jayway.jsonpath.JsonPath
 import groovy.json.JsonOutput
 import groovy.transform.Immutable
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
+import org.apache.commons.lang3.StringEscapeUtils
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.BodyMatchers
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
@@ -158,7 +165,52 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	@Override
 	protected void validateResponseBodyBlock(BlockBuilder bb, BodyMatchers bodyMatchers, Object responseBody) {
 		super.validateResponseBodyBlock(bb, bodyMatchers, responseBody)
+		// TODO: Move to handlebars implementation
+		TestSideRequestTemplateModel templateModel = TestSideRequestTemplateModel.from(request, trimmedAndEscapedBody())
+		Map<String, TestSideRequestTemplateModel> model = [request: templateModel]
+		Template bodyTemplate = uncheckedCompileTemplate(getBodyAsRawJson(request.body), bb.toString())
+		String newBody = templatedResponseBody(model, bodyTemplate)
+		bb.updateContents(newBody)
+	}
 
+	private Closure<String> trimmedAndEscapedBody() {
+		return this.&getBodyAsRawJson >> { String s -> StringEscapeUtils.escapeJava(s) }
+	}
+
+	// TODO: Move to handlebars implementation
+	private String templatedResponseBody(Map< String, TestSideRequestTemplateModel> model, Template bodyTemplate) {
+		return uncheckedApplyTemplate(bodyTemplate, model)
+	}
+
+	// TODO: Move to handlebars implementation
+	private String uncheckedApplyTemplate(Template template, Object context) {
+		try {
+			return template.apply(context)
+		} catch (IOException e) {
+			throw new RuntimeException(e)
+		}
+	}
+
+	// TODO: Move to handlebars implementation
+	private Template uncheckedCompileTemplate(final String requestBody, String content) {
+		try {
+			Handlebars handlebars = new Handlebars()
+			handlebars.registerHelper("jsonpath", new Helper<Object>() {
+				@Override
+				Object apply(Object context, Options options) throws IOException {
+					String jsonPath = options.param(0)
+					DocumentContext documentContext = JsonPath.parse(requestBody)
+					Object o = documentContext.read(jsonPath)
+					if (o instanceof String) {
+						return '"' + o + '"'
+					}
+					return o
+				}
+			})
+			return handlebars.compileInline(content)
+		} catch (IOException e) {
+			throw new RuntimeException(e)
+		}
 	}
 
 	@Override
@@ -172,10 +224,14 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 
 	@Override
 	protected String getBodyAsString() {
-		Object bodyValue = extractServerValueFromBody(request.body.serverValue)
-		String json = new JsonOutput().toJson(bodyValue)
+		String json = getBodyAsRawJson(request.body.serverValue)
 		json = convertUnicodeEscapesIfRequired(json)
 		return trimRepeatedQuotes(json)
+	}
+
+	protected String getBodyAsRawJson(Object body) {
+		Object bodyValue = extractServerValueFromBody(body)
+		return  new JsonOutput().toJson(bodyValue)
 	}
 
 	/**
@@ -224,19 +280,19 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 }
 
 @Immutable
-class RequestTemplateModel {
+class TestSideRequestTemplateModel {
 	final String url
 	final Map<String, String> query
 	final Map<String, String> headers
 	final String body
 
-	static RequestTemplateModel from(final Request request) {
+	static TestSideRequestTemplateModel from(final Request request, Closure<String> bodyConvertingFunction) {
 		String url = MapConverter.getTestSideValues(request.url ?: request.urlPath)
 		Map<String, String> query = (request.url ?: request.urlPath)
 				.queryParameters?.parameters?.collectEntries { [(it.name) : MapConverter.getTestSideValues(it)] }
 		Map<String, String> headers = (request.headers?.entries?.collectEntries {
 			[(it.name) : MapConverter.getTestSideValues(it)] })
-		String body = MapConverter.getTestSideValues(request.body)
-		return new RequestTemplateModel(url, query, headers, body)
+		String body = bodyConvertingFunction(request.body)
+		return new TestSideRequestTemplateModel(url, query, headers, body)
 	}
 }

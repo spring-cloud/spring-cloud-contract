@@ -8,6 +8,7 @@ import groovy.transform.CompileStatic
  * @author Marcin Grzejszczak
  * @since 1.1.0
  */
+// TODO: Move all {{}} to handlebars implementation
 @CompileStatic
 class FromRequest {
 
@@ -15,7 +16,7 @@ class FromRequest {
 	 * URL path and query
 	 */
 	DslProperty url() {
-		return new DslProperty("{{request.url}}".toString())
+		return new DslProperty("{{{request.url}}}".toString())
 	}
 
 	/**
@@ -23,7 +24,7 @@ class FromRequest {
 	 * @param key
 	 */
 	DslProperty query(String key) {
-		return new DslProperty("{{request.query.${key}}}".toString())
+		return new DslProperty("{{{request.query.${key}}}}".toString())
 	}
 
 	/**
@@ -32,7 +33,7 @@ class FromRequest {
 	 * @param index
 	 */
 	DslProperty query(String key, int index) {
-		return new DslProperty("{{request.query.${key}.[${index}]}}".toString())
+		return new DslProperty("{{{request.query.${key}.[${index}]}}}".toString())
 	}
 
 	/**
@@ -40,7 +41,7 @@ class FromRequest {
 	 * @param key
 	 */
 	DslProperty headers(String key) {
-		return new DslProperty("{{request.headers.${key}}}".toString())
+		return new DslProperty("{{{request.headers.${key}}}}".toString())
 	}
 
 	/**
@@ -49,13 +50,21 @@ class FromRequest {
 	 * @param index
 	 */
 	DslProperty headers(String key, int index) {
-		return new DslProperty("{{request.headers.${key}.[${index}]}}".toString())
+		return new DslProperty("{{{request.headers.${key}.[${index}]}}}".toString())
 	}
 
 	/**
 	 * Request body text (avoid for non-text bodies)
 	 */
 	DslProperty body() {
-		return new DslProperty("{{request.body}}".toString())
+		return new DslProperty("{{{request.body}}}".toString())
 	}
+
+	/**
+	 * Request body text for the given JsonPath
+	 */
+	DslProperty body(String jsonPath) {
+		return new DslProperty("{{{jsonpath this '${jsonPath}'}}}".toString())
+	}
+
 }

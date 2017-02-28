@@ -160,6 +160,9 @@ class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequ
 
 	@Override
 	protected String postProcessJsonPathCall(String jsonPath) {
+		if (containsTemplateEntry(jsonPath)) {
+			return jsonPath
+		}
 		return jsonPath.replace('$', '\\$')
 	}
 }
