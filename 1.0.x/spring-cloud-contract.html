@@ -648,6 +648,7 @@ $(addBlockSwitches);
 </li>
 <li><a href="#_stub_runner_junit_rule">Stub Runner JUnit Rule</a>
 <ul class="sectlevel3">
+<li><a href="#_maven_settings">Maven settings</a></li>
 <li><a href="#_providing_fixed_ports">Providing fixed ports</a></li>
 <li><a href="#_fluent_api">Fluent API</a></li>
 <li><a href="#_stub_runner_with_spring">Stub Runner with Spring</a></li>
@@ -801,7 +802,7 @@ $(addBlockSwitches);
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Documentation Authors: Adam Dudczak, Mathias Düsterhöft, Marcin Grzejszczak, Jakub Kubryński, Karol Lassak,
+<p><em>Documentation Authors: Adam Dudczak, Mathias Düsterhöft, Marcin Grzejszczak, Dennis Kieselhorst, Jakub Kubryński, Karol Lassak,
 Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer</em></p>
 </div>
 <div class="paragraph">
@@ -4643,6 +4644,13 @@ public void should_start_wiremock_servers() throws Exception {
 </div>
 <div class="paragraph">
 <p>Check the <strong>Common properties for JUnit and Spring</strong> for more information on how to apply global configuration of Stub Runner.</p>
+</div>
+<div class="sect3">
+<h4 id="_maven_settings">Maven settings</h4>
+<div class="paragraph">
+<p>The stub downloader honors Maven settings for a different local repository folder.
+Authentication details for repositories and profiles are currently not taken into account, so you need to specify it using the properties mentioned above.</p>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_providing_fixed_ports">Providing fixed ports</h4>
