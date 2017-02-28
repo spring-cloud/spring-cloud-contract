@@ -2196,7 +2196,12 @@ World.'''"""
 			Contract contractDsl = Contract.make {
 				request {
 					method 'GET'
-					url '/api/v1/xxxx'
+					url('/api/v1/xxxx') {
+						queryParameters {
+							parameter("foo", "bar")
+							parameter("foo", "bar2")
+						}
+					}
 					headers {
 						header(authorization(), "secret")
 					}
@@ -2209,6 +2214,8 @@ World.'''"""
 					}
 					body(
 							url: fromRequest().url(),
+							param: fromRequest().query("foo"),
+							paramIndex: fromRequest().query("foo", 1),
 							authorization: fromRequest().headers("Authorization"),
 							fullBody: fromRequest().body(),
 							responseFoo: fromRequest().body('$.foo'),
@@ -2226,9 +2233,11 @@ World.'''"""
 		then:
 			test.contains('''assertThatJson(parsedJson).field("url").isEqualTo("/api/v1/xxxx")''')
 			test.contains('''assertThatJson(parsedJson).field("fullBody").isEqualTo("{\\"foo\\":\\"bar\\",\\"baz\\":5}")''')
+			test.contains('''assertThatJson(parsedJson).field("paramIndex").isEqualTo("bar2")''')
 			test.contains('''assertThatJson(parsedJson).field("responseFoo").isEqualTo("bar")''')
-			test.contains('''assertThatJson(parsedJson).field("responseBaz").isEqualTo(5)''')
 			test.contains('''assertThatJson(parsedJson).field("authorization").isEqualTo("secret")''')
+			test.contains('''assertThatJson(parsedJson).field("responseBaz").isEqualTo(5)''')
+			test.contains('''assertThatJson(parsedJson).field("param").isEqualTo("bar")''')
 			responseAssertion(test)
 		where:
 			methodBuilderName                                    | methodBuilder                                                                               | responseAssertion

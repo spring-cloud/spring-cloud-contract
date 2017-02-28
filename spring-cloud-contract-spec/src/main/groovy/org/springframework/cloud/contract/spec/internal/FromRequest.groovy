@@ -24,7 +24,7 @@ class FromRequest {
 	 * @param key
 	 */
 	DslProperty query(String key) {
-		return new DslProperty("{{{request.query.${key}}}}".toString())
+		return new DslProperty("{{{request.query.${key}.[0]}}}".toString())
 	}
 
 	/**
@@ -42,15 +42,6 @@ class FromRequest {
 	 */
 	DslProperty headers(String key) {
 		return new DslProperty("{{{request.headers.${key}}}}".toString())
-	}
-
-	/**
-	 * nth value of a header (zero indexed) e.g. request.headers.ManyThings.[1]
-	 * @param key
-	 * @param index
-	 */
-	DslProperty headers(String key, int index) {
-		return new DslProperty("{{{request.headers.${key}.[${index}]}}}".toString())
 	}
 
 	/**

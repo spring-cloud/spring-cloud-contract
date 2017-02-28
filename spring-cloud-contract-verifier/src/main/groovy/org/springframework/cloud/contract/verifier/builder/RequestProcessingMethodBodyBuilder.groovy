@@ -282,14 +282,14 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 @Immutable
 class TestSideRequestTemplateModel {
 	final String url
-	final Map<String, String> query
+	final Map<String, List<String>> query
 	final Map<String, String> headers
 	final String body
 
 	static TestSideRequestTemplateModel from(final Request request, Closure<String> bodyConvertingFunction) {
 		String url = MapConverter.getTestSideValues(request.url ?: request.urlPath)
-		Map<String, String> query = (request.url ?: request.urlPath)
-				.queryParameters?.parameters?.collectEntries { [(it.name) : MapConverter.getTestSideValues(it)] }
+		Map<String, List<String>> query = (request.url ?: request.urlPath)
+				.queryParameters?.parameters?.groupBy { it.name }?.collectEntries { [(it.key) : it.value.collect { MapConverter.getTestSideValues(it) }] }
 		Map<String, String> headers = (request.headers?.entries?.collectEntries {
 			[(it.name) : MapConverter.getTestSideValues(it)] })
 		String body = bodyConvertingFunction(request.body)
