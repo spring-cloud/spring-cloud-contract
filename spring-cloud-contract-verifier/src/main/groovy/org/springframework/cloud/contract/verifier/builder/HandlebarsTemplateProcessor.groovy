@@ -4,17 +4,21 @@ import com.github.jknack.handlebars.Handlebars
 import com.github.jknack.handlebars.Template
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+import org.springframework.cloud.contract.spec.ContractTemplate
+import org.springframework.cloud.contract.spec.internal.HandlebarsContractTemplate
 import org.springframework.cloud.contract.spec.internal.Request
 
 /**
- *
+ * Default Handlebars template processor
  *
  * @author Marcin Grzejszczak
  * @since 1.1.0
  */
 @CompileStatic
 @PackageScope
-class HandlebarsTemplateProcessor implements TemplateProcessor {
+class HandlebarsTemplateProcessor implements TemplateProcessor, ContractTemplate {
+
+	@Delegate private final ContractTemplate contractTemplate = new HandlebarsContractTemplate()
 
 	@Override
 	String transform(Request request, String testContents) {
@@ -31,17 +35,7 @@ class HandlebarsTemplateProcessor implements TemplateProcessor {
 
 	@Override
 	boolean containsJsonPathTemplateEntry(String line) {
-		return line.contains(openingTemplate() + "jsonpath")
-	}
-
-	@Override
-	String openingTemplate() {
-		return "{{{"
-	}
-
-	@Override
-	String closingTemplate() {
-		return "}}}"
+		return line.contains(openingTemplate() + HandlebarsJsonPathHelper.NAME)
 	}
 
 	private String templatedResponseBody(Map< String, TestSideRequestTemplateModel> model, Template bodyTemplate) {

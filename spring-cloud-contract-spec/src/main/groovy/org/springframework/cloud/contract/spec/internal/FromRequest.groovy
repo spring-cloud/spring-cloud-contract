@@ -1,21 +1,37 @@
 package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.CompileStatic
+import org.springframework.cloud.contract.spec.ContractTemplate
+import org.springframework.core.io.support.SpringFactoriesLoader
 /**
  * Helper class to reference the request body parameters
  *
  * @author Marcin Grzejszczak
  * @since 1.1.0
  */
-// TODO: Move all {{}} to handlebars implementation
+
 @CompileStatic
 class FromRequest {
+
+	private final ContractTemplate template
+
+	FromRequest() {
+		this.template = processor()
+	}
+
+	private ContractTemplate processor() {
+		List<ContractTemplate> factories = SpringFactoriesLoader.loadFactories(ContractTemplate, null)
+		if (factories.empty) {
+			return new HandlebarsContractTemplate()
+		}
+		return factories.first()
+	}
 
 	/**
 	 * URL path and query
 	 */
 	DslProperty url() {
-		return new DslProperty("{{{request.url}}}".toString())
+		return new DslProperty(template.url())
 	}
 
 	/**
@@ -23,7 +39,7 @@ class FromRequest {
 	 * @param key
 	 */
 	DslProperty query(String key) {
-		return new DslProperty("{{{request.query.${key}.[0]}}}".toString())
+		return new DslProperty(template.query(key))
 	}
 
 	/**
@@ -32,7 +48,7 @@ class FromRequest {
 	 * @param index
 	 */
 	DslProperty query(String key, int index) {
-		return new DslProperty("{{{request.query.${key}.[${index}]}}}".toString())
+		return new DslProperty(template.query(key, index))
 	}
 
 	/**
@@ -40,21 +56,31 @@ class FromRequest {
 	 * @param key
 	 */
 	DslProperty header(String key) {
-		return new DslProperty("{{{request.headers.${key}}}}".toString())
+		return new DslProperty(template.header(key))
+	}
+
+	/**
+	 * nth value of a request header e.g. request.headers.X-Request-Id
+	 * @param key
+	 */
+	DslProperty header(String key, int index) {
+		return new DslProperty(template.header(key, index))
 	}
 
 	/**
 	 * Request body text (avoid for non-text bodies)
 	 */
 	DslProperty body() {
-		return new DslProperty("{{{request.body}}}".toString())
+		return new DslProperty(template.body())
 	}
 
 	/**
 	 * Request body text for the given JsonPath
 	 */
 	DslProperty body(String jsonPath) {
-		return new DslProperty("{{{jsonpath this '${jsonPath}'}}}".toString())
+		return new DslProperty(template.body(jsonPath))
 	}
 
 }
+
+

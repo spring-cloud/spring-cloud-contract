@@ -2204,6 +2204,7 @@ World.'''"""
 					}
 					headers {
 						header(authorization(), "secret")
+						header(authorization(), "secret2")
 					}
 					body(foo: "bar", baz: 5)
 				}
@@ -2217,6 +2218,7 @@ World.'''"""
 							param: fromRequest().query("foo"),
 							paramIndex: fromRequest().query("foo", 1),
 							authorization: fromRequest().header("Authorization"),
+							authorization2: fromRequest().header("Authorization", 1),
 							fullBody: fromRequest().body(),
 							responseFoo: fromRequest().body('$.foo'),
 							responseBaz: fromRequest().body('$.baz')
@@ -2236,6 +2238,7 @@ World.'''"""
 			test.contains('''assertThatJson(parsedJson).field("paramIndex").isEqualTo("bar2")''')
 			test.contains('''assertThatJson(parsedJson).field("responseFoo").isEqualTo("bar")''')
 			test.contains('''assertThatJson(parsedJson).field("authorization").isEqualTo("secret")''')
+			test.contains('''assertThatJson(parsedJson).field("authorization2").isEqualTo("secret2")''')
 			test.contains('''assertThatJson(parsedJson).field("responseBaz").isEqualTo(5)''')
 			test.contains('''assertThatJson(parsedJson).field("param").isEqualTo("bar")''')
 			responseAssertion(test)

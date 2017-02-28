@@ -10,8 +10,7 @@ import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
 /**
- * Representation of the request side. Contains all data necessary to perform
- * response templating
+ * Representation of the request side to be used for response templating
  *
  * @author Marcin Grzejszczak
  * @since 1.1.0
@@ -32,7 +31,7 @@ class TestSideRequestTemplateModel {
 	/**
 	 * Map containing request headers
 	 */
-	final Map<String, String> headers
+	final Map<String, List<String>> headers
 
 	/**
 	 * Escaped request body that can be put into test
@@ -50,8 +49,8 @@ class TestSideRequestTemplateModel {
 				.queryParameters?.parameters?.groupBy { it.name }?.collectEntries {
 			[(it.key): it.value.collect { MapConverter.getTestSideValues(it) }]
 		}
-		Map<String, String> headers = (request.headers?.entries?.collectEntries {
-			[(it.name): MapConverter.getTestSideValues(it)]
+		Map<String, List<String>> headers = (Map<String, List<String>>) (request.headers?.entries?.groupBy {it.name}?.collectEntries {
+			[(it.key): it.value.collect {  MapConverter.getTestSideValues(it) }]
 		})
 		String body = trimmedAndEscapedBody(request.body)
 		String rawBody = getBodyAsRawJson(request.body)

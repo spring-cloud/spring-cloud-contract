@@ -22,6 +22,7 @@ import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.apache.commons.lang3.StringEscapeUtils
+import org.springframework.cloud.contract.spec.ContractTemplate
 import org.springframework.cloud.contract.spec.internal.*
 import org.springframework.cloud.contract.verifier.util.MapConverter;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
@@ -49,14 +50,24 @@ abstract class MethodBodyBuilder {
 
 	protected final ContractVerifierConfigProperties configProperties
 	protected final TemplateProcessor templateProcessor
+	protected final ContractTemplate contractTemplate
 
 	protected MethodBodyBuilder(ContractVerifierConfigProperties configProperties) {
 		this.configProperties = configProperties
 		this.templateProcessor = processor()
+		this.contractTemplate = template()
 	}
 
 	private TemplateProcessor processor() {
 		List<TemplateProcessor> factories = SpringFactoriesLoader.loadFactories(TemplateProcessor, null)
+		if (factories.empty) {
+			return new HandlebarsTemplateProcessor()
+		}
+		return factories.first()
+	}
+
+	private ContractTemplate template() {
+		List<ContractTemplate> factories = SpringFactoriesLoader.loadFactories(ContractTemplate, null)
 		if (factories.empty) {
 			return new HandlebarsTemplateProcessor()
 		}
@@ -316,8 +327,8 @@ abstract class MethodBodyBuilder {
 			String method = it.method()
 			if (templateProcessor.containsTemplateEntry(method) &&
 					templateProcessor.containsJsonPathTemplateEntry(method)) {
-				method = method.replace('"' + templateProcessor.openingTemplate(), templateProcessor.openingTemplate())
-						.replace(templateProcessor.closingTemplate() + '"', templateProcessor.closingTemplate())
+				method = method.replace('"' + contractTemplate.openingTemplate(), contractTemplate.openingTemplate())
+						.replace(contractTemplate.closingTemplate() + '"', contractTemplate.closingTemplate())
 			}
 			String postProcessedMethod = templateProcessor.containsJsonPathTemplateEntry(method) ?
 					method : postProcessJsonPathCall(method)
