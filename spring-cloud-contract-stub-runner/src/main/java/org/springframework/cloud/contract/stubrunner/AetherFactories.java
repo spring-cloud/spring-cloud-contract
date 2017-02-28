@@ -16,7 +16,16 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
+import java.io.File;
+
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
+import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
+import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuilder;
+import org.apache.maven.settings.building.SettingsBuildingException;
+import org.apache.maven.settings.building.SettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuildingResult;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
@@ -32,6 +41,8 @@ import org.eclipse.aether.transport.http.HttpTransporterFactory;
 class AetherFactories {
 
 	private static final String MAVEN_LOCAL_REPOSITORY_LOCATION = "maven.repo.local";
+	private static final String MAVEN_USER_SETTINGS_LOCATION = "org.apache.maven.user-settings";
+	private static final String MAVEN_GLOBAL_SETTINGS_LOCATION = "org.apache.maven.global-settings";
 
 	public static RepositorySystem newRepositorySystem() {
 		DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
@@ -54,7 +65,33 @@ class AetherFactories {
 	}
 
 	private static String localRepositoryDirectory() {
-		return System.getProperty(MAVEN_LOCAL_REPOSITORY_LOCATION, System.getProperty("user.home") + "/.m2/repository");
+		String localRepoLocationFromSettings = settings().getLocalRepository();
+		return System.getProperty(MAVEN_LOCAL_REPOSITORY_LOCATION, localRepoLocationFromSettings != null
+			? localRepoLocationFromSettings
+			: System.getProperty("user.home") + File.separator + ".m2" + File.separator + "repository");
+	}
+
+	private static Settings settings() {
+		SettingsBuilder builder = new DefaultSettingsBuilderFactory().newInstance();
+		SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
+		String user = System.getProperty(MAVEN_USER_SETTINGS_LOCATION);
+		if (user == null) {
+			request.setUserSettingsFile(new File(new File(System.getProperty("user.home")).getAbsoluteFile(),
+					File.separator + ".m2" + File.separator + "settings.xml"));
+		} else {
+			request.setUserSettingsFile(new File(user));
+		}
+		String global = System.getProperty(MAVEN_GLOBAL_SETTINGS_LOCATION);
+		if (global != null) {
+			request.setGlobalSettingsFile(new File(global));
+		}
+		SettingsBuildingResult result;
+		try {
+			result = builder.build(request);
+		} catch (SettingsBuildingException ex) {
+			throw new IllegalStateException(ex);
+		}
+		return result.getEffectiveSettings();
 	}
 
 }
