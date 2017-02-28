@@ -74,7 +74,11 @@ dependencies {
 
 }
 
-task libtest << { configurations.testCompile.files.each { println it } }
+task libtest() {
+	doLast{
+		configurations.testCompile.files.each { println it }
+	}
+}
 
 test {
 	testLogging {
@@ -123,4 +127,8 @@ task resolveDependencies {
 			}
 		}
 	}
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '3.4'
 }
