@@ -127,6 +127,11 @@ include::src/test/groovy/org/springframework/cloud/contract/stubrunner/junit/Stu
 
 Check the *Common properties for JUnit and Spring* for more information on how to apply global configuration of Stub Runner.
 
+==== Maven settings
+
+The stub downloader honors Maven settings for a different local repository folder.
+Authentication details for repositories and profiles are currently not taken into account, so you need to specify it using the properties mentioned above.
+
 ==== Providing fixed ports
 
 You can also run your stubs on fixed ports. You can do it in two different ways. One is to pass it in the properties, and the other via fluent API of
