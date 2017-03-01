@@ -256,6 +256,120 @@ IMPORTANT: You can't use both a String and `execute` to perform concatenation. E
 To make this work just call `header('Authorization', execute('authToken()'))` and ensure that
 the `authToken()` method returns everything that you need.
 
+===== Referencing request from response
+
+The best situation is to provide fixed values but sometimes you need to reference a request in your response.
+In order to do this you can profit from the `fromRequest()` method that allows you to reference a bunch
+of elements from the HTTP request. You can use the following options:
+
+- `fromRequest().url()` - return the request URL
+- `fromRequest().query(String key)` - return the first query parameter with a given name
+- `fromRequest().query(String key, int index)` - return the nth query parameter with a given name
+- `fromRequest().header(String key)` - return the first header with a given name
+- `fromRequest().header(String key, int index)` - return the nth header with a given name
+- `fromRequest().body()` - return the full request body
+- `fromRequest().body(String jsonPath)` - return the element from the request that matches the JSON Path
+
+Let's take a look at the following contract
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderSpec.groovy[tags=template_contract,indent=0]
+----
+
+Running a JUnit test generation will lead in creation of a test looking more or less like this
+
+[source,java,indent=0]
+----
+ // given:
+  MockMvcRequestSpecification request = given()
+    .header("Authorization", "secret")
+    .header("Authorization", "secret2")
+    .body("{\"foo\":\"bar\",\"baz\":5}");
+
+ // when:
+  ResponseOptions response = given().spec(request)
+    .queryParam("foo","bar")
+    .queryParam("foo","bar2")
+    .get("/api/v1/xxxx");
+
+ // then:
+  assertThat(response.statusCode()).isEqualTo(200);
+  assertThat(response.header("Authorization")).isEqualTo("foo secret bar");
+ // and:
+  DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+  assertThatJson(parsedJson).field("url").isEqualTo("/api/v1/xxxx");
+  assertThatJson(parsedJson).field("fullBody").isEqualTo("{\"foo\":\"bar\",\"baz\":5}");
+  assertThatJson(parsedJson).field("paramIndex").isEqualTo("bar2");
+  assertThatJson(parsedJson).field("responseFoo").isEqualTo("bar");
+  assertThatJson(parsedJson).field("authorization2").isEqualTo("secret2");
+  assertThatJson(parsedJson).field("responseBaz").isEqualTo(5);
+  assertThatJson(parsedJson).field("responseBaz2").isEqualTo("Bla bla bar bla bla");
+  assertThatJson(parsedJson).field("param").isEqualTo("bar");
+  assertThatJson(parsedJson).field("authorization").isEqualTo("secret");
+----
+
+As you can see elements from the request have been properly referenced in the response.
+
+The generated WireMock stub will look more or less like this:
+
+[source,json,indent=0]
+----
+{
+  "request" : {
+    "urlPath" : "/api/v1/xxxx",
+    "method" : "POST",
+    "headers" : {
+      "Authorization" : {
+        "equalTo" : "secret2"
+      }
+    },
+    "queryParameters" : {
+      "foo" : {
+        "equalTo" : "bar2"
+      }
+    },
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[?(@.baz == 5)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.foo == 'bar')]"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"url\":\"{{{request.url}}}\",\"param\":\"{{{request.query.foo.[0]}}}\",\"paramIndex\":\"{{{request.query.foo.[1]}}}\",\"authorization\":\"{{{request.headers.Authorization.[0]}}}\",\"authorization2\":\"{{{request.headers.Authorization.[1]}}}\",\"fullBody\":\"{{{escapejsonbody}}}\",\"responseFoo\":\"{{{jsonpath this '$.foo'}}}\",\"responseBaz\":{{{jsonpath this '$.baz'}}} ,\"responseBaz2\":\"Bla bla {{{jsonpath this '$.foo'}}} bla bla\"}",
+    "headers" : {
+      "Authorization" : "{{{request.headers.Authorization.[0]}}}"
+    },
+    "transformers" : [ "response-template" ]
+  }
+}
+----
+
+So sending a request as the one presented in the `request` part of the contract will lead in sending the following
+response body
+
+[source,json,indent=0]
+----
+{
+  "url" : "/api/v1/xxxx?foo=bar&foo=bar2",
+  "param" : "bar",
+  "paramIndex" : "bar2",
+  "authorization" : "secret",
+  "authorization2" : "secret2",
+  "fullBody" : "{\"foo\":\"bar\",\"baz\":5}",
+  "responseFoo" : "bar",
+  "responseBaz" : 5,
+  "responseBaz2" : "Bla bla bar bla bla"
+}
+----
+
+IMPORTANT: This feature will work only with WireMock having version greater or equal to 2.5.1. We're using WireMock's
+`response-template` response transformer. It's using Handlebars to convert the Mustache `{{{ }}}` templates into
+proper values. Additionally we're registering 2 helper functions. `escapejsonbody` - that escapes the request
+body in a format that can be embedded in a JSON. Another is `jsonpath` that for a given parameter knows how to
+find an object in the request body.
+
 ===== Dynamic properties in matchers sections
 
 If you've been working with https://docs.pact.io/[Pact] this might seem familiar. Quite a few users

@@ -44,7 +44,6 @@ import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 import org.springframework.cloud.contract.verifier.util.MapConverter
-import org.springframework.core.io.support.SpringFactoriesLoader
 import org.springframework.util.SerializationUtils
 
 import java.lang.invoke.MethodHandles
@@ -79,19 +78,11 @@ abstract class MethodBodyBuilder {
 	}
 
 	private TemplateProcessor processor() {
-		List<TemplateProcessor> factories = SpringFactoriesLoader.loadFactories(TemplateProcessor, null)
-		if (factories.empty) {
-			return new HandlebarsTemplateProcessor()
-		}
-		return factories.first()
+		return new HandlebarsTemplateProcessor()
 	}
 
 	private ContractTemplate template() {
-		List<ContractTemplate> factories = SpringFactoriesLoader.loadFactories(ContractTemplate, null)
-		if (factories.empty) {
-			return new HandlebarsTemplateProcessor()
-		}
-		return factories.first()
+		return new HandlebarsTemplateProcessor()
 	}
 
 	/**

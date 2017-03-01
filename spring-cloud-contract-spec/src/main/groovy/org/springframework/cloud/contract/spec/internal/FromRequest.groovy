@@ -2,7 +2,6 @@ package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.ContractTemplate
-import org.springframework.core.io.support.SpringFactoriesLoader
 /**
  * Helper class to reference the request body parameters
  *
@@ -20,11 +19,7 @@ class FromRequest {
 	}
 
 	private ContractTemplate processor() {
-		List<ContractTemplate> factories = SpringFactoriesLoader.loadFactories(ContractTemplate, null)
-		if (factories.empty) {
-			return new HandlebarsContractTemplate()
-		}
-		return factories.first()
+		return new HandlebarsContractTemplate()
 	}
 
 	/**

@@ -1613,6 +1613,11 @@ The rest of the flow looks the same.
 Yes! Check out the https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_different_base_classes_for_contracts[Different base classes for contracts] sections
 of either Gradle or Maven plugins.
 
+==== Can I reference the request from the response?
+
+Yes! With version 1.1.0 we've added such a possibility. On the HTTP stub server side we're providing support
+for this for WireMock. In case of other HTTP server stubs you'll have to implement the approach yourself.
+
 === Links
 
 Here you can find interesting links related to Spring Cloud Contract Verifier:

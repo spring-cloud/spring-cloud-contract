@@ -2193,6 +2193,7 @@ World.'''"""
 	@Issue("#230")
 	def "should manage to reference request in response [#methodBuilderName]"() {
 		given:
+			//tag::template_contract[]
 			Contract contractDsl = Contract.make {
 				request {
 					method 'GET'
@@ -2226,6 +2227,7 @@ World.'''"""
 					)
 				}
 			}
+			//end::template_contract[]
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		and:

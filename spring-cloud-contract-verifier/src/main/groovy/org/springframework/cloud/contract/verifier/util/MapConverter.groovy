@@ -20,8 +20,6 @@ import groovy.json.JsonSlurper
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor
 import org.springframework.cloud.contract.verifier.template.TemplateProcessor
-import org.springframework.core.io.support.SpringFactoriesLoader
-
 /**
  * Converts an object into either client or server side representation.
  * Iterates over the structure of an object (depending on whether it's an
@@ -44,11 +42,7 @@ class MapConverter {
 	}
 
 	private TemplateProcessor processor() {
-		List<TemplateProcessor> factories = SpringFactoriesLoader.loadFactories(TemplateProcessor, null)
-		if (factories.empty) {
-			return new HandlebarsTemplateProcessor()
-		}
-		return factories.first()
+		return new HandlebarsTemplateProcessor()
 	}
 
 	/**

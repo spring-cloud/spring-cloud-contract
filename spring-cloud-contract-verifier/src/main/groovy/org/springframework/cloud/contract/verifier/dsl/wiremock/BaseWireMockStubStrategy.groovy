@@ -30,7 +30,6 @@ import org.springframework.cloud.contract.verifier.template.TemplateProcessor
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.MapConverter
-import org.springframework.core.io.support.SpringFactoriesLoader
 
 import static ContentUtils.extractValue
 import static org.springframework.cloud.contract.verifier.util.MapConverter.transformValues
@@ -58,19 +57,11 @@ abstract class BaseWireMockStubStrategy {
 	}
 
 	private TemplateProcessor processor() {
-		List<TemplateProcessor> factories = SpringFactoriesLoader.loadFactories(TemplateProcessor, null)
-		if (factories.empty) {
-			return new HandlebarsTemplateProcessor()
-		}
-		return factories.first()
+		return new HandlebarsTemplateProcessor()
 	}
 
 	private ContractTemplate contractTemplate() {
-		List<ContractTemplate> factories = SpringFactoriesLoader.loadFactories(ContractTemplate, null)
-		if (factories.empty) {
-			return new HandlebarsTemplateProcessor()
-		}
-		return factories.first()
+		return new HandlebarsTemplateProcessor()
 	}
 
 	/**

@@ -50,7 +50,10 @@ public class WireMockHttpServerStub implements HttpServerStub {
 		return new ResponseTemplateTransformer(false, helpers());
 	}
 
-	private Map<String, Helper> helpers() {
+	/**
+	 * Override this if you want to register your own helpers
+	 */
+	protected Map<String, Helper> helpers() {
 		Map<String, Helper> helpers = new HashMap<>();
 		helpers.put(HandlebarsJsonPathHelper.NAME, new HandlebarsJsonPathHelper());
 		helpers.put(HandlebarsEscapeHelper.NAME, new HandlebarsEscapeHelper());
