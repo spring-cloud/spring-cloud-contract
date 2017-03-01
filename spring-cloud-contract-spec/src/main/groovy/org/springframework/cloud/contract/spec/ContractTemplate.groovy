@@ -54,9 +54,16 @@ interface ContractTemplate {
 	String header(String key, int index)
 
 	/**
-	 * Request body text (avoid for non-text bodies) e.g. {{{ request.body }}}
+	 * Request body text (avoid for non-text bodies) e.g. {{{ request.body }}} . The body will not be escaped
+	 * so you won't be able to directly embed it in a JSON for example.
 	 */
 	String body()
+
+	/**
+	 * Request body text (avoid for non-text bodies) e.g. {{{ escapejsonbody }}} . The body will not be escaped
+	 * so you will be able to embed it
+	 */
+	String escapedBody()
 
 	/**
 	 * Request body text for the given JsonPath. e.g. {{{ jsonpath this '$.a.b.c' }}}

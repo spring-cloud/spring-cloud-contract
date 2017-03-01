@@ -10,7 +10,8 @@ import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
 /**
- * Representation of the request side to be used for response templating
+ * Representation of the request side to be used for response templating in
+ * the generated tests.
  *
  * @author Marcin Grzejszczak
  * @since 1.1.0

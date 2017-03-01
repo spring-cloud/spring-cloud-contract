@@ -116,6 +116,8 @@ abstract class BaseWireMockStubStrategy {
 					return it
 				}
 				return "${WRAPPER}${it}${WRAPPER}"
+			} else if (it instanceof String && processor.containsTemplateEntry(it) && template.body() == it) {
+				return template.escapedBody()
 			}
 			return it
 		})

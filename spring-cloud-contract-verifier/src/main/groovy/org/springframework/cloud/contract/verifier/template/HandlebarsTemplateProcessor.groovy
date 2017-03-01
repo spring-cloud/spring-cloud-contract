@@ -6,7 +6,7 @@ import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.ContractTemplate
 import org.springframework.cloud.contract.spec.internal.HandlebarsContractTemplate
 import org.springframework.cloud.contract.spec.internal.Request
-import org.springframework.cloud.contract.verifier.builder.HandlebarsJsonPathHelper
+import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsJsonPathHelper
 import org.springframework.cloud.contract.verifier.builder.TestSideRequestTemplateModel
 
 import java.util.regex.Matcher

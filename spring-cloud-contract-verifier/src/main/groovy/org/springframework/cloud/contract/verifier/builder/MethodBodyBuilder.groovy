@@ -327,9 +327,10 @@ abstract class MethodBodyBuilder {
 		JsonPaths jsonPaths = new JsonToJsonPathsConverter(configProperties).transformToJsonPathWithTestsSideValues(convertedResponseBody)
 		jsonPaths.each {
 			String method = it.method()
-			if (templateProcessor.containsTemplateEntry(method) &&
-					templateProcessor.containsJsonPathTemplateEntry(method)) {
-				method = method.replace('"' + contractTemplate.openingTemplate(), contractTemplate.openingTemplate())
+			if (templateProcessor.containsTemplateEntry(method) && templateProcessor.containsJsonPathTemplateEntry(method)) {
+				// Unquoting the values
+				method = method
+						.replace('"' + contractTemplate.openingTemplate(), contractTemplate.openingTemplate())
 						.replace(contractTemplate.closingTemplate() + '"', contractTemplate.closingTemplate())
 			}
 			String postProcessedMethod = templateProcessor.containsJsonPathTemplateEntry(method) ?

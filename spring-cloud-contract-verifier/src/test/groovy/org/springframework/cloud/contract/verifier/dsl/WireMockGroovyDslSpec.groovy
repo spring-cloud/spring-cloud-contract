@@ -22,7 +22,8 @@ import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemp
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.builder.HandlebarsJsonPathHelper
+import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsEscapeHelper
+import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsJsonPathHelper
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubMapping
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubStrategy
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
@@ -1735,7 +1736,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					  },
 					  "response" : {
 						"status" : 200,
-						"body" : "{\\"url\\":\\"{{{request.url}}}\\",\\"param\\":\\"{{{request.query.foo.[0]}}}\\",\\"paramIndex\\":\\"{{{request.query.foo.[1]}}}\\",\\"authorization\\":\\"{{{request.headers.Authorization.[0]}}}\\",\\"authorization2\\":\\"{{{request.headers.Authorization.[1]}}}\\",\\"fullBody\\":\\"{{{request.body}}}\\",\\"responseFoo\\":\\"{{{jsonpath this '$.foo'}}}\\",\\"responseBaz\\":{{{jsonpath this '$.baz'}}} }",
+						"body" : "{\\"url\\":\\"{{{request.url}}}\\",\\"param\\":\\"{{{request.query.foo.[0]}}}\\",\\"paramIndex\\":\\"{{{request.query.foo.[1]}}}\\",\\"authorization\\":\\"{{{request.headers.Authorization.[0]}}}\\",\\"authorization2\\":\\"{{{request.headers.Authorization.[1]}}}\\",\\"fullBody\\":\\"{{{escapejsonbody}}}\\",\\"responseFoo\\":\\"{{{jsonpath this '$.foo'}}}\\",\\"responseBaz\\":{{{jsonpath this '$.baz'}}} }",
 						"headers" : {
 						  "Authorization" : "{{{request.headers.Authorization.[0]}}}"
 						},
@@ -1756,7 +1757,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		and:
 			AssertionUtil.assertThatJsonsAreEqual(('''
 				{
-				  "url" : "/api/v1/xxxx?foo=bar2",
+				  "url" : "/api/v1/xxxx?foo=bar&foo=bar2",
 				  "param" : "bar",
 				  "paramIndex" : "bar2",
 				  "authorization" : "secret",
@@ -1775,6 +1776,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	}
 
 	private ResponseTemplateTransformer responseTemplateTransformer() {
-		return new ResponseTemplateTransformer(false, HandlebarsJsonPathHelper.NAME, new HandlebarsJsonPathHelper())
+		return new ResponseTemplateTransformer(false,
+				[(HandlebarsJsonPathHelper.NAME): new HandlebarsJsonPathHelper(),
+				(HandlebarsEscapeHelper.NAME): new HandlebarsEscapeHelper()])
 	}
 }

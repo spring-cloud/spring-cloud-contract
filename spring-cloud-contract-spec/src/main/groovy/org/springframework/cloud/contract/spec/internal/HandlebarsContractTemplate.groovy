@@ -53,6 +53,11 @@ class HandlebarsContractTemplate implements ContractTemplate {
 	}
 
 	@Override
+	String escapedBody() {
+		return wrapped("escapejsonbody")
+	}
+
+	@Override
 	String body(String jsonPath) {
 		return wrapped("jsonpath this '${jsonPath}'")
 	}

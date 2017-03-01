@@ -5,16 +5,20 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.stubrunner.HttpServerStub;
-import org.springframework.cloud.contract.verifier.builder.HandlebarsJsonPathHelper;
+import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsEscapeHelper;
+import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsJsonPathHelper;
 import org.springframework.cloud.contract.wiremock.WireMockSpring;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.SocketUtils;
 import org.springframework.util.StreamUtils;
 
+import com.github.jknack.handlebars.Helper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
@@ -43,7 +47,14 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	}
 
 	private ResponseTemplateTransformer responseTemplateTransformer() {
-		return new ResponseTemplateTransformer(false, HandlebarsJsonPathHelper.NAME, new HandlebarsJsonPathHelper());
+		return new ResponseTemplateTransformer(false, helpers());
+	}
+
+	private Map<String, Helper> helpers() {
+		Map<String, Helper> helpers = new HashMap<>();
+		helpers.put(HandlebarsJsonPathHelper.NAME, new HandlebarsJsonPathHelper());
+		helpers.put(HandlebarsEscapeHelper.NAME, new HandlebarsEscapeHelper());
+		return helpers;
 	}
 
 	@Override
