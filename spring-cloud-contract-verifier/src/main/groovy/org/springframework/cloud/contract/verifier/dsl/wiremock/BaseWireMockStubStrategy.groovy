@@ -96,10 +96,19 @@ abstract class BaseWireMockStubStrategy {
 		def transformedMap = MapConverter.getStubSideValues(map)
 		String responseSideBody = toJson(MapConverter.getTestSideValues(contract.request.body))
 		DocumentContext context = JsonPath.parse(responseSideBody)
-		transformedMap = transformValues(transformedMap, {
+		transformedMap = processEntriesForTemplating(transformedMap, context)
+		String json = toJson(transformedMap)
+		// the space is important cause at the end of the json body you also have a }
+		// you can't have 4 } next to each other
+		String unquotedJson = json.replace('"' + WRAPPER, '').replace(WRAPPER + '"', ' ')
+		return parseBody(unquotedJson, contentType)
+	}
+
+	private Object processEntriesForTemplating(transformedMap, DocumentContext context) {
+		return transformValues(transformedMap, {
 			if (it instanceof String && processor.containsJsonPathTemplateEntry(it)) {
 				String jsonPath = processor.jsonPathFromTemplateEntry(it)
-				if(!jsonPath) {
+				if (!jsonPath) {
 					return it
 				}
 				Object value = context.read(jsonPath)
@@ -112,11 +121,6 @@ abstract class BaseWireMockStubStrategy {
 			}
 			return it
 		})
-		String json = toJson(transformedMap)
-		// the space is important cause at the end of the json body you also have a }
-		// you can't have 4 } next to each other
-		String unquotedJson = json.replace('"' + WRAPPER, '').replace(WRAPPER + '"', ' ')
-		return parseBody(unquotedJson, contentType)
 	}
 
 	/**

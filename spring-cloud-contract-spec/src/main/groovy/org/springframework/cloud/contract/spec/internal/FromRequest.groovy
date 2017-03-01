@@ -15,10 +15,10 @@ class FromRequest {
 	private final ContractTemplate template
 
 	FromRequest() {
-		this.template = processor()
+		this.template = template()
 	}
 
-	private ContractTemplate processor() {
+	private ContractTemplate template() {
 		return new HandlebarsContractTemplate()
 	}
 

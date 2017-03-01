@@ -4,7 +4,8 @@ import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.ContractTemplate
 
 /**
- * Represents the structure of templates using Handlebars
+ * Represents the structure of templates using Handlebars compatible with
+ * WireMock template model requirements.
  *
  * @author Marcin Grzejszczak
  * @since 1.1.0

@@ -346,17 +346,7 @@ abstract class MethodBodyBuilder {
 		}
 		jsonPaths.each {
 			String method = it.method()
-			if (templateProcessor.containsTemplateEntry(method) &&
-					templateProcessor.containsJsonPathTemplateEntry(method) && contract.request.body) {
-				// Unquoting the values of non strings
-				String jsonPathEntry = templateProcessor.jsonPathFromTemplateEntry(method)
-				Object object = parsedRequestBody.read(jsonPathEntry)
-				if (!(object instanceof String)) {
-					method = method
-							.replace('"' + contractTemplate.openingTemplate(), contractTemplate.openingTemplate())
-							.replace(contractTemplate.closingTemplate() + '"', contractTemplate.closingTemplate())
-				}
-			}
+			method = processIfTemplateIsPresent(method, parsedRequestBody)
 			String postProcessedMethod = templateProcessor.containsJsonPathTemplateEntry(method) ?
 					method : postProcessJsonPathCall(method)
 			bb.addLine("assertThatJson(parsedJson)" + postProcessedMethod)
@@ -378,6 +368,21 @@ abstract class MethodBodyBuilder {
 			}
 		}
 		processBodyElement(bb, "", convertedResponseBody)
+	}
+
+	protected String processIfTemplateIsPresent(String method, DocumentContext parsedRequestBody) {
+		if (templateProcessor.containsTemplateEntry(method) &&
+				templateProcessor.containsJsonPathTemplateEntry(method) && contract.request?.body) {
+			// Unquoting the values of non strings
+			String jsonPathEntry = templateProcessor.jsonPathFromTemplateEntry(method)
+			Object object = parsedRequestBody.read(jsonPathEntry)
+			if (!(object instanceof String)) {
+				return method
+						.replace('"' + contractTemplate.openingTemplate(), contractTemplate.openingTemplate())
+						.replace(contractTemplate.closingTemplate() + '"', contractTemplate.closingTemplate())
+			}
+		}
+		return method
 	}
 
 	protected void methodForEqualityCheck(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
