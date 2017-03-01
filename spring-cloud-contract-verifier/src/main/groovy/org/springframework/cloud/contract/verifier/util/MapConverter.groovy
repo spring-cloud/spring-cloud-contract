@@ -18,6 +18,9 @@ package org.springframework.cloud.contract.verifier.util
 
 import groovy.json.JsonSlurper
 import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor
+import org.springframework.cloud.contract.verifier.template.TemplateProcessor
+import org.springframework.core.io.support.SpringFactoriesLoader
 
 /**
  * Converts an object into either client or server side representation.
@@ -33,6 +36,20 @@ class MapConverter {
 
 	public static final boolean STUB_SIDE = true
 	public static final boolean TEST_SIDE = false
+
+	private final TemplateProcessor templateProcessor
+
+	MapConverter() {
+		this.templateProcessor = processor()
+	}
+
+	private TemplateProcessor processor() {
+		List<TemplateProcessor> factories = SpringFactoriesLoader.loadFactories(TemplateProcessor, null)
+		if (factories.empty) {
+			return new HandlebarsTemplateProcessor()
+		}
+		return factories.first()
+	}
 
 	/**
 	 * Returns the object with client side values of {@link org.springframework.cloud.contract.spec.internal.DslProperty}
@@ -107,7 +124,10 @@ class MapConverter {
 				return clientSide ?
 						getClientOrServerSideValues(dslProperty.clientValue, clientSide) : getClientOrServerSideValues(dslProperty.serverValue, clientSide)
 			} else if (it instanceof GString) {
-				return ContentUtils.extractValue(it , null, {
+				ContentType type = new MapConverter().templateProcessor.containsJsonPathTemplateEntry(
+							ContentUtils.extractValueForGString(it, ContentUtils.GET_TEST_SIDE).toString()
+					) ? ContentType.TEXT : null
+				return ContentUtils.extractValue(it , type, {
 					if (it instanceof DslProperty) {
 						return clientSide ?
 								getClientOrServerSideValues((it as DslProperty).clientValue, clientSide) : getClientOrServerSideValues((it as DslProperty).serverValue, clientSide)

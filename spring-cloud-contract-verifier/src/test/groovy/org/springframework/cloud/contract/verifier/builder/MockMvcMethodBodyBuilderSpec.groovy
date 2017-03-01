@@ -2211,7 +2211,7 @@ World.'''"""
 				response {
 					status 200
 					headers {
-						header(authorization(), fromRequest().header(authorization()))
+						header(authorization(), "foo ${fromRequest().header(authorization())} bar")
 					}
 					body(
 							url: fromRequest().url(),
@@ -2221,7 +2221,8 @@ World.'''"""
 							authorization2: fromRequest().header("Authorization", 1),
 							fullBody: fromRequest().body(),
 							responseFoo: fromRequest().body('$.foo'),
-							responseBaz: fromRequest().body('$.baz')
+							responseBaz: fromRequest().body('$.baz'),
+							responseBaz2: "Bla bla ${fromRequest().body('$.foo')} bla bla"
 					)
 				}
 			}
@@ -2233,6 +2234,7 @@ World.'''"""
 		when:
 			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
 		then:
+			!test.contains('''DslProperty''')
 			test.contains('''assertThatJson(parsedJson).field("url").isEqualTo("/api/v1/xxxx")''')
 			test.contains('''assertThatJson(parsedJson).field("fullBody").isEqualTo("{\\"foo\\":\\"bar\\",\\"baz\\":5}")''')
 			test.contains('''assertThatJson(parsedJson).field("paramIndex").isEqualTo("bar2")''')
@@ -2240,13 +2242,14 @@ World.'''"""
 			test.contains('''assertThatJson(parsedJson).field("authorization").isEqualTo("secret")''')
 			test.contains('''assertThatJson(parsedJson).field("authorization2").isEqualTo("secret2")''')
 			test.contains('''assertThatJson(parsedJson).field("responseBaz").isEqualTo(5)''')
+			test.contains('''assertThatJson(parsedJson).field("responseBaz2").isEqualTo("Bla bla bar bla bla")''')
 			test.contains('''assertThatJson(parsedJson).field("param").isEqualTo("bar")''')
 			responseAssertion(test)
 		where:
 			methodBuilderName                                    | methodBuilder                                                                               | responseAssertion
-			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | { String body -> body.contains("response.header('Authorization')  == 'secret'") }
-			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | { String body -> body.contains('assertThat(response.header("Authorization")).isEqualTo("secret");') }
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String body -> body.contains("response.getHeaderString('Authorization')  == 'secret'") }
-			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String body -> body.contains('assertThat(response.getHeaderString("Authorization")).isEqualTo("secret");') }
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | { String body -> body.contains("response.header('Authorization')  == 'foo secret bar'") }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | { String body -> body.contains('assertThat(response.header("Authorization")).isEqualTo("foo secret bar");') }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String body -> body.contains("response.getHeaderString('Authorization')  == 'foo secret bar'") }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String body -> body.contains('assertThat(response.getHeaderString("Authorization")).isEqualTo("foo secret bar");') }
 	}
 }

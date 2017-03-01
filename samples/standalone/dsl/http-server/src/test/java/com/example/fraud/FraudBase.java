@@ -5,7 +5,6 @@ import org.junit.Before;
 import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc;
 
 public class FraudBase {
-
 	@Before
 	public void setup() {
 		RestAssuredMockMvc.standaloneSetup(new FraudDetectionController(),

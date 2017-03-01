@@ -32,7 +32,6 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.util.SerializationUtils
 
 import java.util.regex.Pattern
-
 /**
  * I would like to apologize to anyone who is reading this class. Since JSON is a hectic structure
  * this class is also hectic. The idea is to traverse the JSON structure and build a set of
@@ -59,7 +58,7 @@ class JsonToJsonPathsConverter {
 	}
 
 	JsonToJsonPathsConverter() {
-		this.configProperties = new ContractVerifierConfigProperties()
+		this(new ContractVerifierConfigProperties())
 		if (log.isDebugEnabled()) {
 			log.debug("Creating JsonToJsonPaths converter with default properties")
 		}

@@ -25,7 +25,6 @@ import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 import java.util.regex.Pattern
-
 /**
  * A {@link SpockMethodRequestProcessingBodyBuilder} implementation that uses MockMvc to send requests.
  *
@@ -63,6 +62,7 @@ class MockMvcSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestP
 					"${patternComparison(value.serverValue.pattern().replace("\\", "\\\\"))}")
 		}
 	}
+
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
 		blockBuilder.addLine("${exec.insertValue("response.header(\'$property\')")}")

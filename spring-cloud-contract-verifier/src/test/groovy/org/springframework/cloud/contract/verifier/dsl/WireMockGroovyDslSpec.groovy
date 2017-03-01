@@ -21,6 +21,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
+import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsEscapeHelper
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsJsonPathHelper
@@ -28,6 +29,7 @@ import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubMapp
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubStrategy
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.AssertionUtil
+import org.springframework.http.RequestEntity
 import org.springframework.http.ResponseEntity
 import org.springframework.util.SocketUtils
 import spock.lang.Issue
@@ -996,7 +998,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				{
 					"request": {
 						"method": "GET",
-						"urlPattern": "users/[0-9]*",
+						"urlPathPattern": "users/[0-9]*",
 						"queryParameters": {
 						  "age": {
 							"doesNotMatch": "^\\\\w*$"
@@ -1706,7 +1708,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 							authorization2: fromRequest().header("Authorization", 1),
 							fullBody: fromRequest().body(),
 							responseFoo: fromRequest().body('$.foo'),
-							responseBaz: fromRequest().body('$.baz')
+							responseBaz: fromRequest().body('$.baz'),
+							responseBaz2: "Bla bla ${fromRequest().body('$.foo')} bla bla"
 					)
 				}
 			}
@@ -1736,7 +1739,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					  },
 					  "response" : {
 						"status" : 200,
-						"body" : "{\\"url\\":\\"{{{request.url}}}\\",\\"param\\":\\"{{{request.query.foo.[0]}}}\\",\\"paramIndex\\":\\"{{{request.query.foo.[1]}}}\\",\\"authorization\\":\\"{{{request.headers.Authorization.[0]}}}\\",\\"authorization2\\":\\"{{{request.headers.Authorization.[1]}}}\\",\\"fullBody\\":\\"{{{escapejsonbody}}}\\",\\"responseFoo\\":\\"{{{jsonpath this '$.foo'}}}\\",\\"responseBaz\\":{{{jsonpath this '$.baz'}}} }",
+						"body" : "{\\"url\\":\\"{{{request.url}}}\\",\\"param\\":\\"{{{request.query.foo.[0]}}}\\",\\"paramIndex\\":\\"{{{request.query.foo.[1]}}}\\",\\"authorization\\":\\"{{{request.headers.Authorization.[0]}}}\\",\\"authorization2\\":\\"{{{request.headers.Authorization.[1]}}}\\",\\"fullBody\\":\\"{{{escapejsonbody}}}\\",\\"responseFoo\\":\\"{{{jsonpath this '$.foo'}}}\\",\\"responseBaz\\":{{{jsonpath this '$.baz'}}} ,\\"responseBaz2\\":\\"Bla bla {{{jsonpath this '$.foo'}}} bla bla\\"}",
 						"headers" : {
 						  "Authorization" : "{{{request.headers.Authorization.[0]}}}"
 						},
@@ -1752,7 +1755,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			server.start()
 			server.addStubMapping(WireMockStubMapping.buildFrom(json))
 		then:
-			ResponseEntity<String> entity = new TestClient().call(port)
+			ResponseEntity<String> entity = call(port)
 			entity.headers.find { it.key == "Authorization" && it.value.contains("secret") }
 		and:
 			AssertionUtil.assertThatJsonsAreEqual(('''
@@ -1764,7 +1767,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				  "authorization2" : "secret2",
 				  "fullBody" : "{\\"foo\\":\\"bar\\",\\"baz\\":5}",
 				  "responseFoo" : "bar",
-				  "responseBaz" : 5
+				  "responseBaz" : 5,
+				  "responseBaz2" : "Bla bla bar bla bla"
 				}
 				'''), entity.body)
 		cleanup:
@@ -1779,5 +1783,13 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		return new ResponseTemplateTransformer(false,
 				[(HandlebarsJsonPathHelper.NAME): new HandlebarsJsonPathHelper(),
 				(HandlebarsEscapeHelper.NAME): new HandlebarsEscapeHelper()])
+	}
+
+	ResponseEntity<String> call(int port) {
+		return new TestRestTemplate().exchange(
+				RequestEntity.post(URI.create("http://localhost:" + port + "/api/v1/xxxx?foo=bar&foo=bar2"))
+						.header("Authorization", "secret")
+						.header("Authorization", "secret2")
+						.body("{\"foo\":\"bar\",\"baz\":5}"), String.class)
 	}
 }

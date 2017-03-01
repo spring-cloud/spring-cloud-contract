@@ -24,6 +24,7 @@ import org.springframework.cloud.contract.spec.internal.Input
 import org.springframework.cloud.contract.spec.internal.OutputMessage
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.ContentType
+import org.springframework.cloud.contract.verifier.util.ContentUtils
 
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromContent
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromHeader
@@ -45,7 +46,7 @@ abstract class MessagingMethodBodyBuilder extends MethodBodyBuilder {
 	protected final OutputMessage outputMessage
 
 	MessagingMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
-		super(configProperties)
+		super(configProperties, stubDefinition)
 		this.inputMessage = stubDefinition.input
 		this.outputMessage = stubDefinition.outputMessage
 	}
@@ -91,6 +92,12 @@ abstract class MessagingMethodBodyBuilder extends MethodBodyBuilder {
 				addColonIfRequired(bb)
 			}
 		}
+	}
+
+	@Override
+	protected void processHeaderElement(BlockBuilder blockBuilder, String property, GString value) {
+		String gstringValue = ContentUtils.extractValueForGString(value, ContentUtils.GET_TEST_SIDE).toString()
+		processHeaderElement(blockBuilder, property, gstringValue)
 	}
 
 	protected ContentType getResponseContentType() {

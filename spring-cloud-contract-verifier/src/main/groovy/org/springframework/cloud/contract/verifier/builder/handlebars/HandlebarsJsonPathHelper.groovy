@@ -39,11 +39,7 @@ class HandlebarsJsonPathHelper implements Helper<Map<String, Object>> {
 
 	private Object returnObjectForTest(Object model, String jsonPath) {
 		DocumentContext documentContext = JsonPath.parse(((TestSideRequestTemplateModel) model).rawBody)
-		Object o = documentContext.read(jsonPath)
-		if (o instanceof String) {
-			return '"' + o + '"'
-		}
-		return o
+		return documentContext.read(jsonPath)
 	}
 
 }

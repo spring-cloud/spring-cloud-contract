@@ -55,4 +55,3 @@ class Response {
 		this.count = count;
 	}
 }
-

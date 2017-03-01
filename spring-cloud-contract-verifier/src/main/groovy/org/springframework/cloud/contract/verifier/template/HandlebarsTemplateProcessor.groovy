@@ -20,7 +20,7 @@ import java.util.regex.Pattern
 @CompileStatic
 class HandlebarsTemplateProcessor implements TemplateProcessor, ContractTemplate {
 
-	private static final Pattern JSON_PATH_PATTERN = Pattern.compile("\\{\\{\\{jsonpath this '(.*)'}}}")
+	private static final Pattern JSON_PATH_PATTERN = Pattern.compile("^.*\\{\\{\\{jsonpath this '(.*)'}}}.*\$")
 
 	@Delegate
 	private final ContractTemplate contractTemplate = new HandlebarsContractTemplate()

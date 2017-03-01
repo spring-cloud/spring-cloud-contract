@@ -152,7 +152,7 @@ class ContentUtils {
 		}
 	}
 
-	private static GStringImpl extractValueForGString(GString bodyAsValue, Closure valueProvider) {
+	static GStringImpl extractValueForGString(GString bodyAsValue, Closure valueProvider) {
 		return new GStringImpl(
 				bodyAsValue.values.collect { it instanceof DslProperty ? valueProvider(it) : it } as String[],
 				bodyAsValue.strings.clone() as String[]

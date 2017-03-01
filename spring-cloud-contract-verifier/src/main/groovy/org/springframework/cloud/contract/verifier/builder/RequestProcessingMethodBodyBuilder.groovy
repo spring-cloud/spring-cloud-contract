@@ -32,6 +32,7 @@ import org.springframework.cloud.contract.spec.internal.Response
 import org.springframework.cloud.contract.spec.internal.Url
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.ContentType
+import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromContent
@@ -55,7 +56,7 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	private static final String QUERY_PARAM_METHOD = 'queryParam'
 
 	RequestProcessingMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
-		super(configProperties)
+		super(configProperties, stubDefinition)
 		this.request = stubDefinition.request
 		this.response = stubDefinition.response
 	}
@@ -159,6 +160,12 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 		super.validateResponseBodyBlock(bb, bodyMatchers, responseBody)
 		String newBody = this.templateProcessor.transform(request, bb.toString())
 		bb.updateContents(newBody)
+	}
+
+	@Override
+	protected void processHeaderElement(BlockBuilder blockBuilder, String property, GString value) {
+		String gstringValue = ContentUtils.extractValueForGString(value, ContentUtils.GET_TEST_SIDE).toString()
+		processHeaderElement(blockBuilder, property, gstringValue)
 	}
 
 	@Override
