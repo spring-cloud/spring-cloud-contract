@@ -16,11 +16,19 @@
 
 package org.springframework.cloud.contract.verifier.dsl
 
+import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.verifier.builder.HandlebarsJsonPathHelper
+import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubMapping
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubStrategy
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.AssertionUtil
+import org.springframework.http.ResponseEntity
+import org.springframework.util.SocketUtils
 import spock.lang.Issue
 import spock.lang.Specification
 
@@ -66,7 +74,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				"body" : "{\\"id\\":\\"123\\",\\"surname\\":\\"Kowalsky\\",\\"name\\":\\"Jan\\",\\"created\\":\\"2014-02-02 12:23:43\\"}",
 				"headers" : {
 				  "Content-Type" : "application/json"
-				}
+				},
+				"transformers" : [ "response-template" ]
 			  }
 			}
 			''', wireMockStub)
@@ -113,7 +122,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
   },
   "response" : {
 	"status" : 200,
-	"body" : "{\\"ingredients\\":[{\\"type\\":\\"MALT\\",\\"quantity\\":100},{\\"type\\":\\"WATER\\",\\"quantity\\":200},{\\"type\\":\\"HOP\\",\\"quantity\\":300},{\\"type\\":\\"YIEST\\",\\"quantity\\":400}]}"
+	"body" : "{\\"ingredients\\":[{\\"type\\":\\"MALT\\",\\"quantity\\":100},{\\"type\\":\\"WATER\\",\\"quantity\\":200},{\\"type\\":\\"HOP\\",\\"quantity\\":300},{\\"type\\":\\"YIEST\\",\\"quantity\\":400}]}",
+	"transformers" : [ "response-template" ]
   }
 }
 ''', wireMockStub)
@@ -166,7 +176,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	},
 	"response": {
 		"status": 204,
-		"body": "{\\"paymentId\\":\\"4\\",\\"foundExistingPayment\\":false}"
+		"body": "{\\"paymentId\\":\\"4\\",\\"foundExistingPayment\\":false}",
+		"transformers" : [ "response-template" ]
 	}
 }
 ''', wireMockStub)
@@ -212,7 +223,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"body" : "{\\"id\\":\\"123\\",\\"surname\\":\\"Kowalsky\\",\\"name\\":\\"Jan\\",\\"created\\":\\"2014-02-02 12:23:43\\"}",
 	"headers" : {
 	  "Content-Type" : "application/json"
-	}
+	},
+	"transformers" : [ "response-template" ]
   }
 }
 ''')
@@ -268,7 +280,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"body" : "{\\"name\\":\\"Jan\\"}",
 	"headers" : {
 	  "Content-Type" : "application/json"
-	}
+	},
+	"transformers" : [ "response-template" ]
   }
 }
 ''', wireMockStub)
@@ -318,7 +331,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	} ]
   },
   "response" : {
-	"status" : 200
+	"status" : 200,
+	"transformers" : [ "response-template" ]
   }
 }
 			'''), wireMockStub)
@@ -363,7 +377,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	}
   },
   "response" : {
-	"status" : 200
+	"status" : 200,
+	"transformers" : [ "response-template" ]
   }
 }
 			'''), json)
@@ -408,7 +423,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						]
 					},
 					"response": {
-						"status": 200
+						"status": 200,
+						"transformers" : [ "response-template" ]
 					}
 				}
 				'''), json)
@@ -445,7 +461,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 							]
 						},
 						"response": {
-							"status": 200
+							"status": 200,
+							"transformers" : [ "response-template" ]
 						}
 					}
 					'''), json)
@@ -478,7 +495,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 							},
 							"response": {
 								"status": 200,
-								"body":"<user><name>Jozo</name><jobId>&lt;test&gt;</jobId></user>"
+								"body":"<user><name>Jozo</name><jobId>&lt;test&gt;</jobId></user>",
+								"transformers" : [ "response-template" ]
 							}
 						}
 						'''), json)
@@ -513,7 +531,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						]
 					},
 					"response": {
-						"status": 200
+						"status": 200,
+						"transformers" : [ "response-template" ]
 					}
 				}
 				'''), json)
@@ -550,7 +569,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 							]
 						},
 						"response": {
-							"status": 200
+							"status": 200,
+							"transformers" : [ "response-template" ]
 						}
 					}
 					'''), json)
@@ -600,7 +620,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"body" : "{\\"name\\":\\"Jan\\"}",
 	"headers" : {
 	  "Content-Type" : "application/json"
-	}
+	},
+	"transformers" : [ "response-template" ]
   }
 }
 '''), wireMockStub)
@@ -662,7 +683,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"body" : "{\\"fraudCheckStatus\\":\\"OK\\",\\"rejectionReason\\":null}",
 	"headers" : {
 	  "Content-Type" : "application/vnd.fraud.v1+json"
-	}
+	},
+	"transformers" : [ "response-template" ]
   }
 }
 '''), wireMockStub)
@@ -728,7 +750,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					}
 				},
 				"response": {
-					"status": 200
+					"status": 200,
+					"transformers" : [ "response-template" ]
 				}
 			}
 			'''), json)
@@ -768,7 +791,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					}
 				},
 				"response": {
-					"status": 200
+					"status": 200,
+					"transformers" : [ "response-template" ]
 				}
 			}
 			'''), json)
@@ -798,7 +822,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						"urlPath": "boxes"
 					},
 					"response": {
-						"status": 200
+						"status": 200,
+						"transformers" : [ "response-template" ]
 					}
 				}
 				'''), json)
@@ -827,7 +852,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						"urlPath": "boxes"
 					},
 					"response": {
-						"status": 200
+						"status": 200,
+						"transformers" : [ "response-template" ]
 					}
 				}
 				'''), json)
@@ -980,7 +1006,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						}
 					},
 					"response": {
-						"status": 200
+						"status": 200,
+						"transformers" : [ "response-template" ]
 					}
 				}
 				'''), json)
@@ -1053,7 +1080,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"body" : "{\\"name\\":\\"Jan\\"}",
 	"headers" : {
 	  "Content-Type" : "application/json"
-	}
+	},
+	"transformers" : [ "response-template" ]
   }
 }
 			'''), wireMockStub)
@@ -1113,7 +1141,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"body" : "{\\"status\\":\\"OK\\"}",
 	"headers" : {
 	  "Content-Type" : "application/json"
-	}
+	},
+	"transformers" : [ "response-template" ]
   }
 }
 				'''), json)
@@ -1146,7 +1175,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		  ]
 		},
 		"response": {
-		  "status": 406
+		  "status": 406,
+		  "transformers" : [ "response-template" ]
 		}
 			}
 '''), json)
@@ -1175,7 +1205,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						"url": "test"
 					},
 					"response": {
-						"status": 406
+						"status": 406,
+						"transformers" : [ "response-template" ]
 					}
 				}
 			'''), json)
@@ -1208,7 +1239,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	} ]
   },
   "response" : {
-	"status" : 200
+	"status" : 200,
+	"transformers" : [ "response-template" ]
   }
 }
 			'''), wireMockStub)
@@ -1245,7 +1277,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						]
 					},
 					"response": {
-						"status": 200
+						"status": 200,
+						"transformers" : [ "response-template" ]
 					}
 				}
 			'''), wireMockStub)
@@ -1303,7 +1336,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			"body" : "{\\"code\\":4,\\"message\\":\\"User not found by email = [not.existing@user.com]\\"}",
 			"headers" : {
 			  "Content-Type" : "application/json"
-			}
+			},
+			"transformers" : [ "response-template" ]
 		  },
 		  "priority" : 1
 		}
@@ -1348,7 +1382,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			}
 		  },
 		  "response" : {
-			"status" : 422
+			"status" : 422,
+			"transformers" : [ "response-template" ]
 		  }
 		}
 			'''), wireMockStub)
@@ -1382,7 +1417,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				"body" : "{\\"code\\":\\"123123\\",\\"message\\":\\"User not found by email = [not.existing@user.com]\\"}",
 				"headers" : {
 				  "Content-Type" : "application/json"
-				}
+				},
+				"transformers" : [ "response-template" ]
 			  },
 			  "priority" : 1
 			}
@@ -1456,7 +1492,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		new JsonSlurper().parseText(json)
 	}
 
-	String toWireMockClientJsonStub(groovyDsl) {
+	String toWireMockClientJsonStub(Contract groovyDsl) {
 		new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
 	}
 
@@ -1497,90 +1533,13 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			} ]
 		  },
 		  "response" : {
-			"status" : 200
+			"status" : 200,
+			"transformers" : [ "response-template" ]
 		  }
 		}
 			'''), wireMockStub)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
-	}
-
-	@Issue('#219')
-	def "should generate request with an optional queryParameter for client side"() {
-		given:
-		org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
-			request {
-				method 'GET'
-				urlPath ('/some/api') {
-					queryParameters {
-						parameter 'size': value(
-								consumer(regex('[0-9]+')),
-								producer(1)
-						)
-						parameter 'page': value(
-								consumer(regex('[0-9]+')),
-								producer(0)
-						)
-						parameter sort: value(
-							consumer(optional(regex('^[a-z]+$'))),
-							producer('id')
-						)
-					}
-				}
-			}
-			response {
-				status 200
-				body(
-						content: [[
-										  id      : '00000000-0000-0000-0000-000000000000',
-										  type  : 'Extraordinary',
-										  state : 'ACTIVE',
-								  ]],
-						totalPages: 1,
-						totalElements: 1,
-						last: true,
-						sort: [[
-									   direction: 'ASC',
-									   property: 'id',
-									   ignoreCase: false,
-									   nullHandling: 'NATIVE',
-									   ascending: true
-							   ]],
-						first: true,
-						numberOfElements: 1,
-						size: 1,
-						number: 0
-				)
-			}
-		}
-		when:
-		def json = toWireMockClientJsonStub(groovyDsl)
-		then:
-		AssertionUtil.assertThatJsonsAreEqual(('''
-				{
-				  "request" : {
-					"urlPath" : "/some/api",
-					"method" : "GET",
-					"queryParameters" : {
-					  "size" : {
-						"matches" : "[0-9]+"
-					  },
-					  "page" : {
-						"matches" : "[0-9]+"
-					  },
-					  "sort" : {
-						"matches" : "(^[a-z]+$)?"
-					  }
-					}
-				  },
-				  "response" : {
-					"status" : 200,
-					"body" : "{\\"content\\":[{\\"id\\":\\"00000000-0000-0000-0000-000000000000\\",\\"type\\":\\"Extraordinary\\",\\"state\\":\\"ACTIVE\\"}],\\"totalPages\\":1,\\"totalElements\\":1,\\"last\\":true,\\"sort\\":[{\\"direction\\":\\"ASC\\",\\"property\\":\\"id\\",\\"ignoreCase\\":false,\\"nullHandling\\":\\"NATIVE\\",\\"ascending\\":true}],\\"first\\":true,\\"numberOfElements\\":1,\\"size\\":1,\\"number\\":0}"
-				  }
-				}
-				'''), json)
-		and:
-		stubMappingIsValidWireMockStub(json)
 	}
 
 	@Issue('#30')
@@ -1634,5 +1593,188 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			def json = new WireMockStubStrategy("Test", new ContractMetadata(null, true, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
 		then:
 			json == ''
+	}
+
+	@Issue('#219')
+	def "should generate request with an optional queryParameter for client side"() {
+		given:
+		org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
+			request {
+				method 'GET'
+				urlPath ('/some/api') {
+					queryParameters {
+						parameter 'size': value(
+								consumer(regex('[0-9]+')),
+								producer(1)
+						)
+						parameter 'page': value(
+								consumer(regex('[0-9]+')),
+								producer(0)
+						)
+						parameter sort: value(
+								consumer(optional(regex('^[a-z]+$'))),
+								producer('id')
+						)
+					}
+				}
+			}
+			response {
+				status 200
+				body(
+						content: [[
+										  id      : '00000000-0000-0000-0000-000000000000',
+										  type  : 'Extraordinary',
+										  state : 'ACTIVE',
+								  ]],
+						totalPages: 1,
+						totalElements: 1,
+						last: true,
+						sort: [[
+									   direction: 'ASC',
+									   property: 'id',
+									   ignoreCase: false,
+									   nullHandling: 'NATIVE',
+									   ascending: true
+							   ]],
+						first: true,
+						numberOfElements: 1,
+						size: 1,
+						number: 0
+				)
+			}
+		}
+		when:
+		def json = toWireMockClientJsonStub(groovyDsl)
+		then:
+		AssertionUtil.assertThatJsonsAreEqual(('''
+				{
+				  "request" : {
+					"urlPath" : "/some/api",
+					"method" : "GET",
+					"queryParameters" : {
+					  "size" : {
+						"matches" : "[0-9]+"
+					  },
+					  "page" : {
+						"matches" : "[0-9]+"
+					  },
+					  "sort" : {
+						"matches" : "(^[a-z]+$)?"
+					  }
+					}
+				  },
+				  "response" : {
+					"status" : 200,
+					"body" : "{\\"content\\":[{\\"id\\":\\"00000000-0000-0000-0000-000000000000\\",\\"type\\":\\"Extraordinary\\",\\"state\\":\\"ACTIVE\\"}],\\"totalPages\\":1,\\"totalElements\\":1,\\"last\\":true,\\"sort\\":[{\\"direction\\":\\"ASC\\",\\"property\\":\\"id\\",\\"ignoreCase\\":false,\\"nullHandling\\":\\"NATIVE\\",\\"ascending\\":true}],\\"first\\":true,\\"numberOfElements\\":1,\\"size\\":1,\\"number\\":0}",
+					"transformers" : [ "response-template" ]
+				  }
+				}
+				'''), json)
+		and:
+		stubMappingIsValidWireMockStub(json)
+	}
+
+	@Issue('#237')
+	def "should generate a stub with response template"() {
+		given:
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
+				request {
+					method 'POST'
+					url('/api/v1/xxxx') {
+						queryParameters {
+							parameter("foo", "bar")
+							parameter("foo", "bar2")
+						}
+					}
+					headers {
+						header(authorization(), "secret")
+						header(authorization(), "secret2")
+					}
+					body(foo: "bar", baz: 5)
+				}
+				response {
+					status 200
+					headers {
+						header(authorization(), fromRequest().header(authorization()))
+					}
+					body(
+							url: fromRequest().url(),
+							param: fromRequest().query("foo"),
+							paramIndex: fromRequest().query("foo", 1),
+							authorization: fromRequest().header("Authorization"),
+							authorization2: fromRequest().header("Authorization", 1),
+							fullBody: fromRequest().body(),
+							responseFoo: fromRequest().body('$.foo'),
+							responseBaz: fromRequest().body('$.baz')
+					)
+				}
+			}
+		when:
+			def json = toWireMockClientJsonStub(groovyDsl)
+		then:
+			AssertionUtil.assertThatJsonsAreEqual(('''
+					{
+					  "request" : {
+						"urlPath" : "/api/v1/xxxx",
+						"method" : "POST",
+						"headers" : {
+						  "Authorization" : {
+							"equalTo" : "secret2"
+						  }
+						},
+						"queryParameters" : {
+						  "foo" : {
+							"equalTo" : "bar2"
+						  }
+						},
+						"bodyPatterns" : [ {
+						  "matchesJsonPath" : "$[?(@.baz == 5)]"
+						}, {
+						  "matchesJsonPath" : "$[?(@.foo == 'bar')]"
+						} ]
+					  },
+					  "response" : {
+						"status" : 200,
+						"body" : "{\\"url\\":\\"{{{request.url}}}\\",\\"param\\":\\"{{{request.query.foo.[0]}}}\\",\\"paramIndex\\":\\"{{{request.query.foo.[1]}}}\\",\\"authorization\\":\\"{{{request.headers.Authorization.[0]}}}\\",\\"authorization2\\":\\"{{{request.headers.Authorization.[1]}}}\\",\\"fullBody\\":\\"{{{request.body}}}\\",\\"responseFoo\\":\\"{{{jsonpath this '$.foo'}}}\\",\\"responseBaz\\":{{{jsonpath this '$.baz'}}} }",
+						"headers" : {
+						  "Authorization" : "{{{request.headers.Authorization.[0]}}}"
+						},
+						"transformers" : [ "response-template" ]
+					  }
+					}
+					'''), json)
+		and:
+			stubMappingIsValidWireMockStub(json)
+		and:
+			int port = SocketUtils.findAvailableTcpPort()
+			WireMockServer server = new WireMockServer(config().port(port))
+			server.start()
+			server.addStubMapping(WireMockStubMapping.buildFrom(json))
+		then:
+			ResponseEntity<String> entity = new TestClient().call(port)
+			entity.headers.find { it.key == "Authorization" && it.value.contains("secret") }
+		and:
+			AssertionUtil.assertThatJsonsAreEqual(('''
+				{
+				  "url" : "/api/v1/xxxx?foo=bar2",
+				  "param" : "bar",
+				  "paramIndex" : "bar2",
+				  "authorization" : "secret",
+				  "authorization2" : "secret2",
+				  "fullBody" : "{\\"foo\\":\\"bar\\",\\"baz\\":5}",
+				  "responseFoo" : "bar",
+				  "responseBaz" : 5
+				}
+				'''), entity.body)
+		cleanup:
+			server?.shutdown()
+	}
+
+	WireMockConfiguration config() {
+		return new WireMockConfiguration().extensions(responseTemplateTransformer())
+	}
+
+	private ResponseTemplateTransformer responseTemplateTransformer() {
+		return new ResponseTemplateTransformer(false, HandlebarsJsonPathHelper.NAME, new HandlebarsJsonPathHelper())
 	}
 }

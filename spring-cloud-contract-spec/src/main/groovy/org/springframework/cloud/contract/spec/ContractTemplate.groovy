@@ -1,7 +1,7 @@
 package org.springframework.cloud.contract.spec
 
 /**
- * Contract for defining templated responses
+ * Contract for defining templated responses.
  *
  * If no implementation is provided then Handlebars will be picked as a default implementation.
  *
@@ -11,13 +11,13 @@ package org.springframework.cloud.contract.spec
 interface ContractTemplate {
 
 	/**
-	 * How does the opening template look like? Handlebars is using the Mustache template thus it looks like this
+	 * Handlebars is using the Mustache template thus it looks like this
 	 *  {{{ Mustache }}}. In this case the opening template would return {{{
 	 */
 	String openingTemplate()
 
 	/**
-	 * How does the closing template look like? Handlebars is using the Mustache template thus it looks like this
+	 * Handlebars is using the Mustache template thus it looks like this
 	 *  {{{ Mustache }}}. In this case the closing template would return }}}
 	 */
 	String closingTemplate()

@@ -24,6 +24,8 @@ import groovy.transform.TypeChecked
 import org.apache.commons.lang3.StringEscapeUtils
 import org.springframework.cloud.contract.spec.ContractTemplate
 import org.springframework.cloud.contract.spec.internal.*
+import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor
+import org.springframework.cloud.contract.verifier.template.TemplateProcessor
 import org.springframework.cloud.contract.verifier.util.MapConverter;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.ContentType

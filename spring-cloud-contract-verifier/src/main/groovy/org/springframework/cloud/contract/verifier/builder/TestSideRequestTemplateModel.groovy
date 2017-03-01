@@ -49,7 +49,9 @@ class TestSideRequestTemplateModel {
 				.queryParameters?.parameters?.groupBy { it.name }?.collectEntries {
 			[(it.key): it.value.collect { MapConverter.getTestSideValues(it) }]
 		}
-		Map<String, List<String>> headers = (Map<String, List<String>>) (request.headers?.entries?.groupBy {it.name}?.collectEntries {
+		Map<String, List<String>> headers = (Map<String, List<String>>) (request.headers?.entries?.groupBy {
+			it.name
+		}?.collectEntries {
 			[(it.key): it.value.collect {  MapConverter.getTestSideValues(it) }]
 		})
 		String body = trimmedAndEscapedBody(request.body)
@@ -62,7 +64,7 @@ class TestSideRequestTemplateModel {
 		return StringEscapeUtils.escapeJava(rawBody)
 	}
 
-	protected static String getBodyAsRawJson(Object body) {
+	private static String getBodyAsRawJson(Object body) {
 		Object bodyValue = extractServerValueFromBody(body)
 		return new JsonOutput().toJson(bodyValue)
 	}

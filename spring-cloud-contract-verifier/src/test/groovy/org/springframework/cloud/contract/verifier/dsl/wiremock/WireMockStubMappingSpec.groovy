@@ -28,6 +28,19 @@ class WireMockStubMappingSpec extends Specification {
   "uuid" : "77514bd4-a102-4478-a3c0-0fda8b905591"
 }
 """
+	private static final String stub_2_5_1_with_transformer = """
+{
+  "id" : "77514bd4-a102-4478-a3c0-0fda8b905591",
+  "request" : {
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "transformers": ["response-template"]
+  },
+  "uuid" : "77514bd4-a102-4478-a3c0-0fda8b905591"
+}
+"""
 
 	def "should successfully parse a WireMock 2.1.7 stub"() {
 		expect:
@@ -37,5 +50,10 @@ class WireMockStubMappingSpec extends Specification {
 	def "should successfully parse a WireMock 2.5.1 stub"() {
 		expect:
 			WireMockStubMapping.buildFrom(stub_2_5_1)
+	}
+
+	def "should successfully parse a WireMock 2.5.1 stub that contains transformers"() {
+		expect:
+			WireMockStubMapping.buildFrom(stub_2_5_1_with_transformer)
 	}
 }

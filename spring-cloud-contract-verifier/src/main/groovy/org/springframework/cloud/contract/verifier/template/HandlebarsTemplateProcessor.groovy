@@ -1,13 +1,16 @@
-package org.springframework.cloud.contract.verifier.builder
+package org.springframework.cloud.contract.verifier.template
 
 import com.github.jknack.handlebars.Handlebars
 import com.github.jknack.handlebars.Template
 import groovy.transform.CompileStatic
-import groovy.transform.PackageScope
 import org.springframework.cloud.contract.spec.ContractTemplate
 import org.springframework.cloud.contract.spec.internal.HandlebarsContractTemplate
 import org.springframework.cloud.contract.spec.internal.Request
+import org.springframework.cloud.contract.verifier.builder.HandlebarsJsonPathHelper
+import org.springframework.cloud.contract.verifier.builder.TestSideRequestTemplateModel
 
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 /**
  * Default Handlebars template processor
  *
@@ -15,10 +18,12 @@ import org.springframework.cloud.contract.spec.internal.Request
  * @since 1.1.0
  */
 @CompileStatic
-@PackageScope
 class HandlebarsTemplateProcessor implements TemplateProcessor, ContractTemplate {
 
-	@Delegate private final ContractTemplate contractTemplate = new HandlebarsContractTemplate()
+	private static final Pattern JSON_PATH_PATTERN = Pattern.compile("\\{\\{\\{jsonpath this '(.*)'}}}")
+
+	@Delegate
+	private final ContractTemplate contractTemplate = new HandlebarsContractTemplate()
 
 	@Override
 	String transform(Request request, String testContents) {
@@ -36,6 +41,18 @@ class HandlebarsTemplateProcessor implements TemplateProcessor, ContractTemplate
 	@Override
 	boolean containsJsonPathTemplateEntry(String line) {
 		return line.contains(openingTemplate() + HandlebarsJsonPathHelper.NAME)
+	}
+
+	@Override
+	String jsonPathFromTemplateEntry(String line) {
+		if (!containsJsonPathTemplateEntry(line)) {
+			return ""
+		}
+		Matcher matcher = JSON_PATH_PATTERN.matcher(line)
+		if (!matcher.matches()) {
+			return ""
+		}
+		return matcher.group(1)
 	}
 
 	private String templatedResponseBody(Map< String, TestSideRequestTemplateModel> model, Template bodyTemplate) {

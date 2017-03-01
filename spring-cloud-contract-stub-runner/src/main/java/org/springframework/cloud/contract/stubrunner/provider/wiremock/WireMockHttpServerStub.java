@@ -37,9 +37,13 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	private WireMockConfiguration config() {
 		if (ClassUtils.isPresent("org.springframework.cloud.contract.wiremock.WireMockSpring", null)) {
 			return WireMockSpring.options()
-					.extensions(new ResponseTemplateTransformer(false, "jsonpath", new HandlebarsJsonPathHelper()));
+					.extensions(responseTemplateTransformer());
 		}
-		return new WireMockConfiguration();
+		return new WireMockConfiguration().extensions(responseTemplateTransformer());
+	}
+
+	private ResponseTemplateTransformer responseTemplateTransformer() {
+		return new ResponseTemplateTransformer(false, HandlebarsJsonPathHelper.NAME, new HandlebarsJsonPathHelper());
 	}
 
 	@Override

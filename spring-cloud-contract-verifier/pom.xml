@@ -126,6 +126,21 @@
 			<version>1.2</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<artifactId>jetty-server</artifactId>
+			<groupId>org.eclipse.jetty</groupId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<artifactId>jetty-servlet</artifactId>
+			<groupId>org.eclipse.jetty</groupId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<artifactId>jetty-servlets</artifactId>
+			<groupId>org.eclipse.jetty</groupId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

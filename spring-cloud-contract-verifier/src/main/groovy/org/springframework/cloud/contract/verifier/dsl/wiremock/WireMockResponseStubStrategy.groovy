@@ -41,6 +41,7 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 	private final Response response
 
 	WireMockResponseStubStrategy(Contract groovyDsl) {
+		super(groovyDsl)
 		this.response = groovyDsl.response
 	}
 
@@ -54,7 +55,7 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 		appendHeaders(builder)
 		appendBody(builder)
 		appendResponseDelayTime(builder)
-		builder.withTransformer("response-template", "", "")
+		builder.withTransformers("response-template")
 		return builder.build()
 	}
 
