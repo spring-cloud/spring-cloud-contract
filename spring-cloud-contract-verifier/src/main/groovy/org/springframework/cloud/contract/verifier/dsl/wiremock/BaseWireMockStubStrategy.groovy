@@ -16,18 +16,23 @@
 
 package org.springframework.cloud.contract.verifier.dsl.wiremock
 
+import com.jayway.jsonpath.DocumentContext
+import com.jayway.jsonpath.JsonPath
 import groovy.json.JsonBuilder
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
-import org.springframework.cloud.contract.spec.internal.Headers
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.ContractTemplate
 import org.springframework.cloud.contract.spec.internal.DslProperty
-import org.springframework.cloud.contract.verifier.util.MapConverter
+import org.springframework.cloud.contract.spec.internal.Headers
+import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor
+import org.springframework.cloud.contract.verifier.template.TemplateProcessor
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.ContentUtils
+import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import static ContentUtils.extractValue
-import static MapConverter.transformValues
-
+import static org.springframework.cloud.contract.verifier.util.MapConverter.transformValues
 /**
  * Common abstraction over WireMock Request / Response conversion implementations
  *
@@ -38,6 +43,26 @@ import static MapConverter.transformValues
 @TypeChecked
 @PackageScope
 abstract class BaseWireMockStubStrategy {
+
+	private static final String WRAPPER = "UNQUOTE_ME"
+
+	protected final TemplateProcessor processor
+	protected final ContractTemplate template
+	protected final Contract contract
+
+	protected BaseWireMockStubStrategy(Contract contract) {
+		this.processor = processor()
+		this.template = contractTemplate()
+		this.contract = contract
+	}
+
+	private TemplateProcessor processor() {
+		return new HandlebarsTemplateProcessor()
+	}
+
+	private ContractTemplate contractTemplate() {
+		return new HandlebarsTemplateProcessor()
+	}
 
 	/**
 	 * Returns the stub side values from the object
@@ -69,7 +94,33 @@ abstract class BaseWireMockStubStrategy {
 	 */
 	String parseBody(Map map, ContentType contentType) {
 		def transformedMap = MapConverter.getStubSideValues(map)
-		return parseBody(toJson(transformedMap), contentType)
+		String responseSideBody = toJson(MapConverter.getTestSideValues(contract.request.body))
+		DocumentContext context = JsonPath.parse(responseSideBody)
+		transformedMap = processEntriesForTemplating(transformedMap, context)
+		String json = toJson(transformedMap)
+		// the space is important cause at the end of the json body you also have a }
+		// you can't have 4 } next to each other
+		String unquotedJson = json.replace('"' + WRAPPER, '').replace(WRAPPER + '"', ' ')
+		return parseBody(unquotedJson, contentType)
+	}
+
+	private Object processEntriesForTemplating(transformedMap, DocumentContext context) {
+		return transformValues(transformedMap, {
+			if (it instanceof String && processor.containsJsonPathTemplateEntry(it)) {
+				String jsonPath = processor.jsonPathFromTemplateEntry(it)
+				if (!jsonPath) {
+					return it
+				}
+				Object value = context.read(jsonPath)
+				if (value instanceof String) {
+					return it
+				}
+				return "${WRAPPER}${it}${WRAPPER}"
+			} else if (it instanceof String && processor.containsTemplateEntry(it) && template.body() == it) {
+				return template.escapedBody()
+			}
+			return it
+		})
 	}
 
 	/**

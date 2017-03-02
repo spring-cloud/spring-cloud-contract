@@ -58,6 +58,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	private final Request request
 
 	WireMockRequestStubStrategy(Contract groovyDsl) {
+		super(groovyDsl)
 		this.request = groovyDsl.request
 	}
 
@@ -145,7 +146,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	}
 
 	private UrlPattern urlPattern() {
-		Object urlPath = request?.urlPath?.clientValue
+		Object urlPath = urlPathOrUrlIfQueryPresent()
 		if (urlPath) {
 			if(urlPath instanceof Pattern) {
 				return WireMock.urlPathMatching(getStubSideValue(urlPath.toString()) as String)
@@ -161,6 +162,18 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			return WireMock.urlMatching((url as Pattern).pattern())
 		}
 		return WireMock.urlEqualTo(url.toString())
+	}
+
+	private Object urlPathOrUrlIfQueryPresent() {
+		Object urlPath = request?.urlPath?.clientValue
+		Object queryParamsFromUrl = request?.url?.queryParameters?.parameters
+		if (urlPath) {
+			return urlPath
+		}
+		if (queryParamsFromUrl) {
+			return request?.url?.clientValue
+		}
+		return null
 	}
 
 	private Object getUrlIfGstring(Object clientSide) {

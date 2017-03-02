@@ -78,6 +78,10 @@
 			<artifactId>jsonassert</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.github.jknack</groupId>
+			<artifactId>handlebars</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib</artifactId>
 			<scope>test</scope>
@@ -120,6 +124,21 @@
 			<groupId>org.mdkt.compiler</groupId>
 			<artifactId>InMemoryJavaCompiler</artifactId>
 			<version>1.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<artifactId>jetty-server</artifactId>
+			<groupId>org.eclipse.jetty</groupId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<artifactId>jetty-servlet</artifactId>
+			<groupId>org.eclipse.jetty</groupId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<artifactId>jetty-servlets</artifactId>
+			<groupId>org.eclipse.jetty</groupId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

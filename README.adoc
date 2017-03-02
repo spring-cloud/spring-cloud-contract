@@ -256,7 +256,7 @@ public class ApplicationTests {
 	public void contextLoads() throws Exception {
 		mockMvc.perform(post("/resource")
                 .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
-				.andExpect(status.isOk())
+				.andExpect(status().isOk())
 				.andDo(verify().jsonPath("$.id")
                         .stub("resource"));
 	}
@@ -279,7 +279,7 @@ created stub. Example:
 	public void contextLoads() throws Exception {
 		mockMvc.perform(post("/resource")
                 .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
-				.andExpect(status.isOk())
+				.andExpect(status().isOk())
 				.andDo(verify()
 						.wiremock(WireMock.post(
 							urlPathEquals("/resource"))
@@ -397,7 +397,7 @@ the generated document (example for Asciidoc) will contain a formatted contract
 
 === Spring Cloud Contract Verifier
 
-:introduction_url: https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x
+:introduction_url: https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master
 
 === Introduction
 
@@ -947,16 +947,28 @@ That's because all the generated tests will extend that class. Over there you ca
 ----
 package com.example.fraud;
 
-import com.example.fraud.FraudDetectionController;
-import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc;
-
 import org.junit.Before;
+
+import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc;
 
 public class FraudBase {
 
 	@Before
 	public void setup() {
-		RestAssuredMockMvc.standaloneSetup(new FraudDetectionController());
+		RestAssuredMockMvc.standaloneSetup(new FraudDetectionController(),
+				new FraudStatsController(stubbedStatsProvider()));
+	}
+
+	private StatsProvider stubbedStatsProvider() {
+		return fraudType -> {
+			switch (fraudType) {
+			case DRUNKS:
+				return 100;
+			case ALL:
+				return 200;
+			}
+			return 0;
+		};
 	}
 
 	public void assertThatRejectionReasonIsNull(Object rejectionReason) {
@@ -1379,15 +1391,15 @@ Example of a `pom.xml` inside the `server` folder.
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.4.2.BUILD-SNAPSHOT</version>
+		<version>1.5.0.BUILD-SNAPSHOT</version>
 		<relativePath />
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<spring-cloud-contract.version>1.0.4.BUILD-SNAPSHOT</spring-cloud-contract.version>
-		<spring-cloud-dependencies.version>Camden.BUILD-SNAPSHOT</spring-cloud-dependencies.version>
+		<spring-cloud-contract.version>1.1.0.BUILD-SNAPSHOT</spring-cloud-contract.version>
+		<spring-cloud-dependencies.version>Dalston.BUILD-SNAPSHOT</spring-cloud-dependencies.version>
 		<excludeBuildFolders>true</excludeBuildFolders>
 	</properties>
 
@@ -1600,6 +1612,11 @@ The rest of the flow looks the same.
 
 Yes! Check out the https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_different_base_classes_for_contracts[Different base classes for contracts] sections
 of either Gradle or Maven plugins.
+
+==== Can I reference the request from the response?
+
+Yes! With version 1.1.0 we've added such a possibility. On the HTTP stub server side we're providing support
+for this for WireMock. In case of other HTTP server stubs you'll have to implement the approach yourself.
 
 === Links
 

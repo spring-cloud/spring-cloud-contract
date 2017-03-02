@@ -28,7 +28,6 @@ import org.springframework.cloud.contract.spec.internal.Response
 import org.springframework.cloud.contract.verifier.util.ContentType
 
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromContent
-
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromHeader
 /**
  * Converts a {@link Request} into {@link ResponseDefinition}
@@ -42,6 +41,7 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 	private final Response response
 
 	WireMockResponseStubStrategy(Contract groovyDsl) {
+		super(groovyDsl)
 		this.response = groovyDsl.response
 	}
 
@@ -55,6 +55,7 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 		appendHeaders(builder)
 		appendBody(builder)
 		appendResponseDelayTime(builder)
+		builder.withTransformers("response-template")
 		return builder.build()
 	}
 

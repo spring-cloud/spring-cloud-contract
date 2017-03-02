@@ -5,18 +5,24 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.stubrunner.HttpServerStub;
+import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsEscapeHelper;
+import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsJsonPathHelper;
 import org.springframework.cloud.contract.wiremock.WireMockSpring;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.SocketUtils;
 import org.springframework.util.StreamUtils;
 
+import com.github.jknack.handlebars.Helper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 /**
@@ -34,9 +40,24 @@ public class WireMockHttpServerStub implements HttpServerStub {
 
 	private WireMockConfiguration config() {
 		if (ClassUtils.isPresent("org.springframework.cloud.contract.wiremock.WireMockSpring", null)) {
-			return WireMockSpring.options();
+			return WireMockSpring.options()
+					.extensions(responseTemplateTransformer());
 		}
-		return new WireMockConfiguration();
+		return new WireMockConfiguration().extensions(responseTemplateTransformer());
+	}
+
+	private ResponseTemplateTransformer responseTemplateTransformer() {
+		return new ResponseTemplateTransformer(false, helpers());
+	}
+
+	/**
+	 * Override this if you want to register your own helpers
+	 */
+	protected Map<String, Helper> helpers() {
+		Map<String, Helper> helpers = new HashMap<>();
+		helpers.put(HandlebarsJsonPathHelper.NAME, new HandlebarsJsonPathHelper());
+		helpers.put(HandlebarsEscapeHelper.NAME, new HandlebarsEscapeHelper());
+		return helpers;
 	}
 
 	@Override

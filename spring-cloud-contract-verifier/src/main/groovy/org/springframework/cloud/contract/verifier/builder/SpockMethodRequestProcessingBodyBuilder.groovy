@@ -25,6 +25,7 @@ import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.util.ContentUtils
 
 import java.util.regex.Pattern
 
@@ -138,6 +139,12 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 	@Override
 	protected String getParameterString(Map.Entry<String, Object> parameter) {
 		return ".param('$parameter.key', '$parameter.value')"
+	}
+
+	@Override
+	protected void processHeaderElement(BlockBuilder blockBuilder, String property, GString value) {
+		String gstringValue = ContentUtils.extractValueForGString(value, ContentUtils.GET_TEST_SIDE).toString()
+		processHeaderElement(blockBuilder, property, gstringValue)
 	}
 
 	protected String convertHeaderComparison(String headerValue) {

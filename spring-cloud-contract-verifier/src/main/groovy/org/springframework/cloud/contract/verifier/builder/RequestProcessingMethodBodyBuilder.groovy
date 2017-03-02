@@ -21,21 +21,22 @@ import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.BodyMatchers
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
-import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.QueryParameter
+import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.Response
 import org.springframework.cloud.contract.spec.internal.Url
-import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.ContentType
+import org.springframework.cloud.contract.verifier.util.ContentUtils
+import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromContent
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromHeader
-
 /**
  * An abstraction for creating a test method that includes processing of an HTTP request
  *
@@ -55,7 +56,7 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	private static final String QUERY_PARAM_METHOD = 'queryParam'
 
 	RequestProcessingMethodBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
-		super(configProperties)
+		super(configProperties, stubDefinition)
 		this.request = stubDefinition.request
 		this.response = stubDefinition.response
 	}
@@ -152,6 +153,19 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 			bb.addLine(addCommentSignIfRequired('and:')).startBlock()
 			validateResponseBodyBlock(bb, response.matchers, response.body.serverValue)
 		}
+	}
+
+	@Override
+	protected void validateResponseBodyBlock(BlockBuilder bb, BodyMatchers bodyMatchers, Object responseBody) {
+		super.validateResponseBodyBlock(bb, bodyMatchers, responseBody)
+		String newBody = this.templateProcessor.transform(request, bb.toString())
+		bb.updateContents(newBody)
+	}
+
+	@Override
+	protected void processHeaderElement(BlockBuilder blockBuilder, String property, GString value) {
+		String gstringValue = ContentUtils.extractValueForGString(value, ContentUtils.GET_TEST_SIDE).toString()
+		processHeaderElement(blockBuilder, property, gstringValue)
 	}
 
 	@Override

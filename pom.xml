@@ -138,6 +138,11 @@
 				<version>2.4.18</version>
 			</dependency>
 			<dependency>
+				<groupId>com.github.jknack</groupId>
+				<artifactId>handlebars</artifactId>
+				<version>4.0.6</version>
+			</dependency>
+			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-dependencies</artifactId>
 				<version>${project.version}</version>

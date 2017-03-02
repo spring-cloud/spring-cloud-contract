@@ -16,20 +16,37 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.PathNotFoundException
 import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.apache.commons.lang3.StringEscapeUtils
-import org.springframework.cloud.contract.spec.internal.*
-import org.springframework.cloud.contract.verifier.util.MapConverter;
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.ContractTemplate
+import org.springframework.cloud.contract.spec.internal.BodyMatcher
+import org.springframework.cloud.contract.spec.internal.BodyMatchers
+import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.Header
+import org.springframework.cloud.contract.spec.internal.MatchingStrategy
+import org.springframework.cloud.contract.spec.internal.MatchingType
+import org.springframework.cloud.contract.spec.internal.NamedProperty
+import org.springframework.cloud.contract.spec.internal.OptionalProperty
+import org.springframework.cloud.contract.spec.internal.QueryParameter
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor
+import org.springframework.cloud.contract.verifier.template.TemplateProcessor
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
+import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.util.SerializationUtils
 
+import java.lang.invoke.MethodHandles
 import java.util.regex.Pattern
 
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.extractValue
@@ -46,10 +63,26 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.extr
 @PackageScope
 abstract class MethodBodyBuilder {
 
-	protected final ContractVerifierConfigProperties configProperties
+	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass())
 
-	protected MethodBodyBuilder(ContractVerifierConfigProperties configProperties) {
+	protected final ContractVerifierConfigProperties configProperties
+	protected final TemplateProcessor templateProcessor
+	protected final ContractTemplate contractTemplate
+	protected final Contract contract
+
+	protected MethodBodyBuilder(ContractVerifierConfigProperties configProperties, Contract contract) {
 		this.configProperties = configProperties
+		this.templateProcessor = processor()
+		this.contractTemplate = template()
+		this.contract = contract
+	}
+
+	private TemplateProcessor processor() {
+		return new HandlebarsTemplateProcessor()
+	}
+
+	private ContractTemplate template() {
+		return new HandlebarsTemplateProcessor()
 	}
 
 	/**
@@ -125,6 +158,11 @@ abstract class MethodBodyBuilder {
 	 * Appends to the {@link BlockBuilder} the assertion for the given header path
 	 */
 	protected abstract void processHeaderElement(BlockBuilder blockBuilder, String property, String value)
+	
+	/**
+	 * Appends to the {@link BlockBuilder} the assertion for the given header path
+	 */
+	protected abstract void processHeaderElement(BlockBuilder blockBuilder, String property, GString value)
 
 	/**
 	 * Appends to the {@link BlockBuilder} the code to retrieve a value for a property
@@ -301,9 +339,16 @@ abstract class MethodBodyBuilder {
 		Object copiedBody = cloneBody(convertedResponseBody)
 		convertedResponseBody = JsonToJsonPathsConverter.removeMatchingJsonPaths(convertedResponseBody, bodyMatchers)
 		JsonPaths jsonPaths = new JsonToJsonPathsConverter(configProperties).transformToJsonPathWithTestsSideValues(convertedResponseBody)
+		DocumentContext parsedRequestBody
+		if (contract.request?.body) {
+			def requestBody = MapConverter.getTestSideValues(contract.request.body)
+			parsedRequestBody = JsonPath.parse(requestBody)
+		}
 		jsonPaths.each {
 			String method = it.method()
-			String postProcessedMethod = postProcessJsonPathCall(method)
+			method = processIfTemplateIsPresent(method, parsedRequestBody)
+			String postProcessedMethod = templateProcessor.containsJsonPathTemplateEntry(method) ?
+					method : postProcessJsonPathCall(method)
 			bb.addLine("assertThatJson(parsedJson)" + postProcessedMethod)
 			addColonIfRequired(bb)
 		}
@@ -323,6 +368,21 @@ abstract class MethodBodyBuilder {
 			}
 		}
 		processBodyElement(bb, "", convertedResponseBody)
+	}
+
+	protected String processIfTemplateIsPresent(String method, DocumentContext parsedRequestBody) {
+		if (templateProcessor.containsTemplateEntry(method) &&
+				templateProcessor.containsJsonPathTemplateEntry(method) && contract.request?.body) {
+			// Unquoting the values of non strings
+			String jsonPathEntry = templateProcessor.jsonPathFromTemplateEntry(method)
+			Object object = parsedRequestBody.read(jsonPathEntry)
+			if (!(object instanceof String)) {
+				return method
+						.replace('"' + contractTemplate.openingTemplate(), contractTemplate.openingTemplate())
+						.replace(contractTemplate.closingTemplate() + '"', contractTemplate.closingTemplate())
+			}
+		}
+		return method
 	}
 
 	protected void methodForEqualityCheck(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
