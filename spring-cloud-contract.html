@@ -561,6 +561,7 @@ $(addBlockSwitches);
 </ul>
 </li>
 <li><a href="#_can_i_have_multiple_base_classes_for_tests">Can I have multiple base classes for tests?</a></li>
+<li><a href="#_can_i_reference_the_request_from_the_response">Can I reference the request from the response?</a></li>
 </ul>
 </li>
 <li><a href="#_spring_cloud_contract_verifier_http">Spring Cloud Contract Verifier HTTP</a>
@@ -648,6 +649,7 @@ $(addBlockSwitches);
 </li>
 <li><a href="#_stub_runner_junit_rule">Stub Runner JUnit Rule</a>
 <ul class="sectlevel3">
+<li><a href="#_maven_settings">Maven settings</a></li>
 <li><a href="#_providing_fixed_ports">Providing fixed ports</a></li>
 <li><a href="#_fluent_api">Fluent API</a></li>
 <li><a href="#_stub_runner_with_spring">Stub Runner with Spring</a></li>
@@ -765,6 +767,7 @@ $(addBlockSwitches);
 <li><a href="#_executing_custom_methods_on_server_side">Executing custom methods on server side</a></li>
 </ul>
 </li>
+<li><a href="#_referencing_request_from_response">Referencing request from response</a></li>
 <li><a href="#_dynamic_properties_in_matchers_sections">Dynamic properties in matchers sections</a></li>
 </ul>
 </li>
@@ -826,7 +829,7 @@ $(addBlockSwitches);
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Documentation Authors: Adam Dudczak, Mathias Düsterhöft, Marcin Grzejszczak, Jakub Kubryński, Karol Lassak,
+<p><em>Documentation Authors: Adam Dudczak, Mathias Düsterhöft, Marcin Grzejszczak, Dennis Kieselhorst, Jakub Kubryński, Karol Lassak,
 Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer</em></p>
 </div>
 <div class="paragraph">
@@ -1139,7 +1142,7 @@ public class ApplicationTests {
 	public void contextLoads() throws Exception {
 		mockMvc.perform(post("/resource")
                 .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
-				.andExpect(status.isOk())
+				.andExpect(status().isOk())
 				.andDo(verify().jsonPath("$.id")
                         .stub("resource"));
 	}
@@ -1164,7 +1167,7 @@ created stub. Example:</p>
 public void contextLoads() throws Exception {
 	mockMvc.perform(post("/resource")
                .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
-			.andExpect(status.isOk())
+			.andExpect(status().isOk())
 			.andDo(verify()
 					.wiremock(WireMock.post(
 						urlPathEquals("/resource"))
@@ -2099,7 +2102,6 @@ import org.junit.Before;
 import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc;
 
 public class FraudBase {
-
 	@Before
 	public void setup() {
 		RestAssuredMockMvc.standaloneSetup(new FraudDetectionController(),
@@ -2900,6 +2902,13 @@ when some incompatible changes are done.</p>
 <div class="paragraph">
 <p>Yes! Check out the <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_different_base_classes_for_contracts">Different base classes for contracts</a> sections
 of either Gradle or Maven plugins.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_can_i_reference_the_request_from_the_response">Can I reference the request from the response?</h4>
+<div class="paragraph">
+<p>Yes! With version 1.1.0 we&#8217;ve added such a possibility. On the HTTP stub server side we&#8217;re providing support
+for this for WireMock. In case of other HTTP server stubs you&#8217;ll have to implement the approach yourself.</p>
 </div>
 </div>
 </div>
@@ -4664,6 +4673,13 @@ public void should_start_wiremock_servers() throws Exception {
 </div>
 <div class="paragraph">
 <p>Check the <strong>Common properties for JUnit and Spring</strong> for more information on how to apply global configuration of Stub Runner.</p>
+</div>
+<div class="sect3">
+<h4 id="_maven_settings">Maven settings</h4>
+<div class="paragraph">
+<p>The stub downloader honors Maven settings for a different local repository folder.
+Authentication details for repositories and profiles are currently not taken into account, so you need to specify it using the properties mentioned above.</p>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_providing_fixed_ports">Providing fixed ports</h4>
@@ -6908,6 +6924,186 @@ the <code>authToken()</code> method returns everything that you need.
 </tr>
 </table>
 </div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_referencing_request_from_response">Referencing request from response</h5>
+<div class="paragraph">
+<p>The best situation is to provide fixed values but sometimes you need to reference a request in your response.
+In order to do this you can profit from the <code>fromRequest()</code> method that allows you to reference a bunch
+of elements from the HTTP request. You can use the following options:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>fromRequest().url()</code> - return the request URL</p>
+</li>
+<li>
+<p><code>fromRequest().query(String key)</code> - return the first query parameter with a given name</p>
+</li>
+<li>
+<p><code>fromRequest().query(String key, int index)</code> - return the nth query parameter with a given name</p>
+</li>
+<li>
+<p><code>fromRequest().header(String key)</code> - return the first header with a given name</p>
+</li>
+<li>
+<p><code>fromRequest().header(String key, int index)</code> - return the nth header with a given name</p>
+</li>
+<li>
+<p><code>fromRequest().body()</code> - return the full request body</p>
+</li>
+<li>
+<p><code>fromRequest().body(String jsonPath)</code> - return the element from the request that matches the JSON Path</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s take a look at the following contract</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">Contract contractDsl = Contract.make {
+	request {
+		method 'GET'
+		url('/api/v1/xxxx') {
+			queryParameters {
+				parameter("foo", "bar")
+				parameter("foo", "bar2")
+			}
+		}
+		headers {
+			header(authorization(), "secret")
+			header(authorization(), "secret2")
+		}
+		body(foo: "bar", baz: 5)
+	}
+	response {
+		status 200
+		headers {
+			header(authorization(), "foo ${fromRequest().header(authorization())} bar")
+		}
+		body(
+				url: fromRequest().url(),
+				param: fromRequest().query("foo"),
+				paramIndex: fromRequest().query("foo", 1),
+				authorization: fromRequest().header("Authorization"),
+				authorization2: fromRequest().header("Authorization", 1),
+				fullBody: fromRequest().body(),
+				responseFoo: fromRequest().body('$.foo'),
+				responseBaz: fromRequest().body('$.baz'),
+				responseBaz2: "Bla bla ${fromRequest().body('$.foo')} bla bla"
+		)
+	}
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Running a JUnit test generation will lead in creation of a test looking more or less like this</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">// given:
+ MockMvcRequestSpecification request = given()
+   .header("Authorization", "secret")
+   .header("Authorization", "secret2")
+   .body("{\"foo\":\"bar\",\"baz\":5}");
+
+// when:
+ ResponseOptions response = given().spec(request)
+   .queryParam("foo","bar")
+   .queryParam("foo","bar2")
+   .get("/api/v1/xxxx");
+
+// then:
+ assertThat(response.statusCode()).isEqualTo(200);
+ assertThat(response.header("Authorization")).isEqualTo("foo secret bar");
+// and:
+ DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+ assertThatJson(parsedJson).field("url").isEqualTo("/api/v1/xxxx");
+ assertThatJson(parsedJson).field("fullBody").isEqualTo("{\"foo\":\"bar\",\"baz\":5}");
+ assertThatJson(parsedJson).field("paramIndex").isEqualTo("bar2");
+ assertThatJson(parsedJson).field("responseFoo").isEqualTo("bar");
+ assertThatJson(parsedJson).field("authorization2").isEqualTo("secret2");
+ assertThatJson(parsedJson).field("responseBaz").isEqualTo(5);
+ assertThatJson(parsedJson).field("responseBaz2").isEqualTo("Bla bla bar bla bla");
+ assertThatJson(parsedJson).field("param").isEqualTo("bar");
+ assertThatJson(parsedJson).field("authorization").isEqualTo("secret");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As you can see elements from the request have been properly referenced in the response.</p>
+</div>
+<div class="paragraph">
+<p>The generated WireMock stub will look more or less like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "request" : {
+    "urlPath" : "/api/v1/xxxx",
+    "method" : "POST",
+    "headers" : {
+      "Authorization" : {
+        "equalTo" : "secret2"
+      }
+    },
+    "queryParameters" : {
+      "foo" : {
+        "equalTo" : "bar2"
+      }
+    },
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[?(@.baz == 5)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.foo == 'bar')]"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"url\":\"{{{request.url}}}\",\"param\":\"{{{request.query.foo.[0]}}}\",\"paramIndex\":\"{{{request.query.foo.[1]}}}\",\"authorization\":\"{{{request.headers.Authorization.[0]}}}\",\"authorization2\":\"{{{request.headers.Authorization.[1]}}}\",\"fullBody\":\"{{{escapejsonbody}}}\",\"responseFoo\":\"{{{jsonpath this '$.foo'}}}\",\"responseBaz\":{{{jsonpath this '$.baz'}}} ,\"responseBaz2\":\"Bla bla {{{jsonpath this '$.foo'}}} bla bla\"}",
+    "headers" : {
+      "Authorization" : "{{{request.headers.Authorization.[0]}}}"
+    },
+    "transformers" : [ "response-template" ]
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So sending a request as the one presented in the <code>request</code> part of the contract will lead in sending the following
+response body</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "url" : "/api/v1/xxxx?foo=bar&amp;foo=bar2",
+  "param" : "bar",
+  "paramIndex" : "bar2",
+  "authorization" : "secret",
+  "authorization2" : "secret2",
+  "fullBody" : "{\"foo\":\"bar\",\"baz\":5}",
+  "responseFoo" : "bar",
+  "responseBaz" : 5,
+  "responseBaz2" : "Bla bla bar bla bla"
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+This feature will work only with WireMock having version greater or equal to 2.5.1. We&#8217;re using WireMock&#8217;s
+<code>response-template</code> response transformer. It&#8217;s using Handlebars to convert the Mustache <code>{{{ }}}</code> templates into
+proper values. Additionally we&#8217;re registering 2 helper functions. <code>escapejsonbody</code> - that escapes the request
+body in a format that can be embedded in a JSON. Another is <code>jsonpath</code> that for a given parameter knows how to
+find an object in the request body.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect4">
