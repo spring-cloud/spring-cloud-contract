@@ -40,7 +40,7 @@ class Request extends Common {
 	DslProperty method
 	Url url
 	UrlPath urlPath
-	RequestHeaders headers
+	Headers headers
 	Body body
 	Multipart multipart
 	BodyMatchers matchers
@@ -248,7 +248,7 @@ class Request extends Common {
 	@CompileStatic
 	@EqualsAndHashCode
 	@ToString(includePackage = false)
-	class RequestHeaders extends Headers {
+	private class RequestHeaders extends Headers {
 
 		@Override
 		DslProperty matching(String value) {

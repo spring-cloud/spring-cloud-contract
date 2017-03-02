@@ -38,7 +38,7 @@ class Response extends Common {
 
 	DslProperty status
 	DslProperty delay
-	ResponseHeaders headers
+	Headers headers
 	Body body
 	boolean async
 	ResponseBodyMatchers matchers
@@ -155,7 +155,7 @@ class Response extends Common {
 	@CompileStatic
 	@EqualsAndHashCode
 	@ToString(includePackage = false)
-	class ResponseHeaders extends Headers {
+	private class ResponseHeaders extends Headers {
 
 		@Override
 		DslProperty matching(String value) {

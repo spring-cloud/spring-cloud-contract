@@ -256,7 +256,7 @@ public class ApplicationTests {
 	public void contextLoads() throws Exception {
 		mockMvc.perform(post("/resource")
                 .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
-				.andExpect(status.isOk())
+				.andExpect(status().isOk())
 				.andDo(verify().jsonPath("$.id")
                         .stub("resource"));
 	}
@@ -279,7 +279,7 @@ created stub. Example:
 	public void contextLoads() throws Exception {
 		mockMvc.perform(post("/resource")
                 .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
-				.andExpect(status.isOk())
+				.andExpect(status().isOk())
 				.andDo(verify()
 						.wiremock(WireMock.post(
 							urlPathEquals("/resource"))
