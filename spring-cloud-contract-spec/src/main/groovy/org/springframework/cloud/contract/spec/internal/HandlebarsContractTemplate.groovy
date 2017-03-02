@@ -30,7 +30,7 @@ class HandlebarsContractTemplate implements ContractTemplate {
 
 	@Override
 	String query(String key) {
-		return wrapped("request.query.${key}.[0]")
+		return query(key, 0)
 	}
 
 	@Override
@@ -40,7 +40,7 @@ class HandlebarsContractTemplate implements ContractTemplate {
 
 	@Override
 	String header(String key) {
-		return wrapped("request.headers.${key}.[0]")
+		return header(key, 0)
 	}
 
 	@Override

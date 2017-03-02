@@ -47,7 +47,7 @@ interface ContractTemplate {
 	String header(String key)
 
 	/**
-	 * Returns the template for retrieving the nth value of a request header e.g. {{{ request.headers.X-Request-Id.[5] }}}
+	 * Returns the template for retrieving the nth value of a request header (zero indexed) e.g. {{{ request.headers.X-Request-Id.[5] }}}
 	 * @param key
 	 * @param index
 	 */

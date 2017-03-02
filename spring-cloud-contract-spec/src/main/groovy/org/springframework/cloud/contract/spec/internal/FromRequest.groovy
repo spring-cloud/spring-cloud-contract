@@ -55,7 +55,7 @@ class FromRequest {
 	}
 
 	/**
-	 * nth value of a request header e.g. request.headers.X-Request-Id
+	 * nth value of a request header (zero indexed) e.g. request.headers.X-Request-Id
 	 * @param key
 	 */
 	DslProperty header(String key, int index) {
