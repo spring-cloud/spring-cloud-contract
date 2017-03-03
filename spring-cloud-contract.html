@@ -1731,6 +1731,19 @@ public void shouldBeRejectedDueToAbnormalLoanAmount() {
 <div class="paragraph">
 <p>As consumers we need to define what exactly we want to achieve. We need to formulate our expectations. That&#8217;s why we write the following contract.</p>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+We&#8217;re placing the contract under <code>src/test/resources/contract/fraud</code> folder. The <code>fraud</code> folder
+is important cause we&#8217;ll reference that folder in the producer&#8217;s test base class name.
+</td>
+</tr>
+</table>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">package contracts
@@ -2075,7 +2088,7 @@ git pull https://your-git-server.com/server-side-fork.git contract-change-pr</co
 </div>
 </div>
 <div class="paragraph">
-<p>In the configuration of the Maven plugin we passed the <code>baseClassForTests</code> property</p>
+<p>In the configuration of the Maven plugin we passed the <code>packageWithBaseClasses</code> property</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2090,8 +2103,25 @@ git pull https://your-git-server.com/server-side-fork.git contract-change-pr</co
 &lt;/plugin&gt;</code></pre>
 </div>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+We&#8217;ve decided to use the "convention based" naming by setting the <code>packageWithBaseClasses</code> property.
+That means that 2 last packages will be combined into a name of the base test class. In our case the contracts
+were placed under <code>src/test/resources/contract/fraud</code>. Since we don&#8217;t have 2 packages starting from the <code>contracts</code>
+folder we&#8217;re picking only one which is <code>fraud</code>. We&#8217;re adding the <code>Base</code> suffix and we&#8217;re capitalizing <code>fraud</code>.
+That gives us the <code>FraudBase</code> test class name.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>That&#8217;s because all the generated tests will extend that class. Over there you can set up your Spring Context or whatever is necessary. In our case we&#8217;re using <a href="http://rest-assured.io/">Rest Assured MVC</a> to start the server side <code>FraudDetectionController</code>.</p>
+<p>That&#8217;s because all the generated tests will extend that class. Over there you can set up your Spring Context or
+whatever is necessary. In our case we&#8217;re using <a href="http://rest-assured.io/">Rest Assured MVC</a> to start the server side <code>FraudDetectionController</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
