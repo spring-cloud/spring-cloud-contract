@@ -208,13 +208,17 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
   },
   "response" : {
 	"status" : 200,
-	"body" : "{\\"created\\":\\"2014-02-02 12:23:43\\",\\"id\\":\\"123\\",\\"name\\":\\"Jan\\",\\"surname\\":\\"Kowalsky\\"}",
 	"headers" : {
 	  "Content-Type" : "application/json"
 	}
   }
 }
 '''), wireMockStub)
+		and:
+			wireMockStub.contains('\\"created\\":\\"2014-02-02 12:23:43\\"')
+			wireMockStub.contains('\\"id\\":\\"123\\"')
+			wireMockStub.contains('\\"name\\":\\"Jan\\"')
+			wireMockStub.contains('\\"surname\\":\\"Kowalsky\\"')
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}
