@@ -36,7 +36,7 @@
 		<maven.compiler.target>1.7</maven.compiler.target>
 	</properties>
 
-	<version>${spring.cloud.contract.verifier.version}</version>
+	<version>1.0.4.BUILD-SNAPSHOT</version>
 	<inceptionYear>2016</inceptionYear>
 
 	<build>
