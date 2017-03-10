@@ -660,7 +660,11 @@ $(addBlockSwitches);
 </li>
 <li><a href="#_stub_runner_spring_cloud">Stub Runner Spring Cloud</a>
 <ul class="sectlevel3">
-<li><a href="#_stubbing_service_discovery">Stubbing Service Discovery</a></li>
+<li><a href="#_stubbing_service_discovery">Stubbing Service Discovery</a>
+<ul class="sectlevel4">
+<li><a href="#_test_profiles_and_service_discovery">Test profiles and service discovery</a></li>
+</ul>
+</li>
 <li><a href="#_additional_configuration">Additional Configuration</a></li>
 </ul>
 </li>
@@ -4879,6 +4883,19 @@ for every registered WireMock server. Example for Stub Runner ids
 <div class="paragraph">
 <p>Stub Runner can integrate with Spring Cloud.</p>
 </div>
+<div class="paragraph">
+<p>For real life examples you can check the</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/master/producer">producer app sample</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/master/consumer_with_discovery">consumer app sample</a></p>
+</li>
+</ul>
+</div>
 <div class="sect3">
 <h4 id="_stubbing_service_discovery">Stubbing Service Discovery</h4>
 <div class="paragraph">
@@ -4928,6 +4945,27 @@ stubrunner:
   idsToServiceIds:
     ivyNotation: someValueInsideYourCode
     fraudDetectionServer: someNameThatShouldMapFraudDetectionServer</code></pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_test_profiles_and_service_discovery">Test profiles and service discovery</h5>
+<div class="paragraph">
+<p>In your integration tests you typically don&#8217;t want to call neither a discovery service (e.g. Eureka)
+or Config Server. That&#8217;s why you create an additional test configuration in which you want to disable
+these features.</p>
+</div>
+<div class="paragraph">
+<p>Due to certain limitations of <a href="https://github.com/spring-cloud/spring-cloud-commons/issues/156"><code>spring-cloud-commons</code></a> to achieve this you have disable these properties
+via a static block like presented below (example for Eureka)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">    //Hack to work around https://github.com/spring-cloud/spring-cloud-commons/issues/156
+    static {
+        System.setProperty("eureka.client.enabled", "false");
+        System.setProperty("spring.cloud.config.failFast", "false");
+    }</code></pre>
+</div>
 </div>
 </div>
 </div>
