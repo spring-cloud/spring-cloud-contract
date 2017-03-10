@@ -51,48 +51,6 @@ include::{standalone_samples_path}/http-server/build.gradle[tags=repos,indent=0]
 }
 ----
 
-====== Add maven plugin with dependencies
-
-[source,xml,indent=0]
-----
-
-<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-contract-dependencies</artifactId>
-            <version>${spring-cloud-contract.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
-
-<dependencies>
-    <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-contract-verifier</artifactId>
-        <scope>test</scope>
-    </dependency>
-</dependencies>
-
-<plugin>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
-    <executions>
-        <execution>
-            <goals>
-                <goal>convert</goal>
-                <goal>generateStubs</goal>
-                <goal>generateTests</goal>
-            </goals>
-        </execution>
-    </executions>
-</plugin>
-----
-
-Read more: https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/[spring-cloud-contract-maven-plugin]
-
 ====== Add stubs
 
 By default Spring Cloud Contract Verifier is looking for stubs in `src/test/resources/contracts` directory.
@@ -500,6 +458,65 @@ For Groovy Spock code use:
 ----
 
 To ensure that provider side is complaint with defined contracts, you need to invoke `mvn generateTest test`
+
+===== FAQ with Maven Plugin
+
+====== Maven Plugin and STS
+
+In case you see the following exception while using STS
+
+image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/docs/src/main/asciidoc/images/sts_exception.png[STS Exception]
+
+when you click on the marker you should see sth like this
+
+[source,bash]
+----
+ plugin:1.1.0.M1:convert:default-convert:process-test-resources) org.apache.maven.plugin.PluginExecutionException: Execution default-convert of goal org.springframework.cloud:spring-
+ cloud-contract-maven-plugin:1.1.0.M1:convert failed. at org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo(DefaultBuildPluginManager.java:145) at
+ org.eclipse.m2e.core.internal.embedder.MavenImpl.execute(MavenImpl.java:331) at org.eclipse.m2e.core.internal.embedder.MavenImpl$11.call(MavenImpl.java:1362) at
+...
+ org.eclipse.core.internal.jobs.Worker.run(Worker.java:55) Caused by: java.lang.NullPointerException at
+ org.eclipse.m2e.core.internal.builder.plexusbuildapi.EclipseIncrementalBuildContext.hasDelta(EclipseIncrementalBuildContext.java:53) at
+ org.sonatype.plexus.build.incremental.ThreadBuildContext.hasDelta(ThreadBuildContext.java:59) at
+----
+
+In order to fix this issue just provide the following section in your `pom.xml`
+
+[source,xml]
+----
+<build>
+    <pluginManagement>
+        <plugins>
+            <!--This plugin's configuration is used to store Eclipse m2e settings
+                only. It has no influence on the Maven build itself. -->
+            <plugin>
+                <groupId>org.eclipse.m2e</groupId>
+                <artifactId>lifecycle-mapping</artifactId>
+                <version>1.0.0</version>
+                <configuration>
+                    <lifecycleMappingMetadata>
+                        <pluginExecutions>
+                             <pluginExecution>
+                                <pluginExecutionFilter>
+                                    <groupId>org.springframework.cloud</groupId>
+                                    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+                                    <versionRange>[1.0,)</versionRange>
+                                    <goals>
+                                        <goal>convert</goal>
+                                    </goals>
+                                </pluginExecutionFilter>
+                                <action>
+                                    <execute />
+                                </action>
+                             </pluginExecution>
+                        </pluginExecutions>
+                    </lifecycleMappingMetadata>
+                </configuration>
+            </plugin>
+        </plugins>
+    </pluginManagement>
+</build>
+----
 
 ===== Spring Cloud Contract Verifier on consumer side
 
