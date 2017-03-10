@@ -28,8 +28,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<dependency.locations.enabled>false</dependency.locations.enabled>
-
-		<spring.cloud.contract.verifier.version>1.0.4.BUILD-SNAPSHOT</spring.cloud.contract.verifier.version>
 		<aether.version>1.0.2.v20150114</aether.version>
 
 		<maven.compiler.source>1.7</maven.compiler.source>
