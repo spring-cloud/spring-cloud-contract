@@ -197,6 +197,11 @@ Which you can reference in your code.
 
 Stub Runner can integrate with Spring Cloud.
 
+For real life examples you can check the
+
+ - https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/master/producer[producer app sample]
+ - https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/master/consumer_with_discovery[consumer app sample]
+
 ==== Stubbing Service Discovery
 
 The most important feature of `Stub Runner Spring Cloud` is the fact that it's stubbing
@@ -220,6 +225,24 @@ for the following configuration file
 [source,yml,indent=0]
 ----
 include::src/test/resources/application.yml[]
+----
+
+===== Test profiles and service discovery
+
+In your integration tests you typically don't want to call neither a discovery service (e.g. Eureka)
+or Config Server. That's why you create an additional test configuration in which you want to disable
+these features.
+
+Due to certain limitations of https://github.com/spring-cloud/spring-cloud-commons/issues/156[`spring-cloud-commons`] to achieve this you have disable these properties
+via a static block like presented below (example for Eureka)
+
+[source,java]
+----
+    //Hack to work around https://github.com/spring-cloud/spring-cloud-commons/issues/156
+    static {
+        System.setProperty("eureka.client.enabled", "false");
+        System.setProperty("spring.cloud.config.failFast", "false");
+    }
 ----
 
 ==== Additional Configuration
