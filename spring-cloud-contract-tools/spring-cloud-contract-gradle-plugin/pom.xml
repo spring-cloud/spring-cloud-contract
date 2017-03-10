@@ -113,6 +113,7 @@
 									<arguments>
 										<argument>build</argument>
 										<argument>jacocoTestReport</argument>
+										<argument>-PverifierVersion=${project.version}</argument>
 									</arguments>
 								</configuration>
 								<goals>
@@ -145,6 +146,7 @@
 									<arguments>
 										<argument>build</argument>
 										<argument>jacocoTestReport</argument>
+										<argument>-PverifierVersion=${project.version}</argument>
 									</arguments>
 								</configuration>
 								<goals>
@@ -176,6 +178,7 @@
 										<argument>build</argument>
 										<argument>jacocoTestReport</argument>
 										<argument>-Pfast</argument>
+										<argument>-PverifierVersion=${project.version}</argument>
 									</arguments>
 								</configuration>
 								<goals>
@@ -206,8 +209,7 @@
 									<arguments>
 										<argument>clean</argument>
 										<argument>build</argument>
-										<argument>sign</argument>
-										<argument>-Pcentral</argument>
+										<argument>-PverifierVersion=${project.version}</argument>
 									</arguments>
 								</configuration>
 								<goals>
