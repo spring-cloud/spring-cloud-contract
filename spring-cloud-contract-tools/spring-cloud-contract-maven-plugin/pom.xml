@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-tools</artifactId>
-		<version>1.1.0.RC1</version>
+		<version>1.1.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
@@ -34,7 +34,7 @@
 		<maven.compiler.target>1.7</maven.compiler.target>
 	</properties>
 
-	<version>1.1.0.RC1</version>
+	<version>1.1.0.BUILD-SNAPSHOT</version>
 	<inceptionYear>2016</inceptionYear>
 
 	<build>
