@@ -44,6 +44,13 @@ class RegexPatterns {
 	protected static final Pattern ANY_DATE = Pattern.compile('(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])')
 	protected static final Pattern ANY_DATE_TIME = Pattern.compile('([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
 	protected static final Pattern ANY_TIME = Pattern.compile('(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
+	protected static final Pattern NOT_EMPTY_OR_WHITESPACE = Pattern.compile(/.*(\S+|\R).*|!^\R*$/)
+
+	protected static final Pattern ISO8601_DATE_TIME_WITH_TIMEZONE = Pattern.compile(/([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\.\d{3})?(Z|[+-][01]\d:[0-5]\d)/)
+
+	protected static Pattern enumOf(String... values){
+		return Pattern.compile(values.collect({"^$it\$"}).join("|"))
+	}
 
 	String onlyAlphaUnicode() {
 		return ONLY_ALPHA_UNICODE.pattern()
@@ -87,6 +94,14 @@ class RegexPatterns {
 
 	String isoTime() {
 		return ANY_TIME.pattern()
+	}
+
+	String iso8601DateTimeWithTimeZone() {
+		return ISO8601_DATE_TIME_WITH_TIMEZONE.pattern()
+	}
+
+	String notEmptyOrWhitespace() {
+		return NOT_EMPTY_OR_WHITESPACE.pattern()
 	}
 
 	// end::regexps[]

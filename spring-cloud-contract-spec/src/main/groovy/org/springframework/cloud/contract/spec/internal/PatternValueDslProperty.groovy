@@ -82,6 +82,19 @@ abstract class PatternValueDslProperty<T extends DslProperty> {
 		return createAndValidateProperty(RegexPatterns.ANY_TIME, "12:2$d:3$d")
 	}
 
+	T anyIso8601DateTimeWithTimeZone() {
+		int d = this.random.nextInt(8) + 1
+		return createAndValidateProperty(RegexPatterns.ISO8601_DATE_TIME_WITH_TIMEZONE, "201$d-0$d-1${d}T12:23:34.123Z")
+	}
+
+	T anyNotEmptyOrWhitespaceString(){
+		return createAndValidateProperty(RegexPatterns.NOT_EMPTY_OR_WHITESPACE, randomString(20))
+	}
+
+	T enumOf(String... values){
+		return createAndValidateProperty(RegexPatterns.enumOf(values), values[0])
+	}
+
 	private static String randomString(int length) {
 		char[] characterSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()
 		Random random = new Random()
