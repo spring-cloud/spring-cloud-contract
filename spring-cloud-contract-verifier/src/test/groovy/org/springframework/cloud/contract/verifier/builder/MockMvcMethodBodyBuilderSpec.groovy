@@ -1898,7 +1898,11 @@ World.'''"""
 						uuid: $(anyUuid()),
 						date: $(anyDate()),
 						dateTime: $(anyDateTime()),
-						time: $(anyTime())
+						time: $(anyTime()),
+						iso8601WithOffset: $(anyIso8601DateTimeWithTimeZone()),
+						nonBlankString: $(anyNonBlankString()),
+						nonEmptyString: $(anyNonEmptyString()),
+						anyOf: $(anyOf('foo', 'bar'))
 				])
 				headers {
 					contentType(applicationJson())
@@ -1917,7 +1921,11 @@ World.'''"""
 						uuid: $(anyUuid()),
 						date: $(anyDate()),
 						dateTime: $(anyDateTime()),
-						time: $(anyTime())
+						time: $(anyTime()),
+						iso8601WithOffset: $(anyIso8601DateTimeWithTimeZone()),
+						nonBlankString: $(anyNonBlankString()),
+						nonEmptyString: $(anyNonEmptyString()),
+						anyOf: $(anyOf('foo', 'bar'))
 				])
 				headers {
 					contentType(applicationJson())
@@ -1941,13 +1949,17 @@ World.'''"""
 			test.contains('assertThatJson(parsedJson).field("date").matches("(\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])')
 			test.contains('assertThatJson(parsedJson).field("dateTime").matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
 			test.contains('assertThatJson(parsedJson).field("time").matches("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])")')
+			test.contains('assertThatJson(parsedJson).field("iso8601WithOffset").matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\\\\.\\\\d{3})?(Z|[+-][01]\\\\d:[0-5]\\\\d)")')
+			test.contains('assertThatJson(parsedJson).field("nonBlankString").matches(".*(\\\\S+|\\\\R).*|!^\\\\R*' + endOfLineRegExSymbol + '")')
+			test.contains('assertThatJson(parsedJson).field("nonEmptyString").matches(".+")')
+			test.contains('assertThatJson(parsedJson).field("anyOf").matches("^foo' + endOfLineRegExSymbol + '|^bar' + endOfLineRegExSymbol + '")')
 			!test.contains('cursor')
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
-			methodBuilderName           | methodBuilder                                                                           
-			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } 
-			"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  
+			methodBuilderName			| methodBuilder																				| endOfLineRegExSymbol
+			"MockMvcSpockMethodBuilder"	| { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } 	| '\\$'
+			"MockMvcJUnitMethodBuilder"	| { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  	| '$'
 
 	}
 
