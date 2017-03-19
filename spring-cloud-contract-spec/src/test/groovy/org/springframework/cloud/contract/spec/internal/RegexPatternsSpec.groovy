@@ -149,34 +149,44 @@ class RegexPatternsSpec extends Specification {
 
 	def "should generate a regex with iso8601DateTimeWithTimezone [#textToMatch] in YYYY-MM-DDTHH:mm:ss.SSSZZ format that should match [#shouldMatch]"(){
 		expect:
-			shouldMatch == Pattern.compile(regexPatterns.iso8601DateTimeWithTimeZone()).matcher(textToMatch).matches()
+			shouldMatch == Pattern.compile(regexPatterns.iso8601WithOffset()).matcher(textToMatch).matches()
 		where:
-			textToMatch 										|| shouldMatch
+			textToMatch 							|| shouldMatch
 			'2014-03-01T12:23:45Z' 					|| true
-			'2014-03-01T12:23:45+01:00' 		|| true
-			'2014-03-01T12:23:45.123Z' 			|| true
-			'2014-03-01T12:23:45.123+01:00' || true
+			'2014-03-01T12:23:45+01:00' 			|| true
+			'2014-03-01T12:23:45.123Z' 				|| true
+			'2014-03-01T12:23:45.123+01:00' 		|| true
 			'2014-03-01T12:23:45' 					|| false
-			'2014-03-01T12:23:45.123' 			|| false
+			'2014-03-01T12:23:45.123' 				|| false
 	}
 
-	def "should generate a regex for a not empty or whitespace string [#textToMatch] that should match [#shouldMatch]"(){
+	def "should generate a regex for a non blank string [#textToMatch] that should match [#shouldMatch]"(){
 		expect:
-			shouldMatch == Pattern.compile(regexPatterns.notEmptyOrWhitespace()).matcher(textToMatch).matches()
+			shouldMatch == Pattern.compile(regexPatterns.nonBlank()).matcher(textToMatch).matches()
 		where:
-			textToMatch || shouldMatch
-			'Not Empty' || true
-			'' 					|| false
-			'    '			|| false
+			textToMatch	|| shouldMatch
+			'Not Empty'	|| true
+			''			|| false
+			'    '		|| false
+	}
+
+	def "should generate a regex for a non empty string [#textToMatch] that should match [#shouldMatch]"() {
+		expect:
+			shouldMatch == Pattern.compile(regexPatterns.nonEmpty()).matcher(textToMatch).matches()
+		where:
+			textToMatch	|| shouldMatch
+			'Not Empty'	|| true
+			''			|| false
+			'  '		|| true
 	}
 
 	def "should generate a regex for an enumerated value [#textToMatch] that should match [#shouldMatch]"(){
 		expect:
-			shouldMatch == RegexPatterns.enumOf('foo','bar').matcher(textToMatch).matches()
+			shouldMatch == RegexPatterns.anyOf('foo', 'bar').matcher(textToMatch).matches()
 		where:
-			textToMatch || shouldMatch
+			textToMatch		|| shouldMatch
 			'foo' 			|| true
 			'bar' 			|| true
-			'baz'				|| false
+			'baz'			|| false
 	}
 }
