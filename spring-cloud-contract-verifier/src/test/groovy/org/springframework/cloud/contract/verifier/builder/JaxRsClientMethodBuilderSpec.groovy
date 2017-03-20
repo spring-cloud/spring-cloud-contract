@@ -998,7 +998,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 							date: $(anyDate()),
 							dateTime: $(anyDateTime()),
 							time: $(anyTime()),
-							iso8601WithOffset: $(anyIso8601DateTimeWithTimeZone()),
+							iso8601WithOffset: $(anyIso8601WithOffset()),
 							nonBlankString: $(anyNonBlankString()),
 							nonEmptyString: $(anyNonEmptyString()),
 							anyOf: $(anyOf('foo', 'bar'))
@@ -1021,7 +1021,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 							date: $(anyDate()),
 							dateTime: $(anyDateTime()),
 							time: $(anyTime()),
-							iso8601WithOffset: $(anyIso8601DateTimeWithTimeZone()),
+							iso8601WithOffset: $(anyIso8601WithOffset()),
 							nonBlankString: $(anyNonBlankString()),
 							nonEmptyString: $(anyNonEmptyString()),
 							anyOf: $(anyOf('foo', 'bar'))

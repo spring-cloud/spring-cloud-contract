@@ -83,7 +83,7 @@ abstract class PatternValueDslProperty<T extends DslProperty> {
 		return createAndValidateProperty(RegexPatterns.ANY_TIME, "12:2$d:3$d")
 	}
 
-	T anyIso8601DateTimeWithTimeZone() {
+	T anyIso8601WithOffset() {
 		int d = this.random.nextInt(8) + 1
 		return createAndValidateProperty(RegexPatterns.ISO8601_WITH_OFFSET, "201$d-0$d-1${d}T12:23:34.123Z")
 	}

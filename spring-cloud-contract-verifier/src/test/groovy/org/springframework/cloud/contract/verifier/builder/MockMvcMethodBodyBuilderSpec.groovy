@@ -1899,7 +1899,7 @@ World.'''"""
 						date: $(anyDate()),
 						dateTime: $(anyDateTime()),
 						time: $(anyTime()),
-						iso8601WithOffset: $(anyIso8601DateTimeWithTimeZone()),
+						iso8601WithOffset: $(anyIso8601WithOffset()),
 						nonBlankString: $(anyNonBlankString()),
 						nonEmptyString: $(anyNonEmptyString()),
 						anyOf: $(anyOf('foo', 'bar'))
@@ -1922,7 +1922,7 @@ World.'''"""
 						date: $(anyDate()),
 						dateTime: $(anyDateTime()),
 						time: $(anyTime()),
-						iso8601WithOffset: $(anyIso8601DateTimeWithTimeZone()),
+						iso8601WithOffset: $(anyIso8601WithOffset()),
 						nonBlankString: $(anyNonBlankString()),
 						nonEmptyString: $(anyNonEmptyString()),
 						anyOf: $(anyOf('foo', 'bar'))
