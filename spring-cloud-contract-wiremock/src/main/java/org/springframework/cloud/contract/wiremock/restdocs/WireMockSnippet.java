@@ -47,6 +47,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
+import static com.github.tomakehurst.wiremock.client.WireMock.patch;
+import static com.github.tomakehurst.wiremock.client.WireMock.head;
+import static com.github.tomakehurst.wiremock.client.WireMock.options;
+import static com.github.tomakehurst.wiremock.client.WireMock.trace;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
@@ -103,7 +107,7 @@ public class WireMockSnippet implements Snippet {
 	private boolean hasJsonContentType(Operation operation) {
 		return operation.getRequest().getHeaders().getContentType() != null
 				&& (operation.getRequest().getHeaders().getContentType()
-								.isCompatibleWith(MediaType.APPLICATION_JSON));
+						.isCompatibleWith(MediaType.APPLICATION_JSON));
 	}
 
 	private ResponseDefinitionBuilder response(Operation operation) {
@@ -146,8 +150,20 @@ public class WireMockSnippet implements Snippet {
 		case PUT:
 			return bodyPattern(put(requestPattern(operation)),
 					operation.getRequest().getContentAsString());
-		default:
+		case PATCH:
+			return bodyPattern(patch(requestPattern(operation)),
+					operation.getRequest().getContentAsString());
+		case GET:
 			return get(requestPattern(operation));
+		case HEAD:
+			return head(requestPattern(operation));
+		case OPTIONS:
+			return options(requestPattern(operation));
+		case TRACE:
+			return trace(requestPattern(operation));
+		default:
+			throw new UnsupportedOperationException(
+					"Unsupported method type: " + operation.getRequest().getMethod());
 		}
 	}
 
