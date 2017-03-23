@@ -4,54 +4,34 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.example</groupId>
-	<artifactId>http-server-dsl</artifactId>
+	<artifactId>shared-contracts</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
 
-	<name>Spring Cloud Contract Verifier Http Server Sample</name>
-	<description>Spring Cloud Contract Verifier Http Server Sample</description>
+	<name>Spring Cloud Contract Verifier Shared Contracts Sample</name>
+	<description>Spring Cloud Contract Verifier Shared Contracts Sample</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.0.BUILD-SNAPSHOT</version>
+		<version>1.4.0.BUILD-SNAPSHOT</version>
 		<relativePath />
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<spring-cloud-contract.version>1.1.0.BUILD-SNAPSHOT</spring-cloud-contract.version>
-		<spring-cloud-dependencies.version>Dalston.BUILD-SNAPSHOT</spring-cloud-dependencies.version>
+		<spring-cloud-contract.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-contract.version>
+		<spring-cloud-dependencies.version>Camden.BUILD-SNAPSHOT</spring-cloud-dependencies.version>
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-
 		<!-- tag::verifier_test_dependencies[] -->
 		<dependency>
 		   <groupId>org.springframework.cloud</groupId>
 		   <artifactId>spring-cloud-starter-contract-verifier</artifactId>
 		   <scope>test</scope>
-	   </dependency>
-		<dependency>
-			<groupId>com.example</groupId>
-			<artifactId>shared-contracts</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>test</scope>
-		</dependency>
+	    </dependency>
 		<!-- end::verifier_test_dependencies[] -->
 	</dependencies>
 
@@ -71,10 +51,6 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
 			<!-- tag::contract_maven_plugin[] -->
 			<plugin>
 				<groupId>org.springframework.cloud</groupId>
@@ -90,17 +66,13 @@
 						</goals>
 					</execution>
 					<execution>
-						<id>generate-tests</id>
-						<phase>generate-test-sources</phase>
+						<id>generate-stubs</id>
+						<phase>package</phase>
 						<goals>
-							<goal>generateTests</goal>
+							<goal>generateStubs</goal>
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<packageWithBaseClasses>com.example.fraud</packageWithBaseClasses>
-				</configuration>
-
 			</plugin>
 			<!-- end::contract_maven_plugin[] -->
 			<plugin>
@@ -125,37 +97,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.springframework.cloud</groupId>
-										<artifactId>spring-cloud-contract-maven-plugin</artifactId>
-										<versionRange>[1.1.0.BUILD-SNAPSHOT,)</versionRange>
-										<goals>
-											<goal>convert</goal>
-											<goal>generateTests</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
+
 	</build>
 
 	<!-- tag::repos[] -->
@@ -227,35 +169,6 @@
 								<phase>test</phase>
 								<configuration>
 									<executable>./gradlew</executable>
-									<arguments>
-										<argument>clean</argument>
-										<argument>build</argument>
-										<argument>publishToMavenLocal</argument>
-										<argument>-PverifierVersion=${spring-cloud-contract.version}</argument>
-									</arguments>
-								</configuration>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>windows</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>gradle</id>
-								<phase>test</phase>
-								<configuration>
-									<executable>gradlew.bat</executable>
 									<arguments>
 										<argument>clean</argument>
 										<argument>build</argument>

@@ -23,6 +23,7 @@
 	<modules>
 		<module>http-server</module>
 		<module>http-client</module>
+		<module>contracts</module>
 	</modules>
 
 	<build>
