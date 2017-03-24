@@ -26,6 +26,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertySource;
 import org.springframework.util.SocketUtils;
 
 /**
@@ -47,10 +48,7 @@ public class WireMockApplicationListener
 	private void registerPort(ConfigurableEnvironment environment) {
 		if (environment.getProperty("wiremock.server.port", Integer.class, 0) == 0) {
 			MutablePropertySources propertySources = environment.getPropertySources();
-			if (!propertySources.contains("wiremock")) {
-				propertySources.addFirst(
-						new MapPropertySource("wiremock", new HashMap<String, Object>()));
-			}
+			addPropertySource(propertySources);
 			Map<String, Object> source = ((MapPropertySource) propertySources
 					.get("wiremock")).getSource();
 			source.put("wiremock.server.port",
@@ -59,14 +57,22 @@ public class WireMockApplicationListener
 		if (environment.getProperty("wiremock.server.https-port", Integer.class,
 				0) == 0) {
 			MutablePropertySources propertySources = environment.getPropertySources();
-			if (!propertySources.contains("wiremock")) {
-				propertySources.addFirst(
-						new MapPropertySource("wiremock", new HashMap<String, Object>()));
-			}
+			addPropertySource(propertySources);
 			Map<String, Object> source = ((MapPropertySource) propertySources
 					.get("wiremock")).getSource();
 			source.put("wiremock.server.https-port",
 					SocketUtils.findAvailableTcpPort(12500, 15000));
+		}
+	}
+
+	private void addPropertySource(MutablePropertySources propertySources) {
+		if (!propertySources.contains("wiremock")) {
+			propertySources.addFirst(
+					new MapPropertySource("wiremock", new HashMap<String, Object>()));
+		} else {
+			// Move it up into first place
+			PropertySource<?> wiremock = propertySources.remove("wiremock");
+			propertySources.addFirst(wiremock);
 		}
 	}
 

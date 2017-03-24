@@ -21,6 +21,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 		<spring-cloud-contract.version>1.0.5.BUILD-SNAPSHOT</spring-cloud-contract.version>
+		<spring-cloud-commons.version>1.1.8.RELEASE</spring-cloud-commons.version>
 	</properties>
 
 	<dependencies>
@@ -31,6 +32,10 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter</artifactId>
 		</dependency>
 
 		<!-- tag::stub_runner[] -->
@@ -76,6 +81,13 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-dependencies</artifactId>
 				<version>${spring-cloud-contract.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-commons-dependencies</artifactId>
+				<version>${spring-cloud-commons.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
