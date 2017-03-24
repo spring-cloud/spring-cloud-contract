@@ -111,7 +111,8 @@ class SpringBootHttpServer
 	@Override
 	public void start() {
 		this.context = new SpringApplicationBuilder(WiremockServerConfiguration.class)
-				.logStartupInfo(false).bannerMode(Mode.OFF).listeners(this).run();
+				.logStartupInfo(false).bannerMode(Mode.OFF)
+				.properties("spring.cloud.bootstrap.enabled=false").listeners(this).run();
 		this.running = true;
 	}
 
@@ -180,7 +181,8 @@ class SpringBootHttpServer
 			return bean;
 		}
 
-		private void setupHttps(WiremockServerProperties server, HttpsSettings httpsSettings) {
+		private void setupHttps(WiremockServerProperties server,
+				HttpsSettings httpsSettings) {
 			if (httpsSettings.port() < 0 || !httpsSettings.enabled()) {
 				return;
 			}
@@ -209,7 +211,7 @@ class SpringBootHttpServer
 }
 
 class WiremockServerProperties implements EmbeddedServletContainerCustomizer {
-	
+
 	private ServerProperties delegate = new ServerProperties();
 
 	public Integer getPort() {
@@ -289,7 +291,8 @@ class WiremockServerConfiguration {
 						WiremockServerConfiguration.this.adminRequestHandler);
 				servletContext.setAttribute(StubRequestHandler.class.getName(),
 						WiremockServerConfiguration.this.stubRequestHandler);
-				servletContext.setAttribute(Notifier.KEY, WiremockServerConfiguration.this.options.notifier());
+				servletContext.setAttribute(Notifier.KEY,
+						WiremockServerConfiguration.this.options.notifier());
 			}
 		};
 	}
@@ -393,7 +396,7 @@ class ContainerConfiguration {
 
 		@Autowired
 		private ContainerProperties container;
-		
+
 		private Integer port;
 
 		@Bean
@@ -403,8 +406,11 @@ class ContainerConfiguration {
 				undertow.addBuilderCustomizers(new UndertowBuilderCustomizer() {
 					@Override
 					public void customize(Builder builder) {
-						builder.addHttpListener(UndertowContainerConfiguration.this.options.portNumber(), "localhost");
-						UndertowContainerConfiguration.this.port = UndertowContainerConfiguration.this.options.portNumber();
+						builder.addHttpListener(
+								UndertowContainerConfiguration.this.options.portNumber(),
+								"localhost");
+						UndertowContainerConfiguration.this.port = UndertowContainerConfiguration.this.options
+								.portNumber();
 					}
 				});
 			}
