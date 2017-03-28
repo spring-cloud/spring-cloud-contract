@@ -25,13 +25,14 @@ package org.springframework.cloud.contract.verifier.config
  */
 enum TestFramework {
 	JUNIT("public ", "public void ", ";", ".java", "Test", "org.junit.Ignore", ["org.junit.FixMethodOrder", "org.junit.runners.MethodSorters"], "@FixMethodOrder(MethodSorters.NAME_ASCENDING)"),
-	SPOCK("", "def ", "", ".groovy", "Spec", "spock.lang.Ignore", ["spock.lang.Stepwise"], "@Stepwise")
+	SPOCK("", "def ", "", ".groovy", "Spec", "spock.lang.Ignore", ["spock.lang.Stepwise"], "@Stepwise"),
+	CUSTOM("", "", "", "", "", "", [], "")
 
 	private final String classModifier
 	private final String methodModifier
 	private final String lineSuffix
-	private final String classExtension;
-	private final String classNameSuffix;
+	private final String classExtension
+	private final String classNameSuffix
 	private final String ignoreClass
 	private final List<String> orderAnnotationImports
 	private final String orderAnnotation

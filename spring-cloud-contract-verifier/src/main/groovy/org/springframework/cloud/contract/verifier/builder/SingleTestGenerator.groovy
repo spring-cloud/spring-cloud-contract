@@ -16,16 +16,13 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
-import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
-
 /**
  * Builds a single test.
  *
  * @since 1.1.0
  */
-@CompileStatic
 interface SingleTestGenerator {
 
 	/**
@@ -41,4 +38,11 @@ interface SingleTestGenerator {
 	 */
 	String buildClass(ContractVerifierConfigProperties properties, Collection<ContractMetadata> listOfFiles,
 					  String className, String classPackage, String includedDirectoryRelativePath)
+
+	/**
+	 * Extension that should be appended to the generated test class. E.g. {@code .java} or {@code .php}
+	 *
+	 * @param properties - properties passed to the plugin
+	 */
+	String fileExtension(ContractVerifierConfigProperties properties)
 }
