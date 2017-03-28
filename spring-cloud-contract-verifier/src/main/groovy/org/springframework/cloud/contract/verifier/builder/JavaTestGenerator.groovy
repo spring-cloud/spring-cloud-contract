@@ -109,6 +109,11 @@ class JavaTestGenerator implements SingleTestGenerator {
 		return clazz.build()
 	}
 
+	@Override
+	String fileExtension(ContractVerifierConfigProperties properties) {
+		return properties.targetFramework.classExtension
+	}
+
 	private Map<ParsedDsl, TestType> mapContractsToTheirTestTypes(Collection<ContractMetadata> listOfFiles) {
 		Map<ParsedDsl, TestType> dsls = [:]
 		listOfFiles.each { ContractMetadata metadata ->

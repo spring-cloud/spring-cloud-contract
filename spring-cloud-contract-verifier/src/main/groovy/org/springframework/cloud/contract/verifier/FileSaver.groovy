@@ -17,8 +17,10 @@
 package org.springframework.cloud.contract.verifier
 
 import groovy.transform.CompileStatic
+import groovy.transform.PackageScope
 import groovy.util.logging.Slf4j
-import org.springframework.cloud.contract.verifier.config.TestFramework
+import org.springframework.cloud.contract.verifier.builder.SingleTestGenerator
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -30,22 +32,25 @@ import static org.springframework.cloud.contract.verifier.util.NamesUtil.capital
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.packageToDirectory
 
 @CompileStatic
+@PackageScope
 @Slf4j
 class FileSaver {
 
-	File targetDirectory
-	TestFramework framework
+	private final File targetDirectory
+	private final SingleTestGenerator generator
+	private final ContractVerifierConfigProperties properties
 
-	FileSaver(File targetDirectory, TestFramework framework) {
+	FileSaver(File targetDirectory, SingleTestGenerator generator, ContractVerifierConfigProperties properties) {
 		this.targetDirectory = targetDirectory
-		this.framework = framework
+		this.generator = generator
+		this.properties = properties
 	}
 
 	void saveClassFile(String fileName, String basePackageClass, String includedDirectoryRelativePath, byte[] classBytes) {
 		Path testBaseDir = Paths.get(targetDirectory.absolutePath, packageToDirectory(basePackageClass),
 				beforeLast(includedDirectoryRelativePath, File.separator))
 		Files.createDirectories(testBaseDir)
-		Path classPath = Paths.get(testBaseDir.toString(), capitalize(fileName) + framework.classExtension).toAbsolutePath()
+		Path classPath = Paths.get(testBaseDir.toString(), capitalize(fileName) + generator.fileExtension(this.properties)).toAbsolutePath()
 		log.info("Creating new class file [$classPath]")
 		Files.write(classPath, classBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
 	}
