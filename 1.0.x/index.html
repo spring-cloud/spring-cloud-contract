@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 	color: #ffffff;
 }
 </style>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.6/zepto.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
 <script type="text/javascript">
 function addBlockSwitches() {
 	$('.primary').each(function() {
@@ -561,6 +561,7 @@ $(addBlockSwitches);
 </ul>
 </li>
 <li><a href="#_can_i_have_multiple_base_classes_for_tests">Can I have multiple base classes for tests?</a></li>
+<li><a href="#_how_can_i_debug_the_request_response_being_sent_by_the_generated_tests_client">How can I debug the request/response being sent by the generated tests client?</a></li>
 </ul>
 </li>
 <li><a href="#_spring_cloud_contract_verifier_http">Spring Cloud Contract Verifier HTTP</a>
@@ -571,7 +572,6 @@ $(addBlockSwitches);
 <ul class="sectlevel5">
 <li><a href="#_add_gradle_plugin_with_dependencies">Add gradle plugin with dependencies</a></li>
 <li><a href="#_snapshot_versions_for_gradle">Snapshot versions for Gradle</a></li>
-<li><a href="#_add_maven_plugin_with_dependencies">Add maven plugin with dependencies</a></li>
 <li><a href="#_add_stubs">Add stubs</a></li>
 </ul>
 </li>
@@ -605,6 +605,11 @@ $(addBlockSwitches);
 </ul>
 </li>
 <li><a href="#_invoking_generated_tests_2">Invoking generated tests</a></li>
+<li><a href="#_faq_with_maven_plugin">FAQ with Maven Plugin</a>
+<ul class="sectlevel5">
+<li><a href="#_maven_plugin_and_sts">Maven Plugin and STS</a></li>
+</ul>
+</li>
 <li><a href="#_spring_cloud_contract_verifier_on_consumer_side_2">Spring Cloud Contract Verifier on consumer side</a></li>
 </ul>
 </li>
@@ -648,6 +653,7 @@ $(addBlockSwitches);
 </li>
 <li><a href="#_stub_runner_junit_rule">Stub Runner JUnit Rule</a>
 <ul class="sectlevel3">
+<li><a href="#_maven_settings">Maven settings</a></li>
 <li><a href="#_providing_fixed_ports">Providing fixed ports</a></li>
 <li><a href="#_fluent_api">Fluent API</a></li>
 <li><a href="#_stub_runner_with_spring">Stub Runner with Spring</a></li>
@@ -655,7 +661,11 @@ $(addBlockSwitches);
 </li>
 <li><a href="#_stub_runner_spring_cloud">Stub Runner Spring Cloud</a>
 <ul class="sectlevel3">
-<li><a href="#_stubbing_service_discovery">Stubbing Service Discovery</a></li>
+<li><a href="#_stubbing_service_discovery">Stubbing Service Discovery</a>
+<ul class="sectlevel4">
+<li><a href="#_test_profiles_and_service_discovery">Test profiles and service discovery</a></li>
+</ul>
+</li>
 <li><a href="#_additional_configuration">Additional Configuration</a></li>
 </ul>
 </li>
@@ -801,11 +811,11 @@ $(addBlockSwitches);
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Documentation Authors: Adam Dudczak, Mathias Düsterhöft, Marcin Grzejszczak, Jakub Kubryński, Karol Lassak,
+<p><em>Documentation Authors: Adam Dudczak, Mathias Düsterhöft, Marcin Grzejszczak, Dennis Kieselhorst, Jakub Kubryński, Karol Lassak,
 Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer</em></p>
 </div>
 <div class="paragraph">
-<p>1.0.4.BUILD-SNAPSHOT</p>
+<p>1.0.5.BUILD-SNAPSHOT</p>
 </div>
 </div>
 </div>
@@ -1114,7 +1124,7 @@ public class ApplicationTests {
 	public void contextLoads() throws Exception {
 		mockMvc.perform(post("/resource")
                 .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
-				.andExpect(status.isOk())
+				.andExpect(status().isOk())
 				.andDo(verify().jsonPath("$.id")
                         .stub("resource"));
 	}
@@ -1139,7 +1149,7 @@ created stub. Example:</p>
 public void contextLoads() throws Exception {
 	mockMvc.perform(post("/resource")
                .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
-			.andExpect(status.isOk())
+			.andExpect(status().isOk())
 			.andDo(verify()
 					.wiremock(WireMock.post(
 						urlPathEquals("/resource"))
@@ -1703,6 +1713,19 @@ public void shouldBeRejectedDueToAbnormalLoanAmount() {
 <div class="paragraph">
 <p>As consumers we need to define what exactly we want to achieve. We need to formulate our expectations. That&#8217;s why we write the following contract.</p>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+We&#8217;re placing the contract under <code>src/test/resources/contract/fraud</code> folder. The <code>fraud</code> folder
+is important cause we&#8217;ll reference that folder in the producer&#8217;s test base class name.
+</td>
+</tr>
+</table>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">package contracts
@@ -2047,7 +2070,7 @@ git pull https://your-git-server.com/server-side-fork.git contract-change-pr</co
 </div>
 </div>
 <div class="paragraph">
-<p>In the configuration of the Maven plugin we passed the <code>baseClassForTests</code> property</p>
+<p>In the configuration of the Maven plugin we passed the <code>packageWithBaseClasses</code> property</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2062,8 +2085,25 @@ git pull https://your-git-server.com/server-side-fork.git contract-change-pr</co
 &lt;/plugin&gt;</code></pre>
 </div>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+We&#8217;ve decided to use the "convention based" naming by setting the <code>packageWithBaseClasses</code> property.
+That means that 2 last packages will be combined into a name of the base test class. In our case the contracts
+were placed under <code>src/test/resources/contract/fraud</code>. Since we don&#8217;t have 2 packages starting from the <code>contracts</code>
+folder we&#8217;re picking only one which is <code>fraud</code>. We&#8217;re adding the <code>Base</code> suffix and we&#8217;re capitalizing <code>fraud</code>.
+That gives us the <code>FraudBase</code> test class name.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>That&#8217;s because all the generated tests will extend that class. Over there you can set up your Spring Context or whatever is necessary. In our case we&#8217;re using <a href="http://rest-assured.io/">Rest Assured MVC</a> to start the server side <code>FraudDetectionController</code>.</p>
+<p>That&#8217;s because all the generated tests will extend that class. Over there you can set up your Spring Context or
+whatever is necessary. In our case we&#8217;re using <a href="http://rest-assured.io/">Rest Assured MVC</a> to start the server side <code>FraudDetectionController</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2625,7 +2665,7 @@ one to one to the contents of the repo.</p>
 	&lt;properties&gt;
 		&lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
 		&lt;java.version&gt;1.8&lt;/java.version&gt;
-		&lt;spring-cloud-contract.version&gt;1.0.4.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
+		&lt;spring-cloud-contract.version&gt;1.0.5.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
 		&lt;spring-cloud-dependencies.version&gt;Camden.BUILD-SNAPSHOT&lt;/spring-cloud-dependencies.version&gt;
 		&lt;excludeBuildFolders&gt;true&lt;/excludeBuildFolders&gt;
 	&lt;/properties&gt;
@@ -2865,6 +2905,17 @@ when some incompatible changes are done.</p>
 of either Gradle or Maven plugins.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_how_can_i_debug_the_request_response_being_sent_by_the_generated_tests_client">How can I debug the request/response being sent by the generated tests client?</h4>
+<div class="paragraph">
+<p>The generated tests all boil down to RestAssured in some form or fashion which relies on <a href="https://hc.apache.org/httpcomponents-client-ga/">Apache HttpClient</a>.  HttpClient has a facility called <a href="https://hc.apache.org/httpcomponents-client-ga/logging.html#Wire_Logging">wire logging</a> which logs the entire request and response to HttpClient.  Spring Boot has a logging <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html">common application property</a> for doing this sort of thing, just add this to your application properties</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-properties" data-lang="properties">logging.level.org.apache.http.wire=DEBUG</code></pre>
+</div>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_spring_cloud_contract_verifier_http">Spring Cloud Contract Verifier HTTP</h3>
@@ -2938,49 +2989,6 @@ dependencies {
 	}
 }</code></pre>
 </div>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_add_maven_plugin_with_dependencies">Add maven plugin with dependencies</h6>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependencyManagement&gt;
-    &lt;dependencies&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-cloud-contract-dependencies&lt;/artifactId&gt;
-            &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
-            &lt;type&gt;pom&lt;/type&gt;
-            &lt;scope&gt;import&lt;/scope&gt;
-        &lt;/dependency&gt;
-    &lt;/dependencies&gt;
-&lt;/dependencyManagement&gt;
-
-&lt;dependencies&gt;
-    &lt;dependency&gt;
-        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-        &lt;artifactId&gt;spring-cloud-starter-contract-verifier&lt;/artifactId&gt;
-        &lt;scope&gt;test&lt;/scope&gt;
-    &lt;/dependency&gt;
-&lt;/dependencies&gt;
-
-&lt;plugin&gt;
-    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
-    &lt;executions&gt;
-        &lt;execution&gt;
-            &lt;goals&gt;
-                &lt;goal&gt;convert&lt;/goal&gt;
-                &lt;goal&gt;generateStubs&lt;/goal&gt;
-                &lt;goal&gt;generateTests&lt;/goal&gt;
-            &lt;/goals&gt;
-        &lt;/execution&gt;
-    &lt;/executions&gt;
-&lt;/plugin&gt;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Read more: <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/">spring-cloud-contract-maven-plugin</a></p>
 </div>
 </div>
 <div class="sect5">
@@ -3646,6 +3654,73 @@ will be extending the <code>com.example.ComBase</code> whereas the rest of tests
 </div>
 <div class="paragraph">
 <p>To ensure that provider side is complaint with defined contracts, you need to invoke <code>mvn generateTest test</code></p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_faq_with_maven_plugin">FAQ with Maven Plugin</h5>
+<div class="sect5">
+<h6 id="_maven_plugin_and_sts">Maven Plugin and STS</h6>
+<div class="paragraph">
+<p>In case you see the following exception while using STS</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/docs/src/main/asciidoc/images/sts_exception.png" alt="STS Exception">
+</div>
+</div>
+<div class="paragraph">
+<p>when you click on the marker you should see sth like this</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash"> plugin:1.1.0.M1:convert:default-convert:process-test-resources) org.apache.maven.plugin.PluginExecutionException: Execution default-convert of goal org.springframework.cloud:spring-
+ cloud-contract-maven-plugin:1.1.0.M1:convert failed. at org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo(DefaultBuildPluginManager.java:145) at
+ org.eclipse.m2e.core.internal.embedder.MavenImpl.execute(MavenImpl.java:331) at org.eclipse.m2e.core.internal.embedder.MavenImpl$11.call(MavenImpl.java:1362) at
+...
+ org.eclipse.core.internal.jobs.Worker.run(Worker.java:55) Caused by: java.lang.NullPointerException at
+ org.eclipse.m2e.core.internal.builder.plexusbuildapi.EclipseIncrementalBuildContext.hasDelta(EclipseIncrementalBuildContext.java:53) at
+ org.sonatype.plexus.build.incremental.ThreadBuildContext.hasDelta(ThreadBuildContext.java:59) at</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In order to fix this issue just provide the following section in your <code>pom.xml</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;build&gt;
+    &lt;pluginManagement&gt;
+        &lt;plugins&gt;
+            &lt;!--This plugin's configuration is used to store Eclipse m2e settings
+                only. It has no influence on the Maven build itself. --&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.eclipse.m2e&lt;/groupId&gt;
+                &lt;artifactId&gt;lifecycle-mapping&lt;/artifactId&gt;
+                &lt;version&gt;1.0.0&lt;/version&gt;
+                &lt;configuration&gt;
+                    &lt;lifecycleMappingMetadata&gt;
+                        &lt;pluginExecutions&gt;
+                             &lt;pluginExecution&gt;
+                                &lt;pluginExecutionFilter&gt;
+                                    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+                                    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+                                    &lt;versionRange&gt;[1.0,)&lt;/versionRange&gt;
+                                    &lt;goals&gt;
+                                        &lt;goal&gt;convert&lt;/goal&gt;
+                                    &lt;/goals&gt;
+                                &lt;/pluginExecutionFilter&gt;
+                                &lt;action&gt;
+                                    &lt;execute /&gt;
+                                &lt;/action&gt;
+                             &lt;/pluginExecution&gt;
+                        &lt;/pluginExecutions&gt;
+                    &lt;/lifecycleMappingMetadata&gt;
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/pluginManagement&gt;
+&lt;/build&gt;</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect4">
@@ -4645,6 +4720,13 @@ public void should_start_wiremock_servers() throws Exception {
 <p>Check the <strong>Common properties for JUnit and Spring</strong> for more information on how to apply global configuration of Stub Runner.</p>
 </div>
 <div class="sect3">
+<h4 id="_maven_settings">Maven settings</h4>
+<div class="paragraph">
+<p>The stub downloader honors Maven settings for a different local repository folder.
+Authentication details for repositories and profiles are currently not taken into account, so you need to specify it using the properties mentioned above.</p>
+</div>
+</div>
+<div class="sect3">
 <h4 id="_providing_fixed_ports">Providing fixed ports</h4>
 <div class="paragraph">
 <p>You can also run your stubs on fixed ports. You can do it in two different ways. One is to pass it in the properties, and the other via fluent API of
@@ -4813,6 +4895,19 @@ for every registered WireMock server. Example for Stub Runner ids
 <div class="paragraph">
 <p>Stub Runner can integrate with Spring Cloud.</p>
 </div>
+<div class="paragraph">
+<p>For real life examples you can check the</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/master/producer">producer app sample</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/master/consumer_with_discovery">consumer app sample</a></p>
+</li>
+</ul>
+</div>
 <div class="sect3">
 <h4 id="_stubbing_service_discovery">Stubbing Service Discovery</h4>
 <div class="paragraph">
@@ -4862,6 +4957,27 @@ stubrunner:
   idsToServiceIds:
     ivyNotation: someValueInsideYourCode
     fraudDetectionServer: someNameThatShouldMapFraudDetectionServer</code></pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_test_profiles_and_service_discovery">Test profiles and service discovery</h5>
+<div class="paragraph">
+<p>In your integration tests you typically don&#8217;t want to call neither a discovery service (e.g. Eureka)
+or Config Server. That&#8217;s why you create an additional test configuration in which you want to disable
+these features.</p>
+</div>
+<div class="paragraph">
+<p>Due to certain limitations of <a href="https://github.com/spring-cloud/spring-cloud-commons/issues/156"><code>spring-cloud-commons</code></a> to achieve this you have disable these properties
+via a static block like presented below (example for Eureka)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">    //Hack to work around https://github.com/spring-cloud/spring-cloud-commons/issues/156
+    static {
+        System.setProperty("eureka.client.enabled", "false");
+        System.setProperty("spring.cloud.config.failFast", "false");
+    }</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -6632,6 +6748,13 @@ protected static final Pattern UUID = Pattern.compile('[a-z0-9]{8}-[a-z0-9]{4}-[
 protected static final Pattern ANY_DATE = Pattern.compile('(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])')
 protected static final Pattern ANY_DATE_TIME = Pattern.compile('([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
 protected static final Pattern ANY_TIME = Pattern.compile('(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
+protected static final Pattern NON_EMPTY = Pattern.compile(/.+/)
+protected static final Pattern NON_BLANK = Pattern.compile(/.*(\S+|\R).*|!^\R*$/)
+protected static final Pattern ISO8601_WITH_OFFSET = Pattern.compile(/([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\.\d{3})?(Z|[+-][01]\d:[0-5]\d)/)
+
+protected static Pattern anyOf(String... values){
+	return Pattern.compile(values.collect({"^$it\$"}).join("|"))
+}
 
 String onlyAlphaUnicode() {
 	return ONLY_ALPHA_UNICODE.pattern()
@@ -6675,6 +6798,18 @@ String isoDateTime() {
 
 String isoTime() {
 	return ANY_TIME.pattern()
+}
+
+String iso8601WithOffset() {
+	return ISO8601_WITH_OFFSET.pattern()
+}
+
+String nonEmpty() {
+	return NON_EMPTY.pattern()
+}
+
+String nonBlank() {
+	return NON_BLANK.pattern()
 }</code></pre>
 </div>
 </div>
@@ -7546,8 +7681,8 @@ import java.util.regex.Pattern;
  * @author Marcin Grzejszczak
  */
 public class PatternUtils {
-	public static Pattern tooYoung() {
-		return Pattern.compile("[0-1][0-9]");
+	public static String tooYoung() {
+		return "[0-1][0-9]";
 	}
 
 	public static Pattern oldEnough() {
