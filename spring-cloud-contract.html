@@ -561,7 +561,6 @@ $(addBlockSwitches);
 </ul>
 </li>
 <li><a href="#_can_i_have_multiple_base_classes_for_tests">Can I have multiple base classes for tests?</a></li>
-<li><a href="#_how_can_i_debug_the_request_response_being_sent_by_the_generated_tests_client">How can I debug the request/response being sent by the generated tests client?</a></li>
 <li><a href="#_can_i_reference_the_request_from_the_response">Can I reference the request from the response?</a></li>
 </ul>
 </li>
@@ -2941,17 +2940,6 @@ when some incompatible changes are done.</p>
 <div class="paragraph">
 <p>Yes! Check out the <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_different_base_classes_for_contracts">Different base classes for contracts</a> sections
 of either Gradle or Maven plugins.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_how_can_i_debug_the_request_response_being_sent_by_the_generated_tests_client">How can I debug the request/response being sent by the generated tests client?</h4>
-<div class="paragraph">
-<p>The generated tests all boil down to RestAssured in some form or fashion which relies on <a href="https://hc.apache.org/httpcomponents-client-ga/">Apache HttpClient</a>.  HttpClient has a facility called <a href="https://hc.apache.org/httpcomponents-client-ga/logging.html#Wire_Logging">wire logging</a> which logs the entire request and response to HttpClient.  Spring Boot has a logging <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html">common application property</a> for doing this sort of thing, just add this to your application properties</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-properties" data-lang="properties">logging.level.org.apache.http.wire=DEBUG</code></pre>
-</div>
 </div>
 </div>
 <div class="sect3">
