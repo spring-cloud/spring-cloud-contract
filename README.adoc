@@ -1622,6 +1622,14 @@ The rest of the flow looks the same.
 Yes! Check out the https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_different_base_classes_for_contracts[Different base classes for contracts] sections
 of either Gradle or Maven plugins.
 
+==== How can I debug the request/response being sent by the generated tests client?
+
+The generated tests all boil down to RestAssured in some form or fashion which relies on https://hc.apache.org/httpcomponents-client-ga/[Apache HttpClient].  HttpClient has a facility called https://hc.apache.org/httpcomponents-client-ga/logging.html#Wire_Logging[wire logging] which logs the entire request and response to HttpClient.  Spring Boot has a logging https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html[common application property] for doing this sort of thing, just add this to your application properties
+[source,properties,indent=0]
+----
+logging.level.org.apache.http.wire=DEBUG
+----
+
 ==== Can I reference the request from the response?
 
 Yes! With version 1.1.0 we've added such a possibility. On the HTTP stub server side we're providing support
