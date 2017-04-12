@@ -1880,7 +1880,7 @@ World.'''"""
 	}
 
 	@Issue('#149')
-		def "should allow easier way of providing dynamic values for [#methodBuilderName]"() {
+	def "should allow easier way of providing dynamic values for [#methodBuilderName]"() {
 		given:
 		Contract contractDsl = Contract.make {
 			request {
@@ -1956,6 +1956,9 @@ World.'''"""
 			!test.contains('cursor')
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
+		and:
+			String shortTest = test.eachLine{ it.contains("assertThatJson") }.join("\n")
+			SyntaxChecker.tryToRun(methodBuilderName, shortTest)
 		where:
 			methodBuilderName			| methodBuilder																				| endOfLineRegExSymbol
 			"MockMvcSpockMethodBuilder"	| { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } 	| '\\$'

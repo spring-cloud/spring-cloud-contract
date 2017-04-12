@@ -5,6 +5,9 @@ import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer
 import org.codehaus.groovy.control.customizers.ImportCustomizer
 import org.mdkt.compiler.InMemoryJavaCompiler
+import org.springframework.util.ReflectionUtils
+
+import java.lang.reflect.Method
 
 /**
  * checking the syntax of produced scripts
@@ -51,6 +54,17 @@ class SyntaxChecker {
 		}
 	}
 
+	static void tryToRun(String builderName, String test) {
+		if (builderName.toLowerCase().contains("spock")) {
+			Script script = tryToCompileGroovy(test)
+			script.run()
+		} else {
+			Class clazz = tryToCompileJava(test)
+			Method method = ReflectionUtils.findMethod(clazz, "method")
+			method.invoke(clazz.newInstance())
+		}
+	}
+
 	// no static compilation due to bug in Groovy https://issues.apache.org/jira/browse/GROOVY-8055
 	static void tryToCompileWithoutCompileStatic(String builderName, String test) {
 		if (builderName.toLowerCase().contains("spock")) {
@@ -60,7 +74,7 @@ class SyntaxChecker {
 		}
 	}
 
-	static void tryToCompileGroovy(String test, boolean compileStatic = true) {
+	static Script tryToCompileGroovy(String test, boolean compileStatic = true) {
 		def imports = new ImportCustomizer()
 		CompilerConfiguration configuration = new CompilerConfiguration()
 		if (compileStatic) {
@@ -75,7 +89,7 @@ class SyntaxChecker {
 		sourceCode.append("WebTarget webTarget")
 		sourceCode.append("\n")
 		sourceCode.append(test)
-		new GroovyShell(SyntaxChecker.classLoader, configuration).parse(sourceCode.toString())
+		return new GroovyShell(SyntaxChecker.classLoader, configuration).parse(sourceCode.toString())
 	}
 
 	static Class tryToCompileJava(String test) {
@@ -89,11 +103,11 @@ class SyntaxChecker {
 		sourceCode.append("${DEFAULT_IMPORTS_AS_STRING}\n")
 		sourceCode.append("${STATIC_IMPORTS}\n")
 		sourceCode.append("\n")
-		sourceCode.append("class ${className} {\n")
+		sourceCode.append("public class ${className} {\n")
 		sourceCode.append("\n")
 		sourceCode.append("   WebTarget webTarget;")
 		sourceCode.append("\n")
-		sourceCode.append("   void method() {\n")
+		sourceCode.append("   public void method() {\n")
 		sourceCode.append("   ${test}\n")
 		sourceCode.append("   }\n")
 		sourceCode.append("}")
