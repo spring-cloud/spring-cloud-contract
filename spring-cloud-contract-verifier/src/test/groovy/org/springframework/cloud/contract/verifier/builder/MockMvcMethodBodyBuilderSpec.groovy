@@ -1957,8 +1957,15 @@ World.'''"""
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		and:
-			String shortTest = test.eachLine{ it.contains("assertThatJson") }.join("\n")
-			SyntaxChecker.tryToRun(methodBuilderName, shortTest)
+			String jsonSample = '''\
+String json = "{\\"duck\\":\\"8\\",\\"alpha\\":\\"YAJEOWYGMFBEWPMEMAZI\\",\\"number\\":-2095030871,\\"aBoolean\\":true,\\"ip\\":\\"20d.dd.d.0d\\",\\"hostname\\":\\"http://foo389886219.com\\",\\"email\\":\\"foo@bar1367573183.com\\",\\"url\\":\\"http://foo-597104692.com\\",\\"uuid\\":\\"e436b817-b764-49a2-908e-967f2f99eb9f\\",\\"date\\":\\"2014-04-14\\",\\"dateTime\\":\\"2011-01-11T12:23:34\\",\\"time\\":\\"12:20:30\\",\\"iso8601WithOffset\\":\\"2015-05-15T12:23:34.123Z\\",\\"nonBlankString\\":\\"EPZWVIRHSUAPBJMMQSFO\\",\\"nonEmptyString\\":\\"RVMFDSEQFHRQFVUVQPIA\\",\\"anyOf\\":\\"foo\\"}";
+DocumentContext parsedJson = JsonPath.parse(json);
+'''
+		and:
+			LinkedList<String> lines = [] as LinkedList<String>
+			test.eachLine { if (it.contains("assertThatJson")) lines << it }
+			lines.addFirst(jsonSample)
+			SyntaxChecker.tryToRun(methodBuilderName, lines.join("\n"))
 		where:
 			methodBuilderName			| methodBuilder																				| endOfLineRegExSymbol
 			"MockMvcSpockMethodBuilder"	| { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } 	| '\\$'
