@@ -55,13 +55,76 @@ class RegexPatternsSpec extends Specification {
 			'a.b.'        || false
 	}
 
+	// @see http://formvalidation.io/validators/uri/
 	def "should generate a regex for url [#textToMatch] that is a match [#shouldMatch]"() {
 		expect:
 			shouldMatch == Pattern.compile(regexPatterns.url()).matcher(textToMatch).matches()
 		where:
-			textToMatch                    || shouldMatch
-			'ftp://asd.com:9090/asd/a?a=b' || true
-			'a.b.'                         || false
+			textToMatch                                         || shouldMatch
+			'ftp://asd.com:9090/asd/a?a=b'                      || true
+			'http://foo.com/blah_blah'                          || true
+			'http://foo.com/blah_blah/'                         || true
+			'http://foo.com/blah_blah_(wikipedia)'              || true
+			'http://foo.com/blah_blah_(wikipedia)_(again)'      || true
+			'http://www.example.com/wpstyle/?p=364'             || true
+			'https://www.example.com/foo/?bar=baz&inga=42&quux' || true
+			'http://✪df.ws/123'                                 || true
+			'http://userid:password@example.com:8080'           || true
+			'http://userid:password@example.com:8080/'          || true
+			'http://userid@example.com'                         || true
+			'http://userid@example.com/'                        || true
+			'http://userid@example.com:8080'                    || true
+			'http://userid@example.com:8080/'                   || true
+			'http://userid:password@example.com'                || true
+			'http://userid:password@example.com/'               || true
+			'http://142.42.1.1/'                                || true
+			'http://142.42.1.1:8080/'                           || true
+			'http://⌘.ws'                                       || true
+			'http://⌘.ws/'                                      || true
+			'http://foo.com/blah_(wikipedia)#cite-1'            || true
+			'http://foo.com/blah_(wikipedia)_blah#cite-1'       || true
+			'http://foo.com/unicode_(✪)_in_parens'              || true
+			'http://foo.com/(something)?after=parens'           || true
+			'http://☺.damowmow.com/'                            || true
+			'http://code.google.com/events/#&product=browser'   || true
+			'http://j.mp'                                       || true
+			'ftp://foo.bar/baz'                                 || true
+			'http://foo.bar/?q=Test%20URL-encoded%20stuff'      || true
+			'http://1337.net'                                   || true
+			'http://a.b-c.de'                                   || true
+			'http://223.255.255.254'                            || true
+			'foo.com'                                           || true
+			'a.b.'                                              || false
+			'http://'                                           || false
+			'http://.'                                          || false
+			'http://..'                                         || false
+			'http://../'                                        || false
+			'http://?'                                          || false
+			'http://??'                                         || false
+			'http://??/'                                        || false
+			'http://#'                                          || false
+			'http://##'                                         || false
+			'http://##/'                                        || false
+			'http://foo.bar?q=Spaces should be encoded'         || false
+			'//'                                                || false
+			'//a'                                               || false
+			'///a'                                              || false
+			'///'                                               || false
+			'http:///a'                                         || false
+			'rdar://1234'                                       || false
+			'h://test'                                          || false
+			'http:// shouldfail.com'                            || false
+			':// should fail'                                   || false
+			'http://foo.bar/foo(bar)baz quux'                   || false
+			'http://-error-.invalid/'                           || false
+			'http://-a.b.co'                                    || false
+			'http://a.b-.co'                                    || false
+			'http://1.1.1.1.1'                                  || false
+			'http://123.123.123'                                || false
+			'http://3628126748'                                 || false
+			'http://.www.foo.bar/'                              || false
+			'http://www.foo.bar./'                              || false
+			'http://.www.foo.bar./'                             || false
 	}
 
 	def "should generate a regex for a number [#textToMatch] that is a match [#shouldMatch]"() {

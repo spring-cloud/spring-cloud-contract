@@ -37,9 +37,9 @@ class RegexPatterns {
 	protected static final Pattern ONLY_ALPHA_UNICODE = Pattern.compile(/[\p{L}]*/)
 	protected static final Pattern NUMBER = Pattern.compile('-?\\d*(\\.\\d+)?')
 	protected static final Pattern IP_ADDRESS = Pattern.compile('([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])')
-	protected static final Pattern HOSTNAME_PATTERN = Pattern.compile('((http[s]?|ftp):\\/)\\/?([^:\\/\\s]+)(:[0-9]{1,5})?')
-	protected static final Pattern EMAIL = Pattern.compile('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}');
-	protected static final Pattern URL = Pattern.compile('((www\\.|(http|https|ftp|news|file)+\\:\\/\\/)[_.a-z0-9-]+\\.[a-z0-9\\/_:@=.+?,##%&~-]*[^.|\\\'|\\# |!|\\(|?|,| |>|<|;|\\)])')
+	protected static final Pattern HOSTNAME_PATTERN = Pattern.compile('((http[s]?|ftp):/)/?([^:/\\s]+)(:[0-9]{1,5})?')
+	protected static final Pattern EMAIL = Pattern.compile('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}')
+	protected static final Pattern URL = UrlHelper.URL
 	protected static final Pattern UUID = Pattern.compile('[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}')
 	protected static final Pattern ANY_DATE = Pattern.compile('(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])')
 	protected static final Pattern ANY_DATE_TIME = Pattern.compile('([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
@@ -117,4 +117,46 @@ class RegexPatterns {
 	static String multipartFile(Object name, Object filename, Object content) {
 		return ".*--(.*)\r\nContent-Disposition: form-data; name=\"$name\"; filename=\"$filename\"\r\n(Content-Type: .*\r\n)?(Content-Length: \\d+\r\n)?\r\n$content\r\n--\\1.*";
 	}
+}
+
+/**
+ * Taken from https://gist.github.com/skeller88/5eb73dc0090d4ff1249a
+ */
+class UrlHelper {
+	/**
+	 * Example: "http". Also called 'protocol'.
+	 * Scheme component is optional, even though the RFC doesn't make it optional. Since this regex is validating a
+	 * submitted callback url, which determines where the browser will navigate to after a successful authentication,
+	 * the browser will use http or https for the scheme by default.
+	 * Not borrowed from dperini in order to allow any scheme type.
+	 */
+	private static final String REGEX_SCHEME = "[A-Za-z][+-.\\w^_]*:"
+
+	// Example: "//".
+	private static final String REGEX_AUTHORATIVE_DECLARATION = "/{2}"
+
+	// Optional component. Example: "suzie:abc123@". The use of the format "user:password" is deprecated.
+	private static final String REGEX_USERINFO = "(?:\\S+(?::\\S*)?@)?"
+
+	// Examples: "fitbit.com", "22.231.113.64".
+	private static final String REGEX_HOST = "(?:" +
+			// @Author = http://www.regular-expressions.info/examples.html
+			// IP address
+			"(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" +
+			"|" +
+			// host name
+			"(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)" +
+			// domain name
+			"(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" +
+			// TLD identifier must have >= 2 characters
+			"(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))"
+
+	// Example: ":8042".
+	private static final String REGEX_PORT = "(?::\\d{2,5})?"
+
+	//Example: "/user/heartrate?foo=bar#element1".
+	private static final String REGEX_RESOURCE_PATH = "(?:/\\S*)?"
+
+	protected static final Pattern URL = Pattern.compile("^(?:(?:" + REGEX_SCHEME + REGEX_AUTHORATIVE_DECLARATION + ")?" +
+			REGEX_USERINFO + REGEX_HOST + REGEX_PORT + REGEX_RESOURCE_PATH + ")\$")
 }
