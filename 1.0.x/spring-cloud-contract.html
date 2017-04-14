@@ -571,6 +571,7 @@ $(addBlockSwitches);
 <li><a href="#_prerequisites">Prerequisites</a>
 <ul class="sectlevel5">
 <li><a href="#_add_gradle_plugin_with_dependencies">Add gradle plugin with dependencies</a></li>
+<li><a href="#_gradle_and_rest_assured_3_0">Gradle and Rest Assured 3.0</a></li>
 <li><a href="#_snapshot_versions_for_gradle">Snapshot versions for Gradle</a></li>
 <li><a href="#_add_stubs">Add stubs</a></li>
 </ul>
@@ -592,6 +593,7 @@ $(addBlockSwitches);
 <ul class="sectlevel4">
 <li><a href="#_add_maven_plugin">Add maven plugin</a>
 <ul class="sectlevel5">
+<li><a href="#_maven_and_rest_assured_3_0">Maven and Rest Assured 3.0</a></li>
 <li><a href="#_snapshot_versions_for_maven">Snapshot versions for Maven</a></li>
 </ul>
 </li>
@@ -2062,7 +2064,7 @@ git pull https://your-git-server.com/server-side-fork.git contract-change-pr</co
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">	&lt;dependency&gt;
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
 	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 	&lt;artifactId&gt;spring-cloud-starter-contract-verifier&lt;/artifactId&gt;
 	&lt;scope&gt;test&lt;/scope&gt;
@@ -2973,6 +2975,39 @@ dependencies {
 </div>
 </div>
 <div class="sect5">
+<h6 id="_gradle_and_rest_assured_3_0">Gradle and Rest Assured 3.0</h6>
+<div class="paragraph">
+<p>By default Rest Assured 2.x is added to the classpath. However in order to give the users the
+opportunity to use Rest Assured 3.x it&#8217;s enough to add it to the plugins classpath.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+	    classpath "org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"
+		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}"
+		classpath "io.rest-assured:rest-assured:3.0.2"
+		classpath "io.rest-assured:spring-mock-mvc:3.0.2"
+	}
+}
+
+depenendencies {
+    // all dependencies
+    // you can exclude rest-assured from spring-cloud-contract-verifier
+    testCompile "io.rest-assured:rest-assured:3.0.2"
+    testCompile "io.rest-assured:spring-mock-mvc:3.0.2"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That way the plugin will automatically see that Rest Assured 3.x is present on the classpath
+and will modify the imports accordingly.</p>
+</div>
+</div>
+<div class="sect5">
 <h6 id="_snapshot_versions_for_gradle">Snapshot versions for Gradle</h6>
 <div class="paragraph">
 <p>Add the additional snapshot repository to your build.gradle to use snapshot versions which are automatically uploaded after every successful build:</p>
@@ -3339,6 +3374,66 @@ class LoanApplicationServiceSpec extends Specification {
 </div>
 <div class="paragraph">
 <p>You can read more in the <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/">Spring Cloud Contract Maven Plugin Docs</a></p>
+</div>
+<div class="sect5">
+<h6 id="_maven_and_rest_assured_3_0">Maven and Rest Assured 3.0</h6>
+<div class="paragraph">
+<p>By default Rest Assured 2.x is added to the classpath. However in order to give the users the
+opportunity to use Rest Assured 3.x it&#8217;s enough to add it to the plugins classpath.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+    &lt;configuration&gt;
+        &lt;packageWithBaseClasses&gt;com.example&lt;/packageWithBaseClasses&gt;
+    &lt;/configuration&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-contract-verifier&lt;/artifactId&gt;
+            &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+           &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+           &lt;artifactId&gt;rest-assured&lt;/artifactId&gt;
+           &lt;version&gt;3.0.2&lt;/version&gt;
+           &lt;scope&gt;compile&lt;/scope&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+           &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+           &lt;artifactId&gt;spring-mock-mvc&lt;/artifactId&gt;
+           &lt;version&gt;3.0.2&lt;/version&gt;
+           &lt;scope&gt;compile&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/plugin&gt;
+
+&lt;dependencies&gt;
+    &lt;!-- all dependencies --&gt;
+    &lt;!-- you can exclude rest-assured from spring-cloud-contract-verifier --&gt;
+    &lt;dependency&gt;
+       &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+       &lt;artifactId&gt;rest-assured&lt;/artifactId&gt;
+       &lt;version&gt;3.0.2&lt;/version&gt;
+       &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+       &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+       &lt;artifactId&gt;spring-mock-mvc&lt;/artifactId&gt;
+       &lt;version&gt;3.0.2&lt;/version&gt;
+       &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That way the plugin will automatically see that Rest Assured 3.x is present on the classpath
+and will modify the imports accordingly.</p>
+</div>
 </div>
 <div class="sect5">
 <h6 id="_snapshot_versions_for_maven">Snapshot versions for Maven</h6>
