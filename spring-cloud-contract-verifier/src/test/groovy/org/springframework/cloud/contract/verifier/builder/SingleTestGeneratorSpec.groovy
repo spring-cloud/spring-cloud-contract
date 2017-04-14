@@ -35,27 +35,49 @@ class SingleTestGeneratorSpec extends Specification {
 	TemporaryFolder tmpFolder = new TemporaryFolder()
 	File file
 
-	private static final List<String> mockMvcJUnitClassStrings = ['package test; ', 'import com.jayway.jsonpath.DocumentContext; ', 'import com.jayway.jsonpath.JsonPath; ',
-												   'import org.junit.FixMethodOrder; ', 'import org.junit.Ignore; ', 'import org.junit.Test; ', 'import org.junit.runners.MethodSorters; ',
-												   'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson; ', 'import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.*; ',
-												   '@FixMethodOrder(MethodSorters.NAME_ASCENDING); ', '@Test; ', '@Ignore; ', 'import com.jayway.restassured.module.mockmvc.specification.MockMvcRequestSpecification; ',
-												   'import com.jayway.restassured.response.ResponseOptions; ', 'import static org.assertj.core.api.Assertions.assertThat']
+	private static final List<String> mockMvcJUnitClassStrings = ['import com.jayway.jsonpath.DocumentContext;', 'import com.jayway.jsonpath.JsonPath;',
+												   'import org.junit.FixMethodOrder;', 'import org.junit.Ignore;', 'import org.junit.Test;', 'import org.junit.runners.MethodSorters;',
+												   'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;', 'import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.*;',
+												   '@FixMethodOrder(MethodSorters.NAME_ASCENDING)', '@Test', '@Ignore', 'import com.jayway.restassured.module.mockmvc.specification.MockMvcRequestSpecification;',
+												   'import com.jayway.restassured.response.ResponseOptions;', 'import static org.assertj.core.api.Assertions.assertThat']
+
+	private static final List<String> mockMvcJUnitRestAssured3ClassStrings = ['import com.jayway.jsonpath.DocumentContext;', 'import com.jayway.jsonpath.JsonPath;',
+												   'import org.junit.FixMethodOrder;', 'import org.junit.Ignore;', 'import org.junit.Test;', 'import org.junit.runners.MethodSorters;',
+												   'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;', 'import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;',
+												   '@FixMethodOrder(MethodSorters.NAME_ASCENDING)', '@Test', '@Ignore', 'import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification;',
+												   'import io.restassured.response.ResponseOptions;', 'import static org.assertj.core.api.Assertions.assertThat']
 
 
-	private static final List<String> explicitJUnitClassStrings = ['package test; ', 'import com.jayway.jsonpath.DocumentContext; ', 'import com.jayway.jsonpath.JsonPath; ',
-													'import org.junit.FixMethodOrder; ', 'import org.junit.Ignore; ', 'import org.junit.Test; ', 'import org.junit.runners.MethodSorters; ',
-													'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson; ', 'import static com.jayway.restassured.RestAssured.*; ',
-													'@FixMethodOrder(MethodSorters.NAME_ASCENDING); ', '@Test; ', '@Ignore; ', 'import com.jayway.restassured.specification.RequestSpecification; ',
-													'import com.jayway.restassured.response.Response; ', 'import static org.assertj.core.api.Assertions.assertThat']
+	private static final List<String> explicitJUnitClassStrings = ['import com.jayway.jsonpath.DocumentContext;', 'import com.jayway.jsonpath.JsonPath;',
+													'import org.junit.FixMethodOrder;', 'import org.junit.Ignore;', 'import org.junit.Test;', 'import org.junit.runners.MethodSorters;',
+													'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;', 'import static com.jayway.restassured.RestAssured.*;',
+													'@FixMethodOrder(MethodSorters.NAME_ASCENDING)', '@Test', '@Ignore', 'import com.jayway.restassured.specification.RequestSpecification;',
+													'import com.jayway.restassured.response.Response;', 'import static org.assertj.core.api.Assertions.assertThat']
 
-	private static final List<String> spockClassStrings = ['package test', 'import com.jayway.jsonpath.DocumentContext', 'import com.jayway.jsonpath.JsonPath',
+	private static final List<String> explicitJUnitRestAssured3ClassStrings = ['import com.jayway.jsonpath.DocumentContext;', 'import com.jayway.jsonpath.JsonPath;',
+													'import org.junit.FixMethodOrder;', 'import org.junit.Ignore;', 'import org.junit.Test;', 'import org.junit.runners.MethodSorters;',
+													'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;', 'import static io.restassured.RestAssured.*;',
+													'@FixMethodOrder(MethodSorters.NAME_ASCENDING)', '@Test', '@Ignore', 'import io.restassured.specification.RequestSpecification;',
+													'import io.restassured.response.Response;', 'import static org.assertj.core.api.Assertions.assertThat']
+
+	private static final List<String> spockClassStrings = ['import com.jayway.jsonpath.DocumentContext', 'import com.jayway.jsonpath.JsonPath',
 											'import spock.lang.Ignore', 'import spock.lang.Specification', 'import spock.lang.Stepwise',
 											'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson', 'import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.*',
 											'@Stepwise', '@Ignore']
 
-	private static final List<String> explicitSpockClassStrings = ['package test', 'import com.jayway.jsonpath.DocumentContext', 'import com.jayway.jsonpath.JsonPath',
+	private static final List<String> spockClassRestAssured3Strings = ['import com.jayway.jsonpath.DocumentContext', 'import com.jayway.jsonpath.JsonPath',
+											'import spock.lang.Ignore', 'import spock.lang.Specification', 'import spock.lang.Stepwise',
+											'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson', 'import static io.restassured.module.mockmvc.RestAssuredMockMvc.*',
+											'@Stepwise', '@Ignore']
+
+	private static final List<String> explicitSpockClassStrings = ['import com.jayway.jsonpath.DocumentContext', 'import com.jayway.jsonpath.JsonPath',
 													'import spock.lang.Ignore', 'import spock.lang.Specification', 'import spock.lang.Stepwise',
 													'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson', 'import static com.jayway.restassured.RestAssured.*',
+													'@Stepwise', '@Ignore']
+
+	private static final List<String> explicitSpockRestAssured3ClassStrings = ['import com.jayway.jsonpath.DocumentContext', 'import com.jayway.jsonpath.JsonPath',
+													'import spock.lang.Ignore', 'import spock.lang.Specification', 'import spock.lang.Stepwise',
+													'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson', 'import static io.restassured.RestAssured.*',
 													'@Stepwise', '@Ignore']
 
 	public static final Closure JAVA_ASSERTER = { String classToTest ->
@@ -93,6 +115,7 @@ class SingleTestGeneratorSpec extends Specification {
 		given:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.targetFramework = testFramework
+			properties.testMode = mode
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2)
 			contract.ignored >> true
 			contract.order >> 2
@@ -102,7 +125,7 @@ class SingleTestGeneratorSpec extends Specification {
 			String clazz = testGenerator.buildClass([contract], "test", "test", 'com/foo')
 
 		then:
-			classStrings.each { clazz.contains(it) }
+			classStrings.each { assert clazz.contains(it) }
 		and:
 			asserter(clazz)
 		where:
@@ -111,6 +134,36 @@ class SingleTestGeneratorSpec extends Specification {
 			JUNIT         | TestMode.EXPLICIT | explicitJUnitClassStrings | JAVA_ASSERTER
 			SPOCK         | TestMode.MOCKMVC  | spockClassStrings         | GROOVY_ASSERTER
 			SPOCK         | TestMode.EXPLICIT | explicitSpockClassStrings | GROOVY_ASSERTER
+	}
+
+	def "should build test class for #testFramework with Rest Assured 3.0"() {
+		given:
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
+			properties.targetFramework = testFramework
+			properties.testMode = mode
+			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2)
+			contract.ignored >> true
+			contract.order >> 2
+			SingleTestGenerator testGenerator = new SingleTestGenerator(properties, new ClassPresenceChecker() {
+				@Override
+				boolean isClassPresent(String className) {
+					return true
+				}
+			})
+
+		when:
+			String clazz = testGenerator.buildClass([contract], "test", "test", 'com/foo')
+
+		then:
+			classStrings.each { assert clazz.contains(it) }
+			!clazz.contains("com.jayway.restassured")
+
+		where:
+			testFramework | mode              | classStrings
+			JUNIT         | TestMode.MOCKMVC  | mockMvcJUnitRestAssured3ClassStrings
+			JUNIT         | TestMode.EXPLICIT | explicitJUnitRestAssured3ClassStrings
+			SPOCK         | TestMode.MOCKMVC  | spockClassRestAssured3Strings
+			SPOCK         | TestMode.EXPLICIT | explicitSpockRestAssured3ClassStrings
 	}
 
 	def "should build test class for #testFramework and mode #mode with two files"() {

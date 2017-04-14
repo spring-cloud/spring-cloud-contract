@@ -25,12 +25,12 @@ package org.springframework.cloud.contract.verifier.config
  */
 enum TestMode {
 	/**
-	 * Uses Spring's MockMvc
+	 * Uses Spring's MockMvc with Rest Assured 2.x
 	 */
 	MOCKMVC,
 
 	/**
-	 * Uses direct HTTP invocations
+	 * Uses direct HTTP invocations with Rest Assured 2.x
 	 */
 	EXPLICIT,
 

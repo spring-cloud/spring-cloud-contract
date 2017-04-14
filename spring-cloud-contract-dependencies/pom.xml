@@ -114,6 +114,7 @@
 				<artifactId>jsonassert</artifactId>
 				<version>${jsonassert.version}</version>
 			</dependency>
+			<!-- TODO: In 1.2.x make 3.0.0 default -->
 			<dependency>
 				<groupId>com.jayway.restassured</groupId>
 				<artifactId>spring-mock-mvc</artifactId>

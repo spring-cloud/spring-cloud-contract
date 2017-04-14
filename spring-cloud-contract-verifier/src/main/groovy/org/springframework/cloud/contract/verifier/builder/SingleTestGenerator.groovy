@@ -20,12 +20,16 @@ import groovy.transform.Canonical
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.PackageScope
 import groovy.util.logging.Slf4j
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
 import org.springframework.cloud.contract.verifier.config.TestMode
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
+
+import java.lang.invoke.MethodHandles
 
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.capitalize
 /**
@@ -38,11 +42,19 @@ class SingleTestGenerator {
 
 	private static final String JSON_ASSERT_STATIC_IMPORT = 'com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson'
 	private static final String JSON_ASSERT_CLASS = 'com.toomuchcoding.jsonassert.JsonAssertion'
+	private static final String REST_ASSURED_3_0_CLASS = 'io.restassured.RestAssured'
 
 	private final ContractVerifierConfigProperties configProperties
+	private final ClassPresenceChecker checker
 
 	SingleTestGenerator(ContractVerifierConfigProperties configProperties) {
 		this.configProperties = configProperties
+		this.checker = new ClassPresenceChecker()
+	}
+
+	protected SingleTestGenerator(ContractVerifierConfigProperties configProperties, ClassPresenceChecker checker) {
+		this.configProperties = configProperties
+		this.checker = checker
 	}
 
 	/**
@@ -73,7 +85,8 @@ class SingleTestGenerator {
 		addJsonPathRelatedImports(clazz)
 
 		Map<ParsedDsl, TestType> contracts = mapContractsToTheirTestTypes(listOfFiles)
-
+		boolean restAssured3Present = this.checker.isClassPresent(REST_ASSURED_3_0_CLASS)
+		String restAssuredPackage = restAssured3Present ? 'io.restassured' : 'com.jayway.restassured'
 		boolean conditionalImportsAdded = false
 		boolean toIgnore = listOfFiles.ignored.find { it }
 		contracts.each { ParsedDsl key, TestType value ->
@@ -85,18 +98,18 @@ class SingleTestGenerator {
 							clazz.addImport('javax.ws.rs.core.Response')
 						}
 					} else if (configProperties.testMode == TestMode.MOCKMVC) {
-						clazz.addStaticImport('com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.*')
+						clazz.addStaticImport("${restAssuredPackage}.module.mockmvc.RestAssuredMockMvc.*")
 					} else {
-						clazz.addStaticImport('com.jayway.restassured.RestAssured.*')
+						clazz.addStaticImport("${restAssuredPackage}.RestAssured.*")
 					}
 				}
 				if (configProperties.targetFramework == TestFramework.JUNIT) {
 					if (contracts.values().contains(TestType.HTTP) && configProperties.testMode == TestMode.MOCKMVC) {
-						clazz.addImport('com.jayway.restassured.module.mockmvc.specification.MockMvcRequestSpecification')
-						clazz.addImport('com.jayway.restassured.response.ResponseOptions')
+						clazz.addImport("${restAssuredPackage}.module.mockmvc.specification.MockMvcRequestSpecification")
+						clazz.addImport("${restAssuredPackage}.response.ResponseOptions")
 					} else if (contracts.values().contains(TestType.HTTP) && configProperties.testMode == TestMode.EXPLICIT) {
-						clazz.addImport('com.jayway.restassured.specification.RequestSpecification')
-						clazz.addImport('com.jayway.restassured.response.Response')
+						clazz.addImport("${restAssuredPackage}.specification.RequestSpecification")
+						clazz.addImport("${restAssuredPackage}.response.Response")
 					}
 					clazz.addImport('org.junit.Test')
 					clazz.addStaticImport('org.assertj.core.api.Assertions.assertThat')
@@ -152,7 +165,7 @@ class SingleTestGenerator {
 		clazz.addImport(['com.jayway.jsonpath.DocumentContext',
 		                 'com.jayway.jsonpath.JsonPath',
 		])
-		if (jsonAssertPresent()) {
+		if (this.checker.isClassPresent(JSON_ASSERT_CLASS)) {
 			clazz.addStaticImport(JSON_ASSERT_STATIC_IMPORT)
 		}
 	}
@@ -169,16 +182,21 @@ class SingleTestGenerator {
 		clazz.addStaticImport('org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers')
 	}
 
-	private static boolean jsonAssertPresent() {
+}
+
+class ClassPresenceChecker {
+
+	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass())
+
+	boolean isClassPresent(String className) {
 		try {
-			Class.forName(JSON_ASSERT_CLASS)
+			Class.forName(className)
 			return true
 		} catch (ClassNotFoundException e) {
 			if (log.isDebugEnabled()) {
-				log.debug("JsonAssert is not present on classpath. Will not add a static import.")
+				log.debug("[${className}] is not present on classpath. Will not add a static import.")
 			}
 			return false
 		}
 	}
-
 }

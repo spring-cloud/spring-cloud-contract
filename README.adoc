@@ -535,70 +535,13 @@ If using the *SNAPSHOT* / *Milestone* / *Release Candidate* versions please add 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
 ----
-<repositories>
-    <repository>
-        <id>spring-snapshots</id>
-        <name>Spring Snapshots</name>
-        <url>https://repo.spring.io/snapshot</url>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-    </repository>
-    <repository>
-        <id>spring-milestones</id>
-        <name>Spring Milestones</name>
-        <url>https://repo.spring.io/milestone</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </repository>
-    <repository>
-        <id>spring-releases</id>
-        <name>Spring Releases</name>
-        <url>https://repo.spring.io/release</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </repository>
-</repositories>
-<pluginRepositories>
-    <pluginRepository>
-        <id>spring-snapshots</id>
-        <name>Spring Snapshots</name>
-        <url>https://repo.spring.io/snapshot</url>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-        <id>spring-milestones</id>
-        <name>Spring Milestones</name>
-        <url>https://repo.spring.io/milestone</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-        <id>spring-releases</id>
-        <name>Spring Releases</name>
-        <url>https://repo.spring.io/release</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </pluginRepository>
-</pluginRepositories>
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-server/pom.xml[tags=repos,indent=0]
 ----
 
 [source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
 .Gradle
 ----
-repositories {
-	mavenCentral()
-	mavenLocal()
-	maven { url "http://repo.spring.io/snapshot" }
-	maven { url "http://repo.spring.io/milestone" }
-	maven { url "http://repo.spring.io/release" }
-}
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-server/build.gradle[tags=deps_repos,indent=0]
 ----
 
 ===== Consumer side (Loan Issuance)
@@ -609,18 +552,7 @@ As a developer of the Loan Issuance service (a consumer of the Fraud Detection s
 
 [source,groovy,indent=0]
 ----
-@Test
-public void shouldBeRejectedDueToAbnormalLoanAmount() {
-    // given:
-    LoanApplication application = new LoanApplication(new Client("1234567890"),
-            99999);
-    // when:
-    LoanApplicationResult loanApplication = service.loanApplication(application);
-    // then:
-    assertThat(loanApplication.getLoanApplicationStatus())
-            .isEqualTo(LoanApplicationStatus.LOAN_APPLICATION_REJECTED);
-    assertThat(loanApplication.getRejectionReason()).isEqualTo("Amount too high");
-}
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[tags=client_tdd,indent=0]
 ----
 
 We've just written a test of our new feature. If a loan application for a big amount is received we should reject that loan application with some description.
@@ -631,10 +563,7 @@ At some point in time you need to send a request to the Fraud Detection service.
 
 [source,groovy,indent=0]
 ----
-ResponseEntity<FraudServiceResponse> response =
-        restTemplate.exchange("http://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
-                new HttpEntity<>(request, httpHeaders),
-                FraudServiceResponse.class);
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-client/src/main/java/com/example/loan/LoanApplicationService.java[tags=client_call_server,indent=0]
 ----
 
 For simplicity we've hardcoded the port of the Fraud Detection service at `8080` and our application is running on `8090`.
@@ -659,73 +588,7 @@ is important cause we'll reference that folder in the producer's test base class
 
 [source,groovy,indent=0]
 ----
-package contracts
-
-org.springframework.cloud.contract.spec.Contract.make {
-	request { // (1)
-		method 'PUT' // (2)
-		url '/fraudcheck' // (3)
-		body([ // (4)
-			   clientId: $(regex('[0-9]{10}')),
-			   loanAmount: 99999
-		])
-		headers { // (5)
-			contentType('application/vnd.fraud.v1+json')
-		}
-	}
-	response { // (6)
-		status 200 // (7)
-		body([ // (8)
-			   fraudCheckStatus: "FRAUD",
-			   rejectionReason: "Amount too high"
-		])
-		headers { // (9)
-			contentType('application/vnd.fraud.v1+json')
-		}
-	}
-}
-
-/*
-Since we don't want to force on the user to hardcode values of fields that are dynamic
-(timestamps, database ids etc.), one can parametrize those entries. If you wrap your field's
- value in a `$(...)` or `value(...)` and provide a dynamic value of a field then
- the concrete value will be generated for you. If you want to be really explicit about
- which side gets which value you can do that by using the `value(consumer(...), producer(...))` notation.
- That way what's present in the `consumer` section will end up in the produced stub. What's
- there in the `producer` will end up in the autogenerated test. If you provide only the
- regular expression side without the concrete value then Spring Cloud Contract will generate one for you.
-
-From the Consumer perspective, when shooting a request in the integration test:
-
-(1) - If the consumer sends a request
-(2) - With the "PUT" method
-(3) - to the URL "/fraudcheck"
-(4) - with the JSON body that
- * has a field `clientId` that matches a regular expression `[0-9]{10}`
- * has a field `loanAmount` that is equal to `99999`
-(5) - with header `Content-Type` equal to `application/vnd.fraud.v1+json`
-(6) - then the response will be sent with
-(7) - status equal `200`
-(8) - and JSON body equal to
- { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
-(9) - with header `Content-Type` equal to `application/vnd.fraud.v1+json`
-
-From the Producer perspective, in the autogenerated producer-side test:
-
-(1) - A request will be sent to the producer
-(2) - With the "PUT" method
-(3) - to the URL "/fraudcheck"
-(4) - with the JSON body that
- * has a field `clientId` that will have a generated value that matches a regular expression `[0-9]{10}`
- * has a field `loanAmount` that is equal to `99999`
-(5) - with header `Content-Type` equal to `application/vnd.fraud.v1+json`
-(6) - then the test will assert if the response has been sent with
-(7) - status equal `200`
-(8) - and JSON body equal to
- { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
-(9) - with header `Content-Type` matching `application/vnd.fraud.v1+json.*`
- */
-----
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.groovy[]
 
 The Contract is written using a statically typed Groovy DSL. You might be wondering what are those
 `value(client(...), server(...))` parts. By using this notation Spring Cloud Contract allows you to
@@ -758,32 +621,14 @@ We can add either Maven or Gradle plugin - in this example we'll show how to add
 
 [source,xml,indent=0]
 ----
-<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-dependencies</artifactId>
-            <version>${spring-cloud-dependencies.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-server/pom.xml[tags=contract_bom,indent=0]
 ----
 
 Next, the `Spring Cloud Contract Verifier` Maven plugin
 
 [source,xml,indent=0]
 ----
-<plugin>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
-    <version>${spring-cloud-contract.version}</version>
-    <extensions>true</extensions>
-    <configuration>
-        <packageWithBaseClasses>com.example.fraud</packageWithBaseClasses>
-    </configuration>
-</plugin>
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-server/pom.xml[tags=contract_maven_plugin,indent=0]
 ----
 
 Since the plugin was added we get the `Spring Cloud Contract Verifier` features which from the provided contracts:
@@ -834,39 +679,21 @@ Add the `Spring Cloud Contract` BOM
 
 [source,xml,indent=0]
 ----
-<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-dependencies</artifactId>
-            <version>${spring-cloud-dependencies.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-client/pom.xml[tags=contract_bom,indent=0]
 ----
 
 Add the dependency to `Spring Cloud Contract Stub Runner`
 
 [source,xml,indent=0]
 ----
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
-    <scope>test</scope>
-</dependency>
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-client/pom.xml[tags=stub_runner,indent=0]
 ----
 
 Annotate your test class with `@AutoConfigureStubRunner`. In the annotation provide the group id and artifact id for the Stub Runner to download stubs of your collaborators. Also provide the offline work switch since you're playing with the collaborators offline (optional step).
 
 [source,groovy,indent=0]
 ----
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment=WebEnvironment.NONE)
-@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"}, workOffline = true)
-@DirtiesContext
-public class LoanApplicationServiceTests {
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[tags=autoconfigure_stubrunner,indent=0]
 ----
 
 Now if you run your tests you'll see sth like this:
@@ -900,13 +727,8 @@ As a reminder here you can see the initial implementation
 
 [source,java,indent=0]
 ----
-@RequestMapping(
-        value = "/fraudcheck",
-        method = PUT,
-        consumes = FRAUD_SERVICE_JSON_VERSION_1,
-        produces = FRAUD_SERVICE_JSON_VERSION_1)
-public FraudCheckResult fraudCheck(@RequestBody FraudCheck fraudCheck) {
-return new FraudCheckResult(FraudCheckStatus.OK, NO_REASON);
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
 }
 ----
 
@@ -922,26 +744,14 @@ You have to add the dependencies needed by the autogenerated tests
 
 [source,xml,indent=0]
 ----
-    <dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-contract-verifier</artifactId>
-    <scope>test</scope>
-</dependency>
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
 ----
 
 In the configuration of the Maven plugin we passed the `packageWithBaseClasses` property
 
 [source,xml,indent=0]
 ----
-<plugin>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
-    <version>${spring-cloud-contract.version}</version>
-    <extensions>true</extensions>
-    <configuration>
-        <packageWithBaseClasses>com.example.fraud</packageWithBaseClasses>
-    </configuration>
-</plugin>
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-server/pom.xml[tags=contract_maven_plugin,indent=0]
 ----
 
 IMPORTANT: We've decided to use the "convention based" naming by setting the `packageWithBaseClasses` property.
@@ -955,25 +765,7 @@ whatever is necessary. In our case we're using http://rest-assured.io/[Rest Assu
 
 [source,java,indent=0]
 ----
-package com.example.fraud;
-
-import com.example.fraud.FraudDetectionController;
-import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc;
-
-import org.junit.Before;
-
-public class FraudBase {
-
-	@Before
-	public void setup() {
-		RestAssuredMockMvc.standaloneSetup(new FraudDetectionController());
-	}
-
-	public void assertThatRejectionReasonIsNull(Object rejectionReason) {
-		assert rejectionReason == null;
-	}
-}
-----
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-server/src/test/java/com/example/fraud/FraudBase.java[]
 
 Now, if you run the `./mvnw clean install` you would get sth like this:
 
@@ -1020,16 +812,9 @@ Now since we now what is the expected input and expected output let's write the 
 
 [source,java,indent=0]
 ----
-@RequestMapping(
-        value = "/fraudcheck",
-        method = PUT,
-        consumes = FRAUD_SERVICE_JSON_VERSION_1,
-        produces = FRAUD_SERVICE_JSON_VERSION_1)
-public FraudCheckResult fraudCheck(@RequestBody FraudCheck fraudCheck) {
-if (amountGreaterThanThreshold(fraudCheck)) {
-    return new FraudCheckResult(FraudCheckStatus.FRAUD, AMOUNT_TOO_HIGH);
-}
-return new FraudCheckResult(FraudCheckStatus.OK, NO_REASON);
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=new_impl,indent=0]
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
 }
 ----
 
@@ -1068,10 +853,7 @@ example of achieving the same by changing the properties.
 
 [source,yaml,indent=0]
 ----
-stubrunner:
-  ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot
-----
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
 
 And that's it!
 
@@ -1374,115 +1156,7 @@ Example of a `pom.xml` inside the `server` folder.
 
 [source,xml,indent=0]
 ----
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-
-	<groupId>com.example</groupId>
-	<artifactId>server</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-
-	<name>Server Stubs</name>
-	<description>POM used to install locally stubs for consumer side</description>
-
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.4.2.BUILD-SNAPSHOT</version>
-		<relativePath />
-	</parent>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.8</java.version>
-		<spring-cloud-contract.version>1.0.5.BUILD-SNAPSHOT</spring-cloud-contract.version>
-		<spring-cloud-dependencies.version>Camden.BUILD-SNAPSHOT</spring-cloud-dependencies.version>
-		<excludeBuildFolders>true</excludeBuildFolders>
-	</properties>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>${spring-cloud-dependencies.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-contract-maven-plugin</artifactId>
-				<version>${spring-cloud-contract.version}</version>
-				<extensions>true</extensions>
-				<configuration>
-					<!-- By default it would search under src/test/resources/ -->
-					<contractsDirectory>${project.basedir}</contractsDirectory>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-
-	<repositories>
-		<repository>
-			<id>spring-snapshots</id>
-			<name>Spring Snapshots</name>
-			<url>https://repo.spring.io/snapshot</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>spring-milestones</id>
-			<name>Spring Milestones</name>
-			<url>https://repo.spring.io/milestone</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>spring-releases</id>
-			<name>Spring Releases</name>
-			<url>https://repo.spring.io/release</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>spring-snapshots</id>
-			<name>Spring Snapshots</name>
-			<url>https://repo.spring.io/snapshot</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-		<pluginRepository>
-			<id>spring-milestones</id>
-			<name>Spring Milestones</name>
-			<url>https://repo.spring.io/milestone</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-		<pluginRepository>
-			<id>spring-releases</id>
-			<name>Spring Releases</name>
-			<url>https://repo.spring.io/release</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
-
-</project>
-----
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/contracts/com/example/server/pom.xml[indent=0]
 
 As you can see there are no dependencies other than the Spring Cloud Contract Maven Plugin.
 Those poms are necessary for the consumer side to run `mvn clean install -DskipTests` to locally install
@@ -1492,77 +1166,13 @@ The `pom.xml` in the root folder can look like this:
 
 [source,xml,indent=0]
 ----
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-
-	<groupId>com.example.standalone</groupId>
-	<artifactId>contracts</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-
-	<name>Contracts</name>
-	<description>Contains all the Spring Cloud Contracts, well, contracts. JAR used by the producers to generate tests and stubs</description>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>contracts</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<attach>true</attach>
-							<descriptor>${basedir}/src/assembly/contracts.xml</descriptor>
-							<!-- If you want an explicit classifier remove the following line -->
-							<appendAssemblyId>false</appendAssemblyId>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-
-</project>
-----
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/contracts/pom.xml[indent=0]
 
 It's using the assembly plugin in order to build the JAR with all the contracts. Example of such setup is here:
 
 [source,xml,indent=0]
 ----
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
-		  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd">
-	<id>project</id>
-	<formats>
-		<format>jar</format>
-	</formats>
-	<includeBaseDirectory>false</includeBaseDirectory>
-	<fileSets>
-		<fileSet>
-			<directory>${project.basedir}</directory>
-			<outputDirectory>/</outputDirectory>
-			<useDefaultExcludes>true</useDefaultExcludes>
-			<excludes>
-				<exclude>**/${project.build.directory}/**</exclude>
-				<exclude>mvnw</exclude>
-				<exclude>mvnw.cmd</exclude>
-				<exclude>.mvn/**</exclude>
-				<exclude>src/**</exclude>
-			</excludes>
-		</fileSet>
-	</fileSets>
-</assembly>
-----
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/contracts/src/assembly/contracts.xml[indent=0]
 
 ===== Workflow
 
@@ -1585,17 +1195,7 @@ of the JAR containing the contracts:
 
 [source,xml,indent=0]
 ----
-<plugin>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
-    <configuration>
-        <contractsRepositoryUrl>http://link/to/your/nexus/or/artifactory/or/sth</contractsRepositoryUrl>
-        <contractDependency>
-            <groupId>com.example.standalone</groupId>
-            <artifactId>contracts</artifactId>
-        </contractDependency>
-    </configuration>
-</plugin>
+Unresolved directive in verifier/introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/spring-cloud-contract-tools/spring-cloud-contract-maven-plugin/src/test/projects/basic-remote-contracts/pom-with-repo.xml[tags=remote_config,indent=0]
 ----
 
 With this setup the JAR with groupid `com.example.standalone` and artifactid `contracts` will be downloaded
@@ -1638,46 +1238,7 @@ You can read more about Spring Cloud Contract Verifier by reading the {documenta
 
 == Contributing
 
-Spring Cloud is released under the non-restrictive Apache 2.0 license,
-and follows a very standard Github development process, using Github
-tracker for issues and merging pull requests into master. If you want
-to contribute even something trivial please do not hesitate, but
-follow the guidelines below.
-
-=== Sign the Contributor License Agreement
-Before we accept a non-trivial patch or pull request we will need you to sign the
-https://support.springsource.com/spring_committer_signup[contributor's agreement].
-Signing the contributor's agreement does not grant anyone commit rights to the main
-repository, but it does mean that we can accept your contributions, and you will get an
-author credit if we do.  Active contributors might be asked to join the core team, and
-given the ability to merge pull requests.
-
-=== Code Conventions and Housekeeping
-None of these is essential for a pull request, but they will all help.  They can also be
-added after the original pull request but before a merge.
-
-* Use the Spring Framework code format conventions. If you use Eclipse
-  you can import formatter settings using the
-  `eclipse-code-formatter.xml` file from the
-  https://github.com/spring-cloud/build/tree/master/eclipse-coding-conventions.xml[Spring
-  Cloud Build] project. If using IntelliJ, you can use the
-  http://plugins.jetbrains.com/plugin/6546[Eclipse Code Formatter
-  Plugin] to import the same file.
-* Make sure all new `.java` files to have a simple Javadoc class comment with at least an
-  `@author` tag identifying you, and preferably at least a paragraph on what the class is
-  for.
-* Add the ASF license header comment to all new `.java` files (copy from existing files
-  in the project)
-* Add yourself as an `@author` to the .java files that you modify substantially (more
-  than cosmetic changes).
-* Add some Javadocs and, if you change the namespace, some XSD doc elements.
-* A few unit tests would help a lot as well -- someone has to do it.
-* If no-one else is using your branch, please rebase it against the current master (or
-  other target branch in the main project).
-* When writing a commit message please follow http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html[these conventions],
-  if you are fixing an existing issue please add `Fixes gh-XXXX` at the end of the commit
-  message (where XXXX is the issue number).
-
+Unresolved directive in README.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/1.0.x/docs/src/main/asciidoc/contributing.adoc[]
 == How to build it
 
 IMPORTANT: You need to have all the necessary Groovy plugins
