@@ -103,6 +103,19 @@ class DslToWireMockClientConverterSpec extends Specification {
 			convertedContents.size() == 2
 			JSONAssert.assertEquals(jsonResponse(1), convertedContents.values().first(), false)
 			JSONAssert.assertEquals(jsonResponse(2), convertedContents.values().last(), false)
+		and:
+			StubMapping mapping = stubMappingIsValidWireMockStub(convertedContents.values().first())
+			StubMapping mapping2 = stubMappingIsValidWireMockStub(convertedContents.values().last())
+		and:
+			wireMockRule.addStubMapping(mapping)
+			wireMockRule.addStubMapping(mapping2)
+		and:
+			restTemplate.exchange(RequestEntity.put("${url}/1".toURI())
+					.header('Content-Type', 'application/json')
+					.body(""), String)
+			restTemplate.exchange(RequestEntity.put("${url}/2".toURI())
+					.header('Content-Type', 'application/json')
+					.body(""), String)
 	}
 
 	private String jsonResponse(int index) {
