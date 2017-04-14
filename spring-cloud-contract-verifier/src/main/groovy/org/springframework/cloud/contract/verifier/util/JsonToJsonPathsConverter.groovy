@@ -136,7 +136,8 @@ class JsonToJsonPathsConverter {
 				throw new IllegalStateException("Value [${bodyMatcher.path()}] not found in JSON [${JsonOutput.toJson(body)}]", e)
 			}
 		} else {
-			return "=~ /(${value})/"
+			String convertedValue = value.toString().replace('/', '\\\\/')
+			return "=~ /(${convertedValue})/"
 		}
 	}
 

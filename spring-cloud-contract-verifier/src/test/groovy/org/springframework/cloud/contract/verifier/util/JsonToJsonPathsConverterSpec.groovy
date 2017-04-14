@@ -763,6 +763,14 @@ class JsonToJsonPathsConverterSpec extends Specification {
 			'$.a.b.c[?(@.d =~ /(.*)/)]' == JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher(MatchingType.REGEX, jsonPath, regexPattern))
 	}
 
+	def "should convert a json path with regex to a regex checking json path that has a / in it"() {
+		given:
+			String jsonPath = '$.a.b.c.d'
+			String regexPattern = "/.*/"
+		expect:
+			'$.a.b.c[?(@.d =~ /(\\\\/.*\\\\/)/)]' == JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher(MatchingType.REGEX, jsonPath, regexPattern))
+	}
+
 	def "should convert a json path with value to a equality checking json path without quotes for numbers"() {
 		given:
 			String jsonPath = '$.a.b.c.d'
