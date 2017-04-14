@@ -107,10 +107,7 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 	}
 
 	private String getMapKeyReferenceString(String property, Map.Entry entry) {
-		if (entry.value instanceof ExecutionProperty) {
-			return provideProperJsonPathNotation(property) + "." + entry.key
-		}
-		return property + """.get(\\\"$entry.key\\\")"""
+		return provideProperJsonPathNotation(property) + "." + entry.key
 	}
 
 	private String provideProperJsonPathNotation(String property) {
