@@ -58,7 +58,7 @@ class MapConverter {
 				}
 			} catch (Exception ignore) {
 			}
-			return extractValue(value, closure);
+			return extractValue(value, closure)
 		} else if (value instanceof Map) {
 			return convert(value as Map, closure)
 		} else if (value instanceof List) {
@@ -77,7 +77,7 @@ class MapConverter {
 			if (newValue instanceof Map || newValue instanceof List || newValue instanceof String && value) {
 				return transformValues(newValue, closure)
 			}
-			return newValue;
+			return newValue
 		})
 	}
 

@@ -16,13 +16,18 @@
 
 package org.springframework.cloud.contract.verifier.wiremock
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule
 import com.github.tomakehurst.wiremock.matching.RegexPattern
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import groovy.json.JsonOutput
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.skyscreamer.jsonassert.JSONAssert
+import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubMapping
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
+import org.springframework.http.RequestEntity
+import org.springframework.util.SocketUtils
 import spock.lang.Issue
 import spock.lang.Specification
 
@@ -30,8 +35,15 @@ import java.util.regex.Pattern
 
 class DslToWireMockClientConverterSpec extends Specification {
 
-	@Rule
-	public TemporaryFolder tmpFolder = new TemporaryFolder()
+	static int port = SocketUtils.findAvailableTcpPort()
+	@Rule public WireMockRule wireMockRule = new WireMockRule(port)
+	@Rule public TemporaryFolder tmpFolder = new TemporaryFolder()
+	TestRestTemplate restTemplate = new TestRestTemplate()
+	String url
+
+	def setup() {
+		url = "http://localhost:${port}"
+	}
 
 	def "should convert DSL file to WireMock JSON"() {
 		given:
@@ -56,7 +68,11 @@ class DslToWireMockClientConverterSpec extends Specification {
 {"request":{"method":"PUT","urlPattern":"/[0-9]{2}"},"response":{"status":200}}
 ''', json, false)
 		and:
-			stubMappingIsValidWireMockStub(json)
+			StubMapping mapping = stubMappingIsValidWireMockStub(json)
+		and:
+			wireMockRule.addStubMapping(mapping)
+		and:
+			restTemplate.exchange(RequestEntity.put("${url}/12".toURI()).body(""), String)
 	}
 
 	@Issue("196")
@@ -89,7 +105,11 @@ class DslToWireMockClientConverterSpec extends Specification {
 }}
 ''', json, false)
 		and:
-			stubMappingIsValidWireMockStub(json)
+			StubMapping mapping = stubMappingIsValidWireMockStub(json)
+		and:
+			wireMockRule.addStubMapping(mapping)
+		and:
+			restTemplate.exchange(RequestEntity.get("${url}/foo".toURI()).build(), String)
 	}
 
 	def "should convert DSL file with a nested list to WireMock JSON"() {
@@ -104,7 +124,6 @@ class DslToWireMockClientConverterSpec extends Specification {
 						url '/api/12'
 						headers {
 							header 'Content-Type': 'application/vnd.org.springframework.cloud.contract.verifier.twitter-places-analyzer.v1+json'
-
 						}
 						body '''
 					[{
@@ -195,9 +214,42 @@ class DslToWireMockClientConverterSpec extends Specification {
 }
 ''', json, false)
 		and:
-			stubMappingIsValidWireMockStub(json)
+			StubMapping mapping = stubMappingIsValidWireMockStub(json)
+		and:
+			wireMockRule.addStubMapping(mapping)
+		and:
+			restTemplate.exchange(RequestEntity.put("${url}/api/12".toURI())
+					.header('Content-Type', 'application/vnd.org.springframework.cloud.contract.verifier.twitter-places-analyzer.v1+json')
+					.body('''
+							[{
+								"created_at": "Sat Jul 26 09:38:57 +0000 2014",
+								"id": 492967299297845248,
+								"id_str": "492967299297845248",
+								"text": "Gonna see you at Warsaw",
+								"place":
+								{
+									"attributes":{},
+									"bounding_box":
+									{
+										"coordinates":
+											[[
+												[-77.119759,38.791645],
+												[-76.909393,38.791645],
+												[-76.909393,38.995548],
+												[-77.119759,38.995548]
+											]],
+										"type":"Polygon"
+									},
+									"country":"United States",
+									"country_code":"US",
+									"full_name":"Washington, DC",
+									"id":"01fbe706f872cb32",
+									"name":"Washington",
+									"place_type":"city",
+									"url": "http://api.twitter.com/1/geo/id/01fbe706f872cb32.json"
+								}
+							}]'''), String)
 	}
-
 
 	@Issue("262")
 	def "should create stub with map inside list"() {
@@ -233,7 +285,13 @@ class DslToWireMockClientConverterSpec extends Specification {
 {"request":{"urlPath":"/foos","method":"GET"},"response":{"body":"[{\\"id\\":\\"123\\"},{\\"id\\":\\"567\\"}]"}}
 ''', json, false)
 		and:
-			stubMappingIsValidWireMockStub(json)
+			StubMapping mapping = stubMappingIsValidWireMockStub(json)
+		and:
+			wireMockRule.addStubMapping(mapping)
+		and:
+			def response = restTemplate.exchange(RequestEntity.get("${url}/foos".toURI()).build(), String)
+			response.headers.get('Content-Type') == ['application/json']
+			JSONAssert.assertEquals('''[ { "id":"123" }, { "id": "567" } ]''', response.body, false)
 	}
 
 
@@ -265,7 +323,12 @@ class DslToWireMockClientConverterSpec extends Specification {
 		and:
 			!json.contains('cursor')
 		and:
-			stubMappingIsValidWireMockStub(json)
+			StubMapping mapping = stubMappingIsValidWireMockStub(json)
+		and:
+			wireMockRule.addStubMapping(mapping)
+		and:
+			def response = restTemplate.exchange(RequestEntity.get("${url}/foos".toURI()).build(), String)
+			response.body
 	}
 
 	def 'should convert dsl to wiremock to show it in the docs'() {
@@ -332,7 +395,17 @@ class DslToWireMockClientConverterSpec extends Specification {
 // end::wiremock[]
 				, json, false)
 		and:
-			stubMappingIsValidWireMockStub(json)
+			StubMapping mapping = stubMappingIsValidWireMockStub(json)
+		and:
+			wireMockRule.addStubMapping(mapping)
+		and:
+			def response = restTemplate.exchange(RequestEntity.post("${url}/users/password".toURI())
+					.header("Content-Type", "application/json")
+					.body('''{"email":"abc@abc.com", "callback_url":"http://partners.com"}''')
+					, String)
+			response.headers.get('Content-Type') == ['application/json']
+			response.statusCodeValue == 404
+			JSONAssert.assertEquals('''{"code":"123123","message":"User not found by email == [not.existing@user.com]"}"''', response.body, false)
 	}
 
 	def 'should convert dsl to wiremock with stub matchers'() {
@@ -343,7 +416,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 			file.write('''
 			org.springframework.cloud.contract.spec.Contract.make {
 				request {
-					method 'GET'
+					method 'POST'
 					urlPath '/get'
 					body([
 							duck: 123,
@@ -451,7 +524,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 {
   "request" : {
     "urlPath" : "/get",
-    "method" : "GET",
+    "method" : "POST",
     "headers" : {
       "Content-Type" : {
         "matches" : "application/json.*"
@@ -501,7 +574,60 @@ class DslToWireMockClientConverterSpec extends Specification {
 //end::matchers[]
 				, json, false)
 		and:
-			stubMappingIsValidWireMockStub(json)
+			StubMapping mapping = stubMappingIsValidWireMockStub(json)
+		and:
+			wireMockRule.addStubMapping(mapping)
+		and:
+			def response = restTemplate.exchange(RequestEntity.post("${url}/get".toURI())
+					.header("Content-Type", "application/json")
+					.body(JsonOutput.toJson([
+												duck: 123,
+												alpha: "abc",
+												number: 123,
+												aBoolean: true,
+												date: "2017-01-01",
+												dateTime: "2017-01-01T01:23:45",
+												time: "01:02:34",
+												valueWithoutAMatcher: "foo",
+												valueWithTypeMatch: "string",
+												list: [
+														some: [
+																nested: [
+																		json: "with value",
+																		anothervalue: 4
+																]
+														],
+														someother: [
+																nested: [
+																		json: "with value",
+																		anothervalue: 4
+																]
+														]
+												]
+										]))
+					, String)
+			response.headers.get('Content-Type') == ['application/json']
+			response.statusCodeValue == 200
+			JSONAssert.assertEquals(JsonOutput.toJson([
+					duck: 123,
+					alpha: "abc",
+					number: 123,
+					aBoolean: true,
+					date: "2017-01-01",
+					dateTime: "2017-01-01T01:23:45",
+					time: "01:02:34",
+					valueWithoutAMatcher: "foo",
+					valueWithTypeMatch: "string",
+					valueWithMin: [
+							1,2,3
+					],
+					valueWithMax: [
+							1,2,3
+					],
+					valueWithMinMax: [
+							1,2,3
+					],
+			]), response.body, false)
 	}
 
 	def 'should convert dsl to wiremock with stub matchers with docs example'() {
@@ -514,7 +640,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 					priority 1
 					request {
 						method 'POST'
-						url '/users/password'
+						url '/users/password2'
 						headers {
 							header 'Content-Type': 'application/json'
 						}
@@ -550,7 +676,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 					'''
 	{
 	  "request" : {
-		"url" : "/users/password",
+		"url" : "/users/password2",
 		"method" : "POST",
 		"bodyPatterns" : [ {
 		  "matchesJsonPath" : "$[?(@.email =~ /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4})/)]"
@@ -575,15 +701,26 @@ class DslToWireMockClientConverterSpec extends Specification {
 	'''
 				, json, false)
 		and:
-			stubMappingIsValidWireMockStub(json)
+			StubMapping mapping = stubMappingIsValidWireMockStub(json)
+		and:
+			wireMockRule.addStubMapping(mapping)
+		and:
+			def response = restTemplate.exchange(RequestEntity.post("${url}/users/password2".toURI())
+					.header("Content-Type", "application/json")
+					.body('''{"email":"abc@abc.com", "callback_url":"http://partners.com"}''')
+					, String)
+			response.headers.get('Content-Type') == ['application/json']
+			response.statusCodeValue == 404
+			JSONAssert.assertEquals('''{"code":"123123","message":"User not found by email == [not.existing@user.com]"}"''', response.body, false)
 	}
-	
-	void stubMappingIsValidWireMockStub(String mappingDefinition) {
+
+	StubMapping stubMappingIsValidWireMockStub(String mappingDefinition) {
 		StubMapping stubMapping = WireMockStubMapping.buildFrom(mappingDefinition)
 		stubMapping.request.bodyPatterns.findAll { it.isPresent() && it instanceof RegexPattern }.every {
 			Pattern.compile(it.getValue())
 		}
 		assert !mappingDefinition.contains('org.springframework.cloud.contract.spec.internal')
+		return stubMapping
 	}
 
 }

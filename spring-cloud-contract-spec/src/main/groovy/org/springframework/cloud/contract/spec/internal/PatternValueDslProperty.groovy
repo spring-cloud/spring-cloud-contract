@@ -49,7 +49,7 @@ abstract class PatternValueDslProperty<T extends DslProperty> {
 	}
 
 	T anyIpAddress() {
-		return createAndValidateProperty(RegexPatterns.IP_ADDRESS)
+		return createAndValidateProperty(RegexPatterns.IP_ADDRESS, "192.168.0." + this.random.nextInt(10))
 	}
 
 	T anyHostname() {
