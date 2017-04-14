@@ -16,6 +16,11 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
+import static java.nio.file.Files.createTempDirectory;
+import static org.springframework.cloud.contract.stubrunner.AetherFactories.newRepositorySystem;
+import static org.springframework.cloud.contract.stubrunner.AetherFactories.newSession;
+import static org.springframework.cloud.contract.stubrunner.util.ZipCategory.unzipTo;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -35,19 +40,11 @@ import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.VersionRangeRequest;
 import org.eclipse.aether.resolution.VersionRangeResolutionException;
 import org.eclipse.aether.resolution.VersionRangeResult;
-import org.eclipse.aether.resolution.VersionRequest;
-import org.eclipse.aether.resolution.VersionResolutionException;
-import org.eclipse.aether.resolution.VersionResult;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions.StubRunnerProxyOptions;
 import org.springframework.util.StringUtils;
-
-import static java.nio.file.Files.createTempDirectory;
-import static org.springframework.cloud.contract.stubrunner.AetherFactories.newRepositorySystem;
-import static org.springframework.cloud.contract.stubrunner.AetherFactories.newSession;
-import static org.springframework.cloud.contract.stubrunner.util.ZipCategory.unzipTo;
 
 /**
  * @author Mariusz Smykula
@@ -215,24 +212,10 @@ public class AetherStubDownloader implements StubDownloader {
 		}
 		if (rangeResult.getHighestVersion() == null) {
 			throw new IllegalArgumentException("For groupId [" + stubsGroup + "] artifactId [" + stubsModule + "] "
-					+ "and classifier [" + classifier + "] the version was not resolved!");
+					+ "and classifier [" + classifier + "] the version was not resolved! The following exceptions took place "
+					+ rangeResult.getExceptions());
 		}
 		return rangeResult.getHighestVersion() == null ? null : rangeResult.getHighestVersion().toString();
-	}
-
-	private String resolveArtifactVersion(String stubsGroup, String stubsModule,
-			String version, String classifier) {
-		Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier,
-				ARTIFACT_EXTENSION, version);
-		VersionRequest versionRequest = new VersionRequest(artifact, this.remoteRepos, null);
-		VersionResult versionResult;
-		try {
-			versionResult = this.repositorySystem.resolveVersion(this.session, versionRequest);
-		}
-		catch (VersionResolutionException e) {
-			throw new IllegalStateException("Cannot resolve version", e);
-		}
-		return versionResult.getVersion() == null ? null : versionResult.getVersion();
 	}
 
 	private static File unpackStubJarToATemporaryFolder(URI stubJarUri) {

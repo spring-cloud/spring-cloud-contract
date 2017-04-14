@@ -1,52 +1,70 @@
+/*
+ *  Copyright 2013-2017 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *	   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.example.loan;
 
-import com.google.common.collect.ImmutableMap;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+
 import org.junit.Test;
 import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerConfiguration;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * @author Andrew Morgan
  */
 public class FailFastLoanApplicationServiceTests {
 
-    @Test
-    public void shouldFailToStartContextWhenNoStubCanBeFound() {
-        // When
-        final Throwable throwable = catchThrowable(() -> new SpringApplicationBuilder(Application.class, StubRunnerConfiguration.class)
-                .properties(ImmutableMap.of(
-                        "stubrunner.repositoryRoot", "classpath:m2repo/repository/",
-                        "stubrunner.ids", new String[]{"org.springframework.cloud.contract.verifier.stubs:should-not-be-found"}))
-                .run());
+	@Test
+	public void shouldFailToStartContextWhenNoStubCanBeFound() {
+		// When
+		final Throwable throwable = catchThrowable(() -> new SpringApplicationBuilder(Application.class, StubRunnerConfiguration.class)
+				.properties(ImmutableMap.of(
+						"stubrunner.repositoryRoot", "classpath:m2repo/repository/",
+						"stubrunner.ids", new String[]{"org.springframework.cloud.contract.verifier.stubs:should-not-be-found"}))
+				.run());
 
-        // Then
-        assertThat(throwable).isInstanceOf(BeanCreationException.class);
-        assertThat(throwable.getCause()).isInstanceOf(BeanInstantiationException.class);
-        assertThat(throwable.getCause().getCause())
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("For groupId [org.springframework.cloud.contract.verifier.stubs] artifactId [should-not-be-found] and classifier [stubs] the version was not resolved!");
-    }
+		// Then
+		assertThat(throwable).isInstanceOf(BeanCreationException.class);
+		assertThat(throwable.getCause()).isInstanceOf(BeanInstantiationException.class);
+		assertThat(throwable.getCause().getCause())
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("For groupId [org.springframework.cloud.contract.verifier.stubs] artifactId [should-not-be-found] "
+						+ "and classifier [stubs] the version was not resolved! The following exceptions took place");
+	}
 
-    @Test
-    public void shouldNotTryAndWorkOfflineWhenWorkOfflineIsSetToFalse() {
-        // When
-        final Throwable throwable = catchThrowable(() -> new SpringApplicationBuilder(Application.class, StubRunnerConfiguration.class)
-                .properties(ImmutableMap.of(
-                        "stubrunner.workOffline", "false",
-                        "stubrunner.ids", new String[]{"org.springframework.cloud.contract.verifier.stubs:should-not-be-found"}))
-                .run());
+	@Test
+	public void shouldNotTryAndWorkOfflineWhenWorkOfflineIsSetToFalse() {
+		// When
+		final Throwable throwable = catchThrowable(() -> new SpringApplicationBuilder(Application.class, StubRunnerConfiguration.class)
+				.properties(ImmutableMap.of(
+						"stubrunner.workOffline", "false",
+						"stubrunner.ids", new String[]{"org.springframework.cloud.contract.verifier.stubs:should-not-be-found"}))
+				.run());
 
-        // Then
-        assertThat(throwable).isInstanceOf(BeanCreationException.class);
-        assertThat(throwable.getCause()).isInstanceOf(BeanInstantiationException.class);
-        assertThat(throwable.getCause().getCause())
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Remote repositories for stubs are not specified and work offline flag wasn't passed");
-    }
+		// Then
+		assertThat(throwable).isInstanceOf(BeanCreationException.class);
+		assertThat(throwable.getCause()).isInstanceOf(BeanInstantiationException.class);
+		assertThat(throwable.getCause().getCause())
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessage("Remote repositories for stubs are not specified and work offline flag wasn't passed");
+	}
 
 }
