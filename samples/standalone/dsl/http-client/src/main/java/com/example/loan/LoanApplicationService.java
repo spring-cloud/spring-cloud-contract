@@ -5,6 +5,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,9 +20,6 @@ import com.example.loan.model.Response;
 
 @Service
 public class LoanApplicationService {
-
-	private static final String FRAUD_SERVICE_JSON_VERSION_1 =
-			"application/vnd.fraud.v1+json";
 
 	private final RestTemplate restTemplate;
 
@@ -45,7 +43,7 @@ public class LoanApplicationService {
 	private FraudServiceResponse sendRequestToFraudDetectionService(
 			FraudServiceRequest request) {
 		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add(HttpHeaders.CONTENT_TYPE, FRAUD_SERVICE_JSON_VERSION_1);
+		httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
 		// tag::client_call_server[]
 		ResponseEntity<FraudServiceResponse> response =
@@ -70,7 +68,7 @@ public class LoanApplicationService {
 
 	public int countAllFrauds() {
 		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add(HttpHeaders.CONTENT_TYPE, FRAUD_SERVICE_JSON_VERSION_1);
+		httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 		ResponseEntity<Response> response =
 				restTemplate.exchange("http://localhost:" + port + "/frauds", HttpMethod.GET,
 						new HttpEntity<>(httpHeaders),
@@ -80,7 +78,7 @@ public class LoanApplicationService {
 
 	public int countDrunks() {
 		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add(HttpHeaders.CONTENT_TYPE, FRAUD_SERVICE_JSON_VERSION_1);
+		httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 		ResponseEntity<Response> response =
 				restTemplate.exchange("http://localhost:" + port + "/drunks", HttpMethod.GET,
 						new HttpEntity<>(httpHeaders),

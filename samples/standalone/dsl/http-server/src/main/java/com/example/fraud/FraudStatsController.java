@@ -6,24 +6,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class FraudStatsController {
 
-	private static final String FRAUD_SERVICE_JSON_VERSION_1 = "application/vnd.fraud.v1+json";
-
 	private final StatsProvider statsProvider;
 
 	public FraudStatsController(StatsProvider statsProvider) {
 		this.statsProvider = statsProvider;
 	}
 
-	@GetMapping(
-			value = "/frauds",
-			produces = FRAUD_SERVICE_JSON_VERSION_1)
+	@GetMapping(value = "/frauds")
 	public Response countAllFrauds() {
 		return new Response(this.statsProvider.count(FraudType.ALL));
 	}
 
-	@GetMapping(
-			value = "/drunks",
-			produces = FRAUD_SERVICE_JSON_VERSION_1)
+	@GetMapping(value = "/drunks")
 	public Response countAllDrunks() {
 		return new Response(this.statsProvider.count(FraudType.DRUNKS));
 	}

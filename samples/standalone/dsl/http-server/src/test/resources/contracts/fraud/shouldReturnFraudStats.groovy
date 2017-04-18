@@ -15,7 +15,7 @@ import org.springframework.cloud.contract.spec.Contract
 						count: 200
 				])
 				headers {
-					contentType("application/vnd.fraud.v1+json")
+					contentType("application/json")
 				}
 			}
 		},
@@ -30,7 +30,7 @@ import org.springframework.cloud.contract.spec.Contract
 						count: 100
 				])
 				headers {
-					contentType("application/vnd.fraud.v1+json")
+					contentType("application/json")
 				}
 			}
 		}
