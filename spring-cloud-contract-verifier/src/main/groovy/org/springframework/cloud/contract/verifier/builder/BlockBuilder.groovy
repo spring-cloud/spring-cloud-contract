@@ -27,7 +27,6 @@ import groovy.transform.PackageScope
  *
  * @since 1.0.0
  */
-@PackageScope
 @CompileStatic
 class BlockBuilder {
 
@@ -43,21 +42,33 @@ class BlockBuilder {
 		builder = new StringBuilder()
 	}
 
+	/**
+	 * Adds indents to start a new block
+	 */
 	BlockBuilder startBlock() {
 		indents++
 		return this
 	}
 
+	/**
+	 * Ends block by removing indents
+	 */
 	BlockBuilder endBlock() {
 		indents--
 		return this
 	}
 
+	/**
+	 * Creates a block and adds indents
+	 */
 	BlockBuilder indent() {
 		startBlock().startBlock()
 		return this
 	}
 
+	/**
+	 * Removes indents and closes the block
+	 */
 	BlockBuilder unindent() {
 		endBlock().endBlock()
 		return this
@@ -81,6 +92,7 @@ class BlockBuilder {
 		}
 	}
 
+	@PackageScope
 	BlockBuilder addBlock(MethodBuilder methodBuilder) {
 		startBlock()
 		methodBuilder.appendTo(this)
@@ -89,6 +101,11 @@ class BlockBuilder {
 		return this
 	}
 
+	/**
+	 * Adds the given text at the end of the line
+	 *
+	 * @return updated BlockBuilder
+	 */
 	BlockBuilder addAtTheEnd(String toAdd) {
 		String lastChar = builder.charAt(builder.length() - 1) as String
 		String secondLastChar = builder.length() >= 2 ? builder.charAt(builder.length() - 2) as String : ""
@@ -114,6 +131,12 @@ class BlockBuilder {
 		return character == "{" || character == toAdd
 	}
 
+	/**
+	 * Updates the current text with the provided one
+	 *
+	 * @param contents - text to replace the current content with
+	 * @return updated Block Builder
+	 */
 	BlockBuilder updateContents(String contents) {
 		this.builder.replace(0, this.builder.length(), contents)
 		return this
