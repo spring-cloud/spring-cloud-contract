@@ -309,7 +309,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		where:
 		methodBuilderName           | methodBuilder                                                               | bodyString
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | """.body('''property1=VAL1''')"""
-		"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | '.body("\\"property1=VAL1\\"")'
+		"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | '.body("property1=VAL1")'
 	}
 
 	@Issue("185")
@@ -697,7 +697,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		where:
 		methodBuilderName           | methodBuilder                                                               | bodyString
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ".body('''''')"
-		"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | ".body(\"\\\"\\\"\")"
+		"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | '.body("")'
 	}
 
 		def "should generate test for String in response body with #methodBuilderName"() {
@@ -1162,7 +1162,7 @@ World.''')
 		methodBuilderName           | methodBuilder                                                               | bodyString
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | """'''hello,
 World.'''"""
-		"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | '\\"hello,\\nWorld.\\"'
+		"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | '"hello,\\nWorld."'
 	}
 
 	@Issue('180')
