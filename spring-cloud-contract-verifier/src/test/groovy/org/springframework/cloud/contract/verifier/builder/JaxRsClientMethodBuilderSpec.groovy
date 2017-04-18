@@ -235,7 +235,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		where:
 			methodBuilderName                   | methodBuilder                                                                                                                                    | bodyString
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | """entity('property1=VAL1', 'application/octet-stream')"""
-			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                                   | 'entity("\\"property1=VAL1\\"", "application/octet-stream")'
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                                   | 'entity("property1=VAL1", "application/octet-stream")'
 	}
 
 	def "should generate assertions for array in response body with #methodBuilderName"() {
@@ -617,7 +617,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		where:
 			methodBuilderName                   | methodBuilder                                                                                                                                    | bodyString
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | "entity('', 'application/octet-stream')"
-			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                                   | 'entity("\\"\\"", "application/octet-stream"'
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                                   | 'entity("", "application/octet-stream"'
 	}
 
 	def "should generate test for String in response body with #methodBodyName"() {
@@ -1111,6 +1111,46 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		where:
 			methodBuilderName                                    | methodBuilder
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
+	@Issue('#261')
+	@Unroll
+	def "should not produce any additional quotes for [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method "POST"
+					url "/v2/applications/a-TEST-upload/documents"
+					headers {
+						header 'Authorization': "foo"
+						header 'Content-Type': "multipart/form-data;boundary=Boundary_1_1831312172_1491482784697"
+					}
+					body $('''
+--Boundary_1_1831312172_1491482784697
+Content-Disposition: form-data; name="file"
+
+DATA
+--Boundary_1_1831312172_1491482784697--
+''')
+				}
+				response {
+					status 400
+					body "File name is required"
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			!test.contains('entity("\\"\\n')
+			test.contains('''entity("\\n--Boundary_1_1831312172_1491482784697\\nContent-Disposition: form-data; name=\\"file\\"\\n\\nDATA\\n--Boundary_1_1831312172_1491482784697--\\n", "multipart/form-data;boundary=Boundary_1_1831312172_1491482784697"))''')
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
+		where:
+			methodBuilderName                                    | methodBuilder
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
 }

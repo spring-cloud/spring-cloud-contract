@@ -506,7 +506,13 @@ abstract class MethodBodyBuilder {
 	 * Removes unnecessary quotes
 	 */
 	protected String trimRepeatedQuotes(String toTrim) {
-		return toTrim.startsWith('"') ? toTrim.replaceAll('"', '') : toTrim
+		if (toTrim.startsWith('"')) {
+			return toTrim.replaceAll('"', '')
+			//#261
+		} else if (toTrim.startsWith('\\"') && toTrim.endsWith('\\"')) {
+			return toTrim.substring(2, toTrim.length() - 2)
+		}
+		return toTrim
 	}
 
 	/**
