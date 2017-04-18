@@ -1153,4 +1153,37 @@ DATA
 			methodBuilderName                                    | methodBuilder
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
+
+	@Issue('#261')
+	@Unroll
+	def "should not produce any additional quotes for json body [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method "POST"
+					url "/foo"
+					headers {
+						header 'Content-Type': "application/json"
+					}
+					body $('''{ "foo": "bar"}''')
+				}
+				response {
+					status 400
+					body "File name is required"
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			!test.contains('entity("\\"\\n')
+			test.contains('''.method("POST", entity("{\\"foo\\":\\"bar\\"}", "application/json"))''')
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
+		where:
+			methodBuilderName                                    | methodBuilder
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
 }
