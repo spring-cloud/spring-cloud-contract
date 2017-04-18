@@ -10,7 +10,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 			   name: "fraud"
 		])
 		headers {
-			contentType("application/vnd.fraud.v1+json")
+			contentType("application/json")
 		}
 	}
 	response {

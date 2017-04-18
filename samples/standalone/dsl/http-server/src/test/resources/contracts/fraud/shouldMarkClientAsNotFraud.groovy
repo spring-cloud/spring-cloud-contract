@@ -12,7 +12,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 					"""
 					)
 					headers {
-						contentType("application/vnd.fraud.v1+json")
+						contentType("application/json")
 					}
 
 				}
@@ -23,7 +23,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 						rejectionReason: $(consumer(null), producer(execute('assertThatRejectionReasonIsNull($it)')))
 				)
 				headers {
-					contentType("application/vnd.fraud.v1+json")
+					contentType("application/json")
 				}
 			}
 
