@@ -505,6 +505,7 @@ $(addBlockSwitches);
 <li><a href="#_alternative_using_junit_rules">Alternative: Using JUnit Rules</a></li>
 </ul>
 </li>
+<li><a href="#_relaxed_ssl_validation_for_rest_template">Relaxed SSL Validation for Rest Template</a></li>
 <li><a href="#_wiremock_and_spring_mvc_mocks">WireMock and Spring MVC Mocks</a></li>
 <li><a href="#_generating_stubs_using_restdocs">Generating Stubs using RestDocs</a></li>
 <li><a href="#_generating_contracts_using_restdocs">Generating Contracts using RestDocs</a></li>
@@ -1004,6 +1005,56 @@ public class WiremockForDocsClassRuleTests {
 <div class="paragraph">
 <p>The use <code>@ClassRule</code> means that the server will shut down after all the methods in this class.</p>
 </div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_relaxed_ssl_validation_for_rest_template">Relaxed SSL Validation for Rest Template</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>WireMock allows you to stub a "secure" server with an "https" URL protocol. If your application wants to
+contact that stub server in an integration test, then it will find that the SSL certificates are not
+valid (it&#8217;s the usual problem with self-installed certificates). The best option is often to just
+re-configure the client to use "http", but if that&#8217;s not open to you then you can ask Spring to configure
+an HTTP client that ignores SSL validation errors (just for tests).</p>
+</div>
+<div class="paragraph">
+<p>To make this work with minimum fuss you need to be using the Spring Boot <code>RestTemplateBuilder</code> in your app,
+e.g.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@Bean
+public RestTemplate restTemplate(RestTemplateBuilder builder) {
+	return builder.build();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is because the builder is passed through callbacks to initalize it, so the SSL validation can be set up
+in the client at that point. This will happen automatically in your test if you are using the
+<code>@AutoConfigureWireMock</code> annotation (or the stub runner). If you are using the JUnit <code>@Rule</code> approach you need
+to add the <code>@AutoConfigureHttpClient</code> annotation as well:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
+@SpringBootTest("app.baseUrl=https://localhost:6443")
+@AutoConfigureHttpClient
+public class WiremockHttpsServerApplicationTests {
+
+	@ClassRule
+	public static WireMockClassRule wiremock = new WireMockClassRule(
+			WireMockSpring.options().httpsPort(6443));
+...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you are using <code>spring-boot-starter-test</code> then you will have the Apache HTTP client on the classpath and it will
+be selected by the <code>RestTemplateBuilder</code> and configured to ignore SSL errors. If you are using the default <code>java.net</code>
+client you don&#8217;t need the annotation (but it won&#8217;t do any harm). There is no support currently for other clients, but
+it may be added in future releases.</p>
 </div>
 </div>
 </div>
