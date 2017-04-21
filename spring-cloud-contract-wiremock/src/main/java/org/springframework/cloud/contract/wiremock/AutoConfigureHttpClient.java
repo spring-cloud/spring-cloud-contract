@@ -26,10 +26,8 @@ import org.springframework.boot.test.autoconfigure.properties.PropertyMapping;
 import org.springframework.context.annotation.Import;
 
 /**
- * Annotation for test classes that want to start a WireMock server as part of the Spring
- * Application Context. The port, https port and stub locations (if any) can all be
- * controlled directly here. For more fine-grained control of the server instance add a
- * bean of type {@link com.github.tomakehurst.wiremock.core.Options} to the application context.
+ * Annotation for test classes that want to install a RestTemplateCustomizer that sets up
+ * a Spring Boot app to ignore SSL errors. Use only in tests!
  * 
  * @author Dave Syer
  *
@@ -37,17 +35,7 @@ import org.springframework.context.annotation.Import;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import(WireMockConfiguration.class)
+@Import(WireMockRestTemplateConfiguration.class)
 @PropertyMapping("wiremock.server")
-@AutoConfigureHttpClient
-public @interface AutoConfigureWireMock {
-
-	int port() default 8080;
-
-	int httpsPort() default -1;
-
-	String[] stubs() default {""};
-
-	String[] files() default {""};
-
+public @interface AutoConfigureHttpClient {
 }

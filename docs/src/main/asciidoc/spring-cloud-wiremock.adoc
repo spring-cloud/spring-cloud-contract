@@ -94,6 +94,49 @@ include::{doc_samples}/src/test/java/com/example/WiremockForDocsClassRuleTests.j
 
 The use `@ClassRule` means that the server will shut down after all the methods in this class.
 
+== Relaxed SSL Validation for Rest Template
+
+WireMock allows you to stub a "secure" server with an "https" URL protocol. If your application wants to
+contact that stub server in an integration test, then it will find that the SSL certificates are not
+valid (it's the usual problem with self-installed certificates). The best option is often to just 
+re-configure the client to use "http", but if that's not open to you then you can ask Spring to configure
+an HTTP client that ignores SSL validation errors (just for tests).
+
+To make this work with minimum fuss you need to be using the Spring Boot `RestTemplateBuilder` in your app,
+e.g.
+
+[source,java,indent=0]
+----
+	@Bean
+	public RestTemplate restTemplate(RestTemplateBuilder builder) {
+		return builder.build();
+	}
+----
+
+This is because the builder is passed through callbacks to initalize it, so the SSL validation can be set up
+in the client at that point. This will happen automatically in your test if you are using the 
+`@AutoConfigureWireMock` annotation (or the stub runner). If you are using the JUnit `@Rule` approach you need
+to add the `@AutoConfigureHttpClient` annotation as well:
+
+[source,java,indent=0]
+----
+@RunWith(SpringRunner.class)
+@SpringBootTest("app.baseUrl=https://localhost:6443")
+@AutoConfigureHttpClient
+public class WiremockHttpsServerApplicationTests {
+
+	@ClassRule
+	public static WireMockClassRule wiremock = new WireMockClassRule(
+			WireMockSpring.options().httpsPort(6443));
+...
+}
+----
+
+If you are using `spring-boot-starter-test` then you will have the Apache HTTP client on the classpath and it will
+be selected by the `RestTemplateBuilder` and configured to ignore SSL errors. If you are using the default `java.net`
+client you don't need the annotation (but it won't do any harm). There is no support currently for other clients, but
+it may be added in future releases.
+
 == WireMock and Spring MVC Mocks
 
 Spring Cloud Contract provides a convenience class that can load JSON WireMock stubs into a
