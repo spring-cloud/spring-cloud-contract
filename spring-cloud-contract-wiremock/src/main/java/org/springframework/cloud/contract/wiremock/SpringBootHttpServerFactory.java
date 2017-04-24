@@ -29,7 +29,6 @@ import com.github.tomakehurst.wiremock.http.HttpServer;
 import com.github.tomakehurst.wiremock.http.HttpServerFactory;
 import com.github.tomakehurst.wiremock.http.RequestHandler;
 import com.github.tomakehurst.wiremock.http.StubRequestHandler;
-import com.github.tomakehurst.wiremock.jetty9.JettyFaultInjectorFactory;
 import com.github.tomakehurst.wiremock.servlet.FaultInjectorFactory;
 import com.github.tomakehurst.wiremock.servlet.NoFaultInjectorFactory;
 import com.github.tomakehurst.wiremock.servlet.WireMockHandlerDispatchingServlet;
