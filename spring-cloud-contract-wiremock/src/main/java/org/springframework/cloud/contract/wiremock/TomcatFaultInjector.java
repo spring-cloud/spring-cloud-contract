@@ -60,7 +60,7 @@ public class TomcatFaultInjector implements FaultInjector {
 	@Override
 	public void emptyResponseAndCloseConnection() {
 		try {
-			socket.close();
+			this.socket.close();
 		}
 		catch (IOException e) {
 			Exceptions.throwUnchecked(e);
@@ -70,10 +70,10 @@ public class TomcatFaultInjector implements FaultInjector {
 	@Override
 	public void malformedResponseChunk() {
 		try {
-			response.sendHeaders();
-			response.doWrite(ByteBuffer.wrap(GARBAGE));
-			socket.flush(true);
-			socket.close();
+			this.response.sendHeaders();
+			this.response.doWrite(ByteBuffer.wrap(GARBAGE));
+			this.socket.flush(true);
+			this.socket.close();
 		}
 		catch (IOException e) {
 			throwUnchecked(e);
@@ -83,9 +83,9 @@ public class TomcatFaultInjector implements FaultInjector {
 	@Override
 	public void randomDataAndCloseConnection() {
 		try {
-			socket.write(true, GARBAGE, 0, GARBAGE.length);
-			socket.flush(true);
-			socket.close();
+			this.socket.write(true, GARBAGE, 0, GARBAGE.length);
+			this.socket.flush(true);
+			this.socket.close();
 		}
 		catch (IOException e) {
 			throwUnchecked(e);
