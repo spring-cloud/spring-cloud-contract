@@ -5,7 +5,7 @@ import spock.lang.Specification
 /**
  * @author Marcin Grzejszczak
  */
-class NamesUtilTestSpec extends Specification {
+class NamesUtilSpec extends Specification {
 
 	def "should return the whole string before the last one"() {
 		given:
