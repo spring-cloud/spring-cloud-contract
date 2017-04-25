@@ -63,9 +63,6 @@ class TestGenerator {
 	}
 
 	int generate() {
-		if (!configProperties.basePackageForTests) {
-
-		}
 		generateTestClasses(configProperties.basePackageForTests)
 		return counter.get()
 	}
