@@ -18,11 +18,27 @@ package org.springframework.cloud.contract.wiremock;
 
 import javax.servlet.ServletContext;
 
+import io.undertow.Undertow.Builder;
+
+import com.github.tomakehurst.wiremock.common.HttpsSettings;
+import com.github.tomakehurst.wiremock.common.Notifier;
+import com.github.tomakehurst.wiremock.core.Options;
+import com.github.tomakehurst.wiremock.core.WireMockApp;
+import com.github.tomakehurst.wiremock.http.AdminRequestHandler;
+import com.github.tomakehurst.wiremock.http.HttpServer;
+import com.github.tomakehurst.wiremock.http.HttpServerFactory;
+import com.github.tomakehurst.wiremock.http.RequestHandler;
+import com.github.tomakehurst.wiremock.http.StubRequestHandler;
+import com.github.tomakehurst.wiremock.servlet.FaultInjectorFactory;
+import com.github.tomakehurst.wiremock.servlet.NoFaultInjectorFactory;
+import com.github.tomakehurst.wiremock.servlet.WireMockHandlerDispatchingServlet;
+
 import org.apache.catalina.connector.Connector;
 import org.eclipse.jetty.server.ConnectionFactory;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -63,19 +79,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.ServletContextAware;
-
-import com.github.tomakehurst.wiremock.common.HttpsSettings;
-import com.github.tomakehurst.wiremock.common.Notifier;
-import com.github.tomakehurst.wiremock.core.Options;
-import com.github.tomakehurst.wiremock.core.WireMockApp;
-import com.github.tomakehurst.wiremock.http.AdminRequestHandler;
-import com.github.tomakehurst.wiremock.http.HttpServer;
-import com.github.tomakehurst.wiremock.http.HttpServerFactory;
-import com.github.tomakehurst.wiremock.http.RequestHandler;
-import com.github.tomakehurst.wiremock.http.StubRequestHandler;
-import com.github.tomakehurst.wiremock.servlet.WireMockHandlerDispatchingServlet;
-
-import io.undertow.Undertow.Builder;
 
 /**
  * @author Dave Syer
@@ -258,6 +261,8 @@ class WiremockServerConfiguration {
 	@Autowired
 	private StubRequestHandler stubRequestHandler;
 	@Autowired
+	private FaultInjectorFactory faultInjectorFactory;
+	@Autowired
 	private Options options;
 
 	@Bean(name = DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME)
@@ -265,6 +270,10 @@ class WiremockServerConfiguration {
 		ServletRegistrationBean reg = new ServletRegistrationBean();
 		reg.addInitParameter(RequestHandler.HANDLER_CLASS_KEY,
 				StubRequestHandler.class.getName());
+		if (WiremockServerConfiguration.this.faultInjectorFactory != null) {
+			reg.addInitParameter(FaultInjectorFactory.INJECTOR_CLASS_KEY,
+					FaultInjectorFactory.class.getName());
+		}
 		reg.setServlet(new WireMockHandlerDispatchingServlet());
 		reg.setName("stub");
 		reg.addUrlMappings("/");
@@ -293,6 +302,10 @@ class WiremockServerConfiguration {
 						WiremockServerConfiguration.this.stubRequestHandler);
 				servletContext.setAttribute(Notifier.KEY,
 						WiremockServerConfiguration.this.options.notifier());
+				if (WiremockServerConfiguration.this.faultInjectorFactory != null) {
+					servletContext.setAttribute(FaultInjectorFactory.class.getName(),
+							WiremockServerConfiguration.this.faultInjectorFactory);
+				}
 			}
 		};
 	}
@@ -367,6 +380,11 @@ class ContainerConfiguration {
 			return tomcat;
 		}
 
+		@Bean
+		public FaultInjectorFactory faultInjectorFactory() {
+			return new TomcatFaultInjectorFactory();
+		}
+
 		@EventListener
 		public void serverUp(EmbeddedServletContainerInitializedEvent event) {
 			if (this.connector != null) {
@@ -417,6 +435,11 @@ class ContainerConfiguration {
 			return undertow;
 		}
 
+		@Bean
+		public FaultInjectorFactory faultInjectorFactory() {
+			return new NoFaultInjectorFactory();
+		}
+
 		@EventListener
 		public void serverUp(EmbeddedServletContainerInitializedEvent event) {
 			if (this.port != null) {
@@ -455,6 +478,11 @@ class ContainerConfiguration {
 				});
 			}
 			return jetty;
+		}
+
+		@Bean
+		public JettyFaultInjectorFactory faultInjectorFactory() {
+			return new JettyFaultInjectorFactory();
 		}
 
 		private org.eclipse.jetty.server.Connector createStandardConnector(

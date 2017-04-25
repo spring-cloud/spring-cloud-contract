@@ -18,13 +18,14 @@ package org.springframework.cloud.contract.wiremock;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.ssl.SSLContexts;
 import org.junit.Assert;
-import org.springframework.util.ClassUtils;
 
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import org.springframework.util.ClassUtils;
 
 /**
  * Convenience factory class for a {@link WireMockConfiguration} that knows how to use

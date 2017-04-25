@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.contract.wiremock.AutoConfigureHttpClient;
 import org.springframework.cloud.contract.wiremock.WireMockSpring;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -21,6 +22,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 @RunWith(SpringRunner.class)
 @SpringBootTest("app.baseUrl=https://localhost:6443")
 @DirtiesContext
+@AutoConfigureHttpClient
 public class WiremockHttpsServerApplicationTests {
 
 	@ClassRule

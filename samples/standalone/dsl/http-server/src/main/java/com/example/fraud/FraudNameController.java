@@ -10,17 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 class FraudNameController {
 
-	private static final String FRAUD_SERVICE_JSON_VERSION_1 = "application/vnd.fraud.v1+json";
-
 	private final FraudVerifier fraudVerifier;
 
 	FraudNameController(FraudVerifier fraudVerifier) {
 		this.fraudVerifier = fraudVerifier;
 	}
 
-	@PutMapping(
-			value = "/frauds/name",
-			produces = FRAUD_SERVICE_JSON_VERSION_1)
+	@PutMapping(value = "/frauds/name")
 	public NameResponse checkByName(@RequestBody NameRequest request) {
 		boolean fraud = this.fraudVerifier.isFraudByName(request.getName());
 		if (fraud) {
