@@ -279,7 +279,7 @@ class ContractHttpDocsSpec extends Specification {
   response.header('Content-Type')  == 'application/json'
  and:
   DocumentContext parsedJson = JsonPath.parse(response.body.asString())
-  assertThatJson(parsedJson).field("code").matches("(123123)?")
+  assertThatJson(parsedJson).field("['code']").matches("(123123)?")
 """
 // end::optionals_test[]
 		stripped(blockBuilder.toString()) == stripped(expectedTest)
