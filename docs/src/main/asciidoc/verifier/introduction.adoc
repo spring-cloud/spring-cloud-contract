@@ -509,6 +509,12 @@ For `stub-runner` use `spring-cloud-starter-stub-runner` and when you're using a
 Below you can find some resources related to Spring Cloud Contract Verifier and Stub Runner. Note that some can be outdated since the Spring Cloud Contract Verifier project
 is under constant development.
 
+===== Spring Cloud Contract video
+
+You can check out the video from the Warsaw JUG about Spring Cloud Contract:
+
+video::sAAklvxmPmk[youtube,start=538,width=640,height=480]
+
 ===== Readings
 
 - http://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura[Slides from Marcin Grzejszczak's talk about Accurest]
