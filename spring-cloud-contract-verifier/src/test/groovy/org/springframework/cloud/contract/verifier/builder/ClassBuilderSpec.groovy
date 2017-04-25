@@ -60,4 +60,12 @@ class ClassBuilderSpec extends Specification {
 			ClassBuilder.retrieveBaseClass(props, contractRelativeFolder) == 'com.example.base.SuperpackageBase'
 	}
 
+	def "should return a class from the generated path by when external contracts are picked"() {
+		given:
+			ContractVerifierConfigProperties props = new ContractVerifierConfigProperties(packageWithBaseClasses: "foo.Bar")
+			String contractRelativeFolder = ["org","springframework","cloud","contract","verifier","tests","META_INF","com.example","hello_world","1.0.0"].join(File.separator)
+		expect:
+			ClassBuilder.retrieveBaseClass(props, contractRelativeFolder) == 'foo.Bar.Hello_world1_0_0Base'
+	}
+
 }

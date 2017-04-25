@@ -33,6 +33,8 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 @PackageScope
 class ClassBuilder {
 
+	private static final String SEPARATOR = "_REPLACEME_"
+
 	private final String className
 	private final String packageName
 	private final String baseClass
@@ -70,7 +72,7 @@ class ClassBuilder {
 	}
 
 	protected static String retrieveBaseClass(ContractVerifierConfigProperties properties, String includedDirectoryRelativePath) {
-		String contractPackage = includedDirectoryRelativePath.replace(File.separator, '.')
+		String contractPackage = includedDirectoryRelativePath.replace(File.separator, SEPARATOR)
 		// package mapping takes super precedence
 		if (properties.baseClassMappings) {
 			Map.Entry<String, String> mapping = properties.baseClassMappings.find { String pattern, String fqn ->
@@ -88,7 +90,7 @@ class ClassBuilder {
 	}
 
 	private static String generateDefaultBaseClassName(String classPackage, ContractVerifierConfigProperties properties) {
-		String[] splitPackage = NamesUtil.convertIllegalPackageChars(classPackage).split("\\.")
+		String[] splitPackage = NamesUtil.convertIllegalPackageChars(classPackage).split(SEPARATOR)
 		if (splitPackage.size() > 1) {
 			String last = NamesUtil.capitalize(splitPackage[-1])
 			String butLast = NamesUtil.capitalize(splitPackage[-2])
