@@ -1,10 +1,12 @@
 package org.springframework.cloud.contract.verifier.util
 
 import spock.lang.Specification
+
 /**
  * @author Marcin Grzejszczak
  */
 class NamesUtilSpec extends Specification {
+
 	def "should return the whole string before the last one"() {
 		given:
 			String string = "a.b.c.d.e"
@@ -91,9 +93,8 @@ class NamesUtilSpec extends Specification {
 
 	def "should convert all illegal package chars to legal ones"() {
 		given:
-			String string = "a-b c"
+			String string = "a-b c.1.0.x"
 		expect:
-			"a_b_c" == NamesUtil.convertIllegalPackageChars(string)
+			"a_b_c_1_0_x" == NamesUtil.convertIllegalPackageChars(string)
 	}
-
 }
