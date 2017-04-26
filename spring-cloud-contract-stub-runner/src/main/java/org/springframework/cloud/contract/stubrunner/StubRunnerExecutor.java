@@ -239,7 +239,7 @@ class StubRunnerExecutor implements StubFinder {
 		final List<File> mappings = repository.getStubs();
 		final Collection<Contract> contracts = repository.contracts;
 		Integer port = stubRunnerOptions.port(stubConfiguration);
-		if (!contracts.isEmpty() && !hasRequest(contracts)) {
+		if (!hasRequest(contracts) && mappings.isEmpty()) {
 			if (log.isDebugEnabled()) {
 				log.debug("There are no HTTP related contracts. Won't start any servers");
 			}
@@ -261,6 +261,9 @@ class StubRunnerExecutor implements StubFinder {
 	}
 
 	private boolean hasRequest(Collection<Contract> contracts) {
+		if (contracts.isEmpty()) {
+			return false;
+		}
 		for (Contract contract : contracts) {
 			if (contract.getRequest() != null) {
 				return true;

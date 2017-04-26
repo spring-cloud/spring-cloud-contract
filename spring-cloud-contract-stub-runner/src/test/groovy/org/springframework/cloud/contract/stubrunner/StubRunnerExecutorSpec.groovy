@@ -131,6 +131,19 @@ class StubRunnerExecutorSpec extends Specification {
 			executor.shutdown()
 	}
 
+	def 'should not start http server if no contracts or mappings are found'() {
+		given:
+			def stubConf = new StubConfiguration('asd', 'asd', 'asd', '')
+			StubRunnerExecutor executor = new StubRunnerExecutor(portScanner)
+		when:
+			RunningStubs stubs = executor.runStubs(stubRunnerOptions,
+					new StubRepository(new File('src/test/resources/emptyrepo')), stubConf)
+		then:
+			stubs.getPort('asd') == -1
+		cleanup:
+			executor.shutdown()
+	}
+
 	Map<StubConfiguration, Integer> stubIdsWithPortsFromString(String stubIdsToPortMapping) {
 		return stubIdsToPortMapping.split(',').collectEntries { String entry ->
 			return StubsParser.fromStringWithPort(entry)
