@@ -4748,6 +4748,9 @@ There might be a problem with StubRunner shutting down ports between tests. You 
 <li>
 <p>feed the WireMock server with all JSON files that are valid WireMock definitions</p>
 </li>
+<li>
+<p>can also send messages (remember to pass an implementation of <code>MessageVerifier</code> interface)</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
@@ -4864,6 +4867,20 @@ public void should_start_wiremock_servers() throws Exception {
 </div>
 <div class="paragraph">
 <p>Check the <strong>Common properties for JUnit and Spring</strong> for more information on how to apply global configuration of Stub Runner.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+To use the JUnit rule together with messaging you have to provide an implementation of the
+<code>MessageVerifier</code> interface to the rule builder (e.g. <code>rule.messageVerifier(new MyMessageVerifier())</code>).
+If you don&#8217;t do this then whenever you try to send a message an exception will be thrown.
+</td>
+</tr>
+</table>
 </div>
 <div class="sect3">
 <h4 id="_maven_settings">Maven settings</h4>
