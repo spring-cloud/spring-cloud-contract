@@ -10,8 +10,8 @@ channel name.
 
 ==== Adding it to the project
 
-It's enough to have both Apache Camel and Spring Cloud Contract Stub Runner on classpath.
-Remember to annotate your test class with `@AutoConfigureMessageVerifier`.
+It's enough to have both Spring Cloud Stream and Spring Cloud Contract Stub Runner on classpath.
+Remember to annotate your test class with `@AutoConfigureStubRunner`.
 
 ==== Examples
 
