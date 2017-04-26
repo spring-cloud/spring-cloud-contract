@@ -116,11 +116,23 @@ class JsonToJsonPathsConverter {
 		if (value == null && bodyMatcher.matchingType() != MatchingType.EQUALITY) {
 			return path
 		}
-		int lastIndexOfDot = path.lastIndexOf(".")
+		int lastIndexOfDot = lastIndexOfDot(path)
 		String toLastDot = path.substring(0, lastIndexOfDot)
 		String fromLastDot = path.substring(lastIndexOfDot + 1)
 		String comparison = createComparison(bodyMatcher, value, body)
 		return "${toLastDot}[?(@.${fromLastDot} ${comparison})]"
+	}
+
+	private static int lastIndexOfDot(String path) {
+		if (pathContainsDotSeparatedKey(path)) {
+			int lastIndexOfBracket = path.lastIndexOf("['")
+			return path.substring(0, lastIndexOfBracket).lastIndexOf(".")
+		}
+		return path.lastIndexOf(".")
+	}
+
+	private static boolean pathContainsDotSeparatedKey(String path) {
+		return path.contains("['")
 	}
 
 	private static String createComparison(BodyMatcher bodyMatcher, Object value, def body) {

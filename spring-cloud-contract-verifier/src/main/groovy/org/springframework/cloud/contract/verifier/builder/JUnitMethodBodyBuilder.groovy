@@ -103,7 +103,7 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 
 	@Override
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, Map.Entry entry) {
-		processBodyElement(blockBuilder, getMapKeyReferenceString(property, entry), entry.value)
+		processBodyElement(blockBuilder, property, getMapKeyReferenceString(property, entry), entry.value)
 	}
 
 	private String getMapKeyReferenceString(String property, Map.Entry entry) {

@@ -132,7 +132,7 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
     // given:
         MockMvcRequestSpecification request = given()
                 .header("Content-Type", "application/vnd.fraud.v1+json")
-                .body("{\"clientPesel\":\"1234567890\",\"loanAmount\":99999}");
+                .body("{\"client.id\":\"1234567890\",\"loanAmount\":99999}");
 
     // when:
         ResponseOptions response = given().spec(request)
@@ -143,8 +143,8 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
         assertThat(response.header("Content-Type")).matches("application/vnd.fraud.v1.json.*");
     // and:
         DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
-        assertThatJson(parsedJson).field("fraudCheckStatus").matches("[A-Z]{5}");
-        assertThatJson(parsedJson).field("rejectionReason").isEqualTo("Amount too high");
+        assertThatJson(parsedJson).field("['fraudCheckStatus']").matches("[A-Z]{5}");
+        assertThatJson(parsedJson).field("['rejection.reason']").isEqualTo("Amount too high");
 }
 ----
 
@@ -244,7 +244,7 @@ The aforementioned contract is an agreement between two sides that:
 
 - if an HTTP request is sent with
 ** a method `PUT` on an endpoint `/fraudcheck`
-** JSON body with `clientPesel` matching the regular expression `[0-9]{10}` and `loanAmount` equal to `99999`
+** JSON body with `client.id` matching the regular expression `[0-9]{10}` and `loanAmount` equal to `99999`
 ** and with a header `Content-Type` equal to `application/vnd.fraud.v1+json`
 - then an HTTP response would be sent to the consumer that
 ** has status `200`
@@ -425,7 +425,7 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
     // given:
         MockMvcRequestSpecification request = given()
                 .header("Content-Type", "application/vnd.fraud.v1+json")
-                .body("{\"clientPesel\":\"1234567890\",\"loanAmount\":99999}");
+                .body("{\"client.id\":\"1234567890\",\"loanAmount\":99999}");
 
     // when:
         ResponseOptions response = given().spec(request)
@@ -436,8 +436,8 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
         assertThat(response.header("Content-Type")).matches("application/vnd.fraud.v1.json.*");
     // and:
         DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
-        assertThatJson(parsedJson).field("fraudCheckStatus").matches("[A-Z]{5}");
-        assertThatJson(parsedJson).field("rejectionReason").isEqualTo("Amount too high");
+        assertThatJson(parsedJson).field("['fraudCheckStatus']").matches("[A-Z]{5}");
+        assertThatJson(parsedJson).field("['rejection.reason']").isEqualTo("Amount too high");
 }
 ----
 

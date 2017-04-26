@@ -237,37 +237,37 @@ class DslToWireMockClientConverterSpec extends Specification {
 	"url" : "/api/12",
     "method" : "PUT",
     "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[*].place.bounding_box.coordinates[*][*][?(@ == -77.119759)]"
+      "matchesJsonPath" : "$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == -77.119759)]"
     }, {
-      "matchesJsonPath" : "$[*][?(@.text == 'Gonna see you at Warsaw')]"
+      "matchesJsonPath" : "$[*][?(@.['text'] == 'Gonna see you at Warsaw')]"
     }, {
-      "matchesJsonPath" : "$[*].place[?(@.place_type == 'city')]"
+      "matchesJsonPath" : "$[*].['place'][?(@.['place_type'] == 'city')]"
     }, {
-      "matchesJsonPath" : "$[*][?(@.id == 492967299297845248)]"
+      "matchesJsonPath" : "$[*][?(@.['id'] == 492967299297845248)]"
     }, {
-      "matchesJsonPath" : "$[*].place.bounding_box.coordinates[*][*][?(@ == 38.791645)]"
+      "matchesJsonPath" : "$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == 38.791645)]"
     }, {
-      "matchesJsonPath" : "$[*].place[?(@.country == 'United States')]"
+      "matchesJsonPath" : "$[*].['place'][?(@.['country'] == 'United States')]"
     }, {
-      "matchesJsonPath" : "$[*][?(@.id_str == '492967299297845248')]"
+      "matchesJsonPath" : "$[*][?(@.['id_str'] == '492967299297845248')]"
     }, {
-      "matchesJsonPath" : "$[*].place.bounding_box.coordinates[*][*][?(@ == -76.909393)]"
+      "matchesJsonPath" : "$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == -76.909393)]"
     }, {
-      "matchesJsonPath" : "$[*].place[?(@.name == 'Washington')]"
+      "matchesJsonPath" : "$[*].['place'][?(@.['name'] == 'Washington')]"
     }, {
-      "matchesJsonPath" : "$[*].place.bounding_box[?(@.type == 'Polygon')]"
+      "matchesJsonPath" : "$[*].['place'].['bounding_box'][?(@.['type'] == 'Polygon')]"
     }, {
-      "matchesJsonPath" : "$[*].place[?(@.url == 'http://api.twitter.com/1/geo/id/01fbe706f872cb32.json')]"
+      "matchesJsonPath" : "$[*].['place'][?(@.['url'] == 'http://api.twitter.com/1/geo/id/01fbe706f872cb32.json')]"
     }, {
-      "matchesJsonPath" : "$[*].place.bounding_box.coordinates[*][*][?(@ == 38.995548)]"
+      "matchesJsonPath" : "$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == 38.995548)]"
     }, {
-      "matchesJsonPath" : "$[*].place[?(@.country_code == 'US')]"
+      "matchesJsonPath" : "$[*].['place'][?(@.['country_code'] == 'US')]"
     }, {
-      "matchesJsonPath" : "$[*].place[?(@.full_name == 'Washington, DC')]"
+      "matchesJsonPath" : "$[*].['place'][?(@.['full_name'] == 'Washington, DC')]"
     }, {
-      "matchesJsonPath" : "$[*][?(@.created_at == 'Sat Jul 26 09:38:57 +0000 2014')]"
+      "matchesJsonPath" : "$[*][?(@.['created_at'] == 'Sat Jul 26 09:38:57 +0000 2014')]"
     }, {
-      "matchesJsonPath" : "$[*].place[?(@.id == '01fbe706f872cb32')]"
+      "matchesJsonPath" : "$[*].['place'][?(@.['id'] == '01fbe706f872cb32')]"
     } ],
 	"headers" : {
 	  "Content-Type" : {
@@ -439,9 +439,9 @@ class DslToWireMockClientConverterSpec extends Specification {
     "url" : "/users/password",
     "method" : "POST",
     "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[?(@.email =~ /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4})?/)]"
+      "matchesJsonPath" : "$[?(@.['email'] =~ /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4})?/)]"
     }, {
-      "matchesJsonPath" : "$[?(@.callback_url =~ /((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?/)]"
+      "matchesJsonPath" : "$[?(@.['callback_url'] =~ /((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?/)]"
     } ],
     "headers" : {
       "Content-Type" : {
@@ -598,15 +598,15 @@ class DslToWireMockClientConverterSpec extends Specification {
       }
     },
     "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[?(@.valueWithoutAMatcher == 'foo')]"
+      "matchesJsonPath" : "$[?(@.['valueWithoutAMatcher'] == 'foo')]"
     }, {
-      "matchesJsonPath" : "$[?(@.valueWithTypeMatch == 'string')]"
+      "matchesJsonPath" : "$[?(@.['valueWithTypeMatch'] == 'string')]"
     }, {
-      "matchesJsonPath" : "$.list.some.nested[?(@.anothervalue == 4)]"
+      "matchesJsonPath" : "$.['list'].['some'].['nested'][?(@.['anothervalue'] == 4)]"
     }, {
-      "matchesJsonPath" : "$.list.someother.nested[?(@.anothervalue == 4)]"
+      "matchesJsonPath" : "$.['list'].['someother'].['nested'][?(@.['anothervalue'] == 4)]"
     }, {
-      "matchesJsonPath" : "$.list.someother.nested[?(@.json == 'with value')]"
+      "matchesJsonPath" : "$.['list'].['someother'].['nested'][?(@.['json'] == 'with value')]"
     }, {
       "matchesJsonPath" : "$[?(@.duck =~ /([0-9]{3})/)]"
     }, {
@@ -716,8 +716,8 @@ class DslToWireMockClientConverterSpec extends Specification {
 							callback_url: 'http://partners.com'
 						)
 						stubMatchers {
-							jsonPath('$.email', byRegex(email()))
-							jsonPath('$.callback_url', byRegex(hostname()))
+							jsonPath('$.[\\'email\\']', byRegex(email()))
+							jsonPath('$.[\\'callback_url\\']', byRegex(hostname()))
 						}
 					}
 					response {
@@ -746,9 +746,9 @@ class DslToWireMockClientConverterSpec extends Specification {
 		"url" : "/users/password2",
 		"method" : "POST",
 		"bodyPatterns" : [ {
-		  "matchesJsonPath" : "$[?(@.email =~ /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4})/)]"
+		  "matchesJsonPath" : "$[?(@.['email'] =~ /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4})/)]"
 		}, {
-		  "matchesJsonPath" : "$[?(@.callback_url =~ /(((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?)/)]"
+		  "matchesJsonPath" : "$[?(@.['callback_url'] =~ /(((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?)/)]"
 		} ],
 		"headers" : {
 		  "Content-Type" : {

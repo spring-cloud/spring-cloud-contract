@@ -67,7 +67,7 @@ class RestAssuredJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Object value) {
 		if (value instanceof NotToEscapePattern) {
 			blockBuilder.addLine("assertThat(response.header(\"$property\"))." +
-					"${createMatchesMethod(value.serverValue.pattern().replace("\\", "\\\\"))};")
+					"${createMatchesMethod((value as NotToEscapePattern).serverValue.pattern().replace("\\", "\\\\"))};")
 		}
 	}
 

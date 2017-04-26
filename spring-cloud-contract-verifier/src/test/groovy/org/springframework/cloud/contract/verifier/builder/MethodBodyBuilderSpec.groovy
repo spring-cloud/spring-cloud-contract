@@ -83,7 +83,7 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('$.myArray[0].anotherArrayNeededForBug[0].optionalNotEmpty')
+			test.contains('$.myArray.[0].anotherArrayNeededForBug.[0].optionalNotEmpty')
 			!test.contains('cursor')
 			!test.contains('REGEXP>>')
 		and:
@@ -96,6 +96,53 @@ DocumentContext parsedJson = JsonPath.parse(json);
 		and:
 			LinkedList<String> lines = [] as LinkedList<String>
 			test.eachLine { if (it.contains("assertThatJson") || it.contains("assertThat((String")) lines << it else it }
+			lines.addFirst(jsonSample)
+			SyntaxChecker.tryToRun(methodBuilderName, lines.join("\n"))
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
+	@Issue('#269')
+	def "should work with execute and keys with dots [#methodBuilderName]"() {
+		given:
+		Contract contractDsl = Contract.make {
+			request {
+				method 'GET'
+				urlPath '/foo'
+			}
+			response {
+				status 200
+				body (
+						foo: ["my.dotted.response" : $(c('foo'), p(execute('"foo".equals($it)')))]
+				)
+				headers {
+					contentType(applicationJson())
+				}
+			}
+		}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('''$.foo.['my.dotted.response']''')
+			!test.contains('cursor')
+			!test.contains('REGEXP>>')
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
+		and:
+			String jsonSample = '''\
+String json = "{\\"foo\\":{\\"my.dotted.response\\":\\"foo\\"}}";
+DocumentContext parsedJson = JsonPath.parse(json);
+'''
+		and:
+			LinkedList<String> lines = [] as LinkedList<String>
+			test.eachLine { if (it.contains('"foo".equals')) lines << it else it }
 			lines.addFirst(jsonSample)
 			SyntaxChecker.tryToRun(methodBuilderName, lines.join("\n"))
 		where:

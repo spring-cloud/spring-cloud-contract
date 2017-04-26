@@ -45,6 +45,7 @@ import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.util.SerializationUtils
+import org.springframework.util.StringUtils
 
 import java.lang.invoke.MethodHandles
 import java.util.regex.Pattern
@@ -367,7 +368,7 @@ abstract class MethodBodyBuilder {
 				}
 			}
 		}
-		processBodyElement(bb, "", convertedResponseBody)
+		processBodyElement(bb, "", "", convertedResponseBody)
 	}
 
 	protected String processIfTemplateIsPresent(String method, DocumentContext parsedRequestBody) {
@@ -432,7 +433,7 @@ abstract class MethodBodyBuilder {
 
 	// Doing a clone doesn't work for nested lists...
 	private Object cloneBody(Object object) {
-		if (object instanceof List) {
+		if (object instanceof List || object instanceof Map) {
 			byte[] serializedObject = SerializationUtils.serialize(object)
 			return SerializationUtils.deserialize(serializedObject)
 		}
@@ -501,6 +502,21 @@ abstract class MethodBodyBuilder {
 		return '"' + StringEscapeUtils.escapeJava(string) + '"'
 	}
 
+	protected String trailingKey(String key) {
+		if (key.startsWith(".")) {
+			return key.substring(1)
+		}
+		return key
+	}
+
+	private String wrappedWithBracketsForDottedProp(String key) {
+		String remindingKey = trailingKey(key)
+		if (remindingKey.contains(".")) {
+			return "['${remindingKey}']"
+		}
+		return remindingKey
+	}
+
 	/**
 	 * Post processing of each JSON path entry
 	 */
@@ -520,8 +536,8 @@ abstract class MethodBodyBuilder {
 	 * Appends to {@link BlockBuilder} processing of the given String value.
 	 */
 	protected void processText(BlockBuilder blockBuilder, String property, Object value) {
-		if (value instanceof String && value.startsWith('$')) {
-			String newValue = stripFirstChar(value).replaceAll('\\$value', "responseBody$property")
+		if (value instanceof String && (value as String).startsWith('$')) {
+			String newValue = stripFirstChar((value as String)).replaceAll('\\$value', "responseBody$property")
 			blockBuilder.addLine(newValue)
 			addColonIfRequired(blockBuilder)
 		} else {
@@ -543,6 +559,16 @@ abstract class MethodBodyBuilder {
 	 * Appends to the {@link BlockBuilder} the assertion for the given body element
 	 */
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, Object value) {
+	}
+
+	/**
+	 * Appends to the {@link BlockBuilder} the assertion for the given body element
+	 */
+	protected void processBodyElement(BlockBuilder blockBuilder, String oldProp, String property, Object value) {
+		String propDiff = property - oldProp
+		String prop = wrappedWithBracketsForDottedProp(propDiff)
+		String mergedProp = StringUtils.hasText(property) ? "${oldProp}.${prop}" : ""
+		processBodyElement(blockBuilder, mergedProp, value)
 	}
 
 	/**
@@ -632,7 +658,7 @@ abstract class MethodBodyBuilder {
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, List list) {
 		list.eachWithIndex { listElement, listIndex ->
 			String prop = getPropertyInListString(property, listIndex as Integer)
-			processBodyElement(blockBuilder, prop, listElement)
+			processBodyElement(blockBuilder, property, prop, listElement)
 		}
 	}
 

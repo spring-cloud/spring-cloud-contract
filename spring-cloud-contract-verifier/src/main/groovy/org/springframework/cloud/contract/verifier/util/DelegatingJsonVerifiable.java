@@ -16,12 +16,12 @@
 
 package org.springframework.cloud.contract.verifier.util;
 
-import static org.apache.commons.lang3.StringEscapeUtils.escapeJava;
+import com.toomuchcoding.jsonassert.JsonVerifiable;
 
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
-import com.toomuchcoding.jsonassert.JsonVerifiable;
+import static org.apache.commons.lang3.StringEscapeUtils.escapeJava;
 
 /**
  * Implementation of the {@link MethodBufferingJsonVerifiable} that contains a list
@@ -82,11 +82,12 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 	@Override
 	public MethodBufferingJsonVerifiable field(Object value) {
 		Object valueToPut = value instanceof ShouldTraverse ? ((ShouldTraverse) value).value : value;
-		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(this.delegate.field(valueToPut), this.methodsBuffer);
+		Object wrappedValue = wrapInBrackets(valueToPut);
+		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(this.delegate.field(wrappedValue), this.methodsBuffer);
 		if (this.delegate.isIteratingOverArray() && !(value instanceof ShouldTraverse)) {
-			verifiable.appendMethodWithQuotedValue("contains", valueToPut);
+			verifiable.appendMethodWithQuotedValue("contains", wrappedValue);
 		} else {
-			verifiable.appendMethodWithQuotedValue("field", valueToPut);
+			verifiable.appendMethodWithQuotedValue("field", wrappedValue);
 		}
 		return verifiable;
 	}
@@ -102,15 +103,17 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 
 	@Override
 	public MethodBufferingJsonVerifiable array(Object value) {
-		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(this.delegate.array(value), this.methodsBuffer);
-		verifiable.appendMethodWithQuotedValue("array", value);
+		Object valueToPut = wrapInBrackets(value);
+		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(this.delegate.array(valueToPut), this.methodsBuffer);
+		verifiable.appendMethodWithQuotedValue("array", valueToPut);
 		return verifiable;
 	}
 
 	@Override
 	public MethodBufferingJsonVerifiable arrayField(Object value) {
-		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(this.delegate.field(value).arrayField(), this.methodsBuffer);
-		verifiable.appendMethodWithQuotedValue("array", value);
+		Object valueToPut = wrapInBrackets(value);
+		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(this.delegate.field(valueToPut).arrayField(), this.methodsBuffer);
+		verifiable.appendMethodWithQuotedValue("array", valueToPut);
 		return verifiable;
 	}
 
@@ -287,6 +290,14 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 	@Override
 	public boolean isAssertingAValueInArray() {
 		return this.delegate.isAssertingAValueInArray();
+	}
+
+	// Related to https://github.com/spring-cloud/spring-cloud-contract/issues/269
+	private Object wrapInBrackets(Object name) {
+		if (name instanceof Number) {
+			return name;
+		}
+		return "['" + name.toString() + "']";
 	}
 
 	@Override

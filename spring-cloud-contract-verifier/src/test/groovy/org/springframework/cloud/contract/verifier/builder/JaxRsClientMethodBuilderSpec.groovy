@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+import com.jayway.jsonpath.DocumentContext
+import com.jayway.jsonpath.JsonPath
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.dsl.WireMockStubVerifier
@@ -52,8 +54,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").isEqualTo("b")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property2']").isEqualTo("b")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -86,9 +88,9 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property3").isEqualTo(false)""")
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").isNull()""")
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("true")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property3']").isEqualTo(false)""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property2']").isNull()""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("true")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, contractDsl), contractDsl).toWireMockClientStub())
 		and:
@@ -123,9 +125,9 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("a").isEqualTo("sth")""")
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("b").isEqualTo("sthElse")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("['property2']").contains("['a']").isEqualTo("sth")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("['property2']").contains("['b']").isEqualTo("sthElse")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, contractDsl), contractDsl).toWireMockClientStub())
 		and:
@@ -162,10 +164,10 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("a").isEqualTo("sth")""")
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").hasSize(2)""")
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("b").isEqualTo("sthElse")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("['property2']").contains("['a']").isEqualTo("sth")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("['property2']").hasSize(2)""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("['property2']").contains("['b']").isEqualTo("sthElse")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, contractDsl), contractDsl).toWireMockClientStub())
 		and:
@@ -261,8 +263,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).array().contains("property1").isEqualTo("a")""")
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).array().contains("property2").isEqualTo("b")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array().contains("['property1']").isEqualTo("a")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array().contains("['property2']").isEqualTo("b")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -295,8 +297,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property1").contains("property2").isEqualTo("test1")""")
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property1").contains("property3").isEqualTo("test2")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("['property1']").contains("['property2']").isEqualTo("test1")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).array("['property1']").contains("['property3']").isEqualTo("test2")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -329,8 +331,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").field("property3").isEqualTo("b")""")
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property2']").field("['property3']").isEqualTo("b")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -368,8 +370,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").matches("[0-9]{3}")""")
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property2']").matches("[0-9]{3}")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -400,8 +402,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").matches("[0-9]{3}")""")
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property2']").matches("[0-9]{3}")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -521,8 +523,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			test.contains(modifyStringIfRequired.call("queryParam('age', '99'"))
 			test.contains(modifyStringIfRequired.call("queryParam('name', 'Denis.Stepanov'"))
 			test.contains(modifyStringIfRequired.call("queryParam('email', 'bob@email.com'"))
-			test.contains(modifyStringIfRequired.call("""assertThatJson(parsedJson).field("property1").isEqualTo("a")"""))
-			test.contains(modifyStringIfRequired.call("""assertThatJson(parsedJson).field("property2").isEqualTo("b")"""))
+			test.contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
+			test.contains("""assertThatJson(parsedJson).field("['property2']").isEqualTo("b")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -578,8 +580,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			test.contains(modifyStringIfRequired.call("queryParam('age', '99'"))
 			test.contains(modifyStringIfRequired.call("queryParam('name', 'Denis.Stepanov'"))
 			test.contains(modifyStringIfRequired.call("queryParam('email', 'bob@email.com'"))
-			test.contains(modifyStringIfRequired.call("""assertThatJson(parsedJson).field("property1").isEqualTo("a")"""))
-			test.contains(modifyStringIfRequired.call("""assertThatJson(parsedJson).field("property2").isEqualTo("b")"""))
+			test.contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
+			test.contains("""assertThatJson(parsedJson).field("['property2']").isEqualTo("b")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -743,7 +745,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
   assertThat(response.getStatus()).isEqualTo(200);
  // and:
   DocumentContext parsedJson = JsonPath.parse(responseAsString);
-  assertThatJson(parsedJson).field("property1").isEqualTo("a");
+  assertThatJson(parsedJson).field("['property1']").isEqualTo("a");
 '''
 // end::jaxrs[]
 		stripped(test) == stripped(expectedResponse)
@@ -780,6 +782,20 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			test.contains('assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason.title"));')
 	}
 
+	String sampleJson = '''
+
+  [
+    {
+      "name"  : "iPhone",
+      "number": "0123-4567-8888"
+    },
+    {
+      "name"  : "home",
+      "number": "0123-4567-8910"
+    }
+  ]
+'''
+
 	@Issue('#85')
 	def "should execute custom method for more complex structures on the response side when using Spock"() {
 		given:
@@ -806,8 +822,11 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$[0].name")''')
-			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$[1].name")''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$.[0].name")''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$.[1].name")''')
+		and:
+			DocumentContext context = JsonPath.parse(sampleJson)
+			context.read('$.[0].name') == 'iPhone'
 	}
 
 	@Issue('#85')
@@ -836,8 +855,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			builder.then(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$[0].name")''')
-			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$[1].name")''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$.[0].name")''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$.[1].name")''')
 	}
 
 	@Issue('#150')
@@ -966,8 +985,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").matches("[0-9]{3}")""")
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property2']").matches("[0-9]{3}")""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -1037,21 +1056,21 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('assertThatJson(parsedJson).field("aBoolean").matches("(true|false)")')
-			test.contains('assertThatJson(parsedJson).field("alpha").matches("[\\\\p{L}]*")')
-			test.contains('assertThatJson(parsedJson).field("hostname").matches("((http[s]?|ftp):/)/?([^:/\\\\s]+)(:[0-9]{1,5})?")')
-			test.contains('assertThatJson(parsedJson).field("url").matches("^(?:(?:[A-Za-z][+-.\\\\w^_]*:/{2})?(?:\\\\S+(?::\\\\S*)?@)?(?:(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|(?:(?:[a-z\\\\u00a1-\\\\uffff0-9]-*)*[a-z\\\\u00a1-\\\\uffff0-9]+)(?:\\\\.(?:[a-z\\\\u00a1-\\\\uffff0-9]-*)*[a-z\\\\u00a1-\\\\uffff0-9]+)*(?:\\\\.(?:[a-z\\\\u00a1-\\\\uffff]{2,})))(?::\\\\d{2,5})?(?:/\\\\S*)?)')
-			test.contains('assertThatJson(parsedJson).field("number").matches("-?\\\\d*(\\\\.\\\\d+)?")')
-			test.contains('assertThatJson(parsedJson).field("email").matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4}")')
-			test.contains('assertThatJson(parsedJson).field("ip").matches("([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])")')
-			test.contains('assertThatJson(parsedJson).field("uuid").matches("[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}")')
-			test.contains('assertThatJson(parsedJson).field("date").matches("(\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])")')
-			test.contains('assertThatJson(parsedJson).field("dateTime").matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])")')
-			test.contains('assertThatJson(parsedJson).field("time").matches("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])")')
-			test.contains('assertThatJson(parsedJson).field("iso8601WithOffset").matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\\\\.\\\\d{3})?(Z|[+-][01]\\\\d:[0-5]\\\\d)")')
-			test.contains('assertThatJson(parsedJson).field("nonBlankString").matches(".*(\\\\S+|\\\\R).*|!^\\\\R*' + endOfLineRegexSymbol + '")')
-			test.contains('assertThatJson(parsedJson).field("nonEmptyString").matches(".+")')
-			test.contains('assertThatJson(parsedJson).field("anyOf").matches("^foo' + endOfLineRegexSymbol + '|^bar' + endOfLineRegexSymbol + '")')
+			test.contains('assertThatJson(parsedJson).field("[\'aBoolean\']").matches("(true|false)")')
+			test.contains('assertThatJson(parsedJson).field("[\'alpha\']").matches("[\\\\p{L}]*")')
+			test.contains('assertThatJson(parsedJson).field("[\'hostname\']").matches("((http[s]?|ftp):/)/?([^:/\\\\s]+)(:[0-9]{1,5})?")')
+			test.contains('assertThatJson(parsedJson).field("[\'url\']").matches("^(?:(?:[A-Za-z][+-.\\\\w^_]*:/{2})?(?:\\\\S+(?::\\\\S*)?@)?(?:(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|(?:(?:[a-z\\\\u00a1-\\\\uffff0-9]-*)*[a-z\\\\u00a1-\\\\uffff0-9]+)(?:\\\\.(?:[a-z\\\\u00a1-\\\\uffff0-9]-*)*[a-z\\\\u00a1-\\\\uffff0-9]+)*(?:\\\\.(?:[a-z\\\\u00a1-\\\\uffff]{2,})))(?::\\\\d{2,5})?(?:/\\\\S*)?)')
+			test.contains('assertThatJson(parsedJson).field("[\'number\']").matches("-?\\\\d*(\\\\.\\\\d+)?")')
+			test.contains('assertThatJson(parsedJson).field("[\'email\']").matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4}")')
+			test.contains('assertThatJson(parsedJson).field("[\'ip\']").matches("([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])")')
+			test.contains('assertThatJson(parsedJson).field("[\'uuid\']").matches("[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}")')
+			test.contains('assertThatJson(parsedJson).field("[\'date\']").matches("(\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])")')
+			test.contains('assertThatJson(parsedJson).field("[\'dateTime\']").matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])")')
+			test.contains('assertThatJson(parsedJson).field("[\'time\']").matches("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])")')
+			test.contains('assertThatJson(parsedJson).field("[\'iso8601WithOffset\']").matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\\\\.\\\\d{3})?(Z|[+-][01]\\\\d:[0-5]\\\\d)")')
+			test.contains('assertThatJson(parsedJson).field("[\'nonBlankString\']").matches(".*(\\\\S+|\\\\R).*|!^\\\\R*' + endOfLineRegexSymbol + '")')
+			test.contains('assertThatJson(parsedJson).field("[\'nonEmptyString\']").matches(".+")')
+			test.contains('assertThatJson(parsedJson).field("[\'anyOf\']").matches("^foo' + endOfLineRegexSymbol + '|^bar' + endOfLineRegexSymbol + '")')
 			!test.contains('cursor')
 			!test.contains('REGEXP>>')
 		and:

@@ -51,7 +51,10 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							dateTime: "2017-01-01T01:23:45",
 							time: "01:02:34",
 							valueWithoutAMatcher: "foo",
-							valueWithTypeMatch: "string"
+							valueWithTypeMatch: "string",
+							key: [
+									'complex.key' : 'foo'
+							]
 					])
 					stubMatchers {
 						jsonPath('$.duck', byRegex("[0-9]{3}"))
@@ -63,6 +66,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 						jsonPath('$.date', byDate())
 						jsonPath('$.dateTime', byTimestamp())
 						jsonPath('$.time', byTime())
+						jsonPath("\$.['key'].['complex.key']", byEquality())
 					}
 					headers {
 						contentType(applicationJson())
@@ -91,6 +95,9 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							],
 							valueWithMinEmpty: [],
 							valueWithMaxEmpty: [],
+							key: [
+							        'complex.key' : 'foo'
+							]
 					])
 					testMatchers {
 						// asserts the jsonpath value against manual regex
@@ -131,6 +138,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 						})
 						// will execute a method `assertThatValueIsANumber`
 						jsonPath('$.duck', byCommand('assertThatValueIsANumber($it)'))
+						jsonPath("\$.['key'].['complex.key']", byEquality())
 					}
 					headers {
 						contentType(applicationJson())
@@ -165,6 +173,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMaxEmpty")).isInstanceOf(java.util.List.class)')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.valueWithMaxEmpty", java.util.Collection.class)).hasSizeLessThanOrEqualTo(0)')
 			test.contains('assertThatValueIsANumber(parsedJson.read("' + rootElement + '.duck")')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '''.['key'].['complex.key']", String.class)).isEqualTo("foo")''')
 			!test.contains('cursor')
 		and:
 			try {

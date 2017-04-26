@@ -126,8 +126,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		when:
 		builder.appendTo(blockBuilder)
 		then:
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").isEqualTo("b")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property2']").isEqualTo("b")""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -160,9 +160,9 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		when:
 		builder.appendTo(blockBuilder)
 		then:
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("true")""")
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").isNull()""")
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property3").isEqualTo(false)""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("true")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property2']").isNull()""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property3']").isEqualTo(false)""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -197,9 +197,9 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		when:
 		builder.appendTo(blockBuilder)
 		then:
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("a").isEqualTo("sth")""")
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("b").isEqualTo("sthElse")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("['property2']").contains("['a']").isEqualTo("sth")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("['property2']").contains("['b']").isEqualTo("sthElse")""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -236,10 +236,10 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		when:
 		builder.appendTo(blockBuilder)
 		then:
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("a").isEqualTo("sth")""")
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").hasSize(2)""")
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("b").isEqualTo("sthElse")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("['property2']").contains("['a']").isEqualTo("sth")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("['property2']").hasSize(2)""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("['property2']").contains("['b']").isEqualTo("sthElse")""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -335,8 +335,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		when:
 		builder.appendTo(blockBuilder)
 		then:
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property").field(7).isEqualTo(0.0)""")
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property").field(14).isEqualTo(0.0)""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property']").field(7).isEqualTo(0.0)""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property']").field(14).isEqualTo(0.0)""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -370,8 +370,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		when:
 		builder.appendTo(blockBuilder)
 		then:
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).array().contains("property2").isEqualTo("b")""")
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).array().contains("property1").isEqualTo("a")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).array().contains("['property2']").isEqualTo("b")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).array().contains("['property1']").isEqualTo("a")""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -404,8 +404,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		when:
 		builder.appendTo(blockBuilder)
 		then:
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property1").contains("property2").isEqualTo("test1")""")
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property1").contains("property3").isEqualTo("test2")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("['property1']").contains("['property2']").isEqualTo("test1")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("['property1']").contains("['property3']").isEqualTo("test2")""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -438,8 +438,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		when:
 		builder.appendTo(blockBuilder)
 		then:
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").field("property3").isEqualTo("b")""")
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property2']").field("['property3']").isEqualTo("b")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -476,8 +476,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		when:
 		builder.appendTo(blockBuilder)
 		then:
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").matches("[0-9]{3}")""")
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property2']").matches("[0-9]{3}")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -510,8 +510,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		when:
 		builder.appendTo(blockBuilder)
 		then:
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").matches("[0-9]{3}")""")
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property2']").matches("[0-9]{3}")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -545,7 +545,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		when:
 		builder.appendTo(blockBuilder)
 		then:
-		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property").matches("\\\\d+")""")
+		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property']").matches("\\\\d+")""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -601,8 +601,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		test.contains('''.queryParam("name","Denis.Stepanov")''')
 		test.contains('''.queryParam("email","bob@email.com")''')
 		test.contains('''.get("/users")''')
-		test.contains('assertThatJson(parsedJson).field("property1").isEqualTo("a")')
-		test.contains('assertThatJson(parsedJson).field("property2").isEqualTo("b")')
+		test.contains('assertThatJson(parsedJson).field("[\'property1\']").isEqualTo("a")')
+		test.contains('assertThatJson(parsedJson).field("[\'property2\']").isEqualTo("b")')
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -659,8 +659,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		test.contains('''.queryParam("name","Denis.Stepanov")''')
 		test.contains('''.queryParam("email","bob@email.com")''')
 		test.contains('''.get("/foo/123456")''')
-		test.contains('assertThatJson(parsedJson).field("property1").isEqualTo("a")')
-		test.contains('assertThatJson(parsedJson).field("property2").isEqualTo("b")')
+		test.contains('assertThatJson(parsedJson).field("[\'property1\']").isEqualTo("a")')
+		test.contains('assertThatJson(parsedJson).field("[\'property2\']").isEqualTo("b")')
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -843,8 +843,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		builder.appendTo(blockBuilder)
 		def test = blockBuilder.toString()
 		then:
-		test.contains("""assertThatJson(parsedJson).array("errors").contains("property").isEqualTo("bank_account_number")""")
-		test.contains("""assertThatJson(parsedJson).array("errors").contains("message").isEqualTo("incorrect_format")""")
+		test.contains("""assertThatJson(parsedJson).array("['errors']").contains("['property']").isEqualTo("bank_account_number")""")
+		test.contains("""assertThatJson(parsedJson).array("['errors']").contains("['message']").isEqualTo("incorrect_format")""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -922,7 +922,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains("""assertThatJson(parsedJson).field("message").matches("User not found by email = \\\\\\\\[[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\\\\\.[a-zA-Z]{2,4}\\\\\\\\]")""")
+			test.contains("""assertThatJson(parsedJson).field("['message']").matches("User not found by email = \\\\\\\\[[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\\\\\.[a-zA-Z]{2,4}\\\\\\\\]")""")
 		and:
 			// no static compilation due to bug in Groovy https://issues.apache.org/jira/browse/GROOVY-8055
 			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
@@ -942,7 +942,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		def test = blockBuilder.toString()
 		then:
 		test.contains('''"email":"abc@abc.com"''')
-		test.contains("""assertThatJson(parsedJson).field("code").matches("(123123)?")""")
+		test.contains("""assertThatJson(parsedJson).field("['code']").matches("(123123)?")""")
 		!test.contains('''REGEXP''')
 		!test.contains('''OPTIONAL''')
 		!test.contains('''OptionalProperty''')
@@ -962,7 +962,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		def test = blockBuilder.toString()
 		then:
 		test.contains('\\"email\\":\\"abc@abc.com\\"')
-		test.contains('assertThatJson(parsedJson).field("code").matches("(123123)?");')
+		test.contains('assertThatJson(parsedJson).field("[\'code\']").matches("(123123)?");')
 		!test.contains('''REGEXP''')
 		!test.contains('''OPTIONAL''')
 		!test.contains('''OptionalProperty''')
@@ -1021,7 +1021,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		}
 		where:
 		methodBuilderName           | methodBuilder                                                               | assertionStrings
-		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ['''assertThatRejectionReasonIsNull(parsedJson.read('$.rejectionReason'))''', '''assertThatLocationIsNull(response.header('Location'))''']
+		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ['''assertThatRejectionReasonIsNull(parsedJson.read(\'\'\'$.rejectionReason\'\'\'))''', '''assertThatLocationIsNull(response.header('Location'))''']
 		"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | ['''assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason"))''', '''assertThatLocationIsNull(response.header("Location"))''']
 	}
 
@@ -1273,7 +1273,7 @@ World.'''"""
 		builder.appendTo(blockBuilder)
 		def test = blockBuilder.toString()
 		then:
-		test.contains('''assertThatJson(parsedJson).array("authorities").arrayField().matches("^[a-zA-Z0-9_\\\\- ]+\\$").value()''')
+		test.contains('''assertThatJson(parsedJson).array("[\'authorities']").arrayField().matches("^[a-zA-Z0-9_\\\\- ]+\\$").value()''')
 		and:
 		SyntaxChecker.tryToCompileGroovy(blockBuilder.toString())
 	}
@@ -1309,7 +1309,7 @@ World.'''"""
 		builder.appendTo(blockBuilder)
 		def test = blockBuilder.toString()
 		then:
-		test.contains('''assertThatJson(parsedJson).array("authorities").arrayField().matches("^[a-zA-Z0-9_\\\\- ]+$").value()''')
+		test.contains('''assertThatJson(parsedJson).array("[\'authorities']").arrayField().matches("^[a-zA-Z0-9_\\\\- ]+$").value()''')
 		and:
 		SyntaxChecker.tryToCompileJava(blockBuilder.toString())
 	}
@@ -1336,7 +1336,7 @@ World.'''"""
 		builder.appendTo(blockBuilder)
 		def test = blockBuilder.toString()
 		then:
-		!test.contains('''assertThatJson(parsedJson).field("rejectionReason").isEqualTo("assertThatRejectionReasonIsNull("''')
+		!test.contains('''assertThatJson(parsedJson).field("[\'rejectionReason']").isEqualTo("assertThatRejectionReasonIsNull("''')
 		test.contains('''assertThatRejectionReasonIsNull(''')
 		where:
 		methodBuilderName           | methodBuilder
@@ -1372,7 +1372,7 @@ World.'''"""
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('assertThatJson(parsedJson).array().contains("id").matches("[0-9]+")')
+			test.contains('assertThatJson(parsedJson).array().contains("[\'id\']").matches("[0-9]+")')
 		and:
 			SyntaxChecker.tryToCompileGroovy(blockBuilder.toString())
 	}
@@ -1539,8 +1539,8 @@ World.'''"""
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('assertThatJson(parsedJson).array("partners").array("payment_methods").arrayField().isEqualTo("BANK").value()')
-			test.contains('assertThatJson(parsedJson).array("partners").array("payment_methods").arrayField().isEqualTo("CASH").value()')
+			test.contains('assertThatJson(parsedJson).array("[\'partners\']").array("[\'payment_methods\']").arrayField().isEqualTo("BANK").value()')
+			test.contains('assertThatJson(parsedJson).array("[\'partners\']").array("[\'payment_methods\']").arrayField().isEqualTo("CASH").value()')
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
@@ -1568,7 +1568,7 @@ World.'''"""
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('assertThatJson(parsedJson).field("message").matches("^(?!\\\\s*\\$).+")')
+			test.contains('assertThatJson(parsedJson).field("[\'message\']").matches("^(?!\\\\s*\\$).+")')
 		and:
 			SyntaxChecker.tryToCompileGroovy(blockBuilder.toString(), false)
 	}
@@ -1660,7 +1660,7 @@ World.'''"""
 			strippedTest.matches(""".*put\\("/foo/[0-9]{5}"\\).*""")
 			strippedTest.contains("""response.header('Content-Type') ==~ java.util.regex.Pattern.compile('application/vnd\\\\.fraud\\\\.v1\\\\+json.*')""")
 			"application/vnd.fraud.v1+json;charset=UTF-8".matches('application/vnd\\.fraud\\.v1\\+json.*')
-			strippedTest.contains("""assertThatJson(parsedJson).field("responseElement").matches("[0-9]{7}")""")
+			strippedTest.contains("""assertThatJson(parsedJson).field("['responseElement']").matches("[0-9]{7}")""")
 		and:
 			SyntaxChecker.tryToCompileGroovy(blockBuilder.toString())
 	}
@@ -1689,7 +1689,7 @@ World.'''"""
 			builder.then(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('assertThatRejectionReasonIsNull(parsedJson.read(\'$.rejectionReason.title\'))')
+			test.contains('assertThatRejectionReasonIsNull(parsedJson.read(\'\'\'$.rejectionReason.title\'\'\'))')
 		when:
 			SyntaxChecker.tryToCompileGroovy(blockBuilder.toString())
 		then:
@@ -1723,8 +1723,8 @@ World.'''"""
 			builder.then(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('''assertThatUserNameIsNotNull(parsedJson.read('$[0].name')''')
-			test.contains('''assertThatUserNameIsNotNull(parsedJson.read('$[1].name')''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read(\'\'\'$.[0].name\'\'\')''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read(\'\'\'$.[1].name\'\'\')''')
 	}
 
 	@Issue('#85')
@@ -1753,8 +1753,8 @@ World.'''"""
 			builder.then(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$[0].name")''')
-			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$[1].name")''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$.[0].name")''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$.[1].name")''')
 	}
 
 	@Issue('#111')
@@ -1937,21 +1937,21 @@ World.'''"""
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('assertThatJson(parsedJson).field("aBoolean").matches("(true|false)")')
-			test.contains('assertThatJson(parsedJson).field("alpha").matches("[\\\\p{L}]*")')
-			test.contains('assertThatJson(parsedJson).field("hostname").matches("((http[s]?|ftp):/)/?([^:/\\\\s]+)(:[0-9]{1,5})?")')
-			test.contains('assertThatJson(parsedJson).field("url").matches("^(?:(?:[A-Za-z][+-.\\\\w^_]*:/{2})?(?:\\\\S+(?::\\\\S*)?@)?(?:(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|(?:(?:[a-z\\\\u00a1-\\\\uffff0-9]-*)*[a-z\\\\u00a1-\\\\uffff0-9]+)(?:\\\\.(?:[a-z\\\\u00a1-\\\\uffff0-9]-*)*[a-z\\\\u00a1-\\\\uffff0-9]+)*(?:\\\\.(?:[a-z\\\\u00a1-\\\\uffff]{2,})))(?::\\\\d{2,5})?(?:/\\\\S*)?)')
-			test.contains('assertThatJson(parsedJson).field("number").matches("-?\\\\d*(\\\\.\\\\d+)?")')
-			test.contains('assertThatJson(parsedJson).field("email").matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4}")')
-			test.contains('assertThatJson(parsedJson).field("ip").matches("([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])")')
-			test.contains('assertThatJson(parsedJson).field("uuid").matches("[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}")')
-			test.contains('assertThatJson(parsedJson).field("date").matches("(\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])')
-			test.contains('assertThatJson(parsedJson).field("dateTime").matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
-			test.contains('assertThatJson(parsedJson).field("time").matches("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])")')
-			test.contains('assertThatJson(parsedJson).field("iso8601WithOffset").matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\\\\.\\\\d{3})?(Z|[+-][01]\\\\d:[0-5]\\\\d)")')
-			test.contains('assertThatJson(parsedJson).field("nonBlankString").matches(".*(\\\\S+|\\\\R).*|!^\\\\R*' + endOfLineRegExSymbol + '")')
-			test.contains('assertThatJson(parsedJson).field("nonEmptyString").matches(".+")')
-			test.contains('assertThatJson(parsedJson).field("anyOf").matches("^foo' + endOfLineRegExSymbol + '|^bar' + endOfLineRegExSymbol + '")')
+			test.contains('assertThatJson(parsedJson).field("[\'aBoolean\']").matches("(true|false)")')
+			test.contains('assertThatJson(parsedJson).field("[\'alpha\']").matches("[\\\\p{L}]*")')
+			test.contains('assertThatJson(parsedJson).field("[\'hostname\']").matches("((http[s]?|ftp):/)/?([^:/\\\\s]+)(:[0-9]{1,5})?")')
+			test.contains('assertThatJson(parsedJson).field("[\'url\']").matches("^(?:(?:[A-Za-z][+-.\\\\w^_]*:/{2})?(?:\\\\S+(?::\\\\S*)?@)?(?:(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|(?:(?:[a-z\\\\u00a1-\\\\uffff0-9]-*)*[a-z\\\\u00a1-\\\\uffff0-9]+)(?:\\\\.(?:[a-z\\\\u00a1-\\\\uffff0-9]-*)*[a-z\\\\u00a1-\\\\uffff0-9]+)*(?:\\\\.(?:[a-z\\\\u00a1-\\\\uffff]{2,})))(?::\\\\d{2,5})?(?:/\\\\S*)?)')
+			test.contains('assertThatJson(parsedJson).field("[\'number\']").matches("-?\\\\d*(\\\\.\\\\d+)?")')
+			test.contains('assertThatJson(parsedJson).field("[\'email\']").matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4}")')
+			test.contains('assertThatJson(parsedJson).field("[\'ip\']").matches("([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])")')
+			test.contains('assertThatJson(parsedJson).field("[\'uuid\']").matches("[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}")')
+			test.contains('assertThatJson(parsedJson).field("[\'date\']").matches("(\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])')
+			test.contains('assertThatJson(parsedJson).field("[\'dateTime\']").matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
+			test.contains('assertThatJson(parsedJson).field("[\'time\']").matches("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])")')
+			test.contains('assertThatJson(parsedJson).field("[\'iso8601WithOffset\']").matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\\\\.\\\\d{3})?(Z|[+-][01]\\\\d:[0-5]\\\\d)")')
+			test.contains('assertThatJson(parsedJson).field("[\'nonBlankString\']").matches(".*(\\\\S+|\\\\R).*|!^\\\\R*' + endOfLineRegExSymbol + '")')
+			test.contains('assertThatJson(parsedJson).field("[\'nonEmptyString\']").matches(".+")')
+			test.contains('assertThatJson(parsedJson).field("[\'anyOf\']").matches("^foo' + endOfLineRegExSymbol + '|^bar' + endOfLineRegExSymbol + '")')
 			!test.contains('cursor')
 			!test.contains('REGEXP>>')
 		and:
@@ -2065,7 +2065,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			!test.contains('assertThatJson(parsedJson).field("a").isEqualTo(1)')
+			!test.contains('assertThatJson(parsedJson).field("[\'a\']").isEqualTo(1)')
 			test.contains(expectedAssertion)
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
@@ -2102,8 +2102,8 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-//			test.contains('assertThatJson(parsedJson).field("bar").matches("some value \\"with quote\\"|bar")')
-//		and:
+			test.contains('assertThatJson(parsedJson).field("[\'bar\']").matches("some value \\"with quote\\"|bar")')
+		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 			//order is inverted cause Intellij didn't parse this properly
@@ -2171,8 +2171,8 @@ DocumentContext parsedJson = JsonPath.parse(json);
 		when:
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		then:
-			test.contains('assertThatJson(parsedJson).array("list").isEmpty()')
-			!test.contains('assertThatJson(parsedJson).array("foo").isEmpty()')
+			test.contains('assertThatJson(parsedJson).array("[\'list\']").isEmpty()')
+			!test.contains('assertThatJson(parsedJson).array("[\'foo\']").isEmpty()')
 		where:
 			methodBuilderName                                    | methodBuilder
 			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -2260,15 +2260,15 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
 		then:
 			!test.contains('''DslProperty''')
-			test.contains('''assertThatJson(parsedJson).field("url").isEqualTo("/api/v1/xxxx")''')
-			test.contains('''assertThatJson(parsedJson).field("fullBody").isEqualTo("{\\"foo\\":\\"bar\\",\\"baz\\":5}")''')
-			test.contains('''assertThatJson(parsedJson).field("paramIndex").isEqualTo("bar2")''')
-			test.contains('''assertThatJson(parsedJson).field("responseFoo").isEqualTo("bar")''')
-			test.contains('''assertThatJson(parsedJson).field("authorization").isEqualTo("secret")''')
-			test.contains('''assertThatJson(parsedJson).field("authorization2").isEqualTo("secret2")''')
-			test.contains('''assertThatJson(parsedJson).field("responseBaz").isEqualTo(5)''')
-			test.contains('''assertThatJson(parsedJson).field("responseBaz2").isEqualTo("Bla bla bar bla bla")''')
-			test.contains('''assertThatJson(parsedJson).field("param").isEqualTo("bar")''')
+			test.contains('''assertThatJson(parsedJson).field("['url']").isEqualTo("/api/v1/xxxx")''')
+			test.contains('''assertThatJson(parsedJson).field("['fullBody']").isEqualTo("{\\"foo\\":\\"bar\\",\\"baz\\":5}")''')
+			test.contains('''assertThatJson(parsedJson).field("['paramIndex']").isEqualTo("bar2")''')
+			test.contains('''assertThatJson(parsedJson).field("['responseFoo']").isEqualTo("bar")''')
+			test.contains('''assertThatJson(parsedJson).field("['authorization']").isEqualTo("secret")''')
+			test.contains('''assertThatJson(parsedJson).field("['authorization2']").isEqualTo("secret2")''')
+			test.contains('''assertThatJson(parsedJson).field("['responseBaz']").isEqualTo(5)''')
+			test.contains('''assertThatJson(parsedJson).field("['responseBaz2']").isEqualTo("Bla bla bar bla bla")''')
+			test.contains('''assertThatJson(parsedJson).field("['param']").isEqualTo("bar")''')
 			responseAssertion(test)
 		where:
 			methodBuilderName                                    | methodBuilder                                                                               | responseAssertion

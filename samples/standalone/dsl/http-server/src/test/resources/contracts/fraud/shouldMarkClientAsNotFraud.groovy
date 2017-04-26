@@ -6,7 +6,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 					url '/fraudcheck'
 					body("""
 						{
-						"clientId":"${value(consumer(regex('[0-9]{10}')), producer('1234567890'))}",
+						"client.id":"${value(consumer(regex('[0-9]{10}')), producer('1234567890'))}",
 						"loanAmount":123.123
 						}
 					"""
@@ -20,7 +20,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 				status 200
 				body(
 						fraudCheckStatus: "OK",
-						rejectionReason: $(consumer(null), producer(execute('assertThatRejectionReasonIsNull($it)')))
+						"rejection.reason": $(consumer(null), producer(execute('assertThatRejectionReasonIsNull($it)')))
 				)
 				headers {
 					contentType("application/json")

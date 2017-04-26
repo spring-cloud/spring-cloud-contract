@@ -23,7 +23,7 @@ repositories {
 }
 
 apply plugin: 'groovy'
-apply plugin: 'spring-boot'
+apply plugin: 'org.springframework.boot'
 apply plugin: 'maven-publish'
 
 dependencyManagement {

@@ -1,9 +1,12 @@
 package com.example.loan.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 
 public class FraudServiceRequest {
 
+	@JsonProperty("client.id")
 	private String clientId;
 
 	private BigDecimal loanAmount;
