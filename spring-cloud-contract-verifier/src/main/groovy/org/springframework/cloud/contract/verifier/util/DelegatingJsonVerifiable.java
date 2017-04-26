@@ -82,11 +82,12 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 	@Override
 	public MethodBufferingJsonVerifiable field(Object value) {
 		Object valueToPut = value instanceof ShouldTraverse ? ((ShouldTraverse) value).value : value;
-		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(this.delegate.field(valueToPut), this.methodsBuffer);
+		Object wrappedValue = wrapInBrackets(valueToPut);
+		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(this.delegate.field(wrappedValue), this.methodsBuffer);
 		if (this.delegate.isIteratingOverArray() && !(value instanceof ShouldTraverse)) {
-			verifiable.appendMethodWithQuotedValue("contains", wrapInBrackets(valueToPut));
+			verifiable.appendMethodWithQuotedValue("contains", wrappedValue);
 		} else {
-			verifiable.appendMethodWithQuotedValue("field", wrapInBrackets(valueToPut));
+			verifiable.appendMethodWithQuotedValue("field", wrappedValue);
 		}
 		return verifiable;
 	}
@@ -102,15 +103,17 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 
 	@Override
 	public MethodBufferingJsonVerifiable array(Object value) {
-		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(this.delegate.array(value), this.methodsBuffer);
-		verifiable.appendMethodWithQuotedValue("array", wrapInBrackets(value));
+		Object valueToPut = wrapInBrackets(value);
+		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(this.delegate.array(valueToPut), this.methodsBuffer);
+		verifiable.appendMethodWithQuotedValue("array", valueToPut);
 		return verifiable;
 	}
 
 	@Override
 	public MethodBufferingJsonVerifiable arrayField(Object value) {
-		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(this.delegate.field(value).arrayField(), this.methodsBuffer);
-		verifiable.appendMethodWithQuotedValue("array", wrapInBrackets(value));
+		Object valueToPut = wrapInBrackets(value);
+		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(this.delegate.field(valueToPut).arrayField(), this.methodsBuffer);
+		verifiable.appendMethodWithQuotedValue("array", valueToPut);
 		return verifiable;
 	}
 

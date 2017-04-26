@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.verifier.dsl
 
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubStrategy
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.AssertionUtil
@@ -257,7 +258,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"urlPattern" : "/[0-9]{2}",
 	"method" : "GET",
 	"bodyPatterns" : [ {
-	  "matchesJsonPath" : "$[?(@.name == 'Jan')]"
+	  "matchesJsonPath" : "$[?(@.['name'] == 'Jan')]"
 	} ]
   },
   "response" : {
@@ -305,13 +306,13 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"urlPattern" : "/[0-9]{2}",
 	"method" : "GET",
 	"bodyPatterns" : [ {
-	  "matchesJsonPath" : "$[?(@.created == '2014-02-02 12:23:43')]"
+	  "matchesJsonPath" : "$[?(@.['created'] == '2014-02-02 12:23:43')]"
 	}, {
-	  "matchesJsonPath" : "$[?(@.surname =~ /[a-zA-Z]+/)]"
+	  "matchesJsonPath" : "$[?(@.['surname'] =~ /[a-zA-Z]+/)]"
 	}, {
-	  "matchesJsonPath" : "$[?(@.name == 'Jan')]"
+	  "matchesJsonPath" : "$[?(@.['name'] == 'Jan')]"
 	}, {
-	  "matchesJsonPath" : "$[?(@.id =~ /[0-9]+/)]"
+	  "matchesJsonPath" : "$[?(@.['id'] =~ /[0-9]+/)]"
 	} ]
   },
   "response" : {
@@ -351,7 +352,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"url" : "/users",
 	"method" : "GET",
 	"bodyPatterns" : [ {
-	  "matchesJsonPath" : "$[?(@.name == 'Jan')]"
+	  "matchesJsonPath" : "$[?(@.['name'] == 'Jan')]"
 	} ],
 	"headers" : {
 	  "Content-Type" : {
@@ -589,7 +590,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"urlPattern" : "/[0-9]{2}",
 	"method" : "GET",
 	"bodyPatterns" : [ {
-	  "matchesJsonPath" : "$[?(@.personalId =~ /^[0-9]{11}$/)]"
+	  "matchesJsonPath" : "$[?(@.['personalId'] =~ /^[0-9]{11}$/)]"
 	} ]
   },
   "response" : {
@@ -644,9 +645,9 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"url" : "/fraudcheck",
 	"method" : "PUT",
 	"bodyPatterns" : [ {
-	  "matchesJsonPath" : "$[?(@.loanAmount == 123.123)]"
+	  "matchesJsonPath" : "$[?(@.['loanAmount'] == 123.123)]"
 	}, {
-	  "matchesJsonPath" : "$[?(@.clientPesel =~ /[0-9]{10}/)]"
+	  "matchesJsonPath" : "$[?(@.['clientPesel'] =~ /[0-9]{10}/)]"
 	} ],
 	"headers" : {
 	  "Content-Type" : {
@@ -1032,17 +1033,17 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"urlPattern" : "/[0-9]{2}",
 	"method" : "GET",
 	"bodyPatterns" : [ {
-	  "matchesJsonPath" : "$.errors[*][?(@.propertyName =~ /[0-9]{2}/)]"
+	  "matchesJsonPath" : "$.['errors'][*][?(@.['propertyName'] =~ /[0-9]{2}/)]"
 	}, {
-	  "matchesJsonPath" : "$.errors[*][?(@.providerValue == 'Test')]"
+	  "matchesJsonPath" : "$.['errors'][*][?(@.['providerValue'] == 'Test')]"
 	}, {
-	  "matchesJsonPath" : "$[?(@.lastName =~ /.*/)]"
+	  "matchesJsonPath" : "$[?(@.['lastName'] =~ /.*/)]"
 	}, {
-	  "matchesJsonPath" : "$[?(@.firstName =~ /.*/)]"
+	  "matchesJsonPath" : "$[?(@.['firstName'] =~ /.*/)]"
 	}, {
-	  "matchesJsonPath" : "$[?(@.birthDate =~ /[0-9]{4}-[0-9]{2}-[0-9]{2}/)]"
+	  "matchesJsonPath" : "$[?(@.['birthDate'] =~ /[0-9]{4}-[0-9]{2}-[0-9]{2}/)]"
 	}, {
-	  "matchesJsonPath" : "$[?(@.personalId =~ /[0-9]{11}/)]"
+	  "matchesJsonPath" : "$[?(@.['personalId'] =~ /[0-9]{11}/)]"
 	}]
   },
   "response" : {
@@ -1092,17 +1093,17 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"url" : "/reissue-payment-order",
 	"method" : "POST",
 	"bodyPatterns" : [ {
-	  "matchesJsonPath" : "$[?(@.loanNumber == '999997001')]"
+	  "matchesJsonPath" : "$[?(@.['loanNumber'] == '999997001')]"
 	}, {
-	  "matchesJsonPath" : "$[?(@.username =~ /.*/)]"
+	  "matchesJsonPath" : "$[?(@.['username'] =~ /.*/)]"
 	}, {
-	  "matchesJsonPath" : "$[?(@.amount =~ /[0-9.]+/)]"
+	  "matchesJsonPath" : "$[?(@.['amount'] =~ /[0-9.]+/)]"
 	}, {
-	  "matchesJsonPath" : "$[?(@.cardId == 1)]"
+	  "matchesJsonPath" : "$[?(@.['cardId'] == 1)]"
 	}, {
-	  "matchesJsonPath" : "$[?(@.currency == 'DKK')]"
+	  "matchesJsonPath" : "$[?(@.['currency'] == 'DKK')]"
 	}, {
-	  "matchesJsonPath" : "$[?(@.applicationName =~ /.*/)]"
+	  "matchesJsonPath" : "$[?(@.['applicationName'] =~ /.*/)]"
 	} ]
   },
   "response" : {
@@ -1201,7 +1202,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
   "request" : {
 	"method" : "POST",
 	"bodyPatterns" : [ {
-	  "matchesJsonPath" : "$[?(@.property == 'value')]"
+	  "matchesJsonPath" : "$[?(@.['property'] == 'value')]"
 	} ]
   },
   "response" : {
@@ -1285,9 +1286,9 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			"url" : "/users/password",
 			"method" : "POST",
 			"bodyPatterns" : [ {
-			  "matchesJsonPath" : "$[?(@.callback_url =~ /((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?/)]"
+			  "matchesJsonPath" : "$[?(@.['callback_url'] =~ /((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?/)]"
 			}, {
-			  "matchesJsonPath" : "$[?(@.email =~ /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4}/)]"
+			  "matchesJsonPath" : "$[?(@.['email'] =~ /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4}/)]"
 			} ],
 			"headers" : {
 			  "Content-Type" : {
@@ -1336,7 +1337,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			"urlPattern" : "/partners/^[0-9]*$/agents/11/customers/09665703Z",
 			"method" : "PUT",
 			"bodyPatterns" : [ {
-			  "matchesJsonPath" : "$[?(@.first_name == 'Josef')]"
+			  "matchesJsonPath" : "$[?(@.['first_name'] == 'Josef')]"
 			} ],
 			"headers" : {
 			  "Content-Type" : {
@@ -1364,9 +1365,9 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				"url" : "/users/password",
 				"method" : "POST",
 				"bodyPatterns" : [ {
-				  "matchesJsonPath" : "$[?(@.callback_url =~ /((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?/)]"
+				  "matchesJsonPath" : "$[?(@.['callback_url'] =~ /((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?/)]"
 				}, {
-				  "matchesJsonPath" : "$[?(@.email =~ /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4})?/)]"
+				  "matchesJsonPath" : "$[?(@.['email'] =~ /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4})?/)]"
 				} ],
 				"headers" : {
 				  "Content-Type" : {
@@ -1631,5 +1632,54 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			def json = new WireMockStubStrategy("Test", new ContractMetadata(null, true, 0, null), groovyDsl).toWireMockClientStub()
 		then:
 			json == ''
+	}
+
+	@Issue('#269')
+	def "should create a stub for dot separated keys"() {
+		given:
+			Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
+			request {
+				method 'PUT'
+				url '/fraudcheck'
+				body([ // (4)
+					   "client.id": $(regex('[0-9]{10}')),
+					   loanAmount: 99999
+				])
+				headers {
+					contentType('application/vnd.fraud.v1+json')
+				}
+			}
+			response {
+				status 200
+			}
+		}
+		when:
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null), groovyDsl).toWireMockClientStub()
+		then:
+			AssertionUtil.assertThatJsonsAreEqual('''
+				{
+				  "request" : {
+					  "url" : "/fraudcheck",
+					  "method" : "PUT",
+					  "headers" : {
+						"Content-Type" : {
+						  "matches" : "application/vnd\\\\.fraud\\\\.v1\\\\+json.*"
+						}
+					  },
+					  "bodyPatterns" : [ {
+						"matchesJsonPath" : "$[?(@.['loanAmount'] == 99999)]"
+					  }, {
+						"matchesJsonPath" : "$[?(@.['client.id'] =~ /[0-9]{10}/)]"
+					  } ]
+					}
+				  },
+				  "response" : {
+					"status" : 200
+				  }
+				}
+				''', wireMockStub)
+		and:
+			stubMappingIsValidWireMockStub(wireMockStub)
+
 	}
 }

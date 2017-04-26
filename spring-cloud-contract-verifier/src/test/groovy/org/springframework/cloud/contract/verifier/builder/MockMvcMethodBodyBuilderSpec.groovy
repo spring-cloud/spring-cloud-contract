@@ -1022,7 +1022,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		}
 		where:
 		methodBuilderName           | methodBuilder                                                               | assertionStrings
-		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ['''assertThatRejectionReasonIsNull(parsedJson.read('$.rejectionReason'))''', '''assertThatLocationIsNull(response.header('Location'))''']
+		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ['''assertThatRejectionReasonIsNull(parsedJson.read(\'\'\'$.rejectionReason\'\'\'))''', '''assertThatLocationIsNull(response.header('Location'))''']
 		"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | ['''assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason"))''', '''assertThatLocationIsNull(response.header("Location"))''']
 	}
 
@@ -1690,7 +1690,7 @@ World.'''"""
 			builder.then(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('assertThatRejectionReasonIsNull(parsedJson.read(\'$.rejectionReason.title\'))')
+			test.contains('assertThatRejectionReasonIsNull(parsedJson.read(\'\'\'$.rejectionReason.title\'\'\'))')
 		when:
 			SyntaxChecker.tryToCompileGroovy(blockBuilder.toString())
 		then:
@@ -1724,8 +1724,8 @@ World.'''"""
 			builder.then(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('''assertThatUserNameIsNotNull(parsedJson.read('$[0].name')''')
-			test.contains('''assertThatUserNameIsNotNull(parsedJson.read('$[1].name')''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read(\'\'\'$.[0].name\'\'\')''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read(\'\'\'$.[1].name\'\'\')''')
 	}
 
 	@Issue('#85')
@@ -1754,8 +1754,8 @@ World.'''"""
 			builder.then(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$[0].name")''')
-			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$[1].name")''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$.[0].name")''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$.[1].name")''')
 	}
 
 	@Issue('#111')

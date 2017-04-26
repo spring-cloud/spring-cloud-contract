@@ -1,9 +1,12 @@
 package com.example.loan.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class FraudServiceResponse {
 
 	private FraudCheckStatus fraudCheckStatus;
 
+	@JsonProperty("rejection.reason")
 	private String rejectionReason;
 
 	public FraudServiceResponse() {

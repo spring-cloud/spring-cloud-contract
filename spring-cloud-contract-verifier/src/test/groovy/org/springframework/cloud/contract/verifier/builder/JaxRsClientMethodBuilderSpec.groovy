@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+import com.jayway.jsonpath.DocumentContext
+import com.jayway.jsonpath.JsonPath
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.dsl.WireMockStubVerifier
@@ -780,6 +782,20 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			test.contains('assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason.title"));')
 	}
 
+	String sampleJson = '''
+
+  [
+    {
+      "name"  : "iPhone",
+      "number": "0123-4567-8888"
+    },
+    {
+      "name"  : "home",
+      "number": "0123-4567-8910"
+    }
+  ]
+'''
+
 	@Issue('#85')
 	def "should execute custom method for more complex structures on the response side when using Spock"() {
 		given:
@@ -806,8 +822,11 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$[0].name")''')
-			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$[1].name")''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$.[0].name")''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$.[1].name")''')
+		and:
+			DocumentContext context = JsonPath.parse(sampleJson)
+			context.read('$.[0].name') == 'iPhone'
 	}
 
 	@Issue('#85')
@@ -836,8 +855,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			builder.then(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$[0].name")''')
-			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$[1].name")''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$.[0].name")''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$.[1].name")''')
 	}
 
 	@Issue('#150')

@@ -68,7 +68,7 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	@Override
 	protected void processBodyElement(BlockBuilder blockBuilder, String property, Map.Entry entry) {
-		processBodyElement(blockBuilder, property + "." + entry.key, entry.value)
+		processBodyElement(blockBuilder, property, property + "." + entry.key, entry.value)
 	}
 
 	@Override
