@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -33,6 +34,7 @@ import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubFinder;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 
 /**
  * JUnit class rule that allows you to download the provided stubs.
@@ -45,6 +47,7 @@ public class StubRunnerRule implements TestRule, StubFinder {
 
 	private final StubRunnerOptionsBuilder stubRunnerOptionsBuilder = new StubRunnerOptionsBuilder(defaultStubRunnerOptions());
 	private BatchStubRunner stubFinder;
+	private MessageVerifier verifier = new ExceptionThrowingMessageVerifier();
 
 	@Override
 	public Statement apply(final Statement base, Description description) {
@@ -58,7 +61,8 @@ public class StubRunnerRule implements TestRule, StubFinder {
 
 			private void before() {
 				StubRunnerRule.this.stubFinder = new BatchStubRunnerFactory(
-						StubRunnerRule.this.stubRunnerOptionsBuilder.build()).buildBatchStubRunner();
+						StubRunnerRule.this.stubRunnerOptionsBuilder.build(),
+						StubRunnerRule.this.verifier).buildBatchStubRunner();
 				StubRunnerRule.this.stubFinder.runStubs();
 			}
 		};
@@ -79,6 +83,16 @@ public class StubRunnerRule implements TestRule, StubFinder {
 			builder.withProxy(proxyHost, Integer.parseInt(System.getProperty("stubrunner.proxy.port")));
 		}
 		return builder.build();
+	}
+
+	/**
+	 * Pass the {@link MessageVerifier} that this rule should use.
+	 * If you don't pass anything a {@link ExceptionThrowingMessageVerifier} will be used.
+	 * That means that an exception will be thrown whenever you try to do sth messaging related.
+	 */
+	public StubRunnerRule messageVerifier(MessageVerifier messageVerifier) {
+		this.verifier = messageVerifier;
+		return this;
 	}
 
 	/**
@@ -209,22 +223,57 @@ public class StubRunnerRule implements TestRule, StubFinder {
 
 	@Override
 	public boolean trigger(String ivyNotation, String labelName) {
-		return this.stubFinder.trigger(ivyNotation, labelName);
+		boolean result = this.stubFinder.trigger(ivyNotation, labelName);
+		if (!result) {
+			throw new IllegalStateException("Failed to trigger a message with notation [" + ivyNotation + "] and label [" + labelName + "]");
+		}
+		return result;
 	}
 
 	@Override
 	public boolean trigger(String labelName) {
-		return this.stubFinder.trigger(labelName);
+		boolean result = this.stubFinder.trigger(labelName);
+		if (!result) {
+			throw new IllegalStateException("Failed to trigger a message with label [" + labelName + "]");
+		}
+		return result;
 	}
 
 	@Override
 	public boolean trigger() {
-		return this.stubFinder.trigger();
+		boolean result = this.stubFinder.trigger();
+		if (!result) {
+			throw new IllegalStateException("Failed to trigger a message");
+		}
+		return result;
 	}
 
 	@Override
 	public Map<String, Collection<String>> labels() {
 		return this.stubFinder.labels();
+	}
+
+
+	static class ExceptionThrowingMessageVerifier implements MessageVerifier {
+
+		private static final String EXCEPTION_MESSAGE = "Please provide a custom MessageVerifier to use this feature";
+
+		@Override public void send(Object message, String destination) {
+			throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
+		}
+
+		@Override public Object receive(String destination, long timeout,
+				TimeUnit timeUnit) {
+			throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
+		}
+
+		@Override public Object receive(String destination) {
+			throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
+		}
+
+		@Override public void send(Object payload, Map headers, String destination) {
+			throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
+		}
 	}
 
 }

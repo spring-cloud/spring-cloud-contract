@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
+import groovy.json.JsonOutput;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,8 +37,6 @@ import org.springframework.cloud.contract.stubrunner.AvailablePortScanner.PortCa
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.cloud.contract.verifier.util.BodyExtractor;
-
-import groovy.json.JsonOutput;
 
 /**
  * Runs stubs for a particular {@link StubServer}
@@ -165,7 +165,7 @@ class StubRunnerExecutor implements StubFinder {
 	private boolean triggerForDsls(Collection<Contract> dsls, String labelName) {
 		Collection<Contract> matchingDsls = new ArrayList<>();
 		for (Contract contract : dsls) {
-			if (labelName.equals(contract.getLabel())) {
+			if (labelName.equals(contract.getLabel()) && contract.getOutputMessage() != null) {
 				matchingDsls.add(contract);
 			}
 		}
@@ -173,7 +173,7 @@ class StubRunnerExecutor implements StubFinder {
 			return false;
 		}
 		for (Contract contract : matchingDsls) {
-			sendMessageIfApplicable(contract);
+			sendMessage(contract);
 		}
 		return true;
 	}
@@ -182,10 +182,17 @@ class StubRunnerExecutor implements StubFinder {
 	public boolean trigger() {
 		Collection<Contract> matchingContracts = new ArrayList<>();
 		for (Collection<Contract> it : getContracts().values()) {
-			matchingContracts.addAll(it);
+			for (Contract contract : it) {
+				if (contract.getOutputMessage() != null) {
+					matchingContracts.add(contract);
+				}
+			}
+		}
+		if (matchingContracts.isEmpty()) {
+			return false;
 		}
 		for (Contract contract : matchingContracts) {
-			sendMessageIfApplicable(contract);
+			sendMessage(contract);
 		}
 		return true;
 	}
@@ -205,11 +212,8 @@ class StubRunnerExecutor implements StubFinder {
 		return labels;
 	}
 
-	private void sendMessageIfApplicable(Contract groovyDsl) {
+	private void sendMessage(Contract groovyDsl) {
 		OutputMessage outputMessage = groovyDsl.getOutputMessage();
-		if (outputMessage == null) {
-			return;
-		}
 		DslProperty<?> body = outputMessage.getBody();
 		Headers headers = outputMessage.getHeaders();
 		this.contractVerifierMessaging.send(
