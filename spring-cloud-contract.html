@@ -1070,7 +1070,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 		method 'PUT' // (2)
 		url '/fraudcheck' // (3)
 		body([ // (4)
-			   clientId: $(regex('[0-9]{10}')),
+			   "client.id": $(regex('[0-9]{10}')),
 			   loanAmount: 99999
 		])
 		headers { // (5)
@@ -1081,7 +1081,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 		status 200 // (7)
 		body([ // (8)
 			   fraudCheckStatus: "FRAUD",
-			   rejectionReason: "Amount too high"
+			   "rejection.reason": "Amount too high"
 		])
 		headers { // (9)
 			contentType('application/json')
@@ -1178,7 +1178,7 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
     // given:
         MockMvcRequestSpecification request = given()
                 .header("Content-Type", "application/vnd.fraud.v1+json")
-                .body("{\"clientPesel\":\"1234567890\",\"loanAmount\":99999}");
+                .body("{\"client.id\":\"1234567890\",\"loanAmount\":99999}");
 
     // when:
         ResponseOptions response = given().spec(request)
@@ -1189,8 +1189,8 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
         assertThat(response.header("Content-Type")).matches("application/vnd.fraud.v1.json.*");
     // and:
         DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
-        assertThatJson(parsedJson).field("fraudCheckStatus").matches("[A-Z]{5}");
-        assertThatJson(parsedJson).field("rejectionReason").isEqualTo("Amount too high");
+        assertThatJson(parsedJson).field("['fraudCheckStatus']").matches("[A-Z]{5}");
+        assertThatJson(parsedJson).field("['rejection.reason']").isEqualTo("Amount too high");
 }</code></pre>
 </div>
 </div>
@@ -1389,7 +1389,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 		method 'PUT' // (2)
 		url '/fraudcheck' // (3)
 		body([ // (4)
-			   clientId: $(regex('[0-9]{10}')),
+			   "client.id": $(regex('[0-9]{10}')),
 			   loanAmount: 99999
 		])
 		headers { // (5)
@@ -1400,7 +1400,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 		status 200 // (7)
 		body([ // (8)
 			   fraudCheckStatus: "FRAUD",
-			   rejectionReason: "Amount too high"
+			   "rejection.reason": "Amount too high"
 		])
 		headers { // (9)
 			contentType('application/json')
@@ -1477,7 +1477,7 @@ It&#8217;s really important that you understand the map notation to set up contr
 <p>a method <code>PUT</code> on an endpoint <code>/fraudcheck</code></p>
 </li>
 <li>
-<p>JSON body with <code>clientPesel</code> matching the regular expression <code>[0-9]{10}</code> and <code>loanAmount</code> equal to <code>99999</code></p>
+<p>JSON body with <code>client.id</code> matching the regular expression <code>[0-9]{10}</code> and <code>loanAmount</code> equal to <code>99999</code></p>
 </li>
 <li>
 <p>and with a header <code>Content-Type</code> equal to <code>application/vnd.fraud.v1+json</code></p>
@@ -1800,7 +1800,7 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
     // given:
         MockMvcRequestSpecification request = given()
                 .header("Content-Type", "application/vnd.fraud.v1+json")
-                .body("{\"clientPesel\":\"1234567890\",\"loanAmount\":99999}");
+                .body("{\"client.id\":\"1234567890\",\"loanAmount\":99999}");
 
     // when:
         ResponseOptions response = given().spec(request)
@@ -1811,8 +1811,8 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
         assertThat(response.header("Content-Type")).matches("application/vnd.fraud.v1.json.*");
     // and:
         DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
-        assertThatJson(parsedJson).field("fraudCheckStatus").matches("[A-Z]{5}");
-        assertThatJson(parsedJson).field("rejectionReason").isEqualTo("Amount too high");
+        assertThatJson(parsedJson).field("['fraudCheckStatus']").matches("[A-Z]{5}");
+        assertThatJson(parsedJson).field("['rejection.reason']").isEqualTo("Amount too high");
 }</code></pre>
 </div>
 </div>
@@ -6656,7 +6656,7 @@ String nonBlank() {
   response.header('Content-Type')  == 'application/json'
  and:
   DocumentContext parsedJson = JsonPath.parse(response.body.asString())
-  assertThatJson(parsedJson).field("code").matches("(123123)?")
+  assertThatJson(parsedJson).field("['code']").matches("(123123)?")
 """</code></pre>
 </div>
 </div>
@@ -6671,9 +6671,9 @@ String nonBlank() {
     "url" : "/users/password",
     "method" : "POST",
     "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[?(@.email =~ /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4})?/)]"
+      "matchesJsonPath" : "$[?(@.['email'] =~ /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4})?/)]"
     }, {
-      "matchesJsonPath" : "$[?(@.callback_url =~ /((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?/)]"
+      "matchesJsonPath" : "$[?(@.['callback_url'] =~ /((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?/)]"
     } ],
     "headers" : {
       "Content-Type" : {
@@ -7044,7 +7044,10 @@ will result in calling a <code>foo</code> method to which the value matching the
 				dateTime: "2017-01-01T01:23:45",
 				time: "01:02:34",
 				valueWithoutAMatcher: "foo",
-				valueWithTypeMatch: "string"
+				valueWithTypeMatch: "string",
+				key: [
+						'complex.key' : 'foo'
+				]
 		])
 		stubMatchers {
 			jsonPath('$.duck', byRegex("[0-9]{3}"))
@@ -7056,6 +7059,7 @@ will result in calling a <code>foo</code> method to which the value matching the
 			jsonPath('$.date', byDate())
 			jsonPath('$.dateTime', byTimestamp())
 			jsonPath('$.time', byTime())
+			jsonPath("\$.['key'].['complex.key']", byEquality())
 		}
 		headers {
 			contentType(applicationJson())
@@ -7084,6 +7088,9 @@ will result in calling a <code>foo</code> method to which the value matching the
 				],
 				valueWithMinEmpty: [],
 				valueWithMaxEmpty: [],
+				key: [
+				        'complex.key' : 'foo'
+				]
 		])
 		testMatchers {
 			// asserts the jsonpath value against manual regex
@@ -7124,6 +7131,7 @@ will result in calling a <code>foo</code> method to which the value matching the
 			})
 			// will execute a method `assertThatValueIsANumber`
 			jsonPath('$.duck', byCommand('assertThatValueIsANumber($it)'))
+			jsonPath("\$.['key'].['complex.key']", byEquality())
 		}
 		headers {
 			contentType(applicationJson())
@@ -7222,15 +7230,15 @@ assertions and the one from matchers with an <code>and</code> section):</p>
       }
     },
     "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[?(@.valueWithoutAMatcher == 'foo')]"
+      "matchesJsonPath" : "$[?(@.['valueWithoutAMatcher'] == 'foo')]"
     }, {
-      "matchesJsonPath" : "$[?(@.valueWithTypeMatch == 'string')]"
+      "matchesJsonPath" : "$[?(@.['valueWithTypeMatch'] == 'string')]"
     }, {
-      "matchesJsonPath" : "$.list.some.nested[?(@.anothervalue == 4)]"
+      "matchesJsonPath" : "$.['list'].['some'].['nested'][?(@.['anothervalue'] == 4)]"
     }, {
-      "matchesJsonPath" : "$.list.someother.nested[?(@.anothervalue == 4)]"
+      "matchesJsonPath" : "$.['list'].['someother'].['nested'][?(@.['anothervalue'] == 4)]"
     }, {
-      "matchesJsonPath" : "$.list.someother.nested[?(@.json == 'with value')]"
+      "matchesJsonPath" : "$.['list'].['someother'].['nested'][?(@.['json'] == 'with value')]"
     }, {
       "matchesJsonPath" : "$[?(@.duck =~ /([0-9]{3})/)]"
     }, {
@@ -7308,7 +7316,7 @@ assertions and the one from matchers with an <code>and</code> section):</p>
   assertThat(response.getStatus()).isEqualTo(200);
  // and:
   DocumentContext parsedJson = JsonPath.parse(responseAsString);
-  assertThatJson(parsedJson).field("property1").isEqualTo("a");
+  assertThatJson(parsedJson).field("['property1']").isEqualTo("a");
 '''</code></pre>
 </div>
 </div>
