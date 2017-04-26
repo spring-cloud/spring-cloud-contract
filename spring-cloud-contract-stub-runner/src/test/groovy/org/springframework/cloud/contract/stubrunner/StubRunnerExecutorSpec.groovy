@@ -116,6 +116,21 @@ class StubRunnerExecutorSpec extends Specification {
 			executor.shutdown()
 	}
 
+	def 'should return false if no messages are found'() {
+		given:
+			def stubConf = new StubConfiguration('asd', 'asd', 'asd', '')
+			StubRunnerExecutor executor = new StubRunnerExecutor(portScanner)
+		when:
+			executor.runStubs(stubRunnerOptions,
+					new StubRepository(new File('src/test/resources/repository/httpcontract')), stubConf)
+		then:
+			!executor.trigger()
+			!executor.trigger("missing", "label")
+			!executor.trigger("label")
+		cleanup:
+			executor.shutdown()
+	}
+
 	Map<StubConfiguration, Integer> stubIdsWithPortsFromString(String stubIdsToPortMapping) {
 		return stubIdsToPortMapping.split(',').collectEntries { String entry ->
 			return StubsParser.fromStringWithPort(entry)
