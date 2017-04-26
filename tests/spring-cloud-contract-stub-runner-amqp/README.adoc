@@ -19,7 +19,7 @@ The message is triggered to all matching message listeners.
 ==== Adding it to the project
 
 It's enough to have both Spring AMQP and Spring Cloud Contract Stub Runner on the classpath and set the property `stubrunner.amqp.enabled=true`.
-Remember to annotate your test class with `@AutoConfigureMessageVerifier`.
+Remember to annotate your test class with `@AutoConfigureStubRunner`.
 
 ==== Examples
 

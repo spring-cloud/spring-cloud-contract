@@ -10,7 +10,7 @@ routes.
 ==== Adding it to the project
 
 It's enough to have both Apache Camel and Spring Cloud Contract Stub Runner on classpath.
-Remember to annotate your test class with `@AutoConfigureMessageVerifier`.
+Remember to annotate your test class with `@AutoConfigureStubRunner`.
 
 ==== Examples
 
