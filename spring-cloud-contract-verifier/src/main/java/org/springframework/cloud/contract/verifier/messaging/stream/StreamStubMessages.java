@@ -86,7 +86,7 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 					.getBean(ChannelBindingServiceProperties.class);
 			for (Map.Entry<String, BindingProperties> entry : channelBindingServiceProperties
 					.getBindings().entrySet()) {
-				if (entry.getValue().getDestination().equals(destination)) {
+				if (destination.equals(entry.getValue().getDestination())) {
 					if (log.isDebugEnabled()) {
 						log.debug("Found a channel named [{}] with destination [{}]",
 								entry.getKey(), destination);

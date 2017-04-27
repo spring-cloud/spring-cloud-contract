@@ -3,8 +3,143 @@
 Runs stubs for service collaborators. Treating stubs as contracts of services allows to use stub-runner as an implementation of 
 http://martinfowler.com/articles/consumerDrivenContracts.html[Consumer Driven Contracts].
 
-Stub Runner allows you to automatically download the stubs of the provided dependencies, start WireMock servers for them and feed them with proper stub definitions.
+Stub Runner allows you to automatically download the stubs of the provided dependencies (or pick those from the classpath), start WireMock servers for them and feed them with proper stub definitions.
 For messaging, special stub routes are defined.
+
+==== Retrieving stubs
+
+You can pick the following options of acquiring stubs
+
+- Aether based solution that downloads JARs with stubs from Artifactory / Nexus
+- Classpath scanning solution that searches classpath via pattern to retrieve stubs
+- Write your own implementation of the `org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder` for full customization
+
+The latter example is described in the <<custom_stub_runner, Custom Stub Runner>> section.
+
+===== Stub downloading
+
+If you provide the `stubrunner.repositoryRoot` or `stubrunner.workOffline` flag will be set
+to `true` then Stub Runner will connect to the given server and download the required jars.
+It will then unpack the JAR to a temporary folder and reference those files in further
+contract processing.
+
+Example:
+
+[source,java]
+----
+@AutoConfigureStubRunner(repositoryRoot="http://foo.bar", ids = "com.example:beer-api-producer:+:stubs:8095")
+----
+
+===== Classpath scanning
+
+If you *DON'T* provide the `stubrunner.repositoryRoot` or `stubrunner.workOffline` flag will
+be set to `false` (that's the default) then classpath will get scanned. Let's look at the
+following example:
+
+[source,java]
+----
+@AutoConfigureStubRunner(ids = {
+    "com.example:beer-api-producer:+:stubs:8095",
+    "com.example.foo:bar:1.0.0:superstubs:8096"
+})
+----
+
+If you've added the dependencies to your classpath
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+<dependency>
+    <groupId>com.example</groupId>
+    <artifactId>beer-api-producer-restdocs</artifactId>
+    <classifier>stubs</classifier>
+    <version>0.0.1-SNAPSHOT</version>
+    <scope>test</scope>
+    <exclusions>
+        <exclusion>
+            <groupId>*</groupId>
+            <artifactId>*</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+<dependency>
+    <groupId>com.example.foo</groupId>
+    <artifactId>bar</artifactId>
+    <classifier>superstubs</classifier>
+    <version>1.0.0</version>
+    <scope>test</scope>
+    <exclusions>
+        <exclusion>
+            <groupId>*</groupId>
+            <artifactId>*</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
+----
+testCompile("com.example:beer-api-producer-restdocs:0.0.1-SNAPSHOT:stubs") {
+    transitive = false
+}
+testCompile("com.example.foo:bar:1.0.0:superstubs") {
+    transitive = false
+}
+----
+
+Then the following locations on your classpath will get scanned. For `com.example:beer-api-producer-restdocs`
+
+- /META-INF/com.example/beer-api-producer-restdocs/**/*.*
+- /contracts/com.example/beer-api-producer-restdocs/**/*.*
+- /mappings/com.example/beer-api-producer-restdocs/**/*.*
+
+and `com.example.foo:bar`
+
+- /META-INF/com.example.foo/bar/**/*.*
+- /contracts/com.example.foo/bar/**/*.*
+- /mappings/com.example.foo/bar/**/*.*
+
+TIP: As you can see you have to explicitly provide the group and artifact ids when packaging the
+producer stubs.
+
+The producer would setup the contracts like this:
+
+[source,bash]
+----
+└── src
+    └── test
+        └── resources
+            └── contracts
+                └── com.example
+                    └── beer-api-producer-restdocs
+                        └── nested
+                            └── contract3.groovy
+
+----
+
+To achieve proper stub packaging.
+
+Or using the https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/master/producer_with_restdocs/pom.xml[Maven `assembly` plugin] or
+https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/master/producer_with_restdocs/build.gradle[Gradle Jar] task you have to create the following
+structure in your stubs jar.
+
+[source,bash]
+----
+└── META-INF
+    └── com.example
+        └── beer-api-producer-restdocs
+            └── 2.0.0
+                ├── contracts
+                │   └── nested
+                │       └── contract2.groovy
+                └── mappings
+                    └── mapping.json
+
+----
+
+By maintaining this structure classpath gets scanned and you can profit from the messaging /
+HTTP stubs without the need to download artifacts.
 
 ==== Running stubs
 

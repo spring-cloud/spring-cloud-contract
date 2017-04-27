@@ -1007,7 +1007,8 @@ and just register it in your `spring.factories` file
 
 [source]
 ----
-include::{tests_path}/spring-cloud-contract-stub-runner-moco/src/test/resources/META-INF/spring.factories[indent=0,lines=1..4]
+org.springframework.cloud.contract.stubrunner.HttpServerStub=\
+org.springframework.cloud.contract.stubrunner.provider.moco.MocoHttpServerStub
 ----
 
 that way you'll be able to run stubs using Moco.
@@ -1032,10 +1033,15 @@ and just register it in your `spring.factories` file
 
 [source]
 ----
-include::{tests_path}/spring-cloud-contract-stub-runner-moco/src/test/resources/META-INF/spring.factories[indent=0,lines=5..-1]
+# Example of a custom Stub Downloader Provider
+org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder=\
+org.springframework.cloud.contract.stubrunner.ClasspathStubProvider
 ----
 
 that way you'll be able to pick a folder with the source of your stubs.
 
-IMPORTANT: If you don't provide any implementation then the default one - Aether based that will download stubs from a remote repo
-will be picked. If you provide more than one then the first one on the list will be picked.
+IMPORTANT: If you don't provide any implementation then the default one will be picked.
+ If you provide `repositoryRoot` property or `workOffline` flag then Aether based
+ that will download stubs from a remote repo will be picked. If you don't provide these
+ values then the `ClasspathStubProvider` will be picked that will scan the classpath.
+ If you provide more than one then the first one on the list will be picked.

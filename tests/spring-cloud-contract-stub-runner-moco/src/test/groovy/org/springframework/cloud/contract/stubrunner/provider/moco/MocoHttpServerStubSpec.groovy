@@ -22,8 +22,14 @@ import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
+import org.springframework.cloud.stream.annotation.EnableBinding
+import org.springframework.cloud.stream.annotation.StreamListener
+import org.springframework.cloud.stream.messaging.Sink
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.stereotype.Component
 import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
@@ -31,22 +37,66 @@ import spock.lang.Specification
  * @author Marcin Grzejszczak
  */
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
+// tag::[classpath_stub_runner]
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@AutoConfigureStubRunner( ids =
-		["com.example:fraudDetectionServerMoco"],
-		repositoryRoot = "classpath:unpacked/")
+// to use stubs from classpath just provide ids without passing any other properties to
+// @AutoConfigureStubRunner
+@AutoConfigureStubRunner( ids = ["com.example:fraudDetectionServerMoco"])
+// end::[classpath_stub_runner]
 @DirtiesContext
+@ActiveProfiles("test")
 class MocoHttpServerStubSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
+	@Autowired MyListener myListener
 
 	def 'should successfully receive a response from a stub'() {
+		given:
+			String url = stubFinder.findStubUrl('fraudDetectionServerMoco').toString()
 		expect:
-			"${stubFinder.findStubUrl('fraudDetectionServerMoco').toString()}/name".toURL().text == 'fraudDetectionServerMoco'
+			"${url.toString()}/name".toURL().text == 'fraudDetectionServerMoco'
+			"${url.toString()}/bye".toURL().text == 'bye'
+			"${url.toString()}/bye2".toURL().text == 'bye'
+		when:
+			"${url.toString()}/name2".toURL().text
+		then:
+			thrown(IOException)
+		when:
+			stubFinder.trigger("send_order")
+		then:
+			myListener.model?.description == "This is the order description"
+		when:
+			myListener.model = null
+			stubFinder.trigger("send_order2")
+		then:
+			myListener.model?.description == "This is the order description"
 	}
 
 	@Configuration
 	@EnableAutoConfiguration
+	@EnableBinding(Sink.class)
 	static class Config {
+
+		@Bean
+		MyListener myListener() {
+			return new MyListener()
+		}
+	}
+
+	@Component
+	static class MyListener {
+
+		Model model
+
+		@StreamListener(Sink.INPUT)
+		void listen(Model data) {
+			this.model = data
+		}
+	}
+
+	static class Model {
+		String uuid
+		String description
 	}
 }
+

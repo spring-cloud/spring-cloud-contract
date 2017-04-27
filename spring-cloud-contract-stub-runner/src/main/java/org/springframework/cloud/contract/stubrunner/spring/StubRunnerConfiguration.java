@@ -23,7 +23,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.contract.stubrunner.AetherStubDownloader;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunnerFactory;
 import org.springframework.cloud.contract.stubrunner.RunningStubs;
@@ -72,8 +71,7 @@ public class StubRunnerConfiguration {
 		}
 		StubRunnerOptions stubRunnerOptions = builder.build();
 		BatchStubRunner batchStubRunner = new BatchStubRunnerFactory(stubRunnerOptions,
-				this.provider.hasBuilder() ? this.provider.get().build(stubRunnerOptions)
-						: new AetherStubDownloader(stubRunnerOptions),
+				this.provider.getOrDefaultDownloader(stubRunnerOptions),
 				this.contractVerifierMessaging != null ? this.contractVerifierMessaging
 						: new NoOpStubMessages()).buildBatchStubRunner();
 		// TODO: Consider running it in a separate thread
