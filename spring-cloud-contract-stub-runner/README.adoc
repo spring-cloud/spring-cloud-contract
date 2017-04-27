@@ -32,7 +32,7 @@ Example:
 
 ===== Classpath scanning
 
-If you *DON'T* provide the `stubrunner.repositoryRoot` or `stubrunner.workOffline` flag will
+If you *DON'T* provide the `stubrunner.repositoryRoot` and `stubrunner.workOffline` flag will
 be set to `false` (that's the default) then classpath will get scanned. Let's look at the
 following example:
 
