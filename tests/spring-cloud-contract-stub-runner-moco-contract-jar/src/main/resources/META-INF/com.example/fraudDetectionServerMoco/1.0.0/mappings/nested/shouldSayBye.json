@@ -1,0 +1,12 @@
+[
+{
+    "request": {
+        "method" : "get",
+        "uri": "/bye"
+    },
+    "response": {
+        "text" : "bye",
+        "status": 200
+    }
+}
+]

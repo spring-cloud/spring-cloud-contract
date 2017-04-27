@@ -8,6 +8,7 @@ import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.RepositorySystemSession;
 import org.springframework.cloud.contract.maven.verifier.stubrunner.AetherStubDownloaderFactory;
 import org.springframework.cloud.contract.stubrunner.AetherStubDownloader;
+import org.springframework.cloud.contract.stubrunner.ClasspathStubProvider;
 import org.springframework.cloud.contract.stubrunner.ContractDownloader;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubDownloader;
@@ -98,6 +99,9 @@ class MavenContractsDownloader {
 		if (builder != null) {
 			logStubDownloader(builder);
 			return builder.build(buildOptions());
+		}
+		if (StringUtils.isEmpty(this.contractsRepositoryUrl) && !this.contractsWorkOffline) {
+			return new ClasspathStubProvider().build(buildOptions());
 		}
 		return this.aetherStubDownloaderFactory.build(this.repoSession);
 	}
