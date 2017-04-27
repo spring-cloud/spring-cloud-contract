@@ -20,7 +20,7 @@ class MediaTypes {
 	}
 
 	String applicationAtomXml() {
-		return "application/atom+xml"
+		return "application/atom\\+xml"
 	}
 
 	String applicationFormUrlencoded() {
@@ -30,11 +30,23 @@ class MediaTypes {
 	String applicationJson() {
 		return "application/json"
 	}
-
+	
+	String applicationJsonHal() {
+		return "application/hal\\+json"
+	}
+	
+	String applicationJsonHalUtf8() {
+		return applicationJsonHal() + utf8()
+	}
+	
 	String applicationJsonUtf8() {
-		return applicationJson() + ";charset=UTF-8"
+		return applicationJson() + utf8()
 	}
 
+	String utf8() {
+		return ";charset=UTF-8"
+	}
+	
 	String applicationOctetStream() {
 		return "application/octet-stream"
 	}
@@ -44,7 +56,7 @@ class MediaTypes {
 	}
 
 	String applicationXhtmlXml() {
-		return "application/xhtml+xml"
+		return "application/xhtml\\+xml"
 	}
 
 	String applicationXml() {
