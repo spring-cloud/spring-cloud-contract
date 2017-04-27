@@ -38,6 +38,7 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-actuator")
 
 	testCompile 'org.springframework.cloud:spring-cloud-contract-wiremock'
+	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
 	testCompile "org.springframework.boot:spring-boot-starter-test"
 	testCompile "com.example:http-server-restdocs:0.0.1-SNAPSHOT:stubs"
 }

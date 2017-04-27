@@ -16,8 +16,7 @@
 
 package com.example.loan;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
+import com.google.common.collect.ImmutableMap;
 
 import org.junit.Test;
 import org.springframework.beans.BeanInstantiationException;
@@ -25,7 +24,8 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerConfiguration;
 
-import com.google.common.collect.ImmutableMap;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 /**
  * @author Andrew Morgan
@@ -64,7 +64,7 @@ public class FailFastLoanApplicationServiceTests {
 		assertThat(throwable.getCause()).isInstanceOf(BeanInstantiationException.class);
 		assertThat(throwable.getCause().getCause())
 				.isInstanceOf(IllegalStateException.class)
-				.hasMessage("Remote repositories for stubs are not specified and work offline flag wasn't passed");
+				.hasMessageContaining("No stubs were found on classpath ");
 	}
 
 }
