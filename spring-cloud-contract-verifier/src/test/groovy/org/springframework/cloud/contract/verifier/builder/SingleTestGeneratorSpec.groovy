@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.verifier.builder
 
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import org.springframework.cloud.contract.verifier.TestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestMode
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
@@ -82,14 +83,26 @@ class SingleTestGeneratorSpec extends Specification {
 
 	public static final Closure JAVA_ASSERTER = { String classToTest ->
 		String name = Math.abs(new Random().nextInt())
-		String changedTest = classToTest.replace("public class Test", "public class Test${name}")
-		SyntaxChecker.tryToCompileJavaWithoutImports("test.Test${name}", changedTest)
+		String changedTest = classToTest
+				.replace("public class Test", "public class Test${name}")
+				.replace("public class ContractsTest", "public class Test${name}")
+		String fqn = FQN(classToTest)
+		SyntaxChecker.tryToCompileJavaWithoutImports("${fqn}${name}", changedTest)
+	}
+
+	static String FQN(String classToTest) {
+		return classToTest.contains("0_1_0_dev_1_uncommitted_d1174dd") ?
+				"org.springframework.cloud.contract.verifier.tests.com_uscm.dale_api44_spec._0_1_0_dev_1_uncommitted_d1174dd.Test" :
+				"test.Test"
 	}
 
 	public static final Closure JAVA_JAXRS_ASSERTER = { String classToTest ->
 		String name = Math.abs(new Random().nextInt())
-		String changedTest = classToTest.replace("public class Test {", "public class Test${name} {\njavax.ws.rs.client.WebTarget webTarget;\n")
-		SyntaxChecker.tryToCompileJavaWithoutImports("test.Test${name}", changedTest)
+		String changedTest = classToTest
+				.replace("public class Test {", "public class Test${name} {\njavax.ws.rs.client.WebTarget webTarget;\n")
+				.replace("public class ContractsTest {", "public class Test${name} {\njavax.ws.rs.client.WebTarget webTarget;\n")
+		String fqn = FQN(classToTest)
+		SyntaxChecker.tryToCompileJavaWithoutImports("${fqn}${name}", changedTest)
 	}
 
 	public static final Closure GROOVY_ASSERTER = { String classToTest ->
@@ -98,6 +111,10 @@ class SingleTestGeneratorSpec extends Specification {
 
 	def setup() {
 		file = tmpFolder.newFile()
+		wiriteContract(file)
+	}
+
+	private wiriteContract(File file) {
 		file.write("""
 				org.springframework.cloud.contract.spec.Contract.make {
 					request {
@@ -134,6 +151,33 @@ class SingleTestGeneratorSpec extends Specification {
 			JUNIT         | TestMode.EXPLICIT | explicitJUnitClassStrings | JAVA_ASSERTER
 			SPOCK         | TestMode.MOCKMVC  | spockClassStrings         | GROOVY_ASSERTER
 			SPOCK         | TestMode.EXPLICIT | explicitSpockClassStrings | GROOVY_ASSERTER
+	}
+
+	def "should build test class for #testFramework when the path contains bizarre signs"() {
+		given:
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
+			properties.targetFramework = testFramework
+			properties.basePackageForTests = "org.springframework.cloud.contract.verifier.tests"
+		and:
+			File newFolder = tmpFolder.newFolder("META_INF")
+			File subfolders = new File(newFolder, "/com.uscm/dale_api44_spec/0.1.0_dev.1.uncommitted+d1174dd/contracts/")
+			subfolders.mkdirs()
+			File newFile = new File(subfolders, "contract.groovy")
+			newFile.createNewFile()
+			wiriteContract(newFile)
+			properties.contractsDslDir = newFolder
+			properties.generatedTestSourcesDir = newFolder.parentFile
+		when:
+			int size = new TestGenerator(properties).generate()
+		then:
+			size > 0
+			asserter(new File(newFolder.parent, "/org/springframework/cloud/contract/verifier/tests/com_uscm/dale_api44_spec/0_1_0_dev_1_uncommitted_d1174dd/${testName}").text)
+		where:
+			testFramework | mode              | asserter        | testName
+			JUNIT         | TestMode.MOCKMVC  | JAVA_ASSERTER   | "ContractsTest.java"
+			JUNIT         | TestMode.EXPLICIT | JAVA_ASSERTER   | "ContractsTest.java"
+			SPOCK         | TestMode.MOCKMVC  | GROOVY_ASSERTER | "ContractsSpec.groovy"
+			SPOCK         | TestMode.EXPLICIT | GROOVY_ASSERTER | "ContractsSpec.groovy"
 	}
 
 	def "should build test class for #testFramework with Rest Assured 3.0"() {
@@ -404,6 +448,8 @@ class SingleTestGeneratorSpec extends Specification {
 			clazz.contains("RequestSpecification request = given();")
 			clazz.contains("Response response = given().spec(request)")
 	}
+
+
 
 
 }

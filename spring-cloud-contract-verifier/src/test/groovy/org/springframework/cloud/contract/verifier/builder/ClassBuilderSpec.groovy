@@ -63,9 +63,9 @@ class ClassBuilderSpec extends Specification {
 	def "should return a class from the generated path by when external contracts are picked"() {
 		given:
 			ContractVerifierConfigProperties props = new ContractVerifierConfigProperties(packageWithBaseClasses: "foo.Bar")
-			String contractRelativeFolder = ["org","springframework","cloud","contract","verifier","tests","META_INF","com.example","hello_world","1.0.0"].join(File.separator)
+			String contractRelativeFolder = ["org","springframework","cloud","contract","verifier","tests","META_INF","com.example","hello_world","0.1.0_dev.1.uncommitted+d1174dd"].join(File.separator)
 		expect:
-			ClassBuilder.retrieveBaseClass(props, contractRelativeFolder) == 'foo.Bar.Hello_world1_0_0Base'
+			ClassBuilder.retrieveBaseClass(props, contractRelativeFolder) == 'foo.Bar.Hello_world0_1_0_dev_1_uncommitted_d1174ddBase'
 	}
 
 }

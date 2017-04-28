@@ -87,9 +87,10 @@ class TestGenerator {
 			final String includedDirectoryRelativePath, Collection<ContractMetadata> contracts, final String basePackageNameForClass) {
 		if (contracts.size()) {
 			def className = afterLast(includedDirectoryRelativePath.toString(), File.separator) + resolveNameSuffix()
+			def convertedClassName = convertIllegalPackageChars(className)
 			def packageName = buildPackage(basePackageNameForClass, includedDirectoryRelativePath)
-			def classBytes = generator.buildClass(contracts, className, packageName, includedDirectoryRelativePath).getBytes(StandardCharsets.UTF_8)
-			saver.saveClassFile(className, basePackageNameForClass, convertIllegalPackageChars(includedDirectoryRelativePath.toString()), classBytes)
+			def classBytes = generator.buildClass(contracts, convertedClassName, packageName, includedDirectoryRelativePath).getBytes(StandardCharsets.UTF_8)
+			saver.saveClassFile(convertedClassName, basePackageNameForClass, convertIllegalPackageChars(includedDirectoryRelativePath.toString()), classBytes)
 			counter.incrementAndGet()
 		}
 	}
@@ -98,9 +99,10 @@ class TestGenerator {
 		return configProperties.nameSuffixForTests ?: configProperties.targetFramework.classNameSuffix
 	}
 
-	private static String buildPackage(final String packageNameForClass, final String includedDirectoryRelativePath) {
+	protected static String buildPackage(final String packageNameForClass, final String includedDirectoryRelativePath) {
 		String directory = beforeLast(includedDirectoryRelativePath, File.separator)
-		return !directory.empty ? "$packageNameForClass.${directoryToPackage(convertIllegalPackageChars(directory))}" : packageNameForClass
+		String convertedPackage = "$packageNameForClass.${directoryToPackage(convertIllegalPackageChars(directory))}"
+		return !directory.empty ? convertedPackage : packageNameForClass
 	}
 
 }

@@ -11,90 +11,97 @@ class NamesUtilSpec extends Specification {
 		given:
 			String string = "a.b.c.d.e"
 		expect:
-			"a.b.c.d" == NamesUtil.beforeLast(string, ".")
+			NamesUtil.beforeLast(string, ".") == "a.b.c.d"
 	}
 
 	def "should return empty string when no token was found for before last"() {
 		given:
 			String string = "a.b.c.d.e"
 		expect:
-			"" == NamesUtil.beforeLast(string, "/")
+			NamesUtil.beforeLast(string, "/") == ""
 	}
 
 	def "should return first token after the last one"() {
 		given:
 			String string = "a.b.c.d.e"
 		expect:
-			"e" == NamesUtil.afterLast(string, ".")
+			NamesUtil.afterLast(string, ".") == "e"
 	}
 
 	def "should return the input string when no token was found for after last"() {
 		given:
 			String string = "a.b.c.d.e"
 		expect:
-			string == NamesUtil.afterLast(string, "/")
+			NamesUtil.afterLast(string, "/") == string
 	}
 
 	def "should return first token after the last dot"() {
 		given:
 			String string = "a.b.c.d.e"
 		expect:
-			"e" == NamesUtil.afterLastDot(string)
+			NamesUtil.afterLastDot(string) == "e"
 	}
 
 	def "should return the input string when no token was found for after last dot"() {
 		given:
 			String string = "abcde"
 		expect:
-			string == NamesUtil.afterLastDot(string)
+			NamesUtil.afterLastDot(string) == string
 	}
 
 	def "should return camel case version of a string"() {
 		given:
 			String string = "BlaBlaBla"
 		expect:
-			"blaBlaBla" == NamesUtil.camelCase(string)
+			NamesUtil.camelCase(string) == "blaBlaBla"
 	}
 
 	def "should return capitalized version of a string"() {
 		given:
 			String string = "blaBlaBla"
 		expect:
-			"BlaBlaBla" == NamesUtil.capitalize(string)
+			NamesUtil.capitalize(string) == "BlaBlaBla"
 	}
 
 	def "should return all text to last dot"() {
 		given:
 			String string = "a.b.c.d.e"
 		expect:
-			"a.b.c.d" == NamesUtil.toLastDot(string)
+			NamesUtil.toLastDot(string) == "a.b.c.d"
 	}
 
 	def "should return the input string when no token was found for to last dot"() {
 		given:
 			String string = "abcde"
 		expect:
-			string == NamesUtil.toLastDot(string)
+			NamesUtil.toLastDot(string) == string
 	}
 
 	def "should convert a package notation to directory"() {
 		given:
 			String string = "a.b.c.d.e"
 		expect:
-			"a/b/c/d/e".replace("/", File.separator) == NamesUtil.packageToDirectory(string)
+			NamesUtil.packageToDirectory(string) == "a/b/c/d/e".replace("/", File.separator)
 	}
 
 	def "should convert a directory notation to package"() {
 		given:
 			String string = "a/b/c/d/e".replace("/", File.separator)
 		expect:
-			"a.b.c.d.e" == NamesUtil.directoryToPackage(string)
+			NamesUtil.directoryToPackage(string) == "a.b.c.d.e"
+	}
+
+	def "should convert a directory notation to package when folder is a digit"() {
+		given:
+			String string = "a/b/c/1.0.0/e".replace("/", File.separator)
+		expect:
+			NamesUtil.directoryToPackage(string) == "a.b.c._1_0_0.e"
 	}
 
 	def "should convert all illegal package chars to legal ones"() {
 		given:
-			String string = "a-b c.1.0.x"
+			String string = "a-b c.1.0.x+d1174dd"
 		expect:
-			"a_b_c_1_0_x" == NamesUtil.convertIllegalPackageChars(string)
+			NamesUtil.convertIllegalPackageChars(string) == "a_b_c_1_0_x_d1174dd"
 	}
 }
