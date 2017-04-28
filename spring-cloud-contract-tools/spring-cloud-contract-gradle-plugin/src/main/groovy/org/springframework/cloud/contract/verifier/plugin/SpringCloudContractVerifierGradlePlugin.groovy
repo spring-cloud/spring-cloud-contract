@@ -75,14 +75,13 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 	}
 
 	private addIdeaTestSources(Project project, extension) {
-		project.afterEvaluate {
-			def hasIdea = project.plugins.findPlugin(IDEA_PLUGIN_CLASS)
-			if (hasIdea) {
-				project.idea {
-					module {
-						testSourceDirs += extension.generatedTestSourcesDir
-						testSourceDirs += extension.contractsDslDir
-					}
+		def hasIdea = new File(project.projectDir, ".idea").exists()
+		if (hasIdea) {
+			project.apply(plugin: 'idea')
+			project.idea {
+				module {
+					testSourceDirs += extension.generatedTestSourcesDir
+					testSourceDirs += extension.contractsDslDir
 				}
 			}
 		}
