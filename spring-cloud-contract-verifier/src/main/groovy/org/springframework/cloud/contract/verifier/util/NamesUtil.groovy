@@ -99,13 +99,16 @@ class NamesUtil {
 	 * Converts the path format to a Java package notation
 	 */
 	static String directoryToPackage(String directory) {
-		return directory.replace(File.separator, '.')
+		return directory
+				.replace('.', '_')
+				.replace(File.separator, '.')
+				.replaceAll('\\.([0-9])', '._$1')
 	}
 
 	/**
 	 * Converts illegal package characters to underscores
 	 */
 	static String convertIllegalPackageChars(String packageName) {
-		return packageName.replaceAll('[_\\- .]', '_')
+		return packageName.replaceAll('[_\\- .+]', '_')
 	}
 }
