@@ -85,6 +85,16 @@ public class StubRunnerProperties {
 	 */
 	private String proxyHost;
 
+	/**
+	 * Should only stubs for this particular consumer get registered in HTTP server stub.
+	 */
+	private boolean stubsPerConsumer;
+
+	/**
+	 * You can override the default {@code spring.application.name} of this field by setting a value to this parameter.
+	 */
+	private String consumerName;
+
 	public int getMinPort() {
 		return this.minPort;
 	}
@@ -173,10 +183,27 @@ public class StubRunnerProperties {
 		this.contextPath = contextPath;
 	}
 
+	public boolean isStubsPerConsumer() {
+		return this.stubsPerConsumer;
+	}
+
+	public void setStubsPerConsumer(boolean stubsPerConsumer) {
+		this.stubsPerConsumer = stubsPerConsumer;
+	}
+
+	public String getConsumerName() {
+		return this.consumerName;
+	}
+
+	public void setConsumerName(String consumerName) {
+		this.consumerName = consumerName;
+	}
+
 	@Override public String toString() {
 		return "StubRunnerProperties{" + "minPort=" + this.minPort + ", maxPort=" + this.maxPort
 				+ ", workOffline=" + this.workOffline + ", repositoryRoot=" + this.repositoryRoot
 				+ ", ids=" + Arrays.toString(this.ids) + ", classifier='" + this.classifier + '\''
+				+ ", setStubsPerConsumer='" + this.stubsPerConsumer + "', consumerName='" + this.consumerName + '\''
 				+ '}';
 	}
 }

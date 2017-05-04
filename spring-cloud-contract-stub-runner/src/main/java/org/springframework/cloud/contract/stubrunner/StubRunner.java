@@ -58,7 +58,7 @@ public class StubRunner implements StubRunning {
 		this.stubsConfiguration = stubsConfiguration;
 		this.stubRunnerOptions = stubRunnerOptions;
 		List<HttpServerStub> serverStubs = SpringFactoriesLoader.loadFactories(HttpServerStub.class, null);
-		this.stubRepository = new StubRepository(new File(repositoryPath), serverStubs);
+		this.stubRepository = new StubRepository(new File(repositoryPath), serverStubs, this.stubRunnerOptions);
 		AvailablePortScanner portScanner = new AvailablePortScanner(
 				stubRunnerOptions.getMinPortValue(), stubRunnerOptions.getMaxPortValue());
 		this.localStubRunner = new StubRunnerExecutor(portScanner, contractVerifierMessaging, serverStubs);

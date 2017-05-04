@@ -49,8 +49,10 @@ class StubRepository {
 	final Collection<Contract> contracts;
 	private final List<ContractConverter> contractConverters;
 	private final List<HttpServerStub> httpServerStubs;
+	private final StubRunnerOptions options;
 
-	StubRepository(File repository, List<HttpServerStub> httpServerStubs) {
+	StubRepository(File repository, List<HttpServerStub> httpServerStubs,
+			StubRunnerOptions options) {
 		if (!repository.isDirectory()) {
 			throw new IllegalArgumentException(
 					"Missing descriptor repository under path [" + repository + "]");
@@ -62,11 +64,12 @@ class StubRepository {
 		this.httpServerStubs = httpServerStubs;
 		this.path = repository;
 		this.stubs = stubs();
+		this.options = options;
 		this.contracts = contracts();
 	}
 
 	StubRepository(File repository) {
-		this(repository, new ArrayList<HttpServerStub>());
+		this(repository, new ArrayList<HttpServerStub>(), new StubRunnerOptionsBuilder().build());
 	}
 
 	public File getPath() {
@@ -114,7 +117,7 @@ class StubRepository {
 						public FileVisitResult visitFile(Path path,
 								BasicFileAttributes attrs) throws IOException {
 							File file = path.toFile();
-							if (httpServerStubAccepts(file)) {
+							if (httpServerStubAccepts(file) && isStubPerConsumerPathMatching(file)) {
 								mappingDescriptors.add(file);
 							}
 							return super.visitFile(path, attrs);
@@ -162,10 +165,10 @@ class StubRepository {
 								BasicFileAttributes attrs) throws IOException {
 							File file = path.toFile();
 							ContractConverter converter = contractConverter(file);
-							if (isContractDescriptor(file)) {
+							if (isContractDescriptor(file) && isStubPerConsumerPathMatching(file)) {
 								contractDescriptors
 								.addAll(ContractVerifierDslConverter.convertAsCollection(file));
-							} else if (converter != null) {
+							} else if (converter != null && isStubPerConsumerPathMatching(file)) {
 								contractDescriptors.addAll(converter.convertFrom(file));
 							}
 							return super.visitFile(path, attrs);
@@ -176,6 +179,14 @@ class StubRepository {
 			log.warn("Exception occurred while trying to parse file", e);
 		}
 		return contractDescriptors;
+	}
+
+	private boolean isStubPerConsumerPathMatching(File file) {
+		if (!this.options.isStubsPerConsumer()) {
+			return true;
+		}
+		String consumerName = this.options.getConsumerName();
+		return file.getAbsolutePath().contains(File.separator + consumerName + File.separator);
 	}
 
 	private static boolean isContractDescriptor(File file) {

@@ -30,6 +30,7 @@ import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubDownloaderBuilderProvider;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
+import org.springframework.cloud.contract.stubrunner.util.StringUtils;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.context.annotation.Bean;
@@ -89,7 +90,16 @@ public class StubRunnerConfiguration {
 					.withStubsClassifier(this.props.getClassifier())
 					.withStubs(this.props.getIds())
 					.withUsername(this.props.getUsername())
-					.withPassword(this.props.getPassword());
+					.withPassword(this.props.getPassword())
+					.withStubPerConsumer(this.props.isStubsPerConsumer())
+					.withConsumerName(consumerName());
+	}
+
+	private String consumerName() {
+		if (StringUtils.hasText(this.props.getConsumerName())) {
+			return this.props.getConsumerName();
+		}
+		return this.environment.getProperty("spring.application.name");
 	}
 
 	private String uriStringOrEmpty(Resource stubRepositoryRoot) throws IOException {
