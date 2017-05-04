@@ -505,6 +505,7 @@ $(addBlockSwitches);
 <li><a href="#_alternative_using_junit_rules">Alternative: Using JUnit Rules</a></li>
 </ul>
 </li>
+<li><a href="#_relaxed_ssl_validation_for_rest_template">Relaxed SSL Validation for Rest Template</a></li>
 <li><a href="#_wiremock_and_spring_mvc_mocks">WireMock and Spring MVC Mocks</a></li>
 <li><a href="#_generating_stubs_using_restdocs">Generating Stubs using RestDocs</a></li>
 <li><a href="#_generating_contracts_using_restdocs">Generating Contracts using RestDocs</a></li>
@@ -571,6 +572,7 @@ $(addBlockSwitches);
 <li><a href="#_prerequisites">Prerequisites</a>
 <ul class="sectlevel5">
 <li><a href="#_add_gradle_plugin_with_dependencies">Add gradle plugin with dependencies</a></li>
+<li><a href="#_gradle_and_rest_assured_3_0">Gradle and Rest Assured 3.0</a></li>
 <li><a href="#_snapshot_versions_for_gradle">Snapshot versions for Gradle</a></li>
 <li><a href="#_add_stubs">Add stubs</a></li>
 </ul>
@@ -592,6 +594,7 @@ $(addBlockSwitches);
 <ul class="sectlevel4">
 <li><a href="#_add_maven_plugin">Add maven plugin</a>
 <ul class="sectlevel5">
+<li><a href="#_maven_and_rest_assured_3_0">Maven and Rest Assured 3.0</a></li>
 <li><a href="#_snapshot_versions_for_maven">Snapshot versions for Maven</a></li>
 </ul>
 </li>
@@ -680,6 +683,10 @@ $(addBlockSwitches);
 </li>
 <li><a href="#_example">Example</a></li>
 <li><a href="#_stub_runner_boot_with_service_discovery">Stub Runner Boot with Service Discovery</a></li>
+</ul>
+</li>
+<li><a href="#_stubs_per_consumer">Stubs Per Consumer</a>
+<ul class="sectlevel3">
 <li><a href="#_common_properties_for_junit_and_spring">Common properties for JUnit and Spring</a>
 <ul class="sectlevel4">
 <li><a href="#_stub_runner_stubs_ids">Stub runner stubs ids</a></li>
@@ -1002,6 +1009,56 @@ public class WiremockForDocsClassRuleTests {
 <div class="paragraph">
 <p>The use <code>@ClassRule</code> means that the server will shut down after all the methods in this class.</p>
 </div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_relaxed_ssl_validation_for_rest_template">Relaxed SSL Validation for Rest Template</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>WireMock allows you to stub a "secure" server with an "https" URL protocol. If your application wants to
+contact that stub server in an integration test, then it will find that the SSL certificates are not
+valid (it&#8217;s the usual problem with self-installed certificates). The best option is often to just
+re-configure the client to use "http", but if that&#8217;s not open to you then you can ask Spring to configure
+an HTTP client that ignores SSL validation errors (just for tests).</p>
+</div>
+<div class="paragraph">
+<p>To make this work with minimum fuss you need to be using the Spring Boot <code>RestTemplateBuilder</code> in your app,
+e.g.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@Bean
+public RestTemplate restTemplate(RestTemplateBuilder builder) {
+	return builder.build();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is because the builder is passed through callbacks to initalize it, so the SSL validation can be set up
+in the client at that point. This will happen automatically in your test if you are using the
+<code>@AutoConfigureWireMock</code> annotation (or the stub runner). If you are using the JUnit <code>@Rule</code> approach you need
+to add the <code>@AutoConfigureHttpClient</code> annotation as well:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
+@SpringBootTest("app.baseUrl=https://localhost:6443")
+@AutoConfigureHttpClient
+public class WiremockHttpsServerApplicationTests {
+
+	@ClassRule
+	public static WireMockClassRule wiremock = new WireMockClassRule(
+			WireMockSpring.options().httpsPort(6443));
+...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you are using <code>spring-boot-starter-test</code> then you will have the Apache HTTP client on the classpath and it will
+be selected by the <code>RestTemplateBuilder</code> and configured to ignore SSL errors. If you are using the default <code>java.net</code>
+client you don&#8217;t need the annotation (but it won&#8217;t do any harm). There is no support currently for other clients, but
+it may be added in future releases.</p>
 </div>
 </div>
 </div>
@@ -1735,7 +1792,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 		method 'PUT' // (2)
 		url '/fraudcheck' // (3)
 		body([ // (4)
-			   clientId: $(regex('[0-9]{10}')),
+			   "client.id": $(regex('[0-9]{10}')),
 			   loanAmount: 99999
 		])
 		headers { // (5)
@@ -1746,7 +1803,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 		status 200 // (7)
 		body([ // (8)
 			   fraudCheckStatus: "FRAUD",
-			   rejectionReason: "Amount too high"
+			   "rejection.reason": "Amount too high"
 		])
 		headers { // (9)
 			contentType('application/vnd.fraud.v1+json')
@@ -2062,7 +2119,7 @@ git pull https://your-git-server.com/server-side-fork.git contract-change-pr</co
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">	&lt;dependency&gt;
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
 	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 	&lt;artifactId&gt;spring-cloud-starter-contract-verifier&lt;/artifactId&gt;
 	&lt;scope&gt;test&lt;/scope&gt;
@@ -2973,6 +3030,39 @@ dependencies {
 </div>
 </div>
 <div class="sect5">
+<h6 id="_gradle_and_rest_assured_3_0">Gradle and Rest Assured 3.0</h6>
+<div class="paragraph">
+<p>By default Rest Assured 2.x is added to the classpath. However in order to give the users the
+opportunity to use Rest Assured 3.x it&#8217;s enough to add it to the plugins classpath.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+	    classpath "org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"
+		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}"
+		classpath "io.rest-assured:rest-assured:3.0.2"
+		classpath "io.rest-assured:spring-mock-mvc:3.0.2"
+	}
+}
+
+depenendencies {
+    // all dependencies
+    // you can exclude rest-assured from spring-cloud-contract-verifier
+    testCompile "io.rest-assured:rest-assured:3.0.2"
+    testCompile "io.rest-assured:spring-mock-mvc:3.0.2"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That way the plugin will automatically see that Rest Assured 3.x is present on the classpath
+and will modify the imports accordingly.</p>
+</div>
+</div>
+<div class="sect5">
 <h6 id="_snapshot_versions_for_gradle">Snapshot versions for Gradle</h6>
 <div class="paragraph">
 <p>Add the additional snapshot repository to your build.gradle to use snapshot versions which are automatically uploaded after every successful build:</p>
@@ -3339,6 +3429,66 @@ class LoanApplicationServiceSpec extends Specification {
 </div>
 <div class="paragraph">
 <p>You can read more in the <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/">Spring Cloud Contract Maven Plugin Docs</a></p>
+</div>
+<div class="sect5">
+<h6 id="_maven_and_rest_assured_3_0">Maven and Rest Assured 3.0</h6>
+<div class="paragraph">
+<p>By default Rest Assured 2.x is added to the classpath. However in order to give the users the
+opportunity to use Rest Assured 3.x it&#8217;s enough to add it to the plugins classpath.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+    &lt;configuration&gt;
+        &lt;packageWithBaseClasses&gt;com.example&lt;/packageWithBaseClasses&gt;
+    &lt;/configuration&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-contract-verifier&lt;/artifactId&gt;
+            &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+           &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+           &lt;artifactId&gt;rest-assured&lt;/artifactId&gt;
+           &lt;version&gt;3.0.2&lt;/version&gt;
+           &lt;scope&gt;compile&lt;/scope&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+           &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+           &lt;artifactId&gt;spring-mock-mvc&lt;/artifactId&gt;
+           &lt;version&gt;3.0.2&lt;/version&gt;
+           &lt;scope&gt;compile&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/plugin&gt;
+
+&lt;dependencies&gt;
+    &lt;!-- all dependencies --&gt;
+    &lt;!-- you can exclude rest-assured from spring-cloud-contract-verifier --&gt;
+    &lt;dependency&gt;
+       &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+       &lt;artifactId&gt;rest-assured&lt;/artifactId&gt;
+       &lt;version&gt;3.0.2&lt;/version&gt;
+       &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+       &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+       &lt;artifactId&gt;spring-mock-mvc&lt;/artifactId&gt;
+       &lt;version&gt;3.0.2&lt;/version&gt;
+       &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That way the plugin will automatically see that Rest Assured 3.x is present on the classpath
+and will modify the imports accordingly.</p>
+</div>
 </div>
 <div class="sect5">
 <h6 id="_snapshot_versions_for_maven">Snapshot versions for Maven</h6>
@@ -4602,6 +4752,9 @@ There might be a problem with StubRunner shutting down ports between tests. You 
 <li>
 <p>feed the WireMock server with all JSON files that are valid WireMock definitions</p>
 </li>
+<li>
+<p>can also send messages (remember to pass an implementation of <code>MessageVerifier</code> interface)</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
@@ -4718,6 +4871,20 @@ public void should_start_wiremock_servers() throws Exception {
 </div>
 <div class="paragraph">
 <p>Check the <strong>Common properties for JUnit and Spring</strong> for more information on how to apply global configuration of Stub Runner.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+To use the JUnit rule together with messaging you have to provide an implementation of the
+<code>MessageVerifier</code> interface to the rule builder (e.g. <code>rule.messageVerifier(new MyMessageVerifier())</code>).
+If you don&#8217;t do this then whenever you try to send a message an exception will be thrown.
+</td>
+</tr>
+</table>
 </div>
 <div class="sect3">
 <h4 id="_maven_settings">Maven settings</h4>
@@ -5222,6 +5389,135 @@ likely to change. That way you can provide only the list of stubs to download wh
 the Stub Runner Boot.</p>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_stubs_per_consumer">Stubs Per Consumer</h3>
+<div class="paragraph">
+<p>There are cases in which 2 consumers of the same endpoint want to have 2 different responses.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+This approach also allows you to immediately know which consumer is using which part of your API.
+You can remove part of a response that your API produces and you can see which of your autogenerated tests
+fails. If none fails then you can safely delete that part of the response cause nobody is using it.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s look at the following example for contract defined for the producer called <code>producer</code>.
+There are 2 consumers: <code>foo-consumer</code> and <code>bar-consumer</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Consumer <code>foo-service</code></strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">request {
+   url '/foo'
+   method GET()
+}
+response {
+    status 200
+    body(
+       foo: "foo"
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Consumer <code>bar-service</code></strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">request {
+   url '/foo'
+   method GET()
+}
+response {
+    status 200
+    body(
+       bar: "bar"
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can&#8217;t produce for the same request 2 different responses. That&#8217;s why you can properly package the
+contracts and then profit from the <code>stubsPerConsumer</code> feature.</p>
+</div>
+<div class="paragraph">
+<p>On the producer side the consumers can have a folder that contains contracts related only to them.
+By setting the <code>stubrunner.stubs-per-consumer</code> flag to <code>true</code> we no longer register all stubs but only those that
+correspond to the consumer application&#8217;s name. In other words we&#8217;ll scan the path of every stub and
+if it contains the subfolder with name of the consumer in the path only then will it get registered.</p>
+</div>
+<div class="paragraph">
+<p>On the <code>foo</code> producer side the contracts would look like this</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">.
+└── contracts
+    ├── bar-consumer
+    │   ├── bookReturnedForBar.groovy
+    │   └── shouldCallBar.groovy
+    └── foo-consumer
+        ├── bookReturnedForFoo.groovy
+        └── shouldCallFoo.groovy</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Being the <code>bar-consumer</code> consumer you can either set the <code>spring.application.name</code> or the <code>stubrunner.consumer-name</code> to <code>bar-consumer</code>
+Or set the test as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
+@SpringBootTest(properties = ["spring.application.name=bar-consumer"])
+@AutoConfigureStubRunner(ids = "org.springframework.cloud.contract.verifier.stubs:producerWithMultipleConsumers",
+		repositoryRoot = "classpath:m2repo/repository/",
+		stubsPerConsumer = true)
+@DirtiesContext
+class StubRunnerStubsPerConsumerSpec extends Specification {
+...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then only the stubs registered under a path that contains the <code>bar-consumer</code> in its name (i.e. those from the
+<code>src/test/resources/contracts/bar-consumer/some/contracts/&#8230;&#8203;</code> folder) will be allowed to be referenced.</p>
+</div>
+<div class="paragraph">
+<p>Or set the consumer name explicitly</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
+@SpringBootTest
+@AutoConfigureStubRunner(ids = "org.springframework.cloud.contract.verifier.stubs:producerWithMultipleConsumers",
+		repositoryRoot = "classpath:m2repo/repository/",
+		consumerName = "foo-consumer",
+		stubsPerConsumer = true)
+@DirtiesContext
+class StubRunnerStubsPerConsumerWithConsumerNameSpec extends Specification {
+...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then only the stubs registered under a path that contains the <code>foo-consumer</code> in its name (i.e. those from the
+<code>src/test/resources/contracts/foo-consumer/some/contracts/&#8230;&#8203;</code> folder) will be allowed to be referenced.</p>
+</div>
+<div class="paragraph">
+<p>You can check out <a href="https://github.com/spring-cloud/spring-cloud-contract/issues/224">issue 224</a> for more
+information about the reasons behind this change.</p>
+</div>
 <div class="sect3">
 <h4 id="_common_properties_for_junit_and_spring">Common properties for JUnit and Spring</h4>
 <div class="paragraph">
@@ -5493,7 +5789,7 @@ routes.</p>
 <h4 id="_adding_it_to_the_project">Adding it to the project</h4>
 <div class="paragraph">
 <p>It&#8217;s enough to have both Apache Camel and Spring Cloud Contract Stub Runner on classpath.
-Remember to annotate your test class with <code>@AutoConfigureMessageVerifier</code>.</p>
+Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.</p>
 </div>
 </div>
 <div class="sect3">
@@ -5665,8 +5961,8 @@ routes.</p>
 <div class="sect3">
 <h4 id="_adding_it_to_the_project_2">Adding it to the project</h4>
 <div class="paragraph">
-<p>It&#8217;s enough to have both Apache Camel and Spring Cloud Contract Stub Runner on classpath.
-Remember to annotate your test class with <code>@AutoConfigureMessageVerifier</code>.</p>
+<p>It&#8217;s enough to have both Spring Integration and Spring Cloud Contract Stub Runner on classpath.
+Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.</p>
 </div>
 </div>
 <div class="sect3">
@@ -5894,8 +6190,8 @@ channel name.
 <div class="sect3">
 <h4 id="_adding_it_to_the_project_3">Adding it to the project</h4>
 <div class="paragraph">
-<p>It&#8217;s enough to have both Apache Camel and Spring Cloud Contract Stub Runner on classpath.
-Remember to annotate your test class with <code>@AutoConfigureMessageVerifier</code>.</p>
+<p>It&#8217;s enough to have both Spring Cloud Stream and Spring Cloud Contract Stub Runner on classpath.
+Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6096,7 +6392,7 @@ The message is triggered to all matching message listeners.</p>
 <h4 id="_adding_it_to_the_project_4">Adding it to the project</h4>
 <div class="paragraph">
 <p>It&#8217;s enough to have both Spring AMQP and Spring Cloud Contract Stub Runner on the classpath and set the property <code>stubrunner.amqp.enabled=true</code>.
-Remember to annotate your test class with <code>@AutoConfigureMessageVerifier</code>.</p>
+Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6741,9 +7037,9 @@ provide the generated string that matches the provided regular expression. For e
 protected static final Pattern ONLY_ALPHA_UNICODE = Pattern.compile(/[\p{L}]*/)
 protected static final Pattern NUMBER = Pattern.compile('-?\\d*(\\.\\d+)?')
 protected static final Pattern IP_ADDRESS = Pattern.compile('([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])')
-protected static final Pattern HOSTNAME_PATTERN = Pattern.compile('((http[s]?|ftp):\\/)\\/?([^:\\/\\s]+)(:[0-9]{1,5})?')
-protected static final Pattern EMAIL = Pattern.compile('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}');
-protected static final Pattern URL = Pattern.compile('((www\\.|(http|https|ftp|news|file)+\\:\\/\\/)[_.a-z0-9-]+\\.[a-z0-9\\/_:@=.+?,##%&amp;~-]*[^.|\\\'|\\# |!|\\(|?|,| |&gt;|&lt;|;|\\)])')
+protected static final Pattern HOSTNAME_PATTERN = Pattern.compile('((http[s]?|ftp):/)/?([^:/\\s]+)(:[0-9]{1,5})?')
+protected static final Pattern EMAIL = Pattern.compile('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}')
+protected static final Pattern URL = UrlHelper.URL
 protected static final Pattern UUID = Pattern.compile('[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}')
 protected static final Pattern ANY_DATE = Pattern.compile('(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])')
 protected static final Pattern ANY_DATE_TIME = Pattern.compile('([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
@@ -6913,7 +7209,7 @@ String nonBlank() {
   response.header('Content-Type')  == 'application/json'
  and:
   DocumentContext parsedJson = JsonPath.parse(response.body.asString())
-  assertThatJson(parsedJson).field("code").matches("(123123)?")
+  assertThatJson(parsedJson).field("['code']").matches("(123123)?")
 """</code></pre>
 </div>
 </div>
@@ -6928,9 +7224,9 @@ String nonBlank() {
     "url" : "/users/password",
     "method" : "POST",
     "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[?(@.email =~ /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4})?/)]"
+      "matchesJsonPath" : "$[?(@.['email'] =~ /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4})?/)]"
     }, {
-      "matchesJsonPath" : "$[?(@.callback_url =~ /((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?/)]"
+      "matchesJsonPath" : "$[?(@.['callback_url'] =~ /((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?/)]"
     } ],
     "headers" : {
       "Content-Type" : {
@@ -7121,7 +7417,10 @@ will result in calling a <code>foo</code> method to which the value matching the
 				dateTime: "2017-01-01T01:23:45",
 				time: "01:02:34",
 				valueWithoutAMatcher: "foo",
-				valueWithTypeMatch: "string"
+				valueWithTypeMatch: "string",
+				key: [
+						'complex.key' : 'foo'
+				]
 		])
 		stubMatchers {
 			jsonPath('$.duck', byRegex("[0-9]{3}"))
@@ -7133,6 +7432,7 @@ will result in calling a <code>foo</code> method to which the value matching the
 			jsonPath('$.date', byDate())
 			jsonPath('$.dateTime', byTimestamp())
 			jsonPath('$.time', byTime())
+			jsonPath("\$.['key'].['complex.key']", byEquality())
 		}
 		headers {
 			contentType(applicationJson())
@@ -7161,6 +7461,9 @@ will result in calling a <code>foo</code> method to which the value matching the
 				],
 				valueWithMinEmpty: [],
 				valueWithMaxEmpty: [],
+				key: [
+				        'complex.key' : 'foo'
+				]
 		])
 		testMatchers {
 			// asserts the jsonpath value against manual regex
@@ -7201,6 +7504,7 @@ will result in calling a <code>foo</code> method to which the value matching the
 			})
 			// will execute a method `assertThatValueIsANumber`
 			jsonPath('$.duck', byCommand('assertThatValueIsANumber($it)'))
+			jsonPath("\$.['key'].['complex.key']", byEquality())
 		}
 		headers {
 			contentType(applicationJson())
@@ -7292,22 +7596,22 @@ assertions and the one from matchers with an <code>and</code> section):</p>
 {
   "request" : {
     "urlPath" : "/get",
-    "method" : "GET",
+    "method" : "POST",
     "headers" : {
       "Content-Type" : {
         "matches" : "application/json.*"
       }
     },
     "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[?(@.valueWithoutAMatcher == 'foo')]"
+      "matchesJsonPath" : "$[?(@.['valueWithoutAMatcher'] == 'foo')]"
     }, {
-      "matchesJsonPath" : "$[?(@.valueWithTypeMatch == 'string')]"
+      "matchesJsonPath" : "$[?(@.['valueWithTypeMatch'] == 'string')]"
     }, {
-      "matchesJsonPath" : "$.list.some.nested[?(@.anothervalue == 4)]"
+      "matchesJsonPath" : "$.['list'].['some'].['nested'][?(@.['anothervalue'] == 4)]"
     }, {
-      "matchesJsonPath" : "$.list.someother.nested[?(@.anothervalue == 4)]"
+      "matchesJsonPath" : "$.['list'].['someother'].['nested'][?(@.['anothervalue'] == 4)]"
     }, {
-      "matchesJsonPath" : "$.list.someother.nested[?(@.json == 'with value')]"
+      "matchesJsonPath" : "$.['list'].['someother'].['nested'][?(@.['json'] == 'with value')]"
     }, {
       "matchesJsonPath" : "$[?(@.duck =~ /([0-9]{3})/)]"
     }, {
@@ -7385,7 +7689,7 @@ assertions and the one from matchers with an <code>and</code> section):</p>
   assertThat(response.getStatus()).isEqualTo(200);
  // and:
   DocumentContext parsedJson = JsonPath.parse(responseAsString);
-  assertThatJson(parsedJson).field("property1").isEqualTo("a");
+  assertThatJson(parsedJson).field("['property1']").isEqualTo("a");
 '''</code></pre>
 </div>
 </div>
