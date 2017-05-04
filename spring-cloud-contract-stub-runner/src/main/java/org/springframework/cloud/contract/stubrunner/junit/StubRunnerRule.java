@@ -77,7 +77,9 @@ public class StubRunnerRule implements TestRule, StubFinder {
 				.withStubsClassifier(System.getProperty("stubrunner.classifier", "stubs"))
 				.withStubs(System.getProperty("stubrunner.ids", ""))
 				.withUsername(System.getProperty("stubrunner.username"))
-				.withPassword(System.getProperty("stubrunner.password"));
+				.withPassword(System.getProperty("stubrunner.password"))
+				.withStubPerConsumer(Boolean.parseBoolean(System.getProperty("stubrunner.stubsPerConsumer", "false")))
+				.withConsumerName(System.getProperty("stubrunner.consumer-name"));
 		String proxyHost = System.getProperty("stubrunner.proxy.host");
 		if (proxyHost != null) {
 			builder.withProxy(proxyHost, Integer.parseInt(System.getProperty("stubrunner.proxy.port")));
@@ -198,6 +200,22 @@ public class StubRunnerRule implements TestRule, StubFinder {
 	 */
 	public StubRunnerRule withPort(Integer port) {
 		this.stubRunnerOptionsBuilder.withPort(port);
+		return this;
+	}
+
+	/**
+	 * Allows stub per consumer
+	 */
+	public StubRunnerRule withStubPerConsumer(boolean stubPerConsumer) {
+		this.stubRunnerOptionsBuilder.withStubPerConsumer(stubPerConsumer);
+		return this;
+	}
+
+	/**
+	 * Allows setting consumer name
+	 */
+	public StubRunnerRule withConsumerName(String consumerName) {
+		this.stubRunnerOptionsBuilder.withConsumerName(consumerName);
 		return this;
 	}
 

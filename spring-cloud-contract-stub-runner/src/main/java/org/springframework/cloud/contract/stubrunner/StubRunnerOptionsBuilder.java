@@ -41,6 +41,8 @@ public class StubRunnerOptionsBuilder {
 	private String username;
 	private String password;
 	private StubRunnerOptions.StubRunnerProxyOptions stubRunnerProxyOptions;
+	private boolean stubPerConsumer = false;
+	private String consumerName;
 
 	public StubRunnerOptionsBuilder() {
 	}
@@ -118,7 +120,7 @@ public class StubRunnerOptionsBuilder {
 	public StubRunnerOptions build() {
 		return new StubRunnerOptions(this.minPortValue, this.maxPortValue, this.stubRepositoryRoot,
 				this.workOffline, this.stubsClassifier, buildDependencies(), this.stubIdsToPortMapping,
-				this.username, this.password, this.stubRunnerProxyOptions);
+				this.username, this.password, this.stubRunnerProxyOptions, this.stubPerConsumer, this.consumerName);
 	}
 
 	private Collection<StubConfiguration> buildDependencies() {
@@ -191,6 +193,16 @@ public class StubRunnerOptionsBuilder {
 
 	public StubRunnerOptionsBuilder withProxy(final String proxyHost, final int proxyPort) {
 		this.stubRunnerProxyOptions = new StubRunnerOptions.StubRunnerProxyOptions(proxyHost, proxyPort);
+		return this;
+	}
+
+	public StubRunnerOptionsBuilder withStubPerConsumer(boolean stubPerConsumer) {
+		this.stubPerConsumer = stubPerConsumer;
+		return this;
+	}
+
+	public StubRunnerOptionsBuilder withConsumerName(String consumerName) {
+		this.consumerName = consumerName;
 		return this;
 	}
 }

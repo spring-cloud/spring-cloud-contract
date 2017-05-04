@@ -44,13 +44,15 @@ class StubRepository {
 	private final File path;
 	final List<WiremockMappingDescriptor> projectDescriptors;
 	final Collection<Contract> contracts;
+	private final StubRunnerOptions options;
 
-	public StubRepository(File repository) {
+	public StubRepository(File repository, StubRunnerOptions options) {
 		if (!repository.isDirectory()) {
 			throw new IllegalArgumentException(
 					"Missing descriptor repository under path [" + repository + "]");
 		}
 		this.path = repository;
+		this.options = options;
 		this.projectDescriptors = projectDescriptors();
 		this.contracts = contracts();
 	}
@@ -101,7 +103,7 @@ class StubRepository {
 						public FileVisitResult visitFile(Path path,
 								BasicFileAttributes attrs) throws IOException {
 							File file = path.toFile();
-							if (isMappingDescriptor(file)) {
+							if (isMappingDescriptor(file) && isStubPerConsumerPathMatching(file)) {
 								mappingDescriptors
 										.add(new WiremockMappingDescriptor(file));
 							}
@@ -129,7 +131,7 @@ class StubRepository {
 						public FileVisitResult visitFile(Path path,
 								BasicFileAttributes attrs) throws IOException {
 							File file = path.toFile();
-							if (isContractDescriptor(file)) {
+							if (isContractDescriptor(file) && isStubPerConsumerPathMatching(file)) {
 								mappingDescriptors
 								.add(ContractVerifierDslConverter.convert(file));
 							}
@@ -145,6 +147,14 @@ class StubRepository {
 
 	private static boolean isMappingDescriptor(File file) {
 		return file.isFile() && file.getName().endsWith(".json");
+	}
+
+	private boolean isStubPerConsumerPathMatching(File file) {
+		if (!this.options.isStubsPerConsumer()) {
+			return true;
+		}
+		String consumerName = this.options.getConsumerName();
+		return file.getAbsolutePath().contains(File.separator + consumerName + File.separator);
 	}
 
 	private static boolean isContractDescriptor(File file) {

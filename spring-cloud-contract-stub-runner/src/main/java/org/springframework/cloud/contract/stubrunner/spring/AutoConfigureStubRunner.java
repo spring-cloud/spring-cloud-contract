@@ -69,4 +69,33 @@ public @interface AutoConfigureStubRunner {
 	 * The classifier to use by default in ivy co-ordinates for a stub.
 	 */
 	String classifier() default "stubs";
+
+	/**
+	 * On the producer side the consumers can have a folder that contains contracts related only to them. By setting the flag to {@code true}
+	 * we no longer register all stubs but only those that correspond to the consumer application's name. In other words
+	 * we'll scan the path of every stub and if it contains the name of the consumer in the path only then will it get registered.
+	 *
+	 * Let's look at this example. Let's assume
+	 * that we have a producer called {@code foo} and two consumers {@code baz} and {@code bar}. On the {@code foo} producer side the
+	 * contracts would look like this
+	 * {@code src/test/resources/contracts/baz-service/some/contracts/...} and
+	 * {@code src/test/resources/contracts/bar-service/some/contracts/...}.
+	 *
+	 * Then when the consumer with {@code spring.application.name} or the {@link AutoConfigureStubRunner#consumerName()}
+	 * annotation parameter set to {@code baz-service} will define the test setup as follows
+	 * {@code @AutoConfigureStubRunner(ids = "com.example:foo:+:stubs:8095", stubsPerConsumer=true)} then only the stubs registered
+	 * under {@code src/test/resources/contracts/baz-service/some/contracts/...} will get registered and those under
+	 * {@code src/test/resources/contracts/bar-service/some/contracts/...} will get ignored.
+	 *
+	 * @see <a href="https://github.com/spring-cloud/spring-cloud-contract/issues/224">issue 224</a>
+	 *
+	 */
+	boolean stubsPerConsumer() default false;
+
+	/**
+	 * You can override the default {@code spring.application.name} of this field by setting a value to this parameter.
+	 *
+	 * @see <a href="https://github.com/spring-cloud/spring-cloud-contract/issues/224">issue 224</a>
+	 */
+	String consumerName() default "";
 }

@@ -27,7 +27,8 @@ class StubServerSpec extends Specification {
 
 	def 'should register stub mappings upon server start'() {
 		given:
-		List<WiremockMappingDescriptor> mappingDescriptors = new StubRepository(repository).getProjectDescriptors()
+		List<WiremockMappingDescriptor> mappingDescriptors = new StubRepository(repository,
+				new StubRunnerOptionsBuilder().build()).getProjectDescriptors()
 		StubServer pingStubServer = new StubServer(stubConfiguration, mappingDescriptors, [],
 				new WireMockHttpServerStub(STUB_SERVER_PORT))
 		when:
@@ -39,7 +40,8 @@ class StubServerSpec extends Specification {
 
 	def 'should provide stub server URL'() {
 		given:
-		List<WiremockMappingDescriptor> mappingDescriptors = new StubRepository(repository).getProjectDescriptors()
+		List<WiremockMappingDescriptor> mappingDescriptors = new StubRepository(repository,
+				new StubRunnerOptionsBuilder().build()).getProjectDescriptors()
 		StubServer pingStubServer = new StubServer(stubConfiguration, mappingDescriptors, [],
 				new WireMockHttpServerStub(STUB_SERVER_PORT))
 		when:

@@ -75,11 +75,22 @@ public class StubRunnerOptions {
 	 */
 	private final StubRunnerProxyOptions stubRunnerProxyOptions;
 
+	/**
+	 * Should only stubs applicable for the given consumer get registered
+	 */
+	private boolean stubsPerConsumer = false;
+
+	/**
+	 * Name of the consumer. If not set should default to {@code spring.application.name}
+	 */
+	private String consumerName;
+
 	StubRunnerOptions(Integer minPortValue, Integer maxPortValue,
 			String stubRepositoryRoot, boolean workOffline, String stubsClassifier,
 			Collection<StubConfiguration> dependencies,
 			Map<StubConfiguration, Integer> stubIdsToPortMapping,
-			String username, String password, final StubRunnerProxyOptions stubRunnerProxyOptions) {
+			String username, String password, final StubRunnerProxyOptions stubRunnerProxyOptions,
+			boolean stubsPerConsumer, String consumerName) {
 		this.minPortValue = minPortValue;
 		this.maxPortValue = maxPortValue;
 		this.stubRepositoryRoot = stubRepositoryRoot;
@@ -90,6 +101,8 @@ public class StubRunnerOptions {
 		this.username = username;
 		this.password = password;
 		this.stubRunnerProxyOptions = stubRunnerProxyOptions;
+		this.stubsPerConsumer = stubsPerConsumer;
+		this.consumerName = consumerName;
 	}
 
 	public Integer port(StubConfiguration stubConfiguration) {
@@ -119,6 +132,22 @@ public class StubRunnerOptions {
 
 	public StubRunnerProxyOptions getProxyOptions() {
 		return this.stubRunnerProxyOptions;
+	}
+
+	public boolean isStubsPerConsumer() {
+		return this.stubsPerConsumer;
+	}
+
+	public void setStubsPerConsumer(boolean stubsPerConsumer) {
+		this.stubsPerConsumer = stubsPerConsumer;
+	}
+
+	public String getConsumerName() {
+		return this.consumerName;
+	}
+
+	public void setConsumerName(String consumerName) {
+		this.consumerName = consumerName;
 	}
 
 	public static class StubRunnerProxyOptions {
@@ -151,7 +180,9 @@ public class StubRunnerOptions {
 				+ ", workOffline=" + this.workOffline + ", stubsClassifier='" + this.stubsClassifier
 				+ '\'' + ", dependencies=" + this.dependencies + ", stubIdsToPortMapping="
 				+ this.stubIdsToPortMapping + ", username='" + this.username + '\'' + ", password='"
-				+ this.password + '\'' + ", stubRunnerProxyOptions=" + this.stubRunnerProxyOptions
+				+ this.password + '\'' + ", stubRunnerProxyOptions='" + this.stubRunnerProxyOptions + "', stubsPerConsumer='"
+				+ this.stubsPerConsumer
+				+ '\'' + ", stubsPerConsumer='" + this.stubsPerConsumer + '\''
 				+ '}';
 	}
 }
