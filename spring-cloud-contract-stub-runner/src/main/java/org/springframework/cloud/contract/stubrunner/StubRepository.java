@@ -63,8 +63,8 @@ class StubRepository {
 		}
 		this.httpServerStubs = httpServerStubs;
 		this.path = repository;
-		this.stubs = stubs();
 		this.options = options;
+		this.stubs = stubs();
 		this.contracts = contracts();
 	}
 

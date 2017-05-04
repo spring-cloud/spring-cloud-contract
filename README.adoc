@@ -1583,7 +1583,7 @@ Spring Boot container if there is one.
 
 https://projects.spring.io/spring-restdocs[Spring RestDocs] can be
 used to generate documentation (e.g. in asciidoctor format) for an
-HTTP API with Spring MockMvc or RestEasy. At the same time as you
+HTTP API with Spring MockMvc or Rest Assured. At the same time as you
 generate documentation for your API, you can also generate WireMock
 stubs, by using Spring Cloud Contract WireMock. Just write your normal
 RestDocs test cases and use `@AutoConfigureRestDocs` to have stubs
