@@ -361,9 +361,8 @@ will generate a stub something like this:
 NOTE: You can use either the `wiremock()` method or the `jsonPath()`
 and `contentType()` methods to create request matchers, but not both.
 
-On the consumer side, you can make the `resource.json` generated above
-available on the classpath (by https://cloud.spring.io/spring-cloud-contract/1.0.x/#_publishing_stubs_as_jars[publishing stubs as JARs] for example).
-After that, you can create a stub using WireMock in a
+On the consumer side, assuming the `resource.json` generated above is
+available on the classpath, you can create a stub using WireMock in a
 number of different ways, including as described above using
 `@AutoConfigureWireMock(stubs="classpath:resource.json")`.
 
