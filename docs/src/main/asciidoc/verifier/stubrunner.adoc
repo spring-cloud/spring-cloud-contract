@@ -49,9 +49,9 @@ include::{samples_url}/producer_with_restdocs/src/assembly/stub.xml[indent=0]
 include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/resources/functionalTest/scenarioProject/build.gradle[tags=jar_setup,indent=0]
 ----
 
-==== Modules
-
 include::{stubrunner_core_path}/README.adoc[]
+
+=== Common
 
 ==== Common properties for JUnit and Spring
 
@@ -68,6 +68,8 @@ Some of the properties that are repetitive can be set using system properties or
 |stubrunner.ids|| Array of Ivy notation stubs to download
 |stubrunner.username|| Optional username to access the tool that stores the JARs with stubs
 |stubrunner.password|| Optional password to access the tool that stores the JARs with stubs
+|stubrunner.stubsPerConsumer|false| Set to `true` if you want to use different stubs per each consumer instead of registering all stubs for every consumer
+|stubrunner.consumerName|| If you want to use stubs per consumer and want to override the consumer name just change this value
 |======================
 
 ===== Stub runner stubs ids

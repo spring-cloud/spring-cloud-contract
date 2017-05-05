@@ -26,6 +26,8 @@ import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
 
+import java.lang.reflect.InvocationTargetException
+
 class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifier {
 
 	@Rule OutputCapture capture = new OutputCapture()
@@ -145,6 +147,58 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			test.eachLine { if (it.contains('"foo".equals')) lines << it else it }
 			lines.addFirst(jsonSample)
 			SyntaxChecker.tryToRun(methodBuilderName, lines.join("\n"))
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
+	@Issue('#289')
+	def "should fail on nonexistent field [#methodBuilderName]"() {
+		given:
+		Contract contractDsl = Contract.make {
+			request {
+				method 'GET'
+				url '/something'
+				headers {
+					contentType(applicationJson())
+				}
+			}
+			response {
+				status 200
+				headers {
+					contentType(applicationJson())
+				}
+				body([
+						doesNotExist: $(p(anyAlphaUnicode()), c("123"))
+				])
+			}
+		}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
+		and:
+			String jsonSample = '''\
+String json = "{}";
+DocumentContext parsedJson = JsonPath.parse(json);
+'''
+		and:
+			LinkedList<String> lines = [] as LinkedList<String>
+			test.eachLine { if (it.contains('assertThatJson')) lines << it else it }
+			lines.addFirst(jsonSample)
+			try {
+				SyntaxChecker.tryToRun(methodBuilderName, lines.join("\n"))
+			} catch (IllegalStateException e) {
+				assert e.message.contains("Parsed JSON [{}] doesn't match the JSON path")
+			} catch (InvocationTargetException e1) {
+				assert e1.cause.message.contains("Parsed JSON [{}] doesn't match the JSON path")
+			}
 		where:
 			methodBuilderName                                    | methodBuilder
 			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
