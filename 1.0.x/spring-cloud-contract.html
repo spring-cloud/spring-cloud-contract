@@ -1257,8 +1257,9 @@ and <code>contentType()</code> methods to create request matchers, but not both.
 </table>
 </div>
 <div class="paragraph">
-<p>On the consumer side, assuming the <code>resource.json</code> generated above is
-available on the classpath, you can create a stub using WireMock in a
+<p>On the consumer side, you can make the <code>resource.json</code> generated above
+available on the classpath (by <a href="https://cloud.spring.io/spring-cloud-contract/1.0.x/#_publishing_stubs_as_jars">publishing stubs as JARs</a> for example).
+After that, you can create a stub using WireMock in a
 number of different ways, including as described above using
 <code>@AutoConfigureWireMock(stubs="classpath:resource.json")</code>.</p>
 </div>
