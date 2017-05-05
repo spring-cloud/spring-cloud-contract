@@ -633,7 +633,6 @@ $(addBlockSwitches);
 <ul class="sectlevel3">
 <li><a href="#_snapshot_versions">Snapshot versions</a></li>
 <li><a href="#_publishing_stubs_as_jars">Publishing stubs as JARs</a></li>
-<li><a href="#_modules">Modules</a></li>
 </ul>
 </li>
 <li><a href="#_stub_runner_core">Stub Runner Core</a>
@@ -686,7 +685,8 @@ $(addBlockSwitches);
 <li><a href="#_stub_runner_boot_with_service_discovery">Stub Runner Boot with Service Discovery</a></li>
 </ul>
 </li>
-<li><a href="#_stubs_per_consumer">Stubs Per Consumer</a>
+<li><a href="#_stubs_per_consumer">Stubs Per Consumer</a></li>
+<li><a href="#_common">Common</a>
 <ul class="sectlevel3">
 <li><a href="#_common_properties_for_junit_and_spring">Common properties for JUnit and Spring</a>
 <ul class="sectlevel4">
@@ -4223,10 +4223,6 @@ publishing {
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_modules">Modules</h4>
-
-</div>
 </div>
 <div class="sect2">
 <h3 id="_stub_runner_core">Stub Runner Core</h3>
@@ -5314,6 +5310,9 @@ class StubRunnerStubsPerConsumerWithConsumerNameSpec extends Specification {
 <p>You can check out <a href="https://github.com/spring-cloud/spring-cloud-contract/issues/224">issue 224</a> for more
 information about the reasons behind this change.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_common">Common</h3>
 <div class="sect3">
 <h4 id="_common_properties_for_junit_and_spring">Common properties for JUnit and Spring</h4>
 <div class="paragraph">
@@ -5372,6 +5371,16 @@ information about the reasons behind this change.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">stubrunner.password</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Optional password to access the tool that stores the JARs with stubs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">stubrunner.stubsPerConsumer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set to <code>true</code> if you want to use different stubs per each consumer instead of registering all stubs for every consumer</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">stubrunner.consumerName</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If you want to use stubs per consumer and want to override the consumer name just change this value</p></td>
 </tr>
 </tbody>
 </table>
@@ -9468,8 +9477,9 @@ and <code>contentType()</code> methods to create request matchers, but not both.
 </table>
 </div>
 <div class="paragraph">
-<p>On the consumer side, assuming the <code>resource.json</code> generated above is
-available on the classpath, you can create a stub using WireMock in a
+<p>On the consumer side, you can make the <code>resource.json</code> generated above
+available on the classpath (by <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_publishing_stubs_as_jars">publishing stubs as JARs</a> for example).
+After that, you can create a stub using WireMock in a
 number of different ways, including as described above using
 <code>@AutoConfigureWireMock(stubs="classpath:resource.json")</code>.</p>
 </div>
