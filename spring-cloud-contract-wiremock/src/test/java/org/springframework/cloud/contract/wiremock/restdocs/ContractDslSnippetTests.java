@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -14,8 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.spec.Contract;
+import org.springframework.cloud.contract.spec.internal.Header;
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -80,9 +84,11 @@ public class ContractDslSnippetTests {
 		String contract = readFromFile(file("/contracts/index.groovy"));
 		// try to parse the contract
 		Contract parsedContract = ContractVerifierDslConverter.convert(contract);
-		then(parsedContract.getRequest().getHeaders().getEntries()).isNotEmpty();
+		then(parsedContract.getRequest().getHeaders().getEntries()).isNotNull();
+		then(headerNames(parsedContract.getRequest().getHeaders().getEntries())).doesNotContain(HttpHeaders.HOST);
 		then(parsedContract.getRequest().getMethod().getClientValue()).isNotNull();
 		then(parsedContract.getRequest().getUrl().getClientValue()).isNotNull();
+		then(parsedContract.getRequest().getUrl().getClientValue().toString()).startsWith("/");
 		then(parsedContract.getRequest().getBody().getClientValue()).isNotNull();
 		then(parsedContract.getResponse().getStatus().getClientValue()).isNotNull();
 		then(parsedContract.getResponse().getHeaders().getEntries()).isNotEmpty();
@@ -101,14 +107,25 @@ public class ContractDslSnippetTests {
 		String contract = readFromFile(file("/contracts/empty.groovy"));
 		// try to parse the contract
 		Contract parsedContract = ContractVerifierDslConverter.convert(contract);
-		then(parsedContract.getRequest().getHeaders().getEntries()).isNotEmpty();
+		then(parsedContract.getRequest().getHeaders()).isNull();
 		then(parsedContract.getRequest().getMethod().getClientValue()).isNotNull();
 		then(parsedContract.getRequest().getUrl().getClientValue()).isNotNull();
+		then(parsedContract.getRequest().getUrl().getClientValue().toString()).startsWith("/");
 		then(parsedContract.getRequest().getBody()).isNull();
 		then(parsedContract.getResponse().getStatus().getClientValue()).isNotNull();
 		then(parsedContract.getResponse().getHeaders()).isNull();
 		then(parsedContract.getResponse().getBody()).isNull();
 		then(parsedContract.getResponse().getMatchers()).isNull();
+	}
+
+	private Set<String> headerNames(Set<Header> headers) {
+		Set<String> names = new HashSet<>();
+
+		for (Header header : headers) {
+			names.add(header.getName());
+		}
+
+		return names;
 	}
 
 	private File file(String name) throws URISyntaxException {
