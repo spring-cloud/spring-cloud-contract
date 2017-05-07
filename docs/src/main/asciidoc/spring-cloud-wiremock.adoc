@@ -323,15 +323,13 @@ import org.springframework.cloud.contract.spec.Contract
 Contract.make {
     request {
         method 'POST'
-        url 'http://localhost:8080/foo'
+        url '/foo'
         body('''
             {"foo": 23 }
         ''')
         headers {
             header('''Accept''', '''application/json''')
             header('''Content-Type''', '''application/json''')
-            header('''Host''', '''localhost:8080''')
-            header('''Content-Length''', '''12''')
         }
     }
     response {

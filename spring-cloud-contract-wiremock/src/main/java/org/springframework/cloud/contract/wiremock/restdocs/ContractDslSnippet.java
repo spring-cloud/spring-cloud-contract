@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.net.URI;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,6 +19,7 @@ import org.springframework.restdocs.operation.OperationRequest;
 import org.springframework.restdocs.operation.OperationResponse;
 import org.springframework.restdocs.snippet.TemplatedSnippet;
 import org.springframework.restdocs.templates.TemplateEngine;
+import org.springframework.util.StringUtils;
 
 /**
  * A {@link org.springframework.restdocs.snippet.Snippet} that documents the Spring Cloud Contract Groovy DSL.
@@ -30,6 +33,7 @@ public class ContractDslSnippet extends TemplatedSnippet {
 	private static final String SNIPPET_NAME = "dsl-contract";
 
 	private Map<String, Object> model = new HashMap<>();
+	private Set<String> bannedHeaders = new HashSet<>(Arrays.asList(HttpHeaders.HOST, HttpHeaders.CONTENT_LENGTH));
 
 	/**
 	 * Creates a new {@code ContractDslSnippet} with no additional attributes.
@@ -53,7 +57,8 @@ public class ContractDslSnippet extends TemplatedSnippet {
 		return this.model;
 	}
 
-	@Override public void document(Operation operation) throws IOException {
+	@Override
+	public void document(Operation operation) throws IOException {
 		TemplateEngine templateEngine = (TemplateEngine) operation.getAttributes().get(TemplateEngine.class.getName());
 		String renderedContract = templateEngine.compileTemplate("default-dsl-contract-only")
 				.render(createModelForContract(operation));
@@ -90,12 +95,30 @@ public class ContractDslSnippet extends TemplatedSnippet {
 	private void insertRequestModel(Operation operation, Map<String, Object> model) {
 		OperationRequest request = operation.getRequest();
 		model.put("request_method", request.getMethod());
-		model.put("request_url", request.getUri());
+		model.put("request_url", prepareRequestUrl(request.getUri()));
 		model.put("request_body_present", request.getContent().length > 0);
 		model.put("request_body", request.getContentAsString());
-		HttpHeaders headers = request.getHeaders();
+		Map<String, String> headers = request.getHeaders().toSingleValueMap();
+		filterHeaders(headers);
 		model.put("request_headers_present", !headers.isEmpty());
-		model.put("request_headers", headers.toSingleValueMap().entrySet());
+		model.put("request_headers", headers.entrySet());
+	}
+
+	private void filterHeaders(Map<String, String> headers) {
+		for (String header : this.bannedHeaders) {
+			if (headers.containsKey(header)) {
+				headers.remove(header);
+			}
+		}
+	}
+
+	private String prepareRequestUrl(URI uri) {
+		String path = uri.getRawPath();
+		String query = uri.getRawQuery();
+		if (StringUtils.hasText(query)) {
+			path = path + "?" + query;
+		}
+		return path;
 	}
 
 	private Map<String, Object> createModelForContract(Operation operation) {
