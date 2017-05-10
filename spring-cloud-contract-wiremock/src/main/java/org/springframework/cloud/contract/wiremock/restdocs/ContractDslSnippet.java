@@ -33,7 +33,8 @@ public class ContractDslSnippet extends TemplatedSnippet {
 	private static final String SNIPPET_NAME = "dsl-contract";
 
 	private Map<String, Object> model = new HashMap<>();
-	private Set<String> bannedHeaders = new HashSet<>(Arrays.asList(HttpHeaders.HOST, HttpHeaders.CONTENT_LENGTH));
+	private static final Set<String> IGNORED_HEADERS =
+			new HashSet<>(Arrays.asList(HttpHeaders.HOST, HttpHeaders.CONTENT_LENGTH));
 
 	/**
 	 * Creates a new {@code ContractDslSnippet} with no additional attributes.
@@ -105,7 +106,7 @@ public class ContractDslSnippet extends TemplatedSnippet {
 	}
 
 	private void filterHeaders(Map<String, String> headers) {
-		for (String header : this.bannedHeaders) {
+		for (String header : IGNORED_HEADERS) {
 			if (headers.containsKey(header)) {
 				headers.remove(header);
 			}
