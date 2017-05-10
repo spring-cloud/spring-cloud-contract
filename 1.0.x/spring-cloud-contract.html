@@ -1273,6 +1273,13 @@ number of different ways, including as described above using
 Contract DSL file and documentation. If you combine that with Spring Cloud
 WireMock then you&#8217;re getting both the contracts and stubs.</p>
 </div>
+<div class="paragraph">
+<p>Why would you want to use this feature? Some people in the community asked questions
+about situation in which they would like to move to DSL based contract definition
+but they already have a lot of Spring MVC tests. Using this feature allows you to generate
+the contract files that you can later modify and move to proper folders so that the
+plugin picks them up.</p>
+</div>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -1322,15 +1329,13 @@ section, contract will get generated and a documentation file too.</p>
 Contract.make {
     request {
         method 'POST'
-        url 'http://localhost:8080/foo'
+        url '/foo'
         body('''
             {"foo": 23 }
         ''')
         headers {
             header('''Accept''', '''application/json''')
             header('''Content-Type''', '''application/json''')
-            header('''Host''', '''localhost:8080''')
-            header('''Content-Length''', '''12''')
         }
     }
     response {
