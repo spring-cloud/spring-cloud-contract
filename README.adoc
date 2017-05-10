@@ -361,8 +361,9 @@ will generate a stub something like this:
 NOTE: You can use either the `wiremock()` method or the `jsonPath()`
 and `contentType()` methods to create request matchers, but not both.
 
-On the consumer side, assuming the `resource.json` generated above is
-available on the classpath, you can create a stub using WireMock in a
+On the consumer side, you can make the `resource.json` generated above
+available on the classpath (by https://cloud.spring.io/spring-cloud-contract/1.0.x/#_publishing_stubs_as_jars[publishing stubs as JARs] for example).
+After that, you can create a stub using WireMock in a
 number of different ways, including as described above using
 `@AutoConfigureWireMock(stubs="classpath:resource.json")`.
 
@@ -371,6 +372,12 @@ number of different ways, including as described above using
 Another thing that can be generated with Spring RestDocs is the Spring Cloud
 Contract DSL file and documentation. If you combine that with Spring Cloud
 WireMock then you're getting both the contracts and stubs.
+
+Why would you want to use this feature? Some people in the community asked questions
+about situation in which they would like to move to DSL based contract definition
+but they already have a lot of Spring MVC tests. Using this feature allows you to generate
+the contract files that you can later modify and move to proper folders so that the
+plugin picks them up.
 
 TIP: You might wonder why this functionality is in the WireMock module.
 Come to think of it, it does make sense since it makes little sense to generate
@@ -408,15 +415,13 @@ import org.springframework.cloud.contract.spec.Contract
 Contract.make {
     request {
         method 'POST'
-        url 'http://localhost:8080/foo'
+        url '/foo'
         body('''
             {"foo": 23 }
         ''')
         headers {
             header('''Accept''', '''application/json''')
             header('''Content-Type''', '''application/json''')
-            header('''Host''', '''localhost:8080''')
-            header('''Content-Length''', '''12''')
         }
     }
     response {
