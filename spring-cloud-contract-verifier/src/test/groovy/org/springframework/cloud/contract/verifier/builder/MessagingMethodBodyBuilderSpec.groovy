@@ -59,7 +59,7 @@ def contractDsl = Contract.make {
  then:
   ContractVerifierMessage response = contractVerifierMessaging.receive('activemq:output')
   assert response != null
-  response.getHeader('BOOK-NAME')  == 'foo'
+  response.getHeader('BOOK-NAME')?.toString()  == 'foo'
  and:
   DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
   assertThatJson(parsedJson).field("bookName").isEqualTo("foo")
@@ -99,7 +99,8 @@ def contractDsl = Contract.make {
  // then:
   ContractVerifierMessage response = contractVerifierMessaging.receive("activemq:output");
   assertThat(response).isNotNull();
-  assertThat(response.getHeader("BOOK-NAME")).isEqualTo("foo");
+  assertThat(response.getHeader("BOOK-NAME")).isNotNull();
+  assertThat(response.getHeader("BOOK-NAME").toString()).isEqualTo("foo");
  // and:
   DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
   assertThatJson(parsedJson).field("bookName").isEqualTo("foo");
@@ -154,7 +155,7 @@ when:
 then:
    ContractVerifierMessage response = contractVerifierMessaging.receive('jms:output')
    assert response !- null
-   response.getHeader('BOOK-NAME')  == 'foo'
+   response.getHeader('BOOK-NAME')?.toString()  == 'foo'
 and:
    DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
    assertThatJson(parsedJson).field("bookName").isEqualTo("foo")
@@ -207,7 +208,8 @@ and:
 // then:
  ContractVerifierMessage response = contractVerifierMessaging.receive("jms:output");
  assertThat(response).isNotNull();
- assertThat(response.getHeader("BOOK-NAME")).isEqualTo("foo");
+ assertThat(response.getHeader("BOOK-NAME")).isNotNull();
+ assertThat(response.getHeader("BOOK-NAME").toString()).isEqualTo("foo");
 // and:
  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
  assertThatJson(parsedJson).field("bookName").isEqualTo("foo");

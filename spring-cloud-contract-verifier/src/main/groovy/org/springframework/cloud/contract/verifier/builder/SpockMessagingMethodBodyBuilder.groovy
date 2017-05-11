@@ -73,17 +73,17 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
-		blockBuilder.addLine("${exec.insertValue("response.getHeader(\'$property\')")}")
+		blockBuilder.addLine("${exec.insertValue("response.getHeader(\'$property\')?.toString()")}")
 	}
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, String value) {
-		blockBuilder.addLine("response.getHeader('$property') ${convertHeaderComparison(value)}")
+		blockBuilder.addLine("response.getHeader('$property')?.toString() ${convertHeaderComparison(value)}")
 	}
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Pattern value) {
-		blockBuilder.addLine("response.getHeader('$property') ${convertHeaderComparison(value)}")
+		blockBuilder.addLine("response.getHeader('$property')?.toString() ${convertHeaderComparison(value)}")
 	}
 
 	@Override
