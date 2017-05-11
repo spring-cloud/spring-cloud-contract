@@ -88,17 +88,20 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, String value) {
-		blockBuilder.addLine("assertThat(response.getHeader(\"$property\")).${createHeaderComparison(value)}")
+		blockBuilder.addLine("assertThat(response.getHeader(\"$property\")).isNotNull();")
+		blockBuilder.addLine("assertThat(response.getHeader(\"$property\").toString()).${createHeaderComparison(value)}")
 	}
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Pattern pattern) {
-		blockBuilder.addLine("assertThat(response.getHeader(\"$property\")).${createHeaderComparison(pattern)}")
+		blockBuilder.addLine("assertThat(response.getHeader(\"$property\")).isNotNull();")
+		blockBuilder.addLine("assertThat(response.getHeader(\"$property\").toString()).${createHeaderComparison(pattern)}")
 	}
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
-		blockBuilder.addLine("${exec.insertValue("response.getHeader(\"$property\")")};")
+		blockBuilder.addLine("assertThat(response.getHeader(\"$property\")).isNotNull();")
+		blockBuilder.addLine("${exec.insertValue("response.getHeader(\"$property\").toString()")};")
 	}
 
 	@Override
@@ -110,7 +113,7 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	protected void validateResponseHeadersBlock(BlockBuilder bb) {
 		bb.addLine("""ContractVerifierMessage response = contractVerifierMessaging.receive("${outputMessage.sentTo.serverValue}");""")
 		bb.addLine("""assertThat(response).isNotNull();""")
-		outputMessage.headers?.executeForEachHeader { Header header ->\
+		outputMessage.headers?.executeForEachHeader { Header header ->
 			processHeaderElement(bb, header.name, header.serverValue)
 		}
 	}
