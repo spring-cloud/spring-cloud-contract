@@ -18,12 +18,19 @@ package com.example.sink;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.contract.stubrunner.StubTrigger;
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
+import org.springframework.cloud.stream.messaging.Sink;
+import org.springframework.integration.support.management.MessageChannelMetrics;
+import org.springframework.messaging.SubscribableChannel;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Marius Bogoevici
@@ -36,8 +43,14 @@ public class MessageConsumedTests {
 	@Autowired
 	StubTrigger stubTrigger;
 
+	@Autowired
+	@Qualifier(Sink.INPUT)
+	SubscribableChannel input;
+
 	@Test
 	public void testMessageConsumed() throws Exception {
+		int count = ((MessageChannelMetrics) input).getSendCount();
 		stubTrigger.trigger("sensor1");
+		assertThat(((MessageChannelMetrics) input).getSendCount()).isEqualTo(count + 1);
 	}
 }
