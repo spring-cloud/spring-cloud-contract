@@ -8264,6 +8264,12 @@ common jar classes will be visible in your Groovy files.</p>
 	&lt;extensions&gt;true&lt;/extensions&gt;
 	&lt;configuration&gt;
 		&lt;packageWithBaseClasses&gt;com.example&lt;/packageWithBaseClasses&gt;
+		&lt;baseClassMappings&gt;
+			&lt;baseClassMapping&gt;
+				&lt;contractPackageRegex&gt;.*intoxication.*&lt;/contractPackageRegex&gt;
+				&lt;baseClassFQN&gt;com.example.intoxication.BeerIntoxicationBase&lt;/baseClassFQN&gt;
+			&lt;/baseClassMapping&gt;
+		&lt;/baseClassMappings&gt;
 	&lt;/configuration&gt;
 	&lt;dependencies&gt;
 		&lt;dependency&gt;
