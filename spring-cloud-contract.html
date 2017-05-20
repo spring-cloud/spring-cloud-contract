@@ -8082,26 +8082,31 @@ import java.util.regex.Pattern;
  *
  * @author Marcin Grzejszczak
  */
+//tag::impl[]
 public class PatternUtils {
+
 	public static String tooYoung() {
+		//remove::start[]
 		return "[0-1][0-9]";
+		//remove::end[return]
 	}
 
 	public static Pattern oldEnough() {
+		//remove::start[]
 		return Pattern.compile("[2-9][0-9]");
-	}
-
-	public static Pattern anyName() {
-		return Pattern.compile("[a-zA-Z]+");
+		//remove::end[return]
 	}
 
 	/**
 	 * Makes little sense but it's just an example ;)
 	 */
 	public static Pattern ok() {
+		//remove::start[]
 		return Pattern.compile("OK");
+		//remove::end[return]
 	}
-}</code></pre>
+}
+//end::impl[]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -8112,7 +8117,6 @@ public class PatternUtils {
 <pre class="highlight"><code class="language-java" data-lang="java">package com.example;
 
 import org.springframework.cloud.contract.spec.internal.ClientDslProperty;
-import org.springframework.cloud.contract.spec.internal.DslProperty;
 
 /**
  * DSL Properties passed to the DSL from the consumer's perspective.
@@ -8123,6 +8127,7 @@ import org.springframework.cloud.contract.spec.internal.DslProperty;
  *
  * @author Marcin Grzejszczak
  */
+//tag::impl[]
 public class ConsumerUtils {
 	/**
 	 * Consumer side property. By using the {@link ClientDslProperty}
@@ -8138,40 +8143,22 @@ public class ConsumerUtils {
 	 * }
 	 * &lt;/pre&gt;
 	 *
-	 * That way the consumer side value of age field will be
-	 * a regular expression and the producer side will be generated.
+	 * That way it's in the implementation that we decide what value we will pass to the consumer
+	 * and which one to the producer.
 	 *
 	 * @author Marcin Grzejszczak
 	 */
 	public static ClientDslProperty oldEnough() {
 		//remove::start[]
-		return new ClientDslProperty(PatternUtils.oldEnough());
+		// this example is not the best one and
+		// theoretically you could just pass the regex instead of `ServerDslProperty` but
+		// it's just to show some new tricks :)
+		return new ClientDslProperty(PatternUtils.oldEnough(), 40);
 		//remove::end[]
 	}
 
-	/**
-	 * Consumer side property. By using the {@link ClientDslProperty}
-	 * you can omit most of boilerplate code from the perspective
-	 * of dynamic values. Example
-	 *
-	 * &lt;pre&gt;
-	 * {@code
-	 * request {
-	 *     body(
-	 *         [ name: $(ConsumerUtils.anyName())]
-	 *     )
-	 * }
-	 * &lt;/pre&gt;
-	 *
-	 * That way the consumer will be a regular expression and the
-	 * producer side value will be equal to {@code marcin}
-	 */
-	public static DslProperty anyName() {
-		//remove::start[]
-		return new DslProperty&lt;&gt;(PatternUtils.anyName(), "marcin");
-		//remove::end[]
-	}
-}</code></pre>
+}
+//end::impl[]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -8192,6 +8179,7 @@ import org.springframework.cloud.contract.spec.internal.ServerDslProperty;
  *
  * @author Marcin Grzejszczak
  */
+//tag::impl[]
 public class ProducerUtils {
 
 	/**
@@ -8208,13 +8196,17 @@ public class ProducerUtils {
 	 * }
 	 * &lt;/pre&gt;
 	 *
-	 * That way the producer side value of age field will be
-	 * a regular expression and the consumer side will be generated.
+	 * That way it's in the implementation that we decide what value we will pass to the consumer
+	 * and which one to the producer.
 	 */
 	public static ServerDslProperty ok() {
-		return new ServerDslProperty(PatternUtils.ok());
+		// this example is not the best one and
+		// theoretically you could just pass the regex instead of `ServerDslProperty` but
+		// it's just to show some new tricks :)
+		return new ServerDslProperty( PatternUtils.ok(), "OK");
 	}
-}</code></pre>
+}
+//end::impl[]</code></pre>
 </div>
 </div>
 </div>
@@ -8298,10 +8290,9 @@ common jar classes will be visible in your Groovy files.</p>
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">package contracts.beer.rest
 
+import com.example.ConsumerUtils
+import com.example.ProducerUtils
 import org.springframework.cloud.contract.spec.Contract
-
-import static com.example.ConsumerUtils.oldEnough
-import static com.example.ProducerUtils.ok
 
 Contract.make {
 	description("""
@@ -8321,7 +8312,7 @@ then:
 		method 'POST'
 		url '/check'
 		body(
-				age: $(oldEnough())
+				age: $(ConsumerUtils.oldEnough())
 		)
 		headers {
 			contentType(applicationJson())
@@ -8331,7 +8322,7 @@ then:
 		status 200
 		body("""
 			{
-				"status": "${value(ok())}"
+				"status": "${value(ProducerUtils.ok())}"
 			}
 			""")
 		headers {
