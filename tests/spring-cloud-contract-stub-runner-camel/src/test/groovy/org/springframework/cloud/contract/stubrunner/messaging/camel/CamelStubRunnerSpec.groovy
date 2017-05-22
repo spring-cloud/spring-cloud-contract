@@ -173,7 +173,7 @@ class CamelStubRunnerSpec extends Specification {
 
 		@Bean
 		ActiveMQConnectionFactory activeMQConnectionFactory(@Value('${activemq.url:vm://localhost?broker.persistent=false}') String url) {
-			return new ActiveMQConnectionFactory(brokerURL: url)
+			return new ActiveMQConnectionFactory(brokerURL: url, trustAllPackages: true)
 		}
 
 		@Bean
