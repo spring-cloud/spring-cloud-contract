@@ -8226,7 +8226,12 @@ common jar classes will be visible in your Groovy files.</p>
 <div class="listingblock primary">
 <div class="title">Maven</div>
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml"></code></pre>
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+	&lt;groupId&gt;com.example&lt;/groupId&gt;
+	&lt;artifactId&gt;beer-common&lt;/artifactId&gt;
+	&lt;version&gt;${project.version}&lt;/version&gt;
+	&lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
 </div>
 </div>
 <div class="listingblock secondary">
@@ -8258,6 +8263,14 @@ common jar classes will be visible in your Groovy files.</p>
 			&lt;/baseClassMapping&gt;
 		&lt;/baseClassMappings&gt;
 	&lt;/configuration&gt;
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;com.example&lt;/groupId&gt;
+			&lt;artifactId&gt;beer-common&lt;/artifactId&gt;
+			&lt;version&gt;${project.version}&lt;/version&gt;
+			&lt;scope&gt;compile&lt;/scope&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
 &lt;/plugin&gt;</code></pre>
 </div>
 </div>
