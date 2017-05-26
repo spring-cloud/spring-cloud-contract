@@ -37,7 +37,7 @@ public class ContractVerifierMessage {
 
 	public ContractVerifierMessage(Object payload, Map<String, Object> headers) {
 		this.payload = payload;
-		if (headers!=null) {
+		if (headers != null) {
 			this.headers.putAll(headers);
 		}
 	}

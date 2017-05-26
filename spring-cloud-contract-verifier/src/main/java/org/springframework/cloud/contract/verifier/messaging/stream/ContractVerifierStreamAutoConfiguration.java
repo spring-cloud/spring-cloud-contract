@@ -30,6 +30,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
+import org.springframework.util.Assert;
 
 /**
  * @author Marcin Grzejszczak
@@ -64,6 +65,7 @@ class ContractVerifierHelper extends ContractVerifierMessaging<Message<?>> {
 
 	@Override
 	protected ContractVerifierMessage convert(Message<?> receive) {
+		Assert.notNull(receive, "Message must not be null!");
 		return new ContractVerifierMessage(receive.getPayload(), receive.getHeaders());
 	}
 }
