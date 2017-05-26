@@ -256,6 +256,15 @@ IMPORTANT: You can't use both a String and `execute` to perform concatenation. E
 To make this work just call `header('Authorization', execute('authToken()'))` and ensure that
 the `authToken()` method returns everything that you need.
 
+The type of the object read from the JSON can be one of the followings depending on the
+JSON path:
+
+    - `String` if you point to a `String` value in a JSON
+    - `JSONArray` if you point to a `List` in a JSON
+    - `Map` if you point to a `Map` in a JSON
+    - proper `Number` if you point to `Integer`, `Double` etc. in a JSON
+    - `Boolean` if you point to a `Boolean` in a JSON
+
 ===== Referencing request from response
 
 The best situation is to provide fixed values but sometimes you need to reference a request in your response.
@@ -414,6 +423,13 @@ That way you can assert on the size of the collection.
 passed as an input to the custom method that you're providing. E.g. `byCommand('foo($it)')`
 will result in calling a `foo` method to which the value matching the JSON Path will get
  passed.
+ ** The type of the object read from the JSON can be one of the followings depending on the
+ JSON path:
+   *** `String` if you point to a `String` value in a JSON
+   *** `JSONArray` if you point to a `List` in a JSON
+   *** `Map` if you point to a `Map` in a JSON
+   *** proper `Number` if you point to `Integer`, `Double` etc. in a JSON
+   *** `Boolean` if you point to a `Boolean` in a JSON
 
 Let's take a look at the following example:
 
