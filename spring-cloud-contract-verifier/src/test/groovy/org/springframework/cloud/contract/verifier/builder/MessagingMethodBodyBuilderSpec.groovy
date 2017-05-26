@@ -40,6 +40,7 @@ def contractDsl = Contract.make {
 		body('''{ "bookName" : "foo" }''')
 		headers {
 			header('BOOK-NAME', 'foo')
+			messagingContentType(applicationJson())
 		}
 	}
 }
@@ -60,6 +61,7 @@ def contractDsl = Contract.make {
   ContractVerifierMessage response = contractVerifierMessaging.receive('activemq:output')
   assert response != null
   response.getHeader('BOOK-NAME')?.toString()  == 'foo'
+  response.getHeader('contentType')?.toString()  == 'application/json'
  and:
   DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
   assertThatJson(parsedJson).field("bookName").isEqualTo("foo")
@@ -81,6 +83,7 @@ def contractDsl = Contract.make {
 					body('''{ "bookName" : "foo" }''')
 					headers {
 						header('BOOK-NAME', 'foo')
+						messagingContentType(applicationJson())
 					}
 				}
 			}
@@ -101,6 +104,8 @@ def contractDsl = Contract.make {
   assertThat(response).isNotNull();
   assertThat(response.getHeader("BOOK-NAME")).isNotNull();
   assertThat(response.getHeader("BOOK-NAME").toString()).isEqualTo("foo");
+  assertThat(response.getHeader("contentType")).isNotNull();
+  assertThat(response.getHeader("contentType").toString()).isEqualTo("application/json");
  // and:
   DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
   assertThatJson(parsedJson).field("bookName").isEqualTo("foo");

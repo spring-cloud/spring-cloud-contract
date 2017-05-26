@@ -34,6 +34,7 @@ class Headers {
 
 	@Delegate MediaTypes mediaTypes = new MediaTypes()
 	@Delegate HttpHeaders httpHeaders = new HttpHeaders()
+	@Delegate MessagingHeaders messagingHeaders = new MessagingHeaders()
 
 	Set<Header> entries = []
 
@@ -58,6 +59,10 @@ class Headers {
 
 	void contentType(String contentType) {
 		header(httpHeaders.contentType(), matching(contentType))
+	}
+
+	void messagingContentType(String contentType) {
+		header(messagingHeaders.messagingContentType(), matching(contentType))
 	}
 
 	/**
