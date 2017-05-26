@@ -8,6 +8,25 @@ WARNING: In Stub Runner's integration with Stream the `messageFrom` or `sentTo` 
 first as a `destination` of a channel, and then if there is no such `destination` it's resolved as a
 channel name.
 
+IMPORTANT: If you want to use Spring Cloud Stream remember to add a
+`org.springframework.cloud:spring-cloud-stream-test-support` dependency.
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-stream-test-support</artifactId>
+    <scope>test</scope>
+</dependency>
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
+----
+testCompile "org.springframework.cloud:spring-cloud-stream-test-support"
+----
+
 ==== Adding it to the project
 
 It's enough to have both Spring Cloud Stream and Spring Cloud Contract Stub Runner on classpath.

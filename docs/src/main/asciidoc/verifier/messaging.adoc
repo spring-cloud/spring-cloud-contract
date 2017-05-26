@@ -18,6 +18,26 @@ to the classpath then automatically all the messaging configuration will be set 
 IMPORTANT: Remember to put `@AutoConfigureMessageVerifier` on the base class of your
 generated tests. Otherwise messaging part of Spring Cloud Contract Verifier will not work.
 
+IMPORTANT: If you want to use Spring Cloud Stream remember to add a
+`org.springframework.cloud:spring-cloud-stream-test-support` dependency.
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-stream-test-support</artifactId>
+    <scope>test</scope>
+</dependency>
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
+----
+testCompile "org.springframework.cloud:spring-cloud-stream-test-support"
+----
+
+
 ==== Manual Integration Testing
 
 The main interface used by the tests is the `org.springframework.cloud.contract.verifier.messaging.MessageVerifier`.
@@ -55,6 +75,12 @@ There are 3 main scenarios that we should take into consideration:
 inside the application (e.g. scheduler)
 - Scenario 2: the input message triggers an output message
 - Scenario 3: the input message is consumed and there is no output message
+
+IMPORTANT: The destination passed to `messageFrom` or `sentTo` can have different meanings for different
+ messaging implementations. For *Stream* and *Integration* it's first resolved as a `destination` of a channel, and then if
+ there is no such `destination` it's resolved as a channel name. For *Camel* that's a certain component (e.x. `jms`).
+
+Example for Camel:
 
 ===== Scenario 1 (no input message)
 
