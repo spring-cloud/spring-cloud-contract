@@ -12,7 +12,7 @@
 
     <artifactId>spring-cloud-contract-samples</artifactId>
     <packaging>pom</packaging>
-
+	<version>1.1.2.BUILD-SNAPSHOT</version>
     <name>Spring Cloud Contract Samples</name>
     <description>Spring Cloud Contract Samples</description>
 
@@ -51,6 +51,7 @@
 		<plugins>
 	        <plugin>
 		      <artifactId>maven-deploy-plugin</artifactId>
+			  <version>2.8.2</version>
 		      <configuration>
 		        <skip>true</skip>
 		      </configuration>
@@ -68,6 +69,7 @@
 							 is available -->
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-invoker-plugin</artifactId>
+						<version>2.0.0</version>
 						<configuration>
 							<settingsFile>src/it/settings.xml</settingsFile>
 							<projectsDirectory>standalone</projectsDirectory>
@@ -105,6 +107,7 @@
 							 is available -->
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-invoker-plugin</artifactId>
+						<version>2.0.0</version>
 						<configuration>
 							<settingsFile>src/it/settings.xml</settingsFile>
 							<projectsDirectory>standalone</projectsDirectory>

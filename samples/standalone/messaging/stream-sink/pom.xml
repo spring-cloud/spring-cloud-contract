@@ -65,6 +65,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8.2</version>
 				<configuration>
 					<skip>true</skip>
 				</configuration>
@@ -148,6 +149,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.6.0</version>
 						<executions>
 							<execution>
 								<id>gradle</id>
@@ -177,6 +179,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.6.0</version>
 						<executions>
 							<execution>
 								<id>gradle</id>
