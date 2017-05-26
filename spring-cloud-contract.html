@@ -3810,6 +3810,7 @@ The destination passed to <code>messageFrom</code> or <code>sentTo</code> can ha
 		body('''{ "bookName" : "foo" }''')
 		headers {
 			header('BOOK-NAME', 'foo')
+			messagingContentType(applicationJson())
 		}
 	}
 }</code></pre>
@@ -3829,6 +3830,8 @@ The destination passed to <code>messageFrom</code> or <code>sentTo</code> can ha
   assertThat(response).isNotNull();
   assertThat(response.getHeader("BOOK-NAME")).isNotNull();
   assertThat(response.getHeader("BOOK-NAME").toString()).isEqualTo("foo");
+  assertThat(response.getHeader("contentType")).isNotNull();
+  assertThat(response.getHeader("contentType").toString()).isEqualTo("application/json");
  // and:
   DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
   assertThatJson(parsedJson).field("bookName").isEqualTo("foo");
@@ -3848,6 +3851,7 @@ The destination passed to <code>messageFrom</code> or <code>sentTo</code> can ha
   ContractVerifierMessage response = contractVerifierMessaging.receive('activemq:output')
   assert response != null
   response.getHeader('BOOK-NAME')?.toString()  == 'foo'
+  response.getHeader('contentType')?.toString()  == 'application/json'
  and:
   DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
   assertThatJson(parsedJson).field("bookName").isEqualTo("foo")
