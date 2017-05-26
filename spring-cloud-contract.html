@@ -1073,7 +1073,7 @@ Contract tests are used to test contracts between applications and not to simula
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">package contracts
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">package contracts
 
 org.springframework.cloud.contract.spec.Contract.make {
 	request { // (1)
@@ -1145,7 +1145,7 @@ You would like to feed that instance with a proper stub definition.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">ResponseEntity&lt;FraudServiceResponse&gt; response =
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">ResponseEntity&lt;FraudServiceResponse&gt; response =
 		restTemplate.exchange("http://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
 				new HttpEntity&lt;&gt;(request, httpHeaders),
 				FraudServiceResponse.class);</code></pre>
@@ -1156,7 +1156,7 @@ You would like to feed that instance with a proper stub definition.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">@RunWith(SpringRunner.class)
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"}, workOffline = true)
 @DirtiesContext
@@ -1183,7 +1183,7 @@ that your application behaves in the same way as you define in your stub.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@Test
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Test
 public void validate_shouldMarkClientAsFraud() throws Exception {
     // given:
         MockMvcRequestSpecification request = given()
@@ -1246,7 +1246,7 @@ all the contract are present in the producer&#8217;s repository
 <div class="listingblock primary">
 <div class="title">Maven</div>
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;repositories&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;repositories&gt;
 	&lt;repository&gt;
 		&lt;id&gt;spring-snapshots&lt;/id&gt;
 		&lt;name&gt;Spring Snapshots&lt;/name&gt;
@@ -1303,7 +1303,7 @@ all the contract are present in the producer&#8217;s repository
 <div class="listingblock secondary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">repositories {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">repositories {
 	mavenCentral()
 	mavenLocal()
 	maven { url "http://repo.spring.io/snapshot" }
@@ -1323,7 +1323,7 @@ all the contract are present in the producer&#8217;s repository
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">@Test
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">@Test
 public void shouldBeRejectedDueToAbnormalLoanAmount() {
 	// given:
 	LoanApplication application = new LoanApplication(new Client("1234567890"),
@@ -1348,7 +1348,7 @@ public void shouldBeRejectedDueToAbnormalLoanAmount() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">ResponseEntity&lt;FraudServiceResponse&gt; response =
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">ResponseEntity&lt;FraudServiceResponse&gt; response =
 		restTemplate.exchange("http://localhost:" + port + "/fraudcheck", HttpMethod.PUT,
 				new HttpEntity&lt;&gt;(request, httpHeaders),
 				FraudServiceResponse.class);</code></pre>
@@ -1368,7 +1368,7 @@ public void shouldBeRejectedDueToAbnormalLoanAmount() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">git clone https://your-git-server.com/server-side.git local-http-server-repo</code></pre>
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">git clone https://your-git-server.com/server-side.git local-http-server-repo</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1392,7 +1392,7 @@ is important cause we&#8217;ll reference that folder in the producer&#8217;s tes
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">package contracts
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">package contracts
 
 org.springframework.cloud.contract.spec.Contract.make {
 	request { // (1)
@@ -1524,7 +1524,7 @@ It&#8217;s really important that you understand the map notation to set up contr
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependencyManagement&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependencyManagement&gt;
 	&lt;dependencies&gt;
 		&lt;dependency&gt;
 			&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
@@ -1542,7 +1542,7 @@ It&#8217;s really important that you understand the map notation to set up contr
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
 	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 	&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
 	&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
@@ -1571,7 +1571,7 @@ It&#8217;s really important that you understand the map notation to set up contr
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">cd local-http-server-repo
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">cd local-http-server-repo
 ./mvnw clean install -DskipTests</code></pre>
 </div>
 </div>
@@ -1580,7 +1580,7 @@ It&#8217;s really important that you understand the map notation to set up contr
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">[INFO] --- spring-cloud-contract-maven-plugin:1.0.0.BUILD-SNAPSHOT:generateStubs (default-generateStubs) @ http-server ---
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">[INFO] --- spring-cloud-contract-maven-plugin:1.0.0.BUILD-SNAPSHOT:generateStubs (default-generateStubs) @ http-server ---
 [INFO] Building jar: /some/path/http-server/target/http-server-0.0.1-SNAPSHOT-stubs.jar
 [INFO]
 [INFO] --- maven-jar-plugin:2.6:jar (default-jar) @ http-server ---
@@ -1599,7 +1599,7 @@ It&#8217;s really important that you understand the map notation to set up contr
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">[INFO] Installing /some/path/http-server/target/http-server-0.0.1-SNAPSHOT-stubs.jar to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar</code></pre>
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">[INFO] Installing /some/path/http-server/target/http-server-0.0.1-SNAPSHOT-stubs.jar to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1616,7 +1616,7 @@ It&#8217;s really important that you understand the map notation to set up contr
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependencyManagement&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependencyManagement&gt;
 	&lt;dependencies&gt;
 		&lt;dependency&gt;
 			&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
@@ -1634,7 +1634,7 @@ It&#8217;s really important that you understand the map notation to set up contr
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
 	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 	&lt;artifactId&gt;spring-cloud-starter-contract-stub-runner&lt;/artifactId&gt;
 	&lt;scope&gt;test&lt;/scope&gt;
@@ -1646,7 +1646,7 @@ It&#8217;s really important that you understand the map notation to set up contr
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">@RunWith(SpringRunner.class)
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"}, workOffline = true)
 @DirtiesContext
@@ -1658,7 +1658,7 @@ public class LoanApplicationServiceTests {</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">2016-07-19 14:22:25.403  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Desired version is + - will try to resolve the latest version
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">2016-07-19 14:22:25.403  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Desired version is + - will try to resolve the latest version
 2016-07-19 14:22:25.438  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolved version is 0.0.1-SNAPSHOT
 2016-07-19 14:22:25.439  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolving artifact com.example:http-server:jar:stubs:0.0.1-SNAPSHOT using remote repositories []
 2016-07-19 14:22:25.451  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolved artifact com.example:http-server:jar:stubs:0.0.1-SNAPSHOT to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar
@@ -1693,7 +1693,7 @@ public class LoanApplicationServiceTests {</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@RequestMapping(value = "/fraudcheck", method = PUT)
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@RequestMapping(value = "/fraudcheck", method = PUT)
 public FraudCheckResult fraudCheck(@RequestBody FraudCheck fraudCheck) {
 return new FraudCheckResult(FraudCheckStatus.OK, NO_REASON);
 }</code></pre>
@@ -1704,7 +1704,7 @@ return new FraudCheckResult(FraudCheckStatus.OK, NO_REASON);
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">git checkout -b contract-change-pr master
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">git checkout -b contract-change-pr master
 git pull https://your-git-server.com/server-side-fork.git contract-change-pr</code></pre>
 </div>
 </div>
@@ -1713,7 +1713,7 @@ git pull https://your-git-server.com/server-side-fork.git contract-change-pr</co
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
 	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 	&lt;artifactId&gt;spring-cloud-starter-contract-verifier&lt;/artifactId&gt;
 	&lt;scope&gt;test&lt;/scope&gt;
@@ -1725,7 +1725,7 @@ git pull https://your-git-server.com/server-side-fork.git contract-change-pr</co
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
 	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 	&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
 	&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
@@ -1758,7 +1758,7 @@ whatever is necessary. In our case we&#8217;re using <a href="http://rest-assure
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">package com.example.fraud;
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">package com.example.fraud;
 
 import org.junit.Before;
 
@@ -1794,7 +1794,7 @@ public class FraudBase {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">Results :
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">Results :
 
 Tests in error:
   ContractVerifierTest.validate_shouldMarkClientAsFraud:32 » IllegalState Parsed...</code></pre>
@@ -1805,7 +1805,7 @@ Tests in error:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@Test
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Test
 public void validate_shouldMarkClientAsFraud() throws Exception {
     // given:
         MockMvcRequestSpecification request = given()
@@ -1840,7 +1840,7 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@RequestMapping(value = "/fraudcheck", method = PUT)
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@RequestMapping(value = "/fraudcheck", method = PUT)
 public FraudCheckResult fraudCheck(@RequestBody FraudCheck fraudCheck) {
 if (amountGreaterThanThreshold(fraudCheck)) {
 	return new FraudCheckResult(FraudCheckStatus.FRAUD, AMOUNT_TOO_HIGH);
@@ -1860,7 +1860,7 @@ return new FraudCheckResult(FraudCheckStatus.OK, NO_REASON);
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">git checkout master
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">git checkout master
 git merge --no-ff contract-change-pr
 git push origin master</code></pre>
 </div>
@@ -1879,7 +1879,7 @@ git push origin master</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">git checkout master
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">git checkout master
 git merge --no-ff contract-change-pr</code></pre>
 </div>
 </div>
@@ -1893,7 +1893,7 @@ example of achieving the same by changing the properties.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml">stubrunner:
+<pre class="prettyprint highlight"><code class="language-yaml" data-lang="yaml">stubrunner:
   ids: 'com.example:http-server-dsl:+:stubs:8080'
   repositoryRoot: http://repo.spring.io/libs-snapshot</code></pre>
 </div>
@@ -1998,7 +1998,7 @@ Imagine the following JSON request</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
+<pre class="prettyprint highlight"><code class="language-json" data-lang="json">{
     "time" : "2016-10-10 20:10:15",
     "id" : "9febab1c-6f36-4a0b-88d6-3b6a6d81cd4a",
     "body" : "foo"
@@ -2010,7 +2010,7 @@ Imagine the following JSON request</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
+<pre class="prettyprint highlight"><code class="language-json" data-lang="json">{
     "time" : "2016-10-10 21:10:15",
     "id" : "c4231e1f-3ca9-48d3-b7e7-567d55f0d051",
     "body" : "bar"
@@ -2030,7 +2030,7 @@ you would like the stub to work like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
+<pre class="prettyprint highlight"><code class="language-json" data-lang="json">{
     "time" : "SOMETHING THAT MATCHES TIME",
     "id" : "SOMETHING THAT MATCHES UUID",
     "body" : "foo"
@@ -2042,7 +2042,7 @@ you would like the stub to work like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
+<pre class="prettyprint highlight"><code class="language-json" data-lang="json">{
     "time" : "2016-10-10 21:10:15",
     "id" : "c4231e1f-3ca9-48d3-b7e7-567d55f0d051",
     "body" : "bar"
@@ -2057,7 +2057,7 @@ producer&#8217;s backend can work on. Such a JSON would be a valid one:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
+<pre class="prettyprint highlight"><code class="language-json" data-lang="json">{
     "time" : "2016-10-10 20:10:15",
     "id" : "9febab1c-6f36-4a0b-88d6-3b6a6d81cd4a",
     "body" : "foo"
@@ -2072,7 +2072,7 @@ what you might want is the following response:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
+<pre class="prettyprint highlight"><code class="language-json" data-lang="json">{
     "time" : "SOMETHING THAT MATCHES TIME",
     "id" : "SOMETHING THAT MATCHES UUID",
     "body" : "bar"
@@ -2089,7 +2089,7 @@ sides of the communication. You can pass the values:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">value(consumer(...), producer(...))
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">value(consumer(...), producer(...))
 value(stub(...), test(...))
 value(client(...), server(...))</code></pre>
 </div>
@@ -2099,7 +2099,7 @@ value(client(...), server(...))</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">$(consumer(...), producer(...))
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">$(consumer(...), producer(...))
 $(stub(...), test(...))
 $(client(...), server(...))</code></pre>
 </div>
@@ -2134,7 +2134,7 @@ for time and UUID are simplified and most likely invalid but we want to keep thi
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method 'GET'
 					url '/someUrl'
@@ -2208,7 +2208,7 @@ looks like this (it got built on the 20.10.2016 at 20:15:21) :</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">1.0.0.20161020-201521-RELEASE</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">1.0.0.20161020-201521-RELEASE</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2216,7 +2216,7 @@ looks like this (it got built on the 20.10.2016 at 20:15:21) :</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">1.0.0.20161020-201521-RELEASE-stubs.jar</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">1.0.0.20161020-201521-RELEASE-stubs.jar</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2225,7 +2225,7 @@ looks like this (it got built on the 20.10.2016 at 20:15:21) :</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:8080"})</code></pre>
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:8080"})</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2234,7 +2234,7 @@ version. Example for 2.1.1.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:2.1.1:stubs:8080"})</code></pre>
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:2.1.1:stubs:8080"})</code></pre>
 </div>
 </div>
 </div>
@@ -2250,7 +2250,7 @@ version. Example for 2.1.1.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:8080"})</code></pre>
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:8080"})</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2258,7 +2258,7 @@ version. Example for 2.1.1.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:prod-stubs:8080"})</code></pre>
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:prod-stubs:8080"})</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2283,7 +2283,7 @@ consumer will you break with your local changes.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">├── com
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">├── com
 │   └── example
 │       └── server
 │           ├── client1
@@ -2312,7 +2312,7 @@ one to one to the contents of the repo.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
 	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
@@ -2432,7 +2432,7 @@ Those poms are necessary for the consumer side to run <code>mvn clean install -D
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
 	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
@@ -2480,7 +2480,7 @@ Those poms are necessary for the consumer side to run <code>mvn clean install -D
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
 		  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
 	&lt;id&gt;project&lt;/id&gt;
@@ -2541,7 +2541,7 @@ of the JAR containing the contracts:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
 	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 	&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
 	&lt;configuration&gt;
@@ -2581,7 +2581,7 @@ of either Gradle or Maven plugins.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-properties" data-lang="properties">logging.level.org.apache.http.wire=DEBUG</code></pre>
+<pre class="prettyprint highlight"><code class="language-properties" data-lang="properties">logging.level.org.apache.http.wire=DEBUG</code></pre>
 </div>
 </div>
 </div>
@@ -2619,7 +2619,7 @@ the <code>spock-core</code> and <code>spock-spring</code> modules. Check <a href
 <h6 id="_add_gradle_plugin_with_dependencies">Add gradle plugin with dependencies</h6>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">buildscript {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">buildscript {
 	repositories {
 		mavenCentral()
 	}
@@ -2656,7 +2656,7 @@ opportunity to use Rest Assured 3.x it&#8217;s enough to add it to the plugins c
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">buildscript {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">buildscript {
 	repositories {
 		mavenCentral()
 	}
@@ -2688,7 +2688,7 @@ and will modify the imports accordingly.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">buildscript {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">buildscript {
 	repositories {
 		mavenCentral()
 		mavenLocal()
@@ -2712,7 +2712,7 @@ So with following structure</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">src/test/resources/contracts/myservice/shouldCreateUser.groovy
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">src/test/resources/contracts/myservice/shouldCreateUser.groovy
 src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
 </div>
 </div>
@@ -2744,7 +2744,7 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">contracts {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">contracts {
     targetFramework = 'JUNIT'
     testMode = 'MockMvc'
     generatedTestSourcesDir = project.file("${project.buildDir}/generated-test-sources/contracts")
@@ -2795,7 +2795,7 @@ publishing {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">contracts {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">contracts {
 	testMode = 'MockMvc'
 	baseClassForTests = 'org.mycompany.tests'
 	generatedTestSourcesDir = project.file('src/generatedContract')
@@ -2871,7 +2871,7 @@ publishing {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">abstract class BaseMockMvcSpec extends Specification {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">abstract class BaseMockMvcSpec extends Specification {
 
 	def setup() {
 		RestAssuredMockMvc.standaloneSetup(new PairIdController())
@@ -2919,7 +2919,7 @@ if they exist and form a class with a <code>Base</code> suffix. Takes precedence
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">packageWithBaseClasses = 'com.example.base'</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">packageWithBaseClasses = 'com.example.base'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2931,7 +2931,7 @@ Let&#8217;s take a look at the following example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">baseClassForTests = "com.example.FooBase"
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">baseClassForTests = "com.example.FooBase"
 baseClassMappings {
 	baseClassMapping('.*/com/.*', 'com.example.ComBase')
 	baseClassMapping('.*/bar/.*':'com.example.BarBase')
@@ -2957,7 +2957,7 @@ will be extending the <code>com.example.ComBase</code> whereas the rest of tests
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">./gradlew generateContractTests test</code></pre>
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">./gradlew generateContractTests test</code></pre>
 </div>
 </div>
 </div>
@@ -2969,7 +2969,7 @@ will be extending the <code>com.example.ComBase</code> whereas the rest of tests
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">./gradlew generateClientStubs</code></pre>
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">./gradlew generateClientStubs</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2980,7 +2980,7 @@ will be extending the <code>com.example.ComBase</code> whereas the rest of tests
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">@ContextConfiguration(loader == SpringApplicationContextLoader, classes == Application)
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">@ContextConfiguration(loader == SpringApplicationContextLoader, classes == Application)
 class LoanApplicationServiceSpec extends Specification {
 
  @ClassRule
@@ -3017,7 +3017,7 @@ class LoanApplicationServiceSpec extends Specification {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependencyManagement&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependencyManagement&gt;
 	&lt;dependencies&gt;
 		&lt;dependency&gt;
 			&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
@@ -3035,7 +3035,7 @@ class LoanApplicationServiceSpec extends Specification {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
 	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 	&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
 	&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
@@ -3057,7 +3057,7 @@ opportunity to use Rest Assured 3.x it&#8217;s enough to add it to the plugins c
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">&lt;plugin&gt;
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">&lt;plugin&gt;
     &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
     &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
     &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
@@ -3116,7 +3116,7 @@ and will modify the imports accordingly.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;repositories&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;repositories&gt;
 	&lt;repository&gt;
 		&lt;id&gt;spring-snapshots&lt;/id&gt;
 		&lt;name&gt;Spring Snapshots&lt;/name&gt;
@@ -3182,7 +3182,7 @@ So with following structure</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">src/test/resources/contracts/myservice/shouldCreateUser.groovy
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">src/test/resources/contracts/myservice/shouldCreateUser.groovy
 src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
 </div>
 </div>
@@ -3205,7 +3205,7 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
     &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
     &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
     &lt;executions&gt;
@@ -3292,7 +3292,7 @@ In this class you need to point to endpoint which should be verified.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">package org.mycompany.tests
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">package org.mycompany.tests
 
 import org.mycompany.ExampleSpringController
 import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc
@@ -3335,7 +3335,7 @@ if they exist and form a class with a <code>Base</code> suffix. Takes precedence
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
 	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 	&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
 	&lt;configuration&gt;
@@ -3354,7 +3354,7 @@ Let&#8217;s take a look at the following example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
 	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 	&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
 	&lt;configuration&gt;
@@ -3391,7 +3391,7 @@ will be extending the <code>com.example.ComBase</code> whereas the rest of tests
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
 	&lt;groupId&gt;org.codehaus.gmavenplus&lt;/groupId&gt;
 	&lt;artifactId&gt;gmavenplus-plugin&lt;/artifactId&gt;
 	&lt;version&gt;1.5&lt;/version&gt;
@@ -3442,7 +3442,7 @@ will be extending the <code>com.example.ComBase</code> whereas the rest of tests
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash"> plugin:1.1.0.M1:convert:default-convert:process-test-resources) org.apache.maven.plugin.PluginExecutionException: Execution default-convert of goal org.springframework.cloud:spring-
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"> plugin:1.1.0.M1:convert:default-convert:process-test-resources) org.apache.maven.plugin.PluginExecutionException: Execution default-convert of goal org.springframework.cloud:spring-
  cloud-contract-maven-plugin:1.1.0.M1:convert failed. at org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo(DefaultBuildPluginManager.java:145) at
  org.eclipse.m2e.core.internal.embedder.MavenImpl.execute(MavenImpl.java:331) at org.eclipse.m2e.core.internal.embedder.MavenImpl$11.call(MavenImpl.java:1362) at
 ...
@@ -3456,7 +3456,7 @@ will be extending the <code>com.example.ComBase</code> whereas the rest of tests
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;build&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;build&gt;
     &lt;pluginManagement&gt;
         &lt;plugins&gt;
             &lt;!--This plugin's configuration is used to store Eclipse m2e settings
@@ -3510,7 +3510,7 @@ easy deploy to maven repository.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
     &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
     &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
     &lt;version&gt;${verifier-plugin.version}&lt;/version&gt;
@@ -3530,7 +3530,7 @@ easy deploy to maven repository.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">@RunWith(SpringTestRunner.class)
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">@RunWith(SpringTestRunner.class)
 @SpringBootTest
 @AutoConfigureStubRunner
 public class LoanApplicationServiceTests {
@@ -3565,7 +3565,7 @@ a WireMock server configured using stubs generated by Spring Cloud Contract Veri
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>my_contracts_dir\
+<pre class="prettyprint highlight"><code>my_contracts_dir\
   scenario1\
     1_login.groovy
     2_showCart.groovy
@@ -3604,7 +3604,7 @@ even though you have a couple of different jars, all of them share one pom:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">├── github-webhook-0.0.1.BUILD-20160903.075506-1-stubs.jar
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">├── github-webhook-0.0.1.BUILD-20160903.075506-1-stubs.jar
 ├── github-webhook-0.0.1.BUILD-20160903.075506-1-stubs.jar.sha1
 ├── github-webhook-0.0.1.BUILD-20160903.075655-2-stubs.jar
 ├── github-webhook-0.0.1.BUILD-20160903.075655-2-stubs.jar.sha1
@@ -3698,7 +3698,7 @@ Then add <code>@AutoConfigureMessageVerifier</code> to your test, e.g.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@RunWith(SpringTestRunner.class)
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@RunWith(SpringTestRunner.class)
 @SpringBootTest
 @AutoConfigureMessageVerifier
 public static class MessagingContractTests {
@@ -3754,7 +3754,7 @@ inside the application (e.g. scheduler)</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">def contractDsl = Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">def contractDsl = Contract.make {
 	label 'some_label'
 	input {
 		triggeredBy('bookReturnedTriggered()')
@@ -3774,7 +3774,7 @@ inside the application (e.g. scheduler)</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">'''
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">'''
  // when:
   bookReturnedTriggered();
 
@@ -3794,7 +3794,7 @@ inside the application (e.g. scheduler)</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">'''
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">'''
  when:
   bookReturnedTriggered()
 
@@ -3817,7 +3817,7 @@ inside the application (e.g. scheduler)</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">def contractDsl = Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">def contractDsl = Contract.make {
 	label 'some_label'
 	input {
 		messageFrom('jms:input')
@@ -3845,7 +3845,7 @@ inside the application (e.g. scheduler)</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">'''
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">'''
 // given:
  ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
   "{\\"bookName\\":\\"foo\\"}"
@@ -3871,7 +3871,7 @@ inside the application (e.g. scheduler)</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">"""\
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">"""\
 given:
    ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
     '''{"bookName":"foo"}''',
@@ -3899,7 +3899,7 @@ and:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">def contractDsl = Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">def contractDsl = Contract.make {
 	label 'some_label'
 	input {
 		messageFrom('jms:delete')
@@ -3919,7 +3919,7 @@ and:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">'''
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">'''
 // given:
  ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
 	"{\\"bookName\\":\\"foo\\"}"
@@ -3939,7 +3939,7 @@ and:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">'''
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">'''
 given:
 	 ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
 		\'\'\'{"bookName":"foo"}\'\'\',
@@ -3969,7 +3969,7 @@ and proper stubbed routes are created.</p>
 <div class="listingblock primary">
 <div class="title">Maven</div>
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependencies&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependencies&gt;
 	&lt;dependency&gt;
 		&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 		&lt;artifactId&gt;spring-cloud-starter-stream-rabbit&lt;/artifactId&gt;
@@ -4003,7 +4003,7 @@ and proper stubbed routes are created.</p>
 <div class="listingblock secondary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">ext {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">ext {
 	contractsDir = file("mappings")
 	stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
 }
@@ -4046,7 +4046,7 @@ automatically for you.</p>
 <div class="listingblock primary">
 <div class="title">Maven</div>
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;repositories&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;repositories&gt;
 	&lt;repository&gt;
 		&lt;id&gt;spring-snapshots&lt;/id&gt;
 		&lt;name&gt;Spring Snapshots&lt;/name&gt;
@@ -4103,7 +4103,7 @@ automatically for you.</p>
 <div class="listingblock secondary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">buildscript {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">buildscript {
 	repositories {
 		mavenCentral()
 		mavenLocal()
@@ -4134,7 +4134,7 @@ For both Maven and Gradle the setup comes out of the box. But you can customize 
 <div class="listingblock primary">
 <div class="title">Maven</div>
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;!-- First disable the default jar setup in the properties section--&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;!-- First disable the default jar setup in the properties section--&gt;
 &lt;!-- we don't want the verifier to do a jar for us --&gt;
 &lt;spring.cloud.contract.verifier.skip&gt;true&lt;/spring.cloud.contract.verifier.skip&gt;
 
@@ -4205,7 +4205,7 @@ For both Maven and Gradle the setup comes out of the box. But you can customize 
 <div class="listingblock secondary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">ext {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">ext {
 	contractsDir = file("mappings")
 	stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
 }
@@ -4271,7 +4271,7 @@ contract processing.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@AutoConfigureStubRunner(repositoryRoot="http://foo.bar", ids = "com.example:beer-api-producer:+:stubs:8095")</code></pre>
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@AutoConfigureStubRunner(repositoryRoot="http://foo.bar", ids = "com.example:beer-api-producer:+:stubs:8095")</code></pre>
 </div>
 </div>
 </div>
@@ -4284,7 +4284,7 @@ following example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@AutoConfigureStubRunner(ids = {
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@AutoConfigureStubRunner(ids = {
     "com.example:beer-api-producer:+:stubs:8095",
     "com.example.foo:bar:1.0.0:superstubs:8096"
 })</code></pre>
@@ -4296,7 +4296,7 @@ following example:</p>
 <div class="listingblock primary">
 <div class="title">Maven</div>
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
     &lt;groupId&gt;com.example&lt;/groupId&gt;
     &lt;artifactId&gt;beer-api-producer-restdocs&lt;/artifactId&gt;
     &lt;classifier&gt;stubs&lt;/classifier&gt;
@@ -4327,7 +4327,7 @@ following example:</p>
 <div class="listingblock secondary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">testCompile("com.example:beer-api-producer-restdocs:0.0.1-SNAPSHOT:stubs") {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">testCompile("com.example:beer-api-producer-restdocs:0.0.1-SNAPSHOT:stubs") {
     transitive = false
 }
 testCompile("com.example.foo:bar:1.0.0:superstubs") {
@@ -4385,7 +4385,7 @@ producer stubs.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">└── src
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">└── src
     └── test
         └── resources
             └── contracts
@@ -4405,7 +4405,7 @@ structure in your stubs jar.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">└── META-INF
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">└── META-INF
     └── com.example
         └── beer-api-producer-restdocs
             └── 2.0.0
@@ -4450,7 +4450,7 @@ There might be a problem with StubRunner shutting down ports between tests. You 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">-c, --classifier                Suffix for the jar containing stubs (e.
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">-c, --classifier                Suffix for the jar containing stubs (e.
                                   g. 'stubs' if the stub jar would
                                   have a 'stubs' classifier for stubs:
                                   foobar-stubs ). Defaults to 'stubs'
@@ -4492,7 +4492,7 @@ There might be a problem with StubRunner shutting down ports between tests. You 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">{
+<pre class="prettyprint highlight"><code class="language-javascript" data-lang="javascript">{
     "request": {
         "method": "GET",
         "url": "/ping"
@@ -4529,7 +4529,7 @@ There might be a problem with StubRunner shutting down ports between tests. You 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@ClassRule public static StubRunnerRule rule = new StubRunnerRule()
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@ClassRule public static StubRunnerRule rule = new StubRunnerRule()
 		.repoRoot(repoRoot())
 		.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")
 		.downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer");</code></pre>
@@ -4569,7 +4569,7 @@ Check their <a href="https://wiki.eclipse.org/Aether">docs</a> for more informat
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">package org.springframework.cloud.contract.stubrunner;
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">package org.springframework.cloud.contract.stubrunner;
 
 import java.net.URL;
 import java.util.Collection;
@@ -4613,7 +4613,7 @@ public interface StubFinder extends StubTrigger {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">@ClassRule @Shared StubRunnerRule rule = new StubRunnerRule()
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">@ClassRule @Shared StubRunnerRule rule = new StubRunnerRule()
 		.repoRoot(StubRunnerRuleSpec.getResource("/m2repo/repository").toURI().toString())
 		.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")
 		.downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")
@@ -4639,7 +4639,7 @@ def 'should start WireMock servers'() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@Test
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Test
 public void should_start_wiremock_servers() throws Exception {
 	// expect: 'WireMocks are running'
 		then(rule.findStubUrl("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")).isNotNull();
@@ -4694,7 +4694,7 @@ JUnit rule.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@ClassRule public static StubRunnerRule rule = new StubRunnerRule()
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@ClassRule public static StubRunnerRule rule = new StubRunnerRule()
 		.repoRoot(repoRoot())
 		.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")
 		.withPort(12345)
@@ -4706,7 +4706,7 @@ JUnit rule.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">then(rule.findStubUrl("loanIssuance")).isEqualTo(URI.create("http://localhost:12345").toURL());
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">then(rule.findStubUrl("loanIssuance")).isEqualTo(URI.create("http://localhost:12345").toURL());
 then(rule.findStubUrl("fraudDetectionServer")).isEqualTo(URI.create("http://localhost:12346").toURL());</code></pre>
 </div>
 </div>
@@ -4726,7 +4726,7 @@ its methods as presented below:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(properties = [" stubrunner.cloud.enabled=false",
 		"stubrunner.camel.enabled=false",
 		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}'])
@@ -4803,7 +4803,7 @@ class StubRunnerConfigurationSpec extends Specification {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-yml" data-lang="yml">stubrunner:
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">stubrunner:
   repositoryRoot: classpath:m2repo/repository/
   ids:
     - org.springframework.cloud.contract.verifier.stubs:loanIssuance
@@ -4825,7 +4825,7 @@ Below you can find an example of achieving the same result by setting values on 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">@AutoConfigureStubRunner(
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">@AutoConfigureStubRunner(
 		ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
 		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
 		"org.springframework.cloud.contract.verifier.stubs:bootService"],
@@ -4895,7 +4895,7 @@ or <code>DiscoveryClient</code> directly, to call those stubbed servers instead 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">def 'should make service discovery work'() {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">def 'should make service discovery work'() {
 	expect: 'WireMocks are running'
 		"${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
 		"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
@@ -4910,7 +4910,7 @@ or <code>DiscoveryClient</code> directly, to call those stubbed servers instead 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-yml" data-lang="yml">spring.cloud:
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">spring.cloud:
   zookeeper.enabled: false
   consul.enabled: false
 eureka.client.enabled: false
@@ -4934,7 +4934,7 @@ via a static block like presented below (example for Eureka)</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">    //Hack to work around https://github.com/spring-cloud/spring-cloud-commons/issues/156
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">    //Hack to work around https://github.com/spring-cloud/spring-cloud-commons/issues/156
     static {
         System.setProperty("eureka.client.enabled", "false");
         System.setProperty("spring.cloud.config.failFast", "false");
@@ -4984,7 +4984,7 @@ trigger the messaging labels and to access started WireMock servers.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">compile "org.springframework.cloud:spring-cloud-starter-stub-runner"</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">compile "org.springframework.cloud:spring-cloud-starter-stub-runner"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5033,7 +5033,7 @@ trigger the messaging labels and to access started WireMock servers.</p>
 <h4 id="_example">Example</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">@ContextConfiguration(classes = StubRunnerBoot, loader = SpringBootContextLoader)
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">@ContextConfiguration(classes = StubRunnerBoot, loader = SpringBootContextLoader)
 @SpringBootTest(properties = "spring.cloud.zookeeper.enabled=false")
 @ActiveProfiles("test")
 class StubRunnerBootSpec extends Specification {
@@ -5142,7 +5142,7 @@ class StubRunnerBootSpec extends Specification {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@SpringBootApplication
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@SpringBootApplication
 @EnableStubRunnerServer
 @EnableEurekaClient
 @AutoConfigureStubRunner
@@ -5166,7 +5166,7 @@ and we want to have the stub runner feature turned on <code>@AutoConfigureStubRu
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">-Dstubrunner.repositoryRoot=http://repo.spring.io/snapshots (1)
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">-Dstubrunner.repositoryRoot=http://repo.spring.io/snapshots (1)
 -Dstubrunner.cloud.stubbed.discovery.enabled=false (2)
 -Dstubrunner.ids=org.springframework.cloud.contract.verifier.stubs:loanIssuance,org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer,org.springframework.cloud.contract.verifier.stubs:bootService (3)
 -Dstubrunner.idsToServiceIds.fraudDetectionServer=someNameThatShouldMapFraudDetectionServer (4)
@@ -5213,7 +5213,7 @@ There are 2 consumers: <code>foo-consumer</code> and <code>bar-consumer</code>.<
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">request {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">request {
    url '/foo'
    method GET()
 }
@@ -5230,7 +5230,7 @@ response {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">request {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">request {
    url '/foo'
    method GET()
 }
@@ -5257,7 +5257,7 @@ if it contains the subfolder with name of the consumer in the path only then wil
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">.
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">.
 └── contracts
     ├── bar-consumer
     │   ├── bookReturnedForBar.groovy
@@ -5273,7 +5273,7 @@ Or set the test as follows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(properties = ["spring.application.name=bar-consumer"])
 @AutoConfigureStubRunner(ids = "org.springframework.cloud.contract.verifier.stubs:producerWithMultipleConsumers",
 		repositoryRoot = "classpath:m2repo/repository/",
@@ -5293,7 +5293,7 @@ class StubRunnerStubsPerConsumerSpec extends Specification {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest
 @AutoConfigureStubRunner(ids = "org.springframework.cloud.contract.verifier.stubs:producerWithMultipleConsumers",
 		repositoryRoot = "classpath:m2repo/repository/",
@@ -5394,7 +5394,7 @@ information about the reasons behind this change.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">groupId:artifactId:version:classifier:port</code></pre>
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">groupId:artifactId:version:classifier:port</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5487,7 +5487,7 @@ segments are padded with trailing 0 or "ga" segments, respectively, until the ki
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">package org.springframework.cloud.contract.stubrunner;
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">package org.springframework.cloud.contract.stubrunner;
 
 import java.util.Collection;
 import java.util.Map;
@@ -5540,14 +5540,14 @@ public interface StubTrigger {
 <h5 id="_trigger_by_label">Trigger by label</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">stubFinder.trigger('return_book_1')</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">stubFinder.trigger('return_book_1')</code></pre>
 </div>
 </div>
 <div class="sect5">
 <h6 id="_trigger_by_group_and_artifact_ids">Trigger by group and artifact ids</h6>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">stubFinder.trigger('org.springframework.cloud.contract.verifier.stubs:camelService', 'return_book_1')</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">stubFinder.trigger('org.springframework.cloud.contract.verifier.stubs:camelService', 'return_book_1')</code></pre>
 </div>
 </div>
 </div>
@@ -5555,7 +5555,7 @@ public interface StubTrigger {
 <h6 id="_trigger_by_artifact_ids">Trigger by artifact ids</h6>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">stubFinder.trigger('camelService', 'return_book_1')</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">stubFinder.trigger('camelService', 'return_book_1')</code></pre>
 </div>
 </div>
 </div>
@@ -5564,7 +5564,7 @@ public interface StubTrigger {
 <h5 id="_trigger_all_messages">Trigger all messages</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">stubFinder.trigger()</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">stubFinder.trigger()</code></pre>
 </div>
 </div>
 </div>
@@ -5594,7 +5594,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">└── .m2
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">└── .m2
     └── repository
         └── io
             └── codearte
@@ -5613,7 +5613,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">├── META-INF
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">├── META-INF
 │   └── MANIFEST.MF
 └── repository
     ├── accurest
@@ -5628,7 +5628,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Contract.make {
 	label 'return_book_1'
 	input {
 		triggeredBy('bookReturnedTriggered()')
@@ -5648,7 +5648,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Contract.make {
 	label 'return_book_2'
 	input {
 		messageFrom('jms:input')
@@ -5679,7 +5679,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">stubFinder.trigger('return_book_1')</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">stubFinder.trigger('return_book_1')</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5687,7 +5687,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5695,7 +5695,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">receivedMessage != null
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">receivedMessage != null
 assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
 receivedMessage.in.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
@@ -5708,7 +5708,7 @@ receivedMessage.in.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">camelContext.createProducerTemplate().sendBodyAndHeaders('jms:input', new BookReturned('foo'), [sample: 'header'])</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">camelContext.createProducerTemplate().sendBodyAndHeaders('jms:input', new BookReturned('foo'), [sample: 'header'])</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5716,7 +5716,7 @@ receivedMessage.in.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5724,7 +5724,7 @@ receivedMessage.in.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">receivedMessage != null
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">receivedMessage != null
 assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
 receivedMessage.in.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
@@ -5737,7 +5737,7 @@ receivedMessage.in.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">camelContext.createProducerTemplate().sendBodyAndHeaders('jms:delete', new BookReturned('foo'), [sample: 'header'])</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">camelContext.createProducerTemplate().sendBodyAndHeaders('jms:delete', new BookReturned('foo'), [sample: 'header'])</code></pre>
 </div>
 </div>
 </div>
@@ -5767,7 +5767,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">└── .m2
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">└── .m2
     └── repository
         └── io
             └── codearte
@@ -5786,7 +5786,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">├── META-INF
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">├── META-INF
 │   └── MANIFEST.MF
 └── repository
     ├── accurest
@@ -5801,7 +5801,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Contract.make {
 	label 'return_book_1'
 	input {
 		triggeredBy('bookReturnedTriggered()')
@@ -5821,7 +5821,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Contract.make {
 	label 'return_book_2'
 	input {
 		messageFrom('input')
@@ -5849,7 +5849,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;beans:beans xmlns="http://www.springframework.org/schema/integration"
 			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			 xmlns:beans="http://www.springframework.org/schema/beans"
@@ -5878,7 +5878,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">stubFinder.trigger('return_book_1')</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">stubFinder.trigger('return_book_1')</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5886,7 +5886,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">Message&lt;?&gt; receivedMessage = messaging.receive('outputTest')</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Message&lt;?&gt; receivedMessage = messaging.receive('outputTest')</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5894,7 +5894,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">receivedMessage != null
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">receivedMessage != null
 assertJsons(receivedMessage.payload)
 receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
@@ -5907,7 +5907,7 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">messaging.send(new BookReturned('foo'), [sample: 'header'], 'input')</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">messaging.send(new BookReturned('foo'), [sample: 'header'], 'input')</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5915,7 +5915,7 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">Message&lt;?&gt; receivedMessage = messaging.receive('outputTest')</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Message&lt;?&gt; receivedMessage = messaging.receive('outputTest')</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5923,7 +5923,7 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">receivedMessage != null
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">receivedMessage != null
 assertJsons(receivedMessage.payload)
 receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
@@ -5936,7 +5936,7 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">messaging.send(new BookReturned('foo'), [sample: 'header'], 'delete')</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">messaging.send(new BookReturned('foo'), [sample: 'header'], 'delete')</code></pre>
 </div>
 </div>
 </div>
@@ -5980,7 +5980,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">└── .m2
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">└── .m2
     └── repository
         └── io
             └── codearte
@@ -5999,7 +5999,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">├── META-INF
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">├── META-INF
 │   └── MANIFEST.MF
 └── repository
     ├── accurest
@@ -6014,7 +6014,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Contract.make {
 	label 'return_book_1'
 	input { triggeredBy('bookReturnedTriggered()') }
 	outputMessage {
@@ -6030,7 +6030,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Contract.make {
 	label 'return_book_2'
 	input {
 		messageFrom('bookStorage')
@@ -6054,7 +6054,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml">stubrunner.repositoryRoot: classpath:m2repo/repository/
+<pre class="prettyprint highlight"><code class="language-yaml" data-lang="yaml">stubrunner.repositoryRoot: classpath:m2repo/repository/
 stubrunner.ids: org.springframework.cloud.contract.verifier.stubs:streamService:0.0.1-SNAPSHOT:stubs
 
 spring:
@@ -6080,7 +6080,7 @@ debug: true</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">stubFinder.trigger('return_book_1')</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">stubFinder.trigger('return_book_1')</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -6088,7 +6088,7 @@ debug: true</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">Message&lt;?&gt; receivedMessage = messaging.receive('returnBook')</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Message&lt;?&gt; receivedMessage = messaging.receive('returnBook')</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -6096,7 +6096,7 @@ debug: true</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">receivedMessage != null
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">receivedMessage != null
 assertJsons(receivedMessage.payload)
 receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
@@ -6109,7 +6109,7 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">messaging.send(new BookReturned('foo'), [sample: 'header'], 'bookStorage')</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">messaging.send(new BookReturned('foo'), [sample: 'header'], 'bookStorage')</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -6117,7 +6117,7 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">Message&lt;?&gt; receivedMessage = messaging.receive('returnBook')</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Message&lt;?&gt; receivedMessage = messaging.receive('returnBook')</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -6125,7 +6125,7 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">receivedMessage != null
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">receivedMessage != null
 assertJsons(receivedMessage.payload)
 receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
@@ -6138,7 +6138,7 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">messaging.send(new BookReturned('foo'), [sample: 'header'], 'delete')</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">messaging.send(new BookReturned('foo'), [sample: 'header'], 'delete')</code></pre>
 </div>
 </div>
 </div>
@@ -6183,7 +6183,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">└── .m2
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">└── .m2
     └── repository
         └── com
             └── example
@@ -6200,7 +6200,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">├── META-INF
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">├── META-INF
 │   └── MANIFEST.MF
 └── contracts
     └── shouldProduceValidPersonData.groovy</code></pre>
@@ -6211,7 +6211,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Contract.make {
     // Human readable description
     description 'Should produce valid person data'
     // Label by means of which the output message can be triggered
@@ -6243,7 +6243,7 @@ Remember to annotate your test class with <code>@AutoConfigureStubRunner</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml">stubrunner:
+<pre class="prettyprint highlight"><code class="language-yaml" data-lang="yaml">stubrunner:
   repositoryRoot: classpath:m2repo/repository/
   ids: org.springframework.cloud.contract.verifier.stubs.amqp:spring-cloud-contract-amqp-test:0.4.0-SNAPSHOT:stubs
   amqp:
@@ -6260,7 +6260,7 @@ server:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">stubTrigger.trigger("contract-test.person.created.event")</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">stubTrigger.trigger("contract-test.person.created.event")</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -6268,7 +6268,7 @@ server:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@Bean
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Bean
 public Binding binding() {
 	return BindingBuilder.bind(new Queue("test.queue")).to(new DirectExchange("contract-test.exchange")).with("#");
 }</code></pre>
@@ -6280,7 +6280,7 @@ So the following listener definition is a match and is invoked with the contract
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@Bean
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Bean
 public SimpleMessageListenerContainer simpleMessageListenerContainer(ConnectionFactory connectionFactory,
 																		MessageListenerAdapter listenerAdapter) {
 	SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
@@ -6297,7 +6297,7 @@ public SimpleMessageListenerContainer simpleMessageListenerContainer(ConnectionF
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@RabbitListener(bindings = @QueueBinding(
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@RabbitListener(bindings = @QueueBinding(
 		value = @Queue(value = "test.queue"),
 		exchange = @Exchange(value = "contract-test.exchange", ignoreDeclarationExceptions = "true")))
 public void handlePerson(Person person) {
@@ -6328,7 +6328,7 @@ The message is directly handed over to the <code>onMessage</code> method of the 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml">stubrunner:
+<pre class="prettyprint highlight"><code class="language-yaml" data-lang="yaml">stubrunner:
   amqp:
     mockConnection: false</code></pre>
 </div>
@@ -6378,7 +6378,7 @@ Spring Cloud Contract supports defining multiple contracts in a single file!
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
 	request {
 		method 'PUT'
 		url '/api/12'
@@ -6484,7 +6484,7 @@ Groovy Map notation.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">		org.springframework.cloud.contract.spec.Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">		org.springframework.cloud.contract.spec.Contract.make {
 			description('''
 given:
 	An input
@@ -6527,7 +6527,7 @@ or just set the <code>ignored</code> property on the contract itself:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
 	ignored()
 }</code></pre>
 </div>
@@ -6541,7 +6541,7 @@ or just set the <code>ignored</code> property on the contract itself:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
 	// Definition of HTTP request part of the contract
 	// (this can be a valid request or invalid depending
 	// on type of contract being specified).
@@ -6571,7 +6571,7 @@ or just set the <code>ignored</code> property on the contract itself:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
 	request {
 		// HTTP request method (GET/POST/PUT/DELETE).
 		method 'GET'
@@ -6591,7 +6591,7 @@ or just set the <code>ignored</code> property on the contract itself:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
 	request {
 		method 'GET'
 
@@ -6610,7 +6610,7 @@ or just set the <code>ignored</code> property on the contract itself:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
 	request {
 		//...
 
@@ -6658,7 +6658,7 @@ or just set the <code>ignored</code> property on the contract itself:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
 	request {
 		//...
 
@@ -6683,7 +6683,7 @@ or just set the <code>ignored</code> property on the contract itself:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
 	request {
 		//...
 
@@ -6706,7 +6706,7 @@ or just set the <code>ignored</code> property on the contract itself:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
 	request {
 		//...
 	}
@@ -6737,7 +6737,7 @@ body and one to set them in a separate section called <code>testMatchers</code> 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">value(consumer(...), producer(...))
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">value(consumer(...), producer(...))
 value(c(...), p(...))
 value(stub(...), test(...))
 value(client(...), server(...))</code></pre>
@@ -6748,7 +6748,7 @@ value(client(...), server(...))</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">$(consumer(...), producer(...))
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">$(consumer(...), producer(...))
 $(c(...), p(...))
 $(stub(...), test(...))
 $(client(...), server(...))</code></pre>
@@ -6770,7 +6770,7 @@ for your test and your server side tests.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
 	request {
 		method('GET')
 		url $(consumer(~/\/[0-9]{2}/), producer('/12'))
@@ -6802,7 +6802,7 @@ provide the generated string that matches the provided regular expression. For e
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
 	request {
 		method 'PUT'
 		url value(consumer(regex('/foo/[0-9]{5}')))
@@ -6833,7 +6833,7 @@ provide the generated string that matches the provided regular expression. For e
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">protected static final Pattern TRUE_OR_FALSE = Pattern.compile(/(true|false)/)
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">protected static final Pattern TRUE_OR_FALSE = Pattern.compile(/(true|false)/)
 protected static final Pattern ONLY_ALPHA_UNICODE = Pattern.compile(/[\p{L}]*/)
 protected static final Pattern NUMBER = Pattern.compile('-?\\d*(\\.\\d+)?')
 protected static final Pattern IP_ADDRESS = Pattern.compile('([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])')
@@ -6914,7 +6914,7 @@ String nonBlank() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">Contract dslWithOptionalsInString = Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Contract dslWithOptionalsInString = Contract.make {
 	priority 1
 	request {
 		method POST()
@@ -6961,7 +6961,7 @@ String nonBlank() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
 	priority 1
 	request {
 		method 'POST'
@@ -6994,7 +6994,7 @@ String nonBlank() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">"""
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">"""
  given:
   def request = given()
     .header("Content-Type", "application/json")
@@ -7018,7 +7018,7 @@ String nonBlank() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">'''
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">'''
 {
   "request" : {
     "url" : "/users/password",
@@ -7058,7 +7058,7 @@ in the configuration. Example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
 	request {
 		method 'PUT'
 		url $(consumer(regex('^/api/[0-9]{2}$')), producer('/api/12'))
@@ -7086,7 +7086,7 @@ in the configuration. Example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">abstract class BaseMockMvcSpec extends Specification {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">abstract class BaseMockMvcSpec extends Specification {
 
 	def setup() {
 		RestAssuredMockMvc.standaloneSetup(new PairIdController())
@@ -7157,7 +7157,7 @@ of elements from the HTTP request. You can use the following options:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">Contract contractDsl = Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Contract contractDsl = Contract.make {
 	request {
 		method 'GET'
 		url('/api/v1/xxxx') {
@@ -7197,7 +7197,7 @@ of elements from the HTTP request. You can use the following options:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">// given:
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">// given:
  MockMvcRequestSpecification request = given()
    .header("Authorization", "secret")
    .header("Authorization", "secret2")
@@ -7233,7 +7233,7 @@ of elements from the HTTP request. You can use the following options:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
+<pre class="prettyprint highlight"><code class="language-json" data-lang="json">{
   "request" : {
     "urlPath" : "/api/v1/xxxx",
     "method" : "POST",
@@ -7270,7 +7270,7 @@ response body</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
+<pre class="prettyprint highlight"><code class="language-json" data-lang="json">{
   "url" : "/api/v1/xxxx?foo=bar&amp;foo=bar2",
   "param" : "bar",
   "paramIndex" : "bar2",
@@ -7384,7 +7384,7 @@ will result in calling a <code>foo</code> method to which the value matching the
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">Contract contractDsl = Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Contract contractDsl = Contract.make {
 	request {
 		method 'GET'
 		urlPath '/get'
@@ -7528,7 +7528,7 @@ assertions and the one from matchers with an <code>and</code> section):</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">// given:
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">// given:
  MockMvcRequestSpecification request = given()
    .header("Content-Type", "application/json")
    .body("{\"duck\":123,\"alpha\":\"abc\",\"number\":123,\"aBoolean\":true,\"date\":\"2017-01-01\",\"dateTime\":\"2017-01-01T01:23:45\",\"time\":\"01:02:34\",\"valueWithoutAMatcher\":\"foo\",\"valueWithTypeMatch\":\"string\"}");
@@ -7572,7 +7572,7 @@ assertions and the one from matchers with an <code>and</code> section):</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">				'''
+<pre class="prettyprint highlight"><code class="language-json" data-lang="json">				'''
 {
   "request" : {
     "urlPath" : "/get",
@@ -7640,7 +7640,7 @@ assertions and the one from matchers with an <code>and</code> section):</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">testMode === 'JAXRSCLIENT'</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">testMode === 'JAXRSCLIENT'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -7648,7 +7648,7 @@ assertions and the one from matchers with an <code>and</code> section):</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">'''
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">'''
  // when:
   Response response = webTarget
     .path("/users")
@@ -7683,7 +7683,7 @@ section a <code>async()</code> method. Example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
     request {
         method GET()
         url '/get'
@@ -7721,7 +7721,7 @@ on the <strong>PRODUCER</strong> side. The autogenerated tests need to be using 
 <div class="listingblock primary">
 <div class="title">Maven</div>
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
     &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
     &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
     &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
@@ -7735,7 +7735,7 @@ on the <strong>PRODUCER</strong> side. The autogenerated tests need to be using 
 <div class="listingblock secondary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">contracts {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">contracts {
 		testMode = 'EXPLICIT'
 }</code></pre>
 </div>
@@ -7749,7 +7749,7 @@ real requests and you need to setup your generated test&#8217;s base class to wo
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract.make {
 	request {
 		method 'GET'
 		url '/my-context-path/url'
@@ -7765,7 +7765,7 @@ real requests and you need to setup your generated test&#8217;s base class to wo
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">import com.jayway.restassured.RestAssured;
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">import com.jayway.restassured.RestAssured;
 import org.junit.Before;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -7810,7 +7810,7 @@ have that information (e.g. in the stubs you&#8217;ll see that you have too call
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">def dsl = Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">def dsl = Contract.make {
 	// Human readable description
 	description 'Some description'
 	// Label by means of which the output message can be triggered
@@ -7846,7 +7846,7 @@ we will generate a test that will call that method to trigger the message. On th
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">def dsl = Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">def dsl = Contract.make {
 	description 'Some Description'
 	label 'some_label'
 	// input is a message
@@ -7888,7 +7888,7 @@ as presented below (note you can use either <code>$</code> or <code>value</code>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">Contract.make {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Contract.make {
 	label 'some_label'
 	input {
 		messageFrom value(consumer('jms:output'), producer('jms:input'))
@@ -7917,7 +7917,7 @@ as presented below (note you can use either <code>$</code> or <code>value</code>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">import org.springframework.cloud.contract.spec.Contract
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">import org.springframework.cloud.contract.spec.Contract
 
 [
         Contract.make {
@@ -7948,7 +7948,7 @@ two tests that will look more or less like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">package org.springframework.cloud.contract.verifier.tests.com.hello;
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">package org.springframework.cloud.contract.verifier.tests.com.hello;
 
 import com.example.TestBase;
 import com.jayway.jsonpath.DocumentContext;
@@ -8003,7 +8003,7 @@ index of the contract in the list.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>should post a user.json
+<pre class="prettyprint highlight"><code>should post a user.json
 1_WithList.json</code></pre>
 </div>
 </div>
@@ -8059,7 +8059,7 @@ of:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">package com.example;
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">package com.example;
 
 import java.util.regex.Pattern;
 
@@ -8114,7 +8114,7 @@ public class PatternUtils {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">package com.example;
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">package com.example;
 
 import org.springframework.cloud.contract.spec.internal.ClientDslProperty;
 
@@ -8166,7 +8166,7 @@ public class ConsumerUtils {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">package com.example;
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">package com.example;
 
 import org.springframework.cloud.contract.spec.internal.ServerDslProperty;
 
@@ -8226,7 +8226,7 @@ common jar classes will be visible in your Groovy files.</p>
 <div class="listingblock primary">
 <div class="title">Maven</div>
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
 	&lt;groupId&gt;com.example&lt;/groupId&gt;
 	&lt;artifactId&gt;beer-common&lt;/artifactId&gt;
 	&lt;version&gt;${project.version}&lt;/version&gt;
@@ -8237,7 +8237,7 @@ common jar classes will be visible in your Groovy files.</p>
 <div class="listingblock secondary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">testCompile("com.example:beer-common:0.0.1-SNAPSHOT")</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">testCompile("com.example:beer-common:0.0.1-SNAPSHOT")</code></pre>
 </div>
 </div>
 </div>
@@ -8249,7 +8249,7 @@ common jar classes will be visible in your Groovy files.</p>
 <div class="listingblock primary">
 <div class="title">Maven</div>
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
 	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 	&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
 	&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
@@ -8277,7 +8277,7 @@ common jar classes will be visible in your Groovy files.</p>
 <div class="listingblock secondary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">classpath "com.example:beer-common:0.0.1-SNAPSHOT"</code></pre>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">classpath "com.example:beer-common:0.0.1-SNAPSHOT"</code></pre>
 </div>
 </div>
 </div>
@@ -8288,7 +8288,7 @@ common jar classes will be visible in your Groovy files.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">package contracts.beer.rest
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">package contracts.beer.rest
 
 import com.example.ConsumerUtils
 import com.example.ProducerUtils
@@ -8353,7 +8353,7 @@ stubs for other stub http server implementations).</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-yml" data-lang="yml">request:
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">request:
   url: /foo
   method: PUT
   headers:
@@ -8373,7 +8373,7 @@ response:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">package org.springframework.cloud.contract.spec
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">package org.springframework.cloud.contract.spec
 
 /**
  * Converter to be used to convert FROM {@link File} TO {@link Contract}
@@ -8436,7 +8436,7 @@ file in which you provide the fully qualified name of your implementation.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code># Converters
+<pre class="prettyprint highlight"><code># Converters
 org.springframework.cloud.contract.spec.ContractConverter=\
 org.springframework.cloud.contract.verifier.converter.YamlContractConverter</code></pre>
 </div>
@@ -8446,7 +8446,7 @@ org.springframework.cloud.contract.verifier.converter.YamlContractConverter</cod
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">package org.springframework.cloud.contract.verifier.converter
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">package org.springframework.cloud.contract.verifier.converter
 
 import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.Contract
@@ -8533,7 +8533,7 @@ the <code>src/test/resources/contracts</code> folder.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">{
+<pre class="prettyprint highlight"><code class="language-javascript" data-lang="javascript">{
   "provider": {
     "name": "Provider"
   },
@@ -8600,7 +8600,7 @@ Pact version that you&#8217;re using.</p>
 <div class="listingblock primary">
 <div class="title">Maven</div>
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
 	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 	&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
 	&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
@@ -8626,7 +8626,7 @@ Pact version that you&#8217;re using.</p>
 <div class="listingblock secondary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">classpath "org.springframework.cloud:spring-cloud-contract-spec-pact:${findProperty('verifierVersion') ?: verifierVersion}"
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">classpath "org.springframework.cloud:spring-cloud-contract-spec-pact:${findProperty('verifierVersion') ?: verifierVersion}"
 classpath 'au.com.dius:pact-jvm-model:2.4.18'</code></pre>
 </div>
 </div>
@@ -8635,7 +8635,7 @@ classpath 'au.com.dius:pact-jvm-model:2.4.18'</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@Test
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Test
 public void validate_shouldMarkClientAsFraud() throws Exception {
 	// given:
 		MockMvcRequestSpecification request = given()
@@ -8662,7 +8662,7 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">{
+<pre class="prettyprint highlight"><code class="language-javascript" data-lang="javascript">{
   "uuid" : "996ae5ae-6834-4db6-8fac-358ca187ab62",
   "request" : {
     "url" : "/fraudcheck",
@@ -8699,7 +8699,7 @@ Pact version that you&#8217;re using.</p>
 <div class="listingblock primary">
 <div class="title">Maven</div>
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
 	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 	&lt;artifactId&gt;spring-cloud-contract-spec-pact&lt;/artifactId&gt;
 	&lt;scope&gt;test&lt;/scope&gt;
@@ -8715,7 +8715,7 @@ Pact version that you&#8217;re using.</p>
 <div class="listingblock secondary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">testCompile "org.springframework.cloud:spring-cloud-contract-spec-pact"
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">testCompile "org.springframework.cloud:spring-cloud-contract-spec-pact"
 testCompile 'au.com.dius:pact-jvm-model:2.4.18'</code></pre>
 </div>
 </div>
@@ -8734,7 +8734,7 @@ your own implementation to do that.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">package org.springframework.cloud.contract.verifier.builder
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">package org.springframework.cloud.contract.verifier.builder
 
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
@@ -8774,7 +8774,7 @@ a proper <code>spring.factories</code> file. Example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>org.springframework.cloud.contract.verifier.builder.SingleTestGenerator=/
+<pre class="prettyprint highlight"><code>org.springframework.cloud.contract.verifier.builder.SingleTestGenerator=/
 com.example.MyGenerator</code></pre>
 </div>
 </div>
@@ -8787,7 +8787,7 @@ com.example.MyGenerator</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">package org.springframework.cloud.contract.verifier.converter
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">package org.springframework.cloud.contract.verifier.converter
 
 import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.Contract
@@ -8832,7 +8832,7 @@ a proper <code>spring.factories</code> file. Example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code># Stub converters
+<pre class="prettyprint highlight"><code># Stub converters
 org.springframework.cloud.contract.verifier.converter.StubGenerator=\
 org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverter</code></pre>
 </div>
@@ -8870,7 +8870,7 @@ You wrote a proper stub generator and your stubs got placed in a JAR file.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">package org.springframework.cloud.contract.stubrunner.provider.moco
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">package org.springframework.cloud.contract.stubrunner.provider.moco
 
 import com.github.dreamhead.moco.bootstrap.arg.HttpArgs
 import com.github.dreamhead.moco.runner.JsonRunner
@@ -8938,7 +8938,7 @@ class MocoHttpServerStub implements HttpServerStub {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>org.springframework.cloud.contract.stubrunner.HttpServerStub=\
+<pre class="prettyprint highlight"><code>org.springframework.cloud.contract.stubrunner.HttpServerStub=\
 org.springframework.cloud.contract.stubrunner.provider.moco.MocoHttpServerStub</code></pre>
 </div>
 </div>
@@ -8967,7 +8967,7 @@ implementation of the <code>StubDownloaderBuilder</code></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">package com.example;
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">package com.example;
 
 class CustomStubDownloaderBuilder implements StubDownloaderBuilder {
 
@@ -8994,7 +8994,7 @@ class CustomStubDownloaderBuilder implements StubDownloaderBuilder {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code># Example of a custom Stub Downloader Provider
+<pre class="prettyprint highlight"><code># Example of a custom Stub Downloader Provider
 org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder=\
 com.example.CustomStubDownloaderBuilder</code></pre>
 </div>
@@ -9095,7 +9095,7 @@ part of your test. Here&#8217;s a simple example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureWireMock(port = 0)
 public class WiremockForDocsTests {
@@ -9202,7 +9202,7 @@ class to obtain an <code>Options</code> instance:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class WiremockForDocsClassRuleTests {
 
@@ -9250,7 +9250,7 @@ e.g.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@Bean
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Bean
 public RestTemplate restTemplate(RestTemplateBuilder builder) {
 	return builder.build();
 }</code></pre>
@@ -9264,7 +9264,7 @@ to add the <code>@AutoConfigureHttpClient</code> annotation as well:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
 @SpringBootTest("app.baseUrl=https://localhost:6443")
 @AutoConfigureHttpClient
 public class WiremockHttpsServerApplicationTests {
@@ -9293,7 +9293,7 @@ Spring <code>MockRestServiceServer</code>. Here&#8217;s an example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 public class WiremockForDocsMockServerApplicationTests {
 
@@ -9351,7 +9351,7 @@ automatically in the restdocs output directory. For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 @AutoConfigureMockMvc
@@ -9390,7 +9390,7 @@ example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 @AutoConfigureMockMvc
@@ -9424,7 +9424,7 @@ created stub. Example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@Test
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Test
 public void contextLoads() throws Exception {
 	mockMvc.perform(post("/resource")
                .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
@@ -9446,7 +9446,7 @@ will generate a stub something like this:</p>
 <div class="listingblock">
 <div class="title">post-resource.json</div>
 <div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
+<pre class="prettyprint highlight"><code class="language-json" data-lang="json">{
   "request" : {
     "url" : "/resource",
     "method" : "POST",
@@ -9521,7 +9521,7 @@ only contracts and not generate the stubs. That&#8217;s why we suggest to do bot
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">		this.mockMvc.perform(post("/foo")
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">		this.mockMvc.perform(post("/foo")
 					.accept(MediaType.APPLICATION_PDF)
 					.accept(MediaType.APPLICATION_JSON)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -9546,7 +9546,7 @@ section, contract will get generated and a documentation file too.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">import org.springframework.cloud.contract.spec.Contract
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">import org.springframework.cloud.contract.spec.Contract
 
 Contract.make {
     request {
@@ -9583,5 +9583,8 @@ Contract.make {
 </div>
 </div>
 </div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
+<script>prettyPrint()</script>
 </body>
 </html>
