@@ -11,6 +11,11 @@ This project provides support for Consumer Driven Contracts and service schemas 
 range of options for writing tests, publishing them as assets, asserting that a contract is kept by producers
 and consumers, for HTTP and message-based interactions.
 
+=== Spring Cloud Contract workshops
+
+If you prefer to learn about the project by doing some tutorials you can check out the workshops under
+http://cloud-samples.spring.io/spring-cloud-contract-samples/workshops.html[this link].
+
 === Spring Cloud Contract Verifier
 
 :introduction_url: https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master
