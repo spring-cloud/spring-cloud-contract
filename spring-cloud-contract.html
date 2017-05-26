@@ -7197,6 +7197,29 @@ the <code>authToken()</code> method returns everything that you need.
 </tr>
 </table>
 </div>
+<div class="paragraph">
+<p>The type of the object read from the JSON can be one of the followings depending on the
+JSON path:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>String</code> if you point to a <code>String</code> value in a JSON</p>
+</li>
+<li>
+<p><code>JSONArray</code> if you point to a <code>List</code> in a JSON</p>
+</li>
+<li>
+<p><code>Map</code> if you point to a <code>Map</code> in a JSON</p>
+</li>
+<li>
+<p>proper <code>Number</code> if you point to <code>Integer</code>, <code>Double</code> etc. in a JSON</p>
+</li>
+<li>
+<p><code>Boolean</code> if you point to a <code>Boolean</code> in a JSON</p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 <div class="sect4">
@@ -7455,6 +7478,33 @@ That way you can assert on the size of the collection.</p>
 passed as an input to the custom method that you&#8217;re providing. E.g. <code>byCommand('foo($it)')</code>
 will result in calling a <code>foo</code> method to which the value matching the JSON Path will get
  passed.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The type of the object read from the JSON can be one of the followings depending on the
+JSON path:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>String</code> if you point to a <code>String</code> value in a JSON</p>
+</li>
+<li>
+<p><code>JSONArray</code> if you point to a <code>List</code> in a JSON</p>
+</li>
+<li>
+<p><code>Map</code> if you point to a <code>Map</code> in a JSON</p>
+</li>
+<li>
+<p>proper <code>Number</code> if you point to <code>Integer</code>, <code>Double</code> etc. in a JSON</p>
+</li>
+<li>
+<p><code>Boolean</code> if you point to a <code>Boolean</code> in a JSON</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
 </li>
 </ul>
 </div>
