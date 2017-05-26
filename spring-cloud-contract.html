@@ -3684,6 +3684,35 @@ generated tests. Otherwise messaging part of Spring Cloud Contract Verifier will
 </tr>
 </table>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+If you want to use Spring Cloud Stream remember to add a
+<code>org.springframework.cloud:spring-cloud-stream-test-support</code> dependency.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock primary">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-stream-test-support&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">testCompile "org.springframework.cloud:spring-cloud-stream-test-support"</code></pre>
+</div>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_manual_integration_testing">Manual Integration Testing</h4>
@@ -3746,6 +3775,23 @@ inside the application (e.g. scheduler)</p>
 <p>Scenario 3: the input message is consumed and there is no output message</p>
 </li>
 </ul>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+The destination passed to <code>messageFrom</code> or <code>sentTo</code> can have different meanings for different
+ messaging implementations. For <strong>Stream</strong> and <strong>Integration</strong> it&#8217;s first resolved as a <code>destination</code> of a channel, and then if
+ there is no such <code>destination</code> it&#8217;s resolved as a channel name. For <strong>Camel</strong> that&#8217;s a certain component (e.x. <code>jms</code>).
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Example for Camel:</p>
 </div>
 <div class="sect4">
 <h5 id="_scenario_1_no_input_message">Scenario 1 (no input message)</h5>
@@ -5962,6 +6008,35 @@ channel name.
 </td>
 </tr>
 </table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+If you want to use Spring Cloud Stream remember to add a
+<code>org.springframework.cloud:spring-cloud-stream-test-support</code> dependency.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock primary">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-stream-test-support&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">testCompile "org.springframework.cloud:spring-cloud-stream-test-support"</code></pre>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_adding_it_to_the_project_3">Adding it to the project</h4>
