@@ -105,6 +105,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 			generatedTestSourcesDir = { extension.generatedTestSourcesDir }
 			configProperties = { extension }
 		}
+		task.enabled = !project.gradle.startParameter.excludedTaskNames.contains("test")
 		task.dependsOn copyContracts
 		project.tasks.findByName("compileTestJava").dependsOn(task)
 	}
