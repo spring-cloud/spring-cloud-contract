@@ -36,7 +36,7 @@ import spock.lang.Specification
 /**
  * @author Marcin Grzejszczak
  */
-@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
+@ContextConfiguration(classes = MocoConfig, loader = SpringBootContextLoader)
 // tag::[classpath_stub_runner]
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 // to use stubs from classpath just provide ids without passing any other properties to
@@ -75,7 +75,7 @@ class MocoHttpServerStubSpec extends Specification {
 	@Configuration
 	@EnableAutoConfiguration
 	@EnableBinding(Sink.class)
-	static class Config {
+	static class MocoConfig {
 
 		@Bean
 		MyListener myListener() {
