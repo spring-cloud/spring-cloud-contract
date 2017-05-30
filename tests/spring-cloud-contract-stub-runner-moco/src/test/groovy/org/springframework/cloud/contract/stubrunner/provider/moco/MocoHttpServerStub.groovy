@@ -67,6 +67,7 @@ class MocoHttpServerStub implements HttpServerStub {
 	HttpServerStub registerMappings(Collection<File> stubFiles) {
 		List<RunnerSetting> settings = stubFiles.findAll { it.name.endsWith("json") }
 				.collect {
+			log.info("Trying to parse [{}]", it.name)
 			try {
 				return RunnerSetting.aRunnerSetting().withStream(it.newInputStream()).build()
 			} catch (Exception e) {
