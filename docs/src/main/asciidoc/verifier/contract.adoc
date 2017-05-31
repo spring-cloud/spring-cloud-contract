@@ -114,12 +114,45 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=body,indent=0]
 ----
 
-//**Body's format** can also be specified explicitly by invoking one of format functions.
-//
-//[source,groovy,indent=0]
-//----
-//include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=bodyAsXml,indent=0]
-//----
+Request may contain **multipart** elements. Just call the `multipart()` method.
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderSpec.groovy[tags=multipartdsl,indent=0]
+----
+
+In this example we defined parameters either directly by using the map notation,
+where the value can be a dynamic property (e.g. `formParameter: $(consumer(...), producer(...))`)
+ or by using the `named(...)` method that allows you to set a named parameter.
+ A named parameter can set a `name` and `content`. You can call it either via
+ a method with 2 arguments: e.g. `named("fileName", "fileContent")` or
+  via a map notation `named(name: "fileName", content: "fileContent")`.
+
+From this contract the generated test will look more or less like this:
+
+[source,java,indent=0]
+----
+ // given:
+  MockMvcRequestSpecification request = given()
+    .header("Content-Type", "multipart/form-data;boundary=AaB03x")
+    .param("formParameter", "\"formParameterValue\"")
+    .param("someBooleanParameter", "true")
+    .multiPart("file", "filename.csv", "file content".getBytes());
+
+ // when:
+  ResponseOptions response = given().spec(request)
+    .put("/multipart");
+
+ // then:
+  assertThat(response.statusCode()).isEqualTo(200);
+----
+
+The WireMock stub will look more or less like this:
+
+[source,json,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/dsl/WireMockGroovyDslSpec.groovy[tags=multipartwiremock,indent=0]
+----
 
 ==== Response
 

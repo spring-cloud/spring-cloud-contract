@@ -1502,31 +1502,47 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue('180')
 	def 'should generate stub with multipart parameters'() {
 		given:
+		// tag::multipartdsl[]
 			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 				request {
 					method "PUT"
 					url "/multipart"
+					headers {
+						contentType('multipart/form-data;boundary=AaB03x')
+					}
 					multipart(
-							formParameter: value(consumer(regex('".+"')), producer('"formParameterValue"')),
-							someBooleanParameter: value(consumer(regex('(true|false)')), producer('true')),
+							// key (parameter name), value (parameter value) pair
+							formParameter: $(c(regex('".+"')), p('"formParameterValue"')),
+							someBooleanParameter: $(c(regex(anyBoolean())), p('true')),
+							// a parameter name (e.g. file)
 							file: named(
-									name: value(consumer(regex('.+')), producer('filename.csv')),
-									content: value(consumer(regex('.+')), producer('file content')))
+									// name of the file
+									name: $(c(regex('.+')), p('filename.csv')),
+									// content of the file
+									content: $(c(regex('.+')), p('file content')))
 					)
 				}
 				response {
 					status 200
 				}
 			}
+		// end::multipartdsl[]
 		when:
 			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, contractDsl), contractDsl).toWireMockClientStub()
 		then:
 			println wireMockStub
-			AssertionUtil.assertThatJsonsAreEqual(('''
+			AssertionUtil.assertThatJsonsAreEqual((
+					// tag::multipartwiremock[]
+					'''
 		{
 		  "request" : {
 			"url" : "/multipart",
 			"method" : "PUT",
+			"headers" : {
+			  "Content-Type" : {
+				"matches" : "multipart/form-data;boundary=AaB03x.*"
+			  }
+			},
 			"bodyPatterns" : [ {
 				"matches" : ".*--(.*)\\r\\nContent-Disposition: form-data; name=\\"formParameter\\"\\r\\n(Content-Type: .*\\r\\n)?(Content-Length: \\\\d+\\r\\n)?\\r\\n\\".+\\"\\r\\n--\\\\1.*"
     		}, {
@@ -1540,7 +1556,9 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			"transformers" : [ "response-template" ]
 		  }
 		}
-			'''), wireMockStub)
+			'''
+					// end::multipartwiremock[]
+			), wireMockStub)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
 	}

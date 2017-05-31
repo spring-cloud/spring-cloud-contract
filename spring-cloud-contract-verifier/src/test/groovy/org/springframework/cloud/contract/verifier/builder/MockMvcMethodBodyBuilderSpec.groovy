@@ -1166,9 +1166,10 @@ World.'''"""
 	}
 
 	@Issue('180')
-		def "should generate proper test code when having multipart parameters with #methodBuilderName"() {
+	def "should generate proper test code when having multipart parameters with #methodBuilderName"() {
 		given:
-		Contract contractDsl = Contract.make {
+		// tag::multipartdsl[]
+		org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				method "PUT"
 				url "/multipart"
@@ -1176,15 +1177,23 @@ World.'''"""
 					contentType('multipart/form-data;boundary=AaB03x')
 				}
 				multipart(
-						formParameter: value(consumer(regex('.+')), producer('"formParameterValue"')),
-						someBooleanParameter: value(consumer(regex('(true|false)')), producer('true')),
-						file: named(value(consumer(regex('.+')), producer('filename.csv')), value(consumer(regex('.+')), producer('file content')))
+						// key (parameter name), value (parameter value) pair
+						formParameter: $(c(regex('".+"')), p('"formParameterValue"')),
+						someBooleanParameter: $(c(regex(anyBoolean())), p('true')),
+						// a named parameter (e.g. with `file` name) that represents file with
+						// `name` and `content`. You can also call `named("fileName", "fileContent")`
+						file: named(
+								// name of the file
+								name: $(c(regex('.+')), p('filename.csv')),
+								// content of the file
+								content: $(c(regex('.+')), p('file content')))
 				)
 			}
 			response {
 				status 200
 			}
 		}
+		// end::multipartdsl[]
 		MethodBodyBuilder builder = methodBuilder(contractDsl)
 		BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
@@ -1209,18 +1218,26 @@ World.'''"""
 	}
 
 	@Issue('180')
-		def "should generate proper test code when having multipart parameters with named as map with #methodBuilderName"() {
+	def "should generate proper test code when having multipart parameters with named as map with #methodBuilderName"() {
 		given:
-		Contract contractDsl = Contract.make {
+		org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
 			request {
 				method "PUT"
 				url "/multipart"
+				headers {
+					contentType('multipart/form-data;boundary=AaB03x')
+				}
 				multipart(
-						formParameter: value(consumer(regex('".+"')), producer('"formParameterValue"')),
-						someBooleanParameter: value(consumer(regex('(true|false)')), producer('true')),
+						// key (parameter name), value (parameter value) pair
+						formParameter: $(c(regex('".+"')), p('"formParameterValue"')),
+						someBooleanParameter: $(c(regex(anyBoolean())), p('true')),
+						// a named parameter (e.g. with `file` name) that represents file with
+						// `name` and `content`. You can also call `named("fileName", "fileContent")`
 						file: named(
-								name: value(consumer(regex('.+')), producer('filename.csv')),
-								content: value(consumer(regex('.+')), producer('file content')))
+								// name of the file
+								name: $(c(regex('.+')), p('filename.csv')),
+								// content of the file
+								content: $(c(regex('.+')), p('file content')))
 				)
 			}
 			response {
