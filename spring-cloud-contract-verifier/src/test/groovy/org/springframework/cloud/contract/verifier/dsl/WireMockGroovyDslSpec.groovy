@@ -1517,9 +1517,9 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 							// a parameter name (e.g. file)
 							file: named(
 									// name of the file
-									name: $(c(regex('.+')), p('filename.csv')),
+									name: $(c(regex(nonEmpty())), p('filename.csv')),
 									// content of the file
-									content: $(c(regex('.+')), p('file content')))
+									content: $(c(regex(nonEmpty())), p('file content')))
 					)
 				}
 				response {

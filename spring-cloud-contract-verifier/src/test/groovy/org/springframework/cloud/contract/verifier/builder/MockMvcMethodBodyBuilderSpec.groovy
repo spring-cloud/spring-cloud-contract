@@ -1184,9 +1184,9 @@ World.'''"""
 						// `name` and `content`. You can also call `named("fileName", "fileContent")`
 						file: named(
 								// name of the file
-								name: $(c(regex('.+')), p('filename.csv')),
+								name: $(c(regex(nonEmpty())), p('filename.csv')),
 								// content of the file
-								content: $(c(regex('.+')), p('file content')))
+								content: $(c(regex(nonEmpty())), p('file content')))
 				)
 			}
 			response {
@@ -1235,9 +1235,9 @@ World.'''"""
 						// `name` and `content`. You can also call `named("fileName", "fileContent")`
 						file: named(
 								// name of the file
-								name: $(c(regex('.+')), p('filename.csv')),
+								name: $(c(regex(nonEmpty())), p('filename.csv')),
 								// content of the file
-								content: $(c(regex('.+')), p('file content')))
+								content: $(c(regex(nonEmpty())), p('file content')))
 				)
 			}
 			response {
