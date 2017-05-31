@@ -6777,6 +6777,96 @@ or just set the <code>ignored</code> property on the contract itself:</p>
 }</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Request may contain <strong>multipart</strong> elements. Just call the <code>multipart()</code> method.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
+	request {
+		method "PUT"
+		url "/multipart"
+		headers {
+			contentType('multipart/form-data;boundary=AaB03x')
+		}
+		multipart(
+				// key (parameter name), value (parameter value) pair
+				formParameter: $(c(regex('".+"')), p('"formParameterValue"')),
+				someBooleanParameter: $(c(regex(anyBoolean())), p('true')),
+				// a named parameter (e.g. with `file` name) that represents file with
+				// `name` and `content`. You can also call `named("fileName", "fileContent")`
+				file: named(
+						// name of the file
+						name: $(c(regex('.+')), p('filename.csv')),
+						// content of the file
+						content: $(c(regex('.+')), p('file content')))
+		)
+	}
+	response {
+		status 200
+	}
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this example we defined parameters either directly by using the map notation,
+where the value can be a dynamic property (e.g. <code>formParameter: $(consumer(&#8230;&#8203;), producer(&#8230;&#8203;))</code>)
+ or by using the <code>named(&#8230;&#8203;)</code> method that allows you to set a named parameter.
+ A named parameter can set a <code>name</code> and <code>content</code>. You can call it either via
+ a method with 2 arguments: e.g. <code>named("fileName", "fileContent")</code> or
+  via a map notation <code>named(name: "fileName", content: "fileContent")</code>.</p>
+</div>
+<div class="paragraph">
+<p>From this contract the generated test will look more or less like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">// given:
+ MockMvcRequestSpecification request = given()
+   .header("Content-Type", "multipart/form-data;boundary=AaB03x")
+   .param("formParameter", "\"formParameterValue\"")
+   .param("someBooleanParameter", "true")
+   .multiPart("file", "filename.csv", "file content".getBytes());
+
+// when:
+ ResponseOptions response = given().spec(request)
+   .put("/multipart");
+
+// then:
+ assertThat(response.statusCode()).isEqualTo(200);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The WireMock stub will look more or less like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-json" data-lang="json">			'''
+{
+  "request" : {
+	"url" : "/multipart",
+	"method" : "PUT",
+	"headers" : {
+	  "Content-Type" : {
+		"matches" : "multipart/form-data;boundary=AaB03x.*"
+	  }
+	},
+	"bodyPatterns" : [ {
+		"matches" : ".*--(.*)\\r\\nContent-Disposition: form-data; name=\\"formParameter\\"\\r\\n(Content-Type: .*\\r\\n)?(Content-Length: \\\\d+\\r\\n)?\\r\\n\\".+\\"\\r\\n--\\\\1.*"
+  		}, {
+    			"matches" : ".*--(.*)\\r\\nContent-Disposition: form-data; name=\\"someBooleanParameter\\"\\r\\n(Content-Type: .*\\r\\n)?(Content-Length: \\\\d+\\r\\n)?\\r\\n(true|false)\\r\\n--\\\\1.*"
+  		}, {
+	  "matches" : ".*--(.*)\\r\\nContent-Disposition: form-data; name=\\"file\\"; filename=\\".+\\"\\r\\n(Content-Type: .*\\r\\n)?(Content-Length: \\\\d+\\r\\n)?\\r\\n.+\\r\\n--\\\\1.*"
+	} ]
+  },
+  "response" : {
+	"status" : 200,
+	"transformers" : [ "response-template" ]
+  }
+}
+	'''</code></pre>
+</div>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_response">Response</h4>
