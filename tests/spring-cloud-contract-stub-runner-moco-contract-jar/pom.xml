@@ -8,8 +8,7 @@
 		<version>1.1.2.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<groupId>com.example</groupId>
-	<artifactId>fraudDetectionServerMoco</artifactId>
+	<artifactId>spring-cloud-contract-stub-runner-moco-contract-jar</artifactId>
 	<packaging>jar</packaging>
 	<name>Spring Cloud Contract Stub Runner Moco Contract Jar</name>
 	<description>Spring Cloud Contract Stub Runner Moco Contract Jar</description>

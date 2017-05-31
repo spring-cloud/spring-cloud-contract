@@ -37,11 +37,12 @@ import spock.lang.Specification
  * @author Marcin Grzejszczak
  */
 @ContextConfiguration(classes = MocoConfig, loader = SpringBootContextLoader)
+// tag::[classpath_stub_runner]
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@AutoConfigureStubRunner(ids = ["com.example:fraudDetectionServerMoco:+:"],
-		workOffline = true,
-		stubsPerConsumer = true,
-		consumerName = "nested")
+// to use stubs from classpath just provide ids without passing any other properties to
+// @AutoConfigureStubRunner
+@AutoConfigureStubRunner( ids = ["com.example:fraudDetectionServerMoco"])
+// end::[classpath_stub_runner]
 @DirtiesContext
 @ActiveProfiles("test")
 class MocoHttpServerStubSpec extends Specification {
