@@ -169,7 +169,7 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	}
 
 	@Override
-	protected String getBodyString(String bodyAsString) {
+	protected String getBodyString(Object body) {
 		return ''
 	}
 
