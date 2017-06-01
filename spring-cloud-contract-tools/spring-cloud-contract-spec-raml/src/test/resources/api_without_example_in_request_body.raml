@@ -1,0 +1,42 @@
+#%RAML 1.0
+title: MUA Flights API
+baseUri: http://localhost:8081/
+
+/mallory:
+  description: a retrieve Mallory request a user with username 'username' and password 'password' exists
+  get:
+    headers:
+      Content-Type:
+        default: application/json
+    queryParameters:
+      name:
+        default: ron
+      status:
+        default: good
+    body:
+      application/json:
+        schema: |
+          {
+            "type": "object",
+            "$schema": "http://json-schema.org/draft-03/schema",
+            "id": "http://jsonschema.net",
+            "required": true,
+            "properties": {
+              "songTitle": {
+                "type": "string"
+              }
+            }
+          }
+    responses:
+      200:
+       headers:
+         Content-Type:
+           default: application/json
+       body:
+         application/json:
+           example: |
+             [[{
+             "email": "rddtGwwWMEhnkAPEmsyE",
+             "id": "eb0f8c17-c06a-479e-9204-14f7c95b63a6",
+             "userName": "AJQrokEGPAVdOHprQpKP"
+             }]]

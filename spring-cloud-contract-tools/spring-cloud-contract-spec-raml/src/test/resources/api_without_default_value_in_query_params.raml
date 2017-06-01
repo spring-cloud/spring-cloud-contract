@@ -1,0 +1,31 @@
+#%RAML 1.0
+title: MUA Flights API
+
+/mallory:
+  description: a retrieve Mallory request a user with username 'username' and password 'password' exists
+  get:
+    headers:
+      Content-Type:
+        default: application/json
+    queryParameters:
+      name:
+        description: The API key needed to create a new job
+      status:
+        default: good
+    body:
+      application/json:
+        example: |
+          {"id": "123", "method": "create"}
+    responses:
+      200:
+       headers:
+         Content-Type:
+           default: application/json
+       body:
+         application/json:
+           example: |
+             [[{
+             "email": "rddtGwwWMEhnkAPEmsyE",
+             "id": "eb0f8c17-c06a-479e-9204-14f7c95b63a6",
+             "userName": "AJQrokEGPAVdOHprQpKP"
+             }]]
