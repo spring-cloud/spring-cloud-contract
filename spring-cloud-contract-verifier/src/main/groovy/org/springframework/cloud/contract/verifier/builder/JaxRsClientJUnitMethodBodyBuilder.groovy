@@ -104,7 +104,9 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 		String method = request.method.serverValue.toString().toLowerCase()
 		if (request.body) {
 			String contentType = getHeader('Content-Type') ?: getRequestContentType().mimeType
-			bb.addLine(".method(\"${method.toUpperCase()}\", entity(\"$bodyAsString\", \"$contentType\"))")
+			String body = request.body?.serverValue instanceof ExecutionProperty ?
+					request.body?.serverValue?.toString() : "\"${bodyAsString}\""
+			bb.addLine(".method(\"${method.toUpperCase()}\", entity(${body}, \"$contentType\"))")
 		} else {
 			bb.addLine(".method(\"${method.toUpperCase()}\")")
 		}

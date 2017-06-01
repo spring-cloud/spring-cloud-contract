@@ -283,7 +283,6 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/org/springframework/cloud/contract/verifier/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
 ----
 
-
 IMPORTANT: You can't use both a String and `execute` to perform concatenation. E.g. calling
 `header('Authorization', 'Bearer ' + execute('authToken()'))` will lead to improper results.
 To make this work just call `header('Authorization', execute('authToken()'))` and ensure that
@@ -297,6 +296,36 @@ JSON path:
     - `Map` if you point to a `Map` in a JSON
     - proper `Number` if you point to `Integer`, `Double` etc. in a JSON
     - `Boolean` if you point to a `Boolean` in a JSON
+
+In the request part of the contract you can specify that the `body` should be
+taken from a method.
+
+IMPORTANT: You have to provide both the consumer and the producer side
+and the `execute` part can be applied for the whole body. Not for parts of it!
+
+Example:
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MethodBodyBuilderSpec.groovy[tags=body_execute,indent=0]
+----
+
+This will result in calling the `hashCode()` method in the request body.
+It would more or less like this:
+
+[source,java,indent=0]
+----
+ // given:
+  MockMvcRequestSpecification request = given()
+    .body(hashCode());
+
+ // when:
+  ResponseOptions response = given().spec(request)
+    .get("/something");
+
+ // then:
+  assertThat(response.statusCode()).isEqualTo(200);
+----
 
 ===== Referencing request from response
 

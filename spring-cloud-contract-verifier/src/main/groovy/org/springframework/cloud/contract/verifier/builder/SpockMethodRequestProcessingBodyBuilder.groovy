@@ -127,8 +127,14 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 	}
 
 	@Override
-	protected String getBodyString(String bodyAsString) {
-		return ".body('''$bodyAsString''')"
+	protected String getBodyString(Object body) {
+		String value
+		if (body instanceof ExecutionProperty) {
+			value = body.toString()
+		} else {
+			value = "'''$body'''"
+		}
+		return ".body($value)"
 	}
 
 	@Override
