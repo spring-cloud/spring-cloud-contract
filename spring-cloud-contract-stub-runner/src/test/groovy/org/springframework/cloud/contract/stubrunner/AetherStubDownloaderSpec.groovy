@@ -31,6 +31,22 @@ class AetherStubDownloaderSpec extends Specification {
         jar != null
     }
 
+    def 'Should throw an exception when a jar is in local m2 and not in remote repo'() {
+        given:
+        StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder()
+            .withStubRepositoryRoot("https://test.jfrog.io/test/libs-snapshot-local")
+            .build()
+
+        AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions)
+
+        when:
+        def jar = aetherStubDownloader.downloadAndUnpackStubJar(new StubConfiguration("org.springframework.cloud", "spring-cloud-contract-spec", "+", ""))
+
+        then:
+            IllegalStateException e = thrown(IllegalStateException)
+            e.message.contains("The artifact was found in the local repository but you have explicitly stated that it should be downloaded from a remote one")
+    }
+
     @RestoreSystemProperties
     def 'Should use local repository from settings.xml'() {
         given:

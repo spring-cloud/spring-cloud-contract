@@ -16,11 +16,6 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
-import static java.nio.file.Files.createTempDirectory;
-import static org.springframework.cloud.contract.stubrunner.AetherFactories.newRepositorySystem;
-import static org.springframework.cloud.contract.stubrunner.AetherFactories.newSession;
-import static org.springframework.cloud.contract.stubrunner.util.ZipCategory.unzipTo;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -33,6 +28,7 @@ import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.Proxy;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
@@ -45,6 +41,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions.StubRunnerProxyOptions;
 import org.springframework.util.StringUtils;
+
+import static java.nio.file.Files.createTempDirectory;
+import static org.springframework.cloud.contract.stubrunner.AetherFactories.newRepositorySystem;
+import static org.springframework.cloud.contract.stubrunner.AetherFactories.newSession;
+import static org.springframework.cloud.contract.stubrunner.util.ZipCategory.unzipTo;
 
 /**
  * @author Mariusz Smykula
@@ -61,6 +62,7 @@ public class AetherStubDownloader implements StubDownloader {
 	private final List<RemoteRepository> remoteRepos;
 	private final RepositorySystem repositorySystem;
 	private final RepositorySystemSession session;
+	private final boolean workOffline;
 
 	public AetherStubDownloader(StubRunnerOptions stubRunnerOptions) {
 		if (log.isDebugEnabled()) {
@@ -81,6 +83,7 @@ public class AetherStubDownloader implements StubDownloader {
 		}
 		this.repositorySystem = newRepositorySystem();
 		this.session = newSession(this.repositorySystem, stubRunnerOptions.workOffline);
+		this.workOffline = stubRunnerOptions.workOffline;
 	}
 
 	private boolean remoteReposMissing() {
@@ -102,6 +105,7 @@ public class AetherStubDownloader implements StubDownloader {
 		if (remoteReposMissing()) {
 			log.error("Remote repositories for stubs are not specified and work offline flag wasn't passed");
 		}
+		this.workOffline = false;
 	}
 
 	private List<RemoteRepository> remoteRepositories(StubRunnerOptions stubRunnerOptions) {
@@ -121,7 +125,6 @@ public class AetherStubDownloader implements StubDownloader {
 					final StubRunnerProxyOptions p = stubRunnerOptions.getProxyOptions();
 					builder.setProxy(new Proxy(null, p.getProxyHost(), p.getProxyPort()));
 				}
-
 				remoteRepos.add(builder.build());
 			}
 		}
@@ -149,12 +152,20 @@ public class AetherStubDownloader implements StubDownloader {
 			ArtifactResult result = this.repositorySystem.resolveArtifact(this.session, request);
 			log.info("Resolved artifact [" + artifact + "] to "
 					+ result.getArtifact().getFile());
+			if (resolvedFromLocalRepo(result) && shouldDownloadFromRemote()) {
+				throw new IllegalStateException("The artifact was found in the local repository "
+						+ "but you have explicitly stated that it should be downloaded from a remote one");
+			}
 			File temporaryFile = unpackStubJarToATemporaryFolder(
 					result.getArtifact().getFile().toURI());
 			log.info("Unpacked file to [" + temporaryFile + "]");
 			return temporaryFile;
 		}
+		catch (IllegalStateException ise) {
+			throw ise;
+		}
 		catch (Exception e) {
+			//TODO: Start throwing this exception instead of returning null
 			log.warn(
 					"Exception occurred while trying to download a stub for group ["
 							+ stubsGroup + "] module [" + stubsModule
@@ -163,6 +174,14 @@ public class AetherStubDownloader implements StubDownloader {
 			return null;
 		}
 
+	}
+
+	private boolean resolvedFromLocalRepo(ArtifactResult result) {
+		return result.getRepository() instanceof LocalRepository;
+	}
+
+	private boolean shouldDownloadFromRemote() {
+		return !remoteReposMissing() && !this.workOffline;
 	}
 
 	private String getVersion(String stubsGroup, String stubsModule, String version,
