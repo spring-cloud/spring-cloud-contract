@@ -197,7 +197,7 @@ abstract class MethodBodyBuilder {
 	/**
 	 * Builds the code to append body to the request / message
 	 */
-	protected abstract String getBodyString(String bodyAsString)
+	protected abstract String getBodyString(Object body)
 
 	/**
 	 * Builds the code to append multipart content to the request.

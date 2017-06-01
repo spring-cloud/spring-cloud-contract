@@ -98,7 +98,9 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 			bb.addLine(getHeaderString(header))
 		}
 		if (request.body) {
-			bb.addLine(getBodyString(bodyAsString))
+			Object body = request.body?.serverValue instanceof ExecutionProperty ?
+					request.body?.serverValue : bodyAsString
+			bb.addLine(getBodyString(body))
 		}
 		if (request.multipart) {
 			multipartParameters?.each { Map.Entry<String, Object> entry -> bb.addLine(getMultipartParameterLine(entry)) }
