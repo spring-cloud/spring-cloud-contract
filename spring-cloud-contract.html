@@ -7310,6 +7310,60 @@ JSON path:</p>
 </li>
 </ul>
 </div>
+<div class="paragraph">
+<p>In the request part of the contract you can specify that the <code>body</code> should be
+taken from a method.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+You have to provide both the consumer and the producer side
+and the <code>execute</code> part can be applied for the whole body. Not for parts of it!
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Contract contractDsl = Contract.make {
+	request {
+		method 'GET'
+		url '/something'
+		body(
+				$(c("foo"), p(execute("hashCode()")))
+		)
+	}
+	response {
+		status 200
+	}
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will result in calling the <code>hashCode()</code> method in the request body.
+It would more or less like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">// given:
+ MockMvcRequestSpecification request = given()
+   .body(hashCode());
+
+// when:
+ ResponseOptions response = given().spec(request)
+   .get("/something");
+
+// then:
+ assertThat(response.statusCode()).isEqualTo(200);</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect4">
