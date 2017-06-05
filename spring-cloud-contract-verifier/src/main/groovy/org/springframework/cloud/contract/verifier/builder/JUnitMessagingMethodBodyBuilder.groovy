@@ -24,7 +24,9 @@ import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.Input
 import org.springframework.cloud.contract.spec.internal.NamedProperty
+import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import java.util.regex.Pattern
 
@@ -93,6 +95,12 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	}
 
 	@Override
+	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Number value) {
+		blockBuilder.addLine("assertThat(response.getHeader(\"$property\")).isNotNull();")
+		blockBuilder.addLine("assertThat(response.getHeader(\"$property\")).isEqualTo(${value});")
+	}
+
+	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Pattern pattern) {
 		blockBuilder.addLine("assertThat(response.getHeader(\"$property\")).isNotNull();")
 		blockBuilder.addLine("assertThat(response.getHeader(\"$property\").toString()).${createHeaderComparison(pattern)}")
@@ -114,7 +122,9 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 		bb.addLine("""ContractVerifierMessage response = contractVerifierMessaging.receive("${outputMessage.sentTo.serverValue}");""")
 		bb.addLine("""assertThat(response).isNotNull();""")
 		outputMessage.headers?.executeForEachHeader { Header header ->
-			processHeaderElement(bb, header.name, header.serverValue)
+			processHeaderElement(bb, header.name, header.serverValue instanceof NotToEscapePattern ?
+					header.serverValue :
+					MapConverter.getTestSideValues(header.serverValue))
 		}
 	}
 

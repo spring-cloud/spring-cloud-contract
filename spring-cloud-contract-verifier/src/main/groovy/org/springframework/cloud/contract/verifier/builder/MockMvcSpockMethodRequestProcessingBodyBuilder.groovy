@@ -23,6 +23,7 @@ import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import java.util.regex.Pattern
 /**
@@ -46,7 +47,9 @@ class MockMvcSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestP
 	@Override
 	protected void validateResponseHeadersBlock(BlockBuilder bb) {
 		response.headers?.executeForEachHeader { Header header ->
-			processHeaderElement(bb, header.name, header.serverValue)
+			processHeaderElement(bb, header.name, header.serverValue instanceof NotToEscapePattern ?
+					header.serverValue :
+					MapConverter.getTestSideValues(header.serverValue))
 		}
 	}
 
@@ -59,8 +62,16 @@ class MockMvcSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestP
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Object value) {
 		if (value instanceof NotToEscapePattern) {
 			blockBuilder.addLine("response.header('$property') " +
-					"${patternComparison(value.serverValue.pattern().replace("\\", "\\\\"))}")
+					"${patternComparison(((NotToEscapePattern) value).serverValue.pattern().replace("\\", "\\\\"))}")
+		} else {
+			// fallback
+			processHeaderElement(blockBuilder, property, value.toString())
 		}
+	}
+
+	@Override
+	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Number number) {
+		blockBuilder.addLine("response.header('$property') == ${number}")
 	}
 
 	@Override

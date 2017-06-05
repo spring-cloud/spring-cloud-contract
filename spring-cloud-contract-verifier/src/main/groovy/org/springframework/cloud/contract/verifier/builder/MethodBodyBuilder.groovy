@@ -166,6 +166,11 @@ abstract class MethodBodyBuilder {
 	protected abstract void processHeaderElement(BlockBuilder blockBuilder, String property, GString value)
 
 	/**
+	 * Appends to the {@link BlockBuilder} the assertion for the given header path
+	 */
+	protected abstract void processHeaderElement(BlockBuilder blockBuilder, String property, Number value)
+
+	/**
 	 * Appends to the {@link BlockBuilder} the code to retrieve a value for a property
 	 * from the list with the given index
 	 */

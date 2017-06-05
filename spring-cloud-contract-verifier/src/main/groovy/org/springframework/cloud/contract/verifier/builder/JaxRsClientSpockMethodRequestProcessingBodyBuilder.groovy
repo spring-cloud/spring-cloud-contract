@@ -21,6 +21,7 @@ import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.Header
+import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.spec.internal.QueryParameter
 import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
@@ -136,13 +137,25 @@ class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequ
 	@Override
 	protected void validateResponseHeadersBlock(BlockBuilder bb) {
 		response.headers?.executeForEachHeader { Header header ->
-			processHeaderElement(bb, header.name, header.serverValue)
+			processHeaderElement(bb, header.name, header.serverValue instanceof NotToEscapePattern ?
+					header.serverValue :
+					MapConverter.getTestSideValues(header.serverValue))
 		}
 	}
 
 	@Override
 	protected String getResponseAsString() {
 		return 'responseAsString'
+	}
+
+	@Override
+	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Object value) {
+		if (value instanceof NotToEscapePattern) {
+			blockBuilder.addLine("response.getHeaderString('$property') ${convertHeaderComparison(((NotToEscapePattern) value).serverValue)}")
+		} else {
+			// fallback
+			processHeaderElement(blockBuilder, property, value.toString())
+		}
 	}
 
 	@Override
@@ -153,6 +166,11 @@ class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequ
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, String value) {
 		blockBuilder.addLine("response.getHeaderString('$property') ${convertHeaderComparison(value)}")
+	}
+
+	@Override
+	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Number value) {
+		blockBuilder.addLine("response.getHeaderString('$property') == ${value}")
 	}
 
 	@Override

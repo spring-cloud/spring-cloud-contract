@@ -240,4 +240,45 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
 
+	@Issue('#318')
+	def "should assert the response headers properly [#methodBuilderName]"() {
+		given:
+			def contractDsl = org.springframework.cloud.contract.spec.Contract.make {
+				request {
+					method 'POST'
+					urlPath '/documents/app_statement_v1'
+					headers {
+						contentType(applicationPdf())
+					}
+					body([
+							PESEL: "77100604360",
+							CLIENT_NAME: "STANISLAW STASZIC",
+							STATEMENT_NUMBER: "00200001/C4/2017/1"
+					])
+				}
+				response {
+					status 200
+					headers {
+						contentType(applicationPdf())
+						header('Content-Length': 4)
+					}
+
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+			asserter(test)
+		where:
+			methodBuilderName                                    | methodBuilder                                                                               | asserter
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | { String testBody -> testBody.contains("response.header('Content-Length') == 4") && testBody.contains("response.header('Content-Type') ==~ java.util.regex.Pattern.compile('application/pdf.*')") }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | { String testBody -> testBody.contains('assertThat(response.header("Content-Length")).isEqualTo(4);') && testBody.contains('assertThat(response.header("Content-Type")).matches("application/pdf.*");') }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String testBody -> testBody.contains("response.getHeaderString('Content-Length') == 4") && testBody.contains("  response.getHeaderString('Content-Type') ==~ java.util.regex.Pattern.compile('application/pdf.*')") }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String testBody -> testBody.contains('assertThat(response.getHeaderString("Content-Length")).isEqualTo(4);') && testBody.contains('assertThat(response.getHeaderString("Content-Type")).matches("application/pdf.*");') }
+	}
+
 }

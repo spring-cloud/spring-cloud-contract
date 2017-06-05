@@ -24,7 +24,9 @@ import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.Input
 import org.springframework.cloud.contract.spec.internal.NamedProperty
+import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import java.util.regex.Pattern
 /**
@@ -82,6 +84,11 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	}
 
 	@Override
+	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Number value) {
+		blockBuilder.addLine("response.getHeader('$property') == ${value}")
+	}
+
+	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Pattern value) {
 		blockBuilder.addLine("response.getHeader('$property')?.toString() ${convertHeaderComparison(value)}")
 	}
@@ -99,7 +106,9 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	@Override
 	protected void validateResponseHeadersBlock(BlockBuilder bb) {
 		outputMessage.headers?.executeForEachHeader { Header header ->
-			processHeaderElement(bb, header.name, header.serverValue)
+			processHeaderElement(bb, header.name, header.serverValue instanceof NotToEscapePattern ?
+					header.serverValue :
+					MapConverter.getTestSideValues(header.serverValue))
 		}
 	}
 
