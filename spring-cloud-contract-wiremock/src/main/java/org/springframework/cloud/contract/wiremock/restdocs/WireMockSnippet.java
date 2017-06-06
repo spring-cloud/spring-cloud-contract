@@ -169,7 +169,7 @@ public class WireMockSnippet implements Snippet {
 
 	private MappingBuilder bodyPattern(MappingBuilder builder,
 			String content) {
-		if (this.jsonPaths != null) {
+		if (this.jsonPaths != null && !this.jsonPaths.isEmpty()) {
 			for (String jsonPath : this.jsonPaths) {
 				builder.withRequestBody(matchingJsonPath(jsonPath));
 			}
