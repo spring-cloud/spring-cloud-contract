@@ -168,15 +168,15 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	protected String getInputString() {
 		String request = 'ContractVerifierMessage inputMessage = contractVerifierMessaging.create('
 		if (inputMessage.messageBody) {
-			request = "${request}\n      \"${StringEscapeUtils.escapeJava(bodyAsString)}\"\n    "
+			request = "${request}\n\t\t\t\t\"${StringEscapeUtils.escapeJava(bodyAsString)}\"\n"
 		}
 		if (inputMessage.messageHeaders) {
-			request = "${request}, headers()\n"
+			request = "${request}\t\t\t\t, headers()\n"
 		}
 		inputMessage.messageHeaders?.executeForEachHeader { Header header ->
-			request = "${request}      ${getHeaderString(header)}"
+			request = "${request}\t\t\t\t\t\t${getHeaderString(header)}"
 		}
-		return "${request})"
+		return "${request}\n\t\t\t)"
 	}
 
 	@Override

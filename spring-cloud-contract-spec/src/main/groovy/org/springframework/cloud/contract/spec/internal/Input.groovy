@@ -37,7 +37,7 @@ class Input extends Common {
 
 	DslProperty<String> messageFrom
 	ExecutionProperty triggeredBy
-	Headers messageHeaders
+	Headers messageHeaders = new Headers()
 	BodyType messageBody
 	ExecutionProperty assertThat
 	BodyMatchers matchers
