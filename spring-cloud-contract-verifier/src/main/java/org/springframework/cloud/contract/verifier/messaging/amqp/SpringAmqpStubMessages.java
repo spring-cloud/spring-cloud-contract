@@ -78,7 +78,7 @@ public class SpringAmqpStubMessages implements
 								.setContentType((String) headers.get("contentType"))
 								.copyHeaders(headers).build())
 				.build();
-		if (headers.containsKey(DEFAULT_CLASSID_FIELD_NAME)) {
+		if (headers != null && headers.containsKey(DEFAULT_CLASSID_FIELD_NAME)) {
 			message.getMessageProperties().setHeader(DEFAULT_CLASSID_FIELD_NAME, headers.get(DEFAULT_CLASSID_FIELD_NAME));
 		}
 		send(message, destination);
