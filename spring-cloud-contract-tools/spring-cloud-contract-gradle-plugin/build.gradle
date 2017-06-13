@@ -59,7 +59,14 @@ configurations {
 dependencies {
 	compile gradleApi()
 	compile localGroovy()
-	compile "org.eclipse.aether:aether-api:1.0.2.v20150114"
+	compile "org.eclipse.aether:aether-api:${aetherVersion}"
+	compile "org.eclipse.aether:aether-impl:${aetherVersion}"
+	compile "org.eclipse.aether:aether-transport-file:${aetherVersion}"
+	compile "org.eclipse.aether:aether-transport-http:${aetherVersion}"
+	compile "org.eclipse.aether:aether-connector-basic:${aetherVersion}"
+	compile "org.apache.maven:maven-aether-provider:${mavenVersion}"
+	compile "org.apache.maven:maven-settings-builder:${mavenVersion}"
+
 	compile("org.springframework.cloud:spring-cloud-contract-converters:${project.version}") {
 		exclude(group: 'org.codehaus.groovy')
 	}
