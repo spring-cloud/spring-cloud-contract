@@ -158,6 +158,26 @@ class ContractVerifierExtension {
 		String classifier
 		String version
 		String stringNotation
+
+		void groupId(String groupId) {
+			this.groupId = groupId
+		}
+
+		void artifactId(String artifactId) {
+			this.artifactId = artifactId
+		}
+
+		void classifier(String classifier) {
+			this.classifier = classifier
+		}
+
+		void version(String version) {
+			this.version = version
+		}
+
+		void stringNotation(String stringNotation) {
+			this.stringNotation = stringNotation
+		}
 	}
 
 	static class BaseClassMapping {
