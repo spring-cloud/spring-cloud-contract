@@ -19,6 +19,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-contract-shade</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-test-support</artifactId>
 			<optional>true</optional>
 		</dependency>
@@ -47,6 +51,11 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
+			<groupId>org.eclipse.aether</groupId>
+			<artifactId>aether-api</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
 			<groupId>net.sf.jopt-simple</groupId>
 			<artifactId>jopt-simple</artifactId>
 			<optional>true</optional>
@@ -64,41 +73,6 @@
 		<dependency>
 			<groupId>org.springframework.integration</groupId>
 			<artifactId>spring-integration-java-dsl</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-api</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-impl</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-transport-file</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-transport-http</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-connector-basic</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-aether-provider</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-settings-builder</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -176,60 +150,6 @@
 						<goals>
 							<goal>testCompile</goal>
 						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>jarjar-maven-plugin</artifactId>
-				<version>1.9</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>jarjar</goal>
-						</goals>
-						<configuration>
-							<includes>
-								<include>org.eclipse.aether:aether-impl</include>
-								<include>org.eclipse.aether:aether-spi</include>
-								<include>org.eclipse.aether:aether-transport-file</include>
-								<include>org.eclipse.aether:aether-transport-http</include>
-								<include>org.eclipse.aether:aether-connector-basic</include>
-								<include>org.eclipse.aether:aether-util</include>
-								<include>org.apache.maven:maven-aether-provider</include>
-							</includes>
-							<rules>
-								<rule>
-									<pattern>org.eclipse.aether.impl.**</pattern>
-									<result>shaded.org.eclipse.aether.impl.@1</result>
-								</rule>
-								<rule>
-									<pattern>org.eclipse.aether.internal.**</pattern>
-									<result>shaded.org.eclipse.aether.internal.@1</result>
-								</rule>
-								<rule>
-									<pattern>org.eclipse.aether.spi.**</pattern>
-									<result>shaded.org.eclipse.aether.spi.@1</result>
-								</rule>
-								<rule>
-									<pattern>org.eclipse.aether.transport.**</pattern>
-									<result>shaded.org.eclipse.aether.transport.@1</result>
-								</rule>
-								<rule>
-									<pattern>org.eclipse.aether.util.**</pattern>
-									<result>shaded.org.eclipse.aether.util.@1</result>
-								</rule>
-								<rule>
-									<pattern>org.eclipse.aether.connector.**</pattern>
-									<result>shaded.org.eclipse.aether.connector.@1</result>
-								</rule>
-								<rule>
-									<pattern>org.apache.maven.repository.internal.**</pattern>
-									<result>shaded.org.apache.maven.repository.internal.@1</result>
-								</rule>
-							</rules>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
