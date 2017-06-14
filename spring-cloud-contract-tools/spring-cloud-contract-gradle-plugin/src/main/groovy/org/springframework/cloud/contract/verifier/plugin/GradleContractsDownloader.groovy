@@ -35,7 +35,9 @@ class GradleContractsDownloader {
 		// download contracts, unzip them and pass as output directory
 		if (shouldDownloadContracts(extension)) {
 			this.log.info("For project [${this.project.name}] Download dependency is provided - will download contract jars")
+			this.log.info("Contract dependency [{}]", extension.contractDependency)
 			StubConfiguration configuration = stubConfiguration(extension.contractDependency)
+			this.log.info("Got the following contract dependency to download [{}]", configuration)
 			File cachedFolder = downloadedContract.get(configuration)
 			if (cachedFolder) {
 				this.log.info("For project [${this.project.name}] Returning the cached location of the contracts")
@@ -69,7 +71,7 @@ class GradleContractsDownloader {
 						.build())
 	}
 
-	private StubConfiguration stubConfiguration(ContractVerifierExtension.Dependency contractDependency) {
+	@PackageScope StubConfiguration stubConfiguration(ContractVerifierExtension.Dependency contractDependency) {
 		String groupId = contractDependency.groupId
 		String artifactId = contractDependency.artifactId
 		String version = StringUtils.hasText(contractDependency.version) ?
@@ -79,7 +81,7 @@ class GradleContractsDownloader {
 		if (StringUtils.hasText(stringNotation)) {
 			StubConfiguration stubConfiguration = new StubConfiguration(stringNotation)
 			return new StubConfiguration(stubConfiguration.groupId, stubConfiguration.artifactId,
-					stubConfiguration.version, contractDependency.classifier)
+					stubConfiguration.version, stubConfiguration.classifier)
 		}
 		return new StubConfiguration(groupId, artifactId, version, classifier)
 	}

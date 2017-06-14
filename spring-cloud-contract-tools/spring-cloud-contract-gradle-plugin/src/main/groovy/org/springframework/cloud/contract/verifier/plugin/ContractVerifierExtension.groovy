@@ -151,6 +151,7 @@ class ContractVerifierExtension {
 		closure.call()
 	}
 
+	@ToString
 	static class Dependency {
 		String groupId
 		String artifactId
