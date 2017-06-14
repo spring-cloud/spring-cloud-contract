@@ -1,5 +1,12 @@
 package org.springframework.cloud.contract.stubrunner.provider.wiremock;
 
+import com.github.jknack.handlebars.Helper;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -17,13 +24,6 @@ import org.springframework.cloud.contract.wiremock.WireMockSpring;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.SocketUtils;
 import org.springframework.util.StreamUtils;
-
-import com.github.jknack.handlebars.Helper;
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
-import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 /**
  * Abstraction over WireMock as a HTTP Server Stub
@@ -73,7 +73,9 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	@Override
 	public HttpServerStub start() {
 		if (isRunning()) {
-			log.info("The server is already running at port [" + port() + "]");
+			if (log.isDebugEnabled()) {
+				log.info("The server is already running at port [" + port() + "]");
+			}
 			return this;
 		}
 		return start(SocketUtils.findAvailableTcpPort());
@@ -89,7 +91,9 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	@Override
 	public HttpServerStub stop() {
 		if (!isRunning()) {
-			log.warn("Trying to stop a non started server!");
+			if (log.isDebugEnabled()) {
+				log.warn("Trying to stop a non started server!");
+			}
 			return this;
 		}
 		this.wireMockServer.stop();
