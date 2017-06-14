@@ -120,7 +120,7 @@ configure(project(':fraudDetectionService')) {
 		baseClassForTests = 'org.springframework.cloud.MvcSpec'
 		contractsRepositoryUrl = "file://" + file("${project.rootDir.absolutePath}/m2repo/repository").absolutePath
 		contractDependency {
-			stringNotation = "com.example:jersey-contracts"
+			stringNotation("com.example:jersey-contracts:+:")
 		}
 		generatedTestSourcesDir = file("${project.buildDir}/generated-test-sources/")
 		stubsOutputDir = stubsOutputDirRoot
