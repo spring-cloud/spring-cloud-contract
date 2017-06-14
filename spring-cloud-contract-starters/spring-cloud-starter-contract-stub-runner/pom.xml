@@ -33,6 +33,11 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-wiremock</artifactId>
 		</dependency>
+		<!-- for Stub Runner's Aether -->
+		<dependency>
+			<groupId>org.eclipse.aether</groupId>
+			<artifactId>aether-api</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

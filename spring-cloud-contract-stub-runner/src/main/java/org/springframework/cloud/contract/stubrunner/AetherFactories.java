@@ -16,27 +16,28 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
+import shaded.org.apache.maven.repository.internal.MavenRepositorySystemUtils;
+import shaded.org.apache.maven.settings.Settings;
+import shaded.org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
+import shaded.org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
+import shaded.org.apache.maven.settings.building.SettingsBuilder;
+import shaded.org.apache.maven.settings.building.SettingsBuildingException;
+import shaded.org.apache.maven.settings.building.SettingsBuildingRequest;
+import shaded.org.apache.maven.settings.building.SettingsBuildingResult;
+import shaded.org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
+import shaded.org.eclipse.aether.impl.DefaultServiceLocator;
+import shaded.org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
+import shaded.org.eclipse.aether.spi.connector.transport.TransporterFactory;
+import shaded.org.eclipse.aether.transport.file.FileTransporterFactory;
+import shaded.org.eclipse.aether.transport.http.HttpTransporterFactory;
+
 import java.io.File;
 
-import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
-import org.apache.maven.settings.Settings;
-import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
-import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
-import org.apache.maven.settings.building.SettingsBuilder;
-import org.apache.maven.settings.building.SettingsBuildingException;
-import org.apache.maven.settings.building.SettingsBuildingRequest;
-import org.apache.maven.settings.building.SettingsBuildingResult;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
-import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
-import org.eclipse.aether.impl.DefaultServiceLocator;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
-import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
-import org.eclipse.aether.spi.connector.transport.TransporterFactory;
-import org.eclipse.aether.transport.file.FileTransporterFactory;
-import org.eclipse.aether.transport.http.HttpTransporterFactory;
 
 class AetherFactories {
 
