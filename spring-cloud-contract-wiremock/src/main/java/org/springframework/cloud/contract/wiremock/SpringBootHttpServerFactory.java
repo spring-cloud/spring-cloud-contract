@@ -44,29 +44,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.Banner.Mode;
-import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAutoConfiguration;
+import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
+import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration.BeanPostProcessorsRegistrar;
-import org.springframework.boot.autoconfigure.web.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.autoconfigure.web.servlet.DefaultServletWebServerFactoryCustomizer;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration.BeanPostProcessorsRegistrar;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.server.ConfigurableEmbeddedServletContainer;
-import org.springframework.boot.web.server.EmbeddedServletContainerCustomizer;
-import org.springframework.boot.web.server.EmbeddedServletContainerFactory;
-import org.springframework.boot.web.server.EmbeddedServletContainerInitializedEvent;
-import org.springframework.boot.web.server.EmbeddedWebApplicationContext;
-import org.springframework.boot.web.server.Ssl;
-import org.springframework.boot.web.embedded.jetty.JettyEmbeddedServletContainerFactory;
-import org.springframework.boot.web.embedded.jetty.JettyServerCustomizer;
-import org.springframework.boot.web.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
-import org.springframework.boot.web.embedded.undertow.UndertowBuilderCustomizer;
-import org.springframework.boot.web.embedded.undertow.UndertowEmbeddedServletContainerFactory;
 import org.springframework.boot.context.event.ApplicationPreparedEvent;
+import org.springframework.boot.web.context.WebServerInitializedEvent;
+import org.springframework.boot.web.embedded.jetty.JettyServerCustomizer;
+import org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.embedded.undertow.UndertowBuilderCustomizer;
+import org.springframework.boot.web.embedded.undertow.UndertowServletWebServerFactory;
+import org.springframework.boot.web.server.Ssl;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
+import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
+import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.cloud.contract.wiremock.ContainerConfiguration.JettyContainerConfiguration;
 import org.springframework.cloud.contract.wiremock.ContainerConfiguration.TomcatContainerConfiguration;
 import org.springframework.cloud.contract.wiremock.ContainerConfiguration.UndertowContainerConfiguration;
@@ -213,7 +214,7 @@ class SpringBootHttpServer
 
 }
 
-class WiremockServerProperties implements EmbeddedServletContainerCustomizer {
+class WiremockServerProperties implements WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> {
 
 	private ServerProperties delegate = new ServerProperties();
 
@@ -234,8 +235,8 @@ class WiremockServerProperties implements EmbeddedServletContainerCustomizer {
 	}
 
 	@Override
-	public void customize(ConfigurableEmbeddedServletContainer container) {
-		this.delegate.customize(container);
+	public void customize(ConfigurableServletWebServerFactory server) {
+		new DefaultServletWebServerFactoryCustomizer(this.delegate).customize(server);
 	}
 }
 
@@ -266,8 +267,8 @@ class WiremockServerConfiguration {
 	private Options options;
 
 	@Bean(name = DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME)
-	public ServletRegistrationBean stubServletRegistration() {
-		ServletRegistrationBean reg = new ServletRegistrationBean();
+	public ServletRegistrationBean<WireMockHandlerDispatchingServlet> stubServletRegistration() {
+		ServletRegistrationBean<WireMockHandlerDispatchingServlet> reg = new ServletRegistrationBean<>();
 		reg.addInitParameter(RequestHandler.HANDLER_CLASS_KEY,
 				StubRequestHandler.class.getName());
 		if (WiremockServerConfiguration.this.faultInjectorFactory != null) {
@@ -281,8 +282,8 @@ class WiremockServerConfiguration {
 	}
 
 	@Bean
-	public ServletRegistrationBean adminServletRegistration() {
-		ServletRegistrationBean reg = new ServletRegistrationBean();
+	public ServletRegistrationBean<WireMockHandlerDispatchingServlet> adminServletRegistration() {
+		ServletRegistrationBean<WireMockHandlerDispatchingServlet> reg = new ServletRegistrationBean<>();
 		reg.addInitParameter(RequestHandler.HANDLER_CLASS_KEY,
 				AdminRequestHandler.class.getName());
 		reg.setServlet(new WireMockHandlerDispatchingServlet());
@@ -336,8 +337,8 @@ class ContainerProperties {
 		if (this.localPort != null) {
 			return this.localPort;
 		}
-		EmbeddedWebApplicationContext embedded = (EmbeddedWebApplicationContext) this.context;
-		return embedded.getEmbeddedServletContainer().getPort();
+		ServletWebServerApplicationContext embedded = (ServletWebServerApplicationContext) this.context;
+		return embedded.getWebServer().getPort();
 	}
 
 	public int httpsPort() {
@@ -360,8 +361,8 @@ class ContainerProperties {
 class ContainerConfiguration {
 
 	@Configuration
-	@ConditionalOnMissingBean(EmbeddedServletContainerFactory.class)
-	@ConditionalOnClass({ TomcatEmbeddedServletContainerFactory.class, Connector.class })
+	@ConditionalOnMissingBean(ServletWebServerFactory.class)
+	@ConditionalOnClass({ TomcatServletWebServerFactory.class, Connector.class })
 	static class TomcatContainerConfiguration {
 		@Autowired
 		private Options options;
@@ -372,8 +373,8 @@ class ContainerConfiguration {
 		private Connector connector;
 
 		@Bean
-		public EmbeddedServletContainerFactory servletContainer() {
-			TomcatEmbeddedServletContainerFactory tomcat = new TomcatEmbeddedServletContainerFactory();
+		public ServletWebServerFactory servletContainer() {
+			TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory();
 			if (this.options.httpsSettings().enabled()) {
 				tomcat.addAdditionalTomcatConnectors(createStandardConnector());
 			}
@@ -386,11 +387,11 @@ class ContainerConfiguration {
 		}
 
 		@EventListener
-		public void serverUp(EmbeddedServletContainerInitializedEvent event) {
+		public void serverUp(WebServerInitializedEvent event) {
 			if (this.connector != null) {
 				this.container.setLocalPort(this.connector.getLocalPort());
 				this.container
-						.setLocalHttpsPort(event.getEmbeddedServletContainer().getPort());
+						.setLocalHttpsPort(event.getWebServer().getPort());
 			}
 		}
 
@@ -405,8 +406,8 @@ class ContainerConfiguration {
 	}
 
 	@Configuration
-	@ConditionalOnMissingBean(EmbeddedServletContainerFactory.class)
-	@ConditionalOnClass({ UndertowEmbeddedServletContainerFactory.class, Builder.class })
+	@ConditionalOnMissingBean(ServletWebServerFactory.class)
+	@ConditionalOnClass({ UndertowServletWebServerFactory.class, Builder.class })
 	static class UndertowContainerConfiguration {
 
 		@Autowired
@@ -418,8 +419,8 @@ class ContainerConfiguration {
 		private Integer port;
 
 		@Bean
-		public EmbeddedServletContainerFactory servletContainer() {
-			UndertowEmbeddedServletContainerFactory undertow = new UndertowEmbeddedServletContainerFactory();
+		public ServletWebServerFactory servletContainer() {
+			UndertowServletWebServerFactory undertow = new UndertowServletWebServerFactory();
 			if (this.options.httpsSettings().enabled()) {
 				undertow.addBuilderCustomizers(new UndertowBuilderCustomizer() {
 					@Override
@@ -441,20 +442,20 @@ class ContainerConfiguration {
 		}
 
 		@EventListener
-		public void serverUp(EmbeddedServletContainerInitializedEvent event) {
+		public void serverUp(WebServerInitializedEvent event) {
 			if (this.port != null) {
 				// TODO: make it dynamic as well
 				this.container.setLocalPort(this.port);
 				this.container
-						.setLocalHttpsPort(event.getEmbeddedServletContainer().getPort());
+						.setLocalHttpsPort(event.getWebServer().getPort());
 			}
 		}
 
 	}
 
 	@Configuration
-	@ConditionalOnMissingBean(EmbeddedServletContainerFactory.class)
-	@ConditionalOnClass({ JettyEmbeddedServletContainerFactory.class,
+	@ConditionalOnMissingBean(ServletWebServerFactory.class)
+	@ConditionalOnClass({ JettyServletWebServerFactory.class,
 			ServerConnector.class })
 	static class JettyContainerConfiguration {
 
@@ -467,8 +468,8 @@ class ContainerConfiguration {
 		private ServerConnector connector;
 
 		@Bean
-		public EmbeddedServletContainerFactory servletContainer() {
-			final JettyEmbeddedServletContainerFactory jetty = new JettyEmbeddedServletContainerFactory();
+		public ServletWebServerFactory servletContainer() {
+			final JettyServletWebServerFactory jetty = new JettyServletWebServerFactory();
 			if (this.options.httpsSettings().enabled()) {
 				jetty.addServerCustomizers(new JettyServerCustomizer() {
 					@Override
@@ -502,11 +503,11 @@ class ContainerConfiguration {
 		}
 
 		@EventListener
-		public void serverUp(EmbeddedServletContainerInitializedEvent event) {
+		public void serverUp(WebServerInitializedEvent event) {
 			if (this.connector != null) {
 				this.container.setLocalPort(this.connector.getLocalPort());
 				this.container
-						.setLocalHttpsPort(event.getEmbeddedServletContainer().getPort());
+						.setLocalHttpsPort(event.getWebServer().getPort());
 			}
 		}
 	}
