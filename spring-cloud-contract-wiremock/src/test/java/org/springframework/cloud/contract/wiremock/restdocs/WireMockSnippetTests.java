@@ -53,8 +53,9 @@ public class WireMockSnippetTests {
 	@Before
 	public void setup() throws IOException {
 		this.outputFolder = this.tmp.newFolder();
-		RestDocumentationContext context = new RestDocumentationContext(this.getClass(),
-				"method", this.outputFolder);
+		ManualRestDocumentation restDocumentation = new ManualRestDocumentation(this.outputFolder.getAbsolutePath());
+		restDocumentation.beforeTest(this.getClass(), "method");
+		RestDocumentationContext context = restDocumentation.beforeOperation();
 		given(this.operation.getName()).willReturn("foo");
 		given(this.operation.getAttributes().get(anyString())).willReturn(null);
 		given(this.operation.getAttributes()
