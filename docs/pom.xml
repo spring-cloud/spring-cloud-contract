@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-parent</artifactId>
-		<version>1.1.2.BUILD-SNAPSHOT</version>
+		<version>2.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>spring-cloud-contract-docs</artifactId>
@@ -16,7 +16,7 @@
 		<docs.main>spring-cloud-contract</docs.main>
 		<main.basedir>${basedir}/..</main.basedir>
 		<maven.plugin.plugin.version>3.4</maven.plugin.plugin.version>
-		<docs.whitelisted.branches>1.0.x</docs.whitelisted.branches>
+		<docs.whitelisted.branches>1.0.x,1.1.x</docs.whitelisted.branches>
 	</properties>
  	<build>
 		<plugins>

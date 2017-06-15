@@ -402,7 +402,7 @@ class SingleTestGeneratorSpec extends Specification {
 			// tag::context_path_baseclass[]
 			import com.jayway.restassured.RestAssured;
 			import org.junit.Before;
-			import org.springframework.boot.context.embedded.LocalServerPort;
+			import org.springframework.boot.web.server.LocalServerPort;
 			import org.springframework.boot.test.context.SpringBootTest;
 			
 			@SpringBootTest(classes = ContextPathTestingBaseClass.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
