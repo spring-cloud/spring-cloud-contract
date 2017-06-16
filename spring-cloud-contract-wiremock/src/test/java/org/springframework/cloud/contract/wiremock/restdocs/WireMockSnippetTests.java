@@ -56,7 +56,6 @@ public class WireMockSnippetTests {
 		ManualRestDocumentation restDocumentation = new ManualRestDocumentation(this.outputFolder.getAbsolutePath());
 		restDocumentation.beforeTest(this.getClass(), "method");
 		RestDocumentationContext context = restDocumentation.beforeOperation();
-		given(this.operation.getName()).willReturn("foo");
 		given(this.operation.getAttributes().get(anyString())).willReturn(null);
 		given(this.operation.getAttributes()
 				.get(RestDocumentationContext.class.getName())).willReturn(context);
@@ -67,6 +66,7 @@ public class WireMockSnippetTests {
 	@Test
 	public void should_maintain_the_response_status_when_generating_stub()
 			throws Exception {
+		given(this.operation.getName()).willReturn("foo");
 		WireMockSnippet snippet = new WireMockSnippet();
 
 		snippet.document(this.operation);
@@ -80,8 +80,25 @@ public class WireMockSnippetTests {
 	}
 
 	@Test
+	public void should_use_placeholders_in_stub_file_name()
+			throws Exception {
+		given(this.operation.getName()).willReturn("{method-name}/{step}");
+		WireMockSnippet snippet = new WireMockSnippet();
+
+		snippet.document(this.operation);
+
+		File stub = new File(this.outputFolder, "stubs/method/1.json");
+		assertThat(stub).exists();
+		StubMapping stubMapping = WireMockStubMapping
+				.buildFrom(new String(Files.readAllBytes(stub.toPath())));
+		assertThat(stubMapping.getResponse().getStatus())
+				.isEqualTo(HttpStatus.ACCEPTED.value());
+	}
+
+	@Test
 	public void should_use_equal_to_json_pattern_for_body_when_request_content_type_is_json_when_generating_stub()
 			throws Exception {
+		given(this.operation.getName()).willReturn("foo");
 		WireMockSnippet snippet = new WireMockSnippet();
 		given(this.operation.getRequest()).willReturn(requestPostWithJsonContentType());
 

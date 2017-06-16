@@ -16,10 +16,7 @@
 
 package org.springframework.cloud.contract.wiremock.restdocs;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -38,7 +35,12 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContext;
 import org.springframework.restdocs.operation.Operation;
+import org.springframework.restdocs.snippet.RestDocumentationContextPlaceholderResolverFactory;
 import org.springframework.restdocs.snippet.Snippet;
+import org.springframework.restdocs.snippet.StandardWriterResolver;
+import org.springframework.restdocs.snippet.WriterResolver;
+import org.springframework.restdocs.templates.TemplateFormat;
+import org.springframework.util.PropertyPlaceholderHelper;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
@@ -70,6 +72,22 @@ public class WireMockSnippet implements Snippet {
 
 	private boolean hasJsonBodyRequestToMatch = false;
 
+	private final PropertyPlaceholderHelper propertyPlaceholderHelper = new PropertyPlaceholderHelper(
+			"{", "}");
+
+	private static final TemplateFormat TEMPLATE_FORMAT = new TemplateFormat() {
+
+		@Override
+		public String getId() {
+			return "json";
+		}
+
+		@Override
+		public String getFileExtension() {
+			return "json";
+		}
+	};
+
 	@Override
 	public void document(Operation operation) throws IOException {
 		extractMatchers(operation);
@@ -79,10 +97,12 @@ public class WireMockSnippet implements Snippet {
 		String json = Json.write(this.stubMapping);
 		RestDocumentationContext context = (RestDocumentationContext) operation
 				.getAttributes().get(RestDocumentationContext.class.getName());
-		File output = new File(context.getOutputDirectory(),
-				this.snippetName + "/" + operation.getName() + ".json");
-		output.getParentFile().mkdirs();
-		try (Writer writer = new OutputStreamWriter(new FileOutputStream(output))) {
+		RestDocumentationContextPlaceholderResolverFactory placeholders = new RestDocumentationContextPlaceholderResolverFactory();
+		WriterResolver writerResolver = new StandardWriterResolver(placeholders, "UTF-8",
+				TEMPLATE_FORMAT);
+		String path = this.propertyPlaceholderHelper.replacePlaceholders(operation.getName(),
+				placeholders.create(context));
+		try (Writer writer = writerResolver.resolve(this.snippetName, path, context)) {
 			writer.append(json);
 		}
 	}
@@ -120,8 +140,7 @@ public class WireMockSnippet implements Snippet {
 		return requestHeaders(requestBuilder(operation), operation);
 	}
 
-	private MappingBuilder requestHeaders(MappingBuilder request,
-			Operation operation) {
+	private MappingBuilder requestHeaders(MappingBuilder request, Operation operation) {
 		org.springframework.http.HttpHeaders headers = operation.getRequest()
 				.getHeaders();
 		// TODO: whitelist headers
@@ -167,8 +186,7 @@ public class WireMockSnippet implements Snippet {
 		}
 	}
 
-	private MappingBuilder bodyPattern(MappingBuilder builder,
-			String content) {
+	private MappingBuilder bodyPattern(MappingBuilder builder, String content) {
 		if (this.jsonPaths != null && !this.jsonPaths.isEmpty()) {
 			for (String jsonPath : this.jsonPaths) {
 				builder.withRequestBody(matchingJsonPath(jsonPath));
