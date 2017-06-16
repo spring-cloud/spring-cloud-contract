@@ -7,6 +7,9 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Collection;
 
+import com.github.tomakehurst.wiremock.matching.EqualToJsonPattern;
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -15,20 +18,19 @@ import org.junit.runner.RunWith;
 import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import org.springframework.cloud.contract.wiremock.WireMockStubMapping;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.ManualRestDocumentation;
 import org.springframework.restdocs.RestDocumentationContext;
 import org.springframework.restdocs.operation.Operation;
 import org.springframework.restdocs.operation.OperationRequest;
 import org.springframework.restdocs.operation.OperationRequestPart;
 import org.springframework.restdocs.operation.OperationResponse;
 import org.springframework.restdocs.operation.Parameters;
-
-import com.github.tomakehurst.wiremock.matching.EqualToJsonPattern;
-import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -49,9 +51,9 @@ public class WireMockSnippetTests {
 	@Before
 	public void setup() throws IOException {
 		this.outputFolder = this.tmp.newFolder();
-		RestDocumentationContext context = new RestDocumentationContext(this.getClass(),
-				"method", this.outputFolder);
-		given(this.operation.getName()).willReturn("foo");
+		ManualRestDocumentation restDocumentation = new ManualRestDocumentation(this.outputFolder.getAbsolutePath());
+		restDocumentation.beforeTest(this.getClass(), "method");
+		RestDocumentationContext context = restDocumentation.beforeOperation();
 		given(this.operation.getAttributes().get(anyString())).willReturn(null);
 		given(this.operation.getAttributes()
 				.get(RestDocumentationContext.class.getName())).willReturn(context);
@@ -62,6 +64,7 @@ public class WireMockSnippetTests {
 	@Test
 	public void should_maintain_the_response_status_when_generating_stub()
 			throws Exception {
+		given(this.operation.getName()).willReturn("foo");
 		WireMockSnippet snippet = new WireMockSnippet();
 
 		snippet.document(this.operation);
@@ -75,8 +78,25 @@ public class WireMockSnippetTests {
 	}
 
 	@Test
+	public void should_use_placeholders_in_stub_file_name()
+			throws Exception {
+		given(this.operation.getName()).willReturn("{method-name}/{step}");
+		WireMockSnippet snippet = new WireMockSnippet();
+
+		snippet.document(this.operation);
+
+		File stub = new File(this.outputFolder, "stubs/method/1.json");
+		assertThat(stub).exists();
+		StubMapping stubMapping = WireMockStubMapping
+				.buildFrom(new String(Files.readAllBytes(stub.toPath())));
+		assertThat(stubMapping.getResponse().getStatus())
+				.isEqualTo(HttpStatus.ACCEPTED.value());
+	}
+
+	@Test
 	public void should_use_equal_to_json_pattern_for_body_when_request_content_type_is_json_when_generating_stub()
 			throws Exception {
+		given(this.operation.getName()).willReturn("foo");
 		WireMockSnippet snippet = new WireMockSnippet();
 		given(this.operation.getRequest()).willReturn(requestPostWithJsonContentType());
 
