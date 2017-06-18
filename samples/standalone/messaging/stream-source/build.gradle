@@ -100,3 +100,7 @@ task resolveDependencies {
 		}
 	}
 }
+
+wrapper {
+	gradleVersion '3.5'
+}
