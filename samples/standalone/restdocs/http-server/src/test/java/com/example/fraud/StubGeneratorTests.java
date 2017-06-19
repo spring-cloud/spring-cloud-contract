@@ -56,7 +56,7 @@ public class StubGeneratorTests {
 				.andDo(verify().jsonPath("$.clientId")
 						.jsonPath("$[?(@.loanAmount > 1000)]")
 						.contentType(MediaType.valueOf("application/vnd.fraud.v1+json"))
-						.stub("markClientAsFraud/{step}"));
+						.stub("markClientAsFraud"));
 	}
 
 	@Test
