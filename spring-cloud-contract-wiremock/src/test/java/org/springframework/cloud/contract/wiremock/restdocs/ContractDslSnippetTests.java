@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -81,9 +82,8 @@ public class ContractDslSnippetTests {
 
 		then(file("/contracts/index.groovy")).exists();
 		then(file("/index/dsl-contract.adoc")).exists();
-		String contract = readFromFile(file("/contracts/index.groovy"));
-		// try to parse the contract
-		Contract parsedContract = ContractVerifierDslConverter.convert(contract);
+		Collection<Contract> parsedContracts = ContractVerifierDslConverter.convertAsCollection(file("/contracts/index.groovy"));
+		Contract parsedContract = parsedContracts.iterator().next();
 		then(parsedContract.getRequest().getHeaders().getEntries()).isNotNull();
 		then(headerNames(parsedContract.getRequest().getHeaders().getEntries())).doesNotContain
 				(HttpHeaders.HOST, HttpHeaders.CONTENT_LENGTH);
@@ -105,9 +105,8 @@ public class ContractDslSnippetTests {
 
 		then(file("/contracts/empty.groovy")).exists();
 		then(file("/empty/dsl-contract.adoc")).exists();
-		String contract = readFromFile(file("/contracts/empty.groovy"));
-		// try to parse the contract
-		Contract parsedContract = ContractVerifierDslConverter.convert(contract);
+		Collection<Contract> parsedContracts = ContractVerifierDslConverter.convertAsCollection(file("/contracts/empty.groovy"));
+		Contract parsedContract = parsedContracts.iterator().next();
 		then(parsedContract.getRequest().getHeaders()).isNull();
 		then(parsedContract.getRequest().getMethod().getClientValue()).isNotNull();
 		then(parsedContract.getRequest().getUrl().getClientValue()).isNotNull();
@@ -129,11 +128,6 @@ public class ContractDslSnippetTests {
 
 	private File file(String name) throws URISyntaxException {
 		return new File(OUTPUT, name);
-	}
-
-	private String readFromFile(File f) throws IOException {
-		byte[] encoded = Files.readAllBytes(f.toPath());
-		return new String(encoded, StandardCharsets.UTF_8);
 	}
 
 	@Configuration

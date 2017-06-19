@@ -100,14 +100,6 @@ public class StubRunnerOptionsBuilder {
 		return this;
 	}
 
-	/**
-	 * @deprecated there is no context path for the stub server
-	 */
-	@Deprecated
-	public StubRunnerOptionsBuilder withContextPath(String contextPath) {
-		return this;
-	}
-
 	public StubRunnerOptionsBuilder withOptions(StubRunnerOptions options) {
 		this.minPortValue = options.minPortValue;
 		this.maxPortValue = options.maxPortValue;

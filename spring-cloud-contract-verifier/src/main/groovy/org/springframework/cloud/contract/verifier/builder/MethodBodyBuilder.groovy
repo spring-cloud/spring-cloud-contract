@@ -305,16 +305,6 @@ abstract class MethodBodyBuilder {
 	/**
 	 * Builds the response body verification part. The code will differ depending on the
 	 * ContentType, type of response etc. The result will be appended to {@link BlockBuilder}
-	 * @deprecated - use {@link MethodBodyBuilder#validateResponseBodyBlock(org.springframework.cloud.contract.verifier.builder.BlockBuilder, org.springframework.cloud.contract.spec.internal.BodyMatchers, java.lang.Object)}
-	 */
-	@Deprecated
-	protected void validateResponseBodyBlock(BlockBuilder bb, Object responseBody) {
-		validateResponseBodyBlock(bb, null, responseBody)
-	}
-
-	/**
-	 * Builds the response body verification part. The code will differ depending on the
-	 * ContentType, type of response etc. The result will be appended to {@link BlockBuilder}
 	 */
 	protected void validateResponseBodyBlock(BlockBuilder bb, BodyMatchers bodyMatchers, Object responseBody) {
 		ContentType contentType = getResponseContentType()

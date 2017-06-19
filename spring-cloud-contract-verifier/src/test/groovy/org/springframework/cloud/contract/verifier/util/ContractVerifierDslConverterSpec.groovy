@@ -69,39 +69,11 @@ class ContractVerifierDslConverterSpec extends Specification {
 		}
 	}
 
-	def "should convert file to a Contract"() {
-		when:
-			Contract contract = ContractVerifierDslConverter.convert(singleContract)
-		then:
-			contract == expectedSingleContract
-	}
-
-	def "should throw exception when invalid file is parsed"() {
-		when:
-			ContractVerifierDslConverter.convert(invalidContract)
-		then:
-			thrown(DslParseException)
-	}
-
 	def "should convert file to a list of Contracts"() {
 		when:
 			List<Contract> contract = ContractVerifierDslConverter.convertAsCollection(multipleContracts)
 		then:
 			contract == expectedMultipleContracts
-	}
-
-	def "should throw exception when invalid text is parsed"() {
-		when:
-			ContractVerifierDslConverter.convert(invalidContract.text)
-		then:
-			thrown(DslParseException)
-	}
-
-	def "should convert text to a Contract"() {
-		when:
-			Contract contract = ContractVerifierDslConverter.convert(singleContract.text)
-		then:
-			contract == expectedSingleContract
 	}
 
 	def "should convert text to a list of Contracts"() {
