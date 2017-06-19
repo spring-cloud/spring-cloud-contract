@@ -26,7 +26,9 @@ class StubRunnerSpec extends Specification {
 
 	def 'should provide stub URL for provided groupid and artifactId'() {
 		given:
-		StubRunner runner = new StubRunner(argumentsWithProjectDefinition())
+		Arguments args = argumentsWithProjectDefinition()
+		StubRunner runner = new StubRunner(args.stubRunnerOptions,
+		args.repositoryPath, args.stub)
 		when:
 		runner.runStubs()
 		then:
@@ -37,7 +39,9 @@ class StubRunnerSpec extends Specification {
 
 	def 'should provide stub URL if only artifactId was passed'() {
 		given:
-		StubRunner runner = new StubRunner(argumentsWithProjectDefinition())
+		Arguments args = argumentsWithProjectDefinition()
+		StubRunner runner = new StubRunner(args.stubRunnerOptions,
+				args.repositoryPath, args.stub)
 		when:
 		runner.runStubs()
 		then:

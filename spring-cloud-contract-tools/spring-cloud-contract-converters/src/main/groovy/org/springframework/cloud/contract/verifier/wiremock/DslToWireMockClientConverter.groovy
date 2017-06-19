@@ -32,12 +32,6 @@ import java.nio.charset.StandardCharsets
 @CompileStatic
 class DslToWireMockClientConverter extends DslToWireMockConverter {
 
-	@Deprecated
-	String convertContent(String rootName, ContractMetadata contract) {
-		return convertASingleContract(rootName, contract, contract.convertedContract.first() ?: createGroovyDSLFromStringContent(
-				contract.path.getText(StandardCharsets.UTF_8.toString())).first())
-	}
-
 	private String convertASingleContract(String rootName, ContractMetadata contract, Contract dsl) {
 		return new WireMockStubStrategy(rootName, contract, dsl).toWireMockClientStub()
 	}

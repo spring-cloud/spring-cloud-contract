@@ -32,26 +32,6 @@ import org.springframework.cloud.contract.spec.Contract
 @Slf4j
 class ContractVerifierDslConverter {
 
-	@Deprecated
-	static Contract convert(String dsl) {
-		try {
-			return groovyShell().evaluate(dsl) as Contract
-		} catch (Exception e) {
-			log.error("Exception occurred while trying to evaluate the contract", e)
-			throw new DslParseException(e)
-		}
-	}
-
-	@Deprecated
-	static Contract convert(File dsl) {
-		try {
-			return groovyShell().evaluate(dsl) as Contract
-		} catch (Exception e) {
-			log.error("Exception occurred while trying to evaluate the contract", e)
-			throw new DslParseException(e)
-		}
-	}
-
 	static Collection<Contract> convertAsCollection(String dsl) {
 		try {
 			Object object = groovyShell().evaluate(dsl)

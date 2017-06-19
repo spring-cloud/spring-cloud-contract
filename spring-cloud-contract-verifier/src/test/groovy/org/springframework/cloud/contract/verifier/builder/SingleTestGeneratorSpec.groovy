@@ -22,6 +22,7 @@ import org.springframework.cloud.contract.verifier.TestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestMode
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
+import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 import org.springframework.util.StringUtils
 import spock.lang.Issue
@@ -186,7 +187,8 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.targetFramework = testFramework
 			properties.testMode = mode
-			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2)
+			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2,
+					ContractVerifierDslConverter.convertAsCollection(file) )
 			contract.ignored >> true
 			contract.order >> 2
 			JavaTestGenerator testGenerator = new JavaTestGenerator(checker: new ClassPresenceChecker() {
@@ -255,10 +257,12 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.targetFramework = testFramework
-			ContractMetadata contract = new ContractMetadata(file.toPath(), false, 1, null)
+			ContractMetadata contract = new ContractMetadata(file.toPath(), false, 1, null,
+					ContractVerifierDslConverter.convertAsCollection(file) )
 			contract.ignored >> false
 		and:
-			ContractMetadata contract2 = new ContractMetadata(file2.toPath(), false, 1, null)
+			ContractMetadata contract2 = new ContractMetadata(file2.toPath(), false, 1, null,
+					ContractVerifierDslConverter.convertAsCollection(file2) )
 			contract2.ignored >> false
 		and:
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
@@ -440,7 +444,8 @@ class SingleTestGeneratorSpec extends Specification {
 			properties.testMode = TestMode.EXPLICIT
 			properties.baseClassForTests = "test.ContextPathTestingBaseClass"
 		and:
-			ContractMetadata contract = new ContractMetadata(file.toPath(), false, 1, null)
+			ContractMetadata contract = new ContractMetadata(file.toPath(), false, 1,
+					null, ContractVerifierDslConverter.convertAsCollection(file))
 		and:
 			SingleTestGenerator testGenerator = new JavaTestGenerator()
 		when:

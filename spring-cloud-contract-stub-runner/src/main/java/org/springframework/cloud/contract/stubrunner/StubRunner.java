@@ -40,12 +40,6 @@ public class StubRunner implements StubRunning {
 	private final StubRunnerOptions stubRunnerOptions;
 	private final StubRunnerExecutor localStubRunner;
 
-	@Deprecated
-	StubRunner(Arguments arguments) {
-		this(arguments.getStubRunnerOptions(), arguments.getRepositoryPath(),
-				arguments.getStub());
-	}
-
 	public StubRunner(StubRunnerOptions stubRunnerOptions, String repositoryPath,
 			StubConfiguration stubsConfiguration) {
 		this(stubRunnerOptions, repositoryPath, stubsConfiguration,

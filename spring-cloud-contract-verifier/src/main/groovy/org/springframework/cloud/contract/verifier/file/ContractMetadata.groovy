@@ -55,11 +55,6 @@ class ContractMetadata {
 	 */
 	final Collection<Contract> convertedContract = []
 
-	@Deprecated
-	ContractMetadata(Path path, boolean ignored, int groupSize, Integer order) {
-		this(path, ignored, groupSize, order, ContractVerifierDslConverter.convertAsCollection(path.toFile()))
-	}
-
 	ContractMetadata(Path path, boolean ignored, int groupSize, Integer order, Contract convertedContract) {
 		this(path, ignored, groupSize, order, [convertedContract])
 	}
