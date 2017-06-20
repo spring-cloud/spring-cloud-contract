@@ -134,7 +134,7 @@
 							<filters>
 								<filter>
 									<excludes>
-										<exclude>org/slf4j/**</exclude>
+										<exclude>org/slf4j/</exclude>
 									</excludes>
 								</filter>
 							</filters>

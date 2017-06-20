@@ -154,6 +154,7 @@ class ContractFileScanner {
 			if (matcher.matches(file.toPath())) {
 				return true
 			}
+			log.debug("Path [{}] doesn't match the pattern [{}]", file.toPath(), matcher)
 		}
 		return false
 	}
