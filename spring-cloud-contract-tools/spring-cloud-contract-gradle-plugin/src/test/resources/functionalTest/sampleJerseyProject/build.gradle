@@ -18,6 +18,9 @@ buildscript {
 	repositories {
 		mavenLocal()
 		mavenCentral()
+		maven { url "http://repo.spring.io/snapshot" }
+		maven { url "http://repo.spring.io/milestone" }
+		maven { url "http://repo.spring.io/release" }
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.0.BUILD-SNAPSHOT")
@@ -43,6 +46,9 @@ subprojects {
 	repositories {
 		mavenCentral()
 		mavenLocal()
+		maven { url "http://repo.spring.io/snapshot" }
+		maven { url "http://repo.spring.io/milestone" }
+		maven { url "http://repo.spring.io/release" }
 	}
 
 	dependencies {
@@ -56,7 +62,8 @@ subprojects {
 }
 
 configure([project(':fraudDetectionService'), project(':loanApplicationService')]) {
-	apply plugin: 'spring-boot'
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
 	apply plugin: 'maven-publish'
 
 	ext['jetty.version'] = '9.2.17.v20160517'
@@ -140,3 +147,6 @@ configure(project(':loanApplicationService')) {
 	test.dependsOn('copyCollaboratorStubs')
 }
 
+wrapper {
+	gradleVersion '3.5'
+}

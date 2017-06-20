@@ -1,6 +1,9 @@
 buildscript {
 	repositories {
 		mavenCentral()
+		maven { url "http://repo.spring.io/snapshot" }
+		maven { url "http://repo.spring.io/milestone" }
+		maven { url "http://repo.spring.io/release" }
 	}
 }
 
@@ -18,11 +21,14 @@ ext {
 repositories {
 	mavenCentral()
 	mavenLocal()
+	maven { url "http://repo.spring.io/snapshot" }
+	maven { url "http://repo.spring.io/milestone" }
+	maven { url "http://repo.spring.io/release" }
 }
 
 dependencies {
-	compile "org.springframework:spring-web"
-	compile "org.springframework:spring-context-support"
+	compile "org.springframework:spring-web:5.0.0.RC2"
+	compile "org.springframework:spring-context-support:5.0.0.RC2"
 	compile "org.codehaus.groovy:groovy-all:2.4.5"
 	compile 'com.jayway.jsonpath:json-path-assert:2.2.0'
 
@@ -47,7 +53,7 @@ contracts {
 generateContractTests.dependsOn generateWireMockClientStubs
 
 wrapper {
-	gradleVersion '2.2.1'
+	gradleVersion '3.5'
 }
 
 test {
