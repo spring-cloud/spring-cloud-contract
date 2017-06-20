@@ -9,7 +9,7 @@
         <relativePath/>
 	</parent>
 	<artifactId>spring-cloud-contract-dependencies</artifactId>
-	<version>1.1.2.BUILD-SNAPSHOT</version>
+	<version>1.2.0.BUILD-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>spring-cloud-contract-dependencies</name>
 	<description>Spring Cloud Contract Dependencies</description>
