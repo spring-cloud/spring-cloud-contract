@@ -25,12 +25,12 @@ class ContractDownloaderSpec extends Specification {
 		then:
 			properties.includedContracts.startsWith('^')
 			properties.includedContracts.endsWith('$')
-			properties.includedContracts.contains(fileSeparated('/some/path/to/somewhere/a/b/c/d/.*'))
+			properties.includedContracts.contains(fileSeparated('/some/path/to/somewhere(/)?.*/a/b/c/d/.*'))
 	}
 
 	def 'should set inclusion pattern on config when path pattern was explicitly provided without a separator at the beginning'() {
 		given:
-			String contractPath = File.separator + ['a','b','c','d'].join(File.separator)
+			String contractPath = ['a','b','c','d'].join(File.separator)
 			ContractDownloader contractDownloader = new ContractDownloader(stubDownloader,
 					stubConfiguration, contractPath, '', '')
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
@@ -41,7 +41,7 @@ class ContractDownloaderSpec extends Specification {
 		then:
 			properties.includedContracts.startsWith('^')
 			properties.includedContracts.endsWith('$')
-			properties.includedContracts.contains(fileSeparated('/some/path/to/somewhere/a/b/c/d/.*'))
+			properties.includedContracts.contains(fileSeparated('/some/path/to/somewhere(/)?.*/a/b/c/d/.*'))
 	}
 
 	private static String fileSeparated(String string) {

@@ -131,6 +131,13 @@
 									<shadedPattern>shaded.org.apache.maven</shadedPattern>
 								</relocation>
 							</relocations>
+							<filters>
+								<filter>
+									<excludes>
+										<exclude>org/slf4j/</exclude>
+									</excludes>
+								</filter>
+							</filters>
 						</configuration>
 					</execution>
 				</executions>
