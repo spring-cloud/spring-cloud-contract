@@ -21,13 +21,10 @@ import java.util.Map;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * Camel configuration that iterates over the downloaded Groovy DSLs and registers a route
@@ -35,9 +32,10 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author Marcin Grzejszczak
  */
-@Configuration
-@ConditionalOnClass(RoutesBuilder.class)
-@ConditionalOnProperty(name="stubrunner.camel.enabled", havingValue="true", matchIfMissing=true)
+//TODO: Set it back once https://issues.apache.org/jira/browse/CAMEL-11430 is done
+//@Configuration
+//@ConditionalOnClass(RoutesBuilder.class)
+//@ConditionalOnProperty(name="stubrunner.camel.enabled", havingValue="true", matchIfMissing=true)
 public class StubRunnerCamelConfiguration {
 
 	@Bean

@@ -22,6 +22,7 @@ import org.hamcrest.Description
 import org.hamcrest.TypeSafeMatcher
 import org.junit.AfterClass
 import org.junit.BeforeClass
+import org.mockito.ArgumentMatcher
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
@@ -80,7 +81,7 @@ class StubRunnerSpringCloudConsulAutoConfigurationSpec extends Specification {
 			serviceName << ['loanIssuance:loanIssuance', 'bootService:bootService', 'fraudDetectionServer:someNameThatShouldMapFraudDetectionServer']
 	}
 
-	private static class NewServiceMatcher extends TypeSafeMatcher<NewService> {
+	private static class NewServiceMatcher implements ArgumentMatcher<NewService> {
 
 		private final String expectedId
 		private final String expectedName
@@ -91,13 +92,8 @@ class StubRunnerSpringCloudConsulAutoConfigurationSpec extends Specification {
 		}
 
 		@Override
-		protected boolean matchesSafely(NewService item) {
+		boolean matches(NewService item) {
 			return item.id == expectedId && item.name == expectedName
-		}
-
-		@Override
-		void describeTo(Description description) {
-
 		}
 	}
 

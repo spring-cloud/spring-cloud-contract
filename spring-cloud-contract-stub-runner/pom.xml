@@ -62,17 +62,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-spring-boot-starter</artifactId>
+			<artifactId>camel-spring-boot</artifactId>
+			<version>${camel.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jackson</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.integration</groupId>
-			<artifactId>spring-integration-java-dsl</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>

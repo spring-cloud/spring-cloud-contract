@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.stubrunner.messaging.stream;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,6 @@ import org.springframework.integration.dsl.FilterEndpointSpec;
 import org.springframework.integration.dsl.GenericEndpointSpec;
 import org.springframework.integration.dsl.IntegrationFlowBuilder;
 import org.springframework.integration.dsl.IntegrationFlows;
-import org.springframework.integration.dsl.support.Consumer;
 import org.springframework.integration.transformer.MessageTransformingHandler;
 import org.springframework.messaging.Message;
 import org.springframework.util.StringUtils;
