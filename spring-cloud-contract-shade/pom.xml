@@ -48,6 +48,44 @@
 			<artifactId>maven-settings-builder</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.sisu</groupId>
+			<artifactId>org.eclipse.sisu.inject</artifactId>
+			<version>0.1.1</version>
+			<optional>true</optional>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.sisu</groupId>
+			<artifactId>org.eclipse.sisu.plexus</artifactId>
+			<version>0.1.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.enterprise</groupId>
+					<artifactId>cdi-api</artifactId>
+				</exclusion>
+			</exclusions>
+			<optional>true</optional>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.sonatype.sisu</groupId>
+			<artifactId>sisu-guice</artifactId>
+			<version>3.1.6</version>
+			<classifier>no_aop</classifier>
+			<exclusions>
+				<exclusion>
+					<groupId>aopalliance</groupId>
+					<artifactId>aopalliance</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.google.code.findbugs</groupId>
+					<artifactId>jsr305</artifactId>
+				</exclusion>
+			</exclusions>
+			<optional>true</optional>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -66,6 +104,7 @@
 							<shadedArtifactAttached>false</shadedArtifactAttached>
 							<createSourcesJar>true</createSourcesJar>
 							<shadeSourcesContent>true</shadeSourcesContent>
+							<keepDependenciesWithProvidedScope>true</keepDependenciesWithProvidedScope>
 							<relocations>
 								<relocation>
 									<pattern>org.eclipse.aether.connector</pattern>
