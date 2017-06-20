@@ -19,12 +19,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes=WiremockTestsApplication.class, properties="app.baseUrl=http://localhost:8080", webEnvironment=WebEnvironment.NONE)
+@SpringBootTest(classes=WiremockTestsApplication.class, properties="app.baseUrl=http://localhost:5435", webEnvironment=WebEnvironment.NONE)
 @DirtiesContext
 public class WiremockServerApplicationTests {
 
 	@ClassRule
-	public static WireMockClassRule wiremock = new WireMockClassRule(WireMockSpring.options());
+	public static WireMockClassRule wiremock = new WireMockClassRule(WireMockSpring.options().port(5435));
 
 	@Autowired
 	private Service service;
