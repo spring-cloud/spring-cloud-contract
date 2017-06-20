@@ -57,9 +57,11 @@ public class ContractDownloader {
 		String includedAntPattern;
 		if (StringUtils.hasText(this.contractsPath)) {
 			pattern = patternFromProperty(contractsDirectory);
+			log.info("Will pick a pattern from the contractPath property");
 			includedAntPattern = wrapWithAntPattern(contractsPath());
 		} else {
 			pattern = groupArtifactToPattern(contractsDirectory);
+			log.info("Will pick a pattern from group id and artifact id");
 			includedAntPattern = wrapWithAntPattern(slashSeparatedGroupId() + "/" + this.projectArtifactId);
 		}
 		log.info("Pattern to pick contracts equals [" + pattern + "]");
@@ -71,6 +73,7 @@ public class ContractDownloader {
 
 	private String patternFromProperty(File contractsDirectory) {
 		return ("^" + contractsDirectory.getAbsolutePath() +
+				"(" + File.separator + ")?" + ".*" +
 				contractsPath().replace("/", File.separator) + ".*$").replace("\\", "\\\\");
 	}
 
@@ -101,7 +104,7 @@ public class ContractDownloader {
 	private String groupArtifactToPattern(File contractsDirectory) {
 		return ("^" +
 				contractsDirectory.getAbsolutePath() +
-				File.separator +
+				"(" + File.separator + ")?" + ".*" +
 				slashSeparatedGroupId() +
 				File.separator +
 				this.projectArtifactId
