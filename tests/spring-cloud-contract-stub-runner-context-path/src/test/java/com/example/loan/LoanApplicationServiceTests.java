@@ -41,7 +41,7 @@ public class LoanApplicationServiceTests {
 	@Test
 	public void shouldStartThisAppWithContextPath() {
 		String response = new RestTemplate()
-				.getForObject("http://localhost:" + this.port + "/my-path/health", String.class);
+				.getForObject("http://localhost:" + this.port + "/my-path/foo", String.class);
 
 		assertThat(response).isNotEmpty();
 	}
