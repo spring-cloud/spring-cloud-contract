@@ -23,7 +23,7 @@
 
 	<properties>
 		<maven.version>3.2.5</maven.version>
-		<maven.plugin.plugin.version>3.4</maven.plugin.plugin.version>
+		<maven.plugin.plugin.version>3.5</maven.plugin.plugin.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
