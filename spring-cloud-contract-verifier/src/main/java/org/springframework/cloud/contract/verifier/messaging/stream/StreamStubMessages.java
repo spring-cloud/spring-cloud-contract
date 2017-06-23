@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.stream.config.BindingProperties;
-import org.springframework.cloud.stream.config.ChannelBindingServiceProperties;
+import org.springframework.cloud.stream.config.BindingServiceProperties;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.Message;
@@ -82,8 +82,8 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 
 	private String resolvedDestination(String destination) {
 		try {
-			ChannelBindingServiceProperties channelBindingServiceProperties = this.context
-					.getBean(ChannelBindingServiceProperties.class);
+			BindingServiceProperties channelBindingServiceProperties = this.context
+					.getBean(BindingServiceProperties.class);
 			for (Map.Entry<String, BindingProperties> entry : channelBindingServiceProperties
 					.getBindings().entrySet()) {
 				if (destination.equals(entry.getValue().getDestination())) {

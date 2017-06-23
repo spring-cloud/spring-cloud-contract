@@ -28,7 +28,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.client.discovery.noop.NoopDiscoveryClient;
 import org.springframework.cloud.contract.stubrunner.RunningStubs;
 import org.springframework.cloud.contract.stubrunner.StubFinder;
 import org.springframework.cloud.contract.stubrunner.util.StringUtils;
@@ -70,8 +69,8 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 		this.stubMapperProperties = stubMapperProperties;
 	}
 
-	private NoopDiscoveryClient noOpDiscoveryClient(String springAppName) {
-		return new NoopDiscoveryClient(new DefaultServiceInstance(springAppName, "localhost", 0, false));
+	private StubRunnerNoOpDiscoveryClient noOpDiscoveryClient(String springAppName) {
+		return new StubRunnerNoOpDiscoveryClient(new DefaultServiceInstance(springAppName, "localhost", 0, false));
 	}
 
 	@Override
@@ -151,5 +150,34 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 			}
 		}
 		return new ArrayList<>();
+	}
+}
+
+class StubRunnerNoOpDiscoveryClient implements DiscoveryClient {
+
+	private final ServiceInstance instance;
+
+	public StubRunnerNoOpDiscoveryClient(ServiceInstance instance) {
+		this.instance = instance;
+	}
+
+	@Override
+	public String description() {
+		return "Spring Cloud Stub Runner No-op DiscoveryClient";
+	}
+
+	@Override
+	public ServiceInstance getLocalServiceInstance() {
+		return this.instance;
+	}
+
+	@Override
+	public List<ServiceInstance> getInstances(String serviceId) {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<String> getServices() {
+		return Collections.emptyList();
 	}
 }
