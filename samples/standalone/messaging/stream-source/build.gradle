@@ -9,8 +9,8 @@ buildscript {
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.0.0.BUILD-SNAPSHOT"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
-		classpath "io.rest-assured:rest-assured:3.0.2"
-		classpath "io.rest-assured:spring-mock-mvc:3.0.2"
+		classpath "com.jayway.restassured:rest-assured:2.9.0"
+		classpath "com.jayway.restassured:spring-mock-mvc:2.9.0"
 	}
 }
 
@@ -55,8 +55,8 @@ dependencies {
 
 	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
 	testCompile "org.springframework.cloud:spring-cloud-stream-test-support"
-	testCompile "io.rest-assured:rest-assured:3.0.2"
-	testCompile "io.rest-assured:spring-mock-mvc:3.0.2"
+	testCompile "com.jayway.restassured:rest-assured:2.9.0"
+	testCompile "com.jayway.restassured:spring-mock-mvc:2.9.0"
 }
 
 task stubsJar(type: Jar, dependsOn: "generateWireMockClientStubs") {

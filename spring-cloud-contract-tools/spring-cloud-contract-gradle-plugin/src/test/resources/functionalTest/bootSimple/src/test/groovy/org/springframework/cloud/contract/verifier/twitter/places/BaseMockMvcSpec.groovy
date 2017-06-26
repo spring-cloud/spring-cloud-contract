@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.twitter.places
 
-import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc
+import io.restassured.module.mockmvc.RestAssuredMockMvc
 import org.springframework.cloud.contract.verifier.twitter.place.PairIdController
 import spock.lang.Specification
 

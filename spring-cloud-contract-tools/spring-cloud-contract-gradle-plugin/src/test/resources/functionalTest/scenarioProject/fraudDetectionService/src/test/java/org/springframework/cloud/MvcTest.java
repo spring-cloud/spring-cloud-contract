@@ -1,6 +1,6 @@
 package org.springframework.cloud;
 
-import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc;
+import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.Before;
 
 public class MvcTest {

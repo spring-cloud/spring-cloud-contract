@@ -16,7 +16,7 @@
  */
 package com.blogspot.toomuchcoding.frauddetection;
 
-import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc;
+import io.restassured.module.mockmvc.RestAssuredMockMvc;
 
 import org.junit.Before;
 
