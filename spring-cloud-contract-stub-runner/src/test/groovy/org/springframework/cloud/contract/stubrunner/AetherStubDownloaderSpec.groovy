@@ -11,7 +11,7 @@ import spock.util.environment.RestoreSystemProperties
 class AetherStubDownloaderSpec extends Specification {
 
     @Rule
-    HoverflyRule hoverflyRule = HoverflyRule.inCaptureMode("simulation.json")
+    HoverflyRule hoverflyRule = HoverflyRule.inSimulationMode("simulation.json")
 
     def 'Should be able to download from a repository using username and password authentication'() {
         given:
@@ -29,6 +29,22 @@ class AetherStubDownloaderSpec extends Specification {
 
         then:
         jar != null
+    }
+
+    def 'Should throw an exception when artifact not found'() {
+        given:
+        StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder()
+            .withWorkOffline(true)
+            .build()
+
+        AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions)
+
+        when:
+        def jar = aetherStubDownloader.downloadAndUnpackStubJar(new StubConfiguration("non.existing.group", "missing-artifact-id", "1.0-SNAPSHOT"))
+
+        then:
+        IllegalStateException e = thrown(IllegalStateException)
+        e.message.contains("Exception occurred while trying to download a stub for group")
     }
 
     def 'Should throw an exception when a jar is in local m2 and not in remote repo'() {
