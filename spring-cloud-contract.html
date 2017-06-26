@@ -567,7 +567,7 @@ $(addBlockSwitches);
 <li><a href="#_prerequisites">Prerequisites</a>
 <ul class="sectlevel5">
 <li><a href="#_add_gradle_plugin_with_dependencies">Add gradle plugin with dependencies</a></li>
-<li><a href="#_gradle_and_rest_assured_3_0">Gradle and Rest Assured 3.0</a></li>
+<li><a href="#_gradle_and_rest_assured_2_0">Gradle and Rest Assured 2.0</a></li>
 <li><a href="#_snapshot_versions_for_gradle">Snapshot versions for Gradle</a></li>
 <li><a href="#_add_stubs">Add stubs</a></li>
 </ul>
@@ -589,7 +589,7 @@ $(addBlockSwitches);
 <ul class="sectlevel4">
 <li><a href="#_add_maven_plugin">Add maven plugin</a>
 <ul class="sectlevel5">
-<li><a href="#_maven_and_rest_assured_3_0">Maven and Rest Assured 3.0</a></li>
+<li><a href="#_maven_and_rest_assured_2_0">Maven and Rest Assured 2.0</a></li>
 <li><a href="#_snapshot_versions_for_maven">Snapshot versions for Maven</a></li>
 </ul>
 </li>
@@ -1762,7 +1762,7 @@ whatever is necessary. In our case we&#8217;re using <a href="http://rest-assure
 
 import org.junit.Before;
 
-import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc;
+import io.restassured.module.mockmvc.RestAssuredMockMvc;
 
 public class FraudBase {
 	@Before
@@ -2335,7 +2335,7 @@ one to one to the contents of the repo.</p>
 		&lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
 		&lt;java.version&gt;1.8&lt;/java.version&gt;
 		&lt;spring-cloud-contract.version&gt;1.2.0.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
-		&lt;spring-cloud-dependencies.version&gt;Dalston.BUILD-SNAPSHOT&lt;/spring-cloud-dependencies.version&gt;
+		&lt;spring-cloud-dependencies.version&gt;Edgware.BUILD-SNAPSHOT&lt;/spring-cloud-dependencies.version&gt;
 		&lt;excludeBuildFolders&gt;true&lt;/excludeBuildFolders&gt;
 	&lt;/properties&gt;
 
@@ -2649,10 +2649,10 @@ dependencies {
 </div>
 </div>
 <div class="sect5">
-<h6 id="_gradle_and_rest_assured_3_0">Gradle and Rest Assured 3.0</h6>
+<h6 id="_gradle_and_rest_assured_2_0">Gradle and Rest Assured 2.0</h6>
 <div class="paragraph">
-<p>By default Rest Assured 2.x is added to the classpath. However in order to give the users the
-opportunity to use Rest Assured 3.x it&#8217;s enough to add it to the plugins classpath.</p>
+<p>By default Rest Assured 3.x is added to the classpath. However in order to give the users the
+opportunity to use Rest Assured 2.x it&#8217;s enough to add it to the plugins classpath.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2663,21 +2663,21 @@ opportunity to use Rest Assured 3.x it&#8217;s enough to add it to the plugins c
 	dependencies {
 	    classpath "org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}"
-		classpath "io.rest-assured:rest-assured:3.0.2"
-		classpath "io.rest-assured:spring-mock-mvc:3.0.2"
+		classpath "com.jayway.restassured:rest-assured:2.5.0"
+		classpath "com.jayway.restassured:spring-mock-mvc:2.5.0"
 	}
 }
 
 depenendencies {
     // all dependencies
     // you can exclude rest-assured from spring-cloud-contract-verifier
-    testCompile "io.rest-assured:rest-assured:3.0.2"
-    testCompile "io.rest-assured:spring-mock-mvc:3.0.2"
+    testCompile "com.jayway.restassured:rest-assured:2.5.0"
+    testCompile "com.jayway.restassured:spring-mock-mvc:2.5.0"
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>That way the plugin will automatically see that Rest Assured 3.x is present on the classpath
+<p>That way the plugin will automatically see that Rest Assured 2.x is present on the classpath
 and will modify the imports accordingly.</p>
 </div>
 </div>
@@ -3050,10 +3050,10 @@ class LoanApplicationServiceSpec extends Specification {
 <p>You can read more in the <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/">Spring Cloud Contract Maven Plugin Docs</a></p>
 </div>
 <div class="sect5">
-<h6 id="_maven_and_rest_assured_3_0">Maven and Rest Assured 3.0</h6>
+<h6 id="_maven_and_rest_assured_2_0">Maven and Rest Assured 2.0</h6>
 <div class="paragraph">
-<p>By default Rest Assured 2.x is added to the classpath. However in order to give the users the
-opportunity to use Rest Assured 3.x it&#8217;s enough to add it to the plugins classpath.</p>
+<p>By default Rest Assured 3.x is added to the classpath. However in order to give the users the
+opportunity to use Rest Assured 2.x it&#8217;s enough to add it to the plugins classpath.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -3072,15 +3072,15 @@ opportunity to use Rest Assured 3.x it&#8217;s enough to add it to the plugins c
             &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
         &lt;/dependency&gt;
         &lt;dependency&gt;
-           &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+           &lt;groupId&gt;com.jayway.restassured&lt;/groupId&gt;
            &lt;artifactId&gt;rest-assured&lt;/artifactId&gt;
-           &lt;version&gt;3.0.2&lt;/version&gt;
+           &lt;version&gt;2.5.0&lt;/version&gt;
            &lt;scope&gt;compile&lt;/scope&gt;
         &lt;/dependency&gt;
         &lt;dependency&gt;
-           &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+           &lt;groupId&gt;com.jayway.restassured&lt;/groupId&gt;
            &lt;artifactId&gt;spring-mock-mvc&lt;/artifactId&gt;
-           &lt;version&gt;3.0.2&lt;/version&gt;
+           &lt;version&gt;2.5.0&lt;/version&gt;
            &lt;scope&gt;compile&lt;/scope&gt;
         &lt;/dependency&gt;
     &lt;/dependencies&gt;
@@ -3090,15 +3090,15 @@ opportunity to use Rest Assured 3.x it&#8217;s enough to add it to the plugins c
     &lt;!-- all dependencies --&gt;
     &lt;!-- you can exclude rest-assured from spring-cloud-contract-verifier --&gt;
     &lt;dependency&gt;
-       &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+       &lt;groupId&gt;com.jayway.restassured&lt;/groupId&gt;
        &lt;artifactId&gt;rest-assured&lt;/artifactId&gt;
-       &lt;version&gt;3.0.2&lt;/version&gt;
+       &lt;version&gt;2.5.0&lt;/version&gt;
        &lt;scope&gt;test&lt;/scope&gt;
     &lt;/dependency&gt;
     &lt;dependency&gt;
-       &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+       &lt;groupId&gt;com.jayway.restassured&lt;/groupId&gt;
        &lt;artifactId&gt;spring-mock-mvc&lt;/artifactId&gt;
-       &lt;version&gt;3.0.2&lt;/version&gt;
+       &lt;version&gt;2.5.0&lt;/version&gt;
        &lt;scope&gt;test&lt;/scope&gt;
     &lt;/dependency&gt;
 &lt;/dependencies&gt;</code></pre>
@@ -4042,7 +4042,7 @@ and proper stubbed routes are created.</p>
 		&lt;dependency&gt;
 			&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 			&lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
-			&lt;version&gt;Dalston.BUILD-SNAPSHOT&lt;/version&gt;
+			&lt;version&gt;Edgware.BUILD-SNAPSHOT&lt;/version&gt;
 			&lt;type&gt;pom&lt;/type&gt;
 			&lt;scope&gt;import&lt;/scope&gt;
 		&lt;/dependency&gt;
@@ -8038,7 +8038,7 @@ real requests and you need to setup your generated test&#8217;s base class to wo
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">import com.jayway.restassured.RestAssured;
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">import io.restassured.RestAssured;
 import org.junit.Before;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
