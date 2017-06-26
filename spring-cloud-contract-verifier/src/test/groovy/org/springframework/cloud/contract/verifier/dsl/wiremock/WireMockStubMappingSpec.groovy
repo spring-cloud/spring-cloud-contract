@@ -47,12 +47,12 @@ class WireMockStubMappingSpec extends Specification {
 			WireMockStubMapping.buildFrom(stub_2_1_7)
 	}
 
-	def "should successfully parse a WireMock 2.5.1 stub"() {
+	def "should successfully parse a WireMock 2.6.0 stub"() {
 		expect:
 			WireMockStubMapping.buildFrom(stub_2_5_1)
 	}
 
-	def "should successfully parse a WireMock 2.5.1 stub that contains transformers"() {
+	def "should successfully parse a WireMock 2.6.0 stub that contains transformers"() {
 		expect:
 			WireMockStubMapping.buildFrom(stub_2_5_1_with_transformer)
 	}

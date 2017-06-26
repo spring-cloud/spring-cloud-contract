@@ -11,7 +11,7 @@ import spock.util.environment.RestoreSystemProperties
 class AetherStubDownloaderSpec extends Specification {
 
     @Rule
-    HoverflyRule hoverflyRule = HoverflyRule.buildFromClassPathResource("simulation.json").build()
+    HoverflyRule hoverflyRule = HoverflyRule.inCaptureMode("simulation.json")
 
     def 'Should be able to download from a repository using username and password authentication'() {
         given:
