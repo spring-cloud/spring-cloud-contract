@@ -165,13 +165,11 @@ public class AetherStubDownloader implements StubDownloader {
 			throw ise;
 		}
 		catch (Exception e) {
-			//TODO: Start throwing this exception instead of returning null
-			log.warn(
+			throw new IllegalStateException(
 					"Exception occurred while trying to download a stub for group ["
 							+ stubsGroup + "] module [" + stubsModule
 							+ "] and classifier [" + classifier + "] in " + this.remoteRepos,
 					e);
-			return null;
 		}
 
 	}
