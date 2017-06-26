@@ -91,7 +91,7 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 		testCompile "org.mockito:mockito-core"
 		testCompile "org.springframework:spring-test"
 		testCompile "org.springframework.boot:spring-boot-test"
-		testCompile("com.github.tomakehurst:wiremock:2.5.1") {
+		testCompile("com.github.tomakehurst:wiremock:2.6.0") {
 			exclude group: 'org.eclipse.jetty'
 		}
 	}

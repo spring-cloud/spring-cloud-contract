@@ -91,7 +91,7 @@
 			<dependency>
 				<groupId>net.sf.jopt-simple</groupId>
 				<artifactId>jopt-simple</artifactId>
-				<version>4.9</version>
+				<version>5.0.3</version>
 			</dependency>
 			<dependency>
 				<groupId>cglib</groupId>
@@ -111,7 +111,7 @@
 			<dependency>
 				<groupId>info.solidsoft.spock</groupId>
 				<artifactId>spock-global-unroll</artifactId>
-				<version>0.5.0</version>
+				<version>0.5.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.amqp</groupId>
@@ -125,12 +125,12 @@
 			<dependency>
 				<groupId>io.specto</groupId>
 				<artifactId>hoverfly-junit</artifactId>
-				<version>0.1.8</version>
+				<version>0.2.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
-				<version>3.4</version>
+				<version>3.6</version>
 			</dependency>
 			<dependency>
 				<groupId>au.com.dius</groupId>
