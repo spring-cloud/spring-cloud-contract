@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.contract.stubrunner.server
 
-import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc
+import io.restassured.module.mockmvc.RestAssuredMockMvc
 import groovy.json.JsonSlurper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootContextLoader

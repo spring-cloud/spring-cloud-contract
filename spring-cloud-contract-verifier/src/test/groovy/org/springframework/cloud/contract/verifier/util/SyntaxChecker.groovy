@@ -17,9 +17,9 @@ class SyntaxChecker {
 
 	private static final String[] DEFAULT_IMPORTS = [
 			"org.springframework.cloud.contract.spec.Contract",
-			"com.jayway.restassured.response.ResponseOptions",
-			"com.jayway.restassured.module.mockmvc.specification.*",
-			"com.jayway.restassured.module.mockmvc.*",
+			"io.restassured.response.ResponseOptions",
+			"io.restassured.module.mockmvc.specification.*",
+			"io.restassured.module.mockmvc.*",
 			"org.junit.Test",
 			"org.junit.Rule",
 			"com.jayway.jsonpath.DocumentContext",
@@ -37,9 +37,9 @@ class SyntaxChecker {
 	}.join("\n")
 
 	private static final String STATIC_IMPORTS = [
-			"com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.given",
-			"com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.when",
-			"com.jayway.restassured.RestAssured.*",
+			"io.restassured.module.mockmvc.RestAssuredMockMvc.given",
+			"io.restassured.module.mockmvc.RestAssuredMockMvc.when",
+			"io.restassured.RestAssured.*",
 			"javax.ws.rs.client.Entity.*",
 			"org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers",
 			"com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson",

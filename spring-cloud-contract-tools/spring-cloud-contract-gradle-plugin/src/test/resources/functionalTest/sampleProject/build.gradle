@@ -20,12 +20,12 @@ buildscript {
 		mavenLocal()
 	}
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.1.RELEASE")
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.4.RELEASE")
 	}
 }
 
 ext {
-	restAssuredVersion = '2.5.0'
+	restAssuredVersion = '3.0.2'
 	spockVersion = '1.0-groovy-2.4'
 
 	contractVerifierStubsBaseDirectory = 'src/test/resources/stubs'
@@ -42,7 +42,7 @@ subprojects {
 	}
 
 	dependencies {
-		testCompile "org.codehaus.groovy:groovy-all:2.4.5"
+		testCompile "org.codehaus.groovy:groovy-all:2.4.11"
 		testCompile "org.spockframework:spock-core:$spockVersion"
 		testCompile("junit:junit:4.12")
 		testCompile "com.github.tomakehurst:wiremock:${wiremockVersion}"
@@ -85,8 +85,8 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 		testCompile "org.mockito:mockito-core"
 		testCompile "org.springframework:spring-test"
 		testCompile "org.springframework.boot:spring-boot-test"
-		testCompile "com.jayway.restassured:rest-assured:$restAssuredVersion"
-		testCompile "com.jayway.restassured:spring-mock-mvc:$restAssuredVersion"
+		testCompile "io.rest-assured:rest-assured:$restAssuredVersion"
+		testCompile "io.rest-assured:spring-mock-mvc:$restAssuredVersion"
 	}
 
 	task cleanup(type: Delete) {
@@ -108,7 +108,7 @@ configure(project(':fraudDetectionService')) {
 
 configure(project(':loanApplicationService')) {
 
-	task copyCollaboratorStubs(type: Copy) {
+	task copyCollaboratorStubs(type: com.sun.org.apache.xalan.internal.xsltc.compiler.Copy) {
 		File fraudBuildDir = project(':fraudDetectionService').buildDir
 		from(new File(fraudBuildDir, "/production/${project(':fraudDetectionService').name}-stubs/"))
 		into "src/test/resources/"

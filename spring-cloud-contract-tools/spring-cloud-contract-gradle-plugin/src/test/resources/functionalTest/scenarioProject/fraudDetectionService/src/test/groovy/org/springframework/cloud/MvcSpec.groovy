@@ -17,7 +17,7 @@
 package org.springframework.cloud
 
 import org.springframework.cloud.frauddetection.FraudDetectionController
-import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc
+import io.restassured.module.mockmvc.RestAssuredMockMvc
 import spock.lang.Specification
 
 class MvcSpec extends Specification {

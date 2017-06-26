@@ -11,6 +11,8 @@ apply plugin: 'maven-publish'
 group = 'org.springframework.cloud.testprojects'
 
 ext {
+	restAssuredVersion = '3.0.2'
+
 	contractsDir = file("repository/mappings")
 	stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/repository/")
 }
@@ -23,14 +25,14 @@ repositories {
 dependencies {
 	compile "org.springframework:spring-web"
 	compile "org.springframework:spring-context-support"
-	compile "org.codehaus.groovy:groovy-all:2.4.5"
+	compile "org.codehaus.groovy:groovy-all:2.4.11"
 	compile 'com.jayway.jsonpath:json-path-assert:2.2.0'
 
 	testCompile "com.github.tomakehurst:wiremock:${wiremockVersion}"
 	testCompile "com.toomuchcoding.jsonassert:jsonassert:${jsonAssertVersion}"
 	testCompile "org.spockframework:spock-spring:1.0-groovy-2.4"
-	testCompile "com.jayway.restassured:rest-assured:$restAssuredVersion"
-	testCompile "com.jayway.restassured:spring-mock-mvc:$restAssuredVersion"
+	testCompile "io.restassured:rest-assured:$restAssuredVersion"
+	testCompile "io.restassured:spring-mock-mvc:$restAssuredVersion"
 	testCompile "ch.qos.logback:logback-classic:1.1.2"
 	testCompile "org.springframework.cloud:spring-cloud-contract-verifier:${verifierVersion}"
 }

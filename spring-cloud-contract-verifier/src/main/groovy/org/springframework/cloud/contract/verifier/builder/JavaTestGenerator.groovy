@@ -41,7 +41,7 @@ class JavaTestGenerator implements SingleTestGenerator {
 
 	private static final String JSON_ASSERT_STATIC_IMPORT = 'com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson'
 	private static final String JSON_ASSERT_CLASS = 'com.toomuchcoding.jsonassert.JsonAssertion'
-	private static final String REST_ASSURED_3_0_CLASS = 'io.restassured.RestAssured'
+	private static final String REST_ASSURED_2_0_CLASS = 'com.jayway.restassured.RestAssured'
 
 	@PackageScope ClassPresenceChecker checker = new ClassPresenceChecker()
 
@@ -69,9 +69,9 @@ class JavaTestGenerator implements SingleTestGenerator {
 		addJsonPathRelatedImports(clazz)
 
 		Map<ParsedDsl, TestType> contracts = mapContractsToTheirTestTypes(listOfFiles)
-		boolean restAssured3Present = this.checker.isClassPresent(REST_ASSURED_3_0_CLASS)
-		String restAssuredPackage = restAssured3Present ? 'io.restassured' : 'com.jayway.restassured'
-		log.info("Rest Assured version 3.0 found [${restAssured3Present}]")
+		boolean restAssured2Present = this.checker.isClassPresent(REST_ASSURED_2_0_CLASS)
+		String restAssuredPackage = restAssured2Present ? 'com.jayway.restassured' : 'io.restassured'
+		log.info("Rest Assured version 2.x found [${restAssured2Present}]")
 		boolean conditionalImportsAdded = false
 		boolean toIgnore = listOfFiles.ignored.find { it }
 		contracts.each { ParsedDsl key, TestType value ->
