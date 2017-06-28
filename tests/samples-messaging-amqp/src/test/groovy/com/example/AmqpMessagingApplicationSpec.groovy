@@ -25,6 +25,7 @@ import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.test.context.ContextConfiguration
@@ -33,6 +34,9 @@ import spock.lang.Specification
 
 import javax.inject.Inject
 
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import static org.assertj.core.api.Assertions.assertThat
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
 // Context configuration would end up in base class
 @ContextConfiguration(classes = [AmqpMessagingApplication], loader = SpringBootContextLoader)
 @AutoConfigureMessageVerifier
@@ -77,6 +81,69 @@ class AmqpMessagingApplicationSpec extends Specification {
 		and:
 			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
 			JsonAssertion.assertThat(parsedJson).field('name').isEqualTo('some')
+	}
+
+	@Issue("332")
+	def "should work for second scenario"() {
+		given:
+			def dsl =
+					Contract.make {
+						description("""
+Represents scenario 2 from documentation: 
+http://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_publisher_side_test_generation
+
+"The input message triggers an output message."
+
+```
+given:
+	rabbit service is running
+when:
+	input message is received
+then:
+	message is send
+```
+
+""")
+						label 'some_label2'
+						input {
+							messageFrom('input')
+							messageBody([
+									name: 'foo2'
+							])
+							messageHeaders {
+								messagingContentType(applicationJson())
+								header('amqp_replyTo', 'amq.rabbitmq.reply-to')
+								header('bill', 'bill')
+							}
+						}
+
+						outputMessage {
+							sentTo('')
+							body('''{ "name" : "foo2" }''')
+							headers {
+								messagingContentType(applicationJson())
+							}
+						}
+					}
+		// generated test should look like this:
+		and:
+			ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+					"{\"name\":\"foo2\"}"
+					, headers()
+					.header("contentType", "application/json")
+					.header("amqp_replyTo", "amq.rabbitmq.reply-to")
+					.header("bill", "bill")
+			)
+		when:
+			contractVerifierMessaging.send(inputMessage, "input")
+		then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive("")
+			assertThat(response).isNotNull()
+			assertThat(response.getHeader("contentType")).isNotNull()
+			assertThat(response.getHeader("contentType").toString()).isEqualTo("application/json")
+		and:
+			DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
+			assertThatJson(parsedJson).field("['name']").isEqualTo("foo2")
 	}
 
 	@Issue("178")

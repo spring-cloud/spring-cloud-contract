@@ -16,13 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.messaging.amqp;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mockingDetails;
-import static org.mockito.Mockito.verify;
-import static org.springframework.amqp.support.converter.DefaultClassMapper.DEFAULT_CLASSID_FIELD_NAME;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +32,14 @@ import org.springframework.amqp.rabbit.support.CorrelationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.util.Assert;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mockingDetails;
+import static org.mockito.Mockito.verify;
+import static org.springframework.amqp.support.converter.DefaultClassMapper.DEFAULT_CLASSID_FIELD_NAME;
 
 /**
  * {@link MessageVerifier} implementation to integrate with plain spring-amqp/spring-rabbit.
@@ -99,7 +100,7 @@ public class SpringAmqpStubMessages implements
 	@Override
 	public Message receive(String destination, long timeout, TimeUnit timeUnit) {
 		ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
-		verify(this.rabbitTemplate).send(eq(destination), anyString(), messageCaptor.capture(), any(CorrelationData.class));
+		verify(this.rabbitTemplate, atLeastOnce()).send(eq(destination), anyString(), messageCaptor.capture(), any(CorrelationData.class));
 
 		if (messageCaptor.getAllValues().isEmpty()) {
 			log.info("no messages found on destination {}", destination);

@@ -171,10 +171,10 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 			request = "${request}\n\t\t\t\t\"${StringEscapeUtils.escapeJava(bodyAsString)}\"\n"
 		}
 		if (inputMessage.messageHeaders) {
-			request = "${request}\t\t\t\t, headers()\n"
+			request = "${request}\t\t\t\t, headers()"
 		}
 		inputMessage.messageHeaders?.executeForEachHeader { Header header ->
-			request = "${request}\t\t\t\t\t\t${getHeaderString(header)}"
+			request = "${request}\n\t\t\t\t\t\t${getHeaderString(header)}"
 		}
 		return "${request}\n\t\t\t)"
 	}
