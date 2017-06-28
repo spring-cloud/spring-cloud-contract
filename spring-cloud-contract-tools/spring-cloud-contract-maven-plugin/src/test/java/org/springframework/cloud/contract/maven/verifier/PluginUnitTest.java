@@ -16,15 +16,15 @@
  */
 package org.springframework.cloud.contract.maven.verifier;
 
+import io.takari.maven.testing.TestMavenRuntime;
+import io.takari.maven.testing.TestResources;
+
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.util.StringUtils;
-
-import io.takari.maven.testing.TestMavenRuntime;
-import io.takari.maven.testing.TestResources;
 
 import static io.takari.maven.testing.TestMavenRuntime.newParameter;
 import static io.takari.maven.testing.TestResources.assertFilesNotPresent;
@@ -151,6 +151,20 @@ public class PluginUnitTest {
 		assertFilesPresent(basedir, "target/stubs/META-INF/com.example.foo.bar.baz/someartifact/0.1.BUILD-SNAPSHOT/mappings/com/example/server/client1/contracts/shouldMarkClientAsFraud.json");
 		assertFilesNotPresent(basedir, "target/stubs/META-INF/com.example.foo.bar.baz/someartifact/0.1.BUILD-SNAPSHOT/mappings/com/foo/bar/baz/shouldBeIgnoredByPlugin.json");
 		assertFilesNotPresent(basedir, "target/stubs/META-INF/com.example.foo.bar.baz/someartifact/0.1.BUILD-SNAPSHOT/contracts/com/foo/bar/baz/shouldBeIgnoredByPlugin.groovy");
+	}
+
+	@Test
+	public void shouldGenerateOutputWhenCalledConvertFromRootProject() throws Exception {
+		File basedir = this.resources.getBasedir("different-module-configuration");
+		this.maven.executeMojo(basedir, "convert");
+		assertFilesPresent(basedir, "target/stubs/META-INF/com.blogspot.toomuchcoding.frauddetection/frauddetection-parent/0.1.0/mappings/shouldMarkClientAsFraud.json");
+	}
+
+	@Test
+	public void shouldGenerateOutputWhenCalledGenerateTestsFromRootProject() throws Exception {
+		File basedir = this.resources.getBasedir("different-module-configuration");
+		this.maven.executeMojo(basedir, "generateTests");
+		assertFilesPresent(basedir, "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
 	}
 
 	@Test
