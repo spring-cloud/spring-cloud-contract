@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.verifier.builder
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
 /**
@@ -450,6 +451,93 @@ Contract.make {
   assertThat(response).isNotNull();
  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
  assertThatJson(parsedJson).field("bookName").isEqualTo("foo");
+'''
+		stripped(test) == stripped(expectedMsg)
+	}
+
+	@Issue("336")
+	def "should generate tests with message headers containing regular expression for JUnit"() {
+		given:
+			def contractDsl =
+					org.springframework.cloud.contract.spec.Contract.make {
+						label 'trigger_event'
+
+						input {
+							triggeredBy('requestIsCalled()')
+						}
+
+						outputMessage {
+							sentTo 'topic.rateablequote'
+							headers {
+								header('processId', value(producer(regex('[0-9]+')), consumer('123')))
+							}
+							body([
+									eventId: value(producer(regex('[0-9]+')), consumer('1'))
+							])
+						}
+					}
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			String expectedMsg =
+				'''
+  // when:
+  requestIsCalled();
+
+ // then:
+  ContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote");
+  assertThat(response).isNotNull();
+  assertThat(response.getHeader("processId")).isNotNull();
+  assertThat(response.getHeader("processId").toString()).matches("[0-9]+");
+ // and:
+  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+  assertThatJson(parsedJson).field("['eventId']").matches("[0-9]+");
+'''
+		stripped(test) == stripped(expectedMsg)
+	}
+
+	@Issue("336")
+	def "should generate tests with message headers containing regular expression for Spock"() {
+		given:
+			def contractDsl =
+					org.springframework.cloud.contract.spec.Contract.make {
+						label 'trigger_event'
+
+						input {
+							triggeredBy('requestIsCalled()')
+						}
+
+						outputMessage {
+							sentTo 'topic.rateablequote'
+							headers {
+								header('processId', value(producer(regex('[0-9]+')), consumer('123')))
+							}
+							body([
+									eventId: value(producer(regex('[0-9]+')), consumer('1'))
+							])
+						}
+					}
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			String expectedMsg =
+				'''
+  when:
+  requestIsCalled()
+
+ then:
+  ContractVerifierMessage response = contractVerifierMessaging.receive('topic.rateablequote')
+  assert response != null
+  response.getHeader('processId')?.toString() ==~ java.util.regex.Pattern.compile('[0-9]+')
+ and:
+  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
+  assertThatJson(parsedJson).field("['eventId']").matches("[0-9]+")
 '''
 		stripped(test) == stripped(expectedMsg)
 	}
