@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+
+     Copyright 2013-2017 the original author or authors.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.blogspot.toomuchcoding.frauddetection</groupId>
+    <artifactId>frauddetection</artifactId>
+    <version>0.1.0</version>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.3.5.RELEASE</version>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+
+        <!-- verifier test dependencies-->
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>2.9.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>spring-mock-mvc</artifactId>
+            <version>2.9.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.toomuchcoding.jsonassert</groupId>
+            <artifactId>jsonassert</artifactId>
+            <version>0.4.9</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>2.4.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <spring-cloud-verifier-plugin.version>${it-plugin.version}</spring-cloud-verifier-plugin.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <!-- tag::plugin[] -->
+            <plugin>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+                <version>${spring-cloud-verifier-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>convert</goal>
+                            <goal>generateStubs</goal>
+                            <goal>generateTests</goal>
+                        </goals>
+                        <configuration>
+                            <contractsDirectory>src/test/contracts</contractsDirectory>
+                            <basePackageForTests>com.blogspot.toomuchcoding.frauddetection</basePackageForTests>
+                            <testMode>MOCKMVC</testMode>
+                            <testFramework>JUNIT</testFramework>
+                            <classifier>stubs</classifier>
+                            <nameSuffixForTests>Test</nameSuffixForTests>
+                            <ruleClassForTests>org.junit.rules.ErrorCollector</ruleClassForTests>
+                            <staticImports>
+                                <staticImport>com.blogspot.toomuchcoding.frauddetection.matchers.CustomMatchers.*</staticImport>
+                            </staticImports>
+                            <imports>
+                                <import>com.blogspot.toomuchcoding.frauddetection.matchers.CustomMatchers</import>
+                            </imports>
+                            <ignoredFiles>
+                                <ignoredFile>broken**</ignoredFile>
+                            </ignoredFiles>
+                            <excludedFiles>
+                                <param>shouldMarkClientAsFraud.groovy</param>
+                            </excludedFiles>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <baseClassForTests>com.blogspot.toomuchcoding.frauddetection.BaseAccurest</baseClassForTests>
+                </configuration>
+            </plugin>
+            <!-- end::plugin[] -->
+        </plugins>
+    </build>
+</project>

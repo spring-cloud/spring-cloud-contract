@@ -425,7 +425,7 @@ To change default configuration just add `configuration` section to plugin defin
  - **basePackageForTests** - specifies base package for all generated tests. By default set to `org.springframework.cloud.verifier.tests`.
  - **ruleClassForTests** - specifies Rule which should be added to generated test classes.
  - **baseClassForTests** - base class for generated tests. By default `spock.lang.Specification` if using Spock tests.
- - **contractsDir** - directory containing contracts written using the GroovyDSL. By default `/src/test/resources/contracts`.
+ - **contractsDirectory** - directory containing contracts written using the GroovyDSL. By default `/src/test/resources/contracts`.
  - **testFramework** - the target test framework to be used; currently Spock and JUnit are supported with JUnit being the default framework
  - **packageWithBaseClasses** - instead of providing a fixed value for base class you can provide a package where all the base classes lay.
   The convention is such that if you have a contract under `src/test/resources/contract/foo/bar/baz/` and provide the value of this property

@@ -71,7 +71,9 @@ class JavaTestGenerator implements SingleTestGenerator {
 		Map<ParsedDsl, TestType> contracts = mapContractsToTheirTestTypes(listOfFiles)
 		boolean restAssured3Present = this.checker.isClassPresent(REST_ASSURED_3_0_CLASS)
 		String restAssuredPackage = restAssured3Present ? 'io.restassured' : 'com.jayway.restassured'
-		log.info("Rest Assured version 3.0 found [${restAssured3Present}]")
+		if (log.isDebugEnabled()) {
+			log.debug("Rest Assured version 3.0 found [${restAssured3Present}]")
+		}
 		boolean conditionalImportsAdded = false
 		boolean toIgnore = listOfFiles.ignored.find { it }
 		contracts.each { ParsedDsl key, TestType value ->
