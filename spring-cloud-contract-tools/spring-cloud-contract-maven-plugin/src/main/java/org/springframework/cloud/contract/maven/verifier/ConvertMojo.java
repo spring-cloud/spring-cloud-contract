@@ -52,7 +52,8 @@ public class  ConvertMojo extends AbstractMojo {
 	/**
 	 * Directory containing Spring Cloud Contract Verifier contracts written using the GroovyDSL
 	 */
-	@Parameter(defaultValue = "${basedir}/src/test/resources/contracts")
+	@Parameter(property = "spring.cloud.contract.verifier.contractsDirectory",
+			defaultValue = "${project.basedir}/src/test/resources/contracts")
 	private File contractsDirectory;
 
 	/**
@@ -147,7 +148,8 @@ public class  ConvertMojo extends AbstractMojo {
 		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering, config)
 				.copy(contractsDirectory, this.stubsDirectory, rootPath);
 
-		config.setContractsDslDir(isInsideProject() ? contractsDirectory : this.source);
+		config.setContractsDslDir(isInsideProject() ?
+				contractsDirectory : this.source);
 		config.setStubsOutputDir(
 				isInsideProject() ? new File(this.stubsDirectory, rootPath + MAPPINGS_PATH) : this.destination);
 
