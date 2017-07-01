@@ -32,6 +32,7 @@ import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContext;
 import org.springframework.restdocs.operation.Operation;
@@ -192,11 +193,13 @@ public class WireMockSnippet implements Snippet {
 				builder.withRequestBody(matchingJsonPath(jsonPath));
 			}
 		}
-		else if (this.hasJsonBodyRequestToMatch) {
-			builder.withRequestBody(equalToJson(content));
-		}
-		else {
-			builder.withRequestBody(equalTo(content));
+		else if (StringUtils.isNotEmpty(content)) {
+			if (this.hasJsonBodyRequestToMatch) {
+				builder.withRequestBody(equalToJson(content));
+			}
+			else {
+				builder.withRequestBody(equalTo(content));
+			}
 		}
 		return builder;
 	}
