@@ -16,16 +16,20 @@
 
 package org.springframework.cloud.contract.stubrunner.spring.cloud;
 
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.contract.stubrunner.StubFinder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.core.env.Environment;
 
 /**
  * Wraps {@link DiscoveryClient} in a Stub Runner implementation that tries to find
@@ -39,20 +43,15 @@ import org.springframework.context.annotation.Primary;
 @ConditionalOnProperty(value = "stubrunner.cloud.enabled", matchIfMissing = true)
 public class StubRunnerSpringCloudAutoConfiguration {
 
+	@Autowired BeanFactory beanFactory;
+
 	@Bean
-	@Primary
-	@ConditionalOnBean(DiscoveryClient.class)
-	@ConditionalOnStubbedDiscoveryEnabled
-	@ConditionalOnProperty(value = "stubrunner.cloud.delegate.enabled", havingValue = "true")
-	public DiscoveryClient stubRunnerDiscoveryClientWrapper(DiscoveryClient discoveryClient,
-			StubFinder stubFinder,
-			StubMapperProperties stubMapperProperties,
-			@Value("${spring.application.name:unknown}") String springAppName) {
-		return new StubRunnerDiscoveryClient(discoveryClient, stubFinder, stubMapperProperties, springAppName);
+	public StubRunnerDiscoveryClientWrapper stubRunnerDiscoveryClientWrapper() {
+		return new StubRunnerDiscoveryClientWrapper(this.beanFactory);
 	}
 
 	@Bean
-	@Primary
+	@ConditionalOnMissingBean(DiscoveryClient.class)
 	@ConditionalOnStubbedDiscoveryEnabled
 	@ConditionalOnProperty(value = "stubrunner.cloud.delegate.enabled", havingValue = "false", matchIfMissing = true)
 	public DiscoveryClient noOpStubRunnerDiscoveryClient(StubFinder stubFinder,
@@ -61,4 +60,81 @@ public class StubRunnerSpringCloudAutoConfiguration {
 		return new StubRunnerDiscoveryClient(stubFinder, stubMapperProperties, springAppName);
 	}
 
+}
+
+class StubRunnerDiscoveryClientWrapper implements BeanPostProcessor {
+
+	private final BeanFactory beanFactory;
+	DiscoveryClient discoveryClient;
+	StubFinder stubFinder;
+	StubMapperProperties stubMapperProperties;
+	String springAppName;
+	Boolean stubbedDiscoveryEnabled;
+	Boolean cloudDelegateEnabled;
+
+	StubRunnerDiscoveryClientWrapper(BeanFactory beanFactory) {
+		this.beanFactory = beanFactory;
+	}
+
+	@Override public Object postProcessBeforeInitialization(Object bean, String beanName)
+			throws BeansException {
+		return bean;
+	}
+
+	@Override public Object postProcessAfterInitialization(Object bean, String beanName)
+			throws BeansException {
+		if (bean instanceof DiscoveryClient && !(bean instanceof StubRunnerDiscoveryClient)) {
+			if (!isStubbedDiscoveryEnabled()) {
+				return bean;
+			}
+			if (isCloudDelegateEnabled()) {
+				return new StubRunnerDiscoveryClient((DiscoveryClient) bean,
+						stubFinder(), stubMapperProperties(), springAppName());
+			}
+			return new StubRunnerDiscoveryClient(stubFinder(), stubMapperProperties(), springAppName());
+		}
+		return bean;
+	}
+
+	StubFinder stubFinder() {
+		if (this.stubFinder == null) {
+			this.stubFinder = this.beanFactory.getBean(StubFinder.class);
+		}
+		return this.stubFinder;
+	}
+
+	StubMapperProperties stubMapperProperties() {
+		if (this.stubMapperProperties == null) {
+			this.stubMapperProperties = this.beanFactory.getBean(StubMapperProperties.class);
+		}
+		return this.stubMapperProperties;
+	}
+
+	String springAppName() {
+		if (this.springAppName == null) {
+			this.springAppName = this.beanFactory.getBean(Environment.class)
+					.getProperty("spring.application.name", "unknown");
+		}
+		return this.springAppName;
+	}
+
+	boolean isStubbedDiscoveryEnabled() {
+		if (this.stubbedDiscoveryEnabled == null) {
+			this.stubbedDiscoveryEnabled = Boolean.valueOf(
+					this.beanFactory.getBean(Environment.class)
+					.getProperty("stubrunner.cloud.stubbed.discovery.enabled", "true")
+			);
+		}
+		return this.stubbedDiscoveryEnabled;
+	}
+
+	boolean isCloudDelegateEnabled() {
+		if (this.cloudDelegateEnabled == null) {
+			this.cloudDelegateEnabled = Boolean.valueOf(
+					this.beanFactory.getBean(Environment.class)
+					.getProperty("stubrunner.cloud.delegate.enabled", "false")
+			);
+		}
+		return this.cloudDelegateEnabled;
+	}
 }
