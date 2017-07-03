@@ -220,7 +220,7 @@ git clone https://your-git-server.com/server-side.git local-http-server-repo
 
 As consumers we need to define what exactly we want to achieve. We need to formulate our expectations. That's why we write the following contract.
 
-IMPORTANT: We're placing the contract under `src/test/resources/contract/fraud` folder. The `fraud` folder
+IMPORTANT: We're placing the contract under `src/test/resources/contracts/fraud` folder. The `fraud` folder
 is important cause we'll reference that folder in the producer's test base class name.
 
 [source,groovy,indent=0]
@@ -394,7 +394,7 @@ include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=cont
 
 IMPORTANT: We've decided to use the "convention based" naming by setting the `packageWithBaseClasses` property.
 That means that 2 last packages will be combined into a name of the base test class. In our case the contracts
-were placed under `src/test/resources/contract/fraud`. Since we don't have 2 packages starting from the `contracts`
+were placed under `src/test/resources/contracts/fraud`. Since we don't have 2 packages starting from the `contracts`
 folder we're picking only one which is `fraud`. We're adding the `Base` suffix and we're capitalizing `fraud`.
 That gives us the `FraudBase` test class name.
 
