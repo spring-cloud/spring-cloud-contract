@@ -1,5 +1,6 @@
 package org.springframework.cloud.contract.verifier.plugin
 
+import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
@@ -7,6 +8,7 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
  * @author Marcin Grzejszczak
  */
 @PackageScope
+@CompileStatic
 class ExtensionToProperties {
 
 	protected static ContractVerifierConfigProperties fromExtension(ContractVerifierExtension extension) {

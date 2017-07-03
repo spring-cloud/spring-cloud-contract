@@ -86,6 +86,10 @@ public class StubConfiguration {
 		return StringUtils.hasText(this.groupId) && StringUtils.hasText(this.artifactId);
 	}
 
+	/**
+	 * Returns a colon separated representation of the stub configuration
+	 * (e.g. groupid:artifactid:version:classifier)
+	 */
 	public String toColonSeparatedDependencyNotation() {
 		if (!isDefined()) {
 			return "";
@@ -102,6 +106,13 @@ public class StubConfiguration {
 		return StringUtils.hasText(value) ? value : "";
 	}
 
+	/**
+	 * Checks if ivy notation matches group and artifact ids
+	 *
+	 * @param ivyNotationAsString - e.g. group:artifact:version:classifier
+	 * @return {@code true} if artifact id matches and there's no group id. Or if
+	 * both group id and artifact id are present and matching
+	 */
 	public boolean groupIdAndArtifactMatches(String ivyNotationAsString) {
 		String[] parts = ivyNotationFrom(ivyNotationAsString);
 		String groupId = parts[0];
@@ -110,6 +121,14 @@ public class StubConfiguration {
 			return this.artifactId.equals(artifactId);
 		}
 		return this.groupId.equals(groupId) && this.artifactId.equals(artifactId);
+	}
+
+	/**
+	 * Returns {@code true} for a snapshot or a LATEST (+) version
+	 */
+	public boolean isVersionChanging() {
+		return DEFAULT_VERSION.equals(this.version) ||
+				this.version.toLowerCase().contains("snapshot");
 	}
 
 	public String getGroupId() {
