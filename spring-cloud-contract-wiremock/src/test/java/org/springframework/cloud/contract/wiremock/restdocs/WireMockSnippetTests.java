@@ -112,6 +112,24 @@ public class WireMockSnippetTests {
 				.isEqualTo("{\"name\": \"12\"}");
 	}
 
+	@Test
+	public void should_handle_empty_request_body() throws IOException {
+		given(this.operation.getName()).willReturn("foo");
+		WireMockSnippet snippet = new WireMockSnippet();
+		given(this.operation.getRequest()).willReturn(requestPostWithEmptyBody());
+
+		snippet.document(this.operation);
+
+		File stub = new File(this.outputFolder, "stubs/foo.json");
+		assertThat(stub).exists();
+		StubMapping stubMapping = WireMockStubMapping
+				.buildFrom(new String(Files.readAllBytes(stub.toPath())));
+		assertThat(stubMapping.getRequest().getBodyPatterns()).isNullOrEmpty();
+		assertThat(stubMapping.getResponse().getStatus())
+				.isEqualTo(HttpStatus.ACCEPTED.value());
+
+	}
+
 	private OperationResponse response() {
 		return new OperationResponse() {
 
@@ -195,6 +213,47 @@ public class WireMockSnippetTests {
 			public HttpHeaders getHeaders() {
 				HttpHeaders httpHeaders = new HttpHeaders();
 				httpHeaders.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+				return httpHeaders;
+			}
+
+			@Override
+			public HttpMethod getMethod() {
+				return HttpMethod.POST;
+			}
+
+			@Override
+			public Parameters getParameters() {
+				return null;
+			}
+
+			@Override
+			public Collection<OperationRequestPart> getParts() {
+				return null;
+			}
+
+			@Override
+			public URI getUri() {
+				return URI.create("http://foo/bar");
+			}
+		};
+	}
+
+	private OperationRequest requestPostWithEmptyBody() {
+		return new OperationRequest() {
+			@Override
+			public byte[] getContent() {
+				return new byte[0];
+			}
+
+			@Override
+			public String getContentAsString() {
+				return "";
+			}
+
+			@Override
+			public HttpHeaders getHeaders() {
+				HttpHeaders httpHeaders = new HttpHeaders();
+				httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 				return httpHeaders;
 			}
 
