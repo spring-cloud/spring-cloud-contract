@@ -1,5 +1,6 @@
 package org.springframework.cloud.contract.verifier.plugin
 
+import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
@@ -15,13 +16,14 @@ import java.util.concurrent.ConcurrentHashMap
  * @author Marcin Grzejszczak
  */
 @PackageScope
+@CompileStatic
 class GradleContractsDownloader {
 
 	private static final String LATEST_VERSION = '+'
 
 	private final Project project
 	private final Logger log
-	private static final Map<StubConfiguration, File> downloadedContract = new ConcurrentHashMap<>()
+	protected static final Map<StubConfiguration, File> downloadedContract = new ConcurrentHashMap<>()
 	
 	GradleContractsDownloader(Project project, Logger log) {
 		this.project = project
@@ -31,24 +33,29 @@ class GradleContractsDownloader {
 	File downloadAndUnpackContractsIfRequired(ContractVerifierExtension extension,
 											  ContractVerifierConfigProperties config) {
 		File defaultContractsDir = extension.contractsDslDir
-		this.log.info("Project has group id [${this.project.group}], artifact id [${this.project.name}]")
+		this.log.info("Project has group id [{}], artifact id [{}]", this.project.group, this.project.name)
 		// download contracts, unzip them and pass as output directory
 		if (shouldDownloadContracts(extension)) {
 			this.log.info("For project [${this.project.name}] Download dependency is provided - will download contract jars")
 			this.log.info("Contract dependency [{}]", extension.contractDependency)
 			StubConfiguration configuration = stubConfiguration(extension.contractDependency)
 			this.log.info("Got the following contract dependency to download [{}]", configuration)
-			File cachedFolder = downloadedContract.get(configuration)
-			if (cachedFolder) {
-				this.log.info("For project [${this.project.name}] Returning the cached location of the contracts")
-				contractDownloader(extension, configuration).updatePropertiesWithInclusion(cachedFolder, config)
-				return cachedFolder
+			this.log.info("The contract dependency is a changing one [{}] and cache download switch is set to [{}]",
+					configuration.isVersionChanging(), extension.cacheDownloadedContracts)
+			if (!configuration.isVersionChanging() && extension.cacheDownloadedContracts) {
+				this.log.info("Resolved a non changing version - will try to return the folder from a cache")
+				File cachedFolder = downloadedContract.get(configuration)
+				if (cachedFolder) {
+					this.log.info("For project [{}] returning the cached location of the contracts", this.project.name)
+					contractDownloader(extension, configuration).updatePropertiesWithInclusion(cachedFolder, config)
+					return cachedFolder
+				}
 			}
 			File downloadedContracts = contractDownloader(extension, configuration).unpackedDownloadedContracts(config)
 			downloadedContract.put(configuration, downloadedContracts)
 			return downloadedContracts
 		}
-		this.log.info("For project [${this.project.name}] will use contracts provided in the folder [" + defaultContractsDir + "]")
+		this.log.info("For project [{}] will use contracts provided in the folder [{}]", this.project.name, defaultContractsDir)
 		return defaultContractsDir
 	}
 
@@ -58,12 +65,12 @@ class GradleContractsDownloader {
 						StringUtils.hasText(extension.contractDependency.stringNotation))
 	}
 
-	private ContractDownloader contractDownloader(ContractVerifierExtension extension, StubConfiguration configuration) {
+	protected ContractDownloader contractDownloader(ContractVerifierExtension extension, StubConfiguration configuration) {
 		return new ContractDownloader(stubDownloader(extension), configuration,
 				extension.contractsPath, this.project.group as String, this.project.name)
 	}
 
-	private AetherStubDownloader stubDownloader(ContractVerifierExtension extension) {
+	protected AetherStubDownloader stubDownloader(ContractVerifierExtension extension) {
 		return new AetherStubDownloader(
 				new StubRunnerOptionsBuilder()
 						.withStubRepositoryRoot(extension.contractsRepositoryUrl)

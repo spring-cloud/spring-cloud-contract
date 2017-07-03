@@ -45,4 +45,19 @@ class StubConfigurationSpec extends Specification {
 
 	}
 
+	@Unroll
+	def 'should resolve [#ivy] as a changing version [#result]'() {
+		given:
+			StubConfiguration stubConfiguration = new StubConfiguration(ivy)
+		expect:
+			result == stubConfiguration.isVersionChanging()
+		where:
+			ivy                                       || result
+			'group:artifact:1.0.0.RELEASE:classifier' || false
+			'group:artifact:1.0.0.BUILD-SNAPSHOT:'    || true
+			'group:artifact:1.0.0.SNAPSHOT'           || true
+			'group:artifact:+:'                       || true
+
+	}
+
 }

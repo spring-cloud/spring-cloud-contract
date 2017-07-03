@@ -141,6 +141,12 @@ class ContractVerifierExtension {
 	 */
 	boolean excludeBuildFolders
 
+	/**
+	 * If set to true then will cache the folder where non snapshot contract artifacts
+	 * got downloaded.
+	 */
+	boolean cacheDownloadedContracts = true
+
 	void contractDependency(@DelegatesTo(Dependency) Closure closure) {
 		closure.delegate = contractDependency
 		closure.call()
