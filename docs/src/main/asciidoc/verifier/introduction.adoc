@@ -486,7 +486,7 @@ git merge --no-ff contract-change-pr
 
 *work online*
 
-Now you can disable the offline work for Spring Cloud Contract Stub Runner ad provide where the repository with your stubs is placed. At this moment the stubs of the server side will be automatically downloaded from Nexus / Artifactory.
+Now you can disable the offline work for Spring Cloud Contract Stub Runner and provide where the repository with your stubs is placed. At this moment the stubs of the server side will be automatically downloaded from Nexus / Artifactory.
 You can switch off the value of the `workOffline` parameter in your annotation. Below you can see an
 example of achieving the same by changing the properties.
 
