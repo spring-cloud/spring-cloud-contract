@@ -124,6 +124,7 @@ contracts {
     }
     contractsPath = ''
     contractsWorkOffline = false
+    cacheDownloadedContracts = true
 }
 
 tasks.create(type: Jar, name: 'verifierStubsJar', dependsOn: 'generateClientStubs') {
@@ -443,8 +444,9 @@ If you want to download your contract definitions from a Maven repository you ca
  - **contractDependency** - the contract dependency that contains all the packaged contracts
  - **contractsPath** - path to concrete contracts in the JAR with packaged contracts. Defaults to `groupid/artifactid` where `gropuid` is slash separated.
  - **contractsWorkOffline** - if the dependencies should be downloaded or local Maven only should be reused
-
-For complete information take a look at https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/plugin-info.html[Plugin Documentation]
+ - **cacheDownloadedContracts** - if you want to reuse download JARs that contain contract definitions.
+ We cache only non-snapshot, explicitly provided versions (e.g. `+` or `1.0.0.BUILD-SNAPSHOT` won't get cached).
+ By default this feature is turned on.
 
 ====== Single base class for all tests
 
