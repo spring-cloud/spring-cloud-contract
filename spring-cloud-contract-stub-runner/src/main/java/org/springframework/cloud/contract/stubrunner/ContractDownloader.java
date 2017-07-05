@@ -1,13 +1,13 @@
 package org.springframework.cloud.contract.stubrunner;
 
-import java.io.File;
-import java.lang.invoke.MethodHandles;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.util.StringUtils;
+
+import java.io.File;
+import java.lang.invoke.MethodHandles;
+import java.util.Map;
 
 /**
  * Downloads a JAR with contracts and sets up the plugin configuration with proper
@@ -88,7 +88,7 @@ public class ContractDownloader {
 
 	private String wrapWithAntPattern(String path) {
 		String changedPath = path.replace(File.separator, "/");
-		return "**" + surroundWithSeparator(changedPath) + "**/";
+		return "**" + surroundWithSeparator(changedPath).replace(File.separator, "/") + "**/";
 	}
 
 	private File unpackAndDownloadContracts() {
