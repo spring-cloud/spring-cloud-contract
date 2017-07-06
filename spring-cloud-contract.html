@@ -1384,7 +1384,7 @@ public void shouldBeRejectedDueToAbnormalLoanAmount() {
 <div class="title">Important</div>
 </td>
 <td class="content">
-We&#8217;re placing the contract under <code>src/test/resources/contract/fraud</code> folder. The <code>fraud</code> folder
+We&#8217;re placing the contract under <code>src/test/resources/contracts/fraud</code> folder. The <code>fraud</code> folder
 is important cause we&#8217;ll reference that folder in the producer&#8217;s test base class name.
 </td>
 </tr>
@@ -1745,7 +1745,7 @@ git pull https://your-git-server.com/server-side-fork.git contract-change-pr</co
 <td class="content">
 We&#8217;ve decided to use the "convention based" naming by setting the <code>packageWithBaseClasses</code> property.
 That means that 2 last packages will be combined into a name of the base test class. In our case the contracts
-were placed under <code>src/test/resources/contract/fraud</code>. Since we don&#8217;t have 2 packages starting from the <code>contracts</code>
+were placed under <code>src/test/resources/contracts/fraud</code>. Since we don&#8217;t have 2 packages starting from the <code>contracts</code>
 folder we&#8217;re picking only one which is <code>fraud</code>. We&#8217;re adding the <code>Base</code> suffix and we&#8217;re capitalizing <code>fraud</code>.
 That gives us the <code>FraudBase</code> test class name.
 </td>
@@ -1887,7 +1887,7 @@ git merge --no-ff contract-change-pr</code></pre>
 <p><strong>work online</strong></p>
 </div>
 <div class="paragraph">
-<p>Now you can disable the offline work for Spring Cloud Contract Stub Runner ad provide where the repository with your stubs is placed. At this moment the stubs of the server side will be automatically downloaded from Nexus / Artifactory.
+<p>Now you can disable the offline work for Spring Cloud Contract Stub Runner and provide where the repository with your stubs is placed. At this moment the stubs of the server side will be automatically downloaded from Nexus / Artifactory.
 You can switch off the value of the <code>workOffline</code> parameter in your annotation. Below you can see an
 example of achieving the same by changing the properties.</p>
 </div>
@@ -2758,6 +2758,7 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
     }
     contractsPath = ''
     contractsWorkOffline = false
+    cacheDownloadedContracts = true
 }
 
 tasks.create(type: Jar, name: 'verifierStubsJar', dependsOn: 'generateClientStubs') {
@@ -3278,10 +3279,12 @@ the test class generated from these contracts will extend <code>com.example.base
 <li>
 <p><strong>contractsWorkOffline</strong> - if the dependencies should be downloaded or local Maven only should be reused</p>
 </li>
+<li>
+<p><strong>cacheDownloadedContracts</strong> - if you want to reuse download JARs that contain contract definitions.
+We cache only non-snapshot, explicitly provided versions (e.g. <code>+</code> or <code>1.0.0.BUILD-SNAPSHOT</code> won&#8217;t get cached).
+By default this feature is turned on.</p>
+</li>
 </ul>
-</div>
-<div class="paragraph">
-<p>For complete information take a look at <a href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/plugin-info.html">Plugin Documentation</a></p>
 </div>
 </div>
 <div class="sect5">
