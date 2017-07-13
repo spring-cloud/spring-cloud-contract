@@ -19,14 +19,19 @@ package org.springframework.cloud.contract.stubrunner;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.core.io.support.SpringFactoriesLoader;
+import org.springframework.util.StringUtils;
 
 /**
  * Represents a single instance of ready-to-run stubs. Can run the stubs and then will
@@ -34,6 +39,8 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
  * current groupid and artifactid are matching the corresponding running stub.
  */
 public class StubRunner implements StubRunning {
+
+	private static final Log log = LogFactory.getLog(StubRunner.class);
 
 	private final StubRepository stubRepository;
 	private final StubConfiguration stubsConfiguration;
@@ -61,8 +68,32 @@ public class StubRunner implements StubRunning {
 	@Override
 	public RunningStubs runStubs() {
 		registerShutdownHook();
-		return this.localStubRunner.runStubs(this.stubRunnerOptions, this.stubRepository,
+		RunningStubs stubs = this.localStubRunner.runStubs(this.stubRunnerOptions, this.stubRepository,
 				this.stubsConfiguration);
+		if (this.stubRunnerOptions.hasMappingsOutputFolder()) {
+			String registeredMappings = this.localStubRunner.registeredMappings();
+			if (StringUtils.hasText(registeredMappings)) {
+				File outputMappings = new File(this.stubRunnerOptions.getMappingsOutputFolder(),
+						this.stubsConfiguration.artifactId + "_"
+								+ stubs.getPort(this.stubsConfiguration.toColonSeparatedDependencyNotation()));
+				try {
+					if (outputMappings.exists()) {
+						outputMappings.delete();
+					}
+					outputMappings.getParentFile().mkdirs();
+					outputMappings.createNewFile();
+					Files.write(Paths.get(outputMappings.toURI()), registeredMappings.getBytes());
+					if (log.isDebugEnabled()) {
+						log.debug("Stored the mappings for artifactid [" + this.stubsConfiguration.artifactId + " at [" + outputMappings + "] location");
+					}
+				}
+				catch (IOException e) {
+					log.error("Exception occurred while trying to store the mappings", e);
+					throw new IllegalStateException(e);
+				}
+			}
+		}
+		return stubs;
 	}
 
 	@Override

@@ -92,7 +92,8 @@ public class StubRunnerConfiguration {
 					.withUsername(this.props.getUsername())
 					.withPassword(this.props.getPassword())
 					.withStubPerConsumer(this.props.isStubsPerConsumer())
-					.withConsumerName(consumerName());
+					.withConsumerName(consumerName())
+					.withMappingsOutputFolder(this.props.getMappingsOutputFolder());
 	}
 
 	private String consumerName() {

@@ -91,5 +91,8 @@ class StubServer {
 		return this.contracts;
 	}
 
+	String registeredMappings() {
+		return this.httpServerStub.registeredMappings();
+	}
 
 }

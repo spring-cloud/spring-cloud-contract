@@ -41,7 +41,7 @@ import spock.lang.Specification
 @SpringBootTest(properties = [" stubrunner.cloud.enabled=false", 
 		"stubrunner.camel.enabled=false",
 		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}'])
-@AutoConfigureStubRunner
+@AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/")
 @DirtiesContext
 @ActiveProfiles("test")
 class StubRunnerConfigurationSpec extends Specification {
@@ -101,6 +101,13 @@ class StubRunnerConfigurationSpec extends Specification {
 			fraudPort > 0
 			environment.getProperty("foo", Integer) == fraudPort
 			foo == fraudPort
+	}
+
+	def 'should dump all mappings to a file'() {
+		when:
+			def url = stubFinder.findStubUrl("fraudDetectionServer")
+		then:
+			new File("target/outputmappings/", "fraudDetectionServer_${url.port}").exists()
 	}
 
 	@Configuration
