@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.stubrunner;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -77,14 +78,12 @@ public class StubRunner implements StubRunning {
 						this.stubsConfiguration.artifactId + "_"
 								+ stubs.getPort(this.stubsConfiguration.toColonSeparatedDependencyNotation()));
 				try {
-					if (outputMappings.exists()) {
-						outputMappings.delete();
-					}
 					outputMappings.getParentFile().mkdirs();
+					clearOldFiles(outputMappings.getParentFile(), this.stubsConfiguration.artifactId);
 					outputMappings.createNewFile();
 					Files.write(Paths.get(outputMappings.toURI()), registeredMappings.getBytes());
 					if (log.isDebugEnabled()) {
-						log.debug("Stored the mappings for artifactid [" + this.stubsConfiguration.artifactId + " at [" + outputMappings + "] location");
+						log.debug("Stored the mappings for artifactid [" + this.stubsConfiguration.artifactId + "] at [" + outputMappings + "] location");
 					}
 				}
 				catch (IOException e) {
@@ -94,6 +93,27 @@ public class StubRunner implements StubRunning {
 			}
 		}
 		return stubs;
+	}
+
+	private void clearOldFiles(File outputFolder, final String filename) {
+		File[] files = outputFolder.listFiles(new FilenameFilter() {
+			@Override public boolean accept(final File dir, final String name) {
+				return name.startsWith(filename);
+			}
+		});
+		if (files == null) {
+			if(log.isDebugEnabled()) {
+				log.debug("Failed to retrieve any mappings");
+			}
+			return;
+		}
+		for (final File file : files) {
+			if (!file.delete()) {
+				if(log.isDebugEnabled()) {
+					log.debug("Exception occurred while trying to remove [" + file.getAbsolutePath() + "]");
+				}
+			}
+		}
 	}
 
 	@Override
