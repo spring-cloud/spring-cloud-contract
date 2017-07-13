@@ -36,6 +36,11 @@ class Header extends DslProperty {
 		this.name = name
 	}
 
+	Header(String name, MatchingStrategy value) {
+		super(value)
+		this.name = name
+	}
+
 	Header(String name, Object value) {
 		super(value)
 		this.name = name
