@@ -1339,6 +1339,12 @@ The generated tests all boil down to RestAssured in some form or fashion which r
 logging.level.org.apache.http.wire=DEBUG
 ----
 
+==== How can I see what got registered in the HTTP server stub?
+
+You can use the `mappingsOutputFolder` property on `@AutoConfigureStubRunner` or `StubRunnerRule`
+to dump all mappings per artifact id. Also the port at which the given stub server was
+started will be attached.
+
 ==== Can I reference the request from the response?
 
 Yes! With version 1.1.0 we've added such a possibility. On the HTTP stub server side we're providing support

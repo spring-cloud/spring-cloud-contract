@@ -215,6 +215,57 @@ Example:
 
 Every stubbed collaborator exposes list of defined mappings under `__/admin/` endpoint.
 
+You can also use the `mappingsOutputFolder` property to dump the mappings to files.
+ For annotation based approach it would look like this
+
+[source,java]
+----
+@AutoConfigureStubRunner(ids="a.b.c:loanIssuance,a.b.c:fraudDetectionServer",
+mappingsOutputFolder = "target/outputmappings/")
+----
+
+and for the JUnit approach like this:
+
+[source,java]
+----
+@ClassRule @Shared StubRunnerRule rule = new StubRunnerRule()
+			.repoRoot("http://some_url")
+			.downloadStub("a.b.c", "loanIssuance")
+			.downloadStub("a.b.c:fraudDetectionServer")
+			.withMappingsOutputFolder("target/outputmappings")
+----
+
+Then if you check out the folder `target/outputmappings` you would see the following structure
+
+[source,bash]
+----
+.
+├── fraudDetectionServer_13705
+└── loanIssuance_12255
+----
+
+That means that there were two stubs registered. `fraudDetectionServer` was registered at port `13705`
+and `loanIssuance` at port `12255`. If we take a look at one of the files we would see (for WireMock)
+mappings available for the given server:
+
+[souce,json]
+----
+[{
+  "id" : "f9152eb9-bf77-4c38-8289-90be7d10d0d7",
+  "request" : {
+    "url" : "/name",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "fraudDetectionServer"
+  },
+  "uuid" : "f9152eb9-bf77-4c38-8289-90be7d10d0d7"
+},
+...
+]
+----
+
 ===== Messaging Stubs
 
 Depending on the provided Stub Runner dependency and the DSL the messaging routes are automatically set up.

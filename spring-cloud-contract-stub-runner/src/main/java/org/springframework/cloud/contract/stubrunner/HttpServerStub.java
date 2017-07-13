@@ -44,6 +44,11 @@ public interface HttpServerStub {
 	HttpServerStub registerMappings(Collection<File> stubFiles);
 
 	/**
+	 * Returns a collection of registered mappings
+	 */
+	String registeredMappings();
+
+	/**
 	 * Returns {@code true} if the file is a valid stub mapping
 	 */
 	boolean isAccepted(File file);

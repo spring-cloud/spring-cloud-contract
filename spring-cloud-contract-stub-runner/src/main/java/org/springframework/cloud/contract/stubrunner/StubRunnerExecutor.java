@@ -16,8 +16,6 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
-import groovy.json.JsonOutput;
-
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -28,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import groovy.json.JsonOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.spec.Contract;
@@ -89,6 +88,10 @@ class StubRunnerExecutor implements StubFinder {
 		if (this.stubServer != null) {
 			this.stubServer.stop();
 		}
+	}
+
+	String registeredMappings() {
+		return this.stubServer.registeredMappings();
 	}
 
 	@Override

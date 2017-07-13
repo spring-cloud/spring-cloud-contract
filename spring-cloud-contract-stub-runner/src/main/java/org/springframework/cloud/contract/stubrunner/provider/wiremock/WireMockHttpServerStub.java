@@ -1,20 +1,20 @@
 package org.springframework.cloud.contract.stubrunner.provider.wiremock;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.github.jknack.handlebars.Helper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.stubrunner.HttpServerStub;
@@ -24,6 +24,7 @@ import org.springframework.cloud.contract.wiremock.WireMockSpring;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.SocketUtils;
 import org.springframework.util.StreamUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * Abstraction over WireMock as a HTTP Server Stub
@@ -107,6 +108,18 @@ public class WireMockHttpServerStub implements HttpServerStub {
 		}
 		registerStubMappings(stubFiles);
 		return this;
+	}
+
+	@Override public String registeredMappings() {
+		Collection<String> mappings = new ArrayList<>();
+		for (StubMapping stubMapping : this.wireMockServer.getStubMappings()) {
+			mappings.add(stubMapping.toString());
+		}
+		return jsonArrayOfMappings(mappings);
+	}
+
+	private String jsonArrayOfMappings(Collection<String> mappings) {
+		return "[" + StringUtils.collectionToDelimitedString(mappings, ",\n") + "]";
 	}
 
 	@Override

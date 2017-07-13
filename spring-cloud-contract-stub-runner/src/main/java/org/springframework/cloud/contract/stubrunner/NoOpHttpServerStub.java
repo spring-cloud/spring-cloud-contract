@@ -37,6 +37,10 @@ class NoOpHttpServerStub implements HttpServerStub {
 		return this;
 	}
 
+	@Override public String registeredMappings() {
+		return "";
+	}
+
 	@Override public boolean isAccepted(File file) {
 		return true;
 	}
