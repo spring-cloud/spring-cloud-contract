@@ -762,6 +762,45 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			stubMappingIsValidWireMockStub(json)
 	}
 
+	@Issue("#353")
+	def "should generate request with absent header for client side"() {
+		given:
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
+				request {
+					method 'GET'
+					urlPath( '/some/path/*')
+					headers {
+						header('''Authentication''', absent())
+					}
+				}
+				response {
+					status 200
+				}
+			}
+		when:
+			def json = toWireMockClientJsonStub(groovyDsl)
+		then:
+		AssertionUtil.assertThatJsonsAreEqual(('''
+			{
+			  "request" : {
+				"urlPath" : "/some/path/*",
+				"method" : "GET",
+				"headers" : {
+				  "Authentication" : {
+					"absent" : true
+				  }
+				}
+			  },
+			  "response" : {
+				"status" : 200,
+				"transformers" : [ "response-template" ]
+			  }
+			}
+			'''), json)
+		and:
+			stubMappingIsValidWireMockStub(json)
+	}
+
 	@Issue('#230')
 	def "should generate request with urlPathPattern and queryParameters for client side\
 			when both contains regular expressions"() {
