@@ -90,6 +90,11 @@ public class StubRunnerProperties {
 	 */
 	private String consumerName;
 
+	/**
+	 * Dumps the mappings of each HTTP server to the selected folder
+	 */
+	private String mappingsOutputFolder;
+
 	public int getMinPort() {
 		return this.minPort;
 	}
@@ -184,6 +189,18 @@ public class StubRunnerProperties {
 
 	public void setConsumerName(String consumerName) {
 		this.consumerName = consumerName;
+	}
+
+	public void setRepositoryRoot(Resource repositoryRoot) {
+		this.repositoryRoot = repositoryRoot;
+	}
+
+	public String getMappingsOutputFolder() {
+		return this.mappingsOutputFolder;
+	}
+
+	public void setMappingsOutputFolder(String mappingsOutputFolder) {
+		this.mappingsOutputFolder = mappingsOutputFolder;
 	}
 
 	@Override public String toString() {

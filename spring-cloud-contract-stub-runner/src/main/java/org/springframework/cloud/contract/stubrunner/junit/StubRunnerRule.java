@@ -219,6 +219,14 @@ public class StubRunnerRule implements TestRule, StubFinder {
 		return this;
 	}
 
+	/**
+	 * Allows setting the output folder for mappings
+	 */
+	public StubRunnerRule withMappingsOutputFolder(String mappingsOutputFolder) {
+		this.stubRunnerOptionsBuilder.withMappingsOutputFolder(mappingsOutputFolder);
+		return this;
+	}
+
 	@Override
 	public URL findStubUrl(String groupId, String artifactId) {
 		return this.stubFinder.findStubUrl(groupId, artifactId);

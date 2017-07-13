@@ -23,3 +23,7 @@ include::verifier/spring-cloud-contract-verifier.adoc[]
 == Spring Cloud Contract WireMock
 
 include::spring-cloud-wiremock.adoc[]
+
+== Migrations
+
+include::migrations.adoc[]

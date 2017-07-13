@@ -83,6 +83,11 @@ class MocoHttpServerStub implements HttpServerStub {
 	}
 
 	@Override
+	String registeredMappings() {
+		return ""
+	}
+
+	@Override
 	boolean isAccepted(File file) {
 		return file.name.endsWith(".json")
 	}

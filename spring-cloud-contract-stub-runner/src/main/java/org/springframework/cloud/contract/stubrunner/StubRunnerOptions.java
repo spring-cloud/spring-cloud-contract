@@ -19,6 +19,8 @@ package org.springframework.cloud.contract.stubrunner;
 import java.util.Collection;
 import java.util.Map;
 
+import org.springframework.cloud.contract.stubrunner.util.StringUtils;
+
 /**
  * Technical options related to running StubRunner
  *
@@ -85,12 +87,18 @@ public class StubRunnerOptions {
 	 */
 	private String consumerName;
 
+	/**
+	 * For debugging purposes you can output the registered mappings to a given folder. Each HTTP server
+	 * stub will have its own subfolder where all the mappings will get stored.
+	 */
+	private String mappingsOutputFolder;
+
 	StubRunnerOptions(Integer minPortValue, Integer maxPortValue,
 			String stubRepositoryRoot, boolean workOffline, String stubsClassifier,
 			Collection<StubConfiguration> dependencies,
 			Map<StubConfiguration, Integer> stubIdsToPortMapping,
 			String username, String password, final StubRunnerProxyOptions stubRunnerProxyOptions,
-			boolean stubsPerConsumer, String consumerName) {
+			boolean stubsPerConsumer, String consumerName, String mappingsOutputFolder) {
 		this.minPortValue = minPortValue;
 		this.maxPortValue = maxPortValue;
 		this.stubRepositoryRoot = stubRepositoryRoot;
@@ -103,6 +111,7 @@ public class StubRunnerOptions {
 		this.stubRunnerProxyOptions = stubRunnerProxyOptions;
 		this.stubsPerConsumer = stubsPerConsumer;
 		this.consumerName = consumerName;
+		this.mappingsOutputFolder = mappingsOutputFolder;
 	}
 
 	public Integer port(StubConfiguration stubConfiguration) {
@@ -172,6 +181,18 @@ public class StubRunnerOptions {
 
 	public void setConsumerName(String consumerName) {
 		this.consumerName = consumerName;
+	}
+
+	public boolean hasMappingsOutputFolder() {
+		return StringUtils.hasText(this.mappingsOutputFolder);
+	}
+
+	public String getMappingsOutputFolder() {
+		return this.mappingsOutputFolder;
+	}
+
+	public void setMappingsOutputFolder(String mappingsOutputFolder) {
+		this.mappingsOutputFolder = mappingsOutputFolder;
 	}
 
 	public static class StubRunnerProxyOptions {

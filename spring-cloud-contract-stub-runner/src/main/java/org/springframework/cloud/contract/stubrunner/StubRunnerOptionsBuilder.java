@@ -43,6 +43,7 @@ public class StubRunnerOptionsBuilder {
 	private StubRunnerOptions.StubRunnerProxyOptions stubRunnerProxyOptions;
 	private boolean stubPerConsumer = false;
 	private String consumerName;
+	private String mappingsOutputFolder;
 
 	public StubRunnerOptionsBuilder() {
 	}
@@ -109,10 +110,16 @@ public class StubRunnerOptionsBuilder {
 		return this;
 	}
 
+	public StubRunnerOptionsBuilder withMappingsOutputFolder(String mappingsOutputFolder) {
+		this.mappingsOutputFolder = mappingsOutputFolder;
+		return this;
+	}
+
 	public StubRunnerOptions build() {
 		return new StubRunnerOptions(this.minPortValue, this.maxPortValue, this.stubRepositoryRoot,
 				this.workOffline, this.stubsClassifier, buildDependencies(), this.stubIdsToPortMapping,
-				this.username, this.password, this.stubRunnerProxyOptions, this.stubPerConsumer, this.consumerName);
+				this.username, this.password, this.stubRunnerProxyOptions, this.stubPerConsumer, this.consumerName,
+				this.mappingsOutputFolder);
 	}
 
 	private Collection<StubConfiguration> buildDependencies() {

@@ -1,0 +1,19 @@
+:core_path: ../../../..
+:doc_samples: {core_path}/samples/wiremock-jetty
+:wiremock_tests: {core_path}/spring-cloud-contract-wiremock
+
+In the following document we will write about necessary migration steps between versions.
+
+=== 1.0.x -> 1.1.x
+
+TODO: https://github.com/spring-cloud/spring-cloud-contract/issues/350
+
+=== 1.1.x -> 1.2.x
+
+==== Custom `HttpServerStub`
+
+By introducing a method `String registeredMappings()` in the public interface
+`HttpServerStub`, if you wrote a custom `HttpServerStub` implementation, you'll
+have to implement that method too. It should return a `String` representing
+all mappings available in a single `HttpServerStub`. Related to
+https://github.com/spring-cloud/spring-cloud-contract/issues/355[issue 355].

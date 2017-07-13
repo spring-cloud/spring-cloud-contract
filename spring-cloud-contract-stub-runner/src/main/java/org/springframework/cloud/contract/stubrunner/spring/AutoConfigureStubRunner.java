@@ -98,4 +98,12 @@ public @interface AutoConfigureStubRunner {
 	 * @see <a href="https://github.com/spring-cloud/spring-cloud-contract/issues/224">issue 224</a>
 	 */
 	String consumerName() default "";
+
+	/**
+	 * For debugging purposes you can output the registered mappings to a given folder. Each HTTP server
+	 * stub will have its own subfolder where all the mappings will get stored.
+	 *
+	 * @see <a href="https://github.com/spring-cloud/spring-cloud-contract/issues/355">issue 355</a>
+	 */
+	String mappingsOutputFolder() default "";
 }
