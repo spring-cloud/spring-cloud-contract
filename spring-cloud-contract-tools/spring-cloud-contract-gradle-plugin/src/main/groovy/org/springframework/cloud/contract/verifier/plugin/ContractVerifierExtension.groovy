@@ -90,9 +90,22 @@ class ContractVerifierExtension {
 	 * The URL from which a JAR containing the contracts should get downloaded. If not provided
 	 * but artifactid / coordinates notation was provided then the current Maven's build repositories will be
 	 * taken into consideration
+	 * 
+	 * @deprecated - use {@link ContractVerifierExtension#contractRepository(groovy.lang.Closure)}
 	 */
+	@Deprecated
 	String contractsRepositoryUrl
 
+	/*
+	 * @deprecated - use {@link ContractVerifierExtension#contractRepository(groovy.lang.Closure)}
+	 */
+	@Deprecated
+	void setContractsRepositoryUrl(String contractsRepositoryUrl) {
+		this.contractRepository.repositoryUrl(contractsRepositoryUrl)
+	}
+	
+	ContractRepository contractRepository = new ContractRepository()
+	
 	/**
 	 * Dependency that contains packaged contracts
 	 */
@@ -141,12 +154,6 @@ class ContractVerifierExtension {
 	 */
 	boolean excludeBuildFolders
 
-	/**
-	 * If set to true then will cache the folder where non snapshot contract artifacts
-	 * got downloaded.
-	 */
-	boolean cacheDownloadedContracts = true
-
 	void contractDependency(@DelegatesTo(Dependency) Closure closure) {
 		closure.delegate = contractDependency
 		closure.call()
@@ -154,6 +161,11 @@ class ContractVerifierExtension {
 
 	void baseClassMappings(@DelegatesTo(BaseClassMapping) Closure closure) {
 		closure.delegate = new BaseClassMapping(baseClassMappings)
+		closure.call()
+	}
+
+	void contractRepository(@DelegatesTo(ContractRepository) Closure closure) {
+		closure.delegate = contractRepository
 		closure.call()
 	}
 
@@ -199,6 +211,63 @@ class ContractVerifierExtension {
 
 		void baseClassMapping(Map mapping) {
 			this.delegate.putAll(mapping)
+		}
+	}
+	
+	static class ContractRepository {
+		/**
+		 * Repository URL
+		 */
+		String repositoryUrl
+
+		/**
+		 * Repository username
+		 */
+		String username
+
+		/**
+		 * Repository password
+		 */
+		String password
+
+		/**
+		 * Repository proxy port
+		 */
+		Integer proxyPort
+
+		/**
+		 * Repository proxy host
+		 */
+		String proxyHost
+
+		/**
+		 * If set to true then will cache the folder where non snapshot contract artifacts
+		 * got downloaded.
+		 */
+		boolean cacheDownloadedContracts = true
+
+		void repositoryUrl(String repositoryUrl) {
+			this.repositoryUrl = repositoryUrl
+		}
+
+		void username(String username) {
+			this.username = username
+		}
+
+		void password(String password) {
+			this.password = password
+		}
+
+		void proxyPort(Integer proxyPort) {
+			this.proxyPort = proxyPort
+		}
+
+		void proxyHost(String proxyHost) {
+			this.proxyHost = proxyHost
+		}
+
+		void cacheDownloadedContracts(boolean cacheDownloadedContracts) {
+			this.cacheDownloadedContracts = cacheDownloadedContracts
 		}
 	}
 }

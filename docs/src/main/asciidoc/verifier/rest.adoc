@@ -124,7 +124,9 @@ contracts {
     }
     contractsPath = ''
     contractsWorkOffline = false
-    cacheDownloadedContracts = true
+    contractRepository {
+        cacheDownloadedContracts(true)
+    }
 }
 
 tasks.create(type: Jar, name: 'verifierStubsJar', dependsOn: 'generateClientStubs') {
@@ -440,11 +442,16 @@ To change default configuration just add `configuration` section to plugin defin
 
 If you want to download your contract definitions from a Maven repository you can use
 
- - **contractsRepositoryUrl** - URL to a repo with the artifacts with contracts, if not provided should use the current Maven ones
  - **contractDependency** - the contract dependency that contains all the packaged contracts
  - **contractsPath** - path to concrete contracts in the JAR with packaged contracts. Defaults to `groupid/artifactid` where `gropuid` is slash separated.
  - **contractsWorkOffline** - if the dependencies should be downloaded or local Maven only should be reused
- - **cacheDownloadedContracts** - if you want to reuse download JARs that contain contract definitions.
+ - **contractsRepositoryUrl** - *DEPRECATED PROPERTY - please use the `contractRepository` closure* - URL to a repo with the artifacts with contracts, if not provided should use the current Maven ones
+ - **contractRepository** - closure where you can define properties related to repository with contracts
+    * **username** - username to be used to connect to the repo
+    * **password** - username to be used to connect to the repo
+    * **proxyHost** - proxy host to be used to connect to the repo
+    * **proxyPort** - proxy port to be used to connect to the repo
+    * **cacheDownloadedContracts** - if you want to reuse download JARs that contain contract definitions.
  We cache only non-snapshot, explicitly provided versions (e.g. `+` or `1.0.0.BUILD-SNAPSHOT` won't get cached).
  By default this feature is turned on.
 

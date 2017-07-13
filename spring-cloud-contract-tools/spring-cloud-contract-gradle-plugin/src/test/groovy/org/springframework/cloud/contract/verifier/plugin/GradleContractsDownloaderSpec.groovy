@@ -76,7 +76,7 @@ class GradleContractsDownloaderSpec extends Specification {
 			stubConfig.classifier == "stubs"
 	}
 
-	def "should pick dependency from cache for a non snapshot contract dependency"() {
+	def "should pick dependency from cache for a non snapshot contract dependency with old property"() {
 		given:
 			ContractVerifierExtension ext = new ContractVerifierExtension()
 			ext.with {
@@ -103,6 +103,35 @@ class GradleContractsDownloaderSpec extends Specification {
 			file == expectedFileFromCache
 	}
 
+	def "should pick dependency from cache for a non snapshot contract dependency with new property"() {
+		given:
+			ContractVerifierExtension ext = new ContractVerifierExtension()
+			ext.with {
+				contractDependency {
+					groupId("com.example")
+					artifactId("foo")
+					version("1.0.0")
+					classifier("stubs")
+				}
+				contractRepository {
+					repositoryUrl("foo")
+				}
+			}
+		and:
+			final AetherStubDownloader downloader = Mock(AetherStubDownloader)
+			final ContractDownloader contractDownloader = Mock(ContractDownloader)
+		and:
+			def gradleDownloader = stubbedContractDownloader(downloader, contractDownloader)
+		and:
+			StubConfiguration expectedStubConfig = new StubConfiguration("com.example:foo:1.0.0:stubs")
+			File expectedFileFromCache = new File("foo/bar")
+			GradleContractsDownloader.downloadedContract.put(expectedStubConfig, expectedFileFromCache)
+		when:
+			File file = gradleDownloader.downloadAndUnpackContractsIfRequired(ext, new ContractVerifierConfigProperties())
+		then:
+			file == expectedFileFromCache
+	}
+
 	def "should not pick dependency from cache for a non snapshot contract dependency with cache switch off"() {
 		given:
 			ContractVerifierExtension ext = new ContractVerifierExtension()
@@ -113,8 +142,10 @@ class GradleContractsDownloaderSpec extends Specification {
 					version("1.0.0")
 					classifier("stubs")
 				}
-				contractsRepositoryUrl = "foo"
-				cacheDownloadedContracts = false
+				contractRepository {
+					repositoryUrl("foo")
+					cacheDownloadedContracts(false)
+				}
 			}
 		and:
 			final AetherStubDownloader downloader = Mock(AetherStubDownloader)
@@ -144,7 +175,9 @@ class GradleContractsDownloaderSpec extends Specification {
 					version("1.0.0.BUILD-SNAPSHOT")
 					classifier("stubs")
 				}
-				contractsRepositoryUrl = "foo"
+				contractRepository {
+					repositoryUrl("foo")
+				}
 			}
 		and:
 			final AetherStubDownloader downloader = Mock(AetherStubDownloader)
@@ -191,6 +224,55 @@ class GradleContractsDownloaderSpec extends Specification {
 			File file = gradleDownloader.downloadAndUnpackContractsIfRequired(ext, new ContractVerifierConfigProperties())
 		then:
 			file == new File("/foo/bar/baz")
+	}
+
+	def "should pass contract dependency properties as a parameter to the builder"() {
+		given:
+		ContractVerifierExtension ext = new ContractVerifierExtension()
+		ext.with {
+			contractDependency {
+				groupId("com.example")
+				artifactId("foo")
+				version("1.0.0.BUILD-SNAPSHOT")
+				classifier("stubs")
+			}
+			contractRepository {
+				repositoryUrl("foo")
+				username("foo1")
+				password("foo2")
+				proxyHost("foo3")
+				proxyPort(12)
+			}
+		}
+		and:
+			final AetherStubDownloader downloader = Mock(AetherStubDownloader)
+			final ContractDownloader contractDownloader = Mock(ContractDownloader)
+			File expectedFileNotFromCache = new File("foo/bar/baz")
+			contractDownloader.unpackedDownloadedContracts(_) >> expectedFileNotFromCache
+		and:
+			def gradleDownloader = assertingContractDownloader(downloader, contractDownloader)
+		when:
+			gradleDownloader.downloadAndUnpackContractsIfRequired(ext, new ContractVerifierConfigProperties())
+		then:
+			noExceptionThrown()
+	}
+
+	private GradleContractsDownloader assertingContractDownloader(downloader, contractDownloader) {
+		new GradleContractsDownloader(project, logger) {
+			@Override
+			protected AetherStubDownloader stubDownloader(ContractVerifierExtension extension) {
+				assert extension.contractRepository.username == "foo1"
+				assert extension.contractRepository.password == "foo2"
+				assert extension.contractRepository.proxyHost == "foo3"
+				assert extension.contractRepository.proxyPort == 12
+				return downloader
+			}
+
+			@Override
+			protected ContractDownloader contractDownloader(ContractVerifierExtension extension, StubConfiguration configuration) {
+				return contractDownloader
+			}
+		}
 	}
 
 }
