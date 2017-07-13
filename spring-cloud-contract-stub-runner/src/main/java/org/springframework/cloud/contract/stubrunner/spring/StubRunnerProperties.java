@@ -63,6 +63,7 @@ public class StubRunnerProperties {
 	/**
 	 * The context path that the stub server will run under.
 	 */
+	@Deprecated
 	private String contextPath = "";
 
 	/**

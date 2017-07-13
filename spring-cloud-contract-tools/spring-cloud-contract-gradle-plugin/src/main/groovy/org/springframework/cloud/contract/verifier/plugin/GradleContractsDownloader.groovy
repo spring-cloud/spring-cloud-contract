@@ -9,6 +9,7 @@ import org.springframework.cloud.contract.stubrunner.ContractDownloader
 import org.springframework.cloud.contract.stubrunner.StubConfiguration
 import org.springframework.cloud.contract.stubrunner.StubDownloader
 import org.springframework.cloud.contract.stubrunner.StubDownloaderBuilderProvider
+import org.springframework.cloud.contract.stubrunner.StubRunnerOptions
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.util.StringUtils
@@ -43,8 +44,8 @@ class GradleContractsDownloader {
 			StubConfiguration configuration = stubConfiguration(extension.contractDependency)
 			this.log.info("Got the following contract dependency to download [{}]", configuration)
 			this.log.info("The contract dependency is a changing one [{}] and cache download switch is set to [{}]",
-					configuration.isVersionChanging(), extension.cacheDownloadedContracts)
-			if (!configuration.isVersionChanging() && extension.cacheDownloadedContracts) {
+					configuration.isVersionChanging(), extension.contractRepository.cacheDownloadedContracts)
+			if (!configuration.isVersionChanging() && extension.contractRepository.cacheDownloadedContracts) {
 				this.log.info("Resolved a non changing version - will try to return the folder from a cache")
 				File cachedFolder = downloadedContract.get(configuration)
 				if (cachedFolder) {
@@ -62,7 +63,7 @@ class GradleContractsDownloader {
 	}
 
 	private boolean shouldDownloadContracts(ContractVerifierExtension extension) {
-		return (StringUtils.hasText(extension.contractsRepositoryUrl) || extension.contractsWorkOffline) &&
+		return (StringUtils.hasText(extension.contractRepository.repositoryUrl) || extension.contractsWorkOffline) &&
 				(StringUtils.hasText(extension.contractDependency.artifactId) ||
 						StringUtils.hasText(extension.contractDependency.stringNotation))
 	}
@@ -73,12 +74,16 @@ class GradleContractsDownloader {
 	}
 
 	protected StubDownloader stubDownloader(ContractVerifierExtension extension) {
-		StubDownloaderBuilderProvider provider = new StubDownloaderBuilderProvider()
-		return provider.getOrDefaultDownloader(
-				new StubRunnerOptionsBuilder()
-						.withStubRepositoryRoot(extension.contractsRepositoryUrl)
-						.withWorkOffline(extension.contractsWorkOffline)
-						.build())
+        StubDownloaderBuilderProvider provider = new StubDownloaderBuilderProvider()
+		StubRunnerOptionsBuilder options = new StubRunnerOptionsBuilder()
+				.withStubRepositoryRoot(extension.contractRepository.repositoryUrl)
+				.withWorkOffline(extension.contractsWorkOffline)
+				.withUsername(extension.contractRepository.username)
+				.withPassword(extension.contractRepository.password)
+		if (extension.contractRepository.proxyPort) {
+			options = options.withProxy(extension.contractRepository.proxyHost, extension.contractRepository.proxyPort)
+		}
+		return provider.getOrDefaultDownloader(options.build())
 	}
 
 	@PackageScope StubConfiguration stubConfiguration(ContractVerifierExtension.Dependency contractDependency) {
