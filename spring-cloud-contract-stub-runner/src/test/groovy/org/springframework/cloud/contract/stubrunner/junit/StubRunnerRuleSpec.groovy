@@ -39,7 +39,7 @@ class StubRunnerRuleSpec extends Specification {
 			.repoRoot(StubRunnerRuleSpec.getResource("/m2repo/repository").toURI().toString())
 			.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")
 			.downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")
-			.withMappingsOutputFolder("target/outputmappingsforule")
+			.withMappingsOutputFolder("target/outputmappingsforrule")
 
 
 	def 'should start WireMock servers'() {
@@ -61,7 +61,7 @@ class StubRunnerRuleSpec extends Specification {
 		when:
 			def url = rule.findStubUrl('fraudDetectionServer')
 		then:
-			new File("target/outputmappingsforule", "fraudDetectionServer_${url.port}").exists()
+			new File("target/outputmappingsforrule", "fraudDetectionServer_${url.port}").exists()
 	}
 	// end::classrule[]
 }
