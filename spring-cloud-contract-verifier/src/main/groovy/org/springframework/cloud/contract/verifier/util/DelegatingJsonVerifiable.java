@@ -174,7 +174,11 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 		if (this.delegate.isAssertingAValueInArray() && containsAMatcher) {
 			readyToCheck.methodsBuffer.offer(".value()");
 		} else {
-			readyToCheck.appendMethodWithValue("isEqualTo", String.valueOf(value));
+			if(value instanceof Long) {
+				readyToCheck.appendMethodWithValue("isEqualTo", String.valueOf(value).concat("L"));
+			} else {
+				readyToCheck.appendMethodWithValue("isEqualTo", String.valueOf(value));
+			}
 		}
 		return readyToCheck;
 	}

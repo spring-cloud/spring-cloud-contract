@@ -281,4 +281,36 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String testBody -> testBody.contains('assertThat(response.getHeaderString("Content-Length")).isEqualTo(4);') && testBody.contains('assertThat(response.getHeaderString("Content-Type")).matches("application/pdf.*");') }
 	}
 
+	def "should put L on long values [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method GET()
+					url "test"
+				}
+				response {
+					status 200
+					body(
+							"createdAt": 1502766000000,
+							"updatedAt": 1499476115000
+						)
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['createdAt']").isEqualTo(1502766000000L)""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['updatedAt']").isEqualTo(1499476115000L)""")
+		and:
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName           | methodBuilder
+			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
 }
