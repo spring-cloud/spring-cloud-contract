@@ -99,7 +99,7 @@ class ContractFileScanner {
 				boolean contractFile = isContractFile(file)
 				boolean included = includeMatcher ? file.absolutePath.matches(includeMatcher) : true
 				if (contractFile && included) {
-					addContractToTestGeneration(result, files, file, i, ContractVerifierDslConverter.convertAsCollection(file))
+					addContractToTestGeneration(result, files, file, i, ContractVerifierDslConverter.convertAsCollection(baseDir, file))
 				} else if (!contractFile && included) {
 					addContractToTestGeneration(converters, result, files, file, i)
 				} else {

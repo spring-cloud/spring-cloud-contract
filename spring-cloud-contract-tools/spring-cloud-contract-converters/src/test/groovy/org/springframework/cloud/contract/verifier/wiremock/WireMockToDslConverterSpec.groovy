@@ -88,7 +88,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			def a = ContractVerifierDslConverter.convertAsCollection(
+			def a = ContractVerifierDslConverter.convertAsCollection(new File("/"),
 					"""org.springframework.cloud.contract.spec.Contract.make {
 				$groovyDsl
 			}""")
@@ -143,7 +143,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			def a = ContractVerifierDslConverter.convertAsCollection(
+			def a = ContractVerifierDslConverter.convertAsCollection(new File("/"),
 					"""org.springframework.cloud.contract.spec.Contract.make {
 					$groovyDsl
 				}""")
@@ -196,7 +196,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			ContractVerifierDslConverter.convertAsCollection(
+			ContractVerifierDslConverter.convertAsCollection(new File("/"),
 					"""org.springframework.cloud.contract.spec.Contract.make {
 				$groovyDsl
 			}""").first() == expectedGroovyDsl
@@ -253,7 +253,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			ContractVerifierDslConverter.convertAsCollection(
+			ContractVerifierDslConverter.convertAsCollection(new File("/"),
 					"""org.springframework.cloud.contract.spec.Contract.make {
 				$groovyDsl
 			}""").first() == expectedGroovyDsl
@@ -318,7 +318,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			ContractVerifierDslConverter.convertAsCollection(
+			ContractVerifierDslConverter.convertAsCollection(new File("/"),
 					"""org.springframework.cloud.contract.spec.Contract.make {
 				$groovyDsl
 			}""").first() == expectedGroovyDsl
@@ -356,7 +356,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			Contract evaluatedGroovyDsl = ContractVerifierDslConverter.convertAsCollection(
+			Contract evaluatedGroovyDsl = ContractVerifierDslConverter.convertAsCollection(new File("/"),
 					"""org.springframework.cloud.contract.spec.Contract.make {
 				$groovyDsl
 			}""").first()
@@ -396,7 +396,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			Contract evaluatedGroovyDsl = ContractVerifierDslConverter.convertAsCollection(
+			Contract evaluatedGroovyDsl = ContractVerifierDslConverter.convertAsCollection(new File("/"),
 					"""org.springframework.cloud.contract.spec.Contract.make {
 				$groovyDsl
 			}""").first()
@@ -437,7 +437,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			Contract evaluatedGroovyDsl = ContractVerifierDslConverter.convertAsCollection(
+			Contract evaluatedGroovyDsl = ContractVerifierDslConverter.convertAsCollection(new File("/"),
 					"""org.springframework.cloud.contract.spec.Contract.make {
 				$groovyDsl
 			}""").first()
@@ -477,7 +477,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			Contract evaluatedGroovyDsl = ContractVerifierDslConverter.convertAsCollection(
+			Contract evaluatedGroovyDsl = ContractVerifierDslConverter.convertAsCollection(new File("/"),
 					"""org.springframework.cloud.contract.spec.Contract.make {
 					$groovyDsl
 				}""").first()
@@ -517,7 +517,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			Contract evaluatedGroovyDsl = ContractVerifierDslConverter.convertAsCollection(
+			Contract evaluatedGroovyDsl = ContractVerifierDslConverter.convertAsCollection(new File("/"),
 					"""org.springframework.cloud.contract.spec.Contract.make {
 					$groovyDsl
 				}""").first()
@@ -555,7 +555,7 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			Contract evaluatedGroovyDsl = ContractVerifierDslConverter.convertAsCollection(
+			Contract evaluatedGroovyDsl = ContractVerifierDslConverter.convertAsCollection(new File("/"),
 					"""org.springframework.cloud.contract.spec.Contract.make {
 					$groovyDsl
 				}""").first()

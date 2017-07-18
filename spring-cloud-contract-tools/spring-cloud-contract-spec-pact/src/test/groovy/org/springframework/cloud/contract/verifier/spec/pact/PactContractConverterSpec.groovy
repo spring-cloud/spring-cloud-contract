@@ -266,7 +266,7 @@ class PactContractConverterSpec extends Specification {
 		given:
 			Resource[] contractResources = new PathMatchingResourcePatternResolver().getResources("contracts/*.groovy")
 			Resource[] pactResources = new PathMatchingResourcePatternResolver().getResources("contracts/*.json")
-			Map<String, Collection<Contract>> contracts = contractResources.collectEntries { [(it.filename) : ContractVerifierDslConverter.convertAsCollection(it.file)] }
+			Map<String, Collection<Contract>> contracts = contractResources.collectEntries { [(it.filename) : ContractVerifierDslConverter.convertAsCollection(new File("/"), it.file)] }
 			Map<String, String> jsonPacts = pactResources.collectEntries { [(it.filename) : it.file.text] }
 		when:
 			Map<String, Pact> pacts = contracts.entrySet().collectEntries { [(it.key) : converter.convertTo(it.value)] }

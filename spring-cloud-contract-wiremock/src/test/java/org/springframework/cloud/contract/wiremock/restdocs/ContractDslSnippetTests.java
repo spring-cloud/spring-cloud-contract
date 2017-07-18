@@ -1,10 +1,7 @@
 package org.springframework.cloud.contract.wiremock.restdocs;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -82,7 +79,7 @@ public class ContractDslSnippetTests {
 
 		then(file("/contracts/index.groovy")).exists();
 		then(file("/index/dsl-contract.adoc")).exists();
-		Collection<Contract> parsedContracts = ContractVerifierDslConverter.convertAsCollection(file("/contracts/index.groovy"));
+		Collection<Contract> parsedContracts = ContractVerifierDslConverter.convertAsCollection(new File("/"), file("/contracts/index.groovy"));
 		Contract parsedContract = parsedContracts.iterator().next();
 		then(parsedContract.getRequest().getHeaders().getEntries()).isNotNull();
 		then(headerNames(parsedContract.getRequest().getHeaders().getEntries())).doesNotContain
@@ -105,7 +102,7 @@ public class ContractDslSnippetTests {
 
 		then(file("/contracts/empty.groovy")).exists();
 		then(file("/empty/dsl-contract.adoc")).exists();
-		Collection<Contract> parsedContracts = ContractVerifierDslConverter.convertAsCollection(file("/contracts/empty.groovy"));
+		Collection<Contract> parsedContracts = ContractVerifierDslConverter.convertAsCollection(new File("/"), file("/contracts/empty.groovy"));
 		Contract parsedContract = parsedContracts.iterator().next();
 		then(parsedContract.getRequest().getHeaders()).isNull();
 		then(parsedContract.getRequest().getMethod().getClientValue()).isNotNull();

@@ -155,7 +155,7 @@ class StubRepository {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Collection<Contract> collectContractDescriptors(File descriptorsDirectory) {
+	private Collection<Contract> collectContractDescriptors(final File descriptorsDirectory) {
 		final List<Contract> contractDescriptors = new ArrayList<>();
 		try {
 			Files.walkFileTree(Paths.get(descriptorsDirectory.toURI()),
@@ -167,7 +167,7 @@ class StubRepository {
 							ContractConverter converter = contractConverter(file);
 							if (isContractDescriptor(file) && isStubPerConsumerPathMatching(file)) {
 								contractDescriptors
-								.addAll(ContractVerifierDslConverter.convertAsCollection(file));
+								.addAll(ContractVerifierDslConverter.convertAsCollection(file.getParentFile(), file));
 							} else if (converter != null && isStubPerConsumerPathMatching(file)) {
 								contractDescriptors.addAll(converter.convertFrom(file));
 							}
