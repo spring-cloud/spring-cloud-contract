@@ -71,28 +71,28 @@ class ContractVerifierDslConverterSpec extends Specification {
 
 	def "should convert file to a list of Contracts"() {
 		when:
-			List<Contract> contract = ContractVerifierDslConverter.convertAsCollection(multipleContracts)
+			List<Contract> contract = ContractVerifierDslConverter.convertAsCollection(new File("/"),multipleContracts)
 		then:
 			contract == expectedMultipleContracts
 	}
 
 	def "should convert text to a list of Contracts"() {
 		when:
-			Collection<Contract> contract = ContractVerifierDslConverter.convertAsCollection(multipleContracts.text)
+			Collection<Contract> contract = ContractVerifierDslConverter.convertAsCollection(new File("/"),multipleContracts.text)
 		then:
 			contract == expectedMultipleContracts
 	}
 
 	def "should throw an exception when an invalid file is parsed"() {
 		when:
-			ContractVerifierDslConverter.convertAsCollection(invalidContract.text)
+			ContractVerifierDslConverter.convertAsCollection(new File("/"),invalidContract.text)
 		then:
 			thrown(DslParseException)
 	}
 
 	def "should throw an exception with file path when an invalid file is parsed"() {
 		when:
-			ContractVerifierDslConverter.convertAsCollection(invalidContract)
+			ContractVerifierDslConverter.convertAsCollection(new File("/"),invalidContract)
 		then:
 			DslParseException e = thrown(DslParseException)
 			e.toString().contains("contract.yml")
@@ -100,7 +100,7 @@ class ContractVerifierDslConverterSpec extends Specification {
 
 	def "should throw an exception when a non existent file is parsed"() {
 		when:
-			ContractVerifierDslConverter.convertAsCollection(new File("/foo/bar/baz.foo"))
+			ContractVerifierDslConverter.convertAsCollection(new File("/"),new File("/foo/bar/baz.foo"))
 		then:
 			DslParseException e = thrown(DslParseException)
 			e.cause instanceof FileNotFoundException
@@ -108,14 +108,14 @@ class ContractVerifierDslConverterSpec extends Specification {
 
 	def "should convert file to a list of Contracts when there's only one declared contract"() {
 		when:
-			Collection<Contract> contract = ContractVerifierDslConverter.convertAsCollection(singleContract)
+			Collection<Contract> contract = ContractVerifierDslConverter.convertAsCollection(new File("/"),singleContract)
 		then:
 			contract == [expectedSingleContract]
 	}
 
 	def "should convert text to a list of Contracts when there's only one declared contract"() {
 		when:
-			Collection<Contract> contract = ContractVerifierDslConverter.convertAsCollection(singleContract.text)
+			Collection<Contract> contract = ContractVerifierDslConverter.convertAsCollection(new File("/"),singleContract.text)
 		then:
 			contract == [expectedSingleContract]
 	}

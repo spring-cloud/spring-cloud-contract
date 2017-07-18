@@ -16,6 +16,8 @@
 package org.springframework.cloud.contract.maven.verifier;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -191,23 +193,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 				this.contractsPath, this.contractsRepositoryUrl, this.contractsWorkOffline, getLog(),
 				this.aetherStubDownloaderFactory, this.repoSession).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
-		config.setContractsDslDir(contractsDirectory);
-		config.setGeneratedTestSourcesDir(this.generatedTestSourcesDir);
-		config.setTargetFramework(this.testFramework);
-		config.setTestMode(this.testMode);
-		config.setBasePackageForTests(this.basePackageForTests);
-		config.setBaseClassForTests(this.baseClassForTests);
-		config.setRuleClassForTests(this.ruleClassForTests);
-		config.setNameSuffixForTests(this.nameSuffixForTests);
-		config.setImports(this.imports);
-		config.setStaticImports(this.staticImports);
-		config.setIgnoredFiles(this.ignoredFiles);
-		config.setExcludedFiles(this.excludedFiles);
-		config.setAssertJsonSize(this.assertJsonSize);
-		config.setPackageWithBaseClasses(this.packageWithBaseClasses);
-		if (this.baseClassMappings != null) {
-			config.setBaseClassMappings(mappingsToMap());
-		}
+		setupConfig(config, contractsDirectory);
 		this.project.addTestCompileSourceRoot(this.generatedTestSourcesDir.getAbsolutePath());
 		if (getLog().isInfoEnabled()) {
 			getLog().info(
@@ -225,6 +211,35 @@ public class GenerateTestsMojo extends AbstractMojo {
 			throw new MojoExecutionException(
 					String.format("Spring Cloud Contract Verifier Plugin exception: %s",
 							e.getMessage()), e);
+		}
+	}
+
+	private void setupConfig(ContractVerifierConfigProperties config,
+			File contractsDirectory) {
+		config.setContractsDslDir(contractsDirectory);
+		config.setGeneratedTestSourcesDir(this.generatedTestSourcesDir);
+		config.setTargetFramework(this.testFramework);
+		config.setTestMode(this.testMode);
+		config.setBasePackageForTests(this.basePackageForTests);
+		config.setBaseClassForTests(this.baseClassForTests);
+		config.setRuleClassForTests(this.ruleClassForTests);
+		config.setNameSuffixForTests(this.nameSuffixForTests);
+		config.setImports(this.imports);
+		config.setStaticImports(this.staticImports);
+		config.setIgnoredFiles(this.ignoredFiles);
+		config.setExcludedFiles(this.excludedFiles);
+		config.setAssertJsonSize(this.assertJsonSize);
+		config.setPackageWithBaseClasses(this.packageWithBaseClasses);
+		if (this.baseClassMappings != null) {
+			config.setBaseClassMappings(mappingsToMap());
+		}
+	}
+
+	private URL fileToUrl(File contractsDirectory) {
+		try {
+			return contractsDirectory.toURI().toURL();
+		} catch (MalformedURLException e) {
+			throw new IllegalStateException(e);
 		}
 	}
 

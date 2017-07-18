@@ -31,7 +31,7 @@ class WiremockScenarioConverterSpec extends Specification {
 			Path dsl = Paths.get(this.getClass().getResource("/converter/scenario/main_scenario/01_login.groovy").toURI())
 		when:
 			String content = converter.convertContents("Test", new ContractMetadata(dsl, false, 3, 0,
-					ContractVerifierDslConverter.convertAsCollection(dsl.toFile()))).values().first()
+					ContractVerifierDslConverter.convertAsCollection(new File("/"), dsl.toFile()))).values().first()
 		then:
 			content.contains('"requiredScenarioState" : "Started"')
 			content.contains('"newScenarioState" : "Step1"')
@@ -44,7 +44,7 @@ class WiremockScenarioConverterSpec extends Specification {
 			Path dsl = Paths.get(this.getClass().getResource("/converter/scenario/main_scenario/02_showCart.groovy").toURI())
 		when:
 			String content = converter.convertContents("Test", new ContractMetadata(dsl, false, 3, 1,
-					ContractVerifierDslConverter.convertAsCollection(dsl.toFile()))).values().first()
+					ContractVerifierDslConverter.convertAsCollection(new File("/"), dsl.toFile()))).values().first()
 		then:
 			content.contains('"requiredScenarioState" : "Step1"')
 			content.contains('"newScenarioState" : "Step2"')
@@ -57,7 +57,7 @@ class WiremockScenarioConverterSpec extends Specification {
 			Path dsl = Paths.get(this.getClass().getResource("/converter/scenario/main_scenario/03_logout.groovy").toURI())
 		when:
 			String content = converter.convertContents("Test", new ContractMetadata(dsl, false, 3, 2,
-					ContractVerifierDslConverter.convertAsCollection(dsl.toFile()))).values().first()
+					ContractVerifierDslConverter.convertAsCollection(new File("/"), dsl.toFile()))).values().first()
 		then:
 			content.contains('"requiredScenarioState" : "Step2"')
 			!content.contains('"newScenarioState"')

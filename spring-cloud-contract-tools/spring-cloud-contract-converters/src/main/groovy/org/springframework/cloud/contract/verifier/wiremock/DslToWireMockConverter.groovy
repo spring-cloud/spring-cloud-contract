@@ -17,10 +17,8 @@
 package org.springframework.cloud.contract.verifier.wiremock
 
 import groovy.transform.CompileStatic
-import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.converter.StubGenerator
-import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 
+import org.springframework.cloud.contract.verifier.converter.StubGenerator
 /**
  * WireMock implementation of the {@link StubGenerator}
  *
@@ -45,9 +43,5 @@ abstract class DslToWireMockConverter implements StubGenerator {
 			return inputFileName.substring(i + 1)
 		}
 		return ""
-	}
-
-	protected Collection<Contract> createGroovyDSLFromStringContent(String groovyDslAsString) {
-		return ContractVerifierDslConverter.convertAsCollection(groovyDslAsString)
 	}
 }

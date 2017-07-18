@@ -134,7 +134,7 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.targetFramework = testFramework
 			properties.testMode = mode
-			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2, convertAsCollection(file))
+			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2, convertAsCollection(new File("/"),file))
 			contract.ignored >> true
 			contract.order >> 2
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
@@ -187,7 +187,7 @@ class SingleTestGeneratorSpec extends Specification {
 			properties.targetFramework = testFramework
 			properties.testMode = mode
 			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2,
-					convertAsCollection(file) )
+					convertAsCollection(new File("/"),file) )
 			contract.ignored >> true
 			contract.order >> 2
 			JavaTestGenerator testGenerator = new JavaTestGenerator(checker: new ClassPresenceChecker() {
@@ -258,11 +258,11 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.targetFramework = testFramework
 			ContractMetadata contract = new ContractMetadata(file.toPath(), false, 1, null,
-					convertAsCollection(file) )
+					convertAsCollection(new File("/"),file) )
 			contract.ignored >> false
 		and:
 			ContractMetadata contract2 = new ContractMetadata(file2.toPath(), false, 1, null,
-					convertAsCollection(file2) )
+					convertAsCollection(new File("/"),file2) )
 			contract2.ignored >> false
 		and:
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
@@ -289,7 +289,7 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.testMode = TestMode.JAXRSCLIENT
 			properties.targetFramework = testFramework
-			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2, convertAsCollection(file))
+			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2, convertAsCollection(new File("/"),file))
 			contract.ignored >> true
 			contract.order >> 2
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
@@ -331,11 +331,11 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.targetFramework = testFramework
-			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2, convertAsCollection(file))
+			ContractMetadata contract = new ContractMetadata(file.toPath(), true, 1, 2, convertAsCollection(new File("/"),file))
 			contract.ignored >> true
 			contract.order >> 2
 		and:
-			ContractMetadata contract2 = new ContractMetadata(secondFile.toPath(), true, 1, 2, convertAsCollection(secondFile))
+			ContractMetadata contract2 = new ContractMetadata(secondFile.toPath(), true, 1, 2, convertAsCollection(new File("/"),secondFile))
 			contract2.ignored >> true
 			contract2.order >> 2
 		and:
@@ -377,7 +377,7 @@ class SingleTestGeneratorSpec extends Specification {
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.targetFramework = testFramework
 		and:
-			ContractMetadata contract2 = new ContractMetadata(secondFile.toPath(), true, 1, 2, convertAsCollection(file))
+			ContractMetadata contract2 = new ContractMetadata(secondFile.toPath(), true, 1, 2, convertAsCollection(new File("/"),file))
 			contract2.ignored >> false
 			contract2.order >> 2
 		and:
@@ -445,7 +445,7 @@ class SingleTestGeneratorSpec extends Specification {
 			properties.baseClassForTests = "test.ContextPathTestingBaseClass"
 		and:
 			ContractMetadata contract = new ContractMetadata(file.toPath(), false, 1,
-					null, convertAsCollection(file))
+					null, convertAsCollection(new File("/"),file))
 		and:
 			SingleTestGenerator testGenerator = new JavaTestGenerator()
 		when:
@@ -473,7 +473,7 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties();
 			properties.targetFramework = testFramework
-			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(secondFile))
+			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(new File("/"),secondFile))
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 		when:
 			String clazz = testGenerator.buildClass(properties, [contract], "test", "test", 'com/foo')
@@ -505,7 +505,7 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties();
 			properties.targetFramework = testFramework
-			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(secondFile))
+			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(new File("/"),secondFile))
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 		when:
 			String clazz = testGenerator.buildClass(properties, [contract], "test", "test", 'com/foo')
@@ -537,13 +537,37 @@ class SingleTestGeneratorSpec extends Specification {
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties();
 			properties.targetFramework = testFramework
-			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(secondFile))
+			ContractMetadata contract = new ContractMetadata(secondFile.toPath(), false, 1, null, convertAsCollection(new File("/"),secondFile))
 			JavaTestGenerator testGenerator = new JavaTestGenerator()
 		when:
 			String clazz = testGenerator.buildClass(properties, [contract], "test", "test", 'com/foo')
 		then:
 			clazz.contains("_0() throws Exception")
 			clazz.contains("_1() throws Exception")
+		where:
+			testFramework << [JUNIT, SPOCK]
+	}
+
+	@Issue("#359")
+	def "should generate tests from a contract that references a file for [#testFramework]"() {
+		given:
+			File contractLocation = new File(SingleTestGeneratorSpec.class.getResource("/classpath/readFromFile.groovy").toURI())
+			File temp = tmpFolder.newFolder()
+		and:
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
+				targetFramework: testFramework, contractsDslDir: contractLocation.parentFile,
+					basePackageForTests: "a.b",
+					generatedTestSourcesDir:  temp
+			)
+			TestGenerator testGenerator = new TestGenerator(properties)
+		when:
+			int count = testGenerator.generate()
+		then:
+			count == 1
+		and:
+			String test = new File(temp, "a/b/ContractVerifier" + (testFramework == JUNIT ? "Test.java" : "Spec.groovy")).text
+			test.contains("REQUEST")
+			test.contains("RESPONSE")
 		where:
 			testFramework << [JUNIT, SPOCK]
 	}
