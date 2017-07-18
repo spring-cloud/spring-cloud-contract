@@ -559,6 +559,7 @@ $(addBlockSwitches);
 <li><a href="#_how_can_i_debug_the_request_response_being_sent_by_the_generated_tests_client">How can I debug the request/response being sent by the generated tests client?</a></li>
 <li><a href="#_how_can_i_see_what_got_registered_in_the_http_server_stub">How can I see what got registered in the HTTP server stub?</a></li>
 <li><a href="#_can_i_reference_the_request_from_the_response">Can I reference the request from the response?</a></li>
+<li><a href="#_can_i_reference_text_from_file">Can I reference text from file?</a></li>
 </ul>
 </li>
 <li><a href="#_spring_cloud_contract_verifier_http">Spring Cloud Contract Verifier HTTP</a>
@@ -770,6 +771,7 @@ $(addBlockSwitches);
 <li><a href="#_description">Description</a></li>
 <li><a href="#_name">Name</a></li>
 <li><a href="#_ignoring_contracts">Ignoring contracts</a></li>
+<li><a href="#_passing_values_from_files">Passing values from files</a></li>
 </ul>
 </li>
 <li><a href="#_http_top_level_elements">HTTP Top-Level Elements</a></li>
@@ -875,7 +877,7 @@ $(addBlockSwitches);
 Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer</em></p>
 </div>
 <div class="paragraph">
-<p>2.0.0.BUILD-SNAPSHOT</p>
+<p>1.2.0.BUILD-SNAPSHOT</p>
 </div>
 </div>
 </div>
@@ -2615,6 +2617,13 @@ started will be attached.</p>
 for this for WireMock. In case of other HTTP server stubs you&#8217;ll have to implement the approach yourself.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_can_i_reference_text_from_file">Can I reference text from file?</h4>
+<div class="paragraph">
+<p>Yes! With version 1.2.0 we&#8217;ve added such a possibility. It&#8217;s enough to call <code>file(&#8230;&#8203;)</code> method in the
+DSL and provide a path relative to where the contract lays.</p>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_spring_cloud_contract_verifier_http">Spring Cloud Contract Verifier HTTP</h3>
@@ -2781,7 +2790,9 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
     }
     contractsPath = ''
     contractsWorkOffline = false
-    cacheDownloadedContracts = true
+    contractRepository {
+        cacheDownloadedContracts(true)
+    }
 }
 
 tasks.create(type: Jar, name: 'verifierStubsJar', dependsOn: 'generateClientStubs') {
@@ -3291,9 +3302,6 @@ the test class generated from these contracts will extend <code>com.example.base
 <div class="ulist">
 <ul>
 <li>
-<p><strong>contractsRepositoryUrl</strong> - URL to a repo with the artifacts with contracts, if not provided should use the current Maven ones</p>
-</li>
-<li>
 <p><strong>contractDependency</strong> - the contract dependency that contains all the packaged contracts</p>
 </li>
 <li>
@@ -3303,9 +3311,31 @@ the test class generated from these contracts will extend <code>com.example.base
 <p><strong>contractsWorkOffline</strong> - if the dependencies should be downloaded or local Maven only should be reused</p>
 </li>
 <li>
+<p><strong>contractsRepositoryUrl</strong> - <strong>DEPRECATED PROPERTY - please use the <code>contractRepository</code> closure</strong> - URL to a repo with the artifacts with contracts, if not provided should use the current Maven ones</p>
+</li>
+<li>
+<p><strong>contractRepository</strong> - closure where you can define properties related to repository with contracts</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>username</strong> - username to be used to connect to the repo</p>
+</li>
+<li>
+<p><strong>password</strong> - username to be used to connect to the repo</p>
+</li>
+<li>
+<p><strong>proxyHost</strong> - proxy host to be used to connect to the repo</p>
+</li>
+<li>
+<p><strong>proxyPort</strong> - proxy port to be used to connect to the repo</p>
+</li>
+<li>
 <p><strong>cacheDownloadedContracts</strong> - if you want to reuse download JARs that contain contract definitions.
 We cache only non-snapshot, explicitly provided versions (e.g. <code>+</code> or <code>1.0.0.BUILD-SNAPSHOT</code> won&#8217;t get cached).
 By default this feature is turned on.</p>
+</li>
+</ul>
+</div>
 </li>
 </ul>
 </div>
@@ -4068,7 +4098,7 @@ and proper stubbed routes are created.</p>
 		&lt;dependency&gt;
 			&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 			&lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
-			&lt;version&gt;Finchley.BUILD-SNAPSHOT&lt;/version&gt;
+			&lt;version&gt;Edgware.BUILD-SNAPSHOT&lt;/version&gt;
 			&lt;type&gt;pom&lt;/type&gt;
 			&lt;scope&gt;import&lt;/scope&gt;
 		&lt;/dependency&gt;
@@ -4628,7 +4658,7 @@ mappings available for the given server:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>[{
+<pre class="prettyprint highlight"><code class="language-json" data-lang="json">[{
   "id" : "f9152eb9-bf77-4c38-8289-90be7d10d0d7",
   "request" : {
     "url" : "/name",
@@ -4641,7 +4671,7 @@ mappings available for the given server:</p>
   "uuid" : "f9152eb9-bf77-4c38-8289-90be7d10d0d7"
 },
 ...
-]</pre>
+]</code></pre>
 </div>
 </div>
 </div>
@@ -4748,7 +4778,7 @@ public interface StubFinder extends StubTrigger {
 		.repoRoot(StubRunnerRuleSpec.getResource("/m2repo/repository").toURI().toString())
 		.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")
 		.downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")
-		.withMappingsOutputFolder("target/outputmappingsforule")
+		.withMappingsOutputFolder("target/outputmappingsforrule")
 
 
 def 'should start WireMock servers'() {
@@ -4770,7 +4800,7 @@ def 'should output mappings to output folder'() {
 	when:
 		def url = rule.findStubUrl('fraudDetectionServer')
 	then:
-		new File("target/outputmappingsforule", "fraudDetectionServer_${url.port}").exists()
+		new File("target/outputmappingsforrule", "fraudDetectionServer_${url.port}").exists()
 }</code></pre>
 </div>
 </div>
@@ -6709,6 +6739,75 @@ or just set the <code>ignored</code> property on the contract itself:</p>
 </div>
 </div>
 </div>
+<div class="sect4">
+<h5 id="_passing_values_from_files">Passing values from files</h5>
+<div class="paragraph">
+<p>Starting with version <code>1.2.0</code> it&#8217;s possible to pass values from files. Let&#8217;s assume that we have
+the following resources in our project.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">└── src
+    └── test
+        └── resources
+            └── contracts
+                ├── readFromFile.groovy
+                ├── request.json
+                └── response.json</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And our contract looks like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">import org.springframework.cloud.contract.spec.Contract
+
+Contract.make {
+	request {
+		method('PUT')
+		headers {
+			contentType(applicationJson())
+		}
+		body(file("request.json"))
+		url("/1")
+	}
+	response {
+		status 200
+		body(file("response.json"))
+		headers {
+			contentType(textPlain())
+		}
+	}
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and the json files look like this:</p>
+</div>
+<div class="paragraph">
+<p><strong>request.json</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-json" data-lang="json">{ "status" : "REQUEST" }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>response.json</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-json" data-lang="json">{ "status" : "RESPONSE" }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When test / stub generation takes place then the contents of the file will be
+passed to the body of request / response. All thanks to the <code>file(&#8230;&#8203;)</code> method.
+The argument of that method needs to be a file with location relative to the
+folder in which the contract lays.</p>
+</div>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_http_top_level_elements">HTTP Top-Level Elements</h4>
@@ -8137,7 +8236,7 @@ real requests and you need to setup your generated test&#8217;s base class to wo
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">import io.restassured.RestAssured;
 import org.junit.Before;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(classes = ContextPathTestingBaseClass.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
