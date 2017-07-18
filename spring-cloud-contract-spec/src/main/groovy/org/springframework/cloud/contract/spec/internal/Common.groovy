@@ -161,6 +161,14 @@ class Common {
 		return new ServerDslProperty(serverValue)
 	}
 
+	String file(String relativePath) {
+		URL resource = Thread.currentThread().getContextClassLoader().getResource(relativePath)
+		if (resource == null) {
+			throw new IllegalStateException("File [${relativePath}] is not present")
+		}
+		return new File(resource.toURI()).text
+	}
+
 	/**
 	 * Helper method to provide a better name for the producer side
 	 */

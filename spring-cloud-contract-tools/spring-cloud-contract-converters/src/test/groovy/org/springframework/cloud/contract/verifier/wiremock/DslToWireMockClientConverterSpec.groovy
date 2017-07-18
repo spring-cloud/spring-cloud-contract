@@ -65,7 +65,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 """)
 		when:
 			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
-			ContractVerifierDslConverter.convertAsCollection(file))).values().first()
+			ContractVerifierDslConverter.convertAsCollection(new File("/"),file))).values().first()
 		then:
 		JSONAssert.assertEquals('''
 {"request":{"method":"PUT","urlPattern":"/[0-9]{2}"},"response":{"status":200}}
@@ -101,7 +101,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 ''')
 		when:
 			Map<Contract, String> convertedContents = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(file)))
+					ContractVerifierDslConverter.convertAsCollection(new File("/"),file)))
 		then:
 			convertedContents.size() == 2
 			JSONAssert.assertEquals(jsonResponse(1), convertedContents.values().first(), false)
@@ -142,7 +142,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 		when:
 			Map<Contract, String> convertedContents = converter.convertContents("Test",
 					new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(file)))
+					ContractVerifierDslConverter.convertAsCollection(new File("/"),file)))
 		then:
 			convertedContents.isEmpty()
 	}
@@ -167,7 +167,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 """)
 		when:
 			String json = converter.convertContents("test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(file))).values().first()
+					ContractVerifierDslConverter.convertAsCollection(new File("/"),file))).values().first()
 		then:
 			JSONAssert.assertEquals('''
 {"request":{
@@ -236,7 +236,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 """)
 		when:
 			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(file))).values().first()
+					ContractVerifierDslConverter.convertAsCollection(new File("/"),file))).values().first()
 		then:
 		JSONAssert.assertEquals('''
 {
@@ -354,7 +354,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 """)
 		when:
 			String json = converter.convertContents("test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(file))).values().first()
+					ContractVerifierDslConverter.convertAsCollection(new File("/"),file))).values().first()
 		then:
 			JSONAssert.assertEquals('''
 {"request":{"urlPath":"/foos","method":"GET"},"response":{"body":"[{\\"id\\":\\"123\\"},{\\"id\\":\\"567\\"}]"}}
@@ -393,7 +393,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 """)
 		when:
 			String json = converter.convertContents("test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(file))).values().first()
+					ContractVerifierDslConverter.convertAsCollection(new File("/"),file))).values().first()
 		then:
 			noExceptionThrown()
 		and:
@@ -440,7 +440,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 	''')
 		when:
 			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(file))).values().first()
+					ContractVerifierDslConverter.convertAsCollection(new File("/"),file))).values().first()
 		then:
 			JSONAssert.assertEquals( // tag::wiremock[]
 '''
@@ -595,7 +595,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 	''')
 		when:
 			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(file))).values().first()
+					ContractVerifierDslConverter.convertAsCollection(new File("/"),file))).values().first()
 		then:
 			JSONAssert.assertEquals(//tag::matchers[]
 				'''
@@ -749,7 +749,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 		''')
 		when:
 			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(file))).values().first()
+					ContractVerifierDslConverter.convertAsCollection(new File("/"),file))).values().first()
 		then:
 			JSONAssert.assertEquals(
 					'''

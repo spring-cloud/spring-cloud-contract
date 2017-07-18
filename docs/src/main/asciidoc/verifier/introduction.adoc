@@ -878,3 +878,8 @@ started will be attached.
 
 Yes! With version 1.1.0 we've added such a possibility. On the HTTP stub server side we're providing support
 for this for WireMock. In case of other HTTP server stubs you'll have to implement the approach yourself.
+
+==== Can I reference text from file?
+
+Yes! With version 1.2.0 we've added such a possibility. It's enough to call `file(...)` method in the
+DSL and provide a path relative to where the contract lays.

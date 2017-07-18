@@ -67,6 +67,46 @@ or just set the `ignored` property on the contract itself:
 include::{contract_spec_path}/src/test/groovy/org/springframework/cloud/contract/spec/internal/ContractSpec.groovy[tags=ignored,indent=0]
 ----
 
+===== Passing values from files
+
+Starting with version `1.2.0` it's possible to pass values from files. Let's assume that we have
+the following resources in our project.
+
+[source,bash,indent=0]
+----
+└── src
+    └── test
+        └── resources
+            └── contracts
+                ├── readFromFile.groovy
+                ├── request.json
+                └── response.json
+----
+
+And our contract looks like this:
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/resources/classpath/readFromFile.groovy[indent=0]
+----
+
+and the json files look like this:
+
+*request.json*
+[source,json,indent=0]
+----
+include::{verifier_core_path}/src/test/resources/classpath/request.json[indent=0]
+----
+
+*response.json*
+[source,json,indent=0]
+----
+include::{verifier_core_path}/src/test/resources/classpath/response.json[indent=0]
+----
+
+When test / stub generation takes place then the contents of the file will be
+passed to the body of request / response.
+
 ==== HTTP Top-Level Elements
 
 Following methods can be called in the top-level closure of a contract definition. Request and response are mandatory, priority is optional.

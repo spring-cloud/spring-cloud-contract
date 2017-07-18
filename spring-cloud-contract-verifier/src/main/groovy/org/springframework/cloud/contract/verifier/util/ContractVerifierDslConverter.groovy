@@ -32,6 +32,10 @@ import org.springframework.cloud.contract.spec.Contract
 @Slf4j
 class ContractVerifierDslConverter {
 
+	/**
+	 * @deprecated - use {@link ContractVerifierDslConverter#convertAsCollection(java.io.File, java.lang.String)}
+	 */
+	@Deprecated
 	static Collection<Contract> convertAsCollection(String dsl) {
 		try {
 			Object object = groovyShell().evaluate(dsl)
@@ -44,6 +48,26 @@ class ContractVerifierDslConverter {
 		}
 	}
 
+	static Collection<Contract> convertAsCollection(File rootFolder, String dsl) {
+		ClassLoader classLoader = ContractVerifierDslConverter.getClassLoader()
+		try {
+			ClassLoader urlCl = updatedClassLoader(rootFolder, classLoader)
+			Object object = groovyShell(urlCl, rootFolder).evaluate(dsl)
+			return listOfContracts(object)
+		} catch (DslParseException e) {
+			throw e
+		} catch (Exception e) {
+			log.error("Exception occurred while trying to evaluate the contract", e)
+			throw new DslParseException(e)
+		} finally {
+			Thread.currentThread().setContextClassLoader(classLoader)
+		}
+	}
+
+	/**
+	 * @deprecated - use {@link ContractVerifierDslConverter#convertAsCollection(java.io.File, java.io.File)}
+	 */
+	@Deprecated
 	static Collection<Contract> convertAsCollection(File dsl) {
 		try {
 			Object object = groovyShell().evaluate(dsl)
@@ -56,8 +80,37 @@ class ContractVerifierDslConverter {
 		}
 	}
 
+	static Collection<Contract> convertAsCollection(File rootFolder, File dsl) {
+		ClassLoader classLoader = ContractVerifierDslConverter.getClassLoader()
+		try {
+			ClassLoader urlCl = updatedClassLoader(rootFolder, classLoader)
+			Object object = groovyShell(urlCl, rootFolder).evaluate(dsl)
+			return listOfContracts(object)
+		} catch (DslParseException e) {
+			throw e
+		} catch (Exception e) {
+			log.error("Exception occurred while trying to evaluate the contract at path [${dsl.path}]", e)
+			throw new DslParseException(e)
+		} finally {
+			Thread.currentThread().setContextClassLoader(classLoader)
+		}
+	}
+
+	private static ClassLoader updatedClassLoader(File rootFolder, ClassLoader classLoader) {
+		ClassLoader urlCl = URLClassLoader
+				.newInstance([rootFolder.toURI().toURL()] as URL[], classLoader)
+		Thread.currentThread().setContextClassLoader(urlCl)
+		return urlCl
+	}
+
 	private static GroovyShell groovyShell() {
-		return new GroovyShell(ContractVerifierDslConverter.classLoader, new Binding(), new CompilerConfiguration(sourceEncoding: 'UTF-8'))
+		return new GroovyShell(ContractVerifierDslConverter.classLoader, new CompilerConfiguration(sourceEncoding: 'UTF-8'))
+	}
+
+	private static GroovyShell groovyShell(ClassLoader cl, File rootFolder) {
+		return new GroovyShell(cl,
+				new CompilerConfiguration(sourceEncoding: 'UTF-8',
+						classpathList: [rootFolder.absolutePath]))
 	}
 
 	private static Collection<Contract> listOfContracts(object) {

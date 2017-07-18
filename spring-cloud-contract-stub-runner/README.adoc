@@ -248,7 +248,7 @@ That means that there were two stubs registered. `fraudDetectionServer` was regi
 and `loanIssuance` at port `12255`. If we take a look at one of the files we would see (for WireMock)
 mappings available for the given server:
 
-[souce,json]
+[source,json]
 ----
 [{
   "id" : "f9152eb9-bf77-4c38-8289-90be7d10d0d7",
