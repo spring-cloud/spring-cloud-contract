@@ -1,1 +1,1 @@
-releaser.maven.buildCommand: ./scripts/buildWithDocs.sh
+releaser.maven.buildCommand: ./scripts/noIntegration.sh
