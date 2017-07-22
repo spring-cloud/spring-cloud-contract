@@ -2,9 +2,9 @@ package org.springframework.cloud.contract.stubrunner
 
 import io.specto.hoverfly.junit.HoverflyRule
 import org.eclipse.aether.RepositorySystemSession
-import org.junit.Ignore
 import org.junit.Rule
 import org.springframework.util.ResourceUtils
+import spock.lang.Ignore
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
 
