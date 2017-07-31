@@ -1339,6 +1339,20 @@ The generated tests all boil down to RestAssured in some form or fashion which r
 logging.level.org.apache.http.wire=DEBUG
 ----
 
+==== How can I debug the mapping/request/response being sent by WireMock?
+
+Starting from version `1.2.0` we turn on WireMock logging to
+info and the WireMock notifier to being verbose. Now you will
+exactly know what request was received by WireMock server and which
+matching response definition was picked.
+
+To turn off this feature just bump WireMock logging to `ERROR`
+
+[source,properties,indent=0]
+----
+logging.level.com.github.tomakehurst.wiremock=ERROR
+----
+
 ==== How can I see what got registered in the HTTP server stub?
 
 You can use the `mappingsOutputFolder` property on `@AutoConfigureStubRunner` or `StubRunnerRule`
