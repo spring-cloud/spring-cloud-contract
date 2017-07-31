@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.List;
 import javax.xml.xpath.XPathExpressionException;
 
+import com.github.tomakehurst.wiremock.matching.ContentPattern;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.MatcherAssert;
@@ -55,7 +56,6 @@ import com.github.tomakehurst.wiremock.matching.MatchesJsonPathPattern;
 import com.github.tomakehurst.wiremock.matching.MatchesXPathPattern;
 import com.github.tomakehurst.wiremock.matching.MultiValuePattern;
 import com.github.tomakehurst.wiremock.matching.RequestPattern;
-import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
@@ -214,7 +214,7 @@ public class WireMockRestServiceServer {
 		if (request.getBodyPatterns() == null) {
 			return;
 		}
-		for (final StringValuePattern pattern : request.getBodyPatterns()) {
+		for (final ContentPattern<?> pattern : request.getBodyPatterns()) {
 			if (pattern instanceof MatchesJsonPathPattern) {
 				expect.andExpect(MockRestRequestMatchers.jsonPath(((MatchesJsonPathPattern) pattern).getMatchesJsonPath()).exists());
 			} else if (pattern instanceof MatchesXPathPattern) {
@@ -224,7 +224,7 @@ public class WireMockRestServiceServer {
 		}
 	}
 
-	private RequestMatcher matchContents(final StringValuePattern pattern) {
+	private RequestMatcher matchContents(final ContentPattern pattern) {
 		return new RequestMatcher() {
 			@Override public void match(ClientHttpRequest request)
 					throws IOException, AssertionError {

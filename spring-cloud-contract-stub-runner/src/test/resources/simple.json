@@ -1,0 +1,13 @@
+{
+  "id" : "77514bd4-a102-4478-a3c0-0fda8b905591",
+  "request" : {
+    "method" : "GET",
+    "url": "/foobar"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "foo",
+    "transformers": ["response-template"]
+  },
+  "uuid" : "77514bd4-a102-4478-a3c0-0fda8b905591"
+}
