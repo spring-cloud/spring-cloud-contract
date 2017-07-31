@@ -18,11 +18,17 @@ package org.springframework.cloud.contract.stubrunner.provider.wiremock
 
 import com.github.tomakehurst.wiremock.http.RequestMethod
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import org.junit.Rule
 import spock.lang.Specification
+
+import org.springframework.boot.test.rule.OutputCapture
+import org.springframework.boot.test.web.client.TestRestTemplate
 
 class WireMockHttpServerStubSpec extends Specification {
 	public static
 	final File MAPPING_DESCRIPTOR = new File('src/test/resources/repository/mappings/spring/cloud/ping/ping.json')
+
+	@Rule OutputCapture capture = new OutputCapture()
 
 	def 'should describe stub mapping'() {
 		given:
@@ -39,5 +45,26 @@ class WireMockHttpServerStubSpec extends Specification {
 			assert response.body == 'pong'
 			assert response.headers.contentTypeHeader.mimeTypePart() == 'text/plain'
 		}
+
+		cleanup:
+		mappingDescriptor.stop()
+	}
+
+	def 'should make WireMock print out logs on INFO'() {
+		given:
+		WireMockHttpServerStub mappingDescriptor = new WireMockHttpServerStub().start() as WireMockHttpServerStub
+		mappingDescriptor.registerMappings([
+		        new File(WireMockHttpServerStubSpec.classLoader.getResource("simple.json").toURI())
+		])
+
+		when:
+		String response = new TestRestTemplate().getForObject("http://localhost:${mappingDescriptor.port()}/foobar", String)
+
+		then:
+		response == "foo"
+		capture.toString().contains("Matched response definition")
+
+		cleanup:
+		mappingDescriptor.stop()
 	}
 }

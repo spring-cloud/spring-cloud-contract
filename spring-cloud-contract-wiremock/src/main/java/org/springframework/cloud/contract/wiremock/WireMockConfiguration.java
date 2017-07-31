@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 
+import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -81,6 +82,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 				factory.httpsPort(this.wireMock.getHttpsPort());
 			}
 			registerFiles(factory);
+			factory.notifier(new Slf4jNotifier(true));
 			this.options = factory;
 		}
 		this.server = new WireMockServer(this.options);
