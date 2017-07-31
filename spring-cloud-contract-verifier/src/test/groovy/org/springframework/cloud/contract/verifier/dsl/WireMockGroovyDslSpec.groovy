@@ -1365,7 +1365,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			"bodyPatterns" : [ {
 			  "matchesJsonPath" : "$[?(@.['callback_url'] =~ /((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?/)]"
 			}, {
-			  "matchesJsonPath" : "$[?(@.['email'] =~ /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4}/)]"
+			  "matchesJsonPath" : "$[?(@.['email'] =~ /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,6}/)]"
 			} ],
 			"headers" : {
 			  "Content-Type" : {
@@ -1446,7 +1446,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				"bodyPatterns" : [ {
 				  "matchesJsonPath" : "$[?(@.['callback_url'] =~ /((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?/)]"
 				}, {
-				  "matchesJsonPath" : "$[?(@.['email'] =~ /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,4})?/)]"
+				  "matchesJsonPath" : "$[?(@.['email'] =~ /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,6})?/)]"
 				} ],
 				"headers" : {
 				  "Content-Type" : {
