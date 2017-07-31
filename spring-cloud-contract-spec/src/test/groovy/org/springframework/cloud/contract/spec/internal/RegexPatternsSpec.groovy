@@ -53,6 +53,7 @@ class RegexPatternsSpec extends Specification {
 			textToMatch   || shouldMatch
 			'asd@asd.com' || true
 			'a.b.'        || false
+			'asdf@asdf.online' || true
 	}
 
 	// @see http://formvalidation.io/validators/uri/
