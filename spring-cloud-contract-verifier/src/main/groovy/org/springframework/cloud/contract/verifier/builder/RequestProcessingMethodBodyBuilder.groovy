@@ -114,9 +114,16 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 
 		Url url = getUrl(request)
 		addQueryParameters(url, bb)
+		addAsyncIfRequired(bb)
 		addUrl(url, bb)
 		addColonIfRequired(bb)
 		bb.unindent()
+	}
+
+	private void addAsyncIfRequired(BlockBuilder bb) {
+		if (response.async) {
+			bb.addLine('.when().async()')
+		}
 	}
 
 	@TypeChecked(TypeCheckingMode.SKIP)

@@ -1531,6 +1531,41 @@ World.'''"""
 		"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | '.when().async()'
 	}
 
+	@Issue('372')
+	def "should generate async body after queryParams when async flag set in response and queryParams set in request"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url('/test') {
+						queryParameters {
+							parameter("param", "value")
+						}
+					}
+				}
+				response {
+					status 200
+					async()
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+			def strippedTest = test.replace('\n', '').replace(' ', '').stripIndent().stripMargin()
+		then:
+			strippedTest.contains('.queryParam("param","value").when().async().get("/test")')
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
+		where:
+			methodBuilderName           | methodBuilder
+			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
 	def "should generate proper test code with array of primitives using #methodBuilderName"() {
 		given:
 			Contract contractDsl = Contract.make {
