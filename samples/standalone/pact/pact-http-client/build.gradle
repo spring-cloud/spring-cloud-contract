@@ -52,7 +52,7 @@ test {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.14'
+    gradleVersion = '4.0.2'
 }
 
 task resolveDependencies {
