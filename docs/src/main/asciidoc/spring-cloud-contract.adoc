@@ -1,7 +1,6 @@
 :toc: left
-:toclevels: 8
+:toclevels: 3
 :nofooter:
-:doctype: book
 :source-highlighter: prettify
 :numbered:
 :icons: font
