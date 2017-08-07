@@ -1,6 +1,13 @@
 :toc: left
 :toclevels: 8
 :nofooter:
+:doctype: book
+:source-highlighter: prettify
+:numbered:
+:icons: font
+:stylesdir: css/
+:stylesheet: manual-singlepage.css
+:sectlinks: true
 
 = Spring Cloud Contract
 
