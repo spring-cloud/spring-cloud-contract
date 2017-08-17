@@ -3658,8 +3658,7 @@ For both Maven and Gradle the setup comes out of the box. But you can customize 
 <div class="title">Maven</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;!-- First disable the default jar setup in the properties section--&gt;
-&lt;!-- we don't want the verifier to do a jar for us --&gt;
-&lt;spring.cloud.contract.verifier.skip&gt;true&lt;/spring.cloud.contract.verifier.skip&gt;
+Unresolved directive in verifier/stubrunner.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer_with_restdocs/pom.xml[tags=skip_jar,indent=0]
 
 &lt;!-- Next add the assembly plugin to your build --&gt;
 &lt;!-- we want the assembly plugin to generate the JAR --&gt;
