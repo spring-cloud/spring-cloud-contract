@@ -41,13 +41,17 @@ import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
  *
  * @author Marcin Grzejszczak
  */
-public class StubRunnerRule implements TestRule, StubFinder {
+public class StubRunnerRule implements TestRule, StubFinder, StubRunnerRuleOptions {
 	private static final String DELIMITER = ":";
 	private static final String LATEST_VERSION = "+";
 
-	private final StubRunnerOptionsBuilder stubRunnerOptionsBuilder = new StubRunnerOptionsBuilder(defaultStubRunnerOptions());
-	private BatchStubRunner stubFinder;
-	private MessageVerifier verifier = new ExceptionThrowingMessageVerifier();
+	StubRunnerOptionsBuilder stubRunnerOptionsBuilder = new StubRunnerOptionsBuilder(defaultStubRunnerOptions());
+	BatchStubRunner stubFinder;
+	MessageVerifier verifier = new ExceptionThrowingMessageVerifier();
+	StubRunnerRule delegate = this;
+
+	public StubRunnerRule() {
+	}
 
 	@Override
 	public Statement apply(final Statement base, Description description) {
@@ -56,14 +60,12 @@ public class StubRunnerRule implements TestRule, StubFinder {
 			public void evaluate() throws Throwable {
 				before();
 				base.evaluate();
-				StubRunnerRule.this.stubFinder.close();
+				StubRunnerRule.this.stubFinder().close();
 			}
 
 			private void before() {
-				StubRunnerRule.this.stubFinder = new BatchStubRunnerFactory(
-						StubRunnerRule.this.stubRunnerOptionsBuilder.build(),
-						StubRunnerRule.this.verifier).buildBatchStubRunner();
-				StubRunnerRule.this.stubFinder.runStubs();
+				stubFinder(new BatchStubRunnerFactory(builder().build(), verifier()).buildBatchStubRunner());
+				StubRunnerRule.this.stubFinder().runStubs();
 			}
 		};
 	}
@@ -87,169 +89,112 @@ public class StubRunnerRule implements TestRule, StubFinder {
 		return builder.build();
 	}
 
-	/**
-	 * Pass the {@link MessageVerifier} that this rule should use.
-	 * If you don't pass anything a {@link ExceptionThrowingMessageVerifier} will be used.
-	 * That means that an exception will be thrown whenever you try to do sth messaging related.
-	 */
-	public StubRunnerRule messageVerifier(MessageVerifier messageVerifier) {
-		this.verifier = messageVerifier;
-		return this;
+	@Override public StubRunnerRule messageVerifier(MessageVerifier messageVerifier) {
+		verifier(messageVerifier);
+		return this.delegate;
 	}
 
-	/**
-	 * Override all options
-	 *
-	 * @see StubRunnerOptions
-	 */
-	public StubRunnerRule options(StubRunnerOptions stubRunnerOptions) {
-		this.stubRunnerOptionsBuilder.withOptions(stubRunnerOptions);
-		return this;
+	@Override public StubRunnerRule options(StubRunnerOptions stubRunnerOptions) {
+		builder().withOptions(stubRunnerOptions);
+		return this.delegate;
 	}
 
-	/**
-	 * Min value of port for WireMock server
-	 */
-	public StubRunnerRule minPort(int minPort) {
-		this.stubRunnerOptionsBuilder.withMinPort(minPort);
-		return this;
+	@Override public StubRunnerRule minPort(int minPort) {
+		builder().withMinPort(minPort);
+		return this.delegate;
 	}
 
-	/**
-	 * Max value of port for WireMock server
-	 */
-	public StubRunnerRule maxPort(int maxPort) {
-		this.stubRunnerOptionsBuilder.withMaxPort(maxPort);
-		return this;
+	@Override public StubRunnerRule maxPort(int maxPort) {
+		builder().withMaxPort(maxPort);
+		return this.delegate;
 	}
 
-	/**
-	 * String URI of repository containing stubs
-	 */
-	public StubRunnerRule repoRoot(String repoRoot) {
-		this.stubRunnerOptionsBuilder.withStubRepositoryRoot(repoRoot);
-		return this;
+	@Override public StubRunnerRule repoRoot(String repoRoot) {
+		builder().withStubRepositoryRoot(repoRoot);
+		return this.delegate;
 	}
 
-	/**
-	 * Should download stubs or use only the local repository
-	 */
-	public StubRunnerRule workOffline(boolean workOffline) {
-		this.stubRunnerOptionsBuilder.withWorkOffline(workOffline);
-		return this;
+	@Override public StubRunnerRule workOffline(boolean workOffline) {
+		builder().withWorkOffline(workOffline);
+		return this.delegate;
 	}
 
-	/**
-	 * Group Id, artifact Id, version and classifier of a single stub to download
-	 */
-	public StubRunnerRule downloadStub(String groupId, String artifactId, String version, String classifier) {
-		this.stubRunnerOptionsBuilder.withStubs(groupId + DELIMITER + artifactId + DELIMITER + version + DELIMITER + classifier);
-		return this;
+	@Override public PortStubRunnerRule downloadStub(String groupId, String artifactId,
+			String version, String classifier) {
+		builder().withStubs(groupId + DELIMITER + artifactId + DELIMITER + version + DELIMITER + classifier);
+		return new PortStubRunnerRule(this.delegate);
 	}
 
-	/**
-	 * Group Id, artifact Id and classifier of a single stub to download in the latest version
-	 */
-	public StubRunnerRule downloadLatestStub(String groupId, String artifactId, String classifier) {
-		this.stubRunnerOptionsBuilder.withStubs(groupId + DELIMITER + artifactId + DELIMITER + LATEST_VERSION + DELIMITER + classifier);
-		return this;
+	@Override public PortStubRunnerRule downloadLatestStub(String groupId, String artifactId,
+			String classifier) {
+		builder().withStubs(groupId + DELIMITER + artifactId + DELIMITER + LATEST_VERSION + DELIMITER + classifier);
+		return new PortStubRunnerRule(this.delegate);
 	}
 
-	/**
-	 * Group Id, artifact Id and version of a single stub to download
-	 */
-	public StubRunnerRule downloadStub(String groupId, String artifactId, String version) {
-		this.stubRunnerOptionsBuilder.withStubs(groupId + DELIMITER + artifactId + DELIMITER + version);
-		return this;
+	@Override public PortStubRunnerRule downloadStub(String groupId, String artifactId,
+			String version) {
+		builder().withStubs(groupId + DELIMITER + artifactId + DELIMITER + version);
+		return new PortStubRunnerRule(this.delegate);
 	}
 
-	/**
-	 * Group Id, artifact Id of a single stub to download. Default classifier will be picked.
-	 */
-	public StubRunnerRule downloadStub(String groupId, String artifactId) {
-		this.stubRunnerOptionsBuilder.withStubs(groupId + DELIMITER + artifactId);
-		return this;
+	@Override public PortStubRunnerRule downloadStub(String groupId, String artifactId) {
+		builder().withStubs(groupId + DELIMITER + artifactId);
+		return new PortStubRunnerRule(this.delegate);
 	}
 
-	/**
-	 * Ivy notation of a single stub to download.
-	 */
-	public StubRunnerRule downloadStub(String ivyNotation) {
-		this.stubRunnerOptionsBuilder.withStubs(ivyNotation);
-		return this;
+	@Override public PortStubRunnerRule downloadStub(String ivyNotation) {
+		builder().withStubs(ivyNotation);
+		return new PortStubRunnerRule(this.delegate);
 	}
 
-	/**
-	 * Stubs to download in Ivy notations
-	 */
-	public StubRunnerRule downloadStubs(String... ivyNotations) {
-		this.stubRunnerOptionsBuilder.withStubs(Arrays.asList(ivyNotations));
-		return this;
+	@Override public StubRunnerRule downloadStubs(String... ivyNotations) {
+		builder().withStubs(Arrays.asList(ivyNotations));
+		return new PortStubRunnerRule(this.delegate);
 	}
 
-	/**
-	 * Stubs to download in Ivy notations
-	 */
-	public StubRunnerRule downloadStubs(List<String> ivyNotations) {
-		this.stubRunnerOptionsBuilder.withStubs(ivyNotations);
-		return this;
+	@Override public StubRunnerRule downloadStubs(List<String> ivyNotations) {
+		builder().withStubs(ivyNotations);
+		return new PortStubRunnerRule(this.delegate);
 	}
 
-	/**
-	 * Appends port to last added stub
-	 */
-	public StubRunnerRule withPort(Integer port) {
-		this.stubRunnerOptionsBuilder.withPort(port);
-		return this;
+	@Override public StubRunnerRule withStubPerConsumer(boolean stubPerConsumer) {
+		builder().withStubPerConsumer(stubPerConsumer);
+		return this.delegate;
 	}
 
-	/**
-	 * Allows stub per consumer
-	 */
-	public StubRunnerRule withStubPerConsumer(boolean stubPerConsumer) {
-		this.stubRunnerOptionsBuilder.withStubPerConsumer(stubPerConsumer);
-		return this;
+	@Override public StubRunnerRule withConsumerName(String consumerName) {
+		builder().withConsumerName(consumerName);
+		return this.delegate;
 	}
 
-	/**
-	 * Allows setting consumer name
-	 */
-	public StubRunnerRule withConsumerName(String consumerName) {
-		this.stubRunnerOptionsBuilder.withConsumerName(consumerName);
-		return this;
-	}
-
-	/**
-	 * Allows setting the output folder for mappings
-	 */
-	public StubRunnerRule withMappingsOutputFolder(String mappingsOutputFolder) {
-		this.stubRunnerOptionsBuilder.withMappingsOutputFolder(mappingsOutputFolder);
-		return this;
+	@Override public StubRunnerRule withMappingsOutputFolder(String mappingsOutputFolder) {
+		builder().withMappingsOutputFolder(mappingsOutputFolder);
+		return this.delegate;
 	}
 
 	@Override
 	public URL findStubUrl(String groupId, String artifactId) {
-		return this.stubFinder.findStubUrl(groupId, artifactId);
+		return this.stubFinder().findStubUrl(groupId, artifactId);
 	}
 
 	@Override
 	public URL findStubUrl(String ivyNotation) {
-		return this.stubFinder.findStubUrl(ivyNotation);
+		return this.stubFinder().findStubUrl(ivyNotation);
 	}
 
 	@Override
 	public RunningStubs findAllRunningStubs() {
-		return this.stubFinder.findAllRunningStubs();
+		return this.stubFinder().findAllRunningStubs();
 	}
 
 	@Override
 	public Map<StubConfiguration, Collection<Contract>> getContracts() {
-		return this.stubFinder.getContracts();
+		return this.stubFinder().getContracts();
 	}
 
 	@Override
 	public boolean trigger(String ivyNotation, String labelName) {
-		boolean result = this.stubFinder.trigger(ivyNotation, labelName);
+		boolean result = this.stubFinder().trigger(ivyNotation, labelName);
 		if (!result) {
 			throw new IllegalStateException("Failed to trigger a message with notation [" + ivyNotation + "] and label [" + labelName + "]");
 		}
@@ -258,7 +203,7 @@ public class StubRunnerRule implements TestRule, StubFinder {
 
 	@Override
 	public boolean trigger(String labelName) {
-		boolean result = this.stubFinder.trigger(labelName);
+		boolean result = this.stubFinder().trigger(labelName);
 		if (!result) {
 			throw new IllegalStateException("Failed to trigger a message with label [" + labelName + "]");
 		}
@@ -267,7 +212,7 @@ public class StubRunnerRule implements TestRule, StubFinder {
 
 	@Override
 	public boolean trigger() {
-		boolean result = this.stubFinder.trigger();
+		boolean result = this.stubFinder().trigger();
 		if (!result) {
 			throw new IllegalStateException("Failed to trigger a message");
 		}
@@ -276,9 +221,32 @@ public class StubRunnerRule implements TestRule, StubFinder {
 
 	@Override
 	public Map<String, Collection<String>> labels() {
-		return this.stubFinder.labels();
+		return this.stubFinder().labels();
 	}
 
+	StubRunnerRule(StubRunnerRule delegate) {
+		this.delegate = delegate;
+	}
+
+	BatchStubRunner stubFinder() {
+		return this.delegate.stubFinder;
+	}
+
+	void stubFinder(BatchStubRunner stubFinder) {
+		this.delegate.stubFinder = stubFinder;
+	}
+
+	MessageVerifier verifier() {
+		return this.delegate.verifier;
+	}
+
+	void verifier(MessageVerifier verifier) {
+		this.delegate.verifier = verifier;
+	}
+
+	StubRunnerOptionsBuilder builder() {
+		return this.delegate.stubRunnerOptionsBuilder;
+	}
 
 	static class ExceptionThrowingMessageVerifier implements MessageVerifier {
 
@@ -299,6 +267,22 @@ public class StubRunnerRule implements TestRule, StubFinder {
 
 		@Override public void send(Object payload, Map headers, String destination) {
 			throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
+		}
+	}
+
+	/**
+	 * Helper class with additional port, related methods once you pick a stub to download
+	 *
+	 * @since 1.2.0
+	 */
+	public static class PortStubRunnerRule extends StubRunnerRule implements PortStubRunnerRuleOptions {
+		PortStubRunnerRule(StubRunnerRule delegate) {
+			super(delegate);
+		}
+
+		@Override public StubRunnerRule withPort(Integer port) {
+			builder().withPort(port);
+			return this.delegate;
 		}
 	}
 
