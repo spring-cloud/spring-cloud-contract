@@ -60,8 +60,8 @@ public @interface AutoConfigureStubRunner {
 	String repositoryRoot() default "";
 
 	/**
-	 * The ids of the stubs to run in "ivy" notation ([groupId]:artifactId:[classifier]:[version][:port]).
-	 * {@code groupId}, {@code classifier}, {@code version} and {@code port} can be optional.
+	 * The ids of the stubs to run in "ivy" notation ([groupId]:artifactId[:version][:classifier][:port]).
+	 * {@code groupId}, {@code version}, {@code classifier} and {@code port} can be optional.
 	 */
 	String[] ids() default {};
 
