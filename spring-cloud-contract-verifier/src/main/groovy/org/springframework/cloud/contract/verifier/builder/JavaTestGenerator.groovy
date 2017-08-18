@@ -99,8 +99,8 @@ class JavaTestGenerator implements SingleTestGenerator {
 						clazz.addImport("${restAssuredPackage}.response.Response")
 					}
 					clazz.addImport('org.junit.Test')
-					clazz.addStaticImport('org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat')
 				}
+				clazz.addStaticImport('org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat')
 				if (configProperties.ruleClassForTests) {
 					clazz.addImport('org.junit.Rule').addRule(configProperties.ruleClassForTests)
 				}

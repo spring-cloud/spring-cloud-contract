@@ -65,22 +65,22 @@ class SingleTestGeneratorSpec extends Specification {
 	private static final List<String> spockClassStrings = ['import com.jayway.jsonpath.DocumentContext', 'import com.jayway.jsonpath.JsonPath',
 											'import spock.lang.Ignore', 'import spock.lang.Specification', 'import spock.lang.Stepwise',
 											'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson', 'import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.*',
-											'@Stepwise', '@Ignore']
+											'@Stepwise', '@Ignore', 'org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat']
 
 	private static final List<String> spockClassRestAssured3Strings = ['import com.jayway.jsonpath.DocumentContext', 'import com.jayway.jsonpath.JsonPath',
 											'import spock.lang.Ignore', 'import spock.lang.Specification', 'import spock.lang.Stepwise',
 											'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson', 'import static io.restassured.module.mockmvc.RestAssuredMockMvc.*',
-											'@Stepwise', '@Ignore']
+											'@Stepwise', '@Ignore', 'org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat']
 
 	private static final List<String> explicitSpockClassStrings = ['import com.jayway.jsonpath.DocumentContext', 'import com.jayway.jsonpath.JsonPath',
 													'import spock.lang.Ignore', 'import spock.lang.Specification', 'import spock.lang.Stepwise',
 													'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson', 'import static com.jayway.restassured.RestAssured.*',
-													'@Stepwise', '@Ignore']
+													'@Stepwise', '@Ignore', 'org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat']
 
 	private static final List<String> explicitSpockRestAssured3ClassStrings = ['import com.jayway.jsonpath.DocumentContext', 'import com.jayway.jsonpath.JsonPath',
 													'import spock.lang.Ignore', 'import spock.lang.Specification', 'import spock.lang.Stepwise',
 													'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson', 'import static io.restassured.RestAssured.*',
-													'@Stepwise', '@Ignore']
+													'@Stepwise', '@Ignore', 'org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat']
 
 	public static final Closure JAVA_ASSERTER = { String classToTest ->
 		String name = Math.abs(new Random().nextInt())
