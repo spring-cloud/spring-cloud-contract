@@ -27,12 +27,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.PollableChannel;
-import org.springframework.stereotype.Component;
 
 /**
  * @author Marcin Grzejszczak
  */
-@Component
 public class SpringIntegrationStubMessages implements
 		MessageVerifier<Message<?>> {
 
