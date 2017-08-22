@@ -17,9 +17,10 @@
 package org.springframework.cloud.contract.stubrunner.util;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -55,28 +56,28 @@ public class ZipCategory {
 		if (destination == null)
 			destination = new File(self.getParent());
 		List<File> unzippedFiles = new ArrayList<>();
-		try {
-			ZipInputStream zipInput = new ZipInputStream(new FileInputStream(self));
-			for (ZipEntry entry = zipInput.getNextEntry(); entry != null; entry = zipInput
-					.getNextEntry()) {
-				if (!entry.isDirectory()) {
-					final File file = new File(destination, entry.getName());
-					if (file.getParentFile() != null) {
-						file.getParentFile().mkdirs();
+		try (InputStream fileInputStream = Files.newInputStream(self.toPath())) {
+			try (ZipInputStream zipInput = new ZipInputStream(fileInputStream)) {
+				for (ZipEntry entry = zipInput.getNextEntry(); entry != null; entry = zipInput
+						.getNextEntry()) {
+					if (!entry.isDirectory()) {
+						final File file = new File(destination, entry.getName());
+						if (file.getParentFile() != null) {
+							file.getParentFile().mkdirs();
+						}
+						try (OutputStream output = Files.newOutputStream(file.toPath())) {
+							StreamUtils.copy(zipInput, output);
+						}
+						unzippedFiles.add(file);
 					}
-					try (FileOutputStream output = new FileOutputStream(file)) {
-						StreamUtils.copy(zipInput, output);
+					else {
+						final File dir = new File(destination, entry.getName());
+						dir.mkdirs();
+						unzippedFiles.add(dir);
 					}
-					unzippedFiles.add(file);
-				}
-				else {
-					final File dir = new File(destination, entry.getName());
-					dir.mkdirs();
-					unzippedFiles.add(dir);
 				}
 			}
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new IllegalStateException("Cannot unzip archive", e);
 		}
 		return unzippedFiles;

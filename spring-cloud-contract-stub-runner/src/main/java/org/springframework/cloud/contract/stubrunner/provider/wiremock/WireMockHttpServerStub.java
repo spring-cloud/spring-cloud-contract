@@ -1,20 +1,20 @@
 package org.springframework.cloud.contract.stubrunner.provider.wiremock;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.github.jknack.handlebars.Helper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.stubrunner.HttpServerStub;
@@ -115,9 +115,9 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	}
 
 	StubMapping getMapping(File file) {
-		try {
-			return StubMapping.buildFrom(StreamUtils.copyToString(
-					new FileInputStream(file), Charset.forName("UTF-8")));
+		try (InputStream stream = Files.newInputStream(file.toPath())) {
+			return StubMapping.buildFrom(
+					StreamUtils.copyToString(stream, Charset.forName("UTF-8")));
 		}
 		catch (IOException e) {
 			throw new IllegalStateException("Cannot read file", e);
