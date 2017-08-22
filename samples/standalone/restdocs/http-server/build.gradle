@@ -42,7 +42,6 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-web")
 	compile("org.springframework.boot:spring-boot-starter-actuator")
 
-	testCompile 'com.google.code.gson:gson'
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
 	testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	testCompile 'org.springframework.cloud:spring-cloud-contract-wiremock'
