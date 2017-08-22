@@ -7511,6 +7511,75 @@ assertions and the one from matchers with an <code>and</code> section):</p>
 '''</code></pre>
 </div>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+If you use a <code>matcher</code> then the part of the request / response that the <code>matcher</code> is addressing
+via the JSON Path will get removed from assertion. In case of verifying a collection you have to create
+matchers for <strong>all</strong> elements of the collection.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s look at the following example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Contract.make {
+    request {
+        method 'GET'
+        url("/foo")
+    }
+    response {
+        status 200
+        body(events: [[
+                                 operation          : 'EXPORT',
+                                 eventId            : '16f1ed75-0bcc-4f0d-a04d-3121798faf99',
+                                 status             : 'OK'
+                         ], [
+                                 operation          : 'INPUT_PROCESSING',
+                                 eventId            : '3bb4ac82-6652-462f-b6d1-75e424a0024a',
+                                 status             : 'OK'
+                         ]
+                ]
+        )
+        testMatchers {
+            jsonPath('$.events[0].operation', byRegex('.+'))
+            jsonPath('$.events[0].eventId', byRegex('^([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})$'))
+            jsonPath('$.events[0].status', byRegex('.+'))
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will lead in creating the following test (showing just the assertion section)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">and:
+	DocumentContext parsedJson = JsonPath.parse(response.body.asString())
+	assertThatJson(parsedJson).array("['events']").contains("['eventId']").isEqualTo("16f1ed75-0bcc-4f0d-a04d-3121798faf99")
+	assertThatJson(parsedJson).array("['events']").contains("['operation']").isEqualTo("EXPORT")
+	assertThatJson(parsedJson).array("['events']").contains("['operation']").isEqualTo("INPUT_PROCESSING")
+	assertThatJson(parsedJson).array("['events']").contains("['eventId']").isEqualTo("3bb4ac82-6652-462f-b6d1-75e424a0024a")
+	assertThatJson(parsedJson).array("['events']").contains("['status']").isEqualTo("OK")
+and:
+	assertThat(parsedJson.read("\$.events[0].operation", String.class)).matches(".+")
+	assertThat(parsedJson.read("\$.events[0].eventId", String.class)).matches("^([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})\$")
+	assertThat(parsedJson.read("\$.events[0].status", String.class)).matches(".+")</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As you can see the assertion is malformed. That&#8217;s because only the first element of the array got asserted.
+In order to fix this it&#8217;s best to apply the assertion to the whole <code>$.events</code> collection and assert it
+via the <code>byCommand(&#8230;&#8203;)</code> method.</p>
+</div>
 </div>
 </div>
 <div class="sect3">
