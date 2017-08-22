@@ -19,10 +19,17 @@ package org.springframework.cloud.contract.stubrunner;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
@@ -51,6 +58,13 @@ import static org.springframework.cloud.contract.stubrunner.util.ZipCategory.unz
  * @author Mariusz Smykula
  */
 public class AetherStubDownloader implements StubDownloader {
+
+	/**
+	 * There are problems with removal of stubs unpacked to a temporary folder.
+	 * That's why we're creating a bounded in-memory storage of unpacked files
+	 * and later we register a shutdown hook to remove all these files.
+	 */
+	private static final Queue<File> TEMP_FILES_LOG = new LinkedBlockingQueue<>(1000);
 
 	private static final Logger log = LoggerFactory.getLogger(AetherStubDownloader.class);
 
@@ -84,6 +98,7 @@ public class AetherStubDownloader implements StubDownloader {
 		this.repositorySystem = newRepositorySystem();
 		this.session = newSession(this.repositorySystem, stubRunnerOptions.workOffline);
 		this.workOffline = stubRunnerOptions.workOffline;
+		registerShutdownHook();
 	}
 
 	private boolean remoteReposMissing() {
@@ -106,6 +121,7 @@ public class AetherStubDownloader implements StubDownloader {
 			log.error("Remote repositories for stubs are not specified and work offline flag wasn't passed");
 		}
 		this.workOffline = false;
+		registerShutdownHook();
 	}
 
 	private List<RemoteRepository> remoteRepositories(StubRunnerOptions stubRunnerOptions) {
@@ -247,7 +263,49 @@ public class AetherStubDownloader implements StubDownloader {
 		tmpDirWhereStubsWillBeUnzipped.deleteOnExit();
 		log.info("Unpacking stub from JAR [URI: " + stubJarUri + "]");
 		unzipTo(new File(stubJarUri), tmpDirWhereStubsWillBeUnzipped);
+		TEMP_FILES_LOG.add(tmpDirWhereStubsWillBeUnzipped);
 		return tmpDirWhereStubsWillBeUnzipped;
 	}
 
+	private void registerShutdownHook() {
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			public void run() {
+				cleanup();
+			}
+		});
+	}
+
+	private void cleanup() {
+		try {
+			for (File file : TEMP_FILES_LOG) {
+				if (file.isDirectory()) {
+					Files.walkFileTree(file.toPath(), new SimpleFileVisitor<Path>() {
+						@Override
+						public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+							if (log.isTraceEnabled()) {
+								log.trace("Removing unzipped file [" + file + "]");
+							}
+							Files.delete(file);
+							return FileVisitResult.CONTINUE;
+						}
+
+						@Override
+						public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+							if (log.isTraceEnabled()) {
+								log.trace("Removing unzipped dir [" + dir + "]");
+							}
+							Files.delete(dir);
+							return FileVisitResult.CONTINUE;
+						}
+					});
+				} else {
+					Files.delete(file.toPath());
+				}
+			}
+		} catch (IOException e) {
+			if (log.isDebugEnabled()) {
+				log.debug("Failed to remove temporary file", e);
+			}
+		}
+	}
 }

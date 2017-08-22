@@ -1,9 +1,10 @@
 package org.springframework.cloud.contract.stubrunner.provider.wiremock;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -130,9 +131,9 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	}
 
 	StubMapping getMapping(File file) {
-		try {
-			return StubMapping.buildFrom(StreamUtils.copyToString(
-					new FileInputStream(file), Charset.forName("UTF-8")));
+		try (InputStream stream = Files.newInputStream(file.toPath())) {
+			return StubMapping.buildFrom(
+					StreamUtils.copyToString(stream, Charset.forName("UTF-8")));
 		}
 		catch (IOException e) {
 			throw new IllegalStateException("Cannot read file", e);
