@@ -1,11 +1,11 @@
 package org.springframework.cloud.contract.wiremock.restdocs;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -136,7 +136,7 @@ public class ContractDslSnippet extends TemplatedSnippet {
 		File output = new File(context.getOutputDirectory(),
 				CONTRACTS_FOLDER + "/" + operation.getName() + ".groovy");
 		output.getParentFile().mkdirs();
-		try (Writer writer = new OutputStreamWriter(new FileOutputStream(output))) {
+		try (Writer writer = new OutputStreamWriter(Files.newOutputStream(output.toPath()))) {
 			writer.append(content);
 		}
 	}

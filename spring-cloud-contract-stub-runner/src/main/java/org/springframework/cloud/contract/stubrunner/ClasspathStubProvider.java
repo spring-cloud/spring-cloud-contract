@@ -2,6 +2,7 @@ package org.springframework.cloud.contract.stubrunner;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -88,7 +89,9 @@ public class ClasspathStubProvider implements StubDownloaderBuilder {
 								new File(tmp, relativePathWithoutFile).toPath());
 						File newFile = new File(directory.toFile(), resource.getFilename());
 						if (!newFile.exists() && !isDirectory(resource)) {
-							Files.copy(resource.getInputStream(), newFile.toPath());
+							try (InputStream stream = resource.getInputStream()) {
+								Files.copy(stream, newFile.toPath());
+							}
 						}
 						if (log.isDebugEnabled()) {
 							log.debug("Stored file [" + newFile + "]");

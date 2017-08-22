@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.converter
 
+import java.nio.file.Files
+
 import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
@@ -37,7 +39,8 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 	@Override
 	public Collection<Contract> convertFrom(File file) {
 		try {
-			YamlContract yamlContract = new Yaml().loadAs(new FileInputStream(file), YamlContract.class)
+			YamlContract yamlContract = new Yaml().loadAs(
+					Files.newInputStream(file.toPath()), YamlContract.class)
 			return [Contract.make {
 				request {
 					method(yamlContract?.request?.method)
