@@ -8403,6 +8403,8 @@ org.springframework.cloud.contract.verifier.converter.YamlContractConverter</cod
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">package org.springframework.cloud.contract.verifier.converter
 
+import java.nio.file.Files
+
 import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
@@ -8424,7 +8426,8 @@ class YamlContractConverter implements ContractConverter&lt;List&lt;YamlContract
 	@Override
 	public Collection&lt;Contract&gt; convertFrom(File file) {
 		try {
-			YamlContract yamlContract = new Yaml().loadAs(new FileInputStream(file), YamlContract.class)
+			YamlContract yamlContract = new Yaml().loadAs(
+					Files.newInputStream(file.toPath()), YamlContract.class)
 			return [Contract.make {
 				request {
 					method(yamlContract?.request?.method)
