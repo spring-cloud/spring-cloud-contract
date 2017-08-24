@@ -4567,15 +4567,18 @@ an existing <code>DiscoveryClient</code> its results will be ignored. However, i
 <div class="sect2">
 <h3 id="_stub_runner_boot_application"><a class="link" href="#_stub_runner_boot_application">2.9. Stub Runner Boot Application</a></h3>
 <div class="paragraph">
-<p>Spring Cloud Contract Verifier Stub Runner Boot is a Spring Boot application that exposes REST endpoints to
+<p>Spring Cloud Contract Stub Runner Boot is a Spring Boot application that exposes REST endpoints to
 trigger the messaging labels and to access started WireMock servers.</p>
 </div>
 <div class="paragraph">
-<p>One of the use-cases is to run some smoke (end to end) tests on a deployed application. You can read
- more about this in the  <a href="http://toomuchcoding.com/blog/2015/09/27/microservice-deployment/">"Microservice Deployment" article at Too Much Coding blog.</a></p>
+<p>One of the use-cases is to run some smoke (end to end) tests on a deployed application.
+You can check out the <a href="https://github.com/spring-cloud/spring-cloud-pipelines">Spring Cloud Pipelines</a>
+project for more information.</p>
 </div>
 <div class="sect3">
 <h4 id="_how_to_use_it"><a class="link" href="#_how_to_use_it">2.9.1. How to use it?</a></h4>
+<div class="sect4">
+<h5 id="_stub_runner_server"><a class="link" href="#_stub_runner_server">Stub Runner Server</a></h5>
 <div class="paragraph">
 <p>Just add the</p>
 </div>
@@ -4589,6 +4592,32 @@ trigger the messaging labels and to access started WireMock servers.</p>
 </div>
 <div class="paragraph">
 <p>For the properties check the <strong>Stub Runner Spring</strong> section.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_spring_cloud_cli"><a class="link" href="#_spring_cloud_cli">Spring Cloud CLI</a></h5>
+<div class="paragraph">
+<p>Starting from <code>1.4.0.RELEASE</code> version of the <a href="http://cloud.spring.io/spring-cloud-cli">Spring Cloud CLI</a>
+project you can start Stub Runner Boot by executing <code>spring cloud stubrunner</code>.</p>
+</div>
+<div class="paragraph">
+<p>In order to pass the configuration just create a <code>stubrunner.yml</code> file in the current working directory
+or a subdirectory called <code>config</code> or in <code>~/.spring-cloud</code>. The file could look like this
+(example for running stubs installed locally)</p>
+</div>
+<div class="listingblock">
+<div class="title">stubrunner.yml</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">stubrunner:
+  workOffline: true
+  ids:
+    - com.example:beer-api-producer:+:9876</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and then just call <code>spring cloud stubrunner</code> from your terminal window to start
+the Stub Runner server. It will be available at port <code>8750</code>.</p>
+</div>
 </div>
 </div>
 <div class="sect3">
