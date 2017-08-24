@@ -59,7 +59,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 			defaultValue = "${project.build.directory}/generated-test-sources/contracts")
 	private File generatedTestSourcesDir;
 
-	@Parameter(defaultValue = "org.springframework.cloud.contract.verifier.tests")
+	@Parameter
 	private String basePackageForTests;
 
 	@Parameter

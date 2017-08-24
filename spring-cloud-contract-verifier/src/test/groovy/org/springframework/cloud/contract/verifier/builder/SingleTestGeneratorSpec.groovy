@@ -572,6 +572,98 @@ class SingleTestGeneratorSpec extends Specification {
 			testFramework << [JUNIT, SPOCK]
 	}
 
+	@Issue("#260")
+	def "should generate tests in a folder taken from basePackageForTests when it is set for [#testFramework]"() {
+		given:
+			File contractLocation = new File(SingleTestGeneratorSpec.class.getResource("/classpath/readFromFile.groovy").toURI())
+			File temp = tmpFolder.newFolder()
+		and:
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
+				targetFramework: testFramework, contractsDslDir: contractLocation.parentFile,
+					basePackageForTests: "a.b", generatedTestSourcesDir:  temp
+			)
+			TestGenerator testGenerator = new TestGenerator(properties)
+		when:
+			int count = testGenerator.generate()
+		then:
+			count == 1
+		and:
+			String test = new File(temp, "a/b/ContractVerifier" + (testFramework == JUNIT ? "Test.java" : "Spec.groovy")).text
+			test.contains("REQUEST")
+			test.contains("RESPONSE")
+		where:
+			testFramework << [JUNIT, SPOCK]
+	}
+
+	@Issue("#260")
+	def "should generate tests in a folder taken from baseClassForTests's package when it is set for [#testFramework]"() {
+		given:
+			File contractLocation = new File(SingleTestGeneratorSpec.class.getResource("/classpath/readFromFile.groovy").toURI())
+			File temp = tmpFolder.newFolder()
+		and:
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
+				targetFramework: testFramework, contractsDslDir: contractLocation.parentFile,
+					baseClassForTests: "a.b.SomeClass", generatedTestSourcesDir:  temp
+			)
+			TestGenerator testGenerator = new TestGenerator(properties)
+		when:
+			int count = testGenerator.generate()
+		then:
+			count == 1
+		and:
+			String test = new File(temp, "a/b/ContractVerifier" + (testFramework == JUNIT ? "Test.java" : "Spec.groovy")).text
+			test.contains("REQUEST")
+			test.contains("RESPONSE")
+		where:
+			testFramework << [JUNIT, SPOCK]
+	}
+
+	@Issue("#260")
+	def "should generate tests in a folder taken from packageWithBaseClasses when it is set for [#testFramework]"() {
+		given:
+			File contractLocation = new File(SingleTestGeneratorSpec.class.getResource("/classpath/readFromFile.groovy").toURI())
+			File temp = tmpFolder.newFolder()
+		and:
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
+				targetFramework: testFramework, contractsDslDir: contractLocation.parentFile,
+					packageWithBaseClasses: "a.b", generatedTestSourcesDir:  temp
+			)
+			TestGenerator testGenerator = new TestGenerator(properties)
+		when:
+			int count = testGenerator.generate()
+		then:
+			count == 1
+		and:
+			String test = new File(temp, "a/b/ContractVerifier" + (testFramework == JUNIT ? "Test.java" : "Spec.groovy")).text
+			test.contains("REQUEST")
+			test.contains("RESPONSE")
+		where:
+			testFramework << [JUNIT, SPOCK]
+	}
+
+	@Issue("#260")
+	def "should generate tests in a default folder when no property was passed for [#testFramework]"() {
+		given:
+			File contractLocation = new File(SingleTestGeneratorSpec.class.getResource("/classpath/readFromFile.groovy").toURI())
+			File temp = tmpFolder.newFolder()
+		and:
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
+				targetFramework: testFramework, contractsDslDir: contractLocation.parentFile,
+					generatedTestSourcesDir:  temp
+			)
+			TestGenerator testGenerator = new TestGenerator(properties)
+		when:
+			int count = testGenerator.generate()
+		then:
+			count == 1
+		and:
+			String test = new File(temp, "org/springframework/cloud/contract/verifier/tests/ContractVerifier" + (testFramework == JUNIT ? "Test.java" : "Spec.groovy")).text
+			test.contains("REQUEST")
+			test.contains("RESPONSE")
+		where:
+			testFramework << [JUNIT, SPOCK]
+	}
+
 
 
 

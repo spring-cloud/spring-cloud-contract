@@ -16,12 +16,12 @@
  */
 package org.springframework.cloud.contract.maven.verifier;
 
-import io.takari.maven.testing.TestMavenRuntime;
-import io.takari.maven.testing.TestResources;
-
 import java.io.File;
 
+import io.takari.maven.testing.TestMavenRuntime;
+import io.takari.maven.testing.TestResources;
 import org.apache.commons.io.FileUtils;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.util.StringUtils;
@@ -42,22 +42,26 @@ public class PluginUnitTest {
 	@Test
 	public void shouldGenerateWireMockStubsInDefaultLocation() throws Exception {
 		File basedir = this.resources.getBasedir("basic");
-		this.maven.executeMojo(basedir, "convert");
+		this.maven.executeMojo(basedir, "convert", defaultPackageForTests());
 		assertFilesPresent(basedir, "target/stubs/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/Sample.json".replace("/", File.separator));
 		assertFilesNotPresent(basedir, "target/stubs/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/Messaging.json".replace("/", File.separator));
+	}
+
+	private Xpp3Dom defaultPackageForTests() {
+		return newParameter("basePackageForTests", "org.springframework.cloud.contract.verifier.tests");
 	}
 
 	@Test
 	public void shouldGenerateWireMockFromStubsDirectory() throws Exception {
 		File basedir = this.resources.getBasedir("withStubs");
-		this.maven.executeMojo(basedir, "convert", newParameter("contractsDirectory", "src/test/resources/stubs"));
+		this.maven.executeMojo(basedir, "convert", defaultPackageForTests(), newParameter("contractsDirectory", "src/test/resources/stubs"));
 		assertFilesPresent(basedir, "target/stubs/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/Sample.json".replace("/", File.separator));
 	}
 
 	@Test
 	public void shouldCopyContracts() throws Exception {
 		File basedir = this.resources.getBasedir("basic");
-		this.maven.executeMojo(basedir, "convert");
+		this.maven.executeMojo(basedir, "convert", defaultPackageForTests());
 		assertFilesPresent(basedir, "target/stubs/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/contracts/Sample.groovy".replace("/", File.separator));
 		assertFilesPresent(basedir, "target/stubs/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/contracts/Messaging.groovy".replace("/", File.separator));
 	}
@@ -65,14 +69,14 @@ public class PluginUnitTest {
 	@Test
 	public void shouldGenerateWireMockStubsInSelectedLocation() throws Exception {
 		File basedir = this.resources.getBasedir("basic");
-		this.maven.executeMojo(basedir, "convert", newParameter("stubsDirectory", "target/foo"));
+		this.maven.executeMojo(basedir, "convert", defaultPackageForTests(), newParameter("stubsDirectory", "target/foo"));
 		assertFilesPresent(basedir, "target/foo/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/Sample.json");
 	}
 
 	@Test
 	public void shouldGenerateContractSpecificationInDefaultLocation() throws Exception {
 		File basedir = this.resources.getBasedir("basic");
-		this.maven.executeMojo(basedir, "generateTests", newParameter("testFramework", "SPOCK"));
+		this.maven.executeMojo(basedir, "generateTests", defaultPackageForTests(), newParameter("testFramework", "SPOCK"));
 		String path = "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierSpec.groovy";
 		assertFilesPresent(basedir, path);
 		File test = new File(basedir, path);
@@ -82,7 +86,7 @@ public class PluginUnitTest {
 	@Test
 	public void shouldGenerateContractTestsInDefaultLocation() throws Exception {
 		File basedir = this.resources.getBasedir("basic");
-		this.maven.executeMojo(basedir, "generateTests");
+		this.maven.executeMojo(basedir, "generateTests", defaultPackageForTests());
 		assertFilesPresent(basedir,
 				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
 	}
@@ -90,7 +94,7 @@ public class PluginUnitTest {
 	@Test
 	public void shouldGenerateContractTestsWithCustomImports() throws Exception {
 		File basedir = this.resources.getBasedir("basic");
-		this.maven.executeMojo(basedir, "generateTests", newParameter("imports", ""));
+		this.maven.executeMojo(basedir, "generateTests", defaultPackageForTests(), newParameter("imports", ""));
 		assertFilesPresent(basedir,
 				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
 	}
@@ -98,7 +102,7 @@ public class PluginUnitTest {
 	@Test
 	public void shouldGenerateContractTestsWithoutArraySize() throws Exception {
 		File basedir = this.resources.getBasedir("basic");
-		this.maven.executeMojo(basedir, "generateTests");
+		this.maven.executeMojo(basedir, "generateTests", defaultPackageForTests());
 		assertFilesPresent(basedir,
 				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
 		File test = new File(basedir, "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
@@ -108,7 +112,7 @@ public class PluginUnitTest {
 	@Test
 	public void shouldGenerateContractTestsWithArraySize() throws Exception {
 		File basedir = this.resources.getBasedir("basic");
-		this.maven.executeMojo(basedir, "generateTests", newParameter("assertJsonSize", "true"));
+		this.maven.executeMojo(basedir, "generateTests", defaultPackageForTests(), newParameter("assertJsonSize", "true"));
 		assertFilesPresent(basedir,
 				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
 		File test = new File(basedir, "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
@@ -118,14 +122,14 @@ public class PluginUnitTest {
 	@Test
 	public void shouldGenerateStubs() throws Exception {
 		File basedir = this.resources.getBasedir("generatedStubs");
-		this.maven.executeMojo(basedir, "generateStubs");
+		this.maven.executeMojo(basedir, "generateStubs", defaultPackageForTests());
 		assertFilesPresent(basedir, "target/sample-project-0.1-stubs.jar");
 	}
 
 	@Test
 	public void shouldGenerateStubsWithMappingsOnly() throws Exception {
 		File basedir = this.resources.getBasedir("generatedStubs");
-		this.maven.executeMojo(basedir, "generateStubs", newParameter("attachContracts", "false"));
+		this.maven.executeMojo(basedir, "generateStubs", defaultPackageForTests(), newParameter("attachContracts", "false"));
 		assertFilesPresent(basedir, "target/sample-project-0.1-stubs.jar");
 		// FIXME: add assertion for jar content
 	}
@@ -133,21 +137,21 @@ public class PluginUnitTest {
 	@Test
 	public void shouldGenerateStubsWithCustomClassifier() throws Exception {
 		File basedir = this.resources.getBasedir("generatedStubs");
-		this.maven.executeMojo(basedir, "generateStubs", newParameter("classifier", "foo"));
+		this.maven.executeMojo(basedir, "generateStubs", defaultPackageForTests(), newParameter("classifier", "foo"));
 		assertFilesPresent(basedir, "target/sample-project-0.1-foo.jar");
 	}
 
 	@Test
 	public void shouldGenerateStubsByDownloadingContractsFromARepo() throws Exception {
 		File basedir = this.resources.getBasedir("basic-remote-contracts");
-		this.maven.executeMojo(basedir, "convert", newParameter("contractsRepositoryUrl", "file://" + PluginUnitTest.class.getClassLoader().getResource("m2repo/repository").getFile().replace("/", File.separator)));
+		this.maven.executeMojo(basedir, "convert", defaultPackageForTests(), newParameter("contractsRepositoryUrl", "file://" + PluginUnitTest.class.getClassLoader().getResource("m2repo/repository").getFile().replace("/", File.separator)));
 		assertFilesPresent(basedir, "target/stubs/META-INF/com.example/server/0.1.BUILD-SNAPSHOT/mappings/com/example/server/client1/contracts/shouldMarkClientAsFraud.json");
 	}
 
 	@Test
 	public void shouldGenerateStubsByDownloadingContractsFromARepoWhenCustomPathIsProvided() throws Exception {
 		File basedir = this.resources.getBasedir("complex-remote-contracts");
-		this.maven.executeMojo(basedir, "convert", newParameter("contractsRepositoryUrl", "file://" + PluginUnitTest.class.getClassLoader().getResource("m2repo/repository").getFile().replace("/", File.separator)));
+		this.maven.executeMojo(basedir, "convert", defaultPackageForTests(), newParameter("contractsRepositoryUrl", "file://" + PluginUnitTest.class.getClassLoader().getResource("m2repo/repository").getFile().replace("/", File.separator)));
 		assertFilesPresent(basedir, "target/stubs/META-INF/com.example.foo.bar.baz/someartifact/0.1.BUILD-SNAPSHOT/mappings/com/example/server/client1/contracts/shouldMarkClientAsFraud.json");
 		assertFilesNotPresent(basedir, "target/stubs/META-INF/com.example.foo.bar.baz/someartifact/0.1.BUILD-SNAPSHOT/mappings/com/foo/bar/baz/shouldBeIgnoredByPlugin.json");
 		assertFilesNotPresent(basedir, "target/stubs/META-INF/com.example.foo.bar.baz/someartifact/0.1.BUILD-SNAPSHOT/contracts/com/foo/bar/baz/shouldBeIgnoredByPlugin.groovy");
@@ -156,28 +160,28 @@ public class PluginUnitTest {
 	@Test
 	public void shouldGenerateOutputWhenCalledConvertFromRootProject() throws Exception {
 		File basedir = this.resources.getBasedir("different-module-configuration");
-		this.maven.executeMojo(basedir, "convert");
+		this.maven.executeMojo(basedir, "convert", defaultPackageForTests());
 		assertFilesPresent(basedir, "target/stubs/META-INF/com.blogspot.toomuchcoding.frauddetection/frauddetection-parent/0.1.0/mappings/shouldMarkClientAsFraud.json");
 	}
 
 	@Test
 	public void shouldGenerateOutputWhenCalledGenerateTestsFromRootProject() throws Exception {
 		File basedir = this.resources.getBasedir("different-module-configuration");
-		this.maven.executeMojo(basedir, "generateTests");
+		this.maven.executeMojo(basedir, "generateTests", defaultPackageForTests());
 		assertFilesPresent(basedir, "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
 	}
 
 	@Test
 	public void shouldGenerateTestsByDownloadingContractsFromARepo() throws Exception {
 		File basedir = this.resources.getBasedir("basic-remote-contracts");
-		this.maven.executeMojo(basedir, "generateTests", newParameter("contractsRepositoryUrl", "file://" + PluginUnitTest.class.getClassLoader().getResource("m2repo/repository").getFile().replace("/", File.separator)));
+		this.maven.executeMojo(basedir, "generateTests", defaultPackageForTests(), newParameter("contractsRepositoryUrl", "file://" + PluginUnitTest.class.getClassLoader().getResource("m2repo/repository").getFile().replace("/", File.separator)));
 		assertFilesPresent(basedir, "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/com/example/server/client1/ContractsTest.java");
 	}
 
 	@Test
 	public void shouldGenerateTestsByDownloadingContractsFromARepoWhenCustomPathIsProvided() throws Exception {
 		File basedir = this.resources.getBasedir("complex-remote-contracts");
-		this.maven.executeMojo(basedir, "generateTests", newParameter("contractsRepositoryUrl", "file://" + PluginUnitTest.class.getClassLoader().getResource("m2repo/repository").getFile().replace("/", File.separator)));
+		this.maven.executeMojo(basedir, "generateTests", defaultPackageForTests(), newParameter("contractsRepositoryUrl", "file://" + PluginUnitTest.class.getClassLoader().getResource("m2repo/repository").getFile().replace("/", File.separator)));
 		assertFilesPresent(basedir, "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/com/example/server/client1/ContractsTest.java");
 		assertFilesNotPresent(basedir, "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/com/foo/bar/BazTest.java");
 		assertFilesNotPresent(basedir, "target/stubs/contracts/com/foo/bar/baz/shouldBeIgnoredByPlugin.groovy");
@@ -187,7 +191,7 @@ public class PluginUnitTest {
 	public void shouldGenerateContractTestsWithBaseClassResolvedFromConvention() throws Exception {
 		File basedir = this.resources.getBasedir("basic-generated-baseclass");
 
-		this.maven.executeMojo(basedir, "generateTests", newParameter("testFramework", "JUNIT"));
+		this.maven.executeMojo(basedir, "generateTests", defaultPackageForTests(), newParameter("testFramework", "JUNIT"));
 
 		String path = "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/hello/V1Test.java";
 		assertFilesPresent(basedir, path);
@@ -199,7 +203,7 @@ public class PluginUnitTest {
 	public void shouldGenerateContractTestsWithBaseClassResolvedFromConventionForSpock() throws Exception {
 		File basedir = this.resources.getBasedir("basic-generated-baseclass");
 
-		this.maven.executeMojo(basedir, "generateTests", newParameter("testFramework", "SPOCK"));
+		this.maven.executeMojo(basedir, "generateTests", defaultPackageForTests(), newParameter("testFramework", "SPOCK"));
 
 		String path = "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/hello/V1Spec.groovy";
 		assertFilesPresent(basedir, path);
@@ -211,7 +215,7 @@ public class PluginUnitTest {
 	public void shouldGenerateContractTestsWithBaseClassResolvedFromMapping() throws Exception {
 		File basedir = this.resources.getBasedir("basic-baseclass-from-mappings");
 
-		this.maven.executeMojo(basedir, "generateTests", newParameter("testFramework", "JUNIT"));
+		this.maven.executeMojo(basedir, "generateTests", defaultPackageForTests(), newParameter("testFramework", "JUNIT"));
 
 		String path = "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/com/hello/V1Test.java";
 		assertFilesPresent(basedir, path);
@@ -223,7 +227,7 @@ public class PluginUnitTest {
 	public void shouldGenerateContractTestsWithBaseClassResolvedFromMappingNameForSpock() throws Exception {
 		File basedir = this.resources.getBasedir("basic-baseclass-from-mappings");
 
-		this.maven.executeMojo(basedir, "generateTests", newParameter("testFramework", "SPOCK"));
+		this.maven.executeMojo(basedir, "generateTests", defaultPackageForTests(), newParameter("testFramework", "SPOCK"));
 
 		String path = "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/com/hello/V1Spec.groovy";
 		assertFilesPresent(basedir, path);
@@ -235,7 +239,7 @@ public class PluginUnitTest {
 	public void shouldGenerateContractTestsWithAFileContainingAListOfContracts() throws Exception {
 		File basedir = this.resources.getBasedir("multiple-contracts");
 
-		this.maven.executeMojo(basedir, "generateTests", newParameter("testFramework", "JUNIT"));
+		this.maven.executeMojo(basedir, "generateTests", defaultPackageForTests(), newParameter("testFramework", "JUNIT"));
 
 		String path = "target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/com/hello/V1Test.java";
 		assertFilesPresent(basedir, path);
@@ -249,7 +253,7 @@ public class PluginUnitTest {
 	public void shouldGenerateStubsWithAFileContainingAListOfContracts() throws Exception {
 		File basedir = this.resources.getBasedir("multiple-contracts");
 
-		this.maven.executeMojo(basedir, "convert", newParameter("stubsDirectory", "target/foo"));
+		this.maven.executeMojo(basedir, "convert", defaultPackageForTests(), newParameter("stubsDirectory", "target/foo"));
 
 		String firstFile = "target/foo/META-INF/org.springframework.cloud.verifier.sample/sample-project/0.1/mappings/com/hello/v1/should post a user.json";
 		File test = new File(basedir, firstFile);
@@ -265,7 +269,7 @@ public class PluginUnitTest {
 	public void shouldGenerateStubsForCommonRepoWithTargetFolder() throws Exception {
 		File basedir = this.resources.getBasedir("common-repo");
 
-		this.maven.executeMojo(basedir, "convert");
+		this.maven.executeMojo(basedir, "convert", defaultPackageForTests());
 
 		assertFilesNotPresent(basedir, "target/generated-test-sources/contracts/");
 		// there will be no stubs cause all files are copied to `target` folder
@@ -278,7 +282,7 @@ public class PluginUnitTest {
 	public void shouldGenerateContractTestsForPactAndMaintainIndents() throws Exception {
 		File basedir = this.resources.getBasedir("pact");
 
-		this.maven.executeMojo(basedir, "generateTests");
+		this.maven.executeMojo(basedir, "generateTests", defaultPackageForTests());
 
 		assertFilesPresent(basedir,
 				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
