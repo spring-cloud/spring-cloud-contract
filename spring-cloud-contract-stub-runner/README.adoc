@@ -448,13 +448,16 @@ an existing `DiscoveryClient` its results will be ignored. However, if you want 
 
 === Stub Runner Boot Application
 
-Spring Cloud Contract Verifier Stub Runner Boot is a Spring Boot application that exposes REST endpoints to
+Spring Cloud Contract Stub Runner Boot is a Spring Boot application that exposes REST endpoints to
 trigger the messaging labels and to access started WireMock servers.
 
-One of the use-cases is to run some smoke (end to end) tests on a deployed application. You can read
- more about this in the  http://toomuchcoding.com/blog/2015/09/27/microservice-deployment/["Microservice Deployment" article at Too Much Coding blog.]
+One of the use-cases is to run some smoke (end to end) tests on a deployed application.
+You can check out the https://github.com/spring-cloud/spring-cloud-pipelines[Spring Cloud Pipelines]
+project for more information.
 
 ==== How to use it?
+
+===== Stub Runner Server
 
 Just add the
 
@@ -466,6 +469,27 @@ compile "org.springframework.cloud:spring-cloud-starter-stub-runner"
 Annotate a class with `@EnableStubRunnerServer`, build a fat-jar and you're ready to go!
 
 For the properties check the *Stub Runner Spring* section.
+
+===== Spring Cloud CLI
+
+Starting from `1.4.0.RELEASE` version of the http://cloud.spring.io/spring-cloud-cli[Spring Cloud CLI]
+project you can start Stub Runner Boot by executing `spring cloud stubrunner`.
+
+In order to pass the configuration just create a `stubrunner.yml` file in the current working directory
+or a subdirectory called `config` or in `~/.spring-cloud`. The file could look like this
+(example for running stubs installed locally)
+
+.stubrunner.yml
+[source,yml,indent=0]
+----
+stubrunner:
+  workOffline: true
+  ids:
+    - com.example:beer-api-producer:+:9876
+----
+
+and then just call `spring cloud stubrunner` from your terminal window to start
+the Stub Runner server. It will be available at port `8750`.
 
 ==== Endpoints
 
