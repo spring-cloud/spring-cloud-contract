@@ -64,7 +64,7 @@ public class PluginIT {
 				.assertLogText("Generated 1 test classes.")
 				.assertLogText("Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings")
 				.assertLogText("Creating new stub")
-				.assertLogText("Running org.springframework.cloud.contract.verifier.tests.ContractVerifierSpec")
+				.assertLogText("Running hello.ContractVerifierSpec")
 				.assertErrorFreeLog();
 	}
 
@@ -78,7 +78,7 @@ public class PluginIT {
 				.assertLogText("Generated 1 test classes.")
 				.assertLogText("Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings")
 				.assertLogText("Creating new stub")
-				.assertLogText("Running org.springframework.cloud.contract.verifier.tests.ContractVerifierTest")
+				.assertLogText("Running hello.ContractVerifierTest")
 				.assertErrorFreeLog();
 	}
 
@@ -92,7 +92,7 @@ public class PluginIT {
 				.assertLogText("Generated 1 test classes.")
 				.assertLogText("Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings")
 				.assertLogText("Creating new stub")
-				.assertLogText("Running org.springframework.cloud.contract.verifier.tests.ContractVerifierTest")
+				.assertLogText("Running hello.ContractVerifierTest")
 				.assertErrorFreeLog();
 	}
 

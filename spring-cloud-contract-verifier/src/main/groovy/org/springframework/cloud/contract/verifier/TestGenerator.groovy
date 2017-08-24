@@ -16,9 +16,14 @@
 
 package org.springframework.cloud.contract.verifier
 
+import java.nio.charset.StandardCharsets
+import java.nio.file.Path
+import java.util.concurrent.atomic.AtomicInteger
+
 import com.google.common.collect.ListMultimap
 import groovy.transform.PackageScope
 import org.apache.commons.lang3.StringUtils
+
 import org.springframework.cloud.contract.spec.ContractVerifierException
 import org.springframework.cloud.contract.verifier.builder.JavaTestGenerator
 import org.springframework.cloud.contract.verifier.builder.SingleTestGenerator
@@ -27,20 +32,21 @@ import org.springframework.cloud.contract.verifier.file.ContractFileScanner
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.core.io.support.SpringFactoriesLoader
 
-import java.nio.charset.StandardCharsets
-import java.nio.file.Path
-import java.util.concurrent.atomic.AtomicInteger
-
-import static org.springframework.cloud.contract.verifier.util.NamesUtil.*
+import static org.springframework.cloud.contract.verifier.util.NamesUtil.afterLast
+import static org.springframework.cloud.contract.verifier.util.NamesUtil.beforeLast
+import static org.springframework.cloud.contract.verifier.util.NamesUtil.convertIllegalPackageChars
+import static org.springframework.cloud.contract.verifier.util.NamesUtil.directoryToPackage
+import static org.springframework.cloud.contract.verifier.util.NamesUtil.toLastDot
 
 /**
  * @author Jakub Kubrynski, codearte.io
  */
 class TestGenerator {
 
-	private final ContractVerifierConfigProperties configProperties
-	private final String DEFAULT_CLASS_PREFIX = "ContractVerifier"
+	private static final String DEFAULT_CLASS_PREFIX = "ContractVerifier"
+	private static final String DEFAULT_TEST_PACKAGE = "org.springframework.cloud.contract.verifier.tests"
 
+	private final ContractVerifierConfigProperties configProperties
 	private AtomicInteger counter = new AtomicInteger()
 	private SingleTestGenerator generator
 	private FileSaver saver
@@ -73,8 +79,19 @@ class TestGenerator {
 	}
 
 	int generate() {
-		generateTestClasses(configProperties.basePackageForTests)
+		generateTestClasses(basePackageName())
 		return counter.get()
+	}
+
+	private String basePackageName() {
+		if (configProperties.basePackageForTests) {
+			return configProperties.basePackageForTests
+		} else if (configProperties.baseClassForTests) {
+			return toLastDot(configProperties.baseClassForTests)
+		} else if (configProperties.packageWithBaseClasses) {
+			return configProperties.packageWithBaseClasses
+		}
+		return DEFAULT_TEST_PACKAGE
 	}
 
 	@PackageScope

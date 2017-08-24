@@ -174,7 +174,8 @@ contracts {
  - **testMode** - defines mode for acceptance tests. By default MockMvc which is based on Spring's MockMvc. It can also be changed to **JaxRsClient** or to **Explicit** for real HTTP calls.
  - **imports** - array with imports that should be included in generated tests (for example ['org.myorg.Matchers']). By default empty array []
  - **staticImports** - array with static imports that should be included in generated tests(for example ['org.myorg.Matchers.*']). By default empty array []
- - **basePackageForTests** - specifies base package for all generated tests. By default set to org.springframework.cloud.verifier.tests
+ - **basePackageForTests** - specifies base package for all generated tests. If not set the value will be picked from `baseClassForTests`'s package and from
+ `packageWithBaseClasses`. If neither of these are set then the value will be set to `org.springframework.cloud.contract.verifier.tests`
  - **baseClassForTests** - base class for all generated tests. By default `spock.lang.Specification` if using Spock tests.
  - **packageWithBaseClasses** - instead of providing a fixed value for base class you can provide a package where all the base classes lay. Takes precedence over **baseClassForTests**.
  - **baseClassMappings** - explicitly map contract package to a FQN of a base class. Takes precedence over **packageWithBaseClasses** and **baseClassForTests**.
@@ -425,7 +426,8 @@ To change default configuration just add `configuration` section to plugin defin
 ====== Important configuration options
 
  - **testMode** - defines mode for acceptance tests. By default `MockMvc` which is based on Spring's MockMvc. It can also be changed to `JaxRsClient` or to `Explicit` for real HTTP calls.
- - **basePackageForTests** - specifies base package for all generated tests. By default set to `org.springframework.cloud.verifier.tests`.
+ - **basePackageForTests** - specifies base package for all generated tests. If not set the value will be picked from `baseClassForTests`'s package and from
+  `packageWithBaseClasses`. If neither of these are set then the value will be set to `org.springframework.cloud.contract.verifier.tests`
  - **ruleClassForTests** - specifies Rule which should be added to generated test classes.
  - **baseClassForTests** - base class for generated tests. By default `spock.lang.Specification` if using Spock tests.
  - **contractsDirectory** - directory containing contracts written using the GroovyDSL. By default `/src/test/resources/contracts`.
