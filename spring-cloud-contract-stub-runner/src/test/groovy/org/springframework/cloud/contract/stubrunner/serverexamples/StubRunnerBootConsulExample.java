@@ -43,7 +43,6 @@ public class StubRunnerBootConsulExample {
 -Dstubrunner.ids=org.springframework.cloud.contract.verifier.stubs:loanIssuance,org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer,org.springframework.cloud.contract.verifier.stubs:bootService
 -Dstubrunner.idsToServiceIds.fraudDetectionServer=someNameThatShouldMapFraudDetectionServer
 -Dstubrunner.cloud.consul.enabled=true
--Dstubrunner.camel.enabled=false
 -Dspring.cloud.zookeeper.enabled=false
 -Deureka.client.enabled=false
 -Dspring.cloud.zookeeper.discovery.enabled=false

@@ -18,11 +18,11 @@ package org.springframework.cloud.contract.stubrunner.spring.cloud.consul
 
 import com.ecwid.consul.v1.ConsulClient
 import com.ecwid.consul.v1.agent.model.NewService
-import org.hamcrest.Description
-import org.hamcrest.TypeSafeMatcher
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import org.mockito.ArgumentMatcher
+import spock.lang.Specification
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
@@ -33,7 +33,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
-import spock.lang.Specification
 
 import static org.mockito.BDDMockito.then
 import static org.mockito.Matchers.argThat
@@ -43,8 +42,7 @@ import static org.mockito.Mockito.mock
  */
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = ["stubrunner.camel.enabled=false",
-				"eureka.client.enabled=false",
+		properties = ["eureka.client.enabled=false",
 				"spring.cloud.zookeeper.enabled=false",
 				"stubrunner.cloud.stubbed.discovery.enabled=false",
 				"stubrunner.cloud.eureka.enabled=false",

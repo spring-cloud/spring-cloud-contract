@@ -3,7 +3,6 @@ spring.cloud:
   consul.enabled: false
 eureka.client.enabled: false
 stubrunner:
-  camel.enabled: false
   idsToServiceIds:
     ivyNotation: someValueInsideYourCode
     fraudDetectionServer: someNameThatShouldMapFraudDetectionServer

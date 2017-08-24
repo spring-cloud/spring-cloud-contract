@@ -140,3 +140,10 @@ In order to add support for `fromRequest.path` some methods had to be added to t
 
 Related to
 https://github.com/spring-cloud/spring-cloud-contract/issues/388[issue 388].
+
+=== 1.2.x -> 2.0.x
+
+==== No Camel support
+
+We will add back Apache Camel support only after this https://issues.apache.org/jira/browse/CAMEL-11430[issue]
+gets fixed

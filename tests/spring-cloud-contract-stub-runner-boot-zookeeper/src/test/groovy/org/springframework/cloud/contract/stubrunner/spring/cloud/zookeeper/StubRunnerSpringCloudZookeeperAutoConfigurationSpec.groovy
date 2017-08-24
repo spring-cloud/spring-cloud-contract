@@ -42,8 +42,7 @@ import spock.lang.Specification
  */
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = ["stubrunner.camel.enabled=false",
-				"stubrunner.cloud.stubbed.discovery.enabled=false",
+		properties = ["stubrunner.cloud.stubbed.discovery.enabled=false",
 				"debug=true"])
 @AutoConfigureStubRunner( ids =
 		["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
