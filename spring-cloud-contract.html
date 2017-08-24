@@ -262,6 +262,7 @@ $(addBlockSwitches);
 <li><a href="#_1_1_x_1_2_x">8.2. 1.1.x &#8594; 1.2.x</a>
 <ul class="sectlevel3">
 <li><a href="#_custom_code_httpserverstub_code">8.2.1. Custom <code>HttpServerStub</code></a></li>
+<li><a href="#_new_packages_for_generated_tests">8.2.2. New packages for generated tests</a></li>
 </ul>
 </li>
 </ul>
@@ -2268,7 +2269,8 @@ publishing {
 <p><strong>staticImports</strong> - array with static imports that should be included in generated tests(for example ['org.myorg.Matchers.*']). By default empty array []</p>
 </li>
 <li>
-<p><strong>basePackageForTests</strong> - specifies base package for all generated tests. By default set to org.springframework.cloud.verifier.tests</p>
+<p><strong>basePackageForTests</strong> - specifies base package for all generated tests. If not set the value will be picked from <code>baseClassForTests&#8217;s package and from
+`packageWithBaseClasses</code>. If neither of these are set then the value will be set to <code>org.springframework.cloud.contract.verifier.tests</code></p>
 </li>
 <li>
 <p><strong>baseClassForTests</strong> - base class for all generated tests. By default <code>spock.lang.Specification</code> if using Spock tests.</p>
@@ -2684,7 +2686,8 @@ src/test/resources/contracts/myservice/shouldReturnUser.groovy</code></pre>
 <p><strong>testMode</strong> - defines mode for acceptance tests. By default <code>MockMvc</code> which is based on Spring&#8217;s MockMvc. It can also be changed to <code>JaxRsClient</code> or to <code>Explicit</code> for real HTTP calls.</p>
 </li>
 <li>
-<p><strong>basePackageForTests</strong> - specifies base package for all generated tests. By default set to <code>org.springframework.cloud.verifier.tests</code>.</p>
+<p><strong>basePackageForTests</strong> - specifies base package for all generated tests. If not set the value will be picked from <code>baseClassForTests&#8217;s package and from
+`packageWithBaseClasses</code>. If neither of these are set then the value will be set to <code>org.springframework.cloud.contract.verifier.tests</code></p>
 </li>
 <li>
 <p><strong>ruleClassForTests</strong> - specifies Rule which should be added to generated test classes.</p>
@@ -9684,6 +9687,32 @@ snippet above.</p>
 have to implement that method too. It should return a <code>String</code> representing
 all mappings available in a single <code>HttpServerStub</code>. Related to
 <a href="https://github.com/spring-cloud/spring-cloud-contract/issues/355">issue 355</a>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_new_packages_for_generated_tests"><a class="link" href="#_new_packages_for_generated_tests">8.2.2. New packages for generated tests</a></h4>
+<div class="paragraph">
+<p>The flow for setting the generated tests package name will look like this:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>pick <code>basePackageForTests</code></p>
+</li>
+<li>
+<p>if <code>basePackageForTests</code> wasn&#8217;t set pick the package from <code>baseClassForTests</code></p>
+</li>
+<li>
+<p>if <code>baseClassForTests</code> wasn&#8217;t set pick <code>packageWithBaseClasses</code></p>
+</li>
+<li>
+<p>if nothing got set pick the default <code>org.springframework.cloud.contract.verifier.tests</code> value</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Related to
+<a href="https://github.com/spring-cloud/spring-cloud-contract/issues/260">issue 260</a>.</p>
 </div>
 </div>
 </div>
