@@ -61,12 +61,6 @@ public class StubRunnerProperties {
 	private String classifier = "stubs";
 
 	/**
-	 * The context path that the stub server will run under.
-	 */
-	@Deprecated
-	private String contextPath = "";
-
-	/**
 	 * Repository username
 	 */
 	private String username;
@@ -179,14 +173,6 @@ public class StubRunnerProperties {
 
 	public void setClassifier(String classifier) {
 		this.classifier = classifier;
-	}
-
-	public String getContextPath() {
-		return this.contextPath;
-	}
-
-	public void setContextPath(String contextPath) {
-		this.contextPath = contextPath;
 	}
 
 	public boolean isStubsPerConsumer() {
