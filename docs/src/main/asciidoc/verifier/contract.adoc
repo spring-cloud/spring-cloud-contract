@@ -480,7 +480,8 @@ match the regex for ISO Time
 - `byType()` - the value taken from the response via the provided JSON Path needs to
 be of the same type as the type defined in the body of the response in the contract.
 `byType` can take a closure where you can set `minOccurrence` and `maxOccurrence`.
-That way you can assert on the size of the collection.
+That way you can assert on the size of the flattened collection. To check the size
+of an unflattened collection, use a custom method via `byCommand(...)` testMatcher.
 - `byCommand(...)` - the value taken from the response via the provided JSON Path will be
 passed as an input to the custom method that you're providing. E.g. `byCommand('foo($it)')`
 will result in calling a `foo` method to which the value matching the JSON Path will get
