@@ -560,6 +560,11 @@ assertions and the one from matchers with an `and` section):
   assertThatValueIsANumber(parsedJson.read("$.duck"));
 ----
 
+IMPORTANT: Notice that for the `byCommand` method we are calling the `assertThatValueIsANumber`. This method needs
+to be defined in the test base class or should be statically imported to your tests.
+Notice that the `byCommand` call was converted to `assertThatValueIsANumber(parsedJson.read("$.duck"));`. That means
+that we took the method name and passed the proper JSON path as a parameter to it.
+
 and the WireMock stub like this:
 
 [source,json,indent=0]
