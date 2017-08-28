@@ -423,4 +423,94 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | '$'
 	}
 
+	@Issue("#391")
+	def "should work for matchers and body with multiline string for [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					name "ISSUE 391"
+					method 'GET'
+					urlPath '/item/factsheet?size=2&page=1'
+					headers { header "accept", "application/...json" }
+				}
+				response {
+					status 200
+					body("""
+							{
+								"items": [
+									{
+										"id": "35309",
+										"title": "lorem ipsum"
+									}
+								]
+							}
+						""")
+					testMatchers {
+						jsonPath('$.items[*].id', byRegex(nonBlank()))
+						jsonPath('$.items[*].title', byRegex(nonBlank()))
+						jsonPath('$.items[*]', byType { minOccurrence(2); maxOccurrence(2) })
+					}
+					headers {header "content-type", "application/...json;charset=UTF-8"}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		and:
+			builder.appendTo(blockBuilder)
+			String test = blockBuilder.toString()
+		when:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		then:
+			!test.contains('''assertThatJson(parsedJson).array("['items']").isEmpty()''')
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
+	@Issue("#391")
+	def "should work for matchers and body with multiline string with map body for [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					name "ISSUE 391"
+					method 'GET'
+					urlPath '/item/factsheet?size=2&page=1'
+					headers { header "accept", "application/...json" }
+				}
+				response {
+					status 200
+					body([
+							"items": [
+									"id"   : "35309",
+									"title": "lorem ipsum"
+							]
+					])
+					testMatchers {
+						jsonPath('$.items[*].id', byRegex(nonBlank()))
+						jsonPath('$.items[*].title', byRegex(nonBlank()))
+						jsonPath('$.items[*]', byType { minOccurrence(2); maxOccurrence(2) })
+					}
+					headers {header "content-type", "application/...json;charset=UTF-8"}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		and:
+			builder.appendTo(blockBuilder)
+			String test = blockBuilder.toString()
+		when:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		then:
+			!test.contains('''assertThatJson(parsedJson).array("['items']").isEmpty()''')
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
 }
