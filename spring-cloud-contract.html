@@ -7485,6 +7485,21 @@ assertions and the one from matchers with an <code>and</code> section):</p>
  assertThatValueIsANumber(parsedJson.read("$.duck"));</code></pre>
 </div>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Notice that for the <code>byCommand</code> method we are calling the <code>assertThatValueIsANumber</code>. This method needs
+to be defined in the test base class or should be statically imported to your tests.
+Notice that the <code>byCommand</code> call was converted to <code>assertThatValueIsANumber(parsedJson.read("$.duck"));</code>. That means
+that we took the method name and passed the proper JSON path as a parameter to it.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>and the WireMock stub like this:</p>
 </div>
