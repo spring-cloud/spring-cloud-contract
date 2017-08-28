@@ -7260,7 +7260,8 @@ match the regex for ISO Time</p>
 <p><code>byType()</code> - the value taken from the response via the provided JSON Path needs to
 be of the same type as the type defined in the body of the response in the contract.
 <code>byType</code> can take a closure where you can set <code>minOccurrence</code> and <code>maxOccurrence</code>.
-That way you can assert on the size of the collection.</p>
+That way you can assert on the size of the flattened collection. To check the size
+of an unflattened collection, use a custom method via <code>byCommand(&#8230;&#8203;)</code> testMatcher.</p>
 </li>
 <li>
 <p><code>byCommand(&#8230;&#8203;)</code> - the value taken from the response via the provided JSON Path will be
