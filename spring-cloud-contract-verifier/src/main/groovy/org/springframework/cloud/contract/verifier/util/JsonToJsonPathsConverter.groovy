@@ -50,6 +50,7 @@ class JsonToJsonPathsConverter {
 
 	private static final Boolean SERVER_SIDE = false
 	private static final Boolean CLIENT_SIDE = true
+	private static final String ANY_ARRAY_NOTATION_IN_JSONPATH = "[*]"
 
 	private final ContractVerifierConfigProperties configProperties
 
@@ -80,6 +81,7 @@ class JsonToJsonPathsConverter {
 			bodyMatchers.jsonPathMatchers().each { BodyMatcher matcher ->
 				try {
 					context.delete(matcher.path())
+					removeTrailingContainers(matcher, context)
 				} catch (RuntimeException e) {
 					if (log.isDebugEnabled()) {
 						log.debug("Exception occurred while trying to delete path [${matcher.path()}]", e)
@@ -88,6 +90,36 @@ class JsonToJsonPathsConverter {
 			}
 		}
 		return jsonCopy
+	}
+
+	/**
+	 * Related to #391. The converted body looks different when done via the String notation than
+	 * it does when done via a map notation. When working with String body and when matchers
+	 * are provided, even when all entries of a map / list got removed, the map / list itself
+	 * remains. That leads to unnecessary creation of checks for empty collection. With this method
+	 * we're checking if the JSON path matcher is related to array checking and we're trying to
+	 * remove that trailing collection. All in all it's better to use the Groovy based notation for
+	 * defining body...
+	 */
+	private static void removeTrailingContainers(BodyMatcher matcher, DocumentContext context) {
+		if (matcher.path().contains(ANY_ARRAY_NOTATION_IN_JSONPATH)) {
+			String pathWithoutAnyArray = matcher.path().substring(0, matcher.path().lastIndexOf(ANY_ARRAY_NOTATION_IN_JSONPATH))
+			def object = context.read(pathWithoutAnyArray)
+			if (object instanceof Iterable && containsOnlyEmptyElements(object)) {
+				context.delete(pathWithoutAnyArray)
+			}
+		}
+	}
+
+	private static boolean containsOnlyEmptyElements(Object object) {
+		return object.every {
+			if (it instanceof Map) {
+				return it.isEmpty()
+			} else if (it instanceof List) {
+				return it.isEmpty()
+			}
+			return false
+		}
 	}
 
 	// Doing a clone doesn't work for nested lists...
