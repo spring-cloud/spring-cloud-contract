@@ -2,9 +2,9 @@
 
 == Converting Spring Cloud Contract DSL into WireMock stub mappings
 
-   mvn org.springramework.cloud:spring-cloud-contract-maven-plugin:convert
+   mvn org.springframework.cloud:spring-cloud-contract-maven-plugin:convert
 
-or shortly footnoteref:[prefix,Additional configuration inside `~/.m2/settings.xml` is required: `<pluginGroups><pluginGroup> org.springramework.cloud:spring-cloud-contract-maven-plugin</pluginGroup></pluginGroups>`.]
+or shortly footnoteref:[prefix,Additional configuration inside `~/.m2/settings.xml` is required: `<pluginGroups><pluginGroup> org.springframework.cloud:spring-cloud-contract-maven-plugin</pluginGroup></pluginGroups>`.]
 
     mvn spring-cloud-contract-verifier:convert
 
@@ -14,7 +14,7 @@ For more information please go to the Spring Cloud Contract Wiki or Plugin Docum
 
 Run stubs mappings from current directory:
 
-    mvn org.springramework.cloud:spring-cloud-contract-maven-plugin:run
+    mvn org.springframework.cloud:spring-cloud-contract-maven-plugin:run
 
 or shortly footnoteref:[prefix]
 
