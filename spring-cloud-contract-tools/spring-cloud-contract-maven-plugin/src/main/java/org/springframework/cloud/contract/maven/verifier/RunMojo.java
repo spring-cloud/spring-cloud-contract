@@ -54,7 +54,7 @@ public class RunMojo extends AbstractMojo {
 	private File destination;
 
 	/**
-	 * HTTP port for WireMock server
+	 * HTTP port for the WireMock server that serves stubs
 	 */
 	@Parameter(property = "spring.cloud.contract.verifier.http.port", defaultValue = "8080")
 	private int httpPort;
@@ -71,14 +71,29 @@ public class RunMojo extends AbstractMojo {
 	@Parameter(property = "spring.cloud.contract.verifier.skipTestOnly", defaultValue = "false")
 	private boolean skipTestOnly;
 
+	/**
+	 * List of stubs to be downloaded and ran in a colon separated Ivy notation
+	 */
 	@Parameter(property = "spring.cloud.contract.verifier.stubs")
 	private String stubs;
 
+	/**
+	 * Minimal port at which the stub should start
+	 */
 	@Parameter(property = "spring.cloud.contract.verifier.http.minPort", defaultValue = "10000")
 	private int minPort;
 
+	/**
+	 * Maximal port at which the stub should start
+	 */
 	@Parameter(property = "spring.cloud.contract.verifier.http.maxPort", defaultValue = "15000")
 	private int maxPort;
+
+	/**
+	 * Should the plugin wait for the user to press the key after starting the stubs
+	 */
+	@Parameter(property = "spring.cloud.contract.verifier.wait-for-key-pressed", defaultValue = "true")
+	private boolean waitForKeyPressed;
 
 	/**
 	 * Classifier used by stubs artifacts.
@@ -109,7 +124,7 @@ public class RunMojo extends AbstractMojo {
 				.withStubsClassifier(this.stubsClassifier);
 		if (isNullOrEmpty(this.stubs)) {
 			StubRunnerOptions options = optionsBuilder
-					.withPort(this.httpPort)
+					.withMinMaxPort(this.httpPort, this.httpPort)
 					.build();
 			StubRunner stubRunner = this.localStubRunner.run(resolveStubsDirectory().getAbsolutePath(), options);
 			batchStubRunner = new BatchStubRunner(Collections.singleton(stubRunner));
@@ -139,6 +154,9 @@ public class RunMojo extends AbstractMojo {
 	}
 
 	private void pressAnyKeyToContinue() {
+		if (!this.waitForKeyPressed) {
+			return;
+		}
 		getLog().info("Press ENTER to continue...");
 		try {
 			System.in.read();

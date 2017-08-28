@@ -29,6 +29,7 @@ import io.takari.maven.testing.TestResources;
 import io.takari.maven.testing.executor.MavenRuntime;
 import io.takari.maven.testing.executor.MavenVersions;
 import io.takari.maven.testing.executor.junit.MavenJUnitTestRunner;
+import org.springframework.util.SocketUtils;
 
 @RunWith(MavenJUnitTestRunner.class)
 @MavenVersions({ "3.3.3" })
@@ -106,6 +107,21 @@ public class PluginIT {
 						this.properties.getPluginVersion()))
 				.assertLogText("Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings")
 				.assertLogText("Creating new stub")
+				.assertErrorFreeLog();
+	}
+
+	@Test
+	public void should_run_WireMock_Stubs_mappings() throws Exception {
+		int availableTcpPort = SocketUtils.findAvailableTcpPort();
+		File basedir = this.resources.getBasedir("generatedStubsOnly");
+		this.properties.getPluginVersion();
+		this.maven.forProject(basedir)
+				.withCliOption("-X")
+				.withCliOption("-Dspring.cloud.contract.verifier.http.port=" + availableTcpPort)
+				.withCliOption("-Dspring.cloud.contract.verifier.wait-for-key-pressed=false")
+				.execute(String.format("org.springframework.cloud:spring-cloud-contract-maven-plugin:%s:run",
+						this.properties.getPluginVersion()))
+				.assertLogText("All stubs are now running RunningStubs [namesAndPorts={=" + availableTcpPort + "}]")
 				.assertErrorFreeLog();
 	}
 }
