@@ -38,13 +38,10 @@
 						<groupId>org.asciidoctor</groupId>
 						<artifactId>asciidoctor-maven-plugin</artifactId>
 						<inherited>false</inherited>
-						<dependencies>
-							<dependency>
-								<groupId>io.spring.asciidoctor</groupId>
-								<artifactId>spring-asciidoctor-extensions</artifactId>
-								<version>0.1.0.RELEASE</version>
-							</dependency>
-						</dependencies>
+					</plugin>
+					<plugin>
+						<groupId>com.agilejava.docbkx</groupId>
+						<artifactId>docbkx-maven-plugin</artifactId>
 					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
