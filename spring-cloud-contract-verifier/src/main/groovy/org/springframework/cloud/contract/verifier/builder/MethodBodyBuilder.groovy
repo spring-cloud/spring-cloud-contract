@@ -419,7 +419,7 @@ abstract class MethodBodyBuilder {
 		Object elementFromBody = value(copiedBody, bodyMatcher)
 		if (bodyMatcher.minTypeOccurrence() != null || bodyMatcher.maxTypeOccurrence() != null) {
 			checkType(bb, bodyMatcher, elementFromBody)
-			String method = "assertThat(parsedJson.read(${quotedAndEscaped(bodyMatcher.path())}, java.util.Collection.class)).${sizeCheckMethod(bodyMatcher)}"
+			String method = "assertThat(parsedJson.read(${quotedAndEscaped(bodyMatcher.path())}, java.lang.Iterable.class)).${sizeCheckMethod(bodyMatcher)}"
 			bb.addLine(postProcessJsonPathCall(method))
 			addColonIfRequired(bb)
 		} else {
@@ -432,7 +432,7 @@ abstract class MethodBodyBuilder {
 	}
 
 	protected void buildCustomMatchingConditionForEachElement(BlockBuilder bb, String path, String valueAsParam) {
-		String method = "assertThat(parsedJson.read(${path}, java.util.Collection.class)).allElementsMatch(${valueAsParam})"
+		String method = "assertThat(parsedJson.read(${path}, java.lang.Iterable.class)).allElementsMatch(${valueAsParam})"
 		bb.addLine(postProcessJsonPathCall(method))
 	}
 
