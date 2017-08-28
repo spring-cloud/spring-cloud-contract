@@ -1,0 +1,22 @@
+{
+  "request" : {
+    "url" : "/users",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[?(@.login == 'john')]"
+    }, {
+      "matchesJsonPath" : "$[?(@.name == 'John The Contract')]"
+    } ],
+    "headers" : {
+      "Content-Type" : {
+        "equalTo" : "application/json"
+      }
+    }
+  },
+  "response" : {
+    "status" : 200,
+    "headers" : {
+      "Location" : "/users/john"
+    }
+  }
+}
