@@ -372,7 +372,9 @@ git merge --no-ff contract-change-pr
 git push origin master</pre><p>Then we assume that your CI would run sth like <code class="literal">./mvnw clean deploy</code> which would publish both the application and the stub artifcats.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_consumer_side_loan_issuance_final_step" href="#_consumer_side_loan_issuance_final_step"></a>Consumer side (Loan Issuance) final step</h4></div></div></div><p>As a developer of the Loan Issuance service (a consumer of the Fraud Detection server):</p><p><span class="strong"><strong>merge branch to master</strong></span></p><pre class="programlisting">git checkout master
 git merge --no-ff contract-change-pr</pre><p><span class="strong"><strong>work online</strong></span></p><p>Now you can disable the offline work for Spring Cloud Contract Stub Runner and provide where the repository with your stubs is placed. At this moment the stubs of the server side will be automatically downloaded from Nexus / Artifactory.
 You can switch off the value of the <code class="literal">workOffline</code> parameter in your annotation. Below you can see an
-example of achieving the same by changing the properties.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">link</span>:https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">[]</span></pre><p>And that&#8217;s it!</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_dependencies" href="#_dependencies"></a>2.1.5&nbsp;Dependencies</h3></div></div></div><p>The best way to add the dependencies is to just use the proper <code class="literal">starter</code> dependency.</p><p>For <code class="literal">stub-runner</code> use <code class="literal">spring-cloud-starter-stub-runner</code> and when you&#8217;re using a plugin just add
+example of achieving the same by changing the properties.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">stubrunner</span>:
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  ids</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'com.example:http-server-dsl:+:stubs:8080'</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  repositoryRoot</span>: http://repo.spring.io/libs-snapshot</pre><p>And that&#8217;s it!</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_dependencies" href="#_dependencies"></a>2.1.5&nbsp;Dependencies</h3></div></div></div><p>The best way to add the dependencies is to just use the proper <code class="literal">starter</code> dependency.</p><p>For <code class="literal">stub-runner</code> use <code class="literal">spring-cloud-starter-stub-runner</code> and when you&#8217;re using a plugin just add
 <code class="literal">spring-cloud-starter-contract-verifier</code>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_additional_links" href="#_additional_links"></a>2.1.6&nbsp;Additional links</h3></div></div></div><p>Below you can find some resources related to Spring Cloud Contract Verifier and Stub Runner. Note that some can be outdated since the Spring Cloud Contract Verifier project
 is under constant development.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_spring_cloud_contract_video" href="#_spring_cloud_contract_video"></a>Spring Cloud Contract video</h4></div></div></div><p>You can check out the video from the Warsaw JUG about Spring Cloud Contract:</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_readings" href="#_readings"></a>Readings</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a class="link" href="http://www.slideshare.net/MarcinGrzejszczak/stick-to-the-rules-consumer-driven-contracts-201507-confitura" target="_top">Slides from Marcin Grzejszczak&#8217;s talk about Accurest</a></li><li class="listitem"><a class="link" href="http://toomuchcoding.com/blog/categories/accurest/" target="_top">Accurest related articles from Marcin Grzejszczak&#8217;s blog</a></li><li class="listitem"><a class="link" href="http://toomuchcoding.com/blog/categories/spring-cloud-contract/" target="_top">Spring Cloud Contract related articles from Marcin Grzejszczak&#8217;s blog</a></li><li class="listitem"><a class="link" href="http://groovy-lang.org/json.html" target="_top">Groovy docs regarding JSON</a></li></ul></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_samples" href="#_samples"></a>2.1.7&nbsp;Samples</h3></div></div></div><p>Here you can find some <a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples" target="_top">samples</a>.</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_faq" href="#_faq"></a>2.2&nbsp;FAQ</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_why_use_spring_cloud_contract_verifier_and_not_x" href="#_why_use_spring_cloud_contract_verifier_and_not_x"></a>2.2.1&nbsp;Why use Spring Cloud Contract Verifier and not X ?</h3></div></div></div><p>For the time being Spring Cloud Contract Verifier is a JVM based tool. So it could be your first pick when you&#8217;re already creating
 software for the JVM. This project has a lot of really interesting features but especially quite a few of them definitely make
@@ -1406,13 +1408,71 @@ automatically for you.</p><div class="section"><div class="titlepage"><div><div>
 	}</pre><p class="secondary">
 </p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_publishing_stubs_as_jars" href="#_publishing_stubs_as_jars"></a>2.5.2&nbsp;Publishing stubs as JARs</h3></div></div></div><p>The easiest approach would be to centralize the way stubs are kept. For example you can keep them as JARs in a Maven repository.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>For both Maven and Gradle the setup comes out of the box. But you can customize it if you want to.</p></td></tr></table></div><p class="primary"><b>Maven.&nbsp;</b>
 </p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- First disable the default jar setup in the properties section--&gt;</span>
-link:https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer_with_restdocs/pom.xml[]
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- we don't want the verifier to do a jar for us --&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;spring.cloud.contract.verifier.skip&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/spring.cloud.contract.verifier.skip&gt;</span>
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- Next add the assembly plugin to your build --&gt;</span>
-link:https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer_with_restdocs/pom.xml[]
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- we want the assembly plugin to generate the JAR --&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.apache.maven.plugins<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>maven-assembly-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;executions&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;execution&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>stub<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;phase&gt;</span>prepare-package<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/phase&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goals&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goal&gt;</span>single<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goal&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goals&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;inherited&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/inherited&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;attach&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/attach&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;descriptor&gt;</span>${basedir}/src/assembly/stub.xml<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/descriptor&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/execution&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/executions&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span>
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- Finally setup your assembly. Below you can find the contents of src/main/assembly/stub.xml --&gt;</span>
-link:https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer_with_restdocs/src/assembly/stub.xml[]</pre><p class="primary">
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;assembly</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns:xsi</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xsi:schemaLocation</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>stubs<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;formats&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;format&gt;</span>jar<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/format&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/formats&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;includeBaseDirectory&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/includeBaseDirectory&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;fileSets&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;fileSet&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;directory&gt;</span>src/main/java<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/directory&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;outputDirectory&gt;</span>/<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/outputDirectory&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;includes&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;include&gt;</span>**com/example/model/*.*<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/include&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/includes&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/fileSet&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;fileSet&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;directory&gt;</span>${project.build.directory}/classes<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/directory&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;outputDirectory&gt;</span>/<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/outputDirectory&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;includes&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;include&gt;</span>**com/example/model/*.*<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/include&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/includes&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/fileSet&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;fileSet&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;directory&gt;</span>${project.build.directory}/snippets/stubs<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/directory&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;outputDirectory&gt;</span>META-INF/${project.groupId}/${project.artifactId}/${project.version}/mappings<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/outputDirectory&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;includes&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;include&gt;</span>**/*<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/include&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/includes&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/fileSet&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;fileSet&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;directory&gt;</span>${basedir}/src/test/resources/contracts<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/directory&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;outputDirectory&gt;</span>META-INF/${project.groupId}/${project.artifactId}/${project.version}/contracts<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/outputDirectory&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;includes&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;include&gt;</span>**/*.groovy<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/include&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/includes&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/fileSet&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/fileSets&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/assembly&gt;</span></pre><p class="primary">
 </p><p class="secondary"><b>Gradle.&nbsp;</b>
 </p><pre class="programlisting">ext {
 	contractsDir = file(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"mappings"</span>)
@@ -3425,18 +3485,217 @@ got the name of the contract file <code class="literal">WithList.groovy</code> p
 contract had index <code class="literal">1</code> in the list of contracts in the file).</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>As you can see it&#8217;s much better if you name your contracts since then your tests
  are far more meaningful.</p></td></tr></table></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_customization" href="#_customization"></a>2.18&nbsp;Customization</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_extending_the_dsl" href="#_extending_the_dsl"></a>2.18.1&nbsp;Extending the DSL</h3></div></div></div><p>It is possible to provide your own functions to the DSL. The key requirement for this
 feature was to maintain the static compatibility. Below you will be able to see an example
-of:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">creation of a JAR with reusable classes</li><li class="listitem">referencing of these classes in the DSLs</li></ul></div><p>The full example can be found <a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples" target="_top">here</a>.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_common_jar" href="#_common_jar"></a>Common JAR</h4></div></div></div><p>Below you can find three classes that we will reuse in the DSLs.</p><p><span class="strong"><strong>PatternUtils</strong></span> contains functions used by both the <span class="strong"><strong>consumer</strong></span> and the <span class="strong"><strong>producer</strong></span>.</p><pre class="programlisting">link:https:<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/common/src/main/java/com/example/PatternUtils.java[]</span></pre><p><span class="strong"><strong>ConsumerUtils</strong></span> contains functions used by the <span class="strong"><strong>consumer</strong></span>.</p><pre class="programlisting">link:https:<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/common/src/main/java/com/example/ConsumerUtils.java[]</span></pre><p><span class="strong"><strong>ProducerUtils</strong></span> contains functions used by the <span class="strong"><strong>producer</strong></span>.</p><pre class="programlisting">link:https:<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/common/src/main/java/com/example/ProducerUtils.java[]</span></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_adding_the_dependency_to_project" href="#_adding_the_dependency_to_project"></a>Adding the dependency to project</h4></div></div></div><p>In order for the plugins and IDE to be able to reference the common JAR classes you need
+of:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">creation of a JAR with reusable classes</li><li class="listitem">referencing of these classes in the DSLs</li></ul></div><p>The full example can be found <a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples" target="_top">here</a>.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_common_jar" href="#_common_jar"></a>Common JAR</h4></div></div></div><p>Below you can find three classes that we will reuse in the DSLs.</p><p><span class="strong"><strong>PatternUtils</strong></span> contains functions used by both the <span class="strong"><strong>consumer</strong></span> and the <span class="strong"><strong>producer</strong></span>.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> com.example;
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> java.util.regex.Pattern;
+
+<strong class="hl-tag" style="color: blue">/**
+ * If you want to use {@link Pattern} directly in your tests
+ * then you can create a class resembling this one. It can
+ * contain all the {@link Pattern} you want to use in the DSL.
+ *
+ * &lt;pre&gt;
+ * {@code
+ * request {
+ *     body(
+ *         [ age: $(c(PatternUtils.oldEnough()))]
+ *     )
+ * }
+ * &lt;/pre&gt;
+ *
+ * Notice that we're using both {@code $()} for dynamic values
+ * and {@code c()} for the consumer side.
+ *
+ * @author Marcin Grzejszczak
+ */</strong>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//tag::impl[]</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> PatternUtils {
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> String tooYoung() {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//remove::start[]</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-1][0-9]"</span>;
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//remove::end[return]</span>
+	}
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> Pattern oldEnough() {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//remove::start[]</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[2-9][0-9]"</span>);
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//remove::end[return]</span>
+	}
+
+	<strong class="hl-tag" style="color: blue">/**
+	 * Makes little sense but it's just an example ;)
+	 */</strong>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> Pattern ok() {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//remove::start[]</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"OK"</span>);
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//remove::end[return]</span>
+	}
+}
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//end::impl[]</span></pre><p><span class="strong"><strong>ConsumerUtils</strong></span> contains functions used by the <span class="strong"><strong>consumer</strong></span>.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> com.example;
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.internal.ClientDslProperty;
+
+<strong class="hl-tag" style="color: blue">/**
+ * DSL Properties passed to the DSL from the consumer's perspective.
+ * That means that on the input side {@code Request} for HTTP
+ * or {@code Input} for messaging you can have a regular expression.
+ * On the {@code Response} for HTTP or {@code Output} for messaging
+ * you have to have a concrete value.
+ *
+ * @author Marcin Grzejszczak
+ */</strong>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//tag::impl[]</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> ConsumerUtils {
+	<strong class="hl-tag" style="color: blue">/**
+	 * Consumer side property. By using the {@link ClientDslProperty}
+	 * you can omit most of boilerplate code from the perspective
+	 * of dynamic values. Example
+	 *
+	 * &lt;pre&gt;
+	 * {@code
+	 * request {
+	 *     body(
+	 *         [ age: $(ConsumerUtils.oldEnough())]
+	 *     )
+	 * }
+	 * &lt;/pre&gt;
+	 *
+	 * That way it's in the implementation that we decide what value we will pass to the consumer
+	 * and which one to the producer.
+	 *
+	 * @author Marcin Grzejszczak
+	 */</strong>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> ClientDslProperty oldEnough() {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//remove::start[]</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// this example is not the best one and</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// theoretically you could just pass the regex instead of `ServerDslProperty` but</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// it's just to show some new tricks :)</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> ClientDslProperty(PatternUtils.oldEnough(), <span class="hl-number">40</span>);
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//remove::end[return]</span>
+	}
+
+}
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//end::impl[]</span></pre><p><span class="strong"><strong>ProducerUtils</strong></span> contains functions used by the <span class="strong"><strong>producer</strong></span>.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> com.example;
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.internal.ServerDslProperty;
+
+<strong class="hl-tag" style="color: blue">/**
+ * DSL Properties passed to the DSL from the producer's perspective.
+ * That means that on the input side {@code Request} for HTTP
+ * or {@code Input} for messaging you have to have a concrete value.
+ * On the {@code Response} for HTTP or {@code Output} for messaging
+ * you can have a regular expression.
+ *
+ * @author Marcin Grzejszczak
+ */</strong>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//tag::impl[]</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> ProducerUtils {
+
+	<strong class="hl-tag" style="color: blue">/**
+	 * Producer side property. By using the {@link ProducerUtils}
+	 * you can omit most of boilerplate code from the perspective
+	 * of dynamic values. Example
+	 *
+	 * &lt;pre&gt;
+	 * {@code
+	 * response {
+	 *     body(
+	 *         [ status: $(ProducerUtils.ok())]
+	 *     )
+	 * }
+	 * &lt;/pre&gt;
+	 *
+	 * That way it's in the implementation that we decide what value we will pass to the consumer
+	 * and which one to the producer.
+	 */</strong>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> ServerDslProperty ok() {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// this example is not the best one and</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// theoretically you could just pass the regex instead of `ServerDslProperty` but</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// it's just to show some new tricks :)</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> ServerDslProperty( PatternUtils.ok(), <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"OK"</span>);
+	}
+}
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//end::impl[]</span></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_adding_the_dependency_to_project" href="#_adding_the_dependency_to_project"></a>Adding the dependency to project</h4></div></div></div><p>In order for the plugins and IDE to be able to reference the common JAR classes you need
 to pass the dependency to your project.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a name="_test_dependency_in_project_s_dependencies" href="#_test_dependency_in_project_s_dependencies"></a>Test dependency in project&#8217;s dependencies</h5></div></div></div><p>First add the common jar dependency as a test dependency. That way since your
 contracts files are available at test resources path, automatically the
 common jar classes will be visible in your Groovy files.</p><p class="primary"><b>Maven.&nbsp;</b>
-</p><pre class="programlisting">link:https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer/pom.xml[]</pre><p class="primary">
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>com.example<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>beer-common<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>${project.version}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;scope&gt;</span>test<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/scope&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span></pre><p class="primary">
 </p><p class="secondary"><b>Gradle.&nbsp;</b>
-</p><pre class="programlisting">link:https:<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer/build.gradle[]</span></pre><p class="secondary">
+</p><pre class="programlisting">testCompile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example:beer-common:0.0.1-SNAPSHOT"</span>)</pre><p class="secondary">
 </p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a name="_test_dependency_in_plugin_s_dependencies" href="#_test_dependency_in_plugin_s_dependencies"></a>Test dependency in plugin&#8217;s dependencies</h5></div></div></div><p>Now you have to add the dependency for the plugin to reuse at runtime.</p><p class="primary"><b>Maven.&nbsp;</b>
-</p><pre class="programlisting">link:https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer/pom.xml[]</pre><p class="primary">
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>${spring-cloud-contract.version}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;extensions&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/extensions&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;packageWithBaseClasses&gt;</span>com.example<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/packageWithBaseClasses&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;baseClassMappings&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;baseClassMapping&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractPackageRegex&gt;</span>.*intoxication.*<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractPackageRegex&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;baseClassFQN&gt;</span>com.example.intoxication.BeerIntoxicationBase<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/baseClassFQN&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/baseClassMapping&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/baseClassMappings&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependencies&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>com.example<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>beer-common<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>${project.version}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;scope&gt;</span>compile<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/scope&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependencies&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><p class="primary">
 </p><p class="secondary"><b>Gradle.&nbsp;</b>
-</p><pre class="programlisting">link:https:<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer/build.gradle[]</span></pre><p class="secondary">
-</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a name="_referencing_classes_in_dsls" href="#_referencing_classes_in_dsls"></a>Referencing classes in DSLs</h5></div></div></div><p>Now you can reference your classes in your DSL. Example:</p><pre class="programlisting">link:https:<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer/src/test/resources/contracts/beer/rest/shouldGrantABeerIfOldEnough.groovy[]</span></pre></div></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_pluggable_architecture" href="#_pluggable_architecture"></a>2.19&nbsp;Pluggable architecture</h2></div></div></div><p>There are cases where you have your contracts defined in other formats
+</p><pre class="programlisting">classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example:beer-common:0.0.1-SNAPSHOT"</span></pre><p class="secondary">
+</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a name="_referencing_classes_in_dsls" href="#_referencing_classes_in_dsls"></a>Referencing classes in DSLs</h5></div></div></div><p>Now you can reference your classes in your DSL. Example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> contracts.beer.rest
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> com.example.ConsumerUtils
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> com.example.ProducerUtils
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.Contract
+
+Contract.make {
+	description(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"
+</span>Represents a successful scenario of getting a beer
+
+```
+given:
+	client is old enough
+when:
+	he applies <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">for</span> a beer
+then:
+	we<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'ll grant him the beer
+</span>```
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">")
+</span>	request {
+		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'POST'</span>
+		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/check'</span>
+		body(
+				age: $(ConsumerUtils.oldEnough())
+		)
+		headers {
+			contentType(applicationJson())
+		}
+	}
+	response {
+		status <span class="hl-number">200</span>
+		body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"
+</span>			{
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${value(ProducerUtils.ok())}"</span>
+			}
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">")
+</span>		headers {
+			contentType(applicationJson())
+		}
+	}
+}</pre></div></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_pluggable_architecture" href="#_pluggable_architecture"></a>2.19&nbsp;Pluggable architecture</h2></div></div></div><p>There are cases where you have your contracts defined in other formats
 like YAML, RAML or PACT. On the other hand you&#8217;d like to profit from
 the test and stubs generation. It&#8217;s really easy to add your own implementation
 of either of those. Also you can customize the way tests are generated (for example you can generate
