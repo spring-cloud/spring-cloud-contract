@@ -1,0 +1,53 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>7.&nbsp;Generating Contracts using RestDocs</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="multi_spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="up" href="multi_spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="prev" href="multi__generating_stubs_using_restdocs.html" title="6.&nbsp;Generating Stubs using RestDocs"><link rel="next" href="multi__migrations.html" title="8.&nbsp;Migrations"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">7.&nbsp;Generating Contracts using RestDocs</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="multi__generating_stubs_using_restdocs.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="multi__migrations.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="_generating_contracts_using_restdocs" href="#_generating_contracts_using_restdocs"></a>7.&nbsp;Generating Contracts using RestDocs</h1></div></div></div><p>Another thing that can be generated with Spring RestDocs is the Spring Cloud
+Contract DSL file and documentation. If you combine that with Spring Cloud
+WireMock then you&#8217;re getting both the contracts and stubs.</p><p>Why would you want to use this feature? Some people in the community asked questions
+about situation in which they would like to move to DSL based contract definition
+but they already have a lot of Spring MVC tests. Using this feature allows you to generate
+the contract files that you can later modify and move to proper folders so that the
+plugin picks them up.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>You might wonder why this functionality is in the WireMock module.
+Come to think of it, it does make sense since it makes little sense to generate
+only contracts and not generate the stubs. That&#8217;s why we suggest to do both.</p></td></tr></table></div><p>Let&#8217;s imagine the following test:</p><pre class="programlisting">		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.mockMvc.perform(post(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/foo"</span>)
+					.accept(MediaType.APPLICATION_PDF)
+					.accept(MediaType.APPLICATION_JSON)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\"foo\": 23 }"</span>))
+				.andExpect(status().isOk())
+				.andExpect(content().string(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar"</span>))
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// first WireMock</span>
+				.andDo(WireMockRestDocs.verify()
+						.jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.foo &gt;= 20)]"</span>)
+						.contentType(MediaType.valueOf(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/json"</span>))
+						.stub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"shouldGrantABeerIfOldEnough"</span>))
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// then Contract DSL documentation</span>
+				.andDo(document(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"index"</span>, SpringCloudContractRestDocs.dslContract()));</pre><p>This will lead in the creation of the stub as presented in the previous
+section, contract will get generated and a documentation file too.</p><p>The contract will be called <code class="literal">index.groovy</code> and look more like this.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.Contract
+
+Contract.make {
+    request {
+        method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'POST'</span>
+        url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/foo'</span>
+        body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
+</span>            {<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>: <span class="hl-number">23</span> }
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">')
+</span>        headers {
+            header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Accept'</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application/json'</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>)
+            header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Content-Type'</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application/json'</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>)
+        }
+    }
+    response {
+        status <span class="hl-number">200</span>
+        body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
+</span>        bar
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">')
+</span>        headers {
+            header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Content-Type'</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application/json;charset=UTF-8'</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>)
+            header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Content-Length'</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'3'</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>)
+        }
+        testMatchers {
+            jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$[?(@.foo &gt;= 20)]'</span>, byType())
+        }
+    }
+}</pre><p>the generated document (example for Asciidoc) will contain a formatted contract
+(the location of this file would be <code class="literal">index/dsl-contract.adoc</code>).</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="multi__generating_stubs_using_restdocs.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="multi__migrations.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">6.&nbsp;Generating Stubs using RestDocs&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="multi_spring-cloud-contract.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;8.&nbsp;Migrations</td></tr></table></div></body></html>
