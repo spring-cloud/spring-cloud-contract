@@ -563,7 +563,7 @@ To ensure that provider side is complaint with defined contracts, you need to in
 
 In case you see the following exception while using STS
 
-image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/docs/src/main/asciidoc/images/sts_exception.png[STS Exception]
+image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/{branch}/docs/src/main/asciidoc/images/sts_exception.png[STS Exception]
 
 when you click on the marker you should see sth like this
 

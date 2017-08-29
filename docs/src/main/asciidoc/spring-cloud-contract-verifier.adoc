@@ -1,5 +1,5 @@
-:core_path: ../../../../..
-:plugins_path: ../../../../../spring-cloud-contract-tools
+:core_path: ../../../..
+:plugins_path: ../../../../spring-cloud-contract-tools
 :converters_path: {plugins_path}/spring-cloud-contract-converters
 :verifier_root_path: {core_path}/spring-cloud-contract-verifier
 :contract_spec_path: {core_path}/spring-cloud-contract-spec
@@ -11,17 +11,18 @@
 :standalone_pact_path: {samples_path}/standalone/pact
 :tests_path: {core_path}/tests
 :samples_url: https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master
+:introduction_url: ${core_path}/../../
 
-include::introduction.adoc[]
+include::verifier_introduction.adoc[]
 
-include::rest.adoc[]
+include::verifier_rest.adoc[]
 
-include::messaging.adoc[]
+include::verifier_messaging.adoc[]
 
-include::stubrunner.adoc[]
+include::verifier_stubrunner.adoc[]
 
-include::stubrunner_msg.adoc[]
+include::verifier_stubrunner_msg.adoc[]
 
-include::contract.adoc[]
+include::verifier_contract.adoc[]
 
-include::links.adoc[]
+include::verifier_links.adoc[]

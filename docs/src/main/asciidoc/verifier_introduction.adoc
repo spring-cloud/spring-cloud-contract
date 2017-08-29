@@ -1,5 +1,3 @@
-:introduction_url: https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master
-
 === Introduction
 
 TIP: The Accurest project was initially started by Marcin Grzejszczak and Jakub Kubrynski (http://codearte.io[codearte.io])
@@ -19,7 +17,7 @@ Spring Cloud Contract Verifier moves TDD to the level of software architecture.
 
 Let us assume that we have a system comprising of multiple microservices:
 
-image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/docs/src/main/asciidoc/images/Deps.png[Microservices Architecture]
+image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/{branch}/docs/src/main/asciidoc/images/Deps.png[Microservices Architecture]
 
 ===== Testing issues
 
@@ -60,7 +58,7 @@ Disadvantages:
 To solve the aforementioned issues Spring Cloud Contract Verifier with Stub Runner were created. Their main idea is to give you very fast feedback, without the need
 to set up the whole world of microservices. If you work on stubs then the only applications you need are those that your application is using directly.
 
-image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/docs/src/main/asciidoc/images/Stubs2.png[Stubbed Services]
+image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/{branch}/docs/src/main/asciidoc/images/Stubs2.png[Stubbed Services]
 
 Spring Cloud Contract Verifier gives you the certainty that the stubs that you're using were created by the service that you're calling. Also if you can use them it means that they were
 tested against the producer's side. In other words - you can trust those stubs.
@@ -160,7 +158,7 @@ Technical remark - Fraud Detection will have artifact id `http-server`, Loan Iss
 Social remark - both client and server development teams need to communicate directly and discuss changes while
 going through the process. CDC is all about communication.
 
-The https://github.com/spring-cloud/spring-cloud-contract/tree/1.0.x/samples/standalone/dsl/http-server[server side code is available here] and https://github.com/spring-cloud/spring-cloud-contract/tree/1.0.x/samples/standalone/dsl/http-client[the client side code here].
+The https://github.com/spring-cloud/spring-cloud-contract/tree/{branch}/samples/standalone/dsl/http-server[server side code is available here] and https://github.com/spring-cloud/spring-cloud-contract/tree/{branch}/samples/standalone/dsl/http-client[the client side code here].
 
 TIP: In this case the ownership of the contracts lays on the producer side. It means that physically
 all the contract are present in the producer's repository
@@ -492,7 +490,7 @@ example of achieving the same by changing the properties.
 
 [source,yaml,indent=0]
 ----
-include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.0.x/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/{branch}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
 ----
 
 And that's it!
@@ -771,7 +769,7 @@ consumer will you break with your local changes.
 
 Let's assume that we have a producer with coordinates `com.example:server` and 3 consumers: `client1`,
 `client2`, `client3`. Then in the repository with common contracts you would have the following setup
-(which you can checkout https://github.com/spring-cloud/spring-cloud-contract/tree/1.0.x/samples/standalone/contracts[here]:
+(which you can checkout https://github.com/spring-cloud/spring-cloud-contract/tree/{branch}/samples/standalone/contracts[here]:
 
 [source,bash,indent=0]
 ----

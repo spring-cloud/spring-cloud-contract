@@ -4,9 +4,8 @@
 :source-highlighter: prettify
 :numbered:
 :icons: font
-:stylesdir: css/
-:stylesheet: manual-singlepage.css
 :sectlinks: true
+:branch: master
 
 = Spring Cloud Contract
 
@@ -24,7 +23,7 @@ and consumers, for HTTP and message-based interactions.
 
 == Spring Cloud Contract Verifier
 
-include::verifier/spring-cloud-contract-verifier.adoc[]
+include::spring-cloud-contract-verifier.adoc[]
 
 == Spring Cloud Contract WireMock
 
