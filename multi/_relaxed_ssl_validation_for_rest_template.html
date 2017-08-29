@@ -1,0 +1,26 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>4.&nbsp;Relaxed SSL Validation for Rest Template</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="up" href="spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="prev" href="_spring_cloud_contract_wiremock.html" title="3.&nbsp;Spring Cloud Contract WireMock"><link rel="next" href="_wiremock_and_spring_mvc_mocks.html" title="5.&nbsp;WireMock and Spring MVC Mocks"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">4.&nbsp;Relaxed SSL Validation for Rest Template</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="_spring_cloud_contract_wiremock.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="_wiremock_and_spring_mvc_mocks.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="_relaxed_ssl_validation_for_rest_template" href="#_relaxed_ssl_validation_for_rest_template"></a>4.&nbsp;Relaxed SSL Validation for Rest Template</h1></div></div></div><p>WireMock allows you to stub a "secure" server with an "https" URL protocol. If your application wants to
+contact that stub server in an integration test, then it will find that the SSL certificates are not
+valid (it&#8217;s the usual problem with self-installed certificates). The best option is often to just
+re-configure the client to use "http", but if that&#8217;s not open to you then you can ask Spring to configure
+an HTTP client that ignores SSL validation errors (just for tests).</p><p>To make this work with minimum fuss you need to be using the Spring Boot <code class="literal">RestTemplateBuilder</code> in your app,
+e.g.</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Bean</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> RestTemplate restTemplate(RestTemplateBuilder builder) {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> builder.build();
+}</pre><p>This is because the builder is passed through callbacks to initalize it, so the SSL validation can be set up
+in the client at that point. This will happen automatically in your test if you are using the
+<code class="literal">@AutoConfigureWireMock</code> annotation (or the stub runner). If you are using the JUnit <code class="literal">@Rule</code> approach you need
+to add the <code class="literal">@AutoConfigureHttpClient</code> annotation as well:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
+<em><span class="hl-annotation" style="color: gray">@SpringBootTest("app.baseUrl=https://localhost:6443")</span></em>
+<em><span class="hl-annotation" style="color: gray">@AutoConfigureHttpClient</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> WiremockHttpsServerApplicationTests {
+
+	<em><span class="hl-annotation" style="color: gray">@ClassRule</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> WireMockClassRule wiremock = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> WireMockClassRule(
+			WireMockSpring.options().httpsPort(<span class="hl-number">6443</span>));
+...
+}</pre><p>If you are using <code class="literal">spring-boot-starter-test</code> then you will have the Apache HTTP client on the classpath and it will
+be selected by the <code class="literal">RestTemplateBuilder</code> and configured to ignore SSL errors. If you are using the default <code class="literal">java.net</code>
+client you don&#8217;t need the annotation (but it won&#8217;t do any harm). There is no support currently for other clients, but
+it may be added in future releases.</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_spring_cloud_contract_wiremock.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="_wiremock_and_spring_mvc_mocks.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">3.&nbsp;Spring Cloud Contract WireMock&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="spring-cloud-contract.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;5.&nbsp;WireMock and Spring MVC Mocks</td></tr></table></div></body></html>
