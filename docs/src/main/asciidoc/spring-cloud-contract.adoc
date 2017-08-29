@@ -24,7 +24,7 @@ and consumers, for HTTP and message-based interactions.
 
 == Spring Cloud Contract Verifier
 
-include::verifier/spring-cloud-contract-verifier.adoc[]
+include::spring-cloud-contract-verifier.adoc[]
 
 == Spring Cloud Contract WireMock
 

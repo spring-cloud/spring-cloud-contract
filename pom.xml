@@ -434,6 +434,7 @@
 						<configuration>
 							<!-- Sets the VM argument line used when unit tests are run. -->
 							<argLine>${surefireArgLine}</argLine>
+							<argLine>${surefireArgLine}</argLine>
 						</configuration>
 					</plugin>
 				</plugins>
