@@ -1,0 +1,92 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>3.&nbsp;Spring Cloud Contract WireMock</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="multi_spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="up" href="multi_spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="prev" href="multi__spring_cloud_contract_verifier.html" title="2.&nbsp;Spring Cloud Contract Verifier"><link rel="next" href="multi__relaxed_ssl_validation_for_rest_template.html" title="4.&nbsp;Relaxed SSL Validation for Rest Template"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">3.&nbsp;Spring Cloud Contract WireMock</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="multi__spring_cloud_contract_verifier.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="multi__relaxed_ssl_validation_for_rest_template.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="_spring_cloud_contract_wiremock" href="#_spring_cloud_contract_wiremock"></a>3.&nbsp;Spring Cloud Contract WireMock</h1></div></div></div><p>Modules giving you the possibility to use
+<a class="link" href="http://wiremock.org" target="_top">WireMock</a> with different servers by using the
+"ambient" server embedded in a Spring Boot application. Check out the
+<a class="link" href="https://github.com/spring-cloud/spring-cloud-contract/tree/2.0.x/samples" target="_top">samples</a>
+for more details.</p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>The Spring Cloud Release Train BOM imports <code class="literal">spring-cloud-contract-dependencies</code>
+ which in turn has exclusions for the dependencies needed by WireMock. This might lead to a situation that
+ even if you&#8217;re not using Spring Cloud Contract then your dependencies will be influenced
+ anyways.</p></td></tr></table></div><p>If you have a Spring Boot application that uses Tomcat as an embedded
+server, for example (the default with <code class="literal">spring-boot-starter-web</code>), then
+you can simply add <code class="literal">spring-cloud-contract-wiremock</code> to your classpath
+and add <code class="literal">@AutoConfigureWireMock</code> in order to be able to use Wiremock
+in your tests. Wiremock runs as a stub server and you can register
+stub behaviour using a Java API or via static JSON declarations as
+part of your test. Here&#8217;s a simple example:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
+<em><span class="hl-annotation" style="color: gray">@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)</span></em>
+<em><span class="hl-annotation" style="color: gray">@AutoConfigureWireMock(port = 0)</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> WiremockForDocsTests {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// A service that calls out over HTTP</span>
+	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> Service service;
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Using the WireMock APIs in the normal way:</span>
+	<em><span class="hl-annotation" style="color: gray">@Test</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> contextLoads() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Stubbing WireMock</span>
+		stubFor(get(urlEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/resource"</span>))
+				.willReturn(aResponse().withHeader(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"text/plain"</span>).withBody(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World!"</span>)));
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// We're asserting if WireMock responded properly</span>
+		assertThat(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.service.go()).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World!"</span>);
+	}
+
+}</pre><p>To start the stub server on a different port use <code class="literal">@AutoConfigureWireMock(port=9999)</code> (for example), and for a random port use the value 0. The stub server port will be bindable in the test application context as "wiremock.server.port". Using <code class="literal">@AutoConfigureWireMock</code> adds a bean of type <code class="literal">WiremockConfiguration</code> to your test application context, where it will be cached in between methods and classes having the same context, just like for normal Spring integration tests.</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_registering_stubs_automatically" href="#_registering_stubs_automatically"></a>3.1&nbsp;Registering Stubs Automatically</h2></div></div></div><p>If you use <code class="literal">@AutoConfigureWireMock</code> then it will register WireMock
+JSON stubs from the file system or classpath, by default from
+<code class="literal">file:src/test/resources/mappings</code>. You can customize the locations
+using the <code class="literal">stubs</code> attribute in the annotation, which can be a resource
+pattern (ant-style) or a directory, in which case <code class="literal"><span class="strong"><strong>*/</strong></span>.json</code> is
+appended. Example:</p><pre class="screen">@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureWireMock(stubs="classpath:/stubs")
+public class WiremockImportApplicationTests {
+
+	@Autowired
+	private Service service;
+
+	@Test
+	public void contextLoads() throws Exception {
+		assertThat(this.service.go()).isEqualTo("Hello World!");
+	}
+
+}</pre><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>Actually WireMock always loads mappings from
+<code class="literal">src/test/resources/mappings</code> <span class="strong"><strong>as well as</strong></span> the custom locations in the
+stubs attribute. To change this behaviour you have to also specify a
+files root as described next.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_using_files_to_specify_the_stub_bodies" href="#_using_files_to_specify_the_stub_bodies"></a>3.2&nbsp;Using Files to Specify the Stub Bodies</h2></div></div></div><p>WireMock can read response bodies from files on the classpath or file
+system. In that case you will see in the JSON DSL that the response
+has a "bodyFileName" instead of a (literal) "body". The files are
+resolved relative to a root directory <code class="literal">src/test/resources/__files</code> by
+default. To customize this location you can set the <code class="literal">files</code> attribute
+in the <code class="literal">@AutoConfigureWireMock</code> annotation to the location of the
+parent directory (i.e. the place <code class="literal">__files</code> is a
+subdirectory). You can use Spring resource notation to refer to
+<code class="literal">file:&#8230;&#8203;</code> or <code class="literal">classpath:&#8230;&#8203;</code> locations (but generic URLs are not
+supported). A list of values can be given and WireMock will resolve
+the first file that exists when it needs to find a response body.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>when you configure the <code class="literal">files</code> root, then it affects the
+automatic loading of stubs as well (they come from the root location
+in a subdirectory called "mappings"). The value of <code class="literal">files</code> has no
+effect on the stubs loaded explicitly from the <code class="literal">stubs</code> attribute.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_alternative_using_junit_rules" href="#_alternative_using_junit_rules"></a>3.3&nbsp;Alternative: Using JUnit Rules</h2></div></div></div><p>For a more conventional WireMock experience, using JUnit <code class="literal">@Rules</code> to
+start and stop the server, just use the <code class="literal">WireMockSpring</code> convenience
+class to obtain an <code class="literal">Options</code> instance:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
+<em><span class="hl-annotation" style="color: gray">@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> WiremockForDocsClassRuleTests {
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Start WireMock on some dynamic port</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// for some reason `dynamicPort()` is not working properly</span>
+	<em><span class="hl-annotation" style="color: gray">@ClassRule</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> WireMockClassRule wiremock = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> WireMockClassRule(
+			WireMockSpring.options().dynamicPort());
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// A service that calls out over HTTP to localhost:${wiremock.port}</span>
+	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> Service service;
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Using the WireMock APIs in the normal way:</span>
+	<em><span class="hl-annotation" style="color: gray">@Test</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> contextLoads() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Stubbing WireMock</span>
+		wiremock.stubFor(get(urlEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/resource"</span>))
+				.willReturn(aResponse().withHeader(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"text/plain"</span>).withBody(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World!"</span>)));
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// We're asserting if WireMock responded properly</span>
+		assertThat(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.service.go()).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World!"</span>);
+	}
+
+}</pre><p>The use <code class="literal">@ClassRule</code> means that the server will shut down after all the methods in this class.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="multi__spring_cloud_contract_verifier.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="multi__relaxed_ssl_validation_for_rest_template.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">2.&nbsp;Spring Cloud Contract Verifier&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="multi_spring-cloud-contract.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;4.&nbsp;Relaxed SSL Validation for Rest Template</td></tr></table></div></body></html>

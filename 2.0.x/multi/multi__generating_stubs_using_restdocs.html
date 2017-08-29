@@ -1,0 +1,93 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>6.&nbsp;Generating Stubs using RestDocs</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="multi_spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="up" href="multi_spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="prev" href="multi__wiremock_and_spring_mvc_mocks.html" title="5.&nbsp;WireMock and Spring MVC Mocks"><link rel="next" href="multi__generating_contracts_using_restdocs.html" title="7.&nbsp;Generating Contracts using RestDocs"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">6.&nbsp;Generating Stubs using RestDocs</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="multi__wiremock_and_spring_mvc_mocks.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="multi__generating_contracts_using_restdocs.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="_generating_stubs_using_restdocs" href="#_generating_stubs_using_restdocs"></a>6.&nbsp;Generating Stubs using RestDocs</h1></div></div></div><p><a class="link" href="https://projects.spring.io/spring-restdocs" target="_top">Spring RestDocs</a> can be
+used to generate documentation (e.g. in asciidoctor format) for an
+HTTP API with Spring MockMvc or Rest Assured. At the same time as you
+generate documentation for your API, you can also generate WireMock
+stubs, by using Spring Cloud Contract WireMock. Just write your normal
+RestDocs test cases and use <code class="literal">@AutoConfigureRestDocs</code> to have stubs
+automatically in the restdocs output directory. For example:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
+<em><span class="hl-annotation" style="color: gray">@SpringBootTest</span></em>
+<em><span class="hl-annotation" style="color: gray">@AutoConfigureRestDocs(outputDir = "target/snippets")</span></em>
+<em><span class="hl-annotation" style="color: gray">@AutoConfigureMockMvc</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> ApplicationTests {
+
+	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> MockMvc mockMvc;
+
+	<em><span class="hl-annotation" style="color: gray">@Test</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> contextLoads() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
+		mockMvc.perform(get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/resource"</span>))
+				.andExpect(content().string(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World"</span>))
+				.andDo(document(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"resource"</span>));
+	}
+}</pre><p>From this test will be generated a WireMock stub at
+"target/snippets/stubs/resource.json". It matches all GET requests to
+the "/resource" path.</p><p>Without any additional configuration this will create a stub with a
+request matcher for the HTTP method and all headers except "host" and
+"content-length". To match the request more precisely, for example to
+match the body of a POST or PUT, we need to explicitly create a
+request matcher. This will do two things: 1) create a stub that only
+matches the way you specify, 2) assert that the request in the test
+case also matches the same conditions.</p><p>The main entry point for this is <code class="literal">WireMockRestDocs.verify()</code> which can
+be used as a substitute for the <code class="literal">document()</code> convenience method. For
+example:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
+<em><span class="hl-annotation" style="color: gray">@SpringBootTest</span></em>
+<em><span class="hl-annotation" style="color: gray">@AutoConfigureRestDocs(outputDir = "target/snippets")</span></em>
+<em><span class="hl-annotation" style="color: gray">@AutoConfigureMockMvc</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> ApplicationTests {
+
+	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> MockMvc mockMvc;
+
+	<em><span class="hl-annotation" style="color: gray">@Test</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> contextLoads() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
+		mockMvc.perform(post(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/resource"</span>)
+                .content(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\"id\":\"123456\",\"message\":\"Hello World\"}"</span>))
+				.andExpect(status().isOk())
+				.andDo(verify().jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.id"</span>)
+                        .stub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"resource"</span>));
+	}
+}</pre><p>So this contract is saying: any valid POST with an "id" field will get
+back an the same response as in this test. You can chain together
+calls to <code class="literal">.jsonPath()</code> to add additional matchers. The
+<a class="link" href="https://github.com/jayway/JsonPath" target="_top">JayWay documentation</a> can help you
+to get up to speed with JSON Path if it is unfamiliar to you.</p><p>Instead of the <code class="literal">jsonPath</code> and <code class="literal">contentType</code> convenience methods, you
+can also use the WireMock APIs to verify the request matches the
+created stub. Example:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Test</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> contextLoads() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
+	mockMvc.perform(post(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/resource"</span>)
+               .content(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\"id\":\"123456\",\"message\":\"Hello World\"}"</span>))
+			.andExpect(status().isOk())
+			.andDo(verify()
+					.wiremock(WireMock.post(
+						urlPathEquals(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/resource"</span>))
+						.withRequestBody(matchingJsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.id"</span>))
+                       .stub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"post-resource"</span>));
+}</pre><p>The WireMock API is rich - you can match headers, query parameters,
+and request body by regex as well as by json path - so this can useful
+to create stubs with a wider range of parameters. The above example
+will generate a stub something like this:</p><p><b>post-resource.json.&nbsp;</b>
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"request"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"url"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/resource"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"method"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"POST"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bodyPatterns"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">[</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.id"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}]</span>
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span>
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"response"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span> : <span class="hl-number">200</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"headers"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"X-Application-Context"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application:-1"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"text/plain"</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span>
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span></pre><p>
+</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>You can use either the <code class="literal">wiremock()</code> method or the <code class="literal">jsonPath()</code>
+and <code class="literal">contentType()</code> methods to create request matchers, but not both.</p></td></tr></table></div><p>On the consumer side, you can make the <code class="literal">resource.json</code> generated above
+available on the classpath (by <a class="link" href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_publishing_stubs_as_jars" target="_top">publishing stubs as JARs</a> for example).
+After that, you can create a stub using WireMock in a
+number of different ways, including as described above using
+<code class="literal">@AutoConfigureWireMock(stubs="classpath:resource.json")</code>.</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="multi__wiremock_and_spring_mvc_mocks.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="multi__generating_contracts_using_restdocs.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">5.&nbsp;WireMock and Spring MVC Mocks&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="multi_spring-cloud-contract.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;7.&nbsp;Generating Contracts using RestDocs</td></tr></table></div></body></html>
