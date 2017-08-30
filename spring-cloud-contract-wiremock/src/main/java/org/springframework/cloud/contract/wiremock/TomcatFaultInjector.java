@@ -19,16 +19,13 @@ package org.springframework.cloud.contract.wiremock;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
-
+import java.nio.charset.Charset;
 import javax.servlet.http.HttpServletResponse;
 
 import com.github.tomakehurst.wiremock.common.Exceptions;
 import com.github.tomakehurst.wiremock.core.FaultInjector;
-import com.google.common.base.Charsets;
-
 import org.apache.coyote.Response;
 import org.apache.tomcat.util.net.SocketWrapperBase;
-
 import org.springframework.util.ReflectionUtils;
 
 import static com.github.tomakehurst.wiremock.common.Exceptions.throwUnchecked;
@@ -40,7 +37,7 @@ import static com.github.tomakehurst.wiremock.common.Exceptions.throwUnchecked;
 public class TomcatFaultInjector implements FaultInjector {
 
 	private static final byte[] GARBAGE = "lskdu018973t09sylgasjkfg1][]'./.sdlv"
-			.getBytes(Charsets.UTF_8);
+			.getBytes(Charset.forName("UTF-8"));
 	private final Response response;
 	private SocketWrapperBase<?> socket;
 

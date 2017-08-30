@@ -18,12 +18,10 @@ package org.springframework.cloud.contract.wiremock;
 
 import java.io.IOException;
 import java.nio.channels.ByteChannel;
-
+import java.nio.charset.Charset;
 import javax.servlet.http.HttpServletResponse;
 
 import com.github.tomakehurst.wiremock.core.FaultInjector;
-import com.google.common.base.Charsets;
-
 import org.eclipse.jetty.io.ChannelEndPoint;
 import org.eclipse.jetty.server.HttpChannel;
 import org.eclipse.jetty.server.Response;
@@ -39,7 +37,7 @@ import static com.github.tomakehurst.wiremock.jetty9.JettyUtils.unwrapResponse;
 public class JettyFaultInjector implements FaultInjector {
 
 	private static final byte[] GARBAGE = "lskdu018973t09sylgasjkfg1][]'./.sdlv"
-			.getBytes(Charsets.UTF_8);
+			.getBytes(Charset.forName("UTF-8"));
 
 	private final Response response;
 	private final ByteChannel socket;
