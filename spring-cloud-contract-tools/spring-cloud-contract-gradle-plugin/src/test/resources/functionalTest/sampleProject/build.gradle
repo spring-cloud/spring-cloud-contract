@@ -23,7 +23,7 @@ buildscript {
 		maven { url "http://repo.spring.io/release" }
 	}
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.0.BUILD-SNAPSHOT")
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.0.M3")
 	}
 }
 
@@ -115,7 +115,7 @@ configure(project(':fraudDetectionService')) {
 
 configure(project(':loanApplicationService')) {
 
-	task copyCollaboratorStubs(type: com.sun.org.apache.xalan.internal.xsltc.compiler.Copy) {
+	task copyCollaboratorStubs(type: Copy) {
 		File fraudBuildDir = project(':fraudDetectionService').buildDir
 		from(new File(fraudBuildDir, "/production/${project(':fraudDetectionService').name}-stubs/"))
 		into "src/test/resources/"

@@ -23,7 +23,7 @@ buildscript {
 		maven { url "http://repo.spring.io/release" }
 	}
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.0.BUILD-SNAPSHOT")
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.0.M3")
 	}
 }
 
@@ -90,7 +90,7 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 		testCompile "org.mockito:mockito-core"
 		testCompile "org.springframework:spring-test"
 		testCompile "org.springframework.boot:spring-boot-test"
-		testCompile("com.github.tomakehurst:wiremock:2.7.1") {
+		testCompile("com.github.tomakehurst:wiremock:${wiremockVersion}") {
 			exclude group: 'org.eclipse.jetty'
 		}
 	}
