@@ -34,8 +34,7 @@ import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.StubRunner;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
-
-import static wiremock.com.google.common.base.Strings.isNullOrEmpty;
+import org.springframework.util.StringUtils;
 
 /**
  *
@@ -122,7 +121,7 @@ public class RunMojo extends AbstractMojo {
 		BatchStubRunner batchStubRunner = null;
 		StubRunnerOptionsBuilder optionsBuilder = new StubRunnerOptionsBuilder()
 				.withStubsClassifier(this.stubsClassifier);
-		if (isNullOrEmpty(this.stubs)) {
+		if (StringUtils.isEmpty(this.stubs)) {
 			StubRunnerOptions options = optionsBuilder
 					.withMinMaxPort(this.httpPort, this.httpPort)
 					.build();
