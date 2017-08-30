@@ -21,7 +21,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<jetty.version>9.2.13.v20150730</jetty.version>
 		<spring-cloud-contract.version>1.2.0.BUILD-SNAPSHOT</spring-cloud-contract.version>
 	</properties>
 
@@ -51,7 +50,7 @@
 
 		<dependency>
 			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock</artifactId>
+			<artifactId>wiremock-standalone</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

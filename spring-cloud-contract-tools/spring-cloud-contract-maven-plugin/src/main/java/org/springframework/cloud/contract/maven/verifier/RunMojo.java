@@ -35,7 +35,7 @@ import org.springframework.cloud.contract.stubrunner.StubRunner;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static wiremock.com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  *

@@ -16,8 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.file
 
-import com.google.common.collect.ArrayListMultimap
-import com.google.common.collect.ListMultimap
+import wiremock.com.google.common.collect.ArrayListMultimap
+import wiremock.com.google.common.collect.ListMultimap
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.SystemUtils

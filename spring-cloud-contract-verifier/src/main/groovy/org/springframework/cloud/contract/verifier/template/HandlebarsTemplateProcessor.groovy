@@ -1,7 +1,7 @@
 package org.springframework.cloud.contract.verifier.template
 
-import com.github.jknack.handlebars.Handlebars
-import com.github.jknack.handlebars.Template
+import wiremock.com.github.jknack.handlebars.Handlebars
+import wiremock.com.github.jknack.handlebars.Template
 import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.ContractTemplate
 import org.springframework.cloud.contract.spec.internal.HandlebarsContractTemplate

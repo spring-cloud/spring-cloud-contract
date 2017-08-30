@@ -1,7 +1,7 @@
 package org.springframework.cloud.contract.verifier.builder.handlebars
 
-import com.github.jknack.handlebars.Helper
-import com.github.jknack.handlebars.Options
+import wiremock.com.github.jknack.handlebars.Helper
+import wiremock.com.github.jknack.handlebars.Options
 import com.github.tomakehurst.wiremock.extension.responsetemplating.RequestTemplateModel
 import groovy.transform.CompileStatic
 import org.apache.commons.lang3.StringEscapeUtils

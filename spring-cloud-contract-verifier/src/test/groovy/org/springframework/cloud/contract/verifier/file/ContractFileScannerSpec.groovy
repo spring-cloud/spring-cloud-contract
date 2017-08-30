@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.file
 
-import com.google.common.collect.ListMultimap
+import wiremock.com.google.common.collect.ListMultimap
 import spock.lang.Specification
 
 import java.nio.file.Path
