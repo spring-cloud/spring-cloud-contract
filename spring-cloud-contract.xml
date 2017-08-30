@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2017-08-29</date>
+<date>2017-08-30</date>
 </info>
 <preface>
 <title></title>
@@ -6403,16 +6403,9 @@ com.example.CustomStubDownloaderBuilder</screen>
 <chapter xml:id="_spring_cloud_contract_wiremock">
 <title>Spring Cloud Contract WireMock</title>
 <simpara>Modules giving you the possibility to use
-<link xl:href="http://wiremock.org">WireMock</link> with different servers by using the
-"ambient" server embedded in a Spring Boot application. Check out the
+<link xl:href="http://wiremock.org">WireMock</link> in a Spring Boot application. Check out the
 <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples">samples</link>
 for more details.</simpara>
-<important>
-<simpara>The Spring Cloud Release Train BOM imports <literal>spring-cloud-contract-dependencies</literal>
- which in turn has exclusions for the dependencies needed by WireMock. This might lead to a situation that
- even if you&#8217;re not using Spring Cloud Contract then your dependencies will be influenced
- anyways.</simpara>
-</important>
 <simpara>If you have a Spring Boot application that uses Tomcat as an embedded
 server, for example (the default with <literal>spring-boot-starter-web</literal>), then
 you can simply add <literal>spring-cloud-contract-wiremock</literal> to your classpath
