@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <project name="maven-antrun-" default="main"  >
 <target name="main">
-  <echo file="/Users/mgrzejszczak/repo/spring-cloud-contract/docs/target/spring-cloud-contract.adoc">:nofooter:
+  <echo file="/opt/jenkins/data/workspace/spring-cloud-contract-1.1.x-ci/docs/target/spring-cloud-contract.adoc">:nofooter:
 :linkcss:
 :stylesdir: css
 :stylesheet: manual-singlepage.css
