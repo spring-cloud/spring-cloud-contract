@@ -1,0 +1,215 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>8.&nbsp;Customization</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="multi_spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="up" href="multi_spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="prev" href="multi__contract_dsl.html" title="7.&nbsp;Contract DSL"><link rel="next" href="multi__pluggable_architecture.html" title="9.&nbsp;Pluggable architecture"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">8.&nbsp;Customization</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="multi__contract_dsl.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="multi__pluggable_architecture.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="_customization" href="#_customization"></a>8.&nbsp;Customization</h1></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_extending_the_dsl" href="#_extending_the_dsl"></a>8.1&nbsp;Extending the DSL</h2></div></div></div><p>It is possible to provide your own functions to the DSL. The key requirement for this
+feature was to maintain the static compatibility. Below you will be able to see an example
+of:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">creation of a JAR with reusable classes</li><li class="listitem">referencing of these classes in the DSLs</li></ul></div><p>The full example can be found <a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples" target="_top">here</a>.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_common_jar" href="#_common_jar"></a>8.1.1&nbsp;Common JAR</h3></div></div></div><p>Below you can find three classes that we will reuse in the DSLs.</p><p><span class="strong"><strong>PatternUtils</strong></span> contains functions used by both the <span class="strong"><strong>consumer</strong></span> and the <span class="strong"><strong>producer</strong></span>.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> com.example;
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> java.util.regex.Pattern;
+
+<strong class="hl-tag" style="color: blue">/**
+ * If you want to use {@link Pattern} directly in your tests
+ * then you can create a class resembling this one. It can
+ * contain all the {@link Pattern} you want to use in the DSL.
+ *
+ * &lt;pre&gt;
+ * {@code
+ * request {
+ *     body(
+ *         [ age: $(c(PatternUtils.oldEnough()))]
+ *     )
+ * }
+ * &lt;/pre&gt;
+ *
+ * Notice that we're using both {@code $()} for dynamic values
+ * and {@code c()} for the consumer side.
+ *
+ * @author Marcin Grzejszczak
+ */</strong>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//tag::impl[]</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> PatternUtils {
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> String tooYoung() {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//remove::start[]</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-1][0-9]"</span>;
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//remove::end[return]</span>
+	}
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> Pattern oldEnough() {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//remove::start[]</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[2-9][0-9]"</span>);
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//remove::end[return]</span>
+	}
+
+	<strong class="hl-tag" style="color: blue">/**
+	 * Makes little sense but it's just an example ;)
+	 */</strong>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> Pattern ok() {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//remove::start[]</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"OK"</span>);
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//remove::end[return]</span>
+	}
+}
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//end::impl[]</span></pre><p><span class="strong"><strong>ConsumerUtils</strong></span> contains functions used by the <span class="strong"><strong>consumer</strong></span>.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> com.example;
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.internal.ClientDslProperty;
+
+<strong class="hl-tag" style="color: blue">/**
+ * DSL Properties passed to the DSL from the consumer's perspective.
+ * That means that on the input side {@code Request} for HTTP
+ * or {@code Input} for messaging you can have a regular expression.
+ * On the {@code Response} for HTTP or {@code Output} for messaging
+ * you have to have a concrete value.
+ *
+ * @author Marcin Grzejszczak
+ */</strong>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//tag::impl[]</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> ConsumerUtils {
+	<strong class="hl-tag" style="color: blue">/**
+	 * Consumer side property. By using the {@link ClientDslProperty}
+	 * you can omit most of boilerplate code from the perspective
+	 * of dynamic values. Example
+	 *
+	 * &lt;pre&gt;
+	 * {@code
+	 * request {
+	 *     body(
+	 *         [ age: $(ConsumerUtils.oldEnough())]
+	 *     )
+	 * }
+	 * &lt;/pre&gt;
+	 *
+	 * That way it's in the implementation that we decide what value we will pass to the consumer
+	 * and which one to the producer.
+	 *
+	 * @author Marcin Grzejszczak
+	 */</strong>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> ClientDslProperty oldEnough() {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//remove::start[]</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// this example is not the best one and</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// theoretically you could just pass the regex instead of `ServerDslProperty` but</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// it's just to show some new tricks :)</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> ClientDslProperty(PatternUtils.oldEnough(), <span class="hl-number">40</span>);
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//remove::end[return]</span>
+	}
+
+}
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//end::impl[]</span></pre><p><span class="strong"><strong>ProducerUtils</strong></span> contains functions used by the <span class="strong"><strong>producer</strong></span>.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> com.example;
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.internal.ServerDslProperty;
+
+<strong class="hl-tag" style="color: blue">/**
+ * DSL Properties passed to the DSL from the producer's perspective.
+ * That means that on the input side {@code Request} for HTTP
+ * or {@code Input} for messaging you have to have a concrete value.
+ * On the {@code Response} for HTTP or {@code Output} for messaging
+ * you can have a regular expression.
+ *
+ * @author Marcin Grzejszczak
+ */</strong>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//tag::impl[]</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> ProducerUtils {
+
+	<strong class="hl-tag" style="color: blue">/**
+	 * Producer side property. By using the {@link ProducerUtils}
+	 * you can omit most of boilerplate code from the perspective
+	 * of dynamic values. Example
+	 *
+	 * &lt;pre&gt;
+	 * {@code
+	 * response {
+	 *     body(
+	 *         [ status: $(ProducerUtils.ok())]
+	 *     )
+	 * }
+	 * &lt;/pre&gt;
+	 *
+	 * That way it's in the implementation that we decide what value we will pass to the consumer
+	 * and which one to the producer.
+	 */</strong>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> ServerDslProperty ok() {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// this example is not the best one and</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// theoretically you could just pass the regex instead of `ServerDslProperty` but</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// it's just to show some new tricks :)</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> ServerDslProperty( PatternUtils.ok(), <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"OK"</span>);
+	}
+}
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//end::impl[]</span></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_adding_the_dependency_to_project" href="#_adding_the_dependency_to_project"></a>8.1.2&nbsp;Adding the dependency to project</h3></div></div></div><p>In order for the plugins and IDE to be able to reference the common JAR classes you need
+to pass the dependency to your project.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_test_dependency_in_project_s_dependencies" href="#_test_dependency_in_project_s_dependencies"></a>8.1.3&nbsp;Test dependency in project&#8217;s dependencies</h3></div></div></div><p>First add the common jar dependency as a test dependency. That way since your
+contracts files are available at test resources path, automatically the
+common jar classes will be visible in your Groovy files.</p><p class="primary"><b>Maven.&nbsp;</b>
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>com.example<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>beer-common<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>${project.version}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;scope&gt;</span>test<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/scope&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span></pre><p class="primary">
+</p><p class="secondary"><b>Gradle.&nbsp;</b>
+</p><pre class="programlisting">testCompile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example:beer-common:0.0.1-SNAPSHOT"</span>)</pre><p class="secondary">
+</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_test_dependency_in_plugin_s_dependencies" href="#_test_dependency_in_plugin_s_dependencies"></a>8.1.4&nbsp;Test dependency in plugin&#8217;s dependencies</h3></div></div></div><p>Now you have to add the dependency for the plugin to reuse at runtime.</p><p class="primary"><b>Maven.&nbsp;</b>
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>${spring-cloud-contract.version}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;extensions&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/extensions&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;packageWithBaseClasses&gt;</span>com.example<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/packageWithBaseClasses&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;baseClassMappings&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;baseClassMapping&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractPackageRegex&gt;</span>.*intoxication.*<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractPackageRegex&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;baseClassFQN&gt;</span>com.example.intoxication.BeerIntoxicationBase<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/baseClassFQN&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/baseClassMapping&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/baseClassMappings&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependencies&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>com.example<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>beer-common<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>${project.version}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;scope&gt;</span>compile<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/scope&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependencies&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><p class="primary">
+</p><p class="secondary"><b>Gradle.&nbsp;</b>
+</p><pre class="programlisting">classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example:beer-common:0.0.1-SNAPSHOT"</span></pre><p class="secondary">
+</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_referencing_classes_in_dsls" href="#_referencing_classes_in_dsls"></a>8.1.5&nbsp;Referencing classes in DSLs</h3></div></div></div><p>Now you can reference your classes in your DSL. Example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> contracts.beer.rest
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> com.example.ConsumerUtils
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> com.example.ProducerUtils
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.Contract
+
+Contract.make {
+	description(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"
+</span>Represents a successful scenario of getting a beer
+
+```
+given:
+	client is old enough
+when:
+	he applies <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">for</span> a beer
+then:
+	we<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'ll grant him the beer
+</span>```
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">")
+</span>	request {
+		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'POST'</span>
+		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/check'</span>
+		body(
+				age: $(ConsumerUtils.oldEnough())
+		)
+		headers {
+			contentType(applicationJson())
+		}
+	}
+	response {
+		status <span class="hl-number">200</span>
+		body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"
+</span>			{
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${value(ProducerUtils.ok())}"</span>
+			}
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">")
+</span>		headers {
+			contentType(applicationJson())
+		}
+	}
+}</pre></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="multi__contract_dsl.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="multi__pluggable_architecture.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">7.&nbsp;Contract DSL&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="multi_spring-cloud-contract.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;9.&nbsp;Pluggable architecture</td></tr></table></div></body></html>

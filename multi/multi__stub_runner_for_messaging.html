@@ -1,0 +1,325 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>6.&nbsp;Stub Runner for Messaging</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="multi_spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="up" href="multi_spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="prev" href="multi__spring_cloud_contract_stub_runner.html" title="5.&nbsp;Spring Cloud Contract Stub Runner"><link rel="next" href="multi__contract_dsl.html" title="7.&nbsp;Contract DSL"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">6.&nbsp;Stub Runner for Messaging</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="multi__spring_cloud_contract_stub_runner.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="multi__contract_dsl.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="_stub_runner_for_messaging" href="#_stub_runner_for_messaging"></a>6.&nbsp;Stub Runner for Messaging</h1></div></div></div><p>Stub Runner has the functionality to run the published stubs in memory. It can integrate with the following frameworks out of the box</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Spring Integration</li><li class="listitem">Spring Cloud Stream</li><li class="listitem">Apache Camel</li><li class="listitem">Spring AMQP</li></ul></div><p>It also provides points of entry to integrate with any other solution on the market.</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stub_triggering" href="#_stub_triggering"></a>6.1&nbsp;Stub triggering</h2></div></div></div><p>To trigger a message it&#8217;s enough to use the <code class="literal">StubTrigger</code> interface:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.springframework.cloud.contract.stubrunner;
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> java.util.Collection;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> java.util.Map;
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">interface</span> StubTrigger {
+
+	<strong class="hl-tag" style="color: blue">/**
+	 * Triggers an event by a given label for a given {@code groupid:artifactid} notation. You can use only {@code artifactId} too.
+	 *
+	 * Feature related to messaging.
+	 *
+	 * @return true - if managed to run a trigger
+	 */</strong>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> trigger(String ivyNotation, String labelName);
+
+	<strong class="hl-tag" style="color: blue">/**
+	 * Triggers an event by a given label.
+	 *
+	 * Feature related to messaging.
+	 *
+	 * @return true - if managed to run a trigger
+	 */</strong>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> trigger(String labelName);
+
+	<strong class="hl-tag" style="color: blue">/**
+	 * Triggers all possible events.
+	 *
+	 * Feature related to messaging.
+	 *
+	 * @return true - if managed to run a trigger
+	 */</strong>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> trigger();
+
+	<strong class="hl-tag" style="color: blue">/**
+	 * Returns a mapping of ivy notation of a dependency to all the labels it has.
+	 *
+	 * Feature related to messaging.
+	 */</strong>
+	Map&lt;String, Collection&lt;String&gt;&gt; labels();
+}</pre><p>For convenience the <code class="literal">StubFinder</code> interface extends <code class="literal">StubTrigger</code> so it&#8217;s enough to use only one in your tests.</p><p><code class="literal">StubTrigger</code> gives you the following options to trigger a message:</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_trigger_by_label" href="#_trigger_by_label"></a>6.1.1&nbsp;Trigger by label</h3></div></div></div><pre class="programlisting">stubFinder.trigger(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'return_book_1'</span>)</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_trigger_by_group_and_artifact_ids" href="#_trigger_by_group_and_artifact_ids"></a>6.1.2&nbsp;Trigger by group and artifact ids</h3></div></div></div><pre class="programlisting">stubFinder.trigger(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:camelService'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'return_book_1'</span>)</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_trigger_by_artifact_ids" href="#_trigger_by_artifact_ids"></a>6.1.3&nbsp;Trigger by artifact ids</h3></div></div></div><pre class="programlisting">stubFinder.trigger(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'camelService'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'return_book_1'</span>)</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_trigger_all_messages" href="#_trigger_all_messages"></a>6.1.4&nbsp;Trigger all messages</h3></div></div></div><pre class="programlisting">stubFinder.trigger()</pre></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stub_runner_camel" href="#_stub_runner_camel"></a>6.2&nbsp;Stub Runner Camel</h2></div></div></div><p>Spring Cloud Contract Verifier Stub Runner&#8217;s messaging module gives you an easy way to integrate with Apache Camel.
+For the provided artifacts it will automatically download the stubs and register the required
+routes.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_adding_it_to_the_project" href="#_adding_it_to_the_project"></a>6.2.1&nbsp;Adding it to the project</h3></div></div></div><p>It&#8217;s enough to have both Apache Camel and Spring Cloud Contract Stub Runner on classpath.
+Remember to annotate your test class with <code class="literal">@AutoConfigureStubRunner</code>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_examples" href="#_examples"></a>6.2.2&nbsp;Examples</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_stubs_structure" href="#_stubs_structure"></a>Stubs structure</h4></div></div></div><p>Let us assume that we have the following Maven repository with a deployed stubs for the
+<code class="literal">camelService</code> application.</p><pre class="programlisting">&#9492;&#9472;&#9472; .m2
+    &#9492;&#9472;&#9472; repository
+        &#9492;&#9472;&#9472; io
+            &#9492;&#9472;&#9472; codearte
+                &#9492;&#9472;&#9472; accurest
+                    &#9492;&#9472;&#9472; stubs
+                        &#9492;&#9472;&#9472; camelService
+                            &#9500;&#9472;&#9472; <span class="hl-number">0.0</span>.<span class="hl-number">1</span>-SNAPSHOT
+                            &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; camelService-<span class="hl-number">0.0</span>.<span class="hl-number">1</span>-SNAPSHOT.pom
+                            &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; camelService-<span class="hl-number">0.0</span>.<span class="hl-number">1</span>-SNAPSHOT-stubs.jar
+                            &#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; maven-metadata-local.xml
+                            &#9492;&#9472;&#9472; maven-metadata-local.xml</pre><p>And the stubs contain the following structure:</p><pre class="programlisting">&#9500;&#9472;&#9472; META-INF
+&#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; MANIFEST.MF
+&#9492;&#9472;&#9472; repository
+    &#9500;&#9472;&#9472; accurest
+    &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; bookDeleted.groovy
+    &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; bookReturned1.groovy
+    &#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; bookReturned2.groovy
+    &#9492;&#9472;&#9472; mappings</pre><p>Let&#8217;s consider the following contracts (let' number it with <span class="strong"><strong>1</strong></span>):</p><pre class="programlisting">Contract.make {
+	label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'return_book_1'</span>
+	input {
+		triggeredBy(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bookReturnedTriggered()'</span>)
+	}
+	outputMessage {
+		sentTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:output'</span>)
+		body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'{ "bookName" : "foo" }'</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>)
+		headers {
+			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>)
+		}
+	}
+}</pre><p>and number <span class="strong"><strong>2</strong></span></p><pre class="programlisting">Contract.make {
+	label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'return_book_2'</span>
+	input {
+		messageFrom(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:input'</span>)
+		messageBody([
+				bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+		])
+		messageHeaders {
+			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sample'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>)
+		}
+	}
+	outputMessage {
+		sentTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:output'</span>)
+		body([
+				bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+		])
+		headers {
+			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>)
+		}
+	}
+}</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_scenario_1_no_input_message_2" href="#_scenario_1_no_input_message_2"></a>Scenario 1 (no input message)</h4></div></div></div><p>So as to trigger a message via the <code class="literal">return_book_1</code> label we&#8217;ll use the <code class="literal">StubTigger</code> interface as follows</p><pre class="programlisting">stubFinder.trigger(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'return_book_1'</span>)</pre><p>Next we&#8217;ll want to listen to the output of the message sent to <code class="literal">jms:output</code></p><pre class="programlisting">Exchange receivedMessage = camelContext.createConsumerTemplate().receive(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:output'</span>, <span class="hl-number">5000</span>)</pre><p>And the received message would pass the following assertions</p><pre class="programlisting">receivedMessage != null
+assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
+receivedMessage.in.headers.get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>) == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_scenario_2_output_triggered_by_input_2" href="#_scenario_2_output_triggered_by_input_2"></a>Scenario 2 (output triggered by input)</h4></div></div></div><p>Since the route is set for you it&#8217;s enough to just send a message to the <code class="literal">jms:output</code> destination.</p><pre class="programlisting">camelContext.createProducerTemplate().sendBodyAndHeaders(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:input'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> BookReturned(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>), [sample: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>])</pre><p>Next we&#8217;ll want to listen to the output of the message sent to <code class="literal">jms:output</code></p><pre class="programlisting">Exchange receivedMessage = camelContext.createConsumerTemplate().receive(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:output'</span>, <span class="hl-number">5000</span>)</pre><p>And the received message would pass the following assertions</p><pre class="programlisting">receivedMessage != null
+assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
+receivedMessage.in.headers.get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>) == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_scenario_3_input_with_no_output" href="#_scenario_3_input_with_no_output"></a>Scenario 3 (input with no output)</h4></div></div></div><p>Since the route is set for you it&#8217;s enough to just send a message to the <code class="literal">jms:output</code> destination.</p><pre class="programlisting">camelContext.createProducerTemplate().sendBodyAndHeaders(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'jms:delete'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> BookReturned(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>), [sample: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>])</pre></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stub_runner_integration" href="#_stub_runner_integration"></a>6.3&nbsp;Stub Runner Integration</h2></div></div></div><p>Spring Cloud Contract Verifier Stub Runner&#8217;s messaging module gives you an easy way to integrate with Spring Integration.
+For the provided artifacts it will automatically download the stubs and register the required
+routes.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_adding_it_to_the_project_2" href="#_adding_it_to_the_project_2"></a>6.3.1&nbsp;Adding it to the project</h3></div></div></div><p>It&#8217;s enough to have both Spring Integration and Spring Cloud Contract Stub Runner on classpath.
+Remember to annotate your test class with <code class="literal">@AutoConfigureStubRunner</code>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_examples_2" href="#_examples_2"></a>6.3.2&nbsp;Examples</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_stubs_structure_2" href="#_stubs_structure_2"></a>Stubs structure</h4></div></div></div><p>Let us assume that we have the following Maven repository with a deployed stubs for the
+<code class="literal">integrationService</code> application.</p><pre class="programlisting">&#9492;&#9472;&#9472; .m2
+    &#9492;&#9472;&#9472; repository
+        &#9492;&#9472;&#9472; io
+            &#9492;&#9472;&#9472; codearte
+                &#9492;&#9472;&#9472; accurest
+                    &#9492;&#9472;&#9472; stubs
+                        &#9492;&#9472;&#9472; integrationService
+                            &#9500;&#9472;&#9472; <span class="hl-number">0.0</span>.<span class="hl-number">1</span>-SNAPSHOT
+                            &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; integrationService-<span class="hl-number">0.0</span>.<span class="hl-number">1</span>-SNAPSHOT.pom
+                            &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; integrationService-<span class="hl-number">0.0</span>.<span class="hl-number">1</span>-SNAPSHOT-stubs.jar
+                            &#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; maven-metadata-local.xml
+                            &#9492;&#9472;&#9472; maven-metadata-local.xml</pre><p>And the stubs contain the following structure:</p><pre class="programlisting">&#9500;&#9472;&#9472; META-INF
+&#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; MANIFEST.MF
+&#9492;&#9472;&#9472; repository
+    &#9500;&#9472;&#9472; accurest
+    &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; bookDeleted.groovy
+    &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; bookReturned1.groovy
+    &#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; bookReturned2.groovy
+    &#9492;&#9472;&#9472; mappings</pre><p>Let&#8217;s consider the following contracts (let' number it with <span class="strong"><strong>1</strong></span>):</p><pre class="programlisting">Contract.make {
+	label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'return_book_1'</span>
+	input {
+		triggeredBy(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bookReturnedTriggered()'</span>)
+	}
+	outputMessage {
+		sentTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'output'</span>)
+		body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'{ "bookName" : "foo" }'</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>)
+		headers {
+			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>)
+		}
+	}
+}</pre><p>and number <span class="strong"><strong>2</strong></span></p><pre class="programlisting">Contract.make {
+	label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'return_book_2'</span>
+	input {
+		messageFrom(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'input'</span>)
+		messageBody([
+				bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+		])
+		messageHeaders {
+			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sample'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>)
+		}
+	}
+	outputMessage {
+		sentTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'output'</span>)
+		body([
+				bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+		])
+		headers {
+			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>)
+		}
+	}
+}</pre><p>and the following Spring Integration Route:</p><pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;beans:beans</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.springframework.org/schema/integration"</span>
+			 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns:xsi</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+			 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns:beans</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.springframework.org/schema/beans"</span>
+			 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xsi:schemaLocation</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/integration
+			http://www.springframework.org/schema/integration/spring-integration.xsd"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&gt;</span>
+
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- REQUIRED FOR TESTING --&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;bridge</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">input-channel</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"output"</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">output-channel</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"outputTest"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">/&gt;</span>
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;channel</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">id</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"outputTest"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;queue/&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/channel&gt;</span>
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/beans:beans&gt;</span></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_scenario_1_no_input_message_3" href="#_scenario_1_no_input_message_3"></a>Scenario 1 (no input message)</h4></div></div></div><p>So as to trigger a message via the <code class="literal">return_book_1</code> label we&#8217;ll use the <code class="literal">StubTigger</code> interface as follows</p><pre class="programlisting">stubFinder.trigger(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'return_book_1'</span>)</pre><p>Next we&#8217;ll want to listen to the output of the message sent to <code class="literal">output</code></p><pre class="programlisting">Message&lt;?&gt; receivedMessage = messaging.receive(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'outputTest'</span>)</pre><p>And the received message would pass the following assertions</p><pre class="programlisting">receivedMessage != null
+assertJsons(receivedMessage.payload)
+receivedMessage.headers.get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>) == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_scenario_2_output_triggered_by_input_3" href="#_scenario_2_output_triggered_by_input_3"></a>Scenario 2 (output triggered by input)</h4></div></div></div><p>Since the route is set for you it&#8217;s enough to just send a message to the <code class="literal">output</code> destination.</p><pre class="programlisting">messaging.send(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> BookReturned(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>), [sample: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>], <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'input'</span>)</pre><p>Next we&#8217;ll want to listen to the output of the message sent to <code class="literal">output</code></p><pre class="programlisting">Message&lt;?&gt; receivedMessage = messaging.receive(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'outputTest'</span>)</pre><p>And the received message would pass the following assertions</p><pre class="programlisting">receivedMessage != null
+assertJsons(receivedMessage.payload)
+receivedMessage.headers.get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>) == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_scenario_3_input_with_no_output_2" href="#_scenario_3_input_with_no_output_2"></a>Scenario 3 (input with no output)</h4></div></div></div><p>Since the route is set for you it&#8217;s enough to just send a message to the <code class="literal">input</code> destination.</p><pre class="programlisting">messaging.send(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> BookReturned(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>), [sample: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>], <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'delete'</span>)</pre></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stub_runner_stream" href="#_stub_runner_stream"></a>6.4&nbsp;Stub Runner Stream</h2></div></div></div><p>Spring Cloud Contract Verifier Stub Runner&#8217;s messaging module gives you an easy way to integrate with Spring Stream.
+For the provided artifacts it will automatically download the stubs and register the required
+routes.</p><div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Warning"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Warning]" src="images/warning.png"></td><th align="left">Warning</th></tr><tr><td align="left" valign="top"><p>In Stub Runner&#8217;s integration with Stream the <code class="literal">messageFrom</code> or <code class="literal">sentTo</code> Strings are resolved
+first as a <code class="literal">destination</code> of a channel, and then if there is no such <code class="literal">destination</code> it&#8217;s resolved as a
+channel name.</p></td></tr></table></div><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>If you want to use Spring Cloud Stream remember to add a
+<code class="literal">org.springframework.cloud:spring-cloud-stream-test-support</code> dependency.</p></td></tr></table></div><p class="primary"><b>Maven.&nbsp;</b>
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-stream-test-support<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;scope&gt;</span>test<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/scope&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span></pre><p class="primary">
+</p><p class="secondary"><b>Gradle.&nbsp;</b>
+</p><pre class="programlisting">testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud:spring-cloud-stream-test-support"</span></pre><p class="secondary">
+</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_adding_it_to_the_project_3" href="#_adding_it_to_the_project_3"></a>6.4.1&nbsp;Adding it to the project</h3></div></div></div><p>It&#8217;s enough to have both Spring Cloud Stream and Spring Cloud Contract Stub Runner on classpath.
+Remember to annotate your test class with <code class="literal">@AutoConfigureStubRunner</code>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_examples_3" href="#_examples_3"></a>6.4.2&nbsp;Examples</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_stubs_structure_3" href="#_stubs_structure_3"></a>Stubs structure</h4></div></div></div><p>Let us assume that we have the following Maven repository with a deployed stubs for the
+<code class="literal">streamService</code> application.</p><pre class="programlisting">&#9492;&#9472;&#9472; .m2
+    &#9492;&#9472;&#9472; repository
+        &#9492;&#9472;&#9472; io
+            &#9492;&#9472;&#9472; codearte
+                &#9492;&#9472;&#9472; accurest
+                    &#9492;&#9472;&#9472; stubs
+                        &#9492;&#9472;&#9472; streamService
+                            &#9500;&#9472;&#9472; <span class="hl-number">0.0</span>.<span class="hl-number">1</span>-SNAPSHOT
+                            &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; streamService-<span class="hl-number">0.0</span>.<span class="hl-number">1</span>-SNAPSHOT.pom
+                            &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; streamService-<span class="hl-number">0.0</span>.<span class="hl-number">1</span>-SNAPSHOT-stubs.jar
+                            &#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; maven-metadata-local.xml
+                            &#9492;&#9472;&#9472; maven-metadata-local.xml</pre><p>And the stubs contain the following structure:</p><pre class="programlisting">&#9500;&#9472;&#9472; META-INF
+&#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; MANIFEST.MF
+&#9492;&#9472;&#9472; repository
+    &#9500;&#9472;&#9472; accurest
+    &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; bookDeleted.groovy
+    &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; bookReturned1.groovy
+    &#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; bookReturned2.groovy
+    &#9492;&#9472;&#9472; mappings</pre><p>Let&#8217;s consider the following contracts (let' number it with <span class="strong"><strong>1</strong></span>):</p><pre class="programlisting">Contract.make {
+	label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'return_book_1'</span>
+	input { triggeredBy(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bookReturnedTriggered()'</span>) }
+	outputMessage {
+		sentTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'returnBook'</span>)
+		body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'{ "bookName" : "foo" }'</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>)
+		headers { header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>) }
+	}
+}</pre><p>and number <span class="strong"><strong>2</strong></span></p><pre class="programlisting">Contract.make {
+	label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'return_book_2'</span>
+	input {
+		messageFrom(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bookStorage'</span>)
+		messageBody([
+			bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+		])
+		messageHeaders { header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sample'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>) }
+	}
+	outputMessage {
+		sentTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'returnBook'</span>)
+		body([
+			bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+		])
+		headers { header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>) }
+	}
+}</pre><p>and the following Spring configuration:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">stubrunner.repositoryRoot</span>: classpath:m2repo/repository/
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">stubrunner.ids</span>: org.springframework.cloud.contract.verifier.stubs:streamService:<span class="hl-number">0.0</span>.<span class="hl-number">1</span>-SNAPSHOT:stubs
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">spring</span>:
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  cloud</span>:
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">    stream</span>:
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">      bindings</span>:
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">        output</span>:
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">          destination</span>: returnBook
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">        input</span>:
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">          destination</span>: bookStorage
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">server</span>:
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  port</span>: <span class="hl-number">0</span>
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">debug</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">true</span></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_scenario_1_no_input_message_4" href="#_scenario_1_no_input_message_4"></a>Scenario 1 (no input message)</h4></div></div></div><p>So as to trigger a message via the <code class="literal">return_book_1</code> label we&#8217;ll use the <code class="literal">StubTrigger</code> interface as follows</p><pre class="programlisting">stubFinder.trigger(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'return_book_1'</span>)</pre><p>Next we&#8217;ll want to listen to the output of the message sent to a channel whose <code class="literal">destination</code> is <code class="literal">returnBook</code></p><pre class="programlisting">Message&lt;?&gt; receivedMessage = messaging.receive(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'returnBook'</span>)</pre><p>And the received message would pass the following assertions</p><pre class="programlisting">receivedMessage != null
+assertJsons(receivedMessage.payload)
+receivedMessage.headers.get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>) == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_scenario_2_output_triggered_by_input_4" href="#_scenario_2_output_triggered_by_input_4"></a>Scenario 2 (output triggered by input)</h4></div></div></div><p>Since the route is set for you it&#8217;s enough to just send a message to the <code class="literal">bookStorage</code> <code class="literal">destination</code>.</p><pre class="programlisting">messaging.send(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> BookReturned(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>), [sample: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>], <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bookStorage'</span>)</pre><p>Next we&#8217;ll want to listen to the output of the message sent to <code class="literal">returnBook</code></p><pre class="programlisting">Message&lt;?&gt; receivedMessage = messaging.receive(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'returnBook'</span>)</pre><p>And the received message would pass the following assertions</p><pre class="programlisting">receivedMessage != null
+assertJsons(receivedMessage.payload)
+receivedMessage.headers.get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>) == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_scenario_3_input_with_no_output_3" href="#_scenario_3_input_with_no_output_3"></a>Scenario 3 (input with no output)</h4></div></div></div><p>Since the route is set for you it&#8217;s enough to just send a message to the <code class="literal">output</code> destination.</p><pre class="programlisting">messaging.send(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> BookReturned(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>), [sample: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>], <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'delete'</span>)</pre></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stub_runner_spring_amqp" href="#_stub_runner_spring_amqp"></a>6.5&nbsp;Stub Runner Spring AMQP</h2></div></div></div><p>Spring Cloud Contract Verifier Stub Runner&#8217;s messaging module provides an easy way to integrate with Spring AMQP&#8217;s Rabbit Template.
+For the provided artifacts it will automatically download the stubs and register the required
+routes.</p><p>The integration tries to work standalone, that is without interaction with a running RabbitMQ message broker.
+It expects a <code class="literal">RabbitTemplate</code> on the application context and uses it as a spring boot test <code class="literal">@SpyBean</code>.
+Thus it can use the mockito spy functionality to verify and introspect messages sent by the application.</p><p>On the message consumer side, it considers all <code class="literal">@RabbitListener</code> annotated endpoints as well as all `SimpleMessageListenerContainer`s on the application context.</p><p>As messages are usually sent to exchanges in AMQP the message contract contains the exchange name as the destination.
+Message listeners on the other side are bound to queues. Bindings connect an exchange to a queue.
+If message contracts are triggered the Spring AMQP stub runner integration will look for bindings on the application context that match this exchange.
+Then it collects the queues from the Spring exchanges and tries to find messages listeners bound to these queues.
+The message is triggered to all matching message listeners.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_adding_it_to_the_project_4" href="#_adding_it_to_the_project_4"></a>6.5.1&nbsp;Adding it to the project</h3></div></div></div><p>It&#8217;s enough to have both Spring AMQP and Spring Cloud Contract Stub Runner on the classpath and set the property <code class="literal">stubrunner.amqp.enabled=true</code>.
+Remember to annotate your test class with <code class="literal">@AutoConfigureStubRunner</code>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_examples_4" href="#_examples_4"></a>6.5.2&nbsp;Examples</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_stubs_structure_4" href="#_stubs_structure_4"></a>Stubs structure</h4></div></div></div><p>Let us assume that we have the following Maven repository with a deployed stubs for the
+<code class="literal">spring-cloud-contract-amqp-test</code> application.</p><pre class="programlisting">&#9492;&#9472;&#9472; .m2
+    &#9492;&#9472;&#9472; repository
+        &#9492;&#9472;&#9472; com
+            &#9492;&#9472;&#9472; example
+                &#9492;&#9472;&#9472; spring-cloud-contract-amqp-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">test</span>
+                    &#9500;&#9472;&#9472; <span class="hl-number">0.4</span>.<span class="hl-number">0</span>-SNAPSHOT
+                    &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; spring-cloud-contract-amqp-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">test</span>-<span class="hl-number">0.4</span>.<span class="hl-number">0</span>-SNAPSHOT.pom
+                    &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; spring-cloud-contract-amqp-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">test</span>-<span class="hl-number">0.4</span>.<span class="hl-number">0</span>-SNAPSHOT-stubs.jar
+                    &#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; maven-metadata-local.xml
+                    &#9492;&#9472;&#9472; maven-metadata-local.xml</pre><p>And the stubs contain the following structure:</p><pre class="programlisting">&#9500;&#9472;&#9472; META-INF
+&#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; MANIFEST.MF
+&#9492;&#9472;&#9472; contracts
+    &#9492;&#9472;&#9472; shouldProduceValidPersonData.groovy</pre><p>Let&#8217;s consider the following contract:</p><pre class="programlisting">Contract.make {
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Human readable description</span>
+    description <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Should produce valid person data'</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Label by means of which the output message can be triggered</span>
+    label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'contract-test.person.created.event'</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// input to the contract</span>
+    input {
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// the contract will be triggered by a method</span>
+        triggeredBy(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'createPerson()'</span>)
+    }
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// output message of the contract</span>
+    outputMessage {
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// destination to which the output message will be sent</span>
+        sentTo <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'contract-test.exchange'</span>
+        headers {
+            header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'contentType'</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application/json'</span>)
+            header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'__TypeId__'</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.stubrunner.messaging.amqp.Person'</span>)
+        }
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// the body of the output message</span>
+        body ([
+                id: $(consumer(<span class="hl-number">9</span>), producer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]+"</span>))),
+                name: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"me"</span>
+        ])
+    }
+}</pre><p>and the following Spring configuration:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">stubrunner</span>:
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  repositoryRoot</span>: classpath:m2repo/repository/
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  ids</span>: org.springframework.cloud.contract.verifier.stubs.amqp:spring-cloud-contract-amqp-test:<span class="hl-number">0.4</span>.<span class="hl-number">0</span>-SNAPSHOT:stubs
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  amqp</span>:
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">    enabled</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">true</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">server</span>:
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  port</span>: <span class="hl-number">0</span></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_triggering_the_message" href="#_triggering_the_message"></a>Triggering the message</h4></div></div></div><p>So to trigger a message using the contract above we&#8217;ll use the <code class="literal">StubTrigger</code> interface as follows.</p><pre class="programlisting">stubTrigger.trigger(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"contract-test.person.created.event"</span>)</pre><p>The message has the destination <code class="literal">contract-test.exchange</code> so the Spring AMQP stub runner integration looks for bindings related to this exchange.</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Bean</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> Binding binding() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> BindingBuilder.bind(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> Queue(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"test.queue"</span>)).to(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> DirectExchange(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"contract-test.exchange"</span>)).with(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"#"</span>);
+}</pre><p>The binding definition binds the queue <code class="literal">test.queue</code>.
+So the following listener definition is a match and is invoked with the contract message.</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Bean</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> SimpleMessageListenerContainer simpleMessageListenerContainer(ConnectionFactory connectionFactory,
+																		MessageListenerAdapter listenerAdapter) {
+	SimpleMessageListenerContainer container = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> SimpleMessageListenerContainer();
+	container.setConnectionFactory(connectionFactory);
+	container.setQueueNames(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"test.queue"</span>);
+	container.setMessageListener(listenerAdapter);
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> container;
+}</pre><p>Also, the following annotated listener represents a match and would be invoked.</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RabbitListener(bindings = @QueueBinding(
+		value = @Queue(value = "test.queue"),
+		exchange = @Exchange(value = "contract-test.exchange", ignoreDeclarationExceptions = "true")))</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> handlePerson(Person person) {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.person = person;
+}</pre><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>The message is directly handed over to the <code class="literal">onMessage</code> method of the <code class="literal">MessageListener</code> associated with the matching <code class="literal">SimpleMessageListenerContainer</code>.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_spring_amqp_test_configuration" href="#_spring_amqp_test_configuration"></a>Spring AMQP Test Configuration</h4></div></div></div><p>In order to avoid that Spring AMQP is trying to connect to a running broker during our tests we configure a mock <code class="literal">ConnectionFactory</code>.</p><p>To disable the mocked ConnectionFactory set the property <code class="literal">stubrunner.amqp.mockConnection=false</code></p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">stubrunner</span>:
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  amqp</span>:
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">    mockConnection</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">false</span></pre></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="multi__spring_cloud_contract_stub_runner.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="multi__contract_dsl.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">5.&nbsp;Spring Cloud Contract Stub Runner&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="multi_spring-cloud-contract.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;7.&nbsp;Contract DSL</td></tr></table></div></body></html>
