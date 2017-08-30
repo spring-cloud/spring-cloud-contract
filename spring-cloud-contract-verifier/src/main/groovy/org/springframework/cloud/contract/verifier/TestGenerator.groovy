@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicInteger
 
-import com.google.common.collect.ListMultimap
+import wiremock.com.google.common.collect.ListMultimap
 import groovy.transform.PackageScope
 import org.apache.commons.lang3.StringUtils
 

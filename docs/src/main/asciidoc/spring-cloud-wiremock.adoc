@@ -4,15 +4,9 @@
 
 
 Modules giving you the possibility to use
-http://wiremock.org[WireMock] with different servers by using the
-"ambient" server embedded in a Spring Boot application. Check out the
+http://wiremock.org[WireMock] in a Spring Boot application. Check out the
 https://github.com/spring-cloud/spring-cloud-contract/tree/{branch}/samples[samples]
 for more details.
-
-IMPORTANT: The Spring Cloud Release Train BOM imports `spring-cloud-contract-dependencies`
- which in turn has exclusions for the dependencies needed by WireMock. This might lead to a situation that
- even if you're not using Spring Cloud Contract then your dependencies will be influenced
- anyways.
 
 If you have a Spring Boot application that uses Tomcat as an embedded
 server, for example (the default with `spring-boot-starter-web`), then

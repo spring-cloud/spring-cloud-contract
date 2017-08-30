@@ -10,15 +10,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.jknack.handlebars.Helper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.cloud.contract.stubrunner.HttpServerStub;
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsEscapeHelper;
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsJsonPathHelper;
@@ -27,6 +28,8 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.SocketUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
+
+import wiremock.com.github.jknack.handlebars.Helper;
 
 /**
  * Abstraction over WireMock as a HTTP Server Stub

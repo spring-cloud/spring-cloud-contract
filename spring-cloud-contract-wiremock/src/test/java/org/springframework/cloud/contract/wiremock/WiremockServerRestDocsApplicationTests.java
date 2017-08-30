@@ -1,8 +1,8 @@
 package org.springframework.cloud.contract.wiremock;
 
-import org.eclipse.jetty.http.HttpStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+
+import wiremock.org.eclipse.jetty.http.HttpStatus;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestConfiguration.class)

@@ -1,6 +1,6 @@
 package org.springframework.cloud.contract.verifier.messaging.amqp
 
-import com.google.common.collect.ImmutableMap
+import wiremock.com.google.common.collect.ImmutableMap
 import org.springframework.amqp.core.Binding
 import org.springframework.amqp.core.BindingBuilder
 import org.springframework.amqp.core.DirectExchange

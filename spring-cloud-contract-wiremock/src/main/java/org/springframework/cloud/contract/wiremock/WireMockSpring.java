@@ -67,7 +67,6 @@ public abstract class WireMockSpring {
 			initialized = true;
 		}
 		WireMockConfiguration config = new WireMockConfiguration();
-		config.httpServerFactory(new SpringBootHttpServerFactory());
 		return config;
 	}
 
