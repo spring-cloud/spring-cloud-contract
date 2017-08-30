@@ -1,4 +1,4 @@
-=== Spring Cloud Contract Stub Runner
+== Spring Cloud Contract Stub Runner
 
 One of the issues that you could have encountered while using Spring Cloud Contract Verifier was to pass the generated WireMock JSON stubs from the server side to the client side (or various clients).
  The same takes place in terms of client side generation for messaging.
@@ -8,7 +8,7 @@ Copying the JSON files / setting the client side for messaging manually is out o
 That's why we'll introduce Spring Cloud Contract Stub Runner that can download and run the stubs
 automatically for you.
 
-==== Snapshot versions
+=== Snapshot versions
 
 Add the additional snapshot repository to your build.gradle to use snapshot versions which are automatically uploaded after every successful build:
 
@@ -24,7 +24,7 @@ include::{standalone_samples_path}/http-server/pom.xml[tags=repos,indent=0]
 include::{standalone_samples_path}/http-server/build.gradle[tags=repos,indent=0]
 ----
 
-==== Publishing stubs as JARs
+=== Publishing stubs as JARs
 
 The easiest approach would be to centralize the way stubs are kept. For example you can keep them as JARs in a Maven repository.
 
@@ -58,7 +58,7 @@ include::{stubrunner_core_path}/README.adoc[]
 Some of the properties that are repetitive can be set using system properties or configuration properties (for Spring). Here are their names with their default values:
 
 [frame="topbot",options="header"]
-|======================
+|===============
 | Property name | Default value | Description
 |stubrunner.minPort|10000| Minimal value of a port for a started WireMock with stubs
 |stubrunner.maxPort|15000| Minimal value of a port for a started WireMock with stubs
@@ -70,9 +70,9 @@ Some of the properties that are repetitive can be set using system properties or
 |stubrunner.password|| Optional password to access the tool that stores the JARs with stubs
 |stubrunner.stubsPerConsumer|false| Set to `true` if you want to use different stubs per each consumer instead of registering all stubs for every consumer
 |stubrunner.consumerName|| If you want to use stubs per consumer and want to override the consumer name just change this value
-|======================
+|===============
 
-===== Stub runner stubs ids
+==== Stub runner stubs ids
 
 You can provide the stubs to download via the `stubrunner.ids` system property. They follow the following pattern:
 

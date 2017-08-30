@@ -1,4 +1,4 @@
-=== Stub Runner for Messaging
+== Stub Runner for Messaging
 
 Stub Runner has the functionality to run the published stubs in memory. It can integrate with the following frameworks out of the box
 
@@ -9,7 +9,7 @@ Stub Runner has the functionality to run the published stubs in memory. It can i
 
 It also provides points of entry to integrate with any other solution on the market.
 
-==== Stub triggering
+=== Stub triggering
 
 To trigger a message it's enough to use the `StubTrigger` interface:
 
@@ -22,28 +22,28 @@ For convenience the `StubFinder` interface extends `StubTrigger` so it's enough 
 
 `StubTrigger` gives you the following options to trigger a message:
 
-===== Trigger by label
+==== Trigger by label
 
 [source,groovy]
 ----
 include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=client_trigger,indent=0]
 ----
 
-====== Trigger by group and artifact ids
+==== Trigger by group and artifact ids
 
 [source,groovy]
 ----
 include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=trigger_group_artifact,indent=0]
 ----
 
-====== Trigger by artifact ids
+==== Trigger by artifact ids
 
 [source,groovy]
 ----
 include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=trigger_artifact,indent=0]
 ----
 
-===== Trigger all messages
+==== Trigger all messages
 
 [source,groovy]
 ----

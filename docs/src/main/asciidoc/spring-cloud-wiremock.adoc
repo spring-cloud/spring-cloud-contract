@@ -2,6 +2,7 @@
 :doc_samples: {core_path}/samples/wiremock-jetty
 :wiremock_tests: {core_path}/spring-cloud-contract-wiremock
 
+== Spring Cloud Contract WireMock
 
 Modules giving you the possibility to use
 http://wiremock.org[WireMock] with different servers by using the
@@ -94,7 +95,7 @@ include::{doc_samples}/src/test/java/com/example/WiremockForDocsClassRuleTests.j
 
 The use `@ClassRule` means that the server will shut down after all the methods in this class.
 
-== Relaxed SSL Validation for Rest Template
+=== Relaxed SSL Validation for Rest Template
 
 WireMock allows you to stub a "secure" server with an "https" URL protocol. If your application wants to
 contact that stub server in an integration test, then it will find that the SSL certificates are not
@@ -137,7 +138,7 @@ be selected by the `RestTemplateBuilder` and configured to ignore SSL errors. If
 client you don't need the annotation (but it won't do any harm). There is no support currently for other clients, but
 it may be added in future releases.
 
-== WireMock and Spring MVC Mocks
+=== WireMock and Spring MVC Mocks
 
 Spring Cloud Contract provides a convenience class that can load JSON WireMock stubs into a
 Spring `MockRestServiceServer`. Here's an example:
@@ -164,7 +165,7 @@ particular version of Jetty (currently 9.2). To use the native Jetty
 you need to add the native wiremock dependencies and exclude the
 Spring Boot container if there is one.
 
-== Generating Stubs using RestDocs
+=== Generating Stubs using RestDocs
 
 https://projects.spring.io/spring-restdocs[Spring RestDocs] can be
 used to generate documentation (e.g. in asciidoctor format) for an
@@ -294,7 +295,7 @@ After that, you can create a stub using WireMock in a
 number of different ways, including as described above using
 `@AutoConfigureWireMock(stubs="classpath:resource.json")`.
 
-== Generating Contracts using RestDocs
+=== Generating Contracts using RestDocs
 
 Another thing that can be generated with Spring RestDocs is the Spring Cloud
 Contract DSL file and documentation. If you combine that with Spring Cloud

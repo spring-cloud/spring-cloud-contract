@@ -14,7 +14,7 @@
 
 include::verifier_introduction.adoc[]
 
-include::verifier_rest.adoc[]
+include::verifier_setup.adoc[]
 
 include::verifier_messaging.adoc[]
 
@@ -23,5 +23,3 @@ include::verifier_stubrunner.adoc[]
 include::verifier_stubrunner_msg.adoc[]
 
 include::verifier_contract.adoc[]
-
-include::verifier_links.adoc[]
