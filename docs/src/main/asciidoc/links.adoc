@@ -1,4 +1,4 @@
-=== Links
+== Links
 
 Here you can find interesting links related to Spring Cloud Contract Verifier:
 
