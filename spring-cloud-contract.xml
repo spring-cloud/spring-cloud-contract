@@ -6269,39 +6269,6 @@ Contract.make {
 (the location of this file would be <literal>index/dsl-contract.adoc</literal>).</simpara>
 </section>
 </chapter>
-<chapter xml:id="_links">
-<title>Links</title>
-<simpara>Here you can find interesting links related to Spring Cloud Contract Verifier:</simpara>
-<itemizedlist>
-<listitem>
-<simpara><link xl:href="https://github.com/spring-cloud/spring-cloud-contract/">Spring Cloud Contract Github Repository</link></simpara>
-</listitem>
-<listitem>
-<simpara><link xl:href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/">Spring Cloud Contract Samples</link></simpara>
-</listitem>
-<listitem>
-<simpara><link xl:href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html">Spring Cloud Contract Documentation</link></simpara>
-</listitem>
-<listitem>
-<simpara><link xl:href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/deprecated">Accurest Legacy Documentation</link></simpara>
-</listitem>
-<listitem>
-<simpara><link xl:href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/#spring-cloud-contract-stub-runner">Spring Cloud Contract Stub Runner Documentation</link></simpara>
-</listitem>
-<listitem>
-<simpara><link xl:href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/#stub-runner-for-messaging">Spring Cloud Contract Stub Runner Messaging Documentation</link></simpara>
-</listitem>
-<listitem>
-<simpara><link xl:href="https://gitter.im/spring-cloud/spring-cloud-contract">Spring Cloud Contract Gitter</link></simpara>
-</listitem>
-<listitem>
-<simpara><link xl:href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/">Spring Cloud Contract Maven Plugin</link></simpara>
-</listitem>
-<listitem>
-<simpara><link xl:href="https://www.youtube.com/watch?v=sAAklvxmPmk">Spring Cloud Contract WJUG Presentation by Marcin Grzejszczak</link></simpara>
-</listitem>
-</itemizedlist>
-</chapter>
 <chapter xml:id="_migrations">
 <title>Migrations</title>
 <simpara>In the following document we will write about necessary migration steps between versions.</simpara>
@@ -6431,5 +6398,38 @@ all mappings available in a single <literal>HttpServerStub</literal>. Related to
 <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/issues/260">issue 260</link>.</simpara>
 </section>
 </section>
+</chapter>
+<chapter xml:id="_links">
+<title>Links</title>
+<simpara>Here you can find interesting links related to Spring Cloud Contract Verifier:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><link xl:href="https://github.com/spring-cloud/spring-cloud-contract/">Spring Cloud Contract Github Repository</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/">Spring Cloud Contract Samples</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html">Spring Cloud Contract Documentation</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/deprecated">Accurest Legacy Documentation</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/#spring-cloud-contract-stub-runner">Spring Cloud Contract Stub Runner Documentation</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/#stub-runner-for-messaging">Spring Cloud Contract Stub Runner Messaging Documentation</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="https://gitter.im/spring-cloud/spring-cloud-contract">Spring Cloud Contract Gitter</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/">Spring Cloud Contract Maven Plugin</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="https://www.youtube.com/watch?v=sAAklvxmPmk">Spring Cloud Contract WJUG Presentation by Marcin Grzejszczak</link></simpara>
+</listitem>
+</itemizedlist>
 </chapter>
 </book>
