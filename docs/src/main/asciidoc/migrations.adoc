@@ -2,6 +2,8 @@
 :doc_samples: {core_path}/samples/wiremock-jetty
 :wiremock_tests: {core_path}/spring-cloud-contract-wiremock
 
+== Migrations
+
 In the following document we will write about necessary migration steps between versions.
 
 === 1.0.x -> 1.1.x
