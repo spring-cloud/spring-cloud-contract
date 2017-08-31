@@ -18,7 +18,7 @@ http://cloud-samples.spring.io/spring-cloud-contract-samples/workshops.html[this
 
 include::verifier_introduction.adoc[]
 
-include::verifier_links.adoc[]
+include::links.adoc[]
 
 === Spring Cloud Contract WireMock
 
