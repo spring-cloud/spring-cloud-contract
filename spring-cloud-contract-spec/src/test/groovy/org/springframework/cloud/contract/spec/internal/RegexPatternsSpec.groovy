@@ -233,6 +233,9 @@ class RegexPatternsSpec extends Specification {
 			'Not Empty'	|| true
 			''			|| false
 			'    '		|| false
+			'\nFoo\nBar\n'	|| true
+			'\r\n'			|| false
+			' \r\n\t\f' 	|| false
 	}
 
 	def "should generate a regex for a non empty string [#textToMatch] that should match [#shouldMatch]"() {
@@ -243,6 +246,9 @@ class RegexPatternsSpec extends Specification {
 			'Not Empty'	|| true
 			''			|| false
 			'  '		|| true
+			'\nFoo\nBar\n'	|| true
+			'\r\n'			|| true
+			' \r\n\t\f' 	|| true
 	}
 
 	def "should generate a regex for an enumerated value [#textToMatch] that should match [#shouldMatch]"(){
