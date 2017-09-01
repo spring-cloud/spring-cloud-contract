@@ -52,60 +52,60 @@ class RegexPatterns {
 		return Pattern.compile(values.collect({"^$it\$"}).join("|"))
 	}
 
-	String onlyAlphaUnicode() {
-		return ONLY_ALPHA_UNICODE.pattern()
+	Pattern onlyAlphaUnicode() {
+		return ONLY_ALPHA_UNICODE
 	}
 
-	String number() {
-		return NUMBER.pattern()
+	Pattern number() {
+		return NUMBER
 	}
 
-	String anyBoolean() {
-		return TRUE_OR_FALSE.pattern()
+	Pattern anyBoolean() {
+		return TRUE_OR_FALSE
 	}
 
-	String ipAddress() {
-		return IP_ADDRESS.pattern()
+	Pattern ipAddress() {
+		return IP_ADDRESS
 	}
 
-	String hostname() {
-		return HOSTNAME_PATTERN.pattern()
+	Pattern hostname() {
+		return HOSTNAME_PATTERN
 	}
 
-	String email() {
-		return EMAIL.pattern()
+	Pattern email() {
+		return EMAIL
 	}
 
-	String url() {
-		return URL.pattern()
+	Pattern url() {
+		return URL
 	}
 
-	String uuid(){
-		return UUID.pattern()
+	Pattern uuid(){
+		return UUID
 	}
 
-	String isoDate() {
-		return ANY_DATE.pattern()
+	Pattern isoDate() {
+		return ANY_DATE
 	}
 
-	String isoDateTime() {
-		return ANY_DATE_TIME.pattern()
+	Pattern isoDateTime() {
+		return ANY_DATE_TIME
 	}
 
-	String isoTime() {
-		return ANY_TIME.pattern()
+	Pattern isoTime() {
+		return ANY_TIME
 	}
 
-	String iso8601WithOffset() {
-		return ISO8601_WITH_OFFSET.pattern()
+	Pattern iso8601WithOffset() {
+		return ISO8601_WITH_OFFSET
 	}
 
-	String nonEmpty() {
-		return NON_EMPTY.pattern()
+	Pattern nonEmpty() {
+		return NON_EMPTY
 	}
 
-	String nonBlank() {
-		return NON_BLANK.pattern()
+	Pattern nonBlank() {
+		return NON_BLANK
 	}
 
 	// end::regexps[]
