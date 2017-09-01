@@ -4355,6 +4355,8 @@ of elements from the HTTP request. You can use the following options:</simpara>
 		}
 		body(
 				url: fromRequest().url(),
+				path: fromRequest().path(),
+				pathIndex: fromRequest().path(1),
 				param: fromRequest().query("foo"),
 				paramIndex: fromRequest().query("foo", 1),
 				authorization: fromRequest().header("Authorization"),
@@ -6419,6 +6421,13 @@ all mappings available in a single <literal>HttpServerStub</literal>. Related to
 </itemizedlist>
 <simpara>Related to
 <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/issues/260">issue 260</link>.</simpara>
+</section>
+<section xml:id="_new_methods_in_templateprocessor">
+<title>New methods in TemplateProcessor</title>
+<simpara>In order to add support for <literal>fromRequest.path</literal> some methods had to be added to the
+<literal>TemplateProcessor</literal> interface.</simpara>
+<simpara>Related to
+<link xl:href="https://github.com/spring-cloud/spring-cloud-contract/issues/388">issue 388</link>.</simpara>
 </section>
 </section>
 </chapter>

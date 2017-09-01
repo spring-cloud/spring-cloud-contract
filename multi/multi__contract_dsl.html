@@ -578,6 +578,8 @@ of elements from the HTTP request. You can use the following options:</p><div cl
 		}
 		body(
 				url: fromRequest().url(),
+				path: fromRequest().path(),
+				pathIndex: fromRequest().path(<span class="hl-number">1</span>),
 				param: fromRequest().query(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>),
 				paramIndex: fromRequest().query(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>, <span class="hl-number">1</span>),
 				authorization: fromRequest().header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Authorization"</span>),
