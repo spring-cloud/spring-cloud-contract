@@ -3011,6 +3011,12 @@ segments are padded with trailing 0 or "ga" segments, respectively, until the ki
 </listitem>
 </itemizedlist>
 <simpara>It also provides points of entry to integrate with any other solution on the market.</simpara>
+<important>
+<simpara>If you have multiple frameworks on the classpath Stub Runner will need to
+define which one should be used. Let&#8217;s assume that you have both AMQP, Spring Cloud Stream and Spring Integration
+on the classpath. Then you need to set <literal>stubrunner.stream.enabled=false</literal> and <literal>stubrunner.integration.enabled=false</literal>.
+That way the only remaining framework is Spring AMQP.</simpara>
+</important>
 <section xml:id="_stub_triggering">
 <title>Stub triggering</title>
 <simpara>To trigger a message it&#8217;s enough to use the <literal>StubTrigger</literal> interface:</simpara>
@@ -3083,6 +3089,10 @@ routes.</simpara>
 <title>Adding it to the project</title>
 <simpara>It&#8217;s enough to have both Apache Camel and Spring Cloud Contract Stub Runner on classpath.
 Remember to annotate your test class with <literal>@AutoConfigureStubRunner</literal>.</simpara>
+</section>
+<section xml:id="_disabling_the_functionality">
+<title>Disabling the functionality</title>
+<simpara>If you need to disable this functionality just pass <literal>stubrunner.camel.enabled=false</literal> property.</simpara>
 </section>
 <section xml:id="_examples">
 <title>Examples</title>
@@ -3186,6 +3196,10 @@ routes.</simpara>
 <title>Adding it to the project</title>
 <simpara>It&#8217;s enough to have both Spring Integration and Spring Cloud Contract Stub Runner on classpath.
 Remember to annotate your test class with <literal>@AutoConfigureStubRunner</literal>.</simpara>
+</section>
+<section xml:id="_disabling_the_functionality_2">
+<title>Disabling the functionality</title>
+<simpara>If you need to disable this functionality just pass <literal>stubrunner.integration.enabled=false</literal> property.</simpara>
 </section>
 <section xml:id="_examples_2">
 <title>Examples</title>
@@ -3335,6 +3349,10 @@ channel name.</simpara>
 <simpara>It&#8217;s enough to have both Spring Cloud Stream and Spring Cloud Contract Stub Runner on classpath.
 Remember to annotate your test class with <literal>@AutoConfigureStubRunner</literal>.</simpara>
 </section>
+<section xml:id="_disabling_the_functionality_3">
+<title>Disabling the functionality</title>
+<simpara>If you need to disable this functionality just pass <literal>stubrunner.stream.enabled=false</literal> property.</simpara>
+</section>
 <section xml:id="_examples_3">
 <title>Examples</title>
 <section xml:id="_stubs_structure_3">
@@ -3455,6 +3473,11 @@ The message is triggered to all matching message listeners.</simpara>
 <title>Adding it to the project</title>
 <simpara>It&#8217;s enough to have both Spring AMQP and Spring Cloud Contract Stub Runner on the classpath and set the property <literal>stubrunner.amqp.enabled=true</literal>.
 Remember to annotate your test class with <literal>@AutoConfigureStubRunner</literal>.</simpara>
+<important>
+<simpara>If you already have Stream and Integration on the classpath you need
+to disable them explicitly via <literal>stubrunner.stream.enabled=false</literal> and <literal>stubrunner.integration.enabled=false</literal>
+properties</simpara>
+</important>
 </section>
 <section xml:id="_examples_4">
 <title>Examples</title>
