@@ -27,7 +27,7 @@ import repackaged.nl.flotsam.xeger.Xeger
 
 import java.nio.charset.StandardCharsets
 
-import static org.apache.commons.lang3.StringEscapeUtils.escapeJava
+import static org.apache.commons.text.StringEscapeUtils.escapeJava
 
 /**
  * Converts WireMock stubs into the DSL format

@@ -1759,6 +1759,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 				body(
 						url: fromRequest().url(),
+						path: fromRequest().path(),
+						pathIndex: fromRequest().path(1),
 						param: fromRequest().query("foo"),
 						paramIndex: fromRequest().query("foo", 1),
 						authorization: fromRequest().header("Authorization"),
@@ -1796,7 +1798,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					  },
 					  "response" : {
 						"status" : 200,
-						"body" : "{\\"url\\":\\"{{{request.url}}}\\",\\"param\\":\\"{{{request.query.foo.[0]}}}\\",\\"paramIndex\\":\\"{{{request.query.foo.[1]}}}\\",\\"authorization\\":\\"{{{request.headers.Authorization.[0]}}}\\",\\"authorization2\\":\\"{{{request.headers.Authorization.[1]}}}\\",\\"fullBody\\":\\"{{{escapejsonbody}}}\\",\\"responseFoo\\":\\"{{{jsonpath this '$.foo'}}}\\",\\"responseBaz\\":{{{jsonpath this '$.baz'}}} ,\\"responseBaz2\\":\\"Bla bla {{{jsonpath this '$.foo'}}} bla bla\\"}",
+						"body" : "{\\"url\\":\\"{{{request.url}}}\\",\\"path\\":\\"{{{request.path}}}\\",\\"pathIndex\\":\\"{{{request.path.[1]}}}\\",\\"param\\":\\"{{{request.query.foo.[0]}}}\\",\\"paramIndex\\":\\"{{{request.query.foo.[1]}}}\\",\\"authorization\\":\\"{{{request.headers.Authorization.[0]}}}\\",\\"authorization2\\":\\"{{{request.headers.Authorization.[1]}}}\\",\\"fullBody\\":\\"{{{escapejsonbody}}}\\",\\"responseFoo\\":\\"{{{jsonpath this '$.foo'}}}\\",\\"responseBaz\\":{{{jsonpath this '$.baz'}}} ,\\"responseBaz2\\":\\"Bla bla {{{jsonpath this '$.foo'}}} bla bla\\"}",
 						"headers" : {
 						  "Authorization" : "{{{request.headers.Authorization.[0]}}};foo"
 						},

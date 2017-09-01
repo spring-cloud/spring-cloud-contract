@@ -22,7 +22,7 @@ import com.jayway.jsonpath.PathNotFoundException
 import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
-import org.apache.commons.lang3.StringEscapeUtils
+import org.apache.commons.text.StringEscapeUtils
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.springframework.cloud.contract.spec.Contract

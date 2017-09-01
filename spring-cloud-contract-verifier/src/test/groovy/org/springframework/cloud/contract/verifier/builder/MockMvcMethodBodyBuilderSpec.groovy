@@ -2291,6 +2291,8 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					}
 					body(
 							url: fromRequest().url(),
+							path: fromRequest().path(),
+							pathIndex: fromRequest().path(1),
 							param: fromRequest().query("foo"),
 							paramIndex: fromRequest().query("foo", 1),
 							authorization: fromRequest().header("Authorization"),
@@ -2312,7 +2314,9 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
 		then:
 			!test.contains('''DslProperty''')
-			test.contains('''assertThatJson(parsedJson).field("['url']").isEqualTo("/api/v1/xxxx")''')
+			test.contains('''assertThatJson(parsedJson).field("['url']").isEqualTo("/api/v1/xxxx?foo=bar&foo=bar2")''')
+			test.contains('''assertThatJson(parsedJson).field("['path']").isEqualTo("/api/v1/xxxx")''')
+			test.contains('''assertThatJson(parsedJson).field("['pathIndex']").isEqualTo("v1")''')
 			test.contains('''assertThatJson(parsedJson).field("['fullBody']").isEqualTo("{\\"foo\\":\\"bar\\",\\"baz\\":5}")''')
 			test.contains('''assertThatJson(parsedJson).field("['paramIndex']").isEqualTo("bar2")''')
 			test.contains('''assertThatJson(parsedJson).field("['responseFoo']").isEqualTo("bar")''')

@@ -32,9 +32,9 @@ import org.springframework.cloud.contract.spec.internal.OptionalProperty
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-import static org.apache.commons.lang3.StringEscapeUtils.escapeJava
-import static org.apache.commons.lang3.StringEscapeUtils.escapeJson
-import static org.apache.commons.lang3.StringEscapeUtils.escapeXml11
+import static org.apache.commons.text.StringEscapeUtils.escapeJava
+import static org.apache.commons.text.StringEscapeUtils.escapeJson
+import static org.apache.commons.text.StringEscapeUtils.escapeXml11
 
 /**
  * A utility class that can operate on a message body basing on the provided Content Type.

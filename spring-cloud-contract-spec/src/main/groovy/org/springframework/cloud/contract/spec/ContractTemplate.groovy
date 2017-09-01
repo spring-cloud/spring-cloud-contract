@@ -23,7 +23,7 @@ interface ContractTemplate {
 	String closingTemplate()
 
 	/**
-	 * Returns the template for retrieving a URL from request
+	 * Returns the template for retrieving a URL path and query from request
 	 */
 	String url()
 
@@ -39,6 +39,17 @@ interface ContractTemplate {
 	 * @param index
 	 */
 	String query(String key, int index)
+
+	/**
+	 * Returns the template for retrieving a URL path
+	 */
+	String path()
+
+	/**
+	 * Returns the template for retrieving nth value of a URL path (zero indexed) e.g. {{{ request.path.[2] }}}
+	 * @param index
+	 */
+	String path(int index)
 
 	/**
 	 * Returns the template for retrieving the first value of a request header e.g. {{{ request.headers.X-Request-Id }}}

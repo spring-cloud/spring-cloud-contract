@@ -16,12 +16,12 @@
 
 package org.springframework.cloud.contract.verifier.util;
 
-import com.toomuchcoding.jsonassert.JsonVerifiable;
-
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
-import static org.apache.commons.lang3.StringEscapeUtils.escapeJava;
+import com.toomuchcoding.jsonassert.JsonVerifiable;
+
+import static org.apache.commons.text.StringEscapeUtils.escapeJava;
 
 /**
  * Implementation of the {@link MethodBufferingJsonVerifiable} that contains a list

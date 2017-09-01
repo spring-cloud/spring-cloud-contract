@@ -4,7 +4,7 @@ import wiremock.com.github.jknack.handlebars.Helper
 import wiremock.com.github.jknack.handlebars.Options
 import com.github.tomakehurst.wiremock.extension.responsetemplating.RequestTemplateModel
 import groovy.transform.CompileStatic
-import org.apache.commons.lang3.StringEscapeUtils
+import org.apache.commons.text.StringEscapeUtils
 import org.springframework.cloud.contract.verifier.builder.TestSideRequestTemplateModel
 /**
  * A Handlebars helper for the {@code escapejsonbody} helper function.
