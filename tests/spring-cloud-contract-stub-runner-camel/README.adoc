@@ -12,6 +12,10 @@ routes.
 It's enough to have both Apache Camel and Spring Cloud Contract Stub Runner on classpath.
 Remember to annotate your test class with `@AutoConfigureStubRunner`.
 
+==== Disabling the functionality
+
+If you need to disable this functionality just pass `stubrunner.camel.enabled=false` property.
+
 ==== Examples
 
 ===== Stubs structure

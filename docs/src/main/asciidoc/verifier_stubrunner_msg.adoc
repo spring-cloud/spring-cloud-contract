@@ -9,6 +9,11 @@ Stub Runner has the functionality to run the published stubs in memory. It can i
 
 It also provides points of entry to integrate with any other solution on the market.
 
+IMPORTANT: If you have multiple frameworks on the classpath Stub Runner will need to
+define which one should be used. Let's assume that you have both AMQP, Spring Cloud Stream and Spring Integration
+on the classpath. Then you need to set `stubrunner.stream.enabled=false` and `stubrunner.integration.enabled=false`.
+That way the only remaining framework is Spring AMQP.
+
 === Stub triggering
 
 To trigger a message it's enough to use the `StubTrigger` interface:
