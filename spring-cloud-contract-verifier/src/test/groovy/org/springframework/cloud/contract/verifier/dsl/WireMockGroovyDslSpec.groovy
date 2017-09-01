@@ -1755,7 +1755,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			response {
 				status 200
 				headers {
-					header(authorization(), fromRequest().header(authorization()))
+					header(authorization(), "${fromRequest().header(authorization())};foo")
 				}
 				body(
 						url: fromRequest().url(),
@@ -1798,7 +1798,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						"status" : 200,
 						"body" : "{\\"url\\":\\"{{{request.url}}}\\",\\"param\\":\\"{{{request.query.foo.[0]}}}\\",\\"paramIndex\\":\\"{{{request.query.foo.[1]}}}\\",\\"authorization\\":\\"{{{request.headers.Authorization.[0]}}}\\",\\"authorization2\\":\\"{{{request.headers.Authorization.[1]}}}\\",\\"fullBody\\":\\"{{{escapejsonbody}}}\\",\\"responseFoo\\":\\"{{{jsonpath this '$.foo'}}}\\",\\"responseBaz\\":{{{jsonpath this '$.baz'}}} ,\\"responseBaz2\\":\\"Bla bla {{{jsonpath this '$.foo'}}} bla bla\\"}",
 						"headers" : {
-						  "Authorization" : "{{{request.headers.Authorization.[0]}}}"
+						  "Authorization" : "{{{request.headers.Authorization.[0]}}};foo"
 						},
 						"transformers" : [ "response-template" ]
 					  }
@@ -1813,7 +1813,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			server.addStubMapping(WireMockStubMapping.buildFrom(json))
 		then:
 			ResponseEntity<String> entity = call(port)
-			entity.headers.find { it.key == "Authorization" && it.value.contains("secret") }
+			entity.headers.find { it.key == "Authorization" && it.value.contains("secret;foo") }
 		and:
 			AssertionUtil.assertThatJsonsAreEqual(('''
 				{

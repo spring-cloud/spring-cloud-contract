@@ -26,6 +26,7 @@ import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.Response
 import org.springframework.cloud.contract.verifier.util.ContentType
+import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromContent
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromHeader
@@ -51,7 +52,7 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 			return null
 		}
 		ResponseDefinitionBuilder builder = new ResponseDefinitionBuilder()
-				.withStatus(response.status.clientValue as Integer)
+				.withStatus(MapConverter.getStubSideValues(response.status) as Integer)
 		appendHeaders(builder)
 		appendBody(builder)
 		appendResponseDelayTime(builder)
@@ -62,7 +63,7 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 	private void appendHeaders(ResponseDefinitionBuilder builder) {
 		if (response.headers) {
 			builder.withHeaders(new HttpHeaders(response.headers.entries?.collect {
-				new HttpHeader(it.name, it.clientValue.toString())
+				new HttpHeader(it.name, MapConverter.getStubSideValues(it.clientValue).toString())
 			}))
 		}
 	}
