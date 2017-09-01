@@ -21,6 +21,10 @@ The message is triggered to all matching message listeners.
 It's enough to have both Spring AMQP and Spring Cloud Contract Stub Runner on the classpath and set the property `stubrunner.amqp.enabled=true`.
 Remember to annotate your test class with `@AutoConfigureStubRunner`.
 
+IMPORTANT: If you already have Stream and Integration on the classpath you need
+to disable them explicitly via `stubrunner.stream.enabled=false` and `stubrunner.integration.enabled=false`
+properties
+
 ==== Examples
 
 ===== Stubs structure
