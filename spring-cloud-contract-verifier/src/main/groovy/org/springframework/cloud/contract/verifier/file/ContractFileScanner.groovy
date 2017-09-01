@@ -20,7 +20,6 @@ import wiremock.com.google.common.collect.ArrayListMultimap
 import wiremock.com.google.common.collect.ListMultimap
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.apache.commons.lang3.SystemUtils
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
@@ -43,6 +42,10 @@ import java.util.regex.Pattern
 @Slf4j
 class ContractFileScanner {
 
+	private static final String OS_NAME = System.getProperty("os.name");
+	private static final String OS_NAME_WINDOWS_PREFIX = "Windows";
+	protected static final boolean IS_OS_WINDOWS = getOSMatchesName(OS_NAME_WINDOWS_PREFIX);
+
 	private static final String MATCH_PREFIX = "glob:"
 	private static final Pattern SCENARIO_STEP_FILENAME_PATTERN = Pattern.compile("[0-9]+_.*")
 	private final File baseDir
@@ -62,7 +65,7 @@ class ContractFileScanner {
 		return patterns.collect({
 			String syntaxAndPattern = MATCH_PREFIX + '**' + File.separator + it
 			// FIXME: This looks strange, need to be checked on windows
-			if (SystemUtils.IS_OS_WINDOWS) {
+			if (IS_OS_WINDOWS) {
 				syntaxAndPattern = syntaxAndPattern.replace("\\", "\\\\")
 			}
 			fileSystem.getPathMatcher(syntaxAndPattern)
@@ -178,5 +181,32 @@ class ContractFileScanner {
 			return null
 		}
 		return path.substring(extIndex + 1);
+	}
+
+	/**
+	 * Decides if the operating system matches.
+	 *
+	 * @param osNamePrefix the prefix for the os name
+	 * @return true if matches, or false if not or can't determine
+	 */
+	private static boolean getOSMatchesName(final String osNamePrefix) {
+		return isOSNameMatch(OS_NAME, osNamePrefix);
+	}
+
+	/**
+	 * Decides if the operating system matches.
+	 * <p>
+	 * This method is package private instead of private to support unit test invocation.
+	 * </p>
+	 *
+	 * @param osName the actual OS name
+	 * @param osNamePrefix the prefix for the expected OS name
+	 * @return true if matches, or false if not or can't determine
+	 */
+	private static boolean isOSNameMatch(final String osName, final String osNamePrefix) {
+		if (osName == null) {
+			return false;
+		}
+		return osName.startsWith(osNamePrefix);
 	}
 }

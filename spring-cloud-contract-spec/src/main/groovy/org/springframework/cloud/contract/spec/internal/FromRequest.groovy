@@ -2,13 +2,13 @@ package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.ContractTemplate
+
 /**
  * Helper class to reference the request body parameters
  *
  * @author Marcin Grzejszczak
  * @since 1.1.0
  */
-
 @CompileStatic
 class FromRequest {
 
@@ -44,6 +44,21 @@ class FromRequest {
 	 */
 	DslProperty query(String key, int index) {
 		return new DslProperty(template.query(key, index))
+	}
+
+	/**
+	 * URL path
+	 */
+	DslProperty path() {
+		return new DslProperty(template.path())
+	}
+
+	/**
+	 * nth value of a URL path (zero indexed) e.g. {{{ request.path.[2] }}}
+	 * @param index
+	 */
+	DslProperty path(int index) {
+		return new DslProperty(template.path(index))
 	}
 
 	/**

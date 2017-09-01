@@ -132,3 +132,11 @@ The flow for setting the generated tests package name will look like this:
 
 Related to
 https://github.com/spring-cloud/spring-cloud-contract/issues/260[issue 260].
+
+==== New methods in TemplateProcessor
+
+In order to add support for `fromRequest.path` some methods had to be added to the
+`TemplateProcessor` interface.
+
+Related to
+https://github.com/spring-cloud/spring-cloud-contract/issues/388[issue 388].

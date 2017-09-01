@@ -23,7 +23,7 @@ import org.springframework.cloud.contract.spec.util.RegexpUtils
 
 import java.util.regex.Pattern
 
-import static org.apache.commons.lang3.StringEscapeUtils.escapeJson
+import static org.apache.commons.text.StringEscapeUtils.escapeJson
 import static ContentType.*
 import static ContentUtils.extractValue
 

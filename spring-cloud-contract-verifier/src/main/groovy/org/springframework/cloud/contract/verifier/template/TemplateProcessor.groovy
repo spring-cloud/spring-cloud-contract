@@ -1,6 +1,7 @@
 package org.springframework.cloud.contract.verifier.template
 
 import org.springframework.cloud.contract.spec.internal.Request
+
 /**
  * Contract for conversion of templated responses.
  *

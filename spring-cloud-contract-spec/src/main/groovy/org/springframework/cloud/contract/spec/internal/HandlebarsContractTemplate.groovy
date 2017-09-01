@@ -39,6 +39,16 @@ class HandlebarsContractTemplate implements ContractTemplate {
 	}
 
 	@Override
+	String path() {
+		return wrapped("request.path")
+	}
+
+	@Override
+	String path(int index) {
+		return wrapped("request.path.[${index}]")
+	}
+
+	@Override
 	String header(String key) {
 		return header(key, 0)
 	}

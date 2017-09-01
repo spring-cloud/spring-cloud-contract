@@ -29,7 +29,7 @@ import org.springframework.cloud.contract.verifier.util.ContentUtils
 
 import java.util.regex.Pattern
 
-import static org.apache.commons.lang3.StringEscapeUtils.escapeJava
+import static org.apache.commons.text.StringEscapeUtils.escapeJava
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getGroovyMultipartFileParameterContent
 
 /**
