@@ -375,9 +375,11 @@ The best situation is to provide fixed values but sometimes you need to referenc
 In order to do this you can profit from the `fromRequest()` method that allows you to reference a bunch
 of elements from the HTTP request. You can use the following options:
 
-- `fromRequest().url()` - return the request URL
+- `fromRequest().url()` - return the request URL and query parameters
 - `fromRequest().query(String key)` - return the first query parameter with a given name
 - `fromRequest().query(String key, int index)` - return the nth query parameter with a given name
+- `fromRequest().path()` - return the full path
+- `fromRequest().path(int index)` - return the nth path element
 - `fromRequest().header(String key)` - return the first header with a given name
 - `fromRequest().header(String key, int index)` - return the nth header with a given name
 - `fromRequest().body()` - return the full request body
@@ -411,15 +413,17 @@ Running a JUnit test generation will lead in creation of a test looking more or 
   assertThat(response.header("Authorization")).isEqualTo("foo secret bar");
  // and:
   DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
-  assertThatJson(parsedJson).field("url").isEqualTo("/api/v1/xxxx");
-  assertThatJson(parsedJson).field("fullBody").isEqualTo("{\"foo\":\"bar\",\"baz\":5}");
-  assertThatJson(parsedJson).field("paramIndex").isEqualTo("bar2");
-  assertThatJson(parsedJson).field("responseFoo").isEqualTo("bar");
-  assertThatJson(parsedJson).field("authorization2").isEqualTo("secret2");
-  assertThatJson(parsedJson).field("responseBaz").isEqualTo(5);
-  assertThatJson(parsedJson).field("responseBaz2").isEqualTo("Bla bla bar bla bla");
-  assertThatJson(parsedJson).field("param").isEqualTo("bar");
-  assertThatJson(parsedJson).field("authorization").isEqualTo("secret");
+  assertThatJson(parsedJson).field("['fullBody']").isEqualTo("{\"foo\":\"bar\",\"baz\":5}");
+  assertThatJson(parsedJson).field("['authorization']").isEqualTo("secret");
+  assertThatJson(parsedJson).field("['authorization2']").isEqualTo("secret2");
+  assertThatJson(parsedJson).field("['path']").isEqualTo("/api/v1/xxxx");
+  assertThatJson(parsedJson).field("['param']").isEqualTo("bar");
+  assertThatJson(parsedJson).field("['paramIndex']").isEqualTo("bar2");
+  assertThatJson(parsedJson).field("['pathIndex']").isEqualTo("v1");
+  assertThatJson(parsedJson).field("['responseBaz']").isEqualTo(5);
+  assertThatJson(parsedJson).field("['responseFoo']").isEqualTo("bar");
+  assertThatJson(parsedJson).field("['url']").isEqualTo("/api/v1/xxxx?foo=bar&foo=bar2");
+  assertThatJson(parsedJson).field("['responseBaz2']").isEqualTo("Bla bla bar bla bla");
 ----
 
 As you can see elements from the request have been properly referenced in the response.
@@ -443,16 +447,16 @@ The generated WireMock stub will look more or less like this:
       }
     },
     "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[?(@.baz == 5)]"
+      "matchesJsonPath" : "$[?(@.['baz'] == 5)]"
     }, {
-      "matchesJsonPath" : "$[?(@.foo == 'bar')]"
+      "matchesJsonPath" : "$[?(@.['foo'] == 'bar')]"
     } ]
   },
   "response" : {
     "status" : 200,
-    "body" : "{\"url\":\"{{{request.url}}}\",\"param\":\"{{{request.query.foo.[0]}}}\",\"paramIndex\":\"{{{request.query.foo.[1]}}}\",\"authorization\":\"{{{request.headers.Authorization.[0]}}}\",\"authorization2\":\"{{{request.headers.Authorization.[1]}}}\",\"fullBody\":\"{{{escapejsonbody}}}\",\"responseFoo\":\"{{{jsonpath this '$.foo'}}}\",\"responseBaz\":{{{jsonpath this '$.baz'}}} ,\"responseBaz2\":\"Bla bla {{{jsonpath this '$.foo'}}} bla bla\"}",
+    "body" : "{\"authorization\":\"{{{request.headers.Authorization.[0]}}}\",\"path\":\"{{{request.path}}}\",\"responseBaz\":{{{jsonpath this '$.baz'}}} ,\"param\":\"{{{request.query.foo.[0]}}}\",\"pathIndex\":\"{{{request.path.[1]}}}\",\"responseBaz2\":\"Bla bla {{{jsonpath this '$.foo'}}} bla bla\",\"responseFoo\":\"{{{jsonpath this '$.foo'}}}\",\"authorization2\":\"{{{request.headers.Authorization.[1]}}}\",\"fullBody\":\"{{{escapejsonbody}}}\",\"url\":\"{{{request.url}}}\",\"paramIndex\":\"{{{request.query.foo.[1]}}}\"}",
     "headers" : {
-      "Authorization" : "{{{request.headers.Authorization.[0]}}}"
+      "Authorization" : "{{{request.headers.Authorization.[0]}}};foo"
     },
     "transformers" : [ "response-template" ]
   }
@@ -466,6 +470,8 @@ response body
 ----
 {
   "url" : "/api/v1/xxxx?foo=bar&foo=bar2",
+  "path" : "/api/v1/xxxx",
+  "pathIndex" : "v1",
   "param" : "bar",
   "paramIndex" : "bar2",
   "authorization" : "secret",
