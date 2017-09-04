@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2017-09-02</date>
+<date>2017-09-04</date>
 </info>
 <preface>
 <title></title>
@@ -3922,7 +3922,7 @@ where the value can be a dynamic property (e.g. <literal>formParameter: $(consum
   		}, {
     			"matches" : ".*--(.*)\\r\\nContent-Disposition: form-data; name=\\"someBooleanParameter\\"\\r\\n(Content-Type: .*\\r\\n)?(Content-Length: \\\\d+\\r\\n)?\\r\\n(true|false)\\r\\n--\\\\1.*"
   		}, {
-	  "matches" : ".*--(.*)\\r\\nContent-Disposition: form-data; name=\\"file\\"; filename=\\".+\\"\\r\\n(Content-Type: .*\\r\\n)?(Content-Length: \\\\d+\\r\\n)?\\r\\n.+\\r\\n--\\\\1.*"
+	  "matches" : ".*--(.*)\\r\\nContent-Disposition: form-data; name=\\"file\\"; filename=\\"[\\\\S\\\\s]+\\"\\r\\n(Content-Type: .*\\r\\n)?(Content-Length: \\\\d+\\r\\n)?\\r\\n[\\\\S\\\\s]+\\r\\n--\\\\1.*"
 	} ]
   },
   "response" : {
@@ -4034,8 +4034,8 @@ protected static final Pattern UUID = Pattern.compile('[a-f0-9]{8}-[a-f0-9]{4}-[
 protected static final Pattern ANY_DATE = Pattern.compile('(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])')
 protected static final Pattern ANY_DATE_TIME = Pattern.compile('([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
 protected static final Pattern ANY_TIME = Pattern.compile('(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
-protected static final Pattern NON_EMPTY = Pattern.compile(/.+/)
-protected static final Pattern NON_BLANK = Pattern.compile(/.*(\S+|\R).*|!^\R*$/)
+protected static final Pattern NON_EMPTY = Pattern.compile(/[\S\s]+/)
+protected static final Pattern NON_BLANK = Pattern.compile(/^\s*\S[\S\s]*/)
 protected static final Pattern ISO8601_WITH_OFFSET = Pattern.compile(/([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\.\d{3})?(Z|[+-][01]\d:[0-5]\d)/)
 
 protected static Pattern anyOf(String... values){
@@ -4311,13 +4311,19 @@ In order to do this you can profit from the <literal>fromRequest()</literal> met
 of elements from the HTTP request. You can use the following options:</simpara>
 <itemizedlist>
 <listitem>
-<simpara><literal>fromRequest().url()</literal> - return the request URL</simpara>
+<simpara><literal>fromRequest().url()</literal> - return the request URL and query parameters</simpara>
 </listitem>
 <listitem>
 <simpara><literal>fromRequest().query(String key)</literal> - return the first query parameter with a given name</simpara>
 </listitem>
 <listitem>
 <simpara><literal>fromRequest().query(String key, int index)</literal> - return the nth query parameter with a given name</simpara>
+</listitem>
+<listitem>
+<simpara><literal>fromRequest().path()</literal> - return the full path</simpara>
+</listitem>
+<listitem>
+<simpara><literal>fromRequest().path(int index)</literal> - return the nth path element</simpara>
 </listitem>
 <listitem>
 <simpara><literal>fromRequest().header(String key)</literal> - return the first header with a given name</simpara>
@@ -4355,6 +4361,8 @@ of elements from the HTTP request. You can use the following options:</simpara>
 		}
 		body(
 				url: fromRequest().url(),
+				path: fromRequest().path(),
+				pathIndex: fromRequest().path(1),
 				param: fromRequest().query("foo"),
 				paramIndex: fromRequest().query("foo", 1),
 				authorization: fromRequest().header("Authorization"),
@@ -4384,15 +4392,17 @@ of elements from the HTTP request. You can use the following options:</simpara>
  assertThat(response.header("Authorization")).isEqualTo("foo secret bar");
 // and:
  DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
- assertThatJson(parsedJson).field("url").isEqualTo("/api/v1/xxxx");
- assertThatJson(parsedJson).field("fullBody").isEqualTo("{\"foo\":\"bar\",\"baz\":5}");
- assertThatJson(parsedJson).field("paramIndex").isEqualTo("bar2");
- assertThatJson(parsedJson).field("responseFoo").isEqualTo("bar");
- assertThatJson(parsedJson).field("authorization2").isEqualTo("secret2");
- assertThatJson(parsedJson).field("responseBaz").isEqualTo(5);
- assertThatJson(parsedJson).field("responseBaz2").isEqualTo("Bla bla bar bla bla");
- assertThatJson(parsedJson).field("param").isEqualTo("bar");
- assertThatJson(parsedJson).field("authorization").isEqualTo("secret");</programlisting>
+ assertThatJson(parsedJson).field("['fullBody']").isEqualTo("{\"foo\":\"bar\",\"baz\":5}");
+ assertThatJson(parsedJson).field("['authorization']").isEqualTo("secret");
+ assertThatJson(parsedJson).field("['authorization2']").isEqualTo("secret2");
+ assertThatJson(parsedJson).field("['path']").isEqualTo("/api/v1/xxxx");
+ assertThatJson(parsedJson).field("['param']").isEqualTo("bar");
+ assertThatJson(parsedJson).field("['paramIndex']").isEqualTo("bar2");
+ assertThatJson(parsedJson).field("['pathIndex']").isEqualTo("v1");
+ assertThatJson(parsedJson).field("['responseBaz']").isEqualTo(5);
+ assertThatJson(parsedJson).field("['responseFoo']").isEqualTo("bar");
+ assertThatJson(parsedJson).field("['url']").isEqualTo("/api/v1/xxxx?foo=bar&amp;foo=bar2");
+ assertThatJson(parsedJson).field("['responseBaz2']").isEqualTo("Bla bla bar bla bla");</programlisting>
 <simpara>As you can see elements from the request have been properly referenced in the response.</simpara>
 <simpara>The generated WireMock stub will look more or less like this:</simpara>
 <programlisting language="json" linenumbering="unnumbered">{
@@ -4410,16 +4420,16 @@ of elements from the HTTP request. You can use the following options:</simpara>
       }
     },
     "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[?(@.baz == 5)]"
+      "matchesJsonPath" : "$[?(@.['baz'] == 5)]"
     }, {
-      "matchesJsonPath" : "$[?(@.foo == 'bar')]"
+      "matchesJsonPath" : "$[?(@.['foo'] == 'bar')]"
     } ]
   },
   "response" : {
     "status" : 200,
-    "body" : "{\"url\":\"{{{request.url}}}\",\"param\":\"{{{request.query.foo.[0]}}}\",\"paramIndex\":\"{{{request.query.foo.[1]}}}\",\"authorization\":\"{{{request.headers.Authorization.[0]}}}\",\"authorization2\":\"{{{request.headers.Authorization.[1]}}}\",\"fullBody\":\"{{{escapejsonbody}}}\",\"responseFoo\":\"{{{jsonpath this '$.foo'}}}\",\"responseBaz\":{{{jsonpath this '$.baz'}}} ,\"responseBaz2\":\"Bla bla {{{jsonpath this '$.foo'}}} bla bla\"}",
+    "body" : "{\"authorization\":\"{{{request.headers.Authorization.[0]}}}\",\"path\":\"{{{request.path}}}\",\"responseBaz\":{{{jsonpath this '$.baz'}}} ,\"param\":\"{{{request.query.foo.[0]}}}\",\"pathIndex\":\"{{{request.path.[1]}}}\",\"responseBaz2\":\"Bla bla {{{jsonpath this '$.foo'}}} bla bla\",\"responseFoo\":\"{{{jsonpath this '$.foo'}}}\",\"authorization2\":\"{{{request.headers.Authorization.[1]}}}\",\"fullBody\":\"{{{escapejsonbody}}}\",\"url\":\"{{{request.url}}}\",\"paramIndex\":\"{{{request.query.foo.[1]}}}\"}",
     "headers" : {
-      "Authorization" : "{{{request.headers.Authorization.[0]}}}"
+      "Authorization" : "{{{request.headers.Authorization.[0]}}};foo"
     },
     "transformers" : [ "response-template" ]
   }
@@ -4428,6 +4438,8 @@ of elements from the HTTP request. You can use the following options:</simpara>
 response body</simpara>
 <programlisting language="json" linenumbering="unnumbered">{
   "url" : "/api/v1/xxxx?foo=bar&amp;foo=bar2",
+  "path" : "/api/v1/xxxx",
+  "pathIndex" : "v1",
   "param" : "bar",
   "paramIndex" : "bar2",
   "authorization" : "secret",
@@ -4757,7 +4769,7 @@ that we took the method name and passed the proper JSON path as a parameter to i
   },
   "response" : {
     "status" : 200,
-    "body" : "{\\"duck\\":123,\\"alpha\\":\\"abc\\",\\"number\\":123,\\"aBoolean\\":true,\\"date\\":\\"2017-01-01\\",\\"dateTime\\":\\"2017-01-01T01:23:45\\",\\"time\\":\\"01:02:34\\",\\"valueWithoutAMatcher\\":\\"foo\\",\\"valueWithTypeMatch\\":\\"string\\",\\"valueWithMin\\":[1,2,3],\\"valueWithMax\\":[1,2,3],\\"valueWithMinMax\\":[1,2,3]}",
+    "body" : "{\\"date\\":\\"2017-01-01\\",\\"dateTime\\":\\"2017-01-01T01:23:45\\",\\"number\\":123,\\"aBoolean\\":true,\\"duck\\":123,\\"alpha\\":\\"abc\\",\\"valueWithMin\\":[1,2,3],\\"time\\":\\"01:02:34\\",\\"valueWithTypeMatch\\":\\"string\\",\\"valueWithMax\\":[1,2,3],\\"valueWithMinMax\\":[1,2,3],\\"valueWithoutAMatcher\\":\\"foo\\"}",
     "headers" : {
       "Content-Type" : "application/json"
     }
@@ -6419,6 +6431,13 @@ all mappings available in a single <literal>HttpServerStub</literal>. Related to
 </itemizedlist>
 <simpara>Related to
 <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/issues/260">issue 260</link>.</simpara>
+</section>
+<section xml:id="_new_methods_in_templateprocessor">
+<title>New methods in TemplateProcessor</title>
+<simpara>In order to add support for <literal>fromRequest.path</literal> some methods had to be added to the
+<literal>TemplateProcessor</literal> interface.</simpara>
+<simpara>Related to
+<link xl:href="https://github.com/spring-cloud/spring-cloud-contract/issues/388">issue 388</link>.</simpara>
 </section>
 </section>
 </chapter>
