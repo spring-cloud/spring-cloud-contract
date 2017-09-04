@@ -74,7 +74,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			  },
 			  "response" : {
 				"status" : 200,
-				"body" : "{\\"id\\":\\"123\\",\\"surname\\":\\"Kowalsky\\",\\"name\\":\\"Jan\\",\\"created\\":\\"2014-02-02 12:23:43\\"}",
+				"body" : "{\\"surname\\":\\"Kowalsky\\",\\"created\\":\\"2014-02-02 12:23:43\\",\\"name\\":\\"Jan\\",\\"id\\":\\"123\\"}",
 				"headers" : {
 				  "Content-Type" : "application/json"
 				},
@@ -125,7 +125,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
   },
   "response" : {
 	"status" : 200,
-	"body" : "{\\"ingredients\\":[{\\"type\\":\\"MALT\\",\\"quantity\\":100},{\\"type\\":\\"WATER\\",\\"quantity\\":200},{\\"type\\":\\"HOP\\",\\"quantity\\":300},{\\"type\\":\\"YIEST\\",\\"quantity\\":400}]}",
+	"body" : "{\\"ingredients\\":[{\\"quantity\\":100,\\"type\\":\\"MALT\\"},{\\"quantity\\":200,\\"type\\":\\"WATER\\"},{\\"quantity\\":300,\\"type\\":\\"HOP\\"},{\\"quantity\\":400,\\"type\\":\\"YIEST\\"}]}",
 	"transformers" : [ "response-template" ]
   }
 }
@@ -179,7 +179,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	},
 	"response": {
 		"status": 204,
-		"body": "{\\"paymentId\\":\\"4\\",\\"foundExistingPayment\\":false}",
+		"body": "{\\"foundExistingPayment\\":false,\\"paymentId\\":\\"4\\"}",
 		"transformers" : [ "response-template" ]
 	}
 }
@@ -1672,7 +1672,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				  },
 				  "response" : {
 					"status" : 200,
-					"body" : "{\\"content\\":[{\\"id\\":\\"00000000-0000-0000-0000-000000000000\\",\\"type\\":\\"Extraordinary\\",\\"state\\":\\"ACTIVE\\"}],\\"totalPages\\":1,\\"totalElements\\":1,\\"last\\":true,\\"sort\\":[{\\"direction\\":\\"ASC\\",\\"property\\":\\"id\\",\\"ignoreCase\\":false,\\"nullHandling\\":\\"NATIVE\\",\\"ascending\\":true}],\\"first\\":true,\\"numberOfElements\\":1,\\"size\\":1,\\"number\\":0}",
+					"body" : "{\\"number\\":0,\\"last\\":true,\\"numberOfElements\\":1,\\"size\\":1,\\"totalPages\\":1,\\"sort\\":[{\\"nullHandling\\":\\"NATIVE\\",\\"ignoreCase\\":false,\\"property\\":\\"id\\",\\"ascending\\":true,\\"direction\\":\\"ASC\\"}],\\"content\\":[{\\"id\\":\\"00000000-0000-0000-0000-000000000000\\",\\"state\\":\\"ACTIVE\\",\\"type\\":\\"Extraordinary\\"}],\\"first\\":true,\\"totalElements\\":1}",
 					"transformers" : [ "response-template" ]
 				  }
 				}
@@ -1798,7 +1798,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					  },
 					  "response" : {
 						"status" : 200,
-						"body" : "{\\"url\\":\\"{{{request.url}}}\\",\\"path\\":\\"{{{request.path}}}\\",\\"pathIndex\\":\\"{{{request.path.[1]}}}\\",\\"param\\":\\"{{{request.query.foo.[0]}}}\\",\\"paramIndex\\":\\"{{{request.query.foo.[1]}}}\\",\\"authorization\\":\\"{{{request.headers.Authorization.[0]}}}\\",\\"authorization2\\":\\"{{{request.headers.Authorization.[1]}}}\\",\\"fullBody\\":\\"{{{escapejsonbody}}}\\",\\"responseFoo\\":\\"{{{jsonpath this '$.foo'}}}\\",\\"responseBaz\\":{{{jsonpath this '$.baz'}}} ,\\"responseBaz2\\":\\"Bla bla {{{jsonpath this '$.foo'}}} bla bla\\"}",
+						"body" : "{\\"authorization\\":\\"{{{request.headers.Authorization.[0]}}}\\",\\"path\\":\\"{{{request.path}}}\\",\\"responseBaz\\":{{{jsonpath this '$.baz'}}} ,\\"param\\":\\"{{{request.query.foo.[0]}}}\\",\\"pathIndex\\":\\"{{{request.path.[1]}}}\\",\\"responseBaz2\\":\\"Bla bla {{{jsonpath this '$.foo'}}} bla bla\\",\\"responseFoo\\":\\"{{{jsonpath this '$.foo'}}}\\",\\"authorization2\\":\\"{{{request.headers.Authorization.[1]}}}\\",\\"fullBody\\":\\"{{{escapejsonbody}}}\\",\\"url\\":\\"{{{request.url}}}\\",\\"paramIndex\\":\\"{{{request.query.foo.[1]}}}\\"}",
 						"headers" : {
 						  "Authorization" : "{{{request.headers.Authorization.[0]}}};foo"
 						},
@@ -1875,6 +1875,64 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				  },
 				  "response" : {
 					"status" : 200
+				  }
+				}
+				''', wireMockStub)
+		and:
+			stubMappingIsValidWireMockStub(wireMockStub)
+
+	}
+
+	@Issue('#385')
+	def "should not escape unicode characters"() {
+		given:
+			Contract groovyDsl = Contract.make {
+			request {
+				method 'PUT'
+				url '/fraudcheck'
+				body([ // (4)
+					   "client.id": $(regex('[0-9]{10}')),
+					   loanAmount: 99999
+				])
+				headers {
+					contentType('application/vnd.fraud.v1+json')
+				}
+			}
+			response {
+				status 200
+				body("""
+						{
+							"code": 91015,
+							"description": "订单已失效",
+							"lastUpdateTime": "0",
+							"payload": null
+						}
+					""")
+			}
+		}
+		when:
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
+		then:
+			AssertionUtil.assertThatJsonsAreEqual('''
+				{
+				  "request" : {
+					"url" : "/fraudcheck",
+					"method" : "PUT",
+					"headers" : {
+					  "Content-Type" : {
+						"matches" : "application/vnd\\\\.fraud\\\\.v1\\\\+json.*"
+					  }
+					},
+					"bodyPatterns" : [ {
+					  "matchesJsonPath" : "$[?(@.['client.id'] =~ /[0-9]{10}/)]"
+					}, {
+					  "matchesJsonPath" : "$[?(@.['loanAmount'] == 99999)]"
+					} ]
+				  },
+				  "response" : {
+					"status" : 200,
+					"body" : "{\\"code\\":91015,\\"payload\\":null,\\"description\\":\\"订单已失效\\",\\"lastUpdateTime\\":\\"0\\"}",
+					"transformers" : [ "response-template" ]
 				  }
 				}
 				''', wireMockStub)

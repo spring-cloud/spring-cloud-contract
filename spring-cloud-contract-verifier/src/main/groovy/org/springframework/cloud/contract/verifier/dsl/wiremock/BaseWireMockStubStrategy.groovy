@@ -21,6 +21,8 @@ import com.jayway.jsonpath.JsonPath
 import groovy.json.JsonBuilder
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
+import org.json.JSONObject
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractTemplate
 import org.springframework.cloud.contract.spec.internal.DslProperty
@@ -156,7 +158,13 @@ abstract class BaseWireMockStubStrategy {
 		return value
 	}
 
-	private static toJson(Object value) {
+	private static String toJson(Object value) {
+		if (value instanceof Map) {
+			Map convertedMap = MapConverter.transformValues(value) {
+				it instanceof GString ? it.toString() : it
+			} as Map
+			return new JSONObject(convertedMap).toString()
+		}
 		return new JsonBuilder(value).toString()
 	}
 
