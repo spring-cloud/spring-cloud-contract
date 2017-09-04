@@ -235,7 +235,7 @@ class RegexPatternsSpec extends Specification {
 			'    '         || false
 			'\nFoo\nBar\n' || true
 			'\r\n'         || false
-			' \r\n\t\f'    || false
+			' \r\n\t'      || false
 
 	}
 
@@ -249,7 +249,7 @@ class RegexPatternsSpec extends Specification {
 			'  '           || true
 			'\nFoo\nBar\n' || true
 			'\r\n'         || true
-			' \r\n\t\f'    || true
+			' \r\n\t'      || true
 
 	}
 
