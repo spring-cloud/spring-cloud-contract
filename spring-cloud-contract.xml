@@ -4311,13 +4311,19 @@ In order to do this you can profit from the <literal>fromRequest()</literal> met
 of elements from the HTTP request. You can use the following options:</simpara>
 <itemizedlist>
 <listitem>
-<simpara><literal>fromRequest().url()</literal> - return the request URL</simpara>
+<simpara><literal>fromRequest().url()</literal> - return the request URL and query parameters</simpara>
 </listitem>
 <listitem>
 <simpara><literal>fromRequest().query(String key)</literal> - return the first query parameter with a given name</simpara>
 </listitem>
 <listitem>
 <simpara><literal>fromRequest().query(String key, int index)</literal> - return the nth query parameter with a given name</simpara>
+</listitem>
+<listitem>
+<simpara><literal>fromRequest().path()</literal> - return the full path</simpara>
+</listitem>
+<listitem>
+<simpara><literal>fromRequest().path(int index)</literal> - return the nth path element</simpara>
 </listitem>
 <listitem>
 <simpara><literal>fromRequest().header(String key)</literal> - return the first header with a given name</simpara>
@@ -4386,15 +4392,17 @@ of elements from the HTTP request. You can use the following options:</simpara>
  assertThat(response.header("Authorization")).isEqualTo("foo secret bar");
 // and:
  DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
- assertThatJson(parsedJson).field("url").isEqualTo("/api/v1/xxxx");
- assertThatJson(parsedJson).field("fullBody").isEqualTo("{\"foo\":\"bar\",\"baz\":5}");
- assertThatJson(parsedJson).field("paramIndex").isEqualTo("bar2");
- assertThatJson(parsedJson).field("responseFoo").isEqualTo("bar");
- assertThatJson(parsedJson).field("authorization2").isEqualTo("secret2");
- assertThatJson(parsedJson).field("responseBaz").isEqualTo(5);
- assertThatJson(parsedJson).field("responseBaz2").isEqualTo("Bla bla bar bla bla");
- assertThatJson(parsedJson).field("param").isEqualTo("bar");
- assertThatJson(parsedJson).field("authorization").isEqualTo("secret");</programlisting>
+ assertThatJson(parsedJson).field("['fullBody']").isEqualTo("{\"foo\":\"bar\",\"baz\":5}");
+ assertThatJson(parsedJson).field("['authorization']").isEqualTo("secret");
+ assertThatJson(parsedJson).field("['authorization2']").isEqualTo("secret2");
+ assertThatJson(parsedJson).field("['path']").isEqualTo("/api/v1/xxxx");
+ assertThatJson(parsedJson).field("['param']").isEqualTo("bar");
+ assertThatJson(parsedJson).field("['paramIndex']").isEqualTo("bar2");
+ assertThatJson(parsedJson).field("['pathIndex']").isEqualTo("v1");
+ assertThatJson(parsedJson).field("['responseBaz']").isEqualTo(5);
+ assertThatJson(parsedJson).field("['responseFoo']").isEqualTo("bar");
+ assertThatJson(parsedJson).field("['url']").isEqualTo("/api/v1/xxxx?foo=bar&amp;foo=bar2");
+ assertThatJson(parsedJson).field("['responseBaz2']").isEqualTo("Bla bla bar bla bla");</programlisting>
 <simpara>As you can see elements from the request have been properly referenced in the response.</simpara>
 <simpara>The generated WireMock stub will look more or less like this:</simpara>
 <programlisting language="json" linenumbering="unnumbered">{
@@ -4412,16 +4420,16 @@ of elements from the HTTP request. You can use the following options:</simpara>
       }
     },
     "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[?(@.baz == 5)]"
+      "matchesJsonPath" : "$[?(@.['baz'] == 5)]"
     }, {
-      "matchesJsonPath" : "$[?(@.foo == 'bar')]"
+      "matchesJsonPath" : "$[?(@.['foo'] == 'bar')]"
     } ]
   },
   "response" : {
     "status" : 200,
-    "body" : "{\"url\":\"{{{request.url}}}\",\"param\":\"{{{request.query.foo.[0]}}}\",\"paramIndex\":\"{{{request.query.foo.[1]}}}\",\"authorization\":\"{{{request.headers.Authorization.[0]}}}\",\"authorization2\":\"{{{request.headers.Authorization.[1]}}}\",\"fullBody\":\"{{{escapejsonbody}}}\",\"responseFoo\":\"{{{jsonpath this '$.foo'}}}\",\"responseBaz\":{{{jsonpath this '$.baz'}}} ,\"responseBaz2\":\"Bla bla {{{jsonpath this '$.foo'}}} bla bla\"}",
+    "body" : "{\"authorization\":\"{{{request.headers.Authorization.[0]}}}\",\"path\":\"{{{request.path}}}\",\"responseBaz\":{{{jsonpath this '$.baz'}}} ,\"param\":\"{{{request.query.foo.[0]}}}\",\"pathIndex\":\"{{{request.path.[1]}}}\",\"responseBaz2\":\"Bla bla {{{jsonpath this '$.foo'}}} bla bla\",\"responseFoo\":\"{{{jsonpath this '$.foo'}}}\",\"authorization2\":\"{{{request.headers.Authorization.[1]}}}\",\"fullBody\":\"{{{escapejsonbody}}}\",\"url\":\"{{{request.url}}}\",\"paramIndex\":\"{{{request.query.foo.[1]}}}\"}",
     "headers" : {
-      "Authorization" : "{{{request.headers.Authorization.[0]}}}"
+      "Authorization" : "{{{request.headers.Authorization.[0]}}};foo"
     },
     "transformers" : [ "response-template" ]
   }
@@ -4430,6 +4438,8 @@ of elements from the HTTP request. You can use the following options:</simpara>
 response body</simpara>
 <programlisting language="json" linenumbering="unnumbered">{
   "url" : "/api/v1/xxxx?foo=bar&amp;foo=bar2",
+  "path" : "/api/v1/xxxx",
+  "pathIndex" : "v1",
   "param" : "bar",
   "paramIndex" : "bar2",
   "authorization" : "secret",
