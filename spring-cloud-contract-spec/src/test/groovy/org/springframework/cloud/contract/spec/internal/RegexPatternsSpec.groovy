@@ -229,20 +229,28 @@ class RegexPatternsSpec extends Specification {
 		expect:
 			shouldMatch == Pattern.compile(regexPatterns.nonBlank()).matcher(textToMatch).matches()
 		where:
-			textToMatch	|| shouldMatch
-			'Not Empty'	|| true
-			''			|| false
-			'    '		|| false
+			textToMatch    || shouldMatch
+			'Not Empty'    || true
+			''             || false
+			'    '         || false
+			'\nFoo\nBar\n' || true
+			'\r\n'         || false
+			' \r\n\t\f'    || false
+
 	}
 
 	def "should generate a regex for a non empty string [#textToMatch] that should match [#shouldMatch]"() {
 		expect:
 			shouldMatch == Pattern.compile(regexPatterns.nonEmpty()).matcher(textToMatch).matches()
 		where:
-			textToMatch	|| shouldMatch
-			'Not Empty'	|| true
-			''			|| false
-			'  '		|| true
+			textToMatch    || shouldMatch
+			'Not Empty'    || true
+			''             || false
+			'  '           || true
+			'\nFoo\nBar\n' || true
+			'\r\n'         || true
+			' \r\n\t\f'    || true
+
 	}
 
 	def "should generate a regex for an enumerated value [#textToMatch] that should match [#shouldMatch]"(){

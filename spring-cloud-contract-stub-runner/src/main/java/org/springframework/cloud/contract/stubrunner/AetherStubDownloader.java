@@ -304,9 +304,11 @@ public class AetherStubDownloader implements StubDownloader {
 					Files.delete(file.toPath());
 				}
 			}
-		} catch (IOException e) {
-			if (log.isDebugEnabled()) {
-				log.debug("Failed to remove temporary file", e);
+		} catch (NoClassDefFoundError | IOException e) {
+			// Added NoClassDefFoundError cause sometimes it's visible in the builds
+			// this error is completely harmless
+			if (log.isTraceEnabled()) {
+				log.trace("Failed to remove temporary file", e);
 			}
 		}
 	}
