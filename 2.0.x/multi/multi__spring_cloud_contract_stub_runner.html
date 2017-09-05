@@ -374,7 +374,6 @@ then(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-st
 and registers in WireMock the selected stubs.</p><p>If you want to find the URL of your stubbed dependency you can autowire the <code class="literal">StubFinder</code> interface and use
 its methods as presented below:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)</span></em>
 <em><span class="hl-annotation" style="color: gray">@SpringBootTest(properties = [" stubrunner.cloud.enabled=false",
-		"stubrunner.camel.enabled=false",
 		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}'])</span></em>
 <em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/")</span></em>
 <em><span class="hl-annotation" style="color: gray">@DirtiesContext</span></em>
@@ -456,8 +455,6 @@ its methods as presented below:</p><pre class="programlisting"><em><span class="
     - org.springframework.cloud.contract.verifier.stubs:bootService
   cloud:
     enabled: false
-  camel:
-    enabled: false
 
 spring.cloud:
   consul.enabled: false
@@ -482,7 +479,6 @@ or <code class="literal">DiscoveryClient</code> directly, to call those stubbed 
   consul.enabled: false
 eureka.client.enabled: false
 stubrunner:
-  camel.enabled: false
   idsToServiceIds:
     ivyNotation: someValueInsideYourCode
     fraudDetectionServer: someNameThatShouldMapFraudDetectionServer</pre><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_test_profiles_and_service_discovery" href="#_test_profiles_and_service_discovery"></a>Test profiles and service discovery</h4></div></div></div><p>In your integration tests you typically don&#8217;t want to call neither a discovery service (e.g. Eureka)

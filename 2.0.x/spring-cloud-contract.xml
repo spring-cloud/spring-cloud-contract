@@ -2427,7 +2427,6 @@ and registers in WireMock the selected stubs.</simpara>
 its methods as presented below:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(properties = [" stubrunner.cloud.enabled=false",
-		"stubrunner.camel.enabled=false",
 		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}'])
 @AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/")
 @DirtiesContext
@@ -2511,8 +2510,6 @@ class StubRunnerConfigurationSpec extends Specification {
     - org.springframework.cloud.contract.verifier.stubs:bootService
   cloud:
     enabled: false
-  camel:
-    enabled: false
 
 spring.cloud:
   consul.enabled: false
@@ -2579,7 +2576,6 @@ or <literal>DiscoveryClient</literal> directly, to call those stubbed servers in
   consul.enabled: false
 eureka.client.enabled: false
 stubrunner:
-  camel.enabled: false
   idsToServiceIds:
     ivyNotation: someValueInsideYourCode
     fraudDetectionServer: someNameThatShouldMapFraudDetectionServer</programlisting>
@@ -3004,9 +3000,6 @@ segments are padded with trailing 0 or "ga" segments, respectively, until the ki
 <simpara>Spring Cloud Stream</simpara>
 </listitem>
 <listitem>
-<simpara>Apache Camel</simpara>
-</listitem>
-<listitem>
 <simpara>Spring AMQP</simpara>
 </listitem>
 </itemizedlist>
@@ -3069,122 +3062,15 @@ public interface StubTrigger {
 </section>
 <section xml:id="_trigger_by_group_and_artifact_ids">
 <title>Trigger by group and artifact ids</title>
-<programlisting language="groovy" linenumbering="unnumbered">stubFinder.trigger('org.springframework.cloud.contract.verifier.stubs:camelService', 'return_book_1')</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">stubFinder.trigger('org.springframework.cloud.contract.verifier.stubs:streamService', 'return_book_1')</programlisting>
 </section>
 <section xml:id="_trigger_by_artifact_ids">
 <title>Trigger by artifact ids</title>
-<programlisting language="groovy" linenumbering="unnumbered">stubFinder.trigger('camelService', 'return_book_1')</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">stubFinder.trigger('streamService', 'return_book_1')</programlisting>
 </section>
 <section xml:id="_trigger_all_messages">
 <title>Trigger all messages</title>
 <programlisting language="groovy" linenumbering="unnumbered">stubFinder.trigger()</programlisting>
-</section>
-</section>
-<section xml:id="_stub_runner_camel">
-<title>Stub Runner Camel</title>
-<simpara>Spring Cloud Contract Verifier Stub Runner&#8217;s messaging module gives you an easy way to integrate with Apache Camel.
-For the provided artifacts it will automatically download the stubs and register the required
-routes.</simpara>
-<section xml:id="_adding_it_to_the_project">
-<title>Adding it to the project</title>
-<simpara>It&#8217;s enough to have both Apache Camel and Spring Cloud Contract Stub Runner on classpath.
-Remember to annotate your test class with <literal>@AutoConfigureStubRunner</literal>.</simpara>
-</section>
-<section xml:id="_disabling_the_functionality">
-<title>Disabling the functionality</title>
-<simpara>If you need to disable this functionality just pass <literal>stubrunner.camel.enabled=false</literal> property.</simpara>
-</section>
-<section xml:id="_examples">
-<title>Examples</title>
-<section xml:id="_stubs_structure">
-<title>Stubs structure</title>
-<simpara>Let us assume that we have the following Maven repository with a deployed stubs for the
-<literal>camelService</literal> application.</simpara>
-<programlisting language="bash" linenumbering="unnumbered">└── .m2
-    └── repository
-        └── io
-            └── codearte
-                └── accurest
-                    └── stubs
-                        └── camelService
-                            ├── 0.0.1-SNAPSHOT
-                            │   ├── camelService-0.0.1-SNAPSHOT.pom
-                            │   ├── camelService-0.0.1-SNAPSHOT-stubs.jar
-                            │   └── maven-metadata-local.xml
-                            └── maven-metadata-local.xml</programlisting>
-<simpara>And the stubs contain the following structure:</simpara>
-<programlisting language="bash" linenumbering="unnumbered">├── META-INF
-│   └── MANIFEST.MF
-└── repository
-    ├── accurest
-    │   ├── bookDeleted.groovy
-    │   ├── bookReturned1.groovy
-    │   └── bookReturned2.groovy
-    └── mappings</programlisting>
-<simpara>Let&#8217;s consider the following contracts (let' number it with <emphasis role="strong">1</emphasis>):</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">Contract.make {
-	label 'return_book_1'
-	input {
-		triggeredBy('bookReturnedTriggered()')
-	}
-	outputMessage {
-		sentTo('jms:output')
-		body('''{ "bookName" : "foo" }''')
-		headers {
-			header('BOOK-NAME', 'foo')
-		}
-	}
-}</programlisting>
-<simpara>and number <emphasis role="strong">2</emphasis></simpara>
-<programlisting language="groovy" linenumbering="unnumbered">Contract.make {
-	label 'return_book_2'
-	input {
-		messageFrom('jms:input')
-		messageBody([
-				bookName: 'foo'
-		])
-		messageHeaders {
-			header('sample', 'header')
-		}
-	}
-	outputMessage {
-		sentTo('jms:output')
-		body([
-				bookName: 'foo'
-		])
-		headers {
-			header('BOOK-NAME', 'foo')
-		}
-	}
-}</programlisting>
-</section>
-<section xml:id="_scenario_1_no_input_message_2">
-<title>Scenario 1 (no input message)</title>
-<simpara>So as to trigger a message via the <literal>return_book_1</literal> label we&#8217;ll use the <literal>StubTigger</literal> interface as follows</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">stubFinder.trigger('return_book_1')</programlisting>
-<simpara>Next we&#8217;ll want to listen to the output of the message sent to <literal>jms:output</literal></simpara>
-<programlisting language="groovy" linenumbering="unnumbered">Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)</programlisting>
-<simpara>And the received message would pass the following assertions</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">receivedMessage != null
-assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
-receivedMessage.in.headers.get('BOOK-NAME') == 'foo'</programlisting>
-</section>
-<section xml:id="_scenario_2_output_triggered_by_input_2">
-<title>Scenario 2 (output triggered by input)</title>
-<simpara>Since the route is set for you it&#8217;s enough to just send a message to the <literal>jms:output</literal> destination.</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">camelContext.createProducerTemplate().sendBodyAndHeaders('jms:input', new BookReturned('foo'), [sample: 'header'])</programlisting>
-<simpara>Next we&#8217;ll want to listen to the output of the message sent to <literal>jms:output</literal></simpara>
-<programlisting language="groovy" linenumbering="unnumbered">Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)</programlisting>
-<simpara>And the received message would pass the following assertions</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">receivedMessage != null
-assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
-receivedMessage.in.headers.get('BOOK-NAME') == 'foo'</programlisting>
-</section>
-<section xml:id="_scenario_3_input_with_no_output">
-<title>Scenario 3 (input with no output)</title>
-<simpara>Since the route is set for you it&#8217;s enough to just send a message to the <literal>jms:output</literal> destination.</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">camelContext.createProducerTemplate().sendBodyAndHeaders('jms:delete', new BookReturned('foo'), [sample: 'header'])</programlisting>
-</section>
 </section>
 </section>
 <section xml:id="_stub_runner_integration">
@@ -3192,18 +3078,18 @@ receivedMessage.in.headers.get('BOOK-NAME') == 'foo'</programlisting>
 <simpara>Spring Cloud Contract Verifier Stub Runner&#8217;s messaging module gives you an easy way to integrate with Spring Integration.
 For the provided artifacts it will automatically download the stubs and register the required
 routes.</simpara>
-<section xml:id="_adding_it_to_the_project_2">
+<section xml:id="_adding_it_to_the_project">
 <title>Adding it to the project</title>
 <simpara>It&#8217;s enough to have both Spring Integration and Spring Cloud Contract Stub Runner on classpath.
 Remember to annotate your test class with <literal>@AutoConfigureStubRunner</literal>.</simpara>
 </section>
-<section xml:id="_disabling_the_functionality_2">
+<section xml:id="_disabling_the_functionality">
 <title>Disabling the functionality</title>
 <simpara>If you need to disable this functionality just pass <literal>stubrunner.integration.enabled=false</literal> property.</simpara>
 </section>
-<section xml:id="_examples_2">
+<section xml:id="_examples">
 <title>Examples</title>
-<section xml:id="_stubs_structure_2">
+<section xml:id="_stubs_structure">
 <title>Stubs structure</title>
 <simpara>Let us assume that we have the following Maven repository with a deployed stubs for the
 <literal>integrationService</literal> application.</simpara>
@@ -3285,7 +3171,7 @@ Remember to annotate your test class with <literal>@AutoConfigureStubRunner</lit
 
 &lt;/beans:beans&gt;</programlisting>
 </section>
-<section xml:id="_scenario_1_no_input_message_3">
+<section xml:id="_scenario_1_no_input_message_2">
 <title>Scenario 1 (no input message)</title>
 <simpara>So as to trigger a message via the <literal>return_book_1</literal> label we&#8217;ll use the <literal>StubTigger</literal> interface as follows</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">stubFinder.trigger('return_book_1')</programlisting>
@@ -3296,7 +3182,7 @@ Remember to annotate your test class with <literal>@AutoConfigureStubRunner</lit
 assertJsons(receivedMessage.payload)
 receivedMessage.headers.get('BOOK-NAME') == 'foo'</programlisting>
 </section>
-<section xml:id="_scenario_2_output_triggered_by_input_3">
+<section xml:id="_scenario_2_output_triggered_by_input_2">
 <title>Scenario 2 (output triggered by input)</title>
 <simpara>Since the route is set for you it&#8217;s enough to just send a message to the <literal>output</literal> destination.</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">messaging.send(new BookReturned('foo'), [sample: 'header'], 'input')</programlisting>
@@ -3307,7 +3193,7 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</programlisting>
 assertJsons(receivedMessage.payload)
 receivedMessage.headers.get('BOOK-NAME') == 'foo'</programlisting>
 </section>
-<section xml:id="_scenario_3_input_with_no_output_2">
+<section xml:id="_scenario_3_input_with_no_output">
 <title>Scenario 3 (input with no output)</title>
 <simpara>Since the route is set for you it&#8217;s enough to just send a message to the <literal>input</literal> destination.</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">messaging.send(new BookReturned('foo'), [sample: 'header'], 'delete')</programlisting>
@@ -3344,18 +3230,18 @@ channel name.</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">testCompile "org.springframework.cloud:spring-cloud-stream-test-support"</programlisting>
 </para>
 </formalpara>
-<section xml:id="_adding_it_to_the_project_3">
+<section xml:id="_adding_it_to_the_project_2">
 <title>Adding it to the project</title>
 <simpara>It&#8217;s enough to have both Spring Cloud Stream and Spring Cloud Contract Stub Runner on classpath.
 Remember to annotate your test class with <literal>@AutoConfigureStubRunner</literal>.</simpara>
 </section>
-<section xml:id="_disabling_the_functionality_3">
+<section xml:id="_disabling_the_functionality_2">
 <title>Disabling the functionality</title>
 <simpara>If you need to disable this functionality just pass <literal>stubrunner.stream.enabled=false</literal> property.</simpara>
 </section>
-<section xml:id="_examples_3">
+<section xml:id="_examples_2">
 <title>Examples</title>
-<section xml:id="_stubs_structure_3">
+<section xml:id="_stubs_structure_2">
 <title>Stubs structure</title>
 <simpara>Let us assume that we have the following Maven repository with a deployed stubs for the
 <literal>streamService</literal> application.</simpara>
@@ -3426,7 +3312,7 @@ server:
 
 debug: true</programlisting>
 </section>
-<section xml:id="_scenario_1_no_input_message_4">
+<section xml:id="_scenario_1_no_input_message_3">
 <title>Scenario 1 (no input message)</title>
 <simpara>So as to trigger a message via the <literal>return_book_1</literal> label we&#8217;ll use the <literal>StubTrigger</literal> interface as follows</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">stubFinder.trigger('return_book_1')</programlisting>
@@ -3437,7 +3323,7 @@ debug: true</programlisting>
 assertJsons(receivedMessage.payload)
 receivedMessage.headers.get('BOOK-NAME') == 'foo'</programlisting>
 </section>
-<section xml:id="_scenario_2_output_triggered_by_input_4">
+<section xml:id="_scenario_2_output_triggered_by_input_3">
 <title>Scenario 2 (output triggered by input)</title>
 <simpara>Since the route is set for you it&#8217;s enough to just send a message to the <literal>bookStorage</literal> <literal>destination</literal>.</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">messaging.send(new BookReturned('foo'), [sample: 'header'], 'bookStorage')</programlisting>
@@ -3448,7 +3334,7 @@ receivedMessage.headers.get('BOOK-NAME') == 'foo'</programlisting>
 assertJsons(receivedMessage.payload)
 receivedMessage.headers.get('BOOK-NAME') == 'foo'</programlisting>
 </section>
-<section xml:id="_scenario_3_input_with_no_output_3">
+<section xml:id="_scenario_3_input_with_no_output_2">
 <title>Scenario 3 (input with no output)</title>
 <simpara>Since the route is set for you it&#8217;s enough to just send a message to the <literal>output</literal> destination.</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">messaging.send(new BookReturned('foo'), [sample: 'header'], 'delete')</programlisting>
@@ -3469,7 +3355,7 @@ Message listeners on the other side are bound to queues. Bindings connect an exc
 If message contracts are triggered the Spring AMQP stub runner integration will look for bindings on the application context that match this exchange.
 Then it collects the queues from the Spring exchanges and tries to find messages listeners bound to these queues.
 The message is triggered to all matching message listeners.</simpara>
-<section xml:id="_adding_it_to_the_project_4">
+<section xml:id="_adding_it_to_the_project_3">
 <title>Adding it to the project</title>
 <simpara>It&#8217;s enough to have both Spring AMQP and Spring Cloud Contract Stub Runner on the classpath and set the property <literal>stubrunner.amqp.enabled=true</literal>.
 Remember to annotate your test class with <literal>@AutoConfigureStubRunner</literal>.</simpara>
@@ -3479,9 +3365,9 @@ to disable them explicitly via <literal>stubrunner.stream.enabled=false</literal
 properties</simpara>
 </important>
 </section>
-<section xml:id="_examples_4">
+<section xml:id="_examples_3">
 <title>Examples</title>
-<section xml:id="_stubs_structure_4">
+<section xml:id="_stubs_structure_3">
 <title>Stubs structure</title>
 <simpara>Let us assume that we have the following Maven repository with a deployed stubs for the
 <literal>spring-cloud-contract-amqp-test</literal> application.</simpara>
@@ -6438,6 +6324,14 @@ all mappings available in a single <literal>HttpServerStub</literal>. Related to
 <literal>TemplateProcessor</literal> interface.</simpara>
 <simpara>Related to
 <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/issues/388">issue 388</link>.</simpara>
+</section>
+</section>
+<section xml:id="_1_2_x_2_0_x">
+<title>1.2.x &#8594; 2.0.x</title>
+<section xml:id="_no_camel_support">
+<title>No Camel support</title>
+<simpara>We will add back Apache Camel support only after this <link xl:href="https://issues.apache.org/jira/browse/CAMEL-11430">issue</link>
+gets fixed</simpara>
 </section>
 </section>
 </chapter>
