@@ -39,7 +39,6 @@ import spock.lang.Specification
 // tag::test[]
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(properties = [" stubrunner.cloud.enabled=false", 
-		"stubrunner.camel.enabled=false",
 		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}'])
 @AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/")
 @DirtiesContext

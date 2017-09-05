@@ -4,7 +4,6 @@ Stub Runner has the functionality to run the published stubs in memory. It can i
 
 - Spring Integration
 - Spring Cloud Stream
-- Apache Camel
 - Spring AMQP
 
 It also provides points of entry to integrate with any other solution on the market.
@@ -31,31 +30,29 @@ For convenience the `StubFinder` interface extends `StubTrigger` so it's enough 
 
 [source,groovy]
 ----
-include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=client_trigger,indent=0]
+include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=client_trigger,indent=0]
 ----
 
 ==== Trigger by group and artifact ids
 
 [source,groovy]
 ----
-include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=trigger_group_artifact,indent=0]
+include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=trigger_group_artifact,indent=0]
 ----
 
 ==== Trigger by artifact ids
 
 [source,groovy]
 ----
-include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=trigger_artifact,indent=0]
+include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=trigger_artifact,indent=0]
 ----
 
 ==== Trigger all messages
 
 [source,groovy]
 ----
-include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=trigger_all,indent=0]
+include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=trigger_all,indent=0]
 ----
-
-include::{tests_path}/spring-cloud-contract-stub-runner-camel/README.adoc[]
 
 include::{tests_path}/spring-cloud-contract-stub-runner-integration/README.adoc[]
 

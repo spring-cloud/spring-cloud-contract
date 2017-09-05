@@ -6,8 +6,6 @@ stubrunner:
     - org.springframework.cloud.contract.verifier.stubs:bootService
   cloud:
     enabled: false
-  camel:
-    enabled: false
 
 spring.cloud:
   consul.enabled: false
