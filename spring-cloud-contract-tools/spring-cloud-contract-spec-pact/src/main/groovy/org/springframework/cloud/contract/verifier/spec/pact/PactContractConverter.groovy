@@ -269,7 +269,7 @@ class PactContractConverter implements ContractConverter<Pact> {
 	protected Map<String, Map<String, Object>> matchingRules(BodyMatchers bodyMatchers) {
 		return bodyMatchers.jsonPathMatchers().collectEntries {
 			MatchingType matchingType = it.matchingType()
-			String key = it.path()
+			String key = "\$.body${it.path().startsWith('$') ? it.path().substring(1) : it.path()}"
 			Object value = it.value()
 			Integer minTypeOccurrence = it.minTypeOccurrence()
 			Integer maxTypeOccurrence = it.maxTypeOccurrence()

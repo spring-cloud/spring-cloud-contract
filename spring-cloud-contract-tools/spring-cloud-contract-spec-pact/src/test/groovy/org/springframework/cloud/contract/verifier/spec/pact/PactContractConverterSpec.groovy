@@ -151,11 +151,11 @@ class PactContractConverterSpec extends Specification {
           "something": "foo"
         },
         "matchingRules": {
-          "$.id": {
+          "$.body.id": {
             "match": "regex",
             "regex": "[0-9]{3}"
           },
-          "$.something": {
+          "$.body.something": {
             "match": "equality"
           }
         }
@@ -176,22 +176,22 @@ class PactContractConverterSpec extends Specification {
           ]
         ],
         "matchingRules": {
-          "$[0][*].email": {
+          "$.body[0][*].email": {
             "match": "type"
           },
-          "$[0][*].id": {
+          "$.body[0][*].id": {
             "match": "regex",
             "regex": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
           },
-          "$[0]": {
+          "$.body[0]": {
             "match": "type",
             "min": 1,
             "max": 5
           },
-          "$[0][*].userName": {
+          "$.body[0][*].userName": {
             "match": "type"
           },
-          "$[0][*].something": {
+          "$.body[0][*].something": {
             "match": "equality"
           }
         }
