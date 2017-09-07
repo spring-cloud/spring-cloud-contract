@@ -1,49 +1,59 @@
 == Stub Runner for Messaging
 
-Stub Runner has the functionality to run the published stubs in memory. It can integrate with the following frameworks out of the box
+Stub Runner can run the published stubs in memory. It can integrate with the following
+frameworks:
 
-- Spring Integration
-- Spring Cloud Stream
-- Apache Camel
-- Spring AMQP
+* Spring Integration
+* Spring Cloud Stream
+* Apache Camel
+* Spring AMQP
 
-It also provides points of entry to integrate with any other solution on the market.
+It also provides entry points to integrate with any other solution on the market.
 
 === Stub triggering
 
-To trigger a message it's enough to use the `StubTrigger` interface:
+To trigger a message, use the `StubTrigger` interface:
 
 [source,groovy]
 ----
 include::{stubrunner_core_path}/src/main/java/org/springframework/cloud/contract/stubrunner/StubTrigger.java[lines=16..-1]
 ----
 
-For convenience the `StubFinder` interface extends `StubTrigger` so it's enough to use only one in your tests.
+For convenience, the `StubFinder` interface extends `StubTrigger`, so you only need one
+or the other in your tests.
 
 `StubTrigger` gives you the following options to trigger a message:
 
-==== Trigger by label
+* <<trigger-label>>
+* <<trigger-group-artifact-ids>>
+* <<trigger-artifact-ids>>
+* <<trigger-all-messages>>
+
+[[trigger-label]]
+==== Trigger by Label
 
 [source,groovy]
 ----
 include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=client_trigger,indent=0]
 ----
-
-==== Trigger by group and artifact ids
+[[trigger-group-artifact-ids]]
+==== Trigger by Group and Artifact Ids
 
 [source,groovy]
 ----
 include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=trigger_group_artifact,indent=0]
 ----
 
-==== Trigger by artifact ids
+[[trigger-artifact-ids]]
+==== Trigger by Artifact Ids
 
 [source,groovy]
 ----
 include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=trigger_artifact,indent=0]
 ----
 
-==== Trigger all messages
+[[trigger-all-messages]]
+==== Trigger All Messages
 
 [source,groovy]
 ----
