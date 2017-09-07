@@ -26,11 +26,9 @@ You can have both Spring AMQP and Spring Cloud Contract Stub Runner on the class
 set the property `stubrunner.amqp.enabled=true`. Remember to annotate your test class
 with `@AutoConfigureStubRunner`.
 
-IMPORTANT: If you already have Stream and Integration on the classpath you need
-to disable them explicitly via `stubrunner.stream.enabled=false` and `stubrunner.integration.enabled=false`
-properties
-
-==== Examples
+IMPORTANT: If you already have Stream and Integration on the classpath, you need
+to disable them explicitly by setting the  `stubrunner.stream.enabled=false` and
+`stubrunner.integration.enabled=false` properties.
 
 Assume that you have the following Maven repository with a deployed stubs for the
 `spring-cloud-contract-amqp-test` application.
@@ -113,7 +111,7 @@ NOTE: The message is directly handed over to the `onMessage` method of the
 In order to avoid Spring AMQP trying to connect to a running broker during our tests
 configure a mock `ConnectionFactory`.
 
-To disable the mocked ConnectionFactory, set the following property: 
+To disable the mocked ConnectionFactory, set the following property:
 `stubrunner.amqp.mockConnection=false`
 
 [source,yaml]

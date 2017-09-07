@@ -152,5 +152,6 @@ In order to add support for `fromRequest.path`, some methods had to be added to 
 
 See https://github.com/spring-cloud/spring-cloud-contract/issues/388[issue 388] for more
 detail.
+=======
 
 // TODO 1.1.x -> 1.2.x

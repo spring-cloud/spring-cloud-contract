@@ -34,9 +34,8 @@ classpath. Remember to annotate your test class with `@AutoConfigureStubRunner`.
 
 ==== Disabling the functionality
 
-If you need to disable this functionality just pass `stubrunner.stream.enabled=false` property.
-
-==== Examples
+If you need to disable this functionality, set the `stubrunner.stream.enabled=false`
+property.
 
 Assume that you have the following Maven repository with a deployed stubs for the
 `streamService` application:
