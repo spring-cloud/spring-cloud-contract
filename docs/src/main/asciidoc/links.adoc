@@ -1,13 +1,21 @@
 == Links
 
-Here you can find interesting links related to Spring Cloud Contract Verifier:
+The following links may be helpful when working with Spring Cloud Contract Verifier:
 
-- https://github.com/spring-cloud/spring-cloud-contract/[Spring Cloud Contract Github Repository]
-- https://github.com/spring-cloud-samples/spring-cloud-contract-samples/[Spring Cloud Contract Samples]
-- https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html[Spring Cloud Contract Documentation]
-- https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/deprecated[Accurest Legacy Documentation]
-- https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/#spring-cloud-contract-stub-runner[Spring Cloud Contract Stub Runner Documentation]
-- https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/#stub-runner-for-messaging[Spring Cloud Contract Stub Runner Messaging Documentation]
-- https://gitter.im/spring-cloud/spring-cloud-contract[Spring Cloud Contract Gitter]
-- https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/[Spring Cloud Contract Maven Plugin]
-- https://www.youtube.com/watch?v=sAAklvxmPmk[Spring Cloud Contract WJUG Presentation by Marcin Grzejszczak]
+* https://github.com/spring-cloud/spring-cloud-contract/[Spring Cloud Contract Github
+Repository]
+* https://github.com/spring-cloud-samples/spring-cloud-contract-samples/[Spring Cloud
+Contract Samples]
+* https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html[Spring Cloud
+Contract Documentation]
+* https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/deprecated[Accurest
+Legacy Documentation]
+* https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/#spring-cloud-contract-stub-runner[Spring
+Cloud Contract Stub Runner Documentation]
+* https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/#stub-runner-for-messaging[Spring
+Cloud Contract Stub Runner Messaging Documentation]
+* https://gitter.im/spring-cloud/spring-cloud-contract[Spring Cloud Contract Gitter]
+* https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/[Spring
+Cloud Contract Maven Plugin]
+* https://www.youtube.com/watch?v=sAAklvxmPmk[Spring Cloud Contract WJUG Presentation by
+Marcin Grzejszczak]

@@ -1,25 +1,27 @@
 == Spring Cloud Contract Verifier Messaging
 
-Spring Cloud Contract Verifier allows you to verify your application that uses messaging as means of communication.
-All of our integrations are working with Spring but you can also create one yourself and use it.
+Spring Cloud Contract Verifier lets you verify applications that uses messaging as a
+means of communication. All of the integrations shown in this document work with Spring,
+but you can also create one of your own and use that.
 
 === Integrations
 
-You can use one of the four integration configurations:
+You can use one of the following four integration configurations:
 
-- Apache Camel
-- Spring Integration
-- Spring Cloud Stream
-- Spring AMQP
+* Apache Camel
+* Spring Integration
+* Spring Cloud Stream
+* Spring AMQP
 
-Since we're using Spring Boot then if you have added one of the aforementioned libraries
-to the classpath then automatically all the messaging configuration will be set up.
+Since we use Spring Boot, if you have added one of these libraries to the classpath, all
+the messaging configuration is automatically set up.
 
 IMPORTANT: Remember to put `@AutoConfigureMessageVerifier` on the base class of your
-generated tests. Otherwise messaging part of Spring Cloud Contract Verifier will not work.
+generated tests. Otherwise, messaging part of Spring Cloud Contract Verifier does not
+work.
 
-IMPORTANT: If you want to use Spring Cloud Stream remember to add a
-`org.springframework.cloud:spring-cloud-stream-test-support` dependency.
+IMPORTANT: If you want to use Spring Cloud Stream, remember to add a dependency on
+`org.springframework.cloud:spring-cloud-stream-test-support`, as shown here:
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
@@ -37,15 +39,16 @@ IMPORTANT: If you want to use Spring Cloud Stream remember to add a
 testCompile "org.springframework.cloud:spring-cloud-stream-test-support"
 ----
 
-
 === Manual Integration Testing
 
-The main interface used by the tests is the `org.springframework.cloud.contract.verifier.messaging.MessageVerifier`.
-It defines how to send and receive messages. You can create your own implementation to achieve the
-same goal.
+The main interface used by the tests is
+`org.springframework.cloud.contract.verifier.messaging.MessageVerifier`.
+It defines how to send and receive messages. You can create your own implementation to
+achieve the same goal.
 
-In the a test you can inject a `ContractVerifierMessageExchange` to send and receive messages that follow the contract.
-Then add `@AutoConfigureMessageVerifier` to your test, e.g.
+In a test, you can inject a `ContractVerifierMessageExchange` to send and receive
+messages that follow the contract. Then add `@AutoConfigureMessageVerifier` to your test.
+Here's an example:
 
 [source,java,indent=0]
 ----
@@ -60,38 +63,38 @@ public static class MessagingContractTests {
 }
 ----
 
-NOTE: If your tests require stubs as well, then
-`@AutoConfigureStubRunner` includes the messaging configuration, so
-you only need the one annotation.
+NOTE: If your tests require stubs as well, then `@AutoConfigureStubRunner` includes the
+messaging configuration, so you only need the one annotation.
 
-=== Publisher side test generation
+=== Publisher-Side Test Generation
 
-Having the `input` or `outputMessage` sections in your DSL will result in creation of tests on the publisher's side. By default
-JUnit tests will be created, however there is also a possibility to create Spock tests.
+Having the `input` or `outputMessage` sections in your DSL results in creation of tests
+on the publisher's side. By default, JUnit tests are created. However, there is also a
+possibility to create Spock tests.
 
 There are 3 main scenarios that we should take into consideration:
 
-- Scenario 1: there is no input message that produces an output one. The output message is triggered by a component
-inside the application (e.g. scheduler)
-- Scenario 2: the input message triggers an output message
-- Scenario 3: the input message is consumed and there is no output message
+* Scenario 1: There is no input message that produces an output message. The output
+message  is triggered by a component inside the application (for example, scheduler).
+* Scenario 2: The input message triggers an output message.
+* Scenario 3: The input message is consumed and there is no output message.
 
-IMPORTANT: The destination passed to `messageFrom` or `sentTo` can have different meanings for different
- messaging implementations. For *Stream* and *Integration* it's first resolved as a `destination` of a channel, and then if
- there is no such `destination` it's resolved as a channel name. For *Camel* that's a certain component (e.x. `jms`).
+IMPORTANT: The destination passed to `messageFrom` or `sentTo` can have different
+meanings for different messaging implementations. For *Stream* and *Integration* it is
+first resolved as a `destination` of a channel. Then, if there is no such `destination`
+it is resolved as a channel name. For *Camel*, that's a certain component (for example,
+`jms`).
 
-Example for Camel:
+==== Scenario 1: No Input Message
 
-==== Scenario 1 (no input message)
-
-For the given contract:
+Here is an example for Camel. For the given contract:
 
 [source,groovy]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_method_dsl]
 ----
 
-The following JUnit test will be created:
+The following JUnit test is created:
 
 [source,groovy]
 ----
@@ -105,16 +108,16 @@ And the following Spock test would be created:
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_method_test]
 ----
 
-==== Scenario 2 (output triggered by input)
+==== Scenario 2: Output Triggered by Input
 
-For the given contract:
+Here is an example for Camel. For the given contract:
 
 [source,groovy]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_message_dsl]
 ----
 
-The following JUnit test will be created:
+The following JUnit test is created:
 
 [source,groovy]
 ----
@@ -128,16 +131,16 @@ And the following Spock test would be created:
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_message_spock]
 ----
 
-==== Scenario 3 (no output message)
+==== Scenario 3: No Output Message
 
-For the given contract:
+Here is an example for Camel. For the given contract:
 
 [source,groovy]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_no_output_dsl]
 ----
 
-The following JUnit test will be created:
+The following JUnit test is created:
 
 [source,groovy]
 ----
@@ -151,12 +154,13 @@ And the following Spock test would be created:
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_no_output_spock]
 ----
 
-=== Consumer Stub Side generation
+=== Consumer Stub Generation
 
-Unlike the HTTP part - in Messaging we need to publish the Groovy DSL inside the JAR with a stub. Then it's parsed on the consumer side
-and proper stubbed routes are created.
+Unlike the HTTP part, in messaging, we need to publish the Groovy DSL inside the JAR with
+a stub. Then it is parsed on the consumer side and proper stubbed routes are created.
 
-For more information please consult the Stub Runner Messaging sections.
+For more information, please consult the Stub Runner Messaging sections.
+// TODO Add a link to those sections.
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
