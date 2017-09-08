@@ -4,8 +4,8 @@
 
 == Migrations
 
-This section covers from one version of Spring Cloud Contract Verifier to the next
-version. It covers the following versions upgrade paths:
+This section covers migrating from one version of Spring Cloud Contract Verifier to the
+next version. It covers the following versions upgrade paths:
 
 [[cloud-verifier-1.0-1.1]]
 === 1.0.x -> 1.1.x
@@ -144,11 +144,13 @@ The flow for setting the generated tests package name will look like this:
 See https://github.com/spring-cloud/spring-cloud-contract/issues/260[issue 260] for more
 detail.
 
-==== New methods in TemplateProcessor
+==== New Methods in TemplateProcessor
 
-In order to add support for `fromRequest.path`, some methods had to be added to the
-`TemplateProcessor` interface.
-// TODO What methods?
+In order to add support for `fromRequest.path`, the following methods had to be added to the
+`TemplateProcessor` interface:
+
+* `path()`
+* `path(int index)`
 
 See https://github.com/spring-cloud/spring-cloud-contract/issues/388[issue 388] for more
 detail.

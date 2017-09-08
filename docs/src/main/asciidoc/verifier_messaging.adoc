@@ -159,8 +159,9 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 Unlike the HTTP part, in messaging, we need to publish the Groovy DSL inside the JAR with
 a stub. Then it is parsed on the consumer side and proper stubbed routes are created.
 
-For more information, please consult the Stub Runner Messaging sections.
-// TODO Add a link to those sections.
+For more information, see
+https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/#stub-runner-for-messaging[the
+Stub Runner Messaging sections].
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
