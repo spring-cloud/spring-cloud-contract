@@ -4,18 +4,17 @@
 
 == Spring Cloud Contract WireMock
 
-Modules giving you the possibility to use
-http://wiremock.org[WireMock] in a Spring Boot application. Check out the
+The Spring Cloud Contract WireMock modules let you use http://wiremock.org[WireMock] in a
+Spring Boot application. Check out the
 https://github.com/spring-cloud/spring-cloud-contract/tree/{branch}/samples[samples]
 for more details.
 
-If you have a Spring Boot application that uses Tomcat as an embedded
-server, for example (the default with `spring-boot-starter-web`), then
-you can simply add `spring-cloud-contract-wiremock` to your classpath
-and add `@AutoConfigureWireMock` in order to be able to use Wiremock
-in your tests. Wiremock runs as a stub server and you can register
-stub behaviour using a Java API or via static JSON declarations as
-part of your test. Here's a simple example:
+If you have a Spring Boot application that uses Tomcat as an embedded server (which is
+the default with `spring-boot-starter-web`),  you can add
+`spring-cloud-contract-wiremock` to your classpath and add `@AutoConfigureWireMock` in
+order to be able to use Wiremock in your tests. Wiremock runs as a stub server and you
+can register stub behavior using a Java API or via static JSON declarations as part of
+your test. The following code shows an example:
 
 [source,java,indent=0]
 ----
@@ -23,16 +22,20 @@ include::{doc_samples}/src/test/java/com/example/WiremockForDocsTests.java[tags=
 include::{doc_samples}/src/test/java/com/example/WiremockForDocsTests.java[tags=wiremock_test2]
 ----
 
-To start the stub server on a different port use `@AutoConfigureWireMock(port=9999)` (for example), and for a random port use the value 0. The stub server port will be bindable in the test application context as "wiremock.server.port". Using `@AutoConfigureWireMock` adds a bean of type `WiremockConfiguration` to your test application context, where it will be cached in between methods and classes having the same context, just like for normal Spring integration tests.
+To start the stub server on a different port use (for example),
+`@AutoConfigureWireMock(port=9999)`. For a random port, use a value of `0`. The stub
+server port can be bound in the test application context with the "wiremock.server.port"
+property. Using `@AutoConfigureWireMock` adds a bean of type `WiremockConfiguration` to
+your test application context, where it will be cached in between methods and classes
+having the same context, the same as for Spring integration tests.
 
 === Registering Stubs Automatically
 
-If you use `@AutoConfigureWireMock` then it will register WireMock
-JSON stubs from the file system or classpath, by default from
-`file:src/test/resources/mappings`. You can customize the locations
-using the `stubs` attribute in the annotation, which can be a resource
-pattern (ant-style) or a directory, in which case `**/*.json` is
-appended. Example:
+If you use `@AutoConfigureWireMock`, it registers WireMock JSON stubs from the file
+system or classpath (by default, from `file:src/test/resources/mappings`). You can
+customize the locations using the `stubs` attribute in the annotation, which can be an
+Ant-style resource pattern or a directory. In the case of a directory, `**/*.json` is
+appended. The following code shows an example:
 
 ----
 @RunWith(SpringRunner.class)
@@ -51,35 +54,32 @@ public class WiremockImportApplicationTests {
 }
 ----
 
-NOTE: Actually WireMock always loads mappings from
-`src/test/resources/mappings` *as well as* the custom locations in the
-stubs attribute. To change this behaviour you have to also specify a
-files root as described next.
+NOTE: Actually, WireMock always loads mappings from `src/test/resources/mappings` *as
+well as* the custom locations in the stubs attribute. To change this behavior, you can
+also specify a files root as described in the next section of this document.
 
 === Using Files to Specify the Stub Bodies
 
-WireMock can read response bodies from files on the classpath or file
-system. In that case you will see in the JSON DSL that the response
-has a "bodyFileName" instead of a (literal) "body". The files are
-resolved relative to a root directory `src/test/resources/\__files` by
-default. To customize this location you can set the `files` attribute
-in the `@AutoConfigureWireMock` annotation to the location of the
-parent directory (i.e. the place `__files` is a
-subdirectory). You can use Spring resource notation to refer to
-`file:...` or `classpath:...` locations (but generic URLs are not
-supported). A list of values can be given and WireMock will resolve
-the first file that exists when it needs to find a response body.
+WireMock can read response bodies from files on the classpath or the file system. In that
+case, you can see in the JSON DSL that the response has a `bodyFileName` instead of a
+(literal) `body`. The files are resolved relative to a root directory (by default,
+`src/test/resources/\__files`). To customize this location you can set the `files`
+attribute in the `@AutoConfigureWireMock` annotation to the location of the parent
+directory (in other words, `__files` is a subdirectory). You can use Spring resource
+notation to refer to `file:...` or `classpath:...` locations. Generic URLs are not
+supported. A list of values can be given, in which case WireMock resolves the first file
+that exists when it needs to find a response body.
 
-NOTE: when you configure the `files` root, then it affects the
-automatic loading of stubs as well (they come from the root location
-in a subdirectory called "mappings"). The value of `files` has no
+NOTE: When you configure the `files` root, it also affects the
+automatic loading of stubs, because they come from the root location
+in a subdirectory called "mappings". The value of `files` has no
 effect on the stubs loaded explicitly from the `stubs` attribute.
 
 === Alternative: Using JUnit Rules
 
-For a more conventional WireMock experience, using JUnit `@Rules` to
-start and stop the server, just use the `WireMockSpring` convenience
-class to obtain an `Options` instance:
+For a more conventional WireMock experience, you can use JUnit `@Rules` to start and stop
+the server. To do so, use the `WireMockSpring` convenience class to obtain an `Options`
+instance, as shown in the followin example:
 
 [source,java,indent=0]
 ----
@@ -87,18 +87,20 @@ include::{doc_samples}/src/test/java/com/example/WiremockForDocsClassRuleTests.j
 include::{doc_samples}/src/test/java/com/example/WiremockForDocsClassRuleTests.java[tags=wiremock_test2]
 ----
 
-The use `@ClassRule` means that the server will shut down after all the methods in this class.
+The `@ClassRule` means that the server shuts down after all the methods in this class
+have been run.
 
 === Relaxed SSL Validation for Rest Template
 
-WireMock allows you to stub a "secure" server with an "https" URL protocol. If your application wants to
-contact that stub server in an integration test, then it will find that the SSL certificates are not
-valid (it's the usual problem with self-installed certificates). The best option is often to just 
-re-configure the client to use "http", but if that's not open to you then you can ask Spring to configure
-an HTTP client that ignores SSL validation errors (just for tests).
+WireMock lets you stub a "secure" server with an "https" URL protocol. If your
+application wants to contact that stub server in an integration test, it will find that
+the SSL certificates are not valid (the usual problem with self-installed certificates).
+The best option is often to re-configure the client to use "http". If that's not an
+option, you can ask Spring to configure an HTTP client that ignores SSL validation errors
+(do so only for tests, of course).
 
-To make this work with minimum fuss you need to be using the Spring Boot `RestTemplateBuilder` in your app,
-e.g.
+To make this work with minimum fuss, you need to be using the Spring Boot
+`RestTemplateBuilder` in your app, as shown in the following example:
 
 [source,java,indent=0]
 ----
@@ -108,10 +110,11 @@ e.g.
 	}
 ----
 
-This is because the builder is passed through callbacks to initalize it, so the SSL validation can be set up
-in the client at that point. This will happen automatically in your test if you are using the 
-`@AutoConfigureWireMock` annotation (or the stub runner). If you are using the JUnit `@Rule` approach you need
-to add the `@AutoConfigureHttpClient` annotation as well:
+You need `RestTemplateBuilder` because the builder is passed through callbacks to
+initialize it, so the SSL validation can be set up in the client at that point. This
+happens automatically in your test if you are using the `@AutoConfigureWireMock`
+annotation or the stub runner. If you use the JUnit `@Rule` approach, you need to add the
+`@AutoConfigureHttpClient` annotation as well, as shown in the following example:
 
 [source,java,indent=0]
 ----
@@ -127,48 +130,45 @@ public class WiremockHttpsServerApplicationTests {
 }
 ----
 
-If you are using `spring-boot-starter-test` then you will have the Apache HTTP client on the classpath and it will
-be selected by the `RestTemplateBuilder` and configured to ignore SSL errors. If you are using the default `java.net`
-client you don't need the annotation (but it won't do any harm). There is no support currently for other clients, but
-it may be added in future releases.
+If you are using `spring-boot-starter-test`, you have the Apache HTTP client on the
+classpath and it is selected by the `RestTemplateBuilder` and configured to ignore SSL
+errors. If you use the default `java.net` client, you do not need the annotation (but it
+won't do any harm). There is no support currently for other clients, but it may be added
+in future releases.
 
 === WireMock and Spring MVC Mocks
 
-Spring Cloud Contract provides a convenience class that can load JSON WireMock stubs into a
-Spring `MockRestServiceServer`. Here's an example:
+Spring Cloud Contract provides a convenience class that can load JSON WireMock stubs into
+a Spring `MockRestServiceServer`. The following code shows an example:
 
 [source,java,indent=0]
 ----
 include::{doc_samples}/src/test/java/com/example/WiremockForDocsMockServerApplicationTests.java[tags=wiremock_test]
 ----
 
-The `baseUrl` is prepended to all mock calls, and the `stubs()`
-method takes a stub path resource pattern as an argument. So in this
-example the stub defined at `/stubs/resource.json` is loaded into the
-mock server, so if the `RestTemplate` is asked to visit
-`http://example.org/` it will get the responses as declared
-there. More than one stub pattern can be specified, and each one can
-be a directory (for a recursive list of all ".json"), or a fixed
-filename (like in the example above) or an ant-style pattern. The JSON
-format is the normal WireMock format which you can read about in the
-WireMock website.
+The `baseUrl` value is prepended to all mock calls, and the `stubs()` method takes a stub
+path resource pattern as an argument. In the preceding example, the stub defined at
+`/stubs/resource.json` is loaded into the mock server. If the `RestTemplate` is asked to
+visit `http://example.org/`, it gets the responses as being declared at that URL. More
+than one stub pattern can be specified, and each one can be a directory (for a recursive
+list of all ".json"), a fixed filename (as in the example above), or an Ant-style
+pattern. The JSON format is the normal WireMock format, which you can read about in the
+http://wiremock.org/docs/stubbing/[WireMock website].
 
-Currently we support Tomcat, Jetty and Undertow as Spring Boot
-embedded servers, and Wiremock itself has "native" support for a
-particular version of Jetty (currently 9.2). To use the native Jetty
-you need to add the native wiremock dependencies and exclude the
-Spring Boot container if there is one.
+Currently, the Spring Cloud Contract Verifier supports Tomcat, Jetty, and Undertow as
+Spring Boot embedded servers, and Wiremock itself has "native" support for a particular
+version of Jetty (currently 9.2). To use the native Jetty, you need to add the native
+Wiremock dependencies and exclude the Spring Boot container (if there is one).
 
-=== Generating Stubs using RestDocs
+=== Generating Stubs using REST Docs
 
-https://projects.spring.io/spring-restdocs[Spring RestDocs] can be
-used to generate documentation (e.g. in asciidoctor format) for an
-HTTP API with Spring MockMvc or Rest Assured. At the same time as you
-generate documentation for your API, you can also generate WireMock
-stubs, by using Spring Cloud Contract WireMock. Just write your normal
-RestDocs test cases and use `@AutoConfigureRestDocs` to have stubs
-automatically in the restdocs output directory. For example:
-
+https://projects.spring.io/spring-restdocs[Spring REST Docs] can be used to generate
+documentation (for example in Asciidoctor format) for an HTTP API with Spring MockMvc or
+Rest Assured. At the same time that you generate documentation for your API, you can also
+generate WireMock stubs by using Spring Cloud Contract WireMock. To do so, write your
+normal REST Docs test cases and use `@AutoConfigureRestDocs` to have stubs be
+automatically generated in the REST Docs output directory. The following code shows an
+example:
 
 [source,java,indent=0]
 ----
@@ -190,20 +190,19 @@ public class ApplicationTests {
 }
 ----
 
-From this test will be generated a WireMock stub at
-"target/snippets/stubs/resource.json". It matches all GET requests to
-the "/resource" path.
+This test generates a WireMock stub at "target/snippets/stubs/resource.json". It matches
+all GET requests to the "/resource" path.
 
-Without any additional configuration this will create a stub with a
-request matcher for the HTTP method and all headers except "host" and
-"content-length". To match the request more precisely, for example to
-match the body of a POST or PUT, we need to explicitly create a
-request matcher. This will do two things: 1) create a stub that only
-matches the way you specify, 2) assert that the request in the test
-case also matches the same conditions.
+Without any additional configuration, this tests creates a stub with a request matcher
+for the HTTP method and all headers except "host" and "content-length". To match the
+request more precisely (for example, to match the body of a POST or PUT), we need to
+explicitly create a request matcher. Doing so has two effects:
 
-The main entry point for this is `WireMockRestDocs.verify()` which can
-be used as a substitute for the `document()` convenience method. For
+* Creating a stub that matches only in the way you specify.
+* Asserting that the request in the test case also matches the same conditions.
+
+The main entry point for this feature is `WireMockRestDocs.verify()`, which can be used
+as a substitute for the `document()` convenience method, as shown in the following
 example:
 
 [source,java,indent=0]
@@ -228,15 +227,14 @@ public class ApplicationTests {
 }
 ----
 
-So this contract is saying: any valid POST with an "id" field will get
-back an the same response as in this test. You can chain together
-calls to `.jsonPath()` to add additional matchers. The
-https://github.com/jayway/JsonPath[JayWay documentation] can help you
-to get up to speed with JSON Path if it is unfamiliar to you.
+This contract specifies that any valid POST with an "id" field receives the response
+defined in this test. You can chain together calls to `.jsonPath()` to add additional
+matchers. If JSON Path is unfamiliar, The https://github.com/jayway/JsonPath[JayWay
+documentation] can help you get up to speed.
 
-Instead of the `jsonPath` and `contentType` convenience methods, you
-can also use the WireMock APIs to verify the request matches the
-created stub. Example:
+Instead of the `jsonPath` and `contentType` convenience methods, you can also use the
+WireMock APIs to verify that the request matches the created stub, as shown in the
+following example:
 
 [source,java,indent=0]
 ----
@@ -253,10 +251,9 @@ created stub. Example:
 	}
 ----
 
-The WireMock API is rich - you can match headers, query parameters,
-and request body by regex as well as by json path - so this can useful
-to create stubs with a wider range of parameters. The above example
-will generate a stub something like this:
+The WireMock API is rich. You can match headers, query parameters, and request body by
+regex as well as by JSON path. These features can be used to create stubs with a wider
+range of parameters. The above example generates a stub resembling the following example:
 
 .post-resource.json
 [source,json]
@@ -280,42 +277,43 @@ will generate a stub something like this:
 }
 ----
 
-NOTE: You can use either the `wiremock()` method or the `jsonPath()`
-and `contentType()` methods to create request matchers, but not both.
+NOTE: You can use either the `wiremock()` method or the `jsonPath()` and `contentType()`
+methods to create request matchers, but you can't use both approaches.
 
-On the consumer side, you can make the `resource.json` generated above
-available on the classpath (by https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_publishing_stubs_as_jars[publishing stubs as JARs] for example).
-After that, you can create a stub using WireMock in a
-number of different ways, including as described above using
-`@AutoConfigureWireMock(stubs="classpath:resource.json")`.
+On the consumer side, you can make the `resource.json` generated earlier in this section
+available on the classpath (by
+https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_publishing_stubs_as_jars[publishing
+stubs as JARs], for example). After that, you can create a stub using WireMock in a
+number of different ways, including by using
+`@AutoConfigureWireMock(stubs="classpath:resource.json")`, as described earlier in this
+document.
 
-=== Generating Contracts using RestDocs
+=== Generating Contracts by Using REST Docs
 
-Another thing that can be generated with Spring RestDocs is the Spring Cloud
-Contract DSL file and documentation. If you combine that with Spring Cloud
-WireMock then you're getting both the contracts and stubs.
+You can also generate Spring Cloud Contract DSL files and documentation with Spring REST
+Docs. If you do so in combination with Spring Cloud WireMock, you get both the contracts
+and the stubs.
 
 Why would you want to use this feature? Some people in the community asked questions
-about situation in which they would like to move to DSL based contract definition
-but they already have a lot of Spring MVC tests. Using this feature allows you to generate
-the contract files that you can later modify and move to proper folders so that the
-plugin picks them up.
+about a situation in which they would like to move to DSL-based contract definition,
+but they already have a lot of Spring MVC tests. Using this feature lets you generate
+the contract files that you can later modify and move to folders (defined in your
+configuration) so that the plugin finds them.
 
-TIP: You might wonder why this functionality is in the WireMock module.
-Come to think of it, it does make sense since it makes little sense to generate
-only contracts and not generate the stubs. That's why we suggest to do both.
+TIP: You might wonder why this functionality is in the WireMock module. The functionality
+is there because it makes sense to generate both the contracts and the stubs.
 
-Let's imagine the following test:
+Consider the following test:
 
 [source,java]
 ----
 include::{wiremock_tests}/src/test/java/org/springframework/cloud/contract/wiremock/restdocs/ContractDslSnippetTests.java[tags=contract_snippet]
 ----
 
-This will lead in the creation of the stub as presented in the previous
-section, contract will get generated and a documentation file too.
+The preceding test creates the stub presented in the previous section, generating both
+the contract and a documentation file.
 
-The contract will be called `index.groovy` and look more like this.
+The contract is called `index.groovy` and might look like the following example:
 
 [source,groovy]
 ----
@@ -349,5 +347,5 @@ Contract.make {
 }
 ----
 
-the generated document (example for Asciidoc) will contain a formatted contract
-(the location of this file would be `index/dsl-contract.adoc`).
+The generated document (formatted in Asciidoc in this case) contains a formatted
+contract. The location of this file would be `index/dsl-contract.adoc`.

@@ -6,14 +6,16 @@ image::https://circleci.com/gh/spring-cloud/spring-cloud-contract.svg?style=svg[
 
 == Spring Cloud Contract
 
-What you always need is confidence in pushing new features into a new application or service in a distributed system.
-This project provides support for Consumer Driven Contracts and service schemas in Spring applications, covering a
-range of options for writing tests, publishing them as assets, asserting that a contract is kept by producers
-and consumers, for HTTP and message-based interactions.
+You always need confidence when pushing new features into a new application or service in
+a distributed system. To that end, this project provides support for Consumer-driven
+Contracts and service schemas in Spring applications, covering a range of options for
+writing tests, publishing them as assets, and asserting that a contract is kept by
+producers and consumers -- for both HTTP and message-based interactions.
 
 === Spring Cloud Contract workshops
 
-If you prefer to learn about the project by doing some tutorials you can check out the workshops under
+If you prefer to learn about the project by doing some tutorials, you can check out the
+workshops under
 http://cloud-samples.spring.io/spring-cloud-contract-samples/workshops.html[this link].
 
 === Spring Cloud Contract Verifier
@@ -28,7 +30,8 @@ include::spring-cloud-wiremock.adoc[]
 
 == Documentation
 
-You can read more about Spring Cloud Contract Verifier by reading the {documentation_url}[docs]
+You can read more about Spring Cloud Contract Verifier by reading the
+{documentation_url}[docs]
 
 == Contributing
 

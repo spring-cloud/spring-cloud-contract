@@ -3,25 +3,22 @@
 
 === Stub Runner Camel
 
-Spring Cloud Contract Verifier Stub Runner's messaging module gives you an easy way to integrate with Apache Camel.
-For the provided artifacts it will automatically download the stubs and register the required
-routes.
+Spring Cloud Contract Verifier Stub Runner's messaging module gives you an easy way to
+integrate with Apache Camel. For the provided artifacts, it automatically downloads the
+stubs and registers the required routes.
 
-==== Adding it to the project
+==== Adding the Runner to the Project
 
-It's enough to have both Apache Camel and Spring Cloud Contract Stub Runner on classpath.
+You can have both Apache Camel and Spring Cloud Contract Stub Runner on the classpath.
 Remember to annotate your test class with `@AutoConfigureStubRunner`.
 
 ==== Disabling the functionality
 
-If you need to disable this functionality just pass `stubrunner.camel.enabled=false` property.
+If you need to disable this functionality, set the `stubrunner.camel.enabled=false`
+property.
 
-==== Examples
-
-===== Stubs structure
-
-Let us assume that we have the following Maven repository with a deployed stubs for the
-`camelService` application.
+Assume that you have the following Maven repository with deployed stubs for the
+`camelService` application:
 
 [source,bash,indent=0]
 ----
@@ -39,7 +36,7 @@ Let us assume that we have the following Maven repository with a deployed stubs 
                             └── maven-metadata-local.xml
 ----
 
-And the stubs contain the following structure:
+Further assume that the stubs contain the following structure:
 
 [source,bash,indent=0]
 ----
@@ -53,69 +50,81 @@ And the stubs contain the following structure:
     └── mappings
 ----
 
-Let's consider the following contracts (let' number it with *1*):
+Consider the following contracts (numbered *1*):
 
 [source,groovy]
 ----
 include::src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=sample_dsl,indent=0]
 ----
 
-and number *2*
+Now consider *2*
 
 [source,groovy]
 ----
 include::src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=sample_dsl_2,indent=0]
 ----
 
+These examples lend themselves to three scenarios:
+
+* <<camel-scenario-1>>
+* <<camel-scenario-2>>
+* <<camel-scenario-3>>
+
+[[camel-scenario-1]]
 ===== Scenario 1 (no input message)
 
-So as to trigger a message via the `return_book_1` label we'll use the `StubTigger` interface as follows
+To trigger a message via the `return_book_1` label, use the `StubTigger` interface, as
+follows:
 
 [source,groovy]
 ----
 include::src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=client_trigger,indent=0]
 ----
 
-Next we'll want to listen to the output of the message sent to `{output_name}`
+To listen to the output of the message sent to `{output_name}`:
 
 [source,groovy]
 ----
 include::src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=client_trigger_receive,indent=0]
 ----
 
-And the received message would pass the following assertions
+The received message passes the following assertions:
 
 [source,groovy]
 ----
 include::src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=client_trigger_message,indent=0]
 ----
 
+[[camel-scenario-2]]
 ===== Scenario 2 (output triggered by input)
 
-Since the route is set for you it's enough to just send a message to the `{output_name}` destination.
+Since the route is set for you, you can send a message to the `{output_name}`
+destination:
 
 [source,groovy]
 ----
 include::src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=client_send,indent=0]
 ----
 
-Next we'll want to listen to the output of the message sent to `{output_name}`
+You can listen to the output of the message sent to `{output_name}`:
 
 [source,groovy]
 ----
 include::src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=client_receive,indent=0]
 ----
 
-And the received message would pass the following assertions
+The received message passes the following assertions:
 
 [source,groovy]
 ----
 include::src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=client_receive_message,indent=0]
 ----
 
+[[camel-scenario-3]]
 ===== Scenario 3 (input with no output)
 
-Since the route is set for you it's enough to just send a message to the `{output_name}` destination.
+Since the route is set for you, you can send a message to the `{output_name}`
+destination:
 
 [source,groovy]
 ----

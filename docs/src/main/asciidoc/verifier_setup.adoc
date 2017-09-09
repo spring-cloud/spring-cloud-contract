@@ -1,15 +1,43 @@
 == Spring Cloud Contract Verifier Setup
 
+You can set up Spring Cloud Contract Verifier in either of two ways
+
+* <<gradle-project,As a Gradle project>>
+* <<maven-project,As a Maven project>>
+
+[[gradle-project]]
 === Gradle Project
 
+To learn how to set up the Gradle project for Spring Cloud Contract Verifier, read the
+following sections:
+
+* <<gradle-prerequisites>>
+* <<gradle-add-gradle-plugin>>
+* <<gradle-and-rest-assured>>
+* <<gradle-snapshot-versions>>
+* <<gradle-add-stubs>>
+* <<gradle-default-setup>>
+* <<gradle-configure-plugin>>
+* <<gradle-configuration-options>>
+* <<gradle-single-base-class>>
+* <<gradle-different-base-classes>>
+* <<gradle-invoking-generated-tests>>
+* <<gradle-consumer>>
+
+[[gradle-prerequisites]]
 ==== Prerequisites
 
-In order to use Spring Cloud Contract Verifier with WireMock you have to use Gradle or Maven plugin.
+In order to use Spring Cloud Contract Verifier with WireMock, you muse use either a
+Gradle or a Maven plugin.
 
-WARNING: If you want to use Spock in your projects you have to add separately
-the `spock-core` and `spock-spring` modules. Check http://spockframework.github.io/[Spock docs for more information]
+WARNING: If you want to use Spock in your projects, you must add separately the
+`spock-core` and `spock-spring` modules. Check http://spockframework.github.io/[Spock
+docs for more information]
 
-==== Add gradle plugin with dependencies
+[[gradle-add-gradle-plugin]]
+==== Add Gradle Plugin with Dependencies
+
+To add a Gradle plugin with dependencies, use code similar to this:
 
 [source,groovy,indent=0]
 ----
@@ -41,10 +69,11 @@ dependencies {
 }
 ----
 
+[[gradle-and-rest-assured]]
 ==== Gradle and Rest Assured 2.0
 
-By default Rest Assured 3.x is added to the classpath. However in order to give the users the
-opportunity to use Rest Assured 2.x it's enough to add it to the plugins classpath.
+By default, Rest Assured 3.x is added to the classpath. However, to use Rest Assured 2.x
+you can add it to the plugins classpath, as shown here:
 
 [source,groovy,indent=0]
 ----
@@ -68,26 +97,31 @@ depenendencies {
 }
 ----
 
-That way the plugin will automatically see that Rest Assured 2.x is present on the classpath
-and will modify the imports accordingly.
+That way, the plugin automatically sees that Rest Assured 2.x is present on the classpath
+and modifies the imports accordingly.
 
-==== Snapshot versions for Gradle
+[[gradle-snapshot-versions]]
+==== Snapshot Versions for Gradle
 
-Add the additional snapshot repository to your build.gradle to use snapshot versions which are automatically uploaded after every successful build:
+Add the additional snapshot repository to your build.gradle to use snapshot versions,
+which are automatically uploaded after every successful build, as shown here:
 
 [source,groovy,indent=0]
 ----
 include::{standalone_samples_path}/http-server/build.gradle[tags=repos,indent=0]
 }
 ----
-
+[[gradle-add-stubs]]
 ==== Add stubs
 
-By default Spring Cloud Contract Verifier is looking for stubs in `src/test/resources/contracts` directory.
+By default, Spring Cloud Contract Verifier is looking for stubs in the
+`src/test/resources/contracts` directory.
 
-Directory containing stub definitions is treated as a class name, and each stub definition is treated as a single test.
-We assume that it contains at least one directory which will be used as test class name. If there is more than one level of nested directories all except the last one will be used as package name.
-So with following structure
+The directory containing stub definitions is treated as a class name, and each stub
+definition is treated as a single test. Spring Cloud Contract Verifier assumes that it
+contains at  least one level of directories that are to be used as the test class name.
+If more than  one level of nested directories is present, all except the last one is used
+as the package name. For example, with following structure:
 
 [source,groovy,indent=0]
 ----
@@ -95,18 +129,24 @@ src/test/resources/contracts/myservice/shouldCreateUser.groovy
 src/test/resources/contracts/myservice/shouldReturnUser.groovy
 ----
 
-Spring Cloud Contract Verifier will create test class `defaultBasePackage.MyService` with two methods
+Spring Cloud Contract Verifier creates a test class named `defaultBasePackage.MyService`
+with two methods:
 
  - `shouldCreateUser()`
  - `shouldReturnUser()`
 
-==== Run plugin
+[[gradle-run-plugin]]
+==== Run the Plugin
 
-Plugin registers itself to be invoked before `check` task. You have nothing to do as long as you want it to be part of your build process. If you just want to generate tests please invoke `generateContractTests` task.
+The plugin registers itself to be invoked before a `check` task. If you want it to be
+part of your build process, you need to do nothing more. If you just want to generate
+tests, invoke the `generateContractTests` task.
 
-==== Default setup
+[[gradle-default-setup]]
+==== Default Setup
 
-Default Gradle Plugin setup creates the following Gradle part of the build (it's a pseudocode)
+The default Gradle Plugin setup creates the following Gradle part of the build (in
+pseudocode):
 
 [source,groovy,indent=0]
 ----
@@ -156,9 +196,11 @@ publishing {
 }
 ----
 
-==== Configure plugin
+[[gradle-configure-plugin]]
+==== Configure Plugin
 
-To change default configuration just add `contracts` snippet to your Gradle config
+To change the default configuration, add a `contracts` snippet to your Gradle config, as
+shown here:
 
 [source,groovy,indent=0]
 ----
@@ -169,100 +211,141 @@ contracts {
 }
 ----
 
-==== Configuration options
+[[gradle-configuration-options]]
+==== Configuration Options
 
- - **testMode** - defines mode for acceptance tests. By default MockMvc which is based on Spring's MockMvc. It can also be changed to **JaxRsClient** or to **Explicit** for real HTTP calls.
- - **imports** - array with imports that should be included in generated tests (for example ['org.myorg.Matchers']). By default empty array []
- - **staticImports** - array with static imports that should be included in generated tests(for example ['org.myorg.Matchers.*']). By default empty array []
- - **basePackageForTests** - specifies base package for all generated tests. If not set the value will be picked from `baseClassForTests`'s package and from
- `packageWithBaseClasses`. If neither of these are set then the value will be set to `org.springframework.cloud.contract.verifier.tests`
- - **baseClassForTests** - base class for all generated tests. By default `spock.lang.Specification` if using Spock tests.
- - **packageWithBaseClasses** - instead of providing a fixed value for base class you can provide a package where all the base classes lay. Takes precedence over **baseClassForTests**.
- - **baseClassMappings** - explicitly map contract package to a FQN of a base class. Takes precedence over **packageWithBaseClasses** and **baseClassForTests**.
- - **ruleClassForTests** - specifies Rule which should be added to generated test classes.
- - **ignoredFiles** - Ant matcher allowing defining stub files for which processing should be skipped. By default empty array []
- - **contractsDslDir** - directory containing contracts written using the GroovyDSL. By default `$rootDir/src/test/resources/contracts`
- - **generatedTestSourcesDir** - test source directory where tests generated from Groovy DSL should be placed. By default `$buildDir/generated-test-sources/contractVerifier`
- - **stubsOutputDir** - dir where the generated WireMock stubs from Groovy DSL should be placed
- - **targetFramework** - the target test framework to be used; currently Spock and JUnit are supported with JUnit being the default framework
+* *testMode*: Defines the mode for acceptance tests. By default, the mode is MockMvc,
+which is based on Spring's MockMvc. It can also be changed to *JaxRsClient* or to
+*Explicit* for real HTTP calls.
+* *imports*: Creates an array with imports that should be included in generated tests
+(for example ['org.myorg.Matchers']). By default, it creates an empty array.
+* *staticImports*: Creates an array with static imports that should be included in
+generated tests(for example ['org.myorg.Matchers.*']). By default, it creates an empty
+array.
+* *basePackageForTests*: Specifies the base package for all generated tests. If not set,
+the value is picked from `baseClassForTests`'s package and from `packageWithBaseClasses`.
+If neither of these values are set, then the value is set to
+`org.springframework.cloud.contract.verifier.tests`.
+* *baseClassForTests*: Creates a base class for all generated tests. By default, if you
+use Spock classes, the class is `spock.lang.Specification`.
+* *packageWithBaseClasses*: Defines a package where all the base classes reside. This
+setting takes precedence over *baseClassForTests*.
+* *baseClassMappings*: Explicitly maps a contract package to a FQN of a base class. This
+setting takes precedence over *packageWithBaseClasses* and *baseClassForTests*.
+* *ruleClassForTests*: Specifies a rule that should be added to the generated test
+classes.
+* *ignoredFiles*: Uses an `Antmatcher` to allow defining stub files for which processing
+should be skipped. By default, it is an empty array.
+* *contractsDslDir*: Specifies the directory containing contracts written using the
+GroovyDSL. By default, its value is `$rootDir/src/test/resources/contracts`.
+* *generatedTestSourcesDir*: Specifies the test source directory where tests generated
+from the Groovy DSL should be placed. By default its value is
+`$buildDir/generated-test-sources/contractVerifier`.
+* *stubsOutputDir*: Specifies the directory where the generated WireMock stubs from
+the Groovy DSL should be placed.
+* *targetFramework*: Specifies the target test framework to be used. Currently, Spock and
+JUnit are supported with JUnit being the default framework.
 
-The following properties are used when you want to provide where the JAR with contract lays
+The following properties are used when you want to specify the location of the JAR
+containing the contracts:
+* *contractDependency*: Specifies the Dependency that provides
+`groupid:artifactid:version:classifier` coordinates. You can use the `contractDependency`
+closure to set it up.
+* *contractsPath*: Specifies the path to the jar. If contract dependencies are
+ downloaded, the path defaults to `groupid/artifactid` where `groupid` is slash
+ separated. Otherwise, it scans contracts under the provided directory.
+* *contractsWorkOffline*: Specifies whether to download the dependencies each time, so
+that you can work online. In other words, it specifies whether to reuses the local Maven
+repo.
 
- - **contractDependency** - the Dependency that provides `groupid:artifactid:version:classifier` coordinates. You can use the `contractDependency` closure to set it up
- - **contractsPath** - if contract deps are downloaded will default to `groupid/artifactid` where `groupid` will be slash separated. Otherwise will scan contracts under provided directory
- - **contractsWorkOffline** - in order not to download the dependencies each time you can download them once and work offline afterwards (reuse local Maven repo)
+[[gradle-single-base-class]]
+==== Single Base Class for All Tests
 
-==== Single base class for all tests
-
-When using Spring Cloud Contract Verifier in default MockMvc you need to create a base specification for all generated acceptance tests. In this class you need to point to endpoint which should be verified.
+When using Spring Cloud Contract Verifier in default MockMvc, you need to create a base
+specification for all generated acceptance tests. In this class, you need to point to an
+endpoint, which should be verified.
 
 [source,groovy,indent=0]
 ----
 include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/org/springframework/cloud/contract/verifier/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
 ----
 
-In case of using `Explicit` mode, you can use base class to initialize the whole tested app similarly as in regular integration tests. In case of `JAXRSCLIENT` mode this base class
-should also contain `protected WebTarget webTarget` field, right now the only option to test JAX-RS API is to start a web server.
+If you use `Explicit` mode, you can use a base class to initialize the whole tested app
+as you might see in regular integration tests. If you use the `JAXRSCLIENT` mode, this
+base class should also contain a `protected WebTarget webTarget` field. Right now, the
+only option to test the JAX-RS API is to start a web server.
 
-==== Different base classes for contracts
+[[gradle-different-base-classes]]
+==== Different Base Classes for Contracts
 
-If your base classes differ between contracts you can tell the Spring Cloud Contract plugin which class should get
-extended by the autogenerated tests. You have two options:
+If your base classes differ between contracts, you can tell the Spring Cloud Contract
+plugin which class should get extended by the autogenerated tests. You have two options:
 
- - follow a convention by providing the `packageWithBaseClasses`
- - provide explicit mapping via `baseClassMappings`
+* Follow a convention by providing the `packageWithBaseClasses`
+* Provide explicit mapping via `baseClassMappings`
 
-*Convention*
+*By Convention*
 
-The convention is such that if you have a contract under e.g. `src/test/resources/contract/foo/bar/baz/` and provide the value of the `packageWithBaseClasses` property
-to `com.example.base` then we will assume that there is a `BarBazBase` class under `com.example.base` package. In other words we take last two parts of package
-if they exist and form a class with a `Base` suffix. Takes precedence over **baseClassForTests**. Example of usage in the `contracts` closure:
+The convention is such that if you have a contract under (for example)
+`src/test/resources/contract/foo/bar/baz/` and set the value of the
+`packageWithBaseClasses` property to `com.example.base`, then Spring Cloud Contract
+Verifier assumes that there is a `BarBazBase` class under the `com.example.base` package.
+In other words, the system takes the last two parts of the package, if they exist, and
+forms a class with a `Base` suffix. This rule takes precedence over *baseClassForTests*.
+Here is an example of how it works in the `contracts` closure:
 
 [source,groovy,indent=0]
 ----
 include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/groovy/org/springframework/cloud/contract/verifier/plugin/ContractVerifierSpec.groovy[tags=package_with_base_classes,indent=0]
 ----
 
-*Mapping*
+*By Mapping*
 
-You can manually map a regular expression of the contract's package to fully qualified name of the base class for the matched contract.
-Let's take a look at the following example:
+You can manually map a regular expression of the contract's package to fully qualified
+name of the base class for the matched contract. You have to provide a list called
+`baseClassMappings` that consists `baseClassMapping` objects that takes a
+`contractPackageRegex` to `baseClassFQN` mapping. Consider the following example:
 
 [source,groovy,indent=0]
 ----
 include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/groovy/org/springframework/cloud/contract/verifier/plugin/ContractVerifierSpec.groovy[tags=base_class_mappings,indent=0]
 ----
 
-Let's assume that you have contracts under 
+Let's assume that you have contracts under
  - `src/test/resources/contract/com/`
  - `src/test/resources/contract/foo/`
- 
-By providing the `baseClassForTests` we have a fallback in case mapping didn't succeed (you could also provide
-the `packageWithBaseClasses` as fallback). That way the tests generated from `src/test/resources/contract/com/` contracts
-will be extending the `com.example.ComBase` whereas the rest of tests will extend `com.example.FooBase`. 
 
-==== Invoking generated tests
+By providing the `baseClassForTests`, we have a fallback in case mapping did not succeed.
+(You could also provide the `packageWithBaseClasses` as a fallback.) That way, the tests
+generated from `src/test/resources/contract/com/` contracts extend the
+`com.example.ComBase`, whereas the rest of the tests extend `com.example.FooBase`.
 
-To ensure that provider side is complaint with defined contracts, you need to invoke:
+[[gradle-invoking-generated-tests]]
+==== Invoking Generated Tests
+
+To ensure that the provider side is compliant with defined contracts, you need to invoke:
 
 [source,bash,indent=0]
 ----
 ./gradlew generateContractTests test
 ----
 
-==== Spring Cloud Contract Verifier on consumer side
+[[gradle-consumer]]
+==== Spring Cloud Contract Verifier on the Consumer Side
 
-In consumer service you need to configure Spring Cloud Contract Verifier plugin in exactly the same way as in case of provider. If you don't want to use Stub Runner then you need to copy contracts stored in
-`src/test/resources/contracts` and generate WireMock json stubs using:
+In a consuming service, you need to configure the Spring Cloud Contract Verifier plugin
+in exactly the same way as in case of provider. If you do not want to use Stub Runner
+then you need to copy contracts stored in `src/test/resources/contracts` and generate
+WireMock JSON stubs using:
 
 [source,bash,indent=0]
 ----
 ./gradlew generateClientStubs
 ----
 
-Note that `stubsOutputDir` option has to be set for stub generation to work.
+NOTE: The `stubsOutputDir` option has to be set for stub generation to work.
 
-When present, json stubs can be used in consumer automated tests.
+When present, JSON stubs can be used in automated tests of consuming a service.
 
 [source,groovy,indent=0]
 ----
@@ -289,32 +372,54 @@ class LoanApplicationServiceSpec extends Specification {
 }
 ----
 
-Underneath LoanApplication makes a call to FraudDetection service. This request is handled by WireMock server configured using stubs generated by Spring Cloud Contract Verifier.
+`LoanApplication` makes a call to `FraudDetection` service. This request is handled by a
+WireMock server configured with stubs generated by Spring Cloud Contract Verifier.
 
-=== Using in your Maven project
+[[maven-project]]
+=== Maven Project
 
+To learn how to set up the Maven project for Spring Cloud Contract Verifier, read the
+following sections:
+
+* <<maven-add-plugin>>
+* <<maven-rest-assured>>
+* <<maven-snapshot-versions>>
+* <<maven-add-stubs>>
+* <<maven-run-plugin>>
+* <<maven-configure-plugin>>
+* <<maven-configuration-options>>
+* <<maven-single-base>>
+* <<maven-different-base>>
+* <<maven-invoking-generated-tests>>
+* <<maven-sts>>
+* <<maven-consumer>>
+
+[[maven-add-plugin]]
 ==== Add maven plugin
 
-Add the Spring Cloud Contract BOM
+Add the Spring Cloud Contract BOM in a fashion similar to this:
 
 [source,xml,indent=0]
 ----
 include::{standalone_samples_path}/http-server/pom.xml[tags=contract_bom,indent=0]
 ----
 
-Next, the `Spring Cloud Contract Verifier` Maven plugin
+Next, add the `Spring Cloud Contract Verifier` Maven plugin:
 
 [source,xml,indent=0]
 ----
 include::{standalone_samples_path}/http-server/pom.xml[tags=contract_maven_plugin,indent=0]
 ----
 
-You can read more in the https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/[Spring Cloud Contract Maven Plugin Docs]
+You can read more in the
+https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/[Spring
+Cloud Contract Maven Plugin Documentation].
 
+[[maven-rest-assured]]
 ==== Maven and Rest Assured 2.0
 
-By default Rest Assured 3.x is added to the classpath. However in order to give the users the
-opportunity to use Rest Assured 2.x it's enough to add it to the plugins classpath.
+By default, Rest Assured 3.x is added to the classpath. However, you can use Rest
+Assured 2.x by adding it to the plugins classpath, as shown here:
 
 [source,groovy,indent=0]
 ----
@@ -365,24 +470,29 @@ opportunity to use Rest Assured 2.x it's enough to add it to the plugins classpa
 </dependencies>
 ----
 
-That way the plugin will automatically see that Rest Assured 3.x is present on the classpath
-and will modify the imports accordingly.
+That way, the plugin automatically sees that Rest Assured 3.x is present on the classpath
+and modifies the imports accordingly.
 
+[[maven-snapshot-versions]]
 ==== Snapshot versions for Maven
 
-For Snapshot / Milestone versions you have to add the following section to your `pom.xml`
+For Snapshot and Milestone versions, you have to add the following section to your
+`pom.xml`, as shown here:
 
 [source,xml,indent=0]
 ----
 include::{standalone_samples_path}/http-server/pom.xml[tags=repos,indent=0]
 ----
 
+[[maven-add-stubs]]
 ==== Add stubs
 
-By default Spring Cloud Contract Verifier is looking for stubs in `src/test/resources/contracts` directory.
-Directory containing stub definitions is treated as a class name, and each stub definition is treated as a single test.
-We assume that it contains at least one directory which will be used as test class name. If there is more than one level of nested directories all except the last one will be used as package name.
-So with following structure
+By default, Spring Cloud Contract Verifier is looking for stubs in the
+`src/test/resources/contracts` directory. The directory containing stub definitions is
+treated as a class name, and each stub definition is treated as a single test. We assume
+that it contains at least one directory to be used as test class name. If there is more
+than one level of nested directories, all except the last one is used as package name.
+For example, with following structure:
 
 [source,groovy,indent=0]
 ----
@@ -390,17 +500,24 @@ src/test/resources/contracts/myservice/shouldCreateUser.groovy
 src/test/resources/contracts/myservice/shouldReturnUser.groovy
 ----
 
-Spring Cloud Contract Verifier will create test class `defaultBasePackage.MyService` with two methods
- - `shouldCreateUser()`
- - `shouldReturnUser()`
+Spring Cloud Contract Verifier creates a test class named `defaultBasePackage.MyService`
+with two methods
 
+* `shouldCreateUser()`
+* `shouldReturnUser()`
+
+[[maven-run-plugin]]
 ==== Run plugin
 
-Plugin goal `generateTests` is assigned to be invoked in phase `generate-test-sources`. You have nothing to do as long as you want it to be part of your build process. If you just want to generate tests please invoke `generateTests` goal.
+The plugin goal `generateTests` is assigned to be invoked in the phase called
+`generate-test-sources`. If you want it to be part of your build process, you need not do
+anything. If you just want to generate tests, invoke the `generateTests` goal.
 
+[[maven-configure-plugin]]
 ==== Configure plugin
 
-To change default configuration just add `configuration` section to plugin definition or `execution` definition.
+To change the default configuration, just add a `configuration` section to the plugin
+definition or the `execution` definition, as shown here:
 
 [source,xml,indent=0]
 ----
@@ -423,44 +540,69 @@ To change default configuration just add `configuration` section to plugin defin
 </plugin>
 ----
 
-==== Important configuration options
+[[maven-configuration-options]]
+==== Configuration Options
 
- - **testMode** - defines mode for acceptance tests. By default `MockMvc` which is based on Spring's MockMvc. It can also be changed to `JaxRsClient` or to `Explicit` for real HTTP calls.
- - **basePackageForTests** - specifies base package for all generated tests. If not set the value will be picked from `baseClassForTests`'s package and from
-  `packageWithBaseClasses`. If neither of these are set then the value will be set to `org.springframework.cloud.contract.verifier.tests`
- - **ruleClassForTests** - specifies Rule which should be added to generated test classes.
- - **baseClassForTests** - base class for generated tests. By default `spock.lang.Specification` if using Spock tests.
- - **contractsDirectory** - directory containing contracts written using the GroovyDSL. By default `/src/test/resources/contracts`.
- - **testFramework** - the target test framework to be used; currently Spock and JUnit are supported with JUnit being the default framework
- - **packageWithBaseClasses** - instead of providing a fixed value for base class you can provide a package where all the base classes lay.
-  The convention is such that if you have a contract under `src/test/resources/contract/foo/bar/baz/` and provide the value of this property
-  to `com.example.base` then we will assume that there is a `BarBazBase` class under `com.example.base` package. Takes precedence
-  over **baseClassForTests**
- - **baseClassMappings** - list of base class mappings that where you have to provide `contractPackageRegex` which is checked
- against the package in which the contract lays and `baseClassFQN` that maps to fully qualified name of the base class for the matched
- contract. If you have a contract under `src/test/resources/contract/foo/bar/baz/` and map the property `.*` -> `com.example.base.BaseClass` then
- the test class generated from these contracts will extend `com.example.base.BaseClass`. Takes precedence over **packageWithBaseClasses**
-  and **baseClassForTests**.
+* *testMode*: Defines the mode for acceptance tests. By default, the mode is MockMvc,
+which is based on Spring's MockMvc. It can also be changed to *JaxRsClient* or to
+*Explicit* for real HTTP calls.
+* *basePackageForTests*: Specifies the base package for all generated tests. If not set,
+the value is picked from `baseClassForTests`'s package and from `packageWithBaseClasses`.
+If neither of these values are set, then the value is set to
+`org.springframework.cloud.contract.verifier.tests`.
+* *ruleClassForTests*: Specifies a rule that should be added to the generated test
+classes.
+* *baseClassForTests*: Creates a base class for all generated tests. By default, if you
+use Spock classes, the class is `spock.lang.Specification`.
+* *contractsDirectory*: Specifies a directory containing contracts written with the
+GroovyDSL. The default directory is `/src/test/resources/contracts`.
+* *testFramework*: Specifies the target test framework to be used. Currently, Spock and
+JUnit are supported with JUnit being the default framework
+* *packageWithBaseClasses*: Defines a package where all the base classes reside. This
+setting takes precedence over *baseClassForTests*. The convention is such that, if you
+have a contract under (for example) `src/test/resources/contract/foo/bar/baz/` and set
+the value of the `packageWithBaseClasses` property to `com.example.base`, then Spring
+Cloud Contract Verifier assumes that there is a `BarBazBase` class under the
+`com.example.base` package. In other words, the system takes the last two parts of the
+package, if they exist, and forms a class with a `Base` suffix.
+* *baseClassMappings*: Specifies a list of base class mappings that provide
+`contractPackageRegex`, which is checked against the package where the contract is
+located, and `baseClassFQN`, which maps to the fully qualified name of the base class for
+the matched contract. For example, if you have a contract under
+`src/test/resources/contract/foo/bar/baz/` and map the property
+`.* -> com.example.base.BaseClass`, then the test class generated from these contracts
+extends `com.example.base.BaseClass`. This setting takes precedence over
+*packageWithBaseClasses* and *baseClassForTests*.
 
-If you want to download your contract definitions from a Maven repository you can use
+If you want to download your contract definitions from a Maven repository, you can use
+the following options:
 
- - **contractDependency** - the contract dependency that contains all the packaged contracts
- - **contractsPath** - path to concrete contracts in the JAR with packaged contracts. Defaults to `groupid/artifactid` where `gropuid` is slash separated.
- - **contractsWorkOffline** - if the dependencies should be downloaded or local Maven only should be reused
- - **contractsRepositoryUrl** - *DEPRECATED PROPERTY - please use the `contractRepository` closure* - URL to a repo with the artifacts with contracts, if not provided should use the current Maven ones
- - **contractRepository** - closure where you can define properties related to repository with contracts
-    * **username** - username to be used to connect to the repo
-    * **password** - username to be used to connect to the repo
-    * **proxyHost** - proxy host to be used to connect to the repo
-    * **proxyPort** - proxy port to be used to connect to the repo
-    * **cacheDownloadedContracts** - if you want to reuse download JARs that contain contract definitions.
- We cache only non-snapshot, explicitly provided versions (e.g. `+` or `1.0.0.BUILD-SNAPSHOT` won't get cached).
- By default this feature is turned on.
+* *contractDependency*: The contract dependency that contains all the packaged contracts.
+* *contractsPath*: The path to the concrete contracts in the JAR with packaged contracts.
+Defaults to `groupid/artifactid` where `gropuid` is slash separated.
+* *contractsWorkOffline*: Dictates whether the dependencies should be downloaded or the
+local Maven artifacts should be reused.
+* *contractsRepositoryUrl*: *DEPRECATED PROPERTY - please use the `contractRepository`
+closure*: URL to a repo with the artifacts that have contracts. If it is not provided,
+use the current Maven ones.
+* *contractRepository* - Lets you use a closure where you can define properties related
+to repository with contracts.
+* *username*: The user name to be used to connect to the repo.
+* *password*: The password to be used to connect to the repo.
+* *proxyHost*: The proxy host to be used to connect to the repo.
+* *proxyPort*: The proxy port to be used to connect to the repo.
+* *cacheDownloadedContracts* - Specifies whether to reuse downloaded JARs that contain
+contract definitions.
 
-==== Single base class for all tests
+We cache only non-snapshot, explicitly provided versions (for example
+`+` or `1.0.0.BUILD-SNAPSHOT` won't get cached). By default, this feature is turned on.
 
-When using Spring Cloud Contract Verifier in default MockMvc you need to create a base specification for all generated acceptance tests.
-In this class you need to point to endpoint which should be verified.
+[[maven-single-base]]
+==== Single Base Class for All Tests
+
+When using Spring Cloud Contract Verifier in default MockMvc, you need to create a base
+specification for all generated acceptance tests. In this class, you need to point to an
+endpoint, which should be verified.
 
 [source,groovy,indent=0]
 ----
@@ -477,51 +619,64 @@ class  MvcSpec extends Specification {
 }
 ----
 
-In case of using `Explicit` mode, you can use base class to initialize the whole tested app similarly as in regular integration tests. In case of `JAXRSCLIENT` mode this base class should also contain `protected WebTarget webTarget` field, right now the only option to test JAX-RS API is to start a web server.
+If you use `Explicit` mode, you can use a base class to initialize the whole tested app
+similarly, as you might find in regular integration tests. If you use the `JAXRSCLIENT`
+mode, this base class should also contain a `protected WebTarget webTarget` field. Right
+now, the only option to test the JAX-RS API is to start a web server.
 
+[[maven-different-base]]
 ==== Different base classes for contracts
 
-If your base classes differ between contracts you can tell the Spring Cloud Contract plugin which class should get
-extended by the autogenerated tests. You have two options:
+If your base classes differ between contracts, you can tell the Spring Cloud Contract
+plugin which class should get extended by the autogenerated tests. You have two options:
 
- - follow a convention by providing the `packageWithBaseClasses`
- - provide explicit mapping via `baseClassMappings`
+* Follow a convention by providing the `packageWithBaseClasses`
+* provide explicit mapping via `baseClassMappings`
 
-*Convention*
+*By Convention*
 
-The convention is such that if you have a contract under e.g. `src/test/resources/contract/hello/v1/` and provide the value of the `packageWithBaseClasses` property
-to `hello` then we will assume that there is a `HelloV1Base` class under `hello` package. In other words we take last two parts of package
-if they exist and form a class with a `Base` suffix. Takes precedence over **baseClassForTests**. Example of usage:
+The convention is such that if you have a contract under (for example)
+`src/test/resources/contract/foo/bar/baz/` and set the value of the
+`packageWithBaseClasses` property to `com.example.base`, then Spring Cloud Contract
+Verifier assumes that there is a `BarBazBase` class under the `com.example.base` package.
+In other words, the system takes the last two parts of the package, if they exist, and
+forms a class with a `Base` suffix. This rule takes precedence over *baseClassForTests*.
+Here is an example of how it works in the `contracts` closure:
 
 [source,xml,indent=0]
 ----
 include::{plugins_path}/spring-cloud-contract-maven-plugin/src/test/projects/basic-generated-baseclass/pom.xml[tags=convention,indent=0]
 ----
 
-*Mapping*
+*By Mapping*
 
-You can manually map a regular expression of the contract's package to fully qualified name of the base class for the matched contract.
-You have to provide a list `baseClassMappings` of `baseClassMapping` that takes a `contractPackageRegex` to `baseClassFQN` mapping.
-Let's take a look at the following example:
+You can manually map a regular expression of the contract's package to fully qualified
+name of the base class for the matched contract. You have to provide a list called
+`baseClassMappings` that consists `baseClassMapping` objects that takes a
+`contractPackageRegex` to `baseClassFQN` mapping. Consider the following example:
 
 [source,xml,indent=0]
 ----
 include::{plugins_path}/spring-cloud-contract-maven-plugin/src/test/projects/basic-baseclass-from-mappings/pom.xml[tags=mapping,indent=0]
 ----
 
-Let's assume that you have contracts under 
- - `src/test/resources/contract/com/`
- - `src/test/resources/contract/foo/`
- 
-By providing the `baseClassForTests` we have a fallback in case mapping didn't succeed (you could also provide
-the `packageWithBaseClasses` as fallback). That way the tests generated from `src/test/resources/contract/com/` contracts
-will be extending the `com.example.ComBase` whereas the rest of tests will extend `com.example.FooBase`. 
+Assume that you have contracts under these two locations:
+* `src/test/resources/contract/com/`
+* `src/test/resources/contract/foo/`
 
+By providing the `baseClassForTests`, we have a fallback in case mapping did not succeed.
+(You can also provide the `packageWithBaseClasses` as a fallback.) That way, the tests
+generated from `src/test/resources/contract/com/` contracts extend the
+`com.example.ComBase`, whereas the rest of the tests extend `com.example.FooBase`.
+
+[[maven-invoking-generated-tests]]
 ==== Invoking generated tests
 
-Spring Cloud Contract Maven Plugin generates verification code into directory `/generated-test-sources/contractVerifier` and attach this directory to `testCompile` goal.
+The Spring Cloud Contract Maven Plugin generates verification code in a directory called
+`/generated-test-sources/contractVerifier` and attaches this directory to `testCompile`
+goal.
 
-For Groovy Spock code use:
+For Groovy Spock code, use the following:
 
 [source,xml,indent=0]
 ----
@@ -555,17 +710,17 @@ For Groovy Spock code use:
 </plugin>
 ----
 
-To ensure that provider side is complaint with defined contracts, you need to invoke `mvn generateTest test`
+To ensure that provider side is compliant with defined contracts, you need to invoke
+`mvn generateTest test`.
 
-==== FAQ with Maven Plugin
-
+[[maven-sts]]
 ==== Maven Plugin and STS
 
-In case you see the following exception while using STS
+If you see the following exception while using STS:
 
 image::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/{branch}/docs/src/main/asciidoc/images/sts_exception.png[STS Exception]
 
-when you click on the marker you should see sth like this
+When you click on the error marker you should see something like this:
 
 [source,bash]
 ----
@@ -578,7 +733,7 @@ when you click on the marker you should see sth like this
  org.sonatype.plexus.build.incremental.ThreadBuildContext.hasDelta(ThreadBuildContext.java:59) at
 ----
 
-In order to fix this issue just provide the following section in your `pom.xml`
+In order to fix this issue, provide the following section in your `pom.xml`:
 
 [source,xml]
 ----
@@ -616,19 +771,20 @@ In order to fix this issue just provide the following section in your `pom.xml`
 </build>
 ----
 
-==== Spring Cloud Contract Verifier on consumer side
+[[maven-consumer]]
+==== Spring Cloud Contract Verifier on the Consumer Side
 
-You can actually use the Spring Cloud Contract Verifier also for the consumer side!
-You can use the plugin so that it only converts the contracts and generates the stubs.
-To achieve that you need to configure Spring Cloud Contract Verifier plugin in exactly
-the same way as in case of provider. You need to copy contracts stored in
-`src/test/resources/contracts` and generate WireMock json stubs using:
-`mvn generateStubs` command. By default generated WireMock mapping is
-stored in directory `target/mappings`. Your project should create from
-this generated mappings additional artifact with classifier `stubs` for
-easy deploy to maven repository.
+You can also use the Spring Cloud Contract Verifier for the consumer side. To do so, use
+the plugin so that it only converts the contracts and generates the stubs. To achieve
+that, you need to configure Spring Cloud Contract Verifier plugin in exactly the same way
+as you would for a provider. You need to copy contracts stored in
+`src/test/resources/contracts` and generate WireMock JSON stubs using the
+`mvn generateStubs` command. By default, the generated WireMock mapping is stored in a
+directory named `target/mappings`. From these generated mappings, your project should
+create additional artifacts with a classifier of `stubs` for easy deployment to the maven
+repository.
 
-Sample configuration:
+Here is a sample configuration:
 
 [source,xml,indent=0]
 ----
@@ -647,7 +803,7 @@ Sample configuration:
 </plugin>
 ----
 
-When present, json stubs can be used in consumer automated tests.
+When present, JSON stubs can be used in consumer automated tests, as shown here:
 
 [source,groovy,indent=0]
 ----
@@ -672,38 +828,16 @@ public class LoanApplicationServiceTests {
   }
 }
 ----
+`LoanApplication` makes a call to the `FraudDetection` service. This request is handled
+by a WireMock server configured with stubs generated by the Spring Cloud Contract
+Verifier.
 
-Underneath `LoanApplication` makes a call to the `FraudDetection` service. This request is handled by
-a WireMock server configured using stubs generated by Spring Cloud Contract Verifier.
+=== Stubs and Transitive Dependencies
 
-=== Scenarios
-
-It's possible to handle scenarios with Spring Cloud Contract Verifier. All you need to do is to stick to proper naming convention while creating your contracts. The convention requires to include order number followed by the underscore.
-
-[source,indent=0]
-----
-my_contracts_dir\
-  scenario1\
-    1_login.groovy
-    2_showCart.groovy
-    3_logout.groovy
-----
-
-Such tree will cause Spring Cloud Contract Verifier generating WireMock's scenario with name `scenario1` and three steps:
-
- - login marked as `Started` pointing to:
- - showCart marked as `Step1` pointing to:
- - logout marked as `Step2` which will close the scenario.
-
-More details about WireMock scenarios can be found under http://wiremock.org/stateful-behaviour.html[http://wiremock.org/stateful-behaviour.html]
-
-Spring Cloud Contract Verifier will also generate tests with guaranteed order of execution.
-
-=== Stubs and transitive dependencies
-
-The Maven and Gradle plugin that we're created are adding the tasks that create the stubs jar for you. What can be problematic
-is that when reusing the stubs you can by mistake import all of that stub dependencies! When building a Maven artifact
-even though you have a couple of different jars, all of them share one pom:
+The Maven and Gradle plugin that add the tasks that create the stubs jar for you. One
+problem that arises is that, when reusing the stubs, you can mistakenly import all of
+that stub's dependencies. When building a Maven artifact, even though you have a couple
+of different jars, all of them share one pom:
 
 [source,bash,indent=0]
 ----
@@ -718,18 +852,53 @@ even though you have a couple of different jars, all of them share one pom:
 └── ...
 ----
 
-There are three possibilities of working with those dependencies so as not to have any issues with transitive dependencies.
+There are three possibilities of working with those dependencies so as not to have any
+issues with transitive dependencies:
+
+* Mark all application dependencies as optional
+* Create a separate artifactid for the stubs
+* Exclude dependencies on the consumer side
 
 *Mark all application dependencies as optional*
 
-If in the `github-webhook` application we would mark all of our dependencies as optional, when you include the
-`github-webhook` stubs in another application (or when that dependency gets downloaded by Stub Runner) then, since
-all of the depenencies are optional, they will not get downloaded.
+If, in the `github-webhook` application, you mark all of your dependencies as optional,
+when you include the `github-webhook` stubs in another application (or when that
+dependency gets downloaded by Stub Runner) then, since all of the dependencies are
+optional, they will not get downloaded.
 
-*Create a separate artifactid for stubs*
+*Create a separate `artifactid` for the stubs*
 
-If you create a separate artifactid then you can set it up in whatever way you wish. For example by having no dependencies at all.
+If you create a separate `artifactid`, then you can set it up in whatever way you wish.
+For example, you might decide to have no dependencies at all.
 
 *Exclude dependencies on the consumer side*
 
-As a consumer, if you add the stub dependency to your classpath you can explicitly exclude the unwanted dependencies.
+As a consumer, if you add the stub dependency to your classpath, you can explicitly
+exclude the unwanted dependencies.
+
+=== Scenarios
+
+You can handle scenarios with Spring Cloud Contract Verifier. All you need to do is to
+stick to the proper naming convention while creating your contracts. The convention
+requires including an order number followed by an underscore, as shown in this example:
+
+[source,indent=0]
+----
+my_contracts_dir\
+  scenario1\
+    1_login.groovy
+    2_showCart.groovy
+    3_logout.groovy
+----
+
+Such a tree causes Spring Cloud Contract Verifier to generate WireMock's scenario with a
+name of `scenario1` and the three following steps:
+
+. login marked as `Started` pointing to...
+. showCart marked as `Step1` pointing to...
+. logout marked as `Step2` which will close the scenario.
+
+More details about WireMock scenarios can be found at
+http://wiremock.org/stateful-behaviour.html[http://wiremock.org/stateful-behaviour.html]
+
+Spring Cloud Contract Verifier also generates tests with a guaranteed order of execution.

@@ -1,16 +1,17 @@
 == Spring Cloud Contract Stub Runner
 
-One of the issues that you could have encountered while using Spring Cloud Contract Verifier was to pass the generated WireMock JSON stubs from the server side to the client side (or various clients).
- The same takes place in terms of client side generation for messaging.
+One of the issues that you might encounter while using Spring Cloud Contract Verifier is
+passing the generated WireMock JSON stubs from the server side to the client side (or to
+various clients). The same takes place in terms of client-side generation for messaging.
 
-Copying the JSON files / setting the client side for messaging manually is out of the question.
-
-That's why we'll introduce Spring Cloud Contract Stub Runner that can download and run the stubs
-automatically for you.
+Copying the JSON files and setting the client side for messaging manually is out of the
+question. That is why we introduced Spring Cloud Contract Stub Runner. It can
+automatically download and run the stubs for you.
 
 === Snapshot versions
 
-Add the additional snapshot repository to your build.gradle to use snapshot versions which are automatically uploaded after every successful build:
+Add the additional snapshot repository to your `build.gradle` file to use snapshot
+versions, which are automatically uploaded after every successful build:
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
@@ -24,16 +25,18 @@ include::{standalone_samples_path}/http-server/pom.xml[tags=repos,indent=0]
 include::{standalone_samples_path}/http-server/build.gradle[tags=repos,indent=0]
 ----
 
-=== Publishing stubs as JARs
+=== Publishing Stubs as JARs
 
-The easiest approach would be to centralize the way stubs are kept. For example you can keep them as JARs in a Maven repository.
+The easiest approach would be to centralize the way stubs are kept. For example, you can
+keep them as jars in a Maven repository.
 
-TIP: For both Maven and Gradle the setup comes out of the box. But you can customize it if you want to.
+TIP: For both Maven and Gradle, the setup comes ready to work. However, you can customize
+it if you want to.
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
 ----
-<!-- First disable the default jar setup in the properties section-->
+<!-- First disable the default jar setup in the properties section -->
 include::{samples_url}/producer_with_restdocs/pom.xml[tags=skip_jar,indent=0]
 
 <!-- Next add the assembly plugin to your build -->
@@ -53,56 +56,59 @@ include::{stubrunner_core_path}/README.adoc[]
 
 === Common
 
-==== Common properties for JUnit and Spring
+This section briefly describes common properties, including:
 
-Some of the properties that are repetitive can be set using system properties or configuration properties (for Spring). Here are their names with their default values:
+* <<common-properties-junit-spring>>
+* <<stub-runner-stub-ids>>
+
+[[common-properties-junit-spring]]
+==== Common Properties for JUnit and Spring
+
+You can set repetitive properties by using system properties or Spring configuration
+properties. Here are their names with their default values:
 
 [frame="topbot",options="header"]
 |===============
 | Property name | Default value | Description
-|stubrunner.minPort|10000| Minimal value of a port for a started WireMock with stubs
-|stubrunner.maxPort|15000| Minimal value of a port for a started WireMock with stubs
-|stubrunner.repositoryRoot|| Maven repo url. If blank then will call the local maven repo
-|stubrunner.classifier|stubs| Default classifier for the stub artifacts
-|stubrunner.workOffline|false| If true then will not contact any remote repositories to download stubs
-|stubrunner.ids|| Array of Ivy notation stubs to download
-|stubrunner.username|| Optional username to access the tool that stores the JARs with stubs
-|stubrunner.password|| Optional password to access the tool that stores the JARs with stubs
-|stubrunner.stubsPerConsumer|false| Set to `true` if you want to use different stubs per each consumer instead of registering all stubs for every consumer
-|stubrunner.consumerName|| If you want to use stubs per consumer and want to override the consumer name just change this value
+|stubrunner.minPort|10000| Minimum value of a port for a started WireMock with stubs.
+|stubrunner.maxPort|15000| Maximum value of a port for a started WireMock with stubs.
+|stubrunner.repositoryRoot|| Maven repo URL. If blank, then call the local maven repo.
+|stubrunner.classifier|stubs| Default classifier for the stub artifacts.
+|stubrunner.workOffline|false| If true, then do not contact any remote repositories to
+download stubs.
+|stubrunner.ids|| Array of Ivy notation stubs to download.
+|stubrunner.username|| Optional username to access the tool that stores the JARs with
+stubs.
+|stubrunner.password|| Optional password to access the tool that stores the JARs with
+stubs.
+|stubrunner.stubsPerConsumer|false| Set to `true` if you want to use different stubs for
+each consumer instead of registering all stubs for every consumer.
+|stubrunner.consumerName|| If you want to use a stub for each consumer and want to
+override the consumer name just change this value.
 |===============
 
-==== Stub runner stubs ids
+[[stub-runner-stub-ids]]
+==== Stub Runner Stubs IDs
 
-You can provide the stubs to download via the `stubrunner.ids` system property. They follow the following pattern:
+You can provide the stubs to download via the `stubrunner.ids` system property. They
+follow this pattern:
 
 [source,java,indent=0]
 ----
 groupId:artifactId:version:classifier:port
 ----
 
-`version`, `classifier` and `port` are optional.
+Note that `version`, `classifier` and `port` are optional.
 
-* If you don't provide the `port` then a random one will be picked
-* If you don't provide the `classifier` then the default one will be taken. (NOTE that you can pass an empty classifier like this `groupId:artifactId:version:`)
-* If you don't provide the `version` then the `+` will be passed and the latest one will be downloaded
+* If you do not provide the `port`, a random one will be picked.
+* If you do not provide the `classifier`, the default is used. (Note that you can
+pass an empty classifier this way: `groupId:artifactId:version:`).
+* If you do not provide the `version`, then the `+` will be passed and the latest one is
+downloaded.
 
-Where `port` means the port of the WireMock server.
+`port` means the port of the WireMock server.
 
-IMPORTANT: Starting from version 1.0.4 as a version you can provide a range of versions that you would like
-the Stub Runner to take into consideration. You can read more about the https://wiki.eclipse.org/Aether/New_and_Noteworthy#Version_Ranges[Aether versioning ranges here].
-
-Taken from http://download.eclipse.org/aether/aether-core/0.9.0/apidocs/org/eclipse/aether/util/version/GenericVersionScheme.html[Aether Docs]:
-
-> This scheme accepts versions of any form, interpreting a version as a sequence of numeric and alphabetic segments. The characters '-', '_', and '.' as well as the mere
-> transitions from digit to letter and vice versa delimit the version segments. Delimiters are treated as equivalent.
->
-> Numeric segments are compared mathematically, alphabetic segments are compared lexicographically and case-insensitively. However, the following qualifier strings are
-> recognized and treated specially: "alpha" = "a" < "beta" = "b" < "milestone" = "m" < "cr" = "rc" < "snapshot" < "final" = "ga" < "sp". All of those well-known qualifiers
-> are considered smaller/older than other strings. An empty segment/string is equivalent to 0.
->
-> In addition to the above mentioned qualifiers, the tokens "min" and "max" may be used as final version segment to denote the smallest/greatest version having a given prefix.
-> For example, "1.2.min" denotes the smallest version in the 1.2 line, "1.2.max" denotes the greatest version in the 1.2 line. A version range of the form "[M.N.*]" is short for "[M.N.min, M.N.max]".
->
-> Numbers and strings are considered incomparable against each other. Where version segments of different kind would collide, comparison will instead assume that the previous
-> segments are padded with trailing 0 or "ga" segments, respectively, until the kind mismatch is resolved, e.g. "1-alpha" = "1.0.0-alpha" < "1.0.1-ga" = "1.0.1".
+IMPORTANT: Starting with version 1.0.4, you can provide a range of versions that you
+would like the Stub Runner to take into consideration. You can read more about the
+https://wiki.eclipse.org/Aether/New_and_Noteworthy#Version_Ranges[Aether versioning
+ranges here].
