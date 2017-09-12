@@ -154,6 +154,21 @@ In order to add support for `fromRequest.path`, the following methods had to be 
 
 See https://github.com/spring-cloud/spring-cloud-contract/issues/388[issue 388] for more
 detail.
-=======
 
-// TODO 1.1.x -> 1.2.x
+==== RestAssured 3.0
+
+Rest Assured, used in the generated test classes, got bumped to `3.0`. If
+you manually set versions of Spring Cloud Contract and the release train
+you might see the following exception:
+
+[source,bash]
+----
+Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.1:testCompile (default-testCompile) on project some-project: Compilation failure: Compilation failure:
+[ERROR] /some/path/SomeClass.java:[4,39] package com.jayway.restassured.response does not exist
+----
+
+This exception will occur due to the fact that the tests got generated with
+an old version of plugin and at test execution time you have an incompatible
+version of the release train (and vice versa).
+
+Done via https://github.com/spring-cloud/spring-cloud-contract/issues/267[issue 267]
