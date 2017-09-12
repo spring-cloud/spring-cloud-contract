@@ -6949,23 +6949,8 @@ detail.</simpara>
 </itemizedlist>
 <simpara>See <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/issues/388">issue 388</link> for more
 detail.</simpara>
-</section>
-<section xml:id="_restassured_3_0">
-<title>RestAssured 3.0</title>
-<simpara>Rest Assured, used in the generated test classes, got bumped to <literal>3.0</literal>. If
-you manually set versions of Spring Cloud Contract and the release train
-you might see the following exception:</simpara>
-<programlisting language="bash" linenumbering="unnumbered">Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.1:testCompile (default-testCompile) on project some-project: Compilation failure: Compilation failure:
-[ERROR] /some/path/SomeClass.java:[4,39] package com.jayway.restassured.response does not exist</programlisting>
-<simpara>This exception will occur due to the fact that the tests got generated with
-an old version of plugin and at test execution time you have an incompatible
-version of the release train (and vice versa).</simpara>
-<simpara>Done via <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/issues/267">issue 267</link></simpara>
-</section>
-</section>
-</chapter>
-<chapter xml:id="_links">
-<title>Links</title>
+<informalexample>
+<simpara>== Links</simpara>
 <simpara>The following links may be helpful when working with Spring Cloud Contract Verifier:</simpara>
 <itemizedlist>
 <listitem>
@@ -7004,5 +6989,8 @@ Cloud Contract Maven Plugin</link></simpara>
 Marcin Grzejszczak</link></simpara>
 </listitem>
 </itemizedlist>
+</informalexample>
+</section>
+</section>
 </chapter>
 </book>
