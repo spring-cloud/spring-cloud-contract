@@ -4,33 +4,38 @@
 
 == Migrations
 
-In the following document we will write about necessary migration steps between versions.
+This section covers migrating from one version of Spring Cloud Contract Verifier to the
+next version. It covers the following versions upgrade paths:
 
+[[cloud-verifier-1.0-1.1]]
 === 1.0.x -> 1.1.x
+
+This section covers upgrading from version 1.0 to version 1.1.
 
 ==== New structure of generated stubs
 
-In `1.1.x` we have introduced a changed structure of generated stubs. So if you've
-been using the following `@AutoConfigureWireMock` notation to use the stubs from classpath
+In `1.1.x` we have introduced a change to the structure of generated stubs. If you have
+been using the  `@AutoConfigureWireMock` notation to use the stubs from the classpath,
+it no longer works. The following example shows how the `@AutoConfigureWireMock` notation
+used to work:
 
 [source,java]
 ----
 @AutoConfigureWireMock(stubs = "classpath:/customer-stubs/mappings", port = 8084)
 ----
 
-It will no longer work with the new stubs. You have to either change the location of stubs
-to : `classpath:.../META-INF/groupId/artifactId/version/mappings` as follows
+You must either change the location of the stubs to:
+`classpath:.../META-INF/groupId/artifactId/version/mappings` or use the new
+classpath-based `@AutoConfigureStubRunner`, as shown in the following example:
 
 [source,java]
 ----
 @AutoConfigureWireMock(stubs = "classpath:customer-stubs/META-INF/travel.components/customer-contract/1.0.2-SNAPSHOT/mappings/", port = 8084)
 ----
 
-Or migrate to the new classpath based `@AutoConfigureStubRunner`.
-
-If however you don't want to do that and you want to remain with the old structure
-just set your plugin tasks accordingly. Example for the structure presented in the
-snippet above.
+If you do not want to use `@AutoConfigureStubRunner` and you want to remain with the old
+structure, set your plugin tasks accordingly. The following example would work for the
+structure presented in the previous snippet.
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
@@ -111,36 +116,64 @@ task copyStubs(type: Copy, dependsOn: 'generateWireMockClientStubs') {
 }
 ----
 
+[[cloud-verifier-1.1-1.2]]
 === 1.1.x -> 1.2.x
+
+This section covers upgrading from version 1.1 to version 1.2.
 
 ==== Custom `HttpServerStub`
 
-By introducing a method `String registeredMappings()` in the public interface
-`HttpServerStub`, if you wrote a custom `HttpServerStub` implementation, you'll
-have to implement that method too. It should return a `String` representing
-all mappings available in a single `HttpServerStub`. Related to
-https://github.com/spring-cloud/spring-cloud-contract/issues/355[issue 355].
+`HttpServerStub` includes a method that was not in version 1.1. The method is
+`String registeredMappings()` If you have classes that implement `HttpServerStub`, you
+now have to implement the `registeredMappings()` method. It should return a `String`
+representing all mappings available in a single `HttpServerStub`.
+
+See https://github.com/spring-cloud/spring-cloud-contract/issues/355[issue 355] for more
+detail.
 
 ==== New packages for generated tests
 
 The flow for setting the generated tests package name will look like this:
 
-- pick `basePackageForTests`
-- if `basePackageForTests` wasn't set pick the package from `baseClassForTests`
-- if `baseClassForTests` wasn't set pick `packageWithBaseClasses`
-- if nothing got set pick the default `org.springframework.cloud.contract.verifier.tests` value
+* Set `basePackageForTests`
+* If `basePackageForTests` was not set, pick the package from `baseClassForTests`
+* If `baseClassForTests` was not set, pick `packageWithBaseClasses`
+* If nothing got set, pick the default value:
+`org.springframework.cloud.contract.verifier.tests`
 
-Related to
-https://github.com/spring-cloud/spring-cloud-contract/issues/260[issue 260].
+See https://github.com/spring-cloud/spring-cloud-contract/issues/260[issue 260] for more
+detail.
 
-==== New methods in TemplateProcessor
+==== New Methods in TemplateProcessor
 
-In order to add support for `fromRequest.path` some methods had to be added to the
-`TemplateProcessor` interface.
+In order to add support for `fromRequest.path`, the following methods had to be added to the
+`TemplateProcessor` interface:
 
-Related to
-https://github.com/spring-cloud/spring-cloud-contract/issues/388[issue 388].
+* `path()`
+* `path(int index)`
 
+See https://github.com/spring-cloud/spring-cloud-contract/issues/388[issue 388] for more
+detail.
+
+==== RestAssured 3.0
+
+Rest Assured, used in the generated test classes, got bumped to `3.0`. If
+you manually set versions of Spring Cloud Contract and the release train
+you might see the following exception:
+
+[source,bash]
+----
+Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.1:testCompile (default-testCompile) on project some-project: Compilation failure: Compilation failure:
+[ERROR] /some/path/SomeClass.java:[4,39] package com.jayway.restassured.response does not exist
+----
+
+This exception will occur due to the fact that the tests got generated with
+an old version of plugin and at test execution time you have an incompatible
+version of the release train (and vice versa).
+
+Done via https://github.com/spring-cloud/spring-cloud-contract/issues/267[issue 267]
+
+[[cloud-verifier-1.2-2.0]]
 === 1.2.x -> 2.0.x
 
 ==== No Camel support

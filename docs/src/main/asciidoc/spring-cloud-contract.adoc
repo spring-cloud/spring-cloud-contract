@@ -10,16 +10,17 @@
 = Spring Cloud Contract
 
 _Documentation Authors: Adam Dudczak, Mathias Düsterhöft, Marcin Grzejszczak, Dennis Kieselhorst, Jakub Kubryński, Karol Lassak,
-Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer_
+Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer_, Jay Bryant
 
 {spring-cloud-version}
 
 == Spring Cloud Contract
 
-What you always need is confidence in pushing new features into a new application or service in a distributed system.
-This project provides support for Consumer Driven Contracts and service schemas in Spring applications, covering a
-range of options for writing tests, publishing them as assets, asserting that a contract is kept by producers
-and consumers, for HTTP and message-based interactions.
+You need confidence when pushing new features to a new application or service in a
+distributed system. This project provides support for Consumer Driven Contracts and
+service schemas in Spring applications (for both HTTP and message-based interactions),
+covering a range of options for writing tests,  publishing them as assets, and asserting
+that a contract is kept by producers and consumers.
 
 include::spring-cloud-contract-verifier.adoc[]
 
