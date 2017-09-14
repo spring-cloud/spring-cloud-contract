@@ -123,8 +123,10 @@ public class WireMockConfiguration implements SmartLifecycle {
 				}
 			}
 		}
-		ResourcesFileSource fileSource = new ResourcesFileSource(resources.toArray(new Resource[0]));
-		factory.fileSource(fileSource);
+		if (!resources.isEmpty()) {
+			ResourcesFileSource fileSource = new ResourcesFileSource(resources.toArray(new Resource[0]));
+			factory.fileSource(fileSource);
+		}
 	}
 
 	@Override
