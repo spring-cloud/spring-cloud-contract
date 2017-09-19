@@ -34,28 +34,37 @@ import com.github.tomakehurst.wiremock.common.TextFile;
 
 /**
  * @author Dave Syer
- *
+ * @author Pei-Tang Huang
  */
 public class ResourcesFileSource implements FileSource {
 
 	private final FileSource[] sources;
 
-	public ResourcesFileSource(Resource[] resources) {
-		this.sources = new FileSource[resources.length];
+	public ResourcesFileSource(Resource... resources) {
+		this(toSources(resources));
+	}
+
+	private ResourcesFileSource(FileSource... sources) {
+		this.sources = sources;
+	}
+
+	private static FileSource[] toSources(Resource[] resources) {
+		FileSource[] sources = new FileSource[resources.length];
 		for (int i = 0; i < resources.length; i++) {
 			Resource resource = resources[i];
 			if (resource instanceof ClassPathResource) {
 				ClassPathResource classes = (ClassPathResource) resource;
-				this.sources[i] = new ClasspathFileSource(classes.getPath());
+				sources[i] = new ClasspathFileSource(classes.getPath());
 			}
 			else if (resource instanceof FileSystemResource) {
 				FileSystemResource files = (FileSystemResource) resource;
-				this.sources[i] = new SingleRootFileSource(files.getFile());
+				sources[i] = new SingleRootFileSource(files.getFile());
 			}
 			else {
 				throw new IllegalArgumentException("Unsupported resource type for file source: " + resource.getClass());
 			}
 		}
+		return sources;
 	}
 
 	@Override
@@ -94,16 +103,20 @@ public class ResourcesFileSource implements FileSource {
 
 	@Override
 	public FileSource child(String subDirectoryName) {
+		List<FileSource> childSources = new ArrayList<>();
 		for (FileSource resource : this.sources) {
 			try {
 				UrlResource uri = new UrlResource(resource.child(subDirectoryName).getUri());
 				if (uri.createRelative(subDirectoryName).exists()) {
-					return resource.child(subDirectoryName);
+					childSources.add(resource.child(subDirectoryName));
 				}
 			}
 			catch (IOException e) {
 				// Ignore
 			}
+		}
+		if (!childSources.isEmpty()) {
+			return new ResourcesFileSource(childSources.toArray(new FileSource[0]));
 		}
 		return this.sources[0].child(subDirectoryName);
 	}

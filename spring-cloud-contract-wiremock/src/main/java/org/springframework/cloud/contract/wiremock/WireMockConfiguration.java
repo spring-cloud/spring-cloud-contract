@@ -113,19 +113,21 @@ public class WireMockConfiguration implements SmartLifecycle {
 	}
 
 	private void registerFiles(com.github.tomakehurst.wiremock.core.WireMockConfiguration factory) throws IOException {
+		List<Resource> resources = new ArrayList<>();
 		for (String files : this.wireMock.getFiles()) {
 			if (StringUtils.hasText(files)) {
 				PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(
 						this.resourceLoader);
-				List<Resource> resources = new ArrayList<>();
 				for (Resource resource : resolver.getResources(files)) {
 					if (resource.exists()) {
 						resources.add(resource);
 					}
 				}
-				ResourcesFileSource fileSource = new ResourcesFileSource(resources.toArray(new Resource[0]));
-				factory.fileSource(fileSource);
 			}
+		}
+		if (!resources.isEmpty()) {
+			ResourcesFileSource fileSource = new ResourcesFileSource(resources.toArray(new Resource[0]));
+			factory.fileSource(fileSource);
 		}
 	}
 
