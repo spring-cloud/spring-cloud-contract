@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=WiremockTestsApplication.class, properties="app.baseUrl=http://localhost:${wiremock.server.port}", webEnvironment=WebEnvironment.NONE)
 @DirtiesContext
-@AutoConfigureWireMock(port=0, files={"classpath:/nonexistent/", "classpath:/root/"}, stubs="file:src/test/resources/io.stubs/mappings")
+@AutoConfigureWireMock(port=0, files={"classpath:/", "classpath:/root/", "classpath:/nonexistent/"}, stubs="file:src/test/resources/io.stubs/mappings")
 public class AutoConfigureWireMockStubsAndMultipleFilesApplicationTests {
 
 	@Autowired
