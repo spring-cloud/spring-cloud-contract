@@ -1880,7 +1880,69 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				''', wireMockStub)
 		and:
 			stubMappingIsValidWireMockStub(wireMockStub)
+	}
 
+	@Issue('#427')
+	def "should not fail to generate a stub when arrays are there in the request"() {
+		given:
+			Contract groovyDsl = Contract.make {
+				request {
+					method "POST"
+					urlPath('/batch/persons')
+					body("""
+					[{
+						"fruitsILike": [
+						  "apple"
+						]
+					},
+					{              
+						"fruitsILike": [
+						]
+					},
+					{
+						"fruitsILike": [
+							"orange"
+						]
+					}]
+            """)
+				}
+				response {
+					status 201
+					headers {
+						contentType(applicationJsonUtf8())
+					}
+					body("""{  
+							"id": "foo"  
+						}"  
+					""")
+				}
+			}
+		when:
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
+		then:
+			AssertionUtil.assertThatJsonsAreEqual('''
+				{
+				  "request" : {
+					"urlPath" : "/batch/persons",
+					"method" : "POST",
+					"bodyPatterns" : [ {
+					  "matchesJsonPath" : "$[*].['fruitsILike'][?(@ == 'orange')]"
+					}, {
+					  "matchesJsonPath" : "$[*].['fruitsILike'][?(@ == 'apple')]"
+					} ]
+				  },
+				  "response" : {
+					"status" : 201,
+					"body" : "{\\"id\\":\\"foo\\"}",
+					"headers" : {
+					  "Content-Type" : "application/json;charset=UTF-8"
+					},
+					"transformers" : [ "response-template" ]
+				  }
+				}
+				''', wireMockStub)
+		and:
+			stubMappingIsValidWireMockStub(wireMockStub)
 	}
 
 	@Issue('#385')
