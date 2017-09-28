@@ -1,3 +1,8 @@
 # Converters
 org.springframework.cloud.contract.spec.ContractConverter=\
 org.springframework.cloud.contract.verifier.converter.YamlContractConverter
+
+# tag::extension[]
+org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions=\
+org.springframework.cloud.contract.verifier.dsl.wiremock.TestWireMockExtensions
+# end::extension[]

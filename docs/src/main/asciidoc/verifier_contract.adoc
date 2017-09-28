@@ -536,6 +536,33 @@ proper values. Additionally, it registers two helper functions:
 * `escapejsonbody`: Escapes the request body in a format that can be embedded in a JSON.
 * `jsonpath`: For a given parameter, find an object in the request body.
 
+==== Registering your own WireMock extension
+
+WireMock allows to register custom extensions. Spring Cloud Contract by default
+registers the transformer that allows you to reference request from response.
+If you want to provide your own extensions it's enough to register an implementation
+of the `org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions`
+interface. Since, we're using the `spring.factories` extension approach, just create
+an entry in `META-INF/spring.factories` file similar to this:
+
+[source,groovy,indent=0]
+----
+include::{stubrunner_core_path}/src/test/resources/META-INF/spring.factories[indent=0]
+----
+
+Here you have the example of a custom extension.
+
+.TestWireMockExtensions.groovy
+[source,groovy,indent=0]
+----
+include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/dsl/wiremock/TestWireMockExtensions.groovy[indent=0]
+----
+
+IMPORTANT: Remember to override the `applyGlobally()` method and set it to `false` if you
+want the transformation to be applied only for a mapping that explicitly
+requires it!
+
+
 ==== Dynamic Properties in the Matchers Sections
 
 If you work with https://docs.pact.io/[Pact], the following discussion may seem familiar.

@@ -17,16 +17,19 @@
 package org.springframework.cloud.contract.verifier.dsl.wiremock
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
+import com.github.tomakehurst.wiremock.extension.Extension
 import com.github.tomakehurst.wiremock.http.HttpHeader
 import com.github.tomakehurst.wiremock.http.HttpHeaders
 import com.github.tomakehurst.wiremock.http.ResponseDefinition
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.Response
 import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.MapConverter
+import org.springframework.core.io.support.SpringFactoriesLoader
 
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromContent
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.recognizeContentTypeFromHeader
@@ -56,8 +59,19 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 		appendHeaders(builder)
 		appendBody(builder)
 		appendResponseDelayTime(builder)
-		builder.withTransformers("response-template")
+		builder.withTransformers(responseTransformerNames())
 		return builder.build()
+	}
+
+	private String[] responseTransformerNames() {
+		List<WireMockExtensions> wireMockExtensions = SpringFactoriesLoader.loadFactories(WireMockExtensions, null)
+		if (wireMockExtensions) {
+			return ((List<Extension>) wireMockExtensions
+					.collect { WireMockExtensions extension ->  extension.extensions() }
+					.flatten())
+					.collect { Extension e -> e.getName()}  as String[]
+		}
+		return [new DefaultResponseTransformer().getName()] as String[]
 	}
 
 	private void appendHeaders(ResponseDefinitionBuilder builder) {

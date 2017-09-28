@@ -1,0 +1,14 @@
+{
+    "request": {
+        "method": "GET",
+        "url": "/ping"
+    },
+    "response": {
+        "status": 200,
+        "body": "pong",
+        "headers": {
+            "Content-Type": "text/plain"
+        },
+        "transformers" : [ "response-template", "foo-transformer" ]
+    }
+}
