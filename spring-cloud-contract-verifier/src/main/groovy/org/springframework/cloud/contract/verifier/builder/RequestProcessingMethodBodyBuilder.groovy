@@ -95,6 +95,9 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	@Override
 	protected void processInput(BlockBuilder bb) {
 		request.headers?.executeForEachHeader { Header header ->
+			if (headerOfAbsentType(header)) {
+				return
+			}
 			bb.addLine(getHeaderString(header))
 		}
 		if (request.body) {
@@ -105,6 +108,11 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 		if (request.multipart) {
 			multipartParameters?.each { Map.Entry<String, Object> entry -> bb.addLine(getMultipartParameterLine(entry)) }
 		}
+	}
+
+	protected boolean headerOfAbsentType(Header header) {
+		return header.serverValue instanceof MatchingStrategy &&
+				((MatchingStrategy) header.serverValue).type == MatchingStrategy.Type.ABSENT
 	}
 
 	@Override
