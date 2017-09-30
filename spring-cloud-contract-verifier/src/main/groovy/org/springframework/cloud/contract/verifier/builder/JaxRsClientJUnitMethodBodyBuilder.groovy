@@ -115,6 +115,9 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 
 	protected appendHeaders(BlockBuilder bb) {
 		request.headers?.executeForEachHeader { Header header ->
+			if (headerOfAbsentType(header)) {
+				return
+			}
 			if (header.name == 'Content-Type' || header.name == 'Accept') return
 			bb.addLine(".header(\"${header.name}\", \"${header.serverValue}\")")
 		}

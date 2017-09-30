@@ -315,6 +315,39 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
 
+	@Issue("#424")
+	def "should not put an absent header to the request [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url '/mytest'
+					headers {
+						header('myheader', absent())
+					}
+				}
+				response {
+					status 200
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			!blockBuilder.toString().contains("myheader")
+		and:
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName           						 | methodBuilder
+			"MockMvcSpockMethodBuilder" 						 | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder" 						 | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
 	def "should use fixed delay milliseconds in the generated test [#methodBuilderName]"() {
 		given:
 			Contract contractDsl = Contract.make {
