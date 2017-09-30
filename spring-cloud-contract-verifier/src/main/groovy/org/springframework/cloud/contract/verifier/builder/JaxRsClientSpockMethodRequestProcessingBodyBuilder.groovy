@@ -120,6 +120,9 @@ class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequ
 
 	protected appendHeaders(BlockBuilder bb) {
 		request.headers?.executeForEachHeader { Header header ->
+			if (headerOfAbsentType(header)) {
+				return
+			}
 			if (header.name == 'Content-Type' || header.name == 'Accept') return // Particular headers are set via 'request' / 'entity' methods
 			bb.addLine(".header('${header.name}', '${header.serverValue}')")
 		}
