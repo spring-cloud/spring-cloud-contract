@@ -6,13 +6,13 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-parent</artifactId>
-		<version>1.1.4.RELEASE</version>
+		<version>1.1.4.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
     <artifactId>spring-cloud-contract-samples</artifactId>
     <packaging>pom</packaging>
-	<version>1.1.4.RELEASE</version>
+	<version>1.1.4.BUILD-SNAPSHOT</version>
     <name>Spring Cloud Contract Samples</name>
     <description>Spring Cloud Contract Samples</description>
 
