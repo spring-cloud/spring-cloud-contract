@@ -8,27 +8,28 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
+import com.github.tomakehurst.wiremock.extension.Extension;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.cloud.contract.stubrunner.HttpServerStub;
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsEscapeHelper;
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsJsonPathHelper;
+import org.springframework.cloud.contract.verifier.dsl.wiremock.DefaultResponseTransformer;
+import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions;
 import org.springframework.cloud.contract.wiremock.WireMockSpring;
+import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.SocketUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
-
 import wiremock.com.github.jknack.handlebars.Helper;
 
 /**
@@ -47,18 +48,32 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	private WireMockConfiguration config() {
 		if (ClassUtils.isPresent("org.springframework.cloud.contract.wiremock.WireMockSpring", null)) {
 			return WireMockSpring.options()
-					.extensions(responseTemplateTransformer());
+					.extensions(responseTransformers());
 		}
-		return new WireMockConfiguration().extensions(responseTemplateTransformer());
+		return new WireMockConfiguration().extensions(responseTransformers());
 	}
 
-	private ResponseTemplateTransformer responseTemplateTransformer() {
-		return new ResponseTemplateTransformer(false, helpers());
+	private Extension[] responseTransformers() {
+		List<WireMockExtensions> wireMockExtensions = SpringFactoriesLoader
+				.loadFactories(WireMockExtensions.class, null);
+		List<Extension> extensions = new ArrayList<>();
+		if (!wireMockExtensions.isEmpty()) {
+			for (WireMockExtensions wireMockExtension : wireMockExtensions) {
+				extensions.addAll(wireMockExtension.extensions());
+			}
+		} else {
+			extensions.add(new DefaultResponseTransformer(false, helpers()));
+		}
+		return extensions.toArray(new Extension[extensions.size()]);
 	}
 
 	/**
 	 * Override this if you want to register your own helpers
+	 *
+	 * @deprecated - please use the {@link WireMockExtensions} mechanism and pass
+	 * the helpers in your implementation
 	 */
+	@Deprecated
 	protected Map<String, Helper> helpers() {
 		Map<String, Helper> helpers = new HashMap<>();
 		helpers.put(HandlebarsJsonPathHelper.NAME, new HandlebarsJsonPathHelper());

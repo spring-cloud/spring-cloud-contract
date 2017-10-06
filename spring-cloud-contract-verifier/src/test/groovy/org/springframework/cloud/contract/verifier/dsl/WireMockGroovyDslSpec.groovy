@@ -78,7 +78,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				"headers" : {
 				  "Content-Type" : "application/json"
 				},
-				"transformers" : [ "response-template" ]
+				"transformers" : [ "response-template", "foo-transformer" ]
 			  }
 			}
 			''', wireMockStub)
@@ -126,7 +126,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
   "response" : {
 	"status" : 200,
 	"body" : "{\\"ingredients\\":[{\\"quantity\\":100,\\"type\\":\\"MALT\\"},{\\"quantity\\":200,\\"type\\":\\"WATER\\"},{\\"quantity\\":300,\\"type\\":\\"HOP\\"},{\\"quantity\\":400,\\"type\\":\\"YIEST\\"}]}",
-	"transformers" : [ "response-template" ]
+	"transformers" : [ "response-template", "foo-transformer" ]
   }
 }
 ''', wireMockStub)
@@ -180,7 +180,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"response": {
 		"status": 204,
 		"body": "{\\"foundExistingPayment\\":false,\\"paymentId\\":\\"4\\"}",
-		"transformers" : [ "response-template" ]
+		"transformers" : [ "response-template", "foo-transformer" ]
 	}
 }
 ''', wireMockStub)
@@ -227,7 +227,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"headers" : {
 	  "Content-Type" : "application/json"
 	},
-	"transformers" : [ "response-template" ]
+	"transformers" : [ "response-template", "foo-transformer" ]
   }
 }
 ''')
@@ -284,7 +284,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"headers" : {
 	  "Content-Type" : "application/json"
 	},
-	"transformers" : [ "response-template" ]
+	"transformers" : [ "response-template", "foo-transformer" ]
   }
 }
 ''', wireMockStub)
@@ -335,7 +335,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
   },
   "response" : {
 	"status" : 200,
-	"transformers" : [ "response-template" ]
+	"transformers" : [ "response-template", "foo-transformer" ]
   }
 }
 			'''), wireMockStub)
@@ -381,7 +381,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
   },
   "response" : {
 	"status" : 200,
-	"transformers" : [ "response-template" ]
+	"transformers" : [ "response-template", "foo-transformer" ]
   }
 }
 			'''), json)
@@ -427,7 +427,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					},
 					"response": {
 						"status": 200,
-						"transformers" : [ "response-template" ]
+						"transformers" : [ "response-template", "foo-transformer" ]
 					}
 				}
 				'''), json)
@@ -465,7 +465,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						},
 						"response": {
 							"status": 200,
-							"transformers" : [ "response-template" ]
+							"transformers" : [ "response-template", "foo-transformer" ]
 						}
 					}
 					'''), json)
@@ -499,7 +499,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 							"response": {
 								"status": 200,
 								"body":"<user><name>Jozo</name><jobId>&lt;test&gt;</jobId></user>",
-								"transformers" : [ "response-template" ]
+								"transformers" : [ "response-template", "foo-transformer" ]
 							}
 						}
 						'''), json)
@@ -535,7 +535,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					},
 					"response": {
 						"status": 200,
-						"transformers" : [ "response-template" ]
+						"transformers" : [ "response-template", "foo-transformer" ]
 					}
 				}
 				'''), json)
@@ -573,7 +573,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						},
 						"response": {
 							"status": 200,
-							"transformers" : [ "response-template" ]
+							"transformers" : [ "response-template", "foo-transformer" ]
 						}
 					}
 					'''), json)
@@ -624,7 +624,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"headers" : {
 	  "Content-Type" : "application/json"
 	},
-	"transformers" : [ "response-template" ]
+	"transformers" : [ "response-template", "foo-transformer" ]
   }
 }
 '''), wireMockStub)
@@ -687,7 +687,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"headers" : {
 	  "Content-Type" : "application/vnd.fraud.v1+json"
 	},
-	"transformers" : [ "response-template" ]
+	"transformers" : [ "response-template", "foo-transformer" ]
   }
 }
 '''), wireMockStub)
@@ -754,7 +754,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				},
 				"response": {
 					"status": 200,
-					"transformers" : [ "response-template" ]
+					"transformers" : [ "response-template", "foo-transformer" ]
 				}
 			}
 			'''), json)
@@ -793,7 +793,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			  },
 			  "response" : {
 				"status" : 200,
-				"transformers" : [ "response-template" ]
+				"transformers" : [ "response-template", "foo-transformer" ]
 			  }
 			}
 			'''), json)
@@ -834,7 +834,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				},
 				"response": {
 					"status": 200,
-					"transformers" : [ "response-template" ]
+					"transformers" : [ "response-template", "foo-transformer" ]
 				}
 			}
 			'''), json)
@@ -865,7 +865,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					},
 					"response": {
 						"status": 200,
-						"transformers" : [ "response-template" ]
+						"transformers" : [ "response-template", "foo-transformer" ]
 					}
 				}
 				'''), json)
@@ -895,7 +895,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					},
 					"response": {
 						"status": 200,
-						"transformers" : [ "response-template" ]
+						"transformers" : [ "response-template", "foo-transformer" ]
 					}
 				}
 				'''), json)
@@ -1049,7 +1049,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					},
 					"response": {
 						"status": 200,
-						"transformers" : [ "response-template" ]
+						"transformers" : [ "response-template", "foo-transformer" ]
 					}
 				}
 				'''), json)
@@ -1123,7 +1123,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"headers" : {
 	  "Content-Type" : "application/json"
 	},
-	"transformers" : [ "response-template" ]
+	"transformers" : [ "response-template", "foo-transformer" ]
   }
 }
 			'''), wireMockStub)
@@ -1184,7 +1184,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	"headers" : {
 	  "Content-Type" : "application/json"
 	},
-	"transformers" : [ "response-template" ]
+	"transformers" : [ "response-template", "foo-transformer" ]
   }
 }
 				'''), json)
@@ -1218,7 +1218,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		},
 		"response": {
 		  "status": 406,
-		  "transformers" : [ "response-template" ]
+		  "transformers" : [ "response-template", "foo-transformer" ]
 		}
 			}
 '''), json)
@@ -1248,7 +1248,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					},
 					"response": {
 						"status": 406,
-						"transformers" : [ "response-template" ]
+						"transformers" : [ "response-template", "foo-transformer" ]
 					}
 				}
 			'''), json)
@@ -1282,7 +1282,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
   },
   "response" : {
 	"status" : 200,
-	"transformers" : [ "response-template" ]
+	"transformers" : [ "response-template", "foo-transformer" ]
   }
 }
 			'''), wireMockStub)
@@ -1320,7 +1320,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					},
 					"response": {
 						"status": 200,
-						"transformers" : [ "response-template" ]
+						"transformers" : [ "response-template", "foo-transformer" ]
 					}
 				}
 			'''), wireMockStub)
@@ -1379,7 +1379,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			"headers" : {
 			  "Content-Type" : "application/json"
 			},
-			"transformers" : [ "response-template" ]
+			"transformers" : [ "response-template", "foo-transformer" ]
 		  },
 		  "priority" : 1
 		}
@@ -1425,7 +1425,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		  },
 		  "response" : {
 			"status" : 422,
-			"transformers" : [ "response-template" ]
+			"transformers" : [ "response-template", "foo-transformer" ]
 		  }
 		}
 			'''), wireMockStub)
@@ -1460,7 +1460,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				"headers" : {
 				  "Content-Type" : "application/json"
 				},
-				"transformers" : [ "response-template" ]
+				"transformers" : [ "response-template", "foo-transformer" ]
 			  },
 			  "priority" : 1
 			}
@@ -1592,7 +1592,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		  },
 		  "response" : {
 			"status" : 200,
-			"transformers" : [ "response-template" ]
+			"transformers" : [ "response-template", "foo-transformer" ]
 		  }
 		}
 			'''
@@ -1673,7 +1673,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				  "response" : {
 					"status" : 200,
 					"body" : "{\\"number\\":0,\\"last\\":true,\\"numberOfElements\\":1,\\"size\\":1,\\"totalPages\\":1,\\"sort\\":[{\\"nullHandling\\":\\"NATIVE\\",\\"ignoreCase\\":false,\\"property\\":\\"id\\",\\"ascending\\":true,\\"direction\\":\\"ASC\\"}],\\"content\\":[{\\"id\\":\\"00000000-0000-0000-0000-000000000000\\",\\"state\\":\\"ACTIVE\\",\\"type\\":\\"Extraordinary\\"}],\\"first\\":true,\\"totalElements\\":1}",
-					"transformers" : [ "response-template" ]
+					"transformers" : [ "response-template", "foo-transformer" ]
 				  }
 				}
 				'''), json)
@@ -1802,7 +1802,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						"headers" : {
 						  "Authorization" : "{{{request.headers.Authorization.[0]}}};foo"
 						},
-						"transformers" : [ "response-template" ]
+						"transformers" : [ "response-template", "foo-transformer" ]
 					  }
 					}
 					'''), json)
@@ -1936,8 +1936,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					"body" : "{\\"id\\":\\"foo\\"}",
 					"headers" : {
 					  "Content-Type" : "application/json;charset=UTF-8"
-					},
-					"transformers" : [ "response-template" ]
+					}
 				  }
 				}
 				''', wireMockStub)
@@ -1994,7 +1993,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				  "response" : {
 					"status" : 200,
 					"body" : "{\\"code\\":91015,\\"payload\\":null,\\"description\\":\\"订单已失效\\",\\"lastUpdateTime\\":\\"0\\"}",
-					"transformers" : [ "response-template" ]
+					"transformers" : [ "response-template", "foo-transformer" ]
 				  }
 				}
 				''', wireMockStub)

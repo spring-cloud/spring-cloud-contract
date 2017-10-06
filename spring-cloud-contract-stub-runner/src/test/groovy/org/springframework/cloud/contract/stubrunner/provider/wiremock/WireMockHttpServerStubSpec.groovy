@@ -23,31 +23,35 @@ import spock.lang.Specification
 
 import org.springframework.boot.test.rule.OutputCapture
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.web.client.RestTemplate
 
 class WireMockHttpServerStubSpec extends Specification {
 	public static
-	final File MAPPING_DESCRIPTOR = new File('src/test/resources/repository/mappings/spring/cloud/ping/ping.json')
+	final File MAPPING_DESCRIPTOR = new File('src/test/resources/transformers.json')
 
 	@Rule OutputCapture capture = new OutputCapture()
 
 	def 'should describe stub mapping'() {
 		given:
-		WireMockHttpServerStub mappingDescriptor = new WireMockHttpServerStub().start() as WireMockHttpServerStub
-
+			WireMockHttpServerStub mappingDescriptor = new WireMockHttpServerStub().start() as WireMockHttpServerStub
 		when:
-		StubMapping mapping = mappingDescriptor.getMapping(MAPPING_DESCRIPTOR)
-
+			StubMapping mapping = mappingDescriptor.getMapping(MAPPING_DESCRIPTOR)
 		then:
-		with(mapping) {
-			assert request.method == RequestMethod.GET
-			assert request.url == '/ping'
-			assert response.status == 200
-			assert response.body == 'pong'
-			assert response.headers.contentTypeHeader.mimeTypePart() == 'text/plain'
-		}
-
+			with(mapping) {
+				assert request.method == RequestMethod.GET
+				assert request.url == '/ping'
+				assert response.status == 200
+				assert response.body == 'pong'
+				assert response.headers.contentTypeHeader.mimeTypePart() == 'text/plain'
+			}
+		when:
+			mappingDescriptor.registerMappings([MAPPING_DESCRIPTOR])
+		then:
+			noExceptionThrown()
+		expect:
+			"surprise!" == new RestTemplate().getForObject("http://localhost:" + mappingDescriptor.port() + "/ping", String.class)
 		cleanup:
-		mappingDescriptor.stop()
+			mappingDescriptor.stop()
 	}
 
 	def 'should make WireMock print out logs on INFO'() {
