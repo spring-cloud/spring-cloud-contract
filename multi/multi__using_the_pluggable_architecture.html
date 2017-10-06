@@ -60,7 +60,12 @@ conversion. Also, you must define how to perform that conversion in both directi
 <code class="literal">/META-INF/spring.factories</code> file in which you provide the fully qualified name of your
 implementation.</p></td></tr></table></div><p>The following example shows a typical <code class="literal">spring.factories</code> file:</p><pre class="screen"># Converters
 org.springframework.cloud.contract.spec.ContractConverter=\
-org.springframework.cloud.contract.verifier.converter.YamlContractConverter</pre><p>The following example shows a typical YAML implementation that matches the preceding
+org.springframework.cloud.contract.verifier.converter.YamlContractConverter
+
+# tag::extension[]
+org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions=\
+org.springframework.cloud.contract.verifier.dsl.wiremock.TestWireMockExtensions
+# end::extension[]</pre><p>The following example shows a typical YAML implementation that matches the preceding
 example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.springframework.cloud.contract.verifier.converter
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> java.nio.file.Files
