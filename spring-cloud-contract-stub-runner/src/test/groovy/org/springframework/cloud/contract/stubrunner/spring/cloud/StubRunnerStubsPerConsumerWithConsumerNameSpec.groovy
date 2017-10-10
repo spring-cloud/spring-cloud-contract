@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.stubrunner.spring.cloud
 
+import spock.lang.Specification
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
@@ -24,6 +26,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.messaging.Sink
 import org.springframework.context.annotation.Configuration
@@ -32,8 +35,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.messaging.Message
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
-import spock.lang.Specification
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -70,10 +71,10 @@ class StubRunnerStubsPerConsumerWithConsumerNameSpec extends Specification {
 		when:
 			stubFinder.trigger('return_book_for_foo')
 		then:
-			Message<?> receivedMessage = messaging.receive('output')
+			Message<String> receivedMessage = messaging.receive('output')
 		and:
 			receivedMessage != null
-			receivedMessage.payload == '''{"bookName":"foo_for_foo"}'''
+			new ContractVerifierObjectMapper().writeValueAsString(receivedMessage.payload) == "\"{\\\"bookName\\\":\\\"foo_for_foo\\\"}\""
 			receivedMessage.headers.get('BOOK-NAME') == 'foo_for_foo'
 	}
 
