@@ -141,6 +141,11 @@
 			<groupId>org.eclipse.jetty</groupId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<artifactId>spring-boot-starter-jersey</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
