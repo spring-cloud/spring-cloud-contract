@@ -26,7 +26,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
-import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.messaging.Sink
 import org.springframework.context.annotation.Configuration
@@ -71,10 +70,10 @@ class StubRunnerStubsPerConsumerWithConsumerNameSpec extends Specification {
 		when:
 			stubFinder.trigger('return_book_for_foo')
 		then:
-			Message<String> receivedMessage = messaging.receive('output')
+			Message<?> receivedMessage = messaging.receive('output')
 		and:
 			receivedMessage != null
-			new ContractVerifierObjectMapper().writeValueAsString(receivedMessage.payload) == "\"{\\\"bookName\\\":\\\"foo_for_foo\\\"}\""
+			receivedMessage.payload == '''{"bookName":"foo_for_foo"}'''
 			receivedMessage.headers.get('BOOK-NAME') == 'foo_for_foo'
 	}
 

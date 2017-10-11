@@ -26,7 +26,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
-import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.messaging.Sink
 import org.springframework.context.annotation.Configuration
@@ -35,7 +34,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.messaging.Message
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -74,7 +72,7 @@ class StubRunnerStubsPerConsumerSpec extends Specification {
 			Message<?> receivedMessage = messaging.receive('output')
 		and:
 			receivedMessage != null
-			new ContractVerifierObjectMapper().writeValueAsString(receivedMessage.payload) == "\"{\\\"bookName\\\":\\\"foo_for_bar\\\"}\""
+			receivedMessage.payload == '''{"bookName":"foo_for_bar"}'''
 			receivedMessage.headers.get('BOOK-NAME') == 'foo_for_bar'
 	}
 
