@@ -16,19 +16,20 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+import java.util.regex.Pattern
+
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.junit.Rule
-import org.springframework.boot.test.rule.OutputCapture
-import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
-import org.springframework.cloud.contract.verifier.dsl.WireMockStubVerifier
-import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
 
-import java.util.regex.Pattern
+import org.springframework.boot.test.rule.OutputCapture
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.dsl.WireMockStubVerifier
+import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 /**
  * @author Jakub Kubrynski, codearte.io
  */
