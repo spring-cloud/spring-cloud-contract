@@ -535,7 +535,7 @@ the Stub Runner server. It will be available at port <code class="literal">8750<
 			def response = RestAssuredMockMvc.get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/stubs/${stubId}"</span>)
 		then:
 			response.statusCode == <span class="hl-number">200</span>
-			response.body.as(Integer) &gt; <span class="hl-number">0</span>
+			Integer.valueOf(response.body.asString()) &gt; <span class="hl-number">0</span>
 		where:
 			stubId &lt;&lt; [<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:bootService:+:stubs'</span>,
 					   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs'</span>,

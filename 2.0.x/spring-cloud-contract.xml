@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2017-09-12</date>
+<date>2017-10-11</date>
 </info>
 <preface>
 <title></title>
@@ -3016,7 +3016,7 @@ class StubRunnerBootSpec extends Specification {
 			def response = RestAssuredMockMvc.get("/stubs/${stubId}")
 		then:
 			response.statusCode == 200
-			response.body.as(Integer) &gt; 0
+			Integer.valueOf(response.body.asString()) &gt; 0
 		where:
 			stubId &lt;&lt; ['org.springframework.cloud.contract.verifier.stubs:bootService:+:stubs',
 					   'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs',
@@ -4220,7 +4220,7 @@ such as <literal>named("fileName", "fileContent")</literal>, or via a map notati
   },
   "response" : {
 	"status" : 200,
-	"transformers" : [ "response-template" ]
+	"transformers" : [ "response-template", "foo-transformer" ]
   }
 }
 	'''</programlisting>
@@ -4770,6 +4770,28 @@ proper values. Additionally, it registers two helper functions:</simpara>
 <simpara><literal>jsonpath</literal>: For a given parameter, find an object in the request body.</simpara>
 </listitem>
 </itemizedlist>
+</section>
+<section xml:id="_registering_your_own_wiremock_extension">
+<title>Registering Your Own WireMock Extension</title>
+<simpara>WireMock lets you register custom extensions. By default, Spring Cloud Contract registers
+the transformer, which lets you reference a request from a response. If you want to
+provide your own extensions, you can register an implementation of the
+<literal>org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions</literal> interface.
+Since we use the spring.factories extension approach, you can create an entry in
+<literal>META-INF/spring.factories</literal> file similar to the following:</simpara>
+<programlisting language="groovy" linenumbering="unnumbered">org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions=\
+org.springframework.cloud.contract.stubrunner.provider.wiremock.TestWireMockExtensions</programlisting>
+<simpara>The following is an example of a custom extension:</simpara>
+<formalpara>
+<title>TestWireMockExtensions.groovy</title>
+<para>
+<programlisting language="groovy" linenumbering="unnumbered">Unresolved directive in verifier_contract.adoc - include::../../../../spring-cloud-contract-stub-runner/src/test/groovy/org/springframework/cloud/contract/verifier/dsl/wiremock/TestWireMockExtensions.groovy[indent=0]</programlisting>
+</para>
+</formalpara>
+<important>
+<simpara>Remember to override the <literal>applyGlobally()</literal> method and set it to <literal>false</literal> if you
+want the transformation to be applied only for a mapping that explicitly requires it.</simpara>
+</important>
 </section>
 <section xml:id="_dynamic_properties_in_the_matchers_sections">
 <title>Dynamic Properties in the Matchers Sections</title>
@@ -5822,7 +5844,12 @@ implementation.</simpara>
 <simpara>The following example shows a typical <literal>spring.factories</literal> file:</simpara>
 <screen># Converters
 org.springframework.cloud.contract.spec.ContractConverter=\
-org.springframework.cloud.contract.verifier.converter.YamlContractConverter</screen>
+org.springframework.cloud.contract.verifier.converter.YamlContractConverter
+
+# tag::extension[]
+org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions=\
+org.springframework.cloud.contract.verifier.dsl.wiremock.TestWireMockExtensions
+# end::extension[]</screen>
 <simpara>The following example shows a typical YAML implementation that matches the preceding
 example:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">package org.springframework.cloud.contract.verifier.converter
