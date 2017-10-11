@@ -142,8 +142,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<artifactId>spring-boot-starter-jersey</artifactId>
-			<groupId>org.springframework.boot</groupId>
+			<artifactId>jsr311-api</artifactId>
+			<groupId>javax.ws.rs</groupId>
+			<version>1.1.1</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
