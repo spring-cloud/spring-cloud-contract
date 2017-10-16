@@ -4,4 +4,5 @@ org.springframework.cloud.contract.wiremock.WireMockApplicationListener
 
 # RestDocs Auto Configuration
 org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs=\
-org.springframework.cloud.contract.wiremock.restdocs.WireMockRestDocsConfiguration
+org.springframework.cloud.contract.wiremock.restdocs.WireMockRestDocsConfiguration,\
+org.springframework.cloud.contract.wiremock.restdocs.WireMockRestAssuredConfiguration
