@@ -1,5 +1,6 @@
 package org.springframework.cloud.contract.wiremock.restdocs;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.test.autoconfigure.restdocs.RestDocsRestAssuredConfigurationCustomizer;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.restdocs.restassured3.RestAssuredRestDocumentationConfigurer;
@@ -16,6 +17,7 @@ import org.springframework.restdocs.restassured3.RestAssuredRestDocumentationCon
  * @author Eddú Meléndez
  */
 @Configuration
+@ConditionalOnClass(RestAssuredRestDocumentationConfigurer.class)
 public class WireMockRestAssuredConfiguration implements RestDocsRestAssuredConfigurationCustomizer {
 
 	@Override

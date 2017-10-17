@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.wiremock.restdocs;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.test.autoconfigure.restdocs.RestDocsMockMvcConfigurationCustomizer;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentationConfigurer;
@@ -33,6 +34,7 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentationConfigurer;
  *
  */
 @Configuration
+@ConditionalOnClass(MockMvcRestDocumentationConfigurer.class)
 public class WireMockRestDocsConfiguration
 		implements RestDocsMockMvcConfigurationCustomizer {
 
