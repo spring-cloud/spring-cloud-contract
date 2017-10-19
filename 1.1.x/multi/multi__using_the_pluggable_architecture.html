@@ -1,0 +1,461 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>9.&nbsp;Using the Pluggable Architecture</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="multi_spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="up" href="multi_spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="prev" href="multi__customization.html" title="8.&nbsp;Customization"><link rel="next" href="multi__spring_cloud_contract_wiremock.html" title="10.&nbsp;Spring Cloud Contract WireMock"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">9.&nbsp;Using the Pluggable Architecture</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="multi__customization.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="multi__spring_cloud_contract_wiremock.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="_using_the_pluggable_architecture" href="#_using_the_pluggable_architecture"></a>9.&nbsp;Using the Pluggable Architecture</h1></div></div></div><p>You may encounter cases where you have your contracts have been defined in other formats,
+such as YAML, RAML or PACT. In those cases, you still want to benefit from the automatic
+generation of tests and stubs. You can add your own implementation for generating both
+tests and stubs. Also, you can customize the way tests are generated (for example, you
+can generate tests for other languages) and the way stubs are generated (for example, you
+can generate stubs for other HTTP server implementations).</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_custom_contract_converter" href="#_custom_contract_converter"></a>9.1&nbsp;Custom Contract Converter</h2></div></div></div><p>Assume that your contract is written in a YAML file as follows:</p><pre class="programlisting">request:
+  url: /foo
+  method: PUT
+  headers:
+    foo: bar
+  body:
+    foo: bar
+response:
+  status: 200
+  headers:
+    foo2: bar
+  body:
+    foo2: bar</pre><p>The <code class="literal">ContractConverter</code> interface lets you register your own implementation of a contract
+structure converter. The following code listing shows the <code class="literal">ContractConverter</code> interface:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.springframework.cloud.contract.spec
+
+<strong class="hl-tag" style="color: blue">/**
+ * Converter to be used to convert FROM {@link File} TO {@link Contract}
+ * and from {@link Contract} to {@code T}
+ *
+ * @param &lt;T&gt; - type to which we want to convert the contract
+ *
+ * @author Marcin Grzejszczak
+ * @since 1.1.0
+ */</strong>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">interface</span> ContractConverter&lt;T&gt; {
+
+	<strong class="hl-tag" style="color: blue">/**
+	 * Should this file be accepted by the converter. Can use the file extension
+	 * to check if the conversion is possible.
+	 *
+	 * @param file - file to be considered for conversion
+	 * @return - {@code true} if the given implementation can convert the file
+	 */</strong>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> isAccepted(File file)
+
+	<strong class="hl-tag" style="color: blue">/**
+	 * Converts the given {@link File} to its {@link Contract} representation
+	 *
+	 * @param file - file to convert
+	 * @return - {@link Contract} representation of the file
+	 */</strong>
+	Collection&lt;Contract&gt; convertFrom(File file)
+
+	<strong class="hl-tag" style="color: blue">/**
+	 * Converts the given {@link Contract} to a {@link T} representation
+	 *
+	 * @param contract - the parsed contract
+	 * @return - {@link T} the type to which we do the conversion
+	 */</strong>
+	T convertTo(Collection&lt;Contract&gt; contract)
+}</pre><p>Your implementation must define the condition on which it should start the
+conversion. Also, you must define how to perform that conversion in both directions.</p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>Once you create your implementation, you must create a
+<code class="literal">/META-INF/spring.factories</code> file in which you provide the fully qualified name of your
+implementation.</p></td></tr></table></div><p>The following example shows a typical <code class="literal">spring.factories</code> file:</p><pre class="screen"># Converters
+org.springframework.cloud.contract.spec.ContractConverter=\
+org.springframework.cloud.contract.verifier.converter.YamlContractConverter</pre><p>The following example shows a typical YAML implementation that matches the preceding
+example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.springframework.cloud.contract.verifier.converter
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> java.nio.file.Files
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> groovy.transform.CompileStatic
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.Contract
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.ContractConverter
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.internal.Headers
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.yaml.snakeyaml.Yaml
+
+<strong class="hl-tag" style="color: blue">/**
+ * Simple converter from and to a {@link YamlContract} to a collection of {@link Contract}
+ */</strong>
+<em><span class="hl-annotation" style="color: gray">@CompileStatic</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> YamlContractConverter <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">implements</span> ContractConverter&lt;List&lt;YamlContract&gt;&gt; {
+
+	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> isAccepted(File file) {
+		String name = file.getName()
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> name.endsWith(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">".yml"</span>) || name.endsWith(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">".yaml"</span>)
+	}
+
+	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> Collection&lt;Contract&gt; convertFrom(File file) {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">try</span> {
+			YamlContract yamlContract = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> Yaml().loadAs(
+					Files.newInputStream(file.toPath()), YamlContract.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> [Contract.make {
+				request {
+					method(yamlContract?.request?.method)
+					url(yamlContract?.request?.url)
+					headers {
+						yamlContract?.request?.headers?.each { String key, Object value -&gt;
+							header(key, value)
+						}
+					}
+					body(yamlContract?.request?.body)
+				}
+				response {
+					status(yamlContract?.response?.status)
+					headers {
+						yamlContract?.response?.headers?.each { String key, Object value -&gt;
+							header(key, value)
+						}
+					}
+					body(yamlContract?.response?.body)
+				}
+			}]
+		}
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">catch</span> (FileNotFoundException e) {
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throw</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> IllegalStateException(e)
+		}
+	}
+
+	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> List&lt;YamlContract&gt; convertTo(Collection&lt;Contract&gt; contracts) {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> contracts.collect { Contract contract -&gt;
+			YamlContract yamlContract = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> YamlContract()
+			yamlContract.request.with {
+				method = contract?.request?.method?.clientValue
+				url = contract?.request?.url?.clientValue
+				headers = (contract?.request?.headers as Headers)?.asStubSideMap()
+				body = contract?.request?.body?.clientValue as Map
+			}
+			yamlContract.response.with {
+				status = contract?.response?.status?.clientValue as Integer
+				headers = (contract?.response?.headers as Headers)?.asStubSideMap()
+				body = contract?.response?.body?.clientValue as Map
+			}
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> yamlContract
+		}
+	}
+}</pre><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_converter" href="#_pact_converter"></a>9.1.1&nbsp;Pact Converter</h3></div></div></div><p>Spring Cloud Contract includes support for <a class="link" href="https://docs.pact.io/" target="_top">Pact</a> representation of
+contracts. Instead of using the Groovy DSL, you can use Pact files. In this section, we
+present how to add Pact support for your project.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_contract" href="#_pact_contract"></a>9.1.2&nbsp;Pact Contract</h3></div></div></div><p>Consider following example of a Pact contract, which is a file under the
+<code class="literal">src/test/resources/contracts</code> folder.</p><pre class="programlisting">{
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"provider"</span>: {
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"name"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Provider"</span>
+  },
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"consumer"</span>: {
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"name"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Consumer"</span>
+  },
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"interactions"</span>: [
+    {
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"description"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span>,
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"request"</span>: {
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"method"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"PUT"</span>,
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"path"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/fraudcheck"</span>,
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"headers"</span>: {
+          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd.fraud.v1+json"</span>
+        },
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span>: {
+          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"clientId"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"1234567890"</span>,
+          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanAmount"</span>: <span class="hl-number">99999</span>
+        },
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchingRules"</span>: {
+          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.body.clientId"</span>: {
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"match"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>,
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{10}"</span>
+          }
+        }
+      },
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"response"</span>: {
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span>: <span class="hl-number">200</span>,
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"headers"</span>: {
+          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd.fraud.v1+json;charset=UTF-8"</span>
+        },
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span>: {
+          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudCheckStatus"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"FRAUD"</span>,
+          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"rejectionReason"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Amount too high"</span>
+        },
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchingRules"</span>: {
+          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.body.fraudCheckStatus"</span>: {
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"match"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>,
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"FRAUD"</span>
+          }
+        }
+      }
+    }
+  ],
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"metadata"</span>: {
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"pact-specification"</span>: {
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"version"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"2.0.0"</span>
+    },
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"pact-jvm"</span>: {
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"version"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"2.4.18"</span>
+    }
+  }
+}</pre><p>The remainder of this section about using Pact refers to the preceding file.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_for_producers" href="#_pact_for_producers"></a>9.1.3&nbsp;Pact for Producers</h3></div></div></div><p>On the producer side, you mustadd two additional dependencies to your plugin
+configuration. One is the Spring Cloud Contract Pact support, and the other represents
+the current Pact version that you use.</p><p class="primary"><b>Maven.&nbsp;</b>
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>${spring-cloud-contract.version}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;extensions&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/extensions&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;packageWithBaseClasses&gt;</span>com.example.fraud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/packageWithBaseClasses&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependencies&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-spec-pact<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>${spring-cloud-contract.version}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>au.com.dius<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>pact-jvm-model<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>2.4.18<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependencies&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><p class="primary">
+</p><p class="secondary"><b>Gradle.&nbsp;</b>
+</p><pre class="programlisting">classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud:spring-cloud-contract-spec-pact:${findProperty('verifierVersion') ?: verifierVersion}"</span>
+classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'au.com.dius:pact-jvm-model:2.4.18'</span></pre><p class="secondary">
+</p><p>When you execute the build of your application, a test will be generated. The generated
+test might be as follows:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Test</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> validate_shouldMarkClientAsFraud() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// given:</span>
+		MockMvcRequestSpecification request = given()
+				.header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd.fraud.v1+json"</span>)
+				.body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\"clientId\":\"1234567890\",\"loanAmount\":99999}"</span>);
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// when:</span>
+		ResponseOptions response = given().spec(request)
+				.put(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/fraudcheck"</span>);
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// then:</span>
+		assertThat(response.statusCode()).isEqualTo(<span class="hl-number">200</span>);
+		assertThat(response.header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>)).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd.fraud.v1+json;charset=UTF-8"</span>);
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
+		DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+		assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"rejectionReason"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Amount too high"</span>);
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
+		assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.fraudCheckStatus"</span>, String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"FRAUD"</span>);
+}</pre><p>The corresponding generated stub might be as follows:</p><pre class="programlisting">{
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"uuid"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"996ae5ae-6834-4db6-8fac-358ca187ab62"</span>,
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"request"</span> : {
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"url"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/fraudcheck"</span>,
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"method"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"PUT"</span>,
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"headers"</span> : {
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span> : {
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"equalTo"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd.fraud.v1+json"</span>
+      }
+    },
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bodyPatterns"</span> : [ {
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.loanAmount == 99999)]"</span>
+    }, {
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.clientId =~ /([0-9]{10})/)]"</span>
+    } ]
+  },
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"response"</span> : {
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span> : <span class="hl-number">200</span>,
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\"fraudCheckStatus\":\"FRAUD\",\"rejectionReason\":\"Amount too high\"}"</span>,
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"headers"</span> : {
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd.fraud.v1+json;charset=UTF-8"</span>
+    }
+  }
+}</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_for_consumers" href="#_pact_for_consumers"></a>9.1.4&nbsp;Pact for Consumers</h3></div></div></div><p>On the producer side, you must add two additional dependencies to your project
+dependencies. One is the Spring Cloud Contract Pact support, and the other represents the
+current Pact version that you use.</p><p class="primary"><b>Maven.&nbsp;</b>
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-spec-pact<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;scope&gt;</span>test<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/scope&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>au.com.dius<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>pact-jvm-model<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>2.4.18<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;scope&gt;</span>test<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/scope&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span></pre><p class="primary">
+</p><p class="secondary"><b>Gradle.&nbsp;</b>
+</p><pre class="programlisting">testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud:spring-cloud-contract-spec-pact"</span>
+testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'au.com.dius:pact-jvm-model:2.4.18'</span></pre><p class="secondary">
+</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_using_the_custom_test_generator" href="#_using_the_custom_test_generator"></a>9.2&nbsp;Using the Custom Test Generator</h2></div></div></div><p>If you want to generate tests for languages other than Java or you are not happy with the
+way the verifier builds Java tests, you can register your own implementation.</p><p>The <code class="literal">SingleTestGenerator</code> interface lets you register your own implementation.  The
+following code listing shows the <code class="literal">SingleTestGenerator</code> interface:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.springframework.cloud.contract.verifier.builder
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.verifier.file.ContractMetadata
+<strong class="hl-tag" style="color: blue">/**
+ * Builds a single test.
+ *
+ * @since 1.1.0
+ */</strong>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">interface</span> SingleTestGenerator {
+
+	<strong class="hl-tag" style="color: blue">/**
+	 * Creates contents of a single test class in which all test scenarios from
+	 * the contract metadata should be placed.
+	 *
+	 * @param properties - properties passed to the plugin
+	 * @param listOfFiles - list of parsed contracts with additional metadata
+	 * @param className - the name of the generated test class
+	 * @param classPackage - the name of the package in which the test class should be stored
+	 * @param includedDirectoryRelativePath - relative path to the included directory
+	 * @return contents of a single test class
+	 */</strong>
+	String buildClass(ContractVerifierConfigProperties properties, Collection&lt;ContractMetadata&gt; listOfFiles,
+					  String className, String classPackage, String includedDirectoryRelativePath)
+
+	<strong class="hl-tag" style="color: blue">/**
+	 * Extension that should be appended to the generated test class. E.g. {@code .java} or {@code .php}
+	 *
+	 * @param properties - properties passed to the plugin
+	 */</strong>
+	String fileExtension(ContractVerifierConfigProperties properties)
+}</pre><p>Again, you must provide a <code class="literal">spring.factories</code> file, such as the one shown in the following
+example:</p><pre class="screen">org.springframework.cloud.contract.verifier.builder.SingleTestGenerator=/
+com.example.MyGenerator</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_using_the_custom_stub_generator" href="#_using_the_custom_stub_generator"></a>9.3&nbsp;Using the Custom Stub Generator</h2></div></div></div><p>If you want to generate stubs for stub servers other than WireMock, you can plug in your
+own implementation of the <code class="literal">StubGenerator</code> interface. The following code listing shows the
+<code class="literal">StubGenerator</code> interface:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.springframework.cloud.contract.verifier.converter
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> groovy.transform.CompileStatic
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.Contract
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.verifier.file.ContractMetadata
+
+<strong class="hl-tag" style="color: blue">/**
+ * Converts contracts into their stub representation.
+ *
+ * @since 1.1.0
+ */</strong>
+<em><span class="hl-annotation" style="color: gray">@CompileStatic</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">interface</span> StubGenerator {
+
+	<strong class="hl-tag" style="color: blue">/**
+	 * Returns {@code true} if the converter can handle the file to convert it into a stub.
+	 */</strong>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> canHandleFileName(String fileName)
+
+	<strong class="hl-tag" style="color: blue">/**
+	 * Returns the collection of converted contracts into stubs. One contract can
+	 * result in multiple stubs.
+	 */</strong>
+	Map&lt;Contract, String&gt; convertContents(String rootName, ContractMetadata content)
+
+	<strong class="hl-tag" style="color: blue">/**
+	 * Returns the name of the converted stub file. If you have multiple contracts
+	 * in a single file then a prefix will be added to the generated file. If you
+	 * provide the {@link Contract#name} field then that field will override the
+	 * generated file name.
+	 *
+	 * Example: name of file with 2 contracts is {@code foo.groovy}, it will be
+	 * converted by the implementation to {@code foo.json}. The recursive file
+	 * converter will create two files {@code 0_foo.json} and {@code 1_foo.json}
+	 */</strong>
+	String generateOutputFileNameForInput(String inputFileName)
+}</pre><p>Again, you must provide a <code class="literal">spring.factories</code> file, such as the one shown in the following
+example:</p><pre class="screen"># Stub converters
+org.springframework.cloud.contract.verifier.converter.StubGenerator=\
+org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverter</pre><p>The default implementation is the WireMock stub generation.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>You can provide multiple stub generator implementations. For example, from a single
+DSL, you can produce both WireMock stubs and Pact files.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_using_the_custom_stub_runner" href="#_using_the_custom_stub_runner"></a>9.4&nbsp;Using the Custom Stub Runner</h2></div></div></div><p>If you decide to use a custom stub generation, you also need a custom way of running
+stubs with your different stub provider.</p><p>Assume that you use <a class="link" href="https://github.com/dreamhead/moco" target="_top">Moco</a> to build your stubs and that
+you have written a stub generator and placed your stubs in a JAR file.</p><p>In order for Stub Runner to know how to run your stubs, you have to define a custom
+HTTP Stub server implementation, which might resemble the following example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.springframework.cloud.contract.stubrunner.provider.moco
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> com.github.dreamhead.moco.bootstrap.arg.HttpArgs
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> com.github.dreamhead.moco.runner.JsonRunner
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> com.github.dreamhead.moco.runner.RunnerSetting
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> groovy.util.logging.Slf4j
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.stubrunner.HttpServerStub
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.util.SocketUtils
+
+<em><span class="hl-annotation" style="color: gray">@Slf4j</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> MocoHttpServerStub <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">implements</span> HttpServerStub {
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> started
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> JsonRunner runner
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> port
+
+	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> port() {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">if</span> (!isRunning()) {
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> -<span class="hl-number">1</span>
+		}
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> port
+	}
+
+	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> isRunning() {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> started
+	}
+
+	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	HttpServerStub start() {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> start(SocketUtils.findAvailableTcpPort())
+	}
+
+	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	HttpServerStub start(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> port) {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.port = port
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>
+	}
+
+	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	HttpServerStub stop() {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">if</span> (!isRunning()) {
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>
+		}
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.runner.stop()
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>
+	}
+
+	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	HttpServerStub registerMappings(Collection&lt;File&gt; stubFiles) {
+		List&lt;RunnerSetting&gt; settings = stubFiles.findAll { it.name.endsWith(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"json"</span>) }
+				.collect {
+			log.info(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Trying to parse [{}]"</span>, it.name)
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">try</span> {
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> RunnerSetting.aRunnerSetting().withStream(it.newInputStream()).build()
+			} <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">catch</span> (Exception e) {
+				log.warn(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Exception occurred while trying to parse file [{}]"</span>, it.name, e)
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> null
+			}
+		}.findAll { it }
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.runner = JsonRunner.newJsonRunnerWithSetting(settings,
+				HttpArgs.httpArgs().withPort(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.port).build())
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.runner.run()
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.started = true
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>
+	}
+
+	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> isAccepted(File file) {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> file.name.endsWith(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">".json"</span>)
+	}
+}</pre><p>Then, you can register it in your <code class="literal">spring.factories</code> file, as shown in the following
+example:</p><pre class="screen">org.springframework.cloud.contract.stubrunner.HttpServerStub=\
+org.springframework.cloud.contract.stubrunner.provider.moco.MocoHttpServerStub</pre><p>Now you can run stubs with Moco.</p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>If you do not provide any implementation, then the default (WireMock)
+implementation is used. If you provide more than one, the first one on the list is used.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_using_the_custom_stub_downloader" href="#_using_the_custom_stub_downloader"></a>9.5&nbsp;Using the Custom Stub Downloader</h2></div></div></div><p>You can customize the way your stubs are downloaded by creating an implementation of the
+<code class="literal">StubDownloaderBuilder</code> interface, as shown in the following example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> com.example;
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> CustomStubDownloaderBuilder <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">implements</span> StubDownloaderBuilder {
+
+	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> StubDownloader build(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> StubRunnerOptions stubRunnerOptions) {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> StubDownloader() {
+			<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> Map.Entry&lt;StubConfiguration, File&gt; downloadAndUnpackStubJar(
+					StubConfiguration config) {
+				File unpackedStubs = retrieveStubs();
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> AbstractMap.SimpleEntry&lt;&gt;(
+						<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> StubConfiguration(config.getGroupId(), config.getArtifactId(), version,
+								config.getClassifier()), unpackedStubs);
+			}
+
+			File retrieveStubs() {
+			    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// here goes your custom logic to provide a folder where all the stubs reside</span>
+			}
+}</pre><p>Then you can register it in your <code class="literal">spring.factories</code> file, as shown in the following
+example:</p><pre class="screen"># Example of a custom Stub Downloader Provider
+org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder=\
+com.example.CustomStubDownloaderBuilder</pre><p>Now you can pick a folder with the source of your stubs.</p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>If you do not provide any implementation, then the default is used.
+If you use the <code class="literal">repositoryRoot</code> property or the <code class="literal">workOffline</code> flag, then an Aether-based
+implementation that downloads stubs from a remote repository is used. If you do not
+provide these values, the <code class="literal">ClasspathStubProvider</code> (which will scan the classpath) is
+used. If you provide more than one, then the first one on the list is used.</p></td></tr></table></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="multi__customization.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="multi__spring_cloud_contract_wiremock.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">8.&nbsp;Customization&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="multi_spring-cloud-contract.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;10.&nbsp;Spring Cloud Contract WireMock</td></tr></table></div></body></html>
