@@ -863,6 +863,7 @@ following sections explain the differences:
 * <<contract-dsl-output-triggered-method>>
 * <<contract-dsl-output-triggered-message>>
 * <<contract-dsl-consumer-producer>>
+* <<contract-dsl-common>>
 
 [[contract-dsl-output-triggered-method]]
 ==== Output Triggered by a Method
@@ -910,6 +911,14 @@ parts):
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=consumer_producer]
 ----
+
+[[contract-dsl-common]]
+==== Common
+
+In the `input {}` or `outputMessage {}` section you can call `assertThat` with the name
+of a `method` (e.g. `assertThatMessageIsOnTheQueue()`) that you have defined in the
+base class or in a static import. Spring Cloud Pipelines will execute that method
+in the genertaed test.
 
 === Multiple Contracts in One File
 

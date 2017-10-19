@@ -542,4 +542,91 @@ Contract.make {
 		stripped(test) == stripped(expectedMsg)
 	}
 
+	@Issue("440")
+	def "should generate tests with sentTo having a method execution for Spock"() {
+		given:
+			def contractDsl =
+					org.springframework.cloud.contract.spec.Contract.make {
+						label 'trigger_event'
+
+						input {
+							triggeredBy('requestIsCalled()')
+						}
+
+						outputMessage {
+							sentTo $(producer(execute("toString()")), consumer('topic.rateablequote'))
+							headers {
+								header('processId', value(producer(regex('[0-9]+')), consumer('123')))
+							}
+							body([
+									eventId: value(producer(regex('[0-9]+')), consumer('1'))
+							])
+						}
+					}
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			String expectedMsg =
+				'''
+  when:
+  requestIsCalled()
+
+ then:
+  ContractVerifierMessage response = contractVerifierMessaging.receive(toString())
+  assert response != null
+  response.getHeader('processId')?.toString() ==~ java.util.regex.Pattern.compile('[0-9]+')
+ and:
+  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
+  assertThatJson(parsedJson).field("['eventId']").matches("[0-9]+")
+'''
+		stripped(test) == stripped(expectedMsg)
+	}
+
+	@Issue("440")
+	def "should generate tests with sentTo having a method execution for JUnit"() {
+		given:
+			def contractDsl =
+					org.springframework.cloud.contract.spec.Contract.make {
+						label 'trigger_event'
+
+						input {
+							triggeredBy('requestIsCalled()')
+						}
+
+						outputMessage {
+							sentTo $(producer(execute("toString()")), consumer('topic.rateablequote'))
+							headers {
+								header('processId', value(producer(regex('[0-9]+')), consumer('123')))
+							}
+							body([
+									eventId: value(producer(regex('[0-9]+')), consumer('1'))
+							])
+						}
+					}
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			String expectedMsg =
+					'''
+  // when:
+  requestIsCalled();
+
+ // then:
+  ContractVerifierMessage response = contractVerifierMessaging.receive(toString());
+  assertThat(response).isNotNull();
+  assertThat(response.getHeader("processId")).isNotNull();
+  assertThat(response.getHeader("processId").toString()).matches("[0-9]+");
+ // and:
+  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+  assertThatJson(parsedJson).field("['eventId']").matches("[0-9]+");
+'''
+			stripped(test) == stripped(expectedMsg)
+	}
+
 }
