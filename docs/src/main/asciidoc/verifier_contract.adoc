@@ -1,75 +1,142 @@
 == Contract DSL
 
-IMPORTANT: Remember that inside the contract file you have to provide the fully qualified name to
-the `Contract` class and the `make` static import i.e. `org.springframework.cloud.spec.Contract.make { ... }`.
-You can also provide an import to the `Contract` class `import org.springframework.cloud.spec.Contract` and then call
-  `Contract.make { ... }`
+IMPORTANT: Remember that, inside the contract file, you have to provide the fully
+qualified name to the `Contract` class and `make` static imports, such as
+`org.springframework.cloud.spec.Contract.make { ... }`. You can also provide an import to
+the `Contract` class: `import org.springframework.cloud.spec.Contract` and then call
+`Contract.make { ... }`.
 
-Contract DSL is written in Groovy, but don't be alarmed if you didn't use Groovy before. Knowledge of the language is not really needed as our DSL uses only
-a tiny subset of it (namely literals, method calls and closures). What's more the DSL is designed to be programmer-readable without any knowledge of the DSL itself -
- it's statically typed.
+Contract DSL is written in Groovy, but do not be alarmed if you have not used Groovy
+before. Knowledge of the language is not really needed, as the Contract DSL uses only a
+tiny subset of it (only literals, method calls and closures). Also, the DSL is statically
+typed, to make it programmer-readable without any knowledge of the DSL itself.
 
-TIP: Spring Cloud Contract supports defining multiple contracts in a single file!
+TIP: Spring Cloud Contract supports defining multiple contracts in a single file.
 
-The Contract is present in the `spring-cloud-contract-spec` module of the Spring Cloud Contract Verifier repository.
+The Contract is present in the `spring-cloud-contract-spec` module of the
+https://github.com/spring-cloud/spring-cloud-contract/tree/master/spring-cloud-contract-verifier[Spring
+Cloud Contract Verifier repository].
 
-Let's look at full example of a contract definition.
+The following is a complete example of a contract definition:
 
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderSpec.groovy[tags=dsl_example,indent=0]
 ----
 
-Not all features of the DSL are used in example above. If you didn't find what you are looking for, please check next paragraphs on this page.
+NOTE: The preceding example does not contain all the features of the DSL appear. The
+remainder of this section describes the other features.
 
-> You can easily compile Contracts to WireMock stubs mapping using standalone maven command: `mvn org.springframework.cloud:spring-cloud-contract-maven-plugin:convert`.
+You can compile Contracts to WireMock stubs mapping using standalone maven command:
+`mvn org.springframework.cloud:spring-cloud-contract-maven-plugin:convert`
 
 === Limitations
 
-WARNING: Spring Cloud Contract Verifier doesn't support XML properly. Please use JSON or help us implement this feature.
+WARNING: Spring Cloud Contract Verifier does not properly support XML. Please use JSON or
+help us implement this feature.
 
-WARNING: The support for the verification of size of JSON arrays is experimental. If you want to turn it on please provide
-the value of a system property `spring.cloud.contract.verifier.assert.size` equal to `true`. By default this feature is set to
-`false`. You can also provide the `assertJsonSize` property in the plugin configuration.
+WARNING: The support for verifying the size of JSON arrays is experimental. If you want
+to turn it on, please set the value of the following system property to `true`:
+`spring.cloud.contract.verifier.assert.size`. By default, this feature is set to `false`.
+You can also provide the `assertJsonSize` property in the plugin configuration.
 
-WARNING: Due to the fact that JSON structure can have any form it's sometimes impossible to parse it properly when using
-the `value(consumer(...), producer(...))` notation when using that in GString. That's why we highly recommend using the
-Groovy Map notation.
+WARNING: Because JSON structure can have any form, it can be impossible to parse it
+properly when using the `value(consumer(...), producer(...))` notation in `GString`. That
+is why you should use the Groovy Map notation.
 
 === Common Top-Level elements
 
+The following sections describe the most common top-level elements:
+
+* <<contract-dsl-description>>
+* <<contract-dsl-name>>
+* <<contract-dsl-ignoring-contracts>>
+* <<contract-dsl-passing-values-from-files>>
+* <<contract-dsl-http-top-level-elements>>
+
+[[contract-dsl-description]]
 ==== Description
 
-You can add a `description` to your contract that is nothing else but an arbitrary text. Example:
+You can add a `description` to your contract. The description is arbitrary text. The
+following code shows an example:
 
 [source,groovy,indent=0]
 ----
 include::{contract_spec_path}/src/test/groovy/org/springframework/cloud/contract/spec/internal/ContractSpec.groovy[tags=description,indent=0]
 ----
 
+[[contract-dsl-name]]
 ==== Name
 
-You can provide a name of your contract. Let's assume that you've provided a name `should register a user`.
-If you do this then the name of the autogenerated test will be equal to `validate_should_register_a_user`.
-Also the name of the stub will be `should_register_a_user.json` in case of a WireMock stub.
+You can provide a name for your contract. Assume that you provided the following name:
+`should register a user`. If you do so, the name of the autogenerated test is
+`validate_should_register_a_user`. Also, the name of the stub in a WireMock stub is
+`should_register_a_user.json`.
 
-IMPORTANT: Please ensure that the name doesn't contain any characters that will make the generated test
- not possible to compile. Also remember that if you provide the same name for multiple contracts then your
- autogenerated tests will fail to compile and your generated stubs will override each other.
+IMPORTANT: You must ensure that the name does not contain any characters that make the
+generated test not compile. Also, remember that, if you provide the same name for
+multiple contracts, your autogenerated tests fail to compile and your generated stubs
+override each other.
 
-==== Ignoring contracts
+[[contract-dsl-ignoring-contracts]]
+==== Ignoring Contracts
 
-If you want to ignore a contract you can either set a value of ignored contracts in the plugin configuration
-or just set the `ignored` property on the contract itself:
+If you want to ignore a contract, you can either set a value of ignored contracts in the
+plugin configuration or set the `ignored` property on the contract itself:
 
 [source,groovy,indent=0]
 ----
 include::{contract_spec_path}/src/test/groovy/org/springframework/cloud/contract/spec/internal/ContractSpec.groovy[tags=ignored,indent=0]
 ----
 
-=== HTTP Top-Level Elements
+[[contract-dsl-passing-values-from-files]]
+==== Passing Values from Files
 
-Following methods can be called in the top-level closure of a contract definition. Request and response are mandatory, priority is optional.
+Starting with version `1.2.0`, you can pass values from files. Assume that you have the
+following resources in our project.
+
+[source,bash,indent=0]
+----
+└── src
+    └── test
+        └── resources
+            └── contracts
+                ├── readFromFile.groovy
+                ├── request.json
+                └── response.json
+----
+
+Further assume that your contract is as follows:
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/resources/classpath/readFromFile.groovy[indent=0]
+----
+
+Further assume that the JSON files is as follows:
+
+*request.json*
+[source,json,indent=0]
+----
+include::{verifier_core_path}/src/test/resources/classpath/request.json[indent=0]
+----
+
+*response.json*
+[source,json,indent=0]
+----
+include::{verifier_core_path}/src/test/resources/classpath/response.json[indent=0]
+----
+
+When test or stub generation takes place, the contents of the file is passed to the body
+of a request or a response. That works because of the `file(...)` method. The argument of
+that method needs to be a file with location relative to the folder in which the contract
+lays.
+
+[[contract-dsl-http-top-level-elements]]
+==== HTTP Top-Level Elements
+
+The following methods can be called in the top-level closure of a contract definition.
+`request` and `response` are mandatory. `priority` is optional.
 
 [source,groovy,indent=0]
 ----
@@ -78,14 +145,16 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 
 === Request
 
-HTTP protocol requires only **method and address** to be specified in a request. The same information is mandatory in request definition of the Contract.
+The HTTP protocol requires only **method and address** to be specified in a request. The
+same information is mandatory in request definition of the Contract.
 
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=request,indent=0]
 ----
 
-It is possible to specify whole `url` instead of just path, but `urlPath` is the recommended way as it makes the tests **host-independent**.
+It is possible to specify an absolute rather than relative `url`, but using `urlPath` is
+the recommended way, as doing so makes the tests **host-independent**.
 
 [source,groovy,indent=0]
 ----
@@ -93,42 +162,46 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 
 ----
 
-Request may contain **query parameters**, which are specified in a closure nested in a call to `urlPath` or `url`.
+`request` may contain **query parameters**, which are specified in a closure nested in a
+call to `urlPath` or `url`.
 
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=urlpath,indent=0]
 ----
 
-It may contain additional **request headers**...
+`request` may contain additional **request headers**, as shown in the following example:
 
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=headers,indent=0]
 ----
 
-...and a **request body**.
+`request` may contain a **request body**, as shown in the following example:
 
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=body,indent=0]
 ----
 
-Request may contain **multipart** elements. Just call the `multipart()` method.
+`request` may contain **multipart** elements. To include multipart elements, call the
+`multipart()` method, as shown in the following example
 
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderSpec.groovy[tags=multipartdsl,indent=0]
 ----
 
-In this example we defined parameters either directly by using the map notation,
-where the value can be a dynamic property (e.g. `formParameter: $(consumer(...), producer(...))`)
- or by using the `named(...)` method that allows you to set a named parameter.
- A named parameter can set a `name` and `content`. You can call it either via
- a method with 2 arguments: e.g. `named("fileName", "fileContent")` or
-  via a map notation `named(name: "fileName", content: "fileContent")`.
+In the preceding example, we define parameters in either of two ways:
 
-From this contract the generated test will look more or less like this:
+* Directly, by using the map notation, where the value can be a dynamic property (such as
+`formParameter: $(consumer(...), producer(...))`).
+* By using the `named(...)` method that lets you set a named parameter. A named parameter
+can set a `name` and `content`. You can call it either via a method with two  arguments,
+such as `named("fileName", "fileContent")`, or via a map notation, such as
+`named(name: "fileName", content: "fileContent")`.
+
+From this contract, the generated test is as follows:
 
 [source,java,indent=0]
 ----
@@ -147,34 +220,40 @@ From this contract the generated test will look more or less like this:
   assertThat(response.statusCode()).isEqualTo(200);
 ----
 
-The WireMock stub will look more or less like this:
+The WireMock stub is as follows:
 
 [source,json,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/dsl/WireMockGroovyDslSpec.groovy[tags=multipartwiremock,indent=0]
 ----
 
+
 === Response
 
-Minimal response must contain **HTTP status code**.
+The response must contain an **HTTP status code** and may contain other information. The
+following code shows an example:
 
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=response,indent=0]
 ----
 
-Besides status response may contain **headers** and **body**, which are specified the same way as in the request (see previous paragraph).
+Besides status, the response may contain **headers** and a **body**, both of which are
+specified the same way as in the request (see the previous paragraph).
 
 === Dynamic properties
 
-The contract can contain some dynamic properties - timestamps / ids etc. You don't want to enforce the consumers to stub their
-clocks to always return the same value of time so that it gets matched by the stub. That's why we allow you to provide the dynamic
-parts in your contracts in two ways. One is to pass them directly in the
-body and one to set them in a separate section called `testMatchers` and `stubMatchers`.
+The contract can contain some dynamic properties: timestamps, IDs, and so on. You do not
+want to force the consumers to stub their clocks to always return the same value of time
+so that it gets matched by the stub. You can provide the dynamic parts in your contracts
+in two ways: pass them directly in the body or set them in separate sections called
+`testMatchers` and `stubMatchers`.
 
 ==== Dynamic properties inside the body
 
-You can set the properties inside the body either via the `value` method
+You can set the properties inside the body either with the `value` method or, if you use
+the Groovy map notation, with `$()`. The following example shows how to set dynamic
+properties with the value method:
 
 [source,groovy,indent=0]
 ----
@@ -184,7 +263,7 @@ value(stub(...), test(...))
 value(client(...), server(...))
 ----
 
-or if you're using the Groovy map notation for body you can use the `$()` method
+The following example shows how to set dynamic properties with `$()`:
 
 [source,groovy,indent=0]
 ----
@@ -194,124 +273,129 @@ $(stub(...), test(...))
 $(client(...), server(...))
 ----
 
-All of the aforementioned approaches are equal. That means that `stub` and `client` methods are aliases over the `consumer`
-method. Let's take a closer look at what we can do with those values in the subsequent sections.
+Both approaches work equally well. `stub` and `client` methods are aliases over the `consumer`
+method. Subsequent sections take a closer look at what you can do with those values.
 
 ==== Regular expressions
 
-You can use regular expressions to write your requests in Contract DSL. It is particularly useful when you want to indicate that a given response
-should be provided for requests that follow a given pattern. Also, you can use it when you need to use patterns and not exact values both
-for your test and your server side tests.
+You can use regular expressions to write your requests in Contract DSL. Doing so is
+particularly useful when you want to indicate that a given response should be provided
+for requests that follow a given pattern. Also, you can use regular expressions when you
+need to use patterns and not exact values both for your test and your server side tests.
 
-Please see the example below:
+The following example shows how to use regular expressions to write a request:
 
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=regex,indent=0]
 ----
 
-You can also provide only one side of the communication using a regular expression. If you do that then automatically we'll
-provide the generated string that matches the provided regular expression. For example:
+You can also provide only one side of the communication with a regular expression. If you
+do so, then the contract engine automatically provides the generated string that matches
+the provided regular expression. The following code shows an example:
 
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderSpec.groovy[tags=dsl_one_side_data_generation_example,indent=0]
 ----
 
-In this example for request and response the opposite side of the communication will have the respective data generated.
+In the preceding example, the opposite side of the communication has the respective data
+generated for request and response.
 
-Spring Cloud Contract comes with a series of predefined regular expressions that you can use in your contracts.
+Spring Cloud Contract comes with a series of predefined regular expressions that you can
+use in your contracts, as shown in the following example:
 
 [source,groovy,indent=0]
 ----
 include::{contract_spec_path}/src/main/groovy/org/springframework/cloud/contract/spec/internal/RegexPatterns.groovy[tags=regexps,indent=0]
 ----
 
-so in your contract you can use it like this
+In your contract, you can use it as shown in the following example:
 
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderSpec.groovy[tags=contract_with_regex,indent=0]
 ----
 
-==== Passing optional parameters
+==== Passing Optional Parameters
 
-It is possible to provide optional parameters in your contract. It's only possible to have optional parameter for the:
+It is possible to provide optional parameters in your contract. However, you can provide
+optional parameters only for the following:
 
-- __STUB__ side of the Request
-- __TEST__ side of the Response
+* __STUB__ side of the Request
+* __TEST__ side of the Response
 
-Example:
+The following example shows how to provide optional parameters:
 
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=optionals,indent=0]
 ----
 
-By wrapping a part of the body with the `optional()` method you are in fact creating a regular expression that should be present 0 or more times.
+By wrapping a part of the body with the `optional()` method, you create a regular
+expression that must be present 0 or more times.
 
-That way for the example above the following test would be generated if you pick Spock:
+If you use Spock for, the following test would be generated from the previous example:
 
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=optionals_test,indent=0]
 ----
 
-and the following stub:
+The following stub would also be generated:
 
 [source,groovy,indent=0]
 ----
 include::{plugins_path}/spring-cloud-contract-converters/src/test/groovy/org/springframework/cloud/contract/verifier/wiremock/DslToWireMockClientConverterSpec.groovy[tags=wiremock,indent=0]
 ----
 
-==== Executing custom methods on server side
+==== Executing Custom Methods on the Server Side
 
-It is also possible to define a method call to be executed on the server side during the test. Such a method can be added to the class defined as "baseClassForTests"
-in the configuration. Example:
-
-*Contract*
+You can define a method call that executes on the server side during the test. Such a
+method can be added to the class defined as "baseClassForTests" in the configuration. The
+following code shows an example of the contract portion of the test case:
 
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=method,indent=0]
 ----
 
-*Base class*
+The following code shows the base class portion of the test case:
 
 [source,groovy,indent=0]
 ----
 include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/org/springframework/cloud/contract/verifier/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
 ----
 
-IMPORTANT: You can't use both a String and `execute` to perform concatenation. E.g. calling
-`header('Authorization', 'Bearer ' + execute('authToken()'))` will lead to improper results.
-To make this work just call `header('Authorization', execute('authToken()'))` and ensure that
-the `authToken()` method returns everything that you need.
+IMPORTANT: You cannot use both a String and `execute` to perform concatenation. For
+example, calling `header('Authorization', 'Bearer ' + execute('authToken()'))` leads to
+improper results. Instead, call `header('Authorization', execute('authToken()'))` and
+ensure that the `authToken()` method returns everything you need.
 
-The type of the object read from the JSON can be one of the followings depending on the
+The type of the object read from the JSON can be one of the following, depending on the
 JSON path:
 
-    - `String` if you point to a `String` value in a JSON
-    - `JSONArray` if you point to a `List` in a JSON
-    - `Map` if you point to a `Map` in a JSON
-    - proper `Number` if you point to `Integer`, `Double` etc. in a JSON
-    - `Boolean` if you point to a `Boolean` in a JSON
+* `String`: If you point to a `String` value in the JSON.
+* `JSONArray`: If you point to a `List` in the JSON.
+* `Map`: If you point to a `Map` in the JSON.
+* `Number`: If you point to `Integer`, `Double` etc. in the JSON.
+* `Boolean`: If you point to a `Boolean` in the JSON.
 
-In the request part of the contract you can specify that the `body` should be
-taken from a method.
+In the request part of the contract, you can specify that the `body` should be taken from
+a method.
 
-IMPORTANT: You have to provide both the consumer and the producer side
-and the `execute` part can be applied for the whole body. Not for parts of it!
+IMPORTANT: You must provide both the consumer and the producer side. The `execute` part
+is applied for the whole body - not for parts of it.
 
-Example:
+The following example shows how to read an object from JSON:
 
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MethodBodyBuilderSpec.groovy[tags=body_execute,indent=0]
 ----
 
-This will result in calling the `hashCode()` method in the request body.
-It would more or less like this:
+The preceding example results in calling the `hashCode()` method in the request body.
+It should resemble the following code:
 
 [source,java,indent=0]
 ----
@@ -327,28 +411,33 @@ It would more or less like this:
   assertThat(response.statusCode()).isEqualTo(200);
 ----
 
-==== Referencing request from response
+==== Referencing the Request from the Response
 
-The best situation is to provide fixed values but sometimes you need to reference a request in your response.
-In order to do this you can profit from the `fromRequest()` method that allows you to reference a bunch
-of elements from the HTTP request. You can use the following options:
+The best situation is to provide fixed values, but sometimes you need to reference a
+request in your response. To do so, you can use the `fromRequest()` method, which lets
+you reference a bunch of elements from the HTTP request. You can use the following
+options:
 
-- `fromRequest().url()` - return the request URL
-- `fromRequest().query(String key)` - return the first query parameter with a given name
-- `fromRequest().query(String key, int index)` - return the nth query parameter with a given name
-- `fromRequest().header(String key)` - return the first header with a given name
-- `fromRequest().header(String key, int index)` - return the nth header with a given name
-- `fromRequest().body()` - return the full request body
-- `fromRequest().body(String jsonPath)` - return the element from the request that matches the JSON Path
+* `fromRequest().url()`: Returns the request URL and query parameters.
+* `fromRequest().query(String key)`: Returns the first query parameter with a given name.
+* `fromRequest().query(String key, int index)`: Returns the nth query parameter with a
+given name.
+* `fromRequest().path()`: Returns the full path.
+* `fromRequest().path(int index)`: Returns the nth path element.
+* `fromRequest().header(String key)`: Returns the first header with a given name.
+* `fromRequest().header(String key, int index)`: Returns the nth header with a given name.
+* `fromRequest().body()`: Returns the full request body.
+* `fromRequest().body(String jsonPath)`: Returns the element from the request that
+matches the JSON Path.
 
-Let's take a look at the following contract
+Consider the following contract:
 
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderSpec.groovy[tags=template_contract,indent=0]
 ----
 
-Running a JUnit test generation will lead in creation of a test looking more or less like this
+Running a JUnit test generation leads to a test that resembles the following example:
 
 [source,java,indent=0]
 ----
@@ -369,20 +458,22 @@ Running a JUnit test generation will lead in creation of a test looking more or 
   assertThat(response.header("Authorization")).isEqualTo("foo secret bar");
  // and:
   DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
-  assertThatJson(parsedJson).field("url").isEqualTo("/api/v1/xxxx");
-  assertThatJson(parsedJson).field("fullBody").isEqualTo("{\"foo\":\"bar\",\"baz\":5}");
-  assertThatJson(parsedJson).field("paramIndex").isEqualTo("bar2");
-  assertThatJson(parsedJson).field("responseFoo").isEqualTo("bar");
-  assertThatJson(parsedJson).field("authorization2").isEqualTo("secret2");
-  assertThatJson(parsedJson).field("responseBaz").isEqualTo(5);
-  assertThatJson(parsedJson).field("responseBaz2").isEqualTo("Bla bla bar bla bla");
-  assertThatJson(parsedJson).field("param").isEqualTo("bar");
-  assertThatJson(parsedJson).field("authorization").isEqualTo("secret");
+  assertThatJson(parsedJson).field("['fullBody']").isEqualTo("{\"foo\":\"bar\",\"baz\":5}");
+  assertThatJson(parsedJson).field("['authorization']").isEqualTo("secret");
+  assertThatJson(parsedJson).field("['authorization2']").isEqualTo("secret2");
+  assertThatJson(parsedJson).field("['path']").isEqualTo("/api/v1/xxxx");
+  assertThatJson(parsedJson).field("['param']").isEqualTo("bar");
+  assertThatJson(parsedJson).field("['paramIndex']").isEqualTo("bar2");
+  assertThatJson(parsedJson).field("['pathIndex']").isEqualTo("v1");
+  assertThatJson(parsedJson).field("['responseBaz']").isEqualTo(5);
+  assertThatJson(parsedJson).field("['responseFoo']").isEqualTo("bar");
+  assertThatJson(parsedJson).field("['url']").isEqualTo("/api/v1/xxxx?foo=bar&foo=bar2");
+  assertThatJson(parsedJson).field("['responseBaz2']").isEqualTo("Bla bla bar bla bla");
 ----
 
-As you can see elements from the request have been properly referenced in the response.
+As you can see, elements from the request have been properly referenced in the response.
 
-The generated WireMock stub will look more or less like this:
+The generated WireMock stub should resemble the following example:
 
 [source,json,indent=0]
 ----
@@ -401,29 +492,31 @@ The generated WireMock stub will look more or less like this:
       }
     },
     "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[?(@.baz == 5)]"
+      "matchesJsonPath" : "$[?(@.['baz'] == 5)]"
     }, {
-      "matchesJsonPath" : "$[?(@.foo == 'bar')]"
+      "matchesJsonPath" : "$[?(@.['foo'] == 'bar')]"
     } ]
   },
   "response" : {
     "status" : 200,
-    "body" : "{\"url\":\"{{{request.url}}}\",\"param\":\"{{{request.query.foo.[0]}}}\",\"paramIndex\":\"{{{request.query.foo.[1]}}}\",\"authorization\":\"{{{request.headers.Authorization.[0]}}}\",\"authorization2\":\"{{{request.headers.Authorization.[1]}}}\",\"fullBody\":\"{{{escapejsonbody}}}\",\"responseFoo\":\"{{{jsonpath this '$.foo'}}}\",\"responseBaz\":{{{jsonpath this '$.baz'}}} ,\"responseBaz2\":\"Bla bla {{{jsonpath this '$.foo'}}} bla bla\"}",
+    "body" : "{\"authorization\":\"{{{request.headers.Authorization.[0]}}}\",\"path\":\"{{{request.path}}}\",\"responseBaz\":{{{jsonpath this '$.baz'}}} ,\"param\":\"{{{request.query.foo.[0]}}}\",\"pathIndex\":\"{{{request.path.[1]}}}\",\"responseBaz2\":\"Bla bla {{{jsonpath this '$.foo'}}} bla bla\",\"responseFoo\":\"{{{jsonpath this '$.foo'}}}\",\"authorization2\":\"{{{request.headers.Authorization.[1]}}}\",\"fullBody\":\"{{{escapejsonbody}}}\",\"url\":\"{{{request.url}}}\",\"paramIndex\":\"{{{request.query.foo.[1]}}}\"}",
     "headers" : {
-      "Authorization" : "{{{request.headers.Authorization.[0]}}}"
+      "Authorization" : "{{{request.headers.Authorization.[0]}}};foo"
     },
     "transformers" : [ "response-template" ]
   }
 }
 ----
 
-So sending a request as the one presented in the `request` part of the contract will lead in sending the following
-response body
+Sending a request such as the one presented in the `request` part of the contract results
+in sending the following response body:
 
 [source,json,indent=0]
 ----
 {
   "url" : "/api/v1/xxxx?foo=bar&foo=bar2",
+  "path" : "/api/v1/xxxx",
+  "pathIndex" : "v1",
   "param" : "bar",
   "paramIndex" : "bar2",
   "authorization" : "secret",
@@ -435,90 +528,123 @@ response body
 }
 ----
 
-IMPORTANT: This feature will work only with WireMock having version greater or equal to 2.5.1. We're using WireMock's
-`response-template` response transformer. It's using Handlebars to convert the Mustache `{{{ }}}` templates into
-proper values. Additionally we're registering 2 helper functions. `escapejsonbody` - that escapes the request
-body in a format that can be embedded in a JSON. Another is `jsonpath` that for a given parameter knows how to
-find an object in the request body.
+IMPORTANT: This feature works only with WireMock having a version greater than or equal
+to 2.5.1. The Spring Cloud Contract Verifier uses WireMock's
+`response-template` response transformer. It uses Handlebars to convert the Mustache `{{{ }}}` templates into
+proper values. Additionally, it registers two helper functions:
 
-==== Dynamic properties in matchers sections
+* `escapejsonbody`: Escapes the request body in a format that can be embedded in a JSON.
+* `jsonpath`: For a given parameter, find an object in the request body.
 
-If you've been working with https://docs.pact.io/[Pact] this might seem familiar. Quite a few users
-are used to having a separation between the body and setting dynamic parts of your contract.
+==== Registering Your Own WireMock Extension
 
-That's why you can profit from two separate sections. One is called `stubMatchers` where you can
-define the dynamic values that should end up in a stub. You can set it in the `request` or `inputMessage`
-part of your contract. The other is called `testMatchers` which is present in the `response` or
-`outputMessage` side of the contract.
+WireMock lets you register custom extensions. By default, Spring Cloud Contract registers
+the transformer, which lets you reference a request from a response. If you want to
+provide your own extensions, you can register an implementation of the
+`org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions` interface.
+Since we use the spring.factories extension approach, you can create an entry in
+`META-INF/spring.factories` file similar to the following:
 
-Currently we support only JSON Path based matchers with the following matching possibilities.
-For `stubMatchers`:
+[source,groovy,indent=0]
+----
+include::{stubrunner_core_path}/src/test/resources/META-INF/spring.factories[indent=0]
+----
 
-- `byEquality()` - the value taken from the response via the provided JSON Path needs
-to be equal to the provided value in the contract
-- `byRegex(...)` - the value taken from the response via the provided JSON Path needs
-to match the regex
-- `byDate()` - the value taken from the response via the provided JSON Path needs to
-match the regex for ISO Date
-- `byTimestamp()` - the value taken from the response via the provided JSON Path needs
-to match the regex for ISO DateTime
-- `byTime()` - the value taken from the response via the provided JSON Path needs to
-match the regex for ISO Time
+The following is an example of a custom extension:
 
-For `testMatchers`:
+.TestWireMockExtensions.groovy
+[source,groovy,indent=0]
+----
+include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/dsl/wiremock/TestWireMockExtensions.groovy[indent=0]
+----
 
-- `byEquality()` - the value taken from the response via the provided JSON Path needs
-to be equal to the provided value in the contract
-- `byRegex(...)` - the value taken from the response via the provided JSON Path needs
-to match the regex
-- `byDate()` - the value taken from the response via the provided JSON Path needs to
-match the regex for ISO Date
-- `byTimestamp()` - the value taken from the response via the provided JSON Path needs
-to match the regex for ISO DateTime
-- `byTime()` - the value taken from the response via the provided JSON Path needs to
-match the regex for ISO Time
-- `byType()` - the value taken from the response via the provided JSON Path needs to
-be of the same type as the type defined in the body of the response in the contract.
-`byType` can take a closure where you can set `minOccurrence` and `maxOccurrence`.
-That way you can assert on the size of the flattened collection. To check the size
-of an unflattened collection, use a custom method via `byCommand(...)` testMatcher.
-- `byCommand(...)` - the value taken from the response via the provided JSON Path will be
-passed as an input to the custom method that you're providing. E.g. `byCommand('foo($it)')`
-will result in calling a `foo` method to which the value matching the JSON Path will get
- passed.
- ** The type of the object read from the JSON can be one of the followings depending on the
- JSON path:
-   *** `String` if you point to a `String` value in a JSON
-   *** `JSONArray` if you point to a `List` in a JSON
-   *** `Map` if you point to a `Map` in a JSON
-   *** proper `Number` if you point to `Integer`, `Double` etc. in a JSON
-   *** `Boolean` if you point to a `Boolean` in a JSON
+IMPORTANT: Remember to override the `applyGlobally()` method and set it to `false` if you
+want the transformation to be applied only for a mapping that explicitly requires it.
 
-Let's take a look at the following example:
+==== Dynamic Properties in the Matchers Sections
+
+If you work with https://docs.pact.io/[Pact], the following discussion may seem familiar.
+Quite a few users are used to having a separation between the body and setting the
+dynamic parts of a contract.
+
+You can use two separate sections:
+
+* `stubMatchers`, which lets you define the dynamic values that should end up in a stub.
+You can set it in the `request` or `inputMessage` part of your contract.
+* `testMatchers`, which is present in the `response` or `outputMessage` side of the
+contract.
+
+Currently, Spring Cloud Contract Verifier supports only JSON Path-based matchers with the
+following matching possibilities:
+
+* For `stubMatchers`:
+** `byEquality()`: The value taken from the response via the provided JSON Path must be
+equal to the value provided in the contract.
+** `byRegex(...)`: The value taken from the response via the provided JSON Path must
+match the regex.
+** `byDate()`: The value taken from the response via the provided JSON Path must
+match the regex for an ISO Date value.
+** `byTimestamp()`: The value taken from the response via the provided JSON Path must
+match the regex for an ISO DateTime value.
+** `byTime()`: The value taken from the response via the provided JSON Path must
+match the regex for an ISO Time value.
+* For `testMatchers`:
+** `byEquality()`: The value taken from the response via the provided JSON Path must be
+equal to the provided value in the contract.
+** `byRegex(...)`: The value taken from the response via the provided JSON Path must
+match the regex.
+** `byDate()`: The value taken from the response via the provided JSON Path must match
+the regex for an ISO Date value.
+** `byTimestamp()`: The value taken from the response via the provided JSON Path must
+match the regex for an ISO DateTime value.
+** `byTime()`: The value taken from the response via the provided JSON Path must match
+the regex for an ISO Time value.
+** `byType()`: The value taken from the response via the provided JSON Path needs to be
+of the same type as the type defined in the body of the response in the contract.
+`byType` can take a closure, in which you can set `minOccurrence` and `maxOccurrence`.
+That way, you can assert the size of the flattened collection. To check the size of an
+unflattened collection, use a custom method with the `byCommand(...)` testMatcher.
+** `byCommand(...)`: The value taken from the response via the provided JSON Path is
+passed as an input to the custom method that you provide. For example,
+`byCommand('foo($it)')` results in calling a `foo` method to which the value matching the
+JSON Path gets passed. The type of the object read from the JSON can be one of the
+following, depending on the JSON path:
+*** `String`: If you point to a `String` value.
+*** `JSONArray`: If you point to a `List`.
+*** `Map`: If you point to a `Map`.
+*** `Number`: If you point to `Integer`, `Double`, or other kind of number.
+*** `Boolean`: If you point to a `Boolean`.
+
+Consider the following example:
 
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderWithMatchersSpec.groovy[tags=matchers,indent=0]
 ----
 
-In this example we're providing the dynamic portions of the contract in the matchers sections.
- For the request part you can see that for all fields but `valueWithoutAMatcher` we're setting
- explicitly the values of regular expressions we'd like the stub to contain. For the `valueWithoutAMatcher`
- the verification will take place in the same way as without the usage of matchers - the test
- will perform an equality check in this case.
+In the preceding example, you can see the dynamic portions of the contract in the
+`matchers` sections. For the request part, you can see that, for all fields but
+`valueWithoutAMatcher`, the values of the regular expressions that the stub should
+contain are explicitly set. For the `valueWithoutAMatcher`, the verification takes place
+in the same way as without the use of matchers. In that case, the test performs an
+equality check.
 
-For the response side in the `testMatchers` section we're defining all the dynamic parts
- in a similar manner. The only difference is that we have the `byType` matchers too. In that
- case we're checking 4 fields in the way that we're verifying whether the response from the test
- has a value whose JSON path matching the given field is of the same type as the one defined in the response body and:
+For the response side in the `testMatchers` section, we define the dynamic parts in a
+similar manner. The only difference is that the `byType` matchers are also present. The
+verifier engine checks four fields to verify whether the response from the test
+has a value for which the JSON path matches the given field, is of the same type as the one
+defined in the response body, and passes the following check (based on the method being called):
 
- - for `$.valueWithTypeMatch` - we're just checking the whether the type is the same
- - for `$.valueWithMin` - we're checking the type and assert if the size is greater or equal to the min occurrence
- - for `$.valueWithMax` - we're checking the type and assert if the size is smaller or equal to the max occurrence
- - for `$.valueWithMinMax` - we're checking the type and assert if the size is between the min and max occurrence
+* For `$.valueWithTypeMatch`, the engine checks whether the type is the same.
+* For `$.valueWithMin`, the engine check the type and asserts whether the size is greater
+than or equal to the minimum occurrence.
+* For `$.valueWithMax`, the engine checks the type and asserts whether the size is
+smaller than or equal to the maximum occurrence.
+* For `$.valueWithMinMax`, the engine checks the type and asserts whether the size is
+between the min and maximum occurrence.
 
-The resulting test would look more or less like this (note that we're separating the autogenerated
-assertions and the one from matchers with an `and` section):
+The resulting test would resemble the following example (note that an `and` section
+separates the autogenerated assertions and the assertion from matchers):
 
 [source,java,indent=0]
 ----
@@ -561,23 +687,25 @@ assertions and the one from matchers with an `and` section):
   assertThatValueIsANumber(parsedJson.read("$.duck"));
 ----
 
-IMPORTANT: Notice that for the `byCommand` method we are calling the `assertThatValueIsANumber`. This method needs
-to be defined in the test base class or should be statically imported to your tests.
-Notice that the `byCommand` call was converted to `assertThatValueIsANumber(parsedJson.read("$.duck"));`. That means
-that we took the method name and passed the proper JSON path as a parameter to it.
+IMPORTANT: Notice that, for the `byCommand` method, the example calls the
+`assertThatValueIsANumber`. This method must be defined in the test base class or be
+statically imported to your tests. Notice that the `byCommand` call was converted to
+`assertThatValueIsANumber(parsedJson.read("$.duck"));`. That means that the engine took
+the method name and passed the proper JSON path as a parameter to it.
 
-and the WireMock stub like this:
+The resulting WireMock stub is in the following example:
 
 [source,json,indent=0]
 ----
 include::{plugins_path}/spring-cloud-contract-converters/src/test/groovy/org/springframework/cloud/contract/verifier/wiremock/DslToWireMockClientConverterSpec.groovy[tags=matchers,indent=0]
 ----
 
-IMPORTANT: If you use a `matcher` then the part of the request / response that the `matcher` is addressing
-via the JSON Path will get removed from assertion. In case of verifying a collection you have to create
-matchers for *all* elements of the collection.
+IMPORTANT: If you use a `matcher`, then the part of the request aned response that the
+`matcher` addresses with the JSON Path gets removed from the assertion. In the case of
+verifying a collection, you must create matchers for *all* the elements of the
+collection.
 
-Let's look at the following example:
+Consider the following example:
 
 [source,groovy,indent=0]
 ----
@@ -608,7 +736,7 @@ Contract.make {
 }
 ----
 
-This will lead in creating the following test (showing just the assertion section)
+The preceding code leads to creating the following test (the code block shows only the assertion section):
 
 [source,java,indent=0]
 ----
@@ -625,15 +753,16 @@ This will lead in creating the following test (showing just the assertion sectio
 			assertThat(parsedJson.read("\$.events[0].status", String.class)).matches(".+")
 ----
 
-As you can see the assertion is malformed. That's because only the first element of the array got asserted.
-In order to fix this it's best to apply the assertion to the whole `$.events` collection and assert it
-via the `byCommand(...)` method.
+As you can see, the assertion is malformed. Only the first element of the array got
+asserted. In order to fix this, you should apply the assertion to the whole `$.events`
+collection and assert it with the `byCommand(...)` method.
 
-=== JAX-RS support
+=== JAX-RS Support
 
-We support JAX-RS 2 Client API. Base class needs to define `protected WebTarget webTarget` and server initialization, right now the only option how to test JAX-RS API is to start a web server.
-
-Request with a body needs to have a content type set otherwise `application/octet-stream` is going to be used.
+The Spring Cloud Contract Verifier supports the JAX-RS 2 Client API. The base class needs
+to define `protected WebTarget webTarget` and server initialization. The only option for
+testing JAX-RS API is to start a web server. Also, a request with a body needs to have a
+content type set. Otherwise, the default of `application/octet-stream` gets used.
 
 In order to use JAX-RS mode, use the following settings:
 
@@ -642,18 +771,18 @@ In order to use JAX-RS mode, use the following settings:
 testMode == 'JAXRSCLIENT'
 ----
 
-Example of a test API generated:
+The following example shows a generated test API:
 
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/JaxRsClientMethodBuilderSpec.groovy[tags=jaxrs,indent=0]
 ----
 
-=== Async support
+=== Async Support
 
-If you're using asynchronous communication on the server side (your controllers are returning
-`Callable`, `DeferredResult` etc. then inside your contract you have to provide in the `response`
-section a `async()` method. Example:
+If you're using asynchronous communication on the server side (your controllers are
+returning `Callable`, `DeferredResult`, and so on), then, inside your contract, you must
+provide a `sync()` method in the `response` section. The following code shows an example:
 
 [source,groovy,indent=0]
 ----
@@ -674,10 +803,10 @@ org.springframework.cloud.contract.spec.Contract.make {
 
 Spring Cloud Contract supports context paths.
 
-IMPORTANT: The only thing that changes in order to fully support context paths is the switch
-on the *PRODUCER* side. The autogenerated tests need to be using the *EXPLICIT* mode.
-
-The consumer side remains untouched, in order for the generated test to pass you have to switch the *EXPLICIT* mode.
+IMPORTANT: The only change needed to fully support context paths is the switch on the
+*PRODUCER* side. Also, the autogenerated tests must use *EXPLICIT* mode. The  consumer
+side remains untouched. In order for the generated test to pass, you must use *EXPLICIT*
+mode.
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
@@ -701,79 +830,108 @@ contracts {
 }
 ----
 
-That way you'll generate a test that *DOES NOT* use MockMvc. It means that you're generating
-real requests and you need to setup your generated test's base class to work on a real socket.
+That way, you generate a test that *DOES NOT* use MockMvc. It means that you generate
+real requests and you need to setup your generated test's base class to work on a real
+socket.
 
-Let's imagine the following contract:
+Consider the following contract:
 
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/SingleTestGeneratorSpec.groovy[tags=context_path_contract,indent=0]
 ----
 
-Here is an example of how to set up a base class and Rest Assured for everything to work correctly.
+The following example shows how to set up a base class and Rest Assured:
 
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/SingleTestGeneratorSpec.groovy[tags=context_path_baseclass,indent=0]
 ----
 
-That way all:
+If you do it this way:
 
-- all your requests in the autogenerated tests will be sent to the real endpoint with your context path included (e.g. `/my-context-path/url`)
-- your contracts reflect that you have a context path, thus your generated stubs will also
- have that information (e.g. in the stubs you'll see that you have too call `/my-context-path/url`)
+* All of your requests in the autogenerated tests are sent to the real endpoint with your
+context path included (for example, `/my-context-path/url`).
+* Your contracts reflect that you have a context path. Your generated stubs also have
+that information (for example, in the stubs, you have to call `/my-context-path/url`).
 
 === Messaging Top-Level Elements
 
-The DSL for messaging looks a little bit different than the one that focuses on HTTP.
+The DSL for messaging looks a little bit different than the one that focuses on HTTP. The
+following sections explain the differences:
 
-==== Output triggered by a method
+* <<contract-dsl-output-triggered-method>>
+* <<contract-dsl-output-triggered-message>>
+* <<contract-dsl-consumer-producer>>
+* <<contract-dsl-common>>
 
-The output message can be triggered by calling a method (e.g. a Scheduler was started and a message was sent)
+[[contract-dsl-output-triggered-method]]
+==== Output Triggered by a Method
+
+The output message can be triggered by calling a method (such as a `Scheduler` when a was
+started and a message was sent), as shown in the following example:
 
 [source,groovy]
 ----
 include::{tests_path}/samples-messaging-integration/src/test/groovy/com/example/IntegrationMessagingApplicationSpec.groovy[tags=method_trigger,indent=0]
 ----
 
-In this case the output message will be sent to `output` if a method called `bookReturnedTriggered` will be executed. In the message *publisher's* side
-we will generate a test that will call that method to trigger the message. On the *consumer* side you can use the `some_label` to trigger the message.
+In the previous example case, the output message is sent to `output` if a method called
+`bookReturnedTriggered` is executed. On the message *publisher's* side, we generate a
+test that calls that method to trigger the message. On the *consumer* side, you can use
+the `some_label` to trigger the message.
 
-==== Output triggered by a message
+[[contract-dsl-output-triggered-message]]
+==== Output Triggered by a Message
 
-The output message can be triggered by receiving a message.
+The output message can be triggered by receiving a message, as shown in the following
+example:
 
 [source,groovy]
 ----
 include::{tests_path}/samples-messaging-integration/src/test/groovy/com/example/IntegrationMessagingApplicationSpec.groovy[tags=message_trigger,indent=0]
 ----
 
-In this case the output message will be sent to `output` if a proper message will be received on the `input` destination. In the message *publisher's* side
-we will generate a test that will send the input message to the defined destination. On the *consumer* side you can either send a message to the input
-destination or use the `some_label` to trigger the message.
+In the preceding example, the output message is sent to `output` if a proper message is
+received on the `input` destination. On the message *publisher's* side, the engine
+generates a test that sends the input message to the defined destination. On the
+*consumer* side, you can either send a message to the input destination or use a label
+(`some_label` in the example) to trigger the message.
 
-==== Consumer / Producer
+[[contract-dsl-consumer-producer]]
+==== Consumer/Producer
 
-In HTTP you have a notion of `client`/`stub and `server`/`test` notation. You can use them also in messaging but we're providing also the `consumer` and `produer` methods
-as presented below (note you can use either `$` or `value` methods to provide `consumer` and `producer` parts)
+In HTTP, you have a notion of `client`/`stub and `server`/`test` notation. You can also
+use those paradigms in messaging. In addition, Spring Cloud Contract Verifier also
+provides the `consumer` and `producer` methods, as presented in the following example
+(note that you can use either `$` or `value` methods to provide `consumer` and `producer`
+parts):
 
 [source,groovy]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=consumer_producer]
 ----
 
-=== Multiple contracts in one file
+[[contract-dsl-common]]
+==== Common
 
-It's possible to define multiple contracts in one file. An example of such a contract can look like this
+In the `input {}` or `outputMessage {}` section you can call `assertThat` with the name
+of a `method` (e.g. `assertThatMessageIsOnTheQueue()`) that you have defined in the
+base class or in a static import. Spring Cloud Pipelines will execute that method
+in the genertaed test.
+
+=== Multiple Contracts in One File
+
+You can define multiple contracts in one file. Such a contract might resemble the
+following example:
 
 [source,groovy,indent=0]
 ----
 include::{plugins_path}/spring-cloud-contract-maven-plugin/src/test/projects/multiple-contracts/src/test/resources/contracts/com/hello/v1/WithList.groovy[lines=18..-1,indent=0]
 ----
 
-In this example one contract has the `name` field and the other doesn't. This will lead to generation of
-two tests that will look more or less like this:
+In the preceding example, one contract has the `name` field and the other does not. This
+leads to generation of two tests that look more or less like this:
 
 [source,java,indent=0]
 ----
@@ -821,12 +979,12 @@ public class V1Test extends TestBase {
 }
 ----
 
-Notice that for the contract that has the `name` field the generated test method is named
-`validate_should_post_a_user`. For the one that doesn't have the name it's called
+Notice that, for the contract that has the `name` field, the generated test method is named
+`validate_should_post_a_user`. For the one that does not have the name, it is called
 `validate_withList_1`. It corresponds to the name of the file `WithList.groovy` and the
 index of the contract in the list.
 
-The generated stubs will look like this
+The generated stubs is shown in the following example:
 
 [source]
 ----
@@ -834,30 +992,32 @@ should post a user.json
 1_WithList.json
 ----
 
-As you can see the first file got the `name` parameter from the contract. The second
-got the name of the contract file `WithList.groovy` prefixed with the index (in this case
-contract had index `1` in the list of contracts in the file).
+As you can see, the first file got the `name` parameter from the contract. The second
+got the name of the contract file (`WithList.groovy`) prefixed with the index (in this
+case, the contract had an index of `1` in the list of contracts in the file).
 
-TIP: As you can see it's much better if you name your contracts since then your tests
- are far more meaningful.
-
+TIP: As you can see, it iss much better if you name your contracts because doing so makes
+your tests far more meaningful.
 
 == Customization
 
+You can customize the Spring Cloud Contract Verifier by extending the DSL, as shown in
+the remainder of this section.
+
 === Extending the DSL
 
-It is possible to provide your own functions to the DSL. The key requirement for this
-feature was to maintain the static compatibility. Below you will be able to see an example
-of:
+You can provide your own functions to the DSL. The key requirement for this feature is to
+maintain the static compatibility. Later in this document, you can see examples of:
 
-- creation of a JAR with reusable classes
-- referencing of these classes in the DSLs
+* Creating a JAR with reusable classes.
+* Referencing of these classes in the DSLs.
 
-The full example can be found https://github.com/spring-cloud-samples/spring-cloud-contract-samples[here].
+You can find the full example
+https://github.com/spring-cloud-samples/spring-cloud-contract-samples[here].
 
 ==== Common JAR
 
-Below you can find three classes that we will reuse in the DSLs.
+The following examples show three classes that can be reused in the DSLs.
 
 *PatternUtils* contains functions used by both the **consumer** and the **producer**.
 
@@ -880,16 +1040,18 @@ include::{samples_url}/common/src/main/java/com/example/ConsumerUtils.java[]
 include::{samples_url}/common/src/main/java/com/example/ProducerUtils.java[]
 ----
 
-==== Adding the dependency to project
+==== Adding the Dependency to the Project
 
-In order for the plugins and IDE to be able to reference the common JAR classes you need
+In order for the plugins and IDE to be able to reference the common JAR classes, you need
 to pass the dependency to your project.
 
-==== Test dependency in project's dependencies
+// TODO missing code block here - we should show an example adding a dependency
 
-First add the common jar dependency as a test dependency. That way since your
-contracts files are available at test resources path, automatically the
-common jar classes will be visible in your Groovy files.
+==== Test the Dependency in the Project's Dependencies
+
+First, add the common jar dependency as a test dependency. Because your contracts files
+are available on the test resources path,  the common jar classes automatically become
+visible in your Groovy files. The following examples show how to test the dependency:
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
@@ -903,9 +1065,10 @@ include::{samples_url}/producer/pom.xml[tags=test_dep,indent=0]
 include::{samples_url}/producer/build.gradle[tags=test_dep,indent=0]
 ----
 
-==== Test dependency in plugin's dependencies
+==== Test a Dependency in the Plugin's Dependencies
 
-Now you have to add the dependency for the plugin to reuse at runtime.
+Now, you must add the dependency for the plugin to reuse at runtime, as shown in the
+following example:
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
@@ -921,80 +1084,84 @@ include::{samples_url}/producer/build.gradle[tags=test_dep_in_plugin,indent=0]
 
 ==== Referencing classes in DSLs
 
-Now you can reference your classes in your DSL. Example:
+You can now reference your classes in your DSL, as shown in the following example:
 
 [source,groovy]
 ----
 include::{samples_url}/producer/src/test/resources/contracts/beer/rest/shouldGrantABeerIfOldEnough.groovy[indent=0]
 ----
 
-== Pluggable architecture
+== Using the Pluggable Architecture
 
-There are cases where you have your contracts defined in other formats
-like YAML, RAML or PACT. On the other hand you'd like to profit from
-the test and stubs generation. It's really easy to add your own implementation
-of either of those. Also you can customize the way tests are generated (for example you can generate
-tests for other languages) and you can do the same for stubs generation (you can generate
-stubs for other stub http server implementations).
+You may encounter cases where you have your contracts have been defined in other formats,
+such as YAML, RAML or PACT. In those cases, you still want to benefit from the automatic
+generation of tests and stubs. You can add your own implementation for generating both
+tests and stubs. Also, you can customize the way tests are generated (for example, you
+can generate tests for other languages) and the way stubs are generated (for example, you
+can generate stubs for other HTTP server implementations).
 
-=== Custom contract converter
+=== Custom Contract Converter
 
-Let's assume that your contract is written in a YAML file like this:
+Assume that your contract is written in a YAML file as follows:
 
 [source,yml]
 ----
 include::{verifier_core_path}/src/test/resources/contract.yml[indent=0]
 ----
 
-Thanks to the interface
+The `ContractConverter` interface lets you register your own implementation of a contract
+structure converter. The following code listing shows the `ContractConverter` interface:
 
 [source,groovy]
 ----
 include::{contract_spec_path}/src/main/groovy/org/springframework/cloud/contract/spec/ContractConverter.groovy[indent=0,lines=17..-1]
 ----
 
-you can register your own implementation of a contract structure converter.
-Your implementation needs to state the condition on which it should start the
-conversion. Also you have to define how to perform that conversion in both ways.
+Your implementation must define the condition on which it should start the
+conversion. Also, you must define how to perform that conversion in both directions.
 
-IMPORTANT: Once you create your implementation you have to create a `/META-INF/spring.factories`
-file in which you provide the fully qualified name of your implementation.
+IMPORTANT: Once you create your implementation, you must create a
+`/META-INF/spring.factories` file in which you provide the fully qualified name of your
+implementation.
 
-Example of a `spring.factories` file
+The following example shows a typical `spring.factories` file:
 
 [source]
 ----
 include::{verifier_core_path}/src/test/resources/META-INF/spring.factories[indent=0]
 ----
 
-and the YAML implementation
+The following example shows a typical YAML implementation that matches the preceding
+example:
 
 [source,groovy]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/converter/YamlContractConverter.groovy[indent=0,lines=16..-1]
 ----
 
-==== Pact converter
+==== Pact Converter
 
-Spring Cloud Contract comes with an out of the box support for https://docs.pact.io/[Pact] representation of contracts.
-In other words instead of using the Groovy DSL you can use Pact files. In this section
-we will present how to add such a support for your project.
+Spring Cloud Contract includes support for https://docs.pact.io/[Pact] representation of
+contracts. Instead of using the Groovy DSL, you can use Pact files. In this section, we
+present how to add Pact support for your project.
 
-==== Pact contract
+==== Pact Contract
 
-We will be working on the following example of a Pact contract. We've placed this file under
-the `src/test/resources/contracts` folder.
+Consider following example of a Pact contract, which is a file under the
+`src/test/resources/contracts` folder.
 
 [source,javascript,indent=0]
 ----
 include::{standalone_pact_path}/pact-http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.json[indent=0]
 ----
 
-==== Pact for producers
+The remainder of this section about using Pact refers to the preceding file.
 
-On the producer side you have add to your plugin configuration two additional dependencies.
-One is the Spring Cloud Contract Pact support and the other represents the current
-Pact version that you're using.
+==== Pact for Producers
+
+On the producer side, you mustadd two additional dependencies to your plugin
+configuration. One is the Spring Cloud Contract Pact support, and the other represents
+the current Pact version that you use.
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
@@ -1008,7 +1175,8 @@ include::{standalone_pact_path}/pact-http-server/pom.xml[tags=pact_dependency,in
 include::{standalone_pact_path}/pact-http-server/build.gradle[tags=pact_dependency,indent=0]
 ----
 
-When you execute the build of your application a test, looking more or less like this, will be generated
+When you execute the build of your application, a test will be generated. The generated
+test might be as follows:
 
 [source,java,indent=0]
 ----
@@ -1034,7 +1202,7 @@ When you execute the build of your application a test, looking more or less like
 	}
 ----
 
-and the stub looking like this
+The corresponding generated stub might be as follows:
 
 [source,javascript,indent=0]
 ----
@@ -1064,11 +1232,11 @@ and the stub looking like this
 }
 ----
 
-==== Pact for consumers
+==== Pact for Consumers
 
-On the producer side you have add to your project dependencies two additional dependencies.
-One is the Spring Cloud Contract Pact support and the other represents the current
-Pact version that you're using.
+On the producer side, you must add two additional dependencies to your project
+dependencies. One is the Spring Cloud Contract Pact support, and the other represents the
+current Pact version that you use.
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
@@ -1082,21 +1250,21 @@ include::{standalone_pact_path}/pact-http-client/pom.xml[tags=pact_dependency,in
 include::{standalone_pact_path}/pact-http-client/build.gradle[tags=pact_dependency,indent=0]
 ----
 
-=== Custom test generator
+=== Using the Custom Test Generator
 
-If you want to generate tests for different languages than Java or you're
-not happy with the way we're building Java tests for you then you can register
-your own implementation to do that.
+If you want to generate tests for languages other than Java or you are not happy with the
+way the verifier builds Java tests, you can register your own implementation.
 
-Thanks to the interface
+The `SingleTestGenerator` interface lets you register your own implementation.  The
+following code listing shows the `SingleTestGenerator` interface:
 
 [source,groovy]
 ----
 include::{verifier_core_path}/src/main/groovy/org/springframework/cloud/contract/verifier/builder/SingleTestGenerator.groovy[indent=0,lines=17..-1]
 ----
 
-you can register your own implementation that generates a test. Again, it's enough to provide
-a proper `spring.factories` file. Example:
+Again, you must provide a `spring.factories` file, such as the one shown in the following
+example:
 
 [source]
 ----
@@ -1104,18 +1272,19 @@ org.springframework.cloud.contract.verifier.builder.SingleTestGenerator=/
 com.example.MyGenerator
 ----
 
-=== Custom stub generator
+=== Using the Custom Stub Generator
 
-If you want to generate stubs for other stub server than WireMock it's enough to
- plug in your own implementation of this interface:
+If you want to generate stubs for stub servers other than WireMock, you can plug in your
+own implementation of the `StubGenerator` interface. The following code listing shows the
+`StubGenerator` interface:
 
 [source,groovy]
 ----
 include::{converters_path}/src/main/groovy/org/springframework/cloud/contract/verifier/converter/StubGenerator.groovy[indent=0,lines=16..-1]
 ----
 
-you can register your own implementation that generate Stubs. Again, it's enough to provide
-a proper `spring.factories` file. Example:
+Again, you must provide a `spring.factories` file, such as the one shown in the following
+example:
 
 [source]
 ----
@@ -1124,26 +1293,27 @@ include::{converters_path}/src/main/resources/META-INF/spring.factories[indent=0
 
 The default implementation is the WireMock stub generation.
 
-TIP: You can provide multiple stub generator implementations. That way for example from a single
-DSL as input you can e.g. produce WireMock stubs and Pact files too!
+TIP: You can provide multiple stub generator implementations. For example, from a single
+DSL, you can produce both WireMock stubs and Pact files.
 
-=== Custom Stub Runner
+=== Using the Custom Stub Runner
 
-If you decide to have a custom stub generation you also need a custom way of running
+If you decide to use a custom stub generation, you also need a custom way of running
 stubs with your different stub provider.
 
-Let us assume that you're using https://github.com/dreamhead/moco[Moco] to build your stubs.
-You wrote a proper stub generator and your stubs got placed in a JAR file.
+Assume that you use https://github.com/dreamhead/moco[Moco] to build your stubs and that
+you have written a stub generator and placed your stubs in a JAR file.
 
-In order for Stub Runner to know how to run your stubs you have to define a custom
- HTTP Stub server implementation. It can look like this:
+In order for Stub Runner to know how to run your stubs, you have to define a custom
+HTTP Stub server implementation, which might resemble the following example:
 
 [source,groovy]
 ----
 include::{tests_path}/spring-cloud-contract-stub-runner-moco/src/test/groovy/org/springframework/cloud/contract/stubrunner/provider/moco/MocoHttpServerStub.groovy[indent=0,lines=16..-1]
 ----
 
-and just register it in your `spring.factories` file
+Then, you can register it in your `spring.factories` file, as shown in the following
+example:
 
 [source]
 ----
@@ -1151,15 +1321,15 @@ org.springframework.cloud.contract.stubrunner.HttpServerStub=\
 org.springframework.cloud.contract.stubrunner.provider.moco.MocoHttpServerStub
 ----
 
-that way you'll be able to run stubs using Moco.
+Now you can run stubs with Moco.
 
-IMPORTANT: If you don't provide any implementation then the default one - WireMock based
-will be picked. If you provide more than one then the first one on the list will be picked.
+IMPORTANT: If you do not provide any implementation, then the default (WireMock)
+implementation is used. If you provide more than one, the first one on the list is used.
 
-=== Custom Stub Downloader
+=== Using the Custom Stub Downloader
 
-You can customize the way your stubs are downloaded. It's enough to create an
-implementation of the `StubDownloaderBuilder`
+You can customize the way your stubs are downloaded by creating an implementation of the
+`StubDownloaderBuilder` interface, as shown in the following example:
 
 [source,java]
 ----
@@ -1185,7 +1355,8 @@ class CustomStubDownloaderBuilder implements StubDownloaderBuilder {
 }
 ----
 
-and just register it in your `spring.factories` file
+Then you can register it in your `spring.factories` file, as shown in the following
+example:
 
 [source]
 ----
@@ -1194,10 +1365,10 @@ org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder=\
 com.example.CustomStubDownloaderBuilder
 ----
 
-that way you'll be able to pick a folder with the source of your stubs.
+Now you can pick a folder with the source of your stubs.
 
-IMPORTANT: If you don't provide any implementation then the default one will be picked.
- If you provide `repositoryRoot` property or `workOffline` flag then Aether based
- that will download stubs from a remote repo will be picked. If you don't provide these
- values then the `ClasspathStubProvider` will be picked that will scan the classpath.
- If you provide more than one, then the first one on the list will be picked.
+IMPORTANT: If you do not provide any implementation, then the default is used.
+If you use the `repositoryRoot` property or the `workOffline` flag, then an Aether-based
+implementation that downloads stubs from a remote repository is used. If you do not
+provide these values, the `ClasspathStubProvider` (which will scan the classpath) is
+used. If you provide more than one, then the first one on the list is used.

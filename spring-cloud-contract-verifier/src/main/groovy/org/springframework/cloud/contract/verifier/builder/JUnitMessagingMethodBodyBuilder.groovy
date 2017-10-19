@@ -119,13 +119,20 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	@Override
 	protected void validateResponseHeadersBlock(BlockBuilder bb) {
-		bb.addLine("""ContractVerifierMessage response = contractVerifierMessaging.receive("${outputMessage.sentTo.serverValue}");""")
+		bb.addLine("""ContractVerifierMessage response = contractVerifierMessaging.receive("${sentToValue(outputMessage.sentTo.serverValue)}");""")
 		bb.addLine("""assertThat(response).isNotNull();""")
 		outputMessage.headers?.executeForEachHeader { Header header ->
 			processHeaderElement(bb, header.name, header.serverValue instanceof NotToEscapePattern ?
 					header.serverValue :
 					MapConverter.getTestSideValues(header.serverValue))
 		}
+	}
+
+	private String sentToValue(Object sentTo) {
+		if (sentTo instanceof ExecutionProperty) {
+			return ((ExecutionProperty) sentTo).executionCommand
+		}
+		return '"' + sentTo.toString() + '"'
 	}
 
 	@Override

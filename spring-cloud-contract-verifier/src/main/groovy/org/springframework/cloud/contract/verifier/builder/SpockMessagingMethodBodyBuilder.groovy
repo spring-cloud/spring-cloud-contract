@@ -96,11 +96,18 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	@Override
 	protected void validateResponseCodeBlock(BlockBuilder bb) {
 		if (outputMessage) {
-			bb.addLine("""ContractVerifierMessage response = contractVerifierMessaging.receive('${outputMessage.sentTo.serverValue}')""")
+			bb.addLine("""ContractVerifierMessage response = contractVerifierMessaging.receive(${sentToValue(outputMessage.sentTo.serverValue)})""")
 			bb.addLine("""assert response != null""")
 		} else {
 			bb.addLine('noExceptionThrown()')
 		}
+	}
+
+	private String sentToValue(Object sentTo) {
+		if (sentTo instanceof ExecutionProperty) {
+			return ((ExecutionProperty) sentTo).executionCommand
+		}
+		return "'" + sentTo.toString() + "'"
 	}
 
 	@Override
