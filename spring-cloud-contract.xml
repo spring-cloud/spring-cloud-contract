@@ -5438,6 +5438,9 @@ following sections explain the differences:</simpara>
 <listitem>
 <simpara><xref linkend="contract-dsl-consumer-producer"/></simpara>
 </listitem>
+<listitem>
+<simpara><xref linkend="contract-dsl-common"/></simpara>
+</listitem>
 </itemizedlist>
 <section xml:id="contract-dsl-output-triggered-method">
 <title>Output Triggered by a Method</title>
@@ -5531,6 +5534,13 @@ parts):</simpara>
 		])
 	}
 }</programlisting>
+</section>
+<section xml:id="contract-dsl-common">
+<title>Common</title>
+<simpara>In the <literal>input {}</literal> or <literal>outputMessage {}</literal> section you can call <literal>assertThat</literal> with the name
+of a <literal>method</literal> (e.g. <literal>assertThatMessageIsOnTheQueue()</literal>) that you have defined in the
+base class or in a static import. Spring Cloud Pipelines will execute that method
+in the genertaed test.</simpara>
 </section>
 </section>
 <section xml:id="_multiple_contracts_in_one_file">
