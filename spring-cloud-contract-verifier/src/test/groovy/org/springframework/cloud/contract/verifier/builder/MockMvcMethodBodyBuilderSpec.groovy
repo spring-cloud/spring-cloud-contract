@@ -2096,7 +2096,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 	}
 
 	@Issue('#172')
-		def "should resolve plain text properly via headers"() {
+	def "should resolve plain text properly via headers"() {
 		given:
 		Contract contractDsl = Contract.make {
 				request {
@@ -2126,6 +2126,41 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			methodBuilderName           | methodBuilder                                                                           | expectedAssertion
 			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '''responseBody == "{\\"a\\":1}\\n{\\"a\\":2}"'''
 			"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
+	}
+
+	@Issue('#443')
+	def "should resolve resolve plain text that happens to be a valid json for [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url '/foo'
+				}
+				response {
+					status 200
+					headers {
+						contentType(applicationJsonUtf8())
+					}
+					body(
+							value(client('true'), server(regex("true|false")))
+					)
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			testAssertion(test)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
+		where:
+			methodBuilderName                                    | methodBuilder                                                                               | testAssertion
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | { String testContents -> testContents.contains("""responseBody ==~ java.util.regex.Pattern.compile('true|false')""") }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | { String testContents -> testContents.contains("""assertThat(responseBody).matches("true|false");""") }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String testContents -> testContents.contains("""responseBody ==~ java.util.regex.Pattern.compile('true|false')""") }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String testContents -> testContents.contains("""assertThat(responseBody).matches("true|false");""") }
 	}
 
 	@Issue('#169')

@@ -62,7 +62,7 @@ class RestAssuredJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 
 	@Override
 	protected String getResponseBodyPropertyComparisonString(String property, Pattern value) {
-		return null
+		return """assertThat(responseBody).${createHeaderComparison(value)}"""
 	}
 
 	@Override
