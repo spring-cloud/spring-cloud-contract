@@ -33,7 +33,7 @@ package org.springframework.cloud.contract.wiremock.restdocs;
  * 	public void contextLoads() throws Exception {
  * 		mockMvc.perform(get("/resource"))
  * 				.andExpect(content().string("Hello World"))
- * 				.andDo(verify().contract("resource"));
+ * 				.andDo(verify().stub("resource"));
  * 	}
  * </pre>
  * 
