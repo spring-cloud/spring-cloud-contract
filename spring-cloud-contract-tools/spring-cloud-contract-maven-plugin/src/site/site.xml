@@ -16,7 +16,7 @@
      limitations under the License.
 
 -->
-<project name="Spring Cloud Contract Maven Plugin">
+<project name="Spring Cloud Contract Maven Plugin" combine.self="override">
 	<bannerLeft>
 		<name>${project.name}</name>
 	</bannerLeft>

@@ -555,7 +555,7 @@ The following is an example of a custom extension:
 .TestWireMockExtensions.groovy
 [source,groovy,indent=0]
 ----
-include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/dsl/wiremock/TestWireMockExtensions.groovy[indent=0]
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/dsl/wiremock/TestWireMockExtensions.groovy[indent=0]
 ----
 
 IMPORTANT: Remember to override the `applyGlobally()` method and set it to `false` if you
