@@ -4785,7 +4785,30 @@ org.springframework.cloud.contract.stubrunner.provider.wiremock.TestWireMockExte
 <formalpara>
 <title>TestWireMockExtensions.groovy</title>
 <para>
-<programlisting language="groovy" linenumbering="unnumbered">Unresolved directive in verifier_contract.adoc - include::../../../../spring-cloud-contract-stub-runner/src/test/groovy/org/springframework/cloud/contract/verifier/dsl/wiremock/TestWireMockExtensions.groovy[indent=0]</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">package org.springframework.cloud.contract.verifier.dsl.wiremock
+
+import com.github.tomakehurst.wiremock.extension.Extension
+
+/**
+ * Extension that registers the default transformer and the custom one
+ */
+class TestWireMockExtensions implements WireMockExtensions {
+	@Override
+	List&lt;Extension&gt; extensions() {
+		return [
+				new DefaultResponseTransformer(),
+				new CustomExtension()
+		]
+	}
+}
+
+class CustomExtension implements Extension {
+
+	@Override
+	String getName() {
+		return "foo-transformer"
+	}
+}</programlisting>
 </para>
 </formalpara>
 <important>
