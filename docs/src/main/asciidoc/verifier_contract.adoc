@@ -89,6 +89,49 @@ plugin configuration or set the `ignored` property on the contract itself:
 include::{contract_spec_path}/src/test/groovy/org/springframework/cloud/contract/spec/internal/ContractSpec.groovy[tags=ignored,indent=0]
 ----
 
+[[contract-dsl-passing-values-from-files]]
+==== Passing Values from Files
+
+Starting with version `1.2.0`, you can pass values from files. Assume that you have the
+following resources in our project.
+
+[source,bash,indent=0]
+----
+└── src
+    └── test
+        └── resources
+            └── contracts
+                ├── readFromFile.groovy
+                ├── request.json
+                └── response.json
+----
+
+Further assume that your contract is as follows:
+
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/resources/classpath/readFromFile.groovy[indent=0]
+----
+
+Further assume that the JSON files is as follows:
+
+*request.json*
+[source,json,indent=0]
+----
+include::{verifier_core_path}/src/test/resources/classpath/request.json[indent=0]
+----
+
+*response.json*
+[source,json,indent=0]
+----
+include::{verifier_core_path}/src/test/resources/classpath/response.json[indent=0]
+----
+
+When test or stub generation takes place, the contents of the file is passed to the body
+of a request or a response. That works because of the `file(...)` method. The argument of
+that method needs to be a file with location relative to the folder in which the contract
+lays.
+
 [[contract-dsl-http-top-level-elements]]
 ==== HTTP Top-Level Elements
 
@@ -512,7 +555,7 @@ The following is an example of a custom extension:
 .TestWireMockExtensions.groovy
 [source,groovy,indent=0]
 ----
-include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/dsl/wiremock/TestWireMockExtensions.groovy[indent=0]
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/dsl/wiremock/TestWireMockExtensions.groovy[indent=0]
 ----
 
 IMPORTANT: Remember to override the `applyGlobally()` method and set it to `false` if you
