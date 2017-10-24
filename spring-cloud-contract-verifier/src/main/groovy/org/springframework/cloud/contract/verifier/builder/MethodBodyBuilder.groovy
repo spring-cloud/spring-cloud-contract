@@ -334,10 +334,14 @@ abstract class MethodBodyBuilder {
 			addColonIfRequired(bb)
 			// TODO xml validation
 		} else {
-			bb.addLine(getSimpleResponseBodyString(getResponseAsString()))
-			processText(bb, "", convertedResponseBody)
-			addColonIfRequired(bb)
+			simpleTextResponseBodyCheck(bb, convertedResponseBody)
 		}
+	}
+
+	private void simpleTextResponseBodyCheck(BlockBuilder bb, convertedResponseBody) {
+		bb.addLine(getSimpleResponseBodyString(getResponseAsString()))
+		processText(bb, "", convertedResponseBody)
+		addColonIfRequired(bb)
 	}
 
 	private void addJsonResponseBodyCheck(BlockBuilder bb, convertedResponseBody, BodyMatchers bodyMatchers) {
@@ -350,13 +354,17 @@ abstract class MethodBodyBuilder {
 			def requestBody = MapConverter.getTestSideValues(contract.request.body)
 			parsedRequestBody = JsonPath.parse(requestBody)
 		}
-		jsonPaths.each {
-			String method = it.method()
-			method = processIfTemplateIsPresent(method, parsedRequestBody)
-			String postProcessedMethod = templateProcessor.containsJsonPathTemplateEntry(method) ?
-					method : postProcessJsonPathCall(method)
-			bb.addLine("assertThatJson(parsedJson)" + postProcessedMethod)
-			addColonIfRequired(bb)
+		if (jsonPaths.empty) {
+			simpleTextResponseBodyCheck(bb, convertedResponseBody)
+		} else {
+			jsonPaths.each {
+				String method = it.method()
+				method = processIfTemplateIsPresent(method, parsedRequestBody)
+				String postProcessedMethod = templateProcessor.containsJsonPathTemplateEntry(method) ?
+						method : postProcessJsonPathCall(method)
+				bb.addLine("assertThatJson(parsedJson)" + postProcessedMethod)
+				addColonIfRequired(bb)
+			}
 		}
 		if (bodyMatchers?.hasMatchers()) {
 			bb.endBlock()
@@ -373,7 +381,9 @@ abstract class MethodBodyBuilder {
 				}
 			}
 		}
-		processBodyElement(bb, "", "", convertedResponseBody)
+		if (!jsonPaths.empty) {
+			processBodyElement(bb, "", "", convertedResponseBody)
+		}
 	}
 
 	protected String processIfTemplateIsPresent(String method, DocumentContext parsedRequestBody) {
