@@ -3671,29 +3671,6 @@ plugin configuration or set the <literal>ignored</literal> property on the contr
 	ignored()
 }</programlisting>
 </section>
-<section xml:id="contract-dsl-passing-values-from-files">
-<title>Passing Values from Files</title>
-<simpara>Starting with version <literal>1.2.0</literal>, you can pass values from files. Assume that you have the
-following resources in our project.</simpara>
-<programlisting language="bash" linenumbering="unnumbered">└── src
-    └── test
-        └── resources
-            └── contracts
-                ├── readFromFile.groovy
-                ├── request.json
-                └── response.json</programlisting>
-<simpara>Further assume that your contract is as follows:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">Unresolved directive in verifier_contract.adoc - include::../../../../spring-cloud-contract-verifier/src/test/resources/classpath/readFromFile.groovy[indent=0]</programlisting>
-<simpara>Further assume that the JSON files is as follows:</simpara>
-<simpara><emphasis role="strong">request.json</emphasis></simpara>
-<programlisting language="json" linenumbering="unnumbered">Unresolved directive in verifier_contract.adoc - include::../../../../spring-cloud-contract-verifier/src/test/resources/classpath/request.json[indent=0]</programlisting>
-<simpara><emphasis role="strong">response.json</emphasis></simpara>
-<programlisting language="json" linenumbering="unnumbered">Unresolved directive in verifier_contract.adoc - include::../../../../spring-cloud-contract-verifier/src/test/resources/classpath/response.json[indent=0]</programlisting>
-<simpara>When test or stub generation takes place, the contents of the file is passed to the body
-of a request or a response. That works because of the <literal>file(&#8230;&#8203;)</literal> method. The argument of
-that method needs to be a file with location relative to the folder in which the contract
-lays.</simpara>
-</section>
 <section xml:id="contract-dsl-http-top-level-elements">
 <title>HTTP Top-Level Elements</title>
 <simpara>The following methods can be called in the top-level closure of a contract definition.
