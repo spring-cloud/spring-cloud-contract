@@ -283,10 +283,10 @@ class ContentUtils {
 
 	static ContentType recognizeContentTypeFromHeader(Headers headers) {
 		String content = headers?.entries.find { it.name == "Content-Type" } ?.clientValue?.toString()
-		if (content?.endsWith("json")) {
+		if (content?.contains("json")) {
 			return ContentType.JSON
 		}
-		if (content?.endsWith("xml")) {
+		if (content?.contains("xml")) {
 			return ContentType.XML
 		}
 		if (content?.contains("text")) {
