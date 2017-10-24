@@ -334,10 +334,14 @@ abstract class MethodBodyBuilder {
 			addColonIfRequired(bb)
 			// TODO xml validation
 		} else {
-			bb.addLine(getSimpleResponseBodyString(getResponseAsString()))
-			processText(bb, "", convertedResponseBody)
-			addColonIfRequired(bb)
+			simpleTextResponseBodyCheck(bb, convertedResponseBody)
 		}
+	}
+
+	private void simpleTextResponseBodyCheck(BlockBuilder bb, convertedResponseBody) {
+		bb.addLine(getSimpleResponseBodyString(getResponseAsString()))
+		processText(bb, "", convertedResponseBody)
+		addColonIfRequired(bb)
 	}
 
 	private void addJsonResponseBodyCheck(BlockBuilder bb, convertedResponseBody, BodyMatchers bodyMatchers) {
@@ -372,6 +376,9 @@ abstract class MethodBodyBuilder {
 					methodForTypeCheck(it, bb, copiedBody)
 				}
 			}
+		}
+		if (!(convertedResponseBody instanceof Map || convertedResponseBody instanceof List)) {
+			simpleTextResponseBodyCheck(bb, convertedResponseBody)
 		}
 		processBodyElement(bb, "", "", convertedResponseBody)
 	}

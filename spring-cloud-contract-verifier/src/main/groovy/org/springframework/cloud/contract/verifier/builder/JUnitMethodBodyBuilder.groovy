@@ -177,8 +177,8 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 		return buildEscapedMatchesMethod(headerValue) + ";"
 	}
 
-	private String buildEscapedMatchesMethod(Pattern headerValue) {
-		String escapedHeader = convertUnicodeEscapesIfRequired("$headerValue")
+	private String buildEscapedMatchesMethod(Pattern escapedValue) {
+		String escapedHeader = convertUnicodeEscapesIfRequired("$escapedValue")
 		return createMatchesMethod(escapedHeader)
 	}
 
