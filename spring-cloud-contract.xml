@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2017-11-01</date>
+<date>2017-11-02</date>
 </info>
 <preface>
 <title></title>
@@ -5825,7 +5825,12 @@ visible in your Groovy files. The following examples show how to test the depend
 <formalpara role="primary">
 <title>Maven</title>
 <para>
-<programlisting language="xml" linenumbering="unnumbered">Unresolved directive in verifier_contract.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer/pom.xml[tags=test_dep,indent=0]</programlisting>
+<programlisting language="xml" linenumbering="unnumbered">&lt;dependency&gt;
+	&lt;groupId&gt;com.example&lt;/groupId&gt;
+	&lt;artifactId&gt;beer-common&lt;/artifactId&gt;
+	&lt;version&gt;${project.version}&lt;/version&gt;
+	&lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</programlisting>
 </para>
 </formalpara>
 <formalpara role="secondary">
