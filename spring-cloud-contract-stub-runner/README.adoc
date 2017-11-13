@@ -363,7 +363,7 @@ for the following configuration file:
 
 [source,yml,indent=0]
 ----
-include::src/test/resources/application-test.yml[]
+include::src/test/resources/application-test.yml[tags=test]
 ----
 
 Instead of using the properties you can also use the properties inside the `@AutoConfigureStubRunner`.
@@ -414,7 +414,7 @@ for the following configuration file
 
 [source,yml,indent=0]
 ----
-include::src/test/resources/application.yml[]
+include::src/test/resources/application.yml[tags=ids]
 ----
 
 ===== Test profiles and service discovery
