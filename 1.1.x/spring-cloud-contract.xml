@@ -2459,15 +2459,7 @@ class StubRunnerConfigurationSpec extends Specification {
   ids:
     - org.springframework.cloud.contract.verifier.stubs:loanIssuance
     - org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer
-    - org.springframework.cloud.contract.verifier.stubs:bootService
-  cloud:
-    enabled: false
-  camel:
-    enabled: false
-
-spring.cloud:
-  consul.enabled: false
-  service-registry.enabled: false</programlisting>
+    - org.springframework.cloud.contract.verifier.stubs:bootService</programlisting>
 <simpara>Instead of using the properties you can also use the properties inside the <literal>@AutoConfigureStubRunner</literal>.
 Below you can find an example of achieving the same result by setting values on the annotation.</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">@AutoConfigureStubRunner(
@@ -2525,12 +2517,7 @@ or <literal>DiscoveryClient</literal> directly, to call those stubbed servers in
 		restTemplate.getForObject('http://someNameThatShouldMapFraudDetectionServer/name', String) == 'fraudDetectionServer'
 }</programlisting>
 <simpara>for the following configuration file</simpara>
-<programlisting language="yml" linenumbering="unnumbered">spring.cloud:
-  zookeeper.enabled: false
-  consul.enabled: false
-eureka.client.enabled: false
-stubrunner:
-  camel.enabled: false
+<programlisting language="yml" linenumbering="unnumbered">stubrunner:
   idsToServiceIds:
     ivyNotation: someValueInsideYourCode
     fraudDetectionServer: someNameThatShouldMapFraudDetectionServer</programlisting>

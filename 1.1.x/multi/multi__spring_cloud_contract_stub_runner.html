@@ -414,15 +414,7 @@ its methods as presented below:</p><pre class="programlisting"><em><span class="
   ids:
     - org.springframework.cloud.contract.verifier.stubs:loanIssuance
     - org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer
-    - org.springframework.cloud.contract.verifier.stubs:bootService
-  cloud:
-    enabled: false
-  camel:
-    enabled: false
-
-spring.cloud:
-  consul.enabled: false
-  service-registry.enabled: false</pre><p>Instead of using the properties you can also use the properties inside the <code class="literal">@AutoConfigureStubRunner</code>.
+    - org.springframework.cloud.contract.verifier.stubs:bootService</pre><p>Instead of using the properties you can also use the properties inside the <code class="literal">@AutoConfigureStubRunner</code>.
 Below you can find an example of achieving the same result by setting values on the annotation.</p><pre class="programlisting">@AutoConfigureStubRunner(
 		ids = [<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:loanIssuance"</span>,
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"</span>,
@@ -438,12 +430,7 @@ or <code class="literal">DiscoveryClient</code> directly, to call those stubbed 
 	and: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Stubs can be reached via load service discovery'</span>
 		restTemplate.getForObject(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'http://loanIssuance/name'</span>, String) == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'loanIssuance'</span>
 		restTemplate.getForObject(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'http://someNameThatShouldMapFraudDetectionServer/name'</span>, String) == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'fraudDetectionServer'</span>
-}</pre><p>for the following configuration file</p><pre class="programlisting">spring.cloud:
-  zookeeper.enabled: false
-  consul.enabled: false
-eureka.client.enabled: false
-stubrunner:
-  camel.enabled: false
+}</pre><p>for the following configuration file</p><pre class="programlisting">stubrunner:
   idsToServiceIds:
     ivyNotation: someValueInsideYourCode
     fraudDetectionServer: someNameThatShouldMapFraudDetectionServer</pre><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_test_profiles_and_service_discovery" href="#_test_profiles_and_service_discovery"></a>Test profiles and service discovery</h4></div></div></div><p>In your integration tests you typically don&#8217;t want to call neither a discovery service (e.g. Eureka)
