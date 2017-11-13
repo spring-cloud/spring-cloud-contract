@@ -73,9 +73,10 @@ public class ContractDslSnippet extends TemplatedSnippet {
 		model.put("response_status", response.getStatus().value());
 		model.put("response_body_present", response.getContent().length > 0);
 		model.put("response_body", response.getContentAsString());
-		HttpHeaders headers = response.getHeaders();
+		Map<String, String> headers = response.getHeaders().toSingleValueMap();
+		filterHeaders(headers);
 		model.put("response_headers_present", !headers.isEmpty());
-		model.put("response_headers", headers.toSingleValueMap().entrySet());
+		model.put("response_headers", headers.entrySet());
 		@SuppressWarnings("unchecked") Set<String> jsonPaths = (Set<String>) operation.getAttributes()
 				.get("contract.jsonPaths");
 		model.put("response_json_paths_present", jsonPaths != null && !jsonPaths.isEmpty());

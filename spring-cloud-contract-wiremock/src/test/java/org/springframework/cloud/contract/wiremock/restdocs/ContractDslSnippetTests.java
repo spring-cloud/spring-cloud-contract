@@ -84,6 +84,8 @@ public class ContractDslSnippetTests {
 		then(parsedContract.getRequest().getHeaders().getEntries()).isNotNull();
 		then(headerNames(parsedContract.getRequest().getHeaders().getEntries())).doesNotContain
 				(HttpHeaders.HOST, HttpHeaders.CONTENT_LENGTH);
+		then(headerNames(parsedContract.getResponse().getHeaders().getEntries())).doesNotContain
+				(HttpHeaders.HOST, HttpHeaders.CONTENT_LENGTH);
 		then(parsedContract.getRequest().getMethod().getClientValue()).isNotNull();
 		then(parsedContract.getRequest().getUrl().getClientValue()).isNotNull();
 		then(parsedContract.getRequest().getUrl().getClientValue().toString()).startsWith("/");
