@@ -2,7 +2,10 @@ spring.cloud:
   zookeeper.enabled: false
   consul.enabled: false
 eureka.client.enabled: false
+stubrunner.camel.enabled: false
+# tag::ids[]
 stubrunner:
   idsToServiceIds:
     ivyNotation: someValueInsideYourCode
     fraudDetectionServer: someNameThatShouldMapFraudDetectionServer
+# end::ids[]
