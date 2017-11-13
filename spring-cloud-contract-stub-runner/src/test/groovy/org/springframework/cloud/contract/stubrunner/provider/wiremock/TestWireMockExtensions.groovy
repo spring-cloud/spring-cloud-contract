@@ -4,12 +4,12 @@ import com.github.tomakehurst.wiremock.common.FileSource
 import com.github.tomakehurst.wiremock.extension.Extension
 import com.github.tomakehurst.wiremock.extension.Parameters
 import com.github.tomakehurst.wiremock.extension.ResponseTransformer
+import com.github.tomakehurst.wiremock.http.ChunkedDribbleDelay
 import com.github.tomakehurst.wiremock.http.Request
 import com.github.tomakehurst.wiremock.http.Response
 
 import org.springframework.cloud.contract.verifier.dsl.wiremock.DefaultResponseTransformer
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions
-
 /**
  * Extension that registers the default response transformer and a custom one too
  */
@@ -41,7 +41,8 @@ class CustomExtension extends ResponseTransformer {
 	@Override
 	Response transform(Request request, Response response, FileSource files, Parameters parameters) {
 		return new Response(response.status, response.statusMessage,
-				"surprise!", response.headers, response.wasConfigured(), response.fault, response.fromProxy)
+				"surprise!", response.headers, response.wasConfigured(), response.fault,
+				new ChunkedDribbleDelay(0, 0), response.fromProxy)
 	}
 
 	/**
