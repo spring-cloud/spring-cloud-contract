@@ -19,10 +19,8 @@ package org.springframework.cloud.contract.verifier.messaging.stream;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.stream.config.BindingProperties;
 import org.springframework.cloud.stream.config.BindingServiceProperties;
@@ -30,9 +28,6 @@ import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.converter.DefaultContentTypeResolver;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
-import org.springframework.util.MimeTypeUtils;
 
 /**
  * @author Marcin Grzejszczak
@@ -111,14 +106,6 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 	@Override
 	public Message<?> receive(String destination) {
 		return receive(destination, 5, TimeUnit.SECONDS);
-	}
-
-	protected MappingJackson2MessageConverter createJacksonConverter() {
-		DefaultContentTypeResolver resolver = new DefaultContentTypeResolver();
-		resolver.setDefaultMimeType(MimeTypeUtils.APPLICATION_JSON);
-		MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
-		converter.setContentTypeResolver(resolver);
-		return converter;
 	}
 
 }
