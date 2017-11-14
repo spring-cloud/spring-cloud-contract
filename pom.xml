@@ -23,7 +23,6 @@
 	<inceptionYear>2016</inceptionYear>
 
 	<properties>
-		<spring-boot.version>2.0.0.BUILD-SNAPSHOT</spring-boot.version>
 		<checkstyle.version>2.17</checkstyle.version>
 		<spring-cloud-build.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-build.version>
 		<spring-cloud-zookeeper.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-zookeeper.version>

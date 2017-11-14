@@ -1026,7 +1026,7 @@ effect on the stubs loaded explicitly from the `stubs` attribute.
 
 For a more conventional WireMock experience, you can use JUnit `@Rules` to start and stop
 the server. To do so, use the `WireMockSpring` convenience class to obtain an `Options`
-instance, as shown in the followin example:
+instance, as shown in the following example:
 
 [source,java,indent=0]
 ----
