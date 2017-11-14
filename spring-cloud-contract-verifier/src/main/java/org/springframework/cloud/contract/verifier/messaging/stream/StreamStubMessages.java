@@ -32,7 +32,6 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.converter.DefaultContentTypeResolver;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.util.MimeTypeUtils;
 
 /**
@@ -75,12 +74,7 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 		try {
 			MessageChannel messageChannel = this.context
 					.getBean(resolvedDestination(destination), MessageChannel.class);
-			Message<?> message = this.messageCollector.forChannel(messageChannel).poll(timeout, timeUnit);
-			if (message == null) {
-				return message;
-			}
-			Object fromMessage = converter().fromMessage(message, String.class);
-			return MessageBuilder.createMessage(fromMessage, message.getHeaders());
+			return this.messageCollector.forChannel(messageChannel).poll(timeout, timeUnit);
 		}
 		catch (Exception e) {
 			log.error("Exception occurred while trying to read a message from "
@@ -117,20 +111,6 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 	@Override
 	public Message<?> receive(String destination) {
 		return receive(destination, 5, TimeUnit.SECONDS);
-	}
-
-	private MappingJackson2MessageConverter converter() {
-		ObjectMapper mapper = null;
-		try {
-			mapper = this.context.getBean(ObjectMapper.class);
-		} catch (NoSuchBeanDefinitionException e) {
-
-		}
-		MappingJackson2MessageConverter converter = createJacksonConverter();
-		if (mapper != null) {
-			converter.setObjectMapper(mapper);
-		}
-		return converter;
 	}
 
 	protected MappingJackson2MessageConverter createJacksonConverter() {
