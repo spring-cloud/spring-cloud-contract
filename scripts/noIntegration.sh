@@ -6,5 +6,5 @@ FOLDER=`pwd`
 
 set -e
 
-./mvnw clean install "${@}"
-${FOLDER}/scripts/generateDocs.sh "${@}"
+./mvnw clean install ${@}
+${FOLDER}/scripts/generateDocs.sh ${@}
