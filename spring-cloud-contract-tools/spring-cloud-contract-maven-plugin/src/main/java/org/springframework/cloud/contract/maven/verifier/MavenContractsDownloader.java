@@ -87,8 +87,10 @@ class MavenContractsDownloader {
 	private StubDownloader stubDownloader() {
 		StubDownloaderBuilder builder = this.stubDownloaderBuilderProvider.get();
 		if (StringUtils.hasText(this.contractsRepositoryUrl) || this.contractsWorkOffline) {
-			this.log.info("Will download contracts from [" + this.contractsRepositoryUrl + "]. "
-					+ "Work offline switch equals to [" + this.contractsWorkOffline + "]");
+			if (this.log.isDebugEnabled()) {
+				this.log.debug("Will download contracts from [" + this.contractsRepositoryUrl + "]. "
+						+ "Work offline switch equals to [" + this.contractsWorkOffline + "]");
+			}
 			if (builder != null) {
 				logStubDownloader(builder);
 				return builder.build(buildOptions());

@@ -162,8 +162,10 @@ public class AetherStubDownloader implements StubDownloader {
 		Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier,
 				ARTIFACT_EXTENSION, resolvedVersion);
 		ArtifactRequest request = new ArtifactRequest(artifact, this.remoteRepos, null);
-		log.info("Resolving artifact [" + artifact
-				+ "] using remote repositories " + this.remoteRepos);
+		if (log.isDebugEnabled()) {
+			log.debug("Resolving artifact [" + artifact
+					+ "] using remote repositories " + this.remoteRepos);
+		}
 		try {
 			ArtifactResult result = this.repositorySystem.resolveArtifact(this.session, request);
 			log.info("Resolved artifact [" + artifact + "] to "

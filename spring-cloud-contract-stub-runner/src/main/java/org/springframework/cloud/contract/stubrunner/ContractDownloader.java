@@ -92,7 +92,9 @@ public class ContractDownloader {
 	}
 
 	private File unpackAndDownloadContracts() {
-		log.info("Will download contracts for [" + this.contractsJarStubConfiguration + "]");
+		if (log.isDebugEnabled()) {
+			log.debug("Will download contracts for [" + this.contractsJarStubConfiguration + "]");
+		}
 		Map.Entry<StubConfiguration, File> unpackedContractStubs = this.stubDownloader
 				.downloadAndUnpackStubJar(this.contractsJarStubConfiguration);
 		if (unpackedContractStubs == null) {
