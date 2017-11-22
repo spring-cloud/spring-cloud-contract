@@ -5,7 +5,7 @@
 
 	<groupId>com.example</groupId>
 	<artifactId>http-server-restdocs</artifactId>
-	<version>1.2.1.BUILD-SNAPSHOT</version>
+	<version>0.0.1-SNAPSHOT</version>
 
 	<name>Spring Cloud Contract RestDocs Http Server Sample</name>
 	<description>Spring Cloud RestDocs Verifier Http Server Sample</description>

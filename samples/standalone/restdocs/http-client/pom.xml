@@ -5,7 +5,7 @@
 
 	<groupId>com.example</groupId>
 	<artifactId>http-client-restdocs</artifactId>
-	<version>1.2.1.BUILD-SNAPSHOT</version>
+	<version>0.0.1-SNAPSHOT</version>
 
 	<name>Spring Cloud Contract RestDocs Http Client Sample</name>
 	<description>Spring Cloud Contract RestDocs Http Client Sample</description>

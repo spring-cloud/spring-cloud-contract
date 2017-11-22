@@ -23,7 +23,7 @@
 
 	<groupId>org.springframework.cloud.verifier.sample</groupId>
 	<artifactId>sample-pact-project</artifactId>
-	<version>1.2.1.BUILD-SNAPSHOT</version>
+	<version>0.1</version>
 
 	<properties>
 		<spring.cloud.contract.version>1.2.0.BUILD-SNAPSHOT</spring.cloud.contract.version>
