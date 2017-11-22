@@ -348,6 +348,49 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
 
+	@Issue("#465")
+	def "should work for '/' url for [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				description("""
+				Represents a request to the shouldReturnName service
+				
+				given:
+					a request to the shouldReturnName service
+				when:
+					it is a GET
+				then:
+					return Ryan
+				""")
+			request {
+				method 'GET'
+				url '/'
+			}
+			response {
+				status 200
+				body("Ryan")
+				headers {
+					contentType(textHtml())
+				}
+			}
+		}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			String test = blockBuilder.toString()
+		then:
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName           						 | methodBuilder
+			"MockMvcSpockMethodBuilder" 						 | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder" 						 | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
 	def "should use fixed delay milliseconds in the generated test [#methodBuilderName]"() {
 		given:
 			Contract contractDsl = Contract.make {

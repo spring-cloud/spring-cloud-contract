@@ -73,7 +73,9 @@ class TestSideRequestTemplateModel {
 	private static List<String> buildPathsFromUrl(String url) {
 		String fakeUrl = "http://foo.bar" + (url.startsWith("/") ? url : "/" + url)
 		List<String> paths = new URL(fakeUrl).path.split("/") as List<String>
-		paths.remove(0)
+		if (!paths.isEmpty()) {
+			paths.remove(0)
+		}
 		return paths
 	}
 
@@ -84,7 +86,7 @@ class TestSideRequestTemplateModel {
 
 	private static String getBodyAsRawJson(Object body) {
 		Object bodyValue = extractServerValueFromBody(body)
-		return new JsonOutput().toJson(bodyValue)
+		return bodyValue != null ? new JsonOutput().toJson(bodyValue) : bodyValue
 	}
 
 	protected static Object extractServerValueFromBody(bodyValue) {
