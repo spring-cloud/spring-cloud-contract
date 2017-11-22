@@ -5,7 +5,7 @@
 
 	<groupId>com.example</groupId>
 	<artifactId>http-client-dsl</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.2.1.BUILD-SNAPSHOT</version>
 
 	<name>Spring Cloud Contract Verifier Http Client Sample</name>
 	<description>Spring Cloud Contract Verifier Http Client Sample</description>
@@ -13,14 +13,14 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.4.RELEASE</version>
+		<version>1.5.8.RELEASE</version>
 		<relativePath />
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<spring-cloud-dependencies.version>Edgware.BUILD-SNAPSHOT</spring-cloud-dependencies.version>
+		<spring-cloud-dependencies.version>1.3.6.RELEASE</spring-cloud-dependencies.version>
 	</properties>
 
 	<dependencies>

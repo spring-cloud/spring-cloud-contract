@@ -23,7 +23,7 @@
 
 	<groupId>org.springframework.cloud.verifier.sample</groupId>
 	<artifactId>sample-project</artifactId>
-	<version>0.1</version>
+	<version>1.2.1.BUILD-SNAPSHOT</version>
 
 	<build>
 		<plugins>
