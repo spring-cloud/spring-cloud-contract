@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.cloud.contract.stubrunner.util.StubsParser;
 import org.springframework.util.StringUtils;
@@ -31,6 +32,7 @@ public class StubRunnerOptionsBuilder {
 
 	private static final String DELIMITER = ":";
 	private LinkedList<String> stubs = new LinkedList<>();
+	private Collection<StubConfiguration> stubConfigurations = new ArrayList<>();
 	private Map<StubConfiguration, Integer> stubIdsToPortMapping = new LinkedHashMap<>();
 
 	private Integer minPortValue = 10000;
@@ -41,7 +43,7 @@ public class StubRunnerOptionsBuilder {
 	private String username;
 	private String password;
 	private StubRunnerOptions.StubRunnerProxyOptions stubRunnerProxyOptions;
-	private boolean stubPerConsumer = false;
+	private boolean stubsPerConsumer = false;
 	private String consumerName;
 	private String mappingsOutputFolder;
 
@@ -107,6 +109,16 @@ public class StubRunnerOptionsBuilder {
 		this.stubRepositoryRoot = options.stubRepositoryRoot;
 		this.workOffline = options.workOffline;
 		this.stubsClassifier = options.stubsClassifier;
+		this.username = options.username;
+		this.password = options.password;
+		this.stubRunnerProxyOptions = options.getStubRunnerProxyOptions();
+		this.stubsPerConsumer = options.isStubsPerConsumer();
+		this.consumerName = options.getConsumerName();
+		this.mappingsOutputFolder = options.getMappingsOutputFolder();
+		this.stubConfigurations = options.dependencies != null ?
+				options.dependencies : new ArrayList<StubConfiguration>();
+		this.stubIdsToPortMapping = options.stubIdsToPortMapping != null ?
+				options.stubIdsToPortMapping : new LinkedHashMap<StubConfiguration, Integer>();
 		return this;
 	}
 
@@ -118,12 +130,15 @@ public class StubRunnerOptionsBuilder {
 	public StubRunnerOptions build() {
 		return new StubRunnerOptions(this.minPortValue, this.maxPortValue, this.stubRepositoryRoot,
 				this.workOffline, this.stubsClassifier, buildDependencies(), this.stubIdsToPortMapping,
-				this.username, this.password, this.stubRunnerProxyOptions, this.stubPerConsumer, this.consumerName,
+				this.username, this.password, this.stubRunnerProxyOptions, this.stubsPerConsumer, this.consumerName,
 				this.mappingsOutputFolder);
 	}
 
 	private Collection<StubConfiguration> buildDependencies() {
-		return StubsParser.fromString(this.stubs, this.stubsClassifier);
+		Set<StubConfiguration> stubConfigurations = StubsParser
+				.fromString(this.stubs, this.stubsClassifier);
+		this.stubConfigurations.addAll(stubConfigurations);
+		return this.stubConfigurations;
 	}
 
 	private static List<String> stubsToList(String[] stubIdsToPortMapping) {
@@ -196,7 +211,7 @@ public class StubRunnerOptionsBuilder {
 	}
 
 	public StubRunnerOptionsBuilder withStubPerConsumer(boolean stubPerConsumer) {
-		this.stubPerConsumer = stubPerConsumer;
+		this.stubsPerConsumer = stubPerConsumer;
 		return this;
 	}
 

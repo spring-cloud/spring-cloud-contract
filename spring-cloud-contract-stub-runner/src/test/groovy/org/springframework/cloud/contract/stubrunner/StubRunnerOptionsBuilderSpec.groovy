@@ -134,4 +134,30 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 		then:
 		options.getDependencies().toString() == '[groupId2:artifactId2:[,0.0.2]:classifier2, groupId:artifactId:[,0.0.1]:classifier]'
 	}
+
+	@Issue("#466")
+	def shouldSetAllDependenciesFromOptions() {
+		given:
+			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, "root", true, "classifier",
+					[new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "foo", "bar",
+					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder"))
+			builder.withStubs("foo:bar:baz")
+		when:
+			StubRunnerOptions options = builder.build()
+		then:
+			options.minPortValue == 1
+			options.maxPortValue == 2
+			options.stubRepositoryRoot == "root"
+			options.workOffline == true
+			options.stubsClassifier == "classifier"
+			options.dependencies == [new StubConfiguration("a:b:c"), new StubConfiguration("foo:bar:baz:classifier")]
+			options.stubIdsToPortMapping == [(new StubConfiguration("a:b:c")): 3]
+			options.username == "foo"
+			options.password == "bar"
+			options.proxyOptions.proxyHost == "host"
+			options.proxyOptions.proxyPort == 4
+			options.stubsPerConsumer == true
+			options.consumerName == "consumer"
+			options.mappingsOutputFolder == "folder"
+	}
 }
