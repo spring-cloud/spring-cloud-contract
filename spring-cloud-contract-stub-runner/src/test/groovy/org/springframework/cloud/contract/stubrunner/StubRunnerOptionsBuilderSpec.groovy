@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.stubrunner
 
 import spock.lang.Issue
 import spock.lang.Specification
+import spock.util.environment.RestoreSystemProperties
 
 class StubRunnerOptionsBuilderSpec extends Specification {
 
@@ -152,6 +153,41 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			options.stubsClassifier == "classifier"
 			options.dependencies == [new StubConfiguration("a:b:c"), new StubConfiguration("foo:bar:baz:classifier")]
 			options.stubIdsToPortMapping == [(new StubConfiguration("a:b:c")): 3]
+			options.username == "foo"
+			options.password == "bar"
+			options.proxyOptions.proxyHost == "host"
+			options.proxyOptions.proxyPort == 4
+			options.stubsPerConsumer == true
+			options.consumerName == "consumer"
+			options.mappingsOutputFolder == "folder"
+	}
+
+	@Issue("#462")
+	@RestoreSystemProperties
+	def shouldSetAllPropsFromSystemProps() {
+		given:
+			System.setProperty("stubrunner.port.range.min", "1")
+			System.setProperty("stubrunner.port.range.max", "2")
+			System.setProperty("stubrunner.repository.root", "root")
+			System.setProperty("stubrunner.work-offline", "true")
+			System.setProperty("stubrunner.classifier", "classifier")
+			System.setProperty("stubrunner.ids", "a:b:c,foo:bar:baz:classifier")
+			System.setProperty("stubrunner.username", "foo")
+			System.setProperty("stubrunner.password", "bar")
+			System.setProperty("stubrunner.stubs-per-consumer", "true")
+			System.setProperty("stubrunner.consumer-name", "consumer")
+			System.setProperty("stubrunner.proxy.host", "host")
+			System.setProperty("stubrunner.proxy.port", "4")
+			System.setProperty("stubrunner.mappings-output-folder", "folder")
+		when:
+			StubRunnerOptions options = StubRunnerOptions.fromSystemProps()
+		then:
+			options.minPortValue == 1
+			options.maxPortValue == 2
+			options.stubRepositoryRoot == "root"
+			options.workOffline == true
+			options.stubsClassifier == "classifier"
+			options.dependencies == [new StubConfiguration("a:b:c"), new StubConfiguration("foo:bar:baz:classifier")]
 			options.username == "foo"
 			options.password == "bar"
 			options.proxyOptions.proxyHost == "host"

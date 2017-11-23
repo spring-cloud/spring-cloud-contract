@@ -123,6 +123,26 @@ public class StubRunnerOptions {
 		}
 	}
 
+	public static StubRunnerOptions fromSystemProps() {
+		StubRunnerOptionsBuilder builder = new StubRunnerOptionsBuilder()
+				.withMinPort(Integer.valueOf(System.getProperty("stubrunner.port.range.min", "10000")))
+				.withMaxPort(Integer.valueOf(System.getProperty("stubrunner.port.range.max", "15000")))
+				.withStubRepositoryRoot(System.getProperty("stubrunner.repository.root", ""))
+				.withWorkOffline(Boolean.parseBoolean(System.getProperty("stubrunner.work-offline", "false")))
+				.withStubsClassifier(System.getProperty("stubrunner.classifier", "stubs"))
+				.withStubs(System.getProperty("stubrunner.ids", ""))
+				.withUsername(System.getProperty("stubrunner.username"))
+				.withPassword(System.getProperty("stubrunner.password"))
+				.withStubPerConsumer(Boolean.parseBoolean(System.getProperty("stubrunner.stubs-per-consumer", "false")))
+				.withConsumerName(System.getProperty("stubrunner.consumer-name"))
+				.withMappingsOutputFolder(System.getProperty("stubrunner.mappings-output-folder"));
+		String proxyHost = System.getProperty("stubrunner.proxy.host");
+		if (proxyHost != null) {
+			builder.withProxy(proxyHost, Integer.parseInt(System.getProperty("stubrunner.proxy.port")));
+		}
+		return builder.build();
+	}
+
 	public Integer getMinPortValue() {
 		return this.minPortValue;
 	}

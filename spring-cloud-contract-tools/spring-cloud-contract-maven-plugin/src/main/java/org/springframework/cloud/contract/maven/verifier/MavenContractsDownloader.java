@@ -114,6 +114,7 @@ class MavenContractsDownloader {
 
 	StubRunnerOptions buildOptions() {
 		return new StubRunnerOptionsBuilder()
+				.withOptions(StubRunnerOptions.fromSystemProps())
 				.withStubRepositoryRoot(this.contractsRepositoryUrl)
 				.withWorkOffline(this.contractsWorkOffline)
 				.build();
