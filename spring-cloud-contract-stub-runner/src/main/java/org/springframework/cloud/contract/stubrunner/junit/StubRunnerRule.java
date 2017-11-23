@@ -45,7 +45,7 @@ public class StubRunnerRule implements TestRule, StubFinder, StubRunnerRuleOptio
 	private static final String DELIMITER = ":";
 	private static final String LATEST_VERSION = "+";
 
-	StubRunnerOptionsBuilder stubRunnerOptionsBuilder = new StubRunnerOptionsBuilder(defaultStubRunnerOptions());
+	StubRunnerOptionsBuilder stubRunnerOptionsBuilder = new StubRunnerOptionsBuilder(StubRunnerOptions.fromSystemProps());
 	BatchStubRunner stubFinder;
 	MessageVerifier verifier = new ExceptionThrowingMessageVerifier();
 	StubRunnerRule delegate = this;
@@ -68,25 +68,6 @@ public class StubRunnerRule implements TestRule, StubFinder, StubRunnerRuleOptio
 				StubRunnerRule.this.stubFinder().runStubs();
 			}
 		};
-	}
-
-	private StubRunnerOptions defaultStubRunnerOptions() {
-		StubRunnerOptionsBuilder builder = new StubRunnerOptionsBuilder()
-				.withMinPort(Integer.valueOf(System.getProperty("stubrunner.port.range.min", "10000")))
-				.withMaxPort(Integer.valueOf(System.getProperty("stubrunner.port.range.max", "15000")))
-				.withStubRepositoryRoot(System.getProperty("stubrunner.repository.root", ""))
-				.withWorkOffline(Boolean.parseBoolean(System.getProperty("stubrunner.work-offline", "false")))
-				.withStubsClassifier(System.getProperty("stubrunner.classifier", "stubs"))
-				.withStubs(System.getProperty("stubrunner.ids", ""))
-				.withUsername(System.getProperty("stubrunner.username"))
-				.withPassword(System.getProperty("stubrunner.password"))
-				.withStubPerConsumer(Boolean.parseBoolean(System.getProperty("stubrunner.stubsPerConsumer", "false")))
-				.withConsumerName(System.getProperty("stubrunner.consumer-name"));
-		String proxyHost = System.getProperty("stubrunner.proxy.host");
-		if (proxyHost != null) {
-			builder.withProxy(proxyHost, Integer.parseInt(System.getProperty("stubrunner.proxy.port")));
-		}
-		return builder.build();
 	}
 
 	@Override public StubRunnerRule messageVerifier(MessageVerifier messageVerifier) {
