@@ -162,6 +162,20 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			options.mappingsOutputFolder == "folder"
 	}
 
+	def shouldNotPrintUsernameAndPassword() {
+		given:
+			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, "root", true, "classifier",
+					[new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "username123", "password123",
+					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder"))
+			builder.withStubs("foo:bar:baz")
+		when:
+			String options = builder.build().toString()
+		then:
+			!options.contains("username123")
+			!options.contains("password123")
+			options.contains("****")
+	}
+
 	@Issue("#462")
 	@RestoreSystemProperties
 	def shouldSetAllPropsFromSystemProps() {
