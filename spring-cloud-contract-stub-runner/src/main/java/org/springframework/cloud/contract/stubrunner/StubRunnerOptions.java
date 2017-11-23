@@ -244,10 +244,14 @@ public class StubRunnerOptions {
 				+ this.maxPortValue + ", stubRepositoryRoot='" + this.stubRepositoryRoot + '\''
 				+ ", workOffline=" + this.workOffline + ", stubsClassifier='" + this.stubsClassifier
 				+ '\'' + ", dependencies=" + this.dependencies + ", stubIdsToPortMapping="
-				+ this.stubIdsToPortMapping + ", username='" + this.username + '\'' + ", password='"
-				+ this.password + '\'' + ", stubRunnerProxyOptions='" + this.stubRunnerProxyOptions + "', stubsPerConsumer='"
+				+ this.stubIdsToPortMapping + ", username='" + obfuscate(this.username) + '\'' + ", password='"
+				+ obfuscate(this.password) + '\'' + ", stubRunnerProxyOptions='" + this.stubRunnerProxyOptions + "', stubsPerConsumer='"
 				+ this.stubsPerConsumer
 				+ '\'' + ", stubsPerConsumer='" + this.stubsPerConsumer + '\''
 				+ '}';
+	}
+
+	private String obfuscate(String string) {
+		return StringUtils.hasText(string) ? "****" : "";
 	}
 }
