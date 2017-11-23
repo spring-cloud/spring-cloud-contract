@@ -1,10 +1,12 @@
 package org.springframework.cloud.contract.verifier.plugin
 
+import java.util.concurrent.ConcurrentHashMap
+
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
-import org.springframework.cloud.contract.stubrunner.AetherStubDownloader
+
 import org.springframework.cloud.contract.stubrunner.ContractDownloader
 import org.springframework.cloud.contract.stubrunner.StubConfiguration
 import org.springframework.cloud.contract.stubrunner.StubDownloader
@@ -13,8 +15,6 @@ import org.springframework.cloud.contract.stubrunner.StubRunnerOptions
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.util.StringUtils
-
-import java.util.concurrent.ConcurrentHashMap
 /**
  * @author Marcin Grzejszczak
  */
@@ -76,6 +76,7 @@ class GradleContractsDownloader {
 	protected StubDownloader stubDownloader(ContractVerifierExtension extension) {
         StubDownloaderBuilderProvider provider = new StubDownloaderBuilderProvider()
 		StubRunnerOptionsBuilder options = new StubRunnerOptionsBuilder()
+				.withOptions(StubRunnerOptions.fromSystemProps())
 				.withStubRepositoryRoot(extension.contractRepository.repositoryUrl)
 				.withWorkOffline(extension.contractsWorkOffline)
 				.withUsername(extension.contractRepository.username)

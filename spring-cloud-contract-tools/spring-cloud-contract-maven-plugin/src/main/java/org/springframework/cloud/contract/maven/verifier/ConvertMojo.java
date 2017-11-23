@@ -116,6 +116,30 @@ public class  ConvertMojo extends AbstractMojo {
 	@Parameter(property = "excludeBuildFolders", defaultValue = "false")
 	private boolean excludeBuildFolders;
 
+	/**
+	 * The user name to be used to connect to the repo with contracts.
+	 */
+	@Parameter(property = "contractsRepositoryUsername")
+	private String contractsRepositoryUsername;
+
+	/**
+	 * The password to be used to connect to the repo with contracts.
+	 */
+	@Parameter(property = "contractsRepositoryPassword")
+	private String contractsRepositoryPassword;
+
+	/**
+	 * The proxy host to be used to connect to the repo with contracts.
+	 */
+	@Parameter(property = "contractsRepositoryProxyHost")
+	private String contractsRepositoryProxyHost;
+
+	/**
+	 * The proxy port to be used to connect to the repo with contracts.
+	 */
+	@Parameter(property = "contractsRepositoryProxyPort")
+	private Integer contractsRepositoryProxyPort;
+
 	@Component(role = MavenResourcesFiltering.class, hint = "default")
 	private MavenResourcesFiltering mavenResourcesFiltering;
 
@@ -142,7 +166,8 @@ public class  ConvertMojo extends AbstractMojo {
 		config.setExcludeBuildFolders(this.excludeBuildFolders);
 		File contractsDirectory = new MavenContractsDownloader(this.project, this.contractDependency,
 				this.contractsPath, this.contractsRepositoryUrl, this.contractsWorkOffline, getLog(),
-				this.aetherStubDownloaderFactory, this.repoSession).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
+				this.aetherStubDownloaderFactory, this.repoSession, this.contractsRepositoryUsername,
+				this.contractsRepositoryPassword, this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 
 		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering, config)

@@ -171,6 +171,30 @@ public class GenerateTestsMojo extends AbstractMojo {
 	@Parameter(property = "baseClassMappings")
 	private List<BaseClassMapping> baseClassMappings;
 
+	/**
+	 * The user name to be used to connect to the repo with contracts.
+	 */
+	@Parameter(property = "contractsRepositoryUsername")
+	private String contractsRepositoryUsername;
+
+	/**
+	 * The password to be used to connect to the repo with contracts.
+	 */
+	@Parameter(property = "contractsRepositoryPassword")
+	private String contractsRepositoryPassword;
+
+	/**
+	 * The proxy host to be used to connect to the repo with contracts.
+	 */
+	@Parameter(property = "contractsRepositoryProxyHost")
+	private String contractsRepositoryProxyHost;
+
+	/**
+	 * The proxy port to be used to connect to the repo with contracts.
+	 */
+	@Parameter(property = "contractsRepositoryProxyPort")
+	private Integer contractsRepositoryProxyPort;
+
 	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
 
 	@Inject
@@ -191,7 +215,9 @@ public class GenerateTestsMojo extends AbstractMojo {
 		// download contracts, unzip them and pass as output directory
 		File contractsDirectory = new MavenContractsDownloader(this.project, this.contractDependency,
 				this.contractsPath, this.contractsRepositoryUrl, this.contractsWorkOffline, getLog(),
-				this.aetherStubDownloaderFactory, this.repoSession).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
+				this.aetherStubDownloaderFactory, this.repoSession,
+				this.contractsRepositoryUsername, this.contractsRepositoryPassword,
+				this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 		setupConfig(config, contractsDirectory);
 		this.project.addTestCompileSourceRoot(this.generatedTestSourcesDir.getAbsolutePath());

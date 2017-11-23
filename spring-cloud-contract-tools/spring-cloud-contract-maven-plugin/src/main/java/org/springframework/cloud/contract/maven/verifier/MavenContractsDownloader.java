@@ -39,12 +39,18 @@ class MavenContractsDownloader {
 	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
 	private final RepositorySystemSession repoSession;
 	private final StubDownloaderBuilderProvider stubDownloaderBuilderProvider;
+	private final String repositoryUsername;
+	private final String repositoryPassword;
+	private final String repositoryProxyHost;
+	private final Integer repositoryProxyPort;
 
 	MavenContractsDownloader(MavenProject project, Dependency contractDependency,
 			String contractsPath, String contractsRepositoryUrl,
 			boolean contractsWorkOffline, Log log,
 			AetherStubDownloaderFactory aetherStubDownloaderFactory,
-			RepositorySystemSession repoSession) {
+			RepositorySystemSession repoSession, String repositoryUsername,
+			String repositoryPassword, String repositoryProxyHost,
+			Integer repositoryProxyPort) {
 		this.project = project;
 		this.contractDependency = contractDependency;
 		this.contractsPath = contractsPath;
@@ -53,6 +59,10 @@ class MavenContractsDownloader {
 		this.log = log;
 		this.aetherStubDownloaderFactory = aetherStubDownloaderFactory;
 		this.repoSession = repoSession;
+		this.repositoryUsername = repositoryUsername;
+		this.repositoryPassword = repositoryPassword;
+		this.repositoryProxyHost = repositoryProxyHost;
+		this.repositoryProxyPort = repositoryProxyPort;
 		this.stubDownloaderBuilderProvider = new StubDownloaderBuilderProvider();
 	}
 
@@ -113,11 +123,16 @@ class MavenContractsDownloader {
 	}
 
 	StubRunnerOptions buildOptions() {
-		return new StubRunnerOptionsBuilder()
+		StubRunnerOptionsBuilder builder = new StubRunnerOptionsBuilder()
 				.withOptions(StubRunnerOptions.fromSystemProps())
 				.withStubRepositoryRoot(this.contractsRepositoryUrl)
 				.withWorkOffline(this.contractsWorkOffline)
-				.build();
+				.withUsername(this.repositoryUsername)
+				.withPassword(this.repositoryPassword);
+		if (this.repositoryProxyPort != null) {
+			builder.withProxy(this.repositoryProxyHost, this.repositoryProxyPort);
+		}
+		return builder.build();
 	}
 
 	private StubConfiguration stubConfiguration() {

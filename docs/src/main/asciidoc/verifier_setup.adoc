@@ -582,17 +582,12 @@ the following options:
 Defaults to `groupid/artifactid` where `gropuid` is slash separated.
 * *contractsWorkOffline*: Dictates whether the dependencies should be downloaded or the
 local Maven artifacts should be reused.
-* *contractsRepositoryUrl*: *DEPRECATED PROPERTY - please use the `contractRepository`
-closure*: URL to a repo with the artifacts that have contracts. If it is not provided,
+* *contractsRepositoryUrl*: URL to a repo with the artifacts that have contracts. If it is not provided,
 use the current Maven ones.
-* *contractRepository* - Lets you use a closure where you can define properties related
-to repository with contracts.
-* *username*: The user name to be used to connect to the repo.
-* *password*: The password to be used to connect to the repo.
-* *proxyHost*: The proxy host to be used to connect to the repo.
-* *proxyPort*: The proxy port to be used to connect to the repo.
-* *cacheDownloadedContracts* - Specifies whether to reuse downloaded JARs that contain
-contract definitions.
+* *contractsRepositoryUsername*: The user name to be used to connect to the repo with contracts.
+* *contractsRepositoryPassword*: The password to be used to connect to the repo with contracts.
+* *contractsRepositoryProxyHost*: The proxy host to be used to connect to the repo with contracts.
+* *contractsRepositoryProxyPort*: The proxy port to be used to connect to the repo with contracts.
 
 We cache only non-snapshot, explicitly provided versions (for example
 `+` or `1.0.0.BUILD-SNAPSHOT` won't get cached). By default, this feature is turned on.
