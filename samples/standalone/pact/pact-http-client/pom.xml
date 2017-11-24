@@ -5,7 +5,7 @@
 
 	<groupId>com.example</groupId>
 	<artifactId>pact-http-client</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.2.2.BUILD-SNAPSHOT</version>
 
 	<name>Spring Cloud Contract Verifier Http Client Sample with Pact</name>
 	<description>Spring Cloud Contract Verifier Http Client Sample with Pact</description>

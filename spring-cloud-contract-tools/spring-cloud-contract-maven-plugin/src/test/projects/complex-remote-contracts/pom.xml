@@ -23,7 +23,7 @@
 
 	<groupId>com.example.foo.bar.baz</groupId>
 	<artifactId>someartifact</artifactId>
-	<version>0.1.BUILD-SNAPSHOT</version>
+	<version>1.2.2.BUILD-SNAPSHOT</version>
 
 	<build>
 		<plugins>

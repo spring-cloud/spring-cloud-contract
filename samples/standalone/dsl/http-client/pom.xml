@@ -5,7 +5,7 @@
 
 	<groupId>com.example</groupId>
 	<artifactId>http-client-dsl</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.2.2.BUILD-SNAPSHOT</version>
 
 	<name>Spring Cloud Contract Verifier Http Client Sample</name>
 	<description>Spring Cloud Contract Verifier Http Client Sample</description>
