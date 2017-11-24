@@ -23,7 +23,7 @@
 
 	<groupId>org.springframework.cloud.verifier.sample</groupId>
 	<artifactId>common-repo</artifactId>
-	<version>1.2.2.BUILD-SNAPSHOT</version>
+	<version>0.1</version>
 
 	<!--tag::common_repo[]-->
 	<properties>
