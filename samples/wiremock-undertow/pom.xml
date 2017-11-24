@@ -5,7 +5,7 @@
 
 	<groupId>com.example</groupId>
 	<artifactId>wiremock-undertow</artifactId>
-	<version>1.2.2.BUILD-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
 	<name>wiremock-undertow</name>
