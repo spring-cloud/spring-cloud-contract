@@ -5,7 +5,7 @@
 
 	<groupId>com.example</groupId>
 	<artifactId>server</artifactId>
-	<version>1.2.2.BUILD-SNAPSHOT</version>
+	<version>0.0.1-SNAPSHOT</version>
 
 	<name>Server Stubs</name>
 	<description>POM used to install locally stubs for consumer side</description>
