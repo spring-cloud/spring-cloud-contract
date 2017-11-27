@@ -6,8 +6,8 @@ import com.github.tomakehurst.wiremock.extension.responsetemplating.RequestTempl
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import groovy.transform.CompileStatic
-import org.springframework.cloud.contract.verifier.builder.TestSideRequestTemplateModel
 
+import org.springframework.cloud.contract.verifier.builder.TestSideRequestTemplateModel
 /**
  * A Handlebars helper for the {@code jsonpath} helper function.
  *
@@ -38,8 +38,16 @@ class HandlebarsJsonPathHelper implements Helper<Map<String, Object>> {
 	}
 
 	private Object returnObjectForTest(Object model, String jsonPath) {
-		DocumentContext documentContext = JsonPath.parse(((TestSideRequestTemplateModel) model).rawBody)
+		String body = removeSurroundingQuotes(((TestSideRequestTemplateModel) model).rawBody).replace('\\"', '"')
+		DocumentContext documentContext = JsonPath.parse(body)
 		return documentContext.read(jsonPath)
+	}
+
+	private String removeSurroundingQuotes(String body) {
+		if (body.startsWith('"') && body.endsWith('"')) {
+			return body.substring(1, body.length() - 1)
+		}
+		return body
 	}
 
 }

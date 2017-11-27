@@ -348,6 +348,36 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
 
+	@Issue("#458")
+	def "should reference request from body whtn body is a string [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url '/mytest'
+					body("""{ "name": "My name" }""")
+				}
+				response {
+					status 200
+					body fromRequest().body('$.name')
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName                                    | methodBuilder                                                                               | responseAsserter
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | { String string -> assert string.contains('responseBody == "My name"') }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | { String string -> assert string.contains('assertThat(responseBody).isEqualTo("My name");') }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String string -> assert string.contains('responseBody == "My name"') }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String string -> assert string.contains('assertThat(responseBody).isEqualTo("My name");') }
+	}
+
 	def "should use fixed delay milliseconds in the generated test [#methodBuilderName]"() {
 		given:
 			Contract contractDsl = Contract.make {
