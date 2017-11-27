@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2017-11-22</date>
+<date>2017-11-27</date>
 </info>
 <preface>
 <title></title>
@@ -1071,7 +1071,7 @@ one to one to the contents of the repo.</simpara>
 	&lt;properties&gt;
 		&lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
 		&lt;java.version&gt;1.8&lt;/java.version&gt;
-		&lt;spring-cloud-contract.version&gt;1.2.1.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
+		&lt;spring-cloud-contract.version&gt;1.2.2.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
 		&lt;spring-cloud-dependencies.version&gt;Edgware.BUILD-SNAPSHOT&lt;/spring-cloud-dependencies.version&gt;
 		&lt;excludeBuildFolders&gt;true&lt;/excludeBuildFolders&gt;
 	&lt;/properties&gt;
@@ -1991,29 +1991,20 @@ Defaults to <literal>groupid/artifactid</literal> where <literal>gropuid</litera
 local Maven artifacts should be reused.</simpara>
 </listitem>
 <listitem>
-<simpara><emphasis role="strong">contractsRepositoryUrl</emphasis>: <emphasis role="strong">DEPRECATED PROPERTY - please use the <literal>contractRepository</literal>
-closure</emphasis>: URL to a repo with the artifacts that have contracts. If it is not provided,
+<simpara><emphasis role="strong">contractsRepositoryUrl</emphasis>: URL to a repo with the artifacts that have contracts. If it is not provided,
 use the current Maven ones.</simpara>
 </listitem>
 <listitem>
-<simpara><emphasis role="strong">contractRepository</emphasis> - Lets you use a closure where you can define properties related
-to repository with contracts.</simpara>
+<simpara><emphasis role="strong">contractsRepositoryUsername</emphasis>: The user name to be used to connect to the repo with contracts.</simpara>
 </listitem>
 <listitem>
-<simpara><emphasis role="strong">username</emphasis>: The user name to be used to connect to the repo.</simpara>
+<simpara><emphasis role="strong">contractsRepositoryPassword</emphasis>: The password to be used to connect to the repo with contracts.</simpara>
 </listitem>
 <listitem>
-<simpara><emphasis role="strong">password</emphasis>: The password to be used to connect to the repo.</simpara>
+<simpara><emphasis role="strong">contractsRepositoryProxyHost</emphasis>: The proxy host to be used to connect to the repo with contracts.</simpara>
 </listitem>
 <listitem>
-<simpara><emphasis role="strong">proxyHost</emphasis>: The proxy host to be used to connect to the repo.</simpara>
-</listitem>
-<listitem>
-<simpara><emphasis role="strong">proxyPort</emphasis>: The proxy port to be used to connect to the repo.</simpara>
-</listitem>
-<listitem>
-<simpara><emphasis role="strong">cacheDownloadedContracts</emphasis> - Specifies whether to reuse downloaded JARs that contain
-contract definitions.</simpara>
+<simpara><emphasis role="strong">contractsRepositoryProxyPort</emphasis>: The proxy port to be used to connect to the repo with contracts.</simpara>
 </listitem>
 </itemizedlist>
 <simpara>We cache only non-snapshot, explicitly provided versions (for example
@@ -6903,7 +6894,7 @@ effect on the stubs loaded explicitly from the <literal>stubs</literal> attribut
 <title>Alternative: Using JUnit Rules</title>
 <simpara>For a more conventional WireMock experience, you can use JUnit <literal>@Rules</literal> to start and stop
 the server. To do so, use the <literal>WireMockSpring</literal> convenience class to obtain an <literal>Options</literal>
-instance, as shown in the followin example:</simpara>
+instance, as shown in the following example:</simpara>
 <programlisting language="java" linenumbering="unnumbered">@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class WiremockForDocsClassRuleTests {

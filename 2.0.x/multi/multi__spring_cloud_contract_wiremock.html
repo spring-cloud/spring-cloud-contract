@@ -62,7 +62,7 @@ automatic loading of stubs, because they come from the root location
 in a subdirectory called "mappings". The value of <code class="literal">files</code> has no
 effect on the stubs loaded explicitly from the <code class="literal">stubs</code> attribute.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_alternative_using_junit_rules" href="#_alternative_using_junit_rules"></a>11.3&nbsp;Alternative: Using JUnit Rules</h2></div></div></div><p>For a more conventional WireMock experience, you can use JUnit <code class="literal">@Rules</code> to start and stop
 the server. To do so, use the <code class="literal">WireMockSpring</code> convenience class to obtain an <code class="literal">Options</code>
-instance, as shown in the followin example:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
+instance, as shown in the following example:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
 <em><span class="hl-annotation" style="color: gray">@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> WiremockForDocsClassRuleTests {
 
