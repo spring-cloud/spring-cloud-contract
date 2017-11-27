@@ -313,6 +313,7 @@ abstract class MethodBodyBuilder {
 			convertedResponseBody = extractValue(convertedResponseBody as GString, contentType, { Object o -> o instanceof DslProperty ? o.serverValue : o })
 		}
 		if (contentType != ContentType.TEXT) {
+			JsonToJsonPathsConverter.INPUT_JSON.set(MapConverter.getStubSideValues(convertedResponseBody))
 			convertedResponseBody = MapConverter.getTestSideValues(convertedResponseBody)
 		} else {
 			convertedResponseBody = StringEscapeUtils.escapeJava(convertedResponseBody.toString())

@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.util
 
+import java.util.regex.Pattern
+
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.PathNotFoundException
@@ -23,6 +25,7 @@ import com.toomuchcoding.jsonassert.JsonAssertion
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
+
 import org.springframework.cloud.contract.spec.internal.BodyMatcher
 import org.springframework.cloud.contract.spec.internal.BodyMatchers
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
@@ -30,8 +33,6 @@ import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.util.SerializationUtils
-
-import java.util.regex.Pattern
 /**
  * I would like to apologize to anyone who is reading this class. Since JSON is a hectic structure
  * this class is also hectic. The idea is to traverse the JSON structure and build a set of
@@ -51,6 +52,8 @@ class JsonToJsonPathsConverter {
 	private static final Boolean SERVER_SIDE = false
 	private static final Boolean CLIENT_SIDE = true
 	private static final String ANY_ARRAY_NOTATION_IN_JSONPATH = "[*]"
+	// in order to be able to verify the instance we need to access the JSON
+	static final ThreadLocal<Object> INPUT_JSON = new ThreadLocal<>()
 
 	private final ContractVerifierConfigProperties configProperties
 
@@ -214,6 +217,7 @@ class JsonToJsonPathsConverter {
 			}
 			pathsAndValues.add(key)
 		}
+		INPUT_JSON.remove()
 		return pathsAndValues
 	}
 
@@ -403,16 +407,24 @@ class JsonToJsonPathsConverter {
 
 	protected MethodBufferingJsonVerifiable valueToAsserter(MethodBufferingJsonVerifiable key, Object value) {
 		def convertedValue = ContentUtils.returnParsedObject(value)
+		println "FOO: ${INPUT_JSON.get()}"
+		DocumentContext context = JsonPath.parse(INPUT_JSON.get())
+		Object object = context.read(key.jsonPath())
 		if (key instanceof FinishedDelegatingJsonVerifiable) {
 			return key
 		}
+		MethodBufferingJsonVerifiable asserterCheck = asserterCheck(convertedValue, key)
+		return asserterCheck.isInstanceOf(object.getClass())
+	}
+
+	private MethodBufferingJsonVerifiable asserterCheck(def convertedValue, MethodBufferingJsonVerifiable key) {
 		if (convertedValue instanceof Pattern) {
 			return key.matches((convertedValue as Pattern).pattern())
 		} else if (convertedValue instanceof OptionalProperty) {
 			return key.matches((convertedValue as OptionalProperty).optionalPattern())
 		} else if (convertedValue instanceof GString) {
 			return key.matches(RegexpBuilders.buildGStringRegexpForTestSide(convertedValue))
-		} else if (convertedValue instanceof  ExecutionProperty) {
+		} else if (convertedValue instanceof ExecutionProperty) {
 			return key
 		}
 		return key.isEqualTo(convertedValue)
