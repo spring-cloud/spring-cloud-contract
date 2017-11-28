@@ -35,7 +35,7 @@ class RegexPatterns {
 	// tag::regexps[]
 	protected static final Pattern TRUE_OR_FALSE = Pattern.compile(/(true|false)/)
 	protected static final Pattern ONLY_ALPHA_UNICODE = Pattern.compile(/[\p{L}]*/)
-	protected static final Pattern NUMBER = Pattern.compile('-?\\d*(\\.\\d+)?')
+	protected static final Pattern NUMBER = Pattern.compile('-?(\\d*\\.\\d+|\\d+)')
 	protected static final Pattern IP_ADDRESS = Pattern.compile('([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])')
 	protected static final Pattern HOSTNAME_PATTERN = Pattern.compile('((http[s]?|ftp):/)/?([^:/\\s]+)(:[0-9]{1,5})?')
 	protected static final Pattern EMAIL = Pattern.compile('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}')
