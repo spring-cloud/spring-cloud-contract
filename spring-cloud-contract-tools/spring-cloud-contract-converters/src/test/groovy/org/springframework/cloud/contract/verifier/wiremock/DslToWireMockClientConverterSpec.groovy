@@ -627,7 +627,7 @@ class DslToWireMockClientConverterSpec extends Specification {
     }, {
       "matchesJsonPath" : "$[?(@.alpha == 'abc')]"
     }, {
-      "matchesJsonPath" : "$[?(@.number =~ /(-?\\\\d*(\\\\.\\\\d+)?)/)]"
+      "matchesJsonPath" : "$[?(@.number =~ /(-?(\\\\d*\\\\.\\\\d+|\\\\d+)/)]"
     }, {
       "matchesJsonPath" : "$[?(@.aBoolean =~ /((true|false))/)]"
     }, {
