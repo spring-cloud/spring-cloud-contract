@@ -4,13 +4,13 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2017-11-13</date>
+<date>2017-12-02</date>
 </info>
 <preface>
 <title></title>
 <simpara><emphasis>Documentation Authors: Adam Dudczak, Mathias Düsterhöft, Marcin Grzejszczak, Dennis Kieselhorst, Jakub Kubryński, Karol Lassak,
 Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer</emphasis>, Jay Bryant</simpara>
-<simpara>1.2.0.BUILD-SNAPSHOT</simpara>
+<simpara>2.0.0.BUILD-SNAPSHOT</simpara>
 </preface>
 <chapter xml:id="_spring_cloud_contract">
 <title>Spring Cloud Contract</title>
@@ -53,7 +53,7 @@ Spring Cloud Contract Verifier.</simpara>
 <informalfigure>
 <mediaobject>
 <imageobject>
-<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/Deps.png"/>
+<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/2.0.x/docs/src/main/asciidoc/images/Deps.png"/>
 </imageobject>
 <textobject><phrase>Microservices Architecture</phrase></textobject>
 </mediaobject>
@@ -128,7 +128,7 @@ are those that your application directly uses.</simpara>
 <informalfigure>
 <mediaobject>
 <imageobject>
-<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/Stubs2.png"/>
+<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/2.0.x/docs/src/main/asciidoc/images/Stubs2.png"/>
 </imageobject>
 <textobject><phrase>Stubbed Services</phrase></textobject>
 </mediaobject>
@@ -294,8 +294,8 @@ we mark the client as a fraud.</simpara>
 Issuance has an artifact-id of <literal>http-client</literal>, and both have a <literal>group-id</literal> of <literal>com.example</literal>.</simpara>
 <simpara>Social remark - both client and server development teams need to communicate directly and
 discuss changes while going through the process. CDC is all about communication.</simpara>
-<simpara>The <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-server">server
-side code is available here</link> and <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-client">the
+<simpara>The <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/2.0.x/samples/standalone/dsl/http-server">server
+side code is available here</link> and <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/2.0.x/samples/standalone/dsl/http-client">the
 client code here</link>.</simpara>
 <tip>
 <simpara>In this case, the producer owns the contracts. Physically, all the contract are
@@ -798,9 +798,7 @@ where the repository with your stubs is located. At this moment the stubs of the
 side are automatically downloaded from Nexus/Artifactory. You can switch off the value of
 the <literal>workOffline</literal> parameter in your annotation. The following code shows an example of
 achieving the same thing by changing the properties.</simpara>
-<programlisting language="yaml" linenumbering="unnumbered">stubrunner:
-  ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot</programlisting>
+<programlisting language="yaml" linenumbering="unnumbered">Unresolved directive in verifier_introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/2.0.x/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]</programlisting>
 <simpara>That&#8217;s it!</simpara>
 </section>
 </section>
@@ -1064,15 +1062,15 @@ one to one to the contents of the repo.</simpara>
 	&lt;parent&gt;
 		&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
 		&lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
-		&lt;version&gt;1.5.4.RELEASE&lt;/version&gt;
+		&lt;version&gt;2.0.0.M6&lt;/version&gt;
 		&lt;relativePath /&gt;
 	&lt;/parent&gt;
 
 	&lt;properties&gt;
 		&lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
 		&lt;java.version&gt;1.8&lt;/java.version&gt;
-		&lt;spring-cloud-contract.version&gt;1.2.0.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
-		&lt;spring-cloud-dependencies.version&gt;Edgware.BUILD-SNAPSHOT&lt;/spring-cloud-dependencies.version&gt;
+		&lt;spring-cloud-contract.version&gt;2.0.0.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
+		&lt;spring-cloud-dependencies.version&gt;Finchley.BUILD-SNAPSHOT&lt;/spring-cloud-dependencies.version&gt;
 		&lt;excludeBuildFolders&gt;true&lt;/excludeBuildFolders&gt;
 	&lt;/properties&gt;
 
@@ -1991,29 +1989,20 @@ Defaults to <literal>groupid/artifactid</literal> where <literal>gropuid</litera
 local Maven artifacts should be reused.</simpara>
 </listitem>
 <listitem>
-<simpara><emphasis role="strong">contractsRepositoryUrl</emphasis>: <emphasis role="strong">DEPRECATED PROPERTY - please use the <literal>contractRepository</literal>
-closure</emphasis>: URL to a repo with the artifacts that have contracts. If it is not provided,
+<simpara><emphasis role="strong">contractsRepositoryUrl</emphasis>: URL to a repo with the artifacts that have contracts. If it is not provided,
 use the current Maven ones.</simpara>
 </listitem>
 <listitem>
-<simpara><emphasis role="strong">contractRepository</emphasis> - Lets you use a closure where you can define properties related
-to repository with contracts.</simpara>
+<simpara><emphasis role="strong">contractsRepositoryUsername</emphasis>: The user name to be used to connect to the repo with contracts.</simpara>
 </listitem>
 <listitem>
-<simpara><emphasis role="strong">username</emphasis>: The user name to be used to connect to the repo.</simpara>
+<simpara><emphasis role="strong">contractsRepositoryPassword</emphasis>: The password to be used to connect to the repo with contracts.</simpara>
 </listitem>
 <listitem>
-<simpara><emphasis role="strong">password</emphasis>: The password to be used to connect to the repo.</simpara>
+<simpara><emphasis role="strong">contractsRepositoryProxyHost</emphasis>: The proxy host to be used to connect to the repo with contracts.</simpara>
 </listitem>
 <listitem>
-<simpara><emphasis role="strong">proxyHost</emphasis>: The proxy host to be used to connect to the repo.</simpara>
-</listitem>
-<listitem>
-<simpara><emphasis role="strong">proxyPort</emphasis>: The proxy port to be used to connect to the repo.</simpara>
-</listitem>
-<listitem>
-<simpara><emphasis role="strong">cacheDownloadedContracts</emphasis> - Specifies whether to reuse downloaded JARs that contain
-contract definitions.</simpara>
+<simpara><emphasis role="strong">contractsRepositoryProxyPort</emphasis>: The proxy port to be used to connect to the repo with contracts.</simpara>
 </listitem>
 </itemizedlist>
 <simpara>We cache only non-snapshot, explicitly provided versions (for example
@@ -2136,7 +2125,7 @@ goal.</simpara>
 <informalfigure>
 <mediaobject>
 <imageobject>
-<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/sts_exception.png"/>
+<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/2.0.x/docs/src/main/asciidoc/images/sts_exception.png"/>
 </imageobject>
 <textobject><phrase>STS Exception</phrase></textobject>
 </mediaobject>
@@ -2593,7 +2582,7 @@ Stub Runner Messaging sections</link>.</simpara>
 		&lt;dependency&gt;
 			&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 			&lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
-			&lt;version&gt;Edgware.BUILD-SNAPSHOT&lt;/version&gt;
+			&lt;version&gt;Finchley.BUILD-SNAPSHOT&lt;/version&gt;
 			&lt;type&gt;pom&lt;/type&gt;
 			&lt;scope&gt;import&lt;/scope&gt;
 		&lt;/dependency&gt;
@@ -2739,7 +2728,9 @@ it if you want to.</simpara>
 			&lt;inherited&gt;false&lt;/inherited&gt;
 			&lt;configuration&gt;
 				&lt;attach&gt;true&lt;/attach&gt;
-				&lt;descriptor&gt;${basedir}/src/assembly/stub.xml&lt;/descriptor&gt;
+				&lt;descriptors&gt;
+					${basedir}/src/assembly/stub.xml
+				&lt;/descriptors&gt;
 			&lt;/configuration&gt;
 		&lt;/execution&gt;
 	&lt;/executions&gt;
@@ -3202,7 +3193,6 @@ and registers in WireMock the selected stubs.</simpara>
 its methods as presented below:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(properties = [" stubrunner.cloud.enabled=false",
-		"stubrunner.camel.enabled=false",
 		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}'])
 @AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/")
 @DirtiesContext
@@ -3464,7 +3454,7 @@ class StubRunnerBootSpec extends Specification {
 			def response = RestAssuredMockMvc.get("/stubs/${stubId}")
 		then:
 			response.statusCode == 200
-			response.body.as(Integer) &gt; 0
+			Integer.valueOf(response.body.asString()) &gt; 0
 		where:
 			stubId &lt;&lt; ['org.springframework.cloud.contract.verifier.stubs:bootService:+:stubs',
 					   'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs',
@@ -3775,9 +3765,6 @@ frameworks:</simpara>
 <simpara>Spring Cloud Stream</simpara>
 </listitem>
 <listitem>
-<simpara>Apache Camel</simpara>
-</listitem>
-<listitem>
 <simpara>Spring AMQP</simpara>
 </listitem>
 </itemizedlist>
@@ -3855,132 +3842,15 @@ or the other in your tests.</simpara>
 </section>
 <section xml:id="trigger-group-artifact-ids">
 <title>Trigger by Group and Artifact Ids</title>
-<programlisting language="groovy" linenumbering="unnumbered">stubFinder.trigger('org.springframework.cloud.contract.verifier.stubs:camelService', 'return_book_1')</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">stubFinder.trigger('org.springframework.cloud.contract.verifier.stubs:streamService', 'return_book_1')</programlisting>
 </section>
 <section xml:id="trigger-artifact-ids">
 <title>Trigger by Artifact Ids</title>
-<programlisting language="groovy" linenumbering="unnumbered">stubFinder.trigger('camelService', 'return_book_1')</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">stubFinder.trigger('streamService', 'return_book_1')</programlisting>
 </section>
 <section xml:id="trigger-all-messages">
 <title>Trigger All Messages</title>
 <programlisting language="groovy" linenumbering="unnumbered">stubFinder.trigger()</programlisting>
-</section>
-</section>
-<section xml:id="_stub_runner_camel">
-<title>Stub Runner Camel</title>
-<simpara>Spring Cloud Contract Verifier Stub Runner&#8217;s messaging module gives you an easy way to
-integrate with Apache Camel. For the provided artifacts, it automatically downloads the
-stubs and registers the required routes.</simpara>
-<section xml:id="_adding_the_runner_to_the_project">
-<title>Adding the Runner to the Project</title>
-<simpara>You can have both Apache Camel and Spring Cloud Contract Stub Runner on the classpath.
-Remember to annotate your test class with <literal>@AutoConfigureStubRunner</literal>.</simpara>
-</section>
-<section xml:id="_disabling_the_functionality">
-<title>Disabling the functionality</title>
-<simpara>If you need to disable this functionality, set the <literal>stubrunner.camel.enabled=false</literal>
-property.</simpara>
-<simpara>Assume that you have the following Maven repository with deployed stubs for the
-<literal>camelService</literal> application:</simpara>
-<programlisting language="bash" linenumbering="unnumbered">└── .m2
-    └── repository
-        └── io
-            └── codearte
-                └── accurest
-                    └── stubs
-                        └── camelService
-                            ├── 0.0.1-SNAPSHOT
-                            │   ├── camelService-0.0.1-SNAPSHOT.pom
-                            │   ├── camelService-0.0.1-SNAPSHOT-stubs.jar
-                            │   └── maven-metadata-local.xml
-                            └── maven-metadata-local.xml</programlisting>
-<simpara>Further assume that the stubs contain the following structure:</simpara>
-<programlisting language="bash" linenumbering="unnumbered">├── META-INF
-│   └── MANIFEST.MF
-└── repository
-    ├── accurest
-    │   ├── bookDeleted.groovy
-    │   ├── bookReturned1.groovy
-    │   └── bookReturned2.groovy
-    └── mappings</programlisting>
-<simpara>Consider the following contracts (numbered <emphasis role="strong">1</emphasis>):</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">Contract.make {
-	label 'return_book_1'
-	input {
-		triggeredBy('bookReturnedTriggered()')
-	}
-	outputMessage {
-		sentTo('jms:output')
-		body('''{ "bookName" : "foo" }''')
-		headers {
-			header('BOOK-NAME', 'foo')
-		}
-	}
-}</programlisting>
-<simpara>Now consider <emphasis role="strong">2</emphasis></simpara>
-<programlisting language="groovy" linenumbering="unnumbered">Contract.make {
-	label 'return_book_2'
-	input {
-		messageFrom('jms:input')
-		messageBody([
-				bookName: 'foo'
-		])
-		messageHeaders {
-			header('sample', 'header')
-		}
-	}
-	outputMessage {
-		sentTo('jms:output')
-		body([
-				bookName: 'foo'
-		])
-		headers {
-			header('BOOK-NAME', 'foo')
-		}
-	}
-}</programlisting>
-<simpara>These examples lend themselves to three scenarios:</simpara>
-<itemizedlist>
-<listitem>
-<simpara><xref linkend="camel-scenario-1"/></simpara>
-</listitem>
-<listitem>
-<simpara><xref linkend="camel-scenario-2"/></simpara>
-</listitem>
-<listitem>
-<simpara><xref linkend="camel-scenario-3"/></simpara>
-</listitem>
-</itemizedlist>
-<section xml:id="camel-scenario-1">
-<title>Scenario 1 (no input message)</title>
-<simpara>To trigger a message via the <literal>return_book_1</literal> label, use the <literal>StubTigger</literal> interface, as
-follows:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">stubFinder.trigger('return_book_1')</programlisting>
-<simpara>To listen to the output of the message sent to <literal>jms:output</literal>:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)</programlisting>
-<simpara>The received message passes the following assertions:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">receivedMessage != null
-assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
-receivedMessage.in.headers.get('BOOK-NAME') == 'foo'</programlisting>
-</section>
-<section xml:id="camel-scenario-2">
-<title>Scenario 2 (output triggered by input)</title>
-<simpara>Since the route is set for you, you can send a message to the <literal>jms:output</literal>
-destination:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">camelContext.createProducerTemplate().sendBodyAndHeaders('jms:input', new BookReturned('foo'), [sample: 'header'])</programlisting>
-<simpara>You can listen to the output of the message sent to <literal>jms:output</literal>:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">Exchange receivedMessage = camelContext.createConsumerTemplate().receive('jms:output', 5000)</programlisting>
-<simpara>The received message passes the following assertions:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">receivedMessage != null
-assertThatBodyContainsBookNameFoo(receivedMessage.in.body)
-receivedMessage.in.headers.get('BOOK-NAME') == 'foo'</programlisting>
-</section>
-<section xml:id="camel-scenario-3">
-<title>Scenario 3 (input with no output)</title>
-<simpara>Since the route is set for you, you can send a message to the <literal>jms:output</literal>
-destination:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">camelContext.createProducerTemplate().sendBodyAndHeaders('jms:delete', new BookReturned('foo'), [sample: 'header'])</programlisting>
-</section>
 </section>
 </section>
 <section xml:id="_stub_runner_integration">
@@ -3988,12 +3858,12 @@ destination:</simpara>
 <simpara>Spring Cloud Contract Verifier Stub Runner&#8217;s messaging module gives you an easy way to
 integrate with Spring Integration. For the provided artifacts, it automatically downloads
 the stubs and registers the required routes.</simpara>
-<section xml:id="_adding_the_runner_to_the_project_2">
+<section xml:id="_adding_the_runner_to_the_project">
 <title>Adding the Runner to the Project</title>
 <simpara>You can have both Spring Integration and Spring Cloud Contract Stub Runner on the
 classpath. Remember to annotate your test class with <literal>@AutoConfigureStubRunner</literal>.</simpara>
 </section>
-<section xml:id="_disabling_the_functionality_2">
+<section xml:id="_disabling_the_functionality">
 <title>Disabling the functionality</title>
 <simpara>If you need to disable this functionality, set the
 <literal>stubrunner.integration.enabled=false</literal> property.</simpara>
@@ -4149,12 +4019,12 @@ destination is resolved as a channel name.</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">testCompile "org.springframework.cloud:spring-cloud-stream-test-support"</programlisting>
 </para>
 </formalpara>
-<section xml:id="_adding_the_runner_to_the_project_3">
+<section xml:id="_adding_the_runner_to_the_project_2">
 <title>Adding the Runner to the Project</title>
 <simpara>You can have both Spring Cloud Stream and Spring Cloud Contract Stub Runner on the
 classpath. Remember to annotate your test class with <literal>@AutoConfigureStubRunner</literal>.</simpara>
 </section>
-<section xml:id="_disabling_the_functionality_3">
+<section xml:id="_disabling_the_functionality_2">
 <title>Disabling the functionality</title>
 <simpara>If you need to disable this functionality, set the <literal>stubrunner.stream.enabled=false</literal>
 property.</simpara>
@@ -4289,7 +4159,7 @@ Spring AMQP stub runner integration looks for bindings on the application contex
 match this exchange. Then it collects the queues from the Spring exchanges and tries to
 find message listeners bound to these queues. The message is triggered for all matching
 message listeners.</simpara>
-<section xml:id="_adding_the_runner_to_the_project_4">
+<section xml:id="_adding_the_runner_to_the_project_3">
 <title>Adding the Runner to the Project</title>
 <simpara>You can have both Spring AMQP and Spring Cloud Contract Stub Runner on the classpath and
 set the property <literal>stubrunner.amqp.enabled=true</literal>. Remember to annotate your test class
@@ -4895,7 +4765,7 @@ generated for request and response.</simpara>
 use in your contracts, as shown in the following example:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">protected static final Pattern TRUE_OR_FALSE = Pattern.compile(/(true|false)/)
 protected static final Pattern ONLY_ALPHA_UNICODE = Pattern.compile(/[\p{L}]*/)
-protected static final Pattern NUMBER = Pattern.compile('-?\\d*(\\.\\d+)?')
+protected static final Pattern NUMBER = Pattern.compile('-?(\\d*\\.\\d+|\\d+)')
 protected static final Pattern IP_ADDRESS = Pattern.compile('([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])')
 protected static final Pattern HOSTNAME_PATTERN = Pattern.compile('((http[s]?|ftp):/)/?([^:/\\s]+)(:[0-9]{1,5})?')
 protected static final Pattern EMAIL = Pattern.compile('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}')
@@ -4912,60 +4782,60 @@ protected static Pattern anyOf(String... values){
 	return Pattern.compile(values.collect({"^$it\$"}).join("|"))
 }
 
-String onlyAlphaUnicode() {
-	return ONLY_ALPHA_UNICODE.pattern()
+Pattern onlyAlphaUnicode() {
+	return ONLY_ALPHA_UNICODE
 }
 
-String number() {
-	return NUMBER.pattern()
+Pattern number() {
+	return NUMBER
 }
 
-String anyBoolean() {
-	return TRUE_OR_FALSE.pattern()
+Pattern anyBoolean() {
+	return TRUE_OR_FALSE
 }
 
-String ipAddress() {
-	return IP_ADDRESS.pattern()
+Pattern ipAddress() {
+	return IP_ADDRESS
 }
 
-String hostname() {
-	return HOSTNAME_PATTERN.pattern()
+Pattern hostname() {
+	return HOSTNAME_PATTERN
 }
 
-String email() {
-	return EMAIL.pattern()
+Pattern email() {
+	return EMAIL
 }
 
-String url() {
-	return URL.pattern()
+Pattern url() {
+	return URL
 }
 
-String uuid(){
-	return UUID.pattern()
+Pattern uuid(){
+	return UUID
 }
 
-String isoDate() {
-	return ANY_DATE.pattern()
+Pattern isoDate() {
+	return ANY_DATE
 }
 
-String isoDateTime() {
-	return ANY_DATE_TIME.pattern()
+Pattern isoDateTime() {
+	return ANY_DATE_TIME
 }
 
-String isoTime() {
-	return ANY_TIME.pattern()
+Pattern isoTime() {
+	return ANY_TIME
 }
 
-String iso8601WithOffset() {
-	return ISO8601_WITH_OFFSET.pattern()
+Pattern iso8601WithOffset() {
+	return ISO8601_WITH_OFFSET
 }
 
-String nonEmpty() {
-	return NON_EMPTY.pattern()
+Pattern nonEmpty() {
+	return NON_EMPTY
 }
 
-String nonBlank() {
-	return NON_BLANK.pattern()
+Pattern nonBlank() {
+	return NON_BLANK
 }</programlisting>
 <simpara>In your contract, you can use it as shown in the following example:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">Contract dslWithOptionalsInString = Contract.make {
@@ -5697,7 +5567,7 @@ the method name and passed the proper JSON path as a parameter to it.</simpara>
     }, {
       "matchesJsonPath" : "$[?(@.alpha == 'abc')]"
     }, {
-      "matchesJsonPath" : "$[?(@.number =~ /(-?\\\\d*(\\\\.\\\\d+)?)/)]"
+      "matchesJsonPath" : "$[?(@.number =~ /(-?(\\\\d*\\\\.\\\\d+|\\\\d+))/)]"
     }, {
       "matchesJsonPath" : "$[?(@.aBoolean =~ /((true|false))/)]"
     }, {
@@ -5865,7 +5735,7 @@ socket.</simpara>
 <simpara>The following example shows how to set up a base class and Rest Assured:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">import io.restassured.RestAssured;
 import org.junit.Before;
-import org.springframework.boot.context.embedded.LocalServerPort;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(classes = ContextPathTestingBaseClass.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -6943,7 +6813,7 @@ used. If you provide more than one, then the first one on the list is used.</sim
 <title>Spring Cloud Contract WireMock</title>
 <simpara>The Spring Cloud Contract WireMock modules let you use <link xl:href="http://wiremock.org">WireMock</link> in a
 Spring Boot application. Check out the
-<link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples">samples</link>
+<link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/2.0.x/samples">samples</link>
 for more details.</simpara>
 <simpara>If you have a Spring Boot application that uses Tomcat as an embedded server (which is
 the default with <literal>spring-boot-starter-web</literal>),  you can add
@@ -7024,7 +6894,7 @@ effect on the stubs loaded explicitly from the <literal>stubs</literal> attribut
 <title>Alternative: Using JUnit Rules</title>
 <simpara>For a more conventional WireMock experience, you can use JUnit <literal>@Rules</literal> to start and stop
 the server. To do so, use the <literal>WireMockSpring</literal> convenience class to obtain an <literal>Options</literal>
-instance, as shown in the followin example:</simpara>
+instance, as shown in the following example:</simpara>
 <programlisting language="java" linenumbering="unnumbered">@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class WiremockForDocsClassRuleTests {
@@ -7465,6 +7335,14 @@ you might see the following exception:</simpara>
 an old version of plugin and at test execution time you have an incompatible
 version of the release train (and vice versa).</simpara>
 <simpara>Done via <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/issues/267">issue 267</link></simpara>
+</section>
+</section>
+<section xml:id="cloud-verifier-1.2-2.0">
+<title>1.2.x &#8594; 2.0.x</title>
+<section xml:id="_no_camel_support">
+<title>No Camel support</title>
+<simpara>We will add back Apache Camel support only after this <link xl:href="https://issues.apache.org/jira/browse/CAMEL-11430">issue</link>
+gets fixed</simpara>
 </section>
 </section>
 </chapter>

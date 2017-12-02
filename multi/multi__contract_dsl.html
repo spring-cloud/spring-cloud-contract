@@ -359,7 +359,7 @@ the provided regular expression. The following code shows an example:</p><pre cl
 generated for request and response.</p><p>Spring Cloud Contract comes with a series of predefined regular expressions that you can
 use in your contracts, as shown in the following example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern TRUE_OR_FALSE = Pattern.compile(/(true|false)/)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern ONLY_ALPHA_UNICODE = Pattern.compile(/[\p{L}]*/)
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern NUMBER = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'-?\\d*(\\.\\d+)?'</span>)
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern NUMBER = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'-?(\\d*\\.\\d+|\\d+)'</span>)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern IP_ADDRESS = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])'</span>)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern HOSTNAME_PATTERN = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'((http[s]?|ftp):/)/?([^:/\\s]+)(:[0-9]{1,5})?'</span>)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern EMAIL = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}'</span>)
@@ -376,60 +376,60 @@ use in your contracts, as shown in the following example:</p><pre class="program
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> Pattern.compile(values.collect({<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"^$it\$"</span>}).join(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"|"</span>))
 }
 
-String onlyAlphaUnicode() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> ONLY_ALPHA_UNICODE.pattern()
+Pattern onlyAlphaUnicode() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> ONLY_ALPHA_UNICODE
 }
 
-String number() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> NUMBER.pattern()
+Pattern number() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> NUMBER
 }
 
-String anyBoolean() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> TRUE_OR_FALSE.pattern()
+Pattern anyBoolean() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> TRUE_OR_FALSE
 }
 
-String ipAddress() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> IP_ADDRESS.pattern()
+Pattern ipAddress() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> IP_ADDRESS
 }
 
-String hostname() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> HOSTNAME_PATTERN.pattern()
+Pattern hostname() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> HOSTNAME_PATTERN
 }
 
-String email() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> EMAIL.pattern()
+Pattern email() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> EMAIL
 }
 
-String url() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> URL.pattern()
+Pattern url() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> URL
 }
 
-String uuid(){
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> UUID.pattern()
+Pattern uuid(){
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> UUID
 }
 
-String isoDate() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> ANY_DATE.pattern()
+Pattern isoDate() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> ANY_DATE
 }
 
-String isoDateTime() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> ANY_DATE_TIME.pattern()
+Pattern isoDateTime() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> ANY_DATE_TIME
 }
 
-String isoTime() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> ANY_TIME.pattern()
+Pattern isoTime() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> ANY_TIME
 }
 
-String iso8601WithOffset() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> ISO8601_WITH_OFFSET.pattern()
+Pattern iso8601WithOffset() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> ISO8601_WITH_OFFSET
 }
 
-String nonEmpty() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> NON_EMPTY.pattern()
+Pattern nonEmpty() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> NON_EMPTY
 }
 
-String nonBlank() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> NON_BLANK.pattern()
+Pattern nonBlank() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> NON_BLANK
 }</pre><p>In your contract, you can use it as shown in the following example:</p><pre class="programlisting">Contract dslWithOptionalsInString = Contract.make {
 	priority <span class="hl-number">1</span>
 	request {
@@ -934,7 +934,7 @@ the method name and passed the proper JSON path as a parameter to it.</p></td></
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
       <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.alpha == 'abc')]"</span>
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
-      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.number =~ /(-?\\\\d*(\\\\.\\\\d+)?)/)]"</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.number =~ /(-?(\\\\d*\\\\.\\\\d+|\\\\d+))/)]"</span>
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
       <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.aBoolean =~ /((true|false))/)]"</span>
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
@@ -1060,7 +1060,7 @@ socket.</p><p>Consider the following contract:</p><pre class="programlisting">or
 	}
 }</pre><p>The following example shows how to set up a base class and Rest Assured:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> io.restassured.RestAssured;
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.Before;
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.boot.context.embedded.LocalServerPort;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.boot.web.server.LocalServerPort;
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.boot.test.context.SpringBootTest;
 
 <em><span class="hl-annotation" style="color: gray">@SpringBootTest(classes = ContextPathTestingBaseClass.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)</span></em>
