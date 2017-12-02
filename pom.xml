@@ -7,13 +7,13 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-build</artifactId>
-		<version>2.0.0.M6</version>
+		<version>2.0.0.BUILD-SNAPSHOT</version>
 		<relativePath/>
 	</parent>
 
 	<artifactId>spring-cloud-contract-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>2.0.0.M5</version>
+	<version>2.0.0.BUILD-SNAPSHOT</version>
 
 	<name>Spring Cloud Contract</name>
 	<description>Spring Cloud Contract</description>
@@ -24,12 +24,12 @@
 
 	<properties>
 		<checkstyle.version>2.17</checkstyle.version>
-		<spring-cloud-build.version>2.0.0.M6</spring-cloud-build.version>
-		<spring-cloud-zookeeper.version>2.0.0.M4</spring-cloud-zookeeper.version>
-		<spring-cloud-stream.version>Elmhurst.M3</spring-cloud-stream.version>
-		<spring-cloud-netflix.version>2.0.0.M5</spring-cloud-netflix.version>
-		<spring-cloud-consul.version>2.0.0.M4</spring-cloud-consul.version>
-		<spring-cloud-commons.version>2.0.0.M5</spring-cloud-commons.version>
+		<spring-cloud-build.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-build.version>
+		<spring-cloud-zookeeper.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-zookeeper.version>
+		<spring-cloud-stream.version>Elmhurst.BUILD-SNAPSHOT</spring-cloud-stream.version>
+		<spring-cloud-netflix.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-netflix.version>
+		<spring-cloud-consul.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-consul.version>
+		<spring-cloud-commons.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-commons.version>
 	</properties>
 
 	<modules>
