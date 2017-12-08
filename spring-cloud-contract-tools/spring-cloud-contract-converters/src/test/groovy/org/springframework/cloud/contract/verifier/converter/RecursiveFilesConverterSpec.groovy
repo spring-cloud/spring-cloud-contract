@@ -130,6 +130,34 @@ class RecursiveFilesConverterSpec extends Specification {
 			tmpFolder.root.list().toList().containsAll("foo", "bar")
 	}
 
+    def "should not create stub file when generated stub is empty"() {
+        given:
+            def sourceFile = tmpFolder.newFile("test.groovy")
+            sourceFile.text = """
+			    org.springframework.cloud.contract.spec.Contract.make {
+				    request {
+					    url "/baz"
+					    method "GET"
+				    }
+				    response {
+					    status 200
+				    }
+			    }
+			    """
+        and:
+            StubGenerator stubGenerator = stubGenerator("")
+        and:
+            ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
+            properties.contractsDslDir = tmpFolder.root
+            properties.stubsOutputDir = tmpFolder.newFolder("target")
+        and:
+            RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(properties, new StubGeneratorProvider([stubGenerator]))
+        when:
+            recursiveFilesConverter.processFiles()
+        then:
+            properties.stubsOutputDir.list().toList().isEmpty()
+    }
+
 	private static Set<Path> getRelativePathsForFilesInDirectory(Collection<File> createdFiles, File targetRootDirectory) {
 		Path rootSourcePath = Paths.get(targetRootDirectory.toURI())
 		Set<Path> relativizedCreatedFiles = createdFiles.collect { File file ->
