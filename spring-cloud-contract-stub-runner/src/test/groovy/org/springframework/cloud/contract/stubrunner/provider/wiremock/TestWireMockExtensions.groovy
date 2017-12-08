@@ -42,7 +42,7 @@ class CustomExtension extends ResponseTransformer {
 	Response transform(Request request, Response response, FileSource files, Parameters parameters) {
 		return new Response(response.status, response.statusMessage,
 				"surprise!", response.headers, response.wasConfigured(), response.fault,
-				new ChunkedDribbleDelay(0, 0), response.fromProxy)
+				response.initialDelay, new ChunkedDribbleDelay(0, 0), response.fromProxy)
 	}
 
 	/**
