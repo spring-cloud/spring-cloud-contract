@@ -18,10 +18,12 @@ package org.springframework.cloud.contract.stubrunner.spring.cloud.ribbon;
 
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.netflix.client.config.IClientConfig;
+import com.netflix.loadbalancer.Server;
+import com.netflix.loadbalancer.ServerList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.stubrunner.RunningStubs;
@@ -29,10 +31,6 @@ import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubFinder;
 import org.springframework.cloud.contract.stubrunner.spring.cloud.StubMapperProperties;
 import org.springframework.cloud.contract.stubrunner.util.StringUtils;
-
-import com.netflix.client.config.IClientConfig;
-import com.netflix.loadbalancer.Server;
-import com.netflix.loadbalancer.ServerList;
 
 /**
  * Stub Runner representation of a server list
@@ -56,7 +54,7 @@ class StubRunnerRibbonServerList implements ServerList<Server> {
 				stubMapperProperties.fromServiceIdToIvyNotation(serviceName) : serviceName;
 		RunningStubs runningStubs = stubFinder.findAllRunningStubs();
 		final Map.Entry<StubConfiguration, Integer> entry = runningStubs.getEntry(mappedServiceName);
-		final Collection<Server> servers = new ArrayList<>();
+		final List<Server> servers = new ArrayList<>();
 		if (entry != null) {
 			servers.add(new Server("localhost", entry.getValue()) {
 				@Override
@@ -88,30 +86,12 @@ class StubRunnerRibbonServerList implements ServerList<Server> {
 		this.serverList = new ServerList<Server>() {
 			@Override
 			public List<Server> getInitialListOfServers() {
-				List<Server> combinedList = new ArrayList<>();
-				combinedList.addAll(servers);
-				try {
-					combinedList.addAll(delegate.getInitialListOfServers());
-				} catch (Exception e) {
-					if (log.isDebugEnabled()) {
-						log.debug("Exception occurred while trying to get list of servers", e);
-					}
-				}
-				return combinedList;
+				return servers;
 			}
 
 			@Override
 			public List<Server> getUpdatedListOfServers() {
-				List<Server> combinedList = new ArrayList<>();
-				combinedList.addAll(servers);
-				try {
-					combinedList.addAll(delegate.getUpdatedListOfServers());
-				} catch (Exception e) {
-					if (log.isDebugEnabled()) {
-						log.debug("Exception occurred while trying to get list of servers", e);
-					}
-				}
-				return combinedList;
+				return servers;
 			}
 		};
 	}
