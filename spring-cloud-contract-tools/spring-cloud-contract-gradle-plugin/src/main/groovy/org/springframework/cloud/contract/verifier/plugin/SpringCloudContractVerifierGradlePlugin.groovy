@@ -60,7 +60,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		setConfigurationDefaults(extension)
 		Task stubsJar = createAndConfigureStubsJarTasks(extension)
 		Task copyContracts = createAndConfigureCopyContractsTask(stubsJar, downloader, extension)
-		createAndConfigureMavenPublishPlugin(stubsJar)
+		createAndConfigureMavenPublishPlugin(stubsJar, extension)
 		createGenerateTestsTask(extension, copyContracts)
 		Task clientTask = createAndConfigureGenerateClientStubsFromDslTask(extension, copyContracts)
 		createAndConfigureGenerateWireMockClientStubsFromDslTask(extension, clientTask)
@@ -176,13 +176,17 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		return task
 	}
 
-	private void createAndConfigureMavenPublishPlugin(Task stubsTask) {
+	private void createAndConfigureMavenPublishPlugin(Task stubsTask, ContractVerifierExtension extension) {
 		if (!classIsOnClasspath("org.gradle.api.publish.maven.plugins.MavenPublishPlugin")) {
 			project.logger.debug("Maven Publish Plugin is not present - won't add default publication")
 			return
 		}
 		project.logger.debug("Spring Cloud Contract Verifier Plugin: Generating default publication")
 		project.afterEvaluate {
+			if (extension.isDisableStubPublication()) {
+				project.logger.info("You've switched off the stub publication - won't add default publication")
+				return
+			}
 			project.plugins.withType(MavenPublishPlugin) { def publishingPlugin ->
 				def publishingExtension = project.extensions.findByName('publishing')
 				if (!hasPublication(publishingExtension)) {

@@ -130,6 +130,7 @@ configure(project(':fraudDetectionService')) {
 		}
 		generatedTestSourcesDir = file("${project.buildDir}/generated-test-sources/")
 		stubsOutputDir = stubsOutputDirRoot
+		disableStubPublication(project.hasProperty("disablePublication"))
 	}
 }
 

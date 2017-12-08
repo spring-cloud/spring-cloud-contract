@@ -169,6 +169,15 @@ class ContractVerifierExtension {
 		closure.call()
 	}
 
+	/**
+	 * Is set to true will not provide the default publication task
+	 */
+	boolean disableStubPublication = false
+
+	void disableStubPublication(boolean disableStubPublication) {
+		this.disableStubPublication = disableStubPublication
+	}
+
 	@ToString
 	static class Dependency {
 		String groupId

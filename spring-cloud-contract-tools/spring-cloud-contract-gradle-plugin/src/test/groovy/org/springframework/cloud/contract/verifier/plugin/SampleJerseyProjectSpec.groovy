@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
+import org.gradle.testkit.runner.BuildResult
 import spock.lang.Stepwise
 
 @Stepwise
@@ -30,8 +31,19 @@ class SampleJerseyProjectSpec extends ContractVerifierIntegrationSpec {
 		given:
 			assert fileExists('build.gradle')
 		expect:
-			runTasksSuccessfully(checkAndPublishToMavenLocal())
+			BuildResult result = runTasksSuccessfully(checkAndPublishToMavenLocal())
 			jarContainsContractVerifierContracts('fraudDetectionService/build/libs')
+			!result.output.contains("You've switched off the stub publication")
+	}
+
+	def "should pass basic flow for Spock with disabled publication"() {
+		given:
+			assert fileExists('build.gradle')
+		expect:
+			String[] args = (checkAndPublishToMavenLocal().toList() << "-PdisablePublication") as String[]
+			BuildResult result = runTasksSuccessfully(args)
+			!fileExists('fraudDetectionService/build/libs')
+			result.output.contains("You've switched off the stub publication")
 	}
 
 	def "should pass basic flow for JUnit"() {

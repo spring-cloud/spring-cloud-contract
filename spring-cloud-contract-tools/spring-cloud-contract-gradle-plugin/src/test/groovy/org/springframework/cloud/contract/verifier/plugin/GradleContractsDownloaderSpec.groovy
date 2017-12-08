@@ -146,6 +146,7 @@ class GradleContractsDownloaderSpec extends Specification {
 					repositoryUrl("foo")
 					cacheDownloadedContracts(false)
 				}
+				disableStubPublication(true)
 			}
 		and:
 			final AetherStubDownloader downloader = Mock(AetherStubDownloader)

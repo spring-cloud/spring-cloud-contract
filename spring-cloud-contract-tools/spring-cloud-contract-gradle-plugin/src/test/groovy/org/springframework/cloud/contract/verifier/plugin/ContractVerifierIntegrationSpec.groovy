@@ -73,11 +73,12 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 		Files.write(path, content.getBytes(UTF_8))
 	}
 
-	protected void runTasksSuccessfully(String... tasks) {
+	protected BuildResult runTasksSuccessfully(String... tasks) {
 		BuildResult result = run(tasks)
 		result.tasks.each {
 			assert it.outcome == TaskOutcome.SUCCESS || it.outcome == TaskOutcome.UP_TO_DATE || it.outcome == TaskOutcome.NO_SOURCE
 		}
+		return result
 	}
 
 	protected BuildResult validateTasksOutcome(BuildResult result, TaskOutcome expectedOutcome, String... tasks) {
@@ -134,7 +135,7 @@ abstract class ContractVerifierIntegrationSpec extends Specification {
 	}
 
 	protected File getBuildFile() {
-		return new File('build.gradle', testProjectDir)
+		return new File(testProjectDir, 'build.gradle')
 	}
 
 	protected boolean jarContainsContractVerifierContracts(String path) {
