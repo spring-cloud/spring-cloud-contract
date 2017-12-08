@@ -95,10 +95,12 @@ class RecursiveFilesConverter {
 						convertedContent.entrySet().eachWithIndex { Map.Entry<Contract, String> content, int index ->
 							Contract dsl = content.key
 							String converted = content.value
-							Path absoluteTargetPath = createAndReturnTargetDirectory(sourceFile)
-							File newJsonFile = createTargetFileWithProperName(stubGenerator, absoluteTargetPath,
-									sourceFile, contractsSize, index, dsl)
-							newJsonFile.setText(converted, StandardCharsets.UTF_8.toString())
+                            if (converted) {
+							    Path absoluteTargetPath = createAndReturnTargetDirectory(sourceFile)
+							    File newJsonFile = createTargetFileWithProperName(stubGenerator, absoluteTargetPath,
+							    		sourceFile, contractsSize, index, dsl)
+							    newJsonFile.setText(converted, StandardCharsets.UTF_8.toString())
+                            }
 						}
 					}
 				} catch (Exception e) {
