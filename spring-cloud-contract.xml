@@ -4,12 +4,12 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2017-12-02</date>
+<date>2017-12-08</date>
 </info>
 <preface>
 <title></title>
-<simpara><emphasis>Documentation Authors: Adam Dudczak, Mathias Düsterhöft, Marcin Grzejszczak, Dennis Kieselhorst, Jakub Kubryński, Karol Lassak,
-Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer</emphasis>, Jay Bryant</simpara>
+<simpara>_Documentation Authors: Adam Dudczak, Mathias Düsterhöft, Marcin Grzejszczak, Dennis Kieselhorst, Jakub Kubryński, Karol Lassak,
+Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer, Jay Bryant</simpara>
 <simpara>2.0.0.BUILD-SNAPSHOT</simpara>
 </preface>
 <chapter xml:id="_spring_cloud_contract">
@@ -53,7 +53,7 @@ Spring Cloud Contract Verifier.</simpara>
 <informalfigure>
 <mediaobject>
 <imageobject>
-<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/2.0.x/docs/src/main/asciidoc/images/Deps.png"/>
+<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/Deps.png"/>
 </imageobject>
 <textobject><phrase>Microservices Architecture</phrase></textobject>
 </mediaobject>
@@ -128,7 +128,7 @@ are those that your application directly uses.</simpara>
 <informalfigure>
 <mediaobject>
 <imageobject>
-<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/2.0.x/docs/src/main/asciidoc/images/Stubs2.png"/>
+<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/Stubs2.png"/>
 </imageobject>
 <textobject><phrase>Stubbed Services</phrase></textobject>
 </mediaobject>
@@ -294,8 +294,8 @@ we mark the client as a fraud.</simpara>
 Issuance has an artifact-id of <literal>http-client</literal>, and both have a <literal>group-id</literal> of <literal>com.example</literal>.</simpara>
 <simpara>Social remark - both client and server development teams need to communicate directly and
 discuss changes while going through the process. CDC is all about communication.</simpara>
-<simpara>The <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/2.0.x/samples/standalone/dsl/http-server">server
-side code is available here</link> and <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/2.0.x/samples/standalone/dsl/http-client">the
+<simpara>The <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-server">server
+side code is available here</link> and <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-client">the
 client code here</link>.</simpara>
 <tip>
 <simpara>In this case, the producer owns the contracts. Physically, all the contract are
@@ -798,7 +798,9 @@ where the repository with your stubs is located. At this moment the stubs of the
 side are automatically downloaded from Nexus/Artifactory. You can switch off the value of
 the <literal>workOffline</literal> parameter in your annotation. The following code shows an example of
 achieving the same thing by changing the properties.</simpara>
-<programlisting language="yaml" linenumbering="unnumbered">Unresolved directive in verifier_introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/2.0.x/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]</programlisting>
+<programlisting language="yaml" linenumbering="unnumbered">stubrunner:
+  ids: 'com.example:http-server-dsl:+:stubs:8080'
+  repositoryRoot: http://repo.spring.io/libs-snapshot</programlisting>
 <simpara>That&#8217;s it!</simpara>
 </section>
 </section>
@@ -2125,7 +2127,7 @@ goal.</simpara>
 <informalfigure>
 <mediaobject>
 <imageobject>
-<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/2.0.x/docs/src/main/asciidoc/images/sts_exception.png"/>
+<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/sts_exception.png"/>
 </imageobject>
 <textobject><phrase>STS Exception</phrase></textobject>
 </mediaobject>
@@ -6813,7 +6815,7 @@ used. If you provide more than one, then the first one on the list is used.</sim
 <title>Spring Cloud Contract WireMock</title>
 <simpara>The Spring Cloud Contract WireMock modules let you use <link xl:href="http://wiremock.org">WireMock</link> in a
 Spring Boot application. Check out the
-<link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/2.0.x/samples">samples</link>
+<link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples">samples</link>
 for more details.</simpara>
 <simpara>If you have a Spring Boot application that uses Tomcat as an embedded server (which is
 the default with <literal>spring-boot-starter-web</literal>),  you can add
