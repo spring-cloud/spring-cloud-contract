@@ -48,9 +48,10 @@ public class EurekaStubsRegistrar implements StubsRegistrar {
 				.validNamesAndPorts();
 		for (Map.Entry<StubConfiguration, Integer> entry : activeStubs.entrySet()) {
 			Application application = new Application(name(entry.getKey()), entry.getKey().getArtifactId(),
-					StringUtils.hasText(this.eurekaInstanceConfigBean.getHostname()) ?
-							this.eurekaInstanceConfigBean.getHostname() :
-							this.inetUtils.findFirstNonLoopbackAddress().getHostName(), entry.getValue());
+					StringUtils.hasText(hostName(entry)) ?
+							hostName(entry) :
+							this.inetUtils.findFirstNonLoopbackAddress().getHostName(),
+					port(entry));
 			try {
 				Registration register = this.eurekaClient.register(application);
 				this.discoveryList.add(new Renewer(
@@ -65,6 +66,14 @@ public class EurekaStubsRegistrar implements StubsRegistrar {
 						+ "] in Service Discovery", e);
 			}
 		}
+	}
+
+	protected String hostName(Map.Entry<StubConfiguration, Integer> entry) {
+		return this.eurekaInstanceConfigBean.getHostname();
+	}
+
+	protected int port(Map.Entry<StubConfiguration, Integer> entry) {
+		return entry.getValue();
 	}
 
 	private String name(StubConfiguration stubConfiguration) {
