@@ -1,20 +1,20 @@
 package org.springframework.cloud.contract.stubrunner.spring.cloud.consul;
 
+import com.ecwid.consul.v1.ConsulClient;
+import com.ecwid.consul.v1.agent.model.NewService;
 import java.lang.invoke.MethodHandles;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.cloud.commons.util.InetUtils;
+import org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubRunning;
 import org.springframework.cloud.contract.stubrunner.spring.cloud.StubMapperProperties;
 import org.springframework.cloud.contract.stubrunner.spring.cloud.StubsRegistrar;
 import org.springframework.util.StringUtils;
-
-import com.ecwid.consul.v1.ConsulClient;
-import com.ecwid.consul.v1.agent.model.NewService;
 
 /**
  * Registers all stubs in Zookeeper Service Discovery
@@ -30,13 +30,19 @@ public class ConsulStubsRegistrar implements StubsRegistrar {
 	private final StubRunning stubRunning;
 	private final ConsulClient consulClient;
 	private final StubMapperProperties stubMapperProperties;
+	private final ConsulDiscoveryProperties consulDiscoveryProperties;
+	private final InetUtils inetUtils;
 	private final List<NewService> services = new LinkedList<>();
 
 	public ConsulStubsRegistrar(StubRunning stubRunning, ConsulClient consulClient,
-			StubMapperProperties stubMapperProperties) {
+		StubMapperProperties stubMapperProperties,
+		ConsulDiscoveryProperties consulDiscoveryProperties,
+		InetUtils inetUtils) {
 		this.stubRunning = stubRunning;
 		this.consulClient = consulClient;
 		this.stubMapperProperties = stubMapperProperties;
+		this.consulDiscoveryProperties = consulDiscoveryProperties;
+		this.inetUtils = inetUtils;
 	}
 
 	@Override public void registerStubs() {
@@ -61,7 +67,9 @@ public class ConsulStubsRegistrar implements StubsRegistrar {
 
 	protected NewService newService(StubConfiguration stubConfiguration, Integer port) {
 		NewService newService = new NewService();
-		newService.setAddress("localhost");
+		newService.setAddress(StringUtils.hasText(consulDiscoveryProperties.getHostname()) ?
+			consulDiscoveryProperties.getHostname() :
+			inetUtils.findFirstNonLoopbackAddress().getHostName());
 		newService.setId(stubConfiguration.getArtifactId());
 		newService.setName(name(stubConfiguration));
 		newService.setPort(port);
