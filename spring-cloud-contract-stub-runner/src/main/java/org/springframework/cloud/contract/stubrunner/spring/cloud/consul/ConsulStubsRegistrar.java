@@ -67,9 +67,9 @@ public class ConsulStubsRegistrar implements StubsRegistrar {
 
 	protected NewService newService(StubConfiguration stubConfiguration, Integer port) {
 		NewService newService = new NewService();
-		newService.setAddress(StringUtils.hasText(consulDiscoveryProperties.getHostname()) ?
-			consulDiscoveryProperties.getHostname() :
-			inetUtils.findFirstNonLoopbackAddress().getHostName());
+		newService.setAddress(StringUtils.hasText(this.consulDiscoveryProperties.getHostname()) ?
+			this.consulDiscoveryProperties.getHostname() :
+			this.inetUtils.findFirstNonLoopbackAddress().getHostName());
 		newService.setId(stubConfiguration.getArtifactId());
 		newService.setName(name(stubConfiguration));
 		newService.setPort(port);
