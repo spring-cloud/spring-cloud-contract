@@ -21,6 +21,7 @@ import com.ecwid.consul.v1.agent.model.NewService
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import org.mockito.ArgumentMatcher
+import org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties
 import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -103,6 +104,11 @@ class StubRunnerSpringCloudConsulAutoConfigurationSpec extends Specification {
 		@Bean
 		ConsulClient mockedConsulClient() {
 			return mock(ConsulClient)
+		}
+
+		@Bean
+		ConsulDiscoveryProperties consulDiscoveryProperties() {
+			return mock(ConsulDiscoveryProperties)
 		}
 	}
 }
