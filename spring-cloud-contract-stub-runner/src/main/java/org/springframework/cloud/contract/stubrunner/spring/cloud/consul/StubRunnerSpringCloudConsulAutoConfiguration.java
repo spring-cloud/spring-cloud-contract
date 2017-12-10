@@ -16,9 +16,13 @@
 
 package org.springframework.cloud.contract.stubrunner.spring.cloud.consul;
 
+import com.ecwid.consul.v1.ConsulClient;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cloud.commons.util.InetUtils;
+import org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties;
+import org.springframework.cloud.consul.serviceregistry.ConsulServiceRegistryAutoConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubRunning;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerConfiguration;
 import org.springframework.cloud.contract.stubrunner.spring.cloud.ConditionalOnStubbedDiscoveryDisabled;
@@ -27,25 +31,26 @@ import org.springframework.cloud.contract.stubrunner.spring.cloud.StubsRegistrar
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.ecwid.consul.v1.ConsulClient;
-
 /**
  * Autoconfiguration for registering stubs in a Zookeeper Service discovery
  *
  * @author Marcin Grzejszczak
- *
  * @since 1.0.0
  */
 @Configuration
-@AutoConfigureAfter(StubRunnerConfiguration.class)
+@AutoConfigureAfter(value = {StubRunnerConfiguration.class,
+    ConsulServiceRegistryAutoConfiguration.class})
 @ConditionalOnClass(ConsulClient.class)
 @ConditionalOnStubbedDiscoveryDisabled
 @ConditionalOnProperty(value = "stubrunner.cloud.consul.enabled", matchIfMissing = true)
 public class StubRunnerSpringCloudConsulAutoConfiguration {
 
-	@Bean(initMethod = "registerStubs")
-	public StubsRegistrar stubsRegistrar(StubRunning stubRunning, ConsulClient consulClient,
-			StubMapperProperties stubMapperProperties) {
-		return new ConsulStubsRegistrar(stubRunning, consulClient, stubMapperProperties);
-	}
+    @Bean(initMethod = "registerStubs")
+    public StubsRegistrar stubsRegistrar(StubRunning stubRunning, ConsulClient consulClient,
+        StubMapperProperties stubMapperProperties,
+        ConsulDiscoveryProperties consulDiscoveryProperties,
+        InetUtils inetUtils) {
+        return new ConsulStubsRegistrar(stubRunning, consulClient, stubMapperProperties,
+            consulDiscoveryProperties, inetUtils);
+    }
 }
