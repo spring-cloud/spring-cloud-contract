@@ -20,9 +20,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.contract.stubrunner.spring.StubRunnerTest;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -30,26 +30,40 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
+ * Tests that stub runner specific auto-configuration can be loaded up in combination with
+ * other slice tests
+ * 
  * @author Biju Kunjummen
  */
-
 @RunWith(SpringRunner.class)
-@StubRunnerTest(mappingsOutputFolder = "target/outputmappings/")
+@WebMvcTest
+@AutoConfigureStubRunner(
+		ids = {
+				"org.springframework.cloud.contract.verifier.stubs:loanIssuance:+:stubs",
+				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:+:stubs"
+		},
+		minPort = 10001,
+		maxPort = 10020,
+		mappingsOutputFolder = "target/outputmappings/")
 @DirtiesContext
 @ActiveProfiles("test")
-public class StubRunnerSliceTest {
+public class StubRunnerSliceTests {
 
 	@Autowired
 	private StubFinder stubFinder;
 
-	@Autowired
-	private Environment environment;
-
 	@Value("${stubrunner.runningstubs.fraudDetectionServer.port}")
-	private Integer foo;
+	private Integer fraudDetectionServerPort;
+
+	@Value("${stubrunner.runningstubs.loanIssuance.port}")
+	private Integer loanIssuancePort;
 
 	@Test
-	public void testStubRunnerLoad() {
+	public void testThatListedStubsAreRunning() {
+
+		assertThat(fraudDetectionServerPort).isBetween(10001, 10020);
+		assertThat(loanIssuancePort).isBetween(10001, 10020);
+
 		assertThat(stubFinder.findStubUrl(
 				"org.springframework.cloud.contract.verifier.stubs", "loanIssuance"))
 						.isNotNull();
@@ -69,7 +83,7 @@ public class StubRunnerSliceTest {
 						.isNotNull();
 	}
 
-	@Configuration
+	@SpringBootConfiguration
 	static class Config {
 	}
 

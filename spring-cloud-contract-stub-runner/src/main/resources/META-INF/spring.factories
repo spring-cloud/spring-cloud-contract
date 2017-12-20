@@ -8,6 +8,4 @@ org.springframework.cloud.contract.stubrunner.messaging.integration.StubRunnerIn
 org.springframework.cloud.contract.stubrunner.spring.cloud.zookeeper.StubRunnerSpringCloudZookeeperAutoConfiguration,\
 org.springframework.cloud.contract.stubrunner.spring.cloud.eureka.StubRunnerSpringCloudEurekaAutoConfiguration,\
 org.springframework.cloud.contract.stubrunner.spring.cloud.consul.StubRunnerSpringCloudConsulAutoConfiguration,\
-org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration,\
-org.springframework.cloud.stream.test.binder.MessageCollectorAutoConfiguration,\
-org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration
+org.springframework.cloud.contract.stubrunner.messaging.StubRunnerStreamsIntegrationAutoConfiguration
