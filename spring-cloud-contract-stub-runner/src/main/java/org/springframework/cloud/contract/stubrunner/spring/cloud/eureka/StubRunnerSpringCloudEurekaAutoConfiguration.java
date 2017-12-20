@@ -16,10 +16,19 @@
 
 package org.springframework.cloud.contract.stubrunner.spring.cloud.eureka;
 
+import java.util.Map;
+
+import com.netflix.appinfo.ApplicationInfoManager;
+import com.netflix.discovery.EurekaClientConfig;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.cloud.commons.util.InetUtils;
+import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubRunning;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerConfiguration;
 import org.springframework.cloud.contract.stubrunner.spring.cloud.ConditionalOnStubbedDiscoveryDisabled;
@@ -32,9 +41,8 @@ import org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import com.netflix.appinfo.ApplicationInfoManager;
-import com.netflix.discovery.EurekaClientConfig;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 
 /**
  * Autoconfiguration for registering stubs in a Eureka Service discovery
@@ -51,10 +59,43 @@ import com.netflix.discovery.EurekaClientConfig;
 @ConditionalOnProperty(value = "stubrunner.cloud.eureka.enabled", matchIfMissing = true)
 public class StubRunnerSpringCloudEurekaAutoConfiguration {
 
-	@Bean(initMethod = "registerStubs")
-	public StubsRegistrar stubsRegistrar(StubRunning stubRunning, Eureka eureka,
-			StubMapperProperties stubMapperProperties, InetUtils inetUtils, EurekaInstanceConfigBean eurekaInstanceConfigBean) {
-		return new EurekaStubsRegistrar(stubRunning, eureka, stubMapperProperties, inetUtils, eurekaInstanceConfigBean);
+	@Profile("!cloud")
+	@Configuration
+	protected static class NonCloudConfig {
+		@Bean(initMethod = "registerStubs")
+		public StubsRegistrar stubsRegistrar(StubRunning stubRunning, Eureka eureka,
+				StubMapperProperties stubMapperProperties, InetUtils inetUtils, EurekaInstanceConfigBean eurekaInstanceConfigBean) {
+			return new EurekaStubsRegistrar(stubRunning, eureka, stubMapperProperties, inetUtils, eurekaInstanceConfigBean);
+		}
+	}
+
+	@Profile("cloud")
+	@Configuration
+	protected static class CloudConfig {
+		private static final int DEFAULT_PORT = 80;
+		private static final Log log = LogFactory.getLog(CloudConfig.class);
+
+		@Autowired Environment environment;
+
+		@Bean(initMethod = "registerStubs")
+		public StubsRegistrar cloudStubsRegistrar(StubRunning stubRunning, Eureka eureka,
+				StubMapperProperties stubMapperProperties, InetUtils inetUtils, EurekaInstanceConfigBean eurekaInstanceConfigBean) {
+			final RelaxedPropertyResolver resolver = new RelaxedPropertyResolver(
+					CloudConfig.this.environment);
+			return new EurekaStubsRegistrar(stubRunning, eureka, stubMapperProperties, inetUtils, eurekaInstanceConfigBean) {
+				@Override protected String hostName(Map.Entry<StubConfiguration, Integer> entry) {
+					String hostname =
+							resolver.getProperty("application.hostname") +
+									"-" + entry.getValue() + "." + resolver.getProperty("application.domain");
+					log.info("Registering stub [" + entry.getKey().getArtifactId() + "] with hostname [" + hostname + "]");
+					return hostname;
+				}
+
+				@Override protected int port(Map.Entry<StubConfiguration, Integer> entry) {
+					return DEFAULT_PORT;
+				}
+			};
+		}
 	}
 
 	@Bean(name = "eurekaRegistrar")

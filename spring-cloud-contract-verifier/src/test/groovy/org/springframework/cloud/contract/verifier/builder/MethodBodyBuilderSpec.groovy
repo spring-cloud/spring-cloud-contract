@@ -349,7 +349,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 	}
 
 	@Issue("#458")
-	def "should reference request from body whtn body is a string [#methodBuilderName]"() {
+	def "should reference request from body when body is a string [#methodBuilderName]"() {
 		given:
 			Contract contractDsl = Contract.make {
 				request {
@@ -367,15 +367,17 @@ DocumentContext parsedJson = JsonPath.parse(json);
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
+			String test = blockBuilder.toString()
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+			responseAsserter(test)
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		where:
 			methodBuilderName                                    | methodBuilder                                                                               | responseAsserter
-			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | { String string -> assert string.contains('responseBody == "My name"') }
-			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | { String string -> assert string.contains('assertThat(responseBody).isEqualTo("My name");') }
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String string -> assert string.contains('responseBody == "My name"') }
-			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String string -> assert string.contains('assertThat(responseBody).isEqualTo("My name");') }
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | { String string -> string.contains('responseBody == "My name"') }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | { String string -> string.contains('assertThat(responseBody).isEqualTo("My name");') }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String string -> string.contains('responseBody == "My name"') }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String string -> string.contains('assertThat(responseBody).isEqualTo("My name");') }
 	}
 
 	@Issue("#465")
@@ -449,6 +451,40 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			methodBuilderName           						 | methodBuilder
 			"MockMvcSpockMethodBuilder" 						 | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
 			"MockMvcJUnitMethodBuilder" 						 | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
+	@Issue("#493")
+	def "should not escape a form URL encoded request body [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'POST'
+					url '/api/form-endpoint'
+					headers {
+						header("Content-Type": 'application/x-www-form-urlencoded')
+					}
+					body('a=abc&b=123')
+				}
+				response {
+					status 200
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			String test = blockBuilder.toString()
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+			!test.contains("a=abc&amp;b=123")
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
 
 }
