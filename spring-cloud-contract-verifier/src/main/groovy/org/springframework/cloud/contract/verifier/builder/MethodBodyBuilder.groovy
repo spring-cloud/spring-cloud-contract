@@ -599,7 +599,7 @@ abstract class MethodBodyBuilder {
 	 */
 	protected Object extractServerValueFromBody(bodyValue) {
 		if (bodyValue instanceof GString) {
-			bodyValue = extractValue(bodyValue, ContentType.from(MapConverter.getTestSideValues(this.contract.request.headers?.entries?.find {
+			bodyValue = extractValue(bodyValue, ContentType.from(MapConverter.getTestSideValues(this.contract.request?.headers?.entries?.find {
 				it.name.toLowerCase() == "Content-Type".toLowerCase()
 			}).toString()), GET_SERVER_VALUE)
 		} else {
