@@ -4103,12 +4103,13 @@ only contracts and not generate the stubs. That&#8217;s why we suggest to do bot
 					.accept(MediaType.APPLICATION_PDF)
 					.accept(MediaType.APPLICATION_JSON)
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\"foo\": 23 }"</span>))
+					.content(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\"foo\": 23, \"bar\" : \"baz\" }"</span>))
 				.andExpect(status().isOk())
 				.andExpect(content().string(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar"</span>))
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// first WireMock</span>
 				.andDo(WireMockRestDocs.verify()
 						.jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.foo &gt;= 20)]"</span>)
+						.jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.bar in ['baz','bazz','bazzz'])]"</span>)
 						.contentType(MediaType.valueOf(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/json"</span>))
 						.stub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"shouldGrantABeerIfOldEnough"</span>))
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// then Contract DSL documentation</span>
