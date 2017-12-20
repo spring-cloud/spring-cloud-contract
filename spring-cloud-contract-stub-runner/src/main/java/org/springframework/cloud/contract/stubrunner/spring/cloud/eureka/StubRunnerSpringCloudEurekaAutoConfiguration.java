@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubRunning;
@@ -80,13 +79,11 @@ public class StubRunnerSpringCloudEurekaAutoConfiguration {
 		@Bean(initMethod = "registerStubs")
 		public StubsRegistrar cloudStubsRegistrar(StubRunning stubRunning, Eureka eureka,
 				StubMapperProperties stubMapperProperties, InetUtils inetUtils, EurekaInstanceConfigBean eurekaInstanceConfigBean) {
-			final RelaxedPropertyResolver resolver = new RelaxedPropertyResolver(
-					CloudConfig.this.environment);
 			return new EurekaStubsRegistrar(stubRunning, eureka, stubMapperProperties, inetUtils, eurekaInstanceConfigBean) {
 				@Override protected String hostName(Map.Entry<StubConfiguration, Integer> entry) {
 					String hostname =
-							resolver.getProperty("application.hostname") +
-									"-" + entry.getValue() + "." + resolver.getProperty("application.domain");
+							CloudConfig.this.environment.getProperty("application.hostname") +
+									"-" + entry.getValue() + "." + CloudConfig.this.environment.getProperty("application.domain");
 					log.info("Registering stub [" + entry.getKey().getArtifactId() + "] with hostname [" + hostname + "]");
 					return hostname;
 				}
