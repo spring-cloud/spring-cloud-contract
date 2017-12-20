@@ -65,12 +65,13 @@ public class ContractDslSnippetTests {
 					.accept(MediaType.APPLICATION_PDF)
 					.accept(MediaType.APPLICATION_JSON)
 					.contentType(MediaType.APPLICATION_JSON)
-					.content("{\"foo\": 23 }"))
+					.content("{\"foo\": 23, \"bar\" : \"baz\" }"))
 				.andExpect(status().isOk())
 				.andExpect(content().string("bar"))
 				// first WireMock
 				.andDo(WireMockRestDocs.verify()
 						.jsonPath("$[?(@.foo >= 20)]")
+						.jsonPath("$[?(@.bar in ['baz','bazz','bazzz'])]")
 						.contentType(MediaType.valueOf("application/json"))
 						.stub("shouldGrantABeerIfOldEnough"))
 				// then Contract DSL documentation
