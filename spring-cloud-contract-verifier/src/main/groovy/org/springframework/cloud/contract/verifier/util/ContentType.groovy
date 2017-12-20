@@ -17,7 +17,7 @@
 package org.springframework.cloud.contract.verifier.util
 
 /**
- * Represents content type
+ * Represents content type. Used to pick the way bodies are parsed.
  *
  * @since 1.0.0
  */
@@ -32,6 +32,21 @@ enum ContentType {
 
 	ContentType(String mimeType) {
 		this.mimeType = mimeType
+	}
+
+	static ContentType from(String header) {
+		try {
+			if (header.contains("json")) {
+				return JSON
+			} else if (header.contains("xml")) {
+				return XML
+			} else if (header.contains("text") ||
+					header.contains("application/x-www-form-urlencoded")) {
+				// we want both to be treated as text
+				return TEXT
+			}
+		} catch(e) {}
+		return UNKNOWN
 	}
 
 }

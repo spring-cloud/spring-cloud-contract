@@ -23,8 +23,6 @@ import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.apache.commons.lang3.StringEscapeUtils
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractTemplate
 import org.springframework.cloud.contract.spec.internal.BodyMatcher
@@ -47,7 +45,6 @@ import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.util.SerializationUtils
 import org.springframework.util.StringUtils
 
-import java.lang.invoke.MethodHandles
 import java.util.regex.Pattern
 
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.extractValue
@@ -64,7 +61,7 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.extr
 @PackageScope
 abstract class MethodBodyBuilder {
 
-	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass())
+	private static final Closure GET_SERVER_VALUE = { it instanceof DslProperty ? it.serverValue : it }
 
 	protected final ContractVerifierConfigProperties configProperties
 	protected final TemplateProcessor templateProcessor
@@ -602,9 +599,11 @@ abstract class MethodBodyBuilder {
 	 */
 	protected Object extractServerValueFromBody(bodyValue) {
 		if (bodyValue instanceof GString) {
-			bodyValue = extractValue(bodyValue, { DslProperty dslProperty -> dslProperty.serverValue })
+			bodyValue = extractValue(bodyValue, ContentType.from(MapConverter.getTestSideValues(this.contract.request.headers?.entries?.find {
+				it.name.toLowerCase() == "Content-Type".toLowerCase()
+			}).toString()), GET_SERVER_VALUE)
 		} else {
-			bodyValue = MapConverter.transformValues(bodyValue, { it instanceof DslProperty ? it.serverValue : it })
+			bodyValue = MapConverter.transformValues(bodyValue, GET_SERVER_VALUE)
 		}
 		return bodyValue
 	}
