@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-parent</artifactId>
-		<version>2.0.0.BUILD-SNAPSHOT</version>
+		<version>1.2.2.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
@@ -18,12 +18,14 @@
 	<description>Spring Cloud Contract Tests</description>
 
 	<modules>
+		<module>samples-messaging-camel</module>
 		<module>samples-messaging-spring</module>
 		<module>samples-messaging-stream</module>
 		<module>samples-messaging-integration</module>
 		<module>samples-messaging-amqp</module>
 		<module>spring-cloud-contract-stub-runner-boot-eureka</module>
 		<module>spring-cloud-contract-stub-runner-boot-zookeeper</module>
+		<module>spring-cloud-contract-stub-runner-camel</module>
 		<module>spring-cloud-contract-stub-runner-context-path</module>
 		<module>spring-cloud-contract-stub-runner-moco-contract-jar</module>
 		<module>spring-cloud-contract-stub-runner-moco</module>

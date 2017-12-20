@@ -7,7 +7,7 @@ buildscript {
 		maven { url "http://repo.spring.io/release" }
 	}
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.0.0.M6"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.4.RELEASE"
 	}
 }
 
@@ -24,7 +24,6 @@ repositories {
 
 apply plugin: 'groovy'
 apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
 apply plugin: 'maven-publish'
 
 dependencyManagement {
@@ -61,8 +60,4 @@ task resolveDependencies {
 			}
 		}
 	}
-}
-
-task wrapper(type: Wrapper) {
-	gradleVersion = '4.0.2'
 }

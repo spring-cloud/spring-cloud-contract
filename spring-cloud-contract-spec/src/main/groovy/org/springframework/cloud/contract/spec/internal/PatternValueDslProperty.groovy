@@ -36,8 +36,7 @@ abstract class PatternValueDslProperty<T extends DslProperty> {
 	protected abstract T createProperty(Pattern pattern, Object generatedValue)
 	
 	T anyAlphaUnicode() {
-		return createAndValidateProperty(RegexPatterns.ONLY_ALPHA_UNICODE,
-				RandomStringGenerator.randomString(20))
+		return createAndValidateProperty(RegexPatterns.ONLY_ALPHA_UNICODE, randomString(20))
 	}
 
 	T anyNumber() {
@@ -89,16 +88,26 @@ abstract class PatternValueDslProperty<T extends DslProperty> {
 	}
 
 	T anyNonBlankString() {
-		return createAndValidateProperty(RegexPatterns.NON_BLANK,
-				RandomStringGenerator.randomString(20))
+		return createAndValidateProperty(RegexPatterns.NON_BLANK, randomString(20))
 	}
 
 	T anyNonEmptyString() {
-		return createAndValidateProperty(RegexPatterns.NON_EMPTY,
-				RandomStringGenerator.randomString(20))
+		return createAndValidateProperty(RegexPatterns.NON_EMPTY, randomString(20))
 	}
 
 	T anyOf(String... values){
 		return createAndValidateProperty(RegexPatterns.anyOf(values), values[0])
+	}
+
+	private static String randomString(int length) {
+		char[] characterSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()
+		Random random = new Random()
+		char[] result = new char[length]
+		for (int i = 0; i < result.length; i++) {
+			// picks a random index out of character set > random character
+			int randomCharIndex = random.nextInt(characterSet.length)
+			result[i] = characterSet[randomCharIndex]
+		}
+		return new String(result)
 	}
 }

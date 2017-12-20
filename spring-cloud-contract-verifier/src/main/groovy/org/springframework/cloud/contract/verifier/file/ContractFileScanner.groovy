@@ -94,17 +94,15 @@ class ContractFileScanner {
 		if (!files) {
 			return
 		}
-		File[] sortedFiles = files.sort() as File[]
-		for (int i = 0; i < sortedFiles.length; i++) {
-			File file = sortedFiles[i]
+		files.sort().eachWithIndex { File file, int index ->
 			boolean excluded = matchesPattern(file, excludeMatchers)
 			if (!excluded) {
 				boolean contractFile = isContractFile(file)
 				boolean included = includeMatcher ? file.absolutePath.matches(includeMatcher) : true
 				if (contractFile && included) {
-					addContractToTestGeneration(result, files, file, i, ContractVerifierDslConverter.convertAsCollection(baseDir, file))
+					addContractToTestGeneration(result, files, file, index, ContractVerifierDslConverter.convertAsCollection(baseDir, file))
 				} else if (!contractFile && included) {
-					addContractToTestGeneration(converters, result, files, file, i)
+					addContractToTestGeneration(converters, result, files, file, index)
 				} else {
 					appendRecursively(file, result)
 					if (log.isDebugEnabled()) {

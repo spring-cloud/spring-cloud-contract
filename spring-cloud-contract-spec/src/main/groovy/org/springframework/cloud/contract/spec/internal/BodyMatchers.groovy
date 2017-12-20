@@ -1,7 +1,5 @@
 package org.springframework.cloud.contract.spec.internal
 
-import java.util.regex.Pattern
-
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
@@ -44,12 +42,6 @@ class BodyMatchers {
 	}
 
 	MatchingTypeValue byRegex(String regex) {
-		assert regex
-		return new MatchingTypeValue(MatchingType.REGEX, regex)
-	}
-
-	// Backward compatibility with RegexPatterns
-	MatchingTypeValue byRegex(Pattern regex) {
 		assert regex
 		return new MatchingTypeValue(MatchingType.REGEX, regex)
 	}

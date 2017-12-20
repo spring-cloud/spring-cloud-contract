@@ -391,7 +391,6 @@ abstract class MethodBodyBuilder {
 	protected void methodForEqualityCheck(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
 		String path = quotedAndEscaped(bodyMatcher.path())
 		Object retrievedValue = value(copiedBody, bodyMatcher)
-		retrievedValue = retrievedValue instanceof Pattern ? ((Pattern) retrievedValue).pattern() : retrievedValue
 		String valueAsParam = retrievedValue instanceof String ? quotedAndEscaped(retrievedValue.toString()) : retrievedValue.toString()
 		if (arrayRelated(path) && MatchingType.regexRelated(bodyMatcher.matchingType())) {
 			buildCustomMatchingConditionForEachElement(bb, path, valueAsParam)

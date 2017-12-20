@@ -163,8 +163,7 @@ class StreamStubRunnerSpec extends Specification {
 
 	private boolean assertJsons(Object payload) {
 		String objectAsString = payload instanceof String ? payload :
-				payload instanceof byte[] ? new String(payload)
-						: JsonOutput.toJson(payload)
+				JsonOutput.toJson(payload)
 		def json = new JsonSlurper().parseText(objectAsString)
 		return json.bookName == 'foo'
 	}

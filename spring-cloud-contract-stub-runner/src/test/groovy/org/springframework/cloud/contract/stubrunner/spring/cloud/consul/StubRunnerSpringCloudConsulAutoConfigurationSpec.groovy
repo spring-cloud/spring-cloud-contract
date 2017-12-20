@@ -18,22 +18,22 @@ package org.springframework.cloud.contract.stubrunner.spring.cloud.consul
 
 import com.ecwid.consul.v1.ConsulClient
 import com.ecwid.consul.v1.agent.model.NewService
+import org.hamcrest.Description
+import org.hamcrest.TypeSafeMatcher
 import org.junit.AfterClass
 import org.junit.BeforeClass
-import org.mockito.ArgumentMatcher
-import org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties
-import spock.lang.Specification
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
+import org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
+import spock.lang.Specification
 
 import static org.mockito.BDDMockito.then
 import static org.mockito.Matchers.argThat
@@ -43,7 +43,8 @@ import static org.mockito.Mockito.mock
  */
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = ["eureka.client.enabled=false",
+		properties = ["stubrunner.camel.enabled=false",
+				"eureka.client.enabled=false",
 				"spring.cloud.zookeeper.enabled=false",
 				"stubrunner.cloud.stubbed.discovery.enabled=false",
 				"stubrunner.cloud.eureka.enabled=false",
@@ -80,7 +81,7 @@ class StubRunnerSpringCloudConsulAutoConfigurationSpec extends Specification {
 			serviceName << ['loanIssuance:loanIssuance', 'bootService:bootService', 'fraudDetectionServer:someNameThatShouldMapFraudDetectionServer']
 	}
 
-	private static class NewServiceMatcher implements ArgumentMatcher<NewService> {
+	private static class NewServiceMatcher extends TypeSafeMatcher<NewService> {
 
 		private final String expectedId
 		private final String expectedName
@@ -91,8 +92,13 @@ class StubRunnerSpringCloudConsulAutoConfigurationSpec extends Specification {
 		}
 
 		@Override
-		boolean matches(NewService item) {
+		protected boolean matchesSafely(NewService item) {
 			return item.id == expectedId && item.name == expectedName
+		}
+
+		@Override
+		void describeTo(Description description) {
+
 		}
 	}
 
@@ -108,7 +114,7 @@ class StubRunnerSpringCloudConsulAutoConfigurationSpec extends Specification {
 
 		@Bean
 		ConsulDiscoveryProperties consulDiscoveryProperties() {
-			return mock(ConsulDiscoveryProperties)
+			return new ConsulDiscoveryProperties()
 		}
 	}
 }

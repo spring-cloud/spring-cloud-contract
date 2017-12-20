@@ -1,4 +1,2 @@
-server:
-  port: 0
-  servlet:
-    context-path: /my-path
+server.port: 0
+server.context-path: /my-path

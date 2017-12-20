@@ -28,7 +28,7 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.cloud.zookeeper.ZookeeperProperties
-import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryClient
+import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.annotation.DirtiesContext
@@ -42,7 +42,8 @@ import spock.lang.Specification
  */
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = ["stubrunner.cloud.stubbed.discovery.enabled=false",
+		properties = ["stubrunner.camel.enabled=false",
+				"stubrunner.cloud.stubbed.discovery.enabled=false",
 				"debug=true"])
 @AutoConfigureStubRunner( ids =
 		["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
@@ -54,7 +55,7 @@ class StubRunnerSpringCloudZookeeperAutoConfigurationSpec extends Specification 
 
 	@Autowired StubFinder stubFinder
 	@Autowired @LoadBalanced RestTemplate restTemplate
-	@Autowired ZookeeperDiscoveryClient zookeeperServiceDiscovery
+	@Autowired ZookeeperServiceDiscovery zookeeperServiceDiscovery
 
 	@BeforeClass
 	@AfterClass
@@ -75,8 +76,12 @@ class StubRunnerSpringCloudZookeeperAutoConfigurationSpec extends Specification 
 
 	def 'should have all apps registered in Service Discovery'() {
 		expect:
-			!zookeeperServiceDiscovery.getInstances('loanIssuance').empty
-			!zookeeperServiceDiscovery.getInstances('someNameThatShouldMapFraudDetectionServer').empty
+			!zookeeperServiceDiscovery.serviceDiscoveryRef.get().queryForInstances('loanIssuance').empty
+			!zookeeperServiceDiscovery.serviceDiscoveryRef.get().queryForInstances('someNameThatShouldMapFraudDetectionServer').empty
+	}
+
+	def cleanup() {
+		zookeeperServiceDiscovery?.serviceDiscoveryRef?.get()?.close()
 	}
 
 	@Configuration

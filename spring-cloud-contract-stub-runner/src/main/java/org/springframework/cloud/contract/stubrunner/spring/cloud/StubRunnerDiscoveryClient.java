@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.contract.stubrunner.RunningStubs;
@@ -50,7 +51,7 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 	public StubRunnerDiscoveryClient(DiscoveryClient delegate, StubFinder stubFinder,
 			StubMapperProperties stubMapperProperties, String springAppName) {
 		this.delegate = delegate instanceof StubRunnerDiscoveryClient ?
-				noOpDiscoveryClient() : delegate;
+				noOpDiscoveryClient(springAppName) : delegate;
 		if (log.isDebugEnabled()) {
 			log.debug("Will delegate calls to discovery service [" + this.delegate + "] if a stub is not found");
 		}
@@ -60,7 +61,7 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 
 	public StubRunnerDiscoveryClient(StubFinder stubFinder,
 			StubMapperProperties stubMapperProperties, String springAppName) {
-		this.delegate = noOpDiscoveryClient();
+		this.delegate = noOpDiscoveryClient(springAppName);
 		if (log.isDebugEnabled()) {
 			log.debug("Will delegate calls to discovery service [" + this.delegate + "] if a stub is not found");
 		}
@@ -68,8 +69,8 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 		this.stubMapperProperties = stubMapperProperties;
 	}
 
-	private StubRunnerNoOpDiscoveryClient noOpDiscoveryClient() {
-		return new StubRunnerNoOpDiscoveryClient();
+	private StubRunnerNoOpDiscoveryClient noOpDiscoveryClient(String springAppName) {
+		return new StubRunnerNoOpDiscoveryClient(new DefaultServiceInstance(springAppName, "localhost", 0, false));
 	}
 
 	@Override
@@ -82,6 +83,18 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 			}
 		}
 		return "";
+	}
+
+	@Override
+	public ServiceInstance getLocalServiceInstance() {
+		try {
+			return this.delegate.getLocalServiceInstance();
+		} catch (Exception e) {
+			if (log.isDebugEnabled()) {
+				log.debug("Failed to get local service instance from delegate", e);
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -142,9 +155,20 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 
 class StubRunnerNoOpDiscoveryClient implements DiscoveryClient {
 
+	private final ServiceInstance instance;
+
+	public StubRunnerNoOpDiscoveryClient(ServiceInstance instance) {
+		this.instance = instance;
+	}
+
 	@Override
 	public String description() {
 		return "Spring Cloud Stub Runner No-op DiscoveryClient";
+	}
+
+	@Override
+	public ServiceInstance getLocalServiceInstance() {
+		return this.instance;
 	}
 
 	@Override

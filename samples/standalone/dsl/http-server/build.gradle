@@ -9,8 +9,7 @@ buildscript {
 	}
 // end::repos[]
 	dependencies {
-		classpath 'org.codehaus.groovy:groovy-all:2.5.0-beta-1'
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.0.0.M6"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.4.RELEASE"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
 	}
 }
@@ -30,7 +29,6 @@ repositories {
 
 apply plugin: 'groovy'
 apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
 apply plugin: 'spring-cloud-contract'
 apply plugin: 'maven-publish'
 
@@ -59,7 +57,7 @@ test {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.0.2'
+    gradleVersion = '2.14'
 }
 
 clean.doFirst {

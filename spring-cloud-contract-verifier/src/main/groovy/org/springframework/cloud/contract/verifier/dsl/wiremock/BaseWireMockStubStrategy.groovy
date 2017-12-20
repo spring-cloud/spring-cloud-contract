@@ -96,23 +96,14 @@ abstract class BaseWireMockStubStrategy {
 	 */
 	String parseBody(Map map, ContentType contentType) {
 		def transformedMap = MapConverter.getStubSideValues(map)
-		transformedMap = transformMapIfRequestPresent(transformedMap)
+		String responseSideBody = toJson(MapConverter.getTestSideValues(contract.request.body))
+		DocumentContext context = JsonPath.parse(responseSideBody)
+		transformedMap = processEntriesForTemplating(transformedMap, context)
 		String json = toJson(transformedMap)
 		// the space is important cause at the end of the json body you also have a }
 		// you can't have 4 } next to each other
 		String unquotedJson = json.replace('"' + WRAPPER, '').replace(WRAPPER + '"', ' ')
 		return parseBody(unquotedJson, contentType)
-	}
-
-	private Object transformMapIfRequestPresent(Object transformedMap) {
-		def requestBody = contract.request.body
-		if (requestBody == null) {
-			return transformedMap
-		}
-		String testSideBody = toJson(
-				MapConverter.getTestSideValues(requestBody))
-		DocumentContext context = JsonPath.parse(testSideBody)
-		return processEntriesForTemplating(transformedMap, context)
 	}
 
 	private Object processEntriesForTemplating(transformedMap, DocumentContext context) {

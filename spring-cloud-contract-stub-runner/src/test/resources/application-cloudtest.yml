@@ -1,4 +1,5 @@
 stubrunner:
+  camel.enabled: false
   cloud.stubbed.discovery.enabled: true
 spring.cloud:
   zookeeper:

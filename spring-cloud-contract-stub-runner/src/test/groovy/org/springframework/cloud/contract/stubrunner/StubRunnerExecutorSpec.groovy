@@ -28,8 +28,8 @@ import spock.lang.Specification
 
 class StubRunnerExecutorSpec extends Specification {
 
-	static final int MIN_PORT = 18999
-	static final int MAX_PORT = 19999
+	static final int MIN_PORT = 8999
+	static final int MAX_PORT = 9999
 
 	private AvailablePortScanner portScanner
 	private StubRepository repository

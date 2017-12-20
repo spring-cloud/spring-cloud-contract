@@ -94,8 +94,8 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	@Override
 	public HttpServerStub start() {
 		if (isRunning()) {
-			if (log.isTraceEnabled()) {
-				log.trace("The server is already running at port [" + port() + "]");
+			if (log.isDebugEnabled()) {
+				log.debug("The server is already running at port [" + port() + "]");
 			}
 			return this;
 		}
@@ -113,8 +113,8 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	@Override
 	public HttpServerStub stop() {
 		if (!isRunning()) {
-			if (log.isTraceEnabled()) {
-				log.trace("Trying to stop a non started server!");
+			if (log.isDebugEnabled()) {
+				log.debug("Trying to stop a non started server!");
 			}
 			return this;
 		}

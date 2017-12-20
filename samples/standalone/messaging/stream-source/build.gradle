@@ -7,7 +7,7 @@ buildscript {
 		maven { url "http://repo.spring.io/release" }
 	}
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.0.0.M6"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.4.RELEASE"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
 		classpath "com.jayway.restassured:rest-assured:2.9.0"
 		classpath "com.jayway.restassured:spring-mock-mvc:2.9.0"
@@ -27,7 +27,6 @@ repositories {
 
 apply plugin: 'groovy'
 apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
 apply plugin: 'spring-cloud-contract'
 apply plugin: 'maven-publish'
 
@@ -100,8 +99,4 @@ task resolveDependencies {
 			}
 		}
 	}
-}
-
-task wrapper(type: Wrapper) {
-	gradleVersion = '4.0.2'
 }

@@ -43,6 +43,7 @@ public class StubRunnerBootZookeeperExample {
 -Dstubrunner.cloud.stubbed.discovery.enabled=false
 -Dstubrunner.cloud.zookeepr.enabled=true
 -Dstubrunner.repositoryRoot=classpath:m2repo/repository/
+-Dstubrunner.camel.enabled=false
 -Deureka.client.enabled=false
 -Ddebug=true
 
