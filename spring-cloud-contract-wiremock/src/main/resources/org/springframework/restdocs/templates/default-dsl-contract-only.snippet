@@ -34,7 +34,7 @@ Contract.make {
     {{#response_json_paths_present}}
         testMatchers {
         {{#response_json_paths}}
-            jsonPath('{{jsonPath}}', byType())
+            jsonPath('''{{jsonPath}}''', byType())
         {{/response_json_paths}}
         }
     {{/response_json_paths_present}}
