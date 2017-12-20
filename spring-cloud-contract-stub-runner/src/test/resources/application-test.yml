@@ -8,8 +8,6 @@ stubrunner:
 # end::test[]
   cloud:
     enabled: false
-  camel:
-    enabled: false
 
 spring.cloud:
   consul.enabled: false

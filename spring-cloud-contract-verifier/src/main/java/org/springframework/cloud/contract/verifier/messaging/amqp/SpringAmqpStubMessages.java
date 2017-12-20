@@ -64,8 +64,9 @@ public class SpringAmqpStubMessages implements
 
 	@Autowired
 	public SpringAmqpStubMessages(RabbitTemplate rabbitTemplate, MessageListenerAccessor messageListenerAccessor) {
-		Assert.notNull(rabbitTemplate);
-		Assert.isTrue(mockingDetails(rabbitTemplate).isSpy() || mockingDetails(rabbitTemplate).isMock()); //we get send messages by capturing arguments on the spy
+		Assert.notNull(rabbitTemplate, "RabbitTemplate must be set");
+		Assert.isTrue(mockingDetails(rabbitTemplate).isSpy() || mockingDetails(rabbitTemplate).isMock(),
+				"StubRunner AMQP will work only if RabbiTemplate is a spy"); //we get send messages by capturing arguments on the spy
 		this.rabbitTemplate = rabbitTemplate;
 		this.messageListenerAccessor = messageListenerAccessor;
 	}

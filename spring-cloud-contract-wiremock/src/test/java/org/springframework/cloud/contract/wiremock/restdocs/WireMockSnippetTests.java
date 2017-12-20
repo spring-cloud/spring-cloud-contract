@@ -1,15 +1,7 @@
 package org.springframework.cloud.contract.wiremock.restdocs;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.util.Collection;
-
 import com.github.tomakehurst.wiremock.matching.EqualToJsonPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -17,8 +9,7 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.Answers;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.cloud.contract.wiremock.WireMockStubMapping;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -31,10 +22,19 @@ import org.springframework.restdocs.operation.OperationRequest;
 import org.springframework.restdocs.operation.OperationRequestPart;
 import org.springframework.restdocs.operation.OperationResponse;
 import org.springframework.restdocs.operation.Parameters;
+import org.springframework.restdocs.operation.RequestCookie;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.util.Collection;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyString;
 
 /**
  * @author Marcin Grzejszczak
@@ -192,6 +192,11 @@ public class WireMockSnippetTests {
 			public URI getUri() {
 				return URI.create("http://foo/bar");
 			}
+
+			@Override
+			public Collection<RequestCookie> getCookies() {
+				return Collections.emptySet();
+			}
 		};
 	}
 
@@ -235,6 +240,11 @@ public class WireMockSnippetTests {
 			public URI getUri() {
 				return URI.create("http://foo/bar");
 			}
+
+			@Override
+			public Collection<RequestCookie> getCookies() {
+				return Collections.emptySet();
+			}
 		};
 	}
 
@@ -275,6 +285,10 @@ public class WireMockSnippetTests {
 			@Override
 			public URI getUri() {
 				return URI.create("http://foo/bar");
+			}
+
+			@Override public Collection<RequestCookie> getCookies() {
+				return Collections.emptySet();
 			}
 		};
 	}

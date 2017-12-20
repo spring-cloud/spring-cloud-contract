@@ -10,7 +10,7 @@ buildscript {
 		maven { url "http://repo.spring.io/plugins-staging-local/" }
 	}
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.4.RELEASE"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.0.0.M6"
 	}
 }
 
@@ -27,6 +27,7 @@ repositories {
 
 apply plugin: 'groovy'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
 apply plugin: 'maven-publish'
 apply plugin: 'maven'
 
@@ -54,7 +55,7 @@ test {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.14'
+    gradleVersion = '4.0.2'
 }
 
 task stubsJar(type: Jar, dependsOn: ['copySnippets', 'copySources', 'copyClasses']) {

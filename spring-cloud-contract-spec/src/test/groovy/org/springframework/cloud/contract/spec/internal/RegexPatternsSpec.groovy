@@ -18,15 +18,13 @@ package org.springframework.cloud.contract.spec.internal
 
 import spock.lang.Specification
 
-import java.util.regex.Pattern
-
 class RegexPatternsSpec extends Specification {
 
 	RegexPatterns regexPatterns = new RegexPatterns()
 
 	def "should generate a regex for ip address [#textToMatch] that is a match [#shouldMatch]"() {
 		expect:
-			shouldMatch == Pattern.compile(regexPatterns.ipAddress()).matcher(textToMatch).matches()
+			shouldMatch == regexPatterns.ipAddress().matcher(textToMatch).matches()
 		where:
 			textToMatch       || shouldMatch
 			'123.123.123.123' || true
@@ -35,7 +33,7 @@ class RegexPatternsSpec extends Specification {
 
 	def "should generate a regex for hostname [#textToMatch] that is a match [#shouldMatch]"() {
 		expect:
-			shouldMatch == Pattern.compile(regexPatterns.hostname()).matcher(textToMatch).matches()
+			shouldMatch == regexPatterns.hostname().matcher(textToMatch).matches()
 		where:
 			textToMatch              || shouldMatch
 			'https://asd.com'        || true
@@ -48,7 +46,7 @@ class RegexPatternsSpec extends Specification {
 
 	def "should generate a regex for email [#textToMatch] that is a match [#shouldMatch]"() {
 		expect:
-			shouldMatch == Pattern.compile(regexPatterns.email()).matcher(textToMatch).matches()
+			shouldMatch == regexPatterns.email().matcher(textToMatch).matches()
 		where:
 			textToMatch   || shouldMatch
 			'asd@asd.com' || true
@@ -59,7 +57,7 @@ class RegexPatternsSpec extends Specification {
 	// @see http://formvalidation.io/validators/uri/
 	def "should generate a regex for url [#textToMatch] that is a match [#shouldMatch]"() {
 		expect:
-			shouldMatch == Pattern.compile(regexPatterns.url()).matcher(textToMatch).matches()
+			shouldMatch == regexPatterns.url().matcher(textToMatch).matches()
 		where:
 			textToMatch                                         || shouldMatch
 			'ftp://asd.com:9090/asd/a?a=b'                      || true
@@ -130,7 +128,7 @@ class RegexPatternsSpec extends Specification {
 
 	def "should generate a regex for a number [#textToMatch] that is a match [#shouldMatch]"() {
 		expect:
-			shouldMatch == Pattern.compile(regexPatterns.number()).matcher(textToMatch).matches()
+			shouldMatch == regexPatterns.number().matcher(textToMatch).matches()
 		where:
 			textToMatch || shouldMatch
 			'1'         || true
@@ -142,7 +140,7 @@ class RegexPatternsSpec extends Specification {
 
 	def "should generate a regex for a uuid [#textToMatch] that is a match [#shouldMatch]"() {
 		expect:
-			shouldMatch == Pattern.compile(regexPatterns.uuid()).matcher(textToMatch).matches()
+			shouldMatch == regexPatterns.uuid().matcher(textToMatch).matches()
 		where:
 			textToMatch                           || shouldMatch
 			UUID.randomUUID().toString()          || true
@@ -155,7 +153,7 @@ class RegexPatternsSpec extends Specification {
 
 	def "should generate a regex with date [#textToMatch] in YYYY-MM-DD format that should match [#shouldMatch]"() {
 		expect:
-			shouldMatch == Pattern.compile(regexPatterns.isoDate()).matcher(textToMatch).matches()
+			shouldMatch == regexPatterns.isoDate().matcher(textToMatch).matches()
 		where:
 			textToMatch  || shouldMatch
 			"2014-03-01" || true
@@ -173,7 +171,7 @@ class RegexPatternsSpec extends Specification {
 
 	def "should generate a regex with datetime [#textToMatch] in YYYY-MM-DDTHH:mm:ss format that should match [#shouldMatch]"() {
 		expect:
-			shouldMatch == Pattern.compile(regexPatterns.isoDateTime()).matcher(textToMatch).matches()
+			shouldMatch == regexPatterns.isoDateTime().matcher(textToMatch).matches()
 		where:
 			textToMatch           || shouldMatch
 			"2014-03-01T12:23:45" || true
@@ -198,7 +196,7 @@ class RegexPatternsSpec extends Specification {
 
 	def "should generate a regex with time [#textToMatch] in HH:mm:ss format that should match [#shouldMatch]"() {
 		expect:
-			shouldMatch == Pattern.compile(regexPatterns.isoTime()).matcher(textToMatch).matches()
+			shouldMatch == regexPatterns.isoTime().matcher(textToMatch).matches()
 		where:
 			textToMatch || shouldMatch
 			"12:23:45"  || true
@@ -214,7 +212,7 @@ class RegexPatternsSpec extends Specification {
 
 	def "should generate a regex with iso8601DateTimeWithTimezone [#textToMatch] in YYYY-MM-DDTHH:mm:ss.SSSZZ format that should match [#shouldMatch]"(){
 		expect:
-			shouldMatch == Pattern.compile(regexPatterns.iso8601WithOffset()).matcher(textToMatch).matches()
+			shouldMatch == regexPatterns.iso8601WithOffset().matcher(textToMatch).matches()
 		where:
 			textToMatch 							|| shouldMatch
 			'2014-03-01T12:23:45Z' 					|| true
@@ -227,7 +225,7 @@ class RegexPatternsSpec extends Specification {
 
 	def "should generate a regex for a non blank string [#textToMatch] that should match [#shouldMatch]"(){
 		expect:
-			shouldMatch == Pattern.compile(regexPatterns.nonBlank()).matcher(textToMatch).matches()
+			shouldMatch == regexPatterns.nonBlank().matcher(textToMatch).matches()
 		where:
 			textToMatch    || shouldMatch
 			'Not Empty'    || true
@@ -241,7 +239,7 @@ class RegexPatternsSpec extends Specification {
 
 	def "should generate a regex for a non empty string [#textToMatch] that should match [#shouldMatch]"() {
 		expect:
-			shouldMatch == Pattern.compile(regexPatterns.nonEmpty()).matcher(textToMatch).matches()
+			shouldMatch == regexPatterns.nonEmpty().matcher(textToMatch).matches()
 		where:
 			textToMatch    || shouldMatch
 			'Not Empty'    || true

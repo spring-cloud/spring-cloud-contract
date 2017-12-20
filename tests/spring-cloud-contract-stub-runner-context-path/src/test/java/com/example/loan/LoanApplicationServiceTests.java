@@ -4,9 +4,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.cloud.contract.stubrunner.StubFinder;
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
 import org.springframework.test.annotation.DirtiesContext;
@@ -41,7 +41,7 @@ public class LoanApplicationServiceTests {
 	@Test
 	public void shouldStartThisAppWithContextPath() {
 		String response = new RestTemplate()
-				.getForObject("http://localhost:" + this.port + "/my-path/health", String.class);
+				.getForObject("http://localhost:" + this.port + "/my-path/foo", String.class);
 
 		assertThat(response).isNotEmpty();
 	}
