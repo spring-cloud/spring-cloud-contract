@@ -502,6 +502,19 @@ provide your own extensions, you can register an implementation of the
 Since we use the spring.factories extension approach, you can create an entry in
 `META-INF/spring.factories` file similar to the following:
 
+[source,groovy,indent=0]
+----
+include::{stubrunner_core_path}/src/test/resources/META-INF/spring.factories[indent=0]
+----
+
+The following is an example of a custom extension:
+
+.TestWireMockExtensions.groovy
+[source,groovy,indent=0]
+----
+include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/dsl/wiremock/TestWireMockExtensions.groovy[indent=0]
+----
+
 IMPORTANT: Remember to override the `applyGlobally()` method and set it to `false` if you
 want the transformation to be applied only for a mapping that explicitly requires it.
 
