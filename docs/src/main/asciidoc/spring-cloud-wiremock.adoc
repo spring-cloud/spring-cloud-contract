@@ -160,6 +160,19 @@ Spring Boot embedded servers, and Wiremock itself has "native" support for a par
 version of Jetty (currently 9.2). To use the native Jetty, you need to add the native
 Wiremock dependencies and exclude the Spring Boot container (if there is one).
 
+=== Customization of WireMock configuration
+
+You can register a bean of `org.springframework.cloud.contract.wiremock.WireMockConfigurationCustomizer` type
+in order to customize the WireMock configuration (e.g. add custom transformers).
+Example:
+
+[source,java,indent=0]
+----
+include::{wiremock_tests}/src/test/java/org/springframework/cloud/contract/wiremock/AutoConfigureWireMockConfigurationCustomizerTests.java[tags=customizer_1]
+// perform your customization here
+include::{wiremock_tests}/src/test/java/org/springframework/cloud/contract/wiremock/AutoConfigureWireMockConfigurationCustomizerTests.java[tags=customizer_2]
+----
+
 === Generating Stubs using REST Docs
 
 https://projects.spring.io/spring-restdocs[Spring REST Docs] can be used to generate
