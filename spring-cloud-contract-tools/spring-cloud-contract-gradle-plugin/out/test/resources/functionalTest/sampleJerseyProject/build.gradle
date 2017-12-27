@@ -1,0 +1,152 @@
+/*
+ *  Copyright 2013-2017 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+buildscript {
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		maven { url "http://repo.spring.io/snapshot" }
+		maven { url "http://repo.spring.io/milestone" }
+		maven { url "http://repo.spring.io/release" }
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.0.M3")
+	}
+}
+
+apply plugin: 'checkstyle'
+
+allprojects {
+	group = 'com.example.jersey'
+}
+
+ext {
+	spockVersion = '1.0-groovy-2.4'
+
+	contractVerifierStubsBaseDirectory = 'src/test/resources/stubs'
+}
+
+subprojects {
+	apply plugin: 'groovy'
+
+	repositories {
+		mavenCentral()
+		mavenLocal()
+		maven { url "http://repo.spring.io/snapshot" }
+		maven { url "http://repo.spring.io/milestone" }
+		maven { url "http://repo.spring.io/release" }
+	}
+
+	dependencies {
+		testCompile 'org.codehaus.groovy:groovy-all:2.5.0-beta-1'
+		testCompile "org.spockframework:spock-core:$spockVersion"
+		testCompile 'junit:junit:4.12'
+		testCompile "com.github.tomakehurst:wiremock:${wiremockVersion}"
+		testCompile "com.toomuchcoding.jsonassert:jsonassert:${jsonAssertVersion}"
+		testCompile "org.springframework.cloud:spring-cloud-contract-verifier:${verifierVersion}"
+	}
+}
+
+configure([project(':fraudDetectionService'), project(':loanApplicationService')]) {
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
+	apply plugin: 'maven-publish'
+
+	ext['jetty.version'] = '9.2.17.v20160517'
+
+	jar {
+		version = '0.0.1'
+	}
+
+	configurations {
+		compile.exclude module: "spring-boot-starter-tomcat"
+	}
+
+	dependencies {
+		compile('org.glassfish.jersey.containers:jersey-container-jetty-http:2.23.2')  {
+			exclude group: 'org.eclipse.jetty'
+		}
+		compile 'org.springframework.boot:spring-boot-starter-jersey'
+		compile 'org.springframework.boot:spring-boot-starter-jetty'
+
+		testRuntime "org.spockframework:spock-spring:$spockVersion"
+
+		compile('org.glassfish.jersey.connectors:jersey-apache-connector:2.23.2') {
+			exclude group: 'org.eclipse.jetty'
+		}
+		testCompile "org.mockito:mockito-core"
+		testCompile "org.springframework:spring-test"
+		testCompile "org.springframework.boot:spring-boot-test"
+		testCompile("com.github.tomakehurst:wiremock:${wiremockVersion}") {
+			exclude group: 'org.eclipse.jetty'
+		}
+	}
+
+	task cleanup(type: Delete) {
+		delete 'src/test/resources/mappings', 'src/test/resources/stubs'
+	}
+
+	clean.dependsOn('cleanup')
+
+	test {
+		testLogging {
+			exceptionFormat = 'full'
+		}
+	}
+
+}
+
+configure(project(':fraudDetectionService')) {
+	test.dependsOn('generateWireMockClientStubs')
+
+	apply plugin: 'spring-cloud-contract'
+
+	ext {
+		contractsDir = file("mappings")
+		stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
+	}
+	ext['jetty.version'] = '9.2.17.v20160517'
+
+	contracts {
+		targetFramework = 'Spock'
+		testMode = 'JaxRsClient'
+		baseClassForTests = 'org.springframework.cloud.MvcSpec'
+		contractsRepositoryUrl = "file://" + file("${project.rootDir.absolutePath}/m2repo/repository").absolutePath
+		contractDependency {
+			stringNotation("com.example:jersey-contracts:+:")
+		}
+		generatedTestSourcesDir = file("${project.buildDir}/generated-test-sources/")
+		stubsOutputDir = stubsOutputDirRoot
+		disableStubPublication(project.hasProperty("disablePublication"))
+	}
+}
+
+configure(project(':loanApplicationService')) {
+
+	task copyCollaboratorStubs(type: Copy) {
+		File fraudBuildDir = project(':fraudDetectionService').buildDir
+		from(new File(fraudBuildDir, "/production/${project(':fraudDetectionService').name}-stubs/")) {
+			include '**/*.json'
+		}
+		into "src/test/resources/mappings"
+	}
+
+	test.dependsOn('copyCollaboratorStubs')
+}
+
+wrapper {
+	gradleVersion '3.5'
+}

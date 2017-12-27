@@ -25,6 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.messaging.Sink
@@ -42,6 +43,7 @@ import org.springframework.test.context.ContextConfiguration
 @SpringBootTest(properties = ["spring.application.name=bar-consumer"])
 @AutoConfigureStubRunner(ids = "org.springframework.cloud.contract.verifier.stubs:producerWithMultipleConsumers",
 		repositoryRoot = "classpath:m2repo/repository/",
+		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 		stubsPerConsumer = true)
 @DirtiesContext
 class StubRunnerStubsPerConsumerSpec extends Specification {

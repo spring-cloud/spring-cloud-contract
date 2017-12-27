@@ -25,6 +25,7 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.cloud.consul.ConsulAutoConfiguration
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration
 import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration
 import org.springframework.cloud.zookeeper.discovery.RibbonZookeeperAutoConfiguration
@@ -46,6 +47,7 @@ import spock.lang.Specification
 		ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
 		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
 		"org.springframework.cloud.contract.verifier.stubs:bootService"],
+		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 		repositoryRoot = "classpath:m2repo/repository/")
 // end::autoconfigure[]
 @DirtiesContext

@@ -1367,8 +1367,7 @@ com.example.CustomStubDownloaderBuilder
 
 Now you can pick a folder with the source of your stubs.
 
-IMPORTANT: If you do not provide any implementation, then the default is used.
-If you use the `repositoryRoot` property or the `workOffline` flag, then an Aether-based
-implementation that downloads stubs from a remote repository is used. If you do not
-provide these values, the `ClasspathStubProvider` (which will scan the classpath) is
-used. If you provide more than one, then the first one on the list is used.
+IMPORTANT: If you do not provide any implementation, then the default is used (scan classpath).
+If you provide the `stubsMode = StubRunnerProperties.StubsMode.LOCAL` or
+`, stubsMode = StubRunnerProperties.StubsMode.REMOTE` then the Aether implementation will be used
+If you provide more than one, then the first one on the list is used.

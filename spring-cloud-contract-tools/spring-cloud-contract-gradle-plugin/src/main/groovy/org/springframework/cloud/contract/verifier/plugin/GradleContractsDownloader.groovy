@@ -13,6 +13,7 @@ import org.springframework.cloud.contract.stubrunner.StubDownloader
 import org.springframework.cloud.contract.stubrunner.StubDownloaderBuilderProvider
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.util.StringUtils
 /**
@@ -63,8 +64,8 @@ class GradleContractsDownloader {
 	}
 
 	private boolean shouldDownloadContracts(ContractVerifierExtension extension) {
-		return (StringUtils.hasText(extension.contractRepository.repositoryUrl) || extension.contractsWorkOffline) &&
-				(StringUtils.hasText(extension.contractDependency.artifactId) ||
+		return [StubRunnerProperties.StubsMode.LOCAL, StubRunnerProperties.StubsMode.REMOTE].any {
+			it == extension.stubsMode } && (StringUtils.hasText(extension.contractDependency.artifactId) ||
 						StringUtils.hasText(extension.contractDependency.stringNotation))
 	}
 
@@ -78,7 +79,7 @@ class GradleContractsDownloader {
 		StubRunnerOptionsBuilder options = new StubRunnerOptionsBuilder()
 				.withOptions(StubRunnerOptions.fromSystemProps())
 				.withStubRepositoryRoot(extension.contractRepository.repositoryUrl)
-				.withWorkOffline(extension.contractsWorkOffline)
+				.withStubsMode(extension.stubsMode)
 				.withUsername(extension.contractRepository.username)
 				.withPassword(extension.contractRepository.password)
 		if (extension.contractRepository.proxyPort) {

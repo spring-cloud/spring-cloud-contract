@@ -1,0 +1,65 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		maven { url "http://repo.spring.io/snapshot" }
+		maven { url "http://repo.spring.io/milestone" }
+		maven { url "http://repo.spring.io/release" }
+	}
+}
+
+apply plugin: 'groovy'
+apply plugin: 'spring-cloud-contract'
+apply plugin: 'maven-publish'
+
+group = 'org.springframework.cloud.testprojects'
+
+ext {
+	restAssuredVersion = '3.0.2'
+
+	contractsDir = file("repository/mappings")
+	stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/repository/")
+}
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+	maven { url "http://repo.spring.io/snapshot" }
+	maven { url "http://repo.spring.io/milestone" }
+	maven { url "http://repo.spring.io/release" }
+}
+
+dependencies {
+	compile "org.springframework:spring-web"
+	compile "org.springframework:spring-context-support"
+	compile "org.codehaus.groovy:groovy-all:2.5.0-beta-1"
+	compile 'com.jayway.jsonpath:json-path-assert:2.2.0'
+
+	testCompile "com.github.tomakehurst:wiremock:${wiremockVersion}"
+	testCompile "com.toomuchcoding.jsonassert:jsonassert:${jsonAssertVersion}"
+	testCompile "org.spockframework:spock-spring:1.0-groovy-2.4"
+	testCompile "io.restassured:rest-assured:$restAssuredVersion"
+	testCompile "io.restassured:spring-mock-mvc:$restAssuredVersion"
+	testCompile "ch.qos.logback:logback-classic:1.1.2"
+	testCompile "org.springframework.cloud:spring-cloud-contract-verifier:${verifierVersion}"
+}
+
+contracts {
+	baseClassForTests = 'org.springframework.cloud.contract.verifier.twitter.places.BaseMockMvcSpec'
+	basePackageForTests = 'contracts'
+	contractsDslDir = contractsDir
+//	generatedTestSourcesDir = file("${project.rootDir}/src/test/groovy/")
+	stubsOutputDir = stubsOutputDirRoot
+	targetFramework = 'Spock'
+}
+
+generateContractTests.dependsOn generateWireMockClientStubs
+
+wrapper {
+	gradleVersion '3.5'
+}
+
+test {
+	testLogging {
+		exceptionFormat = 'full'
+	}
+}

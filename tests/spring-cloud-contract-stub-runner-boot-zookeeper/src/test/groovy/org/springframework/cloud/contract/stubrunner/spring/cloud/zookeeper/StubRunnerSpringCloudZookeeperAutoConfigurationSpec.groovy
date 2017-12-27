@@ -27,6 +27,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.zookeeper.ZookeeperProperties
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryClient
 import org.springframework.context.annotation.Bean
@@ -48,7 +49,8 @@ import spock.lang.Specification
 		["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
 		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
 		"org.springframework.cloud.contract.verifier.stubs:bootService"],
-		repositoryRoot = "classpath:m2repo/repository/")
+		repositoryRoot = "classpath:m2repo/repository/",
+		stubsMode = StubRunnerProperties.StubsMode.REMOTE)
 @DirtiesContext
 class StubRunnerSpringCloudZookeeperAutoConfigurationSpec extends Specification {
 

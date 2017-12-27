@@ -121,6 +121,7 @@ configure(project(':fraudDetectionService')) {
 	ext['jetty.version'] = '9.2.17.v20160517'
 
 	contracts {
+		stubsMode = "REMOTE"
 		targetFramework = 'Spock'
 		testMode = 'JaxRsClient'
 		baseClassForTests = 'org.springframework.cloud.MvcSpec'

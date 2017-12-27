@@ -3,6 +3,7 @@ package org.springframework.cloud.contract.stubrunner.junit;
 import java.util.List;
 
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 
 interface StubRunnerRuleOptions {
@@ -36,9 +37,9 @@ interface StubRunnerRuleOptions {
 	StubRunnerRule repoRoot(String repoRoot);
 
 	/**
-	 * Should download stubs or use only the local repository
+	 * Stubs mode that should be used
 	 */
-	StubRunnerRule workOffline(boolean workOffline);
+	StubRunnerRule stubsMode(StubRunnerProperties.StubsMode stubsMode);
 
 	/**
 	 * Group Id, artifact Id, version and classifier of a single stub to download

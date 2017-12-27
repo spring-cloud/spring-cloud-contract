@@ -35,6 +35,7 @@ import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.RepositorySystemSession;
 import org.springframework.cloud.contract.maven.verifier.stubrunner.AetherStubDownloaderFactory;
 import org.springframework.cloud.contract.spec.ContractVerifierException;
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.TestGenerator;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
@@ -142,10 +143,10 @@ public class GenerateTestsMojo extends AbstractMojo {
 	private String contractsPath;
 
 	/**
-	 * If {@code true} then JAR with contracts will be taken from local maven repository
+	 * Picks the mode in which stubs will be found and registered
 	 */
-	@Parameter(property = "contractsWorkOffline", defaultValue = "false")
-	private boolean contractsWorkOffline;
+	@Parameter(property = "stubsMode", defaultValue = "CLASSPATH")
+	private StubRunnerProperties.StubsMode stubsMode;
 
 	/**
 	 * A package that contains all the base clases for generated tests. If your contract resides in a location
@@ -214,7 +215,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 		final ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
 		// download contracts, unzip them and pass as output directory
 		File contractsDirectory = new MavenContractsDownloader(this.project, this.contractDependency,
-				this.contractsPath, this.contractsRepositoryUrl, this.contractsWorkOffline, getLog(),
+				this.contractsPath, this.contractsRepositoryUrl, this.stubsMode, getLog(),
 				this.aetherStubDownloaderFactory, this.repoSession,
 				this.contractsRepositoryUsername, this.contractsRepositoryPassword,
 				this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);

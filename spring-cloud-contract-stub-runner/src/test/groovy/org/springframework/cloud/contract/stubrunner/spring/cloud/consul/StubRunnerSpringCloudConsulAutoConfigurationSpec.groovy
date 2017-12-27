@@ -30,6 +30,7 @@ import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.annotation.DirtiesContext
@@ -55,6 +56,7 @@ import static org.mockito.Mockito.mock
 		["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
 		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
 		"org.springframework.cloud.contract.verifier.stubs:bootService"],
+		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 		repositoryRoot = "classpath:m2repo/repository/")
 @DirtiesContext
 class StubRunnerSpringCloudConsulAutoConfigurationSpec extends Specification {

@@ -19,6 +19,8 @@ package org.springframework.cloud.contract.stubrunner.junit
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import org.junit.ClassRule
+
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
 import spock.lang.Shared
 import spock.lang.Specification
@@ -38,6 +40,7 @@ class StubRunnerRuleCustomMsgVerifierSpec extends Specification {
 	}
 
 	@ClassRule @Shared StubRunnerRule rule = new StubRunnerRule()
+			.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
 			.repoRoot(StubRunnerRuleCustomMsgVerifierSpec.getResource("/m2repo/repository").toURI().toString())
 			.downloadStub("org.springframework.cloud.contract.verifier.stubs", "bootService")
 			.messageVerifier(new MyMessageVerifier())

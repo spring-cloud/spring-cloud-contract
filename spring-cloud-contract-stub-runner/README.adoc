@@ -18,23 +18,25 @@ The latter example is described in the <<custom_stub_runner, Custom Stub Runner>
 
 ===== Stub downloading
 
-If you provide the `stubrunner.repositoryRoot` or `stubrunner.workOffline` flag will be set
-to `true` then Stub Runner will connect to the given server and download the required jars.
-It will then unpack the JAR to a temporary folder and reference those files in further
-contract processing.
+You can control the stub downloading via the `stubsMode` switch. It picks value from the
+`StubRunnerProperties.StubsMode` enum. You can use the following options
+
+- `StubRunnerProperties.StubsMode.CLASSPATH` (default value) - will pick stubs from the classpath
+- `StubRunnerProperties.StubsMode.LOCAL` - will pick stubs from a local storage (e.g. `.m2`)
+- `StubRunnerProperties.StubsMode.REMOTE` - will pick stubs from a remote location
 
 Example:
 
 [source,java]
 ----
-@AutoConfigureStubRunner(repositoryRoot="http://foo.bar", ids = "com.example:beer-api-producer:+:stubs:8095")
+@AutoConfigureStubRunner(repositoryRoot="http://foo.bar", ids = "com.example:beer-api-producer:+:stubs:8095", stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 ----
 
 ===== Classpath scanning
 
-If you *DON'T* provide the `stubrunner.repositoryRoot` and `stubrunner.workOffline` flag will
-be set to `false` (that's the default) then classpath will get scanned. Let's look at the
-following example:
+If you set the `stubsMode` property to `StubRunnerProperties.StubsMode.CLASSPATH`
+(or set nothing since `CLASSPATH` is the default value) then classpath will get scanned.
+Let's look at the following example:
 
 [source,java]
 ----
@@ -182,10 +184,10 @@ You can set the following options to the main class:
                                   representation of jars with stubs.
                                   Eg. groupid:artifactid1,groupid2:
                                   artifactid2:classifier
+--sm, --stubsMode               Stubs mode to be used. Acceptable values
+                                  [CLASSPATH, LOCAL, REMOTE]
 -u, --username                  Username to user when connecting to
                                   repository
---wo, --workOffline             Switch to work offline. Defaults to
-                                  'false'
 ----
 
 ===== HTTP Stubs
@@ -483,7 +485,7 @@ or a subdirectory called `config` or in `~/.spring-cloud`. The file could look l
 [source,yml,indent=0]
 ----
 stubrunner:
-  workOffline: true
+  stubsMode: LOCAL
   ids:
     - com.example:beer-api-producer:+:9876
 ----
