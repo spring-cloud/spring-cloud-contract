@@ -62,6 +62,9 @@ public class WireMockConfiguration implements SmartLifecycle {
 	@Autowired(required = false)
 	private Options options;
 
+	@Autowired(required = false)
+	private WireMockConfigurationCustomizer customizer;
+
 	@Autowired
 	private DefaultListableBeanFactory beanFactory;
 
@@ -84,6 +87,9 @@ public class WireMockConfiguration implements SmartLifecycle {
 			registerFiles(factory);
 			factory.notifier(new Slf4jNotifier(true));
 			this.options = factory;
+			if (this.customizer != null) {
+				this.customizer.customize(factory);
+			}
 		}
 		this.server = new WireMockServer(this.options);
 		registerStubs();
