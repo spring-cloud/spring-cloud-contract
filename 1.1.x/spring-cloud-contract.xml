@@ -225,7 +225,8 @@ You would like to feed that instance with a proper stub definition.</simpara>
 <simpara>Annotate your test class with <literal>@AutoConfigureStubRunner</literal>. In the annotation provide the group id and artifact id for the Stub Runner to download stubs of your collaborators.</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.NONE)
-@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"}, workOffline = true)
+@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
+		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 @DirtiesContext
 public class LoanApplicationServiceTests {</programlisting>
 <simpara>After that, during the tests Spring Cloud Contract will automatically find the stubs (simulating the real service) in Maven repository and expose them on configured (or random) port.</simpara>
@@ -554,7 +555,8 @@ for more information.</link> We highly recommend using the map notation!</simpar
 <simpara>Annotate your test class with <literal>@AutoConfigureStubRunner</literal>. In the annotation provide the group id and artifact id for the Stub Runner to download stubs of your collaborators. Also provide the offline work switch since you&#8217;re playing with the collaborators offline (optional step).</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.NONE)
-@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"}, workOffline = true)
+@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
+		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 @DirtiesContext
 public class LoanApplicationServiceTests {</programlisting>
 <simpara>Now if you run your tests you&#8217;ll see sth like this:</simpara>
