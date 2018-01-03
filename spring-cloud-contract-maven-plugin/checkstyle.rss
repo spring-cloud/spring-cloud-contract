@@ -23,7 +23,7 @@ under the License.
     <link>https://github.com/spring-cloud/spring-cloud-contract</link>
     <description>Spring Cloud Contract Maven Plugin - Checkstyle report</description>
     <language>en-us</language>
-    <copyright>&#169;2016 - 2017 Spring</copyright>
+    <copyright>&#169;2016 - 2018 Spring</copyright>
     <item>
       <title>File: 11,
              Errors: 0,
@@ -116,7 +116,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.stubrunner.RemoteStubRunner.java">org/springframework/cloud/contract/maven/verifier/stubrunner/RemoteStubRunner.java</a>
+                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.RunMojo.java">org/springframework/cloud/contract/maven/verifier/RunMojo.java</a>
                 </td>
                 <td>
                   0
@@ -144,7 +144,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.RunMojo.java">org/springframework/cloud/contract/maven/verifier/RunMojo.java</a>
+                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.stubrunner.RemoteStubRunner.java">org/springframework/cloud/contract/maven/verifier/stubrunner/RemoteStubRunner.java</a>
                 </td>
                 <td>
                   0

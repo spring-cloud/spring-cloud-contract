@@ -143,7 +143,15 @@ pattern. The JSON format is the normal WireMock format, which you can read about
 <a class="link" href="http://wiremock.org/docs/stubbing/" target="_top">WireMock website</a>.</p><p>Currently, the Spring Cloud Contract Verifier supports Tomcat, Jetty, and Undertow as
 Spring Boot embedded servers, and Wiremock itself has "native" support for a particular
 version of Jetty (currently 9.2). To use the native Jetty, you need to add the native
-Wiremock dependencies and exclude the Spring Boot container (if there is one).</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_generating_stubs_using_rest_docs" href="#_generating_stubs_using_rest_docs"></a>11.6&nbsp;Generating Stubs using REST Docs</h2></div></div></div><p><a class="link" href="https://projects.spring.io/spring-restdocs" target="_top">Spring REST Docs</a> can be used to generate
+Wiremock dependencies and exclude the Spring Boot container (if there is one).</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_customization_of_wiremock_configuration" href="#_customization_of_wiremock_configuration"></a>11.6&nbsp;Customization of WireMock configuration</h2></div></div></div><p>You can register a bean of <code class="literal">org.springframework.cloud.contract.wiremock.WireMockConfigurationCustomizer</code> type
+in order to customize the WireMock configuration (e.g. add custom transformers).
+Example:</p><pre class="programlisting">		<em><span class="hl-annotation" style="color: gray">@Bean</span></em> WireMockConfigurationCustomizer optionsCustomizer() {
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> WireMockConfigurationCustomizer() {
+				<em><span class="hl-annotation" style="color: gray">@Override</span></em> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> customize(WireMockConfiguration options) {
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// perform your customization here</span>
+				}
+			};
+		}</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_generating_stubs_using_rest_docs" href="#_generating_stubs_using_rest_docs"></a>11.7&nbsp;Generating Stubs using REST Docs</h2></div></div></div><p><a class="link" href="https://projects.spring.io/spring-restdocs" target="_top">Spring REST Docs</a> can be used to generate
 documentation (for example in Asciidoctor format) for an HTTP API with Spring MockMvc or
 Rest Assured. At the same time that you generate documentation for your API, you can also
 generate WireMock stubs by using Spring Cloud Contract WireMock. To do so, write your
@@ -229,7 +237,7 @@ available on the classpath (by
 stubs as JARs</a>, for example). After that, you can create a stub using WireMock in a
 number of different ways, including by using
 <code class="literal">@AutoConfigureWireMock(stubs="classpath:resource.json")</code>, as described earlier in this
-document.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_generating_contracts_by_using_rest_docs" href="#_generating_contracts_by_using_rest_docs"></a>11.7&nbsp;Generating Contracts by Using REST Docs</h2></div></div></div><p>You can also generate Spring Cloud Contract DSL files and documentation with Spring REST
+document.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_generating_contracts_by_using_rest_docs" href="#_generating_contracts_by_using_rest_docs"></a>11.8&nbsp;Generating Contracts by Using REST Docs</h2></div></div></div><p>You can also generate Spring Cloud Contract DSL files and documentation with Spring REST
 Docs. If you do so in combination with Spring Cloud WireMock, you get both the contracts
 and the stubs.</p><p>Why would you want to use this feature? Some people in the community asked questions
 about a situation in which they would like to move to DSL-based contract definition,
@@ -240,12 +248,13 @@ is there because it makes sense to generate both the contracts and the stubs.</p
 					.accept(MediaType.APPLICATION_PDF)
 					.accept(MediaType.APPLICATION_JSON)
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\"foo\": 23 }"</span>))
+					.content(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\"foo\": 23, \"bar\" : \"baz\" }"</span>))
 				.andExpect(status().isOk())
 				.andExpect(content().string(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar"</span>))
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// first WireMock</span>
 				.andDo(WireMockRestDocs.verify()
 						.jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.foo &gt;= 20)]"</span>)
+						.jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.bar in ['baz','bazz','bazzz'])]"</span>)
 						.contentType(MediaType.valueOf(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/json"</span>))
 						.stub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"shouldGrantABeerIfOldEnough"</span>))
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// then Contract DSL documentation</span>

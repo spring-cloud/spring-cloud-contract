@@ -90,7 +90,8 @@ You would like to feed that instance with a proper stub definition.</p><p>At som
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> HttpEntity&lt;&gt;(request, httpHeaders),
 				FraudServiceResponse.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);</pre><p>Annotate your test class with <code class="literal">@AutoConfigureStubRunner</code>. In the annotation provide the group id and artifact id for the Stub Runner to download stubs of your collaborators.</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
 <em><span class="hl-annotation" style="color: gray">@SpringBootTest(webEnvironment=WebEnvironment.NONE)</span></em>
-<em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"}, workOffline = true)</span></em>
+<em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
+		stubsMode = StubRunnerProperties.StubsMode.LOCAL)</span></em>
 <em><span class="hl-annotation" style="color: gray">@DirtiesContext</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> LoanApplicationServiceTests {</pre><p>After that, during the tests, Spring Cloud Contract automatically finds the stubs
 (simulating the real service) in the Maven repository and exposes them on a configured
@@ -331,7 +332,8 @@ Application service</code>):</p><p>Add the <code class="literal">Spring Cloud Co
 collaborators. (Optional step) Because you&#8217;re playing with the collaborators offline, you
 can also provide the offline work switch.</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
 <em><span class="hl-annotation" style="color: gray">@SpringBootTest(webEnvironment=WebEnvironment.NONE)</span></em>
-<em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"}, workOffline = true)</span></em>
+<em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
+		stubsMode = StubRunnerProperties.StubsMode.LOCAL)</span></em>
 <em><span class="hl-annotation" style="color: gray">@DirtiesContext</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> LoanApplicationServiceTests {</pre><p>Now, when you run your tests, you see something like this:</p><pre class="programlisting"><span class="hl-number">2016</span>-<span class="hl-number">07</span>-<span class="hl-number">19</span> <span class="hl-number">14</span>:<span class="hl-number">22</span>:<span class="hl-number">25.403</span>  INFO <span class="hl-number">41050</span> --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Desired version is + - will try to resolve the latest version
 <span class="hl-number">2016</span>-<span class="hl-number">07</span>-<span class="hl-number">19</span> <span class="hl-number">14</span>:<span class="hl-number">22</span>:<span class="hl-number">25.438</span>  INFO <span class="hl-number">41050</span> --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolved version is <span class="hl-number">0.0</span>.<span class="hl-number">1</span>-SNAPSHOT
@@ -438,8 +440,8 @@ git push origin master</pre><p>Your CI might run something like <code class="lit
 application and the stub artifacts.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_consumer_side_loan_issuance_final_step" href="#_consumer_side_loan_issuance_final_step"></a>2.4.4&nbsp;Consumer Side (Loan Issuance) Final Step</h3></div></div></div><p>As a developer of the Loan Issuance service (a consumer of the Fraud Detection server):</p><p><span class="strong"><strong>Merge branch to master.</strong></span></p><pre class="programlisting">git checkout master
 git merge --no-ff contract-change-pr</pre><p><span class="strong"><strong>Work online.</strong></span></p><p>Now you can disable the offline work for Spring Cloud Contract Stub Runner and indicate
 where the repository with your stubs is located. At this moment the stubs of the server
-side are automatically downloaded from Nexus/Artifactory. You can switch off the value of
-the <code class="literal">workOffline</code> parameter in your annotation. The following code shows an example of
+side are automatically downloaded from Nexus/Artifactory. You can set the value of
+<code class="literal">stubsMode</code> to <code class="literal">REMOTE</code>. The following code shows an example of
 achieving the same thing by changing the properties.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">stubrunner</span>:
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  ids</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'com.example:http-server-dsl:+:stubs:8080'</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  repositoryRoot</span>: http://repo.spring.io/libs-snapshot</pre><p>That&#8217;s it!</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_dependencies" href="#_dependencies"></a>2.5&nbsp;Dependencies</h2></div></div></div><p>The best way to add dependencies is to use the proper <code class="literal">starter</code> dependency.</p><p>For <code class="literal">stub-runner</code>, use <code class="literal">spring-cloud-starter-stub-runner</code>. When you use a plugin, add

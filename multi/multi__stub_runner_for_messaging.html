@@ -184,7 +184,7 @@ property.</p><p>Assume that you have the following Maven repository with a deplo
 	}
 }</pre><p>Now consider the following Spring configuration:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">stubrunner.repositoryRoot</span>: classpath:m2repo/repository/
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">stubrunner.ids</span>: org.springframework.cloud.contract.verifier.stubs:streamService:<span class="hl-number">0.0</span>.<span class="hl-number">1</span>-SNAPSHOT:stubs
-
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">stubrunner.stubs-mode</span>: remote
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">spring</span>:
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  cloud</span>:
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">    stream</span>:
@@ -261,6 +261,7 @@ to disable them explicitly by setting the  <code class="literal">stubrunner.stre
 }</pre><p>Now consider the following Spring configuration:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">stubrunner</span>:
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  repositoryRoot</span>: classpath:m2repo/repository/
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  ids</span>: org.springframework.cloud.contract.verifier.stubs.amqp:spring-cloud-contract-amqp-test:<span class="hl-number">0.4</span>.<span class="hl-number">0</span>-SNAPSHOT:stubs
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  stubs-mode</span>: remote
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">  amqp</span>:
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">    enabled</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">true</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">server</span>:

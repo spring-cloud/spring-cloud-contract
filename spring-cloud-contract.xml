@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2017-12-19</date>
+<date>2017-12-02</date>
 </info>
 <preface>
 <title></title>
@@ -246,7 +246,8 @@ You would like to feed that instance with a proper stub definition.</simpara>
 <simpara>Annotate your test class with <literal>@AutoConfigureStubRunner</literal>. In the annotation provide the group id and artifact id for the Stub Runner to download stubs of your collaborators.</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.NONE)
-@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"}, workOffline = true)
+@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
+		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 @DirtiesContext
 public class LoanApplicationServiceTests {</programlisting>
 <simpara>After that, during the tests, Spring Cloud Contract automatically finds the stubs
@@ -642,7 +643,8 @@ collaborators. (Optional step) Because you&#8217;re playing with the collaborato
 can also provide the offline work switch.</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.NONE)
-@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"}, workOffline = true)
+@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
+		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 @DirtiesContext
 public class LoanApplicationServiceTests {</programlisting>
 <simpara>Now, when you run your tests, you see something like this:</simpara>
@@ -795,8 +797,8 @@ git merge --no-ff contract-change-pr</programlisting>
 <simpara><emphasis role="strong">Work online.</emphasis></simpara>
 <simpara>Now you can disable the offline work for Spring Cloud Contract Stub Runner and indicate
 where the repository with your stubs is located. At this moment the stubs of the server
-side are automatically downloaded from Nexus/Artifactory. You can switch off the value of
-the <literal>workOffline</literal> parameter in your annotation. The following code shows an example of
+side are automatically downloaded from Nexus/Artifactory. You can set the value of
+<literal>stubsMode</literal> to <literal>REMOTE</literal>. The following code shows an example of
 achieving the same thing by changing the properties.</simpara>
 <programlisting language="yaml" linenumbering="unnumbered">stubrunner:
   ids: 'com.example:http-server-dsl:+:stubs:8080'
@@ -1250,6 +1252,7 @@ of the JAR containing the contracts:</simpara>
 	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 	&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
 	&lt;configuration&gt;
+		&lt;stubsMode&gt;REMOTE&lt;/stubsMode&gt;
 		&lt;contractsRepositoryUrl&gt;http://link/to/your/nexus/or/artifactory/or/sth&lt;/contractsRepositoryUrl&gt;
 		&lt;contractDependency&gt;
 			&lt;groupId&gt;com.example.standalone&lt;/groupId&gt;
@@ -2828,18 +2831,27 @@ For messaging, special stub routes are defined.</simpara>
 <simpara>The latter example is described in the <link linkend="custom_stub_runner">Custom Stub Runner</link> section.</simpara>
 <section xml:id="_stub_downloading">
 <title>Stub downloading</title>
-<simpara>If you provide the <literal>stubrunner.repositoryRoot</literal> or <literal>stubrunner.workOffline</literal> flag will be set
-to <literal>true</literal> then Stub Runner will connect to the given server and download the required jars.
-It will then unpack the JAR to a temporary folder and reference those files in further
-contract processing.</simpara>
+<simpara>You can control the stub downloading via the <literal>stubsMode</literal> switch. It picks value from the
+<literal>StubRunnerProperties.StubsMode</literal> enum. You can use the following options</simpara>
+<itemizedlist>
+<listitem>
+<simpara><literal>StubRunnerProperties.StubsMode.CLASSPATH</literal> (default value) - will pick stubs from the classpath</simpara>
+</listitem>
+<listitem>
+<simpara><literal>StubRunnerProperties.StubsMode.LOCAL</literal> - will pick stubs from a local storage (e.g. <literal>.m2</literal>)</simpara>
+</listitem>
+<listitem>
+<simpara><literal>StubRunnerProperties.StubsMode.REMOTE</literal> - will pick stubs from a remote location</simpara>
+</listitem>
+</itemizedlist>
 <simpara>Example:</simpara>
-<programlisting language="java" linenumbering="unnumbered">@AutoConfigureStubRunner(repositoryRoot="http://foo.bar", ids = "com.example:beer-api-producer:+:stubs:8095")</programlisting>
+<programlisting language="java" linenumbering="unnumbered">@AutoConfigureStubRunner(repositoryRoot="http://foo.bar", ids = "com.example:beer-api-producer:+:stubs:8095", stubsMode = StubRunnerProperties.StubsMode.LOCAL)</programlisting>
 </section>
 <section xml:id="_classpath_scanning">
 <title>Classpath scanning</title>
-<simpara>If you <emphasis role="strong">DON&#8217;T</emphasis> provide the <literal>stubrunner.repositoryRoot</literal> and <literal>stubrunner.workOffline</literal> flag will
-be set to <literal>false</literal> (that&#8217;s the default) then classpath will get scanned. Let&#8217;s look at the
-following example:</simpara>
+<simpara>If you set the <literal>stubsMode</literal> property to <literal>StubRunnerProperties.StubsMode.CLASSPATH</literal>
+(or set nothing since <literal>CLASSPATH</literal> is the default value) then classpath will get scanned.
+Let&#8217;s look at the following example:</simpara>
 <programlisting language="java" linenumbering="unnumbered">@AutoConfigureStubRunner(ids = {
     "com.example:beer-api-producer:+:stubs:8095",
     "com.example.foo:bar:1.0.0:superstubs:8096"
@@ -2981,10 +2993,10 @@ HTTP stubs without the need to download artifacts.</simpara>
                                   representation of jars with stubs.
                                   Eg. groupid:artifactid1,groupid2:
                                   artifactid2:classifier
+--sm, --stubsMode               Stubs mode to be used. Acceptable values
+                                  [CLASSPATH, LOCAL, REMOTE]
 -u, --username                  Username to user when connecting to
-                                  repository
---wo, --workOffline             Switch to work offline. Defaults to
-                                  'false'</programlisting>
+                                  repository</programlisting>
 </section>
 <section xml:id="_http_stubs">
 <title>HTTP Stubs</title>
@@ -3115,6 +3127,7 @@ public interface StubFinder extends StubTrigger {
 }</programlisting>
 <simpara>Example of usage in Spock tests:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">@ClassRule @Shared StubRunnerRule rule = new StubRunnerRule()
+		.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
 		.repoRoot(StubRunnerRuleSpec.getResource("/m2repo/repository").toURI().toString())
 		.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")
 		.downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")
@@ -3275,13 +3288,15 @@ class StubRunnerConfigurationSpec extends Specification {
   ids:
     - org.springframework.cloud.contract.verifier.stubs:loanIssuance
     - org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer
-    - org.springframework.cloud.contract.verifier.stubs:bootService</programlisting>
+    - org.springframework.cloud.contract.verifier.stubs:bootService
+  stubs-mode: remote</programlisting>
 <simpara>Instead of using the properties you can also use the properties inside the <literal>@AutoConfigureStubRunner</literal>.
 Below you can find an example of achieving the same result by setting values on the annotation.</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">@AutoConfigureStubRunner(
 		ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
 		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
 		"org.springframework.cloud.contract.verifier.stubs:bootService"],
+		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 		repositoryRoot = "classpath:m2repo/repository/")</programlisting>
 <simpara>Stub Runner Spring registers environment variables in the following manner
 for every registered WireMock server. Example for Stub Runner ids
@@ -3391,7 +3406,7 @@ or a subdirectory called <literal>config</literal> or in <literal>~/.spring-clou
 <title>stubrunner.yml</title>
 <para>
 <programlisting language="yml" linenumbering="unnumbered">stubrunner:
-  workOffline: true
+  stubsMode: LOCAL
   ids:
     - com.example:beer-api-producer:+:9876</programlisting>
 </para>
@@ -3616,6 +3631,7 @@ Or set the test as follows:</simpara>
 @SpringBootTest(properties = ["spring.application.name=bar-consumer"])
 @AutoConfigureStubRunner(ids = "org.springframework.cloud.contract.verifier.stubs:producerWithMultipleConsumers",
 		repositoryRoot = "classpath:m2repo/repository/",
+		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 		stubsPerConsumer = true)
 @DirtiesContext
 class StubRunnerStubsPerConsumerSpec extends Specification {
@@ -3629,6 +3645,7 @@ class StubRunnerStubsPerConsumerSpec extends Specification {
 @AutoConfigureStubRunner(ids = "org.springframework.cloud.contract.verifier.stubs:producerWithMultipleConsumers",
 		repositoryRoot = "classpath:m2repo/repository/",
 		consumerName = "foo-consumer",
+		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 		stubsPerConsumer = true)
 @DirtiesContext
 class StubRunnerStubsPerConsumerWithConsumerNameSpec extends Specification {
@@ -3688,10 +3705,9 @@ properties. Here are their names with their default values:</simpara>
 <entry align="left" valign="top"><simpara>Default classifier for the stub artifacts.</simpara></entry>
 </row>
 <row>
-<entry align="left" valign="top"><simpara>stubrunner.workOffline</simpara></entry>
-<entry align="left" valign="top"><simpara>false</simpara></entry>
-<entry align="left" valign="top"><simpara>If true, then do not contact any remote repositories to
-download stubs.</simpara></entry>
+<entry align="left" valign="top"><simpara>stubrunner.stubsMode</simpara></entry>
+<entry align="left" valign="top"><simpara>CLASSPATH</simpara></entry>
+<entry align="left" valign="top"><simpara>The way you want to fetch and register the stubs</simpara></entry>
 </row>
 <row>
 <entry align="left" valign="top"><simpara>stubrunner.ids</simpara></entry>
@@ -4084,7 +4100,7 @@ property.</simpara>
 <simpara>Now consider the following Spring configuration:</simpara>
 <programlisting language="yaml" linenumbering="unnumbered">stubrunner.repositoryRoot: classpath:m2repo/repository/
 stubrunner.ids: org.springframework.cloud.contract.verifier.stubs:streamService:0.0.1-SNAPSHOT:stubs
-
+stubrunner.stubs-mode: remote
 spring:
   cloud:
     stream:
@@ -4218,6 +4234,7 @@ to disable them explicitly by setting the  <literal>stubrunner.stream.enabled=fa
 <programlisting language="yaml" linenumbering="unnumbered">stubrunner:
   repositoryRoot: classpath:m2repo/repository/
   ids: org.springframework.cloud.contract.verifier.stubs.amqp:spring-cloud-contract-amqp-test:0.4.0-SNAPSHOT:stubs
+  stubs-mode: remote
   amqp:
     enabled: true
 server:
@@ -6803,11 +6820,10 @@ org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder=\
 com.example.CustomStubDownloaderBuilder</screen>
 <simpara>Now you can pick a folder with the source of your stubs.</simpara>
 <important>
-<simpara>If you do not provide any implementation, then the default is used.
-If you use the <literal>repositoryRoot</literal> property or the <literal>workOffline</literal> flag, then an Aether-based
-implementation that downloads stubs from a remote repository is used. If you do not
-provide these values, the <literal>ClasspathStubProvider</literal> (which will scan the classpath) is
-used. If you provide more than one, then the first one on the list is used.</simpara>
+<simpara>If you do not provide any implementation, then the default is used (scan classpath).
+If you provide the <literal>stubsMode = StubRunnerProperties.StubsMode.LOCAL</literal> or
+<literal>, stubsMode = StubRunnerProperties.StubsMode.REMOTE</literal> then the Aether implementation will be used
+If you provide more than one, then the first one on the list is used.</simpara>
 </important>
 </section>
 </chapter>
@@ -6997,6 +7013,19 @@ Spring Boot embedded servers, and Wiremock itself has "native" support for a par
 version of Jetty (currently 9.2). To use the native Jetty, you need to add the native
 Wiremock dependencies and exclude the Spring Boot container (if there is one).</simpara>
 </section>
+<section xml:id="_customization_of_wiremock_configuration">
+<title>Customization of WireMock configuration</title>
+<simpara>You can register a bean of <literal>org.springframework.cloud.contract.wiremock.WireMockConfigurationCustomizer</literal> type
+in order to customize the WireMock configuration (e.g. add custom transformers).
+Example:</simpara>
+<programlisting language="java" linenumbering="unnumbered">		@Bean WireMockConfigurationCustomizer optionsCustomizer() {
+			return new WireMockConfigurationCustomizer() {
+				@Override public void customize(WireMockConfiguration options) {
+// perform your customization here
+				}
+			};
+		}</programlisting>
+</section>
 <section xml:id="_generating_stubs_using_rest_docs">
 <title>Generating Stubs using REST Docs</title>
 <simpara><link xl:href="https://projects.spring.io/spring-restdocs">Spring REST Docs</link> can be used to generate
@@ -7131,12 +7160,13 @@ is there because it makes sense to generate both the contracts and the stubs.</s
 					.accept(MediaType.APPLICATION_PDF)
 					.accept(MediaType.APPLICATION_JSON)
 					.contentType(MediaType.APPLICATION_JSON)
-					.content("{\"foo\": 23 }"))
+					.content("{\"foo\": 23, \"bar\" : \"baz\" }"))
 				.andExpect(status().isOk())
 				.andExpect(content().string("bar"))
 				// first WireMock
 				.andDo(WireMockRestDocs.verify()
 						.jsonPath("$[?(@.foo &gt;= 20)]")
+						.jsonPath("$[?(@.bar in ['baz','bazz','bazzz'])]")
 						.contentType(MediaType.valueOf("application/json"))
 						.stub("shouldGrantABeerIfOldEnough"))
 				// then Contract DSL documentation
