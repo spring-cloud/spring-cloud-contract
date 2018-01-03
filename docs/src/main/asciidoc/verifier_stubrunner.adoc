@@ -74,8 +74,7 @@ properties. Here are their names with their default values:
 |stubrunner.maxPort|15000| Maximum value of a port for a started WireMock with stubs.
 |stubrunner.repositoryRoot|| Maven repo URL. If blank, then call the local maven repo.
 |stubrunner.classifier|stubs| Default classifier for the stub artifacts.
-|stubrunner.workOffline|false| If true, then do not contact any remote repositories to
-download stubs.
+|stubrunner.stubsMode|CLASSPATH| The way you want to fetch and register the stubs
 |stubrunner.ids|| Array of Ivy notation stubs to download.
 |stubrunner.username|| Optional username to access the tool that stores the JARs with
 stubs.

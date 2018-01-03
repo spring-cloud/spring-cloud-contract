@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.core.io.support.SpringFactoriesLoader;
-import org.springframework.util.StringUtils;
 
 /**
  * Provider for {@link StubDownloaderBuilder}. It can also pick a default
@@ -40,8 +40,8 @@ public class StubDownloaderBuilderProvider {
 			log.info("A custom Stub Downloader was passed - will pick [" + get() + "]");
 			return get().build(stubRunnerOptions);
 		}
-		if (!stubRunnerOptions.isWorkOffline() && StringUtils.isEmpty(stubRunnerOptions.getStubRepositoryRoot())) {
-			log.info("Classpath scanning will be used due to passed propreties");
+		if (stubRunnerOptions.stubsMode == StubRunnerProperties.StubsMode.CLASSPATH) {
+			log.info("Classpath scanning will be used due to passed properties");
 			return new ClasspathStubProvider().build(stubRunnerOptions);
 		}
 		log.info("Will download stubs using Aether");

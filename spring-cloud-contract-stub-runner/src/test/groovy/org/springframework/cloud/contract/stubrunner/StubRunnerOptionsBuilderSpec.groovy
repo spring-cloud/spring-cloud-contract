@@ -20,6 +20,8 @@ import spock.lang.Issue
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
 
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
+
 class StubRunnerOptionsBuilderSpec extends Specification {
 
 	private StubRunnerOptionsBuilder builder = new StubRunnerOptionsBuilder()
@@ -139,8 +141,8 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 	@Issue("#466")
 	def shouldSetAllDependenciesFromOptions() {
 		given:
-			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, "root", true, "classifier",
-					[new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "foo", "bar",
+			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, "root", StubRunnerProperties.StubsMode.LOCAL,
+					"classifier", [new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "foo", "bar",
 					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder"))
 			builder.withStubs("foo:bar:baz")
 		when:
@@ -149,7 +151,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			options.minPortValue == 1
 			options.maxPortValue == 2
 			options.stubRepositoryRoot == "root"
-			options.workOffline == true
+			options.stubsMode == StubRunnerProperties.StubsMode.LOCAL
 			options.stubsClassifier == "classifier"
 			options.dependencies == [new StubConfiguration("a:b:c"), new StubConfiguration("foo:bar:baz:classifier")]
 			options.stubIdsToPortMapping == [(new StubConfiguration("a:b:c")): 3]
@@ -164,7 +166,8 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 
 	def shouldNotPrintUsernameAndPassword() {
 		given:
-			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, "root", true, "classifier",
+			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, "root",
+					StubRunnerProperties.StubsMode.CLASSPATH, "classifier",
 					[new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "username123", "password123",
 					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder"))
 			builder.withStubs("foo:bar:baz")
@@ -183,7 +186,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			System.setProperty("stubrunner.port.range.min", "1")
 			System.setProperty("stubrunner.port.range.max", "2")
 			System.setProperty("stubrunner.repository.root", "root")
-			System.setProperty("stubrunner.work-offline", "true")
+			System.setProperty("stubrunner.stubs-mode", "LOCAL")
 			System.setProperty("stubrunner.classifier", "classifier")
 			System.setProperty("stubrunner.ids", "a:b:c,foo:bar:baz:classifier")
 			System.setProperty("stubrunner.username", "foo")
@@ -199,7 +202,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			options.minPortValue == 1
 			options.maxPortValue == 2
 			options.stubRepositoryRoot == "root"
-			options.workOffline == true
+			options.stubsMode == StubRunnerProperties.StubsMode.LOCAL
 			options.stubsClassifier == "classifier"
 			options.dependencies == [new StubConfiguration("a:b:c"), new StubConfiguration("foo:bar:baz:classifier")]
 			options.username == "foo"

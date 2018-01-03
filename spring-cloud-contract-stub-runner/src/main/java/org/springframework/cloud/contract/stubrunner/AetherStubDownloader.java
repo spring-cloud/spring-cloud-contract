@@ -47,6 +47,7 @@ import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions.StubRunnerProxyOptions;
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.util.StringUtils;
 
 import static java.nio.file.Files.createTempDirectory;
@@ -84,20 +85,20 @@ public class AetherStubDownloader implements StubDownloader {
 		}
 		this.remoteRepos = remoteRepositories(stubRunnerOptions);
 		boolean remoteReposMissing = remoteReposMissing();
-		if (remoteReposMissing && stubRunnerOptions.workOffline) {
-			log.info("Remote repos not passed but the switch to work offline was set. "
-					+ "Stubs will be used from your local Maven repository.");
-		}
-		if (remoteReposMissing && !stubRunnerOptions.workOffline) {
-			throw new IllegalStateException("Remote repositories for stubs are not specified and work offline flag wasn't passed");
-		}
-		if (!remoteReposMissing && stubRunnerOptions.workOffline) {
-			throw new IllegalStateException("Remote repositories for stubs are specified and work offline flag is set. "
-					+ "You have to provide one of them.");
+		switch (stubRunnerOptions.stubsMode) {
+			case LOCAL:
+				log.info("Remote repos not passed but the switch to work offline was set. "
+						+ "Stubs will be used from your local Maven repository.");
+				break;
+			case REMOTE:
+				if (remoteReposMissing) throw new IllegalStateException("Remote repositories for stubs are not specified and work offline flag wasn't passed");
+				break;
+			case CLASSPATH:
+				throw new UnsupportedOperationException("You can't use Aether downloader when you use classpath to find stubs");
 		}
 		this.repositorySystem = newRepositorySystem();
-		this.session = newSession(this.repositorySystem, stubRunnerOptions.workOffline);
-		this.workOffline = stubRunnerOptions.workOffline;
+		this.workOffline = stubRunnerOptions.stubsMode == StubRunnerProperties.StubsMode.LOCAL;
+		this.session = newSession(this.repositorySystem, this.workOffline);
 		registerShutdownHook();
 	}
 

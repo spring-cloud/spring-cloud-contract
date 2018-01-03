@@ -31,6 +31,7 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-maven-plugin</artifactId>
 				<configuration>
+					<stubsMode>REMOTE</stubsMode>
 					<contractDependency>
 						<groupId>com.example</groupId>
 						<artifactId>contracts</artifactId>

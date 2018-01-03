@@ -40,11 +40,6 @@ public class StubRunnerProperties {
 	private int maxPort = 15000;
 
 	/**
-	 * Should the stubs be checked for presence only locally
-	 */
-	private boolean workOffline;
-
-	/**
 	 * The repository root to use (where the stubs should be downloaded from)
 	 */
 	private Resource repositoryRoot;
@@ -95,6 +90,29 @@ public class StubRunnerProperties {
 	 */
 	private String mappingsOutputFolder;
 
+	private StubsMode stubsMode;
+
+	/**
+	 * An enumeration stub modes.
+	 */
+	public enum StubsMode {
+
+		/**
+		 * Pick the stubs from classpath
+		 */
+		CLASSPATH,
+
+		/**
+		 * Fetch the stubs from local .m2
+		 */
+		LOCAL,
+
+		/**
+		 * Fetch the stubs from a remote location
+		 */
+		REMOTE,
+	}
+
 	public int getMinPort() {
 		return this.minPort;
 	}
@@ -109,14 +127,6 @@ public class StubRunnerProperties {
 
 	public void setMaxPort(int maxPort) {
 		this.maxPort = maxPort;
-	}
-
-	public boolean isWorkOffline() {
-		return this.workOffline;
-	}
-
-	public void setWorkOffline(boolean workOffline) {
-		this.workOffline = workOffline;
 	}
 
 	public Resource getRepositoryRoot() {
@@ -203,11 +213,20 @@ public class StubRunnerProperties {
 		this.mappingsOutputFolder = mappingsOutputFolder;
 	}
 
+	public StubsMode getStubsMode() {
+		return this.stubsMode;
+	}
+
+	public void setStubsMode(StubsMode stubsMode) {
+		this.stubsMode = stubsMode;
+	}
+
 	@Override public String toString() {
 		return "StubRunnerProperties{" + "minPort=" + this.minPort + ", maxPort=" + this.maxPort
-				+ ", workOffline=" + this.workOffline + ", repositoryRoot=" + this.repositoryRoot
+				+ ", repositoryRoot=" + this.repositoryRoot
 				+ ", ids=" + Arrays.toString(this.ids) + ", classifier='" + this.classifier + '\''
 				+ ", setStubsPerConsumer='" + this.stubsPerConsumer + "', consumerName='" + this.consumerName + '\''
+				+ ", stubsMode='" + this.stubsMode + '\''
 				+ '}';
 	}
 }

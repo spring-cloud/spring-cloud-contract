@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 
 public class StubRunnerMain {
 
@@ -67,11 +68,14 @@ public class StubRunnerMain {
 					.acceptsAll(Arrays.asList("pport", "proxyPort"),"Proxy port to use for repository requests")
 					.withOptionalArg()
 					.ofType(Integer.class);
-			parser.acceptsAll(Arrays.asList("wo", "workOffline"),
-					"Switch to work offline. Defaults to 'false'");
+			ArgumentAcceptingOptionSpec<String> stubsMode = parser
+					.acceptsAll(Arrays.asList("sm", "stubsMode"),"Stubs mode to be used. Acceptable values " + Arrays
+							.toString(StubRunnerProperties.StubsMode.values()))
+					.withRequiredArg().defaultsTo(StubRunnerProperties.StubsMode.CLASSPATH.toString());
 			OptionSet options = parser.parse(args);
 			String stubs = options.valueOf(stubsOpt);
-			boolean workOffline = options.has("wo");
+			StubRunnerProperties.StubsMode stubsModeValue = StubRunnerProperties.StubsMode.valueOf(
+					options.valueOf(stubsMode));
 			Integer minPortValue = options.valueOf(minPortValueOpt);
 			Integer maxPortValue = options.valueOf(maxPortValueOpt);
 			String stubRepositoryRoot= options.valueOf(rootOpt);
@@ -83,7 +87,7 @@ public class StubRunnerMain {
 			final StubRunnerOptionsBuilder builder = new StubRunnerOptionsBuilder()
 					.withMinMaxPort(minPortValue, maxPortValue)
 					.withStubRepositoryRoot(stubRepositoryRoot)
-					.withWorkOffline(workOffline).withStubsClassifier(stubsSuffix)
+					.withStubsMode(stubsModeValue).withStubsClassifier(stubsSuffix)
 					.withUsername(username)
 					.withPassword(password)
 					.withStubs(stubs);
