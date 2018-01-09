@@ -18,9 +18,12 @@ buildscript {
 	repositories {
 		mavenLocal()
 		mavenCentral()
+		maven { url "http://repo.spring.io/snapshot" }
+		maven { url "http://repo.spring.io/milestone" }
+		maven { url "http://repo.spring.io/release" }
 	}
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.4.RELEASE")
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.0.M3")
 	}
 }
 
@@ -42,10 +45,13 @@ subprojects {
 	repositories {
 		mavenCentral()
 		mavenLocal()
+		maven { url "http://repo.spring.io/snapshot" }
+		maven { url "http://repo.spring.io/milestone" }
+		maven { url "http://repo.spring.io/release" }
 	}
 
 	dependencies {
-		testCompile 'org.codehaus.groovy:groovy-all:2.4.11'
+		testCompile 'org.codehaus.groovy:groovy-all:2.5.0-beta-1'
 		testCompile "org.spockframework:spock-core:$spockVersion"
 		testCompile 'junit:junit:4.12'
 		testCompile "com.github.tomakehurst:wiremock:${wiremockVersion}"
@@ -55,7 +61,8 @@ subprojects {
 }
 
 configure([project(':fraudDetectionService'), project(':loanApplicationService')]) {
-	apply plugin: 'spring-boot'
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
 	apply plugin: 'maven-publish'
 
 	ext['jetty.version'] = '9.2.17.v20160517'
@@ -83,7 +90,7 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 		testCompile "org.mockito:mockito-core"
 		testCompile "org.springframework:spring-test"
 		testCompile "org.springframework.boot:spring-boot-test"
-		testCompile("com.github.tomakehurst:wiremock:2.9.0") {
+		testCompile("com.github.tomakehurst:wiremock:${wiremockVersion}") {
 			exclude group: 'org.eclipse.jetty'
 		}
 	}
@@ -114,6 +121,7 @@ configure(project(':fraudDetectionService')) {
 	ext['jetty.version'] = '9.2.17.v20160517'
 
 	contracts {
+		stubsMode = "REMOTE"
 		targetFramework = 'Spock'
 		testMode = 'JaxRsClient'
 		baseClassForTests = 'org.springframework.cloud.MvcSpec'
@@ -140,3 +148,6 @@ configure(project(':loanApplicationService')) {
 	test.dependsOn('copyCollaboratorStubs')
 }
 
+wrapper {
+	gradleVersion '3.5'
+}

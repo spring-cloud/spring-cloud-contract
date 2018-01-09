@@ -567,8 +567,8 @@ git merge --no-ff contract-change-pr
 
 Now you can disable the offline work for Spring Cloud Contract Stub Runner and indicate
 where the repository with your stubs is located. At this moment the stubs of the server
-side are automatically downloaded from Nexus/Artifactory. You can switch off the value of
-the `workOffline` parameter in your annotation. The following code shows an example of
+side are automatically downloaded from Nexus/Artifactory. You can set the value of
+`stubsMode` to `REMOTE`. The following code shows an example of
 achieving the same thing by changing the properties.
 
 [source,yaml,indent=0]

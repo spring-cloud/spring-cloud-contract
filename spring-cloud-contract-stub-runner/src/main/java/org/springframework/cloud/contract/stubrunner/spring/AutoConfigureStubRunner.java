@@ -50,11 +50,6 @@ public @interface AutoConfigureStubRunner {
 	int maxPort() default 15000;
 
 	/**
-	 * Should the stubs be checked for presence only locally
-	 */
-	boolean workOffline() default false;
-
-	/**
 	 * The repository root to use (where the stubs should be downloaded from)
 	 */
 	String repositoryRoot() default "";
@@ -106,4 +101,11 @@ public @interface AutoConfigureStubRunner {
 	 * @see <a href="https://github.com/spring-cloud/spring-cloud-contract/issues/355">issue 355</a>
 	 */
 	String mappingsOutputFolder() default "";
+
+	/**
+	 * The way stubs should be found and registered. Defaults to
+	 * {@link StubRunnerProperties.StubsMode#CLASSPATH}.
+	 * @return the type of stubs mode
+	 */
+	StubRunnerProperties.StubsMode stubsMode() default StubRunnerProperties.StubsMode.CLASSPATH;
 }

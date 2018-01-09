@@ -25,8 +25,9 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 /**
  * Stub downloader that picks stubs and contracts from the provided resource.
- * If no {@link org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties#repositoryRoot}
- * is provided then by default classpath is searched according to what has been passed in
+ * If {@link org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties#stubsMode} is set
+ * to {@link org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties.StubsMode#CLASSPATH}
+ * then classpath is searched according to what has been passed in
  * {@link org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties#ids}. The
  * pattern to search for stubs looks like this
  *

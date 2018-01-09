@@ -1,6 +1,8 @@
 package org.springframework.cloud.contract.verifier.plugin
 
 import groovy.transform.ToString
+
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
 import org.springframework.cloud.contract.verifier.config.TestMode
 
@@ -121,9 +123,9 @@ class ContractVerifierExtension {
 	String contractsPath
 
 	/**
-	 * If {@code true} then JAR with contracts will be taken from local maven repository
+	 * Picks the mode in which stubs will be found and registered
 	 */
-	boolean contractsWorkOffline
+	StubRunnerProperties.StubsMode stubsMode = StubRunnerProperties.StubsMode.CLASSPATH
 
 	/**
 	 * A package that contains all the base clases for generated tests. If your contract resides in a location

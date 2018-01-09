@@ -3,41 +3,21 @@ package org.springframework.cloud.contract.stubrunner
 import io.specto.hoverfly.junit.HoverflyRule
 import org.eclipse.aether.RepositorySystemSession
 import org.junit.Rule
-import org.springframework.util.ResourceUtils
-import spock.lang.Ignore
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
+
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
+import org.springframework.util.ResourceUtils
 
 class AetherStubDownloaderSpec extends Specification {
 
     @Rule
     HoverflyRule hoverflyRule = HoverflyRule.inSimulationMode("simulation.json")
 
-    // CI tools sometimes can't reach the `test.jfrog.io` address
-    // @IgnoreIf({ Boolean.valueOf(env['CI']) })
-    @Ignore("There's sth wrong with the test jfrog API")
-    def 'Should be able to download from a repository using username and password authentication'() {
-        given:
-        StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder()
-            .withUsername("andrew.morgan")
-            .withPassword("k+hbZp8rpolRucXB09dGE/CxPXxidQryQUYSGbeo6JE=")
-            .withProxy("localhost", hoverflyRule.proxyPort)
-            .withStubRepositoryRoot("https://test.jfrog.io/test/libs-snapshot-local")
-            .build()
-
-        AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions)
-
-        when:
-        def jar = aetherStubDownloader.downloadAndUnpackStubJar(new StubConfiguration("io.test", "test-simulations-svc", "1.0-SNAPSHOT"))
-
-        then:
-        jar != null
-    }
-
     def 'Should throw an exception when artifact not found'() {
         given:
         StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder()
-            .withWorkOffline(true)
+            .withStubsMode(StubRunnerProperties.StubsMode.LOCAL)
             .build()
 
         AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions)
@@ -53,6 +33,7 @@ class AetherStubDownloaderSpec extends Specification {
     def 'Should throw an exception when a jar is in local m2 and not in remote repo'() {
         given:
         StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder()
+            .withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
             .withStubRepositoryRoot("https://test.jfrog.io/test/libs-snapshot-local")
             .build()
 
@@ -79,7 +60,7 @@ class AetherStubDownloaderSpec extends Specification {
 
         and:
         StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder()
-                .withWorkOffline(true)
+                .withStubsMode(StubRunnerProperties.StubsMode.LOCAL)
                 .build()
         AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions)
 

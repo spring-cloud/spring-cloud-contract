@@ -1,13 +1,32 @@
 package org.springframework.cloud.contract.verifier.util
 
+import java.lang.reflect.Method
+import javax.inject.Inject
+import javax.ws.rs.client.Entity
+import javax.ws.rs.client.WebTarget
+import javax.ws.rs.core.Response
+
+import com.jayway.jsonpath.DocumentContext
+import com.jayway.jsonpath.JsonPath
+import com.toomuchcoding.jsonassert.JsonAssertion
 import groovy.transform.CompileStatic
+import io.restassured.RestAssured
+import io.restassured.module.mockmvc.RestAssuredMockMvc
+import io.restassured.response.ResponseOptions
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer
 import org.codehaus.groovy.control.customizers.ImportCustomizer
+import org.junit.Rule
+import org.junit.Test
 import org.mdkt.compiler.InMemoryJavaCompiler
-import org.springframework.util.ReflectionUtils
 
-import java.lang.reflect.Method
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
+import org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil
+import org.springframework.util.ReflectionUtils
 
 /**
  * checking the syntax of produced scripts
@@ -15,21 +34,24 @@ import java.lang.reflect.Method
 @CompileStatic
 class SyntaxChecker {
 
+	WebTarget webTarget
+	Entity entity
+
 	private static final String[] DEFAULT_IMPORTS = [
-			"org.springframework.cloud.contract.spec.Contract",
-			"io.restassured.response.ResponseOptions",
+			Contract.name,
+			ResponseOptions.name,
 			"io.restassured.module.mockmvc.specification.*",
 			"io.restassured.module.mockmvc.*",
-			"org.junit.Test",
-			"org.junit.Rule",
-			"com.jayway.jsonpath.DocumentContext",
-			"com.jayway.jsonpath.JsonPath",
-			"javax.inject.Inject",
-			"org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper",
-			"org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage",
-			"org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging",
-			"javax.ws.rs.client.WebTarget",
-			"javax.ws.rs.core.Response"
+			Test.name,
+			Rule.name,
+			DocumentContext.name,
+			JsonPath.name,
+			Inject.name,
+			ContractVerifierObjectMapper.name,
+			ContractVerifierMessage.name,
+			ContractVerifierMessaging.name,
+			WebTarget.name,
+			Response.name
 	]
 
 	private static final String DEFAULT_IMPORTS_AS_STRING = DEFAULT_IMPORTS.collect {
@@ -37,13 +59,13 @@ class SyntaxChecker {
 	}.join("\n")
 
 	private static final String STATIC_IMPORTS = [
-			"io.restassured.module.mockmvc.RestAssuredMockMvc.given",
-			"io.restassured.module.mockmvc.RestAssuredMockMvc.when",
-			"io.restassured.RestAssured.*",
-			"javax.ws.rs.client.Entity.*",
-			"org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers",
-			"com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson",
-			"org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat"
+			"${RestAssuredMockMvc.name}.given",
+			"${RestAssuredMockMvc.name}.when",
+			"${RestAssured.name}.*",
+			"${Entity.name}.*",
+			"${ContractVerifierMessagingUtil.name}.headers",
+			"${JsonAssertion.name}.assertThatJson",
+			"${SpringCloudContractAssertions.name}.assertThat"
 	].collect { "import static ${it};"}.join("\n")
 
 	static void tryToCompile(String builderName, String test) {

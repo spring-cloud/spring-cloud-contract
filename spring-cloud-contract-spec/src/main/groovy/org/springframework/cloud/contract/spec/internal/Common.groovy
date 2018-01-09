@@ -113,6 +113,11 @@ class Common {
 		return Pattern.compile(regex)
 	}
 
+	// Backward compatibility with RegexPatterns
+	Pattern regex(Pattern regex) {
+		return regex
+	}
+
 	OptionalProperty optional(Object object) {
 		return new OptionalProperty(object)
 	}

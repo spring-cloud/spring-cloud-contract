@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.StreamListener
 import org.springframework.cloud.stream.messaging.Sink
@@ -39,9 +40,8 @@ import spock.lang.Specification
 @ContextConfiguration(classes = MocoConfig, loader = SpringBootContextLoader)
 // tag::[classpath_stub_runner]
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-// to use stubs from classpath just provide ids without passing any other properties to
-// @AutoConfigureStubRunner
-@AutoConfigureStubRunner( ids = ["com.example:fraudDetectionServerMoco"])
+@AutoConfigureStubRunner( ids = ["com.example:fraudDetectionServerMoco"],
+		stubsMode = StubRunnerProperties.StubsMode.CLASSPATH)
 // end::[classpath_stub_runner]
 @DirtiesContext
 @ActiveProfiles("test")

@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.stubrunner;
 import java.util.Collection;
 import java.util.Map;
 
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.stubrunner.util.StringUtils;
 
 /**
@@ -44,11 +45,6 @@ public class StubRunnerOptions {
 	 * root URL from where the JAR with stub mappings will be downloaded
 	 */
 	final String stubRepositoryRoot;
-
-	/**
-	 * avoids local repository in dependency resolution
-	 */
-	final boolean workOffline;
 
 	/**
 	 * stub definition classifier
@@ -93,8 +89,10 @@ public class StubRunnerOptions {
 	 */
 	private String mappingsOutputFolder;
 
+	final StubRunnerProperties.StubsMode stubsMode;
+
 	StubRunnerOptions(Integer minPortValue, Integer maxPortValue,
-			String stubRepositoryRoot, boolean workOffline, String stubsClassifier,
+			String stubRepositoryRoot, StubRunnerProperties.StubsMode stubsMode, String stubsClassifier,
 			Collection<StubConfiguration> dependencies,
 			Map<StubConfiguration, Integer> stubIdsToPortMapping,
 			String username, String password, final StubRunnerProxyOptions stubRunnerProxyOptions,
@@ -102,7 +100,7 @@ public class StubRunnerOptions {
 		this.minPortValue = minPortValue;
 		this.maxPortValue = maxPortValue;
 		this.stubRepositoryRoot = stubRepositoryRoot;
-		this.workOffline = workOffline;
+		this.stubsMode = stubsMode != null ? stubsMode : StubRunnerProperties.StubsMode.CLASSPATH;
 		this.stubsClassifier = stubsClassifier;
 		this.dependencies = dependencies;
 		this.stubIdsToPortMapping = stubIdsToPortMapping;
@@ -128,7 +126,7 @@ public class StubRunnerOptions {
 				.withMinPort(Integer.valueOf(System.getProperty("stubrunner.port.range.min", "10000")))
 				.withMaxPort(Integer.valueOf(System.getProperty("stubrunner.port.range.max", "15000")))
 				.withStubRepositoryRoot(System.getProperty("stubrunner.repository.root", ""))
-				.withWorkOffline(Boolean.parseBoolean(System.getProperty("stubrunner.work-offline", "false")))
+				.withStubsMode(System.getProperty("stubrunner.stubs-mode", "CLASSPATH"))
 				.withStubsClassifier(System.getProperty("stubrunner.classifier", "stubs"))
 				.withStubs(System.getProperty("stubrunner.ids", ""))
 				.withUsername(System.getProperty("stubrunner.username"))
@@ -163,8 +161,8 @@ public class StubRunnerOptions {
 		return this.stubRepositoryRoot;
 	}
 
-	public boolean isWorkOffline() {
-		return this.workOffline;
+	public StubRunnerProperties.StubsMode getStubsMode() {
+		return this.stubsMode;
 	}
 
 	public String getStubsClassifier() {
@@ -242,7 +240,7 @@ public class StubRunnerOptions {
 	@Override public String toString() {
 		return "StubRunnerOptions{" + "minPortValue=" + this.minPortValue + ", maxPortValue="
 				+ this.maxPortValue + ", stubRepositoryRoot='" + this.stubRepositoryRoot + '\''
-				+ ", workOffline=" + this.workOffline + ", stubsClassifier='" + this.stubsClassifier
+				+ ", stubsMode='" + this.stubsMode + "', stubsClassifier='" + this.stubsClassifier
 				+ '\'' + ", dependencies=" + this.dependencies + ", stubIdsToPortMapping="
 				+ this.stubIdsToPortMapping + ", username='" + obfuscate(this.username) + '\'' + ", password='"
 				+ obfuscate(this.password) + '\'' + ", stubRunnerProxyOptions='" + this.stubRunnerProxyOptions + "', stubsPerConsumer='"

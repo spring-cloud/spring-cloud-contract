@@ -18,9 +18,12 @@ buildscript {
 	repositories {
 		mavenCentral()
 		mavenLocal()
+		maven { url "http://repo.spring.io/snapshot" }
+		maven { url "http://repo.spring.io/milestone" }
+		maven { url "http://repo.spring.io/release" }
 	}
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.4.RELEASE")
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.0.M3")
 	}
 }
 
@@ -40,10 +43,13 @@ subprojects {
 	repositories {
 		mavenCentral()
 		mavenLocal()
+		maven { url "http://repo.spring.io/snapshot" }
+		maven { url "http://repo.spring.io/milestone" }
+		maven { url "http://repo.spring.io/release" }
 	}
 
 	dependencies {
-		testCompile "org.codehaus.groovy:groovy-all:2.4.11"
+		testCompile "org.codehaus.groovy:groovy-all:2.5.0-beta-1"
 		testCompile "org.spockframework:spock-core:$spockVersion"
 		testCompile "junit:junit:4.12"
 		testCompile "com.github.tomakehurst:wiremock:${wiremockVersion}"
@@ -54,7 +60,8 @@ subprojects {
 }
 
 configure([project(':fraudDetectionService'), project(':loanApplicationService')]) {
-	apply plugin: 'spring-boot'
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
 	apply plugin: 'spring-cloud-contract'
 
 	// tag::jar_setup[]
@@ -79,6 +86,7 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 	// end::jar_setup[]
 
 	contracts {
+		stubsMode = "REMOTE"
 		// tag::target_framework[]
 		targetFramework = 'Spock'
 		// end::target_framework[]
@@ -141,3 +149,6 @@ configure(project(':loanApplicationService')) {
 	generateContractTests.dependsOn('copyCollaboratorStubs')
 }
 
+wrapper {
+	gradleVersion '3.5'
+}

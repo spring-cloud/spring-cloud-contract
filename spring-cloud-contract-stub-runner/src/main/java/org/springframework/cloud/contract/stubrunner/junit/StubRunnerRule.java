@@ -34,6 +34,7 @@ import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubFinder;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 
 /**
@@ -95,8 +96,8 @@ public class StubRunnerRule implements TestRule, StubFinder, StubRunnerRuleOptio
 		return this.delegate;
 	}
 
-	@Override public StubRunnerRule workOffline(boolean workOffline) {
-		builder().withWorkOffline(workOffline);
+	@Override public StubRunnerRule stubsMode(StubRunnerProperties.StubsMode stubsMode) {
+		builder().withStubsMode(stubsMode);
 		return this.delegate;
 	}
 

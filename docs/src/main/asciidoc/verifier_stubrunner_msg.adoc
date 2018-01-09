@@ -5,7 +5,6 @@ frameworks:
 
 * Spring Integration
 * Spring Cloud Stream
-* Apache Camel
 * Spring AMQP
 
 It also provides entry points to integrate with any other solution on the market.
@@ -39,14 +38,14 @@ or the other in your tests.
 
 [source,groovy]
 ----
-include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=client_trigger,indent=0]
+include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=client_trigger,indent=0]
 ----
 [[trigger-group-artifact-ids]]
 ==== Trigger by Group and Artifact Ids
 
 [source,groovy]
 ----
-include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=trigger_group_artifact,indent=0]
+include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=trigger_group_artifact,indent=0]
 ----
 
 [[trigger-artifact-ids]]
@@ -54,7 +53,7 @@ include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/or
 
 [source,groovy]
 ----
-include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=trigger_artifact,indent=0]
+include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=trigger_artifact,indent=0]
 ----
 
 [[trigger-all-messages]]
@@ -62,10 +61,8 @@ include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/or
 
 [source,groovy]
 ----
-include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=trigger_all,indent=0]
+include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=trigger_all,indent=0]
 ----
-
-include::{tests_path}/spring-cloud-contract-stub-runner-camel/README.adoc[]
 
 include::{tests_path}/spring-cloud-contract-stub-runner-integration/README.adoc[]
 

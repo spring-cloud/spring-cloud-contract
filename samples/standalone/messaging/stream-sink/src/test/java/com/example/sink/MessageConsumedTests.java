@@ -25,6 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.contract.stubrunner.StubTrigger;
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.integration.support.management.MessageChannelMetrics;
 import org.springframework.messaging.SubscribableChannel;
@@ -36,8 +37,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Marius Bogoevici
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.NONE, properties = "spring.cloud.stream.bindings.input.destination=sensor-data")
-@AutoConfigureStubRunner
+@SpringBootTest(webEnvironment = WebEnvironment.NONE,
+		properties = "spring.cloud.stream.bindings.input.destination=sensor-data")
+@AutoConfigureStubRunner(stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 public class MessageConsumedTests {
 
 	@Autowired

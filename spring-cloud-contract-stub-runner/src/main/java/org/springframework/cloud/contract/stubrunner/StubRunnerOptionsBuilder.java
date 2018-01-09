@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.stubrunner.util.StubsParser;
 import org.springframework.util.StringUtils;
 
@@ -38,7 +39,6 @@ public class StubRunnerOptionsBuilder {
 	private Integer minPortValue = 10000;
 	private Integer maxPortValue = 15000;
 	private String stubRepositoryRoot;
-	private boolean workOffline = false;
 	private String stubsClassifier = "stubs";
 	private String username;
 	private String password;
@@ -46,6 +46,7 @@ public class StubRunnerOptionsBuilder {
 	private boolean stubsPerConsumer = false;
 	private String consumerName;
 	private String mappingsOutputFolder;
+	private StubRunnerProperties.StubsMode stubsMode;
 
 	public StubRunnerOptionsBuilder() {
 	}
@@ -87,8 +88,13 @@ public class StubRunnerOptionsBuilder {
 		return this;
 	}
 
-	public StubRunnerOptionsBuilder withWorkOffline(boolean workOffline) {
-		this.workOffline = workOffline;
+	public StubRunnerOptionsBuilder withStubsMode(StubRunnerProperties.StubsMode stubsMode) {
+		this.stubsMode = stubsMode;
+		return this;
+	}
+
+	public StubRunnerOptionsBuilder withStubsMode(String stubsMode) {
+		this.stubsMode = StubRunnerProperties.StubsMode.valueOf(stubsMode);
 		return this;
 	}
 
@@ -107,7 +113,7 @@ public class StubRunnerOptionsBuilder {
 		this.minPortValue = options.minPortValue;
 		this.maxPortValue = options.maxPortValue;
 		this.stubRepositoryRoot = options.stubRepositoryRoot;
-		this.workOffline = options.workOffline;
+		this.stubsMode = options.stubsMode;
 		this.stubsClassifier = options.stubsClassifier;
 		this.username = options.username;
 		this.password = options.password;
@@ -129,7 +135,7 @@ public class StubRunnerOptionsBuilder {
 
 	public StubRunnerOptions build() {
 		return new StubRunnerOptions(this.minPortValue, this.maxPortValue, this.stubRepositoryRoot,
-				this.workOffline, this.stubsClassifier, buildDependencies(), this.stubIdsToPortMapping,
+				this.stubsMode, this.stubsClassifier, buildDependencies(), this.stubIdsToPortMapping,
 				this.username, this.password, this.stubRunnerProxyOptions, this.stubsPerConsumer, this.consumerName,
 				this.mappingsOutputFolder);
 	}

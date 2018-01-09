@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -20,7 +21,8 @@ import com.example.loan.model.LoanApplicationStatus;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.NONE)
-@AutoConfigureStubRunner(ids = {"com.example:pact-http-server:+:stubs"}, workOffline = true)
+@AutoConfigureStubRunner(ids = {"com.example:pact-http-server:+:stubs"},
+		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 @DirtiesContext
 public class LoanApplicationServiceTests {
 

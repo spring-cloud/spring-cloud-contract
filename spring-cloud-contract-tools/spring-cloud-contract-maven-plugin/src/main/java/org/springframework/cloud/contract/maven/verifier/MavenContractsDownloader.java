@@ -16,6 +16,7 @@ import org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder;
 import org.springframework.cloud.contract.stubrunner.StubDownloaderBuilderProvider;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.util.StringUtils;
 
@@ -34,7 +35,7 @@ class MavenContractsDownloader {
 	private final Dependency contractDependency;
 	private final String contractsPath;
 	private final String contractsRepositoryUrl;
-	private final boolean contractsWorkOffline;
+	private final StubRunnerProperties.StubsMode stubsMode;
 	private final Log log;
 	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
 	private final RepositorySystemSession repoSession;
@@ -46,7 +47,7 @@ class MavenContractsDownloader {
 
 	MavenContractsDownloader(MavenProject project, Dependency contractDependency,
 			String contractsPath, String contractsRepositoryUrl,
-			boolean contractsWorkOffline, Log log,
+			StubRunnerProperties.StubsMode stubsMode, Log log,
 			AetherStubDownloaderFactory aetherStubDownloaderFactory,
 			RepositorySystemSession repoSession, String repositoryUsername,
 			String repositoryPassword, String repositoryProxyHost,
@@ -55,7 +56,7 @@ class MavenContractsDownloader {
 		this.contractDependency = contractDependency;
 		this.contractsPath = contractsPath;
 		this.contractsRepositoryUrl = contractsRepositoryUrl;
-		this.contractsWorkOffline = contractsWorkOffline;
+		this.stubsMode = stubsMode;
 		this.log = log;
 		this.aetherStubDownloaderFactory = aetherStubDownloaderFactory;
 		this.repoSession = repoSession;
@@ -96,26 +97,36 @@ class MavenContractsDownloader {
 
 	private StubDownloader stubDownloader() {
 		StubDownloaderBuilder builder = this.stubDownloaderBuilderProvider.get();
-		if (StringUtils.hasText(this.contractsRepositoryUrl) || this.contractsWorkOffline) {
+		if (this.stubsMode == StubRunnerProperties.StubsMode.LOCAL || this.stubsMode == StubRunnerProperties.StubsMode.REMOTE) {
 			if (this.log.isDebugEnabled()) {
 				this.log.debug("Will download contracts from [" + this.contractsRepositoryUrl + "]. "
-						+ "Work offline switch equals to [" + this.contractsWorkOffline + "]");
+						+ "Stubs mode equals [" + this.stubsMode + "]");
 			}
-			if (builder != null) {
-				logStubDownloader(builder);
-				return builder.build(buildOptions());
-			}
-			return new AetherStubDownloader(buildOptions());
+			return stubDownloader(builder);
 		}
-		this.log.info("Will download contracts using current build's Maven repository setup");
-		if (builder != null) {
-			logStubDownloader(builder);
+		if (customStubDownloader(builder)) {
 			return builder.build(buildOptions());
 		}
-		if (StringUtils.isEmpty(this.contractsRepositoryUrl) && !this.contractsWorkOffline) {
+		if (this.stubsMode == StubRunnerProperties.StubsMode.CLASSPATH) {
 			return new ClasspathStubProvider().build(buildOptions());
 		}
+		this.log.info("Will download contracts using current build's Maven repository setup");
 		return this.aetherStubDownloaderFactory.build(this.repoSession);
+	}
+
+	private StubDownloader stubDownloader(StubDownloaderBuilder builder) {
+		if (customStubDownloader(builder)) {
+			return builder.build(buildOptions());
+		}
+		return new AetherStubDownloader(buildOptions());
+	}
+
+	private boolean customStubDownloader(StubDownloaderBuilder builder) {
+		if (builder != null) {
+			logStubDownloader(builder);
+			return true;
+		}
+		return false;
 	}
 
 	private void logStubDownloader(StubDownloaderBuilder builder) {
@@ -126,7 +137,7 @@ class MavenContractsDownloader {
 		StubRunnerOptionsBuilder builder = new StubRunnerOptionsBuilder()
 				.withOptions(StubRunnerOptions.fromSystemProps())
 				.withStubRepositoryRoot(this.contractsRepositoryUrl)
-				.withWorkOffline(this.contractsWorkOffline)
+				.withStubsMode(this.stubsMode)
 				.withUsername(this.repositoryUsername)
 				.withPassword(this.repositoryPassword);
 		if (this.repositoryProxyPort != null) {

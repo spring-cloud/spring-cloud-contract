@@ -1,6 +1,6 @@
 stubrunner.repositoryRoot: classpath:m2repo/repository/
 stubrunner.ids: org.springframework.cloud.contract.verifier.stubs:streamService:0.0.1-SNAPSHOT:stubs
-
+stubrunner.stubs-mode: remote
 spring:
   cloud:
     stream:

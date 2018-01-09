@@ -43,8 +43,7 @@ Example for Maven
     <groupId>org.springframework.cloud</groupId>
     <artifactId>spring-cloud-contract-maven-plugin</artifactId>
     <configuration>
-        <!-- url not required for working locally -->
-        <contractsWorkOffline>true<contractsWorkOffline>
+        <stubsMode>LOCAL</stubsMode>
         <contractDependency>
             <groupId>com.example.standalone</groupId>
             <artifactId>contracts</artifactId>
@@ -61,7 +60,7 @@ contracts {
     targetFramework = 'Spock'
     testMode = 'JaxRsClient'
     baseClassForTests = 'org.springframework.cloud.MvcSpec'
-    contractsWorkOffline = true
+    stubsMode = 'LOCAL'
     contractDependency {
         stringNotation = "com.example:contracts"
     }

@@ -22,6 +22,8 @@ import org.junit.ClassRule
 import spock.lang.Shared
 import spock.lang.Specification
 
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
+
 /**
  * @author Marcin Grzejszczak
  */
@@ -35,6 +37,7 @@ class StubRunnerRuleExceptionThrowingSpec extends Specification {
 	}
 
 	@ClassRule @Shared StubRunnerRule rule = new StubRunnerRule()
+			.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
 			.repoRoot(StubRunnerRuleExceptionThrowingSpec.getResource("/m2repo/repository").toURI().toString())
 			.downloadStub("org.springframework.cloud.contract.verifier.stubs", "bootService")
 

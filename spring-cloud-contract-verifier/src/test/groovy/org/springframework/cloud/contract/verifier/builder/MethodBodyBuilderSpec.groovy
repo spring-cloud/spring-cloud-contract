@@ -487,4 +487,35 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
 
+	@Issue("#509")
+	def "classToCheck() should return class of object"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'POST'
+					url '/api/users'
+				}
+				response {
+					status 200
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+		when:
+			Map<String, String> map = new LinkedHashMap<>()
+			Integer number = Integer.valueOf(42)
+			List<String> list = new ArrayList<>()
+			Set<String> set = new HashSet<>()
+		then:
+			builder.classToCheck(map) == Map.class
+		and:
+			builder.classToCheck(number) == Integer.class
+		and:
+			builder.classToCheck(list) == List.class
+		and:
+			builder.classToCheck(set) == Set.class
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+	}
+
 }

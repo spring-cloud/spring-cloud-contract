@@ -16,16 +16,16 @@
 
 package org.springframework.cloud.contract.stubrunner.server
 
-import io.restassured.module.mockmvc.RestAssuredMockMvc
 import groovy.json.JsonSlurper
+import io.restassured.module.mockmvc.RestAssuredMockMvc
+import spock.lang.Specification
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.stubrunner.StubRunning
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
-import spock.lang.Specification
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -55,7 +55,7 @@ class StubRunnerBootSpec extends Specification {
 			def response = RestAssuredMockMvc.get("/stubs/${stubId}")
 		then:
 			response.statusCode == 200
-			response.body.as(Integer) > 0
+			Integer.valueOf(response.body.asString()) > 0
 		where:
 			stubId << ['org.springframework.cloud.contract.verifier.stubs:bootService:+:stubs',
 					   'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs',

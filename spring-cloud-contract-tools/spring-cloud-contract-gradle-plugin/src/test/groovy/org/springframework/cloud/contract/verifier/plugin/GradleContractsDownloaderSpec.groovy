@@ -5,6 +5,7 @@ import org.gradle.api.logging.Logger
 import org.springframework.cloud.contract.stubrunner.AetherStubDownloader
 import org.springframework.cloud.contract.stubrunner.ContractDownloader
 import org.springframework.cloud.contract.stubrunner.StubConfiguration
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import spock.lang.Specification
 
@@ -80,6 +81,7 @@ class GradleContractsDownloaderSpec extends Specification {
 		given:
 			ContractVerifierExtension ext = new ContractVerifierExtension()
 			ext.with {
+				stubsMode = StubRunnerProperties.StubsMode.REMOTE
 				contractDependency {
 					groupId("com.example")
 					artifactId("foo")
@@ -107,6 +109,7 @@ class GradleContractsDownloaderSpec extends Specification {
 		given:
 			ContractVerifierExtension ext = new ContractVerifierExtension()
 			ext.with {
+				stubsMode = StubRunnerProperties.StubsMode.REMOTE
 				contractDependency {
 					groupId("com.example")
 					artifactId("foo")
@@ -136,6 +139,7 @@ class GradleContractsDownloaderSpec extends Specification {
 		given:
 			ContractVerifierExtension ext = new ContractVerifierExtension()
 			ext.with {
+				stubsMode = StubRunnerProperties.StubsMode.REMOTE
 				contractDependency {
 					groupId("com.example")
 					artifactId("foo")
@@ -170,6 +174,7 @@ class GradleContractsDownloaderSpec extends Specification {
 		given:
 			ContractVerifierExtension ext = new ContractVerifierExtension()
 			ext.with {
+				stubsMode = StubRunnerProperties.StubsMode.REMOTE
 				contractDependency {
 					groupId("com.example")
 					artifactId("foo")
