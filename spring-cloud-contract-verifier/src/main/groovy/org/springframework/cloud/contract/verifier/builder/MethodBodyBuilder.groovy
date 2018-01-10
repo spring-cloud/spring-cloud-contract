@@ -468,7 +468,7 @@ abstract class MethodBodyBuilder {
 
 	// we want to make the type more generic (e.g. not ArrayList but List)
 	protected Class classToCheck(Object elementFromBody) {
-		switch (elementFromBody.class) {
+		switch (elementFromBody.getClass()) {
 			case List:
 				return List
 			case Set:
