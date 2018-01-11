@@ -47,8 +47,8 @@ package org.springframework.cloud.contract.wiremock.restdocs;
  */
 public class WireMockRestDocs {
 
-	public static ContractRequestHandler verify() {
-		return new ContractRequestHandler();
+	public static ContractResultHandler verify() {
+		return new ContractResultHandler();
 	}
 
 }

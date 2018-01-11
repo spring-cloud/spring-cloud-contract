@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.http.ContentTypeHeader;
 import com.github.tomakehurst.wiremock.http.Cookie;
@@ -32,9 +31,6 @@ import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.QueryParameter;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
-import com.github.tomakehurst.wiremock.matching.MatchResult;
-import com.github.tomakehurst.wiremock.stubbing.StubMapping;
-import com.jayway.jsonpath.JsonPath;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -45,8 +41,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import wiremock.com.google.common.base.Optional;
 import wiremock.org.apache.commons.codec.binary.Base64;
 
@@ -54,51 +48,18 @@ import wiremock.org.apache.commons.codec.binary.Base64;
  * @author Dave Syer
  *
  */
-public class ContractEntityExchangeHandler
+public class ContractExchangeHandler extends
+		WireMockVerifyHelper<EntityExchangeResult<?>, ContractExchangeHandler>
 		implements Consumer<EntityExchangeResult<byte[]>> {
-
-	private Map<String, JsonPath> jsonPaths = new LinkedHashMap<>();
-	private MediaType contentType;
-	private String name;
-
-	private MappingBuilder builder;
-
-	public ContractEntityExchangeHandler stub(String name) {
-		this.name = name;
-		// TODO: try and get access to the internals of this so we don't need to store
-		// state in the snippet
-		return this;
-	}
 
 	@Override
 	public void accept(EntityExchangeResult<byte[]> result) {
-		Map<String, Object> configuration = getConfiguration(result);
-		String actual = new String(result.getRequestBodyContent(),
-				Charset.forName("UTF-8"));
-		for (JsonPath jsonPath : this.jsonPaths.values()) {
-			new JsonPathValue(jsonPath, actual).assertHasValue(Object.class, "an object");
-		}
-		configuration.put("contract.jsonPaths", this.jsonPaths.keySet());
-		if (this.contentType != null) {
-			configuration.put("contract.contentType", this.contentType);
-			MediaType resultType = result.getRequestHeaders().getContentType();
-			assertThat(resultType).isNotNull().as("no content type");
-			assertThat(this.contentType.includes(resultType)).isTrue()
-					.as("content type did not match");
-		}
-		if (this.builder != null) {
-			this.builder.willReturn(getResponseDefinition(result));
-			StubMapping stubMapping = this.builder.build();
-			MatchResult match = stubMapping.getRequest()
-					.match(new WireMockHttpRequestAdapter(result));
-			assertThat(match.isExactMatch()).as("wiremock did not match request")
-					.isTrue();
-			configuration.put("contract.stubMapping", stubMapping);
-		}
-		WebTestClientRestDocumentation.document(this.name).accept(result);
+		configure(result);
+		WebTestClientRestDocumentation.document(getName()).accept(result);
 	}
 
-	private ResponseDefinitionBuilder getResponseDefinition(
+	@Override
+	protected ResponseDefinitionBuilder getResponseDefinition(
 			EntityExchangeResult<?> result) {
 		ResponseDefinitionBuilder definition = ResponseDefinitionBuilder
 				.responseDefinition().withBody(result.getResponseBodyContent())
@@ -114,29 +75,8 @@ public class ContractEntityExchangeHandler
 		}
 	}
 
-	public ContractEntityExchangeHandler wiremock(MappingBuilder builder) {
-		this.builder = builder;
-		return this;
-	}
-
-	public ContractEntityExchangeHandler jsonPath(String expression, Object... args) {
-		compile(expression, args);
-		return this;
-	}
-
-	public ContractEntityExchangeHandler contentType(MediaType contentType) {
-		this.contentType = contentType;
-		return this;
-	}
-
-	private void compile(String expression, Object... args) {
-		org.springframework.util.Assert.hasText((expression == null ? null : expression),
-				"expression must not be null or empty");
-		expression = String.format(expression, args);
-		this.jsonPaths.put(expression, JsonPath.compile(expression));
-	}
-
-	private Map<String, Object> getConfiguration(EntityExchangeResult<?> result) {
+	@Override
+	protected Map<String, Object> getConfiguration(EntityExchangeResult<?> result) {
 		Field field = ReflectionUtils.findField(
 				WebTestClientRestDocumentationConfigurer.class, "configurations");
 		ReflectionUtils.makeAccessible(field);
@@ -146,6 +86,21 @@ public class ContractEntityExchangeHandler
 		Map<String, Object> map = (((Map<String, Map<String, Object>>) ReflectionUtils
 				.getField(field, null)).get(index));
 		return map;
+	}
+
+	@Override
+	protected Request getWireMockRequest(EntityExchangeResult<?> result) {
+		return new WireMockHttpRequestAdapter(result);
+	}
+
+	@Override
+	protected MediaType getContentType(EntityExchangeResult<?> result) {
+		return result.getRequestHeaders().getContentType();
+	}
+
+	@Override
+	protected byte[] getRequestBodyContent(EntityExchangeResult<?> result) {
+		return result.getRequestBodyContent();
 	}
 
 }

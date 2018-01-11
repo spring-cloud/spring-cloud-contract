@@ -47,8 +47,8 @@ package org.springframework.cloud.contract.wiremock.restdocs;
  */
 public class WireMockWebTestClient {
 
-	public static ContractEntityExchangeHandler verify() {
-		return new ContractEntityExchangeHandler();
+	public static ContractExchangeHandler verify() {
+		return new ContractExchangeHandler();
 	}
 
 }

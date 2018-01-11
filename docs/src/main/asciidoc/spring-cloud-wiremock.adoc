@@ -176,12 +176,13 @@ include::{wiremock_tests}/src/test/java/org/springframework/cloud/contract/wirem
 === Generating Stubs using REST Docs
 
 https://projects.spring.io/spring-restdocs[Spring REST Docs] can be used to generate
-documentation (for example in Asciidoctor format) for an HTTP API with Spring MockMvc or
+documentation (for example in Asciidoctor format) for an HTTP API with Spring MockMvc
+or `WebTestClient` or
 Rest Assured. At the same time that you generate documentation for your API, you can also
 generate WireMock stubs by using Spring Cloud Contract WireMock. To do so, write your
 normal REST Docs test cases and use `@AutoConfigureRestDocs` to have stubs be
 automatically generated in the REST Docs output directory. The following code shows an
-example:
+example using `MockMvc`:
 
 [source,java,indent=0]
 ----
@@ -204,9 +205,30 @@ public class ApplicationTests {
 ----
 
 This test generates a WireMock stub at "target/snippets/stubs/resource.json". It matches
-all GET requests to the "/resource" path.
+all GET requests to the "/resource" path. The same example with `WebTestClient` (used
+for testing Spring WebFlux applications) would look like this:
 
-Without any additional configuration, this tests creates a stub with a request matcher
+[source,java,indent=0]
+----
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureRestDocs(outputDir = "target/snippets")
+@AutoConfigureWebTestClient
+public class ApplicationTests {
+
+	@Autowired
+	private WebTestClient client;
+
+	@Test
+	public void contextLoads() throws Exception {
+		client.get().uri("/resource").exchange()
+				.expectBody(String.class).isEqualTo("Hello World")
+ 				.consumeWith(document("resource"));
+	}
+}
+----
+
+Without any additional configuration, these tests create a stub with a request matcher
 for the HTTP method and all headers except "host" and "content-length". To match the
 request more precisely (for example, to match the body of a POST or PUT), we need to
 explicitly create a request matcher. Doing so has two effects:
@@ -219,6 +241,9 @@ as a substitute for the `document()` convenience method, as shown in the followi
 example:
 
 [source,java,indent=0]
+
+import static org.springframework.cloud.contract.wiremock.restdocs.WireMockRestDocs.verify;
+
 ----
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -243,7 +268,8 @@ public class ApplicationTests {
 This contract specifies that any valid POST with an "id" field receives the response
 defined in this test. You can chain together calls to `.jsonPath()` to add additional
 matchers. If JSON Path is unfamiliar, The https://github.com/jayway/JsonPath[JayWay
-documentation] can help you get up to speed.
+documentation] can help you get up to speed. The `WebTestClient` version of this test
+has a similar `verify()` static helper that you insert in the same place.
 
 Instead of the `jsonPath` and `contentType` convenience methods, you can also use the
 WireMock APIs to verify that the request matches the created stub, as shown in the
