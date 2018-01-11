@@ -28,9 +28,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultHandler;
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.StreamUtils;
-import org.springframework.util.StringUtils;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
@@ -138,65 +136,6 @@ public class ContractRequestHandler implements ResultHandler {
 				"expression must not be null or empty");
 		expression = String.format(expression, args);
 		this.jsonPaths.put(expression, JsonPath.compile(expression));
-	}
-
-}
-
-class JsonPathValue {
-
-	private final JsonPath jsonPath;
-	private final String expression;
-	private final CharSequence actual;
-
-	JsonPathValue(JsonPath jsonPath, CharSequence actual) {
-		this.jsonPath = jsonPath;
-		this.actual = actual;
-		this.expression = jsonPath.getPath();
-	}
-
-	public void assertHasValue(Class<?> type, String expectedDescription) {
-		Object value = getValue(true);
-		if (value == null || isIndefiniteAndEmpty()) {
-			throw new AssertionError(getNoValueMessage());
-		}
-		if (type != null && !type.isInstance(value)) {
-			throw new AssertionError(getExpectedValueMessage(expectedDescription));
-		}
-	}
-
-	private boolean isIndefiniteAndEmpty() {
-		return !isDefinite() && isEmpty();
-	}
-
-	private boolean isDefinite() {
-		return this.jsonPath.isDefinite();
-	}
-
-	private boolean isEmpty() {
-		return ObjectUtils.isEmpty(getValue(false));
-	}
-
-	public Object getValue(boolean required) {
-		try {
-			CharSequence json = this.actual;
-			return this.jsonPath.read(json == null ? null : json.toString());
-		}
-		catch (Exception ex) {
-			if (!required) {
-				return null;
-			}
-			throw new AssertionError(getNoValueMessage() + ". " + ex.getMessage());
-		}
-	}
-
-	private String getNoValueMessage() {
-		return "No value at JSON path \"" + this.expression + "\"";
-	}
-
-	private String getExpectedValueMessage(String expectedDescription) {
-		return String.format("Expected %s at JSON path \"%s\" but found: %s",
-				expectedDescription, this.expression,
-				ObjectUtils.nullSafeToString(StringUtils.quoteIfString(getValue(false))));
 	}
 
 }

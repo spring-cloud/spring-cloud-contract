@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.example</groupId>
-	<artifactId>http-server-restdocs</artifactId>
+	<artifactId>http-client-webclient</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<name>Spring Cloud Contract RestDocs Http Server Sample</name>
-	<description>Spring Cloud RestDocs Verifier Http Server Sample</description>
+	<name>Spring Cloud Contract RestDocs Http Client Sample</name>
+	<description>Spring Cloud Contract RestDocs Http Client Sample</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -33,24 +33,48 @@
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 
+		<!-- tag::stub_runner[] -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.restdocs</groupId>
-			<artifactId>spring-restdocs-mockmvc</artifactId>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-wiremock</artifactId>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.example</groupId>
+			<artifactId>http-server-restdocs</artifactId>
+			<classifier>stubs</classifier>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- end::stub_runner[] -->
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-activemq</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+	</dependencies>
+	<!-- tag::contract_bom[] -->
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -62,6 +86,7 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	<!-- end::contract_bom[] -->
 
 	<build>
 		<plugins>
@@ -74,40 +99,6 @@
 				<configuration>
 					<skip>true</skip>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-clean-plugin</artifactId>
-				<configuration>
-					<filesets>
-						<fileset>
-							<directory>build</directory>
-						</fileset>
-						<fileset>
-							<directory>target</directory>
-						</fileset>
-					</filesets>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>stub</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<inherited>false</inherited>
-						<configuration>
-							<attach>true</attach>
-							<descriptors>
-								<descriptor>${basedir}/src/assembly/stub.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -183,8 +174,7 @@
 									<arguments>
 										<argument>clean</argument>
 										<argument>build</argument>
-										<!-- For some reason publishToMavenLocal doesn't work... Please don't troll Gradle ;)-->
-										<argument>install</argument>
+										<argument>publishToMavenLocal</argument>
 										<argument>-PverifierVersion=${spring-cloud-contract.version}</argument>
 									</arguments>
 								</configuration>
@@ -210,12 +200,11 @@
 								<id>gradle</id>
 								<phase>test</phase>
 								<configuration>
-									<executable>gradlew.bat</executable>
+									<executable>./gradlew</executable>
 									<arguments>
 										<argument>clean</argument>
 										<argument>build</argument>
-										<!-- For some reason publishToMavenLocal doesn't work... Please don't troll Gradle ;)-->
-										<argument>install</argument>
+										<argument>publishToMavenLocal</argument>
 										<argument>-PverifierVersion=${spring-cloud-contract.version}</argument>
 									</arguments>
 								</configuration>
@@ -229,4 +218,5 @@
 			</build>
 		</profile>
 	</profiles>
+
 </project>
