@@ -21,8 +21,9 @@ import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.QueryParameters
+import org.springframework.cloud.contract.verifier.util.JsonPaths
+import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 import org.springframework.cloud.contract.verifier.util.MapConverter
-
 /**
  * Converter of JSON PACT file
  *
@@ -36,6 +37,7 @@ class PactContractConverter implements ContractConverter<Pact> {
 	private static final String REGEX_KEY = "regex"
 	private static final String MAX_KEY = "max"
 	private static final String MIN_KEY = "min"
+	private static final String FULL_BODY = '$.body'
 
 	@Override
 	boolean isAccepted(File file) {
@@ -90,7 +92,8 @@ class PactContractConverter implements ContractConverter<Pact> {
 						}
 						if (requestResponseInteraction.request?.matchingRules) {
 							stubMatchers {
-								requestResponseInteraction.request.matchingRules.each { String key, Map<String, Object> value ->
+								Map<String, Map<String, Object>> rules = requestResponseInteraction.request.matchingRules
+								rules.each { String key, Map<String, Object> value ->
 									String keyFromBody = toKeyStartingFromBody(key)
 									if (value.containsKey(MATCH_KEY)) {
 										MatchingType matchingType = MatchingType.valueOf((value.get(MATCH_KEY) as String).toUpperCase())
@@ -132,8 +135,19 @@ class PactContractConverter implements ContractConverter<Pact> {
 						}
 						if (requestResponseInteraction.response?.matchingRules) {
 							testMatchers {
-								requestResponseInteraction.response.matchingRules.each { String key, Map<String, Object> value ->
+								Map<String, Map<String, Object>> rules = requestResponseInteraction.response.matchingRules
+								Map<String, Object> fullBodyCheck = rules.get(FULL_BODY)
+								if (fullBodyCheck != null) {
+									JsonPaths jsonPaths = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(requestResponseInteraction.request?.body?.value)
+									jsonPaths.each {
+										jsonPath(it.keyBeforeChecking(), byType())
+									}
+								}
+								rules.each { String key, Map<String, Object> value ->
 									String keyFromBody = toKeyStartingFromBody(key)
+									if (!keyFromBody) {
+										return 
+									}
 									if (value.containsKey(MATCH_KEY)) {
 										MatchingType matchingType = MatchingType.valueOf((value.get(MATCH_KEY) as String).toUpperCase())
 										switch (matchingType) {
@@ -185,7 +199,10 @@ class PactContractConverter implements ContractConverter<Pact> {
 	}
 
 	protected String toKeyStartingFromBody(String key) {
-		return key.replace('$.body', '$')
+		if (key == FULL_BODY) {
+			return ""
+		}
+		return key.replace(FULL_BODY, '$')
 	}
 
 	@Override
