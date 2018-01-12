@@ -115,17 +115,17 @@ class WireMockHttpRequestAdapter implements Request {
 
 	@Override
 	public String getUrl() {
-		return result.getUrl().getRawPath();
+		return this.result.getUrl().getRawPath();
 	}
 
 	@Override
 	public String getAbsoluteUrl() {
-		return result.getUrl().toString();
+		return this.result.getUrl().toString();
 	}
 
 	@Override
 	public RequestMethod getMethod() {
-		return new RequestMethod(result.getMethod().name());
+		return new RequestMethod(this.result.getMethod().name());
 	}
 
 	@Override
@@ -135,13 +135,13 @@ class WireMockHttpRequestAdapter implements Request {
 
 	@Override
 	public String getHeader(String key) {
-		HttpHeaders headers = result.getRequestHeaders();
+		HttpHeaders headers = this.result.getRequestHeaders();
 		return headers.containsKey(key) ? headers.getFirst(key) : null;
 	}
 
 	@Override
 	public HttpHeader header(String key) {
-		HttpHeaders headers = result.getRequestHeaders();
+		HttpHeaders headers = this.result.getRequestHeaders();
 		return headers.containsKey(key)
 				? new HttpHeader(key, headers.getValuesAsList(key))
 				: null;
@@ -149,7 +149,7 @@ class WireMockHttpRequestAdapter implements Request {
 
 	@Override
 	public ContentTypeHeader contentTypeHeader() {
-		MediaType contentType = result.getRequestHeaders().getContentType();
+		MediaType contentType = this.result.getRequestHeaders().getContentType();
 		if (contentType == null) {
 			return null;
 		}
@@ -159,7 +159,7 @@ class WireMockHttpRequestAdapter implements Request {
 	@Override
 	public com.github.tomakehurst.wiremock.http.HttpHeaders getHeaders() {
 		com.github.tomakehurst.wiremock.http.HttpHeaders target = new com.github.tomakehurst.wiremock.http.HttpHeaders();
-		HttpHeaders headers = result.getRequestHeaders();
+		HttpHeaders headers = this.result.getRequestHeaders();
 		for (String key : headers.keySet()) {
 			target = target.plus(new HttpHeader(key, headers.getValuesAsList(key)));
 		}
@@ -168,12 +168,12 @@ class WireMockHttpRequestAdapter implements Request {
 
 	@Override
 	public boolean containsHeader(String key) {
-		return result.getRequestHeaders().containsKey(key);
+		return this.result.getRequestHeaders().containsKey(key);
 	}
 
 	@Override
 	public Set<String> getAllHeaderKeys() {
-		return result.getRequestHeaders().keySet();
+		return this.result.getRequestHeaders().keySet();
 	}
 
 	@Override
@@ -183,7 +183,7 @@ class WireMockHttpRequestAdapter implements Request {
 
 	@Override
 	public QueryParameter queryParameter(String key) {
-		String query = result.getUrl().getRawQuery();
+		String query = this.result.getUrl().getRawQuery();
 		if (query == null) {
 			return null;
 		}
@@ -204,17 +204,17 @@ class WireMockHttpRequestAdapter implements Request {
 
 	@Override
 	public byte[] getBody() {
-		return result.getRequestBodyContent();
+		return this.result.getRequestBodyContent();
 	}
 
 	@Override
 	public String getBodyAsString() {
-		return new String(result.getRequestBodyContent(), Charset.forName("UTF-8"));
+		return new String(this.result.getRequestBodyContent(), Charset.forName("UTF-8"));
 	}
 
 	@Override
 	public String getBodyAsBase64() {
-		return Base64.encodeBase64String(result.getRequestBodyContent());
+		return Base64.encodeBase64String(this.result.getRequestBodyContent());
 	}
 
 	@Override

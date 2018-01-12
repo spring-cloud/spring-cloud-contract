@@ -51,7 +51,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.example</groupId>
-			<artifactId>http-server-restdocs</artifactId>
+			<artifactId>http-server-webclient</artifactId>
 			<classifier>stubs</classifier>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>test</scope>

@@ -18,11 +18,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@AutoConfigureStubRunner(ids = "com.example:http-server-restdocs")
+@AutoConfigureStubRunner(ids = "com.example:http-server-webclient")
 public class LoanApplicationServiceusingStubRunnerTests {
 
 	@Autowired LoanApplicationService service;
-	@Value("${stubrunner.runningstubs.http-server-restdocs.port}") int port;
+	@Value("${stubrunner.runningstubs.http-server-webclient.port}") int port;
 
 	@Before
 	public void setup() {

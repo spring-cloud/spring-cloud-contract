@@ -49,7 +49,7 @@ public abstract class WireMockVerifyHelper<T, S extends WireMockVerifyHelper<T, 
 	}
 
 	protected String getName() {
-		return name;
+		return this.name;
 	}
 
 	public void configure(T result) {
