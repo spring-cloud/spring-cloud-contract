@@ -146,7 +146,7 @@ class PactContractConverter implements ContractConverter<Pact> {
 								rules.each { String key, Map<String, Object> value ->
 									String keyFromBody = toKeyStartingFromBody(key)
 									if (!keyFromBody) {
-										return 
+										return
 									}
 									if (value.containsKey(MATCH_KEY)) {
 										MatchingType matchingType = MatchingType.valueOf((value.get(MATCH_KEY) as String).toUpperCase())
