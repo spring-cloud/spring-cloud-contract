@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *	   http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -85,18 +85,18 @@ class DslToWireMockClientConverterSpec extends Specification {
 			File file = tmpFolder.newFile("dsl1_list.groovy")
 			file.write('''
 (1..2).collect { int index ->
-    org.springframework.cloud.contract.spec.Contract.make {
-        request {
-            method(PUT())
-            headers {
-                contentType(applicationJson())
-            }
-            url "/${index}"
-        }
-        response {
-            status 200
-        }
-    }
+	org.springframework.cloud.contract.spec.Contract.make {
+		request {
+			method(PUT())
+			headers {
+				contentType(applicationJson())
+			}
+			url "/${index}"
+		}
+		response {
+			status 200
+		}
+	}
 }
 ''')
 		when:
@@ -242,40 +242,40 @@ class DslToWireMockClientConverterSpec extends Specification {
 {
   "request" : {
 	"url" : "/api/12",
-    "method" : "PUT",
-    "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == -77.119759)]"
-    }, {
-      "matchesJsonPath" : "$[*][?(@.['text'] == 'Gonna see you at Warsaw')]"
-    }, {
-      "matchesJsonPath" : "$[*].['place'][?(@.['place_type'] == 'city')]"
-    }, {
-      "matchesJsonPath" : "$[*][?(@.['id'] == 492967299297845248)]"
-    }, {
-      "matchesJsonPath" : "$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == 38.791645)]"
-    }, {
-      "matchesJsonPath" : "$[*].['place'][?(@.['country'] == 'United States')]"
-    }, {
-      "matchesJsonPath" : "$[*][?(@.['id_str'] == '492967299297845248')]"
-    }, {
-      "matchesJsonPath" : "$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == -76.909393)]"
-    }, {
-      "matchesJsonPath" : "$[*].['place'][?(@.['name'] == 'Washington')]"
-    }, {
-      "matchesJsonPath" : "$[*].['place'].['bounding_box'][?(@.['type'] == 'Polygon')]"
-    }, {
-      "matchesJsonPath" : "$[*].['place'][?(@.['url'] == 'http://api.twitter.com/1/geo/id/01fbe706f872cb32.json')]"
-    }, {
-      "matchesJsonPath" : "$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == 38.995548)]"
-    }, {
-      "matchesJsonPath" : "$[*].['place'][?(@.['country_code'] == 'US')]"
-    }, {
-      "matchesJsonPath" : "$[*].['place'][?(@.['full_name'] == 'Washington, DC')]"
-    }, {
-      "matchesJsonPath" : "$[*][?(@.['created_at'] == 'Sat Jul 26 09:38:57 +0000 2014')]"
-    }, {
-      "matchesJsonPath" : "$[*].['place'][?(@.['id'] == '01fbe706f872cb32')]"
-    } ],
+	"method" : "PUT",
+	"bodyPatterns" : [ {
+	  "matchesJsonPath" : "$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == -77.119759)]"
+	}, {
+	  "matchesJsonPath" : "$[*][?(@.['text'] == 'Gonna see you at Warsaw')]"
+	}, {
+	  "matchesJsonPath" : "$[*].['place'][?(@.['place_type'] == 'city')]"
+	}, {
+	  "matchesJsonPath" : "$[*][?(@.['id'] == 492967299297845248)]"
+	}, {
+	  "matchesJsonPath" : "$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == 38.791645)]"
+	}, {
+	  "matchesJsonPath" : "$[*].['place'][?(@.['country'] == 'United States')]"
+	}, {
+	  "matchesJsonPath" : "$[*][?(@.['id_str'] == '492967299297845248')]"
+	}, {
+	  "matchesJsonPath" : "$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == -76.909393)]"
+	}, {
+	  "matchesJsonPath" : "$[*].['place'][?(@.['name'] == 'Washington')]"
+	}, {
+	  "matchesJsonPath" : "$[*].['place'].['bounding_box'][?(@.['type'] == 'Polygon')]"
+	}, {
+	  "matchesJsonPath" : "$[*].['place'][?(@.['url'] == 'http://api.twitter.com/1/geo/id/01fbe706f872cb32.json')]"
+	}, {
+	  "matchesJsonPath" : "$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == 38.995548)]"
+	}, {
+	  "matchesJsonPath" : "$[*].['place'][?(@.['country_code'] == 'US')]"
+	}, {
+	  "matchesJsonPath" : "$[*].['place'][?(@.['full_name'] == 'Washington, DC')]"
+	}, {
+	  "matchesJsonPath" : "$[*][?(@.['created_at'] == 'Sat Jul 26 09:38:57 +0000 2014')]"
+	}, {
+	  "matchesJsonPath" : "$[*].['place'][?(@.['id'] == '01fbe706f872cb32')]"
+	} ],
 	"headers" : {
 	  "Content-Type" : {
 		"equalTo" : "application/vnd.org.springframework.cloud.contract.verifier.twitter-places-analyzer.v1+json"
@@ -334,22 +334,22 @@ class DslToWireMockClientConverterSpec extends Specification {
 			file.write("""
 				org.springframework.cloud.contract.spec.Contract.make {
 					request {
-                method 'GET'
-                urlPath '/foos'
-            }
-            response {
-                status 200
-                body([[id: value(
-                        consumer('123'),
-                        producer(regex('[0-9]+'))
-                )], [id: value(
-                        consumer('567'),
-                        producer(regex('[0-9]+'))
-                )]])
-                headers {
+				method 'GET'
+				urlPath '/foos'
+			}
+			response {
+				status 200
+				body([[id: value(
+						consumer('123'),
+						producer(regex('[0-9]+'))
+				)], [id: value(
+						consumer('567'),
+						producer(regex('[0-9]+'))
+				)]])
+				headers {
 									header 'Content-Type': 'application/json'
 								}
-            }
+			}
 			}
 """)
 		when:
@@ -379,10 +379,10 @@ class DslToWireMockClientConverterSpec extends Specification {
 			file.write("""
 				org.springframework.cloud.contract.spec.Contract.make {
 					request {
-                method 'GET'
-                urlPath '/foos'
-            }
-            response {
+				method 'GET'
+				urlPath '/foos'
+			}
+			response {
 				status 200
 				body(
 					digit: \$(producer(regex('[0-9]{1}'))),
@@ -446,25 +446,25 @@ class DslToWireMockClientConverterSpec extends Specification {
 '''
 {
   "request" : {
-    "url" : "/users/password",
-    "method" : "POST",
-    "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[?(@.['email'] =~ /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,6})?/)]"
-    }, {
-      "matchesJsonPath" : "$[?(@.['callback_url'] =~ /((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?/)]"
-    } ],
-    "headers" : {
-      "Content-Type" : {
-        "equalTo" : "application/json"
-      }
-    }
+	"url" : "/users/password",
+	"method" : "POST",
+	"bodyPatterns" : [ {
+	  "matchesJsonPath" : "$[?(@.['email'] =~ /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,6})?/)]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.['callback_url'] =~ /((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?/)]"
+	} ],
+	"headers" : {
+	  "Content-Type" : {
+		"equalTo" : "application/json"
+	  }
+	}
   },
   "response" : {
-    "status" : 404,
-    "body" : "{\\"code\\":\\"123123\\",\\"message\\":\\"User not found by email == [not.existing@user.com]\\"}",
-    "headers" : {
-      "Content-Type" : "application/json"
-    }
+	"status" : 404,
+	"body" : "{\\"code\\":\\"123123\\",\\"message\\":\\"User not found by email == [not.existing@user.com]\\"}",
+	"headers" : {
+	  "Content-Type" : "application/json"
+	}
   },
   "priority" : 1
 }
@@ -601,51 +601,51 @@ class DslToWireMockClientConverterSpec extends Specification {
 				'''
 {
   "request" : {
-    "urlPath" : "/get",
-    "method" : "POST",
-    "headers" : {
-      "Content-Type" : {
-        "matches" : "application/json.*"
-      }
-    },
-    "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[?(@.['valueWithoutAMatcher'] == 'foo')]"
-    }, {
-      "matchesJsonPath" : "$[?(@.['valueWithTypeMatch'] == 'string')]"
-    }, {
-      "matchesJsonPath" : "$.['list'].['some'].['nested'][?(@.['anothervalue'] == 4)]"
-    }, {
-      "matchesJsonPath" : "$.['list'].['someother'].['nested'][?(@.['anothervalue'] == 4)]"
-    }, {
-      "matchesJsonPath" : "$.['list'].['someother'].['nested'][?(@.['json'] == 'with value')]"
-    }, {
-      "matchesJsonPath" : "$[?(@.duck =~ /([0-9]{3})/)]"
-    }, {
-      "matchesJsonPath" : "$[?(@.duck == 123)]"
-    }, {
-      "matchesJsonPath" : "$[?(@.alpha =~ /([\\\\p{L}]*)/)]"
-    }, {
-      "matchesJsonPath" : "$[?(@.alpha == 'abc')]"
-    }, {
-      "matchesJsonPath" : "$[?(@.number =~ /(-?(\\\\d*\\\\.\\\\d+|\\\\d+))/)]"
-    }, {
-      "matchesJsonPath" : "$[?(@.aBoolean =~ /((true|false))/)]"
-    }, {
-      "matchesJsonPath" : "$[?(@.date =~ /((\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]))/)]"
-    }, {
-      "matchesJsonPath" : "$[?(@.dateTime =~ /(([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9]))/)]"
-    }, {
-      "matchesJsonPath" : "$[?(@.time =~ /((2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9]))/)]"
-    }, {
-      "matchesJsonPath" : "$.list.some.nested[?(@.json =~ /(.*)/)]"
-    } ]
+	"urlPath" : "/get",
+	"method" : "POST",
+	"headers" : {
+	  "Content-Type" : {
+		"matches" : "application/json.*"
+	  }
+	},
+	"bodyPatterns" : [ {
+	  "matchesJsonPath" : "$[?(@.['valueWithoutAMatcher'] == 'foo')]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.['valueWithTypeMatch'] == 'string')]"
+	}, {
+	  "matchesJsonPath" : "$.['list'].['some'].['nested'][?(@.['anothervalue'] == 4)]"
+	}, {
+	  "matchesJsonPath" : "$.['list'].['someother'].['nested'][?(@.['anothervalue'] == 4)]"
+	}, {
+	  "matchesJsonPath" : "$.['list'].['someother'].['nested'][?(@.['json'] == 'with value')]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.duck =~ /([0-9]{3})/)]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.duck == 123)]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.alpha =~ /([\\\\p{L}]*)/)]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.alpha == 'abc')]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.number =~ /(-?(\\\\d*\\\\.\\\\d+|\\\\d+))/)]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.aBoolean =~ /((true|false))/)]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.date =~ /((\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]))/)]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.dateTime =~ /(([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9]))/)]"
+	}, {
+	  "matchesJsonPath" : "$[?(@.time =~ /((2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9]))/)]"
+	}, {
+	  "matchesJsonPath" : "$.list.some.nested[?(@.json =~ /(.*)/)]"
+	} ]
   },
   "response" : {
-    "status" : 200,
-    "body" : "{\\"date\\":\\"2017-01-01\\",\\"dateTime\\":\\"2017-01-01T01:23:45\\",\\"number\\":123,\\"aBoolean\\":true,\\"duck\\":123,\\"alpha\\":\\"abc\\",\\"valueWithMin\\":[1,2,3],\\"time\\":\\"01:02:34\\",\\"valueWithTypeMatch\\":\\"string\\",\\"valueWithMax\\":[1,2,3],\\"valueWithMinMax\\":[1,2,3],\\"valueWithoutAMatcher\\":\\"foo\\"}",
-    "headers" : {
-      "Content-Type" : "application/json"
-    }
+	"status" : 200,
+	"body" : "{\\"date\\":\\"2017-01-01\\",\\"dateTime\\":\\"2017-01-01T01:23:45\\",\\"number\\":123,\\"aBoolean\\":true,\\"duck\\":123,\\"alpha\\":\\"abc\\",\\"valueWithMin\\":[1,2,3],\\"time\\":\\"01:02:34\\",\\"valueWithTypeMatch\\":\\"string\\",\\"valueWithMax\\":[1,2,3],\\"valueWithMinMax\\":[1,2,3],\\"valueWithoutAMatcher\\":\\"foo\\"}",
+	"headers" : {
+	  "Content-Type" : "application/json"
+	}
   }
 }
 '''
@@ -791,6 +791,104 @@ class DslToWireMockClientConverterSpec extends Specification {
 			response.headers.get('Content-Type') == ['application/json']
 			response.statusCodeValue == 404
 			JSONAssert.assertEquals('''{"code":"123123","message":"User not found by email == [not.existing@user.com]"}"''', response.body, false)
+	}
+
+	@Issue("#515")
+	def 'should not escape any java chars in the javascript WireMock stub'() {
+		given:
+			def converter = new DslToWireMockClientConverter()
+		and:
+			File file = tmpFolder.newFile("dsl_from_docs.groovy")
+			file.write('''
+				org.springframework.cloud.contract.spec.Contract.make {
+					priority 1
+					request {
+						method 'POST'
+						url '/users/password2'
+						headers {
+							header 'Content-Type': 'application/json'
+						}
+						body(
+							email: 'abc@abc.com',
+							callback_url: 'http://partners.com'
+						)
+						stubMatchers {
+							jsonPath('$.[\\'email\\']', byRegex(email()))
+							jsonPath('$.[\\'callback_url\\']', byRegex(hostname()))
+						}
+					}
+					response {
+						status 400
+						headers {
+							header 'CorrelationID': '11111111-1111-1111-1111-111111111111\'
+							header 'Content-Type': value(test(regex('application/json(;.*)?')), stub('application/json;charset=UTF-8'))
+						}
+						body(
+								[
+										subject: [
+												'@type'	:'ErrorSubject',
+												'oid'		:'8.2',
+												'description':'Profile'
+										],
+										reason : [
+												'@type'	:'ErrorReason',
+												'oid'		:'3.7',
+												'description':'Bad Request',
+												'httpCode':'400'
+										],
+										message: '[8.2 Profile/3.7 Bad Request]\'
+								]
+						)
+					}
+				}
+		''')
+		when:
+			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
+					ContractVerifierDslConverter.convertAsCollection(new File("/"),file))).values().first()
+		then:
+			JSONAssert.assertEquals(
+					'''
+		{
+		  "request" : {
+		"url" : "/users/password2",
+		"method" : "POST",
+		"headers" : {
+		  "Content-Type" : {
+			"equalTo" : "application/json"
+		  }
+		},
+		"bodyPatterns" : [ {
+		  "matchesJsonPath" : "$[?(@.['email'] =~ /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,6})/)]"
+		}, {
+		  "matchesJsonPath" : "$[?(@.['callback_url'] =~ /(((http[s]?|ftp):\\\\/)\\\\/?([^:\\\\/\\\\s]+)(:[0-9]{1,5})?)/)]"
+		} ]
+	  },
+	  "response" : {
+		"status" : 400,
+		"body" : "{\\"reason\\":{\\"@type\\":\\"ErrorReason\\",\\"description\\":\\"Bad Request\\",\\"oid\\":\\"3.7\\",\\"httpCode\\":\\"400\\"},\\"subject\\":{\\"@type\\":\\"ErrorSubject\\",\\"description\\":\\"Profile\\",\\"oid\\":\\"8.2\\"},\\"message\\":\\"[8.2 Profile/3.7 Bad Request]\\"}",
+		"headers" : {
+		  "CorrelationID" : "11111111-1111-1111-1111-111111111111",
+		  "Content-Type" : "application/json;charset=UTF-8"
+		},
+		"transformers" : [ "response-template" ]
+	  },
+	  "priority" : 1
+	}
+	}
+	'''
+				, json, false)
+		and:
+			StubMapping mapping = stubMappingIsValidWireMockStub(json)
+		and:
+			wireMockRule.addStubMapping(mapping)
+		and:
+			def response = restTemplate.exchange(RequestEntity.post("${url}/users/password2".toURI())
+					.header("Content-Type", "application/json")
+					.body('''{"email":"abc@abc.com", "callback_url":"http://partners.com"}''')
+					, String)
+			response.headers.get('Content-Type') == ['application/json;charset=UTF-8']
+			response.statusCodeValue == 400
+			JSONAssert.assertEquals('''{"message":"[8.2 Profile/3.7 Bad Request]"}"''', response.body, false)
 	}
 
 	StubMapping stubMappingIsValidWireMockStub(String mappingDefinition) {

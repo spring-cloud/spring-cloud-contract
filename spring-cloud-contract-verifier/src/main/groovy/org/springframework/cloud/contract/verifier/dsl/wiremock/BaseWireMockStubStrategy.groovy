@@ -103,7 +103,8 @@ abstract class BaseWireMockStubStrategy {
 		// the space is important cause at the end of the json body you also have a }
 		// you can't have 4 } next to each other
 		String unquotedJson = json.replace('"' + WRAPPER, '').replace(WRAPPER + '"', ' ')
-		return parseBody(unquotedJson, contentType)
+		String unescapedJson = unquotedJson.replace("\\/", "/")
+		return parseBody(unescapedJson, contentType)
 	}
 
 	private Object processEntriesForTemplating(transformedMap, DocumentContext context) {
