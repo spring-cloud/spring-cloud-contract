@@ -23,17 +23,17 @@ package org.springframework.cloud.contract.wiremock.restdocs;
  * &#64;RunWith(SpringRunner.class)
  * &#64;SpringBootTest
  * &#64;AutoConfigureRestDocs(outputDir = "target/snippets")
- * &#64;AutoConfigureMockMvc
+ * &#64;AutoConfigureWebTestClient
  * public class WiremockServerRestDocsApplicationTests {
  * 
  * 	&#64;Autowired
- * 	private MockMvc mockMvc;
+ * 	private WebTestClient client;
  * 
  * 	&#64;Test
  * 	public void contextLoads() throws Exception {
- * 		mockMvc.perform(get("/resource"))
- * 				.andExpect(content().string("Hello World"))
- * 				.andDo(verify().stub("resource"));
+ * 		client.get().uri("/resource").exchange()
+ * 				.expectBody(String.class).isEqualTo("Hello World")
+ * 				.consumeWith(verify().stub("resource"));
  * 	}
  * </pre>
  * 
@@ -45,10 +45,10 @@ package org.springframework.cloud.contract.wiremock.restdocs;
  * @author Dave Syer
  *
  */
-public class WireMockRestDocs {
+public class WireMockWebTestClient {
 
-	public static ContractResultHandler verify() {
-		return new ContractResultHandler();
+	public static ContractExchangeHandler verify() {
+		return new ContractExchangeHandler();
 	}
 
 }
