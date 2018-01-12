@@ -61,7 +61,7 @@ class MethodBuilder {
 		return new MethodBuilder(methodName, stubContent, configProperties, contract.ignored || stubContent.ignored)
 	}
 
-	private static String methodName(ContractMetadata contract, File stubsFile, Contract stubContent) {
+	static String methodName(ContractMetadata contract, File stubsFile, Contract stubContent) {
 		if (stubContent.name) {
 			return NamesUtil.camelCase(NamesUtil.convertIllegalPackageChars(stubContent.name))
 		} else if (contract.convertedContract.size() > 1) {
@@ -72,7 +72,7 @@ class MethodBuilder {
 	}
 
 	private static String camelCasedMethodFromFileName(File stubsFile) {
-		return NamesUtil.camelCase(NamesUtil.toLastDot(NamesUtil.afterLast(stubsFile.path, File.separator)))
+		return NamesUtil.camelCase(NamesUtil.convertIllegalMethodNameChars(NamesUtil.toLastDot(NamesUtil.afterLast(stubsFile.path, File.separator))))
 	}
 
 	/**
