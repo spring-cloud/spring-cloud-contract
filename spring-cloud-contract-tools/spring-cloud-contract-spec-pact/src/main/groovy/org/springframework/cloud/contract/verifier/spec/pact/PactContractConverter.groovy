@@ -138,7 +138,7 @@ class PactContractConverter implements ContractConverter<Pact> {
 								Map<String, Map<String, Object>> rules = requestResponseInteraction.response.matchingRules
 								Map<String, Object> fullBodyCheck = rules.get(FULL_BODY)
 								if (fullBodyCheck != null) {
-									JsonPaths jsonPaths = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(requestResponseInteraction.request?.body?.value)
+									JsonPaths jsonPaths = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(requestResponseInteraction.response?.body?.value)
 									jsonPaths.each {
 										jsonPath(it.keyBeforeChecking(), byType())
 									}

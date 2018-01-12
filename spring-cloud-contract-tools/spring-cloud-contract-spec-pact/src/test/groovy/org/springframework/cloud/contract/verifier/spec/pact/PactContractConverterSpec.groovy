@@ -96,8 +96,9 @@ class PactContractConverterSpec extends Specification {
 					headers {
 						contentType(applicationJson())
 					}
-					body(id: 42)
+					body(id: 42, firstName: "Arthur", lastName: "Dent")
 					testMatchers {
+						jsonPath('''$.['id']''', byType())
 						jsonPath('''$.['lastName']''', byType())
 						jsonPath('''$.['firstName']''', byType())
 					}
