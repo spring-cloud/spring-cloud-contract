@@ -111,4 +111,13 @@ class NamesUtil {
 	static String convertIllegalPackageChars(String packageName) {
 		return packageName.replaceAll('[_\\- .+]', '_')
 	}
+
+	/**
+	 * Converts illegal characters in method names to underscores
+	 */
+	static String convertIllegalMethodNameChars(String methodName) {
+		String result =  methodName.replaceAll('^[^a-zA-Z_$]', '_')
+		result = result.replaceAll('[^a-zA-Z_$0-9]', '_')
+		return result
+	}
 }
