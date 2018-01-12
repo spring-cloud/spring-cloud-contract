@@ -7,7 +7,7 @@ import spock.lang.Specification
 
 class MethodBuilderSpec extends Specification {
 
-    @Issue('#xxx')
+    @Issue('#518')
     def "should map create valid method name from file name containing illegal chars"() {
         given:
             Contract contractDsl = Contract.make {
@@ -23,7 +23,7 @@ class MethodBuilderSpec extends Specification {
                     }
                 }
             }
-            ContractMetadata metadata =  new ContractMetadata(null, false, 0, null, contractDsl)
+            ContractMetadata metadata = new ContractMetadata(null, false, 0, null, contractDsl)
         when:
             File stubFile = new File("5invalid-method:name.groovy")
             String methodName = MethodBuilder.methodName(metadata, stubFile, contractDsl)

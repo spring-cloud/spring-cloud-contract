@@ -107,8 +107,8 @@ class NamesUtilSpec extends Specification {
 
 	def "should convert all illegal method chars to legal ones"() {
 		given:
-		String string = '10a-b c.1.0.x+d1174$dd'
+			String string = '10a-b c.1.0.x+d1174$dd'
 		expect:
-		NamesUtil.convertIllegalMethodNameChars(string) == '_0a_b_c_1_0_x_d1174$dd'
+			NamesUtil.convertIllegalMethodNameChars(string) == '_0a_b_c_1_0_x_d1174$dd'
 	}
 }
