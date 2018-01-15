@@ -1,4 +1,4 @@
-== Contract DSL
+== Groovy Contract DSL
 
 IMPORTANT: Remember that, inside the contract file, you have to provide the fully
 qualified name to the `Contract` class and `make` static imports, such as
@@ -999,6 +999,10 @@ case, the contract had an index of `1` in the list of contracts in the file).
 TIP: As you can see, it iss much better if you name your contracts because doing so makes
 your tests far more meaningful.
 
+== YAML Contract
+
+You can also define a contract using YAML.
+
 == Customization
 
 You can customize the Spring Cloud Contract Verifier by extending the DSL, as shown in
@@ -1102,13 +1106,6 @@ can generate stubs for other HTTP server implementations).
 
 === Custom Contract Converter
 
-Assume that your contract is written in a YAML file as follows:
-
-[source,yml]
-----
-include::{verifier_core_path}/src/test/resources/contract.yml[indent=0]
-----
-
 The `ContractConverter` interface lets you register your own implementation of a contract
 structure converter. The following code listing shows the `ContractConverter` interface:
 
@@ -1128,15 +1125,8 @@ The following example shows a typical `spring.factories` file:
 
 [source]
 ----
-include::{verifier_core_path}/src/test/resources/META-INF/spring.factories[indent=0]
-----
-
-The following example shows a typical YAML implementation that matches the preceding
-example:
-
-[source,groovy]
-----
-include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/converter/YamlContractConverter.groovy[indent=0,lines=16..-1]
+org.springframework.cloud.contract.spec.ContractConverter=\
+org.springframework.cloud.contract.verifier.converter.YamlContractConverter
 ----
 
 ==== Pact Converter

@@ -91,6 +91,18 @@ class Headers {
 		} as Map<String , Object>
 	}
 
+	/**
+	 * Converts the headers into their stub side representations and returns as
+	 * a map of String key => Object value.
+	 */
+	Map<String , Object> asTestSideMap() {
+		def acc = [:].withDefault { [] as Collection<Object> }
+		return entries.inject(acc as Map<String, Object>) { Map<String, Object> map, Header header ->
+			map[header.name] = header.serverValue
+			return map
+		} as Map<String , Object>
+	}
+
 	boolean equals(o) {
 		if (this.is(o)) return true
 		if (getClass() != o.class) return false

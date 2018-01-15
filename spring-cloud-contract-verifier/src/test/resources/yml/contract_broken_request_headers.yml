@@ -1,7 +1,3 @@
-description: Some description
-name: some name
-priority: 8
-ignored: true
 request:
   url: /foo
   queryParameters:
@@ -20,26 +16,19 @@ request:
         value: bar
     headers:
       - key: foo
-        regex: bar
+        regex: barrrr
 response:
   status: 200
   headers:
     foo2: bar
-    foo3: foo33
     fooRes: baz
   body:
     foo2: bar
-    foo3: baz
   matchers:
     body:
       - path: $.foo2
         type: by_regex
         value: bar
-      - path: $.foo3
-        type: by_command
-        value: executeMe($it)
     headers:
       - key: foo2
         regex: bar
-      - key: foo3
-        command: andMeToo($it)

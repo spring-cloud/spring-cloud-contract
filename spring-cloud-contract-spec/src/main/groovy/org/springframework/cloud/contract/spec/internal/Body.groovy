@@ -31,7 +31,8 @@ import groovy.transform.ToString
 class Body extends DslProperty {
 
 	Body(Map<String, DslProperty> body) {
-		super(extractValue(body, { DslProperty p -> p.clientValue}), extractValue(body, {DslProperty p -> p.serverValue}))
+		super(extractValue(body, { p -> p instanceof DslProperty ? ((DslProperty) p).clientValue : p }),
+				extractValue(body, { p -> p instanceof DslProperty ? ((DslProperty) p).serverValue : p }))
 	}
 
 	private static Map<String, Object> extractValue(Map<String, DslProperty> body, Closure valueProvider) {

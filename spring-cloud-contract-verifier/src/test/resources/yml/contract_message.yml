@@ -1,35 +1,33 @@
 description: Some description
+label: some_label
 name: some name
-priority: 8
 ignored: true
-request:
-  url: /foo
-  queryParameters:
-    a: b
-    b: c
-  method: PUT
-  headers:
+input:
+  messageFrom: foo
+  triggeredBy: foo()
+  messageHeaders:
     foo: bar
-    fooReq: baz
-  body:
+  messageBody:
     foo: bar
+  assertThat: bar()
   matchers:
     body:
-      - path: $.foo
+      - path: $.bar
         type: by_regex
         value: bar
     headers:
       - key: foo
         regex: bar
-response:
-  status: 200
+outputMessage:
+  sentTo: bar
   headers:
     foo2: bar
-    foo3: foo33
+    foo3: bar3
     fooRes: baz
   body:
     foo2: bar
     foo3: baz
+  assertThat: baz()
   matchers:
     body:
       - path: $.foo2
