@@ -26,6 +26,8 @@ import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
+import groovy.util.logging.Slf4j
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Body
 import org.springframework.cloud.contract.spec.internal.DslProperty
@@ -53,6 +55,7 @@ import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.bu
  */
 @TypeChecked
 @PackageScope
+@Slf4j
 class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 
 	private final Request request
@@ -211,7 +214,12 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 					case MatchingStrategy.Type.ABSENT:
 						return WireMock.absent()
 					default:
-						return WireMock."${value.type.name}"(value.clientValue)
+						try {
+							return WireMock."${value.type.name}"(value.clientValue)
+						} catch (Throwable t) {
+							log.error("Exception occurred while trying to call WireMock.${value.type.name}(${value.clientValue})", t)
+							throw t
+						}
 				}
 			default:
 				return WireMock.equalTo(object.toString())
