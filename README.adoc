@@ -1149,23 +1149,6 @@ Spring Boot embedded servers, and Wiremock itself has "native" support for a par
 version of Jetty (currently 9.2). To use the native Jetty, you need to add the native
 Wiremock dependencies and exclude the Spring Boot container (if there is one).
 
-=== Customization of WireMock configuration
-
-You can register a bean of `org.springframework.cloud.contract.wiremock.WireMockConfigurationCustomizer` type
-in order to customize the WireMock configuration (e.g. add custom transformers).
-Example:
-
-[source,java,indent=0]
-----
-		@Bean WireMockConfigurationCustomizer optionsCustomizer() {
-			return new WireMockConfigurationCustomizer() {
-				@Override public void customize(WireMockConfiguration options) {
-// perform your customization here
-				}
-			};
-		}
-----
-
 === Generating Stubs using REST Docs
 
 https://projects.spring.io/spring-restdocs[Spring REST Docs] can be used to generate
@@ -1317,13 +1300,12 @@ Consider the following test:
 					.accept(MediaType.APPLICATION_PDF)
 					.accept(MediaType.APPLICATION_JSON)
 					.contentType(MediaType.APPLICATION_JSON)
-					.content("{\"foo\": 23, \"bar\" : \"baz\" }"))
+					.content("{\"foo\": 23 }"))
 				.andExpect(status().isOk())
 				.andExpect(content().string("bar"))
 				// first WireMock
 				.andDo(WireMockRestDocs.verify()
 						.jsonPath("$[?(@.foo >= 20)]")
-						.jsonPath("$[?(@.bar in ['baz','bazz','bazzz'])]")
 						.contentType(MediaType.valueOf("application/json"))
 						.stub("shouldGrantABeerIfOldEnough"))
 				// then Contract DSL documentation
