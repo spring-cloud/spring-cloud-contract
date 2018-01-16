@@ -147,8 +147,13 @@ class ContractFileScanner {
 		if (hasScenarioFilenamePattern(path)) {
 			order = index
 		}
-		result.put(file.parentFile.toPath(), new ContractMetadata(path, matchesPattern(file, ignoreMatchers),
-				files.size(), order, convertedContract))
+		Path parent = file.parentFile.toPath()
+		ContractMetadata metadata = new ContractMetadata(path, matchesPattern(file, ignoreMatchers),
+				files.size(), order, convertedContract)
+		if (log.isDebugEnabled()) {
+			log.debug("Creating a contract entry for path [" + path + "] and metadata [" + metadata + "]")
+		}
+		result.put(parent, metadata)
 	}
 
 	private boolean hasScenarioFilenamePattern(Path path) {

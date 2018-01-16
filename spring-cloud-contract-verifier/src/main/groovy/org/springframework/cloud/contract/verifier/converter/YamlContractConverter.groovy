@@ -61,10 +61,12 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 	}
 
 	@Override
-	Collection<Contract> convertFrom(File file) {
+	Collection<Contract> convertFrom(File contractFile) {
+		ClassLoader classLoader = YamlContractConverter.getClassLoader()
 		try {
 			YamlContract yamlContract = new Yaml().loadAs(
-					Files.newInputStream(file.toPath()), YamlContract.class)
+					Files.newInputStream(contractFile.toPath()), YamlContract.class)
+			Thread.currentThread().setContextClassLoader(updatedClassLoader(contractFile.getParentFile(), classLoader))
 			return [Contract.make {
 				if (yamlContract.description) description(yamlContract.description)
 				if (yamlContract.label) label(yamlContract.label)
@@ -100,6 +102,7 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 							}
 						}
 						if (yamlContract.request.body) body(yamlContract.request.body)
+						if (yamlContract.request.bodyFromFile) body(file(yamlContract.request.bodyFromFile))
 						stubMatchers {
 							yamlContract.request.matchers?.body?.each { BodyStubMatcher matcher ->
 								MatchingTypeValue value = null
@@ -143,6 +146,7 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 							}
 						}
 						if (yamlContract.response.body) body(yamlContract.response.body)
+						if (yamlContract.response.bodyFromFile) body(file(yamlContract.response.bodyFromFile))
 						testMatchers {
 							yamlContract.response?.matchers?.body?.each { BodyTestMatcher testMatcher ->
 								MatchingTypeValue value = null
@@ -164,8 +168,8 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 										break
 									case TestMatcherType.by_type:
 										value = byType() {
-											minOccurrence(testMatcher.minOccurrence)
-											maxOccurrence(testMatcher.maxOccurrence)
+											if (testMatcher.minOccurrence) minOccurrence(testMatcher.minOccurrence)
+											if (testMatcher.maxOccurrence) maxOccurrence(testMatcher.maxOccurrence)
 										}
 										break
 									case TestMatcherType.by_command:
@@ -197,6 +201,7 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 							}
 						}
 						if (yamlContract.input.messageBody) messageBody(yamlContract.input.messageBody)
+						if (yamlContract.input.messageBodyFromFile) messageBody(file(yamlContract.input.messageBodyFromFile))
 						stubMatchers {
 							yamlContract.input.matchers.body?.each { BodyStubMatcher matcher ->
 								MatchingTypeValue value = null
@@ -244,6 +249,7 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 							}
 						}
 						if (outputMsg.body) body(outputMsg.body)
+						if (outputMsg.bodyFromFile) body(file(outputMsg.bodyFromFile))
 						if (outputMsg.matchers) {
 							testMatchers {
 								yamlContract.outputMessage?.matchers?.body?.each { BodyTestMatcher testMatcher ->
@@ -284,7 +290,24 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 		}
 		catch (FileNotFoundException e) {
 			throw new IllegalStateException(e)
+		} finally {
+			Thread.currentThread().setContextClassLoader(classLoader)
 		}
+	}
+
+	protected String file(String relativePath) {
+		URL resource = Thread.currentThread().getContextClassLoader().getResource(relativePath)
+		if (resource == null) {
+			throw new IllegalStateException("File [${relativePath}] is not present")
+		}
+		return new File(resource.toURI()).text
+	}
+
+	protected static ClassLoader updatedClassLoader(File rootFolder, ClassLoader classLoader) {
+		ClassLoader urlCl = URLClassLoader
+				.newInstance([rootFolder.toURI().toURL()] as URL[], classLoader)
+		Thread.currentThread().setContextClassLoader(urlCl)
+		return urlCl
 	}
 	
 	@Override

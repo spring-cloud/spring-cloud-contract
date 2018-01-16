@@ -43,6 +43,7 @@ class YamlContract {
 		public Map<String, String> queryParameters = [:]
 		public Map<String, Object> headers = [:]
 		public Object body
+		public String bodyFromFile
 		public StubMatchers matchers = new StubMatchers()
 	}
 
@@ -96,6 +97,7 @@ class YamlContract {
 		public int status
 		public Map<String, Object> headers = [:]
 		public Object body
+		public String bodyFromFile
 		public TestMatchers matchers = new TestMatchers()
 	}
 
@@ -111,6 +113,7 @@ class YamlContract {
 		public String triggeredBy
 		public Map<String, Object> messageHeaders = [:]
 		public Object messageBody
+		public String messageBodyFromFile
 		public String assertThat
 		public StubMatchers matchers = new StubMatchers()
 	}
@@ -120,6 +123,7 @@ class YamlContract {
 		public String sentTo
 		public Map<String, Object> headers = [:]
 		public Object body
+		public String bodyFromFile
 		public String assertThat
 		public TestMatchers matchers = new TestMatchers()
 	}
