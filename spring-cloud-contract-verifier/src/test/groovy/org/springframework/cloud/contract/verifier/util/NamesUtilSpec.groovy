@@ -109,6 +109,6 @@ class NamesUtilSpec extends Specification {
 		given:
 			String string = '10a-b c.1.0.x+d1174$dd'
 		expect:
-			NamesUtil.convertIllegalMethodNameChars(string) == '_0a_b_c_1_0_x_d1174$dd'
+			NamesUtil.convertIllegalMethodNameChars(string) == '10a_b_c_1_0_x_d1174$dd'
 	}
 }

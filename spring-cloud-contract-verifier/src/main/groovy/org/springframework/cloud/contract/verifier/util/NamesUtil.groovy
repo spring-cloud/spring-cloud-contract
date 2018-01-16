@@ -116,8 +116,7 @@ class NamesUtil {
 	 * Converts illegal characters in method names to underscores
 	 */
 	static String convertIllegalMethodNameChars(String methodName) {
-		String result =  methodName.replaceAll('^[^a-zA-Z_$]', '_')
-		result = result.replaceAll('[^a-zA-Z_$0-9]', '_')
-		return result
+		String result =  methodName.replaceAll('^[^a-zA-Z_$0-9]', '_')
+		return result.replaceAll('[^a-zA-Z_$0-9]', '_')
 	}
 }

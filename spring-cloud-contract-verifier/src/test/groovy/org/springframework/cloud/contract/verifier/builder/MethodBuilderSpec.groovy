@@ -25,10 +25,11 @@ class MethodBuilderSpec extends Specification {
             }
             ContractMetadata metadata = new ContractMetadata(null, false, 0, null, contractDsl)
         when:
-            File stubFile = new File("5invalid-method:name.groovy")
+            File stubFile = new File("invalid-method:name.groovy")
+
             String methodName = MethodBuilder.methodName(metadata, stubFile, contractDsl)
         then:
-            methodName.equals("_invalid_method_name")
+            methodName == "invalid_method_name"
     }
 
 }
