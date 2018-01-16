@@ -40,7 +40,9 @@ import org.codehaus.plexus.archiver.jar.JarArchiver;
 public class GenerateStubsMojo extends AbstractMojo {
 
 	private static final String STUB_MAPPING_FILE_PATTERN = "**/*.json";
-	private static final String CONTRACT_FILE_PATTERN = "**/*.groovy";
+	private static final String GROOVY_CONTRACT_FILE_PATTERN = "**/*.groovy";
+	private static final String YAML_CONTRACT_FILE_PATTERN = "**/*.yaml";
+	private static final String YML_CONTRACT_FILE_PATTERN = "**/*.yml";
 
 	@Parameter(defaultValue = "${project.build.directory}", readonly = true,
 			required = true)
@@ -110,7 +112,10 @@ public class GenerateStubsMojo extends AbstractMojo {
 		try {
 			if (this.attachContracts) {
 				this.archiver.addDirectory(stubsOutputDir,
-						new String[] { STUB_MAPPING_FILE_PATTERN, CONTRACT_FILE_PATTERN },
+						new String[] { STUB_MAPPING_FILE_PATTERN,
+								GROOVY_CONTRACT_FILE_PATTERN,
+								YAML_CONTRACT_FILE_PATTERN,
+								YML_CONTRACT_FILE_PATTERN },
 						excludedFilesEmpty() ? new String[0] : this.excludedFiles);
 			}
 			else {
@@ -134,7 +139,9 @@ public class GenerateStubsMojo extends AbstractMojo {
 
 	private String[] excludes() {
 		List<String> excludes = new ArrayList<>();
-		excludes.add(CONTRACT_FILE_PATTERN);
+		excludes.add(GROOVY_CONTRACT_FILE_PATTERN);
+		excludes.add(YAML_CONTRACT_FILE_PATTERN);
+		excludes.add(YML_CONTRACT_FILE_PATTERN);
 		if (!excludedFilesEmpty()) {
 			excludes.addAll(Arrays.asList(this.excludedFiles));
 		}
