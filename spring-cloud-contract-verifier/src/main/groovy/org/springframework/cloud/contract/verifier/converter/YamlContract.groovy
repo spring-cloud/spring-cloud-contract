@@ -40,7 +40,8 @@ class YamlContract {
 	static class Request {
 		public String method
 		public String url
-		public Map<String, String> queryParameters = [:]
+		public String urlPath
+		public Map<String, Object> queryParameters = [:]
 		public Map<String, Object> headers = [:]
 		public Object body
 		public String bodyFromFile
@@ -99,6 +100,7 @@ class YamlContract {
 		public Object body
 		public String bodyFromFile
 		public TestMatchers matchers = new TestMatchers()
+		public Boolean async
 	}
 
 	@CompileStatic

@@ -1,36 +1,18 @@
-#tag::description[]
 description: Some description
-#end::description[]
-#tag::name[]
 name: some name
-#end::name[]
-#tag::priority[]
 priority: 8
-#end::priority[]
-#tag::ignored[]
 ignored: true
-#end::ignored[]
-#tag::request[]
 request:
-#end::request[]
-#tag::request_obligatory[]
-  method: PUT
   url: /foo
-#end::request_obligatory[]
-#tag::query_params[]
   queryParameters:
     a: b
     b: c
-#tag::query_params[]
-#tag::headers[]
+  method: PUT
   headers:
     foo: bar
     fooReq: baz
-#end::headers[]
-#tag::body[]
   body:
     foo: bar
-#end::body[]
   matchers:
     body:
       - path: $.foo
@@ -39,12 +21,8 @@ request:
     headers:
       - key: foo
         regex: bar
-#tag::response[]
 response:
-#end::response[]
-#tag::response_obligatory[]
   status: 200
-#end::response_obligatory[]
   headers:
     foo2: bar
     foo3: foo33

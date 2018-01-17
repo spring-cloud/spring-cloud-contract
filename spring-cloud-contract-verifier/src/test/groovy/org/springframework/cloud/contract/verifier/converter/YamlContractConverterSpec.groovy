@@ -18,28 +18,39 @@ package org.springframework.cloud.contract.verifier.converter
 
 import java.util.regex.Pattern
 
+import spock.lang.Shared
 import spock.lang.Specification
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.MatchingType
+import org.springframework.cloud.contract.spec.internal.Url
+import org.springframework.cloud.contract.verifier.util.MapConverter
 
 /**
  * @author Marcin Grzejszczak
  */
 class YamlContractConverterSpec extends Specification {
 
-	URL ymlUrl = YamlContractConverterSpec.getResource("/yml/contract.yml")
-	File ymlWithRest = new File(ymlUrl.toURI())
+	@Shared URL ymlUrl = YamlContractConverterSpec.getResource("/yml/contract.yml")
+	@Shared File ymlWithRest = new File(ymlUrl.toURI())
+	@Shared URL ymlUrl2 = YamlContractConverterSpec.getResource("/yml/contract_rest.yml")
+	@Shared File ymlWithRest2 = new File(ymlUrl2.toURI())
+	@Shared URL ymlUrl3 = YamlContractConverterSpec.getResource("/yml/contract_rest_with_path.yml")
+	@Shared File ymlWithRest3 = new File(ymlUrl3.toURI())
 	URL ymlMsgUrl = YamlContractConverterSpec.getResource("/yml/contract_message.yml")
 	File ymlMessaging = new File(ymlMsgUrl.toURI())
+	URL ymlBodyFile = YamlContractConverterSpec.getResource("/yml/contract_from_file.yml")
+	File ymlBody = new File(ymlBodyFile.toURI())
+	URL ymlReferenceFile = YamlContractConverterSpec.getResource("/yml/contract_reference_request.yml")
+	File ymlReference = new File(ymlReferenceFile.toURI())
 	YamlContractConverter converter = new YamlContractConverter()
 
-	def "should convert YAML with REST to DSL"() {
+	def "should convert YAML with REST to DSL for [#yamlFile]"() {
 		given:
-			assert converter.isAccepted(ymlWithRest)
+			assert converter.isAccepted(yamlFile)
 		when:
-			Collection<Contract> contracts = converter.convertFrom(ymlWithRest)
+			Collection<Contract> contracts = converter.convertFrom(yamlFile)
 		then:
 			contracts.size() == 1
 			Contract contract = contracts.first()
@@ -47,11 +58,13 @@ class YamlContractConverterSpec extends Specification {
 			contract.name == "some name"
 			contract.priority == 8
 			contract.ignored == true
-			contract.request.url.clientValue == "/foo"
-			contract.request.url.queryParameters.parameters[0].name == "a"
-			contract.request.url.queryParameters.parameters[0].serverValue == "b"
-			contract.request.url.queryParameters.parameters[1].name == "b"
-			contract.request.url.queryParameters.parameters[1].serverValue == "c"
+			Url url = yamlFile == ymlWithRest3 ?
+					contract.request.urlPath : contract.request.url
+			url.clientValue == "/foo"
+			url.queryParameters.parameters[0].name == "a"
+			url.queryParameters.parameters[0].serverValue == "b"
+			url.queryParameters.parameters[1].name == "b"
+			url.queryParameters.parameters[1].serverValue == "c"
 			contract.request.method.clientValue == "PUT"
 			contract.request.headers.entries.find { it.name == "foo" &&
 					((Pattern) it.clientValue).pattern == "bar" && it.serverValue == "bar" }
@@ -76,6 +89,58 @@ class YamlContractConverterSpec extends Specification {
 			contract.response.matchers.jsonPathRegexMatchers[1].path() == '$.foo3'
 			contract.response.matchers.jsonPathRegexMatchers[1].matchingType() == MatchingType.COMMAND
 			contract.response.matchers.jsonPathRegexMatchers[1].value() == new ExecutionProperty('executeMe($it)')
+		where:
+			yamlFile << [ymlWithRest, ymlWithRest2, ymlWithRest3]
+	}
+
+	def "should convert YAML with REST to DSL with advanced request referencing"() {
+		given:
+			assert converter.isAccepted(ymlReference)
+		when:
+			Collection<Contract> contracts = converter.convertFrom(ymlReference)
+		then:
+			contracts.size() == 1
+			Contract contract = contracts.first()
+			Url url = contract.request.url
+			url.clientValue == "/api/v1/xxxx"
+			url.queryParameters.parameters[0].name == "foo"
+			url.queryParameters.parameters[0].serverValue == "bar"
+			url.queryParameters.parameters[1].name == "foo"
+			url.queryParameters.parameters[1].serverValue == "bar2"
+			contract.request.method.clientValue == "GET"
+			contract.request.headers.entries.findAll { it.name == "Authorization" }
+					.collect { it.clientValue } == ["secret", "secret2"]
+			contract.request.body.clientValue == [foo: "bar", baz: 5]
+		and:
+			contract.response.status.clientValue == 200
+			contract.response.headers.entries
+					.find { it.name == "Authorization" }.clientValue == '''foo {{{ request.header.Authorization.0 }}} bar'''
+			with(MapConverter.getTestSideValues(contract.response.body)) {
+				it.url == "{{{ request.url }}}"
+				it.path == "{{{ request.path }}}"
+				it.pathIndex == "{{{ request.path.1 }}}"
+				it.param == "{{{ request.query.foo }}}"
+				it.paramIndex == "{{{ request.query.foo.1 }}}"
+				it.authorization == "{{{ request.header.Authorization.0 }}}"
+				it.authorization2 == "{{{ request.header.Authorization.1 }}"
+				it.fullBody == "{{{ request.body }}}"
+				it.responseFoo == '''{{{ jsonpath this '$.foo' }}}'''
+				it.responseBaz == '''{{{ jsonpath this '$.baz' }}}'''
+				it.responseBaz2 == '''Bla bla {{{ jsonpath this '$.foo' }}} bla bla'''
+			}
+	}
+
+	def "should convert YAML with REST with response from request"() {
+		given:
+			assert converter.isAccepted(ymlBody)
+		when:
+			Collection<Contract> contracts = converter.convertFrom(ymlBody)
+		then:
+			contracts.size() == 1
+			Contract contract = contracts.first()
+			contract.request.body.clientValue == '''{ "hello" : "request" }'''
+		and:
+			contract.response.body.clientValue == '''{ "hello" : "response" }'''
 	}
 
 	def "should convert YAML with messaging to DSL"() {

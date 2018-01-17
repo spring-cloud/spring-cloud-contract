@@ -76,11 +76,36 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 				if (yamlContract.request?.method) {
 					request {
 						method(yamlContract.request?.method)
-						url(yamlContract.request?.url) {
-							if (yamlContract.request.queryParameters) {
-								queryParameters {
-									yamlContract.request.queryParameters.each { String key, String value ->
-										parameter(key, value)
+						if (yamlContract.request?.url) {
+							url(yamlContract.request?.url) {
+								if (yamlContract.request.queryParameters) {
+									queryParameters {
+										yamlContract.request.queryParameters.each { String key, Object value ->
+											if (value instanceof List) {
+												((List) value).each {
+													parameter(key, it)
+												}
+											} else {
+												parameter(key, value)
+											}
+										}
+									}
+								}
+							}
+						}
+						if (yamlContract.request?.urlPath) {
+							urlPath(yamlContract.request?.urlPath) {
+								if (yamlContract.request.queryParameters) {
+									queryParameters {
+										yamlContract.request.queryParameters.each { String key, Object value ->
+											if (value instanceof List) {
+												((List) value).each {
+													parameter(key, it)
+												}
+											} else {
+												parameter(key, value)
+											}
+										}
 									}
 								}
 							}
@@ -89,15 +114,15 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 							headers {
 								yamlContract.request?.headers?.each { String key, Object value ->
 									StubHeaderMatcher matcher = yamlContract.request.matchers.headers.find { it.key == key }
-									Object clientValue = value
-									if (matcher?.regex) {
-										clientValue = Pattern.compile(matcher.regex)
-										Pattern pattern = (Pattern) clientValue
-										boolean matches = pattern.matcher(value.toString()).matches()
-										if (!matches) throw new IllegalStateException("Broken request headers! A header with " +
-												"key [${key}] with value [${value}] is not matched by regex [${pattern.pattern()}]")
+									if (value instanceof List) {
+										((List) value).each {
+											Object clientValue = clientValue(it, matcher, key)
+											header(key, new DslProperty(clientValue, it))
+										}
+									} else {
+										Object clientValue = clientValue(value, matcher, key)
+										header(key, new DslProperty(clientValue, value))
 									}
-									header(key, new DslProperty(clientValue, value))
 								}
 							}
 						}
@@ -132,21 +157,20 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 						headers {
 							yamlContract.response?.headers?.each { String key, Object value ->
 								TestHeaderMatcher matcher = yamlContract.response.matchers.headers.find { it.key == key }
-								Object serverValue = value
-								if (matcher?.regex) {
-									serverValue = Pattern.compile(matcher.regex)
-									Pattern pattern = (Pattern) serverValue
-									boolean matches = pattern.matcher(value.toString()).matches()
-									if (!matches) throw new IllegalStateException("Broken response headers! A header with " +
-											"key [${key}] with value [${value}] is not matched by regex [${pattern.pattern()}]")
-								} else if (matcher?.command) {
-									serverValue = new ExecutionProperty(matcher.command)
+								if (value instanceof List) {
+									((List) value).each {
+										Object serverValue = serverValue(it, matcher, key)
+										header(key, new DslProperty(it, serverValue))
+									}
+								} else {
+									Object serverValue = serverValue(value, matcher, key)
+									header(key, new DslProperty(value, serverValue))
 								}
-								header(key, new DslProperty(value, serverValue))
 							}
 						}
 						if (yamlContract.response.body) body(yamlContract.response.body)
 						if (yamlContract.response.bodyFromFile) body(file(yamlContract.response.bodyFromFile))
+						if (yamlContract.response.async) async()
 						testMatchers {
 							yamlContract.response?.matchers?.body?.each { BodyTestMatcher testMatcher ->
 								MatchingTypeValue value = null
@@ -293,6 +317,32 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 		} finally {
 			Thread.currentThread().setContextClassLoader(classLoader)
 		}
+	}
+
+	protected Object serverValue(Object value, TestHeaderMatcher matcher, String key) {
+		Object serverValue = value
+		if (matcher?.regex) {
+			serverValue = Pattern.compile(matcher.regex)
+			Pattern pattern = (Pattern) serverValue
+			boolean matches = pattern.matcher(value.toString()).matches()
+			if (!matches) throw new IllegalStateException("Broken response headers! A header with " +
+					"key [${key}] with value [${value}] is not matched by regex [${pattern.pattern()}]")
+		} else if (matcher?.command) {
+			serverValue = new ExecutionProperty(matcher.command)
+		}
+		return serverValue
+	}
+
+	protected Object clientValue(Object value, StubHeaderMatcher matcher, String key) {
+		Object clientValue = value
+		if (matcher?.regex) {
+			clientValue = Pattern.compile(matcher.regex)
+			Pattern pattern = (Pattern) clientValue
+			boolean matches = pattern.matcher(value.toString()).matches()
+			if (!matches) throw new IllegalStateException("Broken request headers! A header with " +
+					"key [${key}] with value [${value}] is not matched by regex [${pattern.pattern()}]")
+		}
+		return clientValue
 	}
 
 	protected String file(String relativePath) {
