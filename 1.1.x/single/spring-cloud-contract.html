@@ -12,7 +12,63 @@ to set up the whole world of microservices. If you work on stubs then the only a
 tested against the producer&#8217;s side. In other words - you can trust those stubs.</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_purposes" href="#_purposes"></a>2.2&nbsp;Purposes</h2></div></div></div><p>The main purposes of Spring Cloud Contract Verifier with Stub Runner are:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">to ensure that WireMock / Messaging stubs (used when developing the client) are doing exactly what actual server-side implementation will do,</li><li class="listitem">to promote ATDD method and Microservices architectural style,</li><li class="listitem">to provide a way to publish changes in contracts that are immediately visible on both sides,</li><li class="listitem">to generate boilerplate test code used on the server side.</li></ul></div><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>Spring Cloud Contract Verifier&#8217;s purpose is NOT to start writing business features in the contracts.
 Let&#8217;s assume that we have a business use case of fraud check. If a user can be a fraud for 100 different reasons,
 we would assume that you would create 2 contracts. One for the positive and one for the negative fraud case.
-Contract tests are used to test contracts between applications and not to simulate full behaviour.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_how" href="#_how"></a>2.3&nbsp;How</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_define_the_contract" href="#_define_the_contract"></a>2.3.1&nbsp;Define the contract</h3></div></div></div><p>As consumers we need to define what exactly we want to achieve. We need to formulate our expectations. That&#8217;s why we write the following contract.</p><p>Let&#8217;s assume that we&#8217;d like to send the request containing the id of the client and the amount he wants to borrow from us. We&#8217;d like to send it to the /fraudcheck url via the PUT method.</p><pre class="programlisting">Unresolved directive in verifier_introduction.adoc - include::https:<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/standalone/dsl/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.groovy[]</span></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_client_side" href="#_client_side"></a>2.3.2&nbsp;Client Side</h3></div></div></div><p>Spring Cloud Contract will generate stubs, which you can use during client side testing.
+Contract tests are used to test contracts between applications and not to simulate full behaviour.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_how" href="#_how"></a>2.3&nbsp;How</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_define_the_contract" href="#_define_the_contract"></a>2.3.1&nbsp;Define the contract</h3></div></div></div><p>As consumers we need to define what exactly we want to achieve. We need to formulate our expectations. That&#8217;s why we write the following contract.</p><p>Let&#8217;s assume that we&#8217;d like to send the request containing the id of the client and the amount he wants to borrow from us. We&#8217;d like to send it to the /fraudcheck url via the PUT method.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> contracts
+
+org.springframework.cloud.contract.spec.Contract.make {
+	request { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (1)</span>
+		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'PUT'</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (2)</span>
+		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/fraudcheck'</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (3)</span>
+		body([ <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (4)</span>
+			   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"client.id"</span>: $(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[0-9]{10}'</span>)),
+			   loanAmount: <span class="hl-number">99999</span>
+		])
+		headers { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (5)</span>
+			contentType(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application/json'</span>)
+		}
+	}
+	response { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (6)</span>
+		status <span class="hl-number">200</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (7)</span>
+		body([ <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (8)</span>
+			   fraudCheckStatus: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"FRAUD"</span>,
+			   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"rejection.reason"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Amount too high"</span>
+		])
+		headers { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (9)</span>
+			contentType(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application/json'</span>)
+		}
+	}
+}
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">/*
+From the Consumer perspective, when shooting a request in the integration test:
+
+(1) - If the consumer sends a request
+(2) - With the "PUT" method
+(3) - to the URL "/fraudcheck"
+(4) - with the JSON body that
+ * has a field `clientId` that matches a regular expression `[0-9]{10}`
+ * has a field `loanAmount` that is equal to `99999`
+(5) - with header `Content-Type` equal to `application/json`
+(6) - then the response will be sent with
+(7) - status equal `200`
+(8) - and JSON body equal to
+ { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
+(9) - with header `Content-Type` equal to `application/json`
+
+From the Producer perspective, in the autogenerated producer-side test:
+
+(1) - A request will be sent to the producer
+(2) - With the "PUT" method
+(3) - to the URL "/fraudcheck"
+(4) - with the JSON body that
+ * has a field `clientId` that will have a generated value that matches a regular expression `[0-9]{10}`
+ * has a field `loanAmount` that is equal to `99999`
+(5) - with header `Content-Type` equal to `application/json`
+(6) - then the test will assert if the response has been sent with
+(7) - status equal `200`
+(8) - and JSON body equal to
+ { "fraudCheckStatus": "FRAUD", "rejectionReason": "Amount too high" }
+(9) - with header `Content-Type` matching `application/json.*`
+ */</span></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_client_side" href="#_client_side"></a>2.3.2&nbsp;Client Side</h3></div></div></div><p>Spring Cloud Contract will generate stubs, which you can use during client side testing.
 You will have a WireMock instance / Messaging route up and running that simulates the service Y.
 You would like to feed that instance with a proper stub definition.</p><p>At some point in time you need to send a request to the Fraud Detection service.</p><pre class="programlisting">ResponseEntity&lt;FraudServiceResponse&gt; response =
 		restTemplate.exchange(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:"</span> + port + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/fraudcheck"</span>, HttpMethod.PUT,
