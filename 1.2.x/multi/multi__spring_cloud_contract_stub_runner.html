@@ -1,0 +1,688 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>6.&nbsp;Spring Cloud Contract Stub Runner</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="multi_spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="up" href="multi_spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="prev" href="multi__spring_cloud_contract_verifier_messaging.html" title="5.&nbsp;Spring Cloud Contract Verifier Messaging"><link rel="next" href="multi__stub_runner_for_messaging.html" title="7.&nbsp;Stub Runner for Messaging"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">6.&nbsp;Spring Cloud Contract Stub Runner</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="multi__spring_cloud_contract_verifier_messaging.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="multi__stub_runner_for_messaging.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="_spring_cloud_contract_stub_runner" href="#_spring_cloud_contract_stub_runner"></a>6.&nbsp;Spring Cloud Contract Stub Runner</h1></div></div></div><p>One of the issues that you might encounter while using Spring Cloud Contract Verifier is
+passing the generated WireMock JSON stubs from the server side to the client side (or to
+various clients). The same takes place in terms of client-side generation for messaging.</p><p>Copying the JSON files and setting the client side for messaging manually is out of the
+question. That is why we introduced Spring Cloud Contract Stub Runner. It can
+automatically download and run the stubs for you.</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_snapshot_versions" href="#_snapshot_versions"></a>6.1&nbsp;Snapshot versions</h2></div></div></div><p>Add the additional snapshot repository to your <code class="literal">build.gradle</code> file to use snapshot
+versions, which are automatically uploaded after every successful build:</p><p class="primary"><b>Maven.&nbsp;</b>
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;repositories&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;repository&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>spring-snapshots<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;name&gt;</span>Spring Snapshots<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/name&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;url&gt;</span>https://repo.spring.io/snapshot<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/url&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;snapshots&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;enabled&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/enabled&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/snapshots&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/repository&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;repository&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>spring-milestones<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;name&gt;</span>Spring Milestones<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/name&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;url&gt;</span>https://repo.spring.io/milestone<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/url&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;snapshots&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;enabled&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/enabled&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/snapshots&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/repository&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;repository&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>spring-releases<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;name&gt;</span>Spring Releases<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/name&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;url&gt;</span>https://repo.spring.io/release<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/url&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;snapshots&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;enabled&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/enabled&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/snapshots&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/repository&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/repositories&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;pluginRepositories&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;pluginRepository&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>spring-snapshots<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;name&gt;</span>Spring Snapshots<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/name&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;url&gt;</span>https://repo.spring.io/snapshot<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/url&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;snapshots&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;enabled&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/enabled&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/snapshots&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/pluginRepository&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;pluginRepository&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>spring-milestones<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;name&gt;</span>Spring Milestones<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/name&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;url&gt;</span>https://repo.spring.io/milestone<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/url&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;snapshots&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;enabled&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/enabled&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/snapshots&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/pluginRepository&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;pluginRepository&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>spring-releases<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;name&gt;</span>Spring Releases<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/name&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;url&gt;</span>https://repo.spring.io/release<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/url&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;snapshots&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;enabled&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/enabled&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/snapshots&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/pluginRepository&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/pluginRepositories&gt;</span></pre><p class="primary">
+</p><p class="secondary"><b>Gradle.&nbsp;</b>
+</p><pre class="programlisting">buildscript {
+	repositories {
+		mavenCentral()
+		mavenLocal()
+		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/snapshot"</span> }
+		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/milestone"</span> }
+		maven { url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://repo.spring.io/release"</span> }
+	}</pre><p class="secondary">
+</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_publishing_stubs_as_jars" href="#_publishing_stubs_as_jars"></a>6.2&nbsp;Publishing Stubs as JARs</h2></div></div></div><p>The easiest approach would be to centralize the way stubs are kept. For example, you can
+keep them as jars in a Maven repository.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>For both Maven and Gradle, the setup comes ready to work. However, you can customize
+it if you want to.</p></td></tr></table></div><p class="primary"><b>Maven.&nbsp;</b>
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- First disable the default jar setup in the properties section --&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- we don't want the verifier to do a jar for us --&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;spring.cloud.contract.verifier.skip&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/spring.cloud.contract.verifier.skip&gt;</span>
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- Next add the assembly plugin to your build --&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- we want the assembly plugin to generate the JAR --&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.apache.maven.plugins<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>maven-assembly-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;executions&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;execution&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>stub<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;phase&gt;</span>prepare-package<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/phase&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goals&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goal&gt;</span>single<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goal&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goals&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;inherited&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/inherited&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;attach&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/attach&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;descriptor&gt;</span>${basedir}/src/assembly/stub.xml<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/descriptor&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/execution&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/executions&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span>
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- Finally setup your assembly. Below you can find the contents of src/main/assembly/stub.xml --&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;assembly</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns:xsi</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xsi:schemaLocation</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>stubs<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;formats&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;format&gt;</span>jar<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/format&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/formats&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;includeBaseDirectory&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/includeBaseDirectory&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;fileSets&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;fileSet&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;directory&gt;</span>src/main/java<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/directory&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;outputDirectory&gt;</span>/<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/outputDirectory&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;includes&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;include&gt;</span>**com/example/model/*.*<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/include&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/includes&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/fileSet&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;fileSet&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;directory&gt;</span>${project.build.directory}/classes<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/directory&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;outputDirectory&gt;</span>/<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/outputDirectory&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;includes&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;include&gt;</span>**com/example/model/*.*<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/include&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/includes&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/fileSet&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;fileSet&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;directory&gt;</span>${project.build.directory}/snippets/stubs<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/directory&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;outputDirectory&gt;</span>META-INF/${project.groupId}/${project.artifactId}/${project.version}/mappings<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/outputDirectory&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;includes&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;include&gt;</span>**/*<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/include&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/includes&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/fileSet&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;fileSet&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;directory&gt;</span>${basedir}/src/test/resources/contracts<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/directory&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;outputDirectory&gt;</span>META-INF/${project.groupId}/${project.artifactId}/${project.version}/contracts<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/outputDirectory&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;includes&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;include&gt;</span>**/*.groovy<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/include&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/includes&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/fileSet&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/fileSets&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/assembly&gt;</span></pre><p class="primary">
+</p><p class="secondary"><b>Gradle.&nbsp;</b>
+</p><pre class="programlisting">ext {
+	contractsDir = file(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"mappings"</span>)
+	stubsOutputDirRoot = file(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${project.buildDir}/production/${project.name}-stubs/"</span>)
+}
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Automatically added by plugin:</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// copyContracts - copies contracts to the output folder from which JAR will be created</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// verifierStubsJar - JAR with a provided stub suffix</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// the presented publication is also added by the plugin but you can modify it as you wish</span>
+
+publishing {
+	publications {
+		stubs(MavenPublication) {
+			artifactId <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${project.name}-stubs"</span>
+			artifact verifierStubsJar
+		}
+	}
+}</pre><p class="secondary">
+</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stub_runner_core" href="#_stub_runner_core"></a>6.3&nbsp;Stub Runner Core</h2></div></div></div><p>Runs stubs for service collaborators. Treating stubs as contracts of services allows to use stub-runner as an implementation of
+<a class="link" href="http://martinfowler.com/articles/consumerDrivenContracts.html" target="_top">Consumer Driven Contracts</a>.</p><p>Stub Runner allows you to automatically download the stubs of the provided dependencies (or pick those from the classpath), start WireMock servers for them and feed them with proper stub definitions.
+For messaging, special stub routes are defined.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_retrieving_stubs" href="#_retrieving_stubs"></a>6.3.1&nbsp;Retrieving stubs</h3></div></div></div><p>You can pick the following options of acquiring stubs</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Aether based solution that downloads JARs with stubs from Artifactory / Nexus</li><li class="listitem">Classpath scanning solution that searches classpath via pattern to retrieve stubs</li><li class="listitem">Write your own implementation of the <code class="literal">org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder</code> for full customization</li></ul></div><p>The latter example is described in the <a class="link" href="">Custom Stub Runner</a> section.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_stub_downloading" href="#_stub_downloading"></a>Stub downloading</h4></div></div></div><p>If you provide the <code class="literal">stubrunner.repositoryRoot</code> or <code class="literal">stubrunner.workOffline</code> flag will be set
+to <code class="literal">true</code> then Stub Runner will connect to the given server and download the required jars.
+It will then unpack the JAR to a temporary folder and reference those files in further
+contract processing.</p><p>Example:</p><pre class="programlisting">@AutoConfigureStubRunner(repositoryRoot=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://foo.bar"</span>, ids = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example:beer-api-producer:+:stubs:8095"</span>)</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_classpath_scanning" href="#_classpath_scanning"></a>Classpath scanning</h4></div></div></div><p>If you <span class="strong"><strong>DON&#8217;T</strong></span> provide the <code class="literal">stubrunner.repositoryRoot</code> and <code class="literal">stubrunner.workOffline</code> flag will
+be set to <code class="literal">false</code> (that&#8217;s the default) then classpath will get scanned. Let&#8217;s look at the
+following example:</p><pre class="programlisting">@AutoConfigureStubRunner(ids = {
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example:beer-api-producer:+:stubs:8095"</span>,
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example.foo:bar:1.0.0:superstubs:8096"</span>
+})</pre><p>If you&#8217;ve added the dependencies to your classpath</p><p class="primary"><b>Maven.&nbsp;</b>
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>com.example<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>beer-api-producer-restdocs<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;classifier&gt;</span>stubs<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/classifier&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>0.0.1-SNAPSHOT<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;scope&gt;</span>test<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/scope&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;exclusions&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;exclusion&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>*<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>*<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/exclusion&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/exclusions&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>com.example.foo<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>bar<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;classifier&gt;</span>superstubs<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/classifier&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>1.0.0<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;scope&gt;</span>test<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/scope&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;exclusions&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;exclusion&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>*<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>*<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/exclusion&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/exclusions&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span></pre><p class="primary">
+</p><p class="secondary"><b>Gradle.&nbsp;</b>
+</p><pre class="programlisting">testCompile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example:beer-api-producer-restdocs:0.0.1-SNAPSHOT:stubs"</span>) {
+    transitive = false
+}
+testCompile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example.foo:bar:1.0.0:superstubs"</span>) {
+    transitive = false
+}</pre><p class="secondary">
+</p><p>Then the following locations on your classpath will get scanned. For <code class="literal">com.example:beer-api-producer-restdocs</code></p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">/META-INF/com.example/beer-api-producer-restdocs/<span class="strong"><strong>*/</strong></span>.*</li><li class="listitem">/contracts/com.example/beer-api-producer-restdocs/<span class="strong"><strong>*/</strong></span>.*</li><li class="listitem">/mappings/com.example/beer-api-producer-restdocs/<span class="strong"><strong>*/</strong></span>.*</li></ul></div><p>and <code class="literal">com.example.foo:bar</code></p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">/META-INF/com.example.foo/bar/<span class="strong"><strong>*/</strong></span>.*</li><li class="listitem">/contracts/com.example.foo/bar/<span class="strong"><strong>*/</strong></span>.*</li><li class="listitem">/mappings/com.example.foo/bar/<span class="strong"><strong>*/</strong></span>.*</li></ul></div><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>As you can see you have to explicitly provide the group and artifact ids when packaging the
+producer stubs.</p></td></tr></table></div><p>The producer would setup the contracts like this:</p><pre class="programlisting">&#9492;&#9472;&#9472; src
+    &#9492;&#9472;&#9472; <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">test</span>
+        &#9492;&#9472;&#9472; resources
+            &#9492;&#9472;&#9472; contracts
+             &nbsp;&nbsp; &#9492;&#9472;&#9472; com.example
+             &nbsp;&nbsp;  &nbsp;&nbsp; &#9492;&#9472;&#9472; beer-api-producer-restdocs
+             &nbsp;&nbsp;  &nbsp;&nbsp;     &#9492;&#9472;&#9472; nested
+             &nbsp;&nbsp;  &nbsp;&nbsp;         &#9492;&#9472;&#9472; contract3.groovy</pre><p>To achieve proper stub packaging.</p><p>Or using the <a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/master/producer_with_restdocs/pom.xml" target="_top">Maven <code class="literal">assembly</code> plugin</a> or
+<a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/master/producer_with_restdocs/build.gradle" target="_top">Gradle Jar</a> task you have to create the following
+structure in your stubs jar.</p><pre class="programlisting">&#9492;&#9472;&#9472; META-INF
+    &#9492;&#9472;&#9472; com.example
+        &#9492;&#9472;&#9472; beer-api-producer-restdocs
+            &#9492;&#9472;&#9472; <span class="hl-number">2.0</span>.<span class="hl-number">0</span>
+                &#9500;&#9472;&#9472; contracts
+                &#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; nested
+             &nbsp;&nbsp; &#9474;       &#9492;&#9472;&#9472; contract2.groovy
+             &nbsp;&nbsp; &#9492;&#9472;&#9472; mappings
+             &nbsp;&nbsp;     &#9492;&#9472;&#9472; mapping.json</pre><p>By maintaining this structure classpath gets scanned and you can profit from the messaging /
+HTTP stubs without the need to download artifacts.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_running_stubs" href="#_running_stubs"></a>6.3.2&nbsp;Running stubs</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_limitations" href="#_limitations"></a>Limitations</h4></div></div></div><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>There might be a problem with StubRunner shutting down ports between tests. You might
+ have a situation in which you get port conflicts. As long as you use the same context across tests
+ everything works fine. But when the context are different (e.g. different stubs or different profiles)
+ then you have to either use <code class="literal">@DirtiesContext</code> to shut down the stub servers, or else run them on
+ different ports per test.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_running_using_main_app" href="#_running_using_main_app"></a>Running using main app</h4></div></div></div><p>You can set the following options to the main class:</p><pre class="programlisting">-c, --classifier                Suffix <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">for</span> the jar containing stubs (e.
+                                  g. <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'stubs'</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">if</span> the stub jar would
+                                  have a <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'stubs'</span> classifier <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">for</span> stubs:
+                                  foobar-stubs ). Defaults to <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'stubs'</span>
+                                  (<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">default</span>: stubs)
+--maxPort, --maxp &lt;Integer&gt;     Maximum port value to be assigned to
+                                  the WireMock instance. Defaults to
+                                  <span class="hl-number">15000</span> (<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">default</span>: <span class="hl-number">15000</span>)
+--minPort, --minp &lt;Integer&gt;     Minimum port value to be assigned to
+                                  the WireMock instance. Defaults to
+                                  <span class="hl-number">10000</span> (<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">default</span>: <span class="hl-number">10000</span>)
+-p, --password                  Password to user when connecting to
+                                  repository
+--phost, --proxyHost            Proxy host to use <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">for</span> repository
+                                  requests
+--pport, --proxyPort [Integer]  Proxy port to use <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">for</span> repository
+                                  requests
+-r, --root                      Location of a Jar containing server
+                                  where you keep your stubs (e.g. http:
+                                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//nexus.</span>
+                                  net/content/repositories/repository)
+-s, --stubs                     Comma separated list of Ivy
+                                  representation of jars with stubs.
+                                  Eg. groupid:artifactid1,groupid2:
+                                  artifactid2:classifier
+-u, --username                  Username to user when connecting to
+                                  repository
+--wo, --workOffline             Switch to work offline. Defaults to
+                                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'false'</span></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_http_stubs" href="#_http_stubs"></a>HTTP Stubs</h4></div></div></div><p>Stubs are defined in JSON documents, whose syntax is defined in <a class="link" href="http://wiremock.org/stubbing.html" target="_top">WireMock documentation</a></p><p>Example:</p><pre class="programlisting">{
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"request"</span>: {
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"method"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"GET"</span>,
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"url"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/ping"</span>
+    },
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"response"</span>: {
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span>: <span class="hl-number">200</span>,
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"pong"</span>,
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"headers"</span>: {
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"text/plain"</span>
+        }
+    }
+}</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_viewing_registered_mappings" href="#_viewing_registered_mappings"></a>Viewing registered mappings</h4></div></div></div><p>Every stubbed collaborator exposes list of defined mappings under <code class="literal">__/admin/</code> endpoint.</p><p>You can also use the <code class="literal">mappingsOutputFolder</code> property to dump the mappings to files.
+ For annotation based approach it would look like this</p><pre class="programlisting">@AutoConfigureStubRunner(ids=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"a.b.c:loanIssuance,a.b.c:fraudDetectionServer"</span>,
+mappingsOutputFolder = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"target/outputmappings/"</span>)</pre><p>and for the JUnit approach like this:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@ClassRule</span></em> <em><span class="hl-annotation" style="color: gray">@Shared</span></em> StubRunnerRule rule = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> StubRunnerRule()
+			.repoRoot(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://some_url"</span>)
+			.downloadStub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"a.b.c"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)
+			.downloadStub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"a.b.c:fraudDetectionServer"</span>)
+			.withMappingsOutputFolder(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"target/outputmappings"</span>)</pre><p>Then if you check out the folder <code class="literal">target/outputmappings</code> you would see the following structure</p><pre class="programlisting">.
+&#9500;&#9472;&#9472; fraudDetectionServer_<span class="hl-number">13705</span>
+&#9492;&#9472;&#9472; loanIssuance_<span class="hl-number">12255</span></pre><p>That means that there were two stubs registered. <code class="literal">fraudDetectionServer</code> was registered at port <code class="literal">13705</code>
+and <code class="literal">loanIssuance</code> at port <code class="literal">12255</code>. If we take a look at one of the files we would see (for WireMock)
+mappings available for the given server:</p><pre class="programlisting">[<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"id"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"f9152eb9-bf77-4c38-8289-90be7d10d0d7"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"request"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"url"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/name"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"method"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"GET"</span>
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span>
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"response"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span> : <span class="hl-number">200</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer"</span>
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span>
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"uuid"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"f9152eb9-bf77-4c38-8289-90be7d10d0d7"</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">},</span>
+...
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">]</span></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_messaging_stubs" href="#_messaging_stubs"></a>Messaging Stubs</h4></div></div></div><p>Depending on the provided Stub Runner dependency and the DSL the messaging routes are automatically set up.</p></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stub_runner_junit_rule" href="#_stub_runner_junit_rule"></a>6.4&nbsp;Stub Runner JUnit Rule</h2></div></div></div><p>Stub Runner comes with a JUnit rule thanks to which you can very easily download and run stubs for given group and artifact id:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@ClassRule</span></em> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> StubRunnerRule rule = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> StubRunnerRule()
+		.repoRoot(repoRoot())
+		.downloadStub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)
+		.downloadStub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"</span>);</pre><p>After that rule gets executed Stub Runner connects to your Maven repository and for the given list of dependencies tries to:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">download them</li><li class="listitem">cache them locally</li><li class="listitem">unzip them to a temporary folder</li><li class="listitem">start a WireMock server for each Maven dependency on a random port from the provided range of ports / provided port</li><li class="listitem">feed the WireMock server with all JSON files that are valid WireMock definitions</li><li class="listitem">can also send messages (remember to pass an implementation of <code class="literal">MessageVerifier</code> interface)</li></ul></div><p>Stub Runner uses <a class="link" href="https://wiki.eclipse.org/Aether" target="_top">Eclipse Aether</a> mechanism to download the Maven dependencies.
+Check their <a class="link" href="https://wiki.eclipse.org/Aether" target="_top">docs</a> for more information.</p><p>Since the <code class="literal">StubRunnerRule</code> implements the <code class="literal">StubFinder</code> it allows you to find the started stubs:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.springframework.cloud.contract.stubrunner;
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> java.net.URL;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> java.util.Collection;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> java.util.Map;
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.Contract;
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">interface</span> StubFinder <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> StubTrigger {
+	<strong class="hl-tag" style="color: blue">/**
+	 * For the given groupId and artifactId tries to find the matching
+	 * URL of the running stub.
+	 *
+	 * @param groupId - might be null. In that case a search only via artifactId takes place
+	 * @return URL of a running stub or throws exception if not found
+	 */</strong>
+	URL findStubUrl(String groupId, String artifactId) <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> StubNotFoundException;
+
+	<strong class="hl-tag" style="color: blue">/**
+	 * For the given Ivy notation {@code [groupId]:artifactId:[version]:[classifier]} tries to
+	 * find the matching URL of the running stub. You can also pass only {@code artifactId}.
+	 *
+	 * @param ivyNotation - Ivy representation of the Maven artifact
+	 * @return URL of a running stub or throws exception if not found
+	 */</strong>
+	URL findStubUrl(String ivyNotation) <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> StubNotFoundException;
+
+	<strong class="hl-tag" style="color: blue">/**
+	 * Returns all running stubs
+	 */</strong>
+	RunningStubs findAllRunningStubs();
+
+	<strong class="hl-tag" style="color: blue">/**
+	 * Returns the list of Contracts
+	 */</strong>
+	Map&lt;StubConfiguration, Collection&lt;Contract&gt;&gt; getContracts();
+}</pre><p>Example of usage in Spock tests:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@ClassRule</span></em> <em><span class="hl-annotation" style="color: gray">@Shared</span></em> StubRunnerRule rule = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> StubRunnerRule()
+		.repoRoot(StubRunnerRuleSpec.getResource(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/m2repo/repository"</span>).toURI().toString())
+		.downloadStub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)
+		.downloadStub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"</span>)
+		.withMappingsOutputFolder(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"target/outputmappingsforrule"</span>)
+
+
+def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should start WireMock servers'</span>() {
+	expect: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'WireMocks are running'</span>
+		rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'loanIssuance'</span>) != null
+		rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'loanIssuance'</span>) != null
+		rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'loanIssuance'</span>) == rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'loanIssuance'</span>)
+		rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer'</span>) != null
+	and:
+		rule.findAllRunningStubs().isPresent(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'loanIssuance'</span>)
+		rule.findAllRunningStubs().isPresent(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'fraudDetectionServer'</span>)
+		rule.findAllRunningStubs().isPresent(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer'</span>)
+	and: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Stubs were registered'</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${rule.findStubUrl('loanIssuance').toString()}/name"</span>.toURL().text == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'loanIssuance'</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${rule.findStubUrl('fraudDetectionServer').toString()}/name"</span>.toURL().text == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'fraudDetectionServer'</span>
+}
+
+def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should output mappings to output folder'</span>() {
+	when:
+		def url = rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'fraudDetectionServer'</span>)
+	then:
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> File(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"target/outputmappingsforrule"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer_${url.port}"</span>).exists()
+}</pre><p>Example of usage in JUnit tests:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Test</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> should_start_wiremock_servers() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// expect: 'WireMocks are running'</span>
+		then(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)).isNotNull();
+		then(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)).isNotNull();
+		then(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)).isEqualTo(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>));
+		then(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"</span>)).isNotNull();
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
+		then(rule.findAllRunningStubs().isPresent(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)).isTrue();
+		then(rule.findAllRunningStubs().isPresent(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer"</span>)).isTrue();
+		then(rule.findAllRunningStubs().isPresent(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"</span>)).isTrue();
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and: 'Stubs were registered'</span>
+		then(httpGet(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>).toString() + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/name"</span>)).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>);
+		then(httpGet(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer"</span>).toString() + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/name"</span>)).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer"</span>);
+}</pre><p>Check the <span class="strong"><strong>Common properties for JUnit and Spring</strong></span> for more information on how to apply global configuration of Stub Runner.</p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>To use the JUnit rule together with messaging you have to provide an implementation of the
+<code class="literal">MessageVerifier</code> interface to the rule builder (e.g. <code class="literal">rule.messageVerifier(new MyMessageVerifier())</code>).
+If you don&#8217;t do this then whenever you try to send a message an exception will be thrown.</p></td></tr></table></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_maven_settings" href="#_maven_settings"></a>6.4.1&nbsp;Maven settings</h3></div></div></div><p>The stub downloader honors Maven settings for a different local repository folder.
+Authentication details for repositories and profiles are currently not taken into account, so you need to specify it using the properties mentioned above.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_providing_fixed_ports" href="#_providing_fixed_ports"></a>6.4.2&nbsp;Providing fixed ports</h3></div></div></div><p>You can also run your stubs on fixed ports. You can do it in two different ways. One is to pass it in the properties, and the other via fluent API of
+JUnit rule.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_fluent_api" href="#_fluent_api"></a>6.4.3&nbsp;Fluent API</h3></div></div></div><p>When using the <code class="literal">StubRunnerRule</code> you can add a stub to download and then pass the port for the last downloaded stub.</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@ClassRule</span></em> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> StubRunnerRule rule = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> StubRunnerRule()
+		.repoRoot(repoRoot())
+		.downloadStub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)
+		.withPort(<span class="hl-number">12345</span>)
+		.downloadStub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:12346"</span>);</pre><p>You can see that for this example the following test is valid:</p><pre class="programlisting">then(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>)).isEqualTo(URI.create(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:12345"</span>).toURL());
+then(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer"</span>)).isEqualTo(URI.create(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:12346"</span>).toURL());</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_stub_runner_with_spring" href="#_stub_runner_with_spring"></a>6.4.4&nbsp;Stub Runner with Spring</h3></div></div></div><p>Sets up Spring configuration of the Stub Runner project.</p><p>By providing a list of stubs inside your configuration file the Stub Runner automatically downloads
+and registers in WireMock the selected stubs.</p><p>If you want to find the URL of your stubbed dependency you can autowire the <code class="literal">StubFinder</code> interface and use
+its methods as presented below:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)</span></em>
+<em><span class="hl-annotation" style="color: gray">@SpringBootTest(properties = [" stubrunner.cloud.enabled=false",
+		"stubrunner.camel.enabled=false",
+		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}'])</span></em>
+<em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/")</span></em>
+<em><span class="hl-annotation" style="color: gray">@DirtiesContext</span></em>
+<em><span class="hl-annotation" style="color: gray">@ActiveProfiles("test")</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> StubRunnerConfigurationSpec <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> Specification {
+
+	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em> StubFinder stubFinder
+	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em> Environment environment
+	<em><span class="hl-annotation" style="color: gray">@Value('${foo}')</span></em> Integer foo
+
+	<em><span class="hl-annotation" style="color: gray">@BeforeClass</span></em>
+	<em><span class="hl-annotation" style="color: gray">@AfterClass</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setupProps() {
+		System.clearProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"stubrunner.repository.root"</span>)
+		System.clearProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"stubrunner.classifier"</span>)
+	}
+
+	def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should start WireMock servers'</span>() {
+		expect: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'WireMocks are running'</span>
+			stubFinder.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'loanIssuance'</span>) != null
+			stubFinder.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'loanIssuance'</span>) != null
+			stubFinder.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'loanIssuance'</span>) == stubFinder.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'loanIssuance'</span>)
+			stubFinder.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'loanIssuance'</span>) == stubFinder.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:loanIssuance'</span>)
+			stubFinder.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:loanIssuance:0.0.1-SNAPSHOT'</span>) == stubFinder.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:loanIssuance:0.0.1-SNAPSHOT:stubs'</span>)
+			stubFinder.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer'</span>) != null
+		and:
+			stubFinder.findAllRunningStubs().isPresent(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'loanIssuance'</span>)
+			stubFinder.findAllRunningStubs().isPresent(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'fraudDetectionServer'</span>)
+			stubFinder.findAllRunningStubs().isPresent(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer'</span>)
+		and: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Stubs were registered'</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${stubFinder.findStubUrl('loanIssuance').toString()}/name"</span>.toURL().text == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'loanIssuance'</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name"</span>.toURL().text == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'fraudDetectionServer'</span>
+	}
+
+	def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should throw an exception when stub is not found'</span>() {
+		when:
+			stubFinder.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'nonExistingService'</span>)
+		then:
+			thrown(StubNotFoundException)
+		when:
+			stubFinder.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'nonExistingGroupId'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'nonExistingArtifactId'</span>)
+		then:
+			thrown(StubNotFoundException)
+	}
+
+	def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should register started servers as environment variables'</span>() {
+		expect:
+			environment.getProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"stubrunner.runningstubs.loanIssuance.port"</span>) != null
+			stubFinder.findAllRunningStubs().getPort(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanIssuance"</span>) == (environment.getProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"stubrunner.runningstubs.loanIssuance.port"</span>) as Integer)
+		and:
+			environment.getProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"stubrunner.runningstubs.fraudDetectionServer.port"</span>) != null
+			stubFinder.findAllRunningStubs().getPort(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer"</span>) == (environment.getProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"stubrunner.runningstubs.fraudDetectionServer.port"</span>) as Integer)
+	}
+
+	def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should be able to interpolate a running stub in the passed test property'</span>() {
+		given:
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> fraudPort = stubFinder.findAllRunningStubs().getPort(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer"</span>)
+		expect:
+			fraudPort &gt; <span class="hl-number">0</span>
+			environment.getProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>, Integer) == fraudPort
+			foo == fraudPort
+	}
+
+	def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should dump all mappings to a file'</span>() {
+		when:
+			def url = stubFinder.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer"</span>)
+		then:
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> File(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"target/outputmappings/"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer_${url.port}"</span>).exists()
+	}
+
+	<em><span class="hl-annotation" style="color: gray">@Configuration</span></em>
+	<em><span class="hl-annotation" style="color: gray">@EnableAutoConfiguration</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> Config {}
+}</pre><p>for the following configuration file:</p><pre class="programlisting">stubrunner:
+  repositoryRoot: classpath:m2repo/repository/
+  ids:
+    - org.springframework.cloud.contract.verifier.stubs:loanIssuance
+    - org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer
+    - org.springframework.cloud.contract.verifier.stubs:bootService</pre><p>Instead of using the properties you can also use the properties inside the <code class="literal">@AutoConfigureStubRunner</code>.
+Below you can find an example of achieving the same result by setting values on the annotation.</p><pre class="programlisting">@AutoConfigureStubRunner(
+		ids = [<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:loanIssuance"</span>,
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"</span>,
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:bootService"</span>],
+		repositoryRoot = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"classpath:m2repo/repository/"</span>)</pre><p>Stub Runner Spring registers environment variables in the following manner
+for every registered WireMock server. Example for Stub Runner ids
+ <code class="literal">com.example:foo</code>, <code class="literal">com.example:bar</code>.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="literal">stubrunner.runningstubs.foo.port</code></li><li class="listitem"><code class="literal">stubrunner.runningstubs.bar.port</code></li></ul></div><p>Which you can reference in your code.</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stub_runner_spring_cloud" href="#_stub_runner_spring_cloud"></a>6.5&nbsp;Stub Runner Spring Cloud</h2></div></div></div><p>Stub Runner can integrate with Spring Cloud.</p><p>For real life examples you can check the</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/master/producer" target="_top">producer app sample</a></li><li class="listitem"><a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/master/consumer_with_discovery" target="_top">consumer app sample</a></li></ul></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_stubbing_service_discovery" href="#_stubbing_service_discovery"></a>6.5.1&nbsp;Stubbing Service Discovery</h3></div></div></div><p>The most important feature of <code class="literal">Stub Runner Spring Cloud</code> is the fact that it&#8217;s stubbing</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="literal">DiscoveryClient</code></li><li class="listitem"><code class="literal">Ribbon</code> <code class="literal">ServerList</code></li></ul></div><p>that means that regardless of the fact whether you&#8217;re using Zookeeper, Consul, Eureka or anything else, you don&#8217;t need that in your tests.
+We&#8217;re starting WireMock instances of your dependencies and we&#8217;re telling your application whenever you&#8217;re using <code class="literal">Feign</code>, load balanced <code class="literal">RestTemplate</code>
+or <code class="literal">DiscoveryClient</code> directly, to call those stubbed servers instead of calling the real Service Discovery tool.</p><p>For example this test will pass</p><pre class="programlisting">def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should make service discovery work'</span>() {
+	expect: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'WireMocks are running'</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${stubFinder.findStubUrl('loanIssuance').toString()}/name"</span>.toURL().text == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'loanIssuance'</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name"</span>.toURL().text == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'fraudDetectionServer'</span>
+	and: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Stubs can be reached via load service discovery'</span>
+		restTemplate.getForObject(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'http://loanIssuance/name'</span>, String) == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'loanIssuance'</span>
+		restTemplate.getForObject(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'http://someNameThatShouldMapFraudDetectionServer/name'</span>, String) == <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'fraudDetectionServer'</span>
+}</pre><p>for the following configuration file</p><pre class="programlisting">stubrunner:
+  idsToServiceIds:
+    ivyNotation: someValueInsideYourCode
+    fraudDetectionServer: someNameThatShouldMapFraudDetectionServer</pre><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_test_profiles_and_service_discovery" href="#_test_profiles_and_service_discovery"></a>Test profiles and service discovery</h4></div></div></div><p>In your integration tests you typically don&#8217;t want to call neither a discovery service (e.g. Eureka)
+or Config Server. That&#8217;s why you create an additional test configuration in which you want to disable
+these features.</p><p>Due to certain limitations of <a class="link" href="https://github.com/spring-cloud/spring-cloud-commons/issues/156" target="_top"><code class="literal">spring-cloud-commons</code></a> to achieve this you have disable these properties
+via a static block like presented below (example for Eureka)</p><pre class="programlisting">    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//Hack to work around https://github.com/spring-cloud/spring-cloud-commons/issues/156</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> {
+        System.setProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"eureka.client.enabled"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"false"</span>);
+        System.setProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"spring.cloud.config.failFast"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"false"</span>);
+    }</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_additional_configuration" href="#_additional_configuration"></a>6.5.2&nbsp;Additional Configuration</h3></div></div></div><p>You can match the artifactId of the stub with the name of your app by using the <code class="literal">stubrunner.idsToServiceIds:</code> map.
+You can disable Stub Runner Ribbon support by providing: <code class="literal">stubrunner.cloud.ribbon.enabled</code> equal to <code class="literal">false</code>
+You can disable Stub Runner support by providing: <code class="literal">stubrunner.cloud.enabled</code> equal to <code class="literal">false</code></p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>By default all service discovery will be stubbed. That means that regardless of the fact if you have
+an existing <code class="literal">DiscoveryClient</code> its results will be ignored. However, if you want to reuse it, just set
+ <code class="literal">stubrunner.cloud.delegate.enabled</code> to <code class="literal">true</code> and then your existing <code class="literal">DiscoveryClient</code> results will be
+ merged with the stubbed ones.</p></td></tr></table></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stub_runner_boot_application" href="#_stub_runner_boot_application"></a>6.6&nbsp;Stub Runner Boot Application</h2></div></div></div><p>Spring Cloud Contract Stub Runner Boot is a Spring Boot application that exposes REST endpoints to
+trigger the messaging labels and to access started WireMock servers.</p><p>One of the use-cases is to run some smoke (end to end) tests on a deployed application.
+You can check out the <a class="link" href="https://github.com/spring-cloud/spring-cloud-pipelines" target="_top">Spring Cloud Pipelines</a>
+project for more information.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_how_to_use_it" href="#_how_to_use_it"></a>6.6.1&nbsp;How to use it?</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_stub_runner_server" href="#_stub_runner_server"></a>Stub Runner Server</h4></div></div></div><p>Just add the</p><pre class="programlisting">compile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud:spring-cloud-starter-stub-runner"</span></pre><p>Annotate a class with <code class="literal">@EnableStubRunnerServer</code>, build a fat-jar and you&#8217;re ready to go!</p><p>For the properties check the <span class="strong"><strong>Stub Runner Spring</strong></span> section.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_spring_cloud_cli" href="#_spring_cloud_cli"></a>Spring Cloud CLI</h4></div></div></div><p>Starting from <code class="literal">1.4.0.RELEASE</code> version of the <a class="link" href="http://cloud.spring.io/spring-cloud-cli" target="_top">Spring Cloud CLI</a>
+project you can start Stub Runner Boot by executing <code class="literal">spring cloud stubrunner</code>.</p><p>In order to pass the configuration just create a <code class="literal">stubrunner.yml</code> file in the current working directory
+or a subdirectory called <code class="literal">config</code> or in <code class="literal">~/.spring-cloud</code>. The file could look like this
+(example for running stubs installed locally)</p><p><b>stubrunner.yml.&nbsp;</b>
+</p><pre class="programlisting">stubrunner:
+  workOffline: true
+  ids:
+    - com.example:beer-api-producer:+:9876</pre><p>
+</p><p>and then just call <code class="literal">spring cloud stubrunner</code> from your terminal window to start
+the Stub Runner server. It will be available at port <code class="literal">8750</code>.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_endpoints" href="#_endpoints"></a>6.6.2&nbsp;Endpoints</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_http" href="#_http"></a>HTTP</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">GET <code class="literal">/stubs</code> - returns a list of all running stubs in <code class="literal">ivy:integer</code> notation</li><li class="listitem">GET <code class="literal">/stubs/{ivy}</code> - returns a port for the given <code class="literal">ivy</code> notation (when calling the endpoint <code class="literal">ivy</code> can also be <code class="literal">artifactId</code> only)</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_messaging" href="#_messaging"></a>Messaging</h4></div></div></div><p>For Messaging</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">GET <code class="literal">/triggers</code> - returns a list of all running labels in <code class="literal">ivy : [ label1, label2 &#8230;&#8203;]</code> notation</li><li class="listitem">POST <code class="literal">/triggers/{label}</code> - executes a trigger with <code class="literal">label</code></li><li class="listitem">POST <code class="literal">/triggers/{ivy}/{label}</code> - executes a trigger with <code class="literal">label</code> for the given <code class="literal">ivy</code> notation (when calling the endpoint <code class="literal">ivy</code> can also be <code class="literal">artifactId</code> only)</li></ul></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_example" href="#_example"></a>6.6.3&nbsp;Example</h3></div></div></div><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@ContextConfiguration(classes = StubRunnerBoot, loader = SpringBootContextLoader)</span></em>
+<em><span class="hl-annotation" style="color: gray">@SpringBootTest(properties = "spring.cloud.zookeeper.enabled=false")</span></em>
+<em><span class="hl-annotation" style="color: gray">@ActiveProfiles("test")</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> StubRunnerBootSpec <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> Specification {
+
+	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em> StubRunning stubRunning
+
+	def setup() {
+		RestAssuredMockMvc.standaloneSetup(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> HttpStubsController(stubRunning),
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> TriggerController(stubRunning))
+	}
+
+	def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should return a list of running stub servers in "full ivy:port" notation'</span>() {
+		when:
+			String response = RestAssuredMockMvc.get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/stubs'</span>).body.asString()
+		then:
+			def root = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> JsonSlurper().parseText(response)
+			root.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs'</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">instanceof</span> Integer
+	}
+
+	def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should return a port on which a [#stubId] stub is running'</span>() {
+		when:
+			def response = RestAssuredMockMvc.get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/stubs/${stubId}"</span>)
+		then:
+			response.statusCode == <span class="hl-number">200</span>
+			response.body.as(Integer) &gt; <span class="hl-number">0</span>
+		where:
+			stubId &lt;&lt; [<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:bootService:+:stubs'</span>,
+					   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs'</span>,
+					   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:bootService:+'</span>,
+					   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:bootService'</span>,
+					   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bootService'</span>]
+	}
+
+	def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should return 404 when missing stub was called'</span>() {
+		when:
+			def response = RestAssuredMockMvc.get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/stubs/a:b:c:d"</span>)
+		then:
+			response.statusCode == <span class="hl-number">404</span>
+	}
+
+	def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should return a list of messaging labels that can be triggered when version and classifier are passed'</span>() {
+		when:
+			String response = RestAssuredMockMvc.get(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/triggers'</span>).body.asString()
+		then:
+			def root = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> JsonSlurper().parseText(response)
+			root.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs'</span>?.containsAll([<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"delete_book"</span>,<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"return_book_1"</span>,<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"return_book_2"</span>])
+	}
+
+	def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should trigger a messaging label'</span>() {
+		given:
+			StubRunning stubRunning = Mock()
+			RestAssuredMockMvc.standaloneSetup(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> HttpStubsController(stubRunning), <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> TriggerController(stubRunning))
+		when:
+			def response = RestAssuredMockMvc.post(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/triggers/delete_book"</span>)
+		then:
+			response.statusCode == <span class="hl-number">200</span>
+		and:
+			<span class="hl-number">1</span> * stubRunning.trigger(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'delete_book'</span>)
+	}
+
+	def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should trigger a messaging label for a stub with [#stubId] ivy notation'</span>() {
+		given:
+			StubRunning stubRunning = Mock()
+			RestAssuredMockMvc.standaloneSetup(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> HttpStubsController(stubRunning), <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> TriggerController(stubRunning))
+		when:
+			def response = RestAssuredMockMvc.post(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/triggers/$stubId/delete_book"</span>)
+		then:
+			response.statusCode == <span class="hl-number">200</span>
+		and:
+			<span class="hl-number">1</span> * stubRunning.trigger(stubId, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'delete_book'</span>)
+		where:
+			stubId &lt;&lt; [<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:bootService:stubs'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:bootService'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bootService'</span>]
+	}
+
+	def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should throw exception when trigger is missing'</span>() {
+		when:
+			RestAssuredMockMvc.post(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/triggers/missing_label"</span>)
+		then:
+			Exception e = thrown(Exception)
+			e.message.contains(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Exception occurred while trying to return [missing_label] label."</span>)
+			e.message.contains(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Available labels are"</span>)
+			e.message.contains(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:loanIssuance:0.0.1-SNAPSHOT:stubs=[]"</span>)
+			e.message.contains(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud.contract.verifier.stubs:bootService:0.0.1-SNAPSHOT:stubs="</span>)
+	}
+
+}</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_stub_runner_boot_with_service_discovery" href="#_stub_runner_boot_with_service_discovery"></a>6.6.4&nbsp;Stub Runner Boot with Service Discovery</h3></div></div></div><p>One of the possibilities of using Stub Runner Boot is to use it as a feed of stubs for "smoke-tests". What does it mean?
+ Let&#8217;s assume that you don&#8217;t want to deploy 50 microservice to a test environment in order
+ to check if your application is working fine. You&#8217;ve already executed a suite of tests during the build process
+ but you would also like to ensure that the packaging of your application is fine. What you can do
+ is to deploy your application to an environment, start it and run a couple of tests on it to see if
+ it&#8217;s working fine. We can call those tests smoke-tests since their idea is to check only a handful
+ of testing scenarios.</p><p>The problem with this approach is such that if you&#8217;re doing microservices most likely you&#8217;re
+ using a service discovery tool. Stub Runner Boot allows you to solve this issue by starting the
+ required stubs and register them in a service discovery tool. Let&#8217;s take a look at an example of
+ such a setup with Eureka. Let&#8217;s assume that Eureka was already running.</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@SpringBootApplication</span></em>
+<em><span class="hl-annotation" style="color: gray">@EnableStubRunnerServer</span></em>
+<em><span class="hl-annotation" style="color: gray">@EnableEurekaClient</span></em>
+<em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> StubRunnerBootEurekaExample {
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> main(String[] args) {
+		SpringApplication.run(StubRunnerBootEurekaExample.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>, args);
+	}
+
+}</pre><p>As you can see we want to start a Stub Runner Boot server <code class="literal">@EnableStubRunnerServer</code>, enable Eureka client <code class="literal">@EnableEurekaClient</code>
+and we want to have the stub runner feature turned on <code class="literal">@AutoConfigureStubRunner</code>.</p><p>Now let&#8217;s assume that we want to start this application so that the stubs get automatically registered.
+ We can do it by running the app <code class="literal">java -jar ${SYSTEM_PROPS} stub-runner-boot-eureka-example.jar</code> where
+ <code class="literal">${SYSTEM_PROPS}</code> would contain the following list of properties</p><pre class="programlisting">-Dstubrunner.repositoryRoot=http://repo.spring.io/snapshots (<span class="hl-number">1</span>)
+-Dstubrunner.cloud.stubbed.discovery.enabled=false (<span class="hl-number">2</span>)
+-Dstubrunner.ids=org.springframework.cloud.contract.verifier.stubs:loanIssuance,org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer,org.springframework.cloud.contract.verifier.stubs:bootService (<span class="hl-number">3</span>)
+-Dstubrunner.idsToServiceIds.fraudDetectionServer=someNameThatShouldMapFraudDetectionServer (<span class="hl-number">4</span>)
+
+(<span class="hl-number">1</span>) - we tell Stub Runner where all the stubs reside
+(<span class="hl-number">2</span>) - we don<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'t want the default behaviour where the discovery service is stubbed. That'</span>s why the stub registration will be picked
+(<span class="hl-number">3</span>) - we provide a list of stubs to download
+(<span class="hl-number">4</span>) - we provide a list of artifactId to serviceId mapping</pre><p>That way your deployed application can send requests to started WireMock servers via the service
+discovery. Most likely points 1-3 could be set by default in <code class="literal">application.yml</code> cause they are not
+likely to change. That way you can provide only the list of stubs to download whenever you start
+the Stub Runner Boot.</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stubs_per_consumer" href="#_stubs_per_consumer"></a>6.7&nbsp;Stubs Per Consumer</h2></div></div></div><p>There are cases in which 2 consumers of the same endpoint want to have 2 different responses.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>This approach also allows you to immediately know which consumer is using which part of your API.
+You can remove part of a response that your API produces and you can see which of your autogenerated tests
+fails. If none fails then you can safely delete that part of the response cause nobody is using it.</p></td></tr></table></div><p>Let&#8217;s look at the following example for contract defined for the producer called <code class="literal">producer</code>.
+There are 2 consumers: <code class="literal">foo-consumer</code> and <code class="literal">bar-consumer</code>.</p><p><span class="strong"><strong>Consumer <code class="literal">foo-service</code></strong></span></p><pre class="programlisting">request {
+   url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/foo'</span>
+   method GET()
+}
+response {
+    status <span class="hl-number">200</span>
+    body(
+       foo: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>
+    }
+}</pre><p><span class="strong"><strong>Consumer <code class="literal">bar-service</code></strong></span></p><pre class="programlisting">request {
+   url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/foo'</span>
+   method GET()
+}
+response {
+    status <span class="hl-number">200</span>
+    body(
+       bar: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar"</span>
+    }
+}</pre><p>You can&#8217;t produce for the same request 2 different responses. That&#8217;s why you can properly package the
+contracts and then profit from the <code class="literal">stubsPerConsumer</code> feature.</p><p>On the producer side the consumers can have a folder that contains contracts related only to them.
+By setting the <code class="literal">stubrunner.stubs-per-consumer</code> flag to <code class="literal">true</code> we no longer register all stubs but only those that
+correspond to the consumer application&#8217;s name. In other words we&#8217;ll scan the path of every stub and
+if it contains the subfolder with name of the consumer in the path only then will it get registered.</p><p>On the <code class="literal">foo</code> producer side the contracts would look like this</p><pre class="programlisting">.
+&#9492;&#9472;&#9472; contracts
+    &#9500;&#9472;&#9472; bar-consumer
+    &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; bookReturnedForBar.groovy
+    &#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; shouldCallBar.groovy
+    &#9492;&#9472;&#9472; foo-consumer
+        &#9500;&#9472;&#9472; bookReturnedForFoo.groovy
+        &#9492;&#9472;&#9472; shouldCallFoo.groovy</pre><p>Being the <code class="literal">bar-consumer</code> consumer you can either set the <code class="literal">spring.application.name</code> or the <code class="literal">stubrunner.consumer-name</code> to <code class="literal">bar-consumer</code>
+Or set the test as follows:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)</span></em>
+<em><span class="hl-annotation" style="color: gray">@SpringBootTest(properties = ["spring.application.name=bar-consumer"])</span></em>
+<em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(ids = "org.springframework.cloud.contract.verifier.stubs:producerWithMultipleConsumers",
+		repositoryRoot = "classpath:m2repo/repository/",
+		stubsPerConsumer = true)</span></em>
+<em><span class="hl-annotation" style="color: gray">@DirtiesContext</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> StubRunnerStubsPerConsumerSpec <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> Specification {
+...
+}</pre><p>Then only the stubs registered under a path that contains the <code class="literal">bar-consumer</code> in its name (i.e. those from the
+<code class="literal">src/test/resources/contracts/bar-consumer/some/contracts/&#8230;&#8203;</code> folder) will be allowed to be referenced.</p><p>Or set the consumer name explicitly</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)</span></em>
+<em><span class="hl-annotation" style="color: gray">@SpringBootTest</span></em>
+<em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(ids = "org.springframework.cloud.contract.verifier.stubs:producerWithMultipleConsumers",
+		repositoryRoot = "classpath:m2repo/repository/",
+		consumerName = "foo-consumer",
+		stubsPerConsumer = true)</span></em>
+<em><span class="hl-annotation" style="color: gray">@DirtiesContext</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> StubRunnerStubsPerConsumerWithConsumerNameSpec <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> Specification {
+...
+}</pre><p>Then only the stubs registered under a path that contains the <code class="literal">foo-consumer</code> in its name (i.e. those from the
+<code class="literal">src/test/resources/contracts/foo-consumer/some/contracts/&#8230;&#8203;</code> folder) will be allowed to be referenced.</p><p>You can check out <a class="link" href="https://github.com/spring-cloud/spring-cloud-contract/issues/224" target="_top">issue 224</a> for more
+information about the reasons behind this change.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_common" href="#_common"></a>6.8&nbsp;Common</h2></div></div></div><p>This section briefly describes common properties, including:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a class="xref" href="multi__spring_cloud_contract_stub_runner.html#common-properties-junit-spring" title="6.8.1&nbsp;Common Properties for JUnit and Spring">Section&nbsp;6.8.1, &#8220;Common Properties for JUnit and Spring&#8221;</a></li><li class="listitem"><a class="xref" href="multi__spring_cloud_contract_stub_runner.html#stub-runner-stub-ids" title="6.8.2&nbsp;Stub Runner Stubs IDs">Section&nbsp;6.8.2, &#8220;Stub Runner Stubs IDs&#8221;</a></li></ul></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="common-properties-junit-spring" href="#common-properties-junit-spring"></a>6.8.1&nbsp;Common Properties for JUnit and Spring</h3></div></div></div><p>You can set repetitive properties by using system properties or Spring configuration
+properties. Here are their names with their default values:</p><div class="informaltable"><table style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Property name</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Default value</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Description</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>stubrunner.minPort</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>10000</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Minimum value of a port for a started WireMock with stubs.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>stubrunner.maxPort</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>15000</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Maximum value of a port for a started WireMock with stubs.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>stubrunner.repositoryRoot</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Maven repo URL. If blank, then call the local maven repo.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>stubrunner.classifier</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>stubs</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Default classifier for the stub artifacts.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>stubrunner.workOffline</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>false</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>If true, then do not contact any remote repositories to
+download stubs.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>stubrunner.ids</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Array of Ivy notation stubs to download.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>stubrunner.username</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Optional username to access the tool that stores the JARs with
+stubs.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>stubrunner.password</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Optional password to access the tool that stores the JARs with
+stubs.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>stubrunner.stubsPerConsumer</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>false</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Set to <code class="literal">true</code> if you want to use different stubs for
+each consumer instead of registering all stubs for every consumer.</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>stubrunner.consumerName</p></td><td style="border-right: 0.5pt solid ; " align="left" valign="top">&nbsp;</td><td style="" align="left" valign="top"><p>If you want to use a stub for each consumer and want to
+override the consumer name just change this value.</p></td></tr></tbody></table></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="stub-runner-stub-ids" href="#stub-runner-stub-ids"></a>6.8.2&nbsp;Stub Runner Stubs IDs</h3></div></div></div><p>You can provide the stubs to download via the <code class="literal">stubrunner.ids</code> system property. They
+follow this pattern:</p><pre class="programlisting">groupId:artifactId:version:classifier:port</pre><p>Note that <code class="literal">version</code>, <code class="literal">classifier</code> and <code class="literal">port</code> are optional.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">If you do not provide the <code class="literal">port</code>, a random one will be picked.</li><li class="listitem">If you do not provide the <code class="literal">classifier</code>, the default is used. (Note that you can
+pass an empty classifier this way: <code class="literal">groupId:artifactId:version:</code>).</li><li class="listitem">If you do not provide the <code class="literal">version</code>, then the <code class="literal">+</code> will be passed and the latest one is
+downloaded.</li></ul></div><p><code class="literal">port</code> means the port of the WireMock server.</p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>Starting with version 1.0.4, you can provide a range of versions that you
+would like the Stub Runner to take into consideration. You can read more about the
+<a class="link" href="https://wiki.eclipse.org/Aether/New_and_Noteworthy#Version_Ranges" target="_top">Aether versioning
+ranges here</a>.</p></td></tr></table></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="multi__spring_cloud_contract_verifier_messaging.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="multi__stub_runner_for_messaging.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">5.&nbsp;Spring Cloud Contract Verifier Messaging&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="multi_spring-cloud-contract.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;7.&nbsp;Stub Runner for Messaging</td></tr></table></div></body></html>
