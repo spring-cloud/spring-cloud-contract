@@ -46,12 +46,27 @@ class YamlContract {
 		public Object body
 		public String bodyFromFile
 		public StubMatchers matchers = new StubMatchers()
+		public Multipart multipart
+	}
+
+	@CompileStatic
+	static class Multipart {
+		public Map<String, String> params = [:]
+		public List<Named> named = []
+	}
+
+	@CompileStatic
+	static class Named {
+		public String paramName
+		public String fileName
+		public String fileContent
 	}
 
 	@CompileStatic
 	static class StubMatchers {
 		public List<BodyStubMatcher> body = []
-		public List<StubHeaderMatcher> headers = []
+		public List<KeyValueMatcher> headers = []
+		public MultipartStubMatcher multipart
 	}
 
 	@CompileStatic
@@ -59,6 +74,25 @@ class YamlContract {
 		public String path
 		public StubMatcherType type
 		public String value
+		public PredefinedRegex predefined
+	}
+
+	@CompileStatic
+	static class MultipartStubMatcher {
+		public List<KeyValueMatcher> params = []
+		public List<MultipartNamedStubMatcher> named = []
+	}
+
+	@CompileStatic
+	static class MultipartNamedStubMatcher {
+		public String paramName
+		public ValueMatcher fileName
+		public ValueMatcher fileContent
+	}
+
+	@CompileStatic
+	static class ValueMatcher {
+		public String regex
 		public PredefinedRegex predefined
 	}
 
@@ -73,7 +107,7 @@ class YamlContract {
 	}
 
 	@CompileStatic
-	static class StubHeaderMatcher {
+	static class KeyValueMatcher {
 		public String key
 		public String regex
 		public PredefinedRegex predefined

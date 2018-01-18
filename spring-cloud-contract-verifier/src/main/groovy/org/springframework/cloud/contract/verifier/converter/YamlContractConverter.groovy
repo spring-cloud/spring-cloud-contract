@@ -31,15 +31,17 @@ import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.MatchingTypeValue
+import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.verifier.converter.YamlContract.BodyStubMatcher
 import org.springframework.cloud.contract.verifier.converter.YamlContract.BodyTestMatcher
 import org.springframework.cloud.contract.verifier.converter.YamlContract.Input
+import org.springframework.cloud.contract.verifier.converter.YamlContract.Named
 import org.springframework.cloud.contract.verifier.converter.YamlContract.OutputMessage
 import org.springframework.cloud.contract.verifier.converter.YamlContract.PredefinedRegex
 import org.springframework.cloud.contract.verifier.converter.YamlContract.Request
 import org.springframework.cloud.contract.verifier.converter.YamlContract.Response
-import org.springframework.cloud.contract.verifier.converter.YamlContract.StubHeaderMatcher
+import org.springframework.cloud.contract.verifier.converter.YamlContract.KeyValueMatcher
 import org.springframework.cloud.contract.verifier.converter.YamlContract.StubMatcherType
 import org.springframework.cloud.contract.verifier.converter.YamlContract.StubMatchers
 import org.springframework.cloud.contract.verifier.converter.YamlContract.TestHeaderMatcher
@@ -117,7 +119,7 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 							if (yamlContract.request?.headers) {
 								headers {
 									yamlContract.request?.headers?.each { String key, Object value ->
-										StubHeaderMatcher matcher = yamlContract.request.matchers.headers.find { it.key == key }
+										KeyValueMatcher matcher = yamlContract.request.matchers.headers.find { it.key == key }
 										if (value instanceof List) {
 											((List) value).each {
 												Object clientValue = clientValue(it, matcher, key)
@@ -132,6 +134,39 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 							}
 							if (yamlContract.request.body) body(yamlContract.request.body)
 							if (yamlContract.request.bodyFromFile) body(file(yamlContract.request.bodyFromFile))
+							if (yamlContract.request.multipart) {
+								Map multipartMap = [:]
+								Map<String, DslProperty> multiPartParams = yamlContract.request.multipart.params.collectEntries { String paramKey, String paramValue ->
+									KeyValueMatcher matcher = yamlContract.request.matchers.multipart.params.find {
+										it.key == paramKey
+									}
+									Object value = paramValue
+									if (matcher) {
+										value = matcher.regex ? Pattern.compile(matcher.regex) :
+												predefinedToPattern(matcher.predefined)
+									}
+									return [(paramKey), new DslProperty<>(value, paramValue)]
+								} as Map<String, DslProperty>
+								multipartMap.putAll(multiPartParams)
+								yamlContract.request.multipart.named.each { Named namedParam ->
+									YamlContract.MultipartNamedStubMatcher matcher = yamlContract.request.matchers.multipart.named.find {
+										it.paramName == namedParam.paramName
+									}
+									Object fileNameValue = namedParam.fileName
+									Object fileContentValue = namedParam.fileContent
+									if (matcher && matcher.fileName) {
+										fileNameValue = matcher.fileName.regex ? Pattern.compile(matcher.fileName.regex) :
+												predefinedToPattern(matcher.fileName.predefined)
+									}
+									if (matcher && matcher.fileContent) {
+										fileContentValue = matcher.fileContent.regex ? Pattern.compile(matcher.fileContent.regex) :
+												predefinedToPattern(matcher.fileContent.predefined)
+									}
+									multipartMap.put(namedParam.paramName, new NamedProperty(new DslProperty<>(fileNameValue, namedParam.fileName),
+											new DslProperty<>(fileContentValue, namedParam.fileContent)))
+								}
+								multipart(multipartMap)
+							}
 							stubMatchers {
 								yamlContract.request.matchers?.body?.each { BodyStubMatcher matcher ->
 									MatchingTypeValue value = null
@@ -224,7 +259,7 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 							if (yamlContract.input.triggeredBy) triggeredBy(yamlContract.input.triggeredBy)
 							messageHeaders {
 								yamlContract.input?.messageHeaders?.each { String key, Object value ->
-									StubHeaderMatcher matcher = yamlContract.input.matchers?.headers?.find { it.key == key }
+									KeyValueMatcher matcher = yamlContract.input.matchers?.headers?.find { it.key == key }
 									Object clientValue = clientValue(value, matcher, key)
 									header(key, new DslProperty(clientValue, value))
 								}
@@ -312,6 +347,9 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 		catch (FileNotFoundException e) {
 			throw new IllegalStateException(e)
 		}
+		catch (IllegalStateException ise) {
+			throw ise
+		}
 		catch (Exception e1) {
 			throw new IllegalStateException("Exception occurred while processing the file [" + contractFile + "]", e1)
 		} finally {
@@ -335,7 +373,7 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 		return serverValue
 	}
 
-	protected Object clientValue(Object value, StubHeaderMatcher matcher, String key) {
+	protected Object clientValue(Object value, KeyValueMatcher matcher, String key) {
 		Object clientValue = value
 		if (matcher?.regex) {
 			clientValue = Pattern.compile(matcher.regex)

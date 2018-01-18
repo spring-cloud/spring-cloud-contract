@@ -1,0 +1,29 @@
+request:
+  method: PUT
+  url: /multipart
+  headers:
+    Content-Type: multipart/form-data;boundary=AaB03x
+  multipart:
+    params:
+    # key (parameter name), value (parameter value) pair
+      formParameter: '"formParameterValue"'
+      someBooleanParameter: true
+    named:
+      - paramName: file
+        fileName: filename.csv
+        fileContent: file content
+  matchers:
+    multipart:
+      params:
+        - key: formParameter
+          regex: ".+"
+        - key: someBooleanParameter
+          predefined: any_boolean
+      named:
+        - paramName: file
+          fileName:
+            predefined: non_empty
+          fileContent:
+            predefined: non_empty
+response:
+  status: 200

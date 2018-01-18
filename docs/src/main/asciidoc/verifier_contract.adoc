@@ -273,8 +273,8 @@ include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=request,i
 include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=body,indent=0]
 ----
 
-`request` may contain **multipart** elements. To include multipart elements, call the
-`multipart()` method, as shown in the following example
+`request` may contain **multipart** elements. To include multipart elements, use the
+`multipart` method/section, as shown in the following examples
 
 .Groovy DSL
 [source,groovy,indent=0]
@@ -282,16 +282,35 @@ include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=body,inde
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderSpec.groovy[tags=multipartdsl,indent=0]
 ----
 
-WARNING: Multipart is not yet supported in YAML
+.YAML
+[source,yml,indent=0]
+----
+include::{verifier_core_path}/src/test/resources/yml/contract_multipart.yml[indent=0]
+----
 
 In the preceding example, we define parameters in either of two ways:
 
+.Groovy DSL
 * Directly, by using the map notation, where the value can be a dynamic property (such as
 `formParameter: $(consumer(...), producer(...))`).
 * By using the `named(...)` method that lets you set a named parameter. A named parameter
 can set a `name` and `content`. You can call it either via a method with two  arguments,
 such as `named("fileName", "fileContent")`, or via a map notation, such as
 `named(name: "fileName", content: "fileContent")`.
+
+.YAML
+* The multipart parameters are set via `multipart.params` section
+* The named parameters (the `fileName` and `fileContent` for a given parameter name)
+can be set via the `multipart.named` section. That section contains
+the `paramName` (name of the parameter), `fileName` (name of the file),
+`fileContent` (content of the file) fields
+* The dynamic bits can be set via the `matchers.multipart` section
+** for parameters use the `params` section that can accept
+`regex` or a `predefined` regular expression
+** for named params use the `named` section where first you
+define the parameter name via `paramName` and then you can pass the
+parametrization of either `fileName` or `fileContent` via
+`regex` or a `predefined` regular expression
 
 From this contract, the generated test is as follows:
 
