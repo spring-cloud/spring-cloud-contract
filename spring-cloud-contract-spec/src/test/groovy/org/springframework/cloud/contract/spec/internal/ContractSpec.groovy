@@ -94,6 +94,15 @@ then:
 		// end::description[]
 	}
 
+	def 'should set a name'() {
+		given:
+		// tag::name[]
+		org.springframework.cloud.contract.spec.Contract.make {
+			name("some_special_name")
+		}
+		// end::name[]
+	}
+
 	def 'should mark a contract ignored'() {
 		given:
 		// tag::ignored[]

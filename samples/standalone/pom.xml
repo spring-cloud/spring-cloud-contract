@@ -26,6 +26,7 @@
 		<module>dsl</module>
 		<module>messaging</module>
 		<module>pact</module>
+		<module>yml</module>
 	</modules>
 
 	<build>

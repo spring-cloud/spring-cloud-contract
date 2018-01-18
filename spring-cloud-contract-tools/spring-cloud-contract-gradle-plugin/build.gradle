@@ -23,7 +23,7 @@ ext {
 	]
 }
 
-project.version = findProperty('verifierVersion') ?: '1.5.4.RELEASE'
+project.version = findProperty('verifierVersion') ?: '1.5.9.RELEASE'
 apply plugin: 'groovy'
 apply from: "$rootDir/gradle/release.gradle"
 apply plugin: 'eclipse'

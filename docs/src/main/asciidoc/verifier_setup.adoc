@@ -875,7 +875,8 @@ exclude the unwanted dependencies.
 
 You can handle scenarios with Spring Cloud Contract Verifier. All you need to do is to
 stick to the proper naming convention while creating your contracts. The convention
-requires including an order number followed by an underscore, as shown in this example:
+requires including an order number followed by an underscore. This will work regardles
+ of whether you're working with YAML or Groovy. Example:
 
 [source,indent=0]
 ----

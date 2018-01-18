@@ -1,0 +1,7 @@
+request:
+  method: GET
+  url: /foo
+  bodyFromFile: request.json
+response:
+  status: 200
+  bodyFromFile: response.json

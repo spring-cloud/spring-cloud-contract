@@ -1,0 +1,15 @@
+# highest priority
+priority: 1
+request:
+  method: PUT
+  url: /frauds/name
+  body:
+    name: "fraud"
+  headers:
+    Content-Type: application/json;charset=UTF-8
+response:
+  status: 200
+  body:
+    result: "Sorry {{{ jsonpath this '$.name' }}} but you're a fraud"
+  headers:
+    Content-Type: "{{{ request.headers.Content-Type.0 }}}"

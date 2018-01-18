@@ -1,0 +1,34 @@
+request:
+  url: /foo
+  queryParameters:
+    a: b
+    b: c
+  method: PUT
+  headers:
+    foo: bar
+    fooReq: baz
+  body:
+    foo: bar
+  matchers:
+    body:
+      - path: $.foo
+        type: by_regex
+        value: bar
+    headers:
+      - key: foo
+        regex: barrrr
+response:
+  status: 200
+  headers:
+    foo2: bar
+    fooRes: baz
+  body:
+    foo2: bar
+  matchers:
+    body:
+      - path: $.foo2
+        type: by_regex
+        value: bar
+    headers:
+      - key: foo2
+        regex: bar

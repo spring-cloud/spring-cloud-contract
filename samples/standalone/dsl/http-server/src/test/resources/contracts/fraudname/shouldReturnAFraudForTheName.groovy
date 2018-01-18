@@ -1,9 +1,9 @@
 package contracts.fraudname
 
 org.springframework.cloud.contract.spec.Contract.make {
+	// highest priority
+	priority(1)
 	request {
-		// highest priority
-		priority(1)
 		method PUT()
 		url '/frauds/name'
 		body([

@@ -1,0 +1,14 @@
+---
+name: should post a user
+request:
+  method: POST
+  url: /users/1
+response:
+  status: 200
+
+---
+request:
+  method: POST
+  url: /users/2
+response:
+  status: 200

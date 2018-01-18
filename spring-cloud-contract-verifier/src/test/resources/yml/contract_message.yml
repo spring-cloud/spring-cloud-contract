@@ -1,0 +1,43 @@
+description: Some description
+label: some_label
+name: some name
+ignored: true
+input:
+  messageFrom: foo
+  triggeredBy: foo()
+  messageHeaders:
+    foo: bar
+  messageBody:
+    foo: bar
+  assertThat: bar()
+  matchers:
+    body:
+      - path: $.bar
+        type: by_regex
+        value: bar
+    headers:
+      - key: foo
+        regex: bar
+outputMessage:
+  sentTo: bar
+  headers:
+    foo2: bar
+    foo3: bar3
+    fooRes: baz
+  body:
+    foo2: bar
+    foo3: baz
+  assertThat: baz()
+  matchers:
+    body:
+      - path: $.foo2
+        type: by_regex
+        value: bar
+      - path: $.foo3
+        type: by_command
+        value: executeMe($it)
+    headers:
+      - key: foo2
+        regex: bar
+      - key: foo3
+        command: andMeToo($it)

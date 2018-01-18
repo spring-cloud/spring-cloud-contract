@@ -22,6 +22,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
+import org.springframework.cloud.contract.verifier.converter.YamlContractConverter
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 import org.springframework.core.io.support.SpringFactoriesLoader
 
@@ -101,6 +102,8 @@ class ContractFileScanner {
 				boolean included = includeMatcher ? file.absolutePath.matches(includeMatcher) : true
 				if (contractFile && included) {
 					addContractToTestGeneration(result, files, file, index, ContractVerifierDslConverter.convertAsCollection(baseDir, file))
+				} else if (YamlContractConverter.INSTANCE.isAccepted(file) && included) {
+					addContractToTestGeneration(result, files, file, index, YamlContractConverter.INSTANCE.convertFrom(file))
 				} else if (!contractFile && included) {
 					addContractToTestGeneration(converters, result, files, file, index)
 				} else {
@@ -144,8 +147,13 @@ class ContractFileScanner {
 		if (hasScenarioFilenamePattern(path)) {
 			order = index
 		}
-		result.put(file.parentFile.toPath(), new ContractMetadata(path, matchesPattern(file, ignoreMatchers),
-				files.size(), order, convertedContract))
+		Path parent = file.parentFile.toPath()
+		ContractMetadata metadata = new ContractMetadata(path, matchesPattern(file, ignoreMatchers),
+				files.size(), order, convertedContract)
+		if (log.isDebugEnabled()) {
+			log.debug("Creating a contract entry for path [" + path + "] and metadata [" + metadata + "]")
+		}
+		result.put(parent, metadata)
 	}
 
 	private boolean hasScenarioFilenamePattern(Path path) {
