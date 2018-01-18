@@ -89,9 +89,16 @@ it is resolved as a channel name. For *Camel*, that's a certain component (for e
 
 Here is an example for Camel. For the given contract:
 
+.Groovy DSL
 [source,groovy]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_method_dsl]
+----
+
+.YAML
+[source,yml,indent=0]
+----
+include::{verifier_core_path}/src/test/resources/yml/contract_message_scenario1.yml[indent=0]
 ----
 
 The following JUnit test is created:
@@ -112,9 +119,16 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 
 Here is an example for Camel. For the given contract:
 
+.Groovy DSL
 [source,groovy]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_message_dsl]
+----
+
+.YAML
+[source,yml,indent=0]
+----
+include::{verifier_core_path}/src/test/resources/yml/contract_message_scenario2.yml[indent=0]
 ----
 
 The following JUnit test is created:
@@ -135,9 +149,16 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 
 Here is an example for Camel. For the given contract:
 
+.Groovy DSL
 [source,groovy]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_no_output_dsl]
+----
+
+.YAML
+[source,yml,indent=0]
+----
+include::{verifier_core_path}/src/test/resources/yml/contract_message_scenario3.yml[indent=0]
 ----
 
 The following JUnit test is created:

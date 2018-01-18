@@ -15,6 +15,10 @@ Spring Cloud Contract Verifier stand out on the "market" of Consumer Driven Cont
 - Stub Runner functionality - the stubs are automatically downloaded at runtime from Nexus / Artifactory
 - Spring Cloud integration - no discovery service is needed for integration tests
 
+=== I don't want to write a contract in Groovy!
+
+No problem. You can write a contract in YAML!
+
 === What is this value(consumer(), producer()) ?
 
 One of the biggest challenges related to stubs is their reusability. Only if they can be vastly used, will they serve their purpose.
@@ -371,3 +375,4 @@ for this for WireMock. In case of other HTTP server stubs you'll have to impleme
 
 Yes! With version 1.2.0 we've added such a possibility. It's enough to call `file(...)` method in the
 DSL and provide a path relative to where the contract lays.
+If you're using YAML just use the `bodyFromFile` property.

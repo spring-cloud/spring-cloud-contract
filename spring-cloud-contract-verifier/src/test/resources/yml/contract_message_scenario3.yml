@@ -1,0 +1,8 @@
+label: some_label
+input:
+  messageFrom: jms:delete
+  messageBody:
+    bookName: 'foo'
+  messageHeaders:
+    sample: header
+  assertThat: bookWasDeleted()

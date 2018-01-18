@@ -1,0 +1,18 @@
+request:
+  method: PUT
+  url: /frauds/name
+  body:
+    name: "non fraud"
+  headers:
+    Content-Type: application/json
+  matchers:
+    body:
+      - path: $.name
+        type: by_regex
+        predefined: only_alpha_unicode
+response:
+  status: 200
+  body:
+    result: "Don't worry {{{ jsonpath this '$.name' }}} you're not a fraud"
+  headers:
+    Content-Type: "{{{ request.headers.Content-Type.0 }}};charset=UTF-8"

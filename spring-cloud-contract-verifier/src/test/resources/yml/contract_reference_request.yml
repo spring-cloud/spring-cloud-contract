@@ -15,15 +15,15 @@ request:
 response:
   status: 200
   headers:
-    Authorization: "foo {{{ request.header.Authorization.0 }}} bar"
+    Authorization: "foo {{{ request.headers.Authorization.0 }}} bar"
   body:
     url: "{{{ request.url }}}"
     path: "{{{ request.path }}}"
     pathIndex: "{{{ request.path.1 }}}"
     param: "{{{ request.query.foo }}}"
     paramIndex: "{{{ request.query.foo.1 }}}"
-    authorization: "{{{ request.header.Authorization.0 }}}"
-    authorization2: "{{{ request.header.Authorization.1 }}"
+    authorization: "{{{ request.headers.Authorization.0 }}}"
+    authorization2: "{{{ request.headers.Authorization.1 }}"
     fullBody: "{{{ request.body }}}"
     responseFoo: "{{{ jsonpath this '$.foo' }}}"
     responseBaz: "{{{ jsonpath this '$.baz' }}}"

@@ -59,6 +59,7 @@ class YamlContract {
 		public String path
 		public StubMatcherType type
 		public String value
+		public PredefinedRegex predefined
 	}
 
 	@CompileStatic
@@ -68,12 +69,14 @@ class YamlContract {
 		public String value
 		public Integer minOccurrence
 		public Integer maxOccurrence
+		public PredefinedRegex predefined
 	}
 
 	@CompileStatic
 	static class StubHeaderMatcher {
 		public String key
 		public String regex
+		public PredefinedRegex predefined
 	}
 
 	@CompileStatic
@@ -81,6 +84,14 @@ class YamlContract {
 		public String key
 		public String regex
 		public String command
+		public PredefinedRegex predefined
+	}
+
+	@CompileStatic
+	static enum PredefinedRegex {
+		only_alpha_unicode, number, any_boolean, ip_address, hostname,
+		email, url, uuid, iso_date, iso_date_time, iso_time,
+		iso_8601_with_offset, non_empty, non_blank
 	}
 
 	@CompileStatic

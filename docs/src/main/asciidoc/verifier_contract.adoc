@@ -559,8 +559,8 @@ E.g. for key `foo`, first entry `{{{ request.query.foo.[0] }}}`
 * `{{{ request.path }}}`: Returns the full path.
 * `{{{ request.path.[index] }}}`: Returns the nth path element. E.g.
 for first entry ```{{{ request.path.[0] }}}
-* `{{{ request.header.key }}}`: Returns the first header with a given name.
-* `{{{ request.header.key.[index] }}}`: Returns the nth header with a given name.
+* `{{{ request.headers.key }}}`: Returns the first header with a given name.
+* `{{{ request.headers.key.[index] }}}`: Returns the nth header with a given name.
 * `{{{ request.body }}}`: Returns the full request body.
 * `{{{ jsonpath this 'your.json.path' }}}`: Returns the element from the request that
 matches the JSON Path. E.g. for json path `$.foo` - `{{{ jsonpath this '$.foo' }}}`
@@ -762,12 +762,59 @@ following, depending on the JSON path:
 
 .YAML
 
+_Please read the Groovy section for detailed explanation of
+what the types mean_
+
+For YAML the structure of a matcher looks like this
+
+[source,yml,indent=0]
+----
+- path: $.foo
+  type: by_regex
+  value: bar
+----
+
+Or if you want to use one of the predefined regular expressions
+`[only_alpha_unicode, number, any_boolean, ip_address, hostname,
+email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_empty, non_blank]`:
+
+[source,yml,indent=0]
+----
+- path: $.foo
+  type: by_regex
+  predefined: only_alpha_unicode
+----
+
+Below you can find the allowed list of `type`s.
+
+* For `stubMatchers`:
+** `by_equality`
+** `by_regex`
+** `by_date`
+** `by_timestamp`
+** `by_time`
+* For `testMatchers`:
+** `by_equality`
+** `by_regex`
+** `by_date`
+** `by_timestamp`
+** `by_time`
+** `by_type`
+*** there are 2 additional fields accepted: `minOccurrence` and `maxOccurrence`.
+** `by_command`
 
 Consider the following example:
 
+.Groovy DSL
 [source,groovy,indent=0]
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderWithMatchersSpec.groovy[tags=matchers,indent=0]
+----
+
+.YAML
+[source,yml,indent=0]
+----
+include::{verifier_core_path}/src/test/resources/yml/contract_matchers.yml[indent=0]
 ----
 
 In the preceding example, you can see the dynamic portions of the contract in the
@@ -932,6 +979,7 @@ If you're using asynchronous communication on the server side (your controllers 
 returning `Callable`, `DeferredResult`, and so on), then, inside your contract, you must
 provide a `sync()` method in the `response` section. The following code shows an example:
 
+.Groovy DSL
 [source,groovy,indent=0]
 ----
 org.springframework.cloud.contract.spec.Contract.make {
@@ -945,6 +993,13 @@ org.springframework.cloud.contract.spec.Contract.make {
         async()
     }
 }
+----
+
+.YAML
+[source,yml,indent=0]
+----
+response:
+    async: true
 ----
 
 === Working with Context Paths
@@ -1019,9 +1074,16 @@ following sections explain the differences:
 The output message can be triggered by calling a method (such as a `Scheduler` when a was
 started and a message was sent), as shown in the following example:
 
+.Groovy DSL
 [source,groovy]
 ----
 include::{tests_path}/samples-messaging-integration/src/test/groovy/com/example/IntegrationMessagingApplicationSpec.groovy[tags=method_trigger,indent=0]
+----
+
+.YAML
+[source,yml,indent=0]
+----
+include::{verifier_core_path}/src/test/resources/yml/contract_message_method.yml[indent=0]
 ----
 
 In the previous example case, the output message is sent to `output` if a method called
@@ -1035,9 +1097,16 @@ the `some_label` to trigger the message.
 The output message can be triggered by receiving a message, as shown in the following
 example:
 
+.Groovy DSL
 [source,groovy]
 ----
 include::{tests_path}/samples-messaging-integration/src/test/groovy/com/example/IntegrationMessagingApplicationSpec.groovy[tags=message_trigger,indent=0]
+----
+
+.YAML
+[source,yml,indent=0]
+----
+include::{verifier_core_path}/src/test/resources/yml/contract_message_input_message.yml[indent=0]
 ----
 
 In the preceding example, the output message is sent to `output` if a proper message is
@@ -1048,6 +1117,8 @@ generates a test that sends the input message to the defined destination. On the
 
 [[contract-dsl-consumer-producer]]
 ==== Consumer/Producer
+
+IMPORTANT: This section is valid only for Groovy DSL.
 
 In HTTP, you have a notion of `client`/`stub and `server`/`test` notation. You can also
 use those paradigms in messaging. In addition, Spring Cloud Contract Verifier also
@@ -1063,19 +1134,26 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 [[contract-dsl-common]]
 ==== Common
 
-In the `input {}` or `outputMessage {}` section you can call `assertThat` with the name
+In the `input` or `outputMessage` section you can call `assertThat` with the name
 of a `method` (e.g. `assertThatMessageIsOnTheQueue()`) that you have defined in the
-base class or in a static import. Spring Cloud Pipelines will execute that method
-in the genertaed test.
+base class or in a static import. Spring Cloud Contract will execute that method
+in the generated test.
 
 === Multiple Contracts in One File
 
 You can define multiple contracts in one file. Such a contract might resemble the
 following example:
 
+.Groovy DSL
 [source,groovy,indent=0]
 ----
 include::{plugins_path}/spring-cloud-contract-maven-plugin/src/test/projects/multiple-contracts/src/test/resources/contracts/com/hello/v1/WithList.groovy[lines=18..-1,indent=0]
+----
+
+.YAML
+[source,yml,indent=0]
+----
+include::{verifier_core_path}/src/test/resources/yml/multiple_contracts.yml[indent=0]
 ----
 
 In the preceding example, one contract has the `name` field and the other does not. This
@@ -1148,6 +1226,8 @@ TIP: As you can see, it iss much better if you name your contracts because doing
 your tests far more meaningful.
 
 == Customization
+
+IMPORTANT: This section is valid only for Groovy DSL
 
 You can customize the Spring Cloud Contract Verifier by extending the DSL, as shown in
 the remainder of this section.

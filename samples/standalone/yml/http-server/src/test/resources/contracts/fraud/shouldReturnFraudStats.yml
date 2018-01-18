@@ -1,0 +1,21 @@
+---
+name: "should count all frauds"
+request:
+  method: GET
+  url: /frauds
+response:
+  status: 200
+  body:
+    count: 200
+  headers:
+    Content-Type: application/json;charset=UTF-8
+---
+request:
+  method: GET
+  url: /drunks
+response:
+  status: 200
+  body:
+    count: 100
+  headers:
+    Content-Type: application/json;charset=UTF-8

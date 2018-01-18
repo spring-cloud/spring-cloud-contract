@@ -31,6 +31,7 @@ request:
   body:
     foo: bar
 #end::body[]
+#tag::request_matcher[]
   matchers:
     body:
       - path: $.foo
@@ -39,6 +40,7 @@ request:
     headers:
       - key: foo
         regex: bar
+#end::request_matcher[]
 #tag::response[]
 response:
 #end::response[]
