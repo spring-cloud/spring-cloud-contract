@@ -17,7 +17,7 @@
 	<description>Spring Cloud Contract Standalone Test Samples used for end to end tests</description>
 
 	<properties>
-		<spring-cloud-contract.version>1.2.2.BUILD-SNAPSHOT</spring-cloud-contract.version>
+		<spring-cloud-contract.version>1.2.3.BUILD-SNAPSHOT</spring-cloud-contract.version>
 	</properties>
 
 	<modules>
