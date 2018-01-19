@@ -1,0 +1,26 @@
+{
+  "id" : "263aac46-1534-497d-9cc6-114a29ffa0de",
+  "request" : {
+    "url" : "/fraudcheck",
+    "method" : "PUT",
+    "headers" : {
+      "Content-Type" : {
+        "equalTo" : "application/vnd.fraud.v1+json"
+      }
+    },
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[?(@.['loanAmount'] == 123.123)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.['clientPesel'] =~ /[0-9]{10}/)]"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"fraudCheckStatus\":\"OK\",\"rejectionReason\":null}",
+    "headers" : {
+      "Content-Type" : "application/vnd.fraud.v1+json"
+    },
+    "transformers" : [ "response-template" ]
+  },
+  "uuid" : "263aac46-1534-497d-9cc6-114a29ffa0de"
+}

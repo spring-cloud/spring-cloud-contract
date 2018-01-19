@@ -43,7 +43,7 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-actuator")
 
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
-	testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	testCompile 'org.springframework.restdocs:spring-restdocs-webtestclient'
 	testCompile 'org.springframework.cloud:spring-cloud-contract-wiremock'
 }
 

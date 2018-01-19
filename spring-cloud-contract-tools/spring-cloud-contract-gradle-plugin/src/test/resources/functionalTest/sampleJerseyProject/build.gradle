@@ -23,7 +23,7 @@ buildscript {
 		maven { url "http://repo.spring.io/release" }
 	}
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.0.M3")
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.0.BUILD-SNAPSHOT")
 	}
 }
 
@@ -65,10 +65,12 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 	apply plugin: 'io.spring.dependency-management'
 	apply plugin: 'maven-publish'
 
-	ext['jetty.version'] = '9.2.17.v20160517'
-
 	jar {
 		version = '0.0.1'
+	}
+
+	bootJar {
+		enabled = false
 	}
 
 	configurations {
@@ -76,17 +78,11 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 	}
 
 	dependencies {
-		compile('org.glassfish.jersey.containers:jersey-container-jetty-http:2.23.2')  {
-			exclude group: 'org.eclipse.jetty'
-		}
 		compile 'org.springframework.boot:spring-boot-starter-jersey'
 		compile 'org.springframework.boot:spring-boot-starter-jetty'
 
 		testRuntime "org.spockframework:spock-spring:$spockVersion"
 
-		compile('org.glassfish.jersey.connectors:jersey-apache-connector:2.23.2') {
-			exclude group: 'org.eclipse.jetty'
-		}
 		testCompile "org.mockito:mockito-core"
 		testCompile "org.springframework:spring-test"
 		testCompile "org.springframework.boot:spring-boot-test"
@@ -118,7 +114,6 @@ configure(project(':fraudDetectionService')) {
 		contractsDir = file("mappings")
 		stubsOutputDirRoot = file("${project.buildDir}/production/${project.name}-stubs/")
 	}
-	ext['jetty.version'] = '9.2.17.v20160517'
 
 	contracts {
 		stubsMode = "REMOTE"
@@ -149,5 +144,5 @@ configure(project(':loanApplicationService')) {
 }
 
 wrapper {
-	gradleVersion '3.5'
+	gradleVersion '4.0.2'
 }

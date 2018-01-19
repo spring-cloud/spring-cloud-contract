@@ -1,21 +1,18 @@
 package org.springframework.cloud;
 
-import org.springframework.cloud.frauddetection.Application;
-import org.springframework.cloud.frauddetection.FraudRestApplication;
-import org.eclipse.jetty.server.Server;
-import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
+import java.net.URI;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.UriBuilder;
-import java.net.URI;
+
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.glassfish.jersey.client.ClientConfig;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.springframework.cloud.frauddetection.FraudDetectionController;
 
 import static org.springframework.util.SocketUtils.findAvailableTcpPort;
 
@@ -24,25 +21,28 @@ public abstract class MvcTest {
 	public static WebTarget webTarget;
 
 	private static Server server;
-
 	private static Client client;
 
 	@BeforeClass
-	public static void setupTest() {
-
-		URI baseUri = UriBuilder.fromUri("http://localhost").port(findAvailableTcpPort(8000)).build();
-
-
-		ResourceConfig resourceConfig = ResourceConfig.forApplication(new FraudRestApplication());
-		resourceConfig.property("contextConfig", new AnnotationConfigApplicationContext(Application.class));
-		server = JettyHttpContainerFactory.createServer(baseUri, resourceConfig, true);
-
+	public static void setupTest() throws Exception {
+		int port = findAvailableTcpPort(8000);
+		URI baseUri = UriBuilder.fromUri("http://localhost").port(port).build();
+		// Create Server
+		Server server = new Server(port);
+		// Configure ServletContextHandler
+		ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+		context.setContextPath("/");
+		server.setHandler(context);
+		// Create Servlet Container
+		ServletHolder jerseyServlet = context.addServlet(org.glassfish.jersey.servlet.ServletContainer.class, "/*");
+		jerseyServlet.setInitOrder(0);
+		// Tells the Jersey Servlet which REST service/class to load.
+		jerseyServlet.setInitParameter("jersey.config.server.provider.classnames", FraudDetectionController.class.getCanonicalName());
+		// Start the server
+		server.start();
 		ClientConfig clientConfig = new ClientConfig();
-		clientConfig.connectorProvider(new ApacheConnectorProvider());
 		client = ClientBuilder.newClient(clientConfig);
-
 		webTarget = client.target(baseUri);
-
 		try {
 			server.start();
 		} catch (Exception e) {
