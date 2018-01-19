@@ -23,7 +23,7 @@ public class LoanApplicationService {
 
 	private final RestTemplate restTemplate;
 
-	private int port = 6565;
+	private int port = 6569;
 
 	@Autowired
 	public LoanApplicationService(RestTemplateBuilder builder) {
