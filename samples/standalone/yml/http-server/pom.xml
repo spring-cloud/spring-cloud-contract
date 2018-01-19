@@ -7,8 +7,8 @@
 	<artifactId>http-server-yml</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<name>Spring Cloud Contract Verifier Http Server Sample</name>
-	<description>Spring Cloud Contract Verifier Http Server Sample</description>
+	<name>Spring Cloud Contract Verifier Http Server YAML Sample</name>
+	<description>Spring Cloud Contract Verifier Http Server YAML Sample</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -20,8 +20,13 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
+<<<<<<< HEAD
 		<spring-cloud-contract.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-contract.version>
 		<spring-cloud-dependencies.version>Finchley.BUILD-SNAPSHOT</spring-cloud-dependencies.version>
+=======
+		<spring-cloud-contract.version>1.2.3.BUILD-SNAPSHOT</spring-cloud-contract.version>
+		<spring-cloud-dependencies.version>Edgware.BUILD-SNAPSHOT</spring-cloud-dependencies.version>
+>>>>>>> 1.2.x
 	</properties>
 
 	<dependencies>

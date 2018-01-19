@@ -7,8 +7,8 @@
 	<artifactId>http-client-yml</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<name>Spring Cloud Contract Verifier Http Client Sample</name>
-	<description>Spring Cloud Contract Verifier Http Client Sample</description>
+	<name>Spring Cloud Contract Verifier Http Client YAML Sample</name>
+	<description>Spring Cloud Contract Verifier Http Client YAML Sample</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
