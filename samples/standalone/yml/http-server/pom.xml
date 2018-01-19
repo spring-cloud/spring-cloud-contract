@@ -7,8 +7,8 @@
 	<artifactId>http-server-yml</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<name>Spring Cloud Contract Verifier Http Server Sample</name>
-	<description>Spring Cloud Contract Verifier Http Server Sample</description>
+	<name>Spring Cloud Contract Verifier Http Server YAML Sample</name>
+	<description>Spring Cloud Contract Verifier Http Server YAML Sample</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -20,7 +20,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<spring-cloud-contract.version>1.2.2.BUILD-SNAPSHOT</spring-cloud-contract.version>
+		<spring-cloud-contract.version>1.2.3.BUILD-SNAPSHOT</spring-cloud-contract.version>
 		<spring-cloud-dependencies.version>Edgware.BUILD-SNAPSHOT</spring-cloud-dependencies.version>
 	</properties>
 
@@ -105,7 +105,7 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
+				<!--This plugin's configuration is used to store Eclipse m2e settings
 					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
