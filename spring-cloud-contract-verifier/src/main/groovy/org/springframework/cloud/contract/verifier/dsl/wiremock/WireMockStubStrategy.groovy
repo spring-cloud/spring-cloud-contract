@@ -82,7 +82,6 @@ class WireMockStubStrategy {
 				stubMapping.newScenarioState = STEP_PREFIX + (contract.order + 1)
 			}
 		}
-
 		return StubMapping.buildJsonStringFor(stubMapping)
 	}
 }

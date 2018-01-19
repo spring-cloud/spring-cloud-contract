@@ -1,0 +1,30 @@
+request:
+  method: GET
+  url: /api/v1/xxxx
+  queryParameters:
+    foo:
+      - bar
+      - bar2
+  headers:
+    Authorization:
+      - secret
+      - secret2
+  body:
+    foo: bar
+    baz: 5
+response:
+  status: 200
+  headers:
+    Authorization: "foo {{{ request.headers.Authorization.0 }}} bar"
+  body:
+    url: "{{{ request.url }}}"
+    path: "{{{ request.path }}}"
+    pathIndex: "{{{ request.path.1 }}}"
+    param: "{{{ request.query.foo }}}"
+    paramIndex: "{{{ request.query.foo.1 }}}"
+    authorization: "{{{ request.headers.Authorization.0 }}}"
+    authorization2: "{{{ request.headers.Authorization.1 }}"
+    fullBody: "{{{ request.body }}}"
+    responseFoo: "{{{ jsonpath this '$.foo' }}}"
+    responseBaz: "{{{ jsonpath this '$.baz' }}}"
+    responseBaz2: "Bla bla {{{ jsonpath this '$.foo' }}} bla bla"

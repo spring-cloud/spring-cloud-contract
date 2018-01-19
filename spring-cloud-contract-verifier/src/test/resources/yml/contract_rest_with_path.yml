@@ -1,0 +1,47 @@
+description: Some description
+name: some name
+priority: 8
+ignored: true
+#tag::url_path[]
+request:
+  method: PUT
+  urlPath: /foo
+#end::url_path[]
+  queryParameters:
+    a: b
+    b: c
+  headers:
+    foo: bar
+    fooReq: baz
+  body:
+    foo: bar
+  matchers:
+    body:
+      - path: $.foo
+        type: by_regex
+        value: bar
+    headers:
+      - key: foo
+        regex: bar
+response:
+  status: 200
+  headers:
+    foo2: bar
+    foo3: foo33
+    fooRes: baz
+  body:
+    foo2: bar
+    foo3: baz
+  matchers:
+    body:
+      - path: $.foo2
+        type: by_regex
+        value: bar
+      - path: $.foo3
+        type: by_command
+        value: executeMe($it)
+    headers:
+      - key: foo2
+        regex: bar
+      - key: foo3
+        command: andMeToo($it)

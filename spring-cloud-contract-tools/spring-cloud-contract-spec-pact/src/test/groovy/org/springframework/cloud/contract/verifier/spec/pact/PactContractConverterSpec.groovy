@@ -8,6 +8,7 @@ import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 import org.springframework.core.io.Resource
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
+import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.Subject
 /**
@@ -16,6 +17,7 @@ import spock.lang.Subject
 class PactContractConverterSpec extends Specification {
 
 	File pactJson = new File(PactContractConverterSpec.getResource("/pact/pact.json").toURI())
+	File pact509Json = new File(PactContractConverterSpec.getResource("/pact/pact_509.json").toURI())
 	@Subject PactContractConverter converter = new PactContractConverter()
 
 	def "should accept json files that are pact files"() {
@@ -72,6 +74,38 @@ class PactContractConverterSpec extends Specification {
 			}
 		when:
 			Collection<Contract> contracts = converter.convertFrom(pactJson)
+		then:
+			contracts == [expectedContract]
+	}
+
+	@Issue("#509")
+	def "should convert from pact with matching rules to whole body to contract"() {
+		given:
+			Contract expectedContract = Contract.make {
+				description("a request to POST a person provider accepts a new person")
+				request {
+					method(POST())
+					url("/user-service/users")
+					headers {
+						contentType(applicationJson())
+					}
+					body(firstName: "Arthur", lastName: "Dent")
+				}
+				response {
+					status(201)
+					headers {
+						contentType(applicationJson())
+					}
+					body(id: 42, firstName: "Arthur", lastName: "Dent")
+					testMatchers {
+						jsonPath('''$.['id']''', byType())
+						jsonPath('''$.['lastName']''', byType())
+						jsonPath('''$.['firstName']''', byType())
+					}
+				}
+			}
+		when:
+			Collection<Contract> contracts = converter.convertFrom(pact509Json)
 		then:
 			contracts == [expectedContract]
 	}

@@ -1,0 +1,25 @@
+request:
+  method: PUT
+  url: /fraudcheck
+  body:
+    "client.id": 1234567890
+    loanAmount: 123.123
+  headers:
+    Content-Type: application/json
+  matchers:
+    body:
+      - path: $.['client.id']
+        type: by_regex
+        value: "[0-9]{10}"
+response:
+  status: 200
+  body:
+    fraudCheckStatus: "OK"
+    "rejection.reason": null
+  headers:
+    Content-Type: application/json;charset=UTF-8
+  matchers:
+    body:
+      - path: $.['rejection.reason']
+        type: by_command
+        value: assertThatRejectionReasonIsNull($it)

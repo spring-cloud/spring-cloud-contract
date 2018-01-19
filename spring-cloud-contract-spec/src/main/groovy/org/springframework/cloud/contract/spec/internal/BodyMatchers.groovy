@@ -17,7 +17,7 @@ import groovy.transform.ToString
 @ToString(includeFields = true, includePackage = false)
 class BodyMatchers {
 	private final RegexPatterns regexPatterns = new RegexPatterns()
-	private final List<BodyMatcher> jsonPathRegexMatchers = []
+	protected final List<BodyMatcher> jsonPathRegexMatchers = []
 
 	void jsonPath(String path, MatchingTypeValue matchingType) {
 		this.jsonPathRegexMatchers << new JsonPathBodyMatcher(path, matchingType)

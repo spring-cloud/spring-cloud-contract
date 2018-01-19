@@ -1,0 +1,13 @@
+label: some_label
+input:
+  messageFrom: jms:input
+  messageBody:
+    bookName: 'foo'
+  messageHeaders:
+    sample: header
+outputMessage:
+  sentTo: jms:output
+  body:
+    bookName: foo
+  headers:
+    BOOK-NAME: foo

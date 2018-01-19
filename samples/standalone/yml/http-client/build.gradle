@@ -1,0 +1,64 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		mavenLocal()
+		maven { url "http://repo.spring.io/snapshot" }
+		maven { url "http://repo.spring.io/milestone" }
+		maven { url "http://repo.spring.io/release" }
+	}
+	dependencies {
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE"
+	}
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+	maven { url "http://repo.spring.io/snapshot" }
+	maven { url "http://repo.spring.io/milestone" }
+	maven { url "http://repo.spring.io/release" }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'maven-publish'
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:$BOM_VERSION"
+	}
+}
+
+dependencies {
+	compile("org.springframework.boot:spring-boot-starter-web")
+	compile("org.springframework.boot:spring-boot-starter-actuator")
+
+	testCompile "org.springframework.cloud:spring-cloud-starter-contract-stub-runner"
+}
+
+test {
+	systemProperty 'spring.profiles.active', 'gradle'
+	testLogging {
+		exceptionFormat = 'full'
+	}
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.14'
+}
+
+task resolveDependencies {
+	doLast {
+		project.rootProject.allprojects.each { subProject ->
+			subProject.buildscript.configurations.each { configuration ->
+				configuration.resolve()
+			}
+			subProject.configurations.each { configuration ->
+				configuration.resolve()
+			}
+		}
+	}
+}

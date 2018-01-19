@@ -30,9 +30,21 @@ import com.toomuchcoding.jsonassert.JsonVerifiable;
  */
 class FinishedDelegatingJsonVerifiable extends DelegatingJsonVerifiable {
 
+	final String keyBeforeChecking;
+
+	FinishedDelegatingJsonVerifiable(String keyBeforeChecking, JsonVerifiable delegate,
+			LinkedList<String> methodsBuffer) {
+		super(delegate, methodsBuffer);
+		this.keyBeforeChecking = keyBeforeChecking;
+	}
+
 	FinishedDelegatingJsonVerifiable(JsonVerifiable delegate,
 			LinkedList<String> methodsBuffer) {
 		super(delegate, methodsBuffer);
+		this.keyBeforeChecking = delegate.jsonPath();
 	}
 
+	@Override public String keyBeforeChecking() {
+		return this.keyBeforeChecking;
+	}
 }

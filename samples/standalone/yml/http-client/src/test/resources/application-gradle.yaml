@@ -1,0 +1,3 @@
+stubrunner:
+  work-offline: true
+  stubs.ids: 'com.example:http-server-dsl-gradle:+:stubs:6565'

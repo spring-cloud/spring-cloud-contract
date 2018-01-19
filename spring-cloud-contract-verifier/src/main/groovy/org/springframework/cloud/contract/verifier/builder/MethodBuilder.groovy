@@ -61,18 +61,30 @@ class MethodBuilder {
 		return new MethodBuilder(methodName, stubContent, configProperties, contract.ignored || stubContent.ignored)
 	}
 
-	private static String methodName(ContractMetadata contract, File stubsFile, Contract stubContent) {
+	static String methodName(ContractMetadata contract, File stubsFile, Contract stubContent) {
 		if (stubContent.name) {
-			return NamesUtil.camelCase(NamesUtil.convertIllegalPackageChars(stubContent.name))
+			String name = NamesUtil.camelCase(NamesUtil.convertIllegalPackageChars(stubContent.name))
+			if (log.isDebugEnabled()) {
+				log.debug("Overriding the default test name with [" + name + "]")
+			}
+			return name
 		} else if (contract.convertedContract.size() > 1) {
 			int index = contract.convertedContract.findIndexOf { it == stubContent}
-			return "${camelCasedMethodFromFileName(stubsFile)}_${index}"
+			String name = "${camelCasedMethodFromFileName(stubsFile)}_${index}"
+			if (log.isDebugEnabled()) {
+				log.debug("Scenario found. The method name will be [" + name + "]")
+			}
+			return name
 		}
-		return camelCasedMethodFromFileName(stubsFile)
+		String name = camelCasedMethodFromFileName(stubsFile)
+		if (log.isDebugEnabled()) {
+			log.debug("The method name will be [" + name + "]")
+		}
+		return name
 	}
 
 	private static String camelCasedMethodFromFileName(File stubsFile) {
-		return NamesUtil.camelCase(NamesUtil.toLastDot(NamesUtil.afterLast(stubsFile.path, File.separator)))
+		return NamesUtil.camelCase(NamesUtil.convertIllegalMethodNameChars(NamesUtil.toLastDot(NamesUtil.afterLast(stubsFile.path, File.separator))))
 	}
 
 	/**

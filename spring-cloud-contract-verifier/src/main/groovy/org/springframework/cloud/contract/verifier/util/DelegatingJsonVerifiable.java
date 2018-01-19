@@ -71,7 +71,8 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 
 	@Override
 	public MethodBufferingJsonVerifiable contains(Object value) {
-		DelegatingJsonVerifiable verifiable = new FinishedDelegatingJsonVerifiable(this.delegate.contains(value), this.methodsBuffer);
+		DelegatingJsonVerifiable verifiable = new FinishedDelegatingJsonVerifiable(this.delegate.jsonPath(),
+		this.delegate.contains(value), this.methodsBuffer);
 		verifiable.appendMethodWithQuotedValue("contains", value);
 		if (isAssertingAValueInArray()) {
 			verifiable.methodsBuffer.offer(".value()");
@@ -145,7 +146,8 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 
 	@Override
 	public MethodBufferingJsonVerifiable isEqualTo(String value) {
-		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(this.delegate.isEqualTo(value), this.methodsBuffer);
+		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(this.delegate.jsonPath(),
+				this.delegate.isEqualTo(value), this.methodsBuffer);
 		if (this.delegate.isAssertingAValueInArray() && readyToCheck.methodsBuffer.peekLast().equals(".arrayField()")) {
 			readyToCheck.appendMethodWithQuotedValue("isEqualTo", escapeJava(value));
 			readyToCheck.methodsBuffer.offer(".value()");
@@ -167,7 +169,8 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 
 	@Override
 	public MethodBufferingJsonVerifiable isEqualTo(Number value) {
-		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(this.delegate.isEqualTo(value), this.methodsBuffer);
+		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(this.delegate.jsonPath(),
+				this.delegate.isEqualTo(value), this.methodsBuffer);
 		// related to #271 - the problem is with asserting arrays of maps vs arrays of primitives
 		String last = readyToCheck.methodsBuffer.peekLast();
 		boolean containsAMatcher = containsAnyMatcher(last);
@@ -185,20 +188,23 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 
 	@Override
 	public MethodBufferingJsonVerifiable isNull() {
-		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(this.delegate.isNull(), this.methodsBuffer);
+		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(
+				this.delegate.jsonPath(), this.delegate.isNull(), this.methodsBuffer);
 		readyToCheck.methodsBuffer.offer(".isNull()");
 		return readyToCheck;
 	}
 
 	@Override public MethodBufferingJsonVerifiable isEmpty() {
-		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(this.delegate.isEmpty(), this.methodsBuffer);
+		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(
+				this.delegate.jsonPath(), this.delegate.isEmpty(), this.methodsBuffer);
 		readyToCheck.methodsBuffer.offer(".isEmpty()");
 		return readyToCheck;
 	}
 
 	@Override
 	public MethodBufferingJsonVerifiable matches(String value) {
-		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(this.delegate.matches(value), this.methodsBuffer);
+		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(
+				this.delegate.jsonPath(), this.delegate.matches(value), this.methodsBuffer);
 		if (this.delegate.isAssertingAValueInArray()) {
 			readyToCheck.appendMethodWithQuotedValue("matches", escapedHackedJavaText(value));
 			readyToCheck.methodsBuffer.offer(".value()");
@@ -221,7 +227,8 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 
 	@Override
 	public MethodBufferingJsonVerifiable isEqualTo(Boolean value) {
-		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(this.delegate.isEqualTo(value), this.methodsBuffer);
+		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(
+				this.delegate.jsonPath(), this.delegate.isEqualTo(value), this.methodsBuffer);
 		if (this.delegate.isAssertingAValueInArray()) {
 			readyToCheck.methodsBuffer.offer(".value()");
 		} else {
@@ -233,6 +240,10 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 	@Override
 	public MethodBufferingJsonVerifiable value() {
 		return new FinishedDelegatingJsonVerifiable(this.delegate, this.methodsBuffer);
+	}
+
+	@Override public String keyBeforeChecking() {
+		return this.delegate.jsonPath();
 	}
 
 	@Override
@@ -272,7 +283,8 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 
 	@Override
 	public JsonVerifiable hasSize(int size) {
-		FinishedDelegatingJsonVerifiable verifiable = new FinishedDelegatingJsonVerifiable(this.delegate.hasSize(size), this.methodsBuffer);
+		FinishedDelegatingJsonVerifiable verifiable = new FinishedDelegatingJsonVerifiable(
+				this.delegate.jsonPath(), this.delegate.hasSize(size), this.methodsBuffer);
 		verifiable.methodsBuffer.offer(".hasSize(" + size + ")");
 		return verifiable;
 	}

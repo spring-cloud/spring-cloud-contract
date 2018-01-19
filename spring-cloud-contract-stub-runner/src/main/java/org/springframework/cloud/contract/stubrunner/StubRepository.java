@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.ContractConverter;
 import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStub;
+import org.springframework.cloud.contract.verifier.converter.YamlContractConverter;
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
@@ -165,11 +166,15 @@ class StubRepository {
 								BasicFileAttributes attrs) throws IOException {
 							File file = path.toFile();
 							ContractConverter converter = contractConverter(file);
-							if (isContractDescriptor(file) && isStubPerConsumerPathMatching(file)) {
-								contractDescriptors
-								.addAll(ContractVerifierDslConverter.convertAsCollection(file.getParentFile(), file));
-							} else if (converter != null && isStubPerConsumerPathMatching(file)) {
-								contractDescriptors.addAll(converter.convertFrom(file));
+							if (isStubPerConsumerPathMatching(file)) {
+								if (isContractDescriptor(file)) {
+									contractDescriptors
+											.addAll(ContractVerifierDslConverter.convertAsCollection(file.getParentFile(), file));
+								} else if (YamlContractConverter.INSTANCE.isAccepted(file)) {
+									contractDescriptors.addAll(YamlContractConverter.INSTANCE.convertFrom(file));
+								} else if (converter != null) {
+									contractDescriptors.addAll(converter.convertFrom(file));
+								}
 							}
 							return super.visitFile(path, attrs);
 						}
