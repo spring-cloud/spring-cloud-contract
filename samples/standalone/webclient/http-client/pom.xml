@@ -7,8 +7,8 @@
 	<artifactId>http-client-webclient</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<name>Spring Cloud Contract RestDocs Http Client Sample</name>
-	<description>Spring Cloud Contract RestDocs Http Client Sample</description>
+	<name>Spring Cloud Contract RestDocs Http WebClient Sample</name>
+	<description>Spring Cloud Contract RestDocs Http WebClient Sample</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
