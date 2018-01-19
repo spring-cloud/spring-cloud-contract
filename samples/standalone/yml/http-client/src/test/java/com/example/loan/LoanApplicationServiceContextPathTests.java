@@ -18,7 +18,7 @@ import com.example.loan.model.LoanApplicationStatus;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.NONE, properties="server.context-path=/app")
-@AutoConfigureStubRunner(ids = {"com.example:http-server-yml:+:stubs:6565"}, workOffline = true)
+@AutoConfigureStubRunner(ids = {"com.example:http-server-yml:+:stubs:6569"}, workOffline = true)
 @DirtiesContext
 public class LoanApplicationServiceContextPathTests {
 
