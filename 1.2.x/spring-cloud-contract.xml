@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2018-01-14</date>
+<date>2018-01-19</date>
 </info>
 <preface>
 <title></title>
@@ -1194,7 +1194,7 @@ one to one to the contents of the repo.</simpara>
 	&lt;parent&gt;
 		&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
 		&lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
-		&lt;version&gt;2.0.0.M6&lt;/version&gt;
+		&lt;version&gt;2.0.0.BUILD-SNAPSHOT&lt;/version&gt;
 		&lt;relativePath /&gt;
 	&lt;/parent&gt;
 
@@ -1435,13 +1435,16 @@ If you&#8217;re using YAML just use the <literal>bodyFromFile</literal> property
 </chapter>
 <chapter xml:id="_spring_cloud_contract_verifier_setup">
 <title>Spring Cloud Contract Verifier Setup</title>
-<simpara>You can set up Spring Cloud Contract Verifier in either of two ways</simpara>
+<simpara>You can set up Spring Cloud Contract Verifier in the following ways:</simpara>
 <itemizedlist>
 <listitem>
 <simpara><link linkend="gradle-project">As a Gradle project</link></simpara>
 </listitem>
 <listitem>
 <simpara><link linkend="maven-project">As a Maven project</link></simpara>
+</listitem>
+<listitem>
+<simpara><link linkend="docker-project">As a Docker project</link></simpara>
 </listitem>
 </itemizedlist>
 <section xml:id="gradle-project">
@@ -2424,6 +2427,215 @@ name of <literal>scenario1</literal> and the three following steps:</simpara>
 <simpara>More details about WireMock scenarios can be found at
 <link xl:href="http://wiremock.org/stateful-behaviour.html">http://wiremock.org/stateful-behaviour.html</link></simpara>
 <simpara>Spring Cloud Contract Verifier also generates tests with a guaranteed order of execution.</simpara>
+</section>
+<section xml:id="docker-project">
+<title>Docker Project</title>
+<simpara>We&#8217;re publishing a <literal>springcloud/spring-cloud-contract</literal> Docker image
+that contains a project that will generate tests and execute them in <literal>EXPLICIT</literal> mode
+against a running application.</simpara>
+<tip>
+<simpara>The <literal>EXPLICIT</literal> mode means that the tests generated from contracts will send
+real requests and not the mocked ones.</simpara>
+</tip>
+<section xml:id="_short_intro_to_maven_jars_and_binary_storage">
+<title>Short intro to Maven, JARs and Binary storage</title>
+<simpara>Since the Docker image can be used by non JVM projects, it&#8217;s good to
+explain the basic terms behind Spring Cloud Contract packaging defaults.</simpara>
+<simpara>Part of the following definitions were taken from the <link xl:href="https://maven.apache.org/glossary.html">Maven Glossary</link></simpara>
+<itemizedlist>
+<listitem>
+<simpara><literal>Project</literal>: Maven thinks in terms of projects. Everything that you
+will build are projects. Those projects follow a well defined
+“Project Object Model”. Projects can depend on other projects,
+in which case the latter are called “dependencies”. A project may
+consistent of several subprojects, however these subprojects are still
+treated equally as projects.</simpara>
+</listitem>
+<listitem>
+<simpara><literal>Artifact</literal>: An artifact is something that is either produced or used
+by a project. Examples of artifacts produced by Maven for a project
+include: JARs, source and binary distributions. Each artifact
+is uniquely identified by a group id and an artifact ID which is
+unique within a group.</simpara>
+</listitem>
+<listitem>
+<simpara><literal>JAR</literal>: JAR stands for Java ARchive. It&#8217;s a format based on
+the ZIP file format. Spring Cloud Contract packages the contracts and generated
+stubs in a JAR file.</simpara>
+</listitem>
+<listitem>
+<simpara><literal>GroupId</literal>: A group ID is a universally unique identifier for a project.
+While this is often just the project name (eg. commons-collections),
+it is helpful to use a fully-qualified package name to distinguish it
+from other projects with a similar name (eg. org.apache.maven).
+Typically, when published to the Artifact Manager, the <literal>GroupId</literal> will get
+slash separated and form part of the URL. E.g. for group id <literal>com.example</literal>
+and artifact id <literal>application</literal> would be <literal>/com/example/application/</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara><literal>Classifier</literal>: The Maven dependency notation looks as follows:
+<literal>groupId:artifactId:version:classifier</literal>. The classifier is additional suffix
+passed to the dependency. E.g. <literal>stubs</literal>, <literal>sources</literal>. The same dependency
+e.g. <literal>com.example:application</literal> can produce multiple artifacts that
+differ from each other with the classifier.</simpara>
+</listitem>
+<listitem>
+<simpara><literal>Artifact manager</literal>: When you generate binaries / sources / packages, you would
+like them to be available for others to download / reference or reuse. In case
+of the JVM world those artifacts would be JARs, for Ruby these are gems
+and for Docker those would be Docker images. You can store those artifacts
+in a manager. Examples of such managers can be <link xl:href="https://jfrog.com/artifactory/">Artifactory</link>
+or <link xl:href="http://www.sonatype.org/nexus/">Nexus</link>.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="_how_it_works_2">
+<title>How it works</title>
+<simpara>The image searches for contracts under the <literal>/contracts</literal> folder.
+The output from running the tests will be available under
+<literal>/spring-cloud-contract/build</literal> folder (it&#8217;s useful for debugging
+purposes).</simpara>
+<simpara>It&#8217;s enough for you to mount your contracts, pass the environment variables
+ and the image will:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>generate the contract tests</simpara>
+</listitem>
+<listitem>
+<simpara>execute the tests against the provided URL</simpara>
+</listitem>
+<listitem>
+<simpara>generate the <link xl:href="http://wiremock.org">WireMock</link> stubs</simpara>
+</listitem>
+<listitem>
+<simpara>(optional - turned on by default) publish the stubs to a Artifact Manager</simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="_environment_variables">
+<title>Environment Variables</title>
+<simpara>The Docker image requires some environment variables to point to
+your running application, to the Artifact manager instance etc.</simpara>
+<itemizedlist>
+<listitem>
+<simpara><literal>PROJECT_GROUP</literal> - your project&#8217;s group id. Defaults to <literal>com.example</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara><literal>PROJECT_VERSION</literal> - your project&#8217;s version. Defaults to <literal>0.0.1-SNAPSHOT</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>PROJECT_NAME</literal> - artifact id. Defaults to <literal>example</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>REPO_WITH_BINARIES_URL</literal> - URL of your Artifact Manager. Defaults to <literal><link xl:href="http://localhost:8081/artifactory/libs-release-local">http://localhost:8081/artifactory/libs-release-local</link></literal>
+which is the default URL of <link xl:href="https://jfrog.com/artifactory/">Artifactory</link> running locally</simpara>
+</listitem>
+<listitem>
+<simpara><literal>REPO_WITH_BINARIES_USERNAME</literal> - (optional) username when the Artifact Manager is secured</simpara>
+</listitem>
+<listitem>
+<simpara><literal>REPO_WITH_BINARIES_PASSWORD</literal> - (optional) password when the Artifact Manager is secured</simpara>
+</listitem>
+<listitem>
+<simpara><literal>PUBLISH_ARTIFACTS</literal> - if set to <literal>true</literal> then will publish artifact to binary storage. Defaults to <literal>true</literal>.</simpara>
+</listitem>
+</itemizedlist>
+<simpara>These environment variables are used when tests are executed:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><literal>APPLICATION_BASE_URL</literal> - url against which tests should be executed.
+Remember that it has to be accessible from the Docker container (e.g. <literal>localhost</literal>
+will not work)</simpara>
+</listitem>
+<listitem>
+<simpara><literal>APPLICATION_USERNAME</literal> - (optional) username for basic authentication to your application</simpara>
+</listitem>
+<listitem>
+<simpara><literal>APPLICATION_PASSWORD</literal> - (optional) password for basic authentication to your application</simpara>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+<section xml:id="_example_of_usage">
+<title>Example of usage</title>
+<simpara>Let&#8217;s take a look at a simple MVC application</simpara>
+<programlisting language="bash" linenumbering="unnumbered">$ git clone https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs
+$ cd bookstore</programlisting>
+<simpara>The contracts are available under <literal>/contracts</literal> folder.</simpara>
+</section>
+<section xml:id="docker-server-side">
+<title>Server side (nodejs)</title>
+<simpara>Since we want to run tests, we could just execute:</simpara>
+<programlisting language="bash" linenumbering="unnumbered">$ npm test</programlisting>
+<simpara>however, for learning purposes, let&#8217;s split it into pieces:</simpara>
+<programlisting language="bash" linenumbering="unnumbered"># Stop docker infra (nodejs, artifactory)
+$ ./stop_infra.sh
+# Start docker infra (nodejs, artifactory)
+$ ./setup_infra.sh
+
+# Kill &amp; Run app
+$ pkill -f "node app"
+$ nohup node app &amp;
+
+# Prepare environment variables
+$ SC_CONTRACT_DOCKER_VERSION="..."
+$ APP_IP="192.168.0.100"
+$ APP_PORT="3000"
+$ ARTIFACTORY_PORT="8081"
+$ APPLICATION_BASE_URL="http://${APP_IP}:${APP_PORT}"
+$ ARTIFACTORY_URL="http://${APP_IP}:${ARTIFACTORY_PORT}/artifactory/libs-release-local"
+$ CURRENT_DIR="$( pwd )"
+$ CURRENT_FOLDER_NAME=${PWD##*/}
+$ PROJECT_VERSION="0.0.1.RELEASE"
+
+# Execute contract tests
+$ docker run  --rm -e "APPLICATION_BASE_URL=${APPLICATION_BASE_URL}" -e "PUBLISH_ARTIFACTS=true" -e "PROJECT_NAME=${CURRENT_FOLDER_NAME}" -e "REPO_WITH_BINARIES_URL=${ARTIFACTORY_URL}" -e "PROJECT_VERSION=${PROJECT_VERSION}" -v "${CURRENT_DIR}/contracts/:/contracts:ro" -v "${CURRENT_DIR}/node_modules/spring-cloud-contract/output:/spring-cloud-contract-output/" springcloud/spring-cloud-contract:"${SC_CONTRACT_DOCKER_VERSION}"
+
+# Kill app
+$ pkill -f "node app"</programlisting>
+<simpara>What will happen is that via bash scripts:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>infrastructure will be set up (MongoDb, Artifactory).
+In real life scenario you would just run the NodeJS application
+with mocked database. In this example we want to show how we can
+benefit from Spring Cloud Contract in no time.</simpara>
+</listitem>
+<listitem>
+<simpara>due to those constraints the contracts also represent the
+stateful situation</simpara>
+<itemizedlist>
+<listitem>
+<simpara>first request is a <literal>POST</literal> that causes data to get inserted to the database</simpara>
+</listitem>
+<listitem>
+<simpara>second request is a <literal>GET</literal> that returns a list of data with 1 previously inserted element</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+<listitem>
+<simpara>the NodeJS application will be started (on port <literal>3000</literal>)</simpara>
+</listitem>
+<listitem>
+<simpara>contract tests will be generated via Docker and tests
+will be executed against the running application</simpara>
+<itemizedlist>
+<listitem>
+<simpara>the contracts will be taken from <literal>/contracts</literal> folder.</simpara>
+</listitem>
+<listitem>
+<simpara>the output of the test execution is available under
+<literal>node_modules/spring-cloud-contract/output</literal>.</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+<listitem>
+<simpara>the stubs will be uploaded to Artifactory. You can check them out
+under <link xl:href="http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/">http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/</link> .
+The stubs will be here <link xl:href="http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/bookstore-0.0.1.RELEASE-stubs.jar">http://localhost:8081/artifactory/libs-release-local/com/example/bookstore/0.0.1.RELEASE/bookstore-0.0.1.RELEASE-stubs.jar</link>.</simpara>
+</listitem>
+</itemizedlist>
+<simpara>To see how the client side looks like check out the <xref linkend="stubrunner-docker"/> section.</simpara>
+</section>
 </section>
 </chapter>
 <chapter xml:id="_spring_cloud_contract_verifier_messaging">
@@ -3945,6 +4157,67 @@ would like the Stub Runner to take into consideration. You can read more about t
 <link xl:href="https://wiki.eclipse.org/Aether/New_and_Noteworthy#Version_Ranges">Aether versioning
 ranges here</link>.</simpara>
 </important>
+</section>
+</section>
+<section xml:id="stubrunner-docker">
+<title>Stub Runner Docker</title>
+<simpara>We&#8217;re publishing a <literal>spring-cloud/spring-cloud-contract-stub-runner</literal> Docker image
+that will start the standalone version of Stub Runner.</simpara>
+<simpara>If you want to learn more about the basics of Maven, artifact ids,
+group ids, classifiers and Artifact Managers, just click here <xref linkend="docker-project"/>.</simpara>
+<section xml:id="_how_to_use_it_2">
+<title>How to use it</title>
+<simpara>Just execute the docker image. You can pass any of the <xref linkend="common-properties-junit-spring"/>
+as environment variables. The convention is that all the
+letters should be upper case. The camel case notation should
+and the dot (<literal>.</literal>) should be separated via underscore (<literal>_</literal>). E.g.
+ the <literal>stubrunner.repositoryRoot</literal> property should be represented
+  as a <literal>STUBRUNNER_REPOSITORY_ROOT</literal> environment variable.</simpara>
+</section>
+<section xml:id="_example_of_client_side_usage_in_a_non_jvm_project">
+<title>Example of client side usage in a non JVM project</title>
+<simpara>We&#8217;d like to use the stubs created in this <xref linkend="docker-server-side"/> step.
+Let&#8217;s assume that we want to run the stubs on port <literal>9876</literal>. The NodeJS code
+is available here:</simpara>
+<programlisting language="bash" linenumbering="unnumbered">$ git clone https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs
+$ cd bookstore</programlisting>
+<simpara>Let&#8217;s run the Stub Runner Boot application with the stubs.</simpara>
+<programlisting language="bash" linenumbering="unnumbered"># Provide the Spring Cloud Contract Docker version
+$ SC_CONTRACT_DOCKER_VERSION="..."
+# The IP at which the app is running and Docker container can reach it
+$ APP_IP="192.168.0.100"
+# Spring Cloud Contract Stub Runner properties
+$ STUBRUNNER_PORT="8083"
+# Stub coordinates 'groupId:artifactId:version:classifier:port'
+$ STUBRUNNER_IDS="com.example:bookstore:0.0.1.RELEASE:stubs:9876"
+$ STUBRUNNER_REPOSITORY_ROOT="http://${APP_IP}:8081/artifactory/libs-release-local"
+# Run the docker with Stub Runner Boot
+$ docker run  --rm -e "STUBRUNNER_IDS=${STUBRUNNER_IDS}" -e "STUBRUNNER_REPOSITORY_ROOT=${STUBRUNNER_REPOSITORY_ROOT}" -p "${STUBRUNNER_PORT}:${STUBRUNNER_PORT}" -p "9876:9876" springcloud/spring-cloud-contract-stub-runner:"${SC_CONTRACT_DOCKER_VERSION}"</programlisting>
+<simpara>What&#8217;s happening is that</simpara>
+<itemizedlist>
+<listitem>
+<simpara>a standalone Stub Runner application got started</simpara>
+</listitem>
+<listitem>
+<simpara>it downloaded the stub with coordinates <literal>com.example:bookstore:0.0.1.RELEASE:stubs</literal> on port <literal>9876</literal></simpara>
+</listitem>
+<listitem>
+<simpara>it got downloaded from Artifactory running at <literal><link xl:href="http://192.168.0.100:8081/artifactory/libs-release-local">http://192.168.0.100:8081/artifactory/libs-release-local</link></literal></simpara>
+</listitem>
+<listitem>
+<simpara>after a while Stub Runner will be running on port <literal>8083</literal></simpara>
+</listitem>
+<listitem>
+<simpara>and the stubs will be running at port <literal>9876</literal></simpara>
+</listitem>
+</itemizedlist>
+<simpara>On the server side we built a stateful stub. Let&#8217;s use curl to assert
+that the stubs are setup properly.</simpara>
+<programlisting language="bash" linenumbering="unnumbered"># let's execute the first request (no response is returned)
+$ curl -H "Content-Type:application/json" -X POST --data '{ "title" : "Title", "genre" : "Genre", "description" : "Description", "author" : "Author", "publisher" : "Publisher", "pages" : 100, "image_url" : "https://d213dhlpdb53mu.cloudfront.net/assets/pivotal-square-logo-41418bd391196c3022f3cd9f3959b3f6d7764c47873d858583384e759c7db435.svg", "buy_url" : "https://pivotal.io" }' http://localhost:9876/api/books
+# Now time for the second request
+$ curl -X GET http://localhost:9876/api/books
+# You will receive contents of the JSON</programlisting>
 </section>
 </section>
 </chapter>
