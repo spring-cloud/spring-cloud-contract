@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -53,25 +54,27 @@
 	<build>
 		<plugins>
 			<plugin>
-			  <groupId>org.apache.maven.plugins</groupId>
-			  <artifactId>maven-dependency-plugin</artifactId>
-			  <version>3.0.0</version>
-			  <executions>
-			    <execution>
-			      <id>copy-dependencies</id>
-			      <phase>package</phase>
-			      <goals>
-			        <goal>copy-dependencies</goal>
-			      </goals>
-			      <configuration>
-			        <outputDirectory>${project.build.directory}/maven_dependencies</outputDirectory>
-			        <overWriteReleases>false</overWriteReleases>
-			        <overWriteSnapshots>true</overWriteSnapshots>
-			        <overWriteIfNewer>true</overWriteIfNewer>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>
+								${project.build.directory}/maven_dependencies
+							</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
 							<useRepositoryLayout>true</useRepositoryLayout>
-			      </configuration>
-			    </execution>
-			  </executions>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -92,23 +95,24 @@
 			</plugin>
 			<plugin>
 				<groupId>com.spotify</groupId>
-			  <artifactId>dockerfile-maven-plugin</artifactId>
-			  <version>1.3.7</version>
-			  <executions>
-			    <execution>
-			      <id>default</id>
-			      <goals>
-			        <goal>build</goal>
-			        <goal>push</goal>
-			      </goals>
-			    </execution>
-			  </executions>
-			  <configuration>
-			    <repository>${docker.registry.organization}/spring-cloud-contract</repository>
-			    <tag>${project.version}</tag>
-	        <username>${env.DOCKER_HUB_USERNAME}</username>
-	        <password>${env.DOCKER_HUB_PASSWORD}</password>
-			  </configuration>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>1.3.7</version>
+				<executions>
+					<execution>
+						<id>default</id>
+						<goals>
+							<goal>build</goal>
+							<goal>push</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<repository>${docker.registry.organization}/spring-cloud-contract
+					</repository>
+					<tag>${project.version}</tag>
+					<username>${env.DOCKER_HUB_USERNAME}</username>
+					<password>${env.DOCKER_HUB_PASSWORD}</password>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

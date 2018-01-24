@@ -155,7 +155,7 @@ $ STUBRUNNER_PORT="8083"
 $ STUBRUNNER_IDS="com.example:bookstore:0.0.1.RELEASE:stubs:9876"
 $ STUBRUNNER_REPOSITORY_ROOT="http://${APP_IP}:8081/artifactory/libs-release-local"
 # Run the docker with Stub Runner Boot
-$ docker run  --rm -e "STUBRUNNER_IDS=${STUBRUNNER_IDS}" -e "STUBRUNNER_REPOSITORY_ROOT=${STUBRUNNER_REPOSITORY_ROOT}" -p "${STUBRUNNER_PORT}:${STUBRUNNER_PORT}" -p "9876:9876" spring-cloud/spring-cloud-contract-stub-runner:"${SC_CONTRACT_DOCKER_VERSION}"
+$ docker run  --rm -e "STUBRUNNER_IDS=${STUBRUNNER_IDS}" -e "STUBRUNNER_REPOSITORY_ROOT=${STUBRUNNER_REPOSITORY_ROOT}" -p "${STUBRUNNER_PORT}:${STUBRUNNER_PORT}" -p "9876:9876" springcloud/spring-cloud-contract-stub-runner:"${SC_CONTRACT_DOCKER_VERSION}"
 ```
 
 What's happening is that

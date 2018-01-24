@@ -17,7 +17,7 @@
 	<description>Spring Cloud Contract Docker Parent</description>
 
 	<properties>
-		<docker.registry.organization>spring-cloud</docker.registry.organization>
+		<docker.registry.organization>springcloud</docker.registry.organization>
 	</properties>
 
 	<modules>

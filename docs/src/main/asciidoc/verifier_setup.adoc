@@ -903,7 +903,7 @@ Spring Cloud Contract Verifier also generates tests with a guaranteed order of e
 [[docker-project]]
 === Docker Project
 
-We're publishing a `spring-cloud/spring-cloud-contract` Docker image
+We're publishing a `springcloud/spring-cloud-contract` Docker image
 that contains a project that will generate tests and execute them in `EXPLICIT` mode
 against a running application.
 
@@ -1031,7 +1031,7 @@ $ CURRENT_FOLDER_NAME=${PWD##*/}
 $ PROJECT_VERSION="0.0.1.RELEASE"
 
 # Execute contract tests
-$ docker run  --rm -e "APPLICATION_BASE_URL=${APPLICATION_BASE_URL}" -e "PUBLISH_ARTIFACTS=true" -e "PROJECT_NAME=${CURRENT_FOLDER_NAME}" -e "REPO_WITH_BINARIES_URL=${ARTIFACTORY_URL}" -e "PROJECT_VERSION=${PROJECT_VERSION}" -v "${CURRENT_DIR}/contracts/:/contracts:ro" -v "${CURRENT_DIR}/node_modules/spring-cloud-contract/output:/spring-cloud-contract-output/" spring-cloud/spring-cloud-contract:"${SC_CONTRACT_DOCKER_VERSION}"
+$ docker run  --rm -e "APPLICATION_BASE_URL=${APPLICATION_BASE_URL}" -e "PUBLISH_ARTIFACTS=true" -e "PROJECT_NAME=${CURRENT_FOLDER_NAME}" -e "REPO_WITH_BINARIES_URL=${ARTIFACTORY_URL}" -e "PROJECT_VERSION=${PROJECT_VERSION}" -v "${CURRENT_DIR}/contracts/:/contracts:ro" -v "${CURRENT_DIR}/node_modules/spring-cloud-contract/output:/spring-cloud-contract-output/" springcloud/spring-cloud-contract:"${SC_CONTRACT_DOCKER_VERSION}"
 
 # Kill app
 $ pkill -f "node app"

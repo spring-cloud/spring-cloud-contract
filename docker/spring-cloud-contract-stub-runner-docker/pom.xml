@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -27,51 +28,55 @@
 	<build>
 		<plugins>
 			<plugin>
-			  <groupId>org.apache.maven.plugins</groupId>
-			  <artifactId>maven-dependency-plugin</artifactId>
-			  <version>3.0.0</version>
-			  <executions>
-			    <execution>
-			      <id>copy-dependencies</id>
-			      <phase>package</phase>
-			      <goals>
-			        <goal>copy</goal>
-			      </goals>
-			      <configuration>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
 							<artifactItems>
-                <artifactItem>
+								<artifactItem>
 									<groupId>${project.groupId}</groupId>
-									<artifactId>spring-cloud-contract-stub-runner-boot</artifactId>
-                  <version>${project.version}</version>
-                  <type>jar</type>
-                  <overWrite>true</overWrite>
-                  <outputDirectory>${project.build.directory}/libs</outputDirectory>
-                  <destFileName>stub-runner-boot.jar</destFileName>
-                </artifactItem>
-              </artifactItems>
-			      </configuration>
-			    </execution>
-			  </executions>
+									<artifactId>spring-cloud-contract-stub-runner-boot
+									</artifactId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>${project.build.directory}/libs
+									</outputDirectory>
+									<destFileName>stub-runner-boot.jar</destFileName>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>com.spotify</groupId>
-			  <artifactId>dockerfile-maven-plugin</artifactId>
-			  <version>1.3.7</version>
-			  <executions>
-			    <execution>
-			      <id>default</id>
-			      <goals>
-			        <goal>build</goal>
-			        <goal>push</goal>
-			      </goals>
-			    </execution>
-			  </executions>
-			  <configuration>
-			    <repository>${docker.registry.organization}/spring-cloud-contract-stub-runner</repository>
-			    <tag>${project.version}</tag>
-	        <username>${env.DOCKER_HUB_USERNAME}</username>
-	        <password>${env.DOCKER_HUB_PASSWORD}</password>
-			  </configuration>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>1.3.7</version>
+				<executions>
+					<execution>
+						<id>default</id>
+						<goals>
+							<goal>build</goal>
+							<goal>push</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<repository>
+						${docker.registry.organization}/spring-cloud-contract-stub-runner
+					</repository>
+					<tag>${project.version}</tag>
+					<username>${env.DOCKER_HUB_USERNAME}</username>
+					<password>${env.DOCKER_HUB_PASSWORD}</password>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
