@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-contract-docker-parent</artifactId>
+		<version>1.2.3.BUILD-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<artifactId>spring-cloud-contract-docker</artifactId>
+	<packaging>pom</packaging>
+	<version>1.2.3.BUILD-SNAPSHOT</version>
+	<name>Spring Cloud Contract Docker</name>
+	<description>Spring Cloud Contract Docker</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-ant</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-groovydoc</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-contract-verifier</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-contract-gradle-plugin</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.spring.gradle</groupId>
+			<artifactId>dependency-management-plugin</artifactId>
+			<version>1.0.4.RELEASE</version>
+			<scope>runtime</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-dependency-plugin</artifactId>
+			  <version>3.0.0</version>
+			  <executions>
+			    <execution>
+			      <id>copy-dependencies</id>
+			      <phase>package</phase>
+			      <goals>
+			        <goal>copy-dependencies</goal>
+			      </goals>
+			      <configuration>
+			        <outputDirectory>${project.build.directory}/maven_dependencies</outputDirectory>
+			        <overWriteReleases>false</overWriteReleases>
+			        <overWriteSnapshots>true</overWriteSnapshots>
+			        <overWriteIfNewer>true</overWriteIfNewer>
+							<useRepositoryLayout>true</useRepositoryLayout>
+			      </configuration>
+			    </execution>
+			  </executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.6.0</version>
+				<executions>
+					<execution>
+						<id>gradle</id>
+						<phase>package</phase>
+						<configuration>
+							<executable>./get_dependencies.sh</executable>
+						</configuration>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.spotify</groupId>
+			  <artifactId>dockerfile-maven-plugin</artifactId>
+			  <version>1.3.7</version>
+			  <executions>
+			    <execution>
+			      <id>default</id>
+			      <goals>
+			        <goal>build</goal>
+			        <goal>push</goal>
+			      </goals>
+			    </execution>
+			  </executions>
+			  <configuration>
+			    <repository>${docker.registry.organization}/spring-cloud-contract</repository>
+			    <tag>${project.version}</tag>
+	        <username>${env.DOCKER_HUB_USERNAME}</username>
+	        <password>${env.DOCKER_HUB_PASSWORD}</password>
+			  </configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

@@ -1,0 +1,114 @@
+buildscript {
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		if (!"${verifierVersion}".contains("RELEASE")) {
+			maven { url "http://repo.spring.io/snapshot" }
+			maven { url "http://repo.spring.io/milestone" }
+			maven { url "http://repo.spring.io/release" }
+		}
+	}
+
+	dependencies {
+		classpath "io.spring.gradle:dependency-management-plugin:1.0.4.RELEASE"
+		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifierVersion}"
+	}
+}
+
+group = getProp("PROJECT_GROUP") ?: 'com.example'
+version = getProp("PROJECT_VERSION") ?: '0.0.1-SNAPSHOT'
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+		if (!"${verifierVersion}".contains("RELEASE")) {
+			maven { url "http://repo.spring.io/snapshot" }
+			maven { url "http://repo.spring.io/milestone" }
+			maven { url "http://repo.spring.io/release" }
+		}
+}
+
+apply plugin: 'groovy'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'spring-cloud-contract'
+apply plugin: 'maven-publish'
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"
+	}
+}
+
+dependencies {
+	testCompile("org.springframework.cloud:spring-cloud-starter-contract-verifier")
+}
+
+test {
+	testLogging {
+		exceptionFormat = 'full'
+		afterSuite { desc, result ->
+			if (!desc.parent) {
+				println "Results: (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+				if (result.testCount == 0) {
+					throw new IllegalStateException("No tests were found. Failing the build")
+				}
+			}
+		}
+	}
+}
+
+// tests - contracts
+contracts {
+	baseClassForTests = "contracts.RestBase"
+	testMode = "EXPLICIT"
+	contractsDslDir = new File("/contracts")
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '4.4.1'
+}
+
+task cleanOutput(type: Delete) {
+	def dirName = "/spring-cloud-contract-output"
+  file(dirName).list().each {
+      f -> delete "${dirName}/${f}"
+  }
+}
+
+task copyOutput(type: Copy) {
+	dependsOn("cleanOutput")
+	from 'build'
+	into '/spring-cloud-contract-output'
+}
+
+test.finalizedBy("copyOutput")
+
+publishing {
+	repositories {
+		maven {
+			url getProp('REPO_WITH_BINARIES_URL') ?: 'http://localhost:8081/artifactory/libs-release-local'
+			credentials {
+				username getProp('REPO_WITH_BINARIES_USERNAME') ?: 'admin'
+				password getProp('REPO_WITH_BINARIES_PASSWORD') ?: 'password'
+			}
+		}
+	}
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+		}
+	}
+}
+
+// explicitly disable artifacts publication
+String publishArtifacts = getProp("PUBLISH_ARTIFACTS") ?: "true"
+boolean publishEnabled = Boolean.parseBoolean(publishArtifacts)
+publish.setEnabled(publishEnabled)
+
+project.tasks.findAll { it.name.startsWith('publish') }*.setEnabled(publishEnabled)
+
+String getProp(String propName) {
+	return hasProperty(propName) ?
+			(getProperty(propName) ?: System.properties[propName]) : System.properties[propName] ?:
+			System.getenv(propName)
+}
