@@ -992,9 +992,8 @@ will not work)
 Let's take a look at a simple MVC application
 
 ```bash
-$ git clone https://github.com/marcingrzejszczak/bookstore/
+$ git clone https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs
 $ cd bookstore
-$ git checkout sc-contract
 ```
 
 The contracts are available under `/contracts` folder.

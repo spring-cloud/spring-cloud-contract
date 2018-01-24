@@ -138,9 +138,8 @@ Let's assume that we want to run the stubs on port `9876`. The NodeJS code
 is available here:
 
 ```bash
-$ git clone https://github.com/marcingrzejszczak/bookstore/
+$ git clone https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs
 $ cd bookstore
-$ git checkout sc-contract
 ```
 
 Let's run the Stub Runner Boot application with the stubs.
