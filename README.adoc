@@ -1547,11 +1547,15 @@ IMPORTANT: You need to have all the necessary Groovy plugins
  Intellij IDEA having both Eclipse Groovy Compiler Plugin & GMavenPlus Intellij Plugin
  results in properly imported project.
 
+IMPORTANT: Spring Cloud Contract builds Docker images. Remember to
+have Docker installed.
+
 === Project structure
 
 Here you can find the Spring Cloud Contract folder structure
 
 ```
+├── docker
 ├── samples
 ├── scripts
 ├── spring-cloud-contract-dependencies
@@ -1564,6 +1568,7 @@ Here you can find the Spring Cloud Contract folder structure
 └── tests
 ```
 
+ - `docker` - folder contains docker images
  - `samples` - folder contains test samples together with standalone ones used also to build documentation
  - `scripts` - contains scripts to build and test `Spring Cloud Contract` with Maven, Gradle and standalone projects
  - `spring-cloud-contract-dependencies` - contains Spring Cloud Contract BOM
