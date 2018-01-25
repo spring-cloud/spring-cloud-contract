@@ -5,19 +5,7 @@ such as YAML, RAML or PACT. In those cases, you still want to benefit from the a
 generation of tests and stubs. You can add your own implementation for generating both
 tests and stubs. Also, you can customize the way tests are generated (for example, you
 can generate tests for other languages) and the way stubs are generated (for example, you
-can generate stubs for other HTTP server implementations).</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_custom_contract_converter" href="#_custom_contract_converter"></a>10.1&nbsp;Custom Contract Converter</h2></div></div></div><p>Assume that your contract is written in a YAML file as follows:</p><pre class="programlisting">request:
-  url: /foo
-  method: PUT
-  headers:
-    foo: bar
-  body:
-    foo: bar
-response:
-  status: 200
-  headers:
-    foo2: bar
-  body:
-    foo2: bar</pre><p>The <code class="literal">ContractConverter</code> interface lets you register your own implementation of a contract
+can generate stubs for other HTTP server implementations).</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_custom_contract_converter" href="#_custom_contract_converter"></a>10.1&nbsp;Custom Contract Converter</h2></div></div></div><p>The <code class="literal">ContractConverter</code> interface lets you register your own implementation of a contract
 structure converter. The following code listing shows the <code class="literal">ContractConverter</code> interface:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.springframework.cloud.contract.spec
 
 <strong class="hl-tag" style="color: blue">/**
@@ -58,87 +46,8 @@ structure converter. The following code listing shows the <code class="literal">
 }</pre><p>Your implementation must define the condition on which it should start the
 conversion. Also, you must define how to perform that conversion in both directions.</p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>Once you create your implementation, you must create a
 <code class="literal">/META-INF/spring.factories</code> file in which you provide the fully qualified name of your
-implementation.</p></td></tr></table></div><p>The following example shows a typical <code class="literal">spring.factories</code> file:</p><pre class="screen"># Converters
-org.springframework.cloud.contract.spec.ContractConverter=\
-org.springframework.cloud.contract.verifier.converter.YamlContractConverter
-
-# tag::extension[]
-org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions=\
-org.springframework.cloud.contract.verifier.dsl.wiremock.TestWireMockExtensions
-# end::extension[]</pre><p>The following example shows a typical YAML implementation that matches the preceding
-example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.springframework.cloud.contract.verifier.converter
-
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> java.nio.file.Files
-
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> groovy.transform.CompileStatic
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.Contract
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.ContractConverter
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.internal.Headers
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.yaml.snakeyaml.Yaml
-
-<strong class="hl-tag" style="color: blue">/**
- * Simple converter from and to a {@link YamlContract} to a collection of {@link Contract}
- */</strong>
-<em><span class="hl-annotation" style="color: gray">@CompileStatic</span></em>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> YamlContractConverter <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">implements</span> ContractConverter&lt;List&lt;YamlContract&gt;&gt; {
-
-	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> isAccepted(File file) {
-		String name = file.getName()
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> name.endsWith(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">".yml"</span>) || name.endsWith(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">".yaml"</span>)
-	}
-
-	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> Collection&lt;Contract&gt; convertFrom(File file) {
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">try</span> {
-			YamlContract yamlContract = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> Yaml().loadAs(
-					Files.newInputStream(file.toPath()), YamlContract.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> [Contract.make {
-				request {
-					method(yamlContract?.request?.method)
-					url(yamlContract?.request?.url)
-					headers {
-						yamlContract?.request?.headers?.each { String key, Object value -&gt;
-							header(key, value)
-						}
-					}
-					body(yamlContract?.request?.body)
-				}
-				response {
-					status(yamlContract?.response?.status)
-					headers {
-						yamlContract?.response?.headers?.each { String key, Object value -&gt;
-							header(key, value)
-						}
-					}
-					body(yamlContract?.response?.body)
-				}
-			}]
-		}
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">catch</span> (FileNotFoundException e) {
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throw</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> IllegalStateException(e)
-		}
-	}
-
-	<em><span class="hl-annotation" style="color: gray">@Override</span></em>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> List&lt;YamlContract&gt; convertTo(Collection&lt;Contract&gt; contracts) {
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> contracts.collect { Contract contract -&gt;
-			YamlContract yamlContract = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> YamlContract()
-			yamlContract.request.with {
-				method = contract?.request?.method?.clientValue
-				url = contract?.request?.url?.clientValue
-				headers = (contract?.request?.headers as Headers)?.asStubSideMap()
-				body = contract?.request?.body?.clientValue as Map
-			}
-			yamlContract.response.with {
-				status = contract?.response?.status?.clientValue as Integer
-				headers = (contract?.response?.headers as Headers)?.asStubSideMap()
-				body = contract?.response?.body?.clientValue as Map
-			}
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> yamlContract
-		}
-	}
-}</pre><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_converter" href="#_pact_converter"></a>10.1.1&nbsp;Pact Converter</h3></div></div></div><p>Spring Cloud Contract includes support for <a class="link" href="https://docs.pact.io/" target="_top">Pact</a> representation of
+implementation.</p></td></tr></table></div><p>The following example shows a typical <code class="literal">spring.factories</code> file:</p><pre class="screen">org.springframework.cloud.contract.spec.ContractConverter=\
+org.springframework.cloud.contract.verifier.converter.YamlContractConverter</pre><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_converter" href="#_pact_converter"></a>10.1.1&nbsp;Pact Converter</h3></div></div></div><p>Spring Cloud Contract includes support for <a class="link" href="https://docs.pact.io/" target="_top">Pact</a> representation of
 contracts. Instead of using the Groovy DSL, you can use Pact files. In this section, we
 present how to add Pact support for your project.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_contract" href="#_pact_contract"></a>10.1.2&nbsp;Pact Contract</h3></div></div></div><p>Consider following example of a Pact contract, which is a file under the
 <code class="literal">src/test/resources/contracts</code> folder.</p><pre class="programlisting">{

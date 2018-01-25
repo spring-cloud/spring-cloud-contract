@@ -152,12 +152,13 @@ Example:</p><pre class="programlisting">		<em><span class="hl-annotation" style=
 				}
 			};
 		}</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_generating_stubs_using_rest_docs" href="#_generating_stubs_using_rest_docs"></a>11.7&nbsp;Generating Stubs using REST Docs</h2></div></div></div><p><a class="link" href="https://projects.spring.io/spring-restdocs" target="_top">Spring REST Docs</a> can be used to generate
-documentation (for example in Asciidoctor format) for an HTTP API with Spring MockMvc or
+documentation (for example in Asciidoctor format) for an HTTP API with Spring MockMvc
+or <code class="literal">WebTestClient</code> or
 Rest Assured. At the same time that you generate documentation for your API, you can also
 generate WireMock stubs by using Spring Cloud Contract WireMock. To do so, write your
 normal REST Docs test cases and use <code class="literal">@AutoConfigureRestDocs</code> to have stubs be
 automatically generated in the REST Docs output directory. The following code shows an
-example:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
+example using <code class="literal">MockMvc</code>:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
 <em><span class="hl-annotation" style="color: gray">@SpringBootTest</span></em>
 <em><span class="hl-annotation" style="color: gray">@AutoConfigureRestDocs(outputDir = "target/snippets")</span></em>
 <em><span class="hl-annotation" style="color: gray">@AutoConfigureMockMvc</span></em>
@@ -173,32 +174,49 @@ example:</p><pre class="programlisting"><em><span class="hl-annotation" style="c
 				.andDo(document(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"resource"</span>));
 	}
 }</pre><p>This test generates a WireMock stub at "target/snippets/stubs/resource.json". It matches
-all GET requests to the "/resource" path.</p><p>Without any additional configuration, this tests creates a stub with a request matcher
+all GET requests to the "/resource" path. The same example with <code class="literal">WebTestClient</code> (used
+for testing Spring WebFlux applications) would look like this:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
+<em><span class="hl-annotation" style="color: gray">@SpringBootTest</span></em>
+<em><span class="hl-annotation" style="color: gray">@AutoConfigureRestDocs(outputDir = "target/snippets")</span></em>
+<em><span class="hl-annotation" style="color: gray">@AutoConfigureWebTestClient</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> ApplicationTests {
+
+	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> WebTestClient client;
+
+	<em><span class="hl-annotation" style="color: gray">@Test</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> contextLoads() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
+		client.get().uri(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/resource"</span>).exchange()
+				.expectBody(String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World"</span>)
+ 				.consumeWith(document(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"resource"</span>));
+	}
+}</pre><p>Without any additional configuration, these tests create a stub with a request matcher
 for the HTTP method and all headers except "host" and "content-length". To match the
 request more precisely (for example, to match the body of a POST or PUT), we need to
 explicitly create a request matcher. Doing so has two effects:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Creating a stub that matches only in the way you specify.</li><li class="listitem">Asserting that the request in the test case also matches the same conditions.</li></ul></div><p>The main entry point for this feature is <code class="literal">WireMockRestDocs.verify()</code>, which can be used
 as a substitute for the <code class="literal">document()</code> convenience method, as shown in the following
-example:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
-<em><span class="hl-annotation" style="color: gray">@SpringBootTest</span></em>
-<em><span class="hl-annotation" style="color: gray">@AutoConfigureRestDocs(outputDir = "target/snippets")</span></em>
-<em><span class="hl-annotation" style="color: gray">@AutoConfigureMockMvc</span></em>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> ApplicationTests {
+example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> org.springframework.cloud.contract.wiremock.restdocs.WireMockRestDocs.verify;</pre><pre class="screen">@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureRestDocs(outputDir = "target/snippets")
+@AutoConfigureMockMvc
+public class ApplicationTests {
 
-	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 
-	<em><span class="hl-annotation" style="color: gray">@Test</span></em>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> contextLoads() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
-		mockMvc.perform(post(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/resource"</span>)
-                .content(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\"id\":\"123456\",\"message\":\"Hello World\"}"</span>))
+	@Test
+	public void contextLoads() throws Exception {
+		mockMvc.perform(post("/resource")
+                .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
 				.andExpect(status().isOk())
-				.andDo(verify().jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.id"</span>)
-                        .stub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"resource"</span>));
+				.andDo(verify().jsonPath("$.id")
+                        .stub("resource"));
 	}
 }</pre><p>This contract specifies that any valid POST with an "id" field receives the response
 defined in this test. You can chain together calls to <code class="literal">.jsonPath()</code> to add additional
 matchers. If JSON Path is unfamiliar, The <a class="link" href="https://github.com/jayway/JsonPath" target="_top">JayWay
-documentation</a> can help you get up to speed.</p><p>Instead of the <code class="literal">jsonPath</code> and <code class="literal">contentType</code> convenience methods, you can also use the
+documentation</a> can help you get up to speed. The <code class="literal">WebTestClient</code> version of this test
+has a similar <code class="literal">verify()</code> static helper that you insert in the same place.</p><p>Instead of the <code class="literal">jsonPath</code> and <code class="literal">contentType</code> convenience methods, you can also use the
 WireMock APIs to verify that the request matches the created stub, as shown in the
 following example:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Test</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> contextLoads() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
