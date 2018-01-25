@@ -57,7 +57,7 @@ test {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.14'
+    gradleVersion = '4.4.1'
 }
 
 clean.doFirst {
