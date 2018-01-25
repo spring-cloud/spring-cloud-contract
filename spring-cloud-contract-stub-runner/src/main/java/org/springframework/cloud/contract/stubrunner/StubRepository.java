@@ -67,6 +67,9 @@ class StubRepository {
 		this.options = options;
 		this.stubs = stubs();
 		this.contracts = contracts();
+		if (log.isDebugEnabled()) {
+			log.debug("Found the following contracts " + this.contracts);
+		}
 	}
 
 	StubRepository(File repository) {
@@ -89,18 +92,14 @@ class StubRepository {
 	 * Returns a list of contracts
 	 */
 	private Collection<Contract> contracts() {
-		List<Contract> contracts = new ArrayList<>();
-		contracts.addAll(contractDescriptors());
-		return contracts;
+		return new ArrayList<>(contractDescriptors());
 	}
 
 	/**
 	 * Returns the list of stubs
 	 */
 	private List<File> stubs() {
-		List<File> stubs = new ArrayList<>();
-		stubs.addAll(collectedStubs());
-		return stubs;
+		return new ArrayList<>(collectedStubs());
 	}
 
 	private List<File> collectedStubs() {
