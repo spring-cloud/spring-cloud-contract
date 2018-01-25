@@ -30,6 +30,7 @@ repositories {
 apply plugin: 'groovy'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'spring-cloud-contract'
 apply plugin: 'maven-publish'
 apply plugin: 'maven'
 
