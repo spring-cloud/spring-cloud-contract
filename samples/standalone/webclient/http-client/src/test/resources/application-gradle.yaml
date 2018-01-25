@@ -1,0 +1,2 @@
+stubrunner:
+  stubs.ids: 'com.example:http-server-webclient-gradle'

@@ -41,10 +41,11 @@ dependencies {
 	testCompile 'org.springframework.cloud:spring-cloud-contract-wiremock'
 	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
 	testCompile "org.springframework.boot:spring-boot-starter-test"
-	testCompile "com.example:http-server-webclient:0.0.1-SNAPSHOT:stubs"
+	testCompile "com.example:http-server-webclient-gradle:0.0.1-SNAPSHOT:stubs"
 }
 
 test {
+	include '**/*GradleTests*'
 	systemProperty 'spring.profiles.active', 'gradle'
 	testLogging {
 		exceptionFormat = 'full'

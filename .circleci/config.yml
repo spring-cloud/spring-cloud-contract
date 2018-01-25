@@ -4,7 +4,7 @@ jobs:
     docker:
       - image: springcloud/pipeline-base
     environment:
-      JAVA_TOOL_OPTIONS: "-Xms512m -Xmx1024m"
+      JAVA_TOOL_OPTIONS: "-Xms512m -Xmx768m"
       GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1024m -XX:+HeapDumpOnOutOfMemoryError" -Dorg.gradle.daemon=false'
       TERM: dumb
     branches:
@@ -12,6 +12,7 @@ jobs:
         - gh-pages # list of branches to ignore
     resource_class: large
     steps:
+      - setup_remote_docker
       - checkout
       - restore_cache:
           key: sc-contract-{{ .Branch }}

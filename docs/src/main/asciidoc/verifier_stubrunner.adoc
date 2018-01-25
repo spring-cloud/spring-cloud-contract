@@ -111,3 +111,67 @@ IMPORTANT: Starting with version 1.0.4, you can provide a range of versions that
 would like the Stub Runner to take into consideration. You can read more about the
 https://wiki.eclipse.org/Aether/New_and_Noteworthy#Version_Ranges[Aether versioning
 ranges here].
+
+[[stubrunner-docker]]
+=== Stub Runner Docker
+
+We're publishing a `spring-cloud/spring-cloud-contract-stub-runner` Docker image
+that will start the standalone version of Stub Runner.
+
+If you want to learn more about the basics of Maven, artifact ids,
+group ids, classifiers and Artifact Managers, just click here <<docker-project>>.
+
+==== How to use it
+
+Just execute the docker image. You can pass any of the <<common-properties-junit-spring>>
+as environment variables. The convention is that all the
+letters should be upper case. The camel case notation should
+and the dot (`.`) should be separated via underscore (`_`). E.g.
+ the `stubrunner.repositoryRoot` property should be represented
+  as a `STUBRUNNER_REPOSITORY_ROOT` environment variable.
+
+==== Example of client side usage in a non JVM project
+
+We'd like to use the stubs created in this <<docker-server-side>> step.
+Let's assume that we want to run the stubs on port `9876`. The NodeJS code
+is available here:
+
+```bash
+$ git clone https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs
+$ cd bookstore
+```
+
+Let's run the Stub Runner Boot application with the stubs.
+
+```bash
+# Provide the Spring Cloud Contract Docker version
+$ SC_CONTRACT_DOCKER_VERSION="..."
+# The IP at which the app is running and Docker container can reach it
+$ APP_IP="192.168.0.100"
+# Spring Cloud Contract Stub Runner properties
+$ STUBRUNNER_PORT="8083"
+# Stub coordinates 'groupId:artifactId:version:classifier:port'
+$ STUBRUNNER_IDS="com.example:bookstore:0.0.1.RELEASE:stubs:9876"
+$ STUBRUNNER_REPOSITORY_ROOT="http://${APP_IP}:8081/artifactory/libs-release-local"
+# Run the docker with Stub Runner Boot
+$ docker run  --rm -e "STUBRUNNER_IDS=${STUBRUNNER_IDS}" -e "STUBRUNNER_REPOSITORY_ROOT=${STUBRUNNER_REPOSITORY_ROOT}" -p "${STUBRUNNER_PORT}:${STUBRUNNER_PORT}" -p "9876:9876" springcloud/spring-cloud-contract-stub-runner:"${SC_CONTRACT_DOCKER_VERSION}"
+```
+
+What's happening is that
+
+- a standalone Stub Runner application got started
+- it downloaded the stub with coordinates `com.example:bookstore:0.0.1.RELEASE:stubs` on port `9876`
+- it got downloaded from Artifactory running at `http://192.168.0.100:8081/artifactory/libs-release-local`
+- after a while Stub Runner will be running on port `8083`
+- and the stubs will be running at port `9876`
+
+On the server side we built a stateful stub. Let's use curl to assert
+that the stubs are setup properly.
+
+```bash
+# let's execute the first request (no response is returned)
+$ curl -H "Content-Type:application/json" -X POST --data '{ "title" : "Title", "genre" : "Genre", "description" : "Description", "author" : "Author", "publisher" : "Publisher", "pages" : 100, "image_url" : "https://d213dhlpdb53mu.cloudfront.net/assets/pivotal-square-logo-41418bd391196c3022f3cd9f3959b3f6d7764c47873d858583384e759c7db435.svg", "buy_url" : "https://pivotal.io" }' http://localhost:9876/api/books
+# Now time for the second request
+$ curl -X GET http://localhost:9876/api/books
+# You will receive contents of the JSON
+```

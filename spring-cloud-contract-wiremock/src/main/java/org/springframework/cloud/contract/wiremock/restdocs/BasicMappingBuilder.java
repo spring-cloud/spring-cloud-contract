@@ -12,6 +12,7 @@ import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.matching.ContentPattern;
+import com.github.tomakehurst.wiremock.matching.MultipartValuePatternBuilder;
 import com.github.tomakehurst.wiremock.matching.RequestPattern;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
@@ -79,6 +80,12 @@ class BasicMappingBuilder implements ScenarioMappingBuilder {
 	@Override public ScenarioMappingBuilder withRequestBody(
 			ContentPattern<?> bodyPattern) {
 		this.requestPatternBuilder.withRequestBody(bodyPattern);
+		return this;
+	}
+
+	@Override public ScenarioMappingBuilder withMultipartRequestBody(
+			MultipartValuePatternBuilder multipartPatternBuilder) {
+		this.requestPatternBuilder.withRequestBodyPart(multipartPatternBuilder.build());
 		return this;
 	}
 
