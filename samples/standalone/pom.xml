@@ -26,6 +26,8 @@
 		<module>dsl</module>
 		<module>messaging</module>
 		<module>pact</module>
+		<module>webclient</module>
+		<module>yml</module>
 	</modules>
 
 	<build>
