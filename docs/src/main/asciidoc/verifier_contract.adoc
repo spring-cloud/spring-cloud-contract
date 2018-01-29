@@ -742,15 +742,15 @@ following matching possibilities:
 .Groovy DSL
 
 * For `stubMatchers`:
-** `byEquality()`: The value taken from the response via the provided JSON Path must be
+** `byEquality()`: The value taken from the request via the provided JSON Path must be
 equal to the value provided in the contract.
-** `byRegex(...)`: The value taken from the response via the provided JSON Path must
+** `byRegex(...)`: The value taken from the request via the provided JSON Path must
 match the regex.
-** `byDate()`: The value taken from the response via the provided JSON Path must
+** `byDate()`: The value taken from the request via the provided JSON Path must
 match the regex for an ISO Date value.
-** `byTimestamp()`: The value taken from the response via the provided JSON Path must
+** `byTimestamp()`: The value taken from the request via the provided JSON Path must
 match the regex for an ISO DateTime value.
-** `byTime()`: The value taken from the response via the provided JSON Path must
+** `byTime()`: The value taken from the request via the provided JSON Path must
 match the regex for an ISO Time value.
 * For `testMatchers`:
 ** `byEquality()`: The value taken from the response via the provided JSON Path must be
