@@ -16,6 +16,13 @@ Contract.make {
             {{/request_headers}}
         }
         {{/request_headers_present}}
+        {{#request_json_paths_present}}
+            stubMatchers {
+            {{#request_json_paths}}
+                jsonPath('''{{jsonPath}}''', byEquality())
+            {{/request_json_paths}}
+            }
+        {{/request_json_paths_present}}
     }
     response {
         status {{response_status}}
@@ -31,12 +38,5 @@ Contract.make {
         {{/response_headers}}
         }
     {{/response_headers_present}}
-    {{#response_json_paths_present}}
-        testMatchers {
-        {{#response_json_paths}}
-            jsonPath('''{{jsonPath}}''', byType())
-        {{/response_json_paths}}
-        }
-    {{/response_json_paths_present}}
     }
 }

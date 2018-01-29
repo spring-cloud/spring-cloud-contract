@@ -77,10 +77,6 @@ public class ContractDslSnippet extends TemplatedSnippet {
 		filterHeaders(headers);
 		model.put("response_headers_present", !headers.isEmpty());
 		model.put("response_headers", headers.entrySet());
-		@SuppressWarnings("unchecked") Set<String> jsonPaths = (Set<String>) operation.getAttributes()
-				.get("contract.jsonPaths");
-		model.put("response_json_paths_present", jsonPaths != null && !jsonPaths.isEmpty());
-		model.put("response_json_paths", jsonPaths(jsonPaths));
 	}
 
 	private Set<JsonPaths> jsonPaths(Set<String> jsonPaths) {
@@ -104,6 +100,10 @@ public class ContractDslSnippet extends TemplatedSnippet {
 		filterHeaders(headers);
 		model.put("request_headers_present", !headers.isEmpty());
 		model.put("request_headers", headers.entrySet());
+		@SuppressWarnings("unchecked") Set<String> jsonPaths = (Set<String>) operation.getAttributes()
+				.get("contract.jsonPaths");
+		model.put("request_json_paths_present", jsonPaths != null && !jsonPaths.isEmpty());
+		model.put("request_json_paths", jsonPaths(jsonPaths));
 	}
 
 	private void filterHeaders(Map<String, String> headers) {
