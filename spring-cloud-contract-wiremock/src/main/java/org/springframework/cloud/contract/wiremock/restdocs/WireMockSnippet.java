@@ -16,6 +16,14 @@
 
 package org.springframework.cloud.contract.wiremock.restdocs;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.regex.Pattern;
+
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.common.Json;
@@ -23,6 +31,7 @@ import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContext;
 import org.springframework.restdocs.operation.Operation;
@@ -31,16 +40,7 @@ import org.springframework.restdocs.snippet.Snippet;
 import org.springframework.restdocs.snippet.StandardWriterResolver;
 import org.springframework.restdocs.snippet.WriterResolver;
 import org.springframework.restdocs.templates.TemplateFormat;
-import org.springframework.util.PropertyPlaceholderHelper;
 import org.springframework.util.StringUtils;
-
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
@@ -72,9 +72,6 @@ public class WireMockSnippet implements Snippet {
 
 	private boolean hasJsonBodyRequestToMatch = false;
 
-	private final PropertyPlaceholderHelper propertyPlaceholderHelper = new PropertyPlaceholderHelper(
-			"{", "}");
-
 	private static final TemplateFormat TEMPLATE_FORMAT = new TemplateFormat() {
 
 		@Override
@@ -100,9 +97,8 @@ public class WireMockSnippet implements Snippet {
 		RestDocumentationContextPlaceholderResolverFactory placeholders = new RestDocumentationContextPlaceholderResolverFactory();
 		WriterResolver writerResolver = new StandardWriterResolver(placeholders, "UTF-8",
 				TEMPLATE_FORMAT);
-		String path = this.propertyPlaceholderHelper.replacePlaceholders(operation.getName(),
-				placeholders.create(context));
-		try (Writer writer = writerResolver.resolve(this.snippetName, path, context)) {
+		try (Writer writer = writerResolver.resolve(this.snippetName, operation.getName(),
+				context)) {
 			writer.append(json);
 		}
 	}
