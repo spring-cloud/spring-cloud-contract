@@ -333,6 +333,111 @@ when some incompatible changes are done.
 
 The rest of the flow looks the same.
 
+==== How can I define messaging contracts per topic not per producer?
+
+To avoid messaging contracts duplication in the common repo, when few producers writing messages to one topic,
+we could create the structure when the rest contracts would be placed in a folder per producer and messaging
+contracts in the folder per topic.
+
+To make it possible to work on the producer side we could do the following things (all via Maven plugins):
+
+- Add common repo dependency to your classpath:
+
+[source,xml,indent=0]
+----
+<dependency>
+   <groupId>com.example</groupId>
+   <artifactId>common-repo</artifactId>
+   <version>${common-repo.version}</version>
+</dependency>
+----
+
+- Download the JAR with the contracts and unpack the JAR to target:
+
+[source,xml,indent=0]
+----
+<plugin>
+   <groupId>org.apache.maven.plugins</groupId>
+   <artifactId>maven-dependency-plugin</artifactId>
+   <version>3.0.0</version>
+   <executions>
+      <execution>
+         <id>unpack-dependencies</id>
+         <phase>process-resources</phase>
+         <goals>
+            <goal>unpack</goal>
+         </goals>
+         <configuration>
+            <artifactItems>
+               <artifactItem>
+                  <groupId>com.example</groupId>
+                  <artifactId>common-repo</artifactId>
+                  <type>jar</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/contracts</outputDirectory>
+               </artifactItem>
+            </artifactItems>
+         </configuration>
+      </execution>
+   </executions>
+</plugin>
+----
+
+- Rip out all the folders we're not interested in:
+
+[source,xml,indent=0]
+----
+<plugin>
+   <groupId>org.apache.maven.plugins</groupId>
+   <artifactId>maven-antrun-plugin</artifactId>
+   <version>1.8</version>
+   <executions>
+      <execution>
+         <phase>process-resources</phase>
+         <goals>
+            <goal>run</goal>
+         </goals>
+         <configuration>
+            <tasks>
+               <delete includeemptydirs="true">
+                  <fileset dir="${project.build.directory}/contracts">
+                     <include name="**/*" />
+                     <!--Producer artifactId-->
+                     <exclude name="**/${project.artifactId}/**" />
+                     <!--List of the supported topics-->
+                     <exclude name="**/${your-first-topic-name}/**" />
+                     <exclude name="**/${your-second-topic-name}/**" />
+                  </fileset>
+               </delete>
+            </tasks>
+         </configuration>
+      </execution>
+   </executions>
+</plugin>
+----
+
+Run the contract plugin by pointing to the contracts to the folder under target:
+
+[source,xml,indent=0]
+----
+<plugin>
+   <groupId>org.springframework.cloud</groupId>
+   <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+   <version>${spring-cloud-contract.version}</version>
+   <extensions>true</extensions>
+   <configuration>
+      <packageWithBaseClasses>com.example</packageWithBaseClasses>
+      <baseClassMappings>
+         <baseClassMapping>
+            <contractPackageRegex>.*intoxication.*</contractPackageRegex>
+            <baseClassFQN>com.example.intoxication.BeerIntoxicationBase</baseClassFQN>
+         </baseClassMapping>
+      </baseClassMappings>
+      <contractsDirectory>${project.build.directory}/contracts</contractsDirectory>
+   </configuration>
+</plugin>
+----
+
 === Can I have multiple base classes for tests?
 
 Yes! Check out the https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_different_base_classes_for_contracts[Different base classes for contracts] sections
