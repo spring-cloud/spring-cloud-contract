@@ -6299,23 +6299,23 @@ following matching possibilities:</simpara>
 <simpara>For <literal>stubMatchers</literal>:</simpara>
 <itemizedlist>
 <listitem>
-<simpara><literal>byEquality()</literal>: The value taken from the response via the provided JSON Path must be
+<simpara><literal>byEquality()</literal>: The value taken from the request via the provided JSON Path must be
 equal to the value provided in the contract.</simpara>
 </listitem>
 <listitem>
-<simpara><literal>byRegex(&#8230;&#8203;)</literal>: The value taken from the response via the provided JSON Path must
+<simpara><literal>byRegex(&#8230;&#8203;)</literal>: The value taken from the request via the provided JSON Path must
 match the regex.</simpara>
 </listitem>
 <listitem>
-<simpara><literal>byDate()</literal>: The value taken from the response via the provided JSON Path must
+<simpara><literal>byDate()</literal>: The value taken from the request via the provided JSON Path must
 match the regex for an ISO Date value.</simpara>
 </listitem>
 <listitem>
-<simpara><literal>byTimestamp()</literal>: The value taken from the response via the provided JSON Path must
+<simpara><literal>byTimestamp()</literal>: The value taken from the request via the provided JSON Path must
 match the regex for an ISO DateTime value.</simpara>
 </listitem>
 <listitem>
-<simpara><literal>byTime()</literal>: The value taken from the response via the provided JSON Path must
+<simpara><literal>byTime()</literal>: The value taken from the request via the provided JSON Path must
 match the regex for an ISO Time value.</simpara>
 </listitem>
 </itemizedlist>
