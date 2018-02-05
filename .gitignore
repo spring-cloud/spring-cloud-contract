@@ -6,12 +6,14 @@
 .classpath
 .project
 .settings/
+.sts4-cache/
 target/
 build/
 bin/
 .gradle/
 
 *.class
+.attach*
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
