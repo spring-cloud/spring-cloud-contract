@@ -201,6 +201,14 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 		return readyToCheck;
 	}
 
+	@Override public JsonVerifiable isInstanceOf(Class clazz)
+			throws IllegalStateException {
+		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(
+				this.delegate.jsonPath(), this.delegate.isInstanceOf(clazz), this.methodsBuffer);
+		readyToCheck.methodsBuffer.offer(".isInstanceOf(" + clazz.getName() + ")");
+		return readyToCheck;
+	}
+
 	@Override
 	public MethodBufferingJsonVerifiable matches(String value) {
 		DelegatingJsonVerifiable readyToCheck = new FinishedDelegatingJsonVerifiable(
