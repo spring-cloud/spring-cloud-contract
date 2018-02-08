@@ -23,7 +23,21 @@ open class KotlinContractConverter : ContractConverter<KotlinContract> {
     override fun isAccepted(file: File) = file.extension.endsWith(".kts")
 
     override fun convertFrom(file: File): Collection<Contract> {
-        // TODO eval
-        return listOf()
+        val eval = file.reader().use {
+            engine.eval(it)
+        }
+        val result = mutableListOf<Contract>()
+        if (eval is KotlinContract) {
+            result.add(eval.contract)
+        }
+        return result
     }
+}
+
+fun main(args: Array<String>) {
+    val converter = KotlinContractConverter()
+    val file = "/Users/soudmaijer/workspace/spring-cloud-contract/spring-cloud-contract-tools/spring-cloud-contract-spec-kotlin/src/test/resources/contracts/shouldMarkClientAsFraud.kts"
+    val contracts = converter.convertFrom(File(file))
+    print(contracts)
+
 }

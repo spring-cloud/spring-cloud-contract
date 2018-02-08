@@ -6,24 +6,25 @@ import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.Response
 
-
-class KotlinContract : Contract() {
+class KotlinContract {
 
     companion object {
         /**
          * Top level function equivalent to [Contract.make]
          */
-        fun make(init: KotlinContract.() -> Unit): Contract {
+        fun make(init: KotlinContract.() -> Unit): KotlinContract {
             val kotlinContract = KotlinContract()
-            kotlinContract.init()
+            init(kotlinContract)
             return kotlinContract
         }
     }
 
-    fun Contract.request(init: Request.() -> Unit): Request {
+    val contract = Contract()
+
+    fun KotlinContract.request(init: Request.() -> Unit): Request {
         val request = Request()
         request.init()
-        this.request = request
+        contract.request = request
         return request
     }
 
@@ -34,10 +35,10 @@ class KotlinContract : Contract() {
         return headers
     }
 
-    fun Contract.response(init: Response.() -> Unit): Response {
+    fun KotlinContract.response(init: Response.() -> Unit): Response {
         val response = Response()
         response.init()
-        this.response = response
+        contract.response = response
         return response
     }
 
