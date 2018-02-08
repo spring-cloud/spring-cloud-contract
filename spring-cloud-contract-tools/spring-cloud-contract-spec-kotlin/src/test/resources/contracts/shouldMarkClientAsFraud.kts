@@ -1,29 +1,29 @@
-package contracts
 
 org.springframework.cloud.contract.spec.KotlinContract.make {
-    //    request {
-    // (1)
-//        method = DslProperty("GET")
-//		url '/fraudcheck' // (3)
-//		body([ // (4)
-//			   clientId: $(c(regex('[0-9]{10}')), p("8532032713")),
-//			   loanAmount: 99999
-//		])
-//		headers { // (5)
-//			contentType('application/vnd.fraud.v1+json')
-//		}
-//    }
-//    response {
-// (6)
-//		status 200 // (7)
-//		body([ // (8)
-//			   fraudCheckStatus: "FRAUD",
-//			   rejectionReason: "Amount too high"
-//		])
-//		headers { // (9)
-//			contentType('application/vnd.fraud.v1+json')
-//		}
-    // }
+    request { // (1)
+        method("PUT") // (2)
+        url("/fraudcheck") // (3)
+        body(mapOf( // (4)
+                "clientId" to listOf(c(regex("[0-9]{10}")), p("8532032713")),
+                "loanAmount" to 99999
+        ))
+        headers {// (5)
+            // (5)
+            contentType("application/vnd.fraud.v1+json")
+        }
+    }
+    response {
+        // (6)
+        status(200)// (7)
+        body(mapOf( // (8)
+                "fraudCheckStatus" to "FRAUD",
+                "rejectionReason" to "Amount too high"
+        ))
+        headers {
+            // (9)
+            contentType("application/vnd.fraud.v1+json")
+        }
+    }
 }
 
 /*

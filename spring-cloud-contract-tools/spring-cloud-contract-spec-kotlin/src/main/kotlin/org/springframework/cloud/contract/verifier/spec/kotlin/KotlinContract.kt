@@ -1,18 +1,23 @@
 package org.springframework.cloud.contract.spec
 
+// We need to be in the same package as the Contract file.
+
 import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.Response
 
-object KotlinContract {
 
-    /**
-     * Top level function equivalent to [Contract.make]
-     */
-    fun make(init: Contract.() -> Unit): Contract {
-        val contract = Contract()
-        contract.init()
-        return contract
+class KotlinContract : Contract() {
+
+    companion object {
+        /**
+         * Top level function equivalent to [Contract.make]
+         */
+        fun make(init: KotlinContract.() -> Unit): Contract {
+            val kotlinContract = KotlinContract()
+            kotlinContract.init()
+            return kotlinContract
+        }
     }
 
     fun Contract.request(init: Request.() -> Unit): Request {
@@ -21,7 +26,6 @@ object KotlinContract {
         this.request = request
         return request
     }
-
 
     fun Request.headers(init: Headers.() -> Unit): Headers {
         val headers = Headers()
