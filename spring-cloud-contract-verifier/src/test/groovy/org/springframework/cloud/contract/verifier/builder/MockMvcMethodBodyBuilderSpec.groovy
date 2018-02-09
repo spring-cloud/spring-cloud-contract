@@ -1201,20 +1201,65 @@ World.'''"""
 		def test = blockBuilder.toString()
 		then:
 		for (String requestString : requestStrings) {
-			test.contains(requestString)
+			assert test.contains(requestString)
 		}
 		and:
 		SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder                                                               | requestStrings
-		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ["""'content-type', 'multipart/form-data;boundary=AaB03x'""",
+		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 																													 """.param('formParameter', '"formParameterValue"'""",
 																													 """.param('someBooleanParameter', 'true')""",
 																													 """.multiPart('file', 'filename.csv', 'file content'.bytes)"""]
-		"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | ['"content-type", "multipart/form-data;boundary=AaB03x"',
+		"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 																													 '.param("formParameter", "\\"formParameterValue\\"")',
 																													 '.param("someBooleanParameter", "true")',
 																													 '.multiPart("file", "filename.csv", "file content".getBytes());']
+	}
+
+	@Issue('541')
+	def "should generate proper test code when having multipart parameters that use execute with #methodBuilderName"() {
+		given:
+			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
+				request {
+					method "PUT"
+					url "/multipart"
+					headers {
+						contentType('multipart/form-data;boundary=AaB03x')
+					}
+					multipart(
+							formParameter: $(c(regex('".+"')), p('"formParameterValue"')),
+							someBooleanParameter: $(c(regex(anyBoolean())), p('true')),
+							file: named(
+									name: $(c(regex(nonEmpty())), p(execute("toString()"))),
+									content: $(c(regex(nonEmpty())), p('file content')))
+					)
+				}
+				response {
+					status 200
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			for (String requestString : requestStrings) {
+				assert test.contains(requestString)
+			}
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
+		where:
+			methodBuilderName           | methodBuilder                                                                           | requestStrings
+			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
+																																	 """.param('formParameter', '"formParameterValue"'""",
+																																	 """.param('someBooleanParameter', 'true')""",
+																																	 """.multiPart('file', toString(), 'file content'.bytes)"""]
+			"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
+																																	 '.param("formParameter", "\\"formParameterValue\\"")',
+																																	 '.param("someBooleanParameter", "true")',
+																																	 '.multiPart("file", toString(), "file content".getBytes());']
 	}
 
 	@Issue('180')
