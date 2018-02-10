@@ -9,7 +9,7 @@ buildscript {
 	}
 // end::repos[]
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.0.0.BUILD-SNAPSHOT"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.0.0.RC1"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
 	}
 }
