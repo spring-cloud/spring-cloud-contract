@@ -15,7 +15,7 @@ import java.io.File
 open class KContractConverter : ContractConverter<List<KContract>> {
 
     companion object {
-        private val engine = KotlinJsr223JvmLocalScriptEngineFactory().scriptEngine
+        private val engine = KotlinJsr223JvmLocalScriptEngineFactory()
     }
 
     override fun convertTo(contracts: Collection<Contract>) = contracts.map { KContract(it) }
@@ -24,7 +24,7 @@ open class KContractConverter : ContractConverter<List<KContract>> {
 
     override fun convertFrom(file: File): Collection<Contract> {
         val eval = file.reader().use {
-            engine.eval(it)
+            engine.scriptEngine.eval(it)
         }
         return when (eval) {
             is KContract -> listOf(eval.contract)

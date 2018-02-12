@@ -1,15 +1,18 @@
-package org.springframework.cloud.contract.verifier.spec.kotlin
+package org.springframework.cloud.contract.spec
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.springframework.cloud.contract.verifier.spec.kotlin.KContractConverter
 import java.io.File
 
 class KContractConverterTest {
 
     @Test
-    fun convertTo() {
-        // TODO
+    fun `convert Contract to KContract`() {
+        val file = file("contracts/shouldMarkClientAsFraud.groovy")
+        val contracts = KContractConverter().convertTo(listOf(Contract()))
+        assertEquals(1, contracts.size)
     }
 
     @Test
