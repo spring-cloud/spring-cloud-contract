@@ -13,13 +13,12 @@ org.springframework.cloud.contract.spec.KContract.make {
         }
     }
     response { // (6)
-        status(200)// (7)
+        status(200) // (7)
         body(mapOf( // (8)
                 "fraudCheckStatus" to "FRAUD",
                 "rejectionReason" to "Amount too high"
         ))
-        headers {
-            // (9)
+        headers { // (9)
             contentType("application/vnd.fraud.v1+json")
         }
     }
