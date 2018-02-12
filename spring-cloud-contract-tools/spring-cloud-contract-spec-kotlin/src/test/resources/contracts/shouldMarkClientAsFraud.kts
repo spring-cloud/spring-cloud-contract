@@ -1,3 +1,4 @@
+package contracts
 
 org.springframework.cloud.contract.spec.KContract.make {
     request { // (1)
@@ -8,12 +9,10 @@ org.springframework.cloud.contract.spec.KContract.make {
                 "loanAmount" to 99999
         ))
         headers {// (5)
-            // (5)
             contentType("application/vnd.fraud.v1+json")
         }
     }
-    response {
-        // (6)
+    response { // (6)
         status(200)// (7)
         body(mapOf( // (8)
                 "fraudCheckStatus" to "FRAUD",
