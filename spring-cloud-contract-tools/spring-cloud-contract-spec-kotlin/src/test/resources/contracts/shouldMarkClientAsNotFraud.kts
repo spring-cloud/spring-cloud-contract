@@ -1,6 +1,6 @@
 package contracts
 
-org.springframework.cloud.contract.spec.KotlinContract.make {
+org.springframework.cloud.contract.spec.KContract.make {
     request {
         method("PUT")
         url("/fraudcheck")

@@ -1,9 +1,9 @@
 package contracts
 
-import org.springframework.cloud.contract.spec.KotlinContract
+import org.springframework.cloud.contract.spec.KContract
 
-listOf(
-        KotlinContract.make {
+arrayOf(
+        KContract.make {
             request {
                 method("GET")
                 url("/frauds")
@@ -16,7 +16,7 @@ listOf(
                 }
             }
         },
-        KotlinContract.make {
+        KContract.make {
             request {
                 method("GET")
                 url("/drunks")
