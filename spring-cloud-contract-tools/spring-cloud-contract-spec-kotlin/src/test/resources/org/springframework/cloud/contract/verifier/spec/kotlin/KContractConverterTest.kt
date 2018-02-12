@@ -5,7 +5,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
 
-class KotlinContractConverterTest {
+class KContractConverterTest {
 
     @Test
     fun convertTo() {
@@ -14,19 +14,19 @@ class KotlinContractConverterTest {
 
     @Test
     fun `accept kts files`() {
-        assertTrue(KotlinContractConverter().isAccepted(file("contracts/shouldMarkClientAsFraud.kts")))
+        assertTrue(KContractConverter().isAccepted(file("contracts/shouldMarkClientAsFraud.kts")))
     }
 
     @Test
     fun `convert from with single contract definition`() {
-        val converter = KotlinContractConverter()
+        val converter = KContractConverter()
         val contracts = converter.convertFrom(file("contracts/shouldMarkClientAsFraud.kts"))
         assertEquals(1, contracts.size)
     }
 
     @Test
     fun `convert from with 2 elements array`() {
-        val converter = KotlinContractConverter()
+        val converter = KContractConverter()
         val contracts = converter.convertFrom(file("contracts/shouldReturnFraudStats.kts"))
         assertEquals(2, contracts.size)
     }

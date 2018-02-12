@@ -12,7 +12,7 @@ import java.io.File
  * @author Stephan Oudmaijer
  * @since 2.0.0
  */
-open class KotlinContractConverter : ContractConverter<KContract> {
+open class KContractConverter : ContractConverter<KContract> {
 
     companion object {
         private val engine = KotlinJsr223JvmLocalScriptEngineFactory().scriptEngine
