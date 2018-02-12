@@ -70,11 +70,6 @@ dependencies {
 	compile("org.springframework.cloud:spring-cloud-starter-contract-verifier:${project.version}") {
 		exclude(group: 'org.codehaus.groovy')
 	}
-	compile "javax.xml.bind:jaxb-api:2.3.0"
-	compile "com.sun.xml.bind:jaxb-impl:2.3.0"
-	compile "org.glassfish.jaxb:jaxb-runtime:2.3.0"
-	compile "javax.activation:activation:1.1.1"
-
 	testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
 		exclude(group: 'org.codehaus.groovy')
 	}
@@ -117,7 +112,7 @@ archiveContractVerifierGradlePluginLibsDependencies.dependsOn project.tasks.jar
 test.dependsOn archiveContractVerifierGradlePluginLibsDependencies
 
 jacoco {
-	toolVersion = "0.8.0"
+	toolVersion = "0.7.7.201606060606"
 }
 
 jacocoTestReport {
@@ -140,5 +135,5 @@ task resolveDependencies {
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '4.2.1'
+	gradleVersion = '4.0.2'
 }
