@@ -2,9 +2,7 @@ package org.springframework.cloud.contract.spec
 
 // We need to be in the same package as the Contract file.
 
-import org.springframework.cloud.contract.spec.internal.Headers
-import org.springframework.cloud.contract.spec.internal.Request
-import org.springframework.cloud.contract.spec.internal.Response
+import org.springframework.cloud.contract.spec.internal.*
 
 open class KContract {
 
@@ -29,11 +27,21 @@ open class KContract {
 
     fun name(name: String) = contract.name(name)
 
-    // TODO fun input(input: Input) = contract.input(input)
+    fun KContract.input(init: Input.() -> Unit): Input {
+        val input = Input()
+        input.init()
+        contract.input = input
+        return input
+    }
 
     fun ignored() = contract.ignored()
 
-    // TODO fun outputMessage(outputMessage: OutputMessage) = contract.outputMessage(outputMessage)
+    fun KContract.outputMessage(init: OutputMessage.() -> Unit): OutputMessage {
+        val outputMessage = OutputMessage()
+        outputMessage.init()
+        contract.outputMessage = outputMessage
+        return outputMessage
+    }
 
     fun KContract.request(init: Request.() -> Unit): Request {
         val request = Request()
