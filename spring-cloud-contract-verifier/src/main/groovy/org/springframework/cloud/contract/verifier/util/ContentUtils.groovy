@@ -386,12 +386,21 @@ class ContentUtils {
 	}
 
 	static String getGroovyMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
-		return "'$propertyName', '$propertyValue.name.serverValue', '$propertyValue.value.serverValue'.bytes"
+		return "'$propertyName', ${namedPropertyName(propertyValue, "'")}, ${namedPropertyValue(propertyValue, "'")}.bytes"
 	}
 
 	static String getJavaMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
-		return """"${escapeJava(propertyName)}", "${escapeJava(propertyValue.name.serverValue as String)}", "${escapeJava(propertyValue.value.serverValue as String)}".getBytes()"""
+		return """"${escapeJava(propertyName)}", ${namedPropertyName(propertyValue, '"')}, ${namedPropertyValue(propertyValue, '"')}.getBytes()"""
 	}
 
+	static String namedPropertyName(NamedProperty property, String quote) {
+		return property.name.serverValue instanceof ExecutionProperty ?
+				property.name.serverValue.toString() : quote + escapeJava(property.name.serverValue.toString()) + quote
+	}
+
+	static String namedPropertyValue(NamedProperty property, String quote) {
+		return property.value.serverValue instanceof ExecutionProperty ?
+				property.value.serverValue.toString() : quote + escapeJava(property.value.serverValue.toString()) + quote
+	}
 
 }
