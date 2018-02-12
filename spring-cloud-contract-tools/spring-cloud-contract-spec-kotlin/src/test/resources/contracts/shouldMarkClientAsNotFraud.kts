@@ -20,7 +20,7 @@ org.springframework.cloud.contract.spec.KContract.make {
         status(200)
         body(mapOf(
                 "fraudCheckStatus" to "OK",
-                "rejectionReason" to listOf(consumer(null), producer(execute("assertThatRejectionReasonIsNull($this)")))
+                "rejectionReason" to listOf(consumer(null), producer(execute("assertThatRejectionReasonIsNull(\$it)")))
         ))
         headers {
             contentType("application/vnd.fraud.v1+json")
