@@ -72,6 +72,8 @@
 							<overWriteSnapshots>true</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
 							<useRepositoryLayout>true</useRepositoryLayout>
+							<copyPom>true</copyPom>
+							<excludeTransitive>false</excludeTransitive>
 						</configuration>
 					</execution>
 				</executions>
