@@ -1,7 +1,11 @@
 // We need to be in the same package as the Contract to be able to instantiate it.
 package org.springframework.cloud.contract.spec
 
-import org.springframework.cloud.contract.spec.internal.*
+import org.springframework.cloud.contract.spec.internal.Headers
+import org.springframework.cloud.contract.spec.internal.Input
+import org.springframework.cloud.contract.spec.internal.OutputMessage
+import org.springframework.cloud.contract.spec.internal.Request
+import org.springframework.cloud.contract.spec.internal.Response
 
 /**
  * Kotlin contract definition, delegates the real functionality to the Groovy Contract class.
