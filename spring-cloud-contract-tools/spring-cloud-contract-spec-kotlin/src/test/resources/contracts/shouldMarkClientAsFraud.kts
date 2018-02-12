@@ -5,7 +5,7 @@ org.springframework.cloud.contract.spec.KContract.make {
         method("PUT") // (2)
         url("/fraudcheck") // (3)
         body(mapOf( // (4)
-                "clientId" to "${value(c(regex("[0-9]{10}")), p("8532032713"))}",
+                "clientId" to dynamic(consumer = regex("[0-9]{10}"), producer = "8532032713"),
                 "loanAmount" to 99999
         ))
         headers {// (5)
