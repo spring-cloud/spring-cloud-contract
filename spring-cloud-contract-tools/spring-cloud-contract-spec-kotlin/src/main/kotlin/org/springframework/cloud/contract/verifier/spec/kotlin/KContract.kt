@@ -21,6 +21,20 @@ open class KContract {
 
     val contract = Contract()
 
+    fun priority(priority: Int) = contract.priority(priority)
+
+    fun label(label: String) = contract.label(label)
+
+    fun description(description: String) = contract.description(description)
+
+    fun name(name: String) = contract.name(name)
+
+    // TODO fun input(input: Input) = contract.input(input)
+
+    fun ignored() = contract.ignored()
+
+    // TODO fun outputMessage(outputMessage: OutputMessage) = contract.outputMessage(outputMessage)
+
     fun KContract.request(init: Request.() -> Unit): Request {
         val request = Request()
         request.init()
