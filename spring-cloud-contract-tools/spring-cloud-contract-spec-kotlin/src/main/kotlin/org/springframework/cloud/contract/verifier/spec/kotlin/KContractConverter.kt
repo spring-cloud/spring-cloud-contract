@@ -7,20 +7,18 @@ import org.springframework.cloud.contract.spec.KContract
 import java.io.File
 
 /**
- * Converter of Kotlin Dsl file
+ * Converter for Kotlin script Dsl file(s)
  *
  * @author Stephan Oudmaijer
  * @since 2.0.0
  */
-open class KContractConverter : ContractConverter<KContract> {
+open class KContractConverter : ContractConverter<List<KContract>> {
 
     companion object {
         private val engine = KotlinJsr223JvmLocalScriptEngineFactory().scriptEngine
     }
 
-    override fun convertTo(contracts: Collection<Contract>): KContract {
-        return KContract() // TODO
-    }
+    override fun convertTo(contracts: Collection<Contract>) = contracts.map { KContract(it) }
 
     override fun isAccepted(file: File) = "kts" == file.extension
 
