@@ -1,6 +1,7 @@
 // We need to be in the same package as the Contract to be able to instantiate it.
 package org.springframework.cloud.contract.spec
 
+import org.springframework.cloud.contract.spec.internal.Body
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.Input
@@ -45,16 +46,28 @@ open class ContractDsl @JvmOverloads constructor(val contract: Contract = Contra
         contract.outputMessage = OutputMessage().apply(init)
     }
 
-    fun ContractDsl.request(init: Request.() -> Unit){
-        contract.request = Request().apply(init)
+    fun ContractDsl.request(init: Request.() -> Unit) {
+        val request = Request()
+        contract.request = request
+        request.init()
+    }
+
+    fun ContractDsl.response(init: Response.() -> Unit) {
+        val response = Response()
+        contract.response = response
+        response.init()
+    }
+
+    fun Request.body(vararg pairs: Pair<String, Any>) {
+        contract.request.body = Body(convertObjectsToDslProperties(pairs.toMap()))
+    }
+
+    fun Response.body(vararg pairs: Pair<String, Any>) {
+        contract.response.body = Body(convertObjectsToDslProperties(pairs.toMap()))
     }
 
     fun Request.headers(init: Headers.() -> Unit) {
         this.headers = Headers().also(init)
-    }
-
-    fun ContractDsl.response(init: Response.() -> Unit) {
-        contract.response = Response().apply(init)
     }
 
     fun Response.headers(init: Headers.() -> Unit) {

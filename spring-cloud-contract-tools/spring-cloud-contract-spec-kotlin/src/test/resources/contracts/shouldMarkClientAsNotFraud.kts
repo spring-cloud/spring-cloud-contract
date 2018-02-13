@@ -20,10 +20,10 @@ contract {
     }
     response {
         status(200)
-        body(mapOf(
+        body(
                 "fraudCheckStatus" to "OK",
                 "rejectionReason" to listOf(consumer(null), producer(execute("assertThatRejectionReasonIsNull(\$it)")))
-        ))
+        )
         headers {
             contentType("application/vnd.fraud.v1+json")
         }

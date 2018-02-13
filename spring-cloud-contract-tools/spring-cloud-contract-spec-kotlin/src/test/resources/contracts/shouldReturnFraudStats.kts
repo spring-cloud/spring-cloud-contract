@@ -10,7 +10,7 @@ arrayOf(
             }
             response {
                 status(200)
-                body(mapOf("count" to 200))
+                body("count" to 200)
                 headers {
                     contentType("application/vnd.fraud.v1+json")
                 }
@@ -23,7 +23,7 @@ arrayOf(
             }
             response {
                 status(200)
-                body(mapOf("count" to 100))
+                body("count" to 100)
                 headers {
                     contentType("application/vnd.fraud.v1+json")
                 }
