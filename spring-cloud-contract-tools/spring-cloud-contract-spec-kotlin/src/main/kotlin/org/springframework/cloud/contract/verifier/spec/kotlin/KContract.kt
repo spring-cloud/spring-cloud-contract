@@ -20,9 +20,7 @@ open class KContract @JvmOverloads constructor(val contract: Contract = Contract
          * Top level function equivalent to [Contract.make]
          */
         fun make(init: KContract.() -> Unit): KContract {
-            val kotlinContract = KContract()
-            init(kotlinContract)
-            return kotlinContract
+            return KContract().apply(init)
         }
     }
 
@@ -36,45 +34,27 @@ open class KContract @JvmOverloads constructor(val contract: Contract = Contract
 
     fun ignored() = contract.ignored()
 
-    fun KContract.input(init: Input.() -> Unit): Input {
-        val input = Input()
-        input.init()
-        contract.input = input
-        return input
+    fun KContract.input(init: Input.() -> Unit) {
+        contract.input = Input().apply(init)
     }
 
-    fun KContract.outputMessage(init: OutputMessage.() -> Unit): OutputMessage {
-        val outputMessage = OutputMessage()
-        outputMessage.init()
-        contract.outputMessage = outputMessage
-        return outputMessage
+    fun KContract.outputMessage(init: OutputMessage.() -> Unit) {
+        contract.outputMessage = OutputMessage().apply(init)
     }
 
-    fun KContract.request(init: Request.() -> Unit): Request {
-        val request = Request()
-        request.init()
-        contract.request = request
-        return request
+    fun KContract.request(init: Request.() -> Unit){
+        contract.request = Request().apply(init)
     }
 
-    fun Request.headers(init: Headers.() -> Unit): Headers {
-        val headers = Headers()
-        headers.init()
-        this.headers = headers
-        return headers
+    fun Request.headers(init: Headers.() -> Unit) {
+        this.headers = Headers().also(init)
     }
 
-    fun KContract.response(init: Response.() -> Unit): Response {
-        val response = Response()
-        response.init()
-        contract.response = response
-        return response
+    fun KContract.response(init: Response.() -> Unit) {
+        contract.response = Response().apply(init)
     }
 
-    fun Response.headers(init: Headers.() -> Unit): Headers {
-        val headers = Headers()
-        headers.init()
-        this.headers = headers
-        return headers
+    fun Response.headers(init: Headers.() -> Unit) {
+        this.headers = Headers().apply(init)
     }
 }
