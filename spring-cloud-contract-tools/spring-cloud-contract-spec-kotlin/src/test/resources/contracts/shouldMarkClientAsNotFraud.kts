@@ -1,6 +1,8 @@
 package contracts
 
-org.springframework.cloud.contract.spec.KContract.make {
+import org.springframework.cloud.contract.spec.contract
+
+contract {
     request {
         method("PUT")
         url("/fraudcheck")

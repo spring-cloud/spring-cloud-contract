@@ -8,41 +8,40 @@ import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.Response
 
 /**
+ * Top level Contract Dsl initializer
+ *
+ * @author Stephan Oudmaijer
+ * @since 2.0.0
+ */
+fun contract(init: ContractDsl.() -> Unit) = ContractDsl().apply(init)
+
+/**
  * Kotlin contract definition, delegates the real functionality to the Groovy Contract class.
  *
  * @author Stephan Oudmaijer
  * @since 2.0.0
  */
-open class KContract @JvmOverloads constructor(val contract: Contract = Contract()) {
+open class ContractDsl @JvmOverloads constructor(val contract: Contract = Contract()) {
 
-    companion object {
-        /**
-         * Top level function equivalent to [Contract.make]
-         */
-        fun make(init: KContract.() -> Unit): KContract {
-            return KContract().apply(init)
-        }
-    }
+    infix fun priority(priority: Int) = contract.priority(priority)
 
-    fun priority(priority: Int) = contract.priority(priority)
+    infix fun label(label: String) = contract.label(label)
 
-    fun label(label: String) = contract.label(label)
+    infix fun description(description: String) = contract.description(description)
 
-    fun description(description: String) = contract.description(description)
-
-    fun name(name: String) = contract.name(name)
+    infix fun name(name: String) = contract.name(name)
 
     fun ignored() = contract.ignored()
 
-    fun KContract.input(init: Input.() -> Unit) {
+    fun ContractDsl.input(init: Input.() -> Unit) {
         contract.input = Input().apply(init)
     }
 
-    fun KContract.outputMessage(init: OutputMessage.() -> Unit) {
+    fun ContractDsl.outputMessage(init: OutputMessage.() -> Unit) {
         contract.outputMessage = OutputMessage().apply(init)
     }
 
-    fun KContract.request(init: Request.() -> Unit){
+    fun ContractDsl.request(init: Request.() -> Unit){
         contract.request = Request().apply(init)
     }
 
@@ -50,7 +49,7 @@ open class KContract @JvmOverloads constructor(val contract: Contract = Contract
         this.headers = Headers().also(init)
     }
 
-    fun KContract.response(init: Response.() -> Unit) {
+    fun ContractDsl.response(init: Response.() -> Unit) {
         contract.response = Response().apply(init)
     }
 
