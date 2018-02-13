@@ -1,11 +1,13 @@
 // We need to be in the same package as the Contract to be able to instantiate it.
 package org.springframework.cloud.contract.spec
 
+import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.Input
 import org.springframework.cloud.contract.spec.internal.OutputMessage
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.Response
+import java.util.regex.Pattern
 
 /**
  * Top level Contract Dsl initializer
@@ -32,6 +34,8 @@ open class ContractDsl @JvmOverloads constructor(val contract: Contract = Contra
     infix fun name(name: String) = contract.name(name)
 
     fun ignored() = contract.ignored()
+
+    fun dyn(consumer: Pattern, producer: String) = DslProperty(consumer, producer)
 
     fun ContractDsl.input(init: Input.() -> Unit) {
         contract.input = Input().apply(init)
