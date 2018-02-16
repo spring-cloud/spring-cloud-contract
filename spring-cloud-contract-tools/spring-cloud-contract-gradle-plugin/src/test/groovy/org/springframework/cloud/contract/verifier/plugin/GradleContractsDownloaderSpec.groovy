@@ -81,7 +81,7 @@ class GradleContractsDownloaderSpec extends Specification {
 		given:
 			ContractVerifierExtension ext = new ContractVerifierExtension()
 			ext.with {
-				stubsMode = StubRunnerProperties.StubsMode.REMOTE
+				contractsMode = StubRunnerProperties.StubsMode.REMOTE
 				contractDependency {
 					groupId("com.example")
 					artifactId("foo")
@@ -109,7 +109,7 @@ class GradleContractsDownloaderSpec extends Specification {
 		given:
 			ContractVerifierExtension ext = new ContractVerifierExtension()
 			ext.with {
-				stubsMode = StubRunnerProperties.StubsMode.REMOTE
+				contractsMode = StubRunnerProperties.StubsMode.REMOTE
 				contractDependency {
 					groupId("com.example")
 					artifactId("foo")
@@ -139,7 +139,7 @@ class GradleContractsDownloaderSpec extends Specification {
 		given:
 			ContractVerifierExtension ext = new ContractVerifierExtension()
 			ext.with {
-				stubsMode = StubRunnerProperties.StubsMode.REMOTE
+				contractsMode = StubRunnerProperties.StubsMode.REMOTE
 				contractDependency {
 					groupId("com.example")
 					artifactId("foo")
@@ -174,7 +174,7 @@ class GradleContractsDownloaderSpec extends Specification {
 		given:
 			ContractVerifierExtension ext = new ContractVerifierExtension()
 			ext.with {
-				stubsMode = StubRunnerProperties.StubsMode.REMOTE
+				contractsMode = StubRunnerProperties.StubsMode.REMOTE
 				contractDependency {
 					groupId("com.example")
 					artifactId("foo")

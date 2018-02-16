@@ -32,7 +32,7 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-maven-plugin</artifactId>
 				<configuration>
-					<stubsMode>REMOTE</stubsMode>
+					<contractsMode>REMOTE</contractsMode>
 					<contractsRepositoryUrl>http://link/to/your/nexus/or/artifactory/or/sth</contractsRepositoryUrl>
 					<contractDependency>
 						<groupId>com.example.standalone</groupId>

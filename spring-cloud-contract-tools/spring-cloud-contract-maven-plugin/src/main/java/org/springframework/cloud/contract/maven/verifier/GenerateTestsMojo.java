@@ -145,8 +145,8 @@ public class GenerateTestsMojo extends AbstractMojo {
 	/**
 	 * Picks the mode in which stubs will be found and registered
 	 */
-	@Parameter(property = "stubsMode", defaultValue = "CLASSPATH")
-	private StubRunnerProperties.StubsMode stubsMode;
+	@Parameter(property = "contractsMode", defaultValue = "CLASSPATH")
+	private StubRunnerProperties.StubsMode contractsMode;
 
 	/**
 	 * A package that contains all the base clases for generated tests. If your contract resides in a location
@@ -196,6 +196,13 @@ public class GenerateTestsMojo extends AbstractMojo {
 	@Parameter(property = "contractsRepositoryProxyPort")
 	private Integer contractsRepositoryProxyPort;
 
+	/**
+	 * If {@code true} then will not assert whether a stub / contract
+	 * JAR was downloaded from local or remote location
+	 */
+	@Parameter(property = "contractsSnapshotCheckSkip", defaultValue = "false")
+	private boolean contractsSnapshotCheckSkip;
+
 	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
 
 	@Inject
@@ -215,10 +222,11 @@ public class GenerateTestsMojo extends AbstractMojo {
 		final ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
 		// download contracts, unzip them and pass as output directory
 		File contractsDirectory = new MavenContractsDownloader(this.project, this.contractDependency,
-				this.contractsPath, this.contractsRepositoryUrl, this.stubsMode, getLog(),
+				this.contractsPath, this.contractsRepositoryUrl, this.contractsMode, getLog(),
 				this.aetherStubDownloaderFactory, this.repoSession,
 				this.contractsRepositoryUsername, this.contractsRepositoryPassword,
-				this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
+				this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort,
+				this.contractsSnapshotCheckSkip).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 		setupConfig(config, contractsDirectory);
 		this.project.addTestCompileSourceRoot(this.generatedTestSourcesDir.getAbsolutePath());

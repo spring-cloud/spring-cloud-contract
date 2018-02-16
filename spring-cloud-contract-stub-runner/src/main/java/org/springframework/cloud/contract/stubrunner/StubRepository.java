@@ -73,7 +73,7 @@ class StubRepository {
 	}
 
 	StubRepository(File repository) {
-		this(repository, new ArrayList<HttpServerStub>(), new StubRunnerOptionsBuilder().build());
+		this(repository, new ArrayList<>(), new StubRunnerOptionsBuilder().build());
 	}
 
 	public File getPath() {

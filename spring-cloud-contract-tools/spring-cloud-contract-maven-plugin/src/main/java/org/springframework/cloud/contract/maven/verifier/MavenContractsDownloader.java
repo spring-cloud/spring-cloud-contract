@@ -44,6 +44,7 @@ class MavenContractsDownloader {
 	private final String repositoryPassword;
 	private final String repositoryProxyHost;
 	private final Integer repositoryProxyPort;
+	private final boolean contractsSnapshotCheckSkip;
 
 	MavenContractsDownloader(MavenProject project, Dependency contractDependency,
 			String contractsPath, String contractsRepositoryUrl,
@@ -51,7 +52,7 @@ class MavenContractsDownloader {
 			AetherStubDownloaderFactory aetherStubDownloaderFactory,
 			RepositorySystemSession repoSession, String repositoryUsername,
 			String repositoryPassword, String repositoryProxyHost,
-			Integer repositoryProxyPort) {
+			Integer repositoryProxyPort, boolean contractsSnapshotCheckSkip) {
 		this.project = project;
 		this.contractDependency = contractDependency;
 		this.contractsPath = contractsPath;
@@ -65,6 +66,7 @@ class MavenContractsDownloader {
 		this.repositoryProxyHost = repositoryProxyHost;
 		this.repositoryProxyPort = repositoryProxyPort;
 		this.stubDownloaderBuilderProvider = new StubDownloaderBuilderProvider();
+		this.contractsSnapshotCheckSkip = contractsSnapshotCheckSkip;
 	}
 
 	File downloadAndUnpackContractsIfRequired(ContractVerifierConfigProperties config, File defaultContractsDir) {
@@ -139,7 +141,8 @@ class MavenContractsDownloader {
 				.withStubRepositoryRoot(this.contractsRepositoryUrl)
 				.withStubsMode(this.stubsMode)
 				.withUsername(this.repositoryUsername)
-				.withPassword(this.repositoryPassword);
+				.withPassword(this.repositoryPassword)
+				.withSnapshotCheckSkip(this.contractsSnapshotCheckSkip);
 		if (this.repositoryProxyPort != null) {
 			builder.withProxy(this.repositoryProxyHost, this.repositoryProxyPort);
 		}

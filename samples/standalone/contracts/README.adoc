@@ -43,7 +43,7 @@ Example for Maven
     <groupId>org.springframework.cloud</groupId>
     <artifactId>spring-cloud-contract-maven-plugin</artifactId>
     <configuration>
-        <stubsMode>LOCAL</stubsMode>
+        <contractsMode>LOCAL</contractsMode>
         <contractDependency>
             <groupId>com.example.standalone</groupId>
             <artifactId>contracts</artifactId>

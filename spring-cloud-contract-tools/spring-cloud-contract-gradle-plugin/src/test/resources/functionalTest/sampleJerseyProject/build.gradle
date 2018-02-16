@@ -116,7 +116,7 @@ configure(project(':fraudDetectionService')) {
 	}
 
 	contracts {
-		stubsMode = "REMOTE"
+		contractsMode = "REMOTE"
 		targetFramework = 'Spock'
 		testMode = 'JaxRsClient'
 		baseClassForTests = 'org.springframework.cloud.MvcSpec'
