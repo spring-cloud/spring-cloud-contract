@@ -24,7 +24,7 @@ import org.springframework.cloud.contract.stubrunner.util.StringUtils;
 /**
  * Technical options related to running StubRunner
  *
- * Use {@class StubRunnerOptionsBuilder} to build this object.
+ * Use {@see StubRunnerOptionsBuilder} to build this object.
  *
  * @see StubRunnerOptionsBuilder
  */

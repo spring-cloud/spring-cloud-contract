@@ -72,6 +72,8 @@ public class AetherStubDownloader implements StubDownloader {
 	private static final String ARTIFACT_EXTENSION = "jar";
 	private static final String LATEST_ARTIFACT_VERSION = "(,]";
 	private static final String LATEST_VERSION_IN_IVY = "+";
+	private static final String STUBRUNNER_SNAPSHOT_CHECK_SKIP_SYSTEM_PROP = "stubrunner.snapshot-check.skip";
+	private static final String STUBRUNNER_SNAPSHOT_CHECK_SKIP_ENV_VAR = "STUBRUNNER_SNAPSHOT_CHECK_SKIP";
 
 	private final List<RemoteRepository> remoteRepos;
 	private final RepositorySystem repositorySystem;
@@ -170,7 +172,7 @@ public class AetherStubDownloader implements StubDownloader {
 			ArtifactResult result = this.repositorySystem.resolveArtifact(this.session, request);
 			log.info("Resolved artifact [" + artifact + "] to "
 					+ result.getArtifact().getFile());
-			if (resolvedFromLocalRepo(result) && shouldDownloadFromRemote()) {
+			if (!skipSnapshotCheck() && resolvedFromLocalRepo(result) && shouldDownloadFromRemote()) {
 				throw new IllegalStateException("The artifact was found in the local repository "
 						+ "but you have explicitly stated that it should be downloaded from a remote one");
 			}
@@ -189,7 +191,17 @@ public class AetherStubDownloader implements StubDownloader {
 							+ "] and classifier [" + classifier + "] in " + this.remoteRepos,
 					e);
 		}
+	}
 
+	private boolean skipSnapshotCheck() {
+		String skipSnapCheckProp = System.getProperty(STUBRUNNER_SNAPSHOT_CHECK_SKIP_SYSTEM_PROP);
+		String skipSnapCheckEnv = getSkipSnapEnvProp();
+		return Boolean.parseBoolean(skipSnapCheckProp) || Boolean.parseBoolean(skipSnapCheckEnv);
+	}
+
+	// Visible for testing
+	String getSkipSnapEnvProp() {
+		return System.getenv(STUBRUNNER_SNAPSHOT_CHECK_SKIP_ENV_VAR);
 	}
 
 	private boolean resolvedFromLocalRepo(ArtifactResult result) {
