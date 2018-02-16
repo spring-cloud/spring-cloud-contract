@@ -72,7 +72,7 @@ public class AetherStubDownloader implements StubDownloader {
 	private static final String ARTIFACT_EXTENSION = "jar";
 	private static final String LATEST_ARTIFACT_VERSION = "(,]";
 	private static final String LATEST_VERSION_IN_IVY = "+";
-	private static final String STUBRUNNER_SNAPSHOT_CHECK_SKIP_SYSTEM_PROP = "stubrunner.snapshot-check.skip";
+	private static final String STUBRUNNER_SNAPSHOT_CHECK_SKIP_SYSTEM_PROP = "stubrunner.snapshot-check-skip";
 	private static final String STUBRUNNER_SNAPSHOT_CHECK_SKIP_ENV_VAR = "STUBRUNNER_SNAPSHOT_CHECK_SKIP";
 
 	private final List<RemoteRepository> remoteRepos;

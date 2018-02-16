@@ -822,7 +822,7 @@ and failed the build.
 
 For such cases we're introducing the property mechanism:
 
-- via `stubrunner.snapshot-check.skip` system property
+- via `stubrunner.snapshot-check-skip` system property
 - via `STUBRUNNER_SNAPSHOT_CHECK_SKIP` environment variable
 
 if either of these values is set to `true`, then the stub downloader will not

@@ -77,7 +77,7 @@ class AetherStubDownloaderSpec extends Specification {
 			AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions)
 
 		and:
-			System.properties.setProperty("stubrunner.snapshot-check.skip", "true")
+			System.properties.setProperty("stubrunner.snapshot-check-skip", "true")
 
 		when:
 			def jar = aetherStubDownloader.downloadAndUnpackStubJar(new StubConfiguration("org.springframework.cloud", "spring-cloud-contract-spec", "+", ""))
