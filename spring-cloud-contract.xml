@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2018-02-17</date>
+<date>2018-02-19</date>
 </info>
 <preface>
 <title></title>
@@ -3953,6 +3953,12 @@ project for more information.</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">compile "org.springframework.cloud:spring-cloud-starter-stub-runner"</programlisting>
 <simpara>Annotate a class with <literal>@EnableStubRunnerServer</literal>, build a fat-jar and you&#8217;re ready to go!</simpara>
 <simpara>For the properties check the <emphasis role="strong">Stub Runner Spring</emphasis> section.</simpara>
+</section>
+<section xml:id="_stub_runner_server_fat_jar">
+<title>Stub Runner Server Fat Jar</title>
+<simpara>You can download a standalone JAR from Maven (for example, for version 1.2.3.RELEASE), as follows:</simpara>
+<programlisting language="bash" linenumbering="unnumbered">$ wget -O stub-runner.jar 'https://search.maven.org/remote_content?g=org.springframework.cloud&amp;a=spring-cloud-contract-stub-runner-boot&amp;v=1.2.3.RELEASE'
+$ java -jar stub-runner.jar --stubrunner.ids=... --stubrunner.repositoryRoot=...</programlisting>
 </section>
 <section xml:id="_spring_cloud_cli">
 <title>Spring Cloud CLI</title>
