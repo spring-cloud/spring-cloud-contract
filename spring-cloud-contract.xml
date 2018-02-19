@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2018-02-16</date>
+<date>2018-02-17</date>
 </info>
 <preface>
 <title></title>
@@ -1396,6 +1396,188 @@ and contracts present under the <literal>com/example/server</literal> will be pi
 tests and the stubs. Due to this convention the producer team will know which consumer teams will be broken
 when some incompatible changes are done.</simpara>
 <simpara>The rest of the flow looks the same.</simpara>
+</section>
+<section xml:id="_how_can_i_define_messaging_contracts_per_topic_not_per_producer">
+<title>How can I define messaging contracts per topic not per producer?</title>
+<simpara>To avoid messaging contracts duplication in the common repo, when few producers writing messages to one topic,
+we could create the structure when the rest contracts would be placed in a folder per producer and messaging
+contracts in the folder per topic.</simpara>
+<section xml:id="_for_maven_project">
+<title>For Maven Project</title>
+<simpara>To make it possible to work on the producer side we could do the following things (all via Maven plugins):</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Add common repo dependency to your classpath:</simpara>
+</listitem>
+</itemizedlist>
+<programlisting language="xml" linenumbering="unnumbered">&lt;dependency&gt;
+   &lt;groupId&gt;com.example&lt;/groupId&gt;
+   &lt;artifactId&gt;common-repo&lt;/artifactId&gt;
+   &lt;version&gt;${common-repo.version}&lt;/version&gt;
+&lt;/dependency&gt;</programlisting>
+<itemizedlist>
+<listitem>
+<simpara>Download the JAR with the contracts and unpack the JAR to target:</simpara>
+</listitem>
+</itemizedlist>
+<programlisting language="xml" linenumbering="unnumbered">&lt;plugin&gt;
+   &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+   &lt;artifactId&gt;maven-dependency-plugin&lt;/artifactId&gt;
+   &lt;version&gt;3.0.0&lt;/version&gt;
+   &lt;executions&gt;
+      &lt;execution&gt;
+         &lt;id&gt;unpack-dependencies&lt;/id&gt;
+         &lt;phase&gt;process-resources&lt;/phase&gt;
+         &lt;goals&gt;
+            &lt;goal&gt;unpack&lt;/goal&gt;
+         &lt;/goals&gt;
+         &lt;configuration&gt;
+            &lt;artifactItems&gt;
+               &lt;artifactItem&gt;
+                  &lt;groupId&gt;com.example&lt;/groupId&gt;
+                  &lt;artifactId&gt;common-repo&lt;/artifactId&gt;
+                  &lt;type&gt;jar&lt;/type&gt;
+                  &lt;overWrite&gt;false&lt;/overWrite&gt;
+                  &lt;outputDirectory&gt;${project.build.directory}/contracts&lt;/outputDirectory&gt;
+               &lt;/artifactItem&gt;
+            &lt;/artifactItems&gt;
+         &lt;/configuration&gt;
+      &lt;/execution&gt;
+   &lt;/executions&gt;
+&lt;/plugin&gt;</programlisting>
+<itemizedlist>
+<listitem>
+<simpara>Rip out all the folders we&#8217;re not interested in:</simpara>
+</listitem>
+</itemizedlist>
+<programlisting language="xml" linenumbering="unnumbered">&lt;plugin&gt;
+   &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+   &lt;artifactId&gt;maven-antrun-plugin&lt;/artifactId&gt;
+   &lt;version&gt;1.8&lt;/version&gt;
+   &lt;executions&gt;
+      &lt;execution&gt;
+         &lt;phase&gt;process-resources&lt;/phase&gt;
+         &lt;goals&gt;
+            &lt;goal&gt;run&lt;/goal&gt;
+         &lt;/goals&gt;
+         &lt;configuration&gt;
+            &lt;tasks&gt;
+               &lt;delete includeemptydirs="true"&gt;
+                  &lt;fileset dir="${project.build.directory}/contracts"&gt;
+                     &lt;include name="**/*" /&gt;
+                     &lt;!--Producer artifactId--&gt;
+                     &lt;exclude name="**/${project.artifactId}/**" /&gt;
+                     &lt;!--List of the supported topics--&gt;
+                     &lt;exclude name="**/${first-topic}/**" /&gt;
+                     &lt;exclude name="**/${second-topic}/**" /&gt;
+                  &lt;/fileset&gt;
+               &lt;/delete&gt;
+            &lt;/tasks&gt;
+         &lt;/configuration&gt;
+      &lt;/execution&gt;
+   &lt;/executions&gt;
+&lt;/plugin&gt;</programlisting>
+<itemizedlist>
+<listitem>
+<simpara>Run the contract plugin by pointing to the contracts to the folder under target:</simpara>
+</listitem>
+</itemizedlist>
+<programlisting language="xml" linenumbering="unnumbered">&lt;plugin&gt;
+   &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+   &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+   &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+   &lt;extensions&gt;true&lt;/extensions&gt;
+   &lt;configuration&gt;
+      &lt;packageWithBaseClasses&gt;com.example&lt;/packageWithBaseClasses&gt;
+      &lt;baseClassMappings&gt;
+         &lt;baseClassMapping&gt;
+            &lt;contractPackageRegex&gt;.*intoxication.*&lt;/contractPackageRegex&gt;
+            &lt;baseClassFQN&gt;com.example.intoxication.BeerIntoxicationBase&lt;/baseClassFQN&gt;
+         &lt;/baseClassMapping&gt;
+      &lt;/baseClassMappings&gt;
+      &lt;contractsDirectory&gt;${project.build.directory}/contracts&lt;/contractsDirectory&gt;
+   &lt;/configuration&gt;
+&lt;/plugin&gt;</programlisting>
+</section>
+<section xml:id="_for_gradle_project">
+<title>For Gradle Project</title>
+<itemizedlist>
+<listitem>
+<simpara>Add a custom configuration for the common-repo dependency:</simpara>
+</listitem>
+</itemizedlist>
+<programlisting language="groovy" linenumbering="unnumbered">ext {
+    conractsGroupId = "com.example"
+    contractsArtifactId = "common-repo"
+    contractsVersion = "1.2.3"
+}
+
+configurations {
+    contracts {
+        transitive = false
+    }
+}</programlisting>
+<itemizedlist>
+<listitem>
+<simpara>Add the common-repo dependency to your classpath:</simpara>
+</listitem>
+</itemizedlist>
+<programlisting language="groovy" linenumbering="unnumbered">dependencies {
+    contracts "${conractsGroupId}:${contractsArtifactId}:${contractsVersion}"
+    testCompile "${conractsGroupId}:${contractsArtifactId}:${contractsVersion}"
+}</programlisting>
+<itemizedlist>
+<listitem>
+<simpara>Download the dependency to an appropriate folder:</simpara>
+</listitem>
+</itemizedlist>
+<programlisting language="groovy" linenumbering="unnumbered">task getContracts(type: Copy) {
+    from configurations.contracts
+    into new File(project.buildDir, "downloadedContracts")
+}</programlisting>
+<itemizedlist>
+<listitem>
+<simpara>Unzip JAR:</simpara>
+</listitem>
+</itemizedlist>
+<programlisting language="groovy" linenumbering="unnumbered">task unzipContracts(type: Copy) {
+    def zipFile = new File(project.buildDir, "downloadedContracts/${contractsArtifactId}-${contractsVersion}.jar")
+    def outputDir = file("${buildDir}/unpackedContracts")
+
+    from zipTree(zipFile)
+    into outputDir
+}</programlisting>
+<itemizedlist>
+<listitem>
+<simpara>Cleanup unused contracts:</simpara>
+</listitem>
+</itemizedlist>
+<programlisting language="groovy" linenumbering="unnumbered">task deleteUnwantedContracts(type: Delete) {
+    delete fileTree(dir: "${buildDir}/unpackedContracts",
+        include: "**/*",
+        excludes: [
+            "**/${project.name}/**"",
+            **/${first-topic}/**",
+            **/${second-topic}/**])
+}</programlisting>
+<itemizedlist>
+<listitem>
+<simpara>Create task dependencies:</simpara>
+</listitem>
+</itemizedlist>
+<programlisting language="groovy" linenumbering="unnumbered">unzipContracts.dependsOn("getContracts")
+deleteUnwantedContracts.dependsOn("unzipContracts")
+build.dependsOn("deleteUnwantedContracts")</programlisting>
+<itemizedlist>
+<listitem>
+<simpara>Configure plugin by specifying the directory containing contracts using <literal><literal>contractsDslDir</literal></literal> property</simpara>
+</listitem>
+</itemizedlist>
+<programlisting language="groovy" linenumbering="unnumbered">contracts {
+
+    contractsDslDir = new File("${buildDir}/unpackedContracts")
+}</programlisting>
+</section>
 </section>
 </section>
 <section xml:id="_can_i_have_multiple_base_classes_for_tests">

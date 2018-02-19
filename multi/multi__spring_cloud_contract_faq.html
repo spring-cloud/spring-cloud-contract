@@ -291,7 +291,112 @@ of the JAR containing the contracts:</p><pre class="programlisting"><span xmlns:
 from <code class="literal"><a class="link" href="http://link/to/your/nexus/or/artifactory/or/sth" target="_top">http://link/to/your/nexus/or/artifactory/or/sth</a></code>. It will be then unpacked in a local temporary folder
 and contracts present under the <code class="literal">com/example/server</code> will be picked as the ones used to generate the
 tests and the stubs. Due to this convention the producer team will know which consumer teams will be broken
-when some incompatible changes are done.</p><p>The rest of the flow looks the same.</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_can_i_have_multiple_base_classes_for_tests" href="#_can_i_have_multiple_base_classes_for_tests"></a>3.6&nbsp;Can I have multiple base classes for tests?</h2></div></div></div><p>Yes! Check out the <a class="link" href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_different_base_classes_for_contracts" target="_top">Different base classes for contracts</a> sections
+when some incompatible changes are done.</p><p>The rest of the flow looks the same.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_how_can_i_define_messaging_contracts_per_topic_not_per_producer" href="#_how_can_i_define_messaging_contracts_per_topic_not_per_producer"></a>3.5.5&nbsp;How can I define messaging contracts per topic not per producer?</h3></div></div></div><p>To avoid messaging contracts duplication in the common repo, when few producers writing messages to one topic,
+we could create the structure when the rest contracts would be placed in a folder per producer and messaging
+contracts in the folder per topic.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_for_maven_project" href="#_for_maven_project"></a>For Maven Project</h4></div></div></div><p>To make it possible to work on the producer side we could do the following things (all via Maven plugins):</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Add common repo dependency to your classpath:</li></ul></div><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>com.example<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>common-repo<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>${common-repo.version}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span></pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Download the JAR with the contracts and unpack the JAR to target:</li></ul></div><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.apache.maven.plugins<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>maven-dependency-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>3.0.0<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;executions&gt;</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;execution&gt;</span>
+         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>unpack-dependencies<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;phase&gt;</span>process-resources<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/phase&gt;</span>
+         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goals&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goal&gt;</span>unpack<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goal&gt;</span>
+         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goals&gt;</span>
+         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactItems&gt;</span>
+               <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactItem&gt;</span>
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>com.example<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>common-repo<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;type&gt;</span>jar<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/type&gt;</span>
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;overWrite&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/overWrite&gt;</span>
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;outputDirectory&gt;</span>${project.build.directory}/contracts<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/outputDirectory&gt;</span>
+               <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactItem&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactItems&gt;</span>
+         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/execution&gt;</span>
+   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/executions&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Rip out all the folders we&#8217;re not interested in:</li></ul></div><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.apache.maven.plugins<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>maven-antrun-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>1.8<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;executions&gt;</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;execution&gt;</span>
+         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;phase&gt;</span>process-resources<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/phase&gt;</span>
+         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goals&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goal&gt;</span>run<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goal&gt;</span>
+         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goals&gt;</span>
+         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;tasks&gt;</span>
+               <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;delete</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">includeemptydirs</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"true"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&gt;</span>
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;fileset</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">dir</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"${project.build.directory}/contracts"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&gt;</span>
+                     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;include</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">name</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"**/*"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag"> /&gt;</span>
+                     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!--Producer artifactId--&gt;</span>
+                     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;exclude</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">name</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"**/${project.artifactId}/**"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag"> /&gt;</span>
+                     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!--List of the supported topics--&gt;</span>
+                     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;exclude</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">name</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"**/${first-topic}/**"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag"> /&gt;</span>
+                     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;exclude</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">name</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"**/${second-topic}/**"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag"> /&gt;</span>
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/fileset&gt;</span>
+               <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/delete&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/tasks&gt;</span>
+         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/execution&gt;</span>
+   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/executions&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Run the contract plugin by pointing to the contracts to the folder under target:</li></ul></div><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>${spring-cloud-contract.version}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;extensions&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/extensions&gt;</span>
+   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;packageWithBaseClasses&gt;</span>com.example<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/packageWithBaseClasses&gt;</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;baseClassMappings&gt;</span>
+         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;baseClassMapping&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractPackageRegex&gt;</span>.*intoxication.*<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractPackageRegex&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;baseClassFQN&gt;</span>com.example.intoxication.BeerIntoxicationBase<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/baseClassFQN&gt;</span>
+         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/baseClassMapping&gt;</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/baseClassMappings&gt;</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractsDirectory&gt;</span>${project.build.directory}/contracts<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractsDirectory&gt;</span>
+   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_for_gradle_project" href="#_for_gradle_project"></a>For Gradle Project</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Add a custom configuration for the common-repo dependency:</li></ul></div><pre class="programlisting">ext {
+    conractsGroupId = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example"</span>
+    contractsArtifactId = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"common-repo"</span>
+    contractsVersion = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"1.2.3"</span>
+}
+
+configurations {
+    contracts {
+        transitive = false
+    }
+}</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Add the common-repo dependency to your classpath:</li></ul></div><pre class="programlisting">dependencies {
+    contracts <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${conractsGroupId}:${contractsArtifactId}:${contractsVersion}"</span>
+    testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${conractsGroupId}:${contractsArtifactId}:${contractsVersion}"</span>
+}</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Download the dependency to an appropriate folder:</li></ul></div><pre class="programlisting">task getContracts(type: Copy) {
+    from configurations.contracts
+    into <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> File(project.buildDir, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"downloadedContracts"</span>)
+}</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Unzip JAR:</li></ul></div><pre class="programlisting">task unzipContracts(type: Copy) {
+    def zipFile = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> File(project.buildDir, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"downloadedContracts/${contractsArtifactId}-${contractsVersion}.jar"</span>)
+    def outputDir = file(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${buildDir}/unpackedContracts"</span>)
+
+    from zipTree(zipFile)
+    into outputDir
+}</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Cleanup unused contracts:</li></ul></div><pre class="programlisting">task deleteUnwantedContracts(type: Delete) {
+    delete fileTree(dir: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${buildDir}/unpackedContracts"</span>,
+        include: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"**/*"</span>,
+        excludes: [
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"**/${project.name}/**"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",
+</span>            **/${first-topic}<strong class="hl-tag" style="color: blue">/**",
+            **/</strong>${second-topic}<strong class="hl-tag" style="color: blue">/**])
+}</strong></pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Create task dependencies:</li></ul></div><pre class="programlisting">unzipContracts.dependsOn(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"getContracts"</span>)
+deleteUnwantedContracts.dependsOn(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"unzipContracts"</span>)
+build.dependsOn(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"deleteUnwantedContracts"</span>)</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Configure plugin by specifying the directory containing contracts using <code class="literal"><code class="literal">contractsDslDir</code></code> property</li></ul></div><pre class="programlisting">contracts {
+
+    contractsDslDir = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> File(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${buildDir}/unpackedContracts"</span>)
+}</pre></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_can_i_have_multiple_base_classes_for_tests" href="#_can_i_have_multiple_base_classes_for_tests"></a>3.6&nbsp;Can I have multiple base classes for tests?</h2></div></div></div><p>Yes! Check out the <a class="link" href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_different_base_classes_for_contracts" target="_top">Different base classes for contracts</a> sections
 of either Gradle or Maven plugins.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_how_can_i_debug_the_request_response_being_sent_by_the_generated_tests_client" href="#_how_can_i_debug_the_request_response_being_sent_by_the_generated_tests_client"></a>3.7&nbsp;How can I debug the request/response being sent by the generated tests client?</h2></div></div></div><p>The generated tests all boil down to RestAssured in some form or fashion which relies on <a class="link" href="https://hc.apache.org/httpcomponents-client-ga/" target="_top">Apache HttpClient</a>.  HttpClient has a facility called <a class="link" href="https://hc.apache.org/httpcomponents-client-ga/logging.html#Wire_Logging" target="_top">wire logging</a> which logs the entire request and response to HttpClient.  Spring Boot has a logging <a class="link" href="https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html" target="_top">common application property</a> for doing this sort of thing, just add this to your application properties</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">logging.level.org.apache.http.wire</span>=DEBUG</pre><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_how_can_i_debug_the_mapping_request_response_being_sent_by_wiremock" href="#_how_can_i_debug_the_mapping_request_response_being_sent_by_wiremock"></a>3.7.1&nbsp;How can I debug the mapping/request/response being sent by WireMock?</h3></div></div></div><p>Starting from version <code class="literal">1.2.0</code> we turn on WireMock logging to
 info and the WireMock notifier to being verbose. Now you will
 exactly know what request was received by WireMock server and which
