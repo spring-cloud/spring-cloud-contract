@@ -1,23 +1,25 @@
 package contracts
 
-org.springframework.cloud.contract.spec.KContract.make {
+import org.springframework.cloud.contract.spec.contract
+
+contract {
     request { // (1)
         method("PUT") // (2)
         url("/fraudcheck") // (3)
-        body(mapOf( // (4)
-                "clientId" to dynamic(consumer = regex("[0-9]{10}"), producer = "8532032713"),
+        body( // (4)
+                "clientId" to dyn(consumer = regex("[0-9]{10}"), producer = "8532032713"),
                 "loanAmount" to 99999
-        ))
-        headers {// (5)
+        )
+        headers { // (5)
             contentType("application/vnd.fraud.v1+json")
         }
     }
     response { // (6)
         status(200) // (7)
-        body(mapOf( // (8)
+        body( // (8)
                 "fraudCheckStatus" to "FRAUD",
                 "rejectionReason" to "Amount too high"
-        ))
+        )
         headers { // (9)
             contentType("application/vnd.fraud.v1+json")
         }

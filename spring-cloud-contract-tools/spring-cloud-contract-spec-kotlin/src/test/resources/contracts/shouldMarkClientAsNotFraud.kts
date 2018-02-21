@@ -1,6 +1,8 @@
 package contracts
 
-org.springframework.cloud.contract.spec.KContract.make {
+import org.springframework.cloud.contract.spec.contract
+
+contract {
     request {
         method("PUT")
         url("/fraudcheck")
@@ -18,10 +20,10 @@ org.springframework.cloud.contract.spec.KContract.make {
     }
     response {
         status(200)
-        body(mapOf(
+        body(
                 "fraudCheckStatus" to "OK",
                 "rejectionReason" to listOf(consumer(null), producer(execute("assertThatRejectionReasonIsNull(\$it)")))
-        ))
+        )
         headers {
             contentType("application/vnd.fraud.v1+json")
         }
