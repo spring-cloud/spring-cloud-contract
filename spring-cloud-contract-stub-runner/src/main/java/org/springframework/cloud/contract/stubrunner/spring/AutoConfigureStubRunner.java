@@ -108,4 +108,10 @@ public @interface AutoConfigureStubRunner {
 	 * @return the type of stubs mode
 	 */
 	StubRunnerProperties.StubsMode stubsMode() default StubRunnerProperties.StubsMode.CLASSPATH;
+
+	/**
+	 * If set to {@code true} will not assert whether the downloaded stubs / contract
+	 * JAR was downloaded from a remote location or a local one
+	 */
+	boolean snapshotCheckSkip() default false;
 }

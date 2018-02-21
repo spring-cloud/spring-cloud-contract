@@ -14,6 +14,6 @@ public class JsonAssertTests {
 	@Test
 	public void should_compare_big_decimals() {
 		DocumentContext context = JsonPath.parse("{\"foo\": 55534673.56}");
-		assertThatJson(context).field("['foo']").isEqualTo(55534673.57);
+		assertThatJson(context).field("['foo']").isEqualTo(55534673.56);
 	}
 }

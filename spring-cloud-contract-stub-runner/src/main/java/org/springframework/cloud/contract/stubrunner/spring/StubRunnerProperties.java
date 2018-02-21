@@ -90,7 +90,16 @@ public class StubRunnerProperties {
 	 */
 	private String mappingsOutputFolder;
 
+	/**
+	 * Pick where the stubs should come from
+	 */
 	private StubsMode stubsMode;
+
+	/**
+	 * If set to {@code true} will not assert whether the downloaded stubs / contract
+	 * JAR was downloaded from a remote location or a local one
+	 */
+	private boolean snapshotCheckSkip;
 
 	/**
 	 * An enumeration stub modes.
@@ -221,12 +230,21 @@ public class StubRunnerProperties {
 		this.stubsMode = stubsMode;
 	}
 
+	public boolean isSnapshotCheckSkip() {
+		return this.snapshotCheckSkip;
+	}
+
+	public void setSnapshotCheckSkip(boolean snapshotCheckSkip) {
+		this.snapshotCheckSkip = snapshotCheckSkip;
+	}
+
 	@Override public String toString() {
 		return "StubRunnerProperties{" + "minPort=" + this.minPort + ", maxPort=" + this.maxPort
 				+ ", repositoryRoot=" + this.repositoryRoot
 				+ ", ids=" + Arrays.toString(this.ids) + ", classifier='" + this.classifier + '\''
 				+ ", setStubsPerConsumer='" + this.stubsPerConsumer + "', consumerName='" + this.consumerName + '\''
 				+ ", stubsMode='" + this.stubsMode + '\''
+				+ ", snapshotCheckSkip='" + this.snapshotCheckSkip + '\''
 				+ '}';
 	}
 }

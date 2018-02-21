@@ -73,11 +73,14 @@ public class AetherStubDownloader implements StubDownloader {
 	private static final String ARTIFACT_EXTENSION = "jar";
 	private static final String LATEST_ARTIFACT_VERSION = "(,]";
 	private static final String LATEST_VERSION_IN_IVY = "+";
+	private static final String STUBRUNNER_SNAPSHOT_CHECK_SKIP_SYSTEM_PROP = "stubrunner.snapshot-check-skip";
+	private static final String STUBRUNNER_SNAPSHOT_CHECK_SKIP_ENV_VAR = "STUBRUNNER_SNAPSHOT_CHECK_SKIP";
 
 	private final List<RemoteRepository> remoteRepos;
 	private final RepositorySystem repositorySystem;
 	private final RepositorySystemSession session;
 	private final boolean workOffline;
+	private final boolean snapshotCheckSkip;
 
 	public AetherStubDownloader(StubRunnerOptions stubRunnerOptions) {
 		if (log.isDebugEnabled()) {
@@ -86,19 +89,23 @@ public class AetherStubDownloader implements StubDownloader {
 		this.remoteRepos = remoteRepositories(stubRunnerOptions);
 		boolean remoteReposMissing = remoteReposMissing();
 		switch (stubRunnerOptions.stubsMode) {
-			case LOCAL:
-				log.info("Remote repos not passed but the switch to work offline was set. "
-						+ "Stubs will be used from your local Maven repository.");
-				break;
-			case REMOTE:
-				if (remoteReposMissing) throw new IllegalStateException("Remote repositories for stubs are not specified and work offline flag wasn't passed");
-				break;
-			case CLASSPATH:
-				throw new UnsupportedOperationException("You can't use Aether downloader when you use classpath to find stubs");
+		case LOCAL:
+			log.info("Remote repos not passed but the switch to work offline was set. " + "Stubs will be used from your local Maven repository.");
+			break;
+		case REMOTE:
+			if (remoteReposMissing)
+				throw new IllegalStateException(
+						"Remote repositories for stubs are not specified and work offline flag wasn't passed");
+			break;
+		case CLASSPATH:
+			throw new UnsupportedOperationException(
+					"You can't use Aether downloader when you use classpath to find stubs");
 		}
 		this.repositorySystem = newRepositorySystem();
 		this.workOffline = stubRunnerOptions.stubsMode == StubRunnerProperties.StubsMode.LOCAL;
 		this.session = newSession(this.repositorySystem, this.workOffline);
+		this.snapshotCheckSkip =
+				stubRunnerOptions.isSnapshotCheckSkip() || skipSnapshotCheck();
 		registerShutdownHook();
 	}
 
@@ -122,6 +129,7 @@ public class AetherStubDownloader implements StubDownloader {
 			log.error("Remote repositories for stubs are not specified and work offline flag wasn't passed");
 		}
 		this.workOffline = false;
+		this.snapshotCheckSkip = skipSnapshotCheck();
 		registerShutdownHook();
 	}
 
@@ -171,7 +179,7 @@ public class AetherStubDownloader implements StubDownloader {
 			ArtifactResult result = this.repositorySystem.resolveArtifact(this.session, request);
 			log.info("Resolved artifact [" + artifact + "] to "
 					+ result.getArtifact().getFile());
-			if (resolvedFromLocalRepo(result) && shouldDownloadFromRemote()) {
+			if (!this.snapshotCheckSkip && resolvedFromLocalRepo(result) && shouldDownloadFromRemote()) {
 				throw new IllegalStateException("The artifact was found in the local repository "
 						+ "but you have explicitly stated that it should be downloaded from a remote one");
 			}
@@ -190,7 +198,23 @@ public class AetherStubDownloader implements StubDownloader {
 							+ "] and classifier [" + classifier + "] in " + this.remoteRepos,
 					e);
 		}
+	}
 
+	private boolean skipSnapshotCheck() {
+		// still checking the system / env props setting for backward compatibility
+		// when running this for plugins
+		String skipSnapCheckProp = System.getProperty(STUBRUNNER_SNAPSHOT_CHECK_SKIP_SYSTEM_PROP);
+		String skipSnapCheckEnv = getSkipSnapEnvProp();
+		if (StringUtils.hasText(skipSnapCheckProp)) {
+			return Boolean.parseBoolean(skipSnapCheckProp);
+		}
+		return StringUtils.hasText(skipSnapCheckEnv) && Boolean
+				.parseBoolean(skipSnapCheckEnv);
+	}
+
+	// Visible for testing
+	String getSkipSnapEnvProp() {
+		return System.getenv(STUBRUNNER_SNAPSHOT_CHECK_SKIP_ENV_VAR);
 	}
 
 	private boolean resolvedFromLocalRepo(ArtifactResult result) {

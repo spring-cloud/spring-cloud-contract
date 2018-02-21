@@ -25,7 +25,7 @@ import org.springframework.cloud.contract.stubrunner.util.StringUtils;
 /**
  * Technical options related to running StubRunner
  *
- * Use {@class StubRunnerOptionsBuilder} to build this object.
+ * Use {@see StubRunnerOptionsBuilder} to build this object.
  *
  * @see StubRunnerOptionsBuilder
  */
@@ -91,12 +91,18 @@ public class StubRunnerOptions {
 
 	final StubRunnerProperties.StubsMode stubsMode;
 
+	/**
+	 * If set to {@code true} will not assert whether the downloaded stubs / contract
+	 * JAR was downloaded from a remote location or a local one
+	 */
+	private boolean snapshotCheckSkip;
+
 	StubRunnerOptions(Integer minPortValue, Integer maxPortValue,
 			String stubRepositoryRoot, StubRunnerProperties.StubsMode stubsMode, String stubsClassifier,
 			Collection<StubConfiguration> dependencies,
 			Map<StubConfiguration, Integer> stubIdsToPortMapping,
 			String username, String password, final StubRunnerProxyOptions stubRunnerProxyOptions,
-			boolean stubsPerConsumer, String consumerName, String mappingsOutputFolder) {
+			boolean stubsPerConsumer, String consumerName, String mappingsOutputFolder, boolean snapshotCheckSkip) {
 		this.minPortValue = minPortValue;
 		this.maxPortValue = maxPortValue;
 		this.stubRepositoryRoot = stubRepositoryRoot;
@@ -110,6 +116,7 @@ public class StubRunnerOptions {
 		this.stubsPerConsumer = stubsPerConsumer;
 		this.consumerName = consumerName;
 		this.mappingsOutputFolder = mappingsOutputFolder;
+		this.snapshotCheckSkip = snapshotCheckSkip;
 	}
 
 	public Integer port(StubConfiguration stubConfiguration) {
@@ -133,7 +140,8 @@ public class StubRunnerOptions {
 				.withPassword(System.getProperty("stubrunner.password"))
 				.withStubPerConsumer(Boolean.parseBoolean(System.getProperty("stubrunner.stubs-per-consumer", "false")))
 				.withConsumerName(System.getProperty("stubrunner.consumer-name"))
-				.withMappingsOutputFolder(System.getProperty("stubrunner.mappings-output-folder"));
+				.withMappingsOutputFolder(System.getProperty("stubrunner.mappings-output-folder"))
+				.withSnapshotCheckSkip(Boolean.parseBoolean(System.getProperty("stubrunner.snapshot-check-skip", "false")));
 		String proxyHost = System.getProperty("stubrunner.proxy.host");
 		if (proxyHost != null) {
 			builder.withProxy(proxyHost, Integer.parseInt(System.getProperty("stubrunner.proxy.port")));
@@ -211,6 +219,14 @@ public class StubRunnerOptions {
 
 	public void setMappingsOutputFolder(String mappingsOutputFolder) {
 		this.mappingsOutputFolder = mappingsOutputFolder;
+	}
+
+	public boolean isSnapshotCheckSkip() {
+		return this.snapshotCheckSkip;
+	}
+
+	public void setSnapshotCheckSkip(boolean snapshotCheckSkip) {
+		this.snapshotCheckSkip = snapshotCheckSkip;
 	}
 
 	public static class StubRunnerProxyOptions {

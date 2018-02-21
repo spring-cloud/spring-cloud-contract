@@ -125,7 +125,7 @@ class ContractVerifierExtension {
 	/**
 	 * Picks the mode in which stubs will be found and registered
 	 */
-	StubRunnerProperties.StubsMode stubsMode = StubRunnerProperties.StubsMode.CLASSPATH
+	StubRunnerProperties.StubsMode contractsMode = StubRunnerProperties.StubsMode.CLASSPATH
 
 	/**
 	 * A package that contains all the base clases for generated tests. If your contract resides in a location
@@ -154,7 +154,13 @@ class ContractVerifierExtension {
 	 * excluded from any operations. This is used out of the box when working with
 	 * common repo with contracts.
 	 */
-	boolean excludeBuildFolders
+	boolean excludeBuildFolders = false
+
+	/**
+	 * If set to {@code true} will not assert whether the downloaded stubs / contract
+	 * JAR was downloaded from a remote location or a local one
+	 */
+	boolean contractsSnapshotCheckSkip = false
 
 	void contractDependency(@DelegatesTo(Dependency) Closure closure) {
 		closure.delegate = contractDependency

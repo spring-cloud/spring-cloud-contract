@@ -65,7 +65,7 @@ class GradleContractsDownloader {
 
 	private boolean shouldDownloadContracts(ContractVerifierExtension extension) {
 		return [StubRunnerProperties.StubsMode.LOCAL, StubRunnerProperties.StubsMode.REMOTE].any {
-			it == extension.stubsMode } && (StringUtils.hasText(extension.contractDependency.artifactId) ||
+			it == extension.contractsMode } && (StringUtils.hasText(extension.contractDependency.artifactId) ||
 						StringUtils.hasText(extension.contractDependency.stringNotation))
 	}
 
@@ -79,9 +79,10 @@ class GradleContractsDownloader {
 		StubRunnerOptionsBuilder options = new StubRunnerOptionsBuilder()
 				.withOptions(StubRunnerOptions.fromSystemProps())
 				.withStubRepositoryRoot(extension.contractRepository.repositoryUrl)
-				.withStubsMode(extension.stubsMode)
+				.withStubsMode(extension.contractsMode)
 				.withUsername(extension.contractRepository.username)
 				.withPassword(extension.contractRepository.password)
+				.withSnapshotCheckSkip(extension.contractsSnapshotCheckSkip)
 		if (extension.contractRepository.proxyPort) {
 			options = options.withProxy(extension.contractRepository.proxyHost, extension.contractRepository.proxyPort)
 		}

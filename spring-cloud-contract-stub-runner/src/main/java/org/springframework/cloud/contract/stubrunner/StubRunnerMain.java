@@ -27,6 +27,12 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 
+/**
+ * Class to run stub runner as a standalone process
+ *
+ * @deprecated - use Stub Runner Boot server
+ */
+@Deprecated
 public class StubRunnerMain {
 
 	private static final Logger log = LoggerFactory.getLogger(StubRunnerMain.class);

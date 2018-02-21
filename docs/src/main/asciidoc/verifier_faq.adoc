@@ -333,6 +333,198 @@ when some incompatible changes are done.
 
 The rest of the flow looks the same.
 
+==== How can I define messaging contracts per topic not per producer?
+
+To avoid messaging contracts duplication in the common repo, when few producers writing messages to one topic,
+we could create the structure when the rest contracts would be placed in a folder per producer and messaging
+contracts in the folder per topic.
+
+===== For Maven Project
+
+To make it possible to work on the producer side we could do the following things (all via Maven plugins):
+
+- Add common repo dependency to your classpath:
+
+[source,xml,indent=0]
+----
+<dependency>
+   <groupId>com.example</groupId>
+   <artifactId>common-repo</artifactId>
+   <version>${common-repo.version}</version>
+</dependency>
+----
+
+- Download the JAR with the contracts and unpack the JAR to target:
+
+[source,xml,indent=0]
+----
+<plugin>
+   <groupId>org.apache.maven.plugins</groupId>
+   <artifactId>maven-dependency-plugin</artifactId>
+   <version>3.0.0</version>
+   <executions>
+      <execution>
+         <id>unpack-dependencies</id>
+         <phase>process-resources</phase>
+         <goals>
+            <goal>unpack</goal>
+         </goals>
+         <configuration>
+            <artifactItems>
+               <artifactItem>
+                  <groupId>com.example</groupId>
+                  <artifactId>common-repo</artifactId>
+                  <type>jar</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/contracts</outputDirectory>
+               </artifactItem>
+            </artifactItems>
+         </configuration>
+      </execution>
+   </executions>
+</plugin>
+----
+
+- Rip out all the folders we're not interested in:
+
+[source,xml,indent=0]
+----
+<plugin>
+   <groupId>org.apache.maven.plugins</groupId>
+   <artifactId>maven-antrun-plugin</artifactId>
+   <version>1.8</version>
+   <executions>
+      <execution>
+         <phase>process-resources</phase>
+         <goals>
+            <goal>run</goal>
+         </goals>
+         <configuration>
+            <tasks>
+               <delete includeemptydirs="true">
+                  <fileset dir="${project.build.directory}/contracts">
+                     <include name="**/*" />
+                     <!--Producer artifactId-->
+                     <exclude name="**/${project.artifactId}/**" />
+                     <!--List of the supported topics-->
+                     <exclude name="**/${first-topic}/**" />
+                     <exclude name="**/${second-topic}/**" />
+                  </fileset>
+               </delete>
+            </tasks>
+         </configuration>
+      </execution>
+   </executions>
+</plugin>
+----
+
+- Run the contract plugin by pointing to the contracts to the folder under target:
+
+[source,xml,indent=0]
+----
+<plugin>
+   <groupId>org.springframework.cloud</groupId>
+   <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+   <version>${spring-cloud-contract.version}</version>
+   <extensions>true</extensions>
+   <configuration>
+      <packageWithBaseClasses>com.example</packageWithBaseClasses>
+      <baseClassMappings>
+         <baseClassMapping>
+            <contractPackageRegex>.*intoxication.*</contractPackageRegex>
+            <baseClassFQN>com.example.intoxication.BeerIntoxicationBase</baseClassFQN>
+         </baseClassMapping>
+      </baseClassMappings>
+      <contractsDirectory>${project.build.directory}/contracts</contractsDirectory>
+   </configuration>
+</plugin>
+----
+
+===== For Gradle Project
+
+- Add a custom configuration for the common-repo dependency:
+
+[source,groovy,indent=0]
+----
+ext {
+    conractsGroupId = "com.example"
+    contractsArtifactId = "common-repo"
+    contractsVersion = "1.2.3"
+}
+
+configurations {
+    contracts {
+        transitive = false
+    }
+}
+----
+
+- Add the common-repo dependency to your classpath:
+
+[source,groovy,indent=0]
+----
+dependencies {
+    contracts "${conractsGroupId}:${contractsArtifactId}:${contractsVersion}"
+    testCompile "${conractsGroupId}:${contractsArtifactId}:${contractsVersion}"
+}
+----
+
+- Download the dependency to an appropriate folder:
+
+[source,groovy,indent=0]
+----
+task getContracts(type: Copy) {
+    from configurations.contracts
+    into new File(project.buildDir, "downloadedContracts")
+}
+----
+
+- Unzip JAR:
+
+[source,groovy,indent=0]
+----
+task unzipContracts(type: Copy) {
+    def zipFile = new File(project.buildDir, "downloadedContracts/${contractsArtifactId}-${contractsVersion}.jar")
+    def outputDir = file("${buildDir}/unpackedContracts")
+
+    from zipTree(zipFile)
+    into outputDir
+}
+----
+
+- Cleanup unused contracts:
+
+[source,groovy,indent=0]
+----
+task deleteUnwantedContracts(type: Delete) {
+    delete fileTree(dir: "${buildDir}/unpackedContracts",
+        include: "**/*",
+        excludes: [
+            "**/${project.name}/**"",
+            **/${first-topic}/**",
+            **/${second-topic}/**])
+}
+----
+
+- Create task dependencies:
+
+[source,groovy,indent=0]
+----
+unzipContracts.dependsOn("getContracts")
+deleteUnwantedContracts.dependsOn("unzipContracts")
+build.dependsOn("deleteUnwantedContracts")
+----
+
+- Configure plugin by specifying the directory containing contracts using ```contractsDslDir``` property
+
+[source,groovy,indent=0]
+----
+contracts {
+
+    contractsDslDir = new File("${buildDir}/unpackedContracts")
+}
+----
+
 === Can I have multiple base classes for tests?
 
 Yes! Check out the https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_different_base_classes_for_contracts[Different base classes for contracts] sections
