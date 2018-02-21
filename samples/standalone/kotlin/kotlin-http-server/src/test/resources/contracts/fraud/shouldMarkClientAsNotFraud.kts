@@ -1,12 +1,14 @@
 package contracts
 
+import org.springframework.cloud.contract.spec.contract
+
 contract {
 				request {
-					method 'PUT'
-					url '/fraudcheck'
+					method ("PUT")
+					url ("/fraudcheck")
 					body("""
 						{
-						"client.id":"${value(consumer(regex('[0-9]{10}')), producer('1234567890'))}",
+						"client.id":"${dynamic(consumer = regex("[0-9]{10}"), producer = "1234567890")}",
 						"loanAmount":123.123
 						}
 					"""
@@ -17,10 +19,10 @@ contract {
 
 				}
 			response {
-				status 200
+				status (200)
 				body(
-						fraudCheckStatus: "OK",
-						"rejection.reason": $(consumer(null), producer(execute('assertThatRejectionReasonIsNull($it)')))
+						"fraudCheckStatus" to  "OK",
+						"rejection.reason" to dynamic(producer = "execute('assertThatRejectionReasonIsNull(\$it)')")
 				)
 				headers {
 					contentType("application/json")
