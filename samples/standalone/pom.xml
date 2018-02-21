@@ -28,6 +28,7 @@
 		<module>pact</module>
 		<module>webclient</module>
 		<module>yml</module>
+		<module>kotlin</module>
 	</modules>
 
 	<build>
