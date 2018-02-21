@@ -22,7 +22,7 @@
 
 	<modules>
 		<module>kotlin-http-server</module>
-		<!--<module>kotlin-http-client</module>-->
+		<module>kotlin-http-client</module>
 	</modules>
 
 	<build>
