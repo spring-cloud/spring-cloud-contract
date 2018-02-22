@@ -36,7 +36,7 @@ open class ContractDsl @JvmOverloads constructor(val contract: Contract = Contra
 
     fun ignored() = contract.ignored()
 
-    fun dyn(consumer: Pattern, producer: String) = DslProperty(consumer, producer)
+    fun dynamic(consumer: Pattern? = null, producer: String? = null) = DslProperty(consumer, producer)
 
     fun ContractDsl.input(init: Input.() -> Unit) {
         contract.input = Input().apply(init)
