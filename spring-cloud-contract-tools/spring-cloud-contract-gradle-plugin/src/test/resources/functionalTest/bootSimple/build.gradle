@@ -44,7 +44,7 @@ dependencies {
 }
 
 contracts {
-	stubsMode = "REMOTE"
+	contractsMode = "REMOTE"
 	baseClassForTests = 'org.springframework.cloud.contract.verifier.twitter.places.BaseMockMvcSpec'
 	basePackageForTests = 'contracts'
 	contractsDslDir = contractsDir

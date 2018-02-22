@@ -86,7 +86,7 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 	// end::jar_setup[]
 
 	contracts {
-		stubsMode = "REMOTE"
+		contractsMode = "REMOTE"
 		// tag::target_framework[]
 		targetFramework = 'Spock'
 		// end::target_framework[]

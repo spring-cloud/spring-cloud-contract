@@ -46,13 +46,12 @@ public class MessageConsumedTests {
 	StubTrigger stubTrigger;
 
 	@Autowired
-	@Qualifier(Sink.INPUT)
-	SubscribableChannel input;
+	Listener listener;
 
 	@Test
 	public void testMessageConsumed() throws Exception {
-		int count = ((MessageChannelMetrics) input).getSendCount();
+		int count = this.listener.getCount();
 		stubTrigger.trigger("sensor1");
-		assertThat(((MessageChannelMetrics) input).getSendCount()).isEqualTo(count + 1);
+		assertThat(this.listener.getCount()).isEqualTo(count + 1);
 	}
 }

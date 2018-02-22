@@ -107,8 +107,8 @@ public class  ConvertMojo extends AbstractMojo {
 	/**
 	 * Picks the mode in which stubs will be found and registered
 	 */
-	@Parameter(property = "stubsMode", defaultValue = "CLASSPATH")
-	private StubRunnerProperties.StubsMode stubsMode;
+	@Parameter(property = "contractsMode", defaultValue = "CLASSPATH")
+	private StubRunnerProperties.StubsMode contractsMode;
 
 	/**
 	 * If {@code true} then any file laying in a path that contains {@code build} or {@code target}
@@ -141,6 +141,13 @@ public class  ConvertMojo extends AbstractMojo {
 	@Parameter(property = "contractsRepositoryProxyPort")
 	private Integer contractsRepositoryProxyPort;
 
+	/**
+	 * If {@code true} then will not assert whether a stub / contract
+	 * JAR was downloaded from local or remote location
+	 */
+	@Parameter(property = "contractsSnapshotCheckSkip", defaultValue = "false")
+	private boolean contractsSnapshotCheckSkip;
+
 	@Component(role = MavenResourcesFiltering.class, hint = "default")
 	private MavenResourcesFiltering mavenResourcesFiltering;
 
@@ -166,9 +173,11 @@ public class  ConvertMojo extends AbstractMojo {
 		ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
 		config.setExcludeBuildFolders(this.excludeBuildFolders);
 		File contractsDirectory = new MavenContractsDownloader(this.project, this.contractDependency,
-				this.contractsPath, this.contractsRepositoryUrl, this.stubsMode, getLog(),
+				this.contractsPath, this.contractsRepositoryUrl, this.contractsMode, getLog(),
 				this.aetherStubDownloaderFactory, this.repoSession, this.contractsRepositoryUsername,
-				this.contractsRepositoryPassword, this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
+				this.contractsRepositoryPassword, this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort,
+				this.contractsSnapshotCheckSkip)
+				.downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 
 		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering, config)

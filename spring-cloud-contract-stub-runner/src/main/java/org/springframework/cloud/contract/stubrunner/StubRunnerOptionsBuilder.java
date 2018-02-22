@@ -47,6 +47,7 @@ public class StubRunnerOptionsBuilder {
 	private String consumerName;
 	private String mappingsOutputFolder;
 	private StubRunnerProperties.StubsMode stubsMode;
+	private boolean snapshotCheckSkip = false;
 
 	public StubRunnerOptionsBuilder() {
 	}
@@ -125,6 +126,7 @@ public class StubRunnerOptionsBuilder {
 				options.dependencies : new ArrayList<StubConfiguration>();
 		this.stubIdsToPortMapping = options.stubIdsToPortMapping != null ?
 				options.stubIdsToPortMapping : new LinkedHashMap<StubConfiguration, Integer>();
+		this.snapshotCheckSkip = options.isSnapshotCheckSkip();
 		return this;
 	}
 
@@ -133,11 +135,16 @@ public class StubRunnerOptionsBuilder {
 		return this;
 	}
 
+	public StubRunnerOptionsBuilder withSnapshotCheckSkip(boolean snapshotCheckSkip) {
+		this.snapshotCheckSkip = snapshotCheckSkip;
+		return this;
+	}
+
 	public StubRunnerOptions build() {
 		return new StubRunnerOptions(this.minPortValue, this.maxPortValue, this.stubRepositoryRoot,
 				this.stubsMode, this.stubsClassifier, buildDependencies(), this.stubIdsToPortMapping,
 				this.username, this.password, this.stubRunnerProxyOptions, this.stubsPerConsumer, this.consumerName,
-				this.mappingsOutputFolder);
+				this.mappingsOutputFolder, this.snapshotCheckSkip);
 	}
 
 	private Collection<StubConfiguration> buildDependencies() {

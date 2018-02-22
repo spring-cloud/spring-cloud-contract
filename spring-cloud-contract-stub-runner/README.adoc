@@ -472,6 +472,16 @@ Annotate a class with `@EnableStubRunnerServer`, build a fat-jar and you're read
 
 For the properties check the *Stub Runner Spring* section.
 
+===== Stub Runner Server Fat Jar
+
+You can download a standalone JAR from Maven (for example, for version 1.2.3.RELEASE), as follows:
+
+[source,bash,indent=0]
+----
+$ wget -O stub-runner.jar 'https://search.maven.org/remote_content?g=org.springframework.cloud&a=spring-cloud-contract-stub-runner-boot&v=1.2.3.RELEASE'
+$ java -jar stub-runner.jar --stubrunner.ids=... --stubrunner.repositoryRoot=...
+----
+
 ===== Spring Cloud CLI
 
 Starting from `1.4.0.RELEASE` version of the http://cloud.spring.io/spring-cloud-cli[Spring Cloud CLI]

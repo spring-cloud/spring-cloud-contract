@@ -173,7 +173,7 @@ abstract class BaseWireMockStubStrategy {
 			Map convertedMap = MapConverter.transformValues(value) {
 				it instanceof GString ? it.toString() : it
 			} as Map
-			return new JSONObject(convertedMap).toString()
+			return new JSONObject(new JsonBuilder(convertedMap).toString())
 		}
 		return new JsonBuilder(value).toString()
 	}

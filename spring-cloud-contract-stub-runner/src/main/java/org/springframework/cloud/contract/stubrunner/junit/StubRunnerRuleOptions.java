@@ -93,4 +93,10 @@ interface StubRunnerRuleOptions {
 	 * Allows setting the output folder for mappings
 	 */
 	StubRunnerRule withMappingsOutputFolder(String mappingsOutputFolder);
+
+	/**
+	 * If set to {@code true} will not assert whether the downloaded stubs / contract
+	 * JAR was downloaded from a remote location or a local one
+	 */
+	StubRunnerRule withSnapshotCheckSkip(boolean snapshotCheckSkip);
 }
