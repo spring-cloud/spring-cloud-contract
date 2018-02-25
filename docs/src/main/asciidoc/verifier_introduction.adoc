@@ -97,6 +97,44 @@ used to test contracts between applications and not to simulate full behavior.
 
 This section explores how Spring Cloud Contract Verifier with Stub Runner works.
 
+==== A three second tour
+
+===== On the Producer Side
+
+In order to start working with Contracts, files with contracts expressed in either
+Groovy DSL or YAML have to be added to the contracts directory set by the
+`contractsDslDir` property, by default `$rootDir/src/test/resources/contracts`.
+
+Then add Spring Cloud Contract Verifier dependency:
+
+[source,xml,indent=0]
+----
+include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
+----
+
+and plugin:
+
+[source,xml,indent=0]
+----
+<plugin>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-contract-maven-plugin</artifactId>
+	<version>${spring-cloud-contract.version}</version>
+	<extensions>true</extensions>
+</plugin>
+----
+
+Now, running `./mvnw clean install` will cause tests that will verify the application
+compliance with the added contracts to be automatically generated, by default under `org.springframework.cloud.contract.verifier.tests.`.
+As the implementation of the functionalities described by the contracts is not  yet present,
+ the tests should fail.
+
+To make them pass, the correct implementation of either handling HTTP requests or messages
+will have to be added. Also correct base test class for auto-generated tests needs to be added to the project.
+This class will be extended by all the auto-generated tests and it should contain all the setup
+necessary to run them (for example `RestAssuredMockMvc` controller setup or
+
+
 ==== Defining the contract
 
 As consumers of services, we need to define what exactly we want to achieve. We need to
@@ -298,7 +336,7 @@ of an identifier or a timestamp, you need not hardcode a value. You want to allo
 different ranges of values. To enable ranges of values, you can set regular expressions
 matching those values for the consumer side. You can provide the body by means of either
 a map notation or String with interpolations.
-https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_contract_dsl[Consult the docs
+https://cloud.spring.io/spring-cloud-contract/single/spring-cloud-contract.html#_contract_dsl[Consult the docs
 for more information.] We highly recommend using the map notation!
 
 TIP: You must understand the map notation in order to set up contracts. Please read the
