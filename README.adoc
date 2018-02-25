@@ -615,7 +615,7 @@ of an identifier or a timestamp, you need not hardcode a value. You want to allo
 different ranges of values. To enable ranges of values, you can set regular expressions
 matching those values for the consumer side. You can provide the body by means of either
 a map notation or String with interpolations.
-https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_contract_dsl[Consult the docs
+https://cloud.spring.io/spring-cloud-contract/single/spring-cloud-contract.html#_contract_dsl[Consult the docs
 for more information.] We highly recommend using the map notation!
 
 TIP: You must understand the map notation in order to set up contracts. Please read the

@@ -124,7 +124,7 @@ $(stub(...), test(...))
 $(client(...), server(...))
 ----
 
-You can read more about this in the https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_contract_dsl[Contract DSL section].
+You can read more about this in the https://cloud.spring.io/spring-cloud-contract/single/spring-cloud-contract.html#_contract_dsl[Contract DSL section].
 
 Calling `value()` or `$()` tells Spring Cloud Contract that you will be passing a dynamic value.
 Inside the `consumer()` method you pass the value that should be used on the consumer side (in the generated stub).
