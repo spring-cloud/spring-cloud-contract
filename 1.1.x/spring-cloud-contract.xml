@@ -223,12 +223,7 @@ You would like to feed that instance with a proper stub definition.</simpara>
 				new HttpEntity&lt;&gt;(request, httpHeaders),
 				FraudServiceResponse.class);</programlisting>
 <simpara>Annotate your test class with <literal>@AutoConfigureStubRunner</literal>. In the annotation provide the group id and artifact id for the Stub Runner to download stubs of your collaborators.</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment=WebEnvironment.NONE)
-@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
-		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
-@DirtiesContext
-public class LoanApplicationServiceTests {</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">Unresolved directive in verifier_introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/standalone/dsl/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[tags=autoconfigure_stubrunner,indent=0]</programlisting>
 <simpara>After that, during the tests Spring Cloud Contract will automatically find the stubs (simulating the real service) in Maven repository and expose them on configured (or random) port.</simpara>
 </section>
 <section xml:id="_server_side">
@@ -279,58 +274,7 @@ all the contract are present in the producer&#8217;s repository</simpara>
 <formalpara role="primary">
 <title>Maven</title>
 <para>
-<programlisting language="xml" linenumbering="unnumbered">&lt;repositories&gt;
-	&lt;repository&gt;
-		&lt;id&gt;spring-snapshots&lt;/id&gt;
-		&lt;name&gt;Spring Snapshots&lt;/name&gt;
-		&lt;url&gt;https://repo.spring.io/snapshot&lt;/url&gt;
-		&lt;snapshots&gt;
-			&lt;enabled&gt;true&lt;/enabled&gt;
-		&lt;/snapshots&gt;
-	&lt;/repository&gt;
-	&lt;repository&gt;
-		&lt;id&gt;spring-milestones&lt;/id&gt;
-		&lt;name&gt;Spring Milestones&lt;/name&gt;
-		&lt;url&gt;https://repo.spring.io/milestone&lt;/url&gt;
-		&lt;snapshots&gt;
-			&lt;enabled&gt;false&lt;/enabled&gt;
-		&lt;/snapshots&gt;
-	&lt;/repository&gt;
-	&lt;repository&gt;
-		&lt;id&gt;spring-releases&lt;/id&gt;
-		&lt;name&gt;Spring Releases&lt;/name&gt;
-		&lt;url&gt;https://repo.spring.io/release&lt;/url&gt;
-		&lt;snapshots&gt;
-			&lt;enabled&gt;false&lt;/enabled&gt;
-		&lt;/snapshots&gt;
-	&lt;/repository&gt;
-&lt;/repositories&gt;
-&lt;pluginRepositories&gt;
-	&lt;pluginRepository&gt;
-		&lt;id&gt;spring-snapshots&lt;/id&gt;
-		&lt;name&gt;Spring Snapshots&lt;/name&gt;
-		&lt;url&gt;https://repo.spring.io/snapshot&lt;/url&gt;
-		&lt;snapshots&gt;
-			&lt;enabled&gt;true&lt;/enabled&gt;
-		&lt;/snapshots&gt;
-	&lt;/pluginRepository&gt;
-	&lt;pluginRepository&gt;
-		&lt;id&gt;spring-milestones&lt;/id&gt;
-		&lt;name&gt;Spring Milestones&lt;/name&gt;
-		&lt;url&gt;https://repo.spring.io/milestone&lt;/url&gt;
-		&lt;snapshots&gt;
-			&lt;enabled&gt;false&lt;/enabled&gt;
-		&lt;/snapshots&gt;
-	&lt;/pluginRepository&gt;
-	&lt;pluginRepository&gt;
-		&lt;id&gt;spring-releases&lt;/id&gt;
-		&lt;name&gt;Spring Releases&lt;/name&gt;
-		&lt;url&gt;https://repo.spring.io/release&lt;/url&gt;
-		&lt;snapshots&gt;
-			&lt;enabled&gt;false&lt;/enabled&gt;
-		&lt;/snapshots&gt;
-	&lt;/pluginRepository&gt;
-&lt;/pluginRepositories&gt;</programlisting>
+<programlisting language="xml" linenumbering="unnumbered">Unresolved directive in verifier_introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/standalone/dsl/http-server/pom.xml[tags=repos,indent=0]</programlisting>
 </para>
 </formalpara>
 <formalpara role="secondary">
@@ -5322,12 +5266,7 @@ visible in your Groovy files. The following examples show how to test the depend
 <formalpara role="primary">
 <title>Maven</title>
 <para>
-<programlisting language="xml" linenumbering="unnumbered">&lt;dependency&gt;
-	&lt;groupId&gt;com.example&lt;/groupId&gt;
-	&lt;artifactId&gt;beer-common&lt;/artifactId&gt;
-	&lt;version&gt;${project.version}&lt;/version&gt;
-	&lt;scope&gt;test&lt;/scope&gt;
-&lt;/dependency&gt;</programlisting>
+<programlisting language="xml" linenumbering="unnumbered">Unresolved directive in verifier_contract.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer/pom.xml[tags=test_dep,indent=0]</programlisting>
 </para>
 </formalpara>
 <formalpara role="secondary">
@@ -5344,29 +5283,7 @@ following example:</simpara>
 <formalpara role="primary">
 <title>Maven</title>
 <para>
-<programlisting language="xml" linenumbering="unnumbered">&lt;plugin&gt;
-	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-	&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
-	&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
-	&lt;extensions&gt;true&lt;/extensions&gt;
-	&lt;configuration&gt;
-		&lt;packageWithBaseClasses&gt;com.example&lt;/packageWithBaseClasses&gt;
-		&lt;baseClassMappings&gt;
-			&lt;baseClassMapping&gt;
-				&lt;contractPackageRegex&gt;.*intoxication.*&lt;/contractPackageRegex&gt;
-				&lt;baseClassFQN&gt;com.example.intoxication.BeerIntoxicationBase&lt;/baseClassFQN&gt;
-			&lt;/baseClassMapping&gt;
-		&lt;/baseClassMappings&gt;
-	&lt;/configuration&gt;
-	&lt;dependencies&gt;
-		&lt;dependency&gt;
-			&lt;groupId&gt;com.example&lt;/groupId&gt;
-			&lt;artifactId&gt;beer-common&lt;/artifactId&gt;
-			&lt;version&gt;${project.version}&lt;/version&gt;
-			&lt;scope&gt;compile&lt;/scope&gt;
-		&lt;/dependency&gt;
-	&lt;/dependencies&gt;
-&lt;/plugin&gt;</programlisting>
+<programlisting language="xml" linenumbering="unnumbered">Unresolved directive in verifier_contract.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer/pom.xml[tags=test_dep_in_plugin,indent=0]</programlisting>
 </para>
 </formalpara>
 <formalpara role="secondary">
