@@ -66,6 +66,36 @@ class ContractSpec extends Specification {
 			noExceptionThrown()
 	}
 
+	def 'should work for messaging with pattern properties'() {
+		when:
+			Contract.make {
+				input {
+					messageFrom('input')
+					messageBody([
+							foo: anyNonBlankString()
+					])
+					messageHeaders {
+						header([
+								foo: anyNumber()
+						])
+					}
+				}
+				outputMessage {
+					sentTo('output')
+					body([
+							foo2: anyNonEmptyString()
+					])
+					headers {
+						header([
+								foo2: anyIpAddress()
+						])
+					}
+				}
+			}
+		then:
+			noExceptionThrown()
+	}
+
 	def 'should generate a value if only regex is passed for client'() {
 		given:
 			Request request = new Request()
