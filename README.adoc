@@ -121,6 +121,376 @@ used to test contracts between applications and not to simulate full behavior.
 
 This section explores how Spring Cloud Contract Verifier with Stub Runner works.
 
+==== A three second tour
+
+===== On the Producer Side
+
+In order to start working with `Spring Cloud Contract`, add files with REST/ messaging contracts expressed in either
+Groovy DSL or YAML to the contracts directory set by the
+`contractsDslDir` property, by default `$rootDir/src/test/resources/contracts`.
+
+Then, add Spring Cloud Contract Verifier dependency and plugin to your build file:
+
+[source,xml,indent=0]
+----
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-contract-verifier</artifactId>
+    <scope>test</scope>
+</dependency>
+----
+
+[source,xml,indent=0]
+----
+<plugin>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-contract-maven-plugin</artifactId>
+	<version>${spring-cloud-contract.version}</version>
+	<extensions>true</extensions>
+</plugin>
+----
+
+Now, running `./mvnw clean install` will cause tests that verify the application
+compliance with the added contracts to be automatically generated, by default under `org.springframework.cloud.contract.verifier.tests.`.
+
+As the implementation of the functionalities described by the contracts is not  yet present,
+ the tests will fail.
+
+To make them pass, the correct implementation of either handling HTTP requests or messages
+will have to be added. Also, a correct base test class for auto-generated tests needs to be added to the project.
+This class will be extended by all the auto-generated tests and it should contain all the setup
+necessary to run them (for example `RestAssuredMockMvc` controller setup or messaging test setup).
+
+Once the implementation and the test base class are in place, the tests will pass, and both the application
+ and the stub artifacts will be built and installed in the local Maven repository. The changes can now be merged
+ and both the application and the stub artifacts may be published in an online repository.
+
+===== On the Consumer Side
+
+`Spring Cloud Contract Stub Runner` can be used in the integration tests to get a running WireMock instance/
+messaging route that simulates the actual service.
+
+Add the dependency to `Spring Cloud Contract Stub Runner`:
+
+[source,xml,indent=0]
+----
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
+    <scope>test</scope>
+</dependency>
+----
+
+Get the Producer-side stubs installed in your Maven repository by either:
+
+- checking out the Producer side repository, adding contracts and generating the stubs by running:
+
+[source,bash,indent=0]
+----
+$ cd local-http-server-repo
+$ ./mvnw clean install -DskipTests
+----
+TIP: The tests are being skipped because the Producer-side contract implementation is not in place yet,
+so the automatically-generated contract tests would fail;
+
+or:
+
+- getting already existing producer service stubs from a remote repository; to do this, simply pass the
+ stub artifact ids and artifact repository url as `Spring Cloud Contract Stub Runner` properties:
+
+[source,yaml,indent=0]
+----
+stubrunner:
+  ids: 'com.example:http-server-dsl:+:stubs:8080'
+  repositoryRoot: http://repo.spring.io/libs-snapshot
+----
+
+Now just annotate your test class with `@AutoConfigureStubRunner`. In the annotation, provide
+the group-id and artifact-id for `Spring Cloud Contract Stub Runner` to run the collaborators' stubs for you.
+
+TIP: Use the `REMOTE` stubsMode when downloading stubs from an online repository and `LOCAL` for offline work.
+
+[source,java, indent=0]
+----
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment=WebEnvironment.NONE)
+@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
+		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
+@DirtiesContext
+public class LoanApplicationServiceTests {
+----
+
+Now in your integration test, you will be able to receive stubbed versions of HTTP responses or messages that are
+expected to be emitted by the collaborator service.
+
+==== A three minute tour
+
+===== On the Producer Side
+
+In order to start working with `Spring Cloud Contract`, add files with REST/ messaging contracts expressed in either
+Groovy DSL or YAML to the contracts directory set by the
+`contractsDslDir` property, by default `$rootDir/src/test/resources/contracts`.
+
+For the HTTP stubs, a contract defines what kind of response should be returned for a given request (taking into account the HTTP
+methods, urls, headers, status codes, etc.). A sample HTTP stub contract in Groovy DSL would look like this:
+
+[source,groovy,indent=0]
+----
+package contracts
+
+org.springframework.cloud.contract.spec.Contract.make {
+	request {
+		method 'PUT'
+		url '/fraudcheck'
+		body([
+			   "client.id": $(regex('[0-9]{10}')),
+			   loanAmount: 99999
+		])
+		headers {
+			contentType('application/json')
+		}
+	}
+	response {
+		status 200
+		body([
+			   fraudCheckStatus: "FRAUD",
+			   "rejection.reason": "Amount too high"
+		])
+		headers {
+			contentType('application/json')
+		}
+	}
+}
+----
+
+While the same contract expressed in YAML would look the following way:
+
+[source,yaml,indent=0]
+----
+request:
+  method: PUT
+  url: /fraudcheck
+  body:
+    "client.id": 1234567890
+    loanAmount: 99999
+  headers:
+    Content-Type: application/json
+  matchers:
+    body:
+      - path: $.['client.id']
+        type: by_regex
+        value: "[0-9]{10}"
+response:
+  status: 200
+  body:
+    fraudCheckStatus: "FRAUD"
+    "rejection.reason": "Amount too high"
+  headers:
+    Content-Type: application/json;charset=UTF-8
+----
+
+In the case of messaging, the input and the output messages can be defined (taking into account from and
+where to it was sent, the message body and header), as well as the methods that should be called after the message
+ is received or the methods that, when called, should trigger a message.
+An example of a Camel messaging contract expressed in Groovy DSL whould look like this:
+
+[source,groovy]
+----
+Unresolved directive in verifier_introduction.adoc - include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_no_output_dsl]
+----
+
+While, the same contract expressed in YAML would look as in the code below:
+
+[source,yml,indent=0]
+----
+Unresolved directive in verifier_introduction.adoc - include::{verifier_core_path}/src/test/resources/yml/contract_message_scenario3.yml[indent=0]
+----
+
+Then, add Spring Cloud Contract Verifier dependency and plugin to your build file:
+
+[source,xml,indent=0]
+----
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-contract-verifier</artifactId>
+    <scope>test</scope>
+</dependency>
+----
+
+[source,xml,indent=0]
+----
+<plugin>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-contract-maven-plugin</artifactId>
+	<version>${spring-cloud-contract.version}</version>
+	<extensions>true</extensions>
+</plugin>
+----
+
+Now, running `./mvnw clean install` will cause tests that verify the application
+compliance with the added contracts to be automatically generated, by default under `org.springframework.cloud.contract.verifier.tests.`.
+
+A sample auto-generated test for an HTTP contract would look the following way:
+
+[source,java,indent=0]
+----
+@Test
+public void validate_shouldMarkClientAsFraud() throws Exception {
+    // given:
+        MockMvcRequestSpecification request = given()
+                .header("Content-Type", "application/vnd.fraud.v1+json")
+                .body("{\"client.id\":\"1234567890\",\"loanAmount\":99999}");
+
+    // when:
+        ResponseOptions response = given().spec(request)
+                .put("/fraudcheck");
+
+    // then:
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.header("Content-Type")).matches("application/vnd.fraud.v1.json.*");
+    // and:
+        DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+        assertThatJson(parsedJson).field("['fraudCheckStatus']").matches("[A-Z]{5}");
+        assertThatJson(parsedJson).field("['rejection.reason']").isEqualTo("Amount too high");
+}
+----
+
+The sample above uses Spring's `MockMvc` to run the tests. This is the default test mode for HTTP
+contracts, however also JAX-RX client and explicit HTTP invocations can be used as well (just change
+the `testMode` property of the plugin to `JAX-RS` or `EXPLICIT`.
+
+Apart from the default JUnit, you can also use Spock tests, instead, by setting the plugin `testFramework`
+property to `Spock`.
+
+TIP: You can now also generate WireMock scenarios based on the contracts, by including an order number followed by
+ an underscore at the beginning of the contract file names.
+
+A sample auto-generated test in Spock for a messaging stub contract would look similar to this:
+
+ [source,groovy,indent=0]
+----
+given:
+	 ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
+		\'\'\'{"bookName":"foo"}\'\'\',
+		['sample': 'header']
+	)
+
+when:
+	 contractVerifierMessaging.send(inputMessage, 'jms:delete')
+
+then:
+	 noExceptionThrown()
+	 bookWasDeleted()
+----
+
+As the implementation of the functionalities described by the contracts is not  yet present,
+ the tests will fail.
+
+To make them pass, the correct implementation of handling either HTTP requests or messages
+will have to be added. Also, a correct base test class for auto-generated tests needs to be added to the project.
+This class will be extended by all the auto-generated tests and it should contain all the setup
+necessary to run them (for example `RestAssuredMockMvc` controller setup or messaging test setup).
+
+Once the implementation and the test base class are in place, the tests will pass, and both the application
+ and the stub artifacts will be built and installed in the local Maven repository. Information about
+ installing the stubs jar to the local repository will appear in the logs:
+
+[source,bash,indent=0]
+----
+ [INFO] --- spring-cloud-contract-maven-plugin:1.0.0.BUILD-SNAPSHOT:generateStubs (default-generateStubs) @ http-server ---
+ [INFO] Building jar: /some/path/http-server/target/http-server-0.0.1-SNAPSHOT-stubs.jar
+ [INFO]
+ [INFO] --- maven-jar-plugin:2.6:jar (default-jar) @ http-server ---
+ [INFO] Building jar: /some/path/http-server/target/http-server-0.0.1-SNAPSHOT.jar
+ [INFO]
+ [INFO] --- spring-boot-maven-plugin:1.5.5.BUILD-SNAPSHOT:repackage (default) @ http-server ---
+ [INFO]
+ [INFO] --- maven-install-plugin:2.5.2:install (default-install) @ http-server ---
+ [INFO] Installing /some/path/http-server/target/http-server-0.0.1-SNAPSHOT.jar to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT.jar
+ [INFO] Installing /some/path/http-server/pom.xml to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT.pom
+ [INFO] Installing /some/path/http-server/target/http-server-0.0.1-SNAPSHOT-stubs.jar to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar
+----
+
+The changes can now be merged and both the application and the stub artifacts may be published in an online repository.
+
+*Docker Project*
+
+In order to enable working with contracts while creating applications in non-JVM technologies,
+the `springcloud/spring-cloud-contract`  Docker image has been created. It contains a project that will
+automatically generate tests for HTTP contracts and execute them in  `EXPLICIT` test mode, then, if
+the tests pass, generate Wiremock stubs and -optionally- publish them to an artifact manager. In order to use the
+image, it's sufficient to mount the contracts into the `/contracts` directory and set a few environment variables.
+
+===== On the Consumer Side
+
+`Spring Cloud Contract Stub Runner` can be used in the integration tests to get a running WireMock instance/
+messaging route that simulates the actual service.
+
+Add the dependency to `Spring Cloud Contract Stub Runner`:
+
+[source,xml,indent=0]
+----
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
+    <scope>test</scope>
+</dependency>
+----
+
+Get the Producer-side stubs installed in your Maven repository by either:
+
+- checking out the Producer side repository, adding contracts and generating the stubs by running:
+
+[source,bash,indent=0]
+----
+$ cd local-http-server-repo
+$ ./mvnw clean install -DskipTests
+----
+TIP: The tests are being skipped because the Producer-side contract implementation is not in place yet,
+so the automatically-generated contract tests would fail;
+
+or:
+
+- getting already existing producer service stubs from a remote repository; to do this, simply pass the
+ stub artifact ids and artifact repository url as `Spring Cloud Contract Stub Runner` properties:
+
+[source,yaml,indent=0]
+----
+stubrunner:
+  ids: 'com.example:http-server-dsl:+:stubs:8080'
+  repositoryRoot: http://repo.spring.io/libs-snapshot
+----
+
+Now just annotate your test class with `@AutoConfigureStubRunner`. In the annotation, provide
+the group-id and artifact-id for `Spring Cloud Contract Stub Runner` to run the collaborators' stubs for you.
+
+TIP: Use the `REMOTE` stubsMode when downloading stubs from an online repository and `LOCAL` for offline work.
+
+[source,java, indent=0]
+----
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment=WebEnvironment.NONE)
+@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
+		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
+@DirtiesContext
+public class LoanApplicationServiceTests {
+----
+
+Now in your integration test, you will be able to receive stubbed versions of HTTP responses or messages that are
+expected to be emitted by the collaborator service. You will see entries similar to theses in the build logs:
+
+[source,bash,indent=0]
+----
+2016-07-19 14:22:25.403  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Desired version is + - will try to resolve the latest version
+2016-07-19 14:22:25.438  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolved version is 0.0.1-SNAPSHOT
+2016-07-19 14:22:25.439  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolving artifact com.example:http-server:jar:stubs:0.0.1-SNAPSHOT using remote repositories []
+2016-07-19 14:22:25.451  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Resolved artifact com.example:http-server:jar:stubs:0.0.1-SNAPSHOT to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar
+2016-07-19 14:22:25.465  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Unpacking stub from JAR [URI: file:/path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar]
+2016-07-19 14:22:25.475  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Unpacked file to [/var/folders/0p/xwq47sq106x1_g3dtv6qfm940000gq/T/contracts100276532569594265]
+2016-07-19 14:22:27.737  INFO 41050 --- [           main] o.s.c.c.stubrunner.StubRunnerExecutor    : All stubs are now running RunningStubs [namesAndPorts={com.example:http-server:0.0.1-SNAPSHOT:stubs=8080}]
+----
+
+
 ==== Defining the contract
 
 As consumers of services, we need to define what exactly we want to achieve. We need to
@@ -615,7 +985,7 @@ of an identifier or a timestamp, you need not hardcode a value. You want to allo
 different ranges of values. To enable ranges of values, you can set regular expressions
 matching those values for the consumer side. You can provide the body by means of either
 a map notation or String with interpolations.
-https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_contract_dsl[Consult the docs
+https://cloud.spring.io/spring-cloud-contract/single/spring-cloud-contract.html#_contract_dsl[Consult the docs
 for more information.] We highly recommend using the map notation!
 
 TIP: You must understand the map notation in order to set up contracts. Please read the
@@ -752,7 +1122,7 @@ Add the dependency to `Spring Cloud Contract Stub Runner`:
 Annotate your test class with `@AutoConfigureStubRunner`. In the annotation, provide the
 `group-id` and `artifact-id` for the Stub Runner to download the stubs of your
 collaborators. (Optional step) Because you're playing with the collaborators offline, you
-can also provide the offline work switch.
+can also provide the offline work switch (`StubRunnerProperties.StubsMode.LOCAL`).
 
 [source,groovy,indent=0]
 ----
