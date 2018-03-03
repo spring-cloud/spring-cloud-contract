@@ -752,7 +752,7 @@ Add the dependency to `Spring Cloud Contract Stub Runner`:
 Annotate your test class with `@AutoConfigureStubRunner`. In the annotation, provide the
 `group-id` and `artifact-id` for the Stub Runner to download the stubs of your
 collaborators. (Optional step) Because you're playing with the collaborators offline, you
-can also provide the offline work switch.
+can also provide the offline work switch (`StubRunnerProperties.StubsMode.LOCAL`).
 
 [source,groovy,indent=0]
 ----

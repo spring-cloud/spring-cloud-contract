@@ -101,18 +101,16 @@ This section explores how Spring Cloud Contract Verifier with Stub Runner works.
 
 ===== On the Producer Side
 
-In order to start working with Contracts, files with contracts expressed in either
-Groovy DSL or YAML have to be added to the contracts directory set by the
+In order to start working with `Spring Cloud Contract`, add files with REST/ messaging contracts expressed in either
+Groovy DSL or YAML to the contracts directory set by the
 `contractsDslDir` property, by default `$rootDir/src/test/resources/contracts`.
 
-Then add Spring Cloud Contract Verifier dependency:
+Then, add Spring Cloud Contract Verifier dependency and plugin to your build file:
 
 [source,xml,indent=0]
 ----
 include::{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
 ----
-
-and plugin:
 
 [source,xml,indent=0]
 ----
@@ -124,16 +122,69 @@ and plugin:
 </plugin>
 ----
 
-Now, running `./mvnw clean install` will cause tests that will verify the application
+Now, running `./mvnw clean install` will cause tests that verify the application
 compliance with the added contracts to be automatically generated, by default under `org.springframework.cloud.contract.verifier.tests.`.
+
 As the implementation of the functionalities described by the contracts is not  yet present,
- the tests should fail.
+ the tests will fail.
 
 To make them pass, the correct implementation of either handling HTTP requests or messages
-will have to be added. Also correct base test class for auto-generated tests needs to be added to the project.
+will have to be added. Also, a correct base test class for auto-generated tests needs to be added to the project.
 This class will be extended by all the auto-generated tests and it should contain all the setup
-necessary to run them (for example `RestAssuredMockMvc` controller setup or
+necessary to run them (for example `RestAssuredMockMvc` controller setup or messaging test setup).
 
+Once the implementation and test base class are in place, the tests will pass, and both the application
+ and the stub artifacts will be built and installed in the local Maven repository. The changes
+ can now be merged, and both application and stub artifacts may be published in an online repository.
+
+===== On the Consumer Side
+
+`Spring Cloud Contract Stub Runner` can be used in the integration tests to get a running WireMock instance/
+Messaging route that simulates the actual service.
+
+Add the dependency to `Spring Cloud Contract Stub Runner`:
+
+[source,xml,indent=0]
+----
+include::{introduction_url}/samples/standalone/dsl/http-client/pom.xml[tags=stub_runner,indent=0]
+----
+
+Get the Producer-side stubs installed in your maven repository by either:
+
+- checking out the Producer side repository, adding contracts and generating the stubs by running:
+
+[source,bash,indent=0]
+----
+$ cd local-http-server-repo
+$ ./mvnw clean install -DskipTests
+----
+TIP: The tests are being skipped because the Producer-side contract implementation is not in place yet,
+so the automatically-generated contract tests would fail;
+
+or:
+
+- getting already existing producer service stubs from a remote repository; to do this, simply pass the
+ stub artifact ids and artifact repository url as `Stub Runner` properties:
+
+[source,yaml,indent=0]
+----
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/{branch}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
+----
+
+Now just annotate your test class with `@AutoConfigureStubRunner`. In the annotation, provide
+the group-id and artifact-id for `Spring Cloud Contract Stub Runner` to run the collaborators' stubs for you.
+
+TIP: Use the `REMOTE` stubsMode when downloading stubs from an online repository and `LOCAL` for offline work.
+
+[source,java, indent=0]
+----
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment=WebEnvironment.NONE)
+@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
+		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
+@DirtiesContext
+public class LoanApplicationServiceTests {
+----
 
 ==== Defining the contract
 
@@ -441,7 +492,7 @@ include::{introduction_url}/samples/standalone/dsl/http-client/pom.xml[tags=stub
 Annotate your test class with `@AutoConfigureStubRunner`. In the annotation, provide the
 `group-id` and `artifact-id` for the Stub Runner to download the stubs of your
 collaborators. (Optional step) Because you're playing with the collaborators offline, you
-can also provide the offline work switch.
+can also provide the offline work switch (`StubRunnerProperties.StubsMode.LOCAL`).
 
 [source,groovy,indent=0]
 ----
