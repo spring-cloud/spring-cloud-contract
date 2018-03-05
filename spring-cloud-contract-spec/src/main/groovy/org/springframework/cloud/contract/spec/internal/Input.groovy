@@ -35,6 +35,8 @@ import java.util.regex.Pattern
 @ToString(includePackage = false, includeNames = true)
 class Input extends Common {
 
+	@Delegate ClientPatternValueDslProperty property = new ClientPatternValueDslProperty()
+
 	DslProperty<String> messageFrom
 	ExecutionProperty triggeredBy
 	Headers messageHeaders = new Headers()
@@ -110,6 +112,17 @@ class Input extends Common {
 		this.matchers = new BodyMatchers()
 		closure.delegate = this.matchers
 		closure()
+	}
+
+	@CompileStatic
+	@EqualsAndHashCode(includeFields = true)
+	@ToString(includePackage = false)
+	private class ClientPatternValueDslProperty extends PatternValueDslProperty<ClientDslProperty> {
+
+		@Override
+		protected ClientDslProperty createProperty(Pattern pattern, Object generatedValue) {
+			return new ClientDslProperty(pattern, generatedValue)
+		}
 	}
 }
 
