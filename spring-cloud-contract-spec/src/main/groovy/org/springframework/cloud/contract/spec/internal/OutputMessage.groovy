@@ -29,6 +29,8 @@ import java.util.regex.Pattern
 @ToString(includePackage = false, includeNames = true)
 class OutputMessage extends Common {
 
+	@Delegate ServerPatternValueDslProperty property = new ServerPatternValueDslProperty()
+
 	DslProperty<String> sentTo
 	Headers headers
 	DslProperty body
@@ -81,6 +83,17 @@ class OutputMessage extends Common {
 		this.matchers = new ResponseBodyMatchers()
 		closure.delegate = this.matchers
 		closure()
+	}
+
+	@CompileStatic
+	@EqualsAndHashCode(includeFields = true)
+	@ToString(includePackage = false)
+	private class ServerPatternValueDslProperty extends PatternValueDslProperty<ServerDslProperty> {
+
+		@Override
+		protected ServerDslProperty createProperty(Pattern pattern, Object generatedValue) {
+			return new ServerDslProperty(pattern, generatedValue)
+		}
 	}
 }
 
