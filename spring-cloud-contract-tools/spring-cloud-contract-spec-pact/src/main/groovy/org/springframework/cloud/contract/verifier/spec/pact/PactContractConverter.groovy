@@ -1,17 +1,20 @@
 package org.springframework.cloud.contract.verifier.spec.pact
 
-import au.com.dius.pact.model.BasePact
 import au.com.dius.pact.model.Consumer
 import au.com.dius.pact.model.Interaction
 import au.com.dius.pact.model.OptionalBody
 import au.com.dius.pact.model.Pact
 import au.com.dius.pact.model.PactReader
+import au.com.dius.pact.model.PactSpecVersion
 import au.com.dius.pact.model.Provider
 import au.com.dius.pact.model.Request
 import au.com.dius.pact.model.RequestResponseInteraction
 import au.com.dius.pact.model.RequestResponsePact
 import au.com.dius.pact.model.Response
+import au.com.dius.pact.model.matchingrules.MatchingRules
+import au.com.dius.pact.model.matchingrules.MatchingRulesImpl
 import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
@@ -81,7 +84,7 @@ class PactContractConverter implements ContractConverter<Pact> {
 							}
 						}
 						if (requestResponseInteraction.request.body.state == OptionalBody.State.PRESENT) {
-							def parsedBody = BasePact.parseBody(requestResponseInteraction.request)
+							def parsedBody = parseBody(requestResponseInteraction.request.body)
 							if (parsedBody instanceof Map) {
 								body(parsedBody as Map)
 							} else if (parsedBody instanceof List) {
@@ -91,31 +94,35 @@ class PactContractConverter implements ContractConverter<Pact> {
 							}
 						}
 						if (requestResponseInteraction.request?.matchingRules) {
-							stubMatchers {
-								Map<String, Map<String, Object>> rules = requestResponseInteraction.request.matchingRules
-								rules.each { String key, Map<String, Object> value ->
-									String keyFromBody = toKeyStartingFromBody(key)
-									if (value.containsKey(MATCH_KEY)) {
-										MatchingType matchingType = MatchingType.valueOf((value.get(MATCH_KEY) as String).toUpperCase())
-										switch (matchingType) {
-											case MatchingType.EQUALITY:
-												// equality is checked by default in the standard way
-												break
-											case MatchingType.DATE:
-												jsonPath(keyFromBody, byDate())
-												break
-											case MatchingType.TIME:
-												jsonPath(keyFromBody, byTime())
-												break
-											case MatchingType.TIMESTAMP:
-												jsonPath(keyFromBody, byTimestamp())
-												break
-											case MatchingType.REGEX:
-												jsonPath(keyFromBody, byRegex(value.get(REGEX_KEY) as String))
-												break
+							Map<String, Object> rules = ((MatchingRulesImpl) requestResponseInteraction.request.matchingRules).toMap(PactSpecVersion.V2)
+							if (!rules.isEmpty()) {
+								stubMatchers {
+									rules.each { String key, Object value ->
+										String keyFromBody = toKeyStartingFromBody(key)
+										Map<String, Object> valueAsMap = (Map<String, Object>) value
+
+										if (valueAsMap.containsKey(MATCH_KEY)) {
+											MatchingType matchingType = MatchingType.valueOf((valueAsMap.get(MATCH_KEY) as String).toUpperCase())
+											switch (matchingType) {
+												case MatchingType.EQUALITY:
+													// equality is checked by default in the standard way
+													break
+												case MatchingType.DATE:
+													jsonPath(keyFromBody, byDate())
+													break
+												case MatchingType.TIME:
+													jsonPath(keyFromBody, byTime())
+													break
+												case MatchingType.TIMESTAMP:
+													jsonPath(keyFromBody, byTimestamp())
+													break
+												case MatchingType.REGEX:
+													jsonPath(keyFromBody, byRegex(valueAsMap.get(REGEX_KEY) as String))
+													break
+											}
+										} else if (valueAsMap.containsKey(REGEX_KEY)) {
+											jsonPath(keyFromBody, byRegex(valueAsMap.get(REGEX_KEY) as String))
 										}
-									} else if (value.containsKey(REGEX_KEY)) {
-										jsonPath(keyFromBody, byRegex(value.get(REGEX_KEY) as String))
 									}
 								}
 							}
@@ -124,7 +131,7 @@ class PactContractConverter implements ContractConverter<Pact> {
 					response {
 						status(requestResponseInteraction.response.status)
 						if (requestResponseInteraction.response.body.state == OptionalBody.State.PRESENT) {
-							def parsedBody = BasePact.parseBody(requestResponseInteraction.response)
+							def parsedBody = parseBody(requestResponseInteraction.response.body)
 							if (parsedBody instanceof Map) {
 								body(parsedBody as Map)
 							} else if (parsedBody instanceof List) {
@@ -135,21 +142,23 @@ class PactContractConverter implements ContractConverter<Pact> {
 						}
 						if (requestResponseInteraction.response?.matchingRules) {
 							testMatchers {
-								Map<String, Map<String, Object>> rules = requestResponseInteraction.response.matchingRules
-								Map<String, Object> fullBodyCheck = rules.get(FULL_BODY)
+								Map<String, Object> rules = ((MatchingRulesImpl) requestResponseInteraction.response.matchingRules).toMap(PactSpecVersion.V2)
+								Object fullBodyCheck = rules.get(FULL_BODY)
 								if (fullBodyCheck != null) {
 									JsonPaths jsonPaths = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(requestResponseInteraction.response?.body?.value)
 									jsonPaths.each {
 										jsonPath(it.keyBeforeChecking(), byType())
 									}
 								}
-								rules.each { String key, Map<String, Object> value ->
+								rules.each { String key, Object value ->
 									String keyFromBody = toKeyStartingFromBody(key)
+									Map<String, Object> valueAsMap = (Map<String, Object>) value
+
 									if (!keyFromBody) {
-										return 
+										return
 									}
-									if (value.containsKey(MATCH_KEY)) {
-										MatchingType matchingType = MatchingType.valueOf((value.get(MATCH_KEY) as String).toUpperCase())
+									if (valueAsMap.containsKey(MATCH_KEY)) {
+										MatchingType matchingType = MatchingType.valueOf((valueAsMap.get(MATCH_KEY) as String).toUpperCase())
 										switch (matchingType) {
 											case MatchingType.EQUALITY:
 												// equality is checked by default in the standard way
@@ -164,21 +173,21 @@ class PactContractConverter implements ContractConverter<Pact> {
 												jsonPath(keyFromBody, byTimestamp())
 												break
 											case MatchingType.REGEX:
-												jsonPath(keyFromBody, byRegex(value.get(REGEX_KEY) as String))
+												jsonPath(keyFromBody, byRegex(valueAsMap.get(REGEX_KEY) as String))
 												break
 											case MatchingType.TYPE:
 												jsonPath(keyFromBody, byType() {
-													if (value.containsKey(MIN_KEY)) {
-														minOccurrence(value.get(MIN_KEY) as Integer)
+													if (valueAsMap.containsKey(MIN_KEY)) {
+														minOccurrence(valueAsMap.get(MIN_KEY) as Integer)
 													}
-													if (value.containsKey(MAX_KEY)) {
-														maxOccurrence(value.get(MAX_KEY) as Integer)
+													if (valueAsMap.containsKey(MAX_KEY)) {
+														maxOccurrence(valueAsMap.get(MAX_KEY) as Integer)
 													}
 												})
 												break
 										}
-									} else if (value.containsKey(REGEX_KEY)) {
-										jsonPath(keyFromBody, byRegex(value.get(REGEX_KEY) as String))
+									} else if (valueAsMap.containsKey(REGEX_KEY)) {
+										jsonPath(keyFromBody, byRegex(valueAsMap.get(REGEX_KEY) as String))
 									}
 								}
 							}
@@ -205,15 +214,24 @@ class PactContractConverter implements ContractConverter<Pact> {
 		return key.replace(FULL_BODY, '$')
 	}
 
+	protected parseBody(OptionalBody optionalBody) {
+		if (optionalBody.present) {
+			def body = new JsonSlurper().parseText(optionalBody.value)
+			if (body instanceof String) {
+				optionalBody.value
+			} else {
+				body
+			}
+		} else {
+			optionalBody.value
+		}
+	}
+
 	@Override
-	Pact convertTo(Collection<Contract> contract) {
-		Provider provider = new Provider()
-		provider.name = "Provider"
-		Consumer consumer = new Consumer()
-		consumer.name = "Consumer"
-		List<RequestResponseInteraction> interactions = contract.find { it.request }.collect { Contract dsl ->
-			RequestResponseInteraction interaction = new RequestResponseInteraction()
-			interaction.description = dsl.description ?: ""
+	Pact convertTo(Collection<Contract> contracts) {
+		Provider provider = new Provider("Provider")
+		Consumer consumer = new Consumer("Consumer")
+		List<RequestResponseInteraction> interactions = contracts.find { it.request }.collect { Contract dsl ->
 			Request request = new Request().with {
 				method = dsl.request.method.serverValue.toString()
 				path = url(dsl)
@@ -255,9 +273,7 @@ class PactContractConverter implements ContractConverter<Pact> {
 				}
 				return it
 			}
-			interaction.request = request
-			interaction.response = response
-			return interaction
+			return new RequestResponseInteraction(dsl.description ?: "", [], request, response)
 		}
 		return new RequestResponsePact(provider, consumer, interactions)
 	}
@@ -283,8 +299,8 @@ class PactContractConverter implements ContractConverter<Pact> {
 		}
 	}
 
-	protected Map<String, Map<String, Object>> matchingRules(BodyMatchers bodyMatchers) {
-		return bodyMatchers.jsonPathMatchers().collectEntries {
+	protected MatchingRules matchingRules(BodyMatchers bodyMatchers) {
+		return MatchingRulesImpl.fromMap(bodyMatchers.jsonPathMatchers().collectEntries {
 			MatchingType matchingType = it.matchingType()
 			String key = "\$.body${it.path().startsWith('$') ? it.path().substring(1) : it.path()}"
 			Object value = it.value()
@@ -312,7 +328,7 @@ class PactContractConverter implements ContractConverter<Pact> {
 					break
 			}
 			return [(key) : matchingRule]
-		}
+		})
 	}
 
 	protected String url(Contract dsl) {

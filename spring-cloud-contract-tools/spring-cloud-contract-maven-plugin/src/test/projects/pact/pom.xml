@@ -52,7 +52,7 @@
 					<dependency>
 						<groupId>au.com.dius</groupId>
 						<artifactId>pact-jvm-model</artifactId>
-						<version>2.4.18</version>
+						<version>3.5.13</version>
 					</dependency>
 				</dependencies>
 			</plugin>

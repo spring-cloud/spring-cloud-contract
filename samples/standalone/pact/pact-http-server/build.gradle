@@ -11,7 +11,7 @@ buildscript {
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
 		//tag::pact_dependency[]
 		classpath "org.springframework.cloud:spring-cloud-contract-spec-pact:${findProperty('verifierVersion') ?: verifierVersion}"
-		classpath 'au.com.dius:pact-jvm-model:2.4.18'
+		classpath 'au.com.dius:pact-jvm-model:3.5.13'
 		//end::pact_dependency[]
 	}
 }

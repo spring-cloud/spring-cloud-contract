@@ -237,7 +237,7 @@ class PactContractConverterSpec extends Specification {
       "version": "2.0.0"
     },
     "pact-jvm": {
-      "version": "2.4.18"
+      "version": "3.5.13"
     }
   }
 }
