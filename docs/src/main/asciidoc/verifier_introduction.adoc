@@ -98,7 +98,7 @@ used to test contracts between applications and not to simulate full behavior.
 This section explores how Spring Cloud Contract Verifier with Stub Runner works.
 
 [[spring-cloud-contract-verifier-intro-three-second-tour]]
-==== A Three Second Tour
+==== A Three-second Tour
 
 This very brief tour walks through using Spring Cloud Contract:
 
@@ -211,7 +211,7 @@ Now, in your integration test, you can receive stubbed versions of HTTP response
 messages that are expected to be emitted by the collaborator service.
 
 [[spring-cloud-contract-verifier-intro-three-minute-tour]]
-==== A Three-Minute Tour
+==== A Three-minute Tour
 
 This brief tour walks through using Spring Cloud Contract:
 
