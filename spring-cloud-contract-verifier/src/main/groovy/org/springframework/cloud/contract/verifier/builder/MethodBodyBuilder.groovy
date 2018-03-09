@@ -423,8 +423,6 @@ abstract class MethodBodyBuilder {
 						.replace('"' + contractTemplate.openingTemplate(), contractTemplate.openingTemplate())
 						.replace(contractTemplate.closingTemplate() + '"', contractTemplate.closingTemplate())
 			}
-		} else if (templateProcessor.containsTemplateEntry(method)) {
-
 		}
 		return method
 	}
