@@ -16,15 +16,17 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+import java.util.regex.Pattern
+
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.PathNotFoundException
 import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
+import org.apache.commons.beanutils.PropertyUtilsBean
 import org.apache.commons.text.StringEscapeUtils
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractTemplate
 import org.springframework.cloud.contract.spec.internal.BodyMatcher
@@ -47,8 +49,6 @@ import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.util.SerializationUtils
 import org.springframework.util.StringUtils
 
-import java.util.regex.Pattern
-
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.extractValue
 /**
  * Main class for building method body.
@@ -64,6 +64,9 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.extr
 abstract class MethodBodyBuilder {
 
 	private static final Closure GET_SERVER_VALUE = { it instanceof DslProperty ? it.serverValue : it }
+	private static final String FROM_REQUEST_PREFIX = "request."
+	private static final String FROM_REQUEST_BODY = "body"
+	private static final String FROM_REQUEST_PATH = "path"
 
 	protected final ContractVerifierConfigProperties configProperties
 	protected final TemplateProcessor templateProcessor
@@ -332,11 +335,15 @@ abstract class MethodBodyBuilder {
 		processText(bb, "", convertedResponseBody)
 		addColonIfRequired(bb)
 	}
-
+	
 	private void addJsonResponseBodyCheck(BlockBuilder bb, convertedResponseBody, BodyMatchers bodyMatchers) {
 		appendJsonPath(bb, getResponseAsString())
 		Object copiedBody = cloneBody(convertedResponseBody)
 		convertedResponseBody = JsonToJsonPathsConverter.removeMatchingJsonPaths(convertedResponseBody, bodyMatchers)
+		// remove quotes from fromRequest objects before picking json paths
+		TestSideRequestTemplateModel templateModel = contract.request?.body ?
+				TestSideRequestTemplateModel.from(contract.request) : null
+		convertedResponseBody = MapConverter.transformValues(convertedResponseBody, returnReferencedEntries(templateModel))
 		JsonPaths jsonPaths = new JsonToJsonPathsConverter(configProperties).transformToJsonPathWithTestsSideValues(convertedResponseBody)
 		DocumentContext parsedRequestBody
 		if (contract.request?.body) {
@@ -351,6 +358,14 @@ abstract class MethodBodyBuilder {
 			bb.addLine("assertThatJson(parsedJson)" + postProcessedMethod)
 			addColonIfRequired(bb)
 		}
+		doBodyMatchingIfPresent(bodyMatchers, bb, copiedBody)
+		if (!(convertedResponseBody instanceof Map || convertedResponseBody instanceof List)) {
+			simpleTextResponseBodyCheck(bb, convertedResponseBody)
+		}
+		processBodyElement(bb, "", "", convertedResponseBody)
+	}
+
+	private void doBodyMatchingIfPresent(BodyMatchers bodyMatchers, BlockBuilder bb, copiedBody) {
 		if (bodyMatchers?.hasMatchers()) {
 			bb.endBlock()
 			bb.addLine(addCommentSignIfRequired('and:'))
@@ -366,10 +381,35 @@ abstract class MethodBodyBuilder {
 				}
 			}
 		}
-		if (!(convertedResponseBody instanceof Map || convertedResponseBody instanceof List)) {
-			simpleTextResponseBodyCheck(bb, convertedResponseBody)
+	}
+
+	private Closure<Object> returnReferencedEntries(TestSideRequestTemplateModel templateModel) {
+		return { entry ->
+			if (!(entry instanceof String) || !templateModel) {
+				return entry
+			}
+			String entryAsString = (String) entry
+			if (templateProcessor.containsTemplateEntry(entryAsString) &&
+					!templateProcessor.containsJsonPathTemplateEntry(entryAsString)) {
+				String justEntry = entryAsString - contractTemplate.openingTemplate() -
+						contractTemplate.closingTemplate() - FROM_REQUEST_PREFIX
+				if (justEntry == FROM_REQUEST_BODY) {
+					// the body should be transformed by standard mechanism
+					return entry
+				}
+				try {
+					Object result = new PropertyUtilsBean().getProperty(templateModel, justEntry)
+					// Path from the Test model is an object and we'd like to return its String representation
+					if (justEntry == FROM_REQUEST_PATH) {
+						return result.toString()
+					}
+					return result
+				} catch (Exception e) {
+					return entry
+				}
+			}
+			return entry
 		}
-		processBodyElement(bb, "", "", convertedResponseBody)
 	}
 
 	protected String processIfTemplateIsPresent(String method, DocumentContext parsedRequestBody) {
@@ -383,6 +423,8 @@ abstract class MethodBodyBuilder {
 						.replace('"' + contractTemplate.openingTemplate(), contractTemplate.openingTemplate())
 						.replace(contractTemplate.closingTemplate() + '"', contractTemplate.closingTemplate())
 			}
+		} else if (templateProcessor.containsTemplateEntry(method)) {
+
 		}
 		return method
 	}
