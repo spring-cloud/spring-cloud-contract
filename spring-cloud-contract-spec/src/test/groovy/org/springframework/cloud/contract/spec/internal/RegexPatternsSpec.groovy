@@ -138,6 +138,18 @@ class RegexPatternsSpec extends Specification {
 			'1.'        || false
 	}
 
+	def "should generate a regex for a double [#textToMatch] that is a match [#shouldMatch]"() {
+		expect:
+			shouldMatch == regexPatterns.aDouble().matcher(textToMatch).matches()
+		where:
+			textToMatch || shouldMatch
+			'1'         || false
+			'1.0'       || true
+			'0.1'       || true
+			'.1'        || true
+			'1.'        || false
+	}
+
 	def "should generate a regex for a uuid [#textToMatch] that is a match [#shouldMatch]"() {
 		expect:
 			shouldMatch == regexPatterns.uuid().matcher(textToMatch).matches()

@@ -123,7 +123,7 @@ class YamlContract {
 
 	@CompileStatic
 	static enum PredefinedRegex {
-		only_alpha_unicode, number, any_boolean, ip_address, hostname,
+		only_alpha_unicode, number, any_double, any_boolean, ip_address, hostname,
 		email, url, uuid, iso_date, iso_date_time, iso_time,
 		iso_8601_with_offset, non_empty, non_blank
 	}
