@@ -1241,7 +1241,7 @@ As you can see, the first file got the `name` parameter from the contract. The s
 got the name of the contract file (`WithList.groovy`) prefixed with the index (in this
 case, the contract had an index of `1` in the list of contracts in the file).
 
-TIP: As you can see, it iss much better if you name your contracts because doing so makes
+TIP: As you can see, it is much better if you name your contracts because doing so makes
 your tests far more meaningful.
 
 == Customization
