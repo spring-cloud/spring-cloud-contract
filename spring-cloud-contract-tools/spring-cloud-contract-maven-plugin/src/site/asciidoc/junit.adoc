@@ -1,4 +1,4 @@
-:branch: 1.2.x
+:branch: master
 
 == Java Project with JUnit Tests
 

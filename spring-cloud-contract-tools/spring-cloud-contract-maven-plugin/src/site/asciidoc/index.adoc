@@ -1,4 +1,4 @@
-:samples_branch: master
+:samples_branch: 2.0.x
 
 = Spring Cloud Contract Maven Plugin
 
