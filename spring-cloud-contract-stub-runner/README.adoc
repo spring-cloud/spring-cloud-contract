@@ -1,3 +1,6 @@
+:branch: 1.2.x
+:samples_branch: master
+
 === Stub Runner Core
 
 Runs stubs for service collaborators. Treating stubs as contracts of services allows to use stub-runner as an implementation of 
@@ -122,8 +125,8 @@ The producer would setup the contracts like this:
 
 To achieve proper stub packaging.
 
-Or using the https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/master/producer_with_restdocs/pom.xml[Maven `assembly` plugin] or
-https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/master/producer_with_restdocs/build.gradle[Gradle Jar] task you have to create the following
+Or using the https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/{samples_branch}/producer_with_restdocs/pom.xml[Maven `assembly` plugin] or
+https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/{samples_branch}/producer_with_restdocs/build.gradle[Gradle Jar] task you have to create the following
 structure in your stubs jar.
 
 [source,bash]
@@ -391,8 +394,8 @@ Stub Runner can integrate with Spring Cloud.
 
 For real life examples you can check the
 
- - https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/master/producer[producer app sample]
- - https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/master/consumer_with_discovery[consumer app sample]
+ - https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}/producer[producer app sample]
+ - https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}/consumer_with_discovery[consumer app sample]
 
 ==== Stubbing Service Discovery
 
