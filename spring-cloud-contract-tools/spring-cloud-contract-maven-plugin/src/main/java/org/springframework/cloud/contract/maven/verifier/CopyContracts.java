@@ -53,7 +53,11 @@ class CopyContracts {
 				+ "[" + this.config.getIncludedContracts() + "] pattern will end up in "
 				+ "the final JAR with stubs.");
 		Resource resource = new Resource();
-		resource.addInclude(this.config.getIncludedRootFolderAntPattern() + "*.*");
+		// by default group id is slash separated...
+		String includedRootFolderAntPattern = this.config.getIncludedRootFolderAntPattern() + "*.*";
+		resource.addInclude(includedRootFolderAntPattern);
+		// ...we also want to allow dot separation
+		resource.addInclude(includedRootFolderAntPattern.replace(slashSeparatedGroupId(), this.project.getGroupId()));
 		if (this.config.isExcludeBuildFolders()) {
 			resource.addExclude("**/target/**");
 			resource.addExclude("**/build/**");
@@ -75,6 +79,10 @@ class CopyContracts {
 		catch (MavenFilteringException e) {
 			throw new MojoExecutionException(e.getMessage(), e);
 		}
+	}
+
+	private String slashSeparatedGroupId() {
+		return this.project.getGroupId().replace(".", File.separator);
 	}
 
 }
