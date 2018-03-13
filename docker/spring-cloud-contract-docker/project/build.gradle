@@ -105,7 +105,9 @@ String publishArtifacts = getProp("PUBLISH_ARTIFACTS") ?: "true"
 boolean publishEnabled = Boolean.parseBoolean(publishArtifacts)
 publish.setEnabled(publishEnabled)
 
-project.tasks.findAll { it.name.startsWith('publish') }*.setEnabled(publishEnabled)
+gradle.taskGraph.whenReady { graph ->
+    graph.allTasks.findAll { it.name.startsWith("publish") }*.setEnabled(publishEnabled)
+}
 
 String getProp(String propName) {
 	return hasProperty(propName) ?
