@@ -47,7 +47,7 @@ the <code class="literal">Contract</code> class: <code class="literal">import or
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
 </span>	}
 	response {
-		status <span class="hl-number">200</span>
+		status OK()
 	}
 }</pre><p>The following is a complete example of a YAML contract definition:</p><pre class="programlisting">description: Some description
 name: some name
@@ -197,7 +197,7 @@ Contract.make {
 		url(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/1"</span>)
 	}
 	response {
-		status <span class="hl-number">200</span>
+		status OK()
 		body(file(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"response.json"</span>))
 		headers {
 			contentType(textPlain())
@@ -430,7 +430,7 @@ body:
 		)
 	}
 	response {
-		status <span class="hl-number">200</span>
+		status OK()
 	}
 }</pre><p>
 </p><p><b>YAML.&nbsp;</b>
@@ -518,7 +518,7 @@ following code shows an example:</p><p><b>Groovy DSL.&nbsp;</b>
 	response {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Status code sent by the server</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// in response to request specified above.</span>
-		status <span class="hl-number">200</span>
+		status OK()
 	}
 }</pre><p>
 </p><p><b>YAML.&nbsp;</b>
@@ -526,7 +526,9 @@ following code shows an example:</p><p><b>Groovy DSL.&nbsp;</b>
 ...
 status: 200</pre><p>
 </p><p>Besides status, the response may contain <span class="strong"><strong>headers</strong></span> and a <span class="strong"><strong>body</strong></span>, both of which are
-specified the same way as in the request (see the previous paragraph).</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_dynamic_properties" href="#_dynamic_properties"></a>8.5&nbsp;Dynamic properties</h2></div></div></div><p>The contract can contain some dynamic properties: timestamps, IDs, and so on. You do not
+specified the same way as in the request (see the previous paragraph).</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>Via the Groovy DSL you can reference the <code class="literal">org.springframework.cloud.contract.spec.internal.HttpStatus</code>
+methods to provide a meaningful status instead of a digit. E.g. you can call
+<code class="literal">OK()</code> for a status <code class="literal">200</code> or <code class="literal">BAD_REQUEST()</code> for <code class="literal">400</code>.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_dynamic_properties" href="#_dynamic_properties"></a>8.5&nbsp;Dynamic properties</h2></div></div></div><p>The contract can contain some dynamic properties: timestamps, IDs, and so on. You do not
 want to force the consumers to stub their clocks to always return the same value of time
 so that it gets matched by the stub.</p><p>For Groovy DSL you can provide the dynamic parts in your contracts
 in two ways: pass them directly in the body or set them in separate sections called
@@ -550,7 +552,7 @@ need to use patterns and not exact values both for your test and your server sid
 		url $(consumer(~/\/[<span class="hl-number">0</span>-<span class="hl-number">9</span>]{<span class="hl-number">2</span>}/), producer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/12'</span>))
 	}
 	response {
-		status <span class="hl-number">200</span>
+		status OK()
 		body(
 				id: $(anyNumber()),
 				surname: $(
@@ -581,7 +583,7 @@ the provided regular expression. The following code shows an example:</p><pre cl
 		}
 	}
 	response {
-		status <span class="hl-number">200</span>
+		status OK()
 		body([
 			responseElement: $(producer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[0-9]{7}'</span>)))
 		])
@@ -594,6 +596,7 @@ generated for request and response.</p><p>Spring Cloud Contract comes with a ser
 use in your contracts, as shown in the following example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern TRUE_OR_FALSE = Pattern.compile(/(true|false)/)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern ONLY_ALPHA_UNICODE = Pattern.compile(/[\p{L}]*/)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern NUMBER = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'-?(\\d*\\.\\d+|\\d+)'</span>)
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern DOUBLE = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'-?(\\d*\\.\\d+)'</span>)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern IP_ADDRESS = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])'</span>)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern HOSTNAME_PATTERN = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'((http[s]?|ftp):/)/?([^:/\\s]+)(:[0-9]{1,5})?'</span>)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern EMAIL = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}'</span>)
@@ -620,6 +623,10 @@ Pattern number() {
 
 Pattern anyBoolean() {
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> TRUE_OR_FALSE
+}
+
+Pattern aDouble() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> DOUBLE
 }
 
 Pattern ipAddress() {
@@ -774,7 +781,7 @@ following code shows an example of the contract portion of the test case:</p><pr
 				path: $(consumer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/api/12'</span>), producer(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'^/api/[0-9]{2}$'</span>))),
 				correlationId: $(consumer(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'1223456'</span>), producer(execute(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'isProperCorrelationId($it)'</span>)))
 		)
-		status <span class="hl-number">200</span>
+		status OK()
 	}
 }</pre><p>The following code shows the base class portion of the test case:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">abstract</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> BaseMockMvcSpec <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> Specification {
 
@@ -805,7 +812,7 @@ is applied for the whole body - not for parts of it.</p></td></tr></table></div>
 		)
 	}
 	response {
-		status <span class="hl-number">200</span>
+		status OK()
 	}
 }</pre><p>The preceding example results in calling the <code class="literal">hashCode()</code> method in the request body.
 It should resemble the following code:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// given:</span>
@@ -844,7 +851,7 @@ matches the JSON Path. E.g. for json path <code class="literal">$.foo</code> - <
 		body(foo: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar"</span>, baz: <span class="hl-number">5</span>)
 	}
 	response {
-		status <span class="hl-number">200</span>
+		status OK()
 		headers {
 			header(authorization(), <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo ${fromRequest().header(authorization())} bar"</span>)
 		}
@@ -1063,7 +1070,7 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 		}
 	}
 	response {
-		status <span class="hl-number">200</span>
+		status OK()
 		body([
 				duck: <span class="hl-number">123</span>,
 				alpha: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"abc"</span>,
@@ -1372,7 +1379,7 @@ collection.</p></td></tr></table></div><p>Consider the following example:</p><pr
         url(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/foo"</span>)
     }
     response {
-        status <span class="hl-number">200</span>
+        status OK()
         body(events: [[
                                  operation          : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'EXPORT'</span>,
                                  eventId            : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'16f1ed75-0bcc-4f0d-a04d-3121798faf99'</span>,
@@ -1436,7 +1443,7 @@ provide a <code class="literal">sync()</code> method in the <code class="literal
         url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/get'</span>
     }
     response {
-        status <span class="hl-number">200</span>
+        status OK()
         body <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Passed'</span>
         async()
     }
@@ -1469,7 +1476,7 @@ socket.</p><p>Consider the following contract:</p><pre class="programlisting">or
 		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/my-context-path/url'</span>
 	}
 	response {
-		status <span class="hl-number">200</span>
+		status OK()
 	}
 }</pre><p>The following example shows how to set up a base class and Rest Assured:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> io.restassured.RestAssured;
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.Before;
@@ -1626,7 +1633,7 @@ following example:</p><p><b>Groovy DSL.&nbsp;</b>
                 url(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/users/1'</span>)
             }
             response {
-                status <span class="hl-number">200</span>
+                status OK()
             }
         },
         Contract.make {
@@ -1635,7 +1642,7 @@ following example:</p><p><b>Groovy DSL.&nbsp;</b>
                 url(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/users/2'</span>)
             }
             response {
-                status <span class="hl-number">200</span>
+                status OK()
             }
         }
 ]</pre><p>
