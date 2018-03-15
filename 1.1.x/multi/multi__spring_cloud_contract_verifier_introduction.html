@@ -23,7 +23,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 		}
 	}
 	response { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (6)</span>
-		status <span class="hl-number">200</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (7)</span>
+		status OK() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (7)</span>
 		body([ <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (8)</span>
 			   fraudCheckStatus: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"FRAUD"</span>,
 			   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"rejection.reason"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Amount too high"</span>
@@ -189,7 +189,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 		}
 	}
 	response { <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (6)</span>
-		status <span class="hl-number">200</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (7)</span>
+		status OK() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (7)</span>
 		body([ <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// (8)</span>
 			   fraudCheckStatus: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"FRAUD"</span>,
 			   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"rejection.reason"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Amount too high"</span>
