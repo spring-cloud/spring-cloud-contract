@@ -3027,7 +3027,7 @@ purposes).</simpara>
 your running application, to the Artifact manager instance etc.</simpara>
 <itemizedlist>
 <listitem>
-<simpara><literal>PROJECT_GROUP</literal> - your project&#8217;s group id. Defaults to <literal>com.example</literal>.</simpara>
+<simpara><literal>PROJECT_GROUP</literal> - your project&#8217;s group id. Defaults to <literal>com.example</literal></simpara>
 </listitem>
 <listitem>
 <simpara><literal>PROJECT_VERSION</literal> - your project&#8217;s version. Defaults to <literal>0.0.1-SNAPSHOT</literal></simpara>
@@ -3047,6 +3047,37 @@ which is the default URL of <link xl:href="https://jfrog.com/artifactory/">Artif
 </listitem>
 <listitem>
 <simpara><literal>PUBLISH_ARTIFACTS</literal> - if set to <literal>true</literal> then will publish artifact to binary storage. Defaults to <literal>true</literal>.</simpara>
+</listitem>
+</itemizedlist>
+<simpara>These environment variables are used when contracts lay in an external repository. To enable
+this feature you must set the <literal>EXTERNAL_CONTRACTS_ARTIFACT_ID</literal> environment variable.</simpara>
+<itemizedlist>
+<listitem>
+<simpara><literal>EXTERNAL_CONTRACTS_GROUP_ID</literal> - group id of the project with contracts. Defaults to <literal>com.example</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>EXTERNAL_CONTRACTS_ARTIFACT_ID</literal>- artifact id of the project with contracts.</simpara>
+</listitem>
+<listitem>
+<simpara><literal>EXTERNAL_CONTRACTS_CLASSIFIER</literal>- classifier of the project with contracts. Empty by default</simpara>
+</listitem>
+<listitem>
+<simpara><literal>EXTERNAL_CONTRACTS_VERSION</literal> - version of the project with contracts. Defaults to <literal>+</literal>, equivalent to picking the latest</simpara>
+</listitem>
+<listitem>
+<simpara><literal>EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL</literal> - URL of your Artifact Manager. Defaults to value of <literal>REPO_WITH_BINARIES_URL</literal> env var.
+If that&#8217;s not set, defaults to <literal><link xl:href="http://localhost:8081/artifactory/libs-release-local">http://localhost:8081/artifactory/libs-release-local</link></literal>
+which is the default URL of <link xl:href="https://jfrog.com/artifactory/">Artifactory</link> running locally</simpara>
+</listitem>
+<listitem>
+<simpara><literal>EXTERNAL_CONTRACTS_PATH</literal> - path to contracts for the given project, inside the project with contracts.
+Defaults to slash separated <literal>EXTERNAL_CONTRACTS_GROUP_ID</literal> concatenated with <literal>/</literal> and <literal>EXTERNAL_CONTRACTS_ARTIFACT_ID</literal>. E.g.
+for group id <literal>foo.bar</literal> and artifact id <literal>baz</literal>, would result in <literal>foo/bar/baz</literal> contracts path.</simpara>
+</listitem>
+<listitem>
+<simpara><literal>EXTERNAL_CONTRACTS_WORK_OFFLINE</literal> - if set to <literal>true</literal> then will retrieve artifact with contracts
+from the container&#8217;s <literal>.m2</literal>. Mount your local <literal>.m2</literal> as a volume available at the container&#8217;s <literal>/root/.m2</literal> path.
+You must not set both <literal>EXTERNAL_CONTRACTS_WORK_OFFLINE</literal> and <literal>EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL</literal>.</simpara>
 </listitem>
 </itemizedlist>
 <simpara>These environment variables are used when tests are executed:</simpara>
