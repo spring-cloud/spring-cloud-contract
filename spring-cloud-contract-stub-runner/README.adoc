@@ -451,6 +451,13 @@ an existing `DiscoveryClient` its results will be ignored. However, if you want 
  `stubrunner.cloud.delegate.enabled` to `true` and then your existing `DiscoveryClient` results will be
  merged with the stubbed ones.
 
+The default Maven configuration used by Stub Runner can be tweaked either
+via the following system properties or environment variables
+
+- `maven.repo.local` - path to the custom maven local repository location
+- `org.apache.maven.user-settings` - path to custom maven user settings location
+- `org.apache.maven.global-settings` - path to maven global settings location
+
 === Stub Runner Boot Application
 
 Spring Cloud Contract Stub Runner Boot is a Spring Boot application that exposes REST endpoints to
