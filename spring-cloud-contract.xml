@@ -4319,6 +4319,19 @@ an existing <literal>DiscoveryClient</literal> its results will be ignored. Howe
  <literal>stubrunner.cloud.delegate.enabled</literal> to <literal>true</literal> and then your existing <literal>DiscoveryClient</literal> results will be
  merged with the stubbed ones.</simpara>
 </tip>
+<simpara>The default Maven configuration used by Stub Runner can be tweaked either
+via the following system properties or environment variables</simpara>
+<itemizedlist>
+<listitem>
+<simpara><literal>maven.repo.local</literal> - path to the custom maven local repository location</simpara>
+</listitem>
+<listitem>
+<simpara><literal>org.apache.maven.user-settings</literal> - path to custom maven user settings location</simpara>
+</listitem>
+<listitem>
+<simpara><literal>org.apache.maven.global-settings</literal> - path to maven global settings location</simpara>
+</listitem>
+</itemizedlist>
 </section>
 </section>
 <section xml:id="_stub_runner_boot_application">
