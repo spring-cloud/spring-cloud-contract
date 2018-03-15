@@ -36,16 +36,52 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 		options.getDependencies().toString() == '[foo:bar:+:stubs]'
 	}
 
-	def shouldCreateDependenciesForCommaSeparatedStubs() {
+	def shouldCreateDependenciesForMultipleStubsWithSameGroup() {
 
 		given:
-		builder.withStubs('foo:bar,bar:foo')
+		builder.withStubs('foo:bar', 'foo:baz', 'foo:baz2')
 
 		when:
 		StubRunnerOptions options = builder.build()
 
 		then:
-		options.getDependencies().size() == 2
+		options.getDependencies().toString() == '[foo:bar:+:stubs, foo:baz:+:stubs, foo:baz2:+:stubs]'
+	}
+
+	def shouldCreateDependenciesForMultipleStubsWithSameArtifactId() {
+
+		given:
+		builder.withStubs('bar:foo', 'baz:foo', 'baz2:foo')
+
+		when:
+		StubRunnerOptions options = builder.build()
+
+		then:
+		options.getDependencies().toString() == '[bar:foo:+:stubs, baz:foo:+:stubs, baz2:foo:+:stubs]'
+	}
+
+	def shouldCreateDependenciesForCommaSeparatedStubs() {
+
+		given:
+		builder.withStubs('foo:bar,bar:foo,foo:baz')
+
+		when:
+		StubRunnerOptions options = builder.build()
+
+		then:
+		options.getDependencies().size() == 3
+	}
+
+	def shouldCreateDependenciesForCommaSeparatedStubsWithSameArtifact() {
+
+		given:
+		builder.withStubs('bar:foo,baz:foo,baz2:foo')
+
+		when:
+		StubRunnerOptions options = builder.build()
+
+		then:
+		options.getDependencies().toString() == '[bar:foo:+:stubs, baz:foo:+:stubs, baz2:foo:+:stubs]'
 	}
 
 	def shouldMapStubsWithPort() {
