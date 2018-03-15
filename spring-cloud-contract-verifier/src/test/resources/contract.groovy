@@ -26,7 +26,7 @@ Contract.make {
 		url("/1")
 	}
 	response {
-		status 200
+		status OK()
 		body(""" { "status" : "OK" } """)
 		headers {
 			contentType(textPlain())

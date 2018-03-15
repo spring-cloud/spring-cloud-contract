@@ -26,7 +26,7 @@ org.springframework.cloud.contract.spec.Contract.make {
         }
     }
     response {
-        status 200
+        status OK()
         headers {
             header 'Location': '/users/john'
         }

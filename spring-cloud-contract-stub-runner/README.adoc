@@ -585,7 +585,7 @@ request {
    method GET()
 }
 response {
-    status 200
+    status OK()
     body(
        foo: "foo"
     }
@@ -601,7 +601,7 @@ request {
    method GET()
 }
 response {
-    status 200
+    status OK()
     body(
        bar: "bar"
     }

@@ -357,9 +357,12 @@ include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=response,
 include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=response_obligatory,indent=0]
 ----
 
-
 Besides status, the response may contain **headers** and a **body**, both of which are
 specified the same way as in the request (see the previous paragraph).
+
+TIP: Via the Groovy DSL you can reference the `org.springframework.cloud.contract.spec.internal.HttpStatus`
+methods to provide a meaningful status instead of a digit. E.g. you can call
+`OK()` for a status `200` or `BAD_REQUEST()` for `400`.
 
 === Dynamic properties
 
@@ -929,7 +932,7 @@ Contract.make {
         url("/foo")
     }
     response {
-        status 200
+        status OK()
         body(events: [[
                                  operation          : 'EXPORT',
                                  eventId            : '16f1ed75-0bcc-4f0d-a04d-3121798faf99',
@@ -1007,7 +1010,7 @@ org.springframework.cloud.contract.spec.Contract.make {
         url '/get'
     }
     response {
-        status 200
+        status OK()
         body 'Passed'
         async()
     }

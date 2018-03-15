@@ -42,7 +42,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					url "test"
 				}
 				response {
-					status 200
+					status OK()
 					body """{
 	"property1": "a",
 	"property2": "b"
@@ -75,7 +75,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					url "test"
 				}
 				response {
-					status 200
+					status OK()
 					body """{
 	"property1": "true",
 	"property2": null,
@@ -110,7 +110,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					url "test"
 				}
 				response {
-					status 200
+					status OK()
 					body(
 							property1: 'a',
 							property2: [
@@ -149,7 +149,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					url "test"
 				}
 				response {
-					status 200
+					status OK()
 					body(
 							property1: 'a',
 							property2: [
@@ -190,7 +190,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					)
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -221,7 +221,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					)
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -248,7 +248,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					url "test"
 				}
 				response {
-					status 200
+					status OK()
 					body """[
 {
 	"property1": "a"
@@ -283,7 +283,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					url "test"
 				}
 				response {
-					status 200
+					status OK()
 					body """{
 	"property1": [
 	{ "property2": "test1"},
@@ -317,7 +317,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					url "test"
 				}
 				response {
-					status 200
+					status OK()
 					body '''\
 {
 	"property1": "a",
@@ -351,7 +351,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					url "test"
 				}
 				response {
-					status 200
+					status OK()
 					body(
 							property1: "a",
 							property2: value(
@@ -390,7 +390,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					url "test"
 				}
 				response {
-					status 200
+					status OK()
 					body("""{"property1":"a","property2":"${value(consumer('123'), producer(regex('[0-9]{3}')))}"}""")
 					headers {
 						header('Content-Type': 'application/json')
@@ -425,7 +425,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					}
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -457,7 +457,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					body ''
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -500,7 +500,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					}
 				}
 				response {
-					status 200
+					status OK()
 					body """
 					{
 						"property1": "a",
@@ -557,7 +557,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					}
 				}
 				response {
-					status 200
+					status OK()
 					body """
 					{
 						"property1": "a",
@@ -630,7 +630,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					url "test"
 				}
 				response {
-					status 200
+					status OK()
 					body "test"
 				}
 			}
@@ -661,7 +661,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					url "/v1/some_cool_requests/e86df6f693de4b35ae648464c5b0dc08"
 				}
 				response {
-					status 200
+					status OK()
 					headers {
 						contentType(applicationJson())
 					}
@@ -708,7 +708,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 				}
 			}
 			response {
-				status 200
+				status OK()
 				body """
 					{
 						"property1": "a"
@@ -764,7 +764,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					urlPath '/get'
 				}
 				response {
-					status 200
+					status OK()
 					body([
 							fraudCheckStatus: "OK",
 							rejectionReason : [
@@ -805,7 +805,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					urlPath '/get'
 				}
 				response {
-					status 200
+					status OK()
 					body([
 							[
 									name: $(consumer("userName 1"), producer(execute('assertThatUserNameIsNotNull($it)')))
@@ -838,7 +838,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					urlPath '/get'
 				}
 				response {
-					status 200
+					status OK()
 					body([
 							[
 									name: $(consumer("userName 1"), producer(execute('assertThatUserNameIsNotNull($it)')))
@@ -868,8 +868,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					url '/get'
 				}
 				response {
-					status 200
-					status 200
+					status OK()
+					status OK()
 					body(value(stub("HELLO FROM STUB"), server(regex(".*"))))
 				}
 			}
@@ -893,8 +893,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					url '/get'
 				}
 				response {
-					status 200
-					status 200
+					status OK()
+					status OK()
 					body(value(stub("HELLO FROM STUB"), server(regex(".*"))))
 				}
 			}
@@ -918,8 +918,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					url '/get'
 				}
 				response {
-					status 200
-					status 200
+					status OK()
+					status OK()
 					body(value(stub("HELLO FROM STUB"), server(execute('foo($it)'))))
 				}
 			}
@@ -941,8 +941,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					url '/get'
 				}
 				response {
-					status 200
-					status 200
+					status OK()
+					status OK()
 					body(value(stub("HELLO FROM STUB"), server(execute('foo($it)'))))
 				}
 			}
@@ -966,7 +966,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status 200
+				status OK()
 				body(
 						property1: "a",
 						property2: $(
@@ -1028,7 +1028,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 					}
 				}
 				response {
-					status 200
+					status OK()
 					body([
 							alpha: $(anyAlphaUnicode()),
 							number: $(anyNumber()),

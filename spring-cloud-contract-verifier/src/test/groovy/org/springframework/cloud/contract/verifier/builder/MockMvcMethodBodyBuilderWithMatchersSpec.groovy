@@ -73,7 +73,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					}
 				}
 				response {
-					status 200
+					status OK()
 					body([
 							duck: 123,
 							alpha: "abc",
@@ -200,7 +200,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					url 'person'
 				}
 				response {
-					status 200
+					status OK()
 					body([
 							"firstName": "Jane",
 							"lastName": "Doe",
@@ -270,7 +270,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 				url 'person'
 			}
 			response {
-				status 200
+				status OK()
 				body([
 						"phoneNumbers": [
 								number: "foo"
@@ -323,7 +323,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					url 'person'
 				}
 				response {
-					status 200
+					status OK()
 					body([
 							"phoneNumbers": [
 							        number: "foo"
@@ -358,7 +358,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					url 'person'
 				}
 				response {
-					status 200
+					status OK()
 					body([
 							"phoneNumbers": [
 							        number: "foo"
@@ -394,7 +394,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					body(12000)
 				}
 				response {
-					status 200
+					status OK()
 					body ([[
 								   [ access_token: '123']
 						   ]])
@@ -434,7 +434,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					headers { header "accept", "application/...json" }
 				}
 				response {
-					status 200
+					status OK()
 					body("""
 							{
 								"items": [
@@ -481,7 +481,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					headers { header "accept", "application/...json" }
 				}
 				response {
-					status 200
+					status OK()
 					body([
 							"items": [
 									"id"   : "35309",

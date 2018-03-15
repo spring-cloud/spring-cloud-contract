@@ -10,7 +10,7 @@ Contract.make {
 		url("/1")
 	}
 	response {
-		status 200
+		status OK()
 		body(file("response.json"))
 		headers {
 			contentType(textPlain())

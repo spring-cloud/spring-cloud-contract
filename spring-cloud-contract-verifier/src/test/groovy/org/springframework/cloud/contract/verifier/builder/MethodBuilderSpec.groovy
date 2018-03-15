@@ -16,7 +16,7 @@ class MethodBuilderSpec extends Specification {
                     urlPath '/foo'
                 }
                 response {
-                    status 200
+                    status OK()
                     body(foo: "foo")
                     headers {
                         contentType(applicationJson())

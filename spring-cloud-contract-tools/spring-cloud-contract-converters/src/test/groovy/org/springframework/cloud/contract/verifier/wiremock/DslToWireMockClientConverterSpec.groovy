@@ -59,7 +59,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 						url \$(consumer(~/\\/[0-9]{2}/), producer('/12'))
 					}
 					response {
-						status 200
+						status OK()
 					}
 				}
 """)
@@ -94,7 +94,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 			url "/${index}"
 		}
 		response {
-			status 200
+			status OK()
 		}
 	}
 }
@@ -160,7 +160,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 						url '/foo'
 					}
 					response {
-						status 200
+						status OK()
 						fixedDelayMilliseconds 1000
 					}
 			}
@@ -230,7 +230,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 				'''
 					}
 					response {
-						status 200
+						status OK()
 					}
 				}
 """)
@@ -338,7 +338,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 				urlPath '/foos'
 			}
 			response {
-				status 200
+				status OK()
 				body([[id: value(
 						consumer('123'),
 						producer(regex('[0-9]+'))
@@ -383,7 +383,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 				urlPath '/foos'
 			}
 			response {
-				status 200
+				status OK()
 				body(
 					digit: \$(producer(regex('[0-9]{1}'))),
 					id: \$(producer(regex(number())))
@@ -537,7 +537,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 					}
 				}
 				response {
-					status 200
+					status OK()
 					body([
 							duck: 123,
 							alpha: "abc",

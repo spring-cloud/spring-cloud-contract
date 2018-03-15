@@ -10,7 +10,7 @@ import org.springframework.cloud.contract.spec.Contract
 				url '/frauds'
 			}
 			response {
-				status 200
+				status OK()
 				body([
 						count: 200
 				])
@@ -25,7 +25,7 @@ import org.springframework.cloud.contract.spec.Contract
 				url '/drunks'
 			}
 			response {
-				status 200
+				status OK()
 				body([
 						count: 100
 				])

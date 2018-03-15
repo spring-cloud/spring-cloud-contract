@@ -26,7 +26,7 @@ org.springframework.cloud.contract.spec.Contract.make {
         body '''{ "login" : "john", "name": "John The Contract" }'''
     }
     response {
-        status 200
+        status OK()
         headers {
             header 'Location': '/users/john'
         }

@@ -30,7 +30,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 
 			}
 			response {
-				status 200
+				status OK()
 				body( """{
 	"fraudCheckStatus": "${value(consumer('FRAUD'), producer(regex('[A-Z]{5}')))}",
 	"rejectionReason": "Amount too high"

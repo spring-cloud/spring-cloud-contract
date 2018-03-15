@@ -249,7 +249,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 		}
 	}
 	response {
-		status 200
+		status OK()
 		body([
 			   fraudCheckStatus: "FRAUD",
 			   "rejection.reason": "Amount too high"

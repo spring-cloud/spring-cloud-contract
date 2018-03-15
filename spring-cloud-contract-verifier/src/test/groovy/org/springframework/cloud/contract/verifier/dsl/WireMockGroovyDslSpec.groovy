@@ -45,7 +45,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					url $(consumer(~/\/[0-9]{2}/), producer('/12'))
 				}
 				response {
-					status 200
+					status OK()
 					body(
 							id: value(
 									consumer('123'),
@@ -98,7 +98,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					}
 				}
 				response {
-					status 200
+					status OK()
 					body(
 							ingredients: [
 									[type: 'MALT', quantity: 100],
@@ -196,7 +196,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					url $(consumer(~/\/[0-9]{2}/), producer('/12'))
 				}
 				response {
-					status 200
+					status OK()
 					body("""\
 							{
 								"id": "${value(consumer('123'), producer('321'))}",
@@ -254,7 +254,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						"""
 				}
 				response {
-					status 200
+					status OK()
 					body("""\
 							{
 								"name": "Jan"
@@ -312,7 +312,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					)
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		when:
@@ -359,7 +359,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 							"""
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		when:
@@ -403,7 +403,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					}</jobId></foo>"""
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		when:
@@ -446,7 +446,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					}</jobId></user>"""
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		when:
@@ -481,7 +481,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					url "/users"
 				}
 				response {
-					status 200
+					status OK()
 					body """<user><name>${value(consumer('Jozo'), producer('Denis'))}</name><jobId>${
 						value(consumer("<test>"), producer('1234567890'))
 					}</jobId></user>"""
@@ -516,7 +516,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					body equalToJson('''{"name":"Jan"}''')
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		when:
@@ -554,7 +554,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					}</jobId></foo>""")
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		when:
@@ -594,7 +594,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						"""
 				}
 				response {
-					status 200
+					status OK()
 					body("""\
 							{
 								"name": "Jan"
@@ -651,7 +651,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 				}
 				response {
-					status 200
+					status OK()
 					body(
 							fraudCheckStatus: "OK",
 							rejectionReason: $(consumer(null), producer(execute('assertThatRejectionReasonIsNull($it)')))
@@ -714,7 +714,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					}
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		when:
@@ -774,7 +774,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					}
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		when:
@@ -815,7 +815,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 			response {
-				status 200
+				status OK()
 			}
 		}
 		when:
@@ -851,7 +851,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					urlPath $(consumer("boxes"), producer("items"))
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		when:
@@ -881,7 +881,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					urlPath "boxes"
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		when:
@@ -916,7 +916,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					}
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		then:
@@ -936,7 +936,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					}
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		then:
@@ -956,7 +956,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					}
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		then:
@@ -982,7 +982,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 							}
 						}
 						response {
-							status 200
+							status OK()
 						}
 					},
 					{
@@ -995,7 +995,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 							}
 						}
 						response {
-							status 200
+							status OK()
 						}
 					},
 					{
@@ -1008,7 +1008,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 							}
 						}
 						response {
-							status 200
+							status OK()
 						}
 					}
 			]
@@ -1027,7 +1027,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					}
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		when:
@@ -1083,7 +1083,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						"""
 				}
 				response {
-					status 200
+					status OK()
 					body("""\
 								{
 									"name": "Jan"
@@ -1145,7 +1145,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					)
 				}
 				response {
-					status 200
+					status OK()
 					body '''
 						{
 						"status": "OK"
@@ -1266,7 +1266,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					)
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		when:
@@ -1302,7 +1302,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					)
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		when:
@@ -1562,7 +1562,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					)
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		// end::multipartdsl[]
@@ -1626,7 +1626,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 			response {
-				status 200
+				status OK()
 				body(
 						content: [[
 										  id      : '00000000-0000-0000-0000-000000000000',
@@ -1698,7 +1698,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 			response {
-				status 200
+				status OK()
 				body('')
 			}
 		}
@@ -1724,7 +1724,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 			response {
-				status 200
+				status OK()
 				body('')
 			}
 		}
@@ -1753,7 +1753,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				body(foo: "bar", baz: 5)
 			}
 			response {
-				status 200
+				status OK()
 				headers {
 					header(authorization(), "${fromRequest().header(authorization())};foo")
 				}
@@ -1850,7 +1850,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 			response {
-				status 200
+				status OK()
 			}
 		}
 		when:
@@ -1960,7 +1960,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 			response {
-				status 200
+				status OK()
 				body("""
 						{
 							"code": 91015,

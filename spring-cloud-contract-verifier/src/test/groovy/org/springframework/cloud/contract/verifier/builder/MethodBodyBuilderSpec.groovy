@@ -49,7 +49,7 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 			response {
-				status 200
+				status OK()
 				body ([
 						myArray:[
 								[
@@ -117,7 +117,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 				urlPath '/foo'
 			}
 			response {
-				status 200
+				status OK()
 				body (
 						foo: ["my.dotted.response" : $(c('foo'), p(execute('"foo".equals($it)')))]
 				)
@@ -167,7 +167,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 				}
 			}
 			response {
-				status 200
+				status OK()
 				headers {
 					contentType(applicationJson())
 				}
@@ -220,7 +220,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					)
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		//end::body_execute[]
@@ -257,7 +257,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					])
 				}
 				response {
-					status 200
+					status OK()
 					headers {
 						contentType(applicationPdf())
 						header('Content-Length': 4)
@@ -289,7 +289,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					url "test"
 				}
 				response {
-					status 200
+					status OK()
 					body(
 							"createdAt": 1502766000000,
 							"updatedAt": 1499476115000
@@ -327,7 +327,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					}
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -358,7 +358,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					body("""{ "name": "My name" }""")
 				}
 				response {
-					status 200
+					status OK()
 					body fromRequest().body('$.name')
 				}
 			}
@@ -395,7 +395,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					body("""{ "name": "My name" }""")
 				}
 				response {
-					status 200
+					status OK()
 					body (
 							foo: fromRequest().query("foo"),
 							number: fromRequest().query("number")
@@ -440,7 +440,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 				url '/'
 			}
 			response {
-				status 200
+				status OK()
 				body("Ryan")
 				headers {
 					contentType(textHtml())
@@ -472,7 +472,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					url "test"
 				}
 				response {
-					status 200
+					status OK()
 					async()
 					fixedDelayMilliseconds(10000)
 					body(a: 'foo')
@@ -507,7 +507,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					body('a=abc&b=123')
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -537,7 +537,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					url '/api/users'
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
