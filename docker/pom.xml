@@ -20,10 +20,24 @@
 		<docker.registry.organization>springcloud</docker.registry.organization>
 	</properties>
 
-	<modules>
-		<module>spring-cloud-contract-docker</module>
-		<module>spring-cloud-contract-stub-runner-docker</module>
-	</modules>
+	<profiles>
+		<profile>
+			<id>skip</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>integration</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<modules>
+				<module>spring-cloud-contract-docker</module>
+				<module>spring-cloud-contract-stub-runner-docker</module>
+			</modules>
+		</profile>
+	</profiles>
 
 	<build>
 		<plugins>
