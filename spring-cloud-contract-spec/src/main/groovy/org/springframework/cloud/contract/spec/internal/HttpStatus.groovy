@@ -13,8 +13,6 @@ import groovy.transform.EqualsAndHashCode
 @EqualsAndHashCode
 class HttpStatus {
 
-	private HttpStatus() {}
-
 	// 1xx Informational
 
 	/**
