@@ -259,6 +259,8 @@ closure to set it up.
 JAR is available offline, remotely etc.)
 * *contractsSnapshotCheckSkip*: If set to `true` will not assert whether the
 downloaded stubs / contract JAR was downloaded from a remote location or a local one
+* *deleteStubsAfterTest*: If set to `false` will not remove any downloaded
+contracts from temporary directories
 
 [[gradle-single-base-class]]
 ==== Single Base Class for All Tests
@@ -584,6 +586,8 @@ Defaults to `groupid/artifactid` where `gropuid` is slash separated.
 * *contractsMode*: Picks the mode in which stubs will be found and registered
 * *contractsSnapshotCheckSkip*: If `true` then will not assert whether a stub / contract
 JAR was downloaded from local or remote location
+* *deleteStubsAfterTest*: If set to `false` will not remove any downloaded
+contracts from temporary directories
 * *contractsRepositoryUrl*: URL to a repo with the artifacts that have contracts. If it is not provided,
 use the current Maven ones.
 * *contractsRepositoryUsername*: The user name to be used to connect to the repo with contracts.

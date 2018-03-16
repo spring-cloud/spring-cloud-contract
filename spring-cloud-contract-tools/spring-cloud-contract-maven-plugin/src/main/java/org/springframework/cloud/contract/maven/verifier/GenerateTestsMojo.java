@@ -203,6 +203,13 @@ public class GenerateTestsMojo extends AbstractMojo {
 	@Parameter(property = "contractsSnapshotCheckSkip", defaultValue = "false")
 	private boolean contractsSnapshotCheckSkip;
 
+	/**
+	 * If set to {@code false} will NOT delete stubs from a temporary
+	 * folder after running tests
+	 */
+	@Parameter(property = "deleteStubsAfterTest", defaultValue = "true")
+	private boolean deleteStubsAfterTest;
+
 	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
 
 	@Inject
@@ -226,7 +233,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 				this.aetherStubDownloaderFactory, this.repoSession,
 				this.contractsRepositoryUsername, this.contractsRepositoryPassword,
 				this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort,
-				this.contractsSnapshotCheckSkip).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
+				this.contractsSnapshotCheckSkip, this.deleteStubsAfterTest).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 		setupConfig(config, contractsDirectory);
 		this.project.addTestCompileSourceRoot(this.generatedTestSourcesDir.getAbsolutePath());

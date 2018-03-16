@@ -102,6 +102,12 @@ public class StubRunnerProperties {
 	private boolean snapshotCheckSkip;
 
 	/**
+	 * If set to {@code false} will NOT delete stubs from a temporary
+	 * folder after running tests
+	 */
+	private boolean deleteStubsAfterTest = true;
+
+	/**
 	 * An enumeration stub modes.
 	 */
 	public enum StubsMode {
@@ -236,6 +242,14 @@ public class StubRunnerProperties {
 
 	public void setSnapshotCheckSkip(boolean snapshotCheckSkip) {
 		this.snapshotCheckSkip = snapshotCheckSkip;
+	}
+
+	public boolean isDeleteStubsAfterTest() {
+		return this.deleteStubsAfterTest;
+	}
+
+	public void setDeleteStubsAfterTest(boolean deleteStubsAfterTest) {
+		this.deleteStubsAfterTest = deleteStubsAfterTest;
 	}
 
 	@Override public String toString() {

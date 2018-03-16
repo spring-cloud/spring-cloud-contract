@@ -94,7 +94,8 @@ public class StubRunnerConfiguration {
 					.withStubPerConsumer(this.props.isStubsPerConsumer())
 					.withConsumerName(consumerName())
 					.withMappingsOutputFolder(this.props.getMappingsOutputFolder())
-					.withSnapshotCheckSkip(this.props.isSnapshotCheckSkip());
+					.withSnapshotCheckSkip(this.props.isSnapshotCheckSkip())
+					.withDeleteStubsAfterTest(this.props.isDeleteStubsAfterTest());
 	}
 
 	private String consumerName() {

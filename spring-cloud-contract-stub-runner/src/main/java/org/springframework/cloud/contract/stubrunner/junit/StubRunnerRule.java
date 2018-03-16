@@ -159,6 +159,12 @@ public class StubRunnerRule implements TestRule, StubFinder, StubRunnerRuleOptio
 		return this.delegate;
 	}
 
+	@Override public StubRunnerRule withDeleteStubsAfterTest(
+			boolean deleteStubsAfterTest) {
+		builder().withDeleteStubsAfterTest(deleteStubsAfterTest);
+		return this.delegate;
+	}
+
 	@Override
 	public URL findStubUrl(String groupId, String artifactId) {
 		return this.stubFinder().findStubUrl(groupId, artifactId);
