@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2018-03-15</date>
+<date>2018-03-16</date>
 </info>
 <preface>
 <title></title>
@@ -2263,7 +2263,9 @@ closure to set it up.
 * <emphasis role="strong">contractsMode</emphasis>: Specifies the mode of downloading contracts (whether the
 JAR is available offline, remotely etc.)
 * <emphasis role="strong">contractsSnapshotCheckSkip</emphasis>: If set to <literal>true</literal> will not assert whether the
-downloaded stubs / contract JAR was downloaded from a remote location or a local one</simpara>
+downloaded stubs / contract JAR was downloaded from a remote location or a local one
+* <emphasis role="strong">deleteStubsAfterTest</emphasis>: If set to <literal>false</literal> will not remove any downloaded
+contracts from temporary directories</simpara>
 </section>
 <section xml:id="gradle-single-base-class">
 <title>Single Base Class for All Tests</title>
@@ -2661,6 +2663,10 @@ Defaults to <literal>groupid/artifactid</literal> where <literal>gropuid</litera
 <listitem>
 <simpara><emphasis role="strong">contractsSnapshotCheckSkip</emphasis>: If <literal>true</literal> then will not assert whether a stub / contract
 JAR was downloaded from local or remote location</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong">deleteStubsAfterTest</emphasis>: If set to <literal>false</literal> will not remove any downloaded
+contracts from temporary directories</simpara>
 </listitem>
 <listitem>
 <simpara><emphasis role="strong">contractsRepositoryUrl</emphasis>: URL to a repo with the artifacts that have contracts. If it is not provided,
