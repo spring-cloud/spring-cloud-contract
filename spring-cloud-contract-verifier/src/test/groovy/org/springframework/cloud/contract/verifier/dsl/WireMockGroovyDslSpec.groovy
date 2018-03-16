@@ -1834,6 +1834,80 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			server?.shutdown()
 	}
 
+	@Issue('#578')
+	def "should generate a stub for a request with form parameters"() {
+		given:
+			Contract groovyDsl = Contract.make {
+				request {
+					method POST()
+					urlPath('/oauth/token')
+					headers {
+						header(authorization(), anyNonBlankString())
+						header(contentType(), applicationFormUrlencoded())
+						header(accept(), applicationJson())
+					}
+					body([
+							username  : 'user',
+							password  : 'password',
+							grant_type: 'password'
+					])
+				}
+				response {
+					status 200
+					headers {
+						header(contentType(), applicationJson())
+					}
+					body([
+							refresh_token: 'RANDOM_REFRESH_TOKEN',
+							access_token : 'RANDOM_ACCESS_TOKEN',
+							token_type   : 'bearer',
+							expires_in   : 3600,
+							scope        : ['task'],
+							user         : [
+									id      : 1,
+									username: 'user',
+									name    : 'User'
+							]
+					])
+				}
+			}
+		when:
+			def json = toWireMockClientJsonStub(groovyDsl)
+		then:
+			AssertionUtil.assertThatJsonsAreEqual(('''
+				{
+					"request" : {
+					"urlPath" : "/oauth/token",
+					"method" : "POST",
+					"headers" : {
+						"Authorization" : {
+						"matches" : "^\\\\s*\\\\S[\\\\S\\\\s]*"
+					},
+					  "Content-Type" : {
+						"equalTo" : "application/x-www-form-urlencoded"
+					  },
+					  "Accept" : {
+						"equalTo" : "application/json"
+					  }
+					},
+					"bodyPatterns" : [ {
+					  "equalTo" : "username=user&password=password&grant_type=password"
+					} ]
+				},
+				"response" : {
+					"status" : 200,
+					"body" : "{\\"access_token\\":\\"RANDOM_ACCESS_TOKEN\\",\\"refresh_token\\":\\"RANDOM_REFRESH_TOKEN\\",\\"scope\\":[\\"task\\"],\\"token_type\\":\\"bearer\\",\\"expires_in\\":3600,\\"user\\":{\\"name\\":\\"User\\",\\"id\\":1,\\"username\\":\\"user\\"}}",
+					"headers" : {
+					  "Content-Type" : "application/json"
+					},
+					"transformers" : [ "response-template", "foo-transformer" ]
+			  		}
+			  	}
+					'''), json)
+		and:
+			stubMappingIsValidWireMockStub(json)
+	}
+
 	@Issue('#269')
 	def "should create a stub for dot separated keys"() {
 		given:

@@ -528,6 +528,61 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
 
+	@Issue("#578")
+	def "should work for form parameters [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method POST()
+					urlPath('/oauth/token')
+					headers {
+						header(authorization(), anyNonBlankString())
+						header(contentType(), applicationFormUrlencoded())
+						header(accept(), applicationJson())
+					}
+					body([
+							username  : 'user',
+							password  : 'password',
+							grant_type: 'password'
+					])
+				}
+				response {
+					status 200
+					headers {
+						header(contentType(), applicationJson())
+					}
+					body([
+							refresh_token: 'RANDOM_REFRESH_TOKEN',
+							access_token : 'RANDOM_ACCESS_TOKEN',
+							token_type   : 'bearer',
+							expires_in   : 3600,
+							scope        : ['task'],
+							user         : [
+									id      : 1,
+									username: 'user',
+									name    : 'User'
+							]
+					])
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			String test = blockBuilder.toString()
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+			test.contains("username=user&password=password&grant_type=password")
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
 	@Issue("#509")
 	def "classToCheck() should return class of object"() {
 		given:

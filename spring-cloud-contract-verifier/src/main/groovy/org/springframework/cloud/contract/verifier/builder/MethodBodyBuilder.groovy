@@ -43,6 +43,7 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor
 import org.springframework.cloud.contract.verifier.template.TemplateProcessor
 import org.springframework.cloud.contract.verifier.util.ContentType
+import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 import org.springframework.cloud.contract.verifier.util.MapConverter
@@ -314,7 +315,7 @@ abstract class MethodBodyBuilder {
 		if (convertedResponseBody instanceof GString) {
 			convertedResponseBody = extractValue(convertedResponseBody as GString, contentType, { Object o -> o instanceof DslProperty ? o.serverValue : o })
 		}
-		if (contentType != ContentType.TEXT) {
+		if (contentType != ContentType.TEXT && contentType != ContentType.FORM) {
 			convertedResponseBody = MapConverter.getTestSideValues(convertedResponseBody)
 		} else {
 			convertedResponseBody = StringEscapeUtils.escapeJava(convertedResponseBody.toString())
@@ -632,13 +633,13 @@ abstract class MethodBodyBuilder {
 	 */
 	protected Object extractServerValueFromBody(bodyValue) {
 		if (bodyValue instanceof GString) {
-			bodyValue = extractValue(bodyValue, ContentType.from(MapConverter.getTestSideValues(this.contract.request?.headers?.entries?.find {
-				it.name.toLowerCase() == "Content-Type".toLowerCase()
-			}).toString()), GET_SERVER_VALUE)
-		} else {
-			bodyValue = MapConverter.transformValues(bodyValue, GET_SERVER_VALUE)
+			return extractValue(bodyValue, contentType(), GET_SERVER_VALUE)
 		}
-		return bodyValue
+		return MapConverter.transformValues(bodyValue, GET_SERVER_VALUE)
+	}
+
+	protected ContentType contentType() {
+		return ContentUtils.recognizeContentTypeFromTestHeader(this.contract.request?.headers)
 	}
 
 	/**

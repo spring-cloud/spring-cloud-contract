@@ -24,6 +24,7 @@ import groovy.util.logging.Slf4j
 import org.codehaus.groovy.runtime.GStringImpl
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.NamedProperty
@@ -76,7 +77,7 @@ class ContentUtils {
 		if (bodyAsValue.isEmpty()){
 			return bodyAsValue
 		}
-		if (contentType == ContentType.TEXT) {
+		if (contentType == ContentType.TEXT || contentType == ContentType.FORM) {
 			return extractValueForText(bodyAsValue, valueProvider)
 		}
 		if (contentType == ContentType.JSON) {
@@ -281,8 +282,9 @@ class ContentUtils {
 		return val[1]
 	}
 
-	static ContentType recognizeContentTypeFromHeader(Headers headers) {
-		String content = headers?.entries.find { it.name == "Content-Type" } ?.clientValue?.toString()
+	static ContentType recognizeContentTypeFromHeader(Headers headers, Closure<Object> closure) {
+		Header header = headers?.entries?.find { it.name == "Content-Type" }
+		String content = closure(header)?.toString()
 		if (content?.contains("json")) {
 			return ContentType.JSON
 		}
@@ -292,7 +294,18 @@ class ContentUtils {
 		if (content?.contains("text")) {
 			return ContentType.TEXT
 		}
+		if (content?.contains("form-urlencoded")) {
+			return ContentType.FORM
+		}
 		return ContentType.UNKNOWN
+	}
+
+	static ContentType recognizeContentTypeFromHeader(Headers headers) {
+		return recognizeContentTypeFromHeader(headers, { Header header -> header?.clientValue })
+	}
+
+	static ContentType recognizeContentTypeFromTestHeader(Headers headers) {
+		return recognizeContentTypeFromHeader(headers, { Header header -> header?.serverValue })
 	}
 
 	static MatchingStrategy.Type getEqualsTypeFromContentType(ContentType contentType) {

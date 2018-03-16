@@ -26,27 +26,13 @@ enum ContentType {
 	JSON("application/json"),
 	XML("application/xml"),
 	TEXT("text/plain"),
+	FORM("application/x-www-form-urlencoded"),
 	UNKNOWN("application/octet-stream")
 
 	final String mimeType
 
 	ContentType(String mimeType) {
 		this.mimeType = mimeType
-	}
-
-	static ContentType from(String header) {
-		try {
-			if (header.contains("json")) {
-				return JSON
-			} else if (header.contains("xml")) {
-				return XML
-			} else if (header.contains("text") ||
-					header.contains("application/x-www-form-urlencoded")) {
-				// we want both to be treated as text
-				return TEXT
-			}
-		} catch(e) {}
-		return UNKNOWN
 	}
 
 }
