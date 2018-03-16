@@ -398,7 +398,7 @@ Value of the annotation can be the `groupid.artifactid` or just the `artifactid`
 ----
 @StubRunnerPort("foo")
 int fooPort;
-@StubRunnerPort("com.example.bar")
+@StubRunnerPort("com.example:bar")
 int barPort;
 ----
 

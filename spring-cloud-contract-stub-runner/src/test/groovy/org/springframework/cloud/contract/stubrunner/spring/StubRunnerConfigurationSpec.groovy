@@ -51,7 +51,7 @@ class StubRunnerConfigurationSpec extends Specification {
 	@Autowired StubFinder stubFinder
 	@Autowired Environment environment
 	@StubRunnerPort("fraudDetectionServer") int fraudDetectionServerPort
-	@StubRunnerPort("org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer") int fraudDetectionServerPortWithGroupId
+	@StubRunnerPort("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer") int fraudDetectionServerPortWithGroupId
 	@Value('${foo}') Integer foo
 
 	@BeforeClass
@@ -96,6 +96,9 @@ class StubRunnerConfigurationSpec extends Specification {
 		and:
 			environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") != null
 			stubFinder.findAllRunningStubs().getPort("fraudDetectionServer") == (environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") as Integer)
+		and:
+			environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") != null
+			stubFinder.findAllRunningStubs().getPort("fraudDetectionServer") == (environment.getProperty("stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port") as Integer)
 	}
 
 	def 'should be able to interpolate a running stub in the passed test property'() {
