@@ -4156,7 +4156,8 @@ and registers in WireMock the selected stubs.</simpara>
 its methods as presented below:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(properties = [" stubrunner.cloud.enabled=false",
-		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}'])
+		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}',
+		'fooWithGroup=${stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port}'])
 @AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/")
 @DirtiesContext
 @ActiveProfiles("test")
@@ -4164,6 +4165,8 @@ class StubRunnerConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
 	@Autowired Environment environment
+	@StubRunnerPort("fraudDetectionServer") int fraudDetectionServerPort
+	@StubRunnerPort("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer") int fraudDetectionServerPortWithGroupId
 	@Value('${foo}') Integer foo
 
 	@BeforeClass
@@ -4208,6 +4211,9 @@ class StubRunnerConfigurationSpec extends Specification {
 		and:
 			environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") != null
 			stubFinder.findAllRunningStubs().getPort("fraudDetectionServer") == (environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") as Integer)
+		and:
+			environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") != null
+			stubFinder.findAllRunningStubs().getPort("fraudDetectionServer") == (environment.getProperty("stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port") as Integer)
 	}
 
 	def 'should be able to interpolate a running stub in the passed test property'() {
@@ -4216,7 +4222,18 @@ class StubRunnerConfigurationSpec extends Specification {
 		expect:
 			fraudPort &gt; 0
 			environment.getProperty("foo", Integer) == fraudPort
+			environment.getProperty("fooWithGroup", Integer) == fraudPort
 			foo == fraudPort
+	}
+
+	@Issue("#573")
+	def 'should be able to retrieve the port of a running stub via an annotation'() {
+		given:
+			int fraudPort = stubFinder.findAllRunningStubs().getPort("fraudDetectionServer")
+		expect:
+			fraudPort &gt; 0
+			fraudDetectionServerPort == fraudPort
+			fraudDetectionServerPortWithGroupId == fraudPort
 	}
 
 	def 'should dump all mappings to a file'() {
@@ -4254,10 +4271,23 @@ for every registered WireMock server. Example for Stub Runner ids
 <simpara><literal>stubrunner.runningstubs.foo.port</literal></simpara>
 </listitem>
 <listitem>
+<simpara><literal>stubrunner.runningstubs.com.example.foo.port</literal></simpara>
+</listitem>
+<listitem>
 <simpara><literal>stubrunner.runningstubs.bar.port</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>stubrunner.runningstubs.com.example.bar.port</literal></simpara>
 </listitem>
 </itemizedlist>
 <simpara>Which you can reference in your code.</simpara>
+<simpara>You can also use the <literal>@StubRunnerPort</literal> annotation to inject the port of a running stub.
+Value of the annotation can be the <literal>groupid:artifactid</literal> or just the <literal>artifactid</literal>. Example for Stub Runner ids
+<literal>com.example:foo</literal>, <literal>com.example:bar</literal>.</simpara>
+<programlisting language="java" linenumbering="unnumbered">@StubRunnerPort("foo")
+int fooPort;
+@StubRunnerPort("com.example:bar")
+int barPort;</programlisting>
 </section>
 </section>
 <section xml:id="_stub_runner_spring_cloud">
@@ -8656,6 +8686,8 @@ classpath and it is selected by the <literal>RestTemplateBuilder</literal> and c
 errors. If you use the default <literal>java.net</literal> client, you do not need the annotation (but it
 won&#8217;t do any harm). There is no support currently for other clients, but it may be added
 in future releases.</simpara>
+<simpara>To disable the custom <literal>RestTemplateBuilder</literal>, set the <literal>wiremock.rest-template-ssl-enabled</literal>
+property to <literal>false</literal>.</simpara>
 </section>
 <section xml:id="_wiremock_and_spring_mvc_mocks">
 <title>WireMock and Spring MVC Mocks</title>

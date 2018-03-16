@@ -112,7 +112,8 @@ annotation or the stub runner. If you use the JUnit <code class="literal">@Rule<
 classpath and it is selected by the <code class="literal">RestTemplateBuilder</code> and configured to ignore SSL
 errors. If you use the default <code class="literal">java.net</code> client, you do not need the annotation (but it
 won&#8217;t do any harm). There is no support currently for other clients, but it may be added
-in future releases.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_wiremock_and_spring_mvc_mocks" href="#_wiremock_and_spring_mvc_mocks"></a>11.5&nbsp;WireMock and Spring MVC Mocks</h2></div></div></div><p>Spring Cloud Contract provides a convenience class that can load JSON WireMock stubs into
+in future releases.</p><p>To disable the custom <code class="literal">RestTemplateBuilder</code>, set the <code class="literal">wiremock.rest-template-ssl-enabled</code>
+property to <code class="literal">false</code>.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_wiremock_and_spring_mvc_mocks" href="#_wiremock_and_spring_mvc_mocks"></a>11.5&nbsp;WireMock and Spring MVC Mocks</h2></div></div></div><p>Spring Cloud Contract provides a convenience class that can load JSON WireMock stubs into
 a Spring <code class="literal">MockRestServiceServer</code>. The following code shows an example:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
 <em><span class="hl-annotation" style="color: gray">@SpringBootTest(webEnvironment = WebEnvironment.NONE)</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> WiremockForDocsMockServerApplicationTests {

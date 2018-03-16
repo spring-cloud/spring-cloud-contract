@@ -378,7 +378,8 @@ then(rule.findStubUrl(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-st
 and registers in WireMock the selected stubs.</p><p>If you want to find the URL of your stubbed dependency you can autowire the <code class="literal">StubFinder</code> interface and use
 its methods as presented below:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@ContextConfiguration(classes = Config, loader = SpringBootContextLoader)</span></em>
 <em><span class="hl-annotation" style="color: gray">@SpringBootTest(properties = [" stubrunner.cloud.enabled=false",
-		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}'])</span></em>
+		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}',
+		'fooWithGroup=${stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port}'])</span></em>
 <em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/")</span></em>
 <em><span class="hl-annotation" style="color: gray">@DirtiesContext</span></em>
 <em><span class="hl-annotation" style="color: gray">@ActiveProfiles("test")</span></em>
@@ -386,6 +387,8 @@ its methods as presented below:</p><pre class="programlisting"><em><span class="
 
 	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em> StubFinder stubFinder
 	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em> Environment environment
+	<em><span class="hl-annotation" style="color: gray">@StubRunnerPort("fraudDetectionServer")</span></em> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> fraudDetectionServerPort
+	<em><span class="hl-annotation" style="color: gray">@StubRunnerPort("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")</span></em> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> fraudDetectionServerPortWithGroupId
 	<em><span class="hl-annotation" style="color: gray">@Value('${foo}')</span></em> Integer foo
 
 	<em><span class="hl-annotation" style="color: gray">@BeforeClass</span></em>
@@ -430,6 +433,9 @@ its methods as presented below:</p><pre class="programlisting"><em><span class="
 		and:
 			environment.getProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"stubrunner.runningstubs.fraudDetectionServer.port"</span>) != null
 			stubFinder.findAllRunningStubs().getPort(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer"</span>) == (environment.getProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"stubrunner.runningstubs.fraudDetectionServer.port"</span>) as Integer)
+		and:
+			environment.getProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"stubrunner.runningstubs.fraudDetectionServer.port"</span>) != null
+			stubFinder.findAllRunningStubs().getPort(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer"</span>) == (environment.getProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port"</span>) as Integer)
 	}
 
 	def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should be able to interpolate a running stub in the passed test property'</span>() {
@@ -438,7 +444,18 @@ its methods as presented below:</p><pre class="programlisting"><em><span class="
 		expect:
 			fraudPort &gt; <span class="hl-number">0</span>
 			environment.getProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>, Integer) == fraudPort
+			environment.getProperty(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fooWithGroup"</span>, Integer) == fraudPort
 			foo == fraudPort
+	}
+
+	<em><span class="hl-annotation" style="color: gray">@Issue("#573")</span></em>
+	def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should be able to retrieve the port of a running stub via an annotation'</span>() {
+		given:
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> fraudPort = stubFinder.findAllRunningStubs().getPort(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"fraudDetectionServer"</span>)
+		expect:
+			fraudPort &gt; <span class="hl-number">0</span>
+			fraudDetectionServerPort == fraudPort
+			fraudDetectionServerPortWithGroupId == fraudPort
 	}
 
 	def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should dump all mappings to a file'</span>() {
@@ -465,7 +482,12 @@ Below you can find an example of achieving the same result by setting values on 
 		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 		repositoryRoot = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"classpath:m2repo/repository/"</span>)</pre><p>Stub Runner Spring registers environment variables in the following manner
 for every registered WireMock server. Example for Stub Runner ids
- <code class="literal">com.example:foo</code>, <code class="literal">com.example:bar</code>.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="literal">stubrunner.runningstubs.foo.port</code></li><li class="listitem"><code class="literal">stubrunner.runningstubs.bar.port</code></li></ul></div><p>Which you can reference in your code.</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stub_runner_spring_cloud" href="#_stub_runner_spring_cloud"></a>6.5&nbsp;Stub Runner Spring Cloud</h2></div></div></div><p>Stub Runner can integrate with Spring Cloud.</p><p>For real life examples you can check the</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.0.x/producer" target="_top">producer app sample</a></li><li class="listitem"><a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.0.x/consumer_with_discovery" target="_top">consumer app sample</a></li></ul></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_stubbing_service_discovery" href="#_stubbing_service_discovery"></a>6.5.1&nbsp;Stubbing Service Discovery</h3></div></div></div><p>The most important feature of <code class="literal">Stub Runner Spring Cloud</code> is the fact that it&#8217;s stubbing</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="literal">DiscoveryClient</code></li><li class="listitem"><code class="literal">Ribbon</code> <code class="literal">ServerList</code></li></ul></div><p>that means that regardless of the fact whether you&#8217;re using Zookeeper, Consul, Eureka or anything else, you don&#8217;t need that in your tests.
+ <code class="literal">com.example:foo</code>, <code class="literal">com.example:bar</code>.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="literal">stubrunner.runningstubs.foo.port</code></li><li class="listitem"><code class="literal">stubrunner.runningstubs.com.example.foo.port</code></li><li class="listitem"><code class="literal">stubrunner.runningstubs.bar.port</code></li><li class="listitem"><code class="literal">stubrunner.runningstubs.com.example.bar.port</code></li></ul></div><p>Which you can reference in your code.</p><p>You can also use the <code class="literal">@StubRunnerPort</code> annotation to inject the port of a running stub.
+Value of the annotation can be the <code class="literal">groupid:artifactid</code> or just the <code class="literal">artifactid</code>. Example for Stub Runner ids
+<code class="literal">com.example:foo</code>, <code class="literal">com.example:bar</code>.</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@StubRunnerPort("foo")</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> fooPort;
+<em><span class="hl-annotation" style="color: gray">@StubRunnerPort("com.example:bar")</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> barPort;</pre></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stub_runner_spring_cloud" href="#_stub_runner_spring_cloud"></a>6.5&nbsp;Stub Runner Spring Cloud</h2></div></div></div><p>Stub Runner can integrate with Spring Cloud.</p><p>For real life examples you can check the</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.0.x/producer" target="_top">producer app sample</a></li><li class="listitem"><a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.0.x/consumer_with_discovery" target="_top">consumer app sample</a></li></ul></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_stubbing_service_discovery" href="#_stubbing_service_discovery"></a>6.5.1&nbsp;Stubbing Service Discovery</h3></div></div></div><p>The most important feature of <code class="literal">Stub Runner Spring Cloud</code> is the fact that it&#8217;s stubbing</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="literal">DiscoveryClient</code></li><li class="listitem"><code class="literal">Ribbon</code> <code class="literal">ServerList</code></li></ul></div><p>that means that regardless of the fact whether you&#8217;re using Zookeeper, Consul, Eureka or anything else, you don&#8217;t need that in your tests.
 We&#8217;re starting WireMock instances of your dependencies and we&#8217;re telling your application whenever you&#8217;re using <code class="literal">Feign</code>, load balanced <code class="literal">RestTemplate</code>
 or <code class="literal">DiscoveryClient</code> directly, to call those stubbed servers instead of calling the real Service Discovery tool.</p><p>For example this test will pass</p><pre class="programlisting">def <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'should make service discovery work'</span>() {
 	expect: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'WireMocks are running'</span>
