@@ -457,7 +457,8 @@ abstract class MethodBodyBuilder {
 		Object elementFromBody = value(copiedBody, bodyMatcher)
 		if (bodyMatcher.minTypeOccurrence() != null || bodyMatcher.maxTypeOccurrence() != null) {
 			checkType(bb, bodyMatcher, elementFromBody)
-			String method = "assertThat((java.lang.Iterable) parsedJson.read(${quotedAndEscaped(bodyMatcher.path())}, java.util.Collection.class)).${sizeCheckMethod(bodyMatcher)}"
+			String quotedAndEscaptedPath = quotedAndEscaped(bodyMatcher.path())
+			String method = "assertThat((java.lang.Iterable) parsedJson.read(${quotedAndEscaptedPath}, java.util.Collection.class)).${sizeCheckMethod(bodyMatcher, quotedAndEscaptedPath)}"
 			bb.addLine(postProcessJsonPathCall(method))
 			addColonIfRequired(bb)
 		} else {
@@ -470,7 +471,7 @@ abstract class MethodBodyBuilder {
 	}
 
 	protected void buildCustomMatchingConditionForEachElement(BlockBuilder bb, String path, String valueAsParam) {
-		String method = "assertThat((java.lang.Iterable) parsedJson.read(${path}, java.util.Collection.class)).allElementsMatch(${valueAsParam})"
+		String method = "assertThat((java.lang.Iterable) parsedJson.read(${path}, java.util.Collection.class)).as(${path}).allElementsMatch(${valueAsParam})"
 		bb.addLine(postProcessJsonPathCall(method))
 	}
 
@@ -522,8 +523,8 @@ abstract class MethodBodyBuilder {
 		}
 	}
 
-	protected String sizeCheckMethod(BodyMatcher bodyMatcher) {
-		String prefix = sizeCheckPrefix(bodyMatcher)
+	protected String sizeCheckMethod(BodyMatcher bodyMatcher, String quotedAndEscaptedPath) {
+		String prefix = sizeCheckPrefix(bodyMatcher, quotedAndEscaptedPath)
 		if (bodyMatcher.minTypeOccurrence() != null && bodyMatcher.maxTypeOccurrence() != null) {
 			return "${prefix}Between(${bodyMatcher.minTypeOccurrence()}, ${bodyMatcher.maxTypeOccurrence()})"
 		} else if (bodyMatcher.minTypeOccurrence() != null ) {
@@ -531,10 +532,12 @@ abstract class MethodBodyBuilder {
 		} else if (bodyMatcher.maxTypeOccurrence() != null) {
 			return "${prefix}LessThanOrEqualTo(${bodyMatcher.maxTypeOccurrence()})"
 		}
+		return prefix
 	}
 
-	private String sizeCheckPrefix(BodyMatcher bodyMatcher) {
-		String prefix = "has"
+	private String sizeCheckPrefix(BodyMatcher bodyMatcher, String quotedAndEscaptedPath) {
+		String description = "as(" + quotedAndEscaptedPath + ")."
+		String prefix = description + "has"
 		if (arrayRelated(bodyMatcher.path())) {
 			prefix = prefix + "Flattened"
 		}

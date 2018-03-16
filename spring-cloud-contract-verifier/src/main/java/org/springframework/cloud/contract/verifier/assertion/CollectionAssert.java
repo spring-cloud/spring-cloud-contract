@@ -124,6 +124,10 @@ public class CollectionAssert<ELEMENT> extends IterableAssert<ELEMENT> {
 		return this;
 	}
 
+	@Override public CollectionAssert<ELEMENT> as(String description, Object... args) {
+		return (CollectionAssert<ELEMENT>) super.as(description, args);
+	}
+
 	private int flattenedSize(int counter, Object object) {
 		if (object instanceof Map) {
 			return counter + ((Map) object).size();

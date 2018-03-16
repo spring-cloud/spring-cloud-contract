@@ -163,15 +163,15 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.time", String.class)).matches("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])")')
 			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithTypeMatch")).isInstanceOf(java.lang.String.class)')
 			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMin")).isInstanceOf(java.util.List.class)')
-			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.valueWithMin", java.util.Collection.class)).hasSizeGreaterThanOrEqualTo(1)')
+			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.valueWithMin", java.util.Collection.class)).as("' + rootElement + '.valueWithMin").hasSizeGreaterThanOrEqualTo(1)')
 			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMax")).isInstanceOf(java.util.List.class)')
-			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.valueWithMax", java.util.Collection.class)).hasSizeLessThanOrEqualTo(3)')
+			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.valueWithMax", java.util.Collection.class)).as("' + rootElement + '.valueWithMax").hasSizeLessThanOrEqualTo(3)')
 			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMinMax")).isInstanceOf(java.util.List.class)')
-			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.valueWithMinMax", java.util.Collection.class)).hasSizeBetween(1, 3)')
+			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.valueWithMinMax", java.util.Collection.class)).as("' + rootElement + '.valueWithMinMax").hasSizeBetween(1, 3)')
 			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMinEmpty")).isInstanceOf(java.util.List.class)')
-			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.valueWithMinEmpty", java.util.Collection.class)).hasSizeGreaterThanOrEqualTo(0)')
+			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.valueWithMinEmpty", java.util.Collection.class)).as("' + rootElement + '.valueWithMinEmpty").hasSizeGreaterThanOrEqualTo(0)')
 			test.contains('assertThat((Object) parsedJson.read("' + rootElement + '.valueWithMaxEmpty")).isInstanceOf(java.util.List.class)')
-			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.valueWithMaxEmpty", java.util.Collection.class)).hasSizeLessThanOrEqualTo(0)')
+			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.valueWithMaxEmpty", java.util.Collection.class)).as("' + rootElement + '.valueWithMaxEmpty").hasSizeLessThanOrEqualTo(0)')
 			test.contains('assertThatValueIsANumber(parsedJson.read("' + rootElement + '.duck")')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '''.['key'].['complex.key']", String.class)).isEqualTo("foo")''')
 			!test.contains('cursor')
@@ -243,8 +243,8 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.phoneNumbers[*].number", java.util.Collection.class)).allElementsMatch("^[0-9]{3} [0-9]{3}-[0-9]{4}' + rootElement + '")')
-			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '..number", java.util.Collection.class)).allElementsMatch("^[0-9]{3} [0-9]{3}-[0-9]{4}' + rootElement + '")')
+			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.phoneNumbers[*].number", java.util.Collection.class)).as("' + rootElement + '.phoneNumbers[*].number").allElementsMatch("^[0-9]{3} [0-9]{3}-[0-9]{4}' + rootElement + '")')
+			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '..number", java.util.Collection.class)).as("' + rootElement + '..number").allElementsMatch("^[0-9]{3} [0-9]{3}-[0-9]{4}' + rootElement + '")')
 			!test.contains('cursor')
 		and:
 			try {
@@ -296,9 +296,9 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.phoneNumbers[*].number", java.util.Collection.class)).hasFlattenedSizeBetween(0, 4)')
-			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.phoneNumbers[*].number", java.util.Collection.class)).hasFlattenedSizeGreaterThanOrEqualTo(0)')
-			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.phoneNumbers[*].number", java.util.Collection.class)).hasFlattenedSizeLessThanOrEqualTo(4)')
+			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.phoneNumbers[*].number", java.util.Collection.class)).as("' + rootElement + '.phoneNumbers[*].number").hasFlattenedSizeBetween(0, 4)')
+			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.phoneNumbers[*].number", java.util.Collection.class)).as("' + rootElement + '.phoneNumbers[*].number").hasFlattenedSizeGreaterThanOrEqualTo(0)')
+			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.phoneNumbers[*].number", java.util.Collection.class)).as("' + rootElement + '.phoneNumbers[*].number").hasFlattenedSizeLessThanOrEqualTo(4)')
 			!test.contains('cursor')
 		and:
 			try {
