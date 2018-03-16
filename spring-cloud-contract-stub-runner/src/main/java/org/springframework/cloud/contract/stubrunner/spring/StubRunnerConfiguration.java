@@ -35,8 +35,8 @@ import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.io.Resource;
@@ -48,6 +48,7 @@ import org.springframework.core.io.Resource;
 @Configuration
 @EnableConfigurationProperties(StubRunnerProperties.class)
 @ConditionalOnMissingBean(type = "org.springframework.cloud.contract.wiremock.WiremockServerConfiguration")
+@Import(StubRunnerPortBeanPostProcessor.class)
 public class StubRunnerConfiguration {
 
 	static final String STUBRUNNER_PREFIX = "stubrunner.runningstubs";
@@ -80,11 +81,6 @@ public class StubRunnerConfiguration {
 		RunningStubs runningStubs = batchStubRunner.runStubs();
 		registerPort(runningStubs);
 		return batchStubRunner;
-	}
-
-	@Bean
-	StubRunnerPortBeanPostProcessor stubRunnerPortBeanPostProcessor(Environment environment) {
-		return new StubRunnerPortBeanPostProcessor(environment);
 	}
 
 	private StubRunnerOptionsBuilder builder() throws IOException {

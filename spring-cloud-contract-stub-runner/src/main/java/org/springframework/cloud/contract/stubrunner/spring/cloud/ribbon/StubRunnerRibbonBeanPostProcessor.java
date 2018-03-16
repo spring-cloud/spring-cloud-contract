@@ -68,7 +68,7 @@ class StubRunnerRibbonBeanPostProcessor implements BeanPostProcessor {
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 		if (bean instanceof ServerList && !(bean instanceof StubRunnerRibbonServerList)) {
-			return new StubRunnerRibbonServerList(stubFinder(), stubMapperProperties(), clientConfig(), (ServerList<?>) bean);
+			return new StubRunnerRibbonServerList(stubFinder(), stubMapperProperties(), clientConfig());
 		}
 		return bean;
 	}

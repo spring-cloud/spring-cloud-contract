@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
 public @interface StubRunnerPort {
 
 	/**
-	 * The {@code artifactid} or {@code groupid.artifactid} notation of the started stub
+	 * The {@code artifactid} or {@code groupid:artifactid} notation of the started stub
 	 */
 	String value();
 
