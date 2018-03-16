@@ -384,9 +384,23 @@ for every registered WireMock server. Example for Stub Runner ids
  `com.example:foo`, `com.example:bar`.
 
 - `stubrunner.runningstubs.foo.port`
+- `stubrunner.runningstubs.com.example.foo.port`
 - `stubrunner.runningstubs.bar.port`
+- `stubrunner.runningstubs.com.example.bar.port`
 
 Which you can reference in your code.
+
+You can also use the `@StubRunnerPort` annotation to inject the port of a running stub.
+Value of the annotation can be the `groupid.artifactid` or just the `artifactid`. Example for Stub Runner ids
+`com.example:foo`, `com.example:bar`.
+
+[source,java,indent=0]
+----
+@StubRunnerPort("foo")
+int fooPort;
+@StubRunnerPort("com.example.bar")
+int barPort;
+----
 
 === Stub Runner Spring Cloud
 

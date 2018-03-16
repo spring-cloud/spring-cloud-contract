@@ -36,6 +36,7 @@ import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessag
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.io.Resource;
@@ -49,7 +50,7 @@ import org.springframework.core.io.Resource;
 @ConditionalOnMissingBean(type = "org.springframework.cloud.contract.wiremock.WiremockServerConfiguration")
 public class StubRunnerConfiguration {
 
-	private static final String STUBRUNNER_PREFIX = "stubrunner.runningstubs";
+	static final String STUBRUNNER_PREFIX = "stubrunner.runningstubs";
 
 	@Autowired(required = false)
 	private MessageVerifier<?> contractVerifierMessaging;
@@ -79,6 +80,11 @@ public class StubRunnerConfiguration {
 		RunningStubs runningStubs = batchStubRunner.runStubs();
 		registerPort(runningStubs);
 		return batchStubRunner;
+	}
+
+	@Bean
+	StubRunnerPortBeanPostProcessor stubRunnerPortBeanPostProcessor(Environment environment) {
+		return new StubRunnerPortBeanPostProcessor(environment);
 	}
 
 	private StubRunnerOptionsBuilder builder() throws IOException {
@@ -119,6 +125,8 @@ public class StubRunnerConfiguration {
 				.get(STUBRUNNER_PREFIX)).getSource();
 		for (Map.Entry<StubConfiguration, Integer> entry : runStubs.validNamesAndPorts().entrySet()) {
 			source.put(STUBRUNNER_PREFIX + "." + entry.getKey().getArtifactId() + ".port", entry.getValue());
+			// there are projects where artifact id is the same, what differs is the group id
+			source.put(STUBRUNNER_PREFIX + "." + entry.getKey().getGroupId() + "." + entry.getKey().getArtifactId() + ".port", entry.getValue());
 		}
 	}
 
