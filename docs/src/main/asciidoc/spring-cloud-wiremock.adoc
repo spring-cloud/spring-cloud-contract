@@ -136,6 +136,9 @@ errors. If you use the default `java.net` client, you do not need the annotation
 won't do any harm). There is no support currently for other clients, but it may be added
 in future releases.
 
+To disable the custom `RestTemplateBuilder`, set the `wiremock.rest-template-ssl-enabled`
+property to `false`.
+
 === WireMock and Spring MVC Mocks
 
 Spring Cloud Contract provides a convenience class that can load JSON WireMock stubs into
