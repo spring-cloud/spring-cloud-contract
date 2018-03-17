@@ -1,3 +1,5 @@
+:samples_branch: 2.0.x
+
 = Spring Cloud Contract Maven Plugin
 
 Just to make long story short - Spring Cloud Contract Verifier is a tool that enables Consumer Driven Contract (CDC) development of JVM-based applications.
@@ -18,5 +20,5 @@ This plugin allows you to:
 You can check out the https://github.com/spring-cloud-samples/spring-cloud-contract-samples[Spring Cloud Contract Samples project] for
 examples of Maven plugin setup.
 
-- https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/master/producer/pom.xml[Producer application with a test dependency added to the plugin]
-- https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/master/producer/pom.xml[Producer application referencing a repo with contracts and regular expression based base class mapping]
+- https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/{samples_branch}/producer/pom.xml[Producer application with a test dependency added to the plugin]
+- https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/{samples_branch}/producer/pom.xml[Producer application referencing a repo with contracts and regular expression based base class mapping]

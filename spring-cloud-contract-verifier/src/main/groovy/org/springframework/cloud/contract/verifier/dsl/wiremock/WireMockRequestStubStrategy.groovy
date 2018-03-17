@@ -23,6 +23,7 @@ import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
 import com.github.tomakehurst.wiremock.matching.StringValuePattern
 import com.github.tomakehurst.wiremock.matching.UrlPattern
 import groovy.json.JsonOutput
+import groovy.json.StringEscapeUtils
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
@@ -71,9 +72,10 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			return null
 		}
 		RequestPatternBuilder requestPatternBuilder = appendMethodAndUrl()
-		appendHeaders(requestPatternBuilder)
-		appendQueryParameters(requestPatternBuilder)
-		appendBody(requestPatternBuilder)
+		ContentType contentType = tryToGetContentType(request?.body?.clientValue, request?.headers)
+		appendHeaders(requestPatternBuilder, contentType)
+		appendQueryParameters(requestPatternBuilder, contentType)
+		appendBody(requestPatternBuilder, contentType)
 		appendMultipart(requestPatternBuilder)
 		return requestPatternBuilder.build()
 	}
@@ -87,11 +89,10 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		return RequestPatternBuilder.newRequestPattern(requestMethod, urlPattern)
 	}
 
-	private void appendBody(RequestPatternBuilder requestPattern) {
+	private void appendBody(RequestPatternBuilder requestPattern, ContentType contentType) {
 		if (!request.body) {
 			return
 		}
-		ContentType contentType = tryToGetContentType(request.body.clientValue, request.headers)
 		if (contentType == ContentType.JSON) {
 			def originalBody = getMatchingStrategyFromBody(request.body)?.clientValue
 			def body = JsonToJsonPathsConverter.removeMatchingJsonPaths(originalBody, request.matchers)
@@ -113,9 +114,10 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			requestPattern.withRequestBody(WireMock.equalToXml(getMatchingStrategy(request.body.clientValue).clientValue.toString()))
 		} else if (containsPattern(request?.body)) {
 				MatchingStrategy matchingStrategy = appendBodyRegexpMatchPattern(request.body)
-			requestPattern.withRequestBody(convertToValuePattern(matchingStrategy))
+			requestPattern.withRequestBody(convertToValuePattern(matchingStrategy, contentType))
 		} else {
-			requestPattern.withRequestBody(convertToValuePattern(getMatchingStrategy(request.body.clientValue)))
+			requestPattern.withRequestBody(convertToValuePattern(
+					getMatchingStrategy(request.body.clientValue), contentType))
 		}
 	}
 
@@ -139,12 +141,12 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 	}
 
-	private void appendHeaders(RequestPatternBuilder requestPattern) {
+	private void appendHeaders(RequestPatternBuilder requestPattern, ContentType contentType) {
 		if(!request.headers) {
 			return
 		}
 		request.headers.entries.each {
-			requestPattern.withHeader(it.name, convertToValuePattern(it.clientValue))
+			requestPattern.withHeader(it.name, convertToValuePattern(it.clientValue, contentType))
 		}
 	}
 
@@ -190,15 +192,15 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		return clientSide
 	}
 
-	private void appendQueryParameters(RequestPatternBuilder requestPattern) {
+	private void appendQueryParameters(RequestPatternBuilder requestPattern, ContentType contentType) {
 		QueryParameters queryParameters = request?.urlPath?.queryParameters ?: request?.url?.queryParameters
 		queryParameters?.parameters?.each {
-			requestPattern.withQueryParam(it.name, convertToValuePattern(it.clientValue))
+			requestPattern.withQueryParam(it.name, convertToValuePattern(it.clientValue, contentType))
 		}
 	}
 
 	@TypeChecked(TypeCheckingMode.SKIP)
-	private static StringValuePattern convertToValuePattern(Object object) {
+	private static StringValuePattern convertToValuePattern(Object object, ContentType contentType) {
 		switch (object) {
 			case Pattern:
 				Pattern value = object as Pattern
@@ -215,7 +217,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 						return WireMock.absent()
 					default:
 						try {
-							return WireMock."${value.type.name}"(value.clientValue)
+							return WireMock."${value.type.name}"(clientBody(value.clientValue, contentType))
 						} catch (Throwable t) {
 							log.error("Exception occurred while trying to call WireMock.${value.type.name}(${value.clientValue})", t)
 							throw t
@@ -224,6 +226,23 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			default:
 				return WireMock.equalTo(object.toString())
 		}
+	}
+
+	protected static Object clientBody(Object bodyValue, ContentType contentType) {
+		if (contentType == ContentType.FORM) {
+			if (bodyValue instanceof Map) {
+				// [a:3, b:4] == "a=3&b=4"
+				return ((Map) bodyValue).collect {
+					StringEscapeUtils.unescapeJavaScript(it.key.toString() + "=" + it.value)
+				}.join("&")
+			} else if (bodyValue instanceof List) {
+				// ["a=3", "b=4"] == "a=3&b=4"
+				return ((List) bodyValue).collect {
+					StringEscapeUtils.unescapeJavaScript(it.toString())
+				}.join("&")
+			}
+		}
+		return bodyValue
 	}
 
 	private MatchingStrategy getMatchingStrategyFromBody(Body body) {

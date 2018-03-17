@@ -220,8 +220,7 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	}
 
 	protected String createHeaderComparison(Pattern headerValue) {
-		String escapedHeader = convertUnicodeEscapesIfRequired("$headerValue")
-		return "matches(\"$escapedHeader\");"
+		return "matches(\"$headerValue\");"
 	}
 
 	private String patternText(Pattern value) {

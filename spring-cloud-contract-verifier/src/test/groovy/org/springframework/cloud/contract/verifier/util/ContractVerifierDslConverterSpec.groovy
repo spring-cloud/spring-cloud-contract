@@ -41,7 +41,7 @@ class ContractVerifierDslConverterSpec extends Specification {
 			url("/1")
 		}
 		response {
-			status 200
+			status OK()
 			body(""" { "status" : "OK" } """)
 			headers {
 				contentType(textPlain())
@@ -60,7 +60,7 @@ class ContractVerifierDslConverterSpec extends Specification {
 				url("/${index}")
 			}
 			response {
-				status 200
+				status OK()
 				body(""" { "status" : "OK" } """)
 				headers {
 					contentType(textPlain())

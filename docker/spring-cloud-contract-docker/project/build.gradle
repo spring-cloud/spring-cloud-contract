@@ -21,11 +21,11 @@ version = getProp("PROJECT_VERSION") ?: '0.0.1-SNAPSHOT'
 repositories {
 	mavenLocal()
 	mavenCentral()
-		if (!"${verifierVersion}".contains("RELEASE")) {
-			maven { url "http://repo.spring.io/snapshot" }
-			maven { url "http://repo.spring.io/milestone" }
-			maven { url "http://repo.spring.io/release" }
-		}
+	if (!"${verifierVersion}".contains("RELEASE")) {
+		maven { url "http://repo.spring.io/snapshot" }
+		maven { url "http://repo.spring.io/milestone" }
+		maven { url "http://repo.spring.io/release" }
+	}
 }
 
 apply plugin: 'groovy'
@@ -57,11 +57,29 @@ test {
 	}
 }
 
-// tests - contracts
 contracts {
 	baseClassForTests = "contracts.RestBase"
 	testMode = "EXPLICIT"
-	contractsDslDir = new File("/contracts")
+	if (getProp("EXTERNAL_CONTRACTS_ARTIFACT_ID")) {
+		logger.lifecycle("Will use an artifact with contracts [${getProp("EXTERNAL_CONTRACTS_GROUP_ID")}:${getProp("EXTERNAL_CONTRACTS_ARTIFACT_ID")}]")
+		// tests - contracts from an artifact
+		contractsPath = getProp("EXTERNAL_CONTRACTS_PATH") ?: ""
+		if (Boolean.parseBoolean(getProp("EXTERNAL_CONTRACTS_WORK_OFFLINE")) == false) {
+			contractsRepositoryUrl = getProp('EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL') ?:
+					getProp('REPO_WITH_BINARIES_URL') ?: 'http://localhost:8081/artifactory/libs-release-local'
+		}
+		contractDependency {
+			groupId = getProp("EXTERNAL_CONTRACTS_GROUP_ID") ?: "com.example"
+			artifactId = getProp("EXTERNAL_CONTRACTS_ARTIFACT_ID")
+			delegate.classifier = getProp("EXTERNAL_CONTRACTS_CLASSIFIER") ?: ""
+			delegate.version = getProp("EXTERNAL_CONTRACTS_VERSION") ?: "+"
+		}
+		contractsWorkOffline = Boolean.parseBoolean(getProp("EXTERNAL_CONTRACTS_WORK_OFFLINE")) ?: false
+	} else {
+		logger.lifecycle("Will use contracts from the mounted [/contracts] folder")
+		// tests - contracts in this repo
+		contractsDslDir = new File("/contracts")
+	}
 }
 
 task wrapper(type: Wrapper) {
@@ -105,7 +123,9 @@ String publishArtifacts = getProp("PUBLISH_ARTIFACTS") ?: "true"
 boolean publishEnabled = Boolean.parseBoolean(publishArtifacts)
 publish.setEnabled(publishEnabled)
 
-project.tasks.findAll { it.name.startsWith('publish') }*.setEnabled(publishEnabled)
+gradle.taskGraph.whenReady { graph ->
+    graph.allTasks.findAll { it.name.startsWith("publish") }*.setEnabled(publishEnabled)
+}
 
 String getProp(String propName) {
 	return hasProperty(propName) ?

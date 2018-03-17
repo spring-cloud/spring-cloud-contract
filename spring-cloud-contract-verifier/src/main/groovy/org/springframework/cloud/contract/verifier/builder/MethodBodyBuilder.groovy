@@ -16,15 +16,17 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+import java.util.regex.Pattern
+
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.PathNotFoundException
 import groovy.json.JsonOutput
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
+import org.apache.commons.beanutils.PropertyUtilsBean
 import org.apache.commons.text.StringEscapeUtils
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractTemplate
 import org.springframework.cloud.contract.spec.internal.BodyMatcher
@@ -41,13 +43,12 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor
 import org.springframework.cloud.contract.verifier.template.TemplateProcessor
 import org.springframework.cloud.contract.verifier.util.ContentType
+import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.util.SerializationUtils
 import org.springframework.util.StringUtils
-
-import java.util.regex.Pattern
 
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.extractValue
 /**
@@ -64,6 +65,9 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.extr
 abstract class MethodBodyBuilder {
 
 	private static final Closure GET_SERVER_VALUE = { it instanceof DslProperty ? it.serverValue : it }
+	private static final String FROM_REQUEST_PREFIX = "request."
+	private static final String FROM_REQUEST_BODY = "body"
+	private static final String FROM_REQUEST_PATH = "path"
 
 	protected final ContractVerifierConfigProperties configProperties
 	protected final TemplateProcessor templateProcessor
@@ -311,7 +315,7 @@ abstract class MethodBodyBuilder {
 		if (convertedResponseBody instanceof GString) {
 			convertedResponseBody = extractValue(convertedResponseBody as GString, contentType, { Object o -> o instanceof DslProperty ? o.serverValue : o })
 		}
-		if (contentType != ContentType.TEXT) {
+		if (contentType != ContentType.TEXT && contentType != ContentType.FORM) {
 			convertedResponseBody = MapConverter.getTestSideValues(convertedResponseBody)
 		} else {
 			convertedResponseBody = StringEscapeUtils.escapeJava(convertedResponseBody.toString())
@@ -332,11 +336,15 @@ abstract class MethodBodyBuilder {
 		processText(bb, "", convertedResponseBody)
 		addColonIfRequired(bb)
 	}
-
+	
 	private void addJsonResponseBodyCheck(BlockBuilder bb, convertedResponseBody, BodyMatchers bodyMatchers) {
 		appendJsonPath(bb, getResponseAsString())
 		Object copiedBody = cloneBody(convertedResponseBody)
 		convertedResponseBody = JsonToJsonPathsConverter.removeMatchingJsonPaths(convertedResponseBody, bodyMatchers)
+		// remove quotes from fromRequest objects before picking json paths
+		TestSideRequestTemplateModel templateModel = contract.request?.body ?
+				TestSideRequestTemplateModel.from(contract.request) : null
+		convertedResponseBody = MapConverter.transformValues(convertedResponseBody, returnReferencedEntries(templateModel))
 		JsonPaths jsonPaths = new JsonToJsonPathsConverter(configProperties).transformToJsonPathWithTestsSideValues(convertedResponseBody)
 		DocumentContext parsedRequestBody
 		if (contract.request?.body) {
@@ -351,6 +359,14 @@ abstract class MethodBodyBuilder {
 			bb.addLine("assertThatJson(parsedJson)" + postProcessedMethod)
 			addColonIfRequired(bb)
 		}
+		doBodyMatchingIfPresent(bodyMatchers, bb, copiedBody)
+		if (!(convertedResponseBody instanceof Map || convertedResponseBody instanceof List)) {
+			simpleTextResponseBodyCheck(bb, convertedResponseBody)
+		}
+		processBodyElement(bb, "", "", convertedResponseBody)
+	}
+
+	private void doBodyMatchingIfPresent(BodyMatchers bodyMatchers, BlockBuilder bb, copiedBody) {
 		if (bodyMatchers?.hasMatchers()) {
 			bb.endBlock()
 			bb.addLine(addCommentSignIfRequired('and:'))
@@ -366,10 +382,35 @@ abstract class MethodBodyBuilder {
 				}
 			}
 		}
-		if (!(convertedResponseBody instanceof Map || convertedResponseBody instanceof List)) {
-			simpleTextResponseBodyCheck(bb, convertedResponseBody)
+	}
+
+	private Closure<Object> returnReferencedEntries(TestSideRequestTemplateModel templateModel) {
+		return { entry ->
+			if (!(entry instanceof String) || !templateModel) {
+				return entry
+			}
+			String entryAsString = (String) entry
+			if (templateProcessor.containsTemplateEntry(entryAsString) &&
+					!templateProcessor.containsJsonPathTemplateEntry(entryAsString)) {
+				String justEntry = entryAsString - contractTemplate.openingTemplate() -
+						contractTemplate.closingTemplate() - FROM_REQUEST_PREFIX
+				if (justEntry == FROM_REQUEST_BODY) {
+					// the body should be transformed by standard mechanism
+					return entry
+				}
+				try {
+					Object result = new PropertyUtilsBean().getProperty(templateModel, justEntry)
+					// Path from the Test model is an object and we'd like to return its String representation
+					if (justEntry == FROM_REQUEST_PATH) {
+						return result.toString()
+					}
+					return result
+				} catch (Exception e) {
+					return entry
+				}
+			}
+			return entry
 		}
-		processBodyElement(bb, "", "", convertedResponseBody)
 	}
 
 	protected String processIfTemplateIsPresent(String method, DocumentContext parsedRequestBody) {
@@ -416,7 +457,8 @@ abstract class MethodBodyBuilder {
 		Object elementFromBody = value(copiedBody, bodyMatcher)
 		if (bodyMatcher.minTypeOccurrence() != null || bodyMatcher.maxTypeOccurrence() != null) {
 			checkType(bb, bodyMatcher, elementFromBody)
-			String method = "assertThat((java.lang.Iterable) parsedJson.read(${quotedAndEscaped(bodyMatcher.path())}, java.util.Collection.class)).${sizeCheckMethod(bodyMatcher)}"
+			String quotedAndEscaptedPath = quotedAndEscaped(bodyMatcher.path())
+			String method = "assertThat((java.lang.Iterable) parsedJson.read(${quotedAndEscaptedPath}, java.util.Collection.class)).${sizeCheckMethod(bodyMatcher, quotedAndEscaptedPath)}"
 			bb.addLine(postProcessJsonPathCall(method))
 			addColonIfRequired(bb)
 		} else {
@@ -429,7 +471,7 @@ abstract class MethodBodyBuilder {
 	}
 
 	protected void buildCustomMatchingConditionForEachElement(BlockBuilder bb, String path, String valueAsParam) {
-		String method = "assertThat((java.lang.Iterable) parsedJson.read(${path}, java.util.Collection.class)).allElementsMatch(${valueAsParam})"
+		String method = "assertThat((java.lang.Iterable) parsedJson.read(${path}, java.util.Collection.class)).as(${path}).allElementsMatch(${valueAsParam})"
 		bb.addLine(postProcessJsonPathCall(method))
 	}
 
@@ -481,8 +523,8 @@ abstract class MethodBodyBuilder {
 		}
 	}
 
-	protected String sizeCheckMethod(BodyMatcher bodyMatcher) {
-		String prefix = sizeCheckPrefix(bodyMatcher)
+	protected String sizeCheckMethod(BodyMatcher bodyMatcher, String quotedAndEscaptedPath) {
+		String prefix = sizeCheckPrefix(bodyMatcher, quotedAndEscaptedPath)
 		if (bodyMatcher.minTypeOccurrence() != null && bodyMatcher.maxTypeOccurrence() != null) {
 			return "${prefix}Between(${bodyMatcher.minTypeOccurrence()}, ${bodyMatcher.maxTypeOccurrence()})"
 		} else if (bodyMatcher.minTypeOccurrence() != null ) {
@@ -490,10 +532,12 @@ abstract class MethodBodyBuilder {
 		} else if (bodyMatcher.maxTypeOccurrence() != null) {
 			return "${prefix}LessThanOrEqualTo(${bodyMatcher.maxTypeOccurrence()})"
 		}
+		return prefix
 	}
 
-	private String sizeCheckPrefix(BodyMatcher bodyMatcher) {
-		String prefix = "has"
+	private String sizeCheckPrefix(BodyMatcher bodyMatcher, String quotedAndEscaptedPath) {
+		String description = "as(" + quotedAndEscaptedPath + ")."
+		String prefix = description + "has"
 		if (arrayRelated(bodyMatcher.path())) {
 			prefix = prefix + "Flattened"
 		}
@@ -592,13 +636,13 @@ abstract class MethodBodyBuilder {
 	 */
 	protected Object extractServerValueFromBody(bodyValue) {
 		if (bodyValue instanceof GString) {
-			bodyValue = extractValue(bodyValue, ContentType.from(MapConverter.getTestSideValues(this.contract.request?.headers?.entries?.find {
-				it.name.toLowerCase() == "Content-Type".toLowerCase()
-			}).toString()), GET_SERVER_VALUE)
-		} else {
-			bodyValue = MapConverter.transformValues(bodyValue, GET_SERVER_VALUE)
+			return extractValue(bodyValue, contentType(), GET_SERVER_VALUE)
 		}
-		return bodyValue
+		return MapConverter.transformValues(bodyValue, GET_SERVER_VALUE)
+	}
+
+	protected ContentType contentType() {
+		return ContentUtils.recognizeContentTypeFromTestHeader(this.contract.request?.headers)
 	}
 
 	/**

@@ -23,16 +23,21 @@ class ContractsCopyTask extends ConventionTask {
 		ContractVerifierConfigProperties props = ExtensionToProperties.fromExtension(getExtension())
 		File file = getDownloader().downloadAndUnpackContractsIfRequired(getExtension(), props)
 		String antPattern = "${props.includedRootFolderAntPattern}*.*"
+		String slashSeparatedGroupId = project.group.toString().replace(".", File.separator)
+		String slashSeparatedAntPattern = antPattern.replace(slashSeparatedGroupId, project.group.toString())
 		String root = OutputFolderBuilder.buildRootPath(project)
 		ext.contractVerifierConfigProperties = props
 		File outputContractsFolder = getExtension().stubsOutputDir != null ?
 				project.file("${getExtension().stubsOutputDir}/${root}/contracts") :
 				project.file("${project.buildDir}/stubs/${root}/contracts")
 		ext.contractsDslDir = outputContractsFolder
-		project.logger.info("Downloading and unpacking files from [$file] to [$outputContractsFolder]. The inclusion ant pattern is [$antPattern]")
+		project.logger.info("Downloading and unpacking files from [$file] to [$outputContractsFolder]. The inclusion ant patterns are [${antPattern}] and [${slashSeparatedAntPattern}]")
 		project.copy {
 			from(file)
+			// by default group id is slash separated...
 			include(antPattern)
+			// ...we also want to allow dot separation
+			include(slashSeparatedAntPattern)
 			if (props.isExcludeBuildFolders()) {
 				exclude "**/target/**", "**/build/**"
 			}

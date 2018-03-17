@@ -110,7 +110,7 @@ class RecursiveFilesConverterSpec extends Specification {
 					method "GET"
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 			"""
@@ -140,7 +140,7 @@ class RecursiveFilesConverterSpec extends Specification {
 					    method "GET"
 				    }
 				    response {
-					    status 200
+					    status OK()
 				    }
 			    }
 			    """

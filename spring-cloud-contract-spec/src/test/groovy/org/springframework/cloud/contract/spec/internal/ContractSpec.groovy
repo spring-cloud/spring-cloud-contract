@@ -182,7 +182,7 @@ then:
 					url "/${index}"
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 			def b = Contract.make {
@@ -194,7 +194,7 @@ then:
 					url "/${index}"
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 			a == b
@@ -212,7 +212,7 @@ then:
 					url "/${index}"
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 			int index2 = 2
@@ -225,7 +225,7 @@ then:
 					url "/${index2}"
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 			a != b
@@ -249,7 +249,7 @@ then:
 					}
 				}
 				response {
-					status 200
+					status OK()
 					body(
 							id: [value: '132'],
 							surname: 'Kowalsky',
@@ -277,7 +277,7 @@ then:
 					}
 				}
 				response {
-					status 200
+					status OK()
 					body(
 							id: [value: '132'],
 							surname: 'Kowalsky',

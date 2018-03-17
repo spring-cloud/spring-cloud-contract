@@ -1,6 +1,6 @@
 == Spring Cloud Contract Verifier Messaging
 
-Spring Cloud Contract Verifier lets you verify applications that uses messaging as a
+Spring Cloud Contract Verifier lets you verify applications that use messaging as a
 means of communication. All of the integrations shown in this document work with Spring,
 but you can also create one of your own and use that.
 

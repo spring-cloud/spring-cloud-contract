@@ -246,6 +246,18 @@ public class CollectionAssertTests {
 	}
 
 	@Test
+	public void should_not_break_compilation_when_using_as() {
+		Collection collection = collection();
+
+		try {
+			SpringCloudContractAssertions.assertThat(collection).as("for jsonpath x.y.z").hasSizeBetween(5, 7);
+			Assertions.fail("should throw exception");
+		} catch (AssertionError e) {
+			Assertions.assertThat(e).hasMessageContaining("[for jsonpath x.y.z] The size <3> is not between <5> and <7>");
+		}
+	}
+
+	@Test
 	public void should_throw_an_exception_when_collection_is_null_for_between() {
 		Collection collection = null;
 

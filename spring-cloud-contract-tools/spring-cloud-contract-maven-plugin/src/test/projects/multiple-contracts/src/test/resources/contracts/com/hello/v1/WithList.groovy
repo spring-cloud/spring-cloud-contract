@@ -25,7 +25,7 @@ import org.springframework.cloud.contract.spec.Contract
                 url('/users/1')
             }
             response {
-                status 200
+                status OK()
             }
         },
         Contract.make {
@@ -34,7 +34,7 @@ import org.springframework.cloud.contract.spec.Contract
                 url('/users/2')
             }
             response {
-                status 200
+                status OK()
             }
         }
 ]

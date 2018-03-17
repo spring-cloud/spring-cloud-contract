@@ -197,7 +197,7 @@ class ContractHttpDocsSpec extends Specification {
 			response {
 				// Status code sent by the server
 				// in response to request specified above.
-				status 200
+				status OK()
 			}
 		}
 		// end::response[]
@@ -210,7 +210,7 @@ class ContractHttpDocsSpec extends Specification {
 				url $(consumer(~/\/[0-9]{2}/), producer('/12'))
 			}
 			response {
-				status 200
+				status OK()
 				body(
 						id: $(anyNumber()),
 						surname: $(
@@ -305,7 +305,7 @@ class ContractHttpDocsSpec extends Specification {
 						path: $(consumer('/api/12'), producer(regex('^/api/[0-9]{2}$'))),
 						correlationId: $(consumer('1223456'), producer(execute('isProperCorrelationId($it)')))
 				)
-				status 200
+				status OK()
 			}
 		}
 		// end::method[]

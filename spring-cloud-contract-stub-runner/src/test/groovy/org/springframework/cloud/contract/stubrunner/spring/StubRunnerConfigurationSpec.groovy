@@ -18,6 +18,8 @@ package org.springframework.cloud.contract.stubrunner.spring
 
 import org.junit.AfterClass
 import org.junit.BeforeClass
+import spock.lang.Issue
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -39,7 +41,8 @@ import spock.lang.Specification
 // tag::test[]
 @ContextConfiguration(classes = Config, loader = SpringBootContextLoader)
 @SpringBootTest(properties = [" stubrunner.cloud.enabled=false", 
-		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}'])
+		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}',
+		'fooWithGroup=${stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port}'])
 @AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/")
 @DirtiesContext
 @ActiveProfiles("test")
@@ -47,6 +50,8 @@ class StubRunnerConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
 	@Autowired Environment environment
+	@StubRunnerPort("fraudDetectionServer") int fraudDetectionServerPort
+	@StubRunnerPort("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer") int fraudDetectionServerPortWithGroupId
 	@Value('${foo}') Integer foo
 
 	@BeforeClass
@@ -91,6 +96,9 @@ class StubRunnerConfigurationSpec extends Specification {
 		and:
 			environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") != null
 			stubFinder.findAllRunningStubs().getPort("fraudDetectionServer") == (environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") as Integer)
+		and:
+			environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") != null
+			stubFinder.findAllRunningStubs().getPort("fraudDetectionServer") == (environment.getProperty("stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port") as Integer)
 	}
 
 	def 'should be able to interpolate a running stub in the passed test property'() {
@@ -99,7 +107,18 @@ class StubRunnerConfigurationSpec extends Specification {
 		expect:
 			fraudPort > 0
 			environment.getProperty("foo", Integer) == fraudPort
+			environment.getProperty("fooWithGroup", Integer) == fraudPort
 			foo == fraudPort
+	}
+
+	@Issue("#573")
+	def 'should be able to retrieve the port of a running stub via an annotation'() {
+		given:
+			int fraudPort = stubFinder.findAllRunningStubs().getPort("fraudDetectionServer")
+		expect:
+			fraudPort > 0
+			fraudDetectionServerPort == fraudPort
+			fraudDetectionServerPortWithGroupId == fraudPort
 	}
 
 	def 'should dump all mappings to a file'() {

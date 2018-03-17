@@ -35,6 +35,7 @@ import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
@@ -47,9 +48,10 @@ import org.springframework.core.io.Resource;
 @Configuration
 @EnableConfigurationProperties(StubRunnerProperties.class)
 @ConditionalOnMissingBean(type = "org.springframework.cloud.contract.wiremock.WiremockServerConfiguration")
+@Import(StubRunnerPortBeanPostProcessor.class)
 public class StubRunnerConfiguration {
 
-	private static final String STUBRUNNER_PREFIX = "stubrunner.runningstubs";
+	static final String STUBRUNNER_PREFIX = "stubrunner.runningstubs";
 
 	@Autowired(required = false)
 	private MessageVerifier<?> contractVerifierMessaging;
@@ -94,7 +96,8 @@ public class StubRunnerConfiguration {
 					.withStubPerConsumer(this.props.isStubsPerConsumer())
 					.withConsumerName(consumerName())
 					.withMappingsOutputFolder(this.props.getMappingsOutputFolder())
-					.withSnapshotCheckSkip(this.props.isSnapshotCheckSkip());
+					.withSnapshotCheckSkip(this.props.isSnapshotCheckSkip())
+					.withDeleteStubsAfterTest(this.props.isDeleteStubsAfterTest());
 	}
 
 	private String consumerName() {
@@ -118,6 +121,8 @@ public class StubRunnerConfiguration {
 				.get(STUBRUNNER_PREFIX)).getSource();
 		for (Map.Entry<StubConfiguration, Integer> entry : runStubs.validNamesAndPorts().entrySet()) {
 			source.put(STUBRUNNER_PREFIX + "." + entry.getKey().getArtifactId() + ".port", entry.getValue());
+			// there are projects where artifact id is the same, what differs is the group id
+			source.put(STUBRUNNER_PREFIX + "." + entry.getKey().getGroupId() + "." + entry.getKey().getArtifactId() + ".port", entry.getValue());
 		}
 	}
 

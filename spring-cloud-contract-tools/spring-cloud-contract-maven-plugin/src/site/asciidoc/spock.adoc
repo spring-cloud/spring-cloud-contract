@@ -1,3 +1,5 @@
+:branch: master
+
 == Groovy Project with Spock Specifications
 
 Sample minimal configuration for Groovy Project with Spock Specification
@@ -26,4 +28,4 @@ include::../../../src/test/projects/spring-boot-groovy/src/test/groovy/hello/Bas
 
 === Project source code
 
-https://github.com/spring-cloud/spring-cloud-contract/tree/master/spring-cloud-contract-tools/spring-cloud-contract-maven-plugin/src/test/projects/spring-boot-groovy
+https://github.com/spring-cloud/spring-cloud-contract/tree/{branch}/spring-cloud-contract-tools/spring-cloud-contract-maven-plugin/src/test/projects/spring-boot-groovy

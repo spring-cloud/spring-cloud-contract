@@ -24,7 +24,7 @@ org.springframework.cloud.contract.spec.Contract.make {
         }
     }
     response {
-        status 200
+        status OK()
         body (
                 id: 1,
                 content: "Hello, World!"

@@ -115,7 +115,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status 200
+				status OK()
 				body """{
 	"property1": "a",
 	"property2": "b"
@@ -148,7 +148,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status 200
+				status OK()
 				body """{
 	"property1": "true",
 	"property2": null,
@@ -183,7 +183,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status 200
+				status OK()
 				body(
 						property1: 'a',
 						property2: [
@@ -222,7 +222,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status 200
+				status OK()
 				body(
 						property1: 'a',
 						property2: [
@@ -263,7 +263,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				)
 			}
 			response {
-				status 200
+				status OK()
 			}
 		}
 		MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -294,7 +294,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				)
 			}
 			response {
-				status 200
+				status OK()
 			}
 		}
 		MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -322,7 +322,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status 200
+				status OK()
 				body(
 						property: [
 								14: 0.0,
@@ -356,7 +356,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status 200
+				status OK()
 				body """[
 {
 	"property1": "a"
@@ -391,7 +391,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status 200
+				status OK()
 				body """{
 	"property1": [
 	{ "property2": "test1"},
@@ -425,7 +425,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status 200
+				status OK()
 				body '''\
 {
 	"property1": "a",
@@ -459,7 +459,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status 200
+				status OK()
 				body(
 						property1: "a",
 						property2: value(
@@ -497,7 +497,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status 200
+				status OK()
 				body("""{"property1":"a","property2":"${
 					value(consumer('123'), producer(regex('[0-9]{3}')))
 				}"}""")
@@ -532,7 +532,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status 200
+				status OK()
 				body("""{"property":"  ${
 					value(consumer('123'), producer(regex('\\d+')))
 				}"}""")
@@ -578,7 +578,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				}
 			}
 			response {
-				status 200
+				status OK()
 				body """
 					{
 						"property1": "a",
@@ -636,7 +636,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				}
 			}
 			response {
-				status 200
+				status OK()
 				body """
 					{
 						"property1": "a",
@@ -709,7 +709,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status 200
+				status OK()
 				body "test"
 			}
 		}
@@ -832,7 +832,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			}
 
 			response {
-				status 200
+				status OK()
 				body(errors: [
 						[property: "bank_account_number", message: "incorrect_format"]
 				])
@@ -995,7 +995,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 
 			}
 			response {
-				status 200
+				status OK()
 				body("""{
     "fraudCheckStatus": "OK",
     "rejectionReason": ${
@@ -1072,7 +1072,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				)
 			}
 			response {
-				status 200
+				status OK()
 				headers {
 					contentType(applicationJson())
 				}
@@ -1115,7 +1115,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				)
 			}
 			response {
-				status 200
+				status OK()
 				headers {
 					contentType(applicationJson())
 				}
@@ -1147,7 +1147,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 World.''')
 			}
 			response {
-				status 200
+				status OK()
 			}
 		}
 		MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -1191,7 +1191,7 @@ World.'''"""
 				)
 			}
 			response {
-				status 200
+				status OK()
 			}
 		}
 		// end::multipartdsl[]
@@ -1237,7 +1237,7 @@ World.'''"""
 					)
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -1287,7 +1287,7 @@ World.'''"""
 				)
 			}
 			response {
-				status 200
+				status OK()
 			}
 		}
 		MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -1322,7 +1322,7 @@ World.'''"""
 				}
 			}
 			response {
-				status 200
+				status OK()
 				body(
 						authorities: [
 								value(consumer('ROLE_ADMIN'), producer(regex('^[a-zA-Z0-9_\\- ]+$')))
@@ -1358,7 +1358,7 @@ World.'''"""
 				}
 			}
 			response {
-				status 200
+				status OK()
 				body(
 						authorities: [
 								value(consumer('ROLE_ADMIN'), producer(regex('^[a-zA-Z0-9_\\- ]+$')))
@@ -1385,7 +1385,7 @@ World.'''"""
 				url '/fraudcheck'
 			}
 			response {
-				status 200
+				status OK()
 				body(
 						fraudCheckStatus: "OK",
 						rejectionReason: $(consumer(null), producer(execute('assertThatRejectionReasonIsNull($it)')))
@@ -1416,7 +1416,7 @@ World.'''"""
 					urlPath '/foos'
 				}
 				response {
-					status 200
+					status OK()
 					body([[id: value(
 							consumer('123'),
 							producer(regex('[0-9]+'))
@@ -1449,7 +1449,7 @@ World.'''"""
 					urlPath '/api/tags'
 				}
 				response {
-					status 200
+					status OK()
 					body(["Java", "Java8", "Spring", "SpringBoot", "Stream"])
 					headers {
 						header('Content-Type': 'application/json;charset=UTF-8')
@@ -1486,7 +1486,7 @@ World.'''"""
 					urlPath '/api/tags'
 				}
 				response {
-					status 200
+					status OK()
 					body(["Java", "Java8", "Spring", "SpringBoot", "Stream"])
 					headers {
 						header('Content-Type': 'application/json;charset=UTF-8')
@@ -1522,7 +1522,7 @@ World.'''"""
 					urlPath '/api/categories'
 				}
 				response {
-					status 200
+					status OK()
 					body([["Programming", "Java"], ["Programming", "Java", "Spring", "Boot"]])
 					headers {
 						header('Content-Type': 'application/json;charset=UTF-8')
@@ -1556,7 +1556,7 @@ World.'''"""
 				url '/test'
 			}
 			response {
-				status 200
+				status OK()
 				async()
 			}
 		}
@@ -1590,7 +1590,7 @@ World.'''"""
 					}
 				}
 				response {
-					status 200
+					status OK()
 					async()
 				}
 			}
@@ -1620,7 +1620,7 @@ World.'''"""
 					urlPath '/api/tags'
 				}
 				response {
-					status 200
+					status OK()
 					body('''{
 							  "partners":[
 								  {
@@ -1656,7 +1656,7 @@ World.'''"""
 					urlPath '/get'
 				}
 				response {
-					status 200
+					status OK()
 					body( code: 9, message: $(consumer('Wrong credentials'), producer(regex('^(?!\\s*$).+'))) )
 				}
 			}
@@ -1712,7 +1712,7 @@ World.'''"""
 			'''
 			}
 			response {
-				status 200
+				status OK()
 			}
 		}
 		// end::dsl_example[]
@@ -1731,7 +1731,7 @@ World.'''"""
 				}
 			}
 			response {
-				status 200
+				status OK()
 				body([
 					responseElement: $(producer(regex('[0-9]{7}')))
 				])
@@ -1772,7 +1772,7 @@ World.'''"""
 				urlPath '/get'
 			}
 			response {
-				status 200
+				status OK()
 				body([
 					fraudCheckStatus: "OK",
 					rejectionReason : [
@@ -1804,7 +1804,7 @@ World.'''"""
 				urlPath '/get'
 			}
 			response {
-				status 200
+				status OK()
 				body([
 					[
 							name: $(consumer("userName 1"), producer(execute('assertThatUserNameIsNotNull($it)')))
@@ -1834,7 +1834,7 @@ World.'''"""
 				urlPath '/get'
 			}
 			response {
-				status 200
+				status OK()
 				body([
 					[
 							name: $(consumer("userName 1"), producer(execute('assertThatUserNameIsNotNull($it)')))
@@ -1867,7 +1867,7 @@ World.'''"""
 				}
 			}
 			response {
-				status 200
+				status OK()
 				body([
 						fraudCheckStatus: "OK",
 						rejectionReason : [
@@ -1899,7 +1899,7 @@ World.'''"""
 				url '/get'
 			}
 			response {
-				status 200
+				status OK()
 				body(value(stub("HELLO FROM STUB"), server(regex(".*"))))
 			}
 		}
@@ -1923,7 +1923,7 @@ World.'''"""
 				url '/get'
 			}
 			response {
-				status 200
+				status OK()
 				body(value(stub("HELLO FROM STUB"), server(execute('foo($it)'))))
 			}
 		}
@@ -1953,7 +1953,7 @@ World.'''"""
 				}
 			}
 			response {
-				status 200
+				status OK()
 				body([
 						fraudCheckStatus: "OK",
 						rejectionReason : [
@@ -1987,6 +1987,7 @@ World.'''"""
 						duck: $(regex("[0-9]")),
 						alpha: $(anyAlphaUnicode()),
 				        number: $(anyNumber()),
+						aDouble: $(anyDouble()),
 						aBoolean: $(aBoolean()),
 						ip: $(anyIpAddress()),
 						hostname: $(anyHostname()),
@@ -2006,10 +2007,11 @@ World.'''"""
 				}
 			}
 			response {
-				status 200
+				status OK()
 				body([
 						alpha: $(anyAlphaUnicode()),
 						number: $(anyNumber()),
+						aDouble: $(anyDouble()),
 						aBoolean: $(aBoolean()),
 						ip: $(anyIpAddress()),
 						hostname: $(anyHostname()),
@@ -2040,6 +2042,7 @@ World.'''"""
 			test.contains('assertThatJson(parsedJson).field("[\'hostname\']").matches("((http[s]?|ftp):/)/?([^:/\\\\s]+)(:[0-9]{1,5})?")')
 			test.contains('assertThatJson(parsedJson).field("[\'url\']").matches("^(?:(?:[A-Za-z][+-.\\\\w^_]*:/{2})?(?:\\\\S+(?::\\\\S*)?@)?(?:(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|(?:(?:[a-z\\\\u00a1-\\\\uffff0-9]-*)*[a-z\\\\u00a1-\\\\uffff0-9]+)(?:\\\\.(?:[a-z\\\\u00a1-\\\\uffff0-9]-*)*[a-z\\\\u00a1-\\\\uffff0-9]+)*(?:\\\\.(?:[a-z\\\\u00a1-\\\\uffff]{2,})))(?::\\\\d{2,5})?(?:/\\\\S*)?)')
 			test.contains('assertThatJson(parsedJson).field("[\'number\']").matches("-?(\\\\d*\\\\.\\\\d+|\\\\d+)")')
+			test.contains('assertThatJson(parsedJson).field("[\'aDouble\']").matches("-?(\\\\d*\\\\.\\\\d+)")')
 			test.contains('assertThatJson(parsedJson).field("[\'email\']").matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,6}")')
 			test.contains('assertThatJson(parsedJson).field("[\'ip\']").matches("([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])")')
 			test.contains('assertThatJson(parsedJson).field("[\'uuid\']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}")')
@@ -2056,7 +2059,7 @@ World.'''"""
 			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		and:
 			String jsonSample = '''\
-String json = "{\\"duck\\":\\"8\\",\\"alpha\\":\\"YAJEOWYGMFBEWPMEMAZI\\",\\"number\\":-2095030871,\\"aBoolean\\":true,\\"ip\\":\\"129.168.99.100\\",\\"hostname\\":\\"http://foo389886219.com\\",\\"email\\":\\"foo@bar1367573183.com\\",\\"url\\":\\"http://foo-597104692.com\\",\\"uuid\\":\\"e436b817-b764-49a2-908e-967f2f99eb9f\\",\\"date\\":\\"2014-04-14\\",\\"dateTime\\":\\"2011-01-11T12:23:34\\",\\"time\\":\\"12:20:30\\",\\"iso8601WithOffset\\":\\"2015-05-15T12:23:34.123Z\\",\\"nonBlankString\\":\\"EPZWVIRHSUAPBJMMQSFO\\",\\"nonEmptyString\\":\\"RVMFDSEQFHRQFVUVQPIA\\",\\"anyOf\\":\\"foo\\"}";
+String json = "{\\"duck\\":\\"8\\",\\"alpha\\":\\"YAJEOWYGMFBEWPMEMAZI\\",\\"number\\":-2095030871,\\"aDouble\\":42.345,\\"aBoolean\\":true,\\"ip\\":\\"129.168.99.100\\",\\"hostname\\":\\"http://foo389886219.com\\",\\"email\\":\\"foo@bar1367573183.com\\",\\"url\\":\\"http://foo-597104692.com\\",\\"uuid\\":\\"e436b817-b764-49a2-908e-967f2f99eb9f\\",\\"date\\":\\"2014-04-14\\",\\"dateTime\\":\\"2011-01-11T12:23:34\\",\\"time\\":\\"12:20:30\\",\\"iso8601WithOffset\\":\\"2015-05-15T12:23:34.123Z\\",\\"nonBlankString\\":\\"EPZWVIRHSUAPBJMMQSFO\\",\\"nonEmptyString\\":\\"RVMFDSEQFHRQFVUVQPIA\\",\\"anyOf\\":\\"foo\\"}";
 DocumentContext parsedJson = JsonPath.parse(json);
 '''
 		and:
@@ -2083,7 +2086,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 				}
 			}
 			response {
-				status 200
+				status OK()
 				headers {
 					contentType("application/vnd.fraud.v1+json")
 				}
@@ -2183,7 +2186,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					url '/foo'
 				}
 				response {
-					status 200
+					status OK()
 					headers {
 						contentType(applicationJsonUtf8())
 					}
@@ -2222,7 +2225,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					headers { header('Content-Type', 'application/json;charset=UTF-8') }
 				}
 				response {
-					status 200
+					status OK()
 					body(
 							bar: $(producer(regex('some value \u0022with quote\u0022|bar')))
 					)
@@ -2254,7 +2257,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					url $(c("foo"), p(execute("executedMethod()")))
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -2288,7 +2291,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					url '/api/v1/xxxx'
 				}
 				response {
-					status 200
+					status OK()
 					body([
 							status: '200',
 							list: [],
@@ -2324,7 +2327,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					body(12000)
 				}
 				response {
-					status 200
+					status OK()
 					body(12000)
 				}
 			}
@@ -2366,7 +2369,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					body(foo: "bar", baz: 5)
 				}
 				response {
-					status 200
+					status OK()
 					headers {
 						header(authorization(), "foo ${fromRequest().header(authorization())} bar")
 					}

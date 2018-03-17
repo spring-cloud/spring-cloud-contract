@@ -99,4 +99,10 @@ interface StubRunnerRuleOptions {
 	 * JAR was downloaded from a remote location or a local one
 	 */
 	StubRunnerRule withSnapshotCheckSkip(boolean snapshotCheckSkip);
+
+	/**
+	 * If set to {@code false} will NOT delete stubs from a temporary
+	 * folder after running tests
+	 */
+	StubRunnerRule withDeleteStubsAfterTest(boolean deleteStubsAfterTest);
 }

@@ -123,7 +123,7 @@ class SingleTestGeneratorSpec extends Specification {
 						url 'url'
 					}
 					response {
-						status 200
+						status OK()
 					}
 				}
 """)
@@ -226,7 +226,7 @@ class SingleTestGeneratorSpec extends Specification {
 							}
 						}
 						response {
-							status 200
+							status OK()
 							body(foo:"foo", bar:"bar")
 							headers {
 								contentType(applicationJson())
@@ -246,7 +246,7 @@ class SingleTestGeneratorSpec extends Specification {
 						}
 					}
 					response {
-						status 200
+						status OK()
 						body(foo:"foo", bar:"bar")
 						headers {
 							contentType(applicationJson())
@@ -369,7 +369,7 @@ class SingleTestGeneratorSpec extends Specification {
 								url 'url'
 							}
 							response {
-								status 200
+								status OK()
 							}
 						}
 		""")
@@ -433,7 +433,7 @@ class SingleTestGeneratorSpec extends Specification {
 								url '/my-context-path/url'
 							}
 							response {
-								status 200
+								status OK()
 							}
 						}
 						// end::context_path_contract[]
@@ -466,7 +466,7 @@ class SingleTestGeneratorSpec extends Specification {
 									url 'url'
 								}
 								response {
-									status 200
+									status OK()
 								}
 							}
 			""")
@@ -498,7 +498,7 @@ class SingleTestGeneratorSpec extends Specification {
 			url "/${index}"
 		}
 		response {
-			status 200
+			status OK()
 		}
 	}
 }''')
@@ -530,7 +530,7 @@ class SingleTestGeneratorSpec extends Specification {
 			url "/${index}"
 		}
 		response {
-			status 200
+			status OK()
 		}
 	}
 }''')

@@ -148,6 +148,13 @@ public class  ConvertMojo extends AbstractMojo {
 	@Parameter(property = "contractsSnapshotCheckSkip", defaultValue = "false")
 	private boolean contractsSnapshotCheckSkip;
 
+	/**
+	 * If set to {@code false} will NOT delete stubs from a temporary
+	 * folder after running tests
+	 */
+	@Parameter(property = "deleteStubsAfterTest", defaultValue = "true")
+	private boolean deleteStubsAfterTest;
+
 	@Component(role = MavenResourcesFiltering.class, hint = "default")
 	private MavenResourcesFiltering mavenResourcesFiltering;
 
@@ -176,7 +183,7 @@ public class  ConvertMojo extends AbstractMojo {
 				this.contractsPath, this.contractsRepositoryUrl, this.contractsMode, getLog(),
 				this.aetherStubDownloaderFactory, this.repoSession, this.contractsRepositoryUsername,
 				this.contractsRepositoryPassword, this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort,
-				this.contractsSnapshotCheckSkip)
+				this.contractsSnapshotCheckSkip, this.deleteStubsAfterTest)
 				.downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 
