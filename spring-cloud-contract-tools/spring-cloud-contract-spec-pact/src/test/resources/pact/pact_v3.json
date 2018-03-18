@@ -1,0 +1,210 @@
+{
+  "provider": {
+    "name": "test_provider_array"
+  },
+  "consumer": {
+    "name": "test_consumer_array"
+  },
+  "interactions": [
+    {
+      "description": "java test interaction with a DSL array body",
+      "request": {
+        "method": "GET",
+        "path": "/"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=UTF-8"
+        },
+        "body": [
+          {
+            "dob": "07/19/2016",
+            "id": 8958464620,
+            "name": "Rogger the Dogger",
+            "timestamp": "2016-07-19T12:14:39"
+          },
+          {
+            "dob": "07/19/2016",
+            "id": 4143398442,
+            "name": "Cat in the Hat",
+            "timestamp": "2016-07-19T12:14:39"
+          }
+        ],
+        "matchingRules": {
+          "body": {
+            "$[0].id": {
+              "matchers": [
+                { "match": "type" }
+              ]
+            },
+            "$[1].id": {
+              "matchers": [
+                { "match": "type" }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "description": "test interaction with a array body with templates",
+      "request": {
+        "method": "GET",
+        "path": "/"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=UTF-8"
+        },
+        "body": [
+          {
+            "dob": "2016-07-19",
+            "id": 1943791933,
+            "name": "ZSAICmTmiwgFFInuEuiK"
+          },
+          {
+            "dob": "2016-07-19",
+            "id": 1943791933,
+            "name": "ZSAICmTmiwgFFInuEuiK"
+          },
+          {
+            "dob": "2016-07-19",
+            "id": 1943791933,
+            "name": "ZSAICmTmiwgFFInuEuiK"
+          }
+        ],
+        "matchingRules": {
+          "body": {
+            "$[2].name": {
+              "matchers": [
+                { "match": "type" }
+              ]
+            },
+            "$[0].id": {
+              "matchers": [
+                { "match": "type" }
+              ]
+            },
+            "$[1].id": {
+              "matchers": [
+                { "match": "type" }
+              ]
+            },
+            "$[2].id": {
+              "matchers": [
+                { "match": "type" }
+              ]
+            },
+            "$[1].name": {
+              "matchers": [
+                { "match": "type" }
+              ]
+            },
+            "$[0].name": {
+              "matchers": [
+                { "match": "type" }
+              ]
+            },
+            "$[0].dob": {
+              "matchers": [
+                { "date": "yyyy-MM-dd" }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "description": "test interaction with an array like matcher",
+      "request": {
+        "method": "GET",
+        "path": "/"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=UTF-8"
+        },
+        "body": {
+          "data": {
+            "array1": [
+              {
+                "dob": "2016-07-19",
+                "id": 1600309982,
+                "name": "FVsWAGZTFGPLhWjLuBOd"
+              }
+            ],
+            "array2": [
+              {
+                "address": "127.0.0.1",
+                "name": "jvxrzduZnwwxpFYrQnpd"
+              }
+            ],
+            "array3": [
+              [
+                {
+                  "itemCount": 652571349
+                }
+              ]
+            ]
+          },
+          "id": 7183997828
+        },
+        "matchingRules": {
+          "body": {
+            "$.data.array3[0]": {
+              "matchers": [
+                { "max": 5, "match": "type" }
+              ]
+            },
+            "$.data.array1": {
+              "matchers": [
+                { "min": 0, "match": "type" }
+              ]
+            },
+            "$.data.array2": {
+              "matchers": [
+                { "min": 1, "match": "type" }
+              ]
+            },
+            "$.id": {
+              "matchers": [
+                { "match": "type" }
+              ]
+            },
+            "$.data.array2[*].name": {
+              "matchers": [
+                { "match": "type" }
+              ]
+            },
+            "$.data.array2[*].address": {
+              "matchers": [
+                { "regex": "(\\d{1,3}\\.)+\\d{1,3}" }
+              ]
+            },
+            "$.data.array1[*].name": {
+              "matchers": [
+                { "match": "type" }
+              ]
+            },
+            "$.data.array1[*].id": {
+              "matchers": [
+                { "match": "type" }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pact-specification": {
+      "version": "3.0.0"
+    },
+    "pact-jvm": {
+      "version": "3.2.11"
+    }
+  }
+}
