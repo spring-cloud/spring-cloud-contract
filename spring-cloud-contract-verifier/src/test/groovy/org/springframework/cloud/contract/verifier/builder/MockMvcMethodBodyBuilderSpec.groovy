@@ -1218,6 +1218,48 @@ World.'''"""
 																													 '.multiPart("file", "filename.csv", "file content".getBytes());']
 	}
 
+	@Issue('546')
+	def "should generate test code when having multipart parameters with byte array #methodBuilderName"() {
+		given:
+		// tag::multipartdsl[]
+		org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
+			request {
+				method "PUT"
+				url "/multipart"
+				headers {
+					contentType('multipart/form-data;boundary=AaB03x')
+				}
+				multipart(
+						file: named(
+								name: value(stub(regex('.+')), test('file')),
+								content: value(stub(regex('.+')), test([100, 117, 112, 97] as byte[]))
+						)
+				)
+			}
+			response {
+				status 200
+			}
+		}
+		// end::multipartdsl[]
+		MethodBodyBuilder builder = methodBuilder(contractDsl)
+		BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+		builder.appendTo(blockBuilder)
+		def test = blockBuilder.toString()
+		then:
+		for (String requestString : requestStrings) {
+			assert test.contains(requestString)
+		}
+		and:
+		SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
+		where:
+		methodBuilderName           | methodBuilder                                                               | requestStrings
+		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
+																													 """.multiPart('file', 'file', [100, 117, 112, 97] as byte[])"""]
+		"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
+																													 '.multiPart("file", "file", new byte[] {100, 117, 112, 97});']
+	}
+
 	@Issue('541')
 	def "should generate proper test code when having multipart parameters that use execute with #methodBuilderName"() {
 		given:
