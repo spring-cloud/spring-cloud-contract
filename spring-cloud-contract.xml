@@ -8565,7 +8565,7 @@ Spring Boot application. Check out the
 for more details.</simpara>
 <simpara>If you have a Spring Boot application that uses Tomcat as an embedded server (which is
 the default with <literal>spring-boot-starter-web</literal>),  you can add
-<literal>spring-cloud-contract-wiremock</literal> to your classpath and add <literal>@AutoConfigureWireMock</literal> in
+<literal>spring-cloud-starter-contract-stub-runner</literal> to your classpath and add <literal>@AutoConfigureWireMock</literal> in
 order to be able to use Wiremock in your tests. Wiremock runs as a stub server and you
 can register stub behavior using a Java API or via static JSON declarations as part of
 your test. The following code shows an example:</simpara>
