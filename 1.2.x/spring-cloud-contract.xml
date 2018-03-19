@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2018-02-02</date>
+<date>2018-03-19</date>
 </info>
 <preface>
 <title></title>
@@ -53,7 +53,7 @@ Spring Cloud Contract Verifier.</simpara>
 <informalfigure>
 <mediaobject>
 <imageobject>
-<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/Deps.png"/>
+<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.2.x/docs/src/main/asciidoc/images/Deps.png"/>
 </imageobject>
 <textobject><phrase>Microservices Architecture</phrase></textobject>
 </mediaobject>
@@ -128,7 +128,7 @@ are those that your application directly uses.</simpara>
 <informalfigure>
 <mediaobject>
 <imageobject>
-<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/Stubs2.png"/>
+<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.2.x/docs/src/main/asciidoc/images/Stubs2.png"/>
 </imageobject>
 <textobject><phrase>Stubbed Services</phrase></textobject>
 </mediaobject>
@@ -356,8 +356,8 @@ we mark the client as a fraud.</simpara>
 Issuance has an artifact-id of <literal>http-client</literal>, and both have a <literal>group-id</literal> of <literal>com.example</literal>.</simpara>
 <simpara>Social remark - both client and server development teams need to communicate directly and
 discuss changes while going through the process. CDC is all about communication.</simpara>
-<simpara>The <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-server">server
-side code is available here</link> and <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-client">the
+<simpara>The <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/1.2.x/samples/standalone/dsl/http-server">server
+side code is available here</link> and <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/1.2.x/samples/standalone/dsl/http-client">the
 client code here</link>.</simpara>
 <tip>
 <simpara>In this case, the producer owns the contracts. Physically, all the contract are
@@ -1194,15 +1194,15 @@ one to one to the contents of the repo.</simpara>
 	&lt;parent&gt;
 		&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
 		&lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
-		&lt;version&gt;2.0.0.BUILD-SNAPSHOT&lt;/version&gt;
+		&lt;version&gt;1.5.10.RELEASE&lt;/version&gt;
 		&lt;relativePath /&gt;
 	&lt;/parent&gt;
 
 	&lt;properties&gt;
 		&lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
 		&lt;java.version&gt;1.8&lt;/java.version&gt;
-		&lt;spring-cloud-contract.version&gt;2.0.0.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
-		&lt;spring-cloud-dependencies.version&gt;Finchley.BUILD-SNAPSHOT&lt;/spring-cloud-dependencies.version&gt;
+		&lt;spring-cloud-contract.version&gt;1.2.4.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
+		&lt;spring-cloud-dependencies.version&gt;Edgware.BUILD-SNAPSHOT&lt;/spring-cloud-dependencies.version&gt;
 		&lt;excludeBuildFolders&gt;true&lt;/excludeBuildFolders&gt;
 	&lt;/properties&gt;
 
@@ -1380,7 +1380,6 @@ of the JAR containing the contracts:</simpara>
 	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 	&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
 	&lt;configuration&gt;
-		&lt;stubsMode&gt;REMOTE&lt;/stubsMode&gt;
 		&lt;contractsRepositoryUrl&gt;http://link/to/your/nexus/or/artifactory/or/sth&lt;/contractsRepositoryUrl&gt;
 		&lt;contractDependency&gt;
 			&lt;groupId&gt;com.example.standalone&lt;/groupId&gt;
@@ -1871,9 +1870,6 @@ following sections:</simpara>
 <listitem>
 <simpara><xref linkend="maven-sts"/></simpara>
 </listitem>
-<listitem>
-<simpara><xref linkend="maven-consumer"/></simpara>
-</listitem>
 </itemizedlist>
 <section xml:id="maven-add-plugin">
 <title>Add maven plugin</title>
@@ -2262,7 +2258,7 @@ goal.</simpara>
 <informalfigure>
 <mediaobject>
 <imageobject>
-<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/sts_exception.png"/>
+<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.2.x/docs/src/main/asciidoc/images/sts_exception.png"/>
 </imageobject>
 <textobject><phrase>STS Exception</phrase></textobject>
 </mediaobject>
@@ -2309,56 +2305,6 @@ goal.</simpara>
     &lt;/pluginManagement&gt;
 &lt;/build&gt;</programlisting>
 </section>
-<section xml:id="maven-consumer">
-<title>Spring Cloud Contract Verifier on the Consumer Side</title>
-<simpara>You can also use the Spring Cloud Contract Verifier for the consumer side. To do so, use
-the plugin so that it only converts the contracts and generates the stubs. To achieve
-that, you need to configure Spring Cloud Contract Verifier plugin in exactly the same way
-as you would for a provider. You need to copy contracts stored in
-<literal>src/test/resources/contracts</literal> and generate WireMock JSON stubs using the
-<literal>mvn generateStubs</literal> command. By default, the generated WireMock mapping is stored in a
-directory named <literal>target/mappings</literal>. From these generated mappings, your project should
-create additional artifacts with a classifier of <literal>stubs</literal> for easy deployment to the maven
-repository.</simpara>
-<simpara>Here is a sample configuration:</simpara>
-<programlisting language="xml" linenumbering="unnumbered">&lt;plugin&gt;
-    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
-    &lt;version&gt;${verifier-plugin.version}&lt;/version&gt;
-    &lt;executions&gt;
-        &lt;execution&gt;
-            &lt;goals&gt;
-                &lt;goal&gt;convert&lt;/goal&gt;
-                &lt;goal&gt;generateStubs&lt;/goal&gt;
-            &lt;/goals&gt;
-        &lt;/execution&gt;
-    &lt;/executions&gt;
-&lt;/plugin&gt;</programlisting>
-<simpara>When present, JSON stubs can be used in consumer automated tests, as shown here:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">@RunWith(SpringTestRunner.class)
-@SpringBootTest
-@AutoConfigureStubRunner
-public class LoanApplicationServiceTests {
-
-  @Autowired
-  LoanApplicationService service;
-
-  @Test
-  public void shouldSuccessfullyApplyForLoan() {
-    //given:
- 	LoanApplication application =
-			new LoanApplication(new Client("12345678901"), 123.123);
-    //when:
-	LoanApplicationResult loanApplication = service.loanApplication(application);
-    // then:
-	assertThat(loanApplication.loanApplicationStatus).isEqualTo(LoanApplicationStatus.LOAN_APPLIED);
-	assertThat(loanApplication.rejectionReason).isNull();
-  }
-}</programlisting>
-<simpara><literal>LoanApplication</literal> makes a call to the <literal>FraudDetection</literal> service. This request is handled
-by a WireMock server configured with stubs generated by the Spring Cloud Contract
-Verifier.</simpara>
-</section>
 </section>
 <section xml:id="_stubs_and_transitive_dependencies">
 <title>Stubs and Transitive Dependencies</title>
@@ -2399,6 +2345,27 @@ For example, you might decide to have no dependencies at all.</simpara>
 <simpara><emphasis role="strong">Exclude dependencies on the consumer side</emphasis></simpara>
 <simpara>As a consumer, if you add the stub dependency to your classpath, you can explicitly
 exclude the unwanted dependencies.</simpara>
+</section>
+<section xml:id="_ci_server_setup">
+<title>CI Server setup</title>
+<simpara>When fetching stubs / contracts in a CI, shared environment, what might happen is that
+both the producer and the consumer reuse the same local Maven repository. Due to this,
+the framework, responsible for downloading a stub JAR from remote location,
+can&#8217;t decide which JAR should be picked, local or remote one. That caused
+the <literal>"The artifact was found in the local repository but you have explicitly
+stated that it should be downloaded from a remote one"</literal> exception
+and failed the build.</simpara>
+<simpara>For such cases we&#8217;re introducing the property mechanism:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>via <literal>stubrunner.snapshot-check-skip</literal> system property</simpara>
+</listitem>
+<listitem>
+<simpara>via <literal>STUBRUNNER_SNAPSHOT_CHECK_SKIP</literal> environment variable</simpara>
+</listitem>
+</itemizedlist>
+<simpara>if either of these values is set to <literal>true</literal>, then the stub downloader will not
+verify the origin of the downloaded JAR.</simpara>
 </section>
 <section xml:id="_scenarios">
 <title>Scenarios</title>
@@ -2517,7 +2484,7 @@ purposes).</simpara>
 your running application, to the Artifact manager instance etc.</simpara>
 <itemizedlist>
 <listitem>
-<simpara><literal>PROJECT_GROUP</literal> - your project&#8217;s group id. Defaults to <literal>com.example</literal>.</simpara>
+<simpara><literal>PROJECT_GROUP</literal> - your project&#8217;s group id. Defaults to <literal>com.example</literal></simpara>
 </listitem>
 <listitem>
 <simpara><literal>PROJECT_VERSION</literal> - your project&#8217;s version. Defaults to <literal>0.0.1-SNAPSHOT</literal></simpara>
@@ -2537,6 +2504,37 @@ which is the default URL of <link xl:href="https://jfrog.com/artifactory/">Artif
 </listitem>
 <listitem>
 <simpara><literal>PUBLISH_ARTIFACTS</literal> - if set to <literal>true</literal> then will publish artifact to binary storage. Defaults to <literal>true</literal>.</simpara>
+</listitem>
+</itemizedlist>
+<simpara>These environment variables are used when contracts lay in an external repository. To enable
+this feature you must set the <literal>EXTERNAL_CONTRACTS_ARTIFACT_ID</literal> environment variable.</simpara>
+<itemizedlist>
+<listitem>
+<simpara><literal>EXTERNAL_CONTRACTS_GROUP_ID</literal> - group id of the project with contracts. Defaults to <literal>com.example</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>EXTERNAL_CONTRACTS_ARTIFACT_ID</literal>- artifact id of the project with contracts.</simpara>
+</listitem>
+<listitem>
+<simpara><literal>EXTERNAL_CONTRACTS_CLASSIFIER</literal>- classifier of the project with contracts. Empty by default</simpara>
+</listitem>
+<listitem>
+<simpara><literal>EXTERNAL_CONTRACTS_VERSION</literal> - version of the project with contracts. Defaults to <literal>+</literal>, equivalent to picking the latest</simpara>
+</listitem>
+<listitem>
+<simpara><literal>EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL</literal> - URL of your Artifact Manager. Defaults to value of <literal>REPO_WITH_BINARIES_URL</literal> env var.
+If that&#8217;s not set, defaults to <literal><link xl:href="http://localhost:8081/artifactory/libs-release-local">http://localhost:8081/artifactory/libs-release-local</link></literal>
+which is the default URL of <link xl:href="https://jfrog.com/artifactory/">Artifactory</link> running locally</simpara>
+</listitem>
+<listitem>
+<simpara><literal>EXTERNAL_CONTRACTS_PATH</literal> - path to contracts for the given project, inside the project with contracts.
+Defaults to slash separated <literal>EXTERNAL_CONTRACTS_GROUP_ID</literal> concatenated with <literal>/</literal> and <literal>EXTERNAL_CONTRACTS_ARTIFACT_ID</literal>. E.g.
+for group id <literal>foo.bar</literal> and artifact id <literal>baz</literal>, would result in <literal>foo/bar/baz</literal> contracts path.</simpara>
+</listitem>
+<listitem>
+<simpara><literal>EXTERNAL_CONTRACTS_WORK_OFFLINE</literal> - if set to <literal>true</literal> then will retrieve artifact with contracts
+from the container&#8217;s <literal>.m2</literal>. Mount your local <literal>.m2</literal> as a volume available at the container&#8217;s <literal>/root/.m2</literal> path.
+You must not set both <literal>EXTERNAL_CONTRACTS_WORK_OFFLINE</literal> and <literal>EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL</literal>.</simpara>
 </listitem>
 </itemizedlist>
 <simpara>These environment variables are used when tests are executed:</simpara>
@@ -3767,6 +3765,19 @@ an existing <literal>DiscoveryClient</literal> its results will be ignored. Howe
  <literal>stubrunner.cloud.delegate.enabled</literal> to <literal>true</literal> and then your existing <literal>DiscoveryClient</literal> results will be
  merged with the stubbed ones.</simpara>
 </tip>
+<simpara>The default Maven configuration used by Stub Runner can be tweaked either
+via the following system properties or environment variables</simpara>
+<itemizedlist>
+<listitem>
+<simpara><literal>maven.repo.local</literal> - path to the custom maven local repository location</simpara>
+</listitem>
+<listitem>
+<simpara><literal>org.apache.maven.user-settings</literal> - path to custom maven user settings location</simpara>
+</listitem>
+<listitem>
+<simpara><literal>org.apache.maven.global-settings</literal> - path to maven global settings location</simpara>
+</listitem>
+</itemizedlist>
 </section>
 </section>
 <section xml:id="_stub_runner_boot_application">
@@ -3784,6 +3795,12 @@ project for more information.</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">compile "org.springframework.cloud:spring-cloud-starter-stub-runner"</programlisting>
 <simpara>Annotate a class with <literal>@EnableStubRunnerServer</literal>, build a fat-jar and you&#8217;re ready to go!</simpara>
 <simpara>For the properties check the <emphasis role="strong">Stub Runner Spring</emphasis> section.</simpara>
+</section>
+<section xml:id="_stub_runner_server_fat_jar">
+<title>Stub Runner Server Fat Jar</title>
+<simpara>You can download a standalone JAR from Maven (for example, for version 1.2.3.RELEASE), as follows:</simpara>
+<programlisting language="bash" linenumbering="unnumbered">$ wget -O stub-runner.jar 'https://search.maven.org/remote_content?g=org.springframework.cloud&amp;a=spring-cloud-contract-stub-runner-boot&amp;v=1.2.3.RELEASE'
+$ java -jar stub-runner.jar --stubrunner.ids=... --stubrunner.repositoryRoot=...</programlisting>
 </section>
 <section xml:id="_spring_cloud_cli">
 <title>Spring Cloud CLI</title>
@@ -8045,11 +8062,11 @@ used. If you provide more than one, then the first one on the list is used.</sim
 <title>Spring Cloud Contract WireMock</title>
 <simpara>The Spring Cloud Contract WireMock modules let you use <link xl:href="http://wiremock.org">WireMock</link> in a
 Spring Boot application. Check out the
-<link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples">samples</link>
+<link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/1.2.x/samples">samples</link>
 for more details.</simpara>
 <simpara>If you have a Spring Boot application that uses Tomcat as an embedded server (which is
 the default with <literal>spring-boot-starter-web</literal>),  you can add
-<literal>spring-cloud-contract-wiremock</literal> to your classpath and add <literal>@AutoConfigureWireMock</literal> in
+<literal>spring-cloud-starter-contract-stub-runner</literal> to your classpath and add <literal>@AutoConfigureWireMock</literal> in
 order to be able to use Wiremock in your tests. Wiremock runs as a stub server and you
 can register stub behavior using a Java API or via static JSON declarations as part of
 your test. The following code shows an example:</simpara>
