@@ -432,6 +432,24 @@ body:
 	response {
 		status OK()
 	}
+}
+org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
+	request {
+		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"PUT"</span>
+		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/multipart"</span>
+		headers {
+			contentType(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'multipart/form-data;boundary=AaB03x'</span>)
+		}
+		multipart(
+				file: named(
+						name: value(stub(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'.+'</span>)), test(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'file'</span>)),
+						content: value(stub(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'.+'</span>)), test([<span class="hl-number">100</span>, <span class="hl-number">117</span>, <span class="hl-number">112</span>, <span class="hl-number">97</span>] as <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">byte</span>[]))
+				)
+		)
+	}
+	response {
+		status <span class="hl-number">200</span>
+	}
 }</pre><p>
 </p><p><b>YAML.&nbsp;</b>
 </p><pre class="programlisting">request:

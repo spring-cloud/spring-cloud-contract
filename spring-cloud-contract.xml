@@ -5951,6 +5951,24 @@ body:
 	response {
 		status OK()
 	}
+}
+org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
+	request {
+		method "PUT"
+		url "/multipart"
+		headers {
+			contentType('multipart/form-data;boundary=AaB03x')
+		}
+		multipart(
+				file: named(
+						name: value(stub(regex('.+')), test('file')),
+						content: value(stub(regex('.+')), test([100, 117, 112, 97] as byte[]))
+				)
+		)
+	}
+	response {
+		status 200
+	}
 }</programlisting>
 </para>
 </formalpara>
