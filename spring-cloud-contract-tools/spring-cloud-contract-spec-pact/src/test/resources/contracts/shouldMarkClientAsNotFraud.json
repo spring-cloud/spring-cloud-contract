@@ -17,6 +17,18 @@
         "body": {
           "clientId": "1234567890",
           "loanAmount": 123.123
+        },
+        "matchingRules":{
+          "body":{
+            "$.clientId":{
+              "matchers":[
+                {
+                  "match":"type"
+                }
+              ],
+              "combine":"AND"
+            }
+          }
         }
       },
       "response": {
@@ -27,6 +39,18 @@
         "body": {
           "fraudCheckStatus": "OK",
           "rejectionReason": null
+        },
+        "matchingRules":{
+          "body":{
+            "$.fraudCheckStatus":{
+              "matchers":[
+                {
+                  "match":"type"
+                }
+              ],
+              "combine":"AND"
+            }
+          }
         }
       }
     }

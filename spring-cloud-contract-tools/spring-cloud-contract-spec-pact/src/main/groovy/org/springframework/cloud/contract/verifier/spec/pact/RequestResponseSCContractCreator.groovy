@@ -21,7 +21,6 @@ import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 
@@ -99,7 +98,7 @@ class RequestResponseSCContractCreator {
 					Response response = interaction.response
 
 					status(response.status)
-					if (response.body.state == OptionalBody.State.PRESENT) {
+					if (response.body.present) {
 						def parsedBody = parseBody(response.body)
 						if (parsedBody instanceof Map) {
 							body(parsedBody as Map)

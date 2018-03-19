@@ -11,6 +11,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.Subject
+
 /**
  * @author Marcin Grzejszczak
  * @author Tim Ysewyn
@@ -21,6 +22,7 @@ class PactContractConverterSpec extends Specification {
 	File pact509Json = new File(PactContractConverterSpec.getResource("/pact/pact_509.json").toURI())
 	File pactv2Json = new File(PactContractConverterSpec.getResource("/pact/pact_v2.json").toURI())
 	File pactv3Json = new File(PactContractConverterSpec.getResource("/pact/pact_v3.json").toURI())
+	File pactv3MessagingJson = new File(PactContractConverterSpec.getResource("/pact/pact_v3_messaging.json").toURI())
 	@Subject PactContractConverter converter = new PactContractConverter()
 
 	def "should accept json files that are pact files"() {
@@ -334,9 +336,10 @@ class PactContractConverterSpec extends Specification {
 				String convertedPactAsText = JsonOutput.toJson(it.value[0].toMap(PactSpecVersion.V3))
 				String pactFileName = it.key.replace("groovy", "json")
 				println "File name [${it.key}]"
-				JSONAssert.assertEquals(jsonPacts.get(pactFileName), convertedPactAsText, false)
+				JSONAssert.assertEquals(jsonPacts.get(pactFileName), convertedPactAsText, true)
 			}
 	}
+
 	def "should convert from pact v2 to two SC contracts"() {
 		given:
 			Collection<Contract> expectedContracts = [
@@ -527,6 +530,35 @@ class PactContractConverterSpec extends Specification {
 			]
 		when:
 			Collection<Contract> contracts = converter.convertFrom(pactv3Json)
+		then:
+			contracts == expectedContracts
+	}
+
+	def "should convert from pact v3 messaging to one SC message contract"() {
+
+		given:
+			Collection<Contract> expectedContracts = [
+					Contract.make {
+						label 'message sent to activemq:output'
+						input {
+							triggeredBy('bookReturnedTriggered()')
+						}
+						outputMessage {
+							body([
+								bookName: "foo"
+							])
+							headers {
+								header('BOOK-NAME', 'foo')
+								messagingContentType(applicationJson())
+							}
+							testMatchers {
+								jsonPath('$.bookName', byType())
+							}
+						}
+					}
+			]
+		when:
+			Collection<Contract> contracts = converter.convertFrom(pactv3MessagingJson)
 		then:
 			contracts == expectedContracts
 	}

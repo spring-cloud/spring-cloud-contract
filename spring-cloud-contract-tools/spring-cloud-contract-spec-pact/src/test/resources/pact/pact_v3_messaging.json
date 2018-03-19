@@ -1,0 +1,45 @@
+{
+  "consumer":{
+    "name":"Consumer"
+  },
+  "provider":{
+    "name":"Provider"
+  },
+  "messages":[
+    {
+      "description":"message sent to activemq:output",
+      "metaData":{
+        "BOOK-NAME":"foo",
+        "contentType":"application/json"
+      },
+      "contents":{
+        "bookName":"foo"
+      },
+      "providerStates":[
+        {
+          "name":"bookReturnedTriggered()"
+        }
+      ],
+      "matchingRules":{
+        "body":{
+          "$.bookName":{
+            "matchers":[
+              {
+                "match":"type"
+              }
+            ],
+            "combine":"AND"
+          }
+        }
+      }
+    }
+  ],
+  "metadata":{
+    "pact-specification":{
+      "version":"3.0.0"
+    },
+    "pact-jvm":{
+      "version":"3.5.13"
+    }
+  }
+}

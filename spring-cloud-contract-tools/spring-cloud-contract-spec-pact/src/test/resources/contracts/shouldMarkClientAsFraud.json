@@ -17,6 +17,18 @@
         "body": {
           "clientId": "8532032713",
           "loanAmount": 99999
+        },
+        "matchingRules":{
+          "body":{
+            "$.clientId":{
+              "matchers":[
+                {
+                  "match":"type"
+                }
+              ],
+              "combine":"AND"
+            }
+          }
         }
       },
       "response": {
@@ -27,6 +39,26 @@
         "body": {
           "fraudCheckStatus": "FRAUD",
           "rejectionReason": "Amount too high"
+        },
+        "matchingRules":{
+          "body":{
+            "$.fraudCheckStatus":{
+              "matchers":[
+                {
+                  "match":"type"
+                }
+              ],
+              "combine":"AND"
+            },
+            "$.rejectionReason":{
+              "matchers":[
+                {
+                  "match":"type"
+                }
+              ],
+              "combine":"AND"
+            }
+          }
         }
       }
     }

@@ -3,6 +3,8 @@ package org.springframework.cloud.contract.verifier.spec.pact
 import au.com.dius.pact.consumer.dsl.DslPart
 import au.com.dius.pact.consumer.dsl.PactDslJsonArray
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody
+import groovy.json.JsonException
+import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.springframework.cloud.contract.spec.internal.Body
@@ -17,8 +19,14 @@ import org.springframework.cloud.contract.verifier.util.ContentUtils
 @PackageScope
 class BodyConverter {
 
+	private static final JsonSlurper jsonSlurper = new JsonSlurper()
+
 	static DslPart toPactBody(Body body, Closure dslPropertyValueExtractor) {
 		return traverse(body, null, dslPropertyValueExtractor)
+	}
+
+	static DslPart toPactBody(DslProperty dslProperty, Closure dslPropertyValueExtractor) {
+		return traverse(dslProperty, null, dslPropertyValueExtractor)
 	}
 
 	private static DslPart traverse(Object value, DslPart parent, Closure dslPropertyValueExtractor) {
@@ -31,6 +39,16 @@ class BodyConverter {
 
 		if (v instanceof GString) {
 			v = ContentUtils.extractValue(v, dslPropertyValueExtractor)
+		}
+
+		if (v instanceof String) {
+			v = v.trim()
+			if (v.startsWith("{") && v.endsWith("}")) {
+				try {
+					v = jsonSlurper.parseText(v as String)
+				} catch (JsonException ex) { /*it wasn't a JSON string after all...*/
+				}
+			}
 		}
 
 		DslPart p = isRoot ? createRootDslPart(v) : parent
