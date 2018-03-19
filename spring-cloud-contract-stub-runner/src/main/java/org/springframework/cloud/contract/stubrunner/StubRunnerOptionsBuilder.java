@@ -23,7 +23,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.stubrunner.util.StubsParser;
@@ -155,7 +154,7 @@ public class StubRunnerOptionsBuilder {
 	}
 
 	private Collection<StubConfiguration> buildDependencies() {
-		Set<StubConfiguration> stubConfigurations = StubsParser
+		List<StubConfiguration> stubConfigurations = StubsParser
 				.fromString(this.stubs, this.stubsClassifier);
 		this.stubConfigurations.addAll(stubConfigurations);
 		return this.stubConfigurations;
@@ -178,6 +177,7 @@ public class StubRunnerOptionsBuilder {
 				}
 			}
 			list.addAll(linkedList);
+			return list;
 		}
 		Collections.addAll(list, stubIdsToPortMapping);
 		return list;
