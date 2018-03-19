@@ -1,10 +1,11 @@
 package org.springframework.cloud.contract.verifier.builder.handlebars
 
-import wiremock.com.github.jknack.handlebars.Helper
-import wiremock.com.github.jknack.handlebars.Options
 import com.github.tomakehurst.wiremock.extension.responsetemplating.RequestTemplateModel
 import groovy.transform.CompileStatic
 import org.apache.commons.text.StringEscapeUtils
+import wiremock.com.github.jknack.handlebars.Helper
+import wiremock.com.github.jknack.handlebars.Options
+
 import org.springframework.cloud.contract.verifier.builder.TestSideRequestTemplateModel
 /**
  * A Handlebars helper for the {@code escapejsonbody} helper function.
@@ -30,11 +31,11 @@ class HandlebarsEscapeHelper implements Helper<Map<String, Object>> {
 	}
 
 	private Object returnObjectForStub(Object model) {
-		return ((RequestTemplateModel) model).body
+		return StringEscapeUtils.escapeJava(((RequestTemplateModel) model).body)
 	}
 
 	private Object returnObjectForTest(Object model) {
-		return ((TestSideRequestTemplateModel) model).rawBody
+		return ((TestSideRequestTemplateModel) model).body
 	}
 
 }

@@ -380,6 +380,38 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String string -> string.contains('assertThat(responseBody).isEqualTo("My name");') }
 	}
 
+	@Issue("#540")
+	def "should reference request from body when using the WireMock handlebars notation body is a string [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url '/mytest'
+					body("""{ "name": "My name" }""")
+				}
+				response {
+					status OK()
+					body "{{jsonPath request.body '\$.name'}}"
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			String test = blockBuilder.toString()
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+			responseAsserter(test)
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName                                    | methodBuilder                                                                               | responseAsserter
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | { String string -> string.contains('responseBody == "My name"') }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | { String string -> string.contains('assertThat(responseBody).isEqualTo("My name");') }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String string -> string.contains('responseBody == "My name"') }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String string -> string.contains('assertThat(responseBody).isEqualTo("My name");') }
+	}
+
 	@Issue("#559")
 	def "should reference request from body without escaping of non-string [#methodBuilderName]"() {
 		given:
