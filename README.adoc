@@ -1060,7 +1060,7 @@ for more details.
 
 If you have a Spring Boot application that uses Tomcat as an embedded server (which is
 the default with `spring-boot-starter-web`),  you can add
-`spring-cloud-contract-wiremock` to your classpath and add `@AutoConfigureWireMock` in
+`spring-cloud-starter-contract-stub-runner` to your classpath and add `@AutoConfigureWireMock` in
 order to be able to use Wiremock in your tests. Wiremock runs as a stub server and you
 can register stub behavior using a Java API or via static JSON declarations as part of
 your test. The following code shows an example:
@@ -1222,6 +1222,9 @@ classpath and it is selected by the `RestTemplateBuilder` and configured to igno
 errors. If you use the default `java.net` client, you do not need the annotation (but it
 won't do any harm). There is no support currently for other clients, but it may be added
 in future releases.
+
+To disable the custom `RestTemplateBuilder`, set the `wiremock.rest-template-ssl-enabled`
+property to `false`.
 
 === WireMock and Spring MVC Mocks
 
