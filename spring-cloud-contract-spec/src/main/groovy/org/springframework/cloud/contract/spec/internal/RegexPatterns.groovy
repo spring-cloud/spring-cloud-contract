@@ -116,11 +116,11 @@ class RegexPatterns {
 	// end::regexps[]
 	
 	static String multipartParam(Object name, Object value) {
-		return ".*--(.*)\r\nContent-Disposition: form-data; name=\"$name\"\r\n(Content-Type: .*\r\n)?(Content-Length: \\d+\r\n)?\r\n$value\r\n--\\1.*"
+		return ".*--(.*)\r\nContent-Disposition: form-data; name=\"$name\"\r\n(Content-Type: .*\r\n)?(Content-Transfer-Encoding: .*\r\n)?(Content-Length: \\d+\r\n)?\r\n$value\r\n--\\1.*"
 	}
 
 	static String multipartFile(Object name, Object filename, Object content) {
-		return ".*--(.*)\r\nContent-Disposition: form-data; name=\"$name\"; filename=\"$filename\"\r\n(Content-Type: .*\r\n)?(Content-Length: \\d+\r\n)?\r\n$content\r\n--\\1.*";
+		return ".*--(.*)\r\nContent-Disposition: form-data; name=\"$name\"; filename=\"$filename\"\r\n(Content-Type: .*\r\n)?(Content-Transfer-Encoding: .*\r\n)?(Content-Length: \\d+\r\n)?\r\n$content\r\n--\\1.*";
 	}
 }
 
