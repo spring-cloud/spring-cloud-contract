@@ -200,9 +200,23 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	@Override
 	protected String getBodyAsString() {
 		Object bodyValue = extractServerValueFromBody(request.body.serverValue)
-		String json = new JsonOutput().toJson(bodyValue)
-		json = convertUnicodeEscapesIfRequired(json)
-		return trimRepeatedQuotes(json)
+		if (contentType() == ContentType.FORM) {
+			if (bodyValue instanceof Map) {
+				// [a:3, b:4] == "a=3&b=4"
+				return ((Map) bodyValue).collect {
+					convertUnicodeEscapesIfRequired(it.key.toString() + "=" + it.value)
+				}.join("&")
+			} else if (bodyValue instanceof List) {
+				// ["a=3", "b=4"] == "a=3&b=4"
+				return ((List) bodyValue).collect {
+					convertUnicodeEscapesIfRequired(it.toString())
+				}.join("&")
+			}
+		} else {
+			String json = new JsonOutput().toJson(bodyValue)
+			json = convertUnicodeEscapesIfRequired(json)
+			return trimRepeatedQuotes(json)
+		}
 	}
 
 	/**

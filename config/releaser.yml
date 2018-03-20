@@ -1,3 +1,4 @@
 releaser.maven.buildCommand: ./scripts/noIntegration.sh
 releaser.gradle.gradlePropsSubstitution:
   verifierVersion: spring-cloud-contract
+  bootVersion: spring-boot

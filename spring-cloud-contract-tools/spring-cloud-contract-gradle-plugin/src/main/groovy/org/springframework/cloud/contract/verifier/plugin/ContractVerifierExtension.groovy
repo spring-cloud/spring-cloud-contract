@@ -162,6 +162,12 @@ class ContractVerifierExtension {
 	 */
 	boolean contractsSnapshotCheckSkip = false
 
+	/**
+	 * If set to {@code false} will NOT delete stubs from a temporary
+	 * folder after running tests
+	 */
+	boolean deleteStubsAfterTest = true
+
 	void contractDependency(@DelegatesTo(Dependency) Closure closure) {
 		closure.delegate = contractDependency
 		closure.call()

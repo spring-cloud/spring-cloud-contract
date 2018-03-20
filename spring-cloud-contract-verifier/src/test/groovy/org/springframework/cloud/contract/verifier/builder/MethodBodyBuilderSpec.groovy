@@ -49,7 +49,7 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 			response {
-				status 200
+				status OK()
 				body ([
 						myArray:[
 								[
@@ -117,7 +117,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 				urlPath '/foo'
 			}
 			response {
-				status 200
+				status OK()
 				body (
 						foo: ["my.dotted.response" : $(c('foo'), p(execute('"foo".equals($it)')))]
 				)
@@ -167,7 +167,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 				}
 			}
 			response {
-				status 200
+				status OK()
 				headers {
 					contentType(applicationJson())
 				}
@@ -220,7 +220,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					)
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		//end::body_execute[]
@@ -257,7 +257,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					])
 				}
 				response {
-					status 200
+					status OK()
 					headers {
 						contentType(applicationPdf())
 						header('Content-Length': 4)
@@ -289,7 +289,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					url "test"
 				}
 				response {
-					status 200
+					status OK()
 					body(
 							"createdAt": 1502766000000,
 							"updatedAt": 1499476115000
@@ -327,7 +327,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					}
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -358,7 +358,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					body("""{ "name": "My name" }""")
 				}
 				response {
-					status 200
+					status OK()
 					body fromRequest().body('$.name')
 				}
 			}
@@ -380,6 +380,47 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String string -> string.contains('assertThat(responseBody).isEqualTo("My name");') }
 	}
 
+	@Issue("#559")
+	def "should reference request from body without escaping of non-string [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url( '/mytest') {
+						queryParameters {
+							parameter("foo", "bar")
+							parameter("number", 1)
+						}
+					}
+					body("""{ "name": "My name" }""")
+				}
+				response {
+					status OK()
+					body (
+							foo: fromRequest().query("foo"),
+							number: fromRequest().query("number")
+					)
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			String test = blockBuilder.toString()
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+			test.contains('''assertThatJson(parsedJson).field("['foo']").isEqualTo("bar")''')
+			test.contains('''assertThatJson(parsedJson).field("['number']").isEqualTo(1)''')
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
 	@Issue("#465")
 	def "should work for '/' url for [#methodBuilderName]"() {
 		given:
@@ -399,7 +440,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 				url '/'
 			}
 			response {
-				status 200
+				status OK()
 				body("Ryan")
 				headers {
 					contentType(textHtml())
@@ -431,7 +472,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					url "test"
 				}
 				response {
-					status 200
+					status OK()
 					async()
 					fixedDelayMilliseconds(10000)
 					body(a: 'foo')
@@ -466,7 +507,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					body('a=abc&b=123')
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -487,6 +528,61 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
 
+	@Issue("#578")
+	def "should work for form parameters [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method POST()
+					urlPath('/oauth/token')
+					headers {
+						header(authorization(), anyNonBlankString())
+						header(contentType(), applicationFormUrlencoded())
+						header(accept(), applicationJson())
+					}
+					body([
+							username  : 'user',
+							password  : 'password',
+							grant_type: 'password'
+					])
+				}
+				response {
+					status 200
+					headers {
+						header(contentType(), applicationJson())
+					}
+					body([
+							refresh_token: 'RANDOM_REFRESH_TOKEN',
+							access_token : 'RANDOM_ACCESS_TOKEN',
+							token_type   : 'bearer',
+							expires_in   : 3600,
+							scope        : ['task'],
+							user         : [
+									id      : 1,
+									username: 'user',
+									name    : 'User'
+							]
+					])
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			String test = blockBuilder.toString()
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+			test.contains("username=user&password=password&grant_type=password")
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
 	@Issue("#509")
 	def "classToCheck() should return class of object"() {
 		given:
@@ -496,7 +592,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					url '/api/users'
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)

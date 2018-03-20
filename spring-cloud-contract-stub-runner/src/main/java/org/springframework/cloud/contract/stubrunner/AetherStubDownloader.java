@@ -81,8 +81,10 @@ public class AetherStubDownloader implements StubDownloader {
 	private final RepositorySystemSession session;
 	private final boolean workOffline;
 	private final boolean snapshotCheckSkip;
+	private final boolean deleteStubsAfterTest;
 
 	public AetherStubDownloader(StubRunnerOptions stubRunnerOptions) {
+		this.deleteStubsAfterTest = stubRunnerOptions.isDeleteStubsAfterTest();
 		if (log.isDebugEnabled()) {
 			log.debug("Will be resolving versions for the following options: [" + stubRunnerOptions + "]");
 		}
@@ -122,6 +124,7 @@ public class AetherStubDownloader implements StubDownloader {
 	 */
 	public AetherStubDownloader(RepositorySystem repositorySystem,
 			List<RemoteRepository> remoteRepositories, RepositorySystemSession session) {
+		this.deleteStubsAfterTest = true;
 		this.remoteRepos = remoteRepositories;
 		this.repositorySystem = repositorySystem;
 		this.session = session;
@@ -303,6 +306,9 @@ public class AetherStubDownloader implements StubDownloader {
 	}
 
 	private void cleanup() {
+		if (!this.deleteStubsAfterTest) {
+			return;
+		}
 		try {
 			for (File file : TEMP_FILES_LOG) {
 				if (file.isDirectory()) {

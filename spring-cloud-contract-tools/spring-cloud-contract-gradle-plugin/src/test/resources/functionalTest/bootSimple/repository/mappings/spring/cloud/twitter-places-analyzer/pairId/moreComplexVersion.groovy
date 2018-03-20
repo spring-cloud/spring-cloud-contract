@@ -38,6 +38,6 @@ Contract.make {
 			 path: $(consumer('/api/12'), producer(regex('^/api/[0-9]{2}$'))),
 			 correlationId: $(consumer('1223456'), producer(execute('isProperCorrelationId($it)')))
 		)
-		status 200
+		status OK()
 	}
 }

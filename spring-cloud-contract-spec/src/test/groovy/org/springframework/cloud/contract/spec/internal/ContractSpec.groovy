@@ -66,6 +66,36 @@ class ContractSpec extends Specification {
 			noExceptionThrown()
 	}
 
+	def 'should work for messaging with pattern properties'() {
+		when:
+			Contract.make {
+				input {
+					messageFrom('input')
+					messageBody([
+							foo: anyNonBlankString()
+					])
+					messageHeaders {
+						header([
+								foo: anyNumber()
+						])
+					}
+				}
+				outputMessage {
+					sentTo('output')
+					body([
+							foo2: anyNonEmptyString()
+					])
+					headers {
+						header([
+								foo2: anyIpAddress()
+						])
+					}
+				}
+			}
+		then:
+			noExceptionThrown()
+	}
+
 	def 'should generate a value if only regex is passed for client'() {
 		given:
 			Request request = new Request()
@@ -152,7 +182,7 @@ then:
 					url "/${index}"
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 			def b = Contract.make {
@@ -164,7 +194,7 @@ then:
 					url "/${index}"
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 			a == b
@@ -182,7 +212,7 @@ then:
 					url "/${index}"
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 			int index2 = 2
@@ -195,7 +225,7 @@ then:
 					url "/${index2}"
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 			a != b
@@ -219,7 +249,7 @@ then:
 					}
 				}
 				response {
-					status 200
+					status OK()
 					body(
 							id: [value: '132'],
 							surname: 'Kowalsky',
@@ -247,7 +277,7 @@ then:
 					}
 				}
 				response {
-					status 200
+					status OK()
 					body(
 							id: [value: '132'],
 							surname: 'Kowalsky',

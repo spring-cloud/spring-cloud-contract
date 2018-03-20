@@ -38,16 +38,64 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 		options.getDependencies().toString() == '[foo:bar:+:stubs]'
 	}
 
-	def shouldCreateDependenciesForCommaSeparatedStubs() {
+	def shouldCreateDependenciesForStubWithSameGroupAndArtifactId() {
 
 		given:
-		builder.withStubs('foo:bar,bar:foo')
+		builder.withStubs('foo:bar:1.0', 'foo:bar:2.0')
 
 		when:
 		StubRunnerOptions options = builder.build()
 
 		then:
-		options.getDependencies().size() == 2
+		options.getDependencies().toString() == '[foo:bar:1.0:stubs, foo:bar:2.0:stubs]'
+	}
+
+	def shouldCreateDependenciesForMultipleStubsWithSameGroup() {
+
+		given:
+		builder.withStubs('foo:bar', 'foo:baz', 'foo:baz2')
+
+		when:
+		StubRunnerOptions options = builder.build()
+
+		then:
+		options.getDependencies().toString() == '[foo:bar:+:stubs, foo:baz:+:stubs, foo:baz2:+:stubs]'
+	}
+
+	def shouldCreateDependenciesForMultipleStubsWithSameArtifactId() {
+
+		given:
+		builder.withStubs('bar:foo', 'baz:foo', 'baz2:foo')
+
+		when:
+		StubRunnerOptions options = builder.build()
+
+		then:
+		options.getDependencies().toString() == '[bar:foo:+:stubs, baz:foo:+:stubs, baz2:foo:+:stubs]'
+	}
+
+	def shouldCreateDependenciesForCommaSeparatedStubs() {
+
+		given:
+		builder.withStubs('foo:bar,bar:foo,foo:baz')
+
+		when:
+		StubRunnerOptions options = builder.build()
+
+		then:
+		options.getDependencies().size() == 3
+	}
+
+	def shouldCreateDependenciesForCommaSeparatedStubsWithSameArtifact() {
+
+		given:
+		builder.withStubs('bar:foo,baz:foo,baz2:foo')
+
+		when:
+		StubRunnerOptions options = builder.build()
+
+		then:
+		options.getDependencies().toString() == '[bar:foo:+:stubs, baz:foo:+:stubs, baz2:foo:+:stubs]'
 	}
 
 	def shouldMapStubsWithPort() {
@@ -143,7 +191,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 		given:
 			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, "root", StubRunnerProperties.StubsMode.LOCAL,
 					"classifier", [new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "foo", "bar",
-					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", true))
+					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", true, false))
 			builder.withStubs("foo:bar:baz")
 		when:
 			StubRunnerOptions options = builder.build()
@@ -163,6 +211,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			options.consumerName == "consumer"
 			options.mappingsOutputFolder == "folder"
 			options.snapshotCheckSkip == true
+			options.deleteStubsAfterTest == false
 	}
 
 	def shouldNotPrintUsernameAndPassword() {
@@ -170,7 +219,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, "root",
 					StubRunnerProperties.StubsMode.CLASSPATH, "classifier",
 					[new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "username123", "password123",
-					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", true))
+					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", true, false))
 			builder.withStubs("foo:bar:baz")
 		when:
 			String options = builder.build().toString()

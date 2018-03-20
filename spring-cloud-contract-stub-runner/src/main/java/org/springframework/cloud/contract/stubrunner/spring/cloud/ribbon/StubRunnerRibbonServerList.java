@@ -47,7 +47,7 @@ class StubRunnerRibbonServerList implements ServerList<Server> {
 
 	StubRunnerRibbonServerList(final StubFinder stubFinder,
 			final StubMapperProperties stubMapperProperties,
-			final IClientConfig clientConfig, final ServerList<?> delegate) {
+			final IClientConfig clientConfig) {
 		String serviceName = clientConfig.getClientName();
 		String mappedServiceName = StringUtils
 				.hasText(stubMapperProperties.fromServiceIdToIvyNotation(serviceName)) ?

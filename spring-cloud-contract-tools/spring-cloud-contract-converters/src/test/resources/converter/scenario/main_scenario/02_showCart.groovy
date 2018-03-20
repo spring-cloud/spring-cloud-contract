@@ -22,6 +22,6 @@ Contract.make {
 		url '/cart'
 	}
 	response {
-		status 200
+		status OK()
 	}
 }

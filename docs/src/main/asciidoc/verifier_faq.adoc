@@ -1,4 +1,4 @@
-:introduction_url: https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master
+:introduction_url: https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/{branch}
 
 == Spring Cloud Contract FAQ
 
@@ -124,7 +124,7 @@ $(stub(...), test(...))
 $(client(...), server(...))
 ----
 
-You can read more about this in the https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_contract_dsl[Contract DSL section].
+You can read more about this in the https://cloud.spring.io/spring-cloud-contract/single/spring-cloud-contract.html#_contract_dsl[Contract DSL section].
 
 Calling `value()` or `$()` tells Spring Cloud Contract that you will be passing a dynamic value.
 Inside the `consumer()` method you pass the value that should be used on the consumer side (in the generated stub).
@@ -151,7 +151,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 					])
 				}
 			response {
-				status 200
+				status OK()
 				body([
 					    time : value(producer(regex('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-2][0-9]-[0-5][0-9]-[0-5][0-9]')),
 					    id: value([producer(regex('[0-9a-zA-z]{8}-[0-9a-zA-z]{4}-[0-9a-zA-z]{4}-[0-9a-zA-z]{12}'))

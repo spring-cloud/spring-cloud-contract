@@ -14,7 +14,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 		}
 	}
 	response {
-		status 200
+		status OK()
 		body([
 				result: "Sorry ${fromRequest().body('$.name')} but you're a fraud"
 		])

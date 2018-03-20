@@ -22,6 +22,6 @@ Contract.make {
 		url '/login'
 	}
 	response {
-		status 200
+		status OK()
 	}
 }

@@ -22,6 +22,6 @@ Contract.make {
 		url '/logout'
 	}
 	response {
-		status 200
+		status OK()
 	}
 }

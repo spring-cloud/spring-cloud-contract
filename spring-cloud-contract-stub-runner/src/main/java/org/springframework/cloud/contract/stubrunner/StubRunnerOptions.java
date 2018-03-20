@@ -97,12 +97,19 @@ public class StubRunnerOptions {
 	 */
 	private boolean snapshotCheckSkip;
 
+	/**
+	 * If set to {@code false} will NOT delete stubs from a temporary
+	 * folder after running tests
+	 */
+	private boolean deleteStubsAfterTest;
+
 	StubRunnerOptions(Integer minPortValue, Integer maxPortValue,
 			String stubRepositoryRoot, StubRunnerProperties.StubsMode stubsMode, String stubsClassifier,
 			Collection<StubConfiguration> dependencies,
 			Map<StubConfiguration, Integer> stubIdsToPortMapping,
 			String username, String password, final StubRunnerProxyOptions stubRunnerProxyOptions,
-			boolean stubsPerConsumer, String consumerName, String mappingsOutputFolder, boolean snapshotCheckSkip) {
+			boolean stubsPerConsumer, String consumerName, String mappingsOutputFolder, boolean snapshotCheckSkip,
+			boolean deleteStubsAfterTest) {
 		this.minPortValue = minPortValue;
 		this.maxPortValue = maxPortValue;
 		this.stubRepositoryRoot = stubRepositoryRoot;
@@ -117,6 +124,7 @@ public class StubRunnerOptions {
 		this.consumerName = consumerName;
 		this.mappingsOutputFolder = mappingsOutputFolder;
 		this.snapshotCheckSkip = snapshotCheckSkip;
+		this.deleteStubsAfterTest = deleteStubsAfterTest;
 	}
 
 	public Integer port(StubConfiguration stubConfiguration) {
@@ -141,7 +149,8 @@ public class StubRunnerOptions {
 				.withStubPerConsumer(Boolean.parseBoolean(System.getProperty("stubrunner.stubs-per-consumer", "false")))
 				.withConsumerName(System.getProperty("stubrunner.consumer-name"))
 				.withMappingsOutputFolder(System.getProperty("stubrunner.mappings-output-folder"))
-				.withSnapshotCheckSkip(Boolean.parseBoolean(System.getProperty("stubrunner.snapshot-check-skip", "false")));
+				.withSnapshotCheckSkip(Boolean.parseBoolean(System.getProperty("stubrunner.snapshot-check-skip", "false")))
+				.withDeleteStubsAfterTest(Boolean.parseBoolean(System.getProperty("stubrunner.delete-stubs-after-test", "true")));
 		String proxyHost = System.getProperty("stubrunner.proxy.host");
 		if (proxyHost != null) {
 			builder.withProxy(proxyHost, Integer.parseInt(System.getProperty("stubrunner.proxy.port")));
@@ -227,6 +236,14 @@ public class StubRunnerOptions {
 
 	public void setSnapshotCheckSkip(boolean snapshotCheckSkip) {
 		this.snapshotCheckSkip = snapshotCheckSkip;
+	}
+
+	public boolean isDeleteStubsAfterTest() {
+		return this.deleteStubsAfterTest;
+	}
+
+	public void setDeleteStubsAfterTest(boolean deleteStubsAfterTest) {
+		this.deleteStubsAfterTest = deleteStubsAfterTest;
 	}
 
 	public static class StubRunnerProxyOptions {

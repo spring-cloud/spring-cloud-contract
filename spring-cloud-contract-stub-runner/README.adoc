@@ -1,3 +1,6 @@
+:branch: master
+:samples_branch: 2.0.x
+
 === Stub Runner Core
 
 Runs stubs for service collaborators. Treating stubs as contracts of services allows to use stub-runner as an implementation of 
@@ -122,8 +125,8 @@ The producer would setup the contracts like this:
 
 To achieve proper stub packaging.
 
-Or using the https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/master/producer_with_restdocs/pom.xml[Maven `assembly` plugin] or
-https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/master/producer_with_restdocs/build.gradle[Gradle Jar] task you have to create the following
+Or using the https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/{samples_branch}/producer_with_restdocs/pom.xml[Maven `assembly` plugin] or
+https://github.com/spring-cloud-samples/spring-cloud-contract-samples/blob/{samples_branch}/producer_with_restdocs/build.gradle[Gradle Jar] task you have to create the following
 structure in your stubs jar.
 
 [source,bash]
@@ -381,9 +384,23 @@ for every registered WireMock server. Example for Stub Runner ids
  `com.example:foo`, `com.example:bar`.
 
 - `stubrunner.runningstubs.foo.port`
+- `stubrunner.runningstubs.com.example.foo.port`
 - `stubrunner.runningstubs.bar.port`
+- `stubrunner.runningstubs.com.example.bar.port`
 
 Which you can reference in your code.
+
+You can also use the `@StubRunnerPort` annotation to inject the port of a running stub.
+Value of the annotation can be the `groupid:artifactid` or just the `artifactid`. Example for Stub Runner ids
+`com.example:foo`, `com.example:bar`.
+
+[source,java,indent=0]
+----
+@StubRunnerPort("foo")
+int fooPort;
+@StubRunnerPort("com.example:bar")
+int barPort;
+----
 
 === Stub Runner Spring Cloud
 
@@ -391,8 +408,8 @@ Stub Runner can integrate with Spring Cloud.
 
 For real life examples you can check the
 
- - https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/master/producer[producer app sample]
- - https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/master/consumer_with_discovery[consumer app sample]
+ - https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}/producer[producer app sample]
+ - https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}/consumer_with_discovery[consumer app sample]
 
 ==== Stubbing Service Discovery
 
@@ -447,6 +464,13 @@ TIP: By default all service discovery will be stubbed. That means that regardles
 an existing `DiscoveryClient` its results will be ignored. However, if you want to reuse it, just set
  `stubrunner.cloud.delegate.enabled` to `true` and then your existing `DiscoveryClient` results will be
  merged with the stubbed ones.
+
+The default Maven configuration used by Stub Runner can be tweaked either
+via the following system properties or environment variables
+
+- `maven.repo.local` - path to the custom maven local repository location
+- `org.apache.maven.user-settings` - path to custom maven user settings location
+- `org.apache.maven.global-settings` - path to maven global settings location
 
 === Stub Runner Boot Application
 
@@ -582,7 +606,7 @@ request {
    method GET()
 }
 response {
-    status 200
+    status OK()
     body(
        foo: "foo"
     }
@@ -598,7 +622,7 @@ request {
    method GET()
 }
 response {
-    status 200
+    status OK()
     body(
        bar: "bar"
     }

@@ -27,7 +27,7 @@ import org.springframework.cloud.contract.spec.Contract
 			url "/${index}"
 		}
 		response {
-			status 200
+			status OK()
 		}
 	}
 }

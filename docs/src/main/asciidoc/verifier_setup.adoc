@@ -259,6 +259,8 @@ closure to set it up.
 JAR is available offline, remotely etc.)
 * *contractsSnapshotCheckSkip*: If set to `true` will not assert whether the
 downloaded stubs / contract JAR was downloaded from a remote location or a local one
+* *deleteStubsAfterTest*: If set to `false` will not remove any downloaded
+contracts from temporary directories
 
 [[gradle-single-base-class]]
 ==== Single Base Class for All Tests
@@ -584,6 +586,8 @@ Defaults to `groupid/artifactid` where `gropuid` is slash separated.
 * *contractsMode*: Picks the mode in which stubs will be found and registered
 * *contractsSnapshotCheckSkip*: If `true` then will not assert whether a stub / contract
 JAR was downloaded from local or remote location
+* *deleteStubsAfterTest*: If set to `false` will not remove any downloaded
+contracts from temporary directories
 * *contractsRepositoryUrl*: URL to a repo with the artifacts that have contracts. If it is not provided,
 use the current Maven ones.
 * *contractsRepositoryUsername*: The user name to be used to connect to the repo with contracts.
@@ -931,7 +935,7 @@ It's enough for you to mount your contracts, pass the environment variables
 The Docker image requires some environment variables to point to
 your running application, to the Artifact manager instance etc.
 
-- `PROJECT_GROUP` - your project's group id. Defaults to `com.example`.
+- `PROJECT_GROUP` - your project's group id. Defaults to `com.example`
 - `PROJECT_VERSION` - your project's version. Defaults to `0.0.1-SNAPSHOT`
 - `PROJECT_NAME` - artifact id. Defaults to `example`
 - `REPO_WITH_BINARIES_URL` - URL of your Artifact Manager. Defaults to `http://localhost:8081/artifactory/libs-release-local`
@@ -939,6 +943,24 @@ which is the default URL of https://jfrog.com/artifactory/[Artifactory] running 
 - `REPO_WITH_BINARIES_USERNAME` - (optional) username when the Artifact Manager is secured
 - `REPO_WITH_BINARIES_PASSWORD` - (optional) password when the Artifact Manager is secured
 - `PUBLISH_ARTIFACTS` - if set to `true` then will publish artifact to binary storage. Defaults to `true`.
+
+These environment variables are used when contracts lay in an external repository. To enable
+this feature you must set the `EXTERNAL_CONTRACTS_ARTIFACT_ID` environment variable.
+
+- `EXTERNAL_CONTRACTS_GROUP_ID` - group id of the project with contracts. Defaults to `com.example`
+- `EXTERNAL_CONTRACTS_ARTIFACT_ID`- artifact id of the project with contracts.
+- `EXTERNAL_CONTRACTS_CLASSIFIER`- classifier of the project with contracts. Empty by default
+- `EXTERNAL_CONTRACTS_VERSION` - version of the project with contracts. Defaults to `+`, equivalent to picking the latest
+- `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL` - URL of your Artifact Manager. Defaults to value of `REPO_WITH_BINARIES_URL` env var.
+If that's not set, defaults to `http://localhost:8081/artifactory/libs-release-local`
+which is the default URL of https://jfrog.com/artifactory/[Artifactory] running locally
+- `EXTERNAL_CONTRACTS_PATH` - path to contracts for the given project, inside the project with contracts.
+Defaults to slash separated `EXTERNAL_CONTRACTS_GROUP_ID` concatenated with `/` and `EXTERNAL_CONTRACTS_ARTIFACT_ID`. E.g.
+for group id `foo.bar` and artifact id `baz`, would result in `foo/bar/baz` contracts path.
+- `EXTERNAL_CONTRACTS_WORK_OFFLINE` - if set to `true` then will retrieve artifact with contracts
+from the container's `.m2`. Mount your local `.m2` as a volume available at the container's `/root/.m2` path.
+You must not set both `EXTERNAL_CONTRACTS_WORK_OFFLINE` and `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL`.
+
 
 These environment variables are used when tests are executed:
 

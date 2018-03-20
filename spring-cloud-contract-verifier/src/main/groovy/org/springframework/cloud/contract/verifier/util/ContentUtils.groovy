@@ -24,6 +24,7 @@ import groovy.util.logging.Slf4j
 import org.codehaus.groovy.runtime.GStringImpl
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
+import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
 import org.springframework.cloud.contract.spec.internal.NamedProperty
@@ -76,7 +77,7 @@ class ContentUtils {
 		if (bodyAsValue.isEmpty()){
 			return bodyAsValue
 		}
-		if (contentType == ContentType.TEXT) {
+		if (contentType == ContentType.TEXT || contentType == ContentType.FORM) {
 			return extractValueForText(bodyAsValue, valueProvider)
 		}
 		if (contentType == ContentType.JSON) {
@@ -281,8 +282,9 @@ class ContentUtils {
 		return val[1]
 	}
 
-	static ContentType recognizeContentTypeFromHeader(Headers headers) {
-		String content = headers?.entries.find { it.name == "Content-Type" } ?.clientValue?.toString()
+	static ContentType recognizeContentTypeFromHeader(Headers headers, Closure<Object> closure) {
+		Header header = headers?.entries?.find { it.name == "Content-Type" }
+		String content = closure(header)?.toString()
 		if (content?.contains("json")) {
 			return ContentType.JSON
 		}
@@ -292,7 +294,18 @@ class ContentUtils {
 		if (content?.contains("text")) {
 			return ContentType.TEXT
 		}
+		if (content?.contains("form-urlencoded")) {
+			return ContentType.FORM
+		}
 		return ContentType.UNKNOWN
+	}
+
+	static ContentType recognizeContentTypeFromHeader(Headers headers) {
+		return recognizeContentTypeFromHeader(headers, { Header header -> header?.clientValue })
+	}
+
+	static ContentType recognizeContentTypeFromTestHeader(Headers headers) {
+		return recognizeContentTypeFromHeader(headers, { Header header -> header?.serverValue })
 	}
 
 	static MatchingStrategy.Type getEqualsTypeFromContentType(ContentType contentType) {
@@ -386,11 +399,11 @@ class ContentUtils {
 	}
 
 	static String getGroovyMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
-		return "'$propertyName', ${namedPropertyName(propertyValue, "'")}, ${namedPropertyValue(propertyValue, "'")}.bytes"
+		return "'$propertyName', ${namedPropertyName(propertyValue, "'")}, ${groovyNamedPropertyValue(propertyValue, "'")}"
 	}
 
 	static String getJavaMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
-		return """"${escapeJava(propertyName)}", ${namedPropertyName(propertyValue, '"')}, ${namedPropertyValue(propertyValue, '"')}.getBytes()"""
+		return """"${escapeJava(propertyName)}", ${namedPropertyName(propertyValue, '"')}, ${javaNamedPropertyValue(propertyValue, '"')}"""
 	}
 
 	static String namedPropertyName(NamedProperty property, String quote) {
@@ -398,9 +411,24 @@ class ContentUtils {
 				property.name.serverValue.toString() : quote + escapeJava(property.name.serverValue.toString()) + quote
 	}
 
-	static String namedPropertyValue(NamedProperty property, String quote) {
-		return property.value.serverValue instanceof ExecutionProperty ?
-				property.value.serverValue.toString() : quote + escapeJava(property.value.serverValue.toString()) + quote
+	static String groovyNamedPropertyValue(NamedProperty property, String quote) {
+		if (property.value.serverValue instanceof ExecutionProperty) {
+			return property.value.serverValue.toString()
+		} else if (property.value.serverValue instanceof byte[]) {
+			byte[] bytes = (byte[]) property.value.serverValue
+			return "[" + bytes.collect { it }.join(", ") + "] as byte[]"
+		}
+		return  quote + escapeJava(property.value.serverValue.toString()) + quote + ".bytes"
+	}
+
+	static String javaNamedPropertyValue(NamedProperty property, String quote) {
+		if (property.value.serverValue instanceof ExecutionProperty) {
+			return property.value.serverValue.toString()
+		} else if (property.value.serverValue instanceof byte[]) {
+			byte[] bytes = (byte[]) property.value.serverValue
+			return "new byte[] {" + bytes.collect { it }.join(", ") + "}"
+		}
+		return  quote + escapeJava(property.value.serverValue.toString()) + quote + ".getBytes()"
 	}
 
 }

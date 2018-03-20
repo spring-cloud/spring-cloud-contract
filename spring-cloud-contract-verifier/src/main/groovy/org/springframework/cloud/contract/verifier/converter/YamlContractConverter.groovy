@@ -400,6 +400,8 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 				return patterns.onlyAlphaUnicode()
 			case PredefinedRegex.number:
 				return patterns.number()
+			case PredefinedRegex.any_double:
+				return patterns.aDouble()
 			case PredefinedRegex.any_boolean:
 				return patterns.anyBoolean()
 			case PredefinedRegex.ip_address:

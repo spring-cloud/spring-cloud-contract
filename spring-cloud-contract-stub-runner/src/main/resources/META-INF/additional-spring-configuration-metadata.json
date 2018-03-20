@@ -1,0 +1,58 @@
+{
+  "properties": [
+    {
+      "name": "stubrunner.cloud.consul.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable register stubs in Consul.",
+      "defaultValue": true
+    },
+    {
+      "name": "stubrunner.cloud.delegate.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable DiscoryClient's StubRunner implementation.",
+      "defaultValue": true
+    },
+    {
+      "name": "stubrunner.cloud.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable Spring Cloud.",
+      "defaultValue": true
+    },
+    {
+      "name": "stubrunner.cloud.eureka.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable register stubs in Eureka.",
+      "defaultValue": true
+    },
+    {
+      "name": "stubrunner.cloud.ribbon.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable StubRunner's Ribbon.",
+      "defaultValue": true
+    },
+    {
+      "name": "stubrunner.cloud.stubbed.discovery.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable Stubbed Discovery mode.",
+      "defaultValue": true
+    },
+    {
+      "name": "stubrunner.cloud.zookeeper.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable register stubs in Zookeper.",
+      "defaultValue": true
+    },
+    {
+      "name": "stubrunner.integration.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable StubRunner for Spring Integration.",
+      "defaultValue": true
+    },
+    {
+      "name": "stubrunner.stream.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable StubRunner for Spring Cloud Stream.",
+      "defaultValue": true
+    }
+  ]
+}

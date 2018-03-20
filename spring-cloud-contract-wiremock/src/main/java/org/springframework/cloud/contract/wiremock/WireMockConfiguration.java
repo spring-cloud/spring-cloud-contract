@@ -78,11 +78,11 @@ public class WireMockConfiguration implements SmartLifecycle {
 	public void init() throws IOException {
 		if (this.options == null) {
 			com.github.tomakehurst.wiremock.core.WireMockConfiguration factory = WireMockSpring.options();
-			if (this.wireMock.getPort() != 8080) {
-				factory.port(this.wireMock.getPort());
+			if (this.wireMock.getServer().getPort() != 8080) {
+				factory.port(this.wireMock.getServer().getPort());
 			}
-			if (this.wireMock.getHttpsPort() != -1) {
-				factory.httpsPort(this.wireMock.getHttpsPort());
+			if (this.wireMock.getServer().getHttpsPort() != -1) {
+				factory.httpsPort(this.wireMock.getServer().getHttpsPort());
 			}
 			registerFiles(factory);
 			factory.notifier(new Slf4jNotifier(true));
@@ -99,7 +99,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 	}
 
 	private void registerStubs() throws IOException {
-		for (String stubs : this.wireMock.getStubs()) {
+		for (String stubs : this.wireMock.getServer().getStubs()) {
 			if (StringUtils.hasText(stubs)) {
 				PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(
 						this.resourceLoader);
@@ -120,7 +120,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 
 	private void registerFiles(com.github.tomakehurst.wiremock.core.WireMockConfiguration factory) throws IOException {
 		List<Resource> resources = new ArrayList<>();
-		for (String files : this.wireMock.getFiles()) {
+		for (String files : this.wireMock.getServer().getFiles()) {
 			if (StringUtils.hasText(files)) {
 				PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(
 						this.resourceLoader);
@@ -175,46 +175,70 @@ public class WireMockConfiguration implements SmartLifecycle {
 
 }
 
-@ConfigurationProperties("wiremock.server")
+@ConfigurationProperties("wiremock")
 class WireMockProperties {
-	private int port = 8080;
 
-	private int httpsPort = -1;
+	private Server server = new Server();
 
-	private String[] stubs;
+	private boolean restTemplateSslEnabled;
 
-	private String[] files;
-
-	public int getPort() {
-		return this.port;
+	public boolean isRestTemplateSslEnabled() {
+		return this.restTemplateSslEnabled;
 	}
 
-	public void setPort(int port) {
-		this.port = port;
+	public void setRestTemplateSslEnabled(boolean restTemplateSslEnabled) {
+		this.restTemplateSslEnabled = restTemplateSslEnabled;
 	}
 
-	public int getHttpsPort() {
-		return this.httpsPort;
+	public Server getServer() {
+		return this.server;
 	}
 
-	public void setHttpsPort(int httpsPort) {
-		this.httpsPort = httpsPort;
+	public void setServer(Server server) {
+		this.server = server;
 	}
 
-	public String[] getStubs() {
-		return this.stubs;
-	}
+	public static class Server {
 
-	public void setStubs(String[] stubs) {
-		this.stubs = stubs;
-	}
+		private int port = 8080;
 
-	public String[] getFiles() {
-		return this.files;
-	}
+		private int httpsPort = -1;
 
-	public void setFiles(String[] files) {
-		this.files = files;
+		private String[] stubs;
+
+		private String[] files;
+
+		public int getPort() {
+			return this.port;
+		}
+
+		public void setPort(int port) {
+			this.port = port;
+		}
+
+		public int getHttpsPort() {
+			return this.httpsPort;
+		}
+
+		public void setHttpsPort(int httpsPort) {
+			this.httpsPort = httpsPort;
+		}
+
+		public String[] getStubs() {
+			return this.stubs;
+		}
+
+		public void setStubs(String[] stubs) {
+			this.stubs = stubs;
+		}
+
+		public String[] getFiles() {
+			return this.files;
+		}
+
+		public void setFiles(String[] files) {
+			this.files = files;
+		}
 	}
 
 }

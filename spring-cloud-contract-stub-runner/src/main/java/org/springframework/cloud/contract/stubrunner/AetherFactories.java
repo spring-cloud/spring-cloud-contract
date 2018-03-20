@@ -16,6 +16,14 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
+import java.io.File;
+
+import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.repository.LocalRepository;
+import org.eclipse.aether.repository.RepositoryPolicy;
+import org.springframework.cloud.contract.stubrunner.util.StringUtils;
 import shaded.org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import shaded.org.apache.maven.settings.Settings;
 import shaded.org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
@@ -30,14 +38,6 @@ import shaded.org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 import shaded.org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import shaded.org.eclipse.aether.transport.file.FileTransporterFactory;
 import shaded.org.eclipse.aether.transport.http.HttpTransporterFactory;
-
-import java.io.File;
-
-import org.eclipse.aether.DefaultRepositorySystemSession;
-import org.eclipse.aether.RepositorySystem;
-import org.eclipse.aether.RepositorySystemSession;
-import org.eclipse.aether.repository.LocalRepository;
-import org.eclipse.aether.repository.RepositoryPolicy;
 
 class AetherFactories {
 
@@ -67,22 +67,37 @@ class AetherFactories {
 
 	private static String localRepositoryDirectory() {
 		String localRepoLocationFromSettings = settings().getLocalRepository();
-		return System.getProperty(MAVEN_LOCAL_REPOSITORY_LOCATION, localRepoLocationFromSettings != null
-			? localRepoLocationFromSettings
-			: System.getProperty("user.home") + File.separator + ".m2" + File.separator + "repository");
+		return readPropertyFromSystemProps(localRepoLocationFromSettings);
+	}
+
+	private static String readPropertyFromSystemProps(
+			String localRepoLocationFromSettings) {
+		String mavenLocalRepo = fromSystemPropOrEnv(MAVEN_LOCAL_REPOSITORY_LOCATION);
+		return StringUtils.hasText(mavenLocalRepo) ? mavenLocalRepo :
+				localRepoLocationFromSettings != null ? localRepoLocationFromSettings
+			: System.getProperty("user.home") + File.separator + ".m2" + File.separator + "repository";
+	}
+
+	// system prop takes precedence over env var
+	private static String fromSystemPropOrEnv(String prop) {
+		String resolvedProp = System.getProperty(prop);
+		if (StringUtils.hasText(resolvedProp)) {
+			return resolvedProp;
+		}
+		return System.getenv(prop);
 	}
 
 	private static Settings settings() {
 		SettingsBuilder builder = new DefaultSettingsBuilderFactory().newInstance();
 		SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
-		String user = System.getProperty(MAVEN_USER_SETTINGS_LOCATION);
+		String user = fromSystemPropOrEnv(MAVEN_USER_SETTINGS_LOCATION);
 		if (user == null) {
 			request.setUserSettingsFile(new File(new File(System.getProperty("user.home")).getAbsoluteFile(),
 					File.separator + ".m2" + File.separator + "settings.xml"));
 		} else {
 			request.setUserSettingsFile(new File(user));
 		}
-		String global = System.getProperty(MAVEN_GLOBAL_SETTINGS_LOCATION);
+		String global = fromSystemPropOrEnv(MAVEN_GLOBAL_SETTINGS_LOCATION);
 		if (global != null) {
 			request.setGlobalSettingsFile(new File(global));
 		}

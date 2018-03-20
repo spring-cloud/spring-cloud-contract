@@ -17,7 +17,7 @@ org.springframework.cloud.contract.spec.Contract.make {
 
 				}
 			response {
-				status 200
+				status OK()
 				body(
 						fraudCheckStatus: "OK",
 						rejectionReason: $(consumer(null), producer(execute('assertThatRejectionReasonIsNull($it)')))

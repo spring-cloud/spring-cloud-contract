@@ -23,7 +23,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.stubrunner.util.StubsParser;
@@ -48,6 +47,7 @@ public class StubRunnerOptionsBuilder {
 	private String mappingsOutputFolder;
 	private StubRunnerProperties.StubsMode stubsMode;
 	private boolean snapshotCheckSkip = false;
+	private boolean deleteStubsAfterTest = true;
 
 	public StubRunnerOptionsBuilder() {
 	}
@@ -127,6 +127,7 @@ public class StubRunnerOptionsBuilder {
 		this.stubIdsToPortMapping = options.stubIdsToPortMapping != null ?
 				options.stubIdsToPortMapping : new LinkedHashMap<StubConfiguration, Integer>();
 		this.snapshotCheckSkip = options.isSnapshotCheckSkip();
+		this.deleteStubsAfterTest = options.isDeleteStubsAfterTest();
 		return this;
 	}
 
@@ -140,15 +141,20 @@ public class StubRunnerOptionsBuilder {
 		return this;
 	}
 
+	public StubRunnerOptionsBuilder withDeleteStubsAfterTest(boolean deleteStubsAfterTest) {
+		this.deleteStubsAfterTest = deleteStubsAfterTest;
+		return this;
+	}
+
 	public StubRunnerOptions build() {
 		return new StubRunnerOptions(this.minPortValue, this.maxPortValue, this.stubRepositoryRoot,
 				this.stubsMode, this.stubsClassifier, buildDependencies(), this.stubIdsToPortMapping,
 				this.username, this.password, this.stubRunnerProxyOptions, this.stubsPerConsumer, this.consumerName,
-				this.mappingsOutputFolder, this.snapshotCheckSkip);
+				this.mappingsOutputFolder, this.snapshotCheckSkip, this.deleteStubsAfterTest);
 	}
 
 	private Collection<StubConfiguration> buildDependencies() {
-		Set<StubConfiguration> stubConfigurations = StubsParser
+		List<StubConfiguration> stubConfigurations = StubsParser
 				.fromString(this.stubs, this.stubsClassifier);
 		this.stubConfigurations.addAll(stubConfigurations);
 		return this.stubConfigurations;
@@ -171,6 +177,7 @@ public class StubRunnerOptionsBuilder {
 				}
 			}
 			list.addAll(linkedList);
+			return list;
 		}
 		Collections.addAll(list, stubIdsToPortMapping);
 		return list;

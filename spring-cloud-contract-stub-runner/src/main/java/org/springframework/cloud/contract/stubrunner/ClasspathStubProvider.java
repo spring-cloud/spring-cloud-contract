@@ -75,7 +75,9 @@ public class ClasspathStubProvider implements StubDownloaderBuilder {
 					throw new IllegalStateException("No stubs were found on classpath for [" + config.getGroupId() + ":" + config.getArtifactId() + "]");
 				}
 				final File tmp = createTempDir();
-				tmp.deleteOnExit();
+				if (stubRunnerOptions.isDeleteStubsAfterTest()) {
+					tmp.deleteOnExit();
+				}
 				Pattern groupAndArtifactPattern = Pattern.compile(
 						"^(.*)(" + config.getGroupId() + "." + config.getArtifactId() + ")(.*)$");
 				String version = config.getVersion();

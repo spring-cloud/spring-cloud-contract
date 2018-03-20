@@ -35,7 +35,8 @@ import java.util.regex.Pattern
 class Response extends Common {
 
 	@Delegate ServerPatternValueDslProperty property = new ServerPatternValueDslProperty()
-
+	@Delegate HttpStatus httpStatus = new HttpStatus()
+	
 	DslProperty status
 	DslProperty delay
 	Headers headers

@@ -27,7 +27,7 @@ import spock.lang.Specification
 class MessagingMethodBodyBuilderSpec extends Specification {
 
 	@Shared ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(assertJsonSize: true)
-	
+
 	def "should work for triggered based messaging with Spock"() {
 		given:
 // tag::trigger_method_dsl[]
@@ -497,6 +497,36 @@ Contract.make {
   assertThatJson(parsedJson).field("['eventId']").matches("[0-9]+");
 '''
 		stripped(test) == stripped(expectedMsg)
+	}
+
+	@Issue("567")
+	def "should generate tests with message headers containing regular expression with backslashes for JUnit"() {
+		given:
+			def contractDsl =
+					org.springframework.cloud.contract.spec.Contract.make {
+						label 'trigger_event'
+
+						input {
+							triggeredBy('requestIsCalled()')
+						}
+
+						outputMessage {
+							sentTo 'topic.rateablequote'
+							headers {
+								header('processId', value(producer(regex('\\d+')), consumer('123')))
+							}
+                            body([
+                                    eventId: value(producer(regex('\\d+')), consumer('1'))
+                            ])
+						}
+					}
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+    		test.contains('assertThat(response.getHeader("processId").toString()).matches("\\d+");')
 	}
 
 	@Issue("336")

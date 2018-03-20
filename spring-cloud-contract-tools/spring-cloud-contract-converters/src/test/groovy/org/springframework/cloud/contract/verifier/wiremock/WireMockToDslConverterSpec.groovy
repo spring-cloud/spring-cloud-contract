@@ -70,7 +70,7 @@ class WireMockToDslConverterSpec extends Specification {
 					}
 				}
 				response {
-					status 200
+					status OK()
 					body("""{
     "id": {
         "value": "132"
@@ -131,7 +131,7 @@ class WireMockToDslConverterSpec extends Specification {
 					}
 				}
 				response {
-					status 200
+					status OK()
 					body( """{
     "status": "OK"
 }""")
@@ -185,7 +185,7 @@ class WireMockToDslConverterSpec extends Specification {
 					}
 				}
 				response {
-					status 200
+					status OK()
 					body(200)
 					headers {
 						header 'Content-Type': 'application/json'
@@ -236,7 +236,7 @@ class WireMockToDslConverterSpec extends Specification {
 					}
 				}
 				response {
-					status 200
+					status OK()
 					body( """[
     {
         "a": 1,
@@ -290,7 +290,7 @@ class WireMockToDslConverterSpec extends Specification {
 					}
 				}
 				response {
-					status 200
+					status OK()
 					body("""[
     {
         "amount": 1.01,
@@ -350,7 +350,7 @@ class WireMockToDslConverterSpec extends Specification {
 					body ('''{"property1":"abc", "property2":"2017-01", "property3":"666", "property4":1428566412}''')
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		when:
@@ -390,7 +390,7 @@ class WireMockToDslConverterSpec extends Specification {
 					body $(consumer(~/1/), producer('1'))
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		when:
@@ -431,7 +431,7 @@ class WireMockToDslConverterSpec extends Specification {
 					body '''{"pan":"4855141150107894", "expirationDate":"2017-01", "dcvx":"178"}'''
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		when:
@@ -471,7 +471,7 @@ class WireMockToDslConverterSpec extends Specification {
 					body '''{"pan":"4855141150107894", "expirationDate":"2017-01", "dcvx":"178"}'''
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		when:
@@ -511,7 +511,7 @@ class WireMockToDslConverterSpec extends Specification {
 					body $(consumer(~/1/), producer('1'))
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		when:
@@ -549,7 +549,7 @@ class WireMockToDslConverterSpec extends Specification {
 					url '/test'
 				}
 				response {
-					status 200
+					status OK()
 				}
 			}
 		when:
