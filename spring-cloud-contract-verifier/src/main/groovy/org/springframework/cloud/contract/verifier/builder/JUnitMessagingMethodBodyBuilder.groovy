@@ -30,6 +30,7 @@ import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import java.util.regex.Pattern
 
+import static groovy.json.StringEscapeUtils.escapeJava
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
 
 /**
@@ -221,8 +222,10 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	protected String createHeaderComparison(Pattern headerValue) {
 		String escapedHeader = convertUnicodeEscapesIfRequired("$headerValue")
-		return "matches(\"$escapedHeader\");"
+		String escapedJavaHeader = escapeJava(escapedHeader)
+		return "matches(\"$escapedJavaHeader\");"
 	}
+
 
 	private String patternText(Pattern value) {
 		return "==~ java.util.regex.Pattern.compile('$value')"
