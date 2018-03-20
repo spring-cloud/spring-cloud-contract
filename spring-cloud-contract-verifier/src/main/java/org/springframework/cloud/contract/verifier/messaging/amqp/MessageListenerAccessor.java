@@ -34,10 +34,10 @@ class MessageListenerAccessor {
 		this.bindings = bindings;
 	}
 
-	List<SimpleMessageListenerContainer> getListenerContainersForDestination(String destination) {
+	List<SimpleMessageListenerContainer> getListenerContainersForDestination(String destination, String routingKey) {
 		List<SimpleMessageListenerContainer> listenerContainers = collectListenerContainers();
 		//we interpret the destination as exchange name and collect all the queues bound to this exchange
-		Set<String> queueNames = collectQueuesBoundToDestination(destination);
+		Set<String> queueNames = collectQueuesBoundToDestination(destination, routingKey);
 		return getListenersByBoundQueues(listenerContainers, queueNames);
 	}
 
@@ -56,10 +56,12 @@ class MessageListenerAccessor {
 		return matchingContainers;
 	}
 
-	private Set<String> collectQueuesBoundToDestination(String destination) {
+	private Set<String> collectQueuesBoundToDestination(String destination, String routingKey) {
 		Set<String> queueNames = new HashSet<>();
 		for (Binding binding: this.bindings) {
-			if (destination.equals(binding.getExchange()) && DestinationType.QUEUE.equals(binding.getDestinationType())) {
+			if (destination.equals(binding.getExchange())
+					&& (routingKey == null || routingKey.equals(binding.getRoutingKey()))
+					&& DestinationType.QUEUE.equals(binding.getDestinationType())) {
 				queueNames.add(binding.getDestination());
 			}
 		}

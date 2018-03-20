@@ -29,12 +29,12 @@ import org.springframework.amqp.core.MessagePropertiesBuilder;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.support.CorrelationData;
+import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.util.Assert;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mockingDetails;
@@ -82,12 +82,17 @@ public class SpringAmqpStubMessages implements
 		if (headers != null && headers.containsKey(DEFAULT_CLASSID_FIELD_NAME)) {
 			message.getMessageProperties().setHeader(DEFAULT_CLASSID_FIELD_NAME, headers.get(DEFAULT_CLASSID_FIELD_NAME));
 		}
+		if (headers != null && headers.containsKey(AmqpHeaders.RECEIVED_ROUTING_KEY)) {
+			message.getMessageProperties()
+					.setReceivedRoutingKey((String) headers.get(AmqpHeaders.RECEIVED_ROUTING_KEY));
+		}
 		send(message, destination);
 	}
 
 	@Override
 	public void send(Message message, String destination) {
-		List<SimpleMessageListenerContainer> listenerContainers = this.messageListenerAccessor.getListenerContainersForDestination(destination);
+		final String routingKey = message.getMessageProperties().getReceivedRoutingKey();
+		List<SimpleMessageListenerContainer> listenerContainers = this.messageListenerAccessor.getListenerContainersForDestination(destination, routingKey);
 		if (listenerContainers.isEmpty()) {
 			throw new IllegalStateException("no listeners found for destination " + destination);
 		}
@@ -100,8 +105,9 @@ public class SpringAmqpStubMessages implements
 	@Override
 	public Message receive(String destination, long timeout, TimeUnit timeUnit) {
 		ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
-		verify(this.rabbitTemplate, atLeastOnce()).send(eq(destination), anyString(), messageCaptor.capture(), any(CorrelationData.class));
-
+		ArgumentCaptor<String> routingKeyCaptor = ArgumentCaptor.forClass(String.class);
+		verify(this.rabbitTemplate, atLeastOnce()).send(eq(destination), routingKeyCaptor.capture(),
+				messageCaptor.capture(), any(CorrelationData.class));
 		if (messageCaptor.getAllValues().isEmpty()) {
 			log.info("no messages found on destination {}", destination);
 			return null;
@@ -109,7 +115,13 @@ public class SpringAmqpStubMessages implements
 			log.info("multiple messages found on destination {} returning last one - {}", destination);
 			return messageCaptor.getValue();
 		}
-		return messageCaptor.getValue();
+		Message message = messageCaptor.getValue();
+		if (!routingKeyCaptor.getValue().isEmpty()) {
+			log.info("routing key passed  {}", routingKeyCaptor.getValue());
+			message.getMessageProperties()
+					.setReceivedRoutingKey(routingKeyCaptor.getValue());
+		}
+		return message;
 	}
 
 	@Override
