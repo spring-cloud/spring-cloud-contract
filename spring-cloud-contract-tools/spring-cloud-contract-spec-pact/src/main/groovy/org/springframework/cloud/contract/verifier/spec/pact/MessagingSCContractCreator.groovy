@@ -36,21 +36,17 @@ class MessagingSCContractCreator {
 	private static final String FULL_BODY = '$'
 
 	Collection<Contract> convertFrom(MessagePact pact) {
-		pact.messages.collect({ Message message ->
+		return pact.messages.collect({ Message message ->
 			Contract.make {
 				label("$message.description")
-
 				if (!message.providerStates.isEmpty()) {
 					input {
 						triggeredBy(getTriggeredBy(message))
 					}
 				}
-
 				outputMessage {
 					if (message.contents.present) {
 						body(parseBody(message.contents))
-
-
 						Category bodyRules = message.matchingRules.rulesForCategory('body')
 						if (bodyRules && !bodyRules.matchingRules.isEmpty()) {
 							testMatchers {
@@ -92,7 +88,6 @@ class MessagingSCContractCreator {
 							}
 						}
 					}
-
 					if (!message.metaData.isEmpty()) {
 						headers {
 							message.metaData.each { String k, String v ->
@@ -110,7 +105,7 @@ class MessagingSCContractCreator {
 	}
 
 	private String getTriggeredBy(Message message) {
-		message.providerStates.first().name
+		return message.providerStates.first().name
 				.replace(':', ' ')
 				.replace(' ', '_')
 				.replace('(', '')
@@ -127,9 +122,9 @@ class MessagingSCContractCreator {
 					body = jsonSlurper.parseText(body)
 				} catch (JsonException ex) { /*it wasn't a JSON string after all...*/ }
 			}
-			body
+			return body
 		} else {
-			body
+			return body
 		}
 	}
 

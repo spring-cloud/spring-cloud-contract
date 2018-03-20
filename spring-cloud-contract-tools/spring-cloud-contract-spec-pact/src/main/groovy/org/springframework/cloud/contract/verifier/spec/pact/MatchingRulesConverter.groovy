@@ -1,11 +1,14 @@
 package org.springframework.cloud.contract.verifier.spec.pact
 
 import au.com.dius.pact.model.matchingrules.Category
+import au.com.dius.pact.model.matchingrules.DateMatcher
 import au.com.dius.pact.model.matchingrules.EqualsMatcher
 import au.com.dius.pact.model.matchingrules.MaxTypeMatcher
 import au.com.dius.pact.model.matchingrules.MinMaxTypeMatcher
 import au.com.dius.pact.model.matchingrules.MinTypeMatcher
 import au.com.dius.pact.model.matchingrules.RegexMatcher
+import au.com.dius.pact.model.matchingrules.TimeMatcher
+import au.com.dius.pact.model.matchingrules.TimestampMatcher
 import au.com.dius.pact.model.matchingrules.TypeMatcher
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
@@ -22,16 +25,14 @@ import org.springframework.cloud.contract.spec.internal.MatchingType
 class MatchingRulesConverter {
 
 	static Category matchingRulesForBody(BodyMatchers bodyMatchers) {
-		matchingRulesFor("body", bodyMatchers)
+		return matchingRulesFor("body", bodyMatchers)
 	}
 
 	private static Category matchingRulesFor(String categoryName, BodyMatchers bodyMatchers) {
 		Category category = new Category(categoryName)
-
 		bodyMatchers.jsonPathMatchers().forEach({ BodyMatcher it ->
 			String key = getMatcherKey(it.path())
 			MatchingType matchingType = it.matchingType()
-
 			switch (matchingType) {
 				case MatchingType.EQUALITY:
 					category.setRule(key, EqualsMatcher.INSTANCE)
@@ -48,8 +49,14 @@ class MatchingRulesConverter {
 					}
 					break
 				case MatchingType.DATE:
+					category.setRule(key, new DateMatcher())
+					break
 				case MatchingType.TIME:
+					category.setRule(key, new TimeMatcher())
+					break
 				case MatchingType.TIMESTAMP:
+					category.setRule(key, new TimestampMatcher())
+					break
 				case MatchingType.REGEX:
 					category.setRule(key, new RegexMatcher(it.value().toString()))
 					break
@@ -57,12 +64,11 @@ class MatchingRulesConverter {
 					break
 			}
 		})
-
-		category
+		return category
 	}
 
 	private static String getMatcherKey(String path) {
-		"${path.startsWith('$') ? path.substring(1) : path}"
+		return "${path.startsWith('$') ? path.substring(1) : path}"
 	}
 
 }

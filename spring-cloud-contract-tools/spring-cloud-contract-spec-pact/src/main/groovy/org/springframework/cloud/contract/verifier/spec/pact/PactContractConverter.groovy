@@ -37,32 +37,26 @@ class PactContractConverter implements ContractConverter<Collection<Pact>> {
 	@Override
 	Collection<Contract> convertFrom(File file) {
 		Pact pact = PactReader.loadPact(file)
-
 		if (pact instanceof RequestResponsePact) {
 			return requestResponseSCContractCreator.convertFrom(pact as RequestResponsePact)
 		}
-
 		if (pact instanceof MessagePact) {
 			return messagingSCContractCreator.convertFrom(pact as MessagePact)
 		}
-
 		throw new UnsupportedOperationException("We currently don't support pact contracts of type" + pact.class.simpleName)
 	}
 
 	@Override
 	Collection<Pact> convertTo(Collection<Contract> contracts) {
 		List<Pact> pactContracts = new ArrayList<>()
-
 		contracts.collect({ Contract contract ->
 			if (contract.request) {
 				pactContracts.add(requestResponsePactCreator.createFromContract(contract))
 			}
-
 			if (contract.input) {
 				pactContracts.add(messagePactCreator.createFromContract(contract))
 			}
 		})
-
-		pactContracts
+		return pactContracts
 	}
 }

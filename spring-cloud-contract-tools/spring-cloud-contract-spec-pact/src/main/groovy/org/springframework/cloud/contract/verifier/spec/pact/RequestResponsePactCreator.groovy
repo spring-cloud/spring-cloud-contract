@@ -27,20 +27,16 @@ import org.springframework.cloud.contract.spec.internal.Response
 @PackageScope
 class RequestResponsePactCreator {
 
-	static final Closure requestDslPropertyValueExtractor = { DslProperty property -> property.serverValue }
-	static final Closure responseDslPropertyValueExtractor = { DslProperty property -> property.clientValue }
+	private static final Closure requestDslPropertyValueExtractor = { DslProperty property -> property.serverValue }
+	private static final Closure responseDslPropertyValueExtractor = { DslProperty property -> property.clientValue }
 
 	RequestResponsePact createFromContract(Contract contract) {
 		assertNoExecutionProperty(contract)
-
 		PactDslWithProvider pactDslWithProvider = ConsumerPactBuilder.consumer("Consumer")
 				.hasPactWith("Provider")
-
 		PactDslRequestWithPath pactDslRequest = createPactDslRequestWithPath(contract, pactDslWithProvider)
-
 		PactDslResponse pactDslResponse = createPactDslResponse(contract, pactDslRequest)
-
-		pactDslResponse.toPact()
+		return pactDslResponse.toPact()
 	}
 
 	private void assertNoExecutionProperty(Contract contract) {
@@ -70,56 +66,42 @@ class RequestResponsePactCreator {
 
 	private PactDslRequestWithPath createPactDslRequestWithPath(Contract contract, PactDslWithProvider pactDslWithProvider) {
 		Request request = contract.request
-
 		PactDslRequestWithPath pactDslRequest = pactDslWithProvider
 				.uponReceiving(contract.description ?: "")
 				.path(url(request))
 				.method(request.method.serverValue.toString())
-
 		String query = query(request)
-
 		if (query) {
 			pactDslRequest = pactDslRequest.encodedQuery(query)
 		}
-
 		if (request.headers) {
 			pactDslRequest = pactDslRequest.headers(headers(request.headers, requestDslPropertyValueExtractor))
 		}
-
 		if (request.body) {
 			DslPart pactRequestBody = BodyConverter.toPactBody(request.body, requestDslPropertyValueExtractor)
-
 			if (request.matchers) {
 				pactRequestBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(request.matchers))
 			}
-
 			pactDslRequest = pactDslRequest.body(pactRequestBody)
 		}
-
-		pactDslRequest
+		return pactDslRequest
 	}
 
 	private PactDslResponse createPactDslResponse(Contract contract, PactDslRequestWithPath pactDslRequest) {
 		Response response = contract.response
-
 		PactDslResponse pactDslResponse = pactDslRequest.willRespondWith()
 				.status(response.status.clientValue as Integer)
-
 		if (response.headers) {
 			pactDslResponse = pactDslResponse.headers(headers(response.headers, responseDslPropertyValueExtractor))
 		}
-
 		if (response.body) {
 			DslPart pactResponseBody = BodyConverter.toPactBody(response.body, responseDslPropertyValueExtractor)
-
 			if (response.matchers) {
 				pactResponseBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(response.matchers))
 			}
-
 			pactDslResponse = pactDslResponse.body(pactResponseBody)
 		}
-
-		pactDslResponse
+		return pactDslResponse
 	}
 
 	private String url(Request request) {
@@ -143,7 +125,7 @@ class RequestResponsePactCreator {
 				}
 			}
 		}
-		query
+		return query
 	}
 
 	private QueryParameters queryParams(Request request) {

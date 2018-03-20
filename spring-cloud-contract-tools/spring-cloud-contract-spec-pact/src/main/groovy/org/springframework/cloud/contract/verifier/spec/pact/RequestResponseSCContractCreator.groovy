@@ -37,12 +37,11 @@ class RequestResponseSCContractCreator {
 	private static final String FULL_BODY = '$'
 
 	Collection<Contract> convertFrom(RequestResponsePact pact) {
-		pact.interactions.collect { RequestResponseInteraction interaction ->
+		return pact.interactions.collect { RequestResponseInteraction interaction ->
 			Contract.make {
 				description(buildDescription(interaction))
 				request {
 					Request request = interaction.request
-					
 					method(request.method)
 					if (request.query) {
 						url(request.path) {
@@ -74,7 +73,6 @@ class RequestResponseSCContractCreator {
 							body(parsedBody.toString())
 						}
 					}
-
 					Category bodyRules = request.matchingRules.rulesForCategory('body')
 					if (bodyRules && !bodyRules.matchingRules.isEmpty()) {
 						stubMatchers {
@@ -96,7 +94,6 @@ class RequestResponseSCContractCreator {
 				}
 				response {
 					Response response = interaction.response
-
 					status(response.status)
 					if (response.body.present) {
 						def parsedBody = parseBody(response.body)
@@ -108,7 +105,6 @@ class RequestResponseSCContractCreator {
 							body(parsedBody.toString())
 						}
 					}
-
 					Category bodyRules = response.matchingRules.rulesForCategory('body')
 					if (bodyRules && !bodyRules.matchingRules.isEmpty()) {
 						testMatchers {
@@ -175,19 +171,19 @@ class RequestResponseSCContractCreator {
 				description += ")"
 			}
 		})
-		description
+		return description
 	}
 
 	private parseBody(OptionalBody optionalBody) {
 		if (optionalBody.present) {
 			def body = new JsonSlurper().parseText(optionalBody.value)
 			if (body instanceof String) {
-				optionalBody.value
+				return optionalBody.value
 			} else {
-				body
+				return body
 			}
 		} else {
-			optionalBody.value
+			return optionalBody.value
 		}
 	}
 

@@ -23,76 +23,66 @@ import org.springframework.cloud.contract.verifier.util.ContentUtils
 @PackageScope
 class MessagePactCreator {
 
-	static final Closure clientValueExtractor = { DslProperty property -> property.clientValue }
+	private static final Closure clientValueExtractor = { DslProperty property -> property.clientValue }
 
 	MessagePact createFromContract(Contract contract) {
-
 		MessagePactBuilder messagePactBuilder = MessagePactBuilder.consumer("Consumer")
 				.hasPactWith("Provider")
 				.given(getGiven(contract.input))
 				.expectsToReceive(getOutcome(contract))
-
 		if (contract.outputMessage) {
 			OutputMessage message = contract.outputMessage
-
 			if (message.body) {
 				DslPart pactResponseBody = BodyConverter.toPactBody(message.body, clientValueExtractor)
-
 				if (message.matchers) {
 					pactResponseBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(message.matchers))
 				}
-
 				messagePactBuilder = messagePactBuilder.withContent(pactResponseBody)
 			}
-
 			if (message.headers) {
 				messagePactBuilder = messagePactBuilder.withMetadata(getMetadata(message.headers))
 			}
 		}
-
-		messagePactBuilder.toPact()
+		return messagePactBuilder.toPact()
 	}
 
 	private String getGiven(Input input) {
 		if (input.triggeredBy) {
-			input.triggeredBy.executionCommand
+			return input.triggeredBy.executionCommand
 		} else if (input.messageFrom) {
-			"received message from " + clientValueExtractor.call(input.messageFrom)
+			return "received message from " + clientValueExtractor.call(input.messageFrom)
 		} else {
-			""
+			return ""
 		}
 	}
 
 	private String getOutcome(Contract contract) {
 		if (contract.outputMessage) {
 			OutputMessage message = contract.outputMessage
-			"message sent to " + clientValueExtractor.call(message.sentTo)
+			return "message sent to " + clientValueExtractor.call(message.sentTo)
 		} else {
-			"assert that " + contract.input.assertThat.executionCommand
+			return "assert that " + contract.input.assertThat.executionCommand
 		}
 	}
 
 	private Map<String, String> getMetadata(Headers headers) {
-		headers.entries.collectEntries({ Header header ->
-			["$header.name": extractValue(header)]
+		return headers.entries.collectEntries({ Header header ->
+			return ["$header.name": extractValue(header)]
 		})
 	}
 
 	private String extractValue(Object value) {
 		Object v = value
-
 		if (v instanceof DslProperty) {
 			v = clientValueExtractor.call(v)
 		}
-
 		if (v instanceof GString) {
 			v = ContentUtils.extractValue(v, clientValueExtractor)
 		}
-
 		if (v instanceof String) {
-			v
+			return v
 		} else {
-			v.toString()
+			return v.toString()
 		}
 	}
 }

@@ -32,15 +32,12 @@ class BodyConverter {
 	private static DslPart traverse(Object value, DslPart parent, Closure dslPropertyValueExtractor) {
 		boolean isRoot = parent == null
 		Object v = value
-
 		if (v instanceof DslProperty) {
 			v = dslPropertyValueExtractor(v)
 		}
-
 		if (v instanceof GString) {
 			v = ContentUtils.extractValue(v, dslPropertyValueExtractor)
 		}
-
 		if (v instanceof String) {
 			v = v.trim()
 			if (v.startsWith("{") && v.endsWith("}")) {
@@ -50,9 +47,7 @@ class BodyConverter {
 				}
 			}
 		}
-
 		DslPart p = isRoot ? createRootDslPart(v) : parent
-
 		if (v instanceof Map) {
 			if (!isRoot) {
 				p = p.object()
@@ -70,26 +65,22 @@ class BodyConverter {
 				p = p.closeArray()
 			}
 		}
-
-		p
+		return p
 	}
 
 	private static DslPart createRootDslPart(Object value) {
-		value instanceof Collection ? new PactDslJsonArray() : new PactDslJsonBody()
+		return value instanceof Collection ? new PactDslJsonArray() : new PactDslJsonBody()
 	}
 
 	private static void processCollection(Collection values, PactDslJsonArray jsonArray, Closure dslPropertyValueExtractor) {
 		values.forEach({
 			Object v = it
-
 			if (v instanceof DslProperty) {
 				v = dslPropertyValueExtractor(v)
 			}
-
 			if (v instanceof GString) {
 				v = ContentUtils.extractValue(v, dslPropertyValueExtractor)
 			}
-
 			if (v == null) {
 				jsonArray.nullValue()
 			} else if (v instanceof String) {
@@ -104,15 +95,12 @@ class BodyConverter {
 
 	private static void processMap(Map<String, Object> values, PactDslJsonBody jsonObject, Closure dslPropertyValueExtractor) {
 		values.forEach({ String k, Object v ->
-
 			if (v instanceof DslProperty) {
 				v = dslPropertyValueExtractor(v)
 			}
-
 			if (v instanceof GString) {
 				v = ContentUtils.extractValue(v, dslPropertyValueExtractor)
 			}
-
 			if (v == null) {
 				jsonObject.nullValue(k)
 			} else if (v instanceof String) {
