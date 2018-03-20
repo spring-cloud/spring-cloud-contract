@@ -4,6 +4,7 @@ import wiremock.com.google.common.collect.ImmutableMap
 import org.springframework.amqp.core.Binding
 import org.springframework.amqp.core.BindingBuilder
 import org.springframework.amqp.core.DirectExchange
+import org.springframework.amqp.core.Message
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
@@ -25,12 +26,13 @@ class SpringAmqpStubMessagesSpec extends Specification {
     String queueName = "test.queue"
     String exchange = "test-exchange"
     String payload = '''{"name":"some"}'''
+    String routingKey = "resource.created"
 
     def "should send amqp message with type id"() {
         given:
             listenerContainer.setMessageListener(messageListenerAdapter)
             listenerContainer.setQueueNames(queueName)
-            Binding binding = BindingBuilder.bind(new Queue(queueName)).to(new DirectExchange(exchange)).with("#")
+            Binding binding = BindingBuilder.bind(new Queue(queueName)).to(new DirectExchange(exchange)).with(routingKey)
             MessageListenerAccessor messageListenerAccessor = new MessageListenerAccessor(null, [listenerContainer], [binding])
             SpringAmqpStubMessages messageVerifier = new SpringAmqpStubMessages(rabbitTemplate, messageListenerAccessor)
 
@@ -38,13 +40,15 @@ class SpringAmqpStubMessagesSpec extends Specification {
             messageVerifier.send(payload,
                     ImmutableMap.builder()
                             .put(DEFAULT_CLASSID_FIELD_NAME, "org.example.Some")
+                            .put("amqp_receivedRoutingKey", routingKey)
                             .put("contentType", CONTENT_TYPE_JSON)
                             .build(),
                     exchange)
         then:
-            1 * messageListenerAdapter.onMessage({
-                it.getMessageProperties().getContentType() == CONTENT_TYPE_JSON &&
-                it.getMessageProperties().getHeaders().get(DEFAULT_CLASSID_FIELD_NAME) == "org.example.Some"
+            1 * messageListenerAdapter.onMessage({ Message msg ->
+                msg.getMessageProperties().getReceivedRoutingKey() == "resource.created" &&
+                msg.getMessageProperties().getContentType() == CONTENT_TYPE_JSON &&
+                msg.getMessageProperties().getHeaders().get(DEFAULT_CLASSID_FIELD_NAME) == "org.example.Some"
             })
     }
 }
