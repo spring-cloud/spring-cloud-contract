@@ -529,6 +529,50 @@ Contract.make {
     		test.contains('assertThat(response.getHeader("processId").toString()).matches("\\d+");')
 	}
 
+	@Issue("587")
+	def "should generate tests with message headers containing regular expression with escapes for JUnit"() {
+		given:
+			def contractDsl =
+					org.springframework.cloud.contract.spec.Contract.make {
+						label 'trigger_event'
+
+						input {
+							triggeredBy('requestIsCalled()')
+						}
+
+						outputMessage {
+							sentTo 'topic.rateablequote'
+							headers {
+								header('processId', value(producer(regex(nonEmpty())), consumer('123')))
+							}
+							body([
+									eventId: value(producer(regex(nonEmpty())), consumer('1'))
+							])
+						}
+					}
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			String expectedMsg =
+				'''
+  // when:
+  requestIsCalled();
+
+ // then:
+  ContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote");
+  assertThat(response).isNotNull();
+  assertThat(response.getHeader("processId")).isNotNull();
+  assertThat(response.getHeader("processId").toString()).matches("[\\S\\s]+");
+ // and:
+  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+  assertThatJson(parsedJson).field("['eventId']").matches("[\\S\\s]+");
+'''
+		stripped(test) == stripped(expectedMsg)
+	}
+
 	@Issue("336")
 	def "should generate tests with message headers containing regular expression for Spock"() {
 		given:
@@ -568,6 +612,49 @@ Contract.make {
  and:
   DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
   assertThatJson(parsedJson).field("['eventId']").matches("[0-9]+")
+'''
+		stripped(test) == stripped(expectedMsg)
+	}
+
+	@Issue("587")
+	def "should generate tests with message headers containing regular expression with escapes for Spock"() {
+		given:
+			def contractDsl =
+					org.springframework.cloud.contract.spec.Contract.make {
+						label 'trigger_event'
+
+						input {
+							triggeredBy('requestIsCalled()')
+						}
+
+						outputMessage {
+							sentTo 'topic.rateablequote'
+							headers {
+								header('processId', value(producer(regex(nonEmpty())), consumer('123')))
+							}
+							body([
+									eventId: value(producer(regex(nonEmpty())), consumer('1'))
+							])
+						}
+					}
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			String expectedMsg =
+				'''
+  when:
+  requestIsCalled()
+
+ then:
+  ContractVerifierMessage response = contractVerifierMessaging.receive('topic.rateablequote')
+  assert response != null
+  response.getHeader('processId')?.toString() ==~ java.util.regex.Pattern.compile('[\\S\\s]+')
+ and:
+  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
+  assertThatJson(parsedJson).field("['eventId']").matches("[\\S\\s]+")
 '''
 		stripped(test) == stripped(expectedMsg)
 	}
