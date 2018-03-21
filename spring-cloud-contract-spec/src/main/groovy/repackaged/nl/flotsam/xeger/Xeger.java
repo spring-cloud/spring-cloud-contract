@@ -27,6 +27,7 @@ import dk.brics.automaton.Automaton;
 import dk.brics.automaton.RegExp;
 import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * An object that will generate text from a regular expression. In a way, it's the opposite of a regular expression
@@ -59,6 +60,15 @@ public class Xeger {
 				.replace("\\s", "[ \t\r\n]");   // Used s="White"Space
 		this.automaton = new RegExp(pattern).toAutomaton();
 		this.random = random;
+		String generatedCharsSysProp = System
+				.getProperty("springCloudContractGeneratedCharsFromRegex");
+		String generatedCharsEnvVar = System
+				.getenv("SPRING_CLOUD_CONTRACT_GENERATED_CHARS_FROM_REGEX");
+		if (StringUtils.isNotEmpty(generatedCharsSysProp)) {
+			ITERATION_LIMIT = Integer.parseInt(generatedCharsSysProp);
+		} else if (StringUtils.isNotEmpty(generatedCharsEnvVar)) {
+			ITERATION_LIMIT = Integer.parseInt(generatedCharsEnvVar);
+		}
 	}
 
 	/**
