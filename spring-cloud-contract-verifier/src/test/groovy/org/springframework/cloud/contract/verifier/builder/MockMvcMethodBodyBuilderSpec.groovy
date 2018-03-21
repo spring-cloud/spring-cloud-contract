@@ -1089,6 +1089,60 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		!test.contains("cursor")
 		and:
 		SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
+		and:
+		String jsonSample = '''\
+String json = "";
+DocumentContext parsedJson = JsonPath.parse(json);
+'''
+			and:
+				LinkedList<String> lines = [] as LinkedList<String>
+				test.eachLine { if (it.contains("assertThatJson")) lines << it else it }
+				lines.addFirst(jsonSample)
+				SyntaxChecker.tryToRun(methodBuilderName, lines.join("\n"))
+		where:
+		methodBuilderName           | methodBuilder                                                               | bodyString
+		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '"street":"Light Street"'
+		"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | '\\"street\\":\\"Light Street\\"'
+
+	}
+
+		def "should work with optional fields that have null #methodBuilderName"() {
+		given:
+		Contract contractDsl = Contract.make {
+			request {
+				method "PUT"
+				url "/v1/payments/e86df6f693de4b35ae648464c5b0dc09/client_data"
+				headers {
+					contentType(applicationJson())
+				}
+			}
+			response {
+				status OK()
+				headers {
+					contentType(applicationJson())
+				}
+				body(
+						code: $(optional(regex("123123")))
+				)
+			}
+		}
+		MethodBodyBuilder builder = methodBuilder(contractDsl)
+		BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+		builder.appendTo(blockBuilder)
+		def test = blockBuilder.toString()
+		then:
+		SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
+		and:
+		String jsonSample = '''\
+String json = "{\\"code\\":null}";
+DocumentContext parsedJson = JsonPath.parse(json);
+'''
+		and:
+		LinkedList<String> lines = [] as LinkedList<String>
+		test.eachLine { if (it.contains("assertThatJson")) lines << it else it }
+		lines.addFirst(jsonSample)
+		SyntaxChecker.tryToRun(methodBuilderName, lines.join("\n"))
 		where:
 		methodBuilderName           | methodBuilder                                                               | bodyString
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '"street":"Light Street"'
