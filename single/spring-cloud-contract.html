@@ -1574,13 +1574,51 @@ endpoint, which should be verified.</p><pre class="programlisting"><span xmlns:d
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> com.jayway.restassured.module.mockmvc.RestAssuredMockMvc
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> spock.lang.Specification
 
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>  MvcSpec <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> Specification {
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> MvcSpec <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> Specification {
   def setup() {
    RestAssuredMockMvc.standaloneSetup(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> ExampleSpringController())
   }
-}</pre><p>If you use <code class="literal">Explicit</code> mode, you can use a base class to initialize the whole tested app
-similarly, as you might find in regular integration tests. If you use the <code class="literal">JAXRSCLIENT</code>
-mode, this base class should also contain a <code class="literal">protected WebTarget webTarget</code> field. Right
+}</pre><p>You can also setup the whole context if necessary.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> io.restassured.module.mockmvc.RestAssuredMockMvc;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.Before;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.runner.RunWith;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.beans.factory.annotation.Autowired;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.boot.test.context.SpringBootTest;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.test.context.junit4.SpringRunner;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.web.context.WebApplicationContext;
+
+<em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
+<em><span class="hl-annotation" style="color: gray">@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = SomeConfig.class, properties="some=property")</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">abstract</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> BaseTestClass {
+
+	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+	WebApplicationContext context;
+
+	<em><span class="hl-annotation" style="color: gray">@Before</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setup() {
+		RestAssuredMockMvc.webAppContextSetup(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.context);
+	}
+}</pre><p>If you use <code class="literal">EXPLICIT</code> mode, you can use a base class to initialize the whole tested app
+similarly, as you might find in regular integration tests.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> io.restassured.RestAssured;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.Before;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.runner.RunWith;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.beans.factory.annotation.Autowired;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.boot.test.context.SpringBootTest;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.boot.web.server.LocalServerPort
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.test.context.junit4.SpringRunner;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.web.context.WebApplicationContext;
+
+<em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
+<em><span class="hl-annotation" style="color: gray">@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = SomeConfig.class, properties="some=property")</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">abstract</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> BaseTestClass {
+
+	<em><span class="hl-annotation" style="color: gray">@LocalServerPort</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> port;
+
+	<em><span class="hl-annotation" style="color: gray">@Before</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setup() {
+		RestAssured.baseURI = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"http://localhost:"</span> + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.port;
+	}
+}</pre><p>If you use the <code class="literal">JAXRSCLIENT</code> mode, this base class should also contain a <code class="literal">protected WebTarget webTarget</code> field. Right
 now, the only option to test the JAX-RS API is to start a web server.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="maven-different-base" href="#maven-different-base"></a>4.2.9&nbsp;Different base classes for contracts</h3></div></div></div><p>If your base classes differ between contracts, you can tell the Spring Cloud Contract
 plugin which class should get extended by the autogenerated tests. You have two options:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Follow a convention by providing the <code class="literal">packageWithBaseClasses</code></li><li class="listitem">provide explicit mapping via <code class="literal">baseClassMappings</code></li></ul></div><p><span class="strong"><strong>By Convention</strong></span></p><p>The convention is such that if you have a contract under (for example)
 <code class="literal">src/test/resources/contract/foo/bar/baz/</code> and set the value of the

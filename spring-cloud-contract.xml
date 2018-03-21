@@ -2699,14 +2699,56 @@ import org.mycompany.ExampleSpringController
 import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc
 import spock.lang.Specification
 
-class  MvcSpec extends Specification {
+class MvcSpec extends Specification {
   def setup() {
    RestAssuredMockMvc.standaloneSetup(new ExampleSpringController())
   }
 }</programlisting>
-<simpara>If you use <literal>Explicit</literal> mode, you can use a base class to initialize the whole tested app
-similarly, as you might find in regular integration tests. If you use the <literal>JAXRSCLIENT</literal>
-mode, this base class should also contain a <literal>protected WebTarget webTarget</literal> field. Right
+<simpara>You can also setup the whole context if necessary.</simpara>
+<programlisting language="java" linenumbering="unnumbered">import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.context.WebApplicationContext;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = SomeConfig.class, properties="some=property")
+public abstract class BaseTestClass {
+
+	@Autowired
+	WebApplicationContext context;
+
+	@Before
+	public void setup() {
+		RestAssuredMockMvc.webAppContextSetup(this.context);
+	}
+}</programlisting>
+<simpara>If you use <literal>EXPLICIT</literal> mode, you can use a base class to initialize the whole tested app
+similarly, as you might find in regular integration tests.</simpara>
+<programlisting language="java" linenumbering="unnumbered">import io.restassured.RestAssured;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.context.WebApplicationContext;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = SomeConfig.class, properties="some=property")
+public abstract class BaseTestClass {
+
+	@LocalServerPort
+	int port;
+
+	@Before
+	public void setup() {
+		RestAssured.baseURI = "http://localhost:" + this.port;
+	}
+}</programlisting>
+<simpara>If you use the <literal>JAXRSCLIENT</literal> mode, this base class should also contain a <literal>protected WebTarget webTarget</literal> field. Right
 now, the only option to test the JAX-RS API is to start a web server.</simpara>
 </section>
 <section xml:id="maven-different-base">
