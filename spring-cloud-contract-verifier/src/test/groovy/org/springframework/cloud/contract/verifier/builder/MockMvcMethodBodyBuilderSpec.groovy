@@ -1232,7 +1232,7 @@ World.'''"""
 				multipart(
 						file: named(
 								name: value(stub(regex('.+')), test('file')),
-								content: value(stub(regex('.+')), test([100, 117, 112, 97] as byte[]))
+								content: value(stub(regex('.+')), test([100, 117, 100, 97] as byte[]))
 						)
 				)
 			}
@@ -1255,9 +1255,9 @@ World.'''"""
 		where:
 		methodBuilderName           | methodBuilder                                                               | requestStrings
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
-																													 """.multiPart('file', 'file', [100, 117, 112, 97] as byte[])"""]
+																													 """.multiPart('file', 'file', [100, 117, 100, 97] as byte[])"""]
 		"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
-																													 '.multiPart("file", "file", new byte[] {100, 117, 112, 97});']
+																													 '.multiPart("file", "file", new byte[] {100, 117, 100, 97});']
 	}
 
 	@Issue('541')

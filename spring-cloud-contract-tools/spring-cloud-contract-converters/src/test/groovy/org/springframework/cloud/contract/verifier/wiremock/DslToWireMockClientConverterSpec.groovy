@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.wiremock
 
+import java.util.regex.Pattern
+
 import com.github.tomakehurst.wiremock.junit.WireMockRule
 import com.github.tomakehurst.wiremock.matching.RegexPattern
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
@@ -23,17 +25,20 @@ import groovy.json.JsonOutput
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.skyscreamer.jsonassert.JSONAssert
-import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubMapping
-import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.file.ContractMetadata
-import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
-import org.springframework.http.RequestEntity
-import org.springframework.util.SocketUtils
 import spock.lang.Issue
 import spock.lang.Specification
 
-import java.util.regex.Pattern
+import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubMapping
+import org.springframework.cloud.contract.verifier.file.ContractMetadata
+import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
+import org.springframework.core.io.ByteArrayResource
+import org.springframework.http.HttpEntity
+import org.springframework.http.RequestEntity
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.util.MultiValueMap
+import org.springframework.util.SocketUtils
 
 class DslToWireMockClientConverterSpec extends Specification {
 
@@ -76,6 +81,64 @@ class DslToWireMockClientConverterSpec extends Specification {
 			wireMockRule.addStubMapping(mapping)
 		and:
 			restTemplate.exchange(RequestEntity.put("${url}/12".toURI()).body(""), String)
+	}
+
+	@Issue("#546")
+	def "should convert DSL file to WireMock JSON with byte arrays"() {
+		given:
+			def converter = new DslToWireMockClientConverter()
+		and:
+			File file = tmpFolder.newFile("dsl1.groovy")
+			file.write("""
+					[
+			org.springframework.cloud.contract.spec.Contract.make {
+				request {
+					method "POST"
+					url "/multipart"
+					headers {
+						contentType('multipart/form-data')
+					}
+					multipart(
+							file: named(
+									name: value(stub(regex('.+')), test('file')),
+									content: value(stub(regex('.+')), test([100, 117, 100, 97] as byte[]))
+							)
+					)
+				}
+				response {
+					status 200
+					body "hello"
+				}
+			}
+	]
+""")
+		when:
+			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
+			ContractVerifierDslConverter.convertAsCollection(new File("/"),file))).values().first()
+		then:
+		JSONAssert.assertEquals('''
+{"request":{"url":"/multipart","method":"POST","headers":{"Content-Type":{"matches":"multipart/form-data.*"}},"bodyPatterns":[{"matches" : ".*--(.*)\\r\\nContent-Disposition: form-data; name=\\"file\\"; filename=\\".+\\"\\r\\n(Content-Type: .*\\r\\n)?(Content-Transfer-Encoding: .*\\r\\n)?(Content-Length: \\\\d+\\r\\n)?\\r\\n.+\\r\\n--\\\\1.*"}]},"response":{"status":200,"body":"hello","transformers":["response-template"]}}
+''', json, false)
+		and:
+			StubMapping mapping = stubMappingIsValidWireMockStub(json)
+		and:
+			wireMockRule.addStubMapping(mapping)
+		and:
+			MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<String, Object>()
+			parameters.add("file", new ByteArrayResource([100, 117, 100, 97] as byte[]) {
+				@Override
+				public String getFilename(){
+					return "file"
+				}
+			})
+			org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders()
+			headers.set("Content-Type", "multipart/form-data;boundary=AaB03xssssss")
+			headers.set("Accept", "text/plain")
+			String result = restTemplate.postForObject(
+					"${url}/multipart",
+					new HttpEntity<MultiValueMap<String, Object>>(parameters, headers),
+					String.class)
+			result == "hello"
 	}
 
 	def "should convert DSL file with list of contracts to WireMock JSONs"() {
