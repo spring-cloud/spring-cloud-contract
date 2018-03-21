@@ -20,6 +20,8 @@ import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
+import org.apache.commons.lang3.StringEscapeUtils
+
 import org.springframework.cloud.contract.spec.util.RegexpUtils
 import repackaged.nl.flotsam.xeger.Xeger
 
@@ -186,7 +188,7 @@ class Request extends Common {
 	DslProperty value(ClientDslProperty client) {
 		Object clientValue = client.clientValue
 		if (client.clientValue instanceof Pattern && client.isSingleValue()) {
-			clientValue = new Xeger(((Pattern)client.clientValue).pattern()).generate()
+			clientValue = StringEscapeUtils.escapeJava(new Xeger(((Pattern)client.clientValue).pattern()).generate())
 		} else if (client.clientValue instanceof Pattern && !client.isSingleValue()) {
 			clientValue = client.serverValue
 		}

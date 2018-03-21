@@ -21,7 +21,7 @@ import groovy.transform.CompileStatic
 import java.util.regex.Pattern
 
 /**
- * Useful utility methods to work with regular expresisons
+ * Useful utility methods to work with regular expressions
  *
  * @since 1.0.2
  */

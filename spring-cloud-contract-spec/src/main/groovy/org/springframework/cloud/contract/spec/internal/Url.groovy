@@ -16,9 +16,13 @@
 
 package org.springframework.cloud.contract.spec.internal
 
+import java.util.regex.Pattern
+
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import org.codehaus.groovy.runtime.GStringImpl
+import repackaged.nl.flotsam.xeger.Xeger
 
 import static org.springframework.cloud.contract.spec.util.ValidateUtils.validateServerValueIsAvailable
 
@@ -40,8 +44,25 @@ class Url extends DslProperty {
 	}
 
 	Url(Object url) {
-		super(url)
+		super(url, testUrl(url))
 		validateServerValueIsAvailable(url, "Url")
+	}
+
+	private static Object testUrl(Object url) {
+		if (url instanceof GString) {
+			boolean anyPattern = url.values.any { it instanceof Pattern }
+			if (!anyPattern) {
+				return url
+			}
+			String newUrl = new GStringImpl(
+					url.values.collect { it instanceof Pattern ?
+							new Xeger(it.pattern()).generate() : it
+					} as String[],
+					url.strings.clone() as String[]
+			).toString()
+			return new Url(newUrl)
+		}
+		return url
 	}
 
 	void queryParameters(@DelegatesTo(QueryParameters) Closure closure) {

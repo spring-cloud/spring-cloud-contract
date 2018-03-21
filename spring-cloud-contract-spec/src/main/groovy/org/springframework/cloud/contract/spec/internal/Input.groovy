@@ -16,14 +16,13 @@
 
 package org.springframework.cloud.contract.spec.internal
 
+import java.util.regex.Pattern
+
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
 import repackaged.nl.flotsam.xeger.Xeger
-
-import java.util.regex.Pattern
-
 /**
  * Represents an input for messaging. The input can be a message or some
  * action inside the application.
