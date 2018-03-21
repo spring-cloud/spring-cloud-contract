@@ -108,6 +108,39 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
 
+	@Issue('#588')
+	def "should work patterns in GString [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method GET()
+					url("/${regex('\\d+')}")
+				}
+				response {
+					status 200
+					body([
+							ok: true
+					])
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			!test.contains('d+')
+			!test.contains('REGEXP>>')
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
 	@Issue('#269')
 	def "should work with execute and keys with dots [#methodBuilderName]"() {
 		given:
