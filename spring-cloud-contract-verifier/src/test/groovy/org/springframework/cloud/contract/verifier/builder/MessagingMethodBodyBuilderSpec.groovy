@@ -527,7 +527,7 @@ Contract.make {
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-    		test.contains('assertThat(response.getHeader("processId").toString()).matches("\\d+");')
+    		test.contains('assertThat(response.getHeader("processId").toString()).matches("\\\\d+");')
 	}
 
 
@@ -634,21 +634,12 @@ Contract.make {
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			String expectedMsg =
-				'''
-  // when:
-  requestIsCalled();
-
- // then:
-  ContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote");
-  assertThat(response).isNotNull();
-  assertThat(response.getHeader("processId")).isNotNull();
-  assertThat(response.getHeader("processId").toString()).matches("[\\S\\s]+");
- // and:
-  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
-  assertThatJson(parsedJson).field("['eventId']").matches("[\\S\\s]+");
-'''
-		stripped(test) == stripped(expectedMsg)
+			test.contains('ContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote")')
+			test.contains('assertThat(response).isNotNull()')
+			test.contains('assertThat(response.getHeader("processId")).isNotNull()')
+			test.contains('assertThat(response.getHeader("processId").toString()).matches("[\\\\S\\\\s]+")')
+			test.contains('DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))')
+			test.contains('assertThatJson(parsedJson).field("[\'eventId\']").matches("[\\\\S\\\\s]+")')
 	}
 
 	@Issue("336")
