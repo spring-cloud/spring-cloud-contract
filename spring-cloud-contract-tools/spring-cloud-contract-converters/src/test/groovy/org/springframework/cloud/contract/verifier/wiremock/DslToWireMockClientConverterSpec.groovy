@@ -891,6 +891,67 @@ class DslToWireMockClientConverterSpec extends Specification {
 			JSONAssert.assertEquals('''{"message":"[8.2 Profile/3.7 Bad Request]"}"''', response.body, false)
 	}
 
+	@Issue("#449")
+	def 'should properly convert regex for headers'() {
+		given:
+			def converter = new DslToWireMockClientConverter()
+		and:
+			File file = tmpFolder.newFile("dsl_from_docs.groovy")
+			file.write('''
+				org.springframework.cloud.contract.spec.Contract.make {
+				request {
+					method 'GET'
+					urlPath($(
+							consumer(regex('/v1/communities/(.+)/channels/[0-9]+')),
+							producer('/v1/communities/contract/channels/1')))
+			
+					headers {
+						header("X-Smartup-Test",
+								$(
+										consumer(regex(nonEmpty())),
+										producer(1)))
+					}
+				}
+				response {
+					status 204
+				}
+			}
+		''')
+		when:
+			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
+					ContractVerifierDslConverter.convertAsCollection(new File("/"),file))).values().first()
+		then:
+			JSONAssert.assertEquals(
+					'''
+		{
+		"request" : {
+		"urlPathPattern" : "/v1/communities/(.+)/channels/[0-9]+",
+		"method" : "GET",
+		"headers" : {
+		  "X-Smartup-Test" : {
+			"matches" : "[\\\\S\\\\s]+"
+		  }
+		}
+	  },
+	  "response" : {
+		"status" : 204
+	  }
+	  }
+	'''
+				, json, false)
+		and:
+			StubMapping mapping = stubMappingIsValidWireMockStub(json)
+		and:
+			wireMockRule.addStubMapping(mapping)
+		and:
+			def response = restTemplate.exchange(RequestEntity
+					.get("${url}/v1/communities/abc/channels/123".toURI())
+					.header("X-Smartup-Test", "asd123")
+					.build()
+					, String)
+			response.statusCodeValue == 204
+	}
+
 	StubMapping stubMappingIsValidWireMockStub(String mappingDefinition) {
 		StubMapping stubMapping = WireMockStubMapping.buildFrom(mappingDefinition)
 		stubMapping.request.bodyPatterns.findAll { it.isPresent() && it instanceof RegexPattern }.every {
