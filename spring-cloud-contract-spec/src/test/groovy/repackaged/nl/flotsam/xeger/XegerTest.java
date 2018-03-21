@@ -17,11 +17,11 @@
  */
 package repackaged.nl.flotsam.xeger;
 
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -31,6 +31,47 @@ public class XegerTest {
 	@Test
 	public void shouldGenerateTextCorrectly() {
 		String regex = "[ab]{4,6}c";
+		Xeger generator = new Xeger(regex);
+		for (int i = 0; i < 100; i++) {
+			String text = generator.generate();
+			assertTrue(text.matches(regex));
+		}
+	}
+
+	@Test
+	public void shouldNotGenerateMoreThanTheLimit() {
+		String regex = "[ab]{5}";
+		Xeger.ITERATION_LIMIT = 1;
+		Xeger generator = new Xeger(regex);
+		for (int i = 0; i < 100; i++) {
+			String text = generator.generate();
+			assertTrue(text.length() == 1);
+		}
+	}
+
+	@Test
+	public void shouldGenerateTextCorrectlyForDigitSign() {
+		String regex = "\\d+";
+		Xeger generator = new Xeger(regex);
+		for (int i = 0; i < 100; i++) {
+			String text = generator.generate();
+			assertTrue(text.matches(regex));
+		}
+	}
+
+	@Test
+	public void shouldGenerateTextCorrectlyForWordSign() {
+		String regex = "\\w+";
+		Xeger generator = new Xeger(regex);
+		for (int i = 0; i < 100; i++) {
+			String text = generator.generate();
+			assertTrue(text.matches(regex));
+		}
+	}
+
+	@Test
+	public void shouldGenerateTextCorrectlyForWhiteSpaceSign() {
+		String regex = "\\s+";
 		Xeger generator = new Xeger(regex);
 		for (int i = 0; i < 100; i++) {
 			String text = generator.generate();
