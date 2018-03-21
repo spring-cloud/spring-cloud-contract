@@ -1089,16 +1089,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		!test.contains("cursor")
 		and:
 		SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
-		and:
-		String jsonSample = '''\
-String json = "";
-DocumentContext parsedJson = JsonPath.parse(json);
-'''
-			and:
-				LinkedList<String> lines = [] as LinkedList<String>
-				test.eachLine { if (it.contains("assertThatJson")) lines << it else it }
-				lines.addFirst(jsonSample)
-				SyntaxChecker.tryToRun(methodBuilderName, lines.join("\n"))
 		where:
 		methodBuilderName           | methodBuilder                                                               | bodyString
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '"street":"Light Street"'
