@@ -5962,7 +5962,7 @@ org.springframework.cloud.contract.spec.Contract contractDsl = org.springframewo
 		multipart(
 				file: named(
 						name: value(stub(regex('.+')), test('file')),
-						content: value(stub(regex('.+')), test([100, 117, 112, 97] as byte[]))
+						content: value(stub(regex('.+')), test([100, 117, 100, 97] as byte[]))
 				)
 		)
 	}
