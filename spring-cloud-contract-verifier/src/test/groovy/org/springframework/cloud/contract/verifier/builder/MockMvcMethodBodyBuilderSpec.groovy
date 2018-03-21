@@ -2113,7 +2113,6 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			methodBuilderName			| methodBuilder																				| endOfLineRegExSymbol
 			"MockMvcSpockMethodBuilder"	| { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } 	| '\\$'
 			"MockMvcJUnitMethodBuilder"	| { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  	| '$'
-
 	}
 
 	@Issue('#162')
