@@ -68,6 +68,10 @@ abstract class PatternValueDslProperty<T extends DslProperty> {
 		return createAndValidateProperty(RegexPatterns.URL, "http://foo" + this.random.nextInt() + ".com")
 	}
 
+	T anyHttpsUrl() {
+		return createAndValidateProperty(RegexPatterns.HTTPS_URL, "https://baz" + this.random.nextInt() + ".com")
+	}
+
 	T anyUuid() {
 		return createAndValidateProperty(RegexPatterns.UUID, UUID.randomUUID().toString())
 	}
