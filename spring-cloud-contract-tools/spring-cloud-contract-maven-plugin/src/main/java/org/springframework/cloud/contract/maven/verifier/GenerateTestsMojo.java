@@ -230,7 +230,6 @@ public class GenerateTestsMojo extends AbstractMojo {
 		// download contracts, unzip them and pass as output directory
 		File contractsDirectory = new MavenContractsDownloader(this.project, this.contractDependency,
 				this.contractsPath, this.contractsRepositoryUrl, this.contractsMode, getLog(),
-				this.aetherStubDownloaderFactory, this.repoSession,
 				this.contractsRepositoryUsername, this.contractsRepositoryPassword,
 				this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort,
 				this.contractsSnapshotCheckSkip, this.deleteStubsAfterTest).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);

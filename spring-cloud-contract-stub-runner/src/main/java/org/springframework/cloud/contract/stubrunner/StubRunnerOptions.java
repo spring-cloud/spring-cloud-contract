@@ -141,7 +141,7 @@ public class StubRunnerOptions {
 				.withMinPort(Integer.valueOf(System.getProperty("stubrunner.port.range.min", "10000")))
 				.withMaxPort(Integer.valueOf(System.getProperty("stubrunner.port.range.max", "15000")))
 				.withStubRepositoryRoot(System.getProperty("stubrunner.repository.root", ""))
-				.withStubsMode(System.getProperty("stubrunner.stubs-mode", "CLASSPATH"))
+				.withStubsMode(System.getProperty("stubrunner.stubs-mode", "LOCAL"))
 				.withStubsClassifier(System.getProperty("stubrunner.classifier", "stubs"))
 				.withStubs(System.getProperty("stubrunner.ids", ""))
 				.withUsername(System.getProperty("stubrunner.username"))

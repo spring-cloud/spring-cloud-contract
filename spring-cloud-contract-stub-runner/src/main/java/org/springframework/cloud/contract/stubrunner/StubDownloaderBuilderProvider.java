@@ -1,12 +1,9 @@
 package org.springframework.cloud.contract.stubrunner;
 
-import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 /**
@@ -18,8 +15,6 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
  */
 public class StubDownloaderBuilderProvider {
 
-	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
-
 	private final List<StubDownloaderBuilder> builders = new ArrayList<>();
 
 	public StubDownloaderBuilderProvider() {
@@ -27,28 +22,28 @@ public class StubDownloaderBuilderProvider {
 				SpringFactoriesLoader.loadFactories(StubDownloaderBuilder.class, null));
 	}
 
-	public StubDownloaderBuilder get() {
-		return this.builders.isEmpty() ? null : this.builders.get(0);
+	StubDownloaderBuilderProvider(List<StubDownloaderBuilder> builders) {
+		this.builders.addAll(builders);
 	}
 
 	/**
-	 * If a {@link StubDownloaderBuilder} is present will build a {@link StubDownloader} from it.
-	 * If not will return the defaults basing on the {@link StubRunnerOptions} values
+	 * @param stubRunnerOptions
+	 * @param additionalBuilders - optional array of {@link StubDownloaderBuilder}s to append to the list of builders
+	 * @return composite {@link StubDownloader} that iterates over a list of stub downloaders
 	 */
-	public StubDownloader getOrDefaultDownloader(StubRunnerOptions stubRunnerOptions) {
-		if (hasBuilder()) {
-			log.info("A custom Stub Downloader was passed - will pick [" + get() + "]");
-			return get().build(stubRunnerOptions);
+	public StubDownloader get(StubRunnerOptions stubRunnerOptions,
+			StubDownloaderBuilder... additionalBuilders) {
+		List<StubDownloaderBuilder> builders = this.builders;
+		if (additionalBuilders != null) {
+			builders.addAll(Arrays.asList(additionalBuilders));
 		}
-		if (stubRunnerOptions.stubsMode == StubRunnerProperties.StubsMode.CLASSPATH) {
-			log.info("Classpath scanning will be used due to passed properties");
-			return new ClasspathStubProvider().build(stubRunnerOptions);
-		}
-		log.info("Will download stubs using Aether");
-		return new AetherStubDownloader(stubRunnerOptions);
+		List<StubDownloaderBuilder> defaultBuilders = defaultStubDownloaderBuilders();
+		builders.addAll(defaultBuilders);
+		return new CompositeStubDownloader(builders, stubRunnerOptions);
 	}
 
-	public boolean hasBuilder() {
-		return get() != null;
+	List<StubDownloaderBuilder> defaultStubDownloaderBuilders() {
+		return Arrays
+					.asList(new ClasspathStubProvider(), new AetherStubDownloaderBuilder());
 	}
 }
