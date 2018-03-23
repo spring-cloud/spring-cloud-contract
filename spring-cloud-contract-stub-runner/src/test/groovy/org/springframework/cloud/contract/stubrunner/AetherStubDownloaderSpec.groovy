@@ -76,12 +76,18 @@ class AetherStubDownloaderSpec extends Specification {
 			System.properties.setProperty("stubrunner.snapshot-check-skip", "false")
 
 		and:
-			AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions)  {
+			PropertyUtil.FETCHER = new PropertyFetcher() {
 				@Override
-				String getSkipSnapEnvProp() {
+				String systemProp(String prop) {
+					return super.systemProp(prop)
+				}
+
+				@Override
+				String envVar(String prop) {
 					return "true"
 				}
 			}
+			AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions)
 
 		when:
 			def jar = aetherStubDownloader.downloadAndUnpackStubJar(new StubConfiguration("org.springframework.cloud", "spring-cloud-contract-spec", "+", ""))
@@ -98,12 +104,19 @@ class AetherStubDownloaderSpec extends Specification {
 					.withStubRepositoryRoot("https://test.jfrog.io/test/libs-snapshot-local")
 					.build()
 
-			AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions) {
+		and:
+			PropertyUtil.FETCHER = new PropertyFetcher() {
 				@Override
-				String getSkipSnapEnvProp() {
+				String systemProp(String prop) {
+					return super.systemProp(prop)
+				}
+
+				@Override
+				String envVar(String prop) {
 					return "true"
 				}
 			}
+			AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions)
 
 		when:
 			def jar = aetherStubDownloader.downloadAndUnpackStubJar(new StubConfiguration("org.springframework.cloud", "spring-cloud-contract-spec", "+", ""))

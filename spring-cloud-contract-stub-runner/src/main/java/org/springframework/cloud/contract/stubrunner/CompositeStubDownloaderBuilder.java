@@ -4,9 +4,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * @author Marcin Grzejszczak
  * @since 2.0.0
@@ -28,8 +25,6 @@ class CompositeStubDownloaderBuilder implements StubDownloaderBuilder {
 }
 
 class CompositeStubDownloader implements StubDownloader {
-
-	private static final Log log = LogFactory.getLog(CompositeStubDownloader.class);
 
 	private final List<StubDownloaderBuilder> builders;
 	private final StubRunnerOptions stubRunnerOptions;

@@ -17,19 +17,11 @@
 package org.springframework.cloud.contract.stubrunner;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
@@ -50,7 +42,6 @@ import org.springframework.cloud.contract.stubrunner.StubRunnerOptions.StubRunne
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.util.StringUtils;
 
-import static java.nio.file.Files.createTempDirectory;
 import static org.springframework.cloud.contract.stubrunner.AetherFactories.newRepositorySystem;
 import static org.springframework.cloud.contract.stubrunner.AetherFactories.newSession;
 import static org.springframework.cloud.contract.stubrunner.util.ZipCategory.unzipTo;
@@ -60,13 +51,6 @@ import static org.springframework.cloud.contract.stubrunner.util.ZipCategory.unz
  */
 public class AetherStubDownloader implements StubDownloader {
 
-	/**
-	 * There are problems with removal of stubs unpacked to a temporary folder.
-	 * That's why we're creating a bounded in-memory storage of unpacked files
-	 * and later we register a shutdown hook to remove all these files.
-	 */
-	private static final Queue<File> TEMP_FILES_LOG = new LinkedBlockingQueue<>(1000);
-
 	private static final Logger log = LoggerFactory.getLogger(AetherStubDownloader.class);
 
 	private static final String TEMP_DIR_PREFIX = "contracts";
@@ -74,7 +58,6 @@ public class AetherStubDownloader implements StubDownloader {
 	private static final String LATEST_ARTIFACT_VERSION = "(,]";
 	private static final String LATEST_VERSION_IN_IVY = "+";
 	private static final String STUBRUNNER_SNAPSHOT_CHECK_SKIP_SYSTEM_PROP = "stubrunner.snapshot-check-skip";
-	private static final String STUBRUNNER_SNAPSHOT_CHECK_SKIP_ENV_VAR = "STUBRUNNER_SNAPSHOT_CHECK_SKIP";
 
 	private final List<RemoteRepository> remoteRepos;
 	private final RepositorySystem repositorySystem;
@@ -204,20 +187,7 @@ public class AetherStubDownloader implements StubDownloader {
 	}
 
 	private boolean skipSnapshotCheck() {
-		// still checking the system / env props setting for backward compatibility
-		// when running this for plugins
-		String skipSnapCheckProp = System.getProperty(STUBRUNNER_SNAPSHOT_CHECK_SKIP_SYSTEM_PROP);
-		String skipSnapCheckEnv = getSkipSnapEnvProp();
-		if (StringUtils.hasText(skipSnapCheckProp)) {
-			return Boolean.parseBoolean(skipSnapCheckProp);
-		}
-		return StringUtils.hasText(skipSnapCheckEnv) && Boolean
-				.parseBoolean(skipSnapCheckEnv);
-	}
-
-	// Visible for testing
-	String getSkipSnapEnvProp() {
-		return System.getenv(STUBRUNNER_SNAPSHOT_CHECK_SKIP_ENV_VAR);
+		return PropertyUtil.isPropertySet(STUBRUNNER_SNAPSHOT_CHECK_SKIP_SYSTEM_PROP);
 	}
 
 	private boolean resolvedFromLocalRepo(ArtifactResult result) {
@@ -282,65 +252,16 @@ public class AetherStubDownloader implements StubDownloader {
 	}
 
 	private static File unpackStubJarToATemporaryFolder(URI stubJarUri) {
-		File tmpDirWhereStubsWillBeUnzipped;
-		try {
-			tmpDirWhereStubsWillBeUnzipped = createTempDirectory(TEMP_DIR_PREFIX)
-					.toFile();
-		}
-		catch (IOException e) {
-			throw new IllegalStateException("Cannot create tmp dir with prefix: [" + TEMP_DIR_PREFIX + "]", e);
-		}
-		tmpDirWhereStubsWillBeUnzipped.deleteOnExit();
+		File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage.unpackStubJarToATemporaryFolder(TEMP_DIR_PREFIX);
 		log.info("Unpacking stub from JAR [URI: " + stubJarUri + "]");
 		unzipTo(new File(stubJarUri), tmpDirWhereStubsWillBeUnzipped);
-		TEMP_FILES_LOG.add(tmpDirWhereStubsWillBeUnzipped);
+		TemporaryFileStorage.add(tmpDirWhereStubsWillBeUnzipped);
 		return tmpDirWhereStubsWillBeUnzipped;
 	}
 
 	private void registerShutdownHook() {
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			public void run() {
-				cleanup();
-			}
-		});
+		Runtime.getRuntime().addShutdownHook(new Thread(
+				() -> TemporaryFileStorage.cleanup(AetherStubDownloader.this.deleteStubsAfterTest)));
 	}
 
-	private void cleanup() {
-		if (!this.deleteStubsAfterTest) {
-			return;
-		}
-		try {
-			for (File file : TEMP_FILES_LOG) {
-				if (file.isDirectory()) {
-					Files.walkFileTree(file.toPath(), new SimpleFileVisitor<Path>() {
-						@Override
-						public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-							if (log.isTraceEnabled()) {
-								log.trace("Removing unzipped file [" + file + "]");
-							}
-							Files.delete(file);
-							return FileVisitResult.CONTINUE;
-						}
-
-						@Override
-						public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-							if (log.isTraceEnabled()) {
-								log.trace("Removing unzipped dir [" + dir + "]");
-							}
-							Files.delete(dir);
-							return FileVisitResult.CONTINUE;
-						}
-					});
-				} else {
-					Files.delete(file.toPath());
-				}
-			}
-		} catch (NoClassDefFoundError | IOException e) {
-			// Added NoClassDefFoundError cause sometimes it's visible in the builds
-			// this error is completely harmless
-			if (log.isTraceEnabled()) {
-				log.trace("Failed to remove temporary file", e);
-			}
-		}
-	}
 }
