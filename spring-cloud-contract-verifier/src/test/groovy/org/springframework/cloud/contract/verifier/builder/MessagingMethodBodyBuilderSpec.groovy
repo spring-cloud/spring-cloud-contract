@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.verifier.builder
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
@@ -526,7 +527,119 @@ Contract.make {
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-    		test.contains('assertThat(response.getHeader("processId").toString()).matches("\\d+");')
+    		test.contains('assertThat(response.getHeader("processId").toString()).matches("\\\\d+");')
+	}
+
+
+	@Issue('#587')
+	def "should allow easier way of providing dynamic values for [#methodBuilderName]"() {
+		given:
+		Contract contractDsl = Contract.make {
+			label 'trigger_event'
+			input {
+				triggeredBy('toString()')
+			}
+			outputMessage {
+				sentTo 'topic.rateablequote'
+				body([
+						alpha: $(anyAlphaUnicode()),
+						number: $(anyNumber()),
+						aBoolean: $(aBoolean()),
+						ip: $(anyIpAddress()),
+						hostname: $(anyHostname()),
+						email: $(anyEmail()),
+						url: $(anyUrl()),
+						uuid: $(anyUuid()),
+						date: $(anyDate()),
+						dateTime: $(anyDateTime()),
+						time: $(anyTime()),
+						iso8601WithOffset: $(anyIso8601WithOffset()),
+						nonBlankString: $(anyNonBlankString()),
+						nonEmptyString: $(anyNonEmptyString()),
+						anyOf: $(anyOf('foo', 'bar'))
+				])
+			}
+		}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('assertThatJson(parsedJson).field("[\'aBoolean\']").matches("(true|false)")')
+			test.contains('assertThatJson(parsedJson).field("[\'alpha\']").matches("[\\\\p{L}]*")')
+			test.contains('assertThatJson(parsedJson).field("[\'hostname\']").matches("((http[s]?|ftp):/)/?([^:/\\\\s]+)(:[0-9]{1,5})?")')
+			test.contains('assertThatJson(parsedJson).field("[\'url\']").matches("^(?:(?:[A-Za-z][+-.\\\\w^_]*:/{2})?(?:\\\\S+(?::\\\\S*)?@)?(?:(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|(?:(?:[a-z\\\\u00a1-\\\\uffff0-9]-*)*[a-z\\\\u00a1-\\\\uffff0-9]+)(?:\\\\.(?:[a-z\\\\u00a1-\\\\uffff0-9]-*)*[a-z\\\\u00a1-\\\\uffff0-9]+)*(?:\\\\.(?:[a-z\\\\u00a1-\\\\uffff]{2,})))(?::\\\\d{2,5})?(?:/\\\\S*)?)')
+			test.contains('assertThatJson(parsedJson).field("[\'number\']").matches("-?(\\\\d*\\\\.\\\\d+|\\\\d+)")')
+			test.contains('assertThatJson(parsedJson).field("[\'email\']").matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,6}")')
+			test.contains('assertThatJson(parsedJson).field("[\'ip\']").matches("([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])")')
+			test.contains('assertThatJson(parsedJson).field("[\'uuid\']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}")')
+			test.contains('assertThatJson(parsedJson).field("[\'date\']").matches("(\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])')
+			test.contains('assertThatJson(parsedJson).field("[\'dateTime\']").matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
+			test.contains('assertThatJson(parsedJson).field("[\'time\']").matches("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])")')
+			test.contains('assertThatJson(parsedJson).field("[\'iso8601WithOffset\']").matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\\\\.\\\\d{3})?(Z|[+-][01]\\\\d:[0-5]\\\\d)")')
+			test.contains('assertThatJson(parsedJson).field("[\'nonBlankString\']").matches("^\\\\s*\\\\S[\\\\S\\\\s]*")')
+			test.contains('assertThatJson(parsedJson).field("[\'nonEmptyString\']").matches("[\\\\S\\\\s]+")')
+			test.contains('assertThatJson(parsedJson).field("[\'anyOf\']").matches("^foo' + endOfLineRegExSymbol + '|^bar' + endOfLineRegExSymbol + '")')
+			!test.contains('cursor')
+			!test.contains('REGEXP>>')
+		and:
+			String jsonSample = '''\
+	String json = "{\\"shouldFail\\":123,\\"duck\\":\\"8\\",\\"allpha\\":\\"YAJEOWYGMFBEWPMEMAZI\\",\\"number\\":-2095030871,\\"aBoolean\\":true,\\"ip\\":\\"129.168.99.100\\",\\"hostname\\":\\"http://foo389886219.com\\",\\"email\\":\\"foo@bar1367573183.com\\",\\"url\\":\\"http://foo-597104692.com\\",\\"uuid\\":\\"e436b817-b764-49a2-908e-967f2f99eb9f\\",\\"date\\":\\"2014-04-14\\",\\"dateTime\\":\\"2011-01-11T12:23:34\\",\\"time\\":\\"12:20:30\\",\\"iso8601WithOffset\\":\\"2015-05-15T12:23:34.123Z\\",\\"nonBlankString\\":\\"EPZWVIRHSUAPBJMMQSFO\\",\\"nonEmptyString\\":\\"RVMFDSEQFHRQFVUVQPIA\\",\\"anyOf\\":\\"foo\\"}";
+	DocumentContext parsedJson = JsonPath.parse(json);
+	'''
+		and:
+			LinkedList<String> lines = [] as LinkedList<String>
+			test.eachLine { if (it.contains("assertThatJson")) lines << it else it }
+			lines.addFirst(jsonSample)
+			lines.addLast('''assertThatJson(parsedJson).field("['shouldFail']").matches("(\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])");''')
+			String assertionsOnly = lines.join("\n")
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, assertionsOnly)
+		when:
+			SyntaxChecker.tryToRun(methodBuilderName, assertionsOnly)
+		then:
+			Exception error = thrown(Exception)
+			(error.message ? error.message : error.cause.message).contains('''doesn't match the JSON path [$[?(@.['shouldFail'] =~ ''')
+		where:
+			methodBuilderName                 | methodBuilder                                                            | endOfLineRegExSymbol
+			"SpockMessagingMethodBodyBuilder" | { Contract dsl -> new SpockMessagingMethodBodyBuilder(dsl, properties) } | '\\$'
+			"JUnitMessagingMethodBodyBuilder" | { Contract dsl -> new JUnitMessagingMethodBodyBuilder(dsl, properties) } | '$'
+	}
+
+	@Issue("587")
+	def "should generate tests with message headers containing regular expression with escapes for JUnit"() {
+		given:
+			def contractDsl =
+					org.springframework.cloud.contract.spec.Contract.make {
+						label 'trigger_event'
+
+						input {
+							triggeredBy('requestIsCalled()')
+						}
+
+						outputMessage {
+							sentTo 'topic.rateablequote'
+							headers {
+								header('processId', value(producer(regex(nonEmpty())), consumer('123')))
+							}
+							body([
+									eventId: value(producer(regex(nonEmpty())), consumer('1'))
+							])
+						}
+					}
+			MethodBodyBuilder builder = new JUnitMessagingMethodBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('ContractVerifierMessage response = contractVerifierMessaging.receive("topic.rateablequote")')
+			test.contains('assertThat(response).isNotNull()')
+			test.contains('assertThat(response.getHeader("processId")).isNotNull()')
+			test.contains('assertThat(response.getHeader("processId").toString()).matches("[\\\\S\\\\s]+")')
+			test.contains('DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))')
+			test.contains('assertThatJson(parsedJson).field("[\'eventId\']").matches("[\\\\S\\\\s]+")')
 	}
 
 	@Issue("336")
@@ -568,6 +681,49 @@ Contract.make {
  and:
   DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
   assertThatJson(parsedJson).field("['eventId']").matches("[0-9]+")
+'''
+		stripped(test) == stripped(expectedMsg)
+	}
+
+	@Issue("587")
+	def "should generate tests with message headers containing regular expression with escapes for Spock"() {
+		given:
+			def contractDsl =
+					org.springframework.cloud.contract.spec.Contract.make {
+						label 'trigger_event'
+
+						input {
+							triggeredBy('requestIsCalled()')
+						}
+
+						outputMessage {
+							sentTo 'topic.rateablequote'
+							headers {
+								header('processId', value(producer(regex(nonEmpty())), consumer('123')))
+							}
+							body([
+									eventId: value(producer(regex(nonEmpty())), consumer('1'))
+							])
+						}
+					}
+			MethodBodyBuilder builder = new SpockMessagingMethodBodyBuilder(contractDsl, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			String expectedMsg =
+				'''
+  when:
+  requestIsCalled()
+
+ then:
+  ContractVerifierMessage response = contractVerifierMessaging.receive('topic.rateablequote')
+  assert response != null
+  response.getHeader('processId')?.toString() ==~ java.util.regex.Pattern.compile('[\\S\\s]+')
+ and:
+  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
+  assertThatJson(parsedJson).field("['eventId']").matches("[\\S\\s]+")
 '''
 		stripped(test) == stripped(expectedMsg)
 	}

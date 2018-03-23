@@ -18,12 +18,33 @@ class MessageListenerAccessorSpec extends Specification {
     def "should get single simple listener container"(){
         given:
             givenSimpleMessageListenerContainer()
-        MessageListenerAccessor messageListenerAccessor = new MessageListenerAccessor(null, [this.listenerContainer], [this.binding])
+            MessageListenerAccessor messageListenerAccessor = new MessageListenerAccessor(null, [this.listenerContainer], [this.binding])
         when:
-            List<SimpleMessageListenerContainer> listenerContainersForDestination = messageListenerAccessor.getListenerContainersForDestination(this.exchange)
+            List<SimpleMessageListenerContainer> listenerContainersForDestination = messageListenerAccessor.getListenerContainersForDestination(this.exchange, null)
         then:
             listenerContainersForDestination.size() == 1
             listenerContainersForDestination.get(0) == this.listenerContainer
+    }
+
+    def "should get single simple listener container for matching routing key"(){
+        given:
+            givenSimpleMessageListenerContainer()
+            MessageListenerAccessor messageListenerAccessor = new MessageListenerAccessor(null, [this.listenerContainer], [this.binding])
+        when:
+            List<SimpleMessageListenerContainer> listenerContainersForDestination = messageListenerAccessor.getListenerContainersForDestination(this.exchange, '#')
+        then:
+            listenerContainersForDestination.size() == 1
+            listenerContainersForDestination.get(0) == this.listenerContainer
+    }
+
+    def "should get empty simple listener container for non matching routing key"(){
+        given:
+            givenSimpleMessageListenerContainer()
+            MessageListenerAccessor messageListenerAccessor = new MessageListenerAccessor(null, [this.listenerContainer], [this.binding])
+        when:
+            List<SimpleMessageListenerContainer> listenerContainersForDestination = messageListenerAccessor.getListenerContainersForDestination(this.exchange, 'not matching')
+        then:
+            listenerContainersForDestination.isEmpty()
     }
 
     def "should get empty listener container list for unknown destination"(){
@@ -31,7 +52,7 @@ class MessageListenerAccessorSpec extends Specification {
             givenSimpleMessageListenerContainer()
             MessageListenerAccessor messageListenerAccessor = new MessageListenerAccessor(null, [this.listenerContainer], [this.binding])
         when:
-            List<SimpleMessageListenerContainer> listenerContainersForDestination = messageListenerAccessor.getListenerContainersForDestination("some-exchange")
+            List<SimpleMessageListenerContainer> listenerContainersForDestination = messageListenerAccessor.getListenerContainersForDestination("some-exchange", null)
         then:
             listenerContainersForDestination.isEmpty()
     }
@@ -42,7 +63,7 @@ class MessageListenerAccessorSpec extends Specification {
             this.binding = BindingBuilder.bind(new Queue("some.queue")).to(new DirectExchange(this.exchange)).with("#")
             MessageListenerAccessor messageListenerAccessor = new MessageListenerAccessor(null, [this.listenerContainer], [this.binding])
         when:
-            List<SimpleMessageListenerContainer> listenerContainersForDestination = messageListenerAccessor.getListenerContainersForDestination(this.exchange)
+            List<SimpleMessageListenerContainer> listenerContainersForDestination = messageListenerAccessor.getListenerContainersForDestination(this.exchange, null)
         then:
             listenerContainersForDestination.isEmpty()
     }
@@ -54,7 +75,7 @@ class MessageListenerAccessorSpec extends Specification {
             rabbitListenerEndpointRegistryMock.getListenerContainers() >> [this.listenerContainer]
             MessageListenerAccessor messageListenerAccessor = new MessageListenerAccessor(rabbitListenerEndpointRegistryMock, [], [this.binding])
         when:
-            List<SimpleMessageListenerContainer> listenerContainersForDestination = messageListenerAccessor.getListenerContainersForDestination(this.exchange)
+            List<SimpleMessageListenerContainer> listenerContainersForDestination = messageListenerAccessor.getListenerContainersForDestination(this.exchange, null)
         then:
             listenerContainersForDestination.size() == 1
             listenerContainersForDestination.get(0) == this.listenerContainer

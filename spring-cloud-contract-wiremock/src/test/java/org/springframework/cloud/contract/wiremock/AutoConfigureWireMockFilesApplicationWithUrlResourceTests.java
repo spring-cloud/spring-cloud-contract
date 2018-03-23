@@ -8,26 +8,20 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=WiremockTestsApplication.class, properties="app.baseUrl=http://localhost:${wiremock.server.port}", webEnvironment=WebEnvironment.NONE)
 @DirtiesContext
-@AutoConfigureWireMock(port = 5432)
-public class AutoConfigureWireMockApplicationTests {
+@AutoConfigureWireMock(port=0, files="classpath*:root")
+public class AutoConfigureWireMockFilesApplicationWithUrlResourceTests {
 
 	@Autowired
 	private Service service;
 
 	@Test
 	public void contextLoads() throws Exception {
-		stubFor(get(urlEqualTo("/test"))
-				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
-		assertThat(this.service.go()).isEqualTo("Hello World!");
+		assertThat(this.service.go()).isEqualTo("{\"message\":\"Hello Root\"}");
 	}
 
 }

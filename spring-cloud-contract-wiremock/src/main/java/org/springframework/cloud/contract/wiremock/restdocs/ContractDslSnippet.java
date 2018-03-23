@@ -17,8 +17,10 @@ import org.springframework.restdocs.RestDocumentationContext;
 import org.springframework.restdocs.operation.Operation;
 import org.springframework.restdocs.operation.OperationRequest;
 import org.springframework.restdocs.operation.OperationResponse;
+import org.springframework.restdocs.snippet.RestDocumentationContextPlaceholderResolver;
 import org.springframework.restdocs.snippet.TemplatedSnippet;
 import org.springframework.restdocs.templates.TemplateEngine;
+import org.springframework.util.PropertyPlaceholderHelper;
 import org.springframework.util.StringUtils;
 
 /**
@@ -35,6 +37,8 @@ public class ContractDslSnippet extends TemplatedSnippet {
 	private Map<String, Object> model = new HashMap<>();
 	private static final Set<String> IGNORED_HEADERS =
 			new HashSet<>(Arrays.asList(HttpHeaders.HOST, HttpHeaders.CONTENT_LENGTH));
+	private final PropertyPlaceholderHelper propertyPlaceholderHelper = new PropertyPlaceholderHelper(
+			"{", "}");
 
 	/**
 	 * Creates a new {@code ContractDslSnippet} with no additional attributes.
@@ -134,12 +138,19 @@ public class ContractDslSnippet extends TemplatedSnippet {
 			throws IOException {
 		RestDocumentationContext context = (RestDocumentationContext) operation
 				.getAttributes().get(RestDocumentationContext.class.getName());
+		RestDocumentationContextPlaceholderResolver resolver = new
+				RestDocumentationContextPlaceholderResolver(context);
+		String resolvedName = replacePlaceholders(resolver, operation.getName());
 		File output = new File(context.getOutputDirectory(),
-				CONTRACTS_FOLDER + "/" + operation.getName() + ".groovy");
+				CONTRACTS_FOLDER + "/" + resolvedName + ".groovy");
 		output.getParentFile().mkdirs();
 		try (Writer writer = new OutputStreamWriter(Files.newOutputStream(output.toPath()))) {
 			writer.append(content);
 		}
+	}
+
+	private String replacePlaceholders(PropertyPlaceholderHelper.PlaceholderResolver resolver, String input) {
+		return this.propertyPlaceholderHelper.replacePlaceholders(input, resolver);
 	}
 }
 

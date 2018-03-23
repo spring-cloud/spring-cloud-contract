@@ -19,15 +19,21 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.springframework.cloud.contract.stubrunner.AetherStubDownloader;
 import org.springframework.cloud.contract.stubrunner.StubDownloader;
+import org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder;
+import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 
 @Named
 @Singleton
 public class AetherStubDownloaderFactory {
+	private static final Log log = LogFactory.getLog(AetherStubDownloaderFactory.class);
+
 	private final MavenProject project;
 	private final RepositorySystem repoSystem;
 
@@ -38,8 +44,13 @@ public class AetherStubDownloaderFactory {
 		this.project = project;
 	}
 
-	public StubDownloader build(RepositorySystemSession repoSession) {
-		return new AetherStubDownloader(this.repoSystem,
-				this.project.getRemoteProjectRepositories(), repoSession);
+	public StubDownloaderBuilder build(final RepositorySystemSession repoSession) {
+		return new StubDownloaderBuilder() {
+			@Override public StubDownloader build(StubRunnerOptions stubRunnerOptions) {
+				log.info("Will download contracts using current build's Maven repository setup");
+				return new AetherStubDownloader(AetherStubDownloaderFactory.this.repoSystem,
+						AetherStubDownloaderFactory.this.project.getRemoteProjectRepositories(), repoSession);
+			}
+		};
 	}
 }

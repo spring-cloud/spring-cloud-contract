@@ -20,6 +20,7 @@ import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
+import org.apache.commons.lang3.StringEscapeUtils
 import repackaged.nl.flotsam.xeger.Xeger
 
 import java.util.regex.Pattern
@@ -74,7 +75,7 @@ class OutputMessage extends Common {
 	DslProperty value(ServerDslProperty server) {
 		Object value = server.clientValue
 		if (server.clientValue instanceof Pattern) {
-			value = new Xeger(((Pattern)server.clientValue).pattern()).generate()
+			value = StringEscapeUtils.escapeJava(new Xeger(((Pattern)server.clientValue).pattern()).generate())
 		}
 		return new DslProperty(value, server.serverValue)
 	}

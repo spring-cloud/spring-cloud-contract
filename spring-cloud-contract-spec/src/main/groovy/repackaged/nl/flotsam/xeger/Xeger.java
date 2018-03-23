@@ -27,15 +27,21 @@ import dk.brics.automaton.Automaton;
 import dk.brics.automaton.RegExp;
 import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * An object that will generate text from a regular expression. In a way, it's the opposite of a regular expression
  * matcher: an instance of this class will produce text that is guaranteed to match the regular expression passed in.
+ *
+ * slight modifications by Marcin Grzejszczak
  */
 public class Xeger {
 
 	private final Automaton automaton;
 	private Random random;
+	// Added by Marcin Grzejszczak
+	// may lead to stackoverflow when regex is unbounded
+	static int ITERATION_LIMIT = 200;
 
 	/**
 	 * Constructs a new instance, accepting the regular expression and the randomizer.
@@ -47,8 +53,22 @@ public class Xeger {
 	public Xeger(String regex, Random random) {
 		assert regex != null;
 		assert random != null;
-		this.automaton = new RegExp(regex).toAutomaton();
+		// https://stackoverflow.com/questions/1578789/how-do-i-generate-text-matching-a-regular-expression-from-a-regular-expression
+		String pattern = regex
+				.replace("\\d", "[0-9]")        // Used d=Digit
+				.replace("\\w", "[A-Za-z0-9_]") // Used =Word
+				.replace("\\s", "[ \t\r\n]");   // Used s="White"Space
+		this.automaton = new RegExp(pattern).toAutomaton();
 		this.random = random;
+		String generatedCharsSysProp = System
+				.getProperty("springCloudContractGeneratedCharsFromRegex");
+		String generatedCharsEnvVar = System
+				.getenv("SPRING_CLOUD_CONTRACT_GENERATED_CHARS_FROM_REGEX");
+		if (StringUtils.isNotEmpty(generatedCharsSysProp)) {
+			ITERATION_LIMIT = Integer.parseInt(generatedCharsSysProp);
+		} else if (StringUtils.isNotEmpty(generatedCharsEnvVar)) {
+			ITERATION_LIMIT = Integer.parseInt(generatedCharsEnvVar);
+		}
 	}
 
 	/**
@@ -67,11 +87,15 @@ public class Xeger {
 	 */
 	public String generate() {
 		StringBuilder builder = new StringBuilder();
-		generate(builder, this.automaton.getInitialState());
+		int counter = 0;
+		generate(builder, this.automaton.getInitialState(), counter);
 		return builder.toString();
 	}
 
-	private void generate(StringBuilder builder, State state) {
+	private void generate(StringBuilder builder, State state, int counter) {
+		if (counter >= ITERATION_LIMIT) {
+			return;
+		}
 		List<Transition> transitions = state.getSortedTransitions(false);
 		if (transitions.size() == 0) {
 			assert state.isAccept();
@@ -85,7 +109,7 @@ public class Xeger {
 		// Moving on to next transition
 		Transition transition = transitions.get(option - (state.isAccept() ? 1 : 0));
 		appendChoice(builder, transition);
-		generate(builder, transition.getDest());
+		generate(builder, transition.getDest(), ++counter);
 	}
 
 	private void appendChoice(StringBuilder builder, Transition transition) {

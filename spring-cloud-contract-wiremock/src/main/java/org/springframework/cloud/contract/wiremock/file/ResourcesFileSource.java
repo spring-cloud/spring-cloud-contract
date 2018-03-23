@@ -16,21 +16,21 @@
 
 package org.springframework.cloud.contract.wiremock.file;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 
 import com.github.tomakehurst.wiremock.common.BinaryFile;
 import com.github.tomakehurst.wiremock.common.ClasspathFileSource;
 import com.github.tomakehurst.wiremock.common.FileSource;
 import com.github.tomakehurst.wiremock.common.SingleRootFileSource;
 import com.github.tomakehurst.wiremock.common.TextFile;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 
 /**
  * @author Dave Syer
@@ -60,11 +60,24 @@ public class ResourcesFileSource implements FileSource {
 				FileSystemResource files = (FileSystemResource) resource;
 				sources[i] = new SingleRootFileSource(files.getFile());
 			}
+			else if (resource instanceof UrlResource) {
+				UrlResource files = (UrlResource) resource;
+				sources[i] = new SingleRootFileSource(getFile(files));
+			}
 			else {
 				throw new IllegalArgumentException("Unsupported resource type for file source: " + resource.getClass());
 			}
 		}
 		return sources;
+	}
+
+	private static File getFile(UrlResource files) {
+		try {
+			return files.getFile();
+		}
+		catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	@Override

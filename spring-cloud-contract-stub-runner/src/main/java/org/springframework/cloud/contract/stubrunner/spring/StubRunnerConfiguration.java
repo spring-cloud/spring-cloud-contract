@@ -74,7 +74,7 @@ public class StubRunnerConfiguration {
 		}
 		StubRunnerOptions stubRunnerOptions = builder.build();
 		BatchStubRunner batchStubRunner = new BatchStubRunnerFactory(stubRunnerOptions,
-				this.provider.getOrDefaultDownloader(stubRunnerOptions),
+				this.provider.get(stubRunnerOptions),
 				this.contractVerifierMessaging != null ? this.contractVerifierMessaging
 						: new NoOpStubMessages()).buildBatchStubRunner();
 		// TODO: Consider running it in a separate thread

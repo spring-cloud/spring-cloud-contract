@@ -28,5 +28,8 @@ package org.springframework.cloud.contract.stubrunner;
  */
 public interface StubDownloaderBuilder {
 
+	/**
+	 * @return {@link StubDownloader} instance of {@code null} if current parameters don't allow building the instance
+	 */
 	StubDownloader build(StubRunnerOptions stubRunnerOptions);
 }

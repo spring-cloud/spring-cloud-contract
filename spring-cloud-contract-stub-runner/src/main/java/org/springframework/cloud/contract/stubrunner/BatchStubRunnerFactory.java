@@ -41,7 +41,7 @@ public class BatchStubRunnerFactory {
 
 	private static StubDownloader aetherStubDownloader(StubRunnerOptions stubRunnerOptions) {
 		StubDownloaderBuilderProvider provider = new StubDownloaderBuilderProvider();
-		return provider.getOrDefaultDownloader(stubRunnerOptions);
+		return provider.get(stubRunnerOptions);
 	}
 
 	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, StubDownloader stubDownloader) {

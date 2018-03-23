@@ -1,57 +1,69 @@
 {
   "properties": [
     {
+      "name": "stubrunner.amqp.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable support for Stub Runner and AMQP.",
+      "defaultValue": false
+    },
+    {
+      "name": "stubrunner.amqp.mockCOnnection",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable support for Stub Runner and AMQP mocked connection factory.",
+      "defaultValue": true
+    },
+    {
       "name": "stubrunner.cloud.consul.enabled",
       "type": "java.lang.Boolean",
-      "description": "Whether to enable register stubs in Consul.",
+      "description": "Whether to enable stubs registration in Consul.",
       "defaultValue": true
     },
     {
       "name": "stubrunner.cloud.delegate.enabled",
       "type": "java.lang.Boolean",
-      "description": "Whether to enable DiscoryClient's StubRunner implementation.",
+      "description": "Whether to enable DiscoveryClient's Stub Runner implementation.",
       "defaultValue": true
     },
     {
       "name": "stubrunner.cloud.enabled",
       "type": "java.lang.Boolean",
-      "description": "Whether to enable Spring Cloud.",
+      "description": "Whether to enable Spring Cloud support for Stub Runner.",
       "defaultValue": true
     },
     {
       "name": "stubrunner.cloud.eureka.enabled",
       "type": "java.lang.Boolean",
-      "description": "Whether to enable register stubs in Eureka.",
+      "description": "Whether to enable stubs registration in Eureka.",
       "defaultValue": true
     },
     {
       "name": "stubrunner.cloud.ribbon.enabled",
       "type": "java.lang.Boolean",
-      "description": "Whether to enable StubRunner's Ribbon.",
+      "description": "Whether to enable Stub Runner's Ribbon integration.",
       "defaultValue": true
     },
     {
       "name": "stubrunner.cloud.stubbed.discovery.enabled",
       "type": "java.lang.Boolean",
-      "description": "Whether to enable Stubbed Discovery mode.",
+      "description": "Whether Service Discovery should be stubbed for Stub Runner. If set to false, stubs will get registered in real service discovery.",
       "defaultValue": true
     },
     {
       "name": "stubrunner.cloud.zookeeper.enabled",
       "type": "java.lang.Boolean",
-      "description": "Whether to enable register stubs in Zookeper.",
+      "description": "Whether to enable stubs registration in Zookeeper.",
       "defaultValue": true
     },
     {
       "name": "stubrunner.integration.enabled",
       "type": "java.lang.Boolean",
-      "description": "Whether to enable StubRunner for Spring Integration.",
+      "description": "Whether to enable Stub Runner integration with Spring Integration.",
       "defaultValue": true
     },
     {
       "name": "stubrunner.stream.enabled",
       "type": "java.lang.Boolean",
-      "description": "Whether to enable StubRunner for Spring Cloud Stream.",
+      "description": "Whether to enable Stub Runner integration with Spring Cloud Stream.",
       "defaultValue": true
     }
   ]

@@ -38,6 +38,18 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 		options.getDependencies().toString() == '[foo:bar:+:stubs]'
 	}
 
+	def shouldCreateDependenciesForStubWithSameGroupAndArtifactId() {
+
+		given:
+		builder.withStubs('foo:bar:1.0', 'foo:bar:2.0')
+
+		when:
+		StubRunnerOptions options = builder.build()
+
+		then:
+		options.getDependencies().toString() == '[foo:bar:1.0:stubs, foo:bar:2.0:stubs]'
+	}
+
 	def shouldCreateDependenciesForMultipleStubsWithSameGroup() {
 
 		given:

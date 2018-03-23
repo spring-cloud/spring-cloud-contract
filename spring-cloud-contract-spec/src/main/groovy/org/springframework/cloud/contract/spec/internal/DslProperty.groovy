@@ -17,7 +17,6 @@
 package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.CompileStatic
-import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 /**
  * Represents an element of a DSL that can contain client or sever side values
@@ -25,7 +24,6 @@ import groovy.transform.ToString
  * @since 1.0.0
  */
 @CompileStatic
-@EqualsAndHashCode
 @ToString(includePackage = false, includeNames = true)
 class DslProperty<T> {
 
@@ -46,5 +44,21 @@ class DslProperty<T> {
 		return this.clientValue == this.serverValue ||
 				(this.clientValue != null && this.serverValue == null ) ||
 				(this.serverValue != null && this.clientValue == null )
+	}
+
+	boolean equals(o) {
+		if (this.is(o)) return true
+		if (getClass() != o.class) return false
+		DslProperty that = (DslProperty) o
+		if (this.clientValue != that.clientValue) return false
+		if (this.serverValue != that.serverValue) return false
+		return true
+	}
+
+	int hashCode() {
+		int result
+		result = (this.clientValue != null ? this.clientValue.hashCode() : 0)
+		result = 31 * result + (this.serverValue != null ? this.serverValue.hashCode() : 0)
+		return result
 	}
 }
