@@ -8,6 +8,7 @@ import au.com.dius.pact.model.matchingrules.MatchingRuleGroup
 import au.com.dius.pact.model.matchingrules.MaxTypeMatcher
 import au.com.dius.pact.model.matchingrules.MinMaxTypeMatcher
 import au.com.dius.pact.model.matchingrules.MinTypeMatcher
+import au.com.dius.pact.model.matchingrules.NullMatcher
 import au.com.dius.pact.model.matchingrules.RegexMatcher
 import au.com.dius.pact.model.matchingrules.TimeMatcher
 import au.com.dius.pact.model.matchingrules.TimestampMatcher
@@ -58,7 +59,9 @@ class MessagingSCContractCreator {
 										}
 									} else {
 										ruleGroup.rules.each { MatchingRule rule ->
-											if (rule instanceof RegexMatcher) {
+											if (rule instanceof NullMatcher) {
+												jsonPath(key, byNull())
+											} else if (rule instanceof RegexMatcher) {
 												jsonPath(key, byRegex(rule.regex))
 											} else if (rule instanceof DateMatcher) {
 												jsonPath(key, byDate())
@@ -122,10 +125,8 @@ class MessagingSCContractCreator {
 					body = jsonSlurper.parseText(body)
 				} catch (JsonException ex) { /*it wasn't a JSON string after all...*/ }
 			}
-			return body
-		} else {
-			return body
 		}
+		return body
 	}
 
 }

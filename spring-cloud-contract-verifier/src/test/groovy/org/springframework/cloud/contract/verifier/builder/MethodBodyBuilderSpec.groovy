@@ -614,4 +614,36 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
 	}
 
+	def "should assert null values without matchers [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method GET()
+					url "test"
+				}
+				response {
+					status OK()
+					body([
+							nullValue: null
+					])
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['nullValue']").isNull()""")
+		and:
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName           						 | methodBuilder
+			"MockMvcSpockMethodBuilder" 						 | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder" 						 | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
 }

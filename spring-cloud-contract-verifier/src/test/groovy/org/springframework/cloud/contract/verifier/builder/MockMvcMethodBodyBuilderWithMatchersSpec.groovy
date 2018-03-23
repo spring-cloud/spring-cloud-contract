@@ -97,7 +97,8 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							valueWithMaxEmpty: [],
 							key: [
 							        'complex.key' : 'foo'
-							]
+							],
+							nullValue: null
 					])
 					testMatchers {
 						// asserts the jsonpath value against manual regex
@@ -139,6 +140,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 						// will execute a method `assertThatValueIsANumber`
 						jsonPath('$.duck', byCommand('assertThatValueIsANumber($it)'))
 						jsonPath("\$.['key'].['complex.key']", byEquality())
+						jsonPath("\$.nullValue", byNull())
 					}
 					headers {
 						contentType(applicationJson())
@@ -174,6 +176,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.valueWithMaxEmpty", java.util.Collection.class)).as("' + rootElement + '.valueWithMaxEmpty").hasSizeLessThanOrEqualTo(0)')
 			test.contains('assertThatValueIsANumber(parsedJson.read("' + rootElement + '.duck")')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '''.['key'].['complex.key']", String.class)).isEqualTo("foo")''')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.nullValue")).isNull()')
 			!test.contains('cursor')
 		and:
 			try {

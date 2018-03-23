@@ -92,13 +92,16 @@ class YamlContractConverterSpec extends Specification {
 					((ExecutionProperty) it.serverValue).insertValue('foo') == "andMeToo(foo)" }
 			contract.response.headers.entries.find { it.name == "fooRes" &&
 					it.clientValue == "baz" }
-			contract.response.body.clientValue == [foo2: "bar", foo3: "baz"]
+			contract.response.body.clientValue == [foo2: "bar", foo3: "baz", nullValue: null]
 			contract.response.matchers.jsonPathRegexMatchers[0].path() == '$.foo2'
 			contract.response.matchers.jsonPathRegexMatchers[0].matchingType() == MatchingType.REGEX
 			contract.response.matchers.jsonPathRegexMatchers[0].value() == 'bar'
 			contract.response.matchers.jsonPathRegexMatchers[1].path() == '$.foo3'
 			contract.response.matchers.jsonPathRegexMatchers[1].matchingType() == MatchingType.COMMAND
 			contract.response.matchers.jsonPathRegexMatchers[1].value() == new ExecutionProperty('executeMe($it)')
+			contract.response.matchers.jsonPathRegexMatchers[2].path() == '$.nullValue'
+			contract.response.matchers.jsonPathRegexMatchers[2].matchingType() == MatchingType.NULL
+			contract.response.matchers.jsonPathRegexMatchers[2].value() == null
 		where:
 			yamlFile << [ymlWithRest, ymlWithRest2, ymlWithRest3]
 	}

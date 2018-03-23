@@ -421,18 +421,21 @@ class PactContractConverterSpec extends Specification {
 								"dob": "07/19/2016",
 								"id": 8958464620,
 								"name": "Rogger the Dogger",
-								"timestamp": "2016-07-19T12:14:39"
+								"timestamp": "2016-07-19T12:14:39",
+								"nullValue": null
 							],
 							[
 								"dob": "07/19/2016",
 								"id": 4143398442,
 								"name": "Cat in the Hat",
-								"timestamp": "2016-07-19T12:14:39"
+								"timestamp": "2016-07-19T12:14:39",
+								"nullValue": null
 							]
 					  	])
 						testMatchers {
 							jsonPath('$[0].id', byType())
 							jsonPath('$[1].id', byType())
+							jsonPath('$[*].nullValue', byNull())
 						}
 					}
 				},

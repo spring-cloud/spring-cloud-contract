@@ -42,10 +42,14 @@ enum MatchingType {
 	/**
 	 * The user can provide custom command to execute
 	 */
-	COMMAND
+	COMMAND,
+	/**
+	 * Verification if the value for the given path is null
+	 */
+	NULL
 
 	static boolean regexRelated(MatchingType type) {
-		if (type == EQUALITY || type == TYPE || type == COMMAND ) {
+		if (type == EQUALITY || type == TYPE || type == COMMAND || type == NULL ) {
 			return false
 		}
 		return true

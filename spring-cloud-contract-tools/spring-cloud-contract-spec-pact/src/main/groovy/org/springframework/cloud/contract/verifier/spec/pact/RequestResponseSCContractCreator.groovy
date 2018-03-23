@@ -13,6 +13,7 @@ import au.com.dius.pact.model.matchingrules.MatchingRuleGroup
 import au.com.dius.pact.model.matchingrules.MaxTypeMatcher
 import au.com.dius.pact.model.matchingrules.MinMaxTypeMatcher
 import au.com.dius.pact.model.matchingrules.MinTypeMatcher
+import au.com.dius.pact.model.matchingrules.NullMatcher
 import au.com.dius.pact.model.matchingrules.RegexMatcher
 import au.com.dius.pact.model.matchingrules.TimeMatcher
 import au.com.dius.pact.model.matchingrules.TimestampMatcher
@@ -78,7 +79,9 @@ class RequestResponseSCContractCreator {
 						stubMatchers {
 							bodyRules.matchingRules.each { String key, MatchingRuleGroup ruleGroup ->
 								ruleGroup.rules.each { MatchingRule rule ->
-									if (rule instanceof RegexMatcher) {
+									if (rule instanceof NullMatcher) {
+										jsonPath(key, byNull())
+									} else if (rule instanceof RegexMatcher) {
 										jsonPath(key, byRegex(rule.regex))
 									} else if (rule instanceof DateMatcher) {
 										jsonPath(key, byDate())
@@ -116,7 +119,9 @@ class RequestResponseSCContractCreator {
 									}
 								} else {
 									ruleGroup.rules.each { MatchingRule rule ->
-										if (rule instanceof RegexMatcher) {
+										if (rule instanceof NullMatcher) {
+											jsonPath(key, byNull())
+										} else if (rule instanceof RegexMatcher) {
 											jsonPath(key, byRegex(rule.regex))
 										} else if (rule instanceof DateMatcher) {
 											jsonPath(key, byDate())
@@ -178,10 +183,9 @@ class RequestResponseSCContractCreator {
 		if (optionalBody.present) {
 			def body = new JsonSlurper().parseText(optionalBody.value)
 			if (body instanceof String) {
-				return optionalBody.value
-			} else {
-				return body
+				body = optionalBody.value
 			}
+			return body
 		} else {
 			return optionalBody.value
 		}
