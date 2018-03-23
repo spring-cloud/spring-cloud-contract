@@ -3,7 +3,6 @@ package org.springframework.cloud.contract.stubrunner;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.AbstractMap;
@@ -18,6 +17,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.stubrunner.util.StringUtils;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
@@ -53,7 +53,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 public class ClasspathStubProvider implements StubDownloaderBuilder {
 
 	private static final Log log = LogFactory
-			.getLog(MethodHandles.lookup().lookupClass());
+			.getLog(ClasspathStubProvider.class);
 
 	private static final int TEMP_DIR_ATTEMPTS = 10000;
 	private final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(
@@ -61,6 +61,10 @@ public class ClasspathStubProvider implements StubDownloaderBuilder {
 
 	@Override
 	public StubDownloader build(final StubRunnerOptions stubRunnerOptions) {
+		if (stubRunnerOptions.stubsMode != StubRunnerProperties.StubsMode.CLASSPATH) {
+			return null;
+		}
+		log.info("Will download stubs from classpath");
 		return new StubDownloader() {
 			@Override
 			public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
@@ -133,7 +137,7 @@ public class ClasspathStubProvider implements StubDownloaderBuilder {
 							+ groupAndArtifactResult.group(3);
 				}
 				else {
-					throw new IllegalArgumentException("Illegal uri [${uri}]");
+					throw new IllegalArgumentException("Illegal uri [" + uri + "]");
 				}
 			}
 		};

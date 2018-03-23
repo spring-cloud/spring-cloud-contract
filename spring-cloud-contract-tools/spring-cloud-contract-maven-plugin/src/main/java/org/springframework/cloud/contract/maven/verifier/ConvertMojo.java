@@ -181,8 +181,8 @@ public class  ConvertMojo extends AbstractMojo {
 		config.setExcludeBuildFolders(this.excludeBuildFolders);
 		File contractsDirectory = new MavenContractsDownloader(this.project, this.contractDependency,
 				this.contractsPath, this.contractsRepositoryUrl, this.contractsMode, getLog(),
-				this.aetherStubDownloaderFactory, this.repoSession, this.contractsRepositoryUsername,
-				this.contractsRepositoryPassword, this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort,
+				this.contractsRepositoryUsername, this.contractsRepositoryPassword,
+				this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort,
 				this.contractsSnapshotCheckSkip, this.deleteStubsAfterTest)
 				.downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");

@@ -87,7 +87,7 @@ class GradleContractsDownloader {
 		if (extension.contractRepository.proxyPort) {
 			options = options.withProxy(extension.contractRepository.proxyHost, extension.contractRepository.proxyPort)
 		}
-		return provider.getOrDefaultDownloader(options.build())
+		return provider.get(options.build())
 	}
 
 	@PackageScope StubConfiguration stubConfiguration(ContractVerifierExtension.Dependency contractDependency) {
