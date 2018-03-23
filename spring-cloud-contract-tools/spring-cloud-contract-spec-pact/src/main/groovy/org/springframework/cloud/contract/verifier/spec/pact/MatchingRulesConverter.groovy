@@ -6,6 +6,7 @@ import au.com.dius.pact.model.matchingrules.EqualsMatcher
 import au.com.dius.pact.model.matchingrules.MaxTypeMatcher
 import au.com.dius.pact.model.matchingrules.MinMaxTypeMatcher
 import au.com.dius.pact.model.matchingrules.MinTypeMatcher
+import au.com.dius.pact.model.matchingrules.NullMatcher
 import au.com.dius.pact.model.matchingrules.RegexMatcher
 import au.com.dius.pact.model.matchingrules.TimeMatcher
 import au.com.dius.pact.model.matchingrules.TimestampMatcher
@@ -34,6 +35,9 @@ class MatchingRulesConverter {
 			String key = getMatcherKey(it.path())
 			MatchingType matchingType = it.matchingType()
 			switch (matchingType) {
+				case MatchingType.NULL:
+					category.setRule(key, NullMatcher.INSTANCE)
+					break
 				case MatchingType.EQUALITY:
 					category.setRule(key, EqualsMatcher.INSTANCE)
 					break

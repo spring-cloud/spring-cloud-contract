@@ -151,7 +151,8 @@ class PactContractConverterSpec extends Specification {
 										   id: "eb0f8c17-c06a-479e-9204-14f7c95b63a6",
 										   number: $(producer(regex("[0-9]{3}")), consumer(923)),
 										   something: "foo",
-										   userName: "AJQrokEGPAVdOHprQpKP"]
+										   userName: "AJQrokEGPAVdOHprQpKP",
+										   nullValue: null]
 								  ]])
 							testMatchers {
 								jsonPath('$[0][*].email', byType())
@@ -162,6 +163,7 @@ class PactContractConverterSpec extends Specification {
 								})
 								jsonPath('$[0][*].userName', byType())
 								jsonPath('$[0][*].something', byEquality())
+								jsonPath('$[0][*].nullValue', byNull())
 							}
 						}
 					}
@@ -220,7 +222,8 @@ class PactContractConverterSpec extends Specification {
               "id": "eb0f8c17-c06a-479e-9204-14f7c95b63a6",
               "number": 923,
               "userName": "AJQrokEGPAVdOHprQpKP",
-              "something": "foo"
+              "something": "foo",
+              "nullValue": null
             }
           ]
         ],
@@ -252,6 +255,11 @@ class PactContractConverterSpec extends Specification {
             "$[0][*].something": {
               "matchers": [{
                 "match": "equality"
+              }]
+            },
+            "$[0][*].nullValue": {
+              "matchers": [{
+                "match": "null"
               }]
             }
           }
