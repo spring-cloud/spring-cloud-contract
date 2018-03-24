@@ -9,6 +9,7 @@ import au.com.dius.pact.model.matchingrules.MaxTypeMatcher
 import au.com.dius.pact.model.matchingrules.MinMaxTypeMatcher
 import au.com.dius.pact.model.matchingrules.MinTypeMatcher
 import au.com.dius.pact.model.matchingrules.NullMatcher
+import au.com.dius.pact.model.matchingrules.NumberTypeMatcher
 import au.com.dius.pact.model.matchingrules.RegexMatcher
 import au.com.dius.pact.model.matchingrules.TimeMatcher
 import au.com.dius.pact.model.matchingrules.TimestampMatcher
@@ -84,6 +85,20 @@ class MessagingSCContractCreator {
 												})
 											} else if (rule instanceof TypeMatcher) {
 												jsonPath(key, byType())
+											} else if (rule instanceof NumberTypeMatcher) {
+												switch(rule.numberType) {
+													case NumberTypeMatcher.NumberType.NUMBER:
+														jsonPath(key, byRegex(number()))
+														break
+													case NumberTypeMatcher.NumberType.INTEGER:
+														jsonPath(key, byRegex(anInteger()))
+														break
+													case NumberTypeMatcher.NumberType.DECIMAL:
+														jsonPath(key, byRegex(aDouble()))
+														break
+													default:
+														throw new RuntimeException("Unsupported number type!")
+												}
 											}
 										}
 									}

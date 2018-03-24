@@ -150,6 +150,10 @@ class PactContractConverterSpec extends Specification {
 										  [email: "rddtGwwWMEhnkAPEmsyE",
 										   id: "eb0f8c17-c06a-479e-9204-14f7c95b63a6",
 										   number: $(producer(regex("[0-9]{3}")), consumer(923)),
+										   positiveInteger: 1234567890,
+										   negativeInteger: -1234567890,
+										   positiveDecimalNumber: 123.4567890,
+										   negativeDecimalNumber: -123.4567890,
 										   something: "foo",
 										   userName: "AJQrokEGPAVdOHprQpKP",
 										   nullValue: null]
@@ -161,6 +165,11 @@ class PactContractConverterSpec extends Specification {
 									minOccurrence(1)
 									maxOccurrence(5)
 								})
+								jsonPath('$[0][*].number', byRegex(number()))
+								jsonPath('$[0][*].positiveInteger', byRegex(anInteger()))
+								jsonPath('$[0][*].negativeInteger', byRegex(anInteger()))
+								jsonPath('$[0][*].positiveDecimalNumber', byRegex(aDouble()))
+								jsonPath('$[0][*].negativeDecimalNumber', byRegex(aDouble()))
 								jsonPath('$[0][*].userName', byType())
 								jsonPath('$[0][*].something', byEquality())
 								jsonPath('$[0][*].nullValue', byNull())
@@ -221,6 +230,10 @@ class PactContractConverterSpec extends Specification {
               "email": "rddtGwwWMEhnkAPEmsyE",
               "id": "eb0f8c17-c06a-479e-9204-14f7c95b63a6",
               "number": 923,
+              "positiveInteger": 1234567890,
+              "negativeInteger": -1234567890,
+              "positiveDecimalNumber": 123.4567890,
+              "negativeDecimalNumber": -123.4567890,
               "userName": "AJQrokEGPAVdOHprQpKP",
               "something": "foo",
               "nullValue": null
@@ -245,6 +258,31 @@ class PactContractConverterSpec extends Specification {
                 "match": "type",
                 "min": 1,
                 "max": 5
+              }]
+            },
+            "$[0][*].number": {
+              "matchers": [{
+                "match": "number"
+              }]
+            },
+            "$[0][*].positiveInteger": {
+              "matchers": [{
+                "match": "integer"
+              }]
+            },
+            "$[0][*].negativeInteger": {
+              "matchers": [{
+                "match": "integer"
+              }]
+            },
+            "$[0][*].positiveDecimalNumber": {
+              "matchers": [{
+                "match": "decimal"
+              }]
+            },
+            "$[0][*].negativeDecimalNumber": {
+              "matchers": [{
+                "match": "decimal"
               }]
             },
             "$[0][*].userName": {
@@ -430,20 +468,35 @@ class PactContractConverterSpec extends Specification {
 								"id": 8958464620,
 								"name": "Rogger the Dogger",
 								"timestamp": "2016-07-19T12:14:39",
-								"nullValue": null
+								"nullValue": null,
+								"aNumber": 1234567890,
+								"positiveInteger": 1234567890,
+								"negativeInteger": -1234567890,
+								"positiveDecimalNumber": 123.4567890,
+								"negativeDecimalNumber": -123.4567890
 							],
 							[
 								"dob": "07/19/2016",
 								"id": 4143398442,
 								"name": "Cat in the Hat",
 								"timestamp": "2016-07-19T12:14:39",
-								"nullValue": null
+								"nullValue": null,
+								"aNumber": 1234567890,
+								"positiveInteger": 1234567890,
+								"negativeInteger": -1234567890,
+								"positiveDecimalNumber": 123.4567890,
+								"negativeDecimalNumber": -123.4567890
 							]
 					  	])
 						testMatchers {
 							jsonPath('$[0].id', byType())
 							jsonPath('$[1].id', byType())
 							jsonPath('$[*].nullValue', byNull())
+							jsonPath('$[*].aNumber', byRegex(number()))
+							jsonPath('$[*].positiveInteger', byRegex(anInteger()))
+							jsonPath('$[*].negativeInteger', byRegex(anInteger()))
+							jsonPath('$[*].positiveDecimalNumber', byRegex(aDouble()))
+							jsonPath('$[*].negativeDecimalNumber', byRegex(aDouble()))
 						}
 					}
 				},
@@ -527,10 +580,6 @@ class PactContractConverterSpec extends Specification {
 								minOccurrence(1)
 							})
 							jsonPath('$.id', byType())
-
-//							TODO: CURRENTLY NOT SUPPORTED
-//							jsonPath('$.data.array3[0][*].itemCount', byInteger())
-
 							jsonPath('$.data.array2[*].name', byType())
 							jsonPath('$.data.array2[*].address', byRegex("(\\d{1,3}\\.)+\\d{1,3}"))
 							jsonPath('$.data.array1[*].name', byType())

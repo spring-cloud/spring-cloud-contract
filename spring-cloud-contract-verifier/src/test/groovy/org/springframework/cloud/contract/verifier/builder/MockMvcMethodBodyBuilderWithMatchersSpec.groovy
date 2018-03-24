@@ -78,6 +78,10 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							duck: 123,
 							alpha: "abc",
 							number: 123,
+							positiveInteger: 1234567890,
+							negativeInteger: -1234567890,
+							positiveDecimalNumber: 123.4567890,
+							negativeDecimalNumber: -123.4567890,
 							aBoolean: true,
 							date: "2017-01-01",
 							dateTime: "2017-01-01T01:23:45",
@@ -109,6 +113,10 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
 						jsonPath('$.alpha', byEquality())
 						jsonPath('$.number', byRegex(number()))
+						jsonPath('$.positiveInteger', byRegex(anInteger()))
+						jsonPath('$.negativeInteger', byRegex(anInteger()))
+						jsonPath('$.positiveDecimalNumber', byRegex(aDouble()))
+						jsonPath('$.negativeDecimalNumber', byRegex(aDouble()))
 						jsonPath('$.aBoolean', byRegex(anyBoolean()))
 						// asserts vs inbuilt time related regex
 						jsonPath('$.date', byDate())
@@ -140,7 +148,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 						// will execute a method `assertThatValueIsANumber`
 						jsonPath('$.duck', byCommand('assertThatValueIsANumber($it)'))
 						jsonPath("\$.['key'].['complex.key']", byEquality())
-						jsonPath("\$.nullValue", byNull())
+						jsonPath('$.nullValue', byNull())
 					}
 					headers {
 						contentType(applicationJson())
@@ -159,6 +167,10 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.alpha", String.class)).matches("[\\\\p{L}]*")')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.alpha", String.class)).isEqualTo("abc")')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.number", String.class)).matches("-?(\\\\d*\\\\.\\\\d+|\\\\d+)")')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.positiveInteger", String.class)).matches("-?(\\\\d+)")')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.negativeInteger", String.class)).matches("-?(\\\\d+)")')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.positiveDecimalNumber", String.class)).matches("-?(\\\\d*\\\\.\\\\d+)")')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.negativeDecimalNumber", String.class)).matches("-?(\\\\d*\\\\.\\\\d+)")')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.aBoolean", String.class)).matches("(true|false)")')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.date", String.class)).matches("(\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])")')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.dateTime", String.class)).matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])")')

@@ -7,6 +7,7 @@ import au.com.dius.pact.model.matchingrules.MaxTypeMatcher
 import au.com.dius.pact.model.matchingrules.MinMaxTypeMatcher
 import au.com.dius.pact.model.matchingrules.MinTypeMatcher
 import au.com.dius.pact.model.matchingrules.NullMatcher
+import au.com.dius.pact.model.matchingrules.NumberTypeMatcher
 import au.com.dius.pact.model.matchingrules.RegexMatcher
 import au.com.dius.pact.model.matchingrules.TimeMatcher
 import au.com.dius.pact.model.matchingrules.TimestampMatcher
@@ -16,6 +17,7 @@ import groovy.transform.PackageScope
 import org.springframework.cloud.contract.spec.internal.BodyMatcher
 import org.springframework.cloud.contract.spec.internal.BodyMatchers
 import org.springframework.cloud.contract.spec.internal.MatchingType
+import org.springframework.cloud.contract.spec.internal.RegexPatterns
 
 /**
  * @author Tim Ysewyn
@@ -24,6 +26,8 @@ import org.springframework.cloud.contract.spec.internal.MatchingType
 @CompileStatic
 @PackageScope
 class MatchingRulesConverter {
+
+	private static final RegexPatterns regexPatterns = new RegexPatterns()
 
 	static Category matchingRulesForBody(BodyMatchers bodyMatchers) {
 		return matchingRulesFor("body", bodyMatchers)
@@ -62,7 +66,16 @@ class MatchingRulesConverter {
 					category.setRule(key, new TimestampMatcher())
 					break
 				case MatchingType.REGEX:
-					category.setRule(key, new RegexMatcher(it.value().toString()))
+					String pattern = it.value().toString()
+					if (pattern.equals(regexPatterns.number().pattern())) {
+						category.setRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.NUMBER))
+					} else if (pattern.equals(regexPatterns.anInteger().pattern())) {
+						category.setRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.INTEGER))
+					} else if (pattern.equals(regexPatterns.aDouble().pattern())) {
+						category.setRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.DECIMAL))
+					} else {
+						category.setRule(key, new RegexMatcher(pattern))
+					}
 					break
 				default:
 					break

@@ -23,14 +23,24 @@
             "id": 8958464620,
             "name": "Rogger the Dogger",
             "timestamp": "2016-07-19T12:14:39",
-            "nullValue": null
+            "nullValue": null,
+            "aNumber": 1234567890,
+            "positiveInteger": 1234567890,
+            "negativeInteger": -1234567890,
+            "positiveDecimalNumber": 123.4567890,
+            "negativeDecimalNumber": -123.4567890
           },
           {
             "dob": "07/19/2016",
             "id": 4143398442,
             "name": "Cat in the Hat",
             "timestamp": "2016-07-19T12:14:39",
-            "nullValue": null
+            "nullValue": null,
+            "aNumber": 1234567890,
+            "positiveInteger": 1234567890,
+            "negativeInteger": -1234567890,
+            "positiveDecimalNumber": 123.4567890,
+            "negativeDecimalNumber": -123.4567890
           }
         ],
         "matchingRules": {
@@ -48,6 +58,31 @@
             "$[*].nullValue": {
               "matchers": [
                 { "match": "null" }
+              ]
+            },
+            "$[*].aNumber": {
+              "matchers": [
+                { "match": "number" }
+              ]
+            },
+            "$[*].positiveInteger": {
+              "matchers": [
+                { "match": "integer" }
+              ]
+            },
+            "$[*].negativeInteger": {
+              "matchers": [
+                { "match": "integer" }
+              ]
+            },
+            "$[*].positiveDecimalNumber": {
+              "matchers": [
+                { "match": "decimal" }
+              ]
+            },
+            "$[*].negativeDecimalNumber": {
+              "matchers": [
+                { "match": "decimal" }
               ]
             }
           }

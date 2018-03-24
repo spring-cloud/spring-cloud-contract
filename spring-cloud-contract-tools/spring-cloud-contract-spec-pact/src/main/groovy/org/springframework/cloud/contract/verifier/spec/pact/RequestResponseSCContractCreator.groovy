@@ -14,6 +14,7 @@ import au.com.dius.pact.model.matchingrules.MaxTypeMatcher
 import au.com.dius.pact.model.matchingrules.MinMaxTypeMatcher
 import au.com.dius.pact.model.matchingrules.MinTypeMatcher
 import au.com.dius.pact.model.matchingrules.NullMatcher
+import au.com.dius.pact.model.matchingrules.NumberTypeMatcher
 import au.com.dius.pact.model.matchingrules.RegexMatcher
 import au.com.dius.pact.model.matchingrules.TimeMatcher
 import au.com.dius.pact.model.matchingrules.TimestampMatcher
@@ -22,6 +23,7 @@ import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 
@@ -36,6 +38,7 @@ import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 class RequestResponseSCContractCreator {
 
 	private static final String FULL_BODY = '$'
+	private static final RegexPatterns regexPatterns = new RegexPatterns();
 
 	Collection<Contract> convertFrom(RequestResponsePact pact) {
 		return pact.interactions.collect { RequestResponseInteraction interaction ->
@@ -89,6 +92,20 @@ class RequestResponseSCContractCreator {
 										jsonPath(key, byTime())
 									} else if (rule instanceof TimestampMatcher) {
 										jsonPath(key, byTimestamp())
+									} else if (rule instanceof NumberTypeMatcher) {
+										switch(rule.numberType) {
+											case NumberTypeMatcher.NumberType.NUMBER:
+												jsonPath(key, byRegex(regexPatterns.number()))
+												break
+											case NumberTypeMatcher.NumberType.INTEGER:
+												jsonPath(key, byRegex(regexPatterns.anInteger()))
+												break
+											case NumberTypeMatcher.NumberType.DECIMAL:
+												jsonPath(key, byRegex(regexPatterns.aDouble()))
+												break
+											default:
+												throw new RuntimeException("Unsupported number type!")
+										}
 									}
 								}
 							}
@@ -144,6 +161,20 @@ class RequestResponseSCContractCreator {
 											})
 										} else if (rule instanceof TypeMatcher) {
 											jsonPath(key, byType())
+										} else if (rule instanceof NumberTypeMatcher) {
+											switch(rule.numberType) {
+												case NumberTypeMatcher.NumberType.NUMBER:
+													jsonPath(key, byRegex(regexPatterns.number()))
+													break
+												case NumberTypeMatcher.NumberType.INTEGER:
+													jsonPath(key, byRegex(regexPatterns.anInteger()))
+													break
+												case NumberTypeMatcher.NumberType.DECIMAL:
+													jsonPath(key, byRegex(regexPatterns.aDouble()))
+													break
+												default:
+													throw new RuntimeException("Unsupported number type!")
+											}
 										}
 									}
 								}
