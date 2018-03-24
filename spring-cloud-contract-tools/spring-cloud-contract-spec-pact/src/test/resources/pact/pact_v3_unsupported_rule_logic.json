@@ -1,0 +1,47 @@
+{
+  "provider": {
+    "name": "test_unsupported_rule_logic"
+  },
+  "consumer": {
+    "name": "test_unsupported_rule_logic"
+  },
+  "interactions": [
+    {
+      "description": "test unsupported rule logic",
+      "request": {
+        "method": "GET",
+        "path": "/"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=UTF-8"
+        },
+        "body": [
+          {
+            "optionalField": 1234567890
+          }
+        ],
+        "matchingRules": {
+          "body": {
+            "$[*].optionalField": {
+              "matchers": [
+                { "match": "integer" },
+                { "match": "null" }
+              ],
+              "combine": "OR"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pact-specification": {
+      "version": "3.0.0"
+    },
+    "pact-jvm": {
+      "version": "3.2.11"
+    }
+  }
+}

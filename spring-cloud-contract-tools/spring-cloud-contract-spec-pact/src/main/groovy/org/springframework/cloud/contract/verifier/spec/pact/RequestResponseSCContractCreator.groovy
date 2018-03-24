@@ -16,6 +16,7 @@ import au.com.dius.pact.model.matchingrules.MinTypeMatcher
 import au.com.dius.pact.model.matchingrules.NullMatcher
 import au.com.dius.pact.model.matchingrules.NumberTypeMatcher
 import au.com.dius.pact.model.matchingrules.RegexMatcher
+import au.com.dius.pact.model.matchingrules.RuleLogic
 import au.com.dius.pact.model.matchingrules.TimeMatcher
 import au.com.dius.pact.model.matchingrules.TimestampMatcher
 import au.com.dius.pact.model.matchingrules.TypeMatcher
@@ -81,6 +82,10 @@ class RequestResponseSCContractCreator {
 					if (bodyRules && !bodyRules.matchingRules.isEmpty()) {
 						stubMatchers {
 							bodyRules.matchingRules.each { String key, MatchingRuleGroup ruleGroup ->
+								if (ruleGroup.ruleLogic != RuleLogic.AND) {
+									throw new UnsupportedOperationException("Currently only the AND combination rule logic is supported")
+								}
+
 								ruleGroup.rules.each { MatchingRule rule ->
 									if (rule instanceof NullMatcher) {
 										jsonPath(key, byNull())
@@ -129,6 +134,10 @@ class RequestResponseSCContractCreator {
 					if (bodyRules && !bodyRules.matchingRules.isEmpty()) {
 						testMatchers {
 							bodyRules.matchingRules.each { String key, MatchingRuleGroup ruleGroup ->
+								if (ruleGroup.ruleLogic != RuleLogic.AND) {
+									throw new UnsupportedOperationException("Currently only the AND combination rule logic is supported")
+								}
+
 								if (FULL_BODY.equals(key)) {
 									JsonPaths jsonPaths = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(response.body.value)
 									jsonPaths.each {

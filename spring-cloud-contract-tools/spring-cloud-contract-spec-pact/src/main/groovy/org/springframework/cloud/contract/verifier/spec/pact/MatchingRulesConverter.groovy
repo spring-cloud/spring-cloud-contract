@@ -40,41 +40,41 @@ class MatchingRulesConverter {
 			MatchingType matchingType = it.matchingType()
 			switch (matchingType) {
 				case MatchingType.NULL:
-					category.setRule(key, NullMatcher.INSTANCE)
+					category.addRule(key, NullMatcher.INSTANCE)
 					break
 				case MatchingType.EQUALITY:
-					category.setRule(key, EqualsMatcher.INSTANCE)
+					category.addRule(key, EqualsMatcher.INSTANCE)
 					break
 				case MatchingType.TYPE:
 					if (it.minTypeOccurrence() && it.maxTypeOccurrence()) {
-						category.setRule(key, new MinMaxTypeMatcher(it.minTypeOccurrence(), it.maxTypeOccurrence()))
+						category.addRule(key, new MinMaxTypeMatcher(it.minTypeOccurrence(), it.maxTypeOccurrence()))
 					} else if (it.minTypeOccurrence()) {
-						category.setRule(key, new MinTypeMatcher(it.minTypeOccurrence()))
+						category.addRule(key, new MinTypeMatcher(it.minTypeOccurrence()))
 					} else if (it.maxTypeOccurrence()) {
-						category.setRule(key, new MaxTypeMatcher(it.maxTypeOccurrence()))
+						category.addRule(key, new MaxTypeMatcher(it.maxTypeOccurrence()))
 					} else {
-						category.setRule(key, TypeMatcher.INSTANCE)
+						category.addRule(key, TypeMatcher.INSTANCE)
 					}
 					break
 				case MatchingType.DATE:
-					category.setRule(key, new DateMatcher())
+					category.addRule(key, new DateMatcher())
 					break
 				case MatchingType.TIME:
-					category.setRule(key, new TimeMatcher())
+					category.addRule(key, new TimeMatcher())
 					break
 				case MatchingType.TIMESTAMP:
-					category.setRule(key, new TimestampMatcher())
+					category.addRule(key, new TimestampMatcher())
 					break
 				case MatchingType.REGEX:
 					String pattern = it.value().toString()
 					if (pattern.equals(regexPatterns.number().pattern())) {
-						category.setRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.NUMBER))
+						category.addRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.NUMBER))
 					} else if (pattern.equals(regexPatterns.anInteger().pattern())) {
-						category.setRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.INTEGER))
+						category.addRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.INTEGER))
 					} else if (pattern.equals(regexPatterns.aDouble().pattern())) {
-						category.setRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.DECIMAL))
+						category.addRule(key, new NumberTypeMatcher(NumberTypeMatcher.NumberType.DECIMAL))
 					} else {
-						category.setRule(key, new RegexMatcher(pattern))
+						category.addRule(key, new RegexMatcher(pattern))
 					}
 					break
 				default:

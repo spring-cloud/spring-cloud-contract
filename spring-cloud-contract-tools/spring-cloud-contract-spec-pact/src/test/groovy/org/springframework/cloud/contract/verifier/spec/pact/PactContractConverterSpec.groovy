@@ -23,6 +23,7 @@ class PactContractConverterSpec extends Specification {
 	File pactv2Json = new File(PactContractConverterSpec.getResource("/pact/pact_v2.json").toURI())
 	File pactv3Json = new File(PactContractConverterSpec.getResource("/pact/pact_v3.json").toURI())
 	File pactv3MessagingJson = new File(PactContractConverterSpec.getResource("/pact/pact_v3_messaging.json").toURI())
+	File pactv3UnsupportedRuleLogicJson = new File(PactContractConverterSpec.getResource("/pact/pact_v3_unsupported_rule_logic.json").toURI())
 	@Subject PactContractConverter converter = new PactContractConverter()
 
 	def "should accept json files that are pact files"() {
@@ -621,6 +622,14 @@ class PactContractConverterSpec extends Specification {
 			Collection<Contract> contracts = converter.convertFrom(pactv3MessagingJson)
 		then:
 			contracts == expectedContracts
+	}
+
+	def "should fail to convert a pact v3 contract with unsupported rule logic"() {
+		when:
+			converter.convertFrom(pactv3UnsupportedRuleLogicJson)
+		then:
+			def e = thrown(UnsupportedOperationException)
+			e.message.contains("Currently only the AND combination rule logic is supported")
 	}
 }
 
