@@ -211,6 +211,18 @@ class RegexPatternsSpec extends Specification {
 			'1.'        || false
 	}
 
+	def "should generate a regex for a positive integer [#textToMatch] that is a match [#shouldMatch]"() {
+		expect:
+			shouldMatch == regexPatterns.positiveInt().matcher(textToMatch).matches()
+		where:
+			textToMatch || shouldMatch
+			'1'         || true
+			'12345'     || true
+			'-1'        || false
+			'0'         || false
+			'1.0'       || false
+	}
+
 	def "should generate a regex for a double [#textToMatch] that is a match [#shouldMatch]"() {
 		expect:
 			shouldMatch == regexPatterns.aDouble().matcher(textToMatch).matches()

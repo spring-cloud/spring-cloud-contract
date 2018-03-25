@@ -44,6 +44,10 @@ abstract class PatternValueDslProperty<T extends DslProperty> {
 		return createAndValidateProperty(RegexPatterns.NUMBER, this.random.nextInt())
 	}
 
+	T anyPositiveInt() {
+		return createAndValidateProperty(RegexPatterns.POSITIVE_INT, Math.abs(this.random.nextInt() + 1))
+	}
+
 	T anyDouble() {
 		return createAndValidateProperty(RegexPatterns.DOUBLE, this.random.nextInt(100) + this.random.nextDouble())
 	}
