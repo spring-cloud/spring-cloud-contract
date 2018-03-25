@@ -9,6 +9,3 @@ org.springframework.cloud.contract.stubrunner.spring.cloud.zookeeper.StubRunnerS
 org.springframework.cloud.contract.stubrunner.spring.cloud.eureka.StubRunnerSpringCloudEurekaAutoConfiguration,\
 org.springframework.cloud.contract.stubrunner.spring.cloud.consul.StubRunnerSpringCloudConsulAutoConfiguration,\
 org.springframework.cloud.contract.stubrunner.messaging.StubRunnerStreamsIntegrationAutoConfiguration
-
-org.springframework.core.io.ProtocolResolver=\
-org.springframework.cloud.contract.stubrunner.GitProtocolResolver

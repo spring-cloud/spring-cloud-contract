@@ -15,8 +15,10 @@
  */
 package org.springframework.cloud.contract.maven.verifier;
 
-import java.io.File;
 import javax.inject.Inject;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
@@ -148,12 +150,19 @@ public class  ConvertMojo extends AbstractMojo {
 	@Parameter(property = "contractsSnapshotCheckSkip", defaultValue = "false")
 	private boolean contractsSnapshotCheckSkip;
 
+
 	/**
 	 * If set to {@code false} will NOT delete stubs from a temporary
 	 * folder after running tests
 	 */
 	@Parameter(property = "deleteStubsAfterTest", defaultValue = "true")
 	private boolean deleteStubsAfterTest;
+
+	/**
+	 * Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
+	 */
+	@Parameter(property = "contractsProperties")
+	private Map<String, String> contractsProperties = new HashMap<>();
 
 	@Component(role = MavenResourcesFiltering.class, hint = "default")
 	private MavenResourcesFiltering mavenResourcesFiltering;
@@ -183,7 +192,7 @@ public class  ConvertMojo extends AbstractMojo {
 				this.contractsPath, this.contractsRepositoryUrl, this.contractsMode, getLog(),
 				this.contractsRepositoryUsername, this.contractsRepositoryPassword,
 				this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort,
-				this.contractsSnapshotCheckSkip, this.deleteStubsAfterTest)
+				this.contractsSnapshotCheckSkip, this.deleteStubsAfterTest, this.contractsProperties)
 				.downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 

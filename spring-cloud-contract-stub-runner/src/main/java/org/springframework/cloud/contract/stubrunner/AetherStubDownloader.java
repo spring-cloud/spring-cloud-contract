@@ -187,7 +187,7 @@ public class AetherStubDownloader implements StubDownloader {
 	}
 
 	private boolean skipSnapshotCheck() {
-		return PropertyUtil.isPropertySet(STUBRUNNER_SNAPSHOT_CHECK_SKIP_SYSTEM_PROP);
+		return StubRunnerPropertyUtils.isPropertySet(STUBRUNNER_SNAPSHOT_CHECK_SKIP_SYSTEM_PROP);
 	}
 
 	private boolean resolvedFromLocalRepo(ArtifactResult result) {

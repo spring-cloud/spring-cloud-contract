@@ -19,13 +19,13 @@ package org.springframework.cloud.contract.stubrunner;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
-import org.springframework.cloud.contract.stubrunner.util.ResourceUtils;
 import org.springframework.cloud.contract.stubrunner.util.StubsParser;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
@@ -50,6 +50,7 @@ public class StubRunnerOptionsBuilder {
 	private StubRunnerProperties.StubsMode stubsMode;
 	private boolean snapshotCheckSkip = false;
 	private boolean deleteStubsAfterTest = true;
+	private Map<String, String> properties = new HashMap<>();
 
 	public StubRunnerOptionsBuilder() {
 	}
@@ -92,7 +93,7 @@ public class StubRunnerOptionsBuilder {
 	}
 
 	public StubRunnerOptionsBuilder withStubRepositoryRoot(String stubRepositoryRoot) {
-		this.stubRepositoryRoot = ResourceUtils.resource(stubRepositoryRoot);
+		this.stubRepositoryRoot = ResourceResolver.resource(stubRepositoryRoot);
 		return this;
 	}
 
@@ -135,6 +136,7 @@ public class StubRunnerOptionsBuilder {
 				options.stubIdsToPortMapping : new LinkedHashMap<StubConfiguration, Integer>();
 		this.snapshotCheckSkip = options.isSnapshotCheckSkip();
 		this.deleteStubsAfterTest = options.isDeleteStubsAfterTest();
+		this.properties = options.getProperties();
 		return this;
 	}
 
@@ -153,11 +155,16 @@ public class StubRunnerOptionsBuilder {
 		return this;
 	}
 
+	public StubRunnerOptionsBuilder withProperties(Map<String, String> properties) {
+		this.properties = properties;
+		return this;
+	}
+
 	public StubRunnerOptions build() {
 		return new StubRunnerOptions(this.minPortValue, this.maxPortValue, this.stubRepositoryRoot,
 				this.stubsMode, this.stubsClassifier, buildDependencies(), this.stubIdsToPortMapping,
 				this.username, this.password, this.stubRunnerProxyOptions, this.stubsPerConsumer, this.consumerName,
-				this.mappingsOutputFolder, this.snapshotCheckSkip, this.deleteStubsAfterTest);
+				this.mappingsOutputFolder, this.snapshotCheckSkip, this.deleteStubsAfterTest, this.properties);
 	}
 
 	private Collection<StubConfiguration> buildDependencies() {

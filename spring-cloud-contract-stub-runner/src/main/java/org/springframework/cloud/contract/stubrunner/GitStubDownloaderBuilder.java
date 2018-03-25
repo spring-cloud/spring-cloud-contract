@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.stubrunner;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.nio.file.FileSystems;
@@ -28,13 +29,10 @@ import java.nio.file.PathMatcher;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.AbstractMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.CreateBranchCommand;
@@ -54,7 +52,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.stubrunner.util.StringUtils;
+import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 import com.jcraft.jsch.IdentityRepository;
 import com.jcraft.jsch.JSch;
@@ -78,27 +78,54 @@ class GitStubDownloaderBuilder implements StubDownloaderBuilder {
 	private static final String GIT_PROTOCOL = "git";
 
 	@Override public StubDownloader build(StubRunnerOptions stubRunnerOptions) {
-		if (stubRunnerOptions.getStubsMode() == StubRunnerProperties.StubsMode.CLASSPATH) {
+		if (stubRunnerOptions.getStubsMode() == StubRunnerProperties.StubsMode.CLASSPATH ||
+				stubRunnerOptions.getStubRepositoryRoot() == null) {
 			return null;
 		}
-		try {
-			Resource resource = stubRunnerOptions.getStubRepositoryRoot();
-			String scheme = resource.getURI().getScheme();
-			if (!StringUtils.hasText(scheme) || !GIT_PROTOCOL.equals(scheme)) {
-				return null;
-			}
-			return new GitStubDownloader(stubRunnerOptions);
+		Resource resource = stubRunnerOptions.getStubRepositoryRoot();
+		if (!(resource instanceof GitResource)) {
+			return null;
 		}
-		catch (IOException e) {
-			throw new IllegalStateException(e);
+		return new GitStubDownloader(stubRunnerOptions);
+	}
+
+	@Override public Resource resolve(String location, ResourceLoader resourceLoader) {
+		if (!StringUtils.hasText(location) || !location.startsWith(GIT_PROTOCOL)) {
+			return null;
 		}
+		return new GitResource(location);
 	}
 }
+
+
+/**
+ * Primitive version of a Git {@link Resource}
+ */
+class GitResource extends AbstractResource {
+
+	private final String rawLocation;
+
+	GitResource(String location) {
+		this.rawLocation = location;
+	}
+
+	@Override public String getDescription() {
+		return this.rawLocation;
+	}
+
+	@Override public InputStream getInputStream() throws IOException {
+		return null;
+	}
+
+	@Override public URI getURI() throws IOException {
+		return URI.create(this.rawLocation);
+	}
+}
+
 
 class GitStubDownloader implements StubDownloader {
 
 	private static final String TEMP_DIR_PREFIX = "git-contracts";
-	private static final Log log = LogFactory.getLog(GitStubDownloader.class);
 
 	private final StubRunnerOptions stubRunnerOptions;
 	private final boolean deleteStubsAfterTest;
@@ -117,26 +144,10 @@ class GitStubDownloader implements StubDownloader {
 		}
 		try {
 			Resource repo = this.stubRunnerOptions.getStubRepositoryRoot();
-			String repoUrl = schemeSpecificPart(repo.getURI());
-			//TODO: Add username and password
-			//TODO: Pick props from env, system or map
 			//TODO: Checking out branches
-			//TODO: Verify if not duplicating to and from URI
-			File tmpDirWhereStubsWillBeUnzipped;
-			File file = CACHED_LOCATIONS.get(repo);
-			//TODO: Add some retention period, add properties to override it
-			if (file == null) {
-				GitStubDownloaderProperties properties = new GitStubDownloaderProperties(repoUrl, new HashMap<>());
-				tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage.unpackStubJarToATemporaryFolder(TEMP_DIR_PREFIX);
-				GitRepo gitRepo = new GitRepo(tmpDirWhereStubsWillBeUnzipped, properties);
-				file = gitRepo.cloneProject(properties.url);
-				CACHED_LOCATIONS.put(repo, file);
-			} else {
-				tmpDirWhereStubsWillBeUnzipped = file;
-			}
-			log.info("Cloned the repo to [" + tmpDirWhereStubsWillBeUnzipped + "]");
-			FileWalker walker = new FileWalker(stubConfiguration);
-			Files.walkFileTree(file.toPath(), walker);
+			File clonedRepo = clonedRepo(repo);
+				FileWalker walker = new FileWalker(stubConfiguration);
+			Files.walkFileTree(clonedRepo.toPath(), walker);
 			if (walker.foundFile != null) {
 				return new AbstractMap.SimpleEntry<>(stubConfiguration, walker.foundFile.toFile());
 			}
@@ -147,9 +158,17 @@ class GitStubDownloader implements StubDownloader {
 		return null;
 	}
 
-	private String schemeSpecificPart(URI uri) {
-		String part = uri.getSchemeSpecificPart();
-		return StringUtils.hasText(part) && part.startsWith("//") ? part.substring(2) : part;
+	private File clonedRepo(Resource repo) throws IOException {
+		File file = CACHED_LOCATIONS.get(repo);
+		if (file == null) {
+			GitStubDownloaderProperties properties = new GitStubDownloaderProperties(repo, this.stubRunnerOptions.getProperties());
+			File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage.unpackStubJarToATemporaryFolder(TEMP_DIR_PREFIX);
+			GitRepo gitRepo = new GitRepo(tmpDirWhereStubsWillBeUnzipped, properties);
+			file = gitRepo.cloneProject(properties.url);
+			gitRepo.checkout(file, properties.branch);
+			CACHED_LOCATIONS.put(repo, file);
+		}
+		return file;
 	}
 
 	private void registerShutdownHook() {
@@ -159,14 +178,30 @@ class GitStubDownloader implements StubDownloader {
 }
 
 class GitStubDownloaderProperties {
+	private static final String GIT_BRANCH_PROPERTY = "git.branch";
+	private static final String GIT_USERNAME_PROPERTY = "git.username";
+	private static final String GIT_PASSWORD_PROPERTY = "git.password";
+
 	final URI url;
 	final String username;
 	final String password;
+	final String branch;
 
-	GitStubDownloaderProperties(String url, Map<String, String> args) {
-		this.url = URI.create(url.startsWith("git@") ? "git://" + url : url);
-		this.username = args.get("");
-		this.password = args.get("");
+	GitStubDownloaderProperties(Resource repo, Map<String, String> args)
+			throws IOException {
+		String repoUrl = schemeSpecificPart(repo.getURI());
+		// if we had git://https://... we want the part starting from https
+		// if we had git://git@... we want the full address again
+		this.url = URI.create(repoUrl.startsWith("git@") ? "git://" + repoUrl : repoUrl);
+		this.username = StubRunnerPropertyUtils.getProperty(args, GIT_USERNAME_PROPERTY);
+		this.password = StubRunnerPropertyUtils.getProperty(args, GIT_PASSWORD_PROPERTY);
+		String branch = StubRunnerPropertyUtils.getProperty(args, GIT_BRANCH_PROPERTY);
+		this.branch = StringUtils.hasText(branch) ? branch : "master";
+	}
+
+	private String schemeSpecificPart(URI uri) {
+		String part = uri.getSchemeSpecificPart();
+		return StringUtils.hasText(part) && part.startsWith("//") ? part.substring(2) : part;
 	}
 }
 
@@ -180,7 +215,7 @@ class GitStubDownloaderProperties {
  */
 class GitRepo {
 
-	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	private static final Logger log = LoggerFactory.getLogger(GitRepo.class);
 
 	private final GitRepo.JGitFactory gitFactory;
 
@@ -231,7 +266,7 @@ class GitRepo {
 	 */
 	void checkout(File project, String branch) {
 		try {
-			log.info("Checking out branch [{}] for repo [{}] to [{}]", this.basedir, branch);
+			log.info("Checking out branch [{}] for repo [{}]", branch, this.basedir);
 			checkoutBranch(project, branch);
 			log.info("Successfully checked out the branch [{}]", branch);
 		}

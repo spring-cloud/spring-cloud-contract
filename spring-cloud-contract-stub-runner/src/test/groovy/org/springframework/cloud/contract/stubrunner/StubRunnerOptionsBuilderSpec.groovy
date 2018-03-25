@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.stubrunner
 
+import org.springframework.core.io.ClassPathResource
+import org.springframework.core.io.FileSystemResource
 import spock.lang.Issue
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
@@ -189,16 +191,16 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 	@Issue("#466")
 	def shouldSetAllDependenciesFromOptions() {
 		given:
-			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, "root", StubRunnerProperties.StubsMode.LOCAL,
+			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, new FileSystemResource("root"), StubRunnerProperties.StubsMode.LOCAL,
 					"classifier", [new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "foo", "bar",
-					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", true, false))
+					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", true, false, [foo: "bar"]))
 			builder.withStubs("foo:bar:baz")
 		when:
 			StubRunnerOptions options = builder.build()
 		then:
 			options.minPortValue == 1
 			options.maxPortValue == 2
-			options.stubRepositoryRoot == "root"
+			options.stubRepositoryRoot == new FileSystemResource("root")
 			options.stubsMode == StubRunnerProperties.StubsMode.LOCAL
 			options.stubsClassifier == "classifier"
 			options.dependencies == [new StubConfiguration("a:b:c"), new StubConfiguration("foo:bar:baz:classifier")]
@@ -212,14 +214,15 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			options.mappingsOutputFolder == "folder"
 			options.snapshotCheckSkip == true
 			options.deleteStubsAfterTest == false
+			options.properties == [foo: "bar"]
 	}
 
 	def shouldNotPrintUsernameAndPassword() {
 		given:
-			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, "root",
+			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, new FileSystemResource("root"),
 					StubRunnerProperties.StubsMode.CLASSPATH, "classifier",
 					[new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "username123", "password123",
-					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", true, false))
+					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", true, false, [:]))
 			builder.withStubs("foo:bar:baz")
 		when:
 			String options = builder.build().toString()
@@ -247,12 +250,15 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			System.setProperty("stubrunner.proxy.port", "4")
 			System.setProperty("stubrunner.mappings-output-folder", "folder")
 			System.setProperty("stubrunner.snapshot-check-skip", "true")
+			System.setProperty("stubrunner.properties.foo-bar", "bar")
+			System.setProperty("stubrunner.properties.foo-baz", "baz")
+			System.setProperty("stubrunner.properties.bar.bar", "foo")
 		when:
 			StubRunnerOptions options = StubRunnerOptions.fromSystemProps()
 		then:
 			options.minPortValue == 1
 			options.maxPortValue == 2
-			options.stubRepositoryRoot == "root"
+			options.stubRepositoryRoot == new ClassPathResource("root")
 			options.stubsMode == StubRunnerProperties.StubsMode.LOCAL
 			options.stubsClassifier == "classifier"
 			options.dependencies == [new StubConfiguration("a:b:c"), new StubConfiguration("foo:bar:baz:classifier")]
@@ -264,5 +270,6 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			options.consumerName == "consumer"
 			options.mappingsOutputFolder == "folder"
 			options.snapshotCheckSkip == true
+			options.properties == ["foo-bar": "bar", "foo-baz": "baz", "bar.bar": "foo"]
 	}
 }

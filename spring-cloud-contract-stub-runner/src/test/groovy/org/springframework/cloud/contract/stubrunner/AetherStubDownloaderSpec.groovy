@@ -3,11 +3,10 @@ package org.springframework.cloud.contract.stubrunner
 import io.specto.hoverfly.junit.HoverflyRule
 import org.eclipse.aether.RepositorySystemSession
 import org.junit.Rule
-import spock.lang.Specification
-import spock.util.environment.RestoreSystemProperties
-
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.util.ResourceUtils
+import spock.lang.Specification
+import spock.util.environment.RestoreSystemProperties
 
 class AetherStubDownloaderSpec extends Specification {
 
@@ -76,7 +75,7 @@ class AetherStubDownloaderSpec extends Specification {
 			System.properties.setProperty("stubrunner.snapshot-check-skip", "false")
 
 		and:
-			PropertyUtil.FETCHER = new PropertyFetcher() {
+			StubRunnerPropertyUtils.FETCHER = new PropertyFetcher() {
 				@Override
 				String systemProp(String prop) {
 					return super.systemProp(prop)
@@ -105,7 +104,7 @@ class AetherStubDownloaderSpec extends Specification {
 					.build()
 
 		and:
-			PropertyUtil.FETCHER = new PropertyFetcher() {
+			StubRunnerPropertyUtils.FETCHER = new PropertyFetcher() {
 				@Override
 				String systemProp(String prop) {
 					return super.systemProp(prop)
@@ -123,6 +122,9 @@ class AetherStubDownloaderSpec extends Specification {
 
 		then:
 			jar != null
+
+		cleanup:
+			StubRunnerPropertyUtils.FETCHER = new PropertyFetcher()
 	}
 
 	def 'Should not throw an exception when a jar is in local m2 and not in remote repo and option disabled snapshot check'() {

@@ -1,6 +1,7 @@
 package org.springframework.cloud.contract.maven.verifier;
 
 import java.io.File;
+import java.util.Map;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.logging.Log;
@@ -39,14 +40,14 @@ class MavenContractsDownloader {
 	private final Integer repositoryProxyPort;
 	private final boolean contractsSnapshotCheckSkip;
 	private final boolean deleteStubsAfterTest;
+	private final Map<String, String> contractsProperties;
 
 	MavenContractsDownloader(MavenProject project, Dependency contractDependency,
 			String contractsPath, String contractsRepositoryUrl,
-			StubRunnerProperties.StubsMode stubsMode, Log log,
-			String repositoryUsername,
+			StubRunnerProperties.StubsMode stubsMode, Log log, String repositoryUsername,
 			String repositoryPassword, String repositoryProxyHost,
 			Integer repositoryProxyPort, boolean contractsSnapshotCheckSkip,
-			boolean deleteStubsAfterTest) {
+			boolean deleteStubsAfterTest, Map<String, String> contractsProperties) {
 		this.project = project;
 		this.contractDependency = contractDependency;
 		this.contractsPath = contractsPath;
@@ -60,6 +61,7 @@ class MavenContractsDownloader {
 		this.stubDownloaderBuilderProvider = new StubDownloaderBuilderProvider();
 		this.contractsSnapshotCheckSkip = contractsSnapshotCheckSkip;
 		this.deleteStubsAfterTest = deleteStubsAfterTest;
+		this.contractsProperties = contractsProperties;
 	}
 
 	File downloadAndUnpackContractsIfRequired(ContractVerifierConfigProperties config, File defaultContractsDir) {
@@ -104,7 +106,8 @@ class MavenContractsDownloader {
 				.withUsername(this.repositoryUsername)
 				.withPassword(this.repositoryPassword)
 				.withSnapshotCheckSkip(this.contractsSnapshotCheckSkip)
-				.withDeleteStubsAfterTest(this.deleteStubsAfterTest);
+				.withDeleteStubsAfterTest(this.deleteStubsAfterTest)
+				.withProperties(this.contractsProperties);
 		if (this.repositoryProxyPort != null) {
 			builder.withProxy(this.repositoryProxyHost, this.repositoryProxyPort);
 		}

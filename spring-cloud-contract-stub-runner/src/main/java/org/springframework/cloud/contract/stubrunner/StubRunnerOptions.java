@@ -18,10 +18,12 @@ package org.springframework.cloud.contract.stubrunner;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
-import org.springframework.cloud.contract.stubrunner.util.ResourceUtils;
 import org.springframework.cloud.contract.stubrunner.util.StringUtils;
 import org.springframework.core.io.Resource;
 
@@ -106,13 +108,19 @@ public class StubRunnerOptions {
 	 */
 	private boolean deleteStubsAfterTest;
 
+	/**
+	 * Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
+	 */
+	private Map<String, String> properties = new HashMap<>();
+
+
 	StubRunnerOptions(Integer minPortValue, Integer maxPortValue,
 			Resource stubRepositoryRoot, StubRunnerProperties.StubsMode stubsMode, String stubsClassifier,
 			Collection<StubConfiguration> dependencies,
 			Map<StubConfiguration, Integer> stubIdsToPortMapping,
 			String username, String password, final StubRunnerProxyOptions stubRunnerProxyOptions,
 			boolean stubsPerConsumer, String consumerName, String mappingsOutputFolder, boolean snapshotCheckSkip,
-			boolean deleteStubsAfterTest) {
+			boolean deleteStubsAfterTest, Map<String, String> properties) {
 		this.minPortValue = minPortValue;
 		this.maxPortValue = maxPortValue;
 		this.stubRepositoryRoot = stubRepositoryRoot;
@@ -128,6 +136,7 @@ public class StubRunnerOptions {
 		this.mappingsOutputFolder = mappingsOutputFolder;
 		this.snapshotCheckSkip = snapshotCheckSkip;
 		this.deleteStubsAfterTest = deleteStubsAfterTest;
+		this.properties = properties;
 	}
 
 	public Integer port(StubConfiguration stubConfiguration) {
@@ -143,7 +152,8 @@ public class StubRunnerOptions {
 		StubRunnerOptionsBuilder builder = new StubRunnerOptionsBuilder()
 				.withMinPort(Integer.valueOf(System.getProperty("stubrunner.port.range.min", "10000")))
 				.withMaxPort(Integer.valueOf(System.getProperty("stubrunner.port.range.max", "15000")))
-				.withStubRepositoryRoot(ResourceUtils.resource(System.getProperty("stubrunner.repository.root", "")))
+				.withStubRepositoryRoot(ResourceResolver
+						.resource(System.getProperty("stubrunner.repository.root", "")))
 				.withStubsMode(System.getProperty("stubrunner.stubs-mode", "LOCAL"))
 				.withStubsClassifier(System.getProperty("stubrunner.classifier", "stubs"))
 				.withStubs(System.getProperty("stubrunner.ids", ""))
@@ -153,12 +163,26 @@ public class StubRunnerOptions {
 				.withConsumerName(System.getProperty("stubrunner.consumer-name"))
 				.withMappingsOutputFolder(System.getProperty("stubrunner.mappings-output-folder"))
 				.withSnapshotCheckSkip(Boolean.parseBoolean(System.getProperty("stubrunner.snapshot-check-skip", "false")))
-				.withDeleteStubsAfterTest(Boolean.parseBoolean(System.getProperty("stubrunner.delete-stubs-after-test", "true")));
+				.withDeleteStubsAfterTest(Boolean.parseBoolean(System.getProperty("stubrunner.delete-stubs-after-test", "true")))
+				.withProperties(stubRunnerProps());
 		String proxyHost = System.getProperty("stubrunner.proxy.host");
 		if (proxyHost != null) {
 			builder.withProxy(proxyHost, Integer.parseInt(System.getProperty("stubrunner.proxy.port")));
 		}
 		return builder.build();
+	}
+
+	private static Map<String, String> stubRunnerProps() {
+		Map<String, String> map = new HashMap<>();
+		Properties properties = System.getProperties();
+		Set<String> propertyNames = properties.stringPropertyNames();
+		propertyNames
+				.stream()
+				// stubrunner.properties.foo.bar=baz
+				.filter(s -> s.toLowerCase().startsWith("stubrunner.properties"))
+				// foo.bar=baz
+				.forEach(s -> map.put(s.substring("stubrunner.properties".length() + 1), System.getProperty(s)));
+		return map;
 	}
 
 	public Integer getMinPortValue() {
@@ -256,6 +280,14 @@ public class StubRunnerOptions {
 
 	public void setDeleteStubsAfterTest(boolean deleteStubsAfterTest) {
 		this.deleteStubsAfterTest = deleteStubsAfterTest;
+	}
+
+	public Map<String, String> getProperties() {
+		return this.properties;
+	}
+
+	public void setProperties(Map<String, String> properties) {
+		this.properties = properties;
 	}
 
 	public static class StubRunnerProxyOptions {

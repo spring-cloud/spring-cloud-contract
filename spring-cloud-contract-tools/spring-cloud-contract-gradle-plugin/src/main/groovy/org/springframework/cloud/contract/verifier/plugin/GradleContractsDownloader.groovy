@@ -84,6 +84,7 @@ class GradleContractsDownloader {
 				.withPassword(extension.contractRepository.password)
 				.withSnapshotCheckSkip(extension.contractsSnapshotCheckSkip)
 				.withDeleteStubsAfterTest(extension.deleteStubsAfterTest)
+				.withProperties(extension.contractsProperties)
 		if (extension.contractRepository.proxyPort) {
 			options = options.withProxy(extension.contractRepository.proxyHost, extension.contractRepository.proxyPort)
 		}

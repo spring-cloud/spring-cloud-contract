@@ -15,13 +15,13 @@
  */
 package org.springframework.cloud.contract.maven.verifier;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.inject.Inject;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
@@ -210,6 +210,12 @@ public class GenerateTestsMojo extends AbstractMojo {
 	@Parameter(property = "deleteStubsAfterTest", defaultValue = "true")
 	private boolean deleteStubsAfterTest;
 
+	/**
+	 * Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
+	 */
+	@Parameter(property = "contractsProperties")
+	private Map<String, String> contractsProperties = new HashMap<>();
+
 	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
 
 	@Inject
@@ -232,7 +238,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 				this.contractsPath, this.contractsRepositoryUrl, this.contractsMode, getLog(),
 				this.contractsRepositoryUsername, this.contractsRepositoryPassword,
 				this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort,
-				this.contractsSnapshotCheckSkip, this.deleteStubsAfterTest).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
+				this.contractsSnapshotCheckSkip, this.deleteStubsAfterTest, this.contractsProperties).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 		setupConfig(config, contractsDirectory);
 		this.project.addTestCompileSourceRoot(this.generatedTestSourcesDir.getAbsolutePath());

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.contract.stubrunner.util;
+package org.springframework.cloud.contract.stubrunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,16 +38,17 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
  * @author Marcin Grzejszczak
  * @since 2.0.0
  */
-public class ResourceUtils {
+public class ResourceResolver {
 
-	private static final Log log = LogFactory.getLog(ResourceUtils.class);
+	private static final Log log = LogFactory.getLog(ResourceResolver.class);
 	private static final List<ProtocolResolver> RESOLVERS = new ArrayList<>();
 	private static final DefaultResourceLoader LOADER = new DefaultResourceLoader();
 
 	static {
 		RESOLVERS.addAll(
-				SpringFactoriesLoader.loadFactories(ProtocolResolver.class, null)
+				SpringFactoriesLoader.loadFactories(StubDownloaderBuilder.class, null)
 		);
+		RESOLVERS.addAll(new StubDownloaderBuilderProvider().defaultStubDownloaderBuilders());
 		for (ProtocolResolver resolver : RESOLVERS) {
 			LOADER.addProtocolResolver(resolver);
 		}
@@ -64,9 +65,5 @@ public class ResourceUtils {
 			log.error("Exception occurred while trying to read the resource [" + url + "]", e);
 			return null;
 		}
-	}
-
-	public static List<ProtocolResolver> resolvers() {
-		return RESOLVERS;
 	}
 }

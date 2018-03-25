@@ -28,6 +28,8 @@ import org.springframework.cloud.contract.stubrunner.AetherStubDownloader;
 import org.springframework.cloud.contract.stubrunner.StubDownloader;
 import org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 @Named
 @Singleton
@@ -50,6 +52,11 @@ public class AetherStubDownloaderFactory {
 				log.info("Will download contracts using current build's Maven repository setup");
 				return new AetherStubDownloader(AetherStubDownloaderFactory.this.repoSystem,
 						AetherStubDownloaderFactory.this.project.getRemoteProjectRepositories(), repoSession);
+			}
+
+			@Override
+			public Resource resolve(String location, ResourceLoader resourceLoader) {
+				return null;
 			}
 		};
 	}

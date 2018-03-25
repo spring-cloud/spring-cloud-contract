@@ -168,6 +168,11 @@ class ContractVerifierExtension {
 	 */
 	boolean deleteStubsAfterTest = true
 
+	/**
+	 * Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
+	 */
+	Map<String, String> contractsProperties = [:]
+
 	void contractDependency(@DelegatesTo(Dependency) Closure closure) {
 		closure.delegate = contractDependency
 		closure.call()
