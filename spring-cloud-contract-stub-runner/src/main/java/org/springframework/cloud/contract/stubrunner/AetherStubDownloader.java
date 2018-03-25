@@ -123,7 +123,7 @@ public class AetherStubDownloader implements StubDownloader {
 		if (stubRunnerOptions.stubRepositoryRoot == null) {
 			return new ArrayList<>();
 		}
-		final String[] repos = stubRunnerOptions.stubRepositoryRoot.split(",");
+		final String[] repos = stubRunnerOptions.getStubRepositoryRootAsString().split(",");
 		final List<RemoteRepository> remoteRepos = new ArrayList<>();
 		for (int i = 0; i < repos.length; i++) {
 			if(StringUtils.hasText(repos[i])) {

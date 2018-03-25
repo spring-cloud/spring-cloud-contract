@@ -19,7 +19,7 @@ package org.springframework.cloud.contract.stubrunner.spring;
 import java.util.Arrays;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.cloud.contract.stubrunner.util.ResourceUtils;
 import org.springframework.core.io.Resource;
 
 /**
@@ -149,7 +149,7 @@ public class StubRunnerProperties {
 	}
 
 	public void setRepositoryRoot(String repositoryRoot) {
-		this.repositoryRoot = new DefaultResourceLoader().getResource(repositoryRoot);
+		this.repositoryRoot = ResourceUtils.resource(repositoryRoot);
 	}
 
 	public String getUsername() {
@@ -214,10 +214,6 @@ public class StubRunnerProperties {
 
 	public void setConsumerName(String consumerName) {
 		this.consumerName = consumerName;
-	}
-
-	public void setRepositoryRoot(Resource repositoryRoot) {
-		this.repositoryRoot = repositoryRoot;
 	}
 
 	public String getMappingsOutputFolder() {

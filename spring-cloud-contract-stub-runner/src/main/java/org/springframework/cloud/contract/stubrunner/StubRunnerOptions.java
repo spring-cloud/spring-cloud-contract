@@ -16,11 +16,14 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
+import org.springframework.cloud.contract.stubrunner.util.ResourceUtils;
 import org.springframework.cloud.contract.stubrunner.util.StringUtils;
+import org.springframework.core.io.Resource;
 
 /**
  * Technical options related to running StubRunner
@@ -44,7 +47,7 @@ public class StubRunnerOptions {
 	/**
 	 * root URL from where the JAR with stub mappings will be downloaded
 	 */
-	final String stubRepositoryRoot;
+	final Resource stubRepositoryRoot;
 
 	/**
 	 * stub definition classifier
@@ -104,7 +107,7 @@ public class StubRunnerOptions {
 	private boolean deleteStubsAfterTest;
 
 	StubRunnerOptions(Integer minPortValue, Integer maxPortValue,
-			String stubRepositoryRoot, StubRunnerProperties.StubsMode stubsMode, String stubsClassifier,
+			Resource stubRepositoryRoot, StubRunnerProperties.StubsMode stubsMode, String stubsClassifier,
 			Collection<StubConfiguration> dependencies,
 			Map<StubConfiguration, Integer> stubIdsToPortMapping,
 			String username, String password, final StubRunnerProxyOptions stubRunnerProxyOptions,
@@ -140,7 +143,7 @@ public class StubRunnerOptions {
 		StubRunnerOptionsBuilder builder = new StubRunnerOptionsBuilder()
 				.withMinPort(Integer.valueOf(System.getProperty("stubrunner.port.range.min", "10000")))
 				.withMaxPort(Integer.valueOf(System.getProperty("stubrunner.port.range.max", "15000")))
-				.withStubRepositoryRoot(System.getProperty("stubrunner.repository.root", ""))
+				.withStubRepositoryRoot(ResourceUtils.resource(System.getProperty("stubrunner.repository.root", "")))
 				.withStubsMode(System.getProperty("stubrunner.stubs-mode", "LOCAL"))
 				.withStubsClassifier(System.getProperty("stubrunner.classifier", "stubs"))
 				.withStubs(System.getProperty("stubrunner.ids", ""))
@@ -174,8 +177,17 @@ public class StubRunnerOptions {
 		return this.stubIdsToPortMapping;
 	}
 
-	public String getStubRepositoryRoot() {
+	public Resource getStubRepositoryRoot() {
 		return this.stubRepositoryRoot;
+	}
+
+	public String getStubRepositoryRootAsString() {
+		try {
+			return this.stubRepositoryRoot.getURI().toString();
+		}
+		catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	public StubRunnerProperties.StubsMode getStubsMode() {

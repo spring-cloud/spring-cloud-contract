@@ -31,6 +31,7 @@ import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,6 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.stubrunner.util.StringUtils;
+import org.springframework.core.io.Resource;
 
 import com.jcraft.jsch.IdentityRepository;
 import com.jcraft.jsch.JSch;
@@ -73,17 +75,23 @@ import com.jcraft.jsch.agentproxy.usocket.JNAUSocketFactory;
  */
 class GitStubDownloaderBuilder implements StubDownloaderBuilder {
 
-	static final String GIT_PROTOCOL = "git://";
+	private static final String GIT_PROTOCOL = "git";
 
 	@Override public StubDownloader build(StubRunnerOptions stubRunnerOptions) {
 		if (stubRunnerOptions.getStubsMode() == StubRunnerProperties.StubsMode.CLASSPATH) {
 			return null;
 		}
-		String repoRoot = stubRunnerOptions.getStubRepositoryRoot();
-		if (!StringUtils.hasText(repoRoot) || !repoRoot.startsWith(GIT_PROTOCOL)) {
-			return null;
+		try {
+			Resource resource = stubRunnerOptions.getStubRepositoryRoot();
+			String scheme = resource.getURI().getScheme();
+			if (!StringUtils.hasText(scheme) || !GIT_PROTOCOL.equals(scheme)) {
+				return null;
+			}
+			return new GitStubDownloader(stubRunnerOptions);
 		}
-		return new GitStubDownloader(stubRunnerOptions);
+		catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 }
 
@@ -94,6 +102,7 @@ class GitStubDownloader implements StubDownloader {
 
 	private final StubRunnerOptions stubRunnerOptions;
 	private final boolean deleteStubsAfterTest;
+	private static final Map<Resource, File> CACHED_LOCATIONS = new ConcurrentHashMap<>();
 
 	GitStubDownloader(StubRunnerOptions stubRunnerOptions) {
 		this.stubRunnerOptions = stubRunnerOptions;
@@ -106,17 +115,26 @@ class GitStubDownloader implements StubDownloader {
 		if (!StringUtils.hasText(stubConfiguration.version) || "+".equals(stubConfiguration.version)) {
 			throw new IllegalStateException("Concrete version wasn't passed for [" + stubConfiguration.toColonSeparatedDependencyNotation() + "]");
 		}
-		String repo = this.stubRunnerOptions.getStubRepositoryRoot();
-		String withoutProtocol = repo.substring(GitStubDownloaderBuilder.GIT_PROTOCOL.length());
-		//TODO: Add username and password
-		//TODO: Pick props from env, system or map
-		//TODO: Checking out branches
-		GitStubDownloaderProperties properties = new GitStubDownloaderProperties(withoutProtocol, new HashMap<>());
-		File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage.unpackStubJarToATemporaryFolder(TEMP_DIR_PREFIX);
-		GitRepo gitRepo = new GitRepo(tmpDirWhereStubsWillBeUnzipped, properties);
-		File file = gitRepo.cloneProject(properties.url);
-		log.info("Cloned the repo to [" + tmpDirWhereStubsWillBeUnzipped + "]");
 		try {
+			Resource repo = this.stubRunnerOptions.getStubRepositoryRoot();
+			String repoUrl = schemeSpecificPart(repo.getURI());
+			//TODO: Add username and password
+			//TODO: Pick props from env, system or map
+			//TODO: Checking out branches
+			//TODO: Verify if not duplicating to and from URI
+			File tmpDirWhereStubsWillBeUnzipped;
+			File file = CACHED_LOCATIONS.get(repo);
+			//TODO: Add some retention period, add properties to override it
+			if (file == null) {
+				GitStubDownloaderProperties properties = new GitStubDownloaderProperties(repoUrl, new HashMap<>());
+				tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage.unpackStubJarToATemporaryFolder(TEMP_DIR_PREFIX);
+				GitRepo gitRepo = new GitRepo(tmpDirWhereStubsWillBeUnzipped, properties);
+				file = gitRepo.cloneProject(properties.url);
+				CACHED_LOCATIONS.put(repo, file);
+			} else {
+				tmpDirWhereStubsWillBeUnzipped = file;
+			}
+			log.info("Cloned the repo to [" + tmpDirWhereStubsWillBeUnzipped + "]");
 			FileWalker walker = new FileWalker(stubConfiguration);
 			Files.walkFileTree(file.toPath(), walker);
 			if (walker.foundFile != null) {
@@ -127,6 +145,11 @@ class GitStubDownloader implements StubDownloader {
 			throw new IllegalStateException(e);
 		}
 		return null;
+	}
+
+	private String schemeSpecificPart(URI uri) {
+		String part = uri.getSchemeSpecificPart();
+		return StringUtils.hasText(part) && part.startsWith("//") ? part.substring(2) : part;
 	}
 
 	private void registerShutdownHook() {
@@ -141,7 +164,7 @@ class GitStubDownloaderProperties {
 	final String password;
 
 	GitStubDownloaderProperties(String url, Map<String, String> args) {
-		this.url = URI.create(url);
+		this.url = URI.create(url.startsWith("git@") ? "git://" + url : url);
 		this.username = args.get("");
 		this.password = args.get("");
 	}
@@ -219,8 +242,11 @@ class GitRepo {
 
 	private Git cloneToBasedir(URI projectUrl, File destinationFolder)
 			throws GitAPIException {
+		String projectString = projectUrl.toString();
+		projectString = projectString.startsWith("git://") ? projectString.substring("git://".length()) : projectString;
+		projectString = projectString.endsWith(".git") ? projectString.substring(0, projectString.indexOf(".git")) : projectString;
 		CloneCommand command = this.gitFactory.getCloneCommandByCloneRepository()
-				.setURI(projectUrl.toString() + ".git").setDirectory(destinationFolder);
+				.setURI(projectString + ".git").setDirectory(destinationFolder);
 		try {
 			return command.call();
 		}

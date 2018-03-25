@@ -25,7 +25,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
+import org.springframework.cloud.contract.stubrunner.util.ResourceUtils;
 import org.springframework.cloud.contract.stubrunner.util.StubsParser;
+import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
 
 public class StubRunnerOptionsBuilder {
@@ -37,7 +39,7 @@ public class StubRunnerOptionsBuilder {
 
 	private Integer minPortValue = 10000;
 	private Integer maxPortValue = 15000;
-	private String stubRepositoryRoot;
+	private Resource stubRepositoryRoot;
 	private String stubsClassifier = "stubs";
 	private String username;
 	private String password;
@@ -84,8 +86,13 @@ public class StubRunnerOptionsBuilder {
 		return this;
 	}
 
-	public StubRunnerOptionsBuilder withStubRepositoryRoot(String stubRepositoryRoot) {
+	public StubRunnerOptionsBuilder withStubRepositoryRoot(Resource stubRepositoryRoot) {
 		this.stubRepositoryRoot = stubRepositoryRoot;
+		return this;
+	}
+
+	public StubRunnerOptionsBuilder withStubRepositoryRoot(String stubRepositoryRoot) {
+		this.stubRepositoryRoot = ResourceUtils.resource(stubRepositoryRoot);
 		return this;
 	}
 
