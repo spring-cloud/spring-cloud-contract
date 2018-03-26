@@ -18,6 +18,14 @@
           "clientId": "1234567890",
           "loanAmount": 123.123
         },
+        "generators": {
+          "body": {
+            "$.clientId":{
+              "type": "Regex",
+              "regex": "[0-9]{10}"
+            }
+          }
+        },
         "matchingRules":{
           "body":{
             "$.clientId":{

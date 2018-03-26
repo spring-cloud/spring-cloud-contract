@@ -1,6 +1,5 @@
 package org.springframework.cloud.contract.verifier.spec.pact
 
-import au.com.dius.pact.model.OptionalBody
 import au.com.dius.pact.model.matchingrules.Category
 import au.com.dius.pact.model.matchingrules.DateMatcher
 import au.com.dius.pact.model.matchingrules.MatchingRule
@@ -17,8 +16,6 @@ import au.com.dius.pact.model.matchingrules.TimestampMatcher
 import au.com.dius.pact.model.matchingrules.TypeMatcher
 import au.com.dius.pact.model.v3.messaging.Message
 import au.com.dius.pact.model.v3.messaging.MessagePact
-import groovy.json.JsonException
-import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.springframework.cloud.contract.spec.Contract
@@ -35,7 +32,6 @@ import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 @PackageScope
 class MessagingSCContractCreator {
 
-	private static final JsonSlurper jsonSlurper = new JsonSlurper()
 	private static final String FULL_BODY = '$'
 
 	Collection<Contract> convertFrom(MessagePact pact) {
@@ -49,7 +45,7 @@ class MessagingSCContractCreator {
 				}
 				outputMessage {
 					if (message.contents.present) {
-						body(parseBody(message.contents))
+						body(BodyConverter.toSCCBody(message))
 						Category bodyRules = message.matchingRules.rulesForCategory('body')
 						if (bodyRules && !bodyRules.matchingRules.isEmpty()) {
 							testMatchers {
@@ -134,19 +130,6 @@ class MessagingSCContractCreator {
 				.replace('(', '')
 				.replace(')', '')
 				.uncapitalize() + "()"
-	}
-
-	private parseBody(OptionalBody optionalBody) {
-		def body = optionalBody.value
-		if (body instanceof String) {
-			body = body.trim()
-			if (body.startsWith("{") && body.endsWith("}")) {
-				try {
-					body = jsonSlurper.parseText(body)
-				} catch (JsonException ex) { /*it wasn't a JSON string after all...*/ }
-			}
-		}
-		return body
 	}
 
 }

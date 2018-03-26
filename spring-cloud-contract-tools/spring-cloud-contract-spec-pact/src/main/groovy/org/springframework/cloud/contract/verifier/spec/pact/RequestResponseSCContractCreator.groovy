@@ -20,7 +20,6 @@ import au.com.dius.pact.model.matchingrules.RuleLogic
 import au.com.dius.pact.model.matchingrules.TimeMatcher
 import au.com.dius.pact.model.matchingrules.TimestampMatcher
 import au.com.dius.pact.model.matchingrules.TypeMatcher
-import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.springframework.cloud.contract.spec.Contract
@@ -69,7 +68,7 @@ class RequestResponseSCContractCreator {
 						}
 					}
 					if (request.body.state == OptionalBody.State.PRESENT) {
-						def parsedBody = parseBody(request.body)
+						def parsedBody = BodyConverter.toSCCBody(request)
 						if (parsedBody instanceof Map) {
 							body(parsedBody as Map)
 						} else if (parsedBody instanceof List) {
@@ -121,7 +120,7 @@ class RequestResponseSCContractCreator {
 					Response response = interaction.response
 					status(response.status)
 					if (response.body.present) {
-						def parsedBody = parseBody(response.body)
+						def parsedBody = BodyConverter.toSCCBody(response)
 						if (parsedBody instanceof Map) {
 							body(parsedBody as Map)
 						} else if (parsedBody instanceof List) {
@@ -217,18 +216,6 @@ class RequestResponseSCContractCreator {
 			}
 		})
 		return description
-	}
-
-	private parseBody(OptionalBody optionalBody) {
-		if (optionalBody.present) {
-			def body = new JsonSlurper().parseText(optionalBody.value)
-			if (body instanceof String) {
-				body = optionalBody.value
-			}
-			return body
-		} else {
-			return optionalBody.value
-		}
 	}
 
 }
