@@ -40,12 +40,14 @@ class RegexPatterns {
 	protected static final Pattern ONLY_ALPHA_UNICODE = Pattern.compile(/[\p{L}]*/)
 	protected static final Pattern NUMBER = Pattern.compile('-?(\\d*\\.\\d+|\\d+)')
 	protected static final Pattern INTEGER = Pattern.compile('-?(\\d+)')
+	protected static final Pattern POSITIVE_INT = Pattern.compile('([1-9]\\d*)')
 	protected static final Pattern DOUBLE = Pattern.compile('-?(\\d*\\.\\d+)')
 	protected static final Pattern HEX = Pattern.compile('[a-fA-F0-9]+')
 	protected static final Pattern IP_ADDRESS = Pattern.compile('([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])')
 	protected static final Pattern HOSTNAME_PATTERN = Pattern.compile('((http[s]?|ftp):/)/?([^:/\\s]+)(:[0-9]{1,5})?')
 	protected static final Pattern EMAIL = Pattern.compile('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}')
 	protected static final Pattern URL = UrlHelper.URL
+	protected static final Pattern HTTPS_URL = UrlHelper.HTTPS_URL
 	protected static final Pattern UUID = Pattern.compile('[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}')
 	protected static final Pattern ANY_DATE = Pattern.compile('(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])')
 	protected static final Pattern ANY_DATE_TIME = Pattern.compile('([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
@@ -68,6 +70,10 @@ class RegexPatterns {
 
 	Pattern number() {
 		return NUMBER
+	}
+
+	Pattern positiveInt() {
+		return POSITIVE_INT
 	}
 
 	Pattern anyBoolean() {
@@ -96,6 +102,10 @@ class RegexPatterns {
 
 	Pattern url() {
 		return URL
+	}
+
+	Pattern httpsUrl() {
+		return HTTPS_URL
 	}
 
 	Pattern uuid(){
@@ -150,6 +160,8 @@ class UrlHelper {
 	 */
 	private static final String REGEX_SCHEME = "[A-Za-z][+-.\\w^_]*:"
 
+	private static final String HTTPS_REGEX_SCHEME = "https:"
+
 	// Example: "//".
 	private static final String REGEX_AUTHORATIVE_DECLARATION = "/{2}"
 
@@ -174,6 +186,9 @@ class UrlHelper {
 
 	//Example: "/user/heartrate?foo=bar#element1".
 	private static final String REGEX_RESOURCE_PATH = "(?:/\\S*)?"
+
+	protected static final Pattern HTTPS_URL = Pattern.compile("^(?:" + HTTPS_REGEX_SCHEME + REGEX_AUTHORATIVE_DECLARATION +
+			REGEX_USERINFO + REGEX_HOST + REGEX_PORT + REGEX_RESOURCE_PATH + ")\$")
 
 	protected static final Pattern URL = Pattern.compile("^(?:(?:" + REGEX_SCHEME + REGEX_AUTHORATIVE_DECLARATION + ")?" +
 			REGEX_USERINFO + REGEX_HOST + REGEX_PORT + REGEX_RESOURCE_PATH + ")\$")

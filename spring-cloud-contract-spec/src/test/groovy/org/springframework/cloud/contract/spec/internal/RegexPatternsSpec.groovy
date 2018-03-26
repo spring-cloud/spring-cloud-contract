@@ -126,6 +126,79 @@ class RegexPatternsSpec extends Specification {
 			'http://.www.foo.bar./'                             || false
 	}
 
+	def "should generate a regex for httpsUrl [#textToMatch] that is a match [#shouldMatch]"() {
+		expect:
+			shouldMatch == regexPatterns.httpsUrl().matcher(textToMatch).matches()
+		where:
+			textToMatch                                         || shouldMatch
+			'ftp://asd.com:9090/asd/a?a=b'                      || false
+			'https://foo.com/blah_blah/'                        || true
+			'https://foo.com/blah_blah'                         || true
+			'http://foo.com/blah_blah'                          || false
+			'http://foo.com/blah_blah/'                         || false
+			'https://foo.com/blah_blah_(wikipedia)'             || true
+			'https://foo.com/blah_blah_(wikipedia)_(again)'     || true
+			'https://www.example.com/wpstyle/?p=364'            || true
+			'https://www.example.com/foo/?bar=baz&inga=42&quux' || true
+			'https://✪df.ws/123'                                || true
+			'https://userid:password@example.com:8080'          || true
+			'https://userid:password@example.com:8080/'         || true
+			'https://userid@example.com'                        || true
+			'https://userid@example.com/'                       || true
+			'https://userid@example.com:8080'                   || true
+			'https://userid@example.com:8080/'                  || true
+			'https://userid:password@example.com'               || true
+			'https://userid:password@example.com/'              || true
+			'https://142.42.1.1/'                               || true
+			'https://142.42.1.1:8080/'                          || true
+			'https://⌘.ws'                                      || true
+			'https://⌘.ws/'                                     || true
+			'https://foo.com/blah_(wikipedia)#cite-1'           || true
+			'https://foo.com/blah_(wikipedia)_blah#cite-1'      || true
+			'https://foo.com/unicode_(✪)_in_parens'             || true
+			'https://foo.com/(something)?after=parens'          || true
+			'https://☺.damowmow.com/'                           || true
+			'https://code.google.com/events/#&product=browser'  || true
+			'https://j.mp'                                      || true
+			'ftp://foo.bar/baz'                                 || false
+			'https://foo.bar/?q=Test%20URL-encoded%20stuff'     || true
+			'https://1337.net'                                  || true
+			'https://a.b-c.de'                                  || true
+			'https://223.255.255.254'                           || true
+			'foo.com'                                           || false
+			'a.b.'                                              || false
+			'https://'                                          || false
+			'https://.'                                         || false
+			'https://..'                                        || false
+			'https://../'                                       || false
+			'https://?'                                         || false
+			'https://??'                                        || false
+			'https://??/'                                       || false
+			'https://#'                                         || false
+			'https://##'                                        || false
+			'https://##/'                                       || false
+			'https://foo.bar?q=Spaces should be encoded'        || false
+			'//'                                                || false
+			'//a'                                               || false
+			'///a'                                              || false
+			'///'                                               || false
+			'https:///a'                                        || false
+			'rdar://1234'                                       || false
+			'h://test'                                          || false
+			'https:// shouldfail.com'                           || false
+			':// should fail'                                   || false
+			'https://foo.bar/foo(bar)baz quux'                  || false
+			'https://-error-.invalid/'                          || false
+			'https://-a.b.co'                                   || false
+			'https://a.b-.co'                                   || false
+			'https://1.1.1.1.1'                                 || false
+			'https://123.123.123'                               || false
+			'https://3628126748'                                || false
+			'https://.www.foo.bar/'                             || false
+			'https://www.foo.bar./'                             || false
+			'https://.www.foo.bar./'                            || false
+	}
+
 	def "should generate a regex for a number [#textToMatch] that is a match [#shouldMatch]"() {
 		expect:
 			shouldMatch == regexPatterns.number().matcher(textToMatch).matches()
@@ -136,6 +209,18 @@ class RegexPatternsSpec extends Specification {
 			'0.1'       || true
 			'.1'        || true
 			'1.'        || false
+	}
+
+	def "should generate a regex for a positive integer [#textToMatch] that is a match [#shouldMatch]"() {
+		expect:
+			shouldMatch == regexPatterns.positiveInt().matcher(textToMatch).matches()
+		where:
+			textToMatch || shouldMatch
+			'1'         || true
+			'12345'     || true
+			'-1'        || false
+			'0'         || false
+			'1.0'       || false
 	}
 
 	def "should generate a regex for a double [#textToMatch] that is a match [#shouldMatch]"() {

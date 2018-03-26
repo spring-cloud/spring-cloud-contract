@@ -17,6 +17,7 @@
 		<wiremock.version>2.15.0</wiremock.version>
 		<jsonassert.version>0.4.11</jsonassert.version>
 		<aether.version>1.0.2.v20150114</aether.version>
+		<rest-assured.version>3.0.7</rest-assured.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -98,7 +99,7 @@
 			<dependency>
 				<groupId>io.rest-assured</groupId>
 				<artifactId>spring-mock-mvc</artifactId>
-				<version>3.0.2</version>
+				<version>${rest-assured.version}</version>
 				<exclusions>
 					<exclusion>
 						<artifactId>spring-web</artifactId>
@@ -117,7 +118,7 @@
 			<dependency>
 				<groupId>io.rest-assured</groupId>
 				<artifactId>rest-assured</artifactId>
-				<version>3.0.2</version>
+				<version>${rest-assured.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.aether</groupId>
