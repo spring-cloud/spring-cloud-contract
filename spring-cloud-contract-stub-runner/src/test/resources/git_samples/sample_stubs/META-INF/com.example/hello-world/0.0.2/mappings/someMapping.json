@@ -1,0 +1,13 @@
+{
+  "id" : "b54426bb-b2ef-4b12-adc9-a05fcf6a4e08",
+  "request" : {
+    "url" : "/hello",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "world",
+    "transformers" : [ "response-template" ]
+  },
+  "uuid" : "b54426bb-b2ef-4b12-adc9-a05fcf6a4e08"
+}

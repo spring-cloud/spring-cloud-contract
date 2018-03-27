@@ -15,13 +15,13 @@
  */
 package org.springframework.cloud.contract.maven.verifier;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
@@ -122,7 +122,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 	@Parameter(property = "skipTests", defaultValue = "false") private boolean skipTests;
 
 	/**
-	 * The URL from which a JAR containing the contracts should get downloaded. If not provided
+	 * The URL from which a contracts should get downloaded. If not provided
 	 * but artifactid / coordinates notation was provided then the current Maven's build repositories will be
 	 * taken into consideration
 	 */

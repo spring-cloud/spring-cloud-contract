@@ -21,10 +21,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import org.eclipse.jgit.api.CloneCommand;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import static org.assertj.core.api.Assertions.fail;
 import static org.assertj.core.api.BDDAssertions.then;
@@ -34,16 +34,13 @@ import static org.assertj.core.api.BDDAssertions.thenThrownBy;
  * @author Marcin Grzejszczak
  * taken from: https://github.com/spring-cloud/spring-cloud-release-tools
  */
-public class GitRepoTests {
+public class GitRepoTests extends AbstractGitTest {
 
-	@Rule public TemporaryFolder tmp = new TemporaryFolder();
 	File project;
-	File tmpFolder;
 	GitRepo gitRepo;
 
 	@Before
 	public void setup() throws IOException, URISyntaxException {
-		this.tmpFolder = this.tmp.newFolder();
 		this.project = new File(GitRepoTests.class.getResource("/git_samples/contract-git").toURI());
 		TestUtils.prepareLocalRepo();
 		this.gitRepo = new GitRepo(this.tmpFolder);
@@ -66,8 +63,7 @@ public class GitRepoTests {
 
 	@Test
 	public void should_throw_an_exception_when_failed_to_initialize_the_repo() throws IOException {
-		thenThrownBy(() ->  new GitRepo(this.tmpFolder, new ExceptionThrowingJGitFactory()).cloneProject(this.project
-				.toURI()))
+		thenThrownBy(() ->  new GitRepo(this.tmpFolder, new ExceptionThrowingJGitFactory()).cloneProject(this.project.toURI()))
 				.isInstanceOf(IllegalStateException.class)
 				.hasMessageContaining("Exception occurred while cloning repo")
 				.hasCauseInstanceOf(CustomException.class);
@@ -76,10 +72,10 @@ public class GitRepoTests {
 	@Test
 	public void should_check_out_a_branch_on_cloned_repo() throws IOException {
 		File project = this.gitRepo.cloneProject(this.project.toURI());
-		this.gitRepo.checkout(project, "branch");
+		this.gitRepo.checkout(project, "master");
 
-		File file = new File(this.tmpFolder, "README.adoc");
-		then(file).exists();
+		File pom = new File(this.tmpFolder, "README.adoc");
+		then(pom).exists();
 	}
 
 	@Test
@@ -93,6 +89,74 @@ public class GitRepoTests {
 		}
 	}
 
+	@Test
+	public void should_commit_changes() throws Exception {
+		File project = this.gitRepo.cloneProject(this.project.toURI());
+		createNewFile(project);
+
+		this.gitRepo.commit(project, "some message");
+
+		try(Git git = openGitProject(project)) {
+			RevCommit revCommit = git.log().call().iterator().next();
+			then(revCommit.getShortMessage()).isEqualTo("some message");
+		}
+	}
+
+	@Test
+	public void should_reset_any_changes() throws Exception {
+		File project = this.gitRepo.cloneProject(this.project.toURI());
+		File file = createNewFile(project);
+
+		this.gitRepo.reset(project);
+
+		then(file).doesNotExist();
+	}
+
+	@Test
+	public void should_not_commit_empty_changes() throws Exception {
+		File project = this.gitRepo.cloneProject(this.project.toURI());
+		createNewFile(project);
+		this.gitRepo.commit(project, "some message");
+
+		this.gitRepo.commit(project, "empty commit");
+
+		try(Git git = openGitProject(project)) {
+			RevCommit revCommit = git.log().call().iterator().next();
+			then(revCommit.getShortMessage()).isNotEqualTo("empty commit");
+		}
+	}
+
+	@Test
+	public void should_push_changes_to_current_branch() throws Exception {
+		File origin = clonedProject(this.tmp.newFolder(), this.project);
+		File project = this.gitRepo.cloneProject(this.project.toURI());
+		setOriginOnProjectToTmp(origin, project, true);
+		createNewFile(project);
+		this.gitRepo.commit(project, "some message");
+
+		this.gitRepo.pushCurrentBranch(project);
+
+		try(Git git = openGitProject(origin)) {
+			RevCommit revCommit = git.log().call().iterator().next();
+			then(revCommit.getShortMessage()).isEqualTo("some message");
+		}
+	}
+
+	@Test
+	public void should_pull_changes_to_current_branch() throws Exception {
+		File origin = clonedProject(this.tmp.newFolder(), this.project);
+		File project = this.gitRepo.cloneProject(this.project.toURI());
+		setOriginOnProjectToTmp(origin, project, false);
+		createNewFile(origin);
+		this.gitRepo.commit(origin, "some message");
+
+		this.gitRepo.pull(project);
+
+		try(Git git = openGitProject(project)) {
+			RevCommit revCommit = git.log().call().iterator().next();
+			then(revCommit.getShortMessage()).isEqualTo("some message");
+		}
+	}
 }
 
 class ExceptionThrowingJGitFactory extends GitRepo.JGitFactory {
