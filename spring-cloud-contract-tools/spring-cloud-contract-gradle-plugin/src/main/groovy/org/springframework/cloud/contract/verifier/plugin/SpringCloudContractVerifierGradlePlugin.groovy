@@ -39,12 +39,11 @@ import org.gradle.jvm.tasks.Jar
 class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 
 	private static final String GENERATE_SERVER_TESTS_TASK_NAME = 'generateContractTests'
-	private static final String DEPRECATED_DSL_TO_WIREMOCK_CLIENT_TASK_NAME = 'generateWireMockClientStubs'
 	private static final String DSL_TO_CLIENT_TASK_NAME = 'generateClientStubs'
 	@PackageScope static final String COPY_CONTRACTS_TASK_NAME = 'copyContracts'
 	private static final String VERIFIER_STUBS_JAR_TASK_NAME = 'verifierStubsJar'
+	private static final String PUBLISH_STUBS_TO_SCM_TASK_NAME = 'publishStubsToScm'
 
-	private static final Class IDEA_PLUGIN_CLASS = org.gradle.plugins.ide.idea.IdeaPlugin
 	private static final String GROUP_NAME = "Verification"
 	private static final String EXTENSION_NAME = 'contracts'
 
@@ -61,9 +60,9 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		Task stubsJar = createAndConfigureStubsJarTasks(extension)
 		Task copyContracts = createAndConfigureCopyContractsTask(stubsJar, downloader, extension)
 		createAndConfigureMavenPublishPlugin(stubsJar, extension)
-		createGenerateTestsTask(extension, copyContracts)
-		Task clientTask = createAndConfigureGenerateClientStubsFromDslTask(extension, copyContracts)
-		createAndConfigureGenerateWireMockClientStubsFromDslTask(extension, clientTask)
+		createGenerateTestsTask(extension, copyContracts, downloader)
+		Task clientTask = createAndConfigureGenerateClientStubs(extension, copyContracts)
+		createAndConfigurePublishStubsToScmTask(extension, downloader)
 		addIdeaTestSources(project, extension)
 	}
 
@@ -96,7 +95,8 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		return project.file("${project.projectDir}/src/test/resources/contracts")
 	}
 
-	private void createGenerateTestsTask(ContractVerifierExtension extension, Task copyContracts) {
+	private void createGenerateTestsTask(ContractVerifierExtension extension, Task copyContracts,
+										 GradleContractsDownloader gradleContractsDownloader) {
 		Task task = project.tasks.create(GENERATE_SERVER_TESTS_TASK_NAME, GenerateServerTestsTask)
 		task.description = "Generate server tests from the contracts"
 		task.group = GROUP_NAME
@@ -110,17 +110,30 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		project.tasks.findByName("compileTestJava").dependsOn(task)
 	}
 
-	// TODO: Remove this task at some point
-	private void createAndConfigureGenerateWireMockClientStubsFromDslTask(ContractVerifierExtension extension,
-																		  Task mainTask) {
-		Task task = project.tasks.create(DEPRECATED_DSL_TO_WIREMOCK_CLIENT_TASK_NAME)
-		task.description = "DEPRECATED: Generate WireMock client stubs from the contracts. Use ${DSL_TO_CLIENT_TASK_NAME} task."
+	private void createAndConfigurePublishStubsToScmTask(ContractVerifierExtension extension,
+														 GradleContractsDownloader gradleContractsDownloader) {
+		Task task = project.tasks.create(PUBLISH_STUBS_TO_SCM_TASK_NAME, PublishStubsToScmTask)
+		task.description = "The generated stubs get committed to the SCM repo and pushed to origin"
 		task.group = GROUP_NAME
-		task.dependsOn mainTask
+		task.conventionMapping.with {
+			downloader = { gradleContractsDownloader }
+			configProperties = { extension }
+			stubsOutputDir = { extension.stubsOutputDir }
+		}
+		task.onlyIf {
+			String contractRepoUrl = extension.contractsRepositoryUrl ?:
+					extension.contractRepository.repositoryUrl ?: ""
+			if (!contractRepoUrl || !contractRepoUrl.startsWith("git")) {
+				project.logger.info("Skipping pushing stubs to scm since your [contractsRepositoryUrl] property doesn't start with [git]")
+				return false
+			}
+			return true
+		}
+		task.dependsOn DSL_TO_CLIENT_TASK_NAME
 	}
 
-	private Task createAndConfigureGenerateClientStubsFromDslTask(ContractVerifierExtension extension,
-																		  Task copyContracts) {
+	private Task createAndConfigureGenerateClientStubs(ContractVerifierExtension extension,
+													   Task copyContracts) {
 		Task task = project.tasks.create(DSL_TO_CLIENT_TASK_NAME, GenerateWireMockClientStubsFromDslTask)
 		task.description = "Generate client stubs from the contracts"
 		task.group = GROUP_NAME

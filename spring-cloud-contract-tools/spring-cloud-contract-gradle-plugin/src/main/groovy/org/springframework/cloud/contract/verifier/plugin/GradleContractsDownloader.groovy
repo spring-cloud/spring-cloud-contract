@@ -76,7 +76,11 @@ class GradleContractsDownloader {
 
 	protected StubDownloader stubDownloader(ContractVerifierExtension extension) {
         StubDownloaderBuilderProvider provider = new StubDownloaderBuilderProvider()
-		StubRunnerOptionsBuilder options = new StubRunnerOptionsBuilder()
+		return provider.get(options(extension))
+	}
+
+	protected StubRunnerOptions options(ContractVerifierExtension extension) {
+        StubRunnerOptionsBuilder options = new StubRunnerOptionsBuilder()
 				.withOptions(StubRunnerOptions.fromSystemProps())
 				.withStubRepositoryRoot(extension.contractRepository.repositoryUrl)
 				.withStubsMode(extension.contractsMode)
@@ -88,7 +92,7 @@ class GradleContractsDownloader {
 		if (extension.contractRepository.proxyPort) {
 			options = options.withProxy(extension.contractRepository.proxyHost, extension.contractRepository.proxyPort)
 		}
-		return provider.get(options.build())
+		return options.build()
 	}
 
 	@PackageScope StubConfiguration stubConfiguration(ContractVerifierExtension.Dependency contractDependency) {

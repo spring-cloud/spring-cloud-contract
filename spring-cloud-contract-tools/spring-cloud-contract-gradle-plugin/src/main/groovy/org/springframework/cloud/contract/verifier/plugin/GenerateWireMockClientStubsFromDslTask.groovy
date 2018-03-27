@@ -32,8 +32,6 @@ import static org.springframework.cloud.contract.verifier.plugin.SpringCloudCont
  */
 class GenerateWireMockClientStubsFromDslTask extends ConventionTask {
 
-	private static final String DEFAULT_MAPPINGS_FOLDER = 'mappings'
-
 	File stubsOutputDir
 
 	ContractVerifierExtension configProperties
@@ -48,10 +46,7 @@ class GenerateWireMockClientStubsFromDslTask extends ConventionTask {
 		logger.info("Spring Cloud Contract Verifier Plugin: Invoking DSL to client stubs conversion")
 		props.contractsDslDir = contractsDslDir
 		props.includedContracts = ".*"
-		String root = OutputFolderBuilder.buildRootPath(project)
-		File outMappingsDir = getStubsOutputDir() != null ?
-				new File(getStubsOutputDir(), "${root}/${DEFAULT_MAPPINGS_FOLDER}")
-				: new File(project.buildDir, "stubs/${root}/${DEFAULT_MAPPINGS_FOLDER}")
+		File outMappingsDir = OutputFolderBuilder.outputMappingsDir(project, getStubsOutputDir())
 		logger.info("Contracts dir is [${contractsDslDir}] output stubs dir is [${outMappingsDir}]")
 		RecursiveFilesConverter converter = new RecursiveFilesConverter(
 				props, outMappingsDir)

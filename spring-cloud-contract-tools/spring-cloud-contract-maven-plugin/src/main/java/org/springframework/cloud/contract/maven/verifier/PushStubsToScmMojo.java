@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -32,7 +30,7 @@ import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.util.StringUtils;
 
 /**
- * The generated stubs get
+ * The generated stubs get committed to the SCM repo and pushed to origin.
  */
 @SuppressWarnings("FieldCanBeLocal")
 @Mojo(name = "pushStubsToScm")
@@ -101,7 +99,7 @@ public class PushStubsToScmMojo extends AbstractMojo {
 	@Parameter(property = "contractsProperties")
 	private Map<String, String> contractsProperties = new HashMap<>();
 
-	public void execute() throws MojoExecutionException, MojoFailureException {
+	public void execute() {
 		if (this.skip || this.taskSkip) {
 			getLog().info(
 					"Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip="
