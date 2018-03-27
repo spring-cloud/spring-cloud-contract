@@ -6,8 +6,6 @@ import au.com.dius.pact.consumer.dsl.PactDslRequestWithPath
 import au.com.dius.pact.consumer.dsl.PactDslResponse
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider
 import au.com.dius.pact.model.RequestResponsePact
-import au.com.dius.pact.model.generators.Generator
-import au.com.dius.pact.model.generators.Generators
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.springframework.cloud.contract.spec.Contract
@@ -18,8 +16,6 @@ import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.Response
-
-import java.util.regex.Pattern
 
 /**
  * Creator of {@link RequestResponsePact} instances
@@ -83,8 +79,8 @@ class RequestResponsePactCreator {
 		}
 		if (request.body) {
 			DslPart pactRequestBody = BodyConverter.toPactBody(request.body, requestDslPropertyValueExtractor)
-			if (request.matchers) {
-				pactRequestBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(request.matchers))
+			if (request.matchers?.bodyMatchers) {
+				pactRequestBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(request.matchers.bodyMatchers))
 			}
 			pactRequestBody.setGenerators(ValueGeneratorConverter.extract(request.body, { DslProperty dslProperty -> dslProperty.clientValue }))
 			pactDslRequest = pactDslRequest.body(pactRequestBody)
@@ -101,8 +97,8 @@ class RequestResponsePactCreator {
 		}
 		if (response.body) {
 			DslPart pactResponseBody = BodyConverter.toPactBody(response.body, responseDslPropertyValueExtractor)
-			if (response.matchers) {
-				pactResponseBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(response.matchers))
+			if (response.matchers?.bodyMatchers) {
+				pactResponseBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(response.matchers.bodyMatchers))
 			}
 			pactResponseBody.setGenerators(ValueGeneratorConverter.extract(response.body, { DslProperty dslProperty -> dslProperty.serverValue }))
 			pactDslResponse = pactDslResponse.body(pactResponseBody)

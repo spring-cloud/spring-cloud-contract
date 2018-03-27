@@ -584,16 +584,18 @@ class DslToWireMockClientConverterSpec extends Specification {
 							]
 					])
 					stubMatchers {
-						jsonPath('$.duck', byRegex("[0-9]{3}"))
-						jsonPath('$.duck', byEquality())
-						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
-						jsonPath('$.alpha', byEquality())
-						jsonPath('$.number', byRegex(number()))
-						jsonPath('$.aBoolean', byRegex(anyBoolean()))
-						jsonPath('$.date', byDate())
-						jsonPath('$.dateTime', byTimestamp())
-						jsonPath('$.time', byTime())
-						jsonPath('$.list.some.nested.json', byRegex(".*"))
+						bodyMatchers {
+							jsonPath('$.duck', byRegex("[0-9]{3}"))
+							jsonPath('$.duck', byEquality())
+							jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+							jsonPath('$.alpha', byEquality())
+							jsonPath('$.number', byRegex(number()))
+							jsonPath('$.aBoolean', byRegex(anyBoolean()))
+							jsonPath('$.date', byDate())
+							jsonPath('$.dateTime', byTimestamp())
+							jsonPath('$.time', byTime())
+							jsonPath('$.list.some.nested.json', byRegex(".*"))
+						}
 					}
 					headers {
 						contentType(applicationJson())
@@ -622,33 +624,35 @@ class DslToWireMockClientConverterSpec extends Specification {
 							],
 					])
 					testMatchers {
-						// asserts the jsonpath value against manual regex
-						jsonPath('$.duck', byRegex("[0-9]{3}"))
-						jsonPath('$.duck', byEquality())
-						// asserts the jsonpath value against some default regex
-						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
-						jsonPath('$.alpha', byEquality())
-						jsonPath('$.number', byRegex(number()))
-						jsonPath('$.aBoolean', byRegex(anyBoolean()))
-						// asserts vs inbuilt time related regex
-						jsonPath('$.date', byDate())
-						jsonPath('$.dateTime', byTimestamp())
-						jsonPath('$.time', byTime())
-						// asserts that the resulting type is the same as in response body
-						jsonPath('$.valueWithTypeMatch', byType())
-						jsonPath('$.valueWithMin', byType {
-							// results in verification of size of array (min 1)
-							minOccurrence(1)
-						})
-						jsonPath('$.valueWithMax', byType {
-							// results in verification of size of array (max 3)
-							maxOccurrence(3)
-						})
-						jsonPath('$.valueWithMinMax', byType {
-							// results in verification of size of array (min 1 & max 3)
-							minOccurrence(1)
-							maxOccurrence(3)
-						})
+						bodyMatchers {
+							// asserts the jsonpath value against manual regex
+							jsonPath('$.duck', byRegex("[0-9]{3}"))
+							jsonPath('$.duck', byEquality())
+							// asserts the jsonpath value against some default regex
+							jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+							jsonPath('$.alpha', byEquality())
+							jsonPath('$.number', byRegex(number()))
+							jsonPath('$.aBoolean', byRegex(anyBoolean()))
+							// asserts vs inbuilt time related regex
+							jsonPath('$.date', byDate())
+							jsonPath('$.dateTime', byTimestamp())
+							jsonPath('$.time', byTime())
+							// asserts that the resulting type is the same as in response body
+							jsonPath('$.valueWithTypeMatch', byType())
+							jsonPath('$.valueWithMin', byType {
+								// results in verification of size of array (min 1)
+								minOccurrence(1)
+							})
+							jsonPath('$.valueWithMax', byType {
+								// results in verification of size of array (max 3)
+								maxOccurrence(3)
+							})
+							jsonPath('$.valueWithMinMax', byType {
+								// results in verification of size of array (min 1 & max 3)
+								minOccurrence(1)
+								maxOccurrence(3)
+							})
+						}
 					}
 					headers {
 						contentType(applicationJson())
@@ -790,8 +794,10 @@ class DslToWireMockClientConverterSpec extends Specification {
 							callback_url: 'http://partners.com'
 						)
 						stubMatchers {
-							jsonPath('$.[\\'email\\']', byRegex(email()))
-							jsonPath('$.[\\'callback_url\\']', byRegex(hostname()))
+							bodyMatchers {
+								jsonPath('$.[\\'email\\']', byRegex(email()))
+								jsonPath('$.[\\'callback_url\\']', byRegex(hostname()))
+							}
 						}
 					}
 					response {
@@ -804,8 +810,10 @@ class DslToWireMockClientConverterSpec extends Specification {
 							message: "User not found by email == [not.existing@user.com]"
 						)
 						testMatchers {
-							jsonPath('$.code', byRegex("123123"))
-							jsonPath('$.message', byRegex("User not found by email == ${email()}"))
+							bodyMatchers {
+								jsonPath('$.code', byRegex("123123"))
+								jsonPath('$.message', byRegex("User not found by email == ${email()}"))
+							}
 						}
 					}
 				}
@@ -876,8 +884,10 @@ class DslToWireMockClientConverterSpec extends Specification {
 							callback_url: 'http://partners.com'
 						)
 						stubMatchers {
-							jsonPath('$.[\\'email\\']', byRegex(email()))
-							jsonPath('$.[\\'callback_url\\']', byRegex(hostname()))
+							bodyMatchers {
+								jsonPath('$.[\\'email\\']', byRegex(email()))
+								jsonPath('$.[\\'callback_url\\']', byRegex(hostname()))
+							}
 						}
 					}
 					response {

@@ -28,6 +28,8 @@ import org.springframework.cloud.contract.spec.util.RegexpUtils
 /**
  * Represents the response side of the HTTP communication
  *
+ * @author Marcin Grzejszczak
+ * @author Tim Ysewyn
  * @since 1.0.0
  */
 @TypeChecked
@@ -43,7 +45,7 @@ class Response extends Common {
 	Headers headers
 	Body body
 	boolean async
-	ResponseBodyMatchers matchers
+	TestMatchers matchers
 
 	Response() {
 	}
@@ -114,8 +116,8 @@ class Response extends Common {
 		return value(server)
 	}
 
-	void testMatchers(@DelegatesTo(ResponseBodyMatchers) Closure closure) {
-		this.matchers = new ResponseBodyMatchers()
+	void testMatchers(@DelegatesTo(TestMatchers) Closure closure) {
+		this.matchers = new TestMatchers()
 		closure.delegate = this.matchers
 		closure()
 	}

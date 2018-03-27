@@ -55,7 +55,9 @@ class PactContractConverterSpec extends Specification {
 					}
 					body(id: "123", method: "create")
 					stubMatchers {
-						jsonPath('$.id', byRegex("[0-9]{3}"))
+						bodyMatchers {
+							jsonPath('$.id', byRegex("[0-9]{3}"))
+						}
 					}
 				}
 				response {
@@ -69,12 +71,14 @@ class PactContractConverterSpec extends Specification {
 							userName: "AJQrokEGPAVdOHprQpKP"]
 						]])
 					testMatchers {
-						jsonPath('$[0][*].email', byType())
-						jsonPath('$[0][*].id', byRegex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
-						jsonPath('$[0]', byType() {
-							maxOccurrence(5)
-						})
-						jsonPath('$[0][*].userName', byType())
+						bodyMatchers {
+							jsonPath('$[0][*].email', byType())
+							jsonPath('$[0][*].id', byRegex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
+							jsonPath('$[0]', byType() {
+								maxOccurrence(5)
+							})
+							jsonPath('$[0][*].userName', byType())
+						}
 					}
 				}
 			}
@@ -104,9 +108,11 @@ class PactContractConverterSpec extends Specification {
 					}
 					body(id: 42, firstName: "Arthur", lastName: "Dent")
 					testMatchers {
-						jsonPath('''$.['id']''', byType())
-						jsonPath('''$.['lastName']''', byType())
-						jsonPath('''$.['firstName']''', byType())
+						bodyMatchers {
+							jsonPath('''$.['id']''', byType())
+							jsonPath('''$.['lastName']''', byType())
+							jsonPath('''$.['firstName']''', byType())
+						}
 					}
 				}
 			}
@@ -138,8 +144,10 @@ class PactContractConverterSpec extends Specification {
 									something: "foo"
 							)
 							stubMatchers {
-								jsonPath('$.id', byRegex("[0-9]{3}"))
-								jsonPath('$.something', byEquality())
+								bodyMatchers {
+									jsonPath('$.id', byRegex("[0-9]{3}"))
+									jsonPath('$.something', byEquality())
+								}
 							}
 						}
 						response {
@@ -160,20 +168,22 @@ class PactContractConverterSpec extends Specification {
 										   nullValue: null]
 								  ]])
 							testMatchers {
-								jsonPath('$[0][*].email', byType())
-								jsonPath('$[0][*].id', byRegex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
-								jsonPath('$[0]', byType() {
-									minOccurrence(1)
-									maxOccurrence(5)
-								})
-								jsonPath('$[0][*].number', byRegex(number()))
-								jsonPath('$[0][*].positiveInteger', byRegex(anInteger()))
-								jsonPath('$[0][*].negativeInteger', byRegex(anInteger()))
-								jsonPath('$[0][*].positiveDecimalNumber', byRegex(aDouble()))
-								jsonPath('$[0][*].negativeDecimalNumber', byRegex(aDouble()))
-								jsonPath('$[0][*].userName', byType())
-								jsonPath('$[0][*].something', byEquality())
-								jsonPath('$[0][*].nullValue', byNull())
+								bodyMatchers {
+									jsonPath('$[0][*].email', byType())
+									jsonPath('$[0][*].id', byRegex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
+									jsonPath('$[0]', byType() {
+										minOccurrence(1)
+										maxOccurrence(5)
+									})
+									jsonPath('$[0][*].number', byRegex(number()))
+									jsonPath('$[0][*].positiveInteger', byRegex(anInteger()))
+									jsonPath('$[0][*].negativeInteger', byRegex(anInteger()))
+									jsonPath('$[0][*].positiveDecimalNumber', byRegex(aDouble()))
+									jsonPath('$[0][*].negativeDecimalNumber', byRegex(aDouble()))
+									jsonPath('$[0][*].userName', byType())
+									jsonPath('$[0][*].something', byEquality())
+									jsonPath('$[0][*].nullValue', byNull())
+								}
 							}
 						}
 					}
@@ -407,12 +417,14 @@ class PactContractConverterSpec extends Specification {
 								userName: "AJQrokEGPAVdOHprQpKP"]
 						]])
 						testMatchers {
-							jsonPath('$[0][*].email', byType())
-							jsonPath('$[0][*].id', byRegex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
-							jsonPath('$[0]', byType() {
-								maxOccurrence(5)
-							})
-							jsonPath('$[0][*].userName', byType())
+							bodyMatchers {
+								jsonPath('$[0][*].email', byType())
+								jsonPath('$[0][*].id', byRegex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
+								jsonPath('$[0]', byType() {
+									maxOccurrence(5)
+								})
+								jsonPath('$[0][*].userName', byType())
+							}
 						}
 					}
 				},
@@ -433,12 +445,14 @@ class PactContractConverterSpec extends Specification {
 								userName: "GIUlVKoiLdHLYNKGbcSy"]
 						]])
 						testMatchers {
-							jsonPath('$[0][*].email', byType())
-							jsonPath('$[0][*].id', byRegex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
-							jsonPath('$[0]', byType() {
-								minOccurrence(5)
-							})
-							jsonPath('$[0][*].userName', byType())
+							bodyMatchers {
+								jsonPath('$[0][*].email', byType())
+								jsonPath('$[0][*].id', byRegex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
+								jsonPath('$[0]', byType() {
+									minOccurrence(5)
+								})
+								jsonPath('$[0][*].userName', byType())
+							}
 						}
 					}
 				}
@@ -490,14 +504,16 @@ class PactContractConverterSpec extends Specification {
 							]
 					  	])
 						testMatchers {
-							jsonPath('$[0].id', byType())
-							jsonPath('$[1].id', byType())
-							jsonPath('$[*].nullValue', byNull())
-							jsonPath('$[*].aNumber', byRegex(number()))
-							jsonPath('$[*].positiveInteger', byRegex(anInteger()))
-							jsonPath('$[*].negativeInteger', byRegex(anInteger()))
-							jsonPath('$[*].positiveDecimalNumber', byRegex(aDouble()))
-							jsonPath('$[*].negativeDecimalNumber', byRegex(aDouble()))
+							bodyMatchers {
+								jsonPath('$[0].id', byType())
+								jsonPath('$[1].id', byType())
+								jsonPath('$[*].nullValue', byNull())
+								jsonPath('$[*].aNumber', byRegex(number()))
+								jsonPath('$[*].positiveInteger', byRegex(anInteger()))
+								jsonPath('$[*].negativeInteger', byRegex(anInteger()))
+								jsonPath('$[*].positiveDecimalNumber', byRegex(aDouble()))
+								jsonPath('$[*].negativeDecimalNumber', byRegex(aDouble()))
+							}
 						}
 					}
 				},
@@ -530,13 +546,15 @@ class PactContractConverterSpec extends Specification {
 							]
 					  	])
 						testMatchers {
-							jsonPath('$[2].name', byType())
-							jsonPath('$[0].id', byType())
-							jsonPath('$[1].id', byType())
-							jsonPath('$[2].id', byType())
-							jsonPath('$[1].name', byType())
-							jsonPath('$[0].name', byType())
-							jsonPath('$[0].dob', byDate())
+							bodyMatchers {
+								jsonPath('$[2].name', byType())
+								jsonPath('$[0].id', byType())
+								jsonPath('$[1].id', byType())
+								jsonPath('$[2].id', byType())
+								jsonPath('$[1].name', byType())
+								jsonPath('$[0].name', byType())
+								jsonPath('$[0].dob', byDate())
+							}
 						}
 					}
 				},
@@ -571,20 +589,22 @@ class PactContractConverterSpec extends Specification {
 							"id": 7183997828
 					  	])
 						testMatchers {
-							jsonPath('$.data.array3[0]', byType() {
-								maxOccurrence(5)
-							})
-							jsonPath('$.data.array1', byType() {
-								minOccurrence(0)
-							})
-							jsonPath('$.data.array2', byType() {
-								minOccurrence(1)
-							})
-							jsonPath('$.id', byType())
-							jsonPath('$.data.array2[*].name', byType())
-							jsonPath('$.data.array2[*].address', byRegex("(\\d{1,3}\\.)+\\d{1,3}"))
-							jsonPath('$.data.array1[*].name', byType())
-							jsonPath('$.data.array1[*].id', byType())
+							bodyMatchers {
+								jsonPath('$.data.array3[0]', byType() {
+									maxOccurrence(5)
+								})
+								jsonPath('$.data.array1', byType() {
+									minOccurrence(0)
+								})
+								jsonPath('$.data.array2', byType() {
+									minOccurrence(1)
+								})
+								jsonPath('$.id', byType())
+								jsonPath('$.data.array2[*].name', byType())
+								jsonPath('$.data.array2[*].address', byRegex("(\\d{1,3}\\.)+\\d{1,3}"))
+								jsonPath('$.data.array1[*].name', byType())
+								jsonPath('$.data.array1[*].id', byType())
+							}
 						}
 					}
 				}
@@ -613,7 +633,9 @@ class PactContractConverterSpec extends Specification {
 								messagingContentType(applicationJson())
 							}
 							testMatchers {
-								jsonPath('$.bookName', byType())
+								bodyMatchers {
+									jsonPath('$.bookName', byType())
+								}
 							}
 						}
 					}

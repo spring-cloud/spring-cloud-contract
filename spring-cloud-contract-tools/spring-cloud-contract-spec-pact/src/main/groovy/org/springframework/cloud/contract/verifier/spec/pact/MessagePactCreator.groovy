@@ -13,8 +13,6 @@ import org.springframework.cloud.contract.spec.internal.Input
 import org.springframework.cloud.contract.spec.internal.OutputMessage
 import org.springframework.cloud.contract.verifier.util.ContentUtils
 
-import java.util.regex.Pattern
-
 /**
  * Creator of {@link MessagePact} instances
  *
@@ -36,8 +34,8 @@ class MessagePactCreator {
 			OutputMessage message = contract.outputMessage
 			if (message.body) {
 				DslPart pactResponseBody = BodyConverter.toPactBody(message.body, clientValueExtractor)
-				if (message.matchers) {
-					pactResponseBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(message.matchers))
+				if (message.matchers?.bodyMatchers) {
+					pactResponseBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(message.matchers.bodyMatchers))
 				}
 				pactResponseBody.setGenerators(ValueGeneratorConverter.extract(message, { DslProperty dslProperty -> dslProperty.serverValue }))
 				messagePactBuilder = messagePactBuilder.withContent(pactResponseBody)

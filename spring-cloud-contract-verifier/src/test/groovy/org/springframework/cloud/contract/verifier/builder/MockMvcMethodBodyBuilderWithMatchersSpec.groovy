@@ -57,16 +57,18 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							]
 					])
 					stubMatchers {
-						jsonPath('$.duck', byRegex("[0-9]{3}"))
-						jsonPath('$.duck', byEquality())
-						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
-						jsonPath('$.alpha', byEquality())
-						jsonPath('$.number', byRegex(number()))
-						jsonPath('$.aBoolean', byRegex(anyBoolean()))
-						jsonPath('$.date', byDate())
-						jsonPath('$.dateTime', byTimestamp())
-						jsonPath('$.time', byTime())
-						jsonPath("\$.['key'].['complex.key']", byEquality())
+						bodyMatchers {
+							jsonPath('$.duck', byRegex("[0-9]{3}"))
+							jsonPath('$.duck', byEquality())
+							jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+							jsonPath('$.alpha', byEquality())
+							jsonPath('$.number', byRegex(number()))
+							jsonPath('$.aBoolean', byRegex(anyBoolean()))
+							jsonPath('$.date', byDate())
+							jsonPath('$.dateTime', byTimestamp())
+							jsonPath('$.time', byTime())
+							jsonPath("\$.['key'].['complex.key']", byEquality())
+						}
 					}
 					headers {
 						contentType(applicationJson())
@@ -105,50 +107,52 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							nullValue: null
 					])
 					testMatchers {
-						// asserts the jsonpath value against manual regex
-						jsonPath('$.duck', byRegex("[0-9]{3}"))
-						// asserts the jsonpath value against the provided value
-						jsonPath('$.duck', byEquality())
-						// asserts the jsonpath value against some default regex
-						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
-						jsonPath('$.alpha', byEquality())
-						jsonPath('$.number', byRegex(number()))
-						jsonPath('$.positiveInteger', byRegex(anInteger()))
-						jsonPath('$.negativeInteger', byRegex(anInteger()))
-						jsonPath('$.positiveDecimalNumber', byRegex(aDouble()))
-						jsonPath('$.negativeDecimalNumber', byRegex(aDouble()))
-						jsonPath('$.aBoolean', byRegex(anyBoolean()))
-						// asserts vs inbuilt time related regex
-						jsonPath('$.date', byDate())
-						jsonPath('$.dateTime', byTimestamp())
-						jsonPath('$.time', byTime())
-						// asserts that the resulting type is the same as in response body
-						jsonPath('$.valueWithTypeMatch', byType())
-						jsonPath('$.valueWithMin', byType {
-							// results in verification of size of array (min 1)
-							minOccurrence(1)
-						})
-						jsonPath('$.valueWithMax', byType {
-							// results in verification of size of array (max 3)
-							maxOccurrence(3)
-						})
-						jsonPath('$.valueWithMinMax', byType {
-							// results in verification of size of array (min 1 & max 3)
-							minOccurrence(1)
-							maxOccurrence(3)
-						})
-						jsonPath('$.valueWithMinEmpty', byType {
-							// results in verification of size of array (min 0)
-							minOccurrence(0)
-						})
-						jsonPath('$.valueWithMaxEmpty', byType {
-							// results in verification of size of array (max 0)
-							maxOccurrence(0)
-						})
-						// will execute a method `assertThatValueIsANumber`
-						jsonPath('$.duck', byCommand('assertThatValueIsANumber($it)'))
-						jsonPath("\$.['key'].['complex.key']", byEquality())
-						jsonPath('$.nullValue', byNull())
+						bodyMatchers {
+							// asserts the jsonpath value against manual regex
+							jsonPath('$.duck', byRegex("[0-9]{3}"))
+							// asserts the jsonpath value against the provided value
+							jsonPath('$.duck', byEquality())
+							// asserts the jsonpath value against some default regex
+							jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+							jsonPath('$.alpha', byEquality())
+							jsonPath('$.number', byRegex(number()))
+							jsonPath('$.positiveInteger', byRegex(anInteger()))
+							jsonPath('$.negativeInteger', byRegex(anInteger()))
+							jsonPath('$.positiveDecimalNumber', byRegex(aDouble()))
+							jsonPath('$.negativeDecimalNumber', byRegex(aDouble()))
+							jsonPath('$.aBoolean', byRegex(anyBoolean()))
+							// asserts vs inbuilt time related regex
+							jsonPath('$.date', byDate())
+							jsonPath('$.dateTime', byTimestamp())
+							jsonPath('$.time', byTime())
+							// asserts that the resulting type is the same as in response body
+							jsonPath('$.valueWithTypeMatch', byType())
+							jsonPath('$.valueWithMin', byType {
+								// results in verification of size of array (min 1)
+								minOccurrence(1)
+							})
+							jsonPath('$.valueWithMax', byType {
+								// results in verification of size of array (max 3)
+								maxOccurrence(3)
+							})
+							jsonPath('$.valueWithMinMax', byType {
+								// results in verification of size of array (min 1 & max 3)
+								minOccurrence(1)
+								maxOccurrence(3)
+							})
+							jsonPath('$.valueWithMinEmpty', byType {
+								// results in verification of size of array (min 0)
+								minOccurrence(0)
+							})
+							jsonPath('$.valueWithMaxEmpty', byType {
+								// results in verification of size of array (max 0)
+								maxOccurrence(0)
+							})
+							// will execute a method `assertThatValueIsANumber`
+							jsonPath('$.duck', byCommand('assertThatValueIsANumber($it)'))
+							jsonPath("\$.['key'].['complex.key']", byEquality())
+							jsonPath('$.nullValue', byNull())
+						}
 					}
 					headers {
 						contentType(applicationJson())
@@ -240,12 +244,14 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							],
 					])
 					testMatchers {
-						jsonPath('$.phoneNumbers', byType {
-							minOccurrence(0)				// min occurrence of 1
-							maxOccurrence(4)				// max occurrence of 3
-						})
-						jsonPath('$.phoneNumbers[*].number', byRegex("^[0-9]{3} [0-9]{3}-[0-9]{4}\$"))
-						jsonPath('$..number', byRegex("^[0-9]{3} [0-9]{3}-[0-9]{4}\$"))
+						bodyMatchers {
+							jsonPath('$.phoneNumbers', byType {
+								minOccurrence(0)                // min occurrence of 1
+								maxOccurrence(4)                // max occurrence of 3
+							})
+							jsonPath('$.phoneNumbers[*].number', byRegex("^[0-9]{3} [0-9]{3}-[0-9]{4}\$"))
+							jsonPath('$..number', byRegex("^[0-9]{3} [0-9]{3}-[0-9]{4}\$"))
+						}
 					}
 					headers {
 						contentType('application/json')
@@ -292,16 +298,18 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 						]
 				])
 				testMatchers {
-					jsonPath('$.phoneNumbers[*].number', byType {
-						minOccurrence(0)
-						maxOccurrence(4)
-					})
-					jsonPath('$.phoneNumbers[*].number', byType {
-						minOccurrence(0)
-					})
-					jsonPath('$.phoneNumbers[*].number', byType {
-						maxOccurrence(4)
-					})
+					bodyMatchers {
+						jsonPath('$.phoneNumbers[*].number', byType {
+							minOccurrence(0)
+							maxOccurrence(4)
+						})
+						jsonPath('$.phoneNumbers[*].number', byType {
+							minOccurrence(0)
+						})
+						jsonPath('$.phoneNumbers[*].number', byType {
+							maxOccurrence(4)
+						})
+					}
 				}
 			}
 		}
@@ -345,7 +353,9 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							]
 					])
 					testMatchers {
-						jsonPath('$.phoneNumbers[*].number', byCommand('foo($it)'))
+						bodyMatchers {
+							jsonPath('$.phoneNumbers[*].number', byCommand('foo($it)'))
+						}
 					}
 				}
 			}
@@ -380,7 +390,9 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							]
 					])
 					testMatchers {
-						jsonPath('$.nonExistingPhoneNumbers[*].number', byCommand('foo($it)'))
+						bodyMatchers {
+							jsonPath('$.nonExistingPhoneNumbers[*].number', byCommand('foo($it)'))
+						}
 					}
 				}
 			}
@@ -417,7 +429,9 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 						contentType(applicationJson())
 					}
 					testMatchers {
-						jsonPath('''$[0][0].access_token''', byEquality())
+						bodyMatchers {
+							jsonPath('''$[0][0].access_token''', byEquality())
+						}
 					}
 				}
 			}
@@ -461,9 +475,11 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							}
 						""")
 					testMatchers {
-						jsonPath('$.items[*].id', byRegex(nonBlank()))
-						jsonPath('$.items[*].title', byRegex(nonBlank()))
-						jsonPath('$.items[*]', byType { minOccurrence(2); maxOccurrence(2) })
+						bodyMatchers {
+							jsonPath('$.items[*].id', byRegex(nonBlank()))
+							jsonPath('$.items[*].title', byRegex(nonBlank()))
+							jsonPath('$.items[*]', byType { minOccurrence(2); maxOccurrence(2) })
+						}
 					}
 					headers {header "content-type", "application/...json;charset=UTF-8"}
 				}
@@ -504,9 +520,11 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							]
 					])
 					testMatchers {
-						jsonPath('$.items[*].id', byRegex(nonBlank()))
-						jsonPath('$.items[*].title', byRegex(nonBlank()))
-						jsonPath('$.items[*]', byType { minOccurrence(2); maxOccurrence(2) })
+						bodyMatchers {
+							jsonPath('$.items[*].id', byRegex(nonBlank()))
+							jsonPath('$.items[*].title', byRegex(nonBlank()))
+							jsonPath('$.items[*]', byType { minOccurrence(2); maxOccurrence(2) })
+						}
 					}
 					headers {header "content-type", "application/...json;charset=UTF-8"}
 				}

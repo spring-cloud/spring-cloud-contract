@@ -35,6 +35,7 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.reco
  * Do not change to {@code @CompileStatic} since it's using double dispatch.
  *
  * @author Olga Maciaszek-Sharma, codearte.io
+ * @author Tim Ysewyn
  *
  * @since 1.0.0
  */
@@ -85,7 +86,7 @@ abstract class MessagingMethodBodyBuilder extends MethodBodyBuilder {
 				} else {
 					bb.startBlock()
 				}
-				validateResponseBodyBlock(bb, outputMessage.matchers, outputMessage.body.serverValue)
+				validateResponseBodyBlock(bb, outputMessage.matchers?.bodyMatchers, outputMessage.body.serverValue)
 			}
 			if (outputMessage.assertThat) {
 				bb.addLine(outputMessage.assertThat.executionCommand)

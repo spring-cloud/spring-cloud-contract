@@ -29,6 +29,8 @@ import java.util.regex.Pattern
 /**
  * Represents the request side of the HTTP communication
  *
+ * @author Marcin Grzejszczak
+ * @author Tim Ysewyn
  * @since 1.0.0
  */
 @TypeChecked
@@ -45,7 +47,7 @@ class Request extends Common {
 	Headers headers
 	Body body
 	Multipart multipart
-	BodyMatchers matchers
+	StubMatchers matchers
 
 	Request() {
 	}
@@ -207,8 +209,8 @@ class Request extends Common {
 		return value(client)
 	}
 
-	void stubMatchers(@DelegatesTo(BodyMatchers) Closure closure) {
-		this.matchers = new BodyMatchers()
+	void stubMatchers(@DelegatesTo(StubMatchers) Closure closure) {
+		this.matchers = new StubMatchers()
 		closure.delegate = this.matchers
 		closure()
 	}

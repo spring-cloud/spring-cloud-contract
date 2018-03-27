@@ -17,11 +17,13 @@ Contract.make {
         }
         {{/request_headers_present}}
         {{#request_json_paths_present}}
-            stubMatchers {
-            {{#request_json_paths}}
+        stubMatchers {
+            bodyMatchers {
+                {{#request_json_paths}}
                 jsonPath('''{{jsonPath}}''', byEquality())
-            {{/request_json_paths}}
+                {{/request_json_paths}}
             }
+        }
         {{/request_json_paths_present}}
     }
     response {
