@@ -7,13 +7,13 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-docker-parent</artifactId>
-		<version>1.2.4.BUILD-SNAPSHOT</version>
+		<version>1.2.5.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
 	<artifactId>spring-cloud-contract-stub-runner-docker</artifactId>
 	<packaging>pom</packaging>
-	<version>1.2.4.BUILD-SNAPSHOT</version>
+	<version>1.2.5.BUILD-SNAPSHOT</version>
 	<name>Spring Cloud Contract Stub Runner Docker</name>
 	<description>Spring Cloud Contract Stub Runner Docker</description>
 
