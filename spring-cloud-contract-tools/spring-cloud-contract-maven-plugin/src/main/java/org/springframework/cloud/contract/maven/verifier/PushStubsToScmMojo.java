@@ -34,6 +34,7 @@ import org.springframework.util.StringUtils;
 /**
  * The generated stubs get
  */
+@SuppressWarnings("FieldCanBeLocal")
 @Mojo(name = "pushStubsToScm")
 public class PushStubsToScmMojo extends AbstractMojo {
 
@@ -110,6 +111,7 @@ public class PushStubsToScmMojo extends AbstractMojo {
 		if (!StringUtils.hasText(this.contractsRepositoryUrl) ||
 				!this.contractsRepositoryUrl.startsWith("git")) {
 			getLog().info("Skipping pushing stubs to scm since your [contractsRepositoryUrl] property doesn't start with [git]");
+			return;
 		}
 		String projectName = this.project.getGroupId() + ":" + this.project.getArtifactId() + ":" + this.project.getVersion();
 		getLog().info("Pushing Stubs to SCM for project [" + projectName + "]");
