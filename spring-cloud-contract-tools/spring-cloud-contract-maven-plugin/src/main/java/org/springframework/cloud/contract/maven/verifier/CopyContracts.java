@@ -49,15 +49,23 @@ class CopyContracts {
 
 	public void copy(File contractsDirectory, File outputDirectory, String rootPath)
 			throws MojoExecutionException {
-		log.info("Copying Spring Cloud Contract Verifier contracts. Only files matching "
-				+ "[" + this.config.getIncludedContracts() + "] pattern will end up in "
+		File outputFolderWithContracts = outputDirectory.getPath().endsWith("contracts") ?
+				outputDirectory : new File(outputDirectory, rootPath + CONTRACTS_PATH);
+		log.info("Copying Spring Cloud Contract Verifier contracts to ["+ outputFolderWithContracts + "]"
+				+ ". Only files matching [" + this.config.getIncludedContracts() + "] pattern will end up in "
 				+ "the final JAR with stubs.");
 		Resource resource = new Resource();
-		// by default group id is slash separated...
 		String includedRootFolderAntPattern = this.config.getIncludedRootFolderAntPattern() + "*.*";
-		resource.addInclude(includedRootFolderAntPattern);
-		// ...we also want to allow dot separation
-		resource.addInclude(includedRootFolderAntPattern.replace(slashSeparatedGroupId(), this.project.getGroupId()));
+		String slashSeparatedGroupIdAntPattern =
+				slashSeparatedGroupIdAntPattern(includedRootFolderAntPattern);
+		String dotSeparatedGroupIdAntPattern =
+				dotSeparatedGroupIdAntPattern(includedRootFolderAntPattern);
+		// by default group id is slash separated...
+		resource.addInclude(slashSeparatedGroupIdAntPattern);
+		if (!slashSeparatedGroupIdAntPattern.equals(dotSeparatedGroupIdAntPattern)) {
+			// ...we also want to allow dot separation
+			resource.addInclude(dotSeparatedGroupIdAntPattern);
+		}
 		if (this.config.isExcludeBuildFolders()) {
 			resource.addExclude("**/target/**");
 			resource.addExclude("**/build/**");
@@ -65,7 +73,7 @@ class CopyContracts {
 		resource.setDirectory(contractsDirectory.getAbsolutePath());
 		MavenResourcesExecution execution = new MavenResourcesExecution();
 		execution.setResources(Collections.singletonList(resource));
-		execution.setOutputDirectory(new File(outputDirectory, rootPath + CONTRACTS_PATH));
+		execution.setOutputDirectory(outputFolderWithContracts);
 		execution.setMavenProject(this.project);
 		execution.setEncoding("UTF-8");
 		execution.setMavenSession(this.mavenSession);
@@ -81,8 +89,30 @@ class CopyContracts {
 		}
 	}
 
+	private String slashSeparatedGroupIdAntPattern(String includedRootFolderAntPattern) {
+		if (includedRootFolderAntPattern.contains(slashSeparatedGroupId())) {
+			return includedRootFolderAntPattern;
+		} else if (includedRootFolderAntPattern.contains(dotSeparatedGroupId())) {
+			return includedRootFolderAntPattern.replace(dotSeparatedGroupId(), slashSeparatedGroupId());
+		}
+		return includedRootFolderAntPattern;
+	}
+
+	private String dotSeparatedGroupIdAntPattern(String includedRootFolderAntPattern) {
+		if (includedRootFolderAntPattern.contains(dotSeparatedGroupId())) {
+			return includedRootFolderAntPattern;
+		} else if (includedRootFolderAntPattern.contains(slashSeparatedGroupId())) {
+			return includedRootFolderAntPattern.replace(slashSeparatedGroupId(), dotSeparatedGroupId());
+		}
+		return includedRootFolderAntPattern;
+	}
+
 	private String slashSeparatedGroupId() {
 		return this.project.getGroupId().replace(".", File.separator);
+	}
+
+	private String dotSeparatedGroupId() {
+		return this.project.getGroupId();
 	}
 
 }

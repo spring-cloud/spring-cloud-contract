@@ -146,6 +146,9 @@ class DirectoryCopyingVisitor extends SimpleFileVisitor<Path> {
 	DirectoryCopyingVisitor(Path from, Path to) {
 		this.from = from;
 		this.to = to;
+		if (log.isDebugEnabled()) {
+			log.debug("Will copy from [" + from.toString() + "] to [" + to.toString() + "]");
+		}
 	}
 
 	@Override
@@ -156,7 +159,14 @@ class DirectoryCopyingVisitor extends SimpleFileVisitor<Path> {
 		}
 		Path targetPath = this.to.resolve(relativePath);
 		if (!Files.exists(targetPath)) {
+			if (log.isDebugEnabled()) {
+				log.debug("Created a folder [" + targetPath.toString() + "]");
+			}
 			Files.createDirectory(targetPath);
+		} else {
+			if (log.isDebugEnabled()) {
+				log.debug("Folder [" + targetPath.toString() + "] already exists");
+			}
 		}
 		return FileVisitResult.CONTINUE;
 	}

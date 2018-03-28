@@ -16,7 +16,7 @@ class ContractDownloaderSpec extends Specification {
 		given:
 			String contractPath = File.separator + ['a','b','c','d'].join(File.separator)
 			ContractDownloader contractDownloader = new ContractDownloader(stubDownloader,
-					stubConfiguration, contractPath, '', '')
+					stubConfiguration, contractPath, '', '', '')
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 		and:
 			stubDownloader.downloadAndUnpackStubJar(_) >> new AbstractMap.SimpleEntry(stubConfiguration, file)
@@ -33,7 +33,7 @@ class ContractDownloaderSpec extends Specification {
 		given:
 			String contractPath = ['a','b','c','d'].join(File.separator)
 			ContractDownloader contractDownloader = new ContractDownloader(stubDownloader,
-					stubConfiguration, contractPath, '', '')
+					stubConfiguration, contractPath, '', '', '')
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 		and:
 			stubDownloader.downloadAndUnpackStubJar(_) >> new AbstractMap.SimpleEntry(stubConfiguration, file)

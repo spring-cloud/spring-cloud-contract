@@ -71,7 +71,7 @@ class GradleContractsDownloader {
 
 	protected ContractDownloader contractDownloader(ContractVerifierExtension extension, StubConfiguration configuration) {
 		return new ContractDownloader(stubDownloader(extension), configuration,
-				extension.contractsPath, this.project.group as String, this.project.name)
+				extension.contractsPath, this.project.group as String, this.project.name, this.project.version as String)
 	}
 
 	protected StubDownloader stubDownloader(ContractVerifierExtension extension) {

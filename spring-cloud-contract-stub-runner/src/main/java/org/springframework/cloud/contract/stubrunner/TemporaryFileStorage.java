@@ -57,7 +57,8 @@ class TemporaryFileStorage {
 	}
 
 	static void cleanup(boolean deleteStubsAfterTest) {
-		if (deleteStubsAfterTest) {
+		if (!deleteStubsAfterTest) {
+			log.info("Will not clear temporary files due to switch");
 			return;
 		}
 		try {

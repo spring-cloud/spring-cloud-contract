@@ -134,7 +134,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 
 	private Task createAndConfigureGenerateClientStubs(ContractVerifierExtension extension,
 													   Task copyContracts) {
-		Task task = project.tasks.create(DSL_TO_CLIENT_TASK_NAME, GenerateWireMockClientStubsFromDslTask)
+		Task task = project.tasks.create(DSL_TO_CLIENT_TASK_NAME, GenerateClientStubsFromDslTask)
 		task.description = "Generate client stubs from the contracts"
 		task.group = GROUP_NAME
 		task.conventionMapping.with {

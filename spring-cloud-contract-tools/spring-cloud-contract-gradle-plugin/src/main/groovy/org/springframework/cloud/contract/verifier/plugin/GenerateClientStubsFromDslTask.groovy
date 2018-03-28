@@ -28,9 +28,9 @@ import static org.springframework.cloud.contract.verifier.plugin.SpringCloudCont
  * Generates stubs from the contracts. The name is WireMock related but the implementation
  * can differ
  *
- * @since 1.0.0
+ * @since 2.0.0
  */
-class GenerateWireMockClientStubsFromDslTask extends ConventionTask {
+class GenerateClientStubsFromDslTask extends ConventionTask {
 
 	File stubsOutputDir
 

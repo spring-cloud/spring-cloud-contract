@@ -84,12 +84,14 @@ class MavenContractsDownloader {
 	}
 
 	private boolean shouldDownloadContracts() {
-		return this.contractDependency != null && StringUtils.hasText(this.contractDependency.getArtifactId());
+		return this.contractDependency != null && StringUtils.hasText(this.contractDependency.getArtifactId()) ||
+				StringUtils.hasText(this.contractsRepositoryUrl);
 	}
 
 	private ContractDownloader contractDownloader() {
 		return new ContractDownloader(stubDownloader(), stubConfiguration(),
-				this.contractsPath, this.project.getGroupId(), this.project.getArtifactId());
+				this.contractsPath, this.project.getGroupId(), this.project.getArtifactId(),
+				this.project.getVersion());
 	}
 
 	private StubDownloader stubDownloader() {

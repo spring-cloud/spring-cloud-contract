@@ -1,13 +1,13 @@
 package org.springframework.cloud.contract.stubrunner;
 
+import java.io.File;
+import java.lang.invoke.MethodHandles;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.util.StringUtils;
-
-import java.io.File;
-import java.lang.invoke.MethodHandles;
-import java.util.Map;
 
 /**
  * Downloads a JAR with contracts and sets up the plugin configuration with proper
@@ -26,15 +26,18 @@ public class ContractDownloader {
 	private final String contractsPath;
 	private final String projectGroupId;
 	private final String projectArtifactId;
+	private final String projectVersion;
 
 	public ContractDownloader(StubDownloader stubDownloader,
 			StubConfiguration contractsJarStubConfiguration,
-			String contractsPath, String projectGroupId, String projectArtifactId) {
+			String contractsPath, String projectGroupId, String projectArtifactId,
+			String projectVersion) {
 		this.stubDownloader = stubDownloader;
 		this.contractsJarStubConfiguration = contractsJarStubConfiguration;
 		this.contractsPath = contractsPath;
 		this.projectGroupId = projectGroupId;
 		this.projectArtifactId = projectArtifactId;
+		this.projectVersion = projectVersion;
 	}
 
 	/**
@@ -60,15 +63,55 @@ public class ContractDownloader {
 			log.info("Will pick a pattern from the contractPath property");
 			includedAntPattern = wrapWithAntPattern(contractsPath());
 		} else {
-			pattern = groupArtifactToPattern(contractsDirectory);
 			log.info("Will pick a pattern from group id and artifact id");
-			includedAntPattern = wrapWithAntPattern(slashSeparatedGroupId() + "/" + this.projectArtifactId);
+			if (hasGavInPath(contractsDirectory)) {
+				File contracts = new File(contractsDirectory, "contracts");
+				if (contracts.exists()) {
+					if (log.isDebugEnabled()) {
+						log.debug("Contracts folder found [" + contracts + "]");
+					}
+					contractsDirectory = contracts;
+				}
+				// we're already under proper folder (for the given version)
+				pattern = fileToPattern(contractsDirectory);
+				includedAntPattern = "**/";
+			} else {
+				pattern = groupArtifactToPattern(contractsDirectory);
+				includedAntPattern = wrapWithAntPattern(slashSeparatedGroupId() + "/" + this.projectArtifactId);
+			}
 		}
 		log.info("Pattern to pick contracts equals [" + pattern + "]");
 		log.info("Ant Pattern to pick files equals [" + includedAntPattern + "]");
 		config.setIncludedContracts(pattern);
 		config.setIncludedRootFolderAntPattern(includedAntPattern);
 		return config;
+	}
+
+	private String shortenedPath(File contractsDirectory) {
+		String path = contractsDirectory.getPath();
+		if (hasSeparatedGroupInPath(contractsDirectory, File.separator)) {
+			return path.substring(path.indexOf(groupAndArtifact(File.separator)));
+		}
+		return path.substring(path.indexOf(groupAndArtifact(".")));
+	}
+
+	private boolean hasGavInPath(File file) {
+		return hasVersionInPath(file) && hasSeparatedGroupInPath(file, File.separator)
+				|| hasSeparatedGroupInPath(file, ".");
+	}
+
+	private boolean hasVersionInPath(File file) {
+		return file.getAbsolutePath()
+				.contains(this.projectVersion);
+	}
+
+	private boolean hasSeparatedGroupInPath(File file, String separator) {
+		return file.getAbsolutePath()
+				.contains(groupAndArtifact(separator));
+	}
+
+	private String groupAndArtifact(String separator) {
+		return this.projectGroupId + separator + this.projectArtifactId;
 	}
 
 	private String patternFromProperty(File contractsDirectory) {
@@ -111,6 +154,12 @@ public class ContractDownloader {
 				File.separator +
 				this.projectArtifactId
 				+ File.separator +
+				".*$").replace("\\", "\\\\");
+	}
+
+	private String fileToPattern(File contractsDirectory) {
+		return ("^" +
+				contractsDirectory.getAbsolutePath() +
 				".*$").replace("\\", "\\\\");
 	}
 

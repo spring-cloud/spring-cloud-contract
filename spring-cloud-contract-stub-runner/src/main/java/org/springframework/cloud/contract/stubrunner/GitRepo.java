@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import com.jcraft.jsch.IdentityRepository;
@@ -48,6 +49,7 @@ import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.JschConfigSessionFactory;
 import org.eclipse.jgit.transport.OpenSshConfig;
 import org.eclipse.jgit.transport.SshTransport;
+import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.util.FS;
 import org.eclipse.jgit.util.FileUtils;
@@ -116,6 +118,11 @@ class GitRepo {
 	 */
 	void checkout(File project, String branch) {
 		try {
+			String currentBranch = currentBranch(project);
+			if (currentBranch.equals(branch)) {
+				log.info("Won't check out the same branch. Skipping");
+				return;
+			}
 			log.info("Checking out branch [{}]", branch);
 			checkoutBranch(project, branch);
 			log.info("Successfully checked out the branch [{}]", branch);
@@ -188,16 +195,23 @@ class GitRepo {
 		return ResourceUtils.getFile(project.toURI()).getAbsoluteFile();
 	}
 
-	private Git cloneToBasedir(URI projectUrl, File destinationFolder)
-			throws GitAPIException {
+	private Git cloneToBasedir(URI projectUrl, File destinationFolder) {
+		String projectGitUrl = projectUrl.toString() + ".git";
 		CloneCommand command = this.gitFactory.getCloneCommandByCloneRepository()
-				.setURI(projectUrl.toString() + ".git").setDirectory(destinationFolder);
+				.setURI(projectGitUrl).setDirectory(destinationFolder);
 		try {
-			return command.call();
+			Git git = command.call();
+			if (git.getRepository().getRemoteNames().isEmpty()) {
+				log.info("No remote added. Will add remote of the cloned project");
+				git.remoteSetUrl().setUri(new URIish(projectGitUrl));
+				git.remoteSetUrl().setName("origin");
+				git.remoteSetUrl().setPush(true);
+			}
+			return git;
 		}
-		catch (GitAPIException e) {
+		catch (GitAPIException | URISyntaxException e) {
 			deleteBaseDirIfExists();
-			throw e;
+			throw new IllegalStateException(e);
 		}
 	}
 
@@ -215,6 +229,19 @@ class GitRepo {
 			deleteBaseDirIfExists();
 			throw e;
 		} finally {
+			git.close();
+		}
+	}
+
+	private String currentBranch(File projectDir) {
+		Git git = this.gitFactory.open(projectDir);
+		try {
+			return git.getRepository().getBranch();
+		}
+		catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
+		finally {
 			git.close();
 		}
 	}

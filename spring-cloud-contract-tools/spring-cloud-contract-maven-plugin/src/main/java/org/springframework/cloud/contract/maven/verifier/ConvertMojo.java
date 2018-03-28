@@ -15,10 +15,10 @@
  */
 package org.springframework.cloud.contract.maven.verifier;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import javax.inject.Inject;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
@@ -195,26 +195,40 @@ public class  ConvertMojo extends AbstractMojo {
 				this.contractsSnapshotCheckSkip, this.deleteStubsAfterTest, this.contractsProperties)
 				.downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
-
+		File contractsSubFolder = new File(contractsDirectory, "contracts");
+		if (contractsSubFolder.exists()) {
+			if (getLog().isDebugEnabled()) {
+				getLog().debug(
+						"The subfolder [contracts] exists, will pick it as a source of contracts");
+			}
+			contractsDirectory = contractsSubFolder;
+		}
 		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering, config)
 				.copy(contractsDirectory, this.stubsDirectory, rootPath);
-
-		config.setContractsDslDir(isInsideProject() ?
-				contractsDirectory : this.source);
-		config.setStubsOutputDir(
-				isInsideProject() ? new File(this.stubsDirectory, rootPath + MAPPINGS_PATH) : this.destination);
-
+		File contractsDslDir = contractsDslDir(contractsDirectory);
+		if (getLog().isDebugEnabled()) {
+			getLog().debug("The contracts dir equals [" + contractsDslDir + "]");
+		}
+		config.setContractsDslDir(contractsDslDir);
+		config.setStubsOutputDir(stubsOutputDir(rootPath));
 		getLog().info(
 				"Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings");
 		getLog().info(String.format(
 				"     Spring Cloud Contract Verifier contracts directory: %s",
 				config.getContractsDslDir()));
-		getLog().info(String.format("WireMock stubs mappings directory: %s",
+		getLog().info(String.format("Stub Server stubs mappings directory: %s",
 				config.getStubsOutputDir()));
-
-
 		RecursiveFilesConverter converter = new RecursiveFilesConverter(config);
 		converter.processFiles();
+	}
+
+	private File stubsOutputDir(String rootPath) {
+		return isInsideProject() ? new File(this.stubsDirectory, rootPath + MAPPINGS_PATH) : this.destination;
+	}
+
+	private File contractsDslDir(File contractsDirectory) {
+		return isInsideProject() ?
+				contractsDirectory : this.source;
 	}
 
 	private boolean isInsideProject() {

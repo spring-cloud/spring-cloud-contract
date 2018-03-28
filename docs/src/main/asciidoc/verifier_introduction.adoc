@@ -497,7 +497,6 @@ to the following in the build logs:
 2016-07-19 14:22:27.737  INFO 41050 --- [           main] o.s.c.c.stubrunner.StubRunnerExecutor    : All stubs are now running RunningStubs [namesAndPorts={com.example:http-server:0.0.1-SNAPSHOT:stubs=8080}]
 ----
 
-
 ==== Defining the Contract
 
 As consumers of services, we need to define what exactly we want to achieve. We need to
