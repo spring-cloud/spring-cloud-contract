@@ -24,6 +24,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.springframework.cloud.contract.stubrunner.ContractProjectUpdater;
+import org.springframework.cloud.contract.stubrunner.GitStubDownloaderBuilder;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
@@ -107,8 +108,8 @@ public class PushStubsToScmMojo extends AbstractMojo {
 			return;
 		}
 		if (!StringUtils.hasText(this.contractsRepositoryUrl) ||
-				!this.contractsRepositoryUrl.startsWith("git")) {
-			getLog().info("Skipping pushing stubs to scm since your [contractsRepositoryUrl] property doesn't start with [git]");
+				!this.contractsRepositoryUrl.startsWith(GitStubDownloaderBuilder.PROTOCOL)) {
+			getLog().info("Skipping pushing stubs to scm since your [contractsRepositoryUrl] property doesn't start with [" + GitStubDownloaderBuilder.PROTOCOL + "]");
 			return;
 		}
 		String projectName = this.project.getGroupId() + ":" + this.project.getArtifactId() + ":" + this.project.getVersion();

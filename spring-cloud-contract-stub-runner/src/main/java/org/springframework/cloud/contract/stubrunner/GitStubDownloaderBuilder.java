@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2018 the original author or authors.
+ * Copyright 2013-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,9 +45,9 @@ import org.springframework.core.io.ResourceLoader;
  * @author Marcin Grzejszczak
  * @since 2.0.0
  */
-class GitStubDownloaderBuilder implements StubDownloaderBuilder {
+public final class GitStubDownloaderBuilder implements StubDownloaderBuilder {
 
-	private static final String GIT_PROTOCOL = "git";
+	public static final String PROTOCOL = "git";
 
 	@Override public StubDownloader build(StubRunnerOptions stubRunnerOptions) {
 		if (stubRunnerOptions.getStubsMode() == StubRunnerProperties.StubsMode.CLASSPATH ||
@@ -62,7 +62,7 @@ class GitStubDownloaderBuilder implements StubDownloaderBuilder {
 	}
 
 	@Override public Resource resolve(String location, ResourceLoader resourceLoader) {
-		if (!StringUtils.hasText(location) || !location.startsWith(GIT_PROTOCOL)) {
+		if (!StringUtils.hasText(location) || !location.startsWith(PROTOCOL)) {
 			return null;
 		}
 		return new GitResource(location);
@@ -130,6 +130,10 @@ class GitContractsRepo {
 }
 
 class GitStubDownloader implements StubDownloader {
+	private static final Log log = LogFactory.getLog(GitStubDownloader.class);
+
+	// Preloading class for the shutdown hook not to throw ClassNotFound
+	private static final Class CLAZZ = TemporaryFileStorage.class;
 
 	private final StubRunnerOptions stubRunnerOptions;
 	private final boolean deleteStubsAfterTest;
@@ -148,6 +152,9 @@ class GitStubDownloader implements StubDownloader {
 			throw new IllegalStateException("Concrete version wasn't passed for [" + stubConfiguration.toColonSeparatedDependencyNotation() + "]");
 		}
 		try {
+			if (log.isDebugEnabled()) {
+				log.debug("Trying to find a contract for [" + stubConfiguration.toColonSeparatedDependencyNotation() + "]");
+			}
 			Resource repo = this.stubRunnerOptions.getStubRepositoryRoot();
 			File clonedRepo = this.gitContractsRepo.clonedRepo(repo);
 			FileWalker walker = new FileWalker(stubConfiguration);
@@ -158,6 +165,9 @@ class GitStubDownloader implements StubDownloader {
 		}
 		catch (IOException e) {
 			throw new IllegalStateException(e);
+		}
+		if (log.isDebugEnabled()) {
+			log.debug("No matching contracts were found in the repo for [" + stubConfiguration.toColonSeparatedDependencyNotation() + "]. Returning null");
 		}
 		return null;
 	}

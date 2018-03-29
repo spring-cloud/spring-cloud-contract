@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
+import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.TaskAction
@@ -32,6 +33,7 @@ import org.springframework.cloud.contract.stubrunner.StubRunnerOptions
  * @since 2.0.0
  */
 @PackageScope
+@CompileStatic
 class PublishStubsToScmTask extends ConventionTask {
 	File stubsOutputDir
 	ContractVerifierExtension configProperties
@@ -39,9 +41,9 @@ class PublishStubsToScmTask extends ConventionTask {
 
 	@TaskAction
 	void publishStubsToScm() {
-		String projectName = project.group + ":" + project.name + ":" + this.project.version
+		String projectName = project.group.toString() + ":" + project.name.toString() + ":" + this.project.version.toString()
 		project.logger.info("Pushing Stubs to SCM for project [" + projectName + "]")
 		StubRunnerOptions options = getDownloader().options(getConfigProperties())
-		new ContractProjectUpdater(options).updateContractProject(projectName, this.outputDirectory.toPath());
+		new ContractProjectUpdater(options).updateContractProject(projectName, getStubsOutputDir().toPath());
 	}
 }

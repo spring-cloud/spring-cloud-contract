@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013-2017 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.contract.stubrunner;
 
 import java.io.File;
@@ -65,13 +81,7 @@ public class ContractDownloader {
 		} else {
 			log.info("Will pick a pattern from group id and artifact id");
 			if (hasGavInPath(contractsDirectory)) {
-				File contracts = new File(contractsDirectory, "contracts");
-				if (contracts.exists()) {
-					if (log.isDebugEnabled()) {
-						log.debug("Contracts folder found [" + contracts + "]");
-					}
-					contractsDirectory = contracts;
-				}
+				contractsDirectory = contractsSubDirIfPresent(contractsDirectory);
 				// we're already under proper folder (for the given version)
 				pattern = fileToPattern(contractsDirectory);
 				includedAntPattern = "**/";
@@ -87,12 +97,15 @@ public class ContractDownloader {
 		return config;
 	}
 
-	private String shortenedPath(File contractsDirectory) {
-		String path = contractsDirectory.getPath();
-		if (hasSeparatedGroupInPath(contractsDirectory, File.separator)) {
-			return path.substring(path.indexOf(groupAndArtifact(File.separator)));
+	private File contractsSubDirIfPresent(File contractsDirectory) {
+		File contracts = new File(contractsDirectory, "contracts");
+		if (contracts.exists()) {
+			if (log.isDebugEnabled()) {
+				log.debug("Contracts folder found [" + contracts + "]");
+			}
+			contractsDirectory = contracts;
 		}
-		return path.substring(path.indexOf(groupAndArtifact(".")));
+		return contractsDirectory;
 	}
 
 	private boolean hasGavInPath(File file) {

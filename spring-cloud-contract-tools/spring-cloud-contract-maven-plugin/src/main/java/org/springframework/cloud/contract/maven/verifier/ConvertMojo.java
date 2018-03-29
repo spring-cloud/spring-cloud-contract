@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ * Copyright 2013-2017 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *       http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.springframework.cloud.contract.maven.verifier;
 
@@ -24,7 +24,6 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -174,7 +173,7 @@ public class  ConvertMojo extends AbstractMojo {
 		this.aetherStubDownloaderFactory = aetherStubDownloaderFactory;
 	}
 
-	public void execute() throws MojoExecutionException, MojoFailureException {
+	public void execute() throws MojoExecutionException {
 		if (this.skip) {
 			getLog().info(String.format(
 					"Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip=%s",
@@ -188,13 +187,33 @@ public class  ConvertMojo extends AbstractMojo {
 		// download contracts, unzip them and pass as output directory
 		ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
 		config.setExcludeBuildFolders(this.excludeBuildFolders);
-		File contractsDirectory = new MavenContractsDownloader(this.project, this.contractDependency,
-				this.contractsPath, this.contractsRepositoryUrl, this.contractsMode, getLog(),
-				this.contractsRepositoryUsername, this.contractsRepositoryPassword,
-				this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort,
-				this.contractsSnapshotCheckSkip, this.deleteStubsAfterTest, this.contractsProperties)
-				.downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
+		File contractsDirectory = locationOfContracts(config);
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
+		contractsDirectory = contractSubfolderIfPresent(contractsDirectory);
+		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering, config)
+				.copy(contractsDirectory, this.stubsDirectory, rootPath);
+		File contractsDslDir = contractsDslDir(contractsDirectory);
+		config.setContractsDslDir(contractsDslDir);
+		config.setStubsOutputDir(stubsOutputDir(rootPath));
+		logSetup(config, contractsDslDir);
+		RecursiveFilesConverter converter = new RecursiveFilesConverter(config);
+		converter.processFiles();
+	}
+
+	private void logSetup(ContractVerifierConfigProperties config, File contractsDslDir) {
+		if (getLog().isDebugEnabled()) {
+			getLog().debug("The contracts dir equals [" + contractsDslDir + "]");
+		}
+		getLog().info(
+				"Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings");
+		getLog().info(String.format(
+				"     Spring Cloud Contract Verifier contracts directory: %s",
+				config.getContractsDslDir()));
+		getLog().info(String.format("Stub Server stubs mappings directory: %s",
+				config.getStubsOutputDir()));
+	}
+
+	private File contractSubfolderIfPresent(File contractsDirectory) {
 		File contractsSubFolder = new File(contractsDirectory, "contracts");
 		if (contractsSubFolder.exists()) {
 			if (getLog().isDebugEnabled()) {
@@ -203,23 +222,16 @@ public class  ConvertMojo extends AbstractMojo {
 			}
 			contractsDirectory = contractsSubFolder;
 		}
-		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering, config)
-				.copy(contractsDirectory, this.stubsDirectory, rootPath);
-		File contractsDslDir = contractsDslDir(contractsDirectory);
-		if (getLog().isDebugEnabled()) {
-			getLog().debug("The contracts dir equals [" + contractsDslDir + "]");
-		}
-		config.setContractsDslDir(contractsDslDir);
-		config.setStubsOutputDir(stubsOutputDir(rootPath));
-		getLog().info(
-				"Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings");
-		getLog().info(String.format(
-				"     Spring Cloud Contract Verifier contracts directory: %s",
-				config.getContractsDslDir()));
-		getLog().info(String.format("Stub Server stubs mappings directory: %s",
-				config.getStubsOutputDir()));
-		RecursiveFilesConverter converter = new RecursiveFilesConverter(config);
-		converter.processFiles();
+		return contractsDirectory;
+	}
+
+	private File locationOfContracts(ContractVerifierConfigProperties config) {
+		return new MavenContractsDownloader(this.project, this.contractDependency,
+					this.contractsPath, this.contractsRepositoryUrl, this.contractsMode, getLog(),
+					this.contractsRepositoryUsername, this.contractsRepositoryPassword,
+					this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort,
+					this.contractsSnapshotCheckSkip, this.deleteStubsAfterTest, this.contractsProperties)
+					.downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
 	}
 
 	private File stubsOutputDir(String rootPath) {

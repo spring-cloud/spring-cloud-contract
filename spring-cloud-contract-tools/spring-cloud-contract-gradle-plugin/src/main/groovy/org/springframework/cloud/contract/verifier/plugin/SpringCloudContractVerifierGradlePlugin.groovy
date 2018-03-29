@@ -1,17 +1,17 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ * Copyright 2013-2017 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *       http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.verifier.plugin
@@ -24,6 +24,9 @@ import org.gradle.api.plugins.GroovyPlugin
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.jvm.tasks.Jar
+
+import org.springframework.cloud.contract.stubrunner.GitStubDownloaderBuilder
+
 /**
  * Gradle plugin for Spring Cloud Contract Verifier that from the DSL contract can
  * <ul>
@@ -61,7 +64,7 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		Task copyContracts = createAndConfigureCopyContractsTask(stubsJar, downloader, extension)
 		createAndConfigureMavenPublishPlugin(stubsJar, extension)
 		createGenerateTestsTask(extension, copyContracts, downloader)
-		Task clientTask = createAndConfigureGenerateClientStubs(extension, copyContracts)
+		createAndConfigureGenerateClientStubs(extension, copyContracts)
 		createAndConfigurePublishStubsToScmTask(extension, downloader)
 		addIdeaTestSources(project, extension)
 	}
@@ -123,8 +126,8 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		task.onlyIf {
 			String contractRepoUrl = extension.contractsRepositoryUrl ?:
 					extension.contractRepository.repositoryUrl ?: ""
-			if (!contractRepoUrl || !contractRepoUrl.startsWith("git")) {
-				project.logger.info("Skipping pushing stubs to scm since your [contractsRepositoryUrl] property doesn't start with [git]")
+			if (!contractRepoUrl || !contractRepoUrl.startsWith(GitStubDownloaderBuilder.PROTOCOL)) {
+				project.logger.info("Skipping pushing stubs to scm since your [contractsRepositoryUrl] property doesn't start with [${GitStubDownloaderBuilder.PROTOCOL}]")
 				return false
 			}
 			return true
