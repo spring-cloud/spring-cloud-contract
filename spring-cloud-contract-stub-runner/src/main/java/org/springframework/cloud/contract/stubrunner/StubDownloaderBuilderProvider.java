@@ -44,7 +44,7 @@ public class StubDownloaderBuilderProvider {
 
 	List<StubDownloaderBuilder> defaultStubDownloaderBuilders() {
 		return Arrays
-					.asList(new GitStubDownloaderBuilder(), new ClasspathStubProvider(),
+					.asList(new ScmStubDownloaderBuilder(), new ClasspathStubProvider(),
 							new AetherStubDownloaderBuilder());
 	}
 }

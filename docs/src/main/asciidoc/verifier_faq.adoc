@@ -1,10 +1,12 @@
 :introduction_url: https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/{branch}
+:samples_branch: 2.0.x
+:samples_branch: 2.0.x
 
 == Spring Cloud Contract FAQ
 
 === Why use Spring Cloud Contract Verifier and not X ?
 
-For the time being Spring Cloud Contract Verifier is a JVM based tool. So it could be your first pick when you're already creating
+For the time being Spring Cloud Contract is a JVM based tool. So it could be your first pick when you're already creating
 software for the JVM. This project has a lot of really interesting features but especially quite a few of them definitely make
 Spring Cloud Contract Verifier stand out on the "market" of Consumer Driven Contract (CDC) tooling. Out of many the most interesting are:
 
@@ -14,6 +16,8 @@ Spring Cloud Contract Verifier stand out on the "market" of Consumer Driven Cont
 - Automatic generation of tests from the defined Contract
 - Stub Runner functionality - the stubs are automatically downloaded at runtime from Nexus / Artifactory
 - Spring Cloud integration - no discovery service is needed for integration tests
+- Spring Cloud Contract integrates with Pact out of the box and provides easy hooks to extend its functionality
+- Via Docker adds support for any language & framework used
 
 === I don't want to write a contract in Groovy!
 
@@ -249,7 +253,7 @@ consumer will you break with your local changes.
 
 Let's assume that we have a producer with coordinates `com.example:server` and 3 consumers: `client1`,
 `client2`, `client3`. Then in the repository with common contracts you would have the following setup
-(which you can checkout https://github.com/spring-cloud/spring-cloud-contract/tree/1.0.x/samples/standalone/contracts[here]:
+(which you can checkout https://github.com/spring-cloud/spring-cloud-contract/tree/{branch}/samples/standalone/contracts[here]):
 
 [source,bash,indent=0]
 ----
@@ -501,8 +505,8 @@ task deleteUnwantedContracts(type: Delete) {
         include: "**/*",
         excludes: [
             "**/${project.name}/**"",
-            **/${first-topic}/**",
-            **/${second-topic}/**])
+            "**/${first-topic}/**",
+            "**/${second-topic}/**"])
 }
 ----
 
@@ -515,20 +519,193 @@ deleteUnwantedContracts.dependsOn("unzipContracts")
 build.dependsOn("deleteUnwantedContracts")
 ----
 
-- Configure plugin by specifying the directory containing contracts using ```contractsDslDir``` property
+- Configure plugin by specifying the directory containing contracts using `contractsDslDir` property
 
 [source,groovy,indent=0]
 ----
 contracts {
-
     contractsDslDir = new File("${buildDir}/unpackedContracts")
 }
 ----
 
-=== Can I have multiple base classes for tests?
+=== Do I need a Binary Storage? Can't I use Git?
 
-Yes! Check out the https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_different_base_classes_for_contracts[Different base classes for contracts] sections
-of either Gradle or Maven plugins.
+In the polyglot world, there are languages that don't use binary storages like
+Artifactory or Nexus. Starting from Spring Cloud Contract version 2.0.0 we provide
+mechanisms to store contracts and stubs in a SCM repository. Currently the
+only supported SCM is Git.
+
+The repository would have to the following setup
+(which you can checkout https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}/contracts_git/[here]):
+
+[source,indent=0]
+----
+.
+└── META-INF
+    └── com.example
+        └── beer-api-producer-git
+            └── 0.0.1-SNAPSHOT
+                ├── contracts
+                │   └── beer-api-consumer
+                │       ├── messaging
+                │       │   ├── shouldSendAcceptedVerification.groovy
+                │       │   └── shouldSendRejectedVerification.groovy
+                │       └── rest
+                │           ├── shouldGrantABeerIfOldEnough.groovy
+                │           └── shouldRejectABeerIfTooYoung.groovy
+                └── mappings
+                    └── beer-api-consumer
+                        └── rest
+                            ├── shouldGrantABeerIfOldEnough.json
+                            └── shouldRejectABeerIfTooYoung.json
+----
+
+Under `META-INF` folder:
+
+* we group applications via `groupId` (e.g. `com.example`)
+* then each application is represented via the `artifactId` (e.g. `beer-api-producer-git`)
+* next, the version of the application. The version is mandatory! (e.g. `0.0.1-SNAPSHOT`)
+* finally, there are two folders:
+** `contracts` - the good practice is to store the contracts required by each
+consumer in the folder with the consumer name (e.g. `beer-api-consumer`). That way you
+can use the `stubs-per-consumer` feature. Further directory structure is arbitrary.
+** `mappings` - in this folder the Maven / Gradle Spring Cloud Contract plugins will push
+the stub server mappings. On the consumer side, Stub Runner will scan this folder
+to start stub servers with stub definitions. The folder structure will be a copy
+of the one created in the `contracts` subfolder.
+
+==== Protocol convention
+
+In order to control the type and location of the source of contracts (whether it's
+a binary storage or an SCM repository), you can use the protocol in the URL of
+the repository. Spring Cloud Contract iterates over registered protocol resolvers
+and tries to fetch the contracts (via a plugin) or stubs (via Stub Runner).
+
+For the SCM functionality, currently, we support the Git repository. To use it,
+in the property, where the repository URL needs to be placed you just have to prefix
+the connection URL with `git://`. Here you can find a couple of examples:
+
+[source,indent=0]
+----
+git://file:///foo/bar
+git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git
+git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git
+----
+
+==== Producer
+
+For the producer, to use the SCM approach, we can reuse the
+same mechanism we use for external contracts. We route Spring Cloud Contract
+to use the SCM implementation via the URL that contains
+the `git://` protocol.
+
+IMPORTANT: You have to manually add the `pushStubsToScm`
+goal in Maven or execute (bind) the `pushStubsToScm` task in
+Gradle. We don't push stubs to `origin` of your git
+repository out of the box.
+
+.Maven
+[source,xml,indent=0]
+----
+<plugin>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+    <version>${spring-cloud-contract.version}</version>
+    <extensions>true</extensions>
+    <configuration>
+        <!-- Base class mappings etc. -->
+
+        <!-- We want to pick contracts from a Git repository -->
+        <contractsRepositoryUrl>git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git</contractsRepositoryUrl>
+
+        <!-- We reuse the contract dependency section to set up the path
+        to the folder that contains the contract definitions. In our case the
+        path will be /groupId/artifactId/version/contracts -->
+        <contractDependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>${project.artifactId}</artifactId>
+            <version>${project.version}</version>
+        </contractDependency>
+
+        <!-- The contracts mode can't be classpath -->
+        <contractsMode>REMOTE</contractsMode>
+    </configuration>
+    <executions>
+        <execution>
+            <phase>package</phase>
+            <goals>
+                <!-- By default we will not push the stubs back to SCM,
+                you have to explicitly add it as a goal -->
+                <goal>pushStubsToScm</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+----
+
+.Gradle
+[source,gradle,indent=0]
+----
+contracts {
+	// We want to pick contracts from a Git repository
+	contractDependency {
+		stringNotation = "${project.group}:${project.name}:${project.version}"
+	}
+	/*
+	We reuse the contract dependency section to set up the path
+	to the folder that contains the contract definitions. In our case the
+	path will be /groupId/artifactId/version/contracts
+	 */
+	contractRepository {
+		repositoryUrl = "git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git"
+	}
+	// The mode can't be classpath
+	contractsMode = "REMOTE"
+	// Base class mappings etc.
+}
+
+/*
+In this scenario we want to publish stubs to SCM whenever
+the `publish` task is executed
+*/
+publish.dependsOn("publishStubsToScm")
+----
+
+With such a setup:
+
+* Git project will be cloned to a temporary directory
+* The SCM stub downloader will go to `META-INF/groupId/artifactId/version/contracts` folder
+to find contracts. E.g. for `com.example:foo:1.0.0` the path would be
+`META-INF/com.example/foo/1.0.0/contracts`
+* Tests will be generated from the contracts
+* Stubs will be created from the contracts
+* Once the tests pass, the stubs will be committed in the cloned repository
+* Finally, a push will be done to that repo's `origin`
+
+==== Consumer
+
+On the consumer side when passing the `repositoryRoot` parameter,
+either from the `@AutoConfigureStubRunner` annotation, the
+JUnit rule or properties, it's enough to pass the URL of the
+SCM repository, prefixed with the protocol. For example
+
+[source,java,indent=0]
+----
+@AutoConfigureStubRunner(
+    stubsMode="REMOTE",
+    repositoryRoot="git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git",
+    ids="com.example:bookstore:0.0.1.RELEASE"
+)
+----
+
+With such a setup:
+
+* Git project will be cloned to a temporary directory
+* The SCM stub downloader will go to `META-INF/groupId/artifactId/version/` folder
+to find stub definitions and contracts. E.g. for `com.example:foo:1.0.0` the path would be
+`META-INF/com.example/foo/1.0.0/`
+* Stub servers will be started and fed with mappings
+* Messaging definitions will be read and used in the messaging tests
 
 === How can I debug the request/response being sent by the generated tests client?
 
@@ -557,11 +734,6 @@ logging.level.com.github.tomakehurst.wiremock=ERROR
 You can use the `mappingsOutputFolder` property on `@AutoConfigureStubRunner` or `StubRunnerRule`
 to dump all mappings per artifact id. Also the port at which the given stub server was
 started will be attached.
-
-==== Can I reference the request from the response?
-
-Yes! With version 1.1.0 we've added such a possibility. On the HTTP stub server side we're providing support
-for this for WireMock. In case of other HTTP server stubs you'll have to implement the approach yourself.
 
 ==== Can I reference text from file?
 

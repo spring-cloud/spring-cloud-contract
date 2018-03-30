@@ -196,7 +196,11 @@ class GitRepo {
 	}
 
 	private Git cloneToBasedir(URI projectUrl, File destinationFolder) {
-		String projectGitUrl = projectUrl.toString() + ".git";
+		String url = projectUrl.toString();
+		String projectGitUrl = url.endsWith(".git") ? url : url + ".git";
+		if (log.isDebugEnabled()) {
+			log.debug("Project git url [" + projectGitUrl + "]");
+		}
 		CloneCommand command = this.gitFactory.getCloneCommandByCloneRepository()
 				.setURI(projectGitUrl).setDirectory(destinationFolder);
 		try {
@@ -333,7 +337,9 @@ class GitRepo {
 				log.info("Passed username and password - will set a custom credentials provider");
 				this.provider = credentialsProvider(properties);
 			} else {
-				log.info("No custom credentials provider will be set");
+				if (log.isDebugEnabled()) {
+					log.debug("No custom credentials provider will be set");
+				}
 				this.provider = null;
 			}
 		}

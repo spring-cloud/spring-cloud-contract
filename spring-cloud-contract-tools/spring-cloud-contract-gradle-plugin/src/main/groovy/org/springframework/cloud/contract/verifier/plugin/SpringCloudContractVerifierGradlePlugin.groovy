@@ -25,7 +25,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.jvm.tasks.Jar
 
-import org.springframework.cloud.contract.stubrunner.GitStubDownloaderBuilder
+import org.springframework.cloud.contract.stubrunner.ScmStubDownloaderBuilder
 
 /**
  * Gradle plugin for Spring Cloud Contract Verifier that from the DSL contract can
@@ -126,8 +126,8 @@ class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
 		task.onlyIf {
 			String contractRepoUrl = extension.contractsRepositoryUrl ?:
 					extension.contractRepository.repositoryUrl ?: ""
-			if (!contractRepoUrl || !contractRepoUrl.startsWith(GitStubDownloaderBuilder.PROTOCOL)) {
-				project.logger.info("Skipping pushing stubs to scm since your [contractsRepositoryUrl] property doesn't start with [${GitStubDownloaderBuilder.PROTOCOL}]")
+			if (!contractRepoUrl || !ScmStubDownloaderBuilder.isProtocolAccepted(contractRepoUrl)) {
+				project.logger.info("Skipping pushing stubs to scm since your [contractsRepositoryUrl] property doesn't match any of the accepted protocols")
 				return false
 			}
 			return true

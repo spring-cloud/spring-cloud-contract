@@ -1607,3 +1607,55 @@ IMPORTANT: If you do not provide any implementation, then the default is used (s
 If you provide the `stubsMode = StubRunnerProperties.StubsMode.LOCAL` or
 `, stubsMode = StubRunnerProperties.StubsMode.REMOTE` then the Aether implementation will be used
 If you provide more than one, then the first one on the list is used.
+
+[[scm-stub-downloader]]
+=== Using the SCM Stub Downloader
+
+Whenever the `repositoryRoot` starts with a SCM protocol
+(currently we support only `git://`), the stub downloader will try
+to clone the repository and use it as a source of contracts
+to generate tests or stubs.
+
+Either via environment variables, system properties, properties set
+inside the plugin or contracts repository configuration you can
+tweak the downloader's behaviour. Below you can find the list of
+properties
+
+.SCM Stub Downloader properties
+|===
+|Type of a property |Name of the property | Description
+|
+* `git.branch` (plugin prop)
+* `stubrunner.properties.git.branch` (system prop)
+* `STUBRUNNER_PROPERTIES_GIT_BRANCH` (env prop)
+|master
+|Which branch to checkout
+
+|
+* `git.username` (plugin prop)
+* `stubrunner.properties.git.username` (system prop)
+* `STUBRUNNER_PROPERTIES_GIT_USERNAME` (env prop)
+|
+|Git clone username
+
+|
+* `git.password` (plugin prop)
+* `stubrunner.properties.git.password` (system prop)
+* `STUBRUNNER_PROPERTIES_GIT_PASSWORD` (env prop)
+|
+|Git clone password
+
+|
+* `git.no-of-attempts` (plugin prop)
+* `stubrunner.properties.git.no-of-attempts` (system prop)
+* `STUBRUNNER_PROPERTIES_GIT_NO_OF_ATTEMPTS` (env prop)
+|10
+|Number of attempts to push the commits to `origin`
+
+|
+* `git.wait-between-attempts` (Plugin prop)
+* `stubrunner.properties.git.wait-between-attempts`  (system prop)
+* `STUBRUNNER_PROPERTIES_GIT_WAIT_BETWEEN_ATTEMPTS`  (env prop)
+|1000
+|Number of millis to wait between attempts to push the commits to `origin`
+|===

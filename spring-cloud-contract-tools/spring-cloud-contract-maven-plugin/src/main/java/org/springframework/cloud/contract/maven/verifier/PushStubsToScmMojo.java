@@ -24,7 +24,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.springframework.cloud.contract.stubrunner.ContractProjectUpdater;
-import org.springframework.cloud.contract.stubrunner.GitStubDownloaderBuilder;
+import org.springframework.cloud.contract.stubrunner.ScmStubDownloaderBuilder;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
@@ -107,9 +107,9 @@ public class PushStubsToScmMojo extends AbstractMojo {
 							+ this.skip + ", spring.cloud.contract.verifier.publish-stubs-to-scm.skip=" + this.taskSkip);
 			return;
 		}
-		if (!StringUtils.hasText(this.contractsRepositoryUrl) ||
-				!this.contractsRepositoryUrl.startsWith(GitStubDownloaderBuilder.PROTOCOL)) {
-			getLog().info("Skipping pushing stubs to scm since your [contractsRepositoryUrl] property doesn't start with [" + GitStubDownloaderBuilder.PROTOCOL + "]");
+		if (StringUtils.isEmpty(this.contractsRepositoryUrl) ||
+				!ScmStubDownloaderBuilder.isProtocolAccepted(this.contractsRepositoryUrl)) {
+			getLog().info("Skipping pushing stubs to scm since your [contractsRepositoryUrl] property doesn't match any of the accepted protocols");
 			return;
 		}
 		String projectName = this.project.getGroupId() + ":" + this.project.getArtifactId() + ":" + this.project.getVersion();

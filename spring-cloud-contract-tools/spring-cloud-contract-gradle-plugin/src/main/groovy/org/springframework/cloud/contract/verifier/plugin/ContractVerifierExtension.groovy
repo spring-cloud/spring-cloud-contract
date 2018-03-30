@@ -204,6 +204,10 @@ class ContractVerifierExtension {
 		closure.call()
 	}
 
+	void contractsProperties(Map<String, String> props) {
+		contractsProperties = props
+	}
+
 	/**
 	 * Is set to true will not provide the default publication task
 	 */

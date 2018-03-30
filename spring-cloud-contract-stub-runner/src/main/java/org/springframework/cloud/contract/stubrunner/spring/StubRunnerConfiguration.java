@@ -30,7 +30,6 @@ import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubDownloaderBuilderProvider;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
-import org.springframework.cloud.contract.stubrunner.util.StringUtils;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.context.annotation.Bean;
@@ -39,6 +38,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
+import org.springframework.util.StringUtils;
 
 /**
  * Configuration that initializes a {@link BatchStubRunner} that runs

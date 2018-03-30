@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
-import org.springframework.cloud.contract.stubrunner.util.StringUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * Maps Ivy based ids to service Ids. You might want to name the service you're calling

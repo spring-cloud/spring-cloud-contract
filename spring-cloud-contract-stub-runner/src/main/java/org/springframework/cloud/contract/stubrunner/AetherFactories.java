@@ -23,7 +23,7 @@ import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
-import org.springframework.cloud.contract.stubrunner.util.StringUtils;
+import org.springframework.util.StringUtils;
 import shaded.org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import shaded.org.apache.maven.settings.Settings;
 import shaded.org.apache.maven.settings.building.DefaultSettingsBuilderFactory;

@@ -42,7 +42,7 @@ public class GitStubDownloaderTests {
 
 	@Test
 	public void should_return_a_null_downloader_for_a_classptath_mode() {
-		StubDownloaderBuilder stubDownloaderBuilder = new GitStubDownloaderBuilder();
+		StubDownloaderBuilder stubDownloaderBuilder = new ScmStubDownloaderBuilder();
 
 		StubDownloader stubDownloader = stubDownloaderBuilder.build(new StubRunnerOptionsBuilder()
 				.withStubsMode(StubRunnerProperties.StubsMode.CLASSPATH)
@@ -53,7 +53,7 @@ public class GitStubDownloaderTests {
 
 	@Test
 	public void should_return_a_null_downloader_for_a_empty_repo() {
-		StubDownloaderBuilder stubDownloaderBuilder = new GitStubDownloaderBuilder();
+		StubDownloaderBuilder stubDownloaderBuilder = new ScmStubDownloaderBuilder();
 
 		StubDownloader stubDownloader = stubDownloaderBuilder.build(new StubRunnerOptionsBuilder()
 				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
@@ -64,7 +64,7 @@ public class GitStubDownloaderTests {
 
 	@Test
 	public void should_return_a_null_downloader_for_a_non_git_repo() {
-		StubDownloaderBuilder stubDownloaderBuilder = new GitStubDownloaderBuilder();
+		StubDownloaderBuilder stubDownloaderBuilder = new ScmStubDownloaderBuilder();
 
 		StubDownloader stubDownloader = stubDownloaderBuilder.build(new StubRunnerOptionsBuilder()
 				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
@@ -76,7 +76,7 @@ public class GitStubDownloaderTests {
 
 	@Test
 	public void should_pick_stubs_for_group_and_artifact_with_version_from_a_git_repo() throws Exception {
-		StubDownloaderBuilder stubDownloaderBuilder = new GitStubDownloaderBuilder();
+		StubDownloaderBuilder stubDownloaderBuilder = new ScmStubDownloaderBuilder();
 		StubDownloader stubDownloader = stubDownloaderBuilder.build(new StubRunnerOptionsBuilder()
 				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
 				.withStubRepositoryRoot("git://" + file("/git_samples/contract-git/").getAbsolutePath() + "/")
@@ -92,7 +92,7 @@ public class GitStubDownloaderTests {
 	@Test
 	public void should_fail_to_fetch_stubs_when_latest_version_was_specified()
 			throws URISyntaxException {
-		StubDownloaderBuilder stubDownloaderBuilder = new GitStubDownloaderBuilder();
+		StubDownloaderBuilder stubDownloaderBuilder = new ScmStubDownloaderBuilder();
 		StubDownloader stubDownloader = stubDownloaderBuilder.build(new StubRunnerOptionsBuilder()
 				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
 				.withStubRepositoryRoot("git://" + file("/git_samples/contract-git").getAbsolutePath())
@@ -109,7 +109,7 @@ public class GitStubDownloaderTests {
 	@Test
 	public void should_fail_to_fetch_stubs_when_concrete_version_was_not_specified()
 			throws URISyntaxException {
-		StubDownloaderBuilder stubDownloaderBuilder = new GitStubDownloaderBuilder();
+		StubDownloaderBuilder stubDownloaderBuilder = new ScmStubDownloaderBuilder();
 		StubDownloader stubDownloader = stubDownloaderBuilder.build(new StubRunnerOptionsBuilder()
 				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
 				.withStubRepositoryRoot("git://" + file("/git_samples/contract-git").getAbsolutePath())

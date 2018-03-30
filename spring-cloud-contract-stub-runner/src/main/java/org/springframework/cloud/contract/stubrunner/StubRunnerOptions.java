@@ -27,8 +27,8 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
-import org.springframework.cloud.contract.stubrunner.util.StringUtils;
 import org.springframework.core.io.Resource;
+import org.springframework.util.StringUtils;
 
 /**
  * Technical options related to running StubRunner

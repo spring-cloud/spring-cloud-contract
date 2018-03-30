@@ -28,26 +28,37 @@ import java.nio.file.PathMatcher;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.AbstractMap;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
-import org.springframework.cloud.contract.stubrunner.util.StringUtils;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.StringUtils;
 
 /**
- * Builds a {@link StubDownloader} to work with contracts and stubs in a git repo
+ * Builds a {@link StubDownloader} to work with contracts and stubs from a SCM
  *
  * @author Marcin Grzejszczak
  * @since 2.0.0
  */
-public final class GitStubDownloaderBuilder implements StubDownloaderBuilder {
+public final class ScmStubDownloaderBuilder implements StubDownloaderBuilder {
 
-	public static final String PROTOCOL = "git";
+	private static final List<String> ACCEPTABLE_PROTOCOLS = Collections
+			.singletonList("git");
+
+	/**
+	 * Does any of the accepted protocols matches the URL of the repository
+	 * @param url - of the repository
+	 */
+	public static boolean isProtocolAccepted(String url) {
+		return ACCEPTABLE_PROTOCOLS.stream().anyMatch(url::startsWith);
+	}
 
 	@Override public StubDownloader build(StubRunnerOptions stubRunnerOptions) {
 		if (stubRunnerOptions.getStubsMode() == StubRunnerProperties.StubsMode.CLASSPATH ||
@@ -62,7 +73,7 @@ public final class GitStubDownloaderBuilder implements StubDownloaderBuilder {
 	}
 
 	@Override public Resource resolve(String location, ResourceLoader resourceLoader) {
-		if (!StringUtils.hasText(location) || !location.startsWith(PROTOCOL)) {
+		if (StringUtils.isEmpty(location) || !isProtocolAccepted(location)) {
 			return null;
 		}
 		return new GitResource(location);
@@ -148,7 +159,7 @@ class GitStubDownloader implements StubDownloader {
 
 	@Override public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
 			StubConfiguration stubConfiguration) {
-		if (!StringUtils.hasText(stubConfiguration.version) || "+".equals(stubConfiguration.version)) {
+		if (StringUtils.isEmpty(stubConfiguration.version) || "+".equals(stubConfiguration.version)) {
 			throw new IllegalStateException("Concrete version wasn't passed for [" + stubConfiguration.toColonSeparatedDependencyNotation() + "]");
 		}
 		try {
@@ -179,6 +190,8 @@ class GitStubDownloader implements StubDownloader {
 }
 
 class GitStubDownloaderProperties {
+	private static final Log log = LogFactory.getLog(GitStubDownloaderProperties.class);
+
 	private static final String GIT_BRANCH_PROPERTY = "git.branch";
 	private static final String GIT_USERNAME_PROPERTY = "git.username";
 	private static final String GIT_PASSWORD_PROPERTY = "git.password";
@@ -189,7 +202,7 @@ class GitStubDownloaderProperties {
 	final String branch;
 
 	GitStubDownloaderProperties(Resource repo, StubRunnerOptions options) {
-		String repoUrl = null;
+		String repoUrl;
 		Map<String, String> args = options.getProperties();
 		try {
 			repoUrl = schemeSpecificPart(repo.getURI());
@@ -198,18 +211,32 @@ class GitStubDownloaderProperties {
 		}
 		// if we had git://https://... we want the part starting from https
 		// if we had git://git@... we want the full address again
-		this.url = URI.create(repoUrl.startsWith("git@") ? "git://" + repoUrl : repoUrl);
+		// if the URL starts with git@... and ends with .git, we want to remove it
+		String modifiedRepo = repoUrl.startsWith("git@") ? modifyUrlForGitRepo(repoUrl) : repoUrl;
+		this.url = URI.create(modifiedRepo);
 		String username = StubRunnerPropertyUtils.getProperty(args, GIT_USERNAME_PROPERTY);
 		this.username = StringUtils.hasText(username) ? username : options.getUsername();
 		String password = StubRunnerPropertyUtils.getProperty(args, GIT_PASSWORD_PROPERTY);
 		this.password = StringUtils.hasText(password) ? password : options.getPassword();
 		String branch = StubRunnerPropertyUtils.getProperty(args, GIT_BRANCH_PROPERTY);
 		this.branch = StringUtils.hasText(branch) ? branch : "master";
+		if (log.isDebugEnabled()) {
+			log.debug("Repo url is [" + repoUrl + "], modified url string "
+					+ "is [" + modifiedRepo + "] URL is [" + this.url + "] and "
+					+ "branch is [" + this.branch + "]");
+		}
 	}
 
 	private String schemeSpecificPart(URI uri) {
 		String part = uri.getSchemeSpecificPart();
-		return StringUtils.hasText(part) && part.startsWith("//") ? part.substring(2) : part;
+		if (StringUtils.isEmpty(part)) {
+			return part;
+		}
+		return part.startsWith("//") ? part.substring(2) : part;
+	}
+
+	private String modifyUrlForGitRepo(String gitRepo) {
+		return "git:" + gitRepo;
 	}
 }
 
