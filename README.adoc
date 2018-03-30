@@ -2006,6 +2006,7 @@ have Docker installed.
 Here you can find the Spring Cloud Contract folder structure
 
 ```
+├── config
 ├── docker
 ├── samples
 ├── scripts
@@ -2019,6 +2020,7 @@ Here you can find the Spring Cloud Contract folder structure
 └── tests
 ```
 
+ - `config` - folder contains setup for Spring Cloud Release Tools automated release process
  - `docker` - folder contains docker images
  - `samples` - folder contains test samples together with standalone ones used also to build documentation
  - `scripts` - contains scripts to build and test `Spring Cloud Contract` with Maven, Gradle and standalone projects
@@ -2026,6 +2028,7 @@ Here you can find the Spring Cloud Contract folder structure
  - `spring-cloud-contract-starters` - contains Spring Cloud Contract Starters
  - `spring-cloud-contract-spec` - contains specification modules (contains concept of a Contract)
  - `spring-cloud-contract-stub-runner` - contains Stub Runner related modules
+ - `spring-cloud-contract-stub-runner-boot` - contains Stub Runner Boot app
  - `spring-cloud-contract-tools` - Gradle and Maven plugin for `Spring Cloud Contract Verifier`
  - `spring-cloud-contract-verifier` - core of the `Spring Cloud Contract Verifier` functionality
  - `spring-cloud-contract-wiremock` - all WireMock related functionality
