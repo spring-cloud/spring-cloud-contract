@@ -29,7 +29,7 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.contract.stubrunner.RunningStubs;
 import org.springframework.cloud.contract.stubrunner.StubFinder;
-import org.springframework.cloud.contract.stubrunner.util.StringUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * Custom version of {@link DiscoveryClient} that tries to find an instance

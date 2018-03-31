@@ -53,7 +53,7 @@ contracts {
 	targetFramework = 'Spock'
 }
 
-generateContractTests.dependsOn generateWireMockClientStubs
+generateContractTests.dependsOn generateClientStubs
 
 wrapper {
 	gradleVersion '3.5'

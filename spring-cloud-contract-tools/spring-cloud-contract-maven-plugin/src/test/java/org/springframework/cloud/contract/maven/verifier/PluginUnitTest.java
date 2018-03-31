@@ -24,6 +24,7 @@ import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.junit.Rule;
 import org.junit.Test;
+import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.util.StringUtils;
 
 import static io.takari.maven.testing.TestMavenRuntime.newParameter;
@@ -32,6 +33,9 @@ import static io.takari.maven.testing.TestResources.assertFilesPresent;
 import static org.assertj.core.api.BDDAssertions.then;
 
 public class PluginUnitTest {
+
+	@Rule
+	public OutputCapture capture = new OutputCapture();
 
 	@Rule
 	public final TestResources resources = new TestResources();
@@ -291,5 +295,14 @@ public class PluginUnitTest {
 		int countOccurrencesOf = StringUtils
 				.countOccurrencesOf(testContents, "\t\tMockMvcRequestSpecification");
 		then(countOccurrencesOf).isEqualTo(4);
+	}
+
+	@Test
+	public void shouldRunPushStubsToScm() throws Exception {
+		File basedir = this.resources.getBasedir("git-basic-remote-contracts");
+
+		this.maven.executeMojo(basedir, "pushStubsToScm", defaultPackageForTests());
+
+		then(this.capture.toString()).contains("Skipping pushing stubs to scm since your");
 	}
 }

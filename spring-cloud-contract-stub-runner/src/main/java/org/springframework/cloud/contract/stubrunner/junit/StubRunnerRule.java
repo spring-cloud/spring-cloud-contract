@@ -165,6 +165,11 @@ public class StubRunnerRule implements TestRule, StubFinder, StubRunnerRuleOptio
 		return this.delegate;
 	}
 
+	@Override public StubRunnerRule withProperties(Map<String, String> properties) {
+		builder().withProperties(properties);
+		return this.delegate;
+	}
+
 	@Override
 	public URL findStubUrl(String groupId, String artifactId) {
 		return this.stubFinder().findStubUrl(groupId, artifactId);

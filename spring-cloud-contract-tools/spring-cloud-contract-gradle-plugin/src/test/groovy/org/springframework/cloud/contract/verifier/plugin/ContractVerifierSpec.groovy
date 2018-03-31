@@ -50,7 +50,7 @@ class ContractVerifierSpec extends Specification {
 			project.tasks.check.getDependsOn().contains("generateContractTests")
 	}
 
-	def "should create generateWireMockClientStubs task"() {
+	def "should create generateClientStubs task"() {
 		given:
 			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
 
@@ -66,12 +66,20 @@ class ContractVerifierSpec extends Specification {
 			project.tasks.findByName("verifierStubsJar") != null
 	}
 
-	def "should configure generateWireMockClientStubs task as a dependency of the verifierStubsJar task"() {
+	def "should configure generateClientStubs task as a dependency of the verifierStubsJar task"() {
 		given:
 			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
 
 		expect:
 			project.tasks.verifierStubsJar.getDependsOn().contains("generateClientStubs")
+	}
+
+	def "should configure generateClientStubs task as a dependency of the publishStubsToScm task"() {
+		given:
+			project.plugins.apply(SpringCloudContractVerifierGradlePlugin)
+
+		expect:
+			project.tasks.publishStubsToScm.getDependsOn().contains("generateClientStubs")
 	}
 
 	def "should create copyContracts task"() {

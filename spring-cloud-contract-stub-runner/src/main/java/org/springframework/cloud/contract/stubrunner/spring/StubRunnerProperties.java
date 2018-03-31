@@ -17,9 +17,11 @@
 package org.springframework.cloud.contract.stubrunner.spring;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.cloud.contract.stubrunner.ResourceResolver;
 import org.springframework.core.io.Resource;
 
 /**
@@ -108,6 +110,11 @@ public class StubRunnerProperties {
 	private boolean deleteStubsAfterTest = true;
 
 	/**
+	 * Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
+	 */
+	private Map<String, String> properties = new HashMap<>();
+
+	/**
 	 * An enumeration stub modes.
 	 */
 	public enum StubsMode {
@@ -149,7 +156,7 @@ public class StubRunnerProperties {
 	}
 
 	public void setRepositoryRoot(String repositoryRoot) {
-		this.repositoryRoot = new DefaultResourceLoader().getResource(repositoryRoot);
+		this.repositoryRoot = ResourceResolver.resource(repositoryRoot);
 	}
 
 	public String getUsername() {
@@ -216,10 +223,6 @@ public class StubRunnerProperties {
 		this.consumerName = consumerName;
 	}
 
-	public void setRepositoryRoot(Resource repositoryRoot) {
-		this.repositoryRoot = repositoryRoot;
-	}
-
 	public String getMappingsOutputFolder() {
 		return this.mappingsOutputFolder;
 	}
@@ -252,6 +255,14 @@ public class StubRunnerProperties {
 		this.deleteStubsAfterTest = deleteStubsAfterTest;
 	}
 
+	public Map<String, String> getProperties() {
+		return this.properties;
+	}
+
+	public void setProperties(Map<String, String> properties) {
+		this.properties = properties;
+	}
+
 	@Override public String toString() {
 		return "StubRunnerProperties{" + "minPort=" + this.minPort + ", maxPort=" + this.maxPort
 				+ ", repositoryRoot=" + this.repositoryRoot
@@ -259,6 +270,7 @@ public class StubRunnerProperties {
 				+ ", setStubsPerConsumer='" + this.stubsPerConsumer + "', consumerName='" + this.consumerName + '\''
 				+ ", stubsMode='" + this.stubsMode + '\''
 				+ ", snapshotCheckSkip='" + this.snapshotCheckSkip + '\''
+				+ ", size of properties=" + this.properties.size()
 				+ '}';
 	}
 }

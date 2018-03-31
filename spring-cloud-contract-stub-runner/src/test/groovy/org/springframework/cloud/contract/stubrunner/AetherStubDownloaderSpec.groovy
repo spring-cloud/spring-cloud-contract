@@ -3,11 +3,10 @@ package org.springframework.cloud.contract.stubrunner
 import io.specto.hoverfly.junit.HoverflyRule
 import org.eclipse.aether.RepositorySystemSession
 import org.junit.Rule
-import spock.lang.Specification
-import spock.util.environment.RestoreSystemProperties
-
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.util.ResourceUtils
+import spock.lang.Specification
+import spock.util.environment.RestoreSystemProperties
 
 class AetherStubDownloaderSpec extends Specification {
 
@@ -76,12 +75,18 @@ class AetherStubDownloaderSpec extends Specification {
 			System.properties.setProperty("stubrunner.snapshot-check-skip", "false")
 
 		and:
-			AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions)  {
+			StubRunnerPropertyUtils.FETCHER = new PropertyFetcher() {
 				@Override
-				String getSkipSnapEnvProp() {
+				String systemProp(String prop) {
+					return super.systemProp(prop)
+				}
+
+				@Override
+				String envVar(String prop) {
 					return "true"
 				}
 			}
+			AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions)
 
 		when:
 			def jar = aetherStubDownloader.downloadAndUnpackStubJar(new StubConfiguration("org.springframework.cloud", "spring-cloud-contract-spec", "+", ""))
@@ -98,18 +103,28 @@ class AetherStubDownloaderSpec extends Specification {
 					.withStubRepositoryRoot("https://test.jfrog.io/test/libs-snapshot-local")
 					.build()
 
-			AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions) {
+		and:
+			StubRunnerPropertyUtils.FETCHER = new PropertyFetcher() {
 				@Override
-				String getSkipSnapEnvProp() {
+				String systemProp(String prop) {
+					return super.systemProp(prop)
+				}
+
+				@Override
+				String envVar(String prop) {
 					return "true"
 				}
 			}
+			AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions)
 
 		when:
 			def jar = aetherStubDownloader.downloadAndUnpackStubJar(new StubConfiguration("org.springframework.cloud", "spring-cloud-contract-spec", "+", ""))
 
 		then:
 			jar != null
+
+		cleanup:
+			StubRunnerPropertyUtils.FETCHER = new PropertyFetcher()
 	}
 
 	def 'Should not throw an exception when a jar is in local m2 and not in remote repo and option disabled snapshot check'() {

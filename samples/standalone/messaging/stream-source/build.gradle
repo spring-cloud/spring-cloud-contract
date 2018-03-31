@@ -59,7 +59,7 @@ dependencies {
 	testCompile "com.jayway.restassured:spring-mock-mvc:2.9.0"
 }
 
-task stubsJar(type: Jar, dependsOn: "generateWireMockClientStubs") {
+task stubsJar(type: Jar, dependsOn: "generateClientStubs") {
 	baseName = "${project.name}"
 	classifier = "stubs"
 	from stubsOutputDirRoot

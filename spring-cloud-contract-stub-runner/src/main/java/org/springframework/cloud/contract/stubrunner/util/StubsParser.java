@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
+import org.springframework.util.StringUtils;
 
 /**
  * Utility to parse string into a list of configuration of stubs

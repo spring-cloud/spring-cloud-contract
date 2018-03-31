@@ -1,21 +1,23 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ * Copyright 2013-2017 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *       http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.stubrunner
 
+import org.springframework.core.io.ClassPathResource
+import org.springframework.core.io.FileSystemResource
 import spock.lang.Issue
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
@@ -25,6 +27,44 @@ import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 class StubRunnerOptionsBuilderSpec extends Specification {
 
 	private StubRunnerOptionsBuilder builder = new StubRunnerOptionsBuilder()
+
+	def shouldReturnURIOfAResourceFromString() {
+
+		given:
+		builder.withStubRepositoryRoot("classpath:/logback.xml")
+
+		when:
+		StubRunnerOptions options = builder.build()
+
+		then:
+		options.getStubRepositoryRootAsString().startsWith("file:/")
+		options.getStubRepositoryRootAsString().endsWith("logback.xml")
+	}
+
+	def shouldReturnURIOfAResourceFromResource() {
+
+		given:
+		builder.withStubRepositoryRoot(new ClassPathResource("logback.xml"))
+
+		when:
+		StubRunnerOptions options = builder.build()
+
+		then:
+		options.getStubRepositoryRootAsString().startsWith("file:/")
+		options.getStubRepositoryRootAsString().endsWith("logback.xml")
+	}
+
+	def shouldReturnEmptyStringWhenFileNotFound() {
+
+		given:
+		builder.withStubRepositoryRoot(new ClassPathResource("fileThatDoesNotExist.xml"))
+
+		when:
+		StubRunnerOptions options = builder.build()
+
+		then:
+		options.getStubRepositoryRootAsString() == ""
+	}
 
 	def shouldCreateDependenciesForStub() {
 
@@ -189,16 +229,16 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 	@Issue("#466")
 	def shouldSetAllDependenciesFromOptions() {
 		given:
-			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, "root", StubRunnerProperties.StubsMode.LOCAL,
+			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, new FileSystemResource("root"), StubRunnerProperties.StubsMode.LOCAL,
 					"classifier", [new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "foo", "bar",
-					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", true, false))
+					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", true, false, [foo: "bar"]))
 			builder.withStubs("foo:bar:baz")
 		when:
 			StubRunnerOptions options = builder.build()
 		then:
 			options.minPortValue == 1
 			options.maxPortValue == 2
-			options.stubRepositoryRoot == "root"
+			options.stubRepositoryRoot == new FileSystemResource("root")
 			options.stubsMode == StubRunnerProperties.StubsMode.LOCAL
 			options.stubsClassifier == "classifier"
 			options.dependencies == [new StubConfiguration("a:b:c"), new StubConfiguration("foo:bar:baz:classifier")]
@@ -212,14 +252,15 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			options.mappingsOutputFolder == "folder"
 			options.snapshotCheckSkip == true
 			options.deleteStubsAfterTest == false
+			options.properties == [foo: "bar"]
 	}
 
 	def shouldNotPrintUsernameAndPassword() {
 		given:
-			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, "root",
+			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, new FileSystemResource("root"),
 					StubRunnerProperties.StubsMode.CLASSPATH, "classifier",
 					[new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "username123", "password123",
-					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", true, false))
+					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", true, false, [:]))
 			builder.withStubs("foo:bar:baz")
 		when:
 			String options = builder.build().toString()
@@ -247,12 +288,15 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			System.setProperty("stubrunner.proxy.port", "4")
 			System.setProperty("stubrunner.mappings-output-folder", "folder")
 			System.setProperty("stubrunner.snapshot-check-skip", "true")
+			System.setProperty("stubrunner.properties.foo-bar", "bar")
+			System.setProperty("stubrunner.properties.foo-baz", "baz")
+			System.setProperty("stubrunner.properties.bar.bar", "foo")
 		when:
 			StubRunnerOptions options = StubRunnerOptions.fromSystemProps()
 		then:
 			options.minPortValue == 1
 			options.maxPortValue == 2
-			options.stubRepositoryRoot == "root"
+			options.stubRepositoryRoot == new ClassPathResource("root")
 			options.stubsMode == StubRunnerProperties.StubsMode.LOCAL
 			options.stubsClassifier == "classifier"
 			options.dependencies == [new StubConfiguration("a:b:c"), new StubConfiguration("foo:bar:baz:classifier")]
@@ -264,5 +308,6 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			options.consumerName == "consumer"
 			options.mappingsOutputFolder == "folder"
 			options.snapshotCheckSkip == true
+			options.properties == ["foo-bar": "bar", "foo-baz": "baz", "bar.bar": "foo"]
 	}
 }

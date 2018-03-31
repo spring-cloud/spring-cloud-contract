@@ -1,0 +1,24 @@
+{
+  "id" : "b54426aa-b2ef-4b12-adc9-a05fcf6a4e08",
+  "request" : {
+    "url" : "/check",
+    "method" : "POST",
+    "headers" : {
+      "Content-Type" : {
+        "equalTo" : "application/json"
+      }
+    },
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[?(@.['age'] =~ /[0-1][0-9]/)]"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"status\":\"NOT_OK\"}",
+    "headers" : {
+      "Content-Type" : "application/json"
+    },
+    "transformers" : [ "response-template" ]
+  },
+  "uuid" : "b54426aa-b2ef-4b12-adc9-a05fcf6a4e08"
+}

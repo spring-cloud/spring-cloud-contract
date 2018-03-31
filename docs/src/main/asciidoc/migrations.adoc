@@ -4,6 +4,9 @@
 
 == Migrations
 
+TIP: For up to date migration guides please visit
+the project's https://github.com/spring-cloud/spring-cloud-contract/wiki/[wiki page].
+
 This section covers migrating from one version of Spring Cloud Contract Verifier to the
 next version. It covers the following versions upgrade paths:
 

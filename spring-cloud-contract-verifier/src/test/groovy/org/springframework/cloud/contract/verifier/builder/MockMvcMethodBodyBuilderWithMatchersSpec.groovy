@@ -199,8 +199,8 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 				SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
 			} catch (ClassFormatError classFormatError) {
 				String output = outputCapture.toString()
-				output.contains('error: cannot find symbol')
-				output.contains('assertThatValueIsANumber(parsedJson.read("$.duck"));')
+				assert output.contains('error: cannot find symbol')
+				assert output.contains('assertThatValueIsANumber(parsedJson.read("$.duck"));')
 			}
 		where:
 			methodBuilderName                                    | methodBuilder                                                                               | rootElement

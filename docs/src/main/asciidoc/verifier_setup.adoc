@@ -23,6 +23,7 @@ following sections:
 * <<gradle-single-base-class>>
 * <<gradle-different-base-classes>>
 * <<gradle-invoking-generated-tests>>
+* <<gradle-pushing-stubs-to-scm>>
 * <<gradle-consumer>>
 
 [[gradle-prerequisites]]
@@ -246,6 +247,8 @@ from the Groovy DSL should be placed. By default its value is
 the Groovy DSL should be placed.
 * *targetFramework*: Specifies the target test framework to be used. Currently, Spock and
 JUnit are supported with JUnit being the default framework.
+* *contractsProperties*: a map containing properties to be passed to Spring Cloud Contract
+components. Those properties might be used by e.g. inbuilt or custom Stub Downloaders.
 
 The following properties are used when you want to specify the location of the JAR
 containing the contracts:
@@ -334,6 +337,25 @@ To ensure that the provider side is compliant with defined contracts, you need t
 ./gradlew generateContractTests test
 ----
 
+[[gradle-pushing-stubs-to-scm]]
+==== Pushing stubs to SCM
+
+If you're using the SCM repository to keep the contracts and
+stubs, you might want to automate the step of pushing stubs to
+the repository. To do that, it's enough to call the `pushStubsToScm`
+task. Example:
+
+[source,bash,indent=0]
+----
+$ ./gradlew pushStubsToScm
+----
+
+Under <<scm-stub-downloader>> you can find all possible
+configuration options that you can pass either via
+the `contractsProperties` field e.g. `contracts { contractsProperties = [foo:"bar"] }`,
+via `contractsProperties` method e.g. `contracts { contractsProperties([foo:"bar"]) }`,
+a system property or an environment variable.
+
 [[gradle-consumer]]
 ==== Spring Cloud Contract Verifier on the Consumer Side
 
@@ -395,6 +417,7 @@ following sections:
 * <<maven-single-base>>
 * <<maven-different-base>>
 * <<maven-invoking-generated-tests>>
+* <<maven-pushing-stubs-to-scm>>
 * <<maven-sts>>
 
 [[maven-add-plugin]]
@@ -576,6 +599,8 @@ the matched contract. For example, if you have a contract under
 `.* -> com.example.base.BaseClass`, then the test class generated from these contracts
 extends `com.example.base.BaseClass`. This setting takes precedence over
 *packageWithBaseClasses* and *baseClassForTests*.
+* *contractsProperties*: a map containing properties to be passed to Spring Cloud Contract
+components. Those properties might be used by e.g. inbuilt or custom Stub Downloaders.
 
 If you want to download your contract definitions from a Maven repository, you can use
 the following options:
@@ -765,6 +790,57 @@ For Groovy Spock code, use the following:
 
 To ensure that provider side is compliant with defined contracts, you need to invoke
 `mvn generateTest test`.
+
+[[maven-pushing-stubs-to-scm]]
+==== Pushing stubs to SCM
+
+If you're using the SCM repository to keep the contracts and
+stubs, you might want to automate the step of pushing stubs to
+the repository. To do that, it's enough to add the `pushStubsToScm`
+goal. Example:
+
+[source,xml,indent=0]
+----
+<plugin>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+    <version>${spring-cloud-contract.version}</version>
+    <extensions>true</extensions>
+    <configuration>
+        <!-- Base class mappings etc. -->
+
+        <!-- We want to pick contracts from a Git repository -->
+        <contractsRepositoryUrl>git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git</contractsRepositoryUrl>
+
+        <!-- We reuse the contract dependency section to set up the path
+        to the folder that contains the contract definitions. In our case the
+        path will be /groupId/artifactId/version/contracts -->
+        <contractDependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>${project.artifactId}</artifactId>
+            <version>${project.version}</version>
+        </contractDependency>
+
+        <!-- The contracts mode can't be classpath -->
+        <contractsMode>REMOTE</contractsMode>
+    </configuration>
+    <executions>
+        <execution>
+            <phase>package</phase>
+            <goals>
+                <!-- By default we will not push the stubs back to SCM,
+                you have to explicitly add it as a goal -->
+                <goal>pushStubsToScm</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+----
+
+Under <<scm-stub-downloader>> you can find all possible
+configuration options that you can pass either via
+the `<configuration><contractProperties>` map, a system property
+or an environment variable.
 
 [[maven-sts]]
 ==== Maven Plugin and STS

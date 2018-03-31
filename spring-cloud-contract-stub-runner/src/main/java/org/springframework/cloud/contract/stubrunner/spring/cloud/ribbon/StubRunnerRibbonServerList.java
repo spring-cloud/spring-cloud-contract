@@ -30,7 +30,7 @@ import org.springframework.cloud.contract.stubrunner.RunningStubs;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubFinder;
 import org.springframework.cloud.contract.stubrunner.spring.cloud.StubMapperProperties;
-import org.springframework.cloud.contract.stubrunner.util.StringUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * Stub Runner representation of a server list

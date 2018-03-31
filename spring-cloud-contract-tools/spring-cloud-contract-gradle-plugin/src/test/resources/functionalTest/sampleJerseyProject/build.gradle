@@ -106,7 +106,7 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 }
 
 configure(project(':fraudDetectionService')) {
-	test.dependsOn('generateWireMockClientStubs')
+	test.dependsOn('generateClientStubs')
 
 	apply plugin: 'spring-cloud-contract'
 

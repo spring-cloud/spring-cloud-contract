@@ -71,12 +71,16 @@ class GradleContractsDownloader {
 
 	protected ContractDownloader contractDownloader(ContractVerifierExtension extension, StubConfiguration configuration) {
 		return new ContractDownloader(stubDownloader(extension), configuration,
-				extension.contractsPath, this.project.group as String, this.project.name)
+				extension.contractsPath, this.project.group as String, this.project.name, this.project.version as String)
 	}
 
 	protected StubDownloader stubDownloader(ContractVerifierExtension extension) {
         StubDownloaderBuilderProvider provider = new StubDownloaderBuilderProvider()
-		StubRunnerOptionsBuilder options = new StubRunnerOptionsBuilder()
+		return provider.get(options(extension))
+	}
+
+	protected StubRunnerOptions options(ContractVerifierExtension extension) {
+        StubRunnerOptionsBuilder options = new StubRunnerOptionsBuilder()
 				.withOptions(StubRunnerOptions.fromSystemProps())
 				.withStubRepositoryRoot(extension.contractRepository.repositoryUrl)
 				.withStubsMode(extension.contractsMode)
@@ -84,10 +88,11 @@ class GradleContractsDownloader {
 				.withPassword(extension.contractRepository.password)
 				.withSnapshotCheckSkip(extension.contractsSnapshotCheckSkip)
 				.withDeleteStubsAfterTest(extension.deleteStubsAfterTest)
+				.withProperties(extension.contractsProperties)
 		if (extension.contractRepository.proxyPort) {
 			options = options.withProxy(extension.contractRepository.proxyHost, extension.contractRepository.proxyPort)
 		}
-		return provider.get(options.build())
+		return options.build()
 	}
 
 	@PackageScope StubConfiguration stubConfiguration(ContractVerifierExtension.Dependency contractDependency) {
