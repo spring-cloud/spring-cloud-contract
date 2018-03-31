@@ -19,6 +19,8 @@ package org.springframework.cloud.contract.stubrunner;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StringUtils;
 
 /**
@@ -28,6 +30,8 @@ import org.springframework.util.StringUtils;
  * @since 2.0.0
  */
 class StubRunnerPropertyUtils {
+
+	private static final Log log = LogFactory.getLog(StubRunnerPropertyUtils.class);
 
 	private static final String STUBRUNNER_PROPERTIES = "stubrunner.properties";
 
@@ -48,23 +52,37 @@ class StubRunnerPropertyUtils {
 	 */
 	static String getProperty(Map<String, String> options, String propName) {
 		if (options != null && options.containsKey(propName)) {
-			return options.get(propName);
+			String value = options.get(propName);
+			if (log.isTraceEnabled()) {
+				log.trace("Options map contains the prop [" + propName + "] with value [" + value + "]");
+			}
+			return value;
 		}
-		String directTry = doGetProp(propName);
-		if (StringUtils.hasText(directTry)) {
-			return directTry;
+		return doGetProp(appendPrefixIfNecessary(propName));
+	}
+
+	private static String appendPrefixIfNecessary(String prop) {
+		if (prop.toLowerCase().startsWith("stubrunner")) {
+			return prop;
 		}
-		return doGetProp(STUBRUNNER_PROPERTIES + "." + propName);
+		return STUBRUNNER_PROPERTIES + "." + prop;
 	}
 
 	private static String doGetProp(String stubRunnerProp) {
 		String systemProp = FETCHER.systemProp(stubRunnerProp);
 		if (StringUtils.hasText(systemProp)) {
+			if (log.isTraceEnabled()) {
+				log.trace("System property [" + stubRunnerProp + "] has value [" + systemProp + "]");
+			}
 			return systemProp;
 		}
 		String convertedEnvProp = stubRunnerProp.replaceAll("\\.", "_")
 				.replaceAll("-", "_").toUpperCase();
-		return FETCHER.envVar(convertedEnvProp);
+		String envVar = FETCHER.envVar(convertedEnvProp);
+		if (log.isTraceEnabled()) {
+			log.trace("Environment variable [" + convertedEnvProp + "] has value [" + envVar + "]");
+		}
+		return envVar;
 	}
 }
 
