@@ -17,6 +17,7 @@ package org.springframework.cloud.contract.stubrunner;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Before;
@@ -46,6 +47,7 @@ public class GitStubDownloaderTests {
 
 		StubDownloader stubDownloader = stubDownloaderBuilder.build(new StubRunnerOptionsBuilder()
 				.withStubsMode(StubRunnerProperties.StubsMode.CLASSPATH)
+				.withProperties(props())
 				.build());
 
 		then(stubDownloader).isNull();
@@ -57,6 +59,7 @@ public class GitStubDownloaderTests {
 
 		StubDownloader stubDownloader = stubDownloaderBuilder.build(new StubRunnerOptionsBuilder()
 				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
+				.withProperties(props())
 				.build());
 
 		then(stubDownloader).isNull();
@@ -69,6 +72,7 @@ public class GitStubDownloaderTests {
 		StubDownloader stubDownloader = stubDownloaderBuilder.build(new StubRunnerOptionsBuilder()
 				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
 				.withStubRepositoryRoot("http://foo.com")
+				.withProperties(props())
 				.build());
 
 		then(stubDownloader).isNull();
@@ -80,6 +84,7 @@ public class GitStubDownloaderTests {
 		StubDownloader stubDownloader = stubDownloaderBuilder.build(new StubRunnerOptionsBuilder()
 				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
 				.withStubRepositoryRoot("git://" + file("/git_samples/contract-git/").getAbsolutePath() + "/")
+				.withProperties(props())
 				.build());
 
 		Map.Entry<StubConfiguration, File> entry = stubDownloader
@@ -96,6 +101,7 @@ public class GitStubDownloaderTests {
 		StubDownloader stubDownloader = stubDownloaderBuilder.build(new StubRunnerOptionsBuilder()
 				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
 				.withStubRepositoryRoot("git://" + file("/git_samples/contract-git").getAbsolutePath())
+				.withProperties(props())
 				.build());
 
 		try {
@@ -113,6 +119,7 @@ public class GitStubDownloaderTests {
 		StubDownloader stubDownloader = stubDownloaderBuilder.build(new StubRunnerOptionsBuilder()
 				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
 				.withStubRepositoryRoot("git://" + file("/git_samples/contract-git").getAbsolutePath())
+				.withProperties(props())
 				.build());
 
 		try {
@@ -121,6 +128,12 @@ public class GitStubDownloaderTests {
 		} catch (IllegalStateException e) {
 			then(e).hasMessageContaining("Concrete version wasn't passed for [foo.bar:bazService::stubs]");
 		}
+	}
+
+	private Map<String, String> props() {
+		Map<String, String> map = new HashMap<>();
+		map.put("git.branch", "master");
+		return map;
 	}
 
 	private File file(String relativePath) throws URISyntaxException {
