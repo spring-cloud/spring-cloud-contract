@@ -53,8 +53,8 @@ class StubRunnerPropertyUtils {
 	static String getProperty(Map<String, String> options, String propName) {
 		if (options != null && options.containsKey(propName)) {
 			String value = options.get(propName);
-			if (log.isDebugEnabled()) {
-				log.debug("Options map contains the prop [" + propName + "] with value [" + value + "]");
+			if (log.isTraceEnabled()) {
+				log.trace("Options map contains the prop [" + propName + "] with value [" + value + "]");
 			}
 			return value;
 		}
@@ -62,22 +62,29 @@ class StubRunnerPropertyUtils {
 		if (StringUtils.hasText(directTry)) {
 			return directTry;
 		}
-		return doGetProp(STUBRUNNER_PROPERTIES + "." + propName);
+		return doGetProp(appendPrefixIfNecessary(propName));
+	}
+
+	private static String appendPrefixIfNecessary(String prop) {
+		if (prop.toLowerCase().startsWith("stubrunner")) {
+			return prop;
+		}
+		return STUBRUNNER_PROPERTIES + "." + prop;
 	}
 
 	private static String doGetProp(String stubRunnerProp) {
 		String systemProp = FETCHER.systemProp(stubRunnerProp);
 		if (StringUtils.hasText(systemProp)) {
-			if (log.isDebugEnabled()) {
-				log.debug("System property [" + stubRunnerProp + "] has value [" + systemProp + "]");
+			if (log.isTraceEnabled()) {
+				log.trace("System property [" + stubRunnerProp + "] has value [" + systemProp + "]");
 			}
 			return systemProp;
 		}
 		String convertedEnvProp = stubRunnerProp.replaceAll("\\.", "_")
 				.replaceAll("-", "_").toUpperCase();
 		String envVar = FETCHER.envVar(convertedEnvProp);
-		if (log.isDebugEnabled()) {
-			log.debug("Environment variable [" + convertedEnvProp + "] has value [" + envVar + "]");
+		if (log.isTraceEnabled()) {
+			log.trace("Environment variable [" + convertedEnvProp + "] has value [" + envVar + "]");
 		}
 		return envVar;
 	}
