@@ -71,7 +71,7 @@ public class ResourcesFileSource implements FileSource {
 	public BinaryFile getBinaryFileNamed(String name) {
 		for (FileSource resource : this.sources) {
 			try {
-				UrlResource uri = new UrlResource(resource.getBinaryFileNamed(name).getUri());
+				UrlResource uri = new UrlResource(resource.getUri());
 				if (uri.exists()) {
 					return resource.getBinaryFileNamed(name);
 				}
