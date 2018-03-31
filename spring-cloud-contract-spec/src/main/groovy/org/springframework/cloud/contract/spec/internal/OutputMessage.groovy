@@ -20,11 +20,20 @@ import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
+import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringEscapeUtils
 import repackaged.nl.flotsam.xeger.Xeger
 
 import java.util.regex.Pattern
-
+/**
+ * Represents an output for messaging. Used for verifying
+ * the body and headers that are sent.
+ *
+ * @author Marcin Grzejszczak
+ * @author Tim Ysewyn
+ * @since 1.0.0
+ */
+@Slf4j
 @TypeChecked
 @EqualsAndHashCode
 @ToString(includePackage = false, includeNames = true)
@@ -36,7 +45,7 @@ class OutputMessage extends Common {
 	Headers headers
 	DslProperty body
 	ExecutionProperty assertThat
-	TestMatchers matchers
+	ResponseBodyMatchers bodyMatchers
 
 	OutputMessage() {}
 
@@ -80,9 +89,18 @@ class OutputMessage extends Common {
 		return new DslProperty(value, server.serverValue)
 	}
 
-	void testMatchers(@DelegatesTo(TestMatchers) Closure closure) {
-		this.matchers = new TestMatchers()
-		closure.delegate = this.matchers
+	/**
+	 * @deprecated Deprecated in favor of bodyMatchers to support other future bodyMatchers too
+	 */
+	@Deprecated
+	void testMatchers(@DelegatesTo(ResponseBodyMatchers) Closure closure) {
+		log.warn("testMatchers method is deprecated. Please use bodyMatchers instead")
+		bodyMatchers(closure)
+	}
+
+	void bodyMatchers(@DelegatesTo(ResponseBodyMatchers) Closure closure) {
+		this.bodyMatchers = new ResponseBodyMatchers()
+		closure.delegate = this.bodyMatchers
 		closure()
 	}
 

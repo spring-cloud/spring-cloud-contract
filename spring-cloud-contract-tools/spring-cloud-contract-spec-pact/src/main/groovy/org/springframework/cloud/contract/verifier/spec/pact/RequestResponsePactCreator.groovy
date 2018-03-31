@@ -79,8 +79,8 @@ class RequestResponsePactCreator {
 		}
 		if (request.body) {
 			DslPart pactRequestBody = BodyConverter.toPactBody(request.body, requestDslPropertyValueExtractor)
-			if (request.matchers?.bodyMatchers) {
-				pactRequestBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(request.matchers.bodyMatchers))
+			if (request.bodyMatchers) {
+				pactRequestBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(request.bodyMatchers))
 			}
 			pactRequestBody.setGenerators(ValueGeneratorConverter.extract(request.body, { DslProperty dslProperty -> dslProperty.clientValue }))
 			pactDslRequest = pactDslRequest.body(pactRequestBody)
@@ -97,8 +97,8 @@ class RequestResponsePactCreator {
 		}
 		if (response.body) {
 			DslPart pactResponseBody = BodyConverter.toPactBody(response.body, responseDslPropertyValueExtractor)
-			if (response.matchers?.bodyMatchers) {
-				pactResponseBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(response.matchers.bodyMatchers))
+			if (response.bodyMatchers) {
+				pactResponseBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(response.bodyMatchers))
 			}
 			pactResponseBody.setGenerators(ValueGeneratorConverter.extract(response.body, { DslProperty dslProperty -> dslProperty.serverValue }))
 			pactDslResponse = pactDslResponse.body(pactResponseBody)

@@ -62,10 +62,8 @@ class StubRunnerStreamMessageSelectorSpec extends Specification {
 						header("foo", 123)
 					}
 					messageBody(foo: "non matching stuff")
-					stubMatchers {
-						bodyMatchers {
-							jsonPath('$.foo', byRegex("[0-9]{3}"))
-						}
+					bodyMatchers {
+						jsonPath('$.foo', byRegex("[0-9]{3}"))
 					}
 				}
 			}
@@ -114,10 +112,8 @@ class StubRunnerStreamMessageSelectorSpec extends Specification {
 						header("foo", 123)
 					}
 					messageBody(foo: 123)
-					stubMatchers {
-						bodyMatchers {
-							jsonPath('$.foo', byRegex("[0-9]{3}"))
-						}
+					bodyMatchers {
+						jsonPath('$.foo', byRegex("[0-9]{3}"))
 					}
 				}
 			}

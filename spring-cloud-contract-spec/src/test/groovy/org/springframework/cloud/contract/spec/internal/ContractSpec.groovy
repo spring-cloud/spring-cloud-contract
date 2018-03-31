@@ -2,6 +2,9 @@ package org.springframework.cloud.contract.spec.internal
 
 import org.springframework.cloud.contract.spec.Contract
 import spock.lang.Specification
+
+import static org.assertj.core.api.Assertions.assertThat
+
 /**
  * @author Marcin Grzejszczak
  */
@@ -290,5 +293,39 @@ then:
 				}
 			}
 			a == b
+	}
+
+	def 'should support deprecated testMatchers and stubMatchers'() {
+		given:
+			def contract = Contract.make {
+				request {
+					method 'GET'
+					url '/path'
+					body(
+							id: [value: '132']
+					)
+					stubMatchers {
+						jsonPath('$.id.value', byRegex(anInteger()))
+					}
+				}
+				response {
+					status OK()
+					body(
+							id: [value: '132'],
+							surname: 'Kowalsky',
+							name: 'Jan',
+							created: '2014-02-02 12:23:43'
+					)
+					headers {
+						contentType(applicationJson())
+					}
+					testMatchers {
+						jsonPath('$.created', byTimestamp())
+					}
+				}
+			}
+		expect:
+			assertThat(contract.request.bodyMatchers.hasMatchers()).isTrue()
+			assertThat(contract.response.bodyMatchers.hasMatchers()).isTrue()
 	}
 }

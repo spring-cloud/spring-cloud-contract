@@ -86,7 +86,7 @@ abstract class MessagingMethodBodyBuilder extends MethodBodyBuilder {
 				} else {
 					bb.startBlock()
 				}
-				validateResponseBodyBlock(bb, outputMessage.matchers?.bodyMatchers, outputMessage.body.serverValue)
+				validateResponseBodyBlock(bb, outputMessage.bodyMatchers, outputMessage.body.serverValue)
 			}
 			if (outputMessage.assertThat) {
 				bb.addLine(outputMessage.assertThat.executionCommand)

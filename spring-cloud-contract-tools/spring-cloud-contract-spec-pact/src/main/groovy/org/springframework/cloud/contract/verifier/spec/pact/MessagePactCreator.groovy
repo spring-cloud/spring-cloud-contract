@@ -34,8 +34,8 @@ class MessagePactCreator {
 			OutputMessage message = contract.outputMessage
 			if (message.body) {
 				DslPart pactResponseBody = BodyConverter.toPactBody(message.body, clientValueExtractor)
-				if (message.matchers?.bodyMatchers) {
-					pactResponseBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(message.matchers.bodyMatchers))
+				if (message.bodyMatchers) {
+					pactResponseBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(message.bodyMatchers))
 				}
 				pactResponseBody.setGenerators(ValueGeneratorConverter.extract(message, { DslProperty dslProperty -> dslProperty.serverValue }))
 				messagePactBuilder = messagePactBuilder.withContent(pactResponseBody)
