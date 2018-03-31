@@ -62,7 +62,9 @@ class StubRunnerIntegrationMessageSelectorSpec extends Specification {
 					}
 					messageBody(foo: "non matching stuff")
 					stubMatchers {
-						jsonPath('$.foo', byRegex("[0-9]{3}"))
+						bodyMatchers {
+							jsonPath('$.foo', byRegex("[0-9]{3}"))
+						}
 					}
 				}
 			}
@@ -112,7 +114,9 @@ class StubRunnerIntegrationMessageSelectorSpec extends Specification {
 					}
 					messageBody(foo: 123)
 					stubMatchers {
-						jsonPath('$.foo', byRegex("[0-9]{3}"))
+						bodyMatchers {
+							jsonPath('$.foo', byRegex("[0-9]{3}"))
+						}
 					}
 				}
 			}

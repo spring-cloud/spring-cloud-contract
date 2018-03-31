@@ -52,6 +52,8 @@ import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.bu
 /**
  * Converts a {@link Request} into {@link RequestPattern}
  *
+ * @author Marcin Grzejszczak
+ * @author Tim Ysewyn
  * @since 1.0.0
  */
 @TypeChecked
@@ -95,17 +97,17 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 		if (contentType == ContentType.JSON) {
 			def originalBody = getMatchingStrategyFromBody(request.body)?.clientValue
-			def body = JsonToJsonPathsConverter.removeMatchingJsonPaths(originalBody, request.matchers)
+			def body = JsonToJsonPathsConverter.removeMatchingJsonPaths(originalBody, request.matchers?.bodyMatchers)
 			JsonPaths values = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(body)
-			if ((values.empty && !request.matchers?.hasMatchers()) || onlySizeAssertionsArePresent(values)) {
+			if ((values.empty && !request.matchers?.bodyMatchers?.hasMatchers()) || onlySizeAssertionsArePresent(values)) {
 				requestPattern.withRequestBody(WireMock.equalToJson(JsonOutput.toJson(getMatchingStrategy(request.body.clientValue).clientValue), false, false))
 			} else {
 				values.findAll{ !it.assertsSize() }.each {
 					requestPattern.withRequestBody(WireMock.matchingJsonPath(it.jsonPath().replace("\\\\", "\\")))
 				}
 			}
-			if (request.matchers?.hasMatchers()) {
-				request.matchers.jsonPathMatchers().each {
+			if (request.matchers?.bodyMatchers?.hasMatchers()) {
+				request.matchers.bodyMatchers.jsonPathMatchers().each {
 					String newPath = JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(it, originalBody)
 					requestPattern.withRequestBody(WireMock.matchingJsonPath(newPath.replace("\\\\", "\\")))
 				}
@@ -122,7 +124,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	}
 
 	private boolean onlySizeAssertionsArePresent(JsonPaths values) {
-		return !values.empty && !request.matchers?.hasMatchers() && values.every { it.assertsSize() }
+		return !values.empty && !request.matchers?.bodyMatchers?.hasMatchers() && values.every { it.assertsSize() }
 	}
 
 	private void appendMultipart(RequestPatternBuilder requestPattern) {

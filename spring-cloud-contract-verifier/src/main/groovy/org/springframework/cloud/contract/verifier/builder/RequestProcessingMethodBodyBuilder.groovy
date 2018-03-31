@@ -43,6 +43,7 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.reco
  * Do not change to {@code @CompileStatic} since it's using double dispatch.
  *
  * @author Olga Maciaszek-Sharma, codearte.io
+ * @author Tim Ysewyn
  *
  * @since 1.0.0
  */
@@ -171,7 +172,7 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 		if (response.body) {
 			bb.endBlock()
 			bb.addLine(addCommentSignIfRequired('and:')).startBlock()
-			validateResponseBodyBlock(bb, response.matchers, response.body.serverValue)
+			validateResponseBodyBlock(bb, response.matchers?.bodyMatchers, response.body.serverValue)
 		}
 	}
 

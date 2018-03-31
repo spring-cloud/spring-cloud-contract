@@ -27,6 +27,8 @@ import repackaged.nl.flotsam.xeger.Xeger
  * Represents an input for messaging. The input can be a message or some
  * action inside the application.
  *
+ * @author Marcin Grzejszczak
+ * @author Tim Ysewyn
  * @since 1.0.0
  */
 @TypeChecked
@@ -41,7 +43,7 @@ class Input extends Common {
 	Headers messageHeaders = new Headers()
 	BodyType messageBody
 	ExecutionProperty assertThat
-	BodyMatchers matchers
+	StubMatchers matchers
 
 	Input() {}
 
@@ -107,8 +109,8 @@ class Input extends Common {
 		this.assertThat = new ExecutionProperty(assertThat)
 	}
 
-	void stubMatchers(@DelegatesTo(BodyMatchers) Closure closure) {
-		this.matchers = new BodyMatchers()
+	void stubMatchers(@DelegatesTo(StubMatchers) Closure closure) {
+		this.matchers = new StubMatchers()
 		closure.delegate = this.matchers
 		closure()
 	}

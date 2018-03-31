@@ -81,9 +81,9 @@ class YamlContractConverterSpec extends Specification {
 			contract.request.headers.entries.find { it.name == "fooReq" &&
 					it.serverValue == "baz" }
 			contract.request.body.clientValue == [foo: "bar"]
-			contract.request.matchers.jsonPathRegexMatchers[0].path() == '$.foo'
-			contract.request.matchers.jsonPathRegexMatchers[0].matchingType() == MatchingType.REGEX
-			contract.request.matchers.jsonPathRegexMatchers[0].value() == 'bar'
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[0].path() == '$.foo'
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[0].matchingType() == MatchingType.REGEX
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[0].value() == 'bar'
 		and:
 			contract.response.status.clientValue == 200
 			contract.response.headers.entries.find { it.name == "foo2" &&
@@ -92,13 +92,16 @@ class YamlContractConverterSpec extends Specification {
 					((ExecutionProperty) it.serverValue).insertValue('foo') == "andMeToo(foo)" }
 			contract.response.headers.entries.find { it.name == "fooRes" &&
 					it.clientValue == "baz" }
-			contract.response.body.clientValue == [foo2: "bar", foo3: "baz"]
-			contract.response.matchers.jsonPathRegexMatchers[0].path() == '$.foo2'
-			contract.response.matchers.jsonPathRegexMatchers[0].matchingType() == MatchingType.REGEX
-			contract.response.matchers.jsonPathRegexMatchers[0].value() == 'bar'
-			contract.response.matchers.jsonPathRegexMatchers[1].path() == '$.foo3'
-			contract.response.matchers.jsonPathRegexMatchers[1].matchingType() == MatchingType.COMMAND
-			contract.response.matchers.jsonPathRegexMatchers[1].value() == new ExecutionProperty('executeMe($it)')
+			contract.response.body.clientValue == [foo2: "bar", foo3: "baz", nullValue: null]
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[0].path() == '$.foo2'
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[0].matchingType() == MatchingType.REGEX
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[0].value() == 'bar'
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[1].path() == '$.foo3'
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[1].matchingType() == MatchingType.COMMAND
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[1].value() == new ExecutionProperty('executeMe($it)')
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[2].path() == '$.nullValue'
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[2].matchingType() == MatchingType.NULL
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[2].value() == null
 		where:
 			yamlFile << [ymlWithRest, ymlWithRest2, ymlWithRest3]
 	}
@@ -151,81 +154,81 @@ class YamlContractConverterSpec extends Specification {
 			RegexPatterns patterns = new RegexPatterns()
 			contract.request.headers.entries.find { it.name == "Content-Type" &&
 					((Pattern) it.clientValue).pattern == "application/json.*" && it.serverValue == "application/json" }
-			contract.request.matchers.jsonPathRegexMatchers[0].path() == '$.duck'
-			contract.request.matchers.jsonPathRegexMatchers[0].matchingType() == MatchingType.REGEX
-			contract.request.matchers.jsonPathRegexMatchers[0].value() == '[0-9]{3}'
-			contract.request.matchers.jsonPathRegexMatchers[1].path() == '$.duck'
-			contract.request.matchers.jsonPathRegexMatchers[1].matchingType() == MatchingType.EQUALITY
-			contract.request.matchers.jsonPathRegexMatchers[2].path() == '$.alpha'
-			contract.request.matchers.jsonPathRegexMatchers[2].matchingType() == MatchingType.REGEX
-			contract.request.matchers.jsonPathRegexMatchers[2].value() == patterns.onlyAlphaUnicode().pattern()
-			contract.request.matchers.jsonPathRegexMatchers[3].path() == '$.alpha'
-			contract.request.matchers.jsonPathRegexMatchers[3].matchingType() == MatchingType.EQUALITY
-			contract.request.matchers.jsonPathRegexMatchers[4].path() == '$.number'
-			contract.request.matchers.jsonPathRegexMatchers[4].matchingType() == MatchingType.REGEX
-			contract.request.matchers.jsonPathRegexMatchers[4].value() == patterns.number().pattern()
-			contract.request.matchers.jsonPathRegexMatchers[5].path() == '$.aBoolean'
-			contract.request.matchers.jsonPathRegexMatchers[5].matchingType() == MatchingType.REGEX
-			contract.request.matchers.jsonPathRegexMatchers[5].value() == patterns.anyBoolean().pattern()
-			contract.request.matchers.jsonPathRegexMatchers[6].path() == '$.date'
-			contract.request.matchers.jsonPathRegexMatchers[6].matchingType() == MatchingType.DATE
-			contract.request.matchers.jsonPathRegexMatchers[6].value() == patterns.isoDate()
-			contract.request.matchers.jsonPathRegexMatchers[7].path() == '$.dateTime'
-			contract.request.matchers.jsonPathRegexMatchers[7].matchingType() == MatchingType.TIMESTAMP
-			contract.request.matchers.jsonPathRegexMatchers[7].value() == patterns.isoDateTime()
-			contract.request.matchers.jsonPathRegexMatchers[8].path() == '$.time'
-			contract.request.matchers.jsonPathRegexMatchers[8].matchingType() == MatchingType.TIME
-			contract.request.matchers.jsonPathRegexMatchers[8].value() == patterns.isoTime()
-			contract.request.matchers.jsonPathRegexMatchers[9].path() == "\$.['key'].['complex.key']"
-			contract.request.matchers.jsonPathRegexMatchers[9].matchingType() == MatchingType.EQUALITY
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[0].path() == '$.duck'
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[0].matchingType() == MatchingType.REGEX
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[0].value() == '[0-9]{3}'
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[1].path() == '$.duck'
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[1].matchingType() == MatchingType.EQUALITY
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[2].path() == '$.alpha'
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[2].matchingType() == MatchingType.REGEX
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[2].value() == patterns.onlyAlphaUnicode().pattern()
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[3].path() == '$.alpha'
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[3].matchingType() == MatchingType.EQUALITY
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[4].path() == '$.number'
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[4].matchingType() == MatchingType.REGEX
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[4].value() == patterns.number().pattern()
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[5].path() == '$.aBoolean'
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[5].matchingType() == MatchingType.REGEX
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[5].value() == patterns.anyBoolean().pattern()
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[6].path() == '$.date'
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[6].matchingType() == MatchingType.DATE
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[6].value() == patterns.isoDate()
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[7].path() == '$.dateTime'
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[7].matchingType() == MatchingType.TIMESTAMP
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[7].value() == patterns.isoDateTime()
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[8].path() == '$.time'
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[8].matchingType() == MatchingType.TIME
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[8].value() == patterns.isoTime()
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[9].path() == "\$.['key'].['complex.key']"
+			contract.request.matchers.bodyMatchers.jsonPathRegexMatchers[9].matchingType() == MatchingType.EQUALITY
 		and:
 			contract.response.status.clientValue == 200
-			contract.response.matchers.jsonPathRegexMatchers[0].path() == '$.duck'
-			contract.response.matchers.jsonPathRegexMatchers[0].matchingType() == MatchingType.REGEX
-			contract.response.matchers.jsonPathRegexMatchers[0].value() == '[0-9]{3}'
-			contract.response.matchers.jsonPathRegexMatchers[1].path() == '$.duck'
-			contract.response.matchers.jsonPathRegexMatchers[1].matchingType() == MatchingType.EQUALITY
-			contract.response.matchers.jsonPathRegexMatchers[2].path() == '$.alpha'
-			contract.response.matchers.jsonPathRegexMatchers[2].matchingType() == MatchingType.REGEX
-			contract.response.matchers.jsonPathRegexMatchers[2].value() == patterns.onlyAlphaUnicode().pattern()
-			contract.response.matchers.jsonPathRegexMatchers[3].path() == '$.alpha'
-			contract.response.matchers.jsonPathRegexMatchers[3].matchingType() == MatchingType.EQUALITY
-			contract.response.matchers.jsonPathRegexMatchers[4].path() == '$.number'
-			contract.response.matchers.jsonPathRegexMatchers[4].matchingType() == MatchingType.REGEX
-			contract.response.matchers.jsonPathRegexMatchers[4].value() == patterns.number().pattern()
-			contract.response.matchers.jsonPathRegexMatchers[5].path() == '$.aBoolean'
-			contract.response.matchers.jsonPathRegexMatchers[5].matchingType() == MatchingType.REGEX
-			contract.response.matchers.jsonPathRegexMatchers[5].value() == patterns.anyBoolean().pattern()
-			contract.response.matchers.jsonPathRegexMatchers[6].path() == '$.date'
-			contract.response.matchers.jsonPathRegexMatchers[6].matchingType() == MatchingType.DATE
-			contract.response.matchers.jsonPathRegexMatchers[6].value() == patterns.isoDate()
-			contract.response.matchers.jsonPathRegexMatchers[7].path() == '$.dateTime'
-			contract.response.matchers.jsonPathRegexMatchers[7].matchingType() == MatchingType.TIMESTAMP
-			contract.response.matchers.jsonPathRegexMatchers[7].value() == patterns.isoDateTime()
-			contract.response.matchers.jsonPathRegexMatchers[8].path() == '$.time'
-			contract.response.matchers.jsonPathRegexMatchers[8].matchingType() == MatchingType.TIME
-			contract.response.matchers.jsonPathRegexMatchers[8].value() == patterns.isoTime()
-			contract.response.matchers.jsonPathRegexMatchers[9].path() == '$.valueWithTypeMatch'
-			contract.response.matchers.jsonPathRegexMatchers[9].matchingType() == MatchingType.TYPE
-			contract.response.matchers.jsonPathRegexMatchers[10].path() == '$.valueWithMin'
-			contract.response.matchers.jsonPathRegexMatchers[10].matchingType() == MatchingType.TYPE
-			contract.response.matchers.jsonPathRegexMatchers[10].minTypeOccurrence() == 1
-			contract.response.matchers.jsonPathRegexMatchers[11].path() == '$.valueWithMax'
-			contract.response.matchers.jsonPathRegexMatchers[11].matchingType() == MatchingType.TYPE
-			contract.response.matchers.jsonPathRegexMatchers[11].maxTypeOccurrence() == 3
-			contract.response.matchers.jsonPathRegexMatchers[12].path() == '$.valueWithMinMax'
-			contract.response.matchers.jsonPathRegexMatchers[12].matchingType() == MatchingType.TYPE
-			contract.response.matchers.jsonPathRegexMatchers[12].minTypeOccurrence() == 1
-			contract.response.matchers.jsonPathRegexMatchers[12].maxTypeOccurrence() == 3
-			contract.response.matchers.jsonPathRegexMatchers[13].path() == '$.valueWithMinEmpty'
-			contract.response.matchers.jsonPathRegexMatchers[13].matchingType() == MatchingType.TYPE
-			contract.response.matchers.jsonPathRegexMatchers[13].minTypeOccurrence() == 0
-			contract.response.matchers.jsonPathRegexMatchers[14].path() == '$.valueWithMaxEmpty'
-			contract.response.matchers.jsonPathRegexMatchers[14].matchingType() == MatchingType.TYPE
-			contract.response.matchers.jsonPathRegexMatchers[14].maxTypeOccurrence() == 0
-			contract.response.matchers.jsonPathRegexMatchers[15].path() == '$.duck'
-			contract.response.matchers.jsonPathRegexMatchers[15].matchingType() == MatchingType.COMMAND
-			contract.response.matchers.jsonPathRegexMatchers[15].value() == new ExecutionProperty('assertThatValueIsANumber($it)')
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[0].path() == '$.duck'
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[0].matchingType() == MatchingType.REGEX
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[0].value() == '[0-9]{3}'
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[1].path() == '$.duck'
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[1].matchingType() == MatchingType.EQUALITY
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[2].path() == '$.alpha'
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[2].matchingType() == MatchingType.REGEX
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[2].value() == patterns.onlyAlphaUnicode().pattern()
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[3].path() == '$.alpha'
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[3].matchingType() == MatchingType.EQUALITY
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[4].path() == '$.number'
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[4].matchingType() == MatchingType.REGEX
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[4].value() == patterns.number().pattern()
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[5].path() == '$.aBoolean'
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[5].matchingType() == MatchingType.REGEX
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[5].value() == patterns.anyBoolean().pattern()
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[6].path() == '$.date'
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[6].matchingType() == MatchingType.DATE
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[6].value() == patterns.isoDate()
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[7].path() == '$.dateTime'
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[7].matchingType() == MatchingType.TIMESTAMP
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[7].value() == patterns.isoDateTime()
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[8].path() == '$.time'
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[8].matchingType() == MatchingType.TIME
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[8].value() == patterns.isoTime()
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[9].path() == '$.valueWithTypeMatch'
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[9].matchingType() == MatchingType.TYPE
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[10].path() == '$.valueWithMin'
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[10].matchingType() == MatchingType.TYPE
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[10].minTypeOccurrence() == 1
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[11].path() == '$.valueWithMax'
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[11].matchingType() == MatchingType.TYPE
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[11].maxTypeOccurrence() == 3
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[12].path() == '$.valueWithMinMax'
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[12].matchingType() == MatchingType.TYPE
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[12].minTypeOccurrence() == 1
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[12].maxTypeOccurrence() == 3
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[13].path() == '$.valueWithMinEmpty'
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[13].matchingType() == MatchingType.TYPE
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[13].minTypeOccurrence() == 0
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[14].path() == '$.valueWithMaxEmpty'
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[14].matchingType() == MatchingType.TYPE
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[14].maxTypeOccurrence() == 0
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[15].path() == '$.duck'
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[15].matchingType() == MatchingType.COMMAND
+			contract.response.matchers.bodyMatchers.jsonPathRegexMatchers[15].value() == new ExecutionProperty('assertThatValueIsANumber($it)')
 	}
 
 	def "should convert YAML with REST with response from request"() {
@@ -285,9 +288,9 @@ class YamlContractConverterSpec extends Specification {
 			contract.input.messageHeaders.entries.find { it.name == "foo" &&
 					((Pattern) it.clientValue).pattern == "bar" && it.serverValue == "bar" }
 			contract.input.messageBody.clientValue == [foo: "bar"]
-			contract.input.matchers.jsonPathRegexMatchers[0].path() == '$.bar'
-			contract.input.matchers.jsonPathRegexMatchers[0].matchingType() == MatchingType.REGEX
-			contract.input.matchers.jsonPathRegexMatchers[0].value() == 'bar'
+			contract.input.matchers.bodyMatchers.jsonPathRegexMatchers[0].path() == '$.bar'
+			contract.input.matchers.bodyMatchers.jsonPathRegexMatchers[0].matchingType() == MatchingType.REGEX
+			contract.input.matchers.bodyMatchers.jsonPathRegexMatchers[0].value() == 'bar'
 		and:
 			contract.outputMessage.assertThat.toString() == "baz()"
 			contract.outputMessage.headers.entries.find { it.name == "foo2" &&
@@ -297,12 +300,12 @@ class YamlContractConverterSpec extends Specification {
 			contract.outputMessage.headers.entries.find { it.name == "fooRes" &&
 					it.clientValue == "baz" }
 			contract.outputMessage.body.clientValue == [foo2: "bar", foo3: "baz"]
-			contract.outputMessage.matchers.jsonPathRegexMatchers[0].path() == '$.foo2'
-			contract.outputMessage.matchers.jsonPathRegexMatchers[0].matchingType() == MatchingType.REGEX
-			contract.outputMessage.matchers.jsonPathRegexMatchers[0].value() == 'bar'
-			contract.outputMessage.matchers.jsonPathRegexMatchers[1].path() == '$.foo3'
-			contract.outputMessage.matchers.jsonPathRegexMatchers[1].matchingType() == MatchingType.COMMAND
-			contract.outputMessage.matchers.jsonPathRegexMatchers[1].value() == new ExecutionProperty('executeMe($it)')
+			contract.outputMessage.matchers.bodyMatchers.jsonPathRegexMatchers[0].path() == '$.foo2'
+			contract.outputMessage.matchers.bodyMatchers.jsonPathRegexMatchers[0].matchingType() == MatchingType.REGEX
+			contract.outputMessage.matchers.bodyMatchers.jsonPathRegexMatchers[0].value() == 'bar'
+			contract.outputMessage.matchers.bodyMatchers.jsonPathRegexMatchers[1].path() == '$.foo3'
+			contract.outputMessage.matchers.bodyMatchers.jsonPathRegexMatchers[1].matchingType() == MatchingType.COMMAND
+			contract.outputMessage.matchers.bodyMatchers.jsonPathRegexMatchers[1].value() == new ExecutionProperty('executeMe($it)')
 	}
 
 	def "should convert YAML with messaging triggered by a method to DSL"() {

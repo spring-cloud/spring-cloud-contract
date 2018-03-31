@@ -373,7 +373,9 @@ abstract class MethodBodyBuilder {
 			bb.startBlock()
 			// for the rest we'll do JsonPath matching in brute force
 			bodyMatchers.jsonPathMatchers().each {
-				if (MatchingType.regexRelated(it.matchingType()) || it.matchingType() == MatchingType.EQUALITY) {
+				if (it.matchingType() == MatchingType.NULL) {
+					methodForNullCheck(it, bb)
+				} else if (MatchingType.regexRelated(it.matchingType()) || it.matchingType() == MatchingType.EQUALITY) {
 					methodForEqualityCheck(it, bb, copiedBody)
 				} else if (it.matchingType() == MatchingType.COMMAND) {
 					methodForCommandExecution(it, bb, copiedBody)
@@ -450,6 +452,13 @@ abstract class MethodBodyBuilder {
 		retrieveObjectByPath(copiedBody, bodyMatcher.path())
 		ExecutionProperty property = bodyMatcher.value() as ExecutionProperty
 		bb.addLine(postProcessJsonPathCall(property.insertValue("parsedJson.read(${path})")))
+		addColonIfRequired(bb)
+	}
+
+	protected void methodForNullCheck(BodyMatcher bodyMatcher, BlockBuilder bb) {
+		String quotedAndEscaptedPath = quotedAndEscaped(bodyMatcher.path())
+		String method = "assertThat(parsedJson.read(${quotedAndEscaptedPath})).isNull()"
+		bb.addLine(postProcessJsonPathCall(method))
 		addColonIfRequired(bb)
 	}
 

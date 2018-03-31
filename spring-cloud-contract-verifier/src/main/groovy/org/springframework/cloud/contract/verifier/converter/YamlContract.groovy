@@ -130,12 +130,12 @@ class YamlContract {
 
 	@CompileStatic
 	static enum StubMatcherType {
-		by_date, by_time, by_timestamp, by_regex, by_equality
+		by_date, by_time, by_timestamp, by_regex, by_equality, by_null
 	}
 
 	@CompileStatic
 	static enum TestMatcherType {
-		by_date, by_time, by_timestamp, by_regex, by_equality, by_type, by_command
+		by_date, by_time, by_timestamp, by_regex, by_equality, by_type, by_command, by_null
 	}
 
 	@CompileStatic

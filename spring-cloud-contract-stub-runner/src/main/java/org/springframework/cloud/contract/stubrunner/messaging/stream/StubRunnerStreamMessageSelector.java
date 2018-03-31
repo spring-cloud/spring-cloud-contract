@@ -23,6 +23,7 @@ import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.BodyMatcher;
 import org.springframework.cloud.contract.spec.internal.BodyMatchers;
 import org.springframework.cloud.contract.spec.internal.Header;
+import org.springframework.cloud.contract.spec.internal.StubMatchers;
 import org.springframework.cloud.contract.verifier.util.MapConverter;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
 import org.springframework.cloud.contract.verifier.util.JsonPaths;
@@ -40,6 +41,7 @@ import com.toomuchcoding.jsonassert.JsonAssertion;
  * Passes through a message that matches the one defined in the DSL
  *
  * @author Marcin Grzejszczak
+ * @author Tim Ysewyn
  */
 class StubRunnerStreamMessageSelector implements MessageSelector {
 
@@ -56,10 +58,14 @@ class StubRunnerStreamMessageSelector implements MessageSelector {
 			return false;
 		}
 		Object inputMessage = message.getPayload();
-		BodyMatchers matchers = this.groovyDsl.getInput().getMatchers();
+		StubMatchers stubMatchers = this.groovyDsl.getInput().getMatchers();
+		BodyMatchers bodyMatchers = null;
+		if (stubMatchers != null) {
+			bodyMatchers = stubMatchers.getBodyMatchers();
+		}
 		Object dslBody = MapConverter.getStubSideValues(this.groovyDsl.getInput().getMessageBody());
 		Object matchingInputMessage = JsonToJsonPathsConverter
-				.removeMatchingJsonPaths(dslBody, matchers);
+				.removeMatchingJsonPaths(dslBody, bodyMatchers);
 		JsonPaths jsonPaths = JsonToJsonPathsConverter
 				.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(
 						matchingInputMessage);
@@ -74,8 +80,8 @@ class StubRunnerStreamMessageSelector implements MessageSelector {
 		for (MethodBufferingJsonVerifiable path : jsonPaths) {
 			matches &= matchesJsonPath(parsedJson, path.jsonPath());
 		}
-		if (matchers != null && matchers.hasMatchers()) {
-			for (BodyMatcher matcher : matchers.jsonPathMatchers()) {
+		if (bodyMatchers != null && bodyMatchers.hasMatchers()) {
+			for (BodyMatcher matcher : bodyMatchers.jsonPathMatchers()) {
 				String jsonPath = JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher, dslBody);
 				matches &= matchesJsonPath(parsedJson, jsonPath);
 			}

@@ -2,10 +2,12 @@ package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+import org.apache.commons.lang3.RandomStringUtils
 
 import java.util.regex.Pattern
 /**
  * @author Marcin Grzejszczak
+ * @author Tim Ysewyn
  */
 @PackageScope
 @CompileStatic
@@ -40,8 +42,17 @@ abstract class PatternValueDslProperty<T extends DslProperty> {
 				RandomStringGenerator.randomString(20))
 	}
 
+	T anyAlphaNumeric() {
+		return createAndValidateProperty(RegexPatterns.ALPHA_NUMERIC,
+				RandomStringUtils.randomAlphanumeric(20))
+	}
+
 	T anyNumber() {
 		return createAndValidateProperty(RegexPatterns.NUMBER, this.random.nextInt())
+	}
+
+	T anyInteger() {
+		return createAndValidateProperty(RegexPatterns.INTEGER, this.random.nextInt())
 	}
 
 	T anyPositiveInt() {
@@ -50,6 +61,11 @@ abstract class PatternValueDslProperty<T extends DslProperty> {
 
 	T anyDouble() {
 		return createAndValidateProperty(RegexPatterns.DOUBLE, this.random.nextInt(100) + this.random.nextDouble())
+	}
+
+	T anyHex() {
+		return createAndValidateProperty(RegexPatterns.HEX,
+				RandomStringUtils.random(10, "0123456789abcdef"))
 	}
 
 	T aBoolean() {
