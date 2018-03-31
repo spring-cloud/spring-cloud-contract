@@ -476,6 +476,7 @@ class PactContractConverterSpec extends Specification {
 						status(200)
 						headers {
 							contentType(applicationJson())
+							header("someHeaderWithJsonContent", '{"issue":"#595"}')
 						}
 						body([
 							[
