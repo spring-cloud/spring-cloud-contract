@@ -19,7 +19,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-contract-verifier</artifactId>
+			<artifactId>spring-cloud-contract-stub-runner</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -36,6 +36,10 @@
 		<dependency>
 			<groupId>au.com.dius</groupId>
 			<artifactId>pact-jvm-consumer-java8_2.12</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>au.com.dius</groupId>
+			<artifactId>pact-jvm-provider-junit_2.12</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.spockframework</groupId>

@@ -255,7 +255,7 @@ public class AetherStubDownloader implements StubDownloader {
 	}
 
 	private static File unpackStubJarToATemporaryFolder(URI stubJarUri) {
-		File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage.unpackStubJarToATemporaryFolder(TEMP_DIR_PREFIX);
+		File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage.createTempDir(TEMP_DIR_PREFIX);
 		log.info("Unpacking stub from JAR [URI: " + stubJarUri + "]");
 		unzipTo(new File(stubJarUri), tmpDirWhereStubsWillBeUnzipped);
 		TemporaryFileStorage.add(tmpDirWhereStubsWillBeUnzipped);

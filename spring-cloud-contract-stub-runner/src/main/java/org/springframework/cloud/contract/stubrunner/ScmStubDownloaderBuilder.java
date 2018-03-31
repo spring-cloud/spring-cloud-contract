@@ -122,7 +122,7 @@ class GitContractsRepo {
 		File file = CACHED_LOCATIONS.get(repo);
 		GitStubDownloaderProperties properties = new GitStubDownloaderProperties(repo, this.options);
 		if (file == null) {
-			File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage.unpackStubJarToATemporaryFolder(TEMP_DIR_PREFIX);
+			File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage.createTempDir(TEMP_DIR_PREFIX);
 			GitRepo gitRepo = new GitRepo(tmpDirWhereStubsWillBeUnzipped, properties);
 			file = gitRepo.cloneProject(properties.url);
 			gitRepo.checkout(file, properties.branch);

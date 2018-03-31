@@ -97,7 +97,7 @@ class TemporaryFileStorage {
 		}
 	}
 
-	static File unpackStubJarToATemporaryFolder(String tempDirPrefix) {
+	static File createTempDir(String tempDirPrefix) {
 		try {
 			return createTempDirectory(tempDirPrefix)
 					.toFile();
