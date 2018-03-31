@@ -405,6 +405,18 @@ path will be <tt>/com/example/artifactid</tt><br /><b>User property is</b>: <tt>
           
 <tr class="b">
             
+<td><b><a href="#contractsProperties">contractsProperties</a></b></td>
+            
+<td><tt>Map</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>Map of properties that can be passed to custom
+<tt>StubDownloaderBuilder</tt><br /><b>User property is</b>: <tt>contractsProperties</tt>.<br /></td>
+          </tr>
+          
+<tr class="a">
+            
 <td><b><a href="#contractsRepositoryPassword">contractsRepositoryPassword</a></b></td>
             
 <td><tt>String</tt></td>
@@ -414,7 +426,7 @@ path will be <tt>/com/example/artifactid</tt><br /><b>User property is</b>: <tt>
 <td>The password to be used to connect to the repo with contracts.<br /><b>User property is</b>: <tt>contractsRepositoryPassword</tt>.<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#contractsRepositoryProxyHost">contractsRepositoryProxyHost</a></b></td>
             
@@ -425,7 +437,7 @@ path will be <tt>/com/example/artifactid</tt><br /><b>User property is</b>: <tt>
 <td>The proxy host to be used to connect to the repo with contracts.<br /><b>User property is</b>: <tt>contractsRepositoryProxyHost</tt>.<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#contractsRepositoryProxyPort">contractsRepositoryProxyPort</a></b></td>
             
@@ -436,7 +448,7 @@ path will be <tt>/com/example/artifactid</tt><br /><b>User property is</b>: <tt>
 <td>The proxy port to be used to connect to the repo with contracts.<br /><b>User property is</b>: <tt>contractsRepositoryProxyPort</tt>.<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#contractsRepositoryUrl">contractsRepositoryUrl</a></b></td>
             
@@ -444,13 +456,13 @@ path will be <tt>/com/example/artifactid</tt><br /><b>User property is</b>: <tt>
             
 <td><tt>-</tt></td>
             
-<td>The URL from which a JAR containing the contracts should get
-downloaded. If not provided but artifactid / coordinates notation
-was provided then the current Maven's build repositories will be
-taken into consideration<br /><b>User property is</b>: <tt>contractsRepositoryUrl</tt>.<br /></td>
+<td>The URL from which a contracts should get downloaded. If not
+provided but artifactid / coordinates notation was provided then
+the current Maven's build repositories will be taken into
+consideration<br /><b>User property is</b>: <tt>contractsRepositoryUrl</tt>.<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#contractsRepositoryUsername">contractsRepositoryUsername</a></b></td>
             
@@ -461,7 +473,7 @@ taken into consideration<br /><b>User property is</b>: <tt>contractsRepositoryUr
 <td>The user name to be used to connect to the repo with contracts.<br /><b>User property is</b>: <tt>contractsRepositoryUsername</tt>.<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#contractsSnapshotCheckSkip">contractsSnapshotCheckSkip</a></b></td>
             
@@ -473,7 +485,7 @@ taken into consideration<br /><b>User property is</b>: <tt>contractsRepositoryUr
 JAR was downloaded from local or remote location<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>contractsSnapshotCheckSkip</tt>.<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#deleteStubsAfterTest">deleteStubsAfterTest</a></b></td>
             
@@ -485,7 +497,7 @@ JAR was downloaded from local or remote location<br /><b>Default value is</b>: <
 folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>User property is</b>: <tt>deleteStubsAfterTest</tt>.<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#excludedFiles">excludedFiles</a></b></td>
             
@@ -496,7 +508,7 @@ folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>
 <td>Patterns that should not be taken into account for processing<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#generatedTestSourcesDir">generatedTestSourcesDir</a></b></td>
             
@@ -507,7 +519,7 @@ folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>
 <td>(no description)<br /><b>Default value is</b>: <tt>${project.build.directory}/generated-test-sources/contracts</tt>.<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#ignoredFiles">ignoredFiles</a></b></td>
             
@@ -519,7 +531,7 @@ folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>
 @Ignored tests<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#imports">imports</a></b></td>
             
@@ -530,7 +542,7 @@ folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>
 <td>Imports that should be added to generated tests<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#mavenTestSkip">mavenTestSkip</a></b></td>
             
@@ -541,7 +553,7 @@ folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>
 <td>(no description)<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>maven.test.skip</tt>.<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#nameSuffixForTests">nameSuffixForTests</a></b></td>
             
@@ -552,7 +564,7 @@ folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>
 <td>(no description)<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#packageWithBaseClasses">packageWithBaseClasses</a></b></td>
             
@@ -571,7 +583,7 @@ test source file that will have the package
 last folders to and attach <tt>Base</tt> to its name.<br /><b>User property is</b>: <tt>packageWithBaseClasses</tt>.<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#ruleClassForTests">ruleClassForTests</a></b></td>
             
@@ -582,7 +594,7 @@ last folders to and attach <tt>Base</tt> to its name.<br /><b>User property is</
 <td>(no description)<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#skip">skip</a></b></td>
             
@@ -593,7 +605,7 @@ last folders to and attach <tt>Base</tt> to its name.<br /><b>User property is</
 <td>(no description)<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>spring.cloud.contract.verifier.skip</tt>.<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#skipTests">skipTests</a></b></td>
             
@@ -604,7 +616,7 @@ last folders to and attach <tt>Base</tt> to its name.<br /><b>User property is</
 <td>(no description)<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>skipTests</tt>.<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#staticImports">staticImports</a></b></td>
             
@@ -615,7 +627,7 @@ last folders to and attach <tt>Base</tt> to its name.<br /><b>User property is</
 <td>Static imports that should be added to generated tests<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#testFramework">testFramework</a></b></td>
             
@@ -626,7 +638,7 @@ last folders to and attach <tt>Base</tt> to its name.<br /><b>User property is</
 <td>(no description)<br /><b>Default value is</b>: <tt>JUNIT</tt>.<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#testMode">testMode</a></b></td>
             
@@ -758,6 +770,19 @@ path will be <tt>/com/example/artifactid</tt></div>
           
 <li><b>User Property</b>: <tt>contractsPath</tt></li>
         </ul><hr />
+<p><b><a name="contractsProperties">contractsProperties</a>:</b></p>
+        
+<div>Map of properties that can be passed to custom
+<tt>StubDownloaderBuilder</tt></div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>java.util.Map</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>contractsProperties</tt></li>
+        </ul><hr />
 <p><b><a name="contractsRepositoryPassword">contractsRepositoryPassword</a>:</b></p>
         
 <div>The password to be used to connect to the repo with contracts.</div>
@@ -796,10 +821,10 @@ path will be <tt>/com/example/artifactid</tt></div>
         </ul><hr />
 <p><b><a name="contractsRepositoryUrl">contractsRepositoryUrl</a>:</b></p>
         
-<div>The URL from which a JAR containing the contracts should get
-downloaded. If not provided but artifactid / coordinates notation
-was provided then the current Maven's build repositories will be
-taken into consideration</div>
+<div>The URL from which a contracts should get downloaded. If not
+provided but artifactid / coordinates notation was provided then
+the current Maven's build repositories will be taken into
+consideration</div>
         
 <ul>
           

@@ -349,6 +349,18 @@ path will be <tt>/com/example/artifactid</tt><br /><b>User property is</b>: <tt>
           
 <tr class="b">
             
+<td><b><a href="#contractsProperties">contractsProperties</a></b></td>
+            
+<td><tt>Map</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>Map of properties that can be passed to custom
+<tt>StubDownloaderBuilder</tt><br /><b>User property is</b>: <tt>contractsProperties</tt>.<br /></td>
+          </tr>
+          
+<tr class="a">
+            
 <td><b><a href="#contractsRepositoryPassword">contractsRepositoryPassword</a></b></td>
             
 <td><tt>String</tt></td>
@@ -358,7 +370,7 @@ path will be <tt>/com/example/artifactid</tt><br /><b>User property is</b>: <tt>
 <td>The password to be used to connect to the repo with contracts.<br /><b>User property is</b>: <tt>contractsRepositoryPassword</tt>.<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#contractsRepositoryProxyHost">contractsRepositoryProxyHost</a></b></td>
             
@@ -369,7 +381,7 @@ path will be <tt>/com/example/artifactid</tt><br /><b>User property is</b>: <tt>
 <td>The proxy host to be used to connect to the repo with contracts.<br /><b>User property is</b>: <tt>contractsRepositoryProxyHost</tt>.<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#contractsRepositoryProxyPort">contractsRepositoryProxyPort</a></b></td>
             
@@ -380,7 +392,7 @@ path will be <tt>/com/example/artifactid</tt><br /><b>User property is</b>: <tt>
 <td>The proxy port to be used to connect to the repo with contracts.<br /><b>User property is</b>: <tt>contractsRepositoryProxyPort</tt>.<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#contractsRepositoryUrl">contractsRepositoryUrl</a></b></td>
             
@@ -394,7 +406,7 @@ was provided then the current Maven's build repositories will be
 taken into consideration<br /><b>User property is</b>: <tt>contractsRepositoryUrl</tt>.<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#contractsRepositoryUsername">contractsRepositoryUsername</a></b></td>
             
@@ -405,7 +417,7 @@ taken into consideration<br /><b>User property is</b>: <tt>contractsRepositoryUr
 <td>The user name to be used to connect to the repo with contracts.<br /><b>User property is</b>: <tt>contractsRepositoryUsername</tt>.<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#contractsSnapshotCheckSkip">contractsSnapshotCheckSkip</a></b></td>
             
@@ -417,7 +429,7 @@ taken into consideration<br /><b>User property is</b>: <tt>contractsRepositoryUr
 JAR was downloaded from local or remote location<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>contractsSnapshotCheckSkip</tt>.<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#deleteStubsAfterTest">deleteStubsAfterTest</a></b></td>
             
@@ -429,7 +441,7 @@ JAR was downloaded from local or remote location<br /><b>Default value is</b>: <
 folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>User property is</b>: <tt>deleteStubsAfterTest</tt>.<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#destination">destination</a></b></td>
             
@@ -440,7 +452,7 @@ folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>
 <td>(no description)<br /><b>Default value is</b>: <tt>${basedir}</tt>.<br /><b>User property is</b>: <tt>stubsDirectory</tt>.<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#excludeBuildFolders">excludeBuildFolders</a></b></td>
             
@@ -453,7 +465,7 @@ folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>
 further processing.<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>excludeBuildFolders</tt>.<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#skip">skip</a></b></td>
             
@@ -464,7 +476,7 @@ further processing.<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User p
 <td>(no description)<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>spring.cloud.contract.verifier.skip</tt>.<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><b><a href="#source">source</a></b></td>
             
@@ -478,7 +490,7 @@ further processing.<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User p
 maven project.</p><br /><b>Default value is</b>: <tt>${basedir}</tt>.<br /><b>User property is</b>: <tt>contractsDirectory</tt>.<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><b><a href="#stubsDirectory">stubsDirectory</a></b></td>
             
@@ -554,6 +566,19 @@ path will be <tt>/com/example/artifactid</tt></div>
 <li><b>Required</b>: <tt>No</tt></li>
           
 <li><b>User Property</b>: <tt>contractsPath</tt></li>
+        </ul><hr />
+<p><b><a name="contractsProperties">contractsProperties</a>:</b></p>
+        
+<div>Map of properties that can be passed to custom
+<tt>StubDownloaderBuilder</tt></div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>java.util.Map</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>contractsProperties</tt></li>
         </ul><hr />
 <p><b><a name="contractsRepositoryPassword">contractsRepositoryPassword</a>:</b></p>
         

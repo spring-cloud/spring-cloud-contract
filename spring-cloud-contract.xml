@@ -8,8 +8,8 @@
 </info>
 <preface>
 <title></title>
-<simpara>_Documentation Authors: Adam Dudczak, Mathias Düsterhöft, Marcin Grzejszczak, Dennis Kieselhorst, Jakub Kubryński, Karol Lassak,
-Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer, Jay Bryant</simpara>
+<simpara><emphasis>Documentation Authors: Adam Dudczak, Mathias Düsterhöft, Marcin Grzejszczak, Dennis Kieselhorst, Jakub Kubryński, Karol Lassak,
+Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer, Jay Bryant</emphasis></simpara>
 <simpara>2.0.0.BUILD-SNAPSHOT</simpara>
 </preface>
 <chapter xml:id="_spring_cloud_contract">
@@ -53,7 +53,7 @@ Spring Cloud Contract Verifier.</simpara>
 <informalfigure>
 <mediaobject>
 <imageobject>
-<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.2.x/docs/src/main/asciidoc/images/Deps.png"/>
+<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/Deps.png"/>
 </imageobject>
 <textobject><phrase>Microservices Architecture</phrase></textobject>
 </mediaobject>
@@ -128,7 +128,7 @@ are those that your application directly uses.</simpara>
 <informalfigure>
 <mediaobject>
 <imageobject>
-<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.2.x/docs/src/main/asciidoc/images/Stubs2.png"/>
+<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/Stubs2.png"/>
 </imageobject>
 <textobject><phrase>Stubbed Services</phrase></textobject>
 </mediaobject>
@@ -710,8 +710,8 @@ we mark the client as a fraud.</simpara>
 Issuance has an artifact-id of <literal>http-client</literal>, and both have a <literal>group-id</literal> of <literal>com.example</literal>.</simpara>
 <simpara>Social remark - both client and server development teams need to communicate directly and
 discuss changes while going through the process. CDC is all about communication.</simpara>
-<simpara>The <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/1.2.x/samples/standalone/dsl/http-server">server
-side code is available here</link> and <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/1.2.x/samples/standalone/dsl/http-client">the
+<simpara>The <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-server">server
+side code is available here</link> and <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-client">the
 client code here</link>.</simpara>
 <tip>
 <simpara>In this case, the producer owns the contracts. Physically, all the contract are
@@ -1329,7 +1329,7 @@ constant development.</simpara>
 <title>Spring Cloud Contract FAQ</title>
 <section xml:id="_why_use_spring_cloud_contract_verifier_and_not_x">
 <title>Why use Spring Cloud Contract Verifier and not X ?</title>
-<simpara>For the time being Spring Cloud Contract Verifier is a JVM based tool. So it could be your first pick when you&#8217;re already creating
+<simpara>For the time being Spring Cloud Contract is a JVM based tool. So it could be your first pick when you&#8217;re already creating
 software for the JVM. This project has a lot of really interesting features but especially quite a few of them definitely make
 Spring Cloud Contract Verifier stand out on the "market" of Consumer Driven Contract (CDC) tooling. Out of many the most interesting are:</simpara>
 <itemizedlist>
@@ -1350,6 +1350,12 @@ Spring Cloud Contract Verifier stand out on the "market" of Consumer Driven Cont
 </listitem>
 <listitem>
 <simpara>Spring Cloud integration - no discovery service is needed for integration tests</simpara>
+</listitem>
+<listitem>
+<simpara>Spring Cloud Contract integrates with Pact out of the box and provides easy hooks to extend its functionality</simpara>
+</listitem>
+<listitem>
+<simpara>Via Docker adds support for any language &amp; framework used</simpara>
 </listitem>
 </itemizedlist>
 </section>
@@ -1512,7 +1518,7 @@ consumer will you break with your local changes.</simpara>
 <title>Repo structure</title>
 <simpara>Let&#8217;s assume that we have a producer with coordinates <literal>com.example:server</literal> and 3 consumers: <literal>client1</literal>,
 <literal>client2</literal>, <literal>client3</literal>. Then in the repository with common contracts you would have the following setup
-(which you can checkout <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/1.0.x/samples/standalone/contracts">here</link>:</simpara>
+(which you can checkout <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/contracts">here</link>):</simpara>
 <programlisting language="bash" linenumbering="unnumbered">├── com
 │   └── example
 │       └── server
@@ -1549,15 +1555,15 @@ one to one to the contents of the repo.</simpara>
 	&lt;parent&gt;
 		&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
 		&lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
-		&lt;version&gt;1.5.10.RELEASE&lt;/version&gt;
+		&lt;version&gt;2.0.0.BUILD-SNAPSHOT&lt;/version&gt;
 		&lt;relativePath /&gt;
 	&lt;/parent&gt;
 
 	&lt;properties&gt;
 		&lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
 		&lt;java.version&gt;1.8&lt;/java.version&gt;
-		&lt;spring-cloud-contract.version&gt;1.2.5.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
-		&lt;spring-cloud-dependencies.version&gt;Edgware.BUILD-SNAPSHOT&lt;/spring-cloud-dependencies.version&gt;
+		&lt;spring-cloud-contract.version&gt;2.0.0.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
+		&lt;spring-cloud-dependencies.version&gt;Finchley.BUILD-SNAPSHOT&lt;/spring-cloud-dependencies.version&gt;
 		&lt;excludeBuildFolders&gt;true&lt;/excludeBuildFolders&gt;
 	&lt;/properties&gt;
 
@@ -1735,6 +1741,7 @@ of the JAR containing the contracts:</simpara>
 	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 	&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
 	&lt;configuration&gt;
+		&lt;contractsMode&gt;REMOTE&lt;/contractsMode&gt;
 		&lt;contractsRepositoryUrl&gt;http://link/to/your/nexus/or/artifactory/or/sth&lt;/contractsRepositoryUrl&gt;
 		&lt;contractDependency&gt;
 			&lt;groupId&gt;com.example.standalone&lt;/groupId&gt;
@@ -1909,8 +1916,8 @@ configurations {
         include: "**/*",
         excludes: [
             "**/${project.name}/**"",
-            **/${first-topic}/**",
-            **/${second-topic}/**])
+            "**/${first-topic}/**",
+            "**/${second-topic}/**"])
 }</programlisting>
 <itemizedlist>
 <listitem>
@@ -1922,20 +1929,214 @@ deleteUnwantedContracts.dependsOn("unzipContracts")
 build.dependsOn("deleteUnwantedContracts")</programlisting>
 <itemizedlist>
 <listitem>
-<simpara>Configure plugin by specifying the directory containing contracts using <literal><literal>contractsDslDir</literal></literal> property</simpara>
+<simpara>Configure plugin by specifying the directory containing contracts using <literal>contractsDslDir</literal> property</simpara>
 </listitem>
 </itemizedlist>
 <programlisting language="groovy" linenumbering="unnumbered">contracts {
-
     contractsDslDir = new File("${buildDir}/unpackedContracts")
 }</programlisting>
 </section>
 </section>
 </section>
-<section xml:id="_can_i_have_multiple_base_classes_for_tests">
-<title>Can I have multiple base classes for tests?</title>
-<simpara>Yes! Check out the <link xl:href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_different_base_classes_for_contracts">Different base classes for contracts</link> sections
-of either Gradle or Maven plugins.</simpara>
+<section xml:id="_do_i_need_a_binary_storage_can_t_i_use_git">
+<title>Do I need a Binary Storage? Can&#8217;t I use Git?</title>
+<simpara>In the polyglot world, there are languages that don&#8217;t use binary storages like
+Artifactory or Nexus. Starting from Spring Cloud Contract version 2.0.0 we provide
+mechanisms to store contracts and stubs in a SCM repository. Currently the
+only supported SCM is Git.</simpara>
+<simpara>The repository would have to the following setup
+(which you can checkout <link xl:href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.0.x/contracts_git/">here</link>):</simpara>
+<screen>.
+└── META-INF
+    └── com.example
+        └── beer-api-producer-git
+            └── 0.0.1-SNAPSHOT
+                ├── contracts
+                │   └── beer-api-consumer
+                │       ├── messaging
+                │       │   ├── shouldSendAcceptedVerification.groovy
+                │       │   └── shouldSendRejectedVerification.groovy
+                │       └── rest
+                │           ├── shouldGrantABeerIfOldEnough.groovy
+                │           └── shouldRejectABeerIfTooYoung.groovy
+                └── mappings
+                    └── beer-api-consumer
+                        └── rest
+                            ├── shouldGrantABeerIfOldEnough.json
+                            └── shouldRejectABeerIfTooYoung.json</screen>
+<simpara>Under <literal>META-INF</literal> folder:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>we group applications via <literal>groupId</literal> (e.g. <literal>com.example</literal>)</simpara>
+</listitem>
+<listitem>
+<simpara>then each application is represented via the <literal>artifactId</literal> (e.g. <literal>beer-api-producer-git</literal>)</simpara>
+</listitem>
+<listitem>
+<simpara>next, the version of the application. The version is mandatory! (e.g. <literal>0.0.1-SNAPSHOT</literal>)</simpara>
+</listitem>
+<listitem>
+<simpara>finally, there are two folders:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><literal>contracts</literal> - the good practice is to store the contracts required by each
+consumer in the folder with the consumer name (e.g. <literal>beer-api-consumer</literal>). That way you
+can use the <literal>stubs-per-consumer</literal> feature. Further directory structure is arbitrary.</simpara>
+</listitem>
+<listitem>
+<simpara><literal>mappings</literal> - in this folder the Maven / Gradle Spring Cloud Contract plugins will push
+the stub server mappings. On the consumer side, Stub Runner will scan this folder
+to start stub servers with stub definitions. The folder structure will be a copy
+of the one created in the <literal>contracts</literal> subfolder.</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+</itemizedlist>
+<section xml:id="_protocol_convention">
+<title>Protocol convention</title>
+<simpara>In order to control the type and location of the source of contracts (whether it&#8217;s
+a binary storage or an SCM repository), you can use the protocol in the URL of
+the repository. Spring Cloud Contract iterates over registered protocol resolvers
+and tries to fetch the contracts (via a plugin) or stubs (via Stub Runner).</simpara>
+<simpara>For the SCM functionality, currently, we support the Git repository. To use it,
+in the property, where the repository URL needs to be placed you just have to prefix
+the connection URL with <literal>git://</literal>. Here you can find a couple of examples:</simpara>
+<screen>git://file:///foo/bar
+git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git
+git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git</screen>
+</section>
+<section xml:id="_producer_2">
+<title>Producer</title>
+<simpara>For the producer, to use the SCM approach, we can reuse the
+same mechanism we use for external contracts. We route Spring Cloud Contract
+to use the SCM implementation via the URL that contains
+the <literal>git://</literal> protocol.</simpara>
+<important>
+<simpara>You have to manually add the <literal>pushStubsToScm</literal>
+goal in Maven or execute (bind) the <literal>pushStubsToScm</literal> task in
+Gradle. We don&#8217;t push stubs to <literal>origin</literal> of your git
+repository out of the box.</simpara>
+</important>
+<formalpara>
+<title>Maven</title>
+<para>
+<programlisting language="xml" linenumbering="unnumbered">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+    &lt;configuration&gt;
+        &lt;!-- Base class mappings etc. --&gt;
+
+        &lt;!-- We want to pick contracts from a Git repository --&gt;
+        &lt;contractsRepositoryUrl&gt;git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git&lt;/contractsRepositoryUrl&gt;
+
+        &lt;!-- We reuse the contract dependency section to set up the path
+        to the folder that contains the contract definitions. In our case the
+        path will be /groupId/artifactId/version/contracts --&gt;
+        &lt;contractDependency&gt;
+            &lt;groupId&gt;${project.groupId}&lt;/groupId&gt;
+            &lt;artifactId&gt;${project.artifactId}&lt;/artifactId&gt;
+            &lt;version&gt;${project.version}&lt;/version&gt;
+        &lt;/contractDependency&gt;
+
+        &lt;!-- The contracts mode can't be classpath --&gt;
+        &lt;contractsMode&gt;REMOTE&lt;/contractsMode&gt;
+    &lt;/configuration&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;phase&gt;package&lt;/phase&gt;
+            &lt;goals&gt;
+                &lt;!-- By default we will not push the stubs back to SCM,
+                you have to explicitly add it as a goal --&gt;
+                &lt;goal&gt;pushStubsToScm&lt;/goal&gt;
+            &lt;/goals&gt;
+        &lt;/execution&gt;
+    &lt;/executions&gt;
+&lt;/plugin&gt;</programlisting>
+</para>
+</formalpara>
+<formalpara>
+<title>Gradle</title>
+<para>
+<programlisting language="gradle" linenumbering="unnumbered">contracts {
+	// We want to pick contracts from a Git repository
+	contractDependency {
+		stringNotation = "${project.group}:${project.name}:${project.version}"
+	}
+	/*
+	We reuse the contract dependency section to set up the path
+	to the folder that contains the contract definitions. In our case the
+	path will be /groupId/artifactId/version/contracts
+	 */
+	contractRepository {
+		repositoryUrl = "git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git"
+	}
+	// The mode can't be classpath
+	contractsMode = "REMOTE"
+	// Base class mappings etc.
+}
+
+/*
+In this scenario we want to publish stubs to SCM whenever
+the `publish` task is executed
+*/
+publish.dependsOn("publishStubsToScm")</programlisting>
+</para>
+</formalpara>
+<simpara>With such a setup:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Git project will be cloned to a temporary directory</simpara>
+</listitem>
+<listitem>
+<simpara>The SCM stub downloader will go to <literal>META-INF/groupId/artifactId/version/contracts</literal> folder
+to find contracts. E.g. for <literal>com.example:foo:1.0.0</literal> the path would be
+<literal>META-INF/com.example/foo/1.0.0/contracts</literal></simpara>
+</listitem>
+<listitem>
+<simpara>Tests will be generated from the contracts</simpara>
+</listitem>
+<listitem>
+<simpara>Stubs will be created from the contracts</simpara>
+</listitem>
+<listitem>
+<simpara>Once the tests pass, the stubs will be committed in the cloned repository</simpara>
+</listitem>
+<listitem>
+<simpara>Finally, a push will be done to that repo&#8217;s <literal>origin</literal></simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="_consumer_2">
+<title>Consumer</title>
+<simpara>On the consumer side when passing the <literal>repositoryRoot</literal> parameter,
+either from the <literal>@AutoConfigureStubRunner</literal> annotation, the
+JUnit rule or properties, it&#8217;s enough to pass the URL of the
+SCM repository, prefixed with the protocol. For example</simpara>
+<programlisting language="java" linenumbering="unnumbered">@AutoConfigureStubRunner(
+    stubsMode="REMOTE",
+    repositoryRoot="git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git",
+    ids="com.example:bookstore:0.0.1.RELEASE"
+)</programlisting>
+<simpara>With such a setup:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Git project will be cloned to a temporary directory</simpara>
+</listitem>
+<listitem>
+<simpara>The SCM stub downloader will go to <literal>META-INF/groupId/artifactId/version/</literal> folder
+to find stub definitions and contracts. E.g. for <literal>com.example:foo:1.0.0</literal> the path would be
+<literal>META-INF/com.example/foo/1.0.0/</literal></simpara>
+</listitem>
+<listitem>
+<simpara>Stub servers will be started and fed with mappings</simpara>
+</listitem>
+<listitem>
+<simpara>Messaging definitions will be read and used in the messaging tests</simpara>
+</listitem>
+</itemizedlist>
+</section>
 </section>
 <section xml:id="_how_can_i_debug_the_request_response_being_sent_by_the_generated_tests_client">
 <title>How can I debug the request/response being sent by the generated tests client?</title>
@@ -1955,11 +2156,6 @@ matching response definition was picked.</simpara>
 <simpara>You can use the <literal>mappingsOutputFolder</literal> property on <literal>@AutoConfigureStubRunner</literal> or <literal>StubRunnerRule</literal>
 to dump all mappings per artifact id. Also the port at which the given stub server was
 started will be attached.</simpara>
-</section>
-<section xml:id="_can_i_reference_the_request_from_the_response">
-<title>Can I reference the request from the response?</title>
-<simpara>Yes! With version 1.1.0 we&#8217;ve added such a possibility. On the HTTP stub server side we&#8217;re providing support
-for this for WireMock. In case of other HTTP server stubs you&#8217;ll have to implement the approach yourself.</simpara>
 </section>
 <section xml:id="_can_i_reference_text_from_file">
 <title>Can I reference text from file?</title>
@@ -2020,6 +2216,9 @@ following sections:</simpara>
 </listitem>
 <listitem>
 <simpara><xref linkend="gradle-invoking-generated-tests"/></simpara>
+</listitem>
+<listitem>
+<simpara><xref linkend="gradle-pushing-stubs-to-scm"/></simpara>
 </listitem>
 <listitem>
 <simpara><xref linkend="gradle-consumer"/></simpara>
@@ -2251,6 +2450,10 @@ the Groovy DSL should be placed.</simpara>
 <simpara><emphasis role="strong">targetFramework</emphasis>: Specifies the target test framework to be used. Currently, Spock and
 JUnit are supported with JUnit being the default framework.</simpara>
 </listitem>
+<listitem>
+<simpara><emphasis role="strong">contractsProperties</emphasis>: a map containing properties to be passed to Spring Cloud Contract
+components. Those properties might be used by e.g. inbuilt or custom Stub Downloaders.</simpara>
+</listitem>
 </itemizedlist>
 <simpara>The following properties are used when you want to specify the location of the JAR
 containing the contracts:
@@ -2336,6 +2539,19 @@ generated from <literal>src/test/resources/contract/com/</literal> contracts ext
 <simpara>To ensure that the provider side is compliant with defined contracts, you need to invoke:</simpara>
 <programlisting language="bash" linenumbering="unnumbered">./gradlew generateContractTests test</programlisting>
 </section>
+<section xml:id="gradle-pushing-stubs-to-scm">
+<title>Pushing stubs to SCM</title>
+<simpara>If you&#8217;re using the SCM repository to keep the contracts and
+stubs, you might want to automate the step of pushing stubs to
+the repository. To do that, it&#8217;s enough to call the <literal>pushStubsToScm</literal>
+task. Example:</simpara>
+<programlisting language="bash" linenumbering="unnumbered">$ ./gradlew pushStubsToScm</programlisting>
+<simpara>Under <xref linkend="scm-stub-downloader"/> you can find all possible
+configuration options that you can pass either via
+the <literal>contractsProperties</literal> field e.g. <literal>contracts { contractsProperties = [foo:"bar"] }</literal>,
+via <literal>contractsProperties</literal> method e.g. <literal>contracts { contractsProperties([foo:"bar"]) }</literal>,
+a system property or an environment variable.</simpara>
+</section>
 <section xml:id="gradle-consumer">
 <title>Spring Cloud Contract Verifier on the Consumer Side</title>
 <simpara>In a consuming service, you need to configure the Spring Cloud Contract Verifier plugin
@@ -2406,6 +2622,9 @@ following sections:</simpara>
 </listitem>
 <listitem>
 <simpara><xref linkend="maven-invoking-generated-tests"/></simpara>
+</listitem>
+<listitem>
+<simpara><xref linkend="maven-pushing-stubs-to-scm"/></simpara>
 </listitem>
 <listitem>
 <simpara><xref linkend="maven-sts"/></simpara>
@@ -2646,6 +2865,10 @@ the matched contract. For example, if you have a contract under
 extends <literal>com.example.base.BaseClass</literal>. This setting takes precedence over
 <emphasis role="strong">packageWithBaseClasses</emphasis> and <emphasis role="strong">baseClassForTests</emphasis>.</simpara>
 </listitem>
+<listitem>
+<simpara><emphasis role="strong">contractsProperties</emphasis>: a map containing properties to be passed to Spring Cloud Contract
+components. Those properties might be used by e.g. inbuilt or custom Stub Downloaders.</simpara>
+</listitem>
 </itemizedlist>
 <simpara>If you want to download your contract definitions from a Maven repository, you can use
 the following options:</simpara>
@@ -2841,13 +3064,58 @@ goal.</simpara>
 <simpara>To ensure that provider side is compliant with defined contracts, you need to invoke
 <literal>mvn generateTest test</literal>.</simpara>
 </section>
+<section xml:id="maven-pushing-stubs-to-scm">
+<title>Pushing stubs to SCM</title>
+<simpara>If you&#8217;re using the SCM repository to keep the contracts and
+stubs, you might want to automate the step of pushing stubs to
+the repository. To do that, it&#8217;s enough to add the <literal>pushStubsToScm</literal>
+goal. Example:</simpara>
+<programlisting language="xml" linenumbering="unnumbered">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+    &lt;configuration&gt;
+        &lt;!-- Base class mappings etc. --&gt;
+
+        &lt;!-- We want to pick contracts from a Git repository --&gt;
+        &lt;contractsRepositoryUrl&gt;git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git&lt;/contractsRepositoryUrl&gt;
+
+        &lt;!-- We reuse the contract dependency section to set up the path
+        to the folder that contains the contract definitions. In our case the
+        path will be /groupId/artifactId/version/contracts --&gt;
+        &lt;contractDependency&gt;
+            &lt;groupId&gt;${project.groupId}&lt;/groupId&gt;
+            &lt;artifactId&gt;${project.artifactId}&lt;/artifactId&gt;
+            &lt;version&gt;${project.version}&lt;/version&gt;
+        &lt;/contractDependency&gt;
+
+        &lt;!-- The contracts mode can't be classpath --&gt;
+        &lt;contractsMode&gt;REMOTE&lt;/contractsMode&gt;
+    &lt;/configuration&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;phase&gt;package&lt;/phase&gt;
+            &lt;goals&gt;
+                &lt;!-- By default we will not push the stubs back to SCM,
+                you have to explicitly add it as a goal --&gt;
+                &lt;goal&gt;pushStubsToScm&lt;/goal&gt;
+            &lt;/goals&gt;
+        &lt;/execution&gt;
+    &lt;/executions&gt;
+&lt;/plugin&gt;</programlisting>
+<simpara>Under <xref linkend="scm-stub-downloader"/> you can find all possible
+configuration options that you can pass either via
+the <literal>&lt;configuration&gt;&lt;contractProperties&gt;</literal> map, a system property
+or an environment variable.</simpara>
+</section>
 <section xml:id="maven-sts">
 <title>Maven Plugin and STS</title>
 <simpara>If you see the following exception while using STS:</simpara>
 <informalfigure>
 <mediaobject>
 <imageobject>
-<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/1.2.x/docs/src/main/asciidoc/images/sts_exception.png"/>
+<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/sts_exception.png"/>
 </imageobject>
 <textobject><phrase>STS Exception</phrase></textobject>
 </mediaobject>
@@ -8608,6 +8876,67 @@ If you provide the <literal>stubsMode = StubRunnerProperties.StubsMode.LOCAL</li
 If you provide more than one, then the first one on the list is used.</simpara>
 </important>
 </section>
+<section xml:id="scm-stub-downloader">
+<title>Using the SCM Stub Downloader</title>
+<simpara>Whenever the <literal>repositoryRoot</literal> starts with a SCM protocol
+(currently we support only <literal>git://</literal>), the stub downloader will try
+to clone the repository and use it as a source of contracts
+to generate tests or stubs.</simpara>
+<simpara>Either via environment variables, system properties, properties set
+inside the plugin or contracts repository configuration you can
+tweak the downloader&#8217;s behaviour. Below you can find the list of
+properties</simpara>
+<table frame="all" rowsep="1" colsep="1">
+<title>SCM Stub Downloader properties</title>
+<tgroup cols="3">
+<colspec colname="col_1" colwidth="33.3333*"/>
+<colspec colname="col_2" colwidth="33.3333*"/>
+<colspec colname="col_3" colwidth="33.3334*"/>
+<tbody>
+<row>
+<entry align="left" valign="top"><simpara>Type of a property</simpara></entry>
+<entry align="left" valign="top"><simpara>Name of the property</simpara></entry>
+<entry align="left" valign="top"><simpara>Description</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>* <literal>git.branch</literal> (plugin prop)
+* <literal>stubrunner.properties.git.branch</literal> (system prop)
+* <literal>STUBRUNNER_PROPERTIES_GIT_BRANCH</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara>master</simpara></entry>
+<entry align="left" valign="top"><simpara>Which branch to checkout</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>* <literal>git.username</literal> (plugin prop)
+* <literal>stubrunner.properties.git.username</literal> (system prop)
+* <literal>STUBRUNNER_PROPERTIES_GIT_USERNAME</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"></entry>
+<entry align="left" valign="top"><simpara>Git clone username</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>* <literal>git.password</literal> (plugin prop)
+* <literal>stubrunner.properties.git.password</literal> (system prop)
+* <literal>STUBRUNNER_PROPERTIES_GIT_PASSWORD</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"></entry>
+<entry align="left" valign="top"><simpara>Git clone password</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>* <literal>git.no-of-attempts</literal> (plugin prop)
+* <literal>stubrunner.properties.git.no-of-attempts</literal> (system prop)
+* <literal>STUBRUNNER_PROPERTIES_GIT_NO_OF_ATTEMPTS</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara>10</simpara></entry>
+<entry align="left" valign="top"><simpara>Number of attempts to push the commits to <literal>origin</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>* <literal>git.wait-between-attempts</literal> (Plugin prop)
+* <literal>stubrunner.properties.git.wait-between-attempts</literal>  (system prop)
+* <literal>STUBRUNNER_PROPERTIES_GIT_WAIT_BETWEEN_ATTEMPTS</literal>  (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara>1000</simpara></entry>
+<entry align="left" valign="top"><simpara>Number of millis to wait between attempts to push the commits to <literal>origin</literal></simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</section>
 </chapter>
 <chapter xml:id="_spring_cloud_contract_wiremock">
 <title>Spring Cloud Contract WireMock</title>
@@ -9012,6 +9341,10 @@ contract. The location of this file would be <literal>index/dsl-contract.adoc</l
 </chapter>
 <chapter xml:id="_migrations">
 <title>Migrations</title>
+<tip>
+<simpara>For up to date migration guides please visit
+the project&#8217;s <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/wiki/">wiki page</link>.</simpara>
+</tip>
 <simpara>This section covers migrating from one version of Spring Cloud Contract Verifier to the
 next version. It covers the following versions upgrade paths:</simpara>
 <section xml:id="cloud-verifier-1.0-1.1">

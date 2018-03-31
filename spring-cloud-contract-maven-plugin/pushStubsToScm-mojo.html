@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="Date-Revision-yyyymmdd" content="20180331" />
     <meta http-equiv="Content-Language" content="en" />
-    <title>Spring Cloud Contract Maven Plugin &#x2013; Checkstyle Results</title>
+    <title>Spring Cloud Contract Maven Plugin &#x2013; spring-cloud-contract:pushStubsToScm</title>
     <link rel="stylesheet" href="./css/apache-maven-fluido-1.5.min.css" />
     <link rel="stylesheet" href="./css/site.css" />
     <link rel="stylesheet" href="./css/print.css" media="print" />
@@ -229,27 +229,13 @@
           <span class="icon-chevron-right"></span>
         Project Information</a>
                   </li>
-                                                                                              
+                                                                                    
       <li>
   
                           <a href="project-reports.html" title="Project Reports">
-          <span class="icon-chevron-down"></span>
+          <span class="icon-chevron-right"></span>
         Project Reports</a>
-                    <ul class="nav nav-list">
-                    
-      <li class="active">
-  
-            <a href="#"><span class="none"></span>Checkstyle</a>
-          </li>
-                    
-      <li>
-  
-                          <a href="plugin-info.html" title="Plugin Documentation">
-          <span class="none"></span>
-        Plugin Documentation</a>
-            </li>
-              </ul>
-        </li>
+                  </li>
             </ul>
               
                 
@@ -270,40 +256,279 @@
                 
         <div id="bodyColumn"  class="span10" >
                                   
-            <div class="section">
-<h2><a name="Checkstyle_Results"></a>Checkstyle Results</h2>
-<p>The following document contains the results of <a class="externalLink" href="http://checkstyle.sourceforge.net/">Checkstyle</a> 6.11.2 with checkstyle.xml ruleset.&#160;<a href="checkstyle.rss"><img alt="rss feed" src="images/rss.png" /></a></p></div>
+            
+  
+    <div class="section">
+<h2><a name="spring-cloud-contract:pushStubsToScm"></a>spring-cloud-contract:pushStubsToScm</h2>
+      
+<p><b>Full name</b>:</p>
+      
+<p>org.springframework.cloud:spring-cloud-contract-maven-plugin:2.0.0.BUILD-SNAPSHOT:pushStubsToScm</p>
+      
+<p><b>Description</b>:</p>
+      
+<div>The generated stubs get committed to the SCM repo and pushed to
+origin.</div>
+      
+<p><b>Attributes</b>:</p>
+      
+<ul>
+        
+<li>Requires a Maven project to be executed.</li>
+      </ul>
+      
 <div class="section">
-<h2><a name="Summary"></a>Summary</h2>
-<table border="0" class="table table-striped">
+<h3><a name="Optional_Parameters"></a>Optional Parameters</h3>
+        
+<table class="table table-striped" border="0">
+          
 <tr class="a">
-<th>Files</th>
-<th><img src="images/icon_info_sml.gif" alt="" />&#160;Info</th>
-<th><img src="images/icon_warning_sml.gif" alt="" />&#160;Warnings</th>
-<th><img src="images/icon_error_sml.gif" alt="" />&#160;Errors</th></tr>
+            
+<th>Name</th>
+            
+<th>Type</th>
+            
+<th>Since</th>
+            
+<th>Description</th>
+          </tr>
+          
 <tr class="b">
-<td>12</td>
-<td>0</td>
-<td>0</td>
-<td>0</td></tr></table></div>
-<div class="section">
-<h2><a name="Files"></a>Files</h2>
-<table border="0" class="table table-striped">
+            
+<td><b><a href="#contractsMode">contractsMode</a></b></td>
+            
+<td><tt>StubRunnerProperties$StubsMode</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>Picks the mode in which stubs will be found and registered<br /><b>Default value is</b>: <tt>CLASSPATH</tt>.<br /><b>User property is</b>: <tt>contractsMode</tt>.<br /></td>
+          </tr>
+          
 <tr class="a">
-<th>File</th>
-<th><img src="images/icon_info_sml.gif" alt="" />&#160;I</th>
-<th><img src="images/icon_warning_sml.gif" alt="" />&#160;W</th>
-<th><img src="images/icon_error_sml.gif" alt="" />&#160;E</th></tr></table></div>
-<div class="section">
-<h2><a name="Rules"></a>Rules</h2>
-<table border="0" class="table table-striped">
+            
+<td><b><a href="#contractsProperties">contractsProperties</a></b></td>
+            
+<td><tt>Map</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>Map of properties that can be passed to custom
+<tt>StubDownloaderBuilder</tt><br /><b>User property is</b>: <tt>contractsProperties</tt>.<br /></td>
+          </tr>
+          
 <tr class="b">
-<th>Category</th>
-<th>Rule</th>
-<th>Violations</th>
-<th>Severity</th></tr></table></div>
+            
+<td><b><a href="#contractsRepositoryPassword">contractsRepositoryPassword</a></b></td>
+            
+<td><tt>String</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>The password to be used to connect to the repo with contracts.<br /><b>User property is</b>: <tt>contractsRepositoryPassword</tt>.<br /></td>
+          </tr>
+          
+<tr class="a">
+            
+<td><b><a href="#contractsRepositoryUrl">contractsRepositoryUrl</a></b></td>
+            
+<td><tt>String</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>The URL from which a contracts should get downloaded. If not
+provided but artifactid / coordinates notation was provided then
+the current Maven's build repositories will be taken into
+consideration<br /><b>User property is</b>: <tt>contractsRepositoryUrl</tt>.<br /></td>
+          </tr>
+          
+<tr class="b">
+            
+<td><b><a href="#contractsRepositoryUsername">contractsRepositoryUsername</a></b></td>
+            
+<td><tt>String</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>The user name to be used to connect to the repo with contracts.<br /><b>User property is</b>: <tt>contractsRepositoryUsername</tt>.<br /></td>
+          </tr>
+          
+<tr class="a">
+            
+<td><b><a href="#deleteStubsAfterTest">deleteStubsAfterTest</a></b></td>
+            
+<td><tt>boolean</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>If set to <tt>false</tt> will NOT delete stubs from a temporary
+folder after running tests<br /><b>Default value is</b>: <tt>true</tt>.<br /><b>User property is</b>: <tt>deleteStubsAfterTest</tt>.<br /></td>
+          </tr>
+          
+<tr class="b">
+            
+<td><b><a href="#outputDirectory">outputDirectory</a></b></td>
+            
+<td><tt>File</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>(no description)<br /><b>Default value is</b>: <tt>${project.build.directory}/stubs</tt>.<br /><b>User property is</b>: <tt>stubsDirectory</tt>.<br /></td>
+          </tr>
+          
+<tr class="a">
+            
+<td><b><a href="#skip">skip</a></b></td>
+            
+<td><tt>boolean</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>Set this to &quot;true&quot; to bypass the whole Verifier execution<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>spring.cloud.contract.verifier.skip</tt>.<br /></td>
+          </tr>
+          
+<tr class="b">
+            
+<td><b><a href="#taskSkip">taskSkip</a></b></td>
+            
+<td><tt>boolean</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>Set this to &quot;true&quot; to bypass only JAR creation<br /><b>Default value is</b>: <tt>false</tt>.<br /><b>User property is</b>: <tt>spring.cloud.contract.verifier.publish-stubs-to-scm.skip</tt>.<br /></td>
+          </tr>
+        </table>
+      </div>
+      
 <div class="section">
-<h2><a name="Details"></a>Details</h2></div>
+<h3><a name="Parameter_Details"></a>Parameter Details</h3>
+        
+<p><b><a name="contractsMode">contractsMode</a>:</b></p>
+        
+<div>Picks the mode in which stubs will be found and registered</div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties$StubsMode</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>contractsMode</tt></li>
+          
+<li><b>Default</b>: <tt>CLASSPATH</tt></li>
+        </ul><hr />
+<p><b><a name="contractsProperties">contractsProperties</a>:</b></p>
+        
+<div>Map of properties that can be passed to custom
+<tt>StubDownloaderBuilder</tt></div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>java.util.Map</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>contractsProperties</tt></li>
+        </ul><hr />
+<p><b><a name="contractsRepositoryPassword">contractsRepositoryPassword</a>:</b></p>
+        
+<div>The password to be used to connect to the repo with contracts.</div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>java.lang.String</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>contractsRepositoryPassword</tt></li>
+        </ul><hr />
+<p><b><a name="contractsRepositoryUrl">contractsRepositoryUrl</a>:</b></p>
+        
+<div>The URL from which a contracts should get downloaded. If not
+provided but artifactid / coordinates notation was provided then
+the current Maven's build repositories will be taken into
+consideration</div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>java.lang.String</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>contractsRepositoryUrl</tt></li>
+        </ul><hr />
+<p><b><a name="contractsRepositoryUsername">contractsRepositoryUsername</a>:</b></p>
+        
+<div>The user name to be used to connect to the repo with contracts.</div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>java.lang.String</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>contractsRepositoryUsername</tt></li>
+        </ul><hr />
+<p><b><a name="deleteStubsAfterTest">deleteStubsAfterTest</a>:</b></p>
+        
+<div>If set to <tt>false</tt> will NOT delete stubs from a temporary
+folder after running tests</div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>boolean</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>deleteStubsAfterTest</tt></li>
+          
+<li><b>Default</b>: <tt>true</tt></li>
+        </ul><hr />
+<p><b><a name="outputDirectory">outputDirectory</a>:</b></p>
+        
+<div>(no description)</div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>java.io.File</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>stubsDirectory</tt></li>
+          
+<li><b>Default</b>: <tt>${project.build.directory}/stubs</tt></li>
+        </ul><hr />
+<p><b><a name="skip">skip</a>:</b></p>
+        
+<div>Set this to &quot;true&quot; to bypass the whole Verifier execution</div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>boolean</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>spring.cloud.contract.verifier.skip</tt></li>
+          
+<li><b>Default</b>: <tt>false</tt></li>
+        </ul><hr />
+<p><b><a name="taskSkip">taskSkip</a>:</b></p>
+        
+<div>Set this to &quot;true&quot; to bypass only JAR creation</div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>boolean</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>spring.cloud.contract.verifier.publish-stubs-to-scm.skip</tt></li>
+          
+<li><b>Default</b>: <tt>false</tt></li>
+        </ul>
+      </div>
+    </div>
+  
+
                   </div>
             </div>
           </div>

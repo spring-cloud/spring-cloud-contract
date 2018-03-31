@@ -1,8 +1,8 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>3.&nbsp;Spring Cloud Contract FAQ</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="multi_spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="up" href="multi_spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="prev" href="multi__spring_cloud_contract_verifier_introduction.html" title="2.&nbsp;Spring Cloud Contract Verifier Introduction"><link rel="next" href="multi__spring_cloud_contract_verifier_setup.html" title="4.&nbsp;Spring Cloud Contract Verifier Setup"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">3.&nbsp;Spring Cloud Contract FAQ</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="multi__spring_cloud_contract_verifier_introduction.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="multi__spring_cloud_contract_verifier_setup.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="_spring_cloud_contract_faq" href="#_spring_cloud_contract_faq"></a>3.&nbsp;Spring Cloud Contract FAQ</h1></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_why_use_spring_cloud_contract_verifier_and_not_x" href="#_why_use_spring_cloud_contract_verifier_and_not_x"></a>3.1&nbsp;Why use Spring Cloud Contract Verifier and not X ?</h2></div></div></div><p>For the time being Spring Cloud Contract Verifier is a JVM based tool. So it could be your first pick when you&#8217;re already creating
+   <title>3.&nbsp;Spring Cloud Contract FAQ</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="multi_spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="up" href="multi_spring-cloud-contract.html" title="Spring Cloud Contract"><link rel="prev" href="multi__spring_cloud_contract_verifier_introduction.html" title="2.&nbsp;Spring Cloud Contract Verifier Introduction"><link rel="next" href="multi__spring_cloud_contract_verifier_setup.html" title="4.&nbsp;Spring Cloud Contract Verifier Setup"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">3.&nbsp;Spring Cloud Contract FAQ</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="multi__spring_cloud_contract_verifier_introduction.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="multi__spring_cloud_contract_verifier_setup.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="_spring_cloud_contract_faq" href="#_spring_cloud_contract_faq"></a>3.&nbsp;Spring Cloud Contract FAQ</h1></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_why_use_spring_cloud_contract_verifier_and_not_x" href="#_why_use_spring_cloud_contract_verifier_and_not_x"></a>3.1&nbsp;Why use Spring Cloud Contract Verifier and not X ?</h2></div></div></div><p>For the time being Spring Cloud Contract is a JVM based tool. So it could be your first pick when you&#8217;re already creating
 software for the JVM. This project has a lot of really interesting features but especially quite a few of them definitely make
-Spring Cloud Contract Verifier stand out on the "market" of Consumer Driven Contract (CDC) tooling. Out of many the most interesting are:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Possibility to do CDC with messaging</li><li class="listitem">Clear and easy to use, statically typed DSL</li><li class="listitem">Possibility to copy paste your current JSON file to the contract and only edit its elements</li><li class="listitem">Automatic generation of tests from the defined Contract</li><li class="listitem">Stub Runner functionality - the stubs are automatically downloaded at runtime from Nexus / Artifactory</li><li class="listitem">Spring Cloud integration - no discovery service is needed for integration tests</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_i_don_t_want_to_write_a_contract_in_groovy" href="#_i_don_t_want_to_write_a_contract_in_groovy"></a>3.2&nbsp;I don&#8217;t want to write a contract in Groovy!</h2></div></div></div><p>No problem. You can write a contract in YAML!</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_what_is_this_value_consumer_producer" href="#_what_is_this_value_consumer_producer"></a>3.3&nbsp;What is this value(consumer(), producer()) ?</h2></div></div></div><p>One of the biggest challenges related to stubs is their reusability. Only if they can be vastly used, will they serve their purpose.
+Spring Cloud Contract Verifier stand out on the "market" of Consumer Driven Contract (CDC) tooling. Out of many the most interesting are:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Possibility to do CDC with messaging</li><li class="listitem">Clear and easy to use, statically typed DSL</li><li class="listitem">Possibility to copy paste your current JSON file to the contract and only edit its elements</li><li class="listitem">Automatic generation of tests from the defined Contract</li><li class="listitem">Stub Runner functionality - the stubs are automatically downloaded at runtime from Nexus / Artifactory</li><li class="listitem">Spring Cloud integration - no discovery service is needed for integration tests</li><li class="listitem">Spring Cloud Contract integrates with Pact out of the box and provides easy hooks to extend its functionality</li><li class="listitem">Via Docker adds support for any language &amp; framework used</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_i_don_t_want_to_write_a_contract_in_groovy" href="#_i_don_t_want_to_write_a_contract_in_groovy"></a>3.2&nbsp;I don&#8217;t want to write a contract in Groovy!</h2></div></div></div><p>No problem. You can write a contract in YAML!</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_what_is_this_value_consumer_producer" href="#_what_is_this_value_consumer_producer"></a>3.3&nbsp;What is this value(consumer(), producer()) ?</h2></div></div></div><p>One of the biggest challenges related to stubs is their reusability. Only if they can be vastly used, will they serve their purpose.
 What typically makes that difficult are the hard-coded values of request / response elements. For example dates or ids.
 Imagine the following JSON request</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">{</span>
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"time"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"2016-10-10 20:10:15"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">,</span>
@@ -82,7 +82,7 @@ It can be related to security issues where the consumers can&#8217;t clone the p
 contracts in a single place then you, as a producer, will know how many consumers you have and which
 consumer will you break with your local changes.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_repo_structure" href="#_repo_structure"></a>3.5.1&nbsp;Repo structure</h3></div></div></div><p>Let&#8217;s assume that we have a producer with coordinates <code class="literal">com.example:server</code> and 3 consumers: <code class="literal">client1</code>,
 <code class="literal">client2</code>, <code class="literal">client3</code>. Then in the repository with common contracts you would have the following setup
-(which you can checkout <a class="link" href="https://github.com/spring-cloud/spring-cloud-contract/tree/1.0.x/samples/standalone/contracts" target="_top">here</a>:</p><pre class="programlisting">&#9500;&#9472;&#9472; com
+(which you can checkout <a class="link" href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/contracts" target="_top">here</a>):</p><pre class="programlisting">&#9500;&#9472;&#9472; com
 &#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; example
 &#9474;&nbsp;&nbsp;     &#9492;&#9472;&#9472; server
 &#9474;&nbsp;&nbsp;         &#9500;&#9472;&#9472; client1
@@ -115,15 +115,15 @@ one to one to the contents of the repo.</p><p>Example of a <code class="literal"
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;parent&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.boot<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-boot-starter-parent<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>1.5.10.RELEASE<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>2.0.0.BUILD-SNAPSHOT<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;relativePath /&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/parent&gt;</span>
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;properties&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/project.build.sourceEncoding&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;java.version&gt;</span>1.8<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/java.version&gt;</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;spring-cloud-contract.version&gt;</span>1.2.5.BUILD-SNAPSHOT<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/spring-cloud-contract.version&gt;</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;spring-cloud-dependencies.version&gt;</span>Edgware.BUILD-SNAPSHOT<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/spring-cloud-dependencies.version&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;spring-cloud-contract.version&gt;</span>2.0.0.BUILD-SNAPSHOT<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/spring-cloud-contract.version&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;spring-cloud-dependencies.version&gt;</span>Finchley.BUILD-SNAPSHOT<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/spring-cloud-dependencies.version&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;excludeBuildFolders&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/excludeBuildFolders&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/properties&gt;</span>
 
@@ -280,6 +280,7 @@ of the JAR containing the contracts:</p><pre class="programlisting"><span xmlns:
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractsMode&gt;</span>REMOTE<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractsMode&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractsRepositoryUrl&gt;</span>http://link/to/your/nexus/or/artifactory/or/sth<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractsRepositoryUrl&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractDependency&gt;</span>
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>com.example.standalone<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
@@ -388,20 +389,126 @@ configurations {
         include: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"**/*"</span>,
         excludes: [
             <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"**/${project.name}/**"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">",
-</span>            **/${first-topic}<strong class="hl-tag" style="color: blue">/**",
-            **/</strong>${second-topic}<strong class="hl-tag" style="color: blue">/**])
-}</strong></pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Create task dependencies:</li></ul></div><pre class="programlisting">unzipContracts.dependsOn(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"getContracts"</span>)
+</span>            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"**/${first-topic}/**"</span>,
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"**/${second-topic}/**"</span>])
+}</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Create task dependencies:</li></ul></div><pre class="programlisting">unzipContracts.dependsOn(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"getContracts"</span>)
 deleteUnwantedContracts.dependsOn(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"unzipContracts"</span>)
-build.dependsOn(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"deleteUnwantedContracts"</span>)</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Configure plugin by specifying the directory containing contracts using <code class="literal"><code class="literal">contractsDslDir</code></code> property</li></ul></div><pre class="programlisting">contracts {
-
+build.dependsOn(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"deleteUnwantedContracts"</span>)</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Configure plugin by specifying the directory containing contracts using <code class="literal">contractsDslDir</code> property</li></ul></div><pre class="programlisting">contracts {
     contractsDslDir = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> File(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${buildDir}/unpackedContracts"</span>)
-}</pre></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_can_i_have_multiple_base_classes_for_tests" href="#_can_i_have_multiple_base_classes_for_tests"></a>3.6&nbsp;Can I have multiple base classes for tests?</h2></div></div></div><p>Yes! Check out the <a class="link" href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_different_base_classes_for_contracts" target="_top">Different base classes for contracts</a> sections
-of either Gradle or Maven plugins.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_how_can_i_debug_the_request_response_being_sent_by_the_generated_tests_client" href="#_how_can_i_debug_the_request_response_being_sent_by_the_generated_tests_client"></a>3.7&nbsp;How can I debug the request/response being sent by the generated tests client?</h2></div></div></div><p>The generated tests all boil down to RestAssured in some form or fashion which relies on <a class="link" href="https://hc.apache.org/httpcomponents-client-ga/" target="_top">Apache HttpClient</a>.  HttpClient has a facility called <a class="link" href="https://hc.apache.org/httpcomponents-client-ga/logging.html#Wire_Logging" target="_top">wire logging</a> which logs the entire request and response to HttpClient.  Spring Boot has a logging <a class="link" href="https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html" target="_top">common application property</a> for doing this sort of thing, just add this to your application properties</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">logging.level.org.apache.http.wire</span>=DEBUG</pre><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_how_can_i_debug_the_mapping_request_response_being_sent_by_wiremock" href="#_how_can_i_debug_the_mapping_request_response_being_sent_by_wiremock"></a>3.7.1&nbsp;How can I debug the mapping/request/response being sent by WireMock?</h3></div></div></div><p>Starting from version <code class="literal">1.2.0</code> we turn on WireMock logging to
+}</pre></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_do_i_need_a_binary_storage_can_t_i_use_git" href="#_do_i_need_a_binary_storage_can_t_i_use_git"></a>3.6&nbsp;Do I need a Binary Storage? Can&#8217;t I use Git?</h2></div></div></div><p>In the polyglot world, there are languages that don&#8217;t use binary storages like
+Artifactory or Nexus. Starting from Spring Cloud Contract version 2.0.0 we provide
+mechanisms to store contracts and stubs in a SCM repository. Currently the
+only supported SCM is Git.</p><p>The repository would have to the following setup
+(which you can checkout <a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.0.x/contracts_git/" target="_top">here</a>):</p><pre class="screen">.
+&#9492;&#9472;&#9472; META-INF
+    &#9492;&#9472;&#9472; com.example
+        &#9492;&#9472;&#9472; beer-api-producer-git
+            &#9492;&#9472;&#9472; 0.0.1-SNAPSHOT
+                &#9500;&#9472;&#9472; contracts
+                &#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; beer-api-consumer
+                &#9474;&nbsp;&nbsp;     &#9500;&#9472;&#9472; messaging
+                &#9474;&nbsp;&nbsp;     &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; shouldSendAcceptedVerification.groovy
+                &#9474;&nbsp;&nbsp;     &#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; shouldSendRejectedVerification.groovy
+                &#9474;&nbsp;&nbsp;     &#9492;&#9472;&#9472; rest
+                &#9474;&nbsp;&nbsp;         &#9500;&#9472;&#9472; shouldGrantABeerIfOldEnough.groovy
+                &#9474;&nbsp;&nbsp;         &#9492;&#9472;&#9472; shouldRejectABeerIfTooYoung.groovy
+                &#9492;&#9472;&#9472; mappings
+                    &#9492;&#9472;&#9472; beer-api-consumer
+                        &#9492;&#9472;&#9472; rest
+                            &#9500;&#9472;&#9472; shouldGrantABeerIfOldEnough.json
+                            &#9492;&#9472;&#9472; shouldRejectABeerIfTooYoung.json</pre><p>Under <code class="literal">META-INF</code> folder:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">we group applications via <code class="literal">groupId</code> (e.g. <code class="literal">com.example</code>)</li><li class="listitem">then each application is represented via the <code class="literal">artifactId</code> (e.g. <code class="literal">beer-api-producer-git</code>)</li><li class="listitem">next, the version of the application. The version is mandatory! (e.g. <code class="literal">0.0.1-SNAPSHOT</code>)</li><li class="listitem"><p class="simpara">finally, there are two folders:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">contracts</code> - the good practice is to store the contracts required by each
+consumer in the folder with the consumer name (e.g. <code class="literal">beer-api-consumer</code>). That way you
+can use the <code class="literal">stubs-per-consumer</code> feature. Further directory structure is arbitrary.</li><li class="listitem"><code class="literal">mappings</code> - in this folder the Maven / Gradle Spring Cloud Contract plugins will push
+the stub server mappings. On the consumer side, Stub Runner will scan this folder
+to start stub servers with stub definitions. The folder structure will be a copy
+of the one created in the <code class="literal">contracts</code> subfolder.</li></ul></div></li></ul></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_protocol_convention" href="#_protocol_convention"></a>3.6.1&nbsp;Protocol convention</h3></div></div></div><p>In order to control the type and location of the source of contracts (whether it&#8217;s
+a binary storage or an SCM repository), you can use the protocol in the URL of
+the repository. Spring Cloud Contract iterates over registered protocol resolvers
+and tries to fetch the contracts (via a plugin) or stubs (via Stub Runner).</p><p>For the SCM functionality, currently, we support the Git repository. To use it,
+in the property, where the repository URL needs to be placed you just have to prefix
+the connection URL with <code class="literal">git://</code>. Here you can find a couple of examples:</p><pre class="screen">git://file:///foo/bar
+git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git
+git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_producer_2" href="#_producer_2"></a>3.6.2&nbsp;Producer</h3></div></div></div><p>For the producer, to use the SCM approach, we can reuse the
+same mechanism we use for external contracts. We route Spring Cloud Contract
+to use the SCM implementation via the URL that contains
+the <code class="literal">git://</code> protocol.</p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>You have to manually add the <code class="literal">pushStubsToScm</code>
+goal in Maven or execute (bind) the <code class="literal">pushStubsToScm</code> task in
+Gradle. We don&#8217;t push stubs to <code class="literal">origin</code> of your git
+repository out of the box.</p></td></tr></table></div><p><b>Maven.&nbsp;</b>
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>${spring-cloud-contract.version}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;extensions&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/extensions&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- Base class mappings etc. --&gt;</span>
+
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- We want to pick contracts from a Git repository --&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractsRepositoryUrl&gt;</span>git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractsRepositoryUrl&gt;</span>
+
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- We reuse the contract dependency section to set up the path
+        to the folder that contains the contract definitions. In our case the
+        path will be /groupId/artifactId/version/contracts --&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractDependency&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>${project.groupId}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>${project.artifactId}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>${project.version}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractDependency&gt;</span>
+
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- The contracts mode can't be classpath --&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractsMode&gt;</span>REMOTE<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractsMode&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;executions&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;execution&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;phase&gt;</span>package<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/phase&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goals&gt;</span>
+                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- By default we will not push the stubs back to SCM,
+                you have to explicitly add it as a goal --&gt;</span>
+                <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goal&gt;</span>pushStubsToScm<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goal&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goals&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/execution&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/executions&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><p>
+</p><p><b>Gradle.&nbsp;</b>
+</p><pre class="programlisting">contracts {
+	// We want to pick contracts from a Git repository
+	contractDependency {
+		stringNotation = "${project.group}:${project.name}:${project.version}"
+	}
+	/*
+	We reuse the contract dependency section to set up the path
+	to the folder that contains the contract definitions. In our case the
+	path will be /groupId/artifactId/version/contracts
+	 */
+	contractRepository {
+		repositoryUrl = "git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git"
+	}
+	// The mode can't be classpath
+	contractsMode = "REMOTE"
+	// Base class mappings etc.
+}
+
+/*
+In this scenario we want to publish stubs to SCM whenever
+the `publish` task is executed
+*/
+publish.dependsOn("publishStubsToScm")</pre><p>
+</p><p>With such a setup:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Git project will be cloned to a temporary directory</li><li class="listitem">The SCM stub downloader will go to <code class="literal">META-INF/groupId/artifactId/version/contracts</code> folder
+to find contracts. E.g. for <code class="literal">com.example:foo:1.0.0</code> the path would be
+<code class="literal">META-INF/com.example/foo/1.0.0/contracts</code></li><li class="listitem">Tests will be generated from the contracts</li><li class="listitem">Stubs will be created from the contracts</li><li class="listitem">Once the tests pass, the stubs will be committed in the cloned repository</li><li class="listitem">Finally, a push will be done to that repo&#8217;s <code class="literal">origin</code></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_consumer_2" href="#_consumer_2"></a>3.6.3&nbsp;Consumer</h3></div></div></div><p>On the consumer side when passing the <code class="literal">repositoryRoot</code> parameter,
+either from the <code class="literal">@AutoConfigureStubRunner</code> annotation, the
+JUnit rule or properties, it&#8217;s enough to pass the URL of the
+SCM repository, prefixed with the protocol. For example</p><pre class="programlisting">@AutoConfigureStubRunner(
+    stubsMode=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"REMOTE"</span>,
+    repositoryRoot=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"git://https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git"</span>,
+    ids=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example:bookstore:0.0.1.RELEASE"</span>
+)</pre><p>With such a setup:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Git project will be cloned to a temporary directory</li><li class="listitem">The SCM stub downloader will go to <code class="literal">META-INF/groupId/artifactId/version/</code> folder
+to find stub definitions and contracts. E.g. for <code class="literal">com.example:foo:1.0.0</code> the path would be
+<code class="literal">META-INF/com.example/foo/1.0.0/</code></li><li class="listitem">Stub servers will be started and fed with mappings</li><li class="listitem">Messaging definitions will be read and used in the messaging tests</li></ul></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_how_can_i_debug_the_request_response_being_sent_by_the_generated_tests_client" href="#_how_can_i_debug_the_request_response_being_sent_by_the_generated_tests_client"></a>3.7&nbsp;How can I debug the request/response being sent by the generated tests client?</h2></div></div></div><p>The generated tests all boil down to RestAssured in some form or fashion which relies on <a class="link" href="https://hc.apache.org/httpcomponents-client-ga/" target="_top">Apache HttpClient</a>.  HttpClient has a facility called <a class="link" href="https://hc.apache.org/httpcomponents-client-ga/logging.html#Wire_Logging" target="_top">wire logging</a> which logs the entire request and response to HttpClient.  Spring Boot has a logging <a class="link" href="https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html" target="_top">common application property</a> for doing this sort of thing, just add this to your application properties</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">logging.level.org.apache.http.wire</span>=DEBUG</pre><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_how_can_i_debug_the_mapping_request_response_being_sent_by_wiremock" href="#_how_can_i_debug_the_mapping_request_response_being_sent_by_wiremock"></a>3.7.1&nbsp;How can I debug the mapping/request/response being sent by WireMock?</h3></div></div></div><p>Starting from version <code class="literal">1.2.0</code> we turn on WireMock logging to
 info and the WireMock notifier to being verbose. Now you will
 exactly know what request was received by WireMock server and which
 matching response definition was picked.</p><p>To turn off this feature just bump WireMock logging to <code class="literal">ERROR</code></p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">logging.level.com.github.tomakehurst.wiremock</span>=ERROR</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_how_can_i_see_what_got_registered_in_the_http_server_stub" href="#_how_can_i_see_what_got_registered_in_the_http_server_stub"></a>3.7.2&nbsp;How can I see what got registered in the HTTP server stub?</h3></div></div></div><p>You can use the <code class="literal">mappingsOutputFolder</code> property on <code class="literal">@AutoConfigureStubRunner</code> or <code class="literal">StubRunnerRule</code>
 to dump all mappings per artifact id. Also the port at which the given stub server was
-started will be attached.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_can_i_reference_the_request_from_the_response" href="#_can_i_reference_the_request_from_the_response"></a>3.7.3&nbsp;Can I reference the request from the response?</h3></div></div></div><p>Yes! With version 1.1.0 we&#8217;ve added such a possibility. On the HTTP stub server side we&#8217;re providing support
-for this for WireMock. In case of other HTTP server stubs you&#8217;ll have to implement the approach yourself.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_can_i_reference_text_from_file" href="#_can_i_reference_text_from_file"></a>3.7.4&nbsp;Can I reference text from file?</h3></div></div></div><p>Yes! With version 1.2.0 we&#8217;ve added such a possibility. It&#8217;s enough to call <code class="literal">file(&#8230;&#8203;)</code> method in the
+started will be attached.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_can_i_reference_text_from_file" href="#_can_i_reference_text_from_file"></a>3.7.3&nbsp;Can I reference text from file?</h3></div></div></div><p>Yes! With version 1.2.0 we&#8217;ve added such a possibility. It&#8217;s enough to call <code class="literal">file(&#8230;&#8203;)</code> method in the
 DSL and provide a path relative to where the contract lays.
 If you&#8217;re using YAML just use the <code class="literal">bodyFromFile</code> property.</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="multi__spring_cloud_contract_verifier_introduction.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="multi__spring_cloud_contract_verifier_setup.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">2.&nbsp;Spring Cloud Contract Verifier Introduction&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="multi_spring-cloud-contract.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;4.&nbsp;Spring Cloud Contract Verifier Setup</td></tr></table></div></body></html>
