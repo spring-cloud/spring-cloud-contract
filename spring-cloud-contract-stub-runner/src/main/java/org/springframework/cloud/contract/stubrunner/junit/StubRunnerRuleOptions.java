@@ -1,6 +1,7 @@
 package org.springframework.cloud.contract.stubrunner.junit;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
@@ -105,4 +106,9 @@ interface StubRunnerRuleOptions {
 	 * folder after running tests
 	 */
 	StubRunnerRule withDeleteStubsAfterTest(boolean deleteStubsAfterTest);
+
+	/**
+	 * Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
+	 */
+	StubRunnerRule withProperties(Map<String, String> properties);
 }

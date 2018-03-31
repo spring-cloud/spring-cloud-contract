@@ -64,6 +64,25 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 		</dependency>
+		<!-- Git Stub Downloader-->
+		<dependency>
+			<groupId>org.eclipse.jgit</groupId>
+			<artifactId>org.eclipse.jgit</artifactId>
+		</dependency>
+		<!-- a proxy to ssh-agent and Pageant in Java -->
+		<dependency>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jsch.agentproxy.sshagent</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jsch.agentproxy.jsch</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jsch.agentproxy.usocket-jna</artifactId>
+		</dependency>
+		<!-- Git Stub Downloader -->
 		<dependency>
 			<groupId>io.specto</groupId>
 			<artifactId>hoverfly-junit</artifactId>

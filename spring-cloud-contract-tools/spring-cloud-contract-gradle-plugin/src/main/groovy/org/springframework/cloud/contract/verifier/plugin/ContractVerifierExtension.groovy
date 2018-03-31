@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013-2017 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.contract.verifier.plugin
 
 import groovy.transform.ToString
@@ -168,6 +184,11 @@ class ContractVerifierExtension {
 	 */
 	boolean deleteStubsAfterTest = true
 
+	/**
+	 * Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
+	 */
+	Map<String, String> contractsProperties = [:]
+
 	void contractDependency(@DelegatesTo(Dependency) Closure closure) {
 		closure.delegate = contractDependency
 		closure.call()
@@ -183,6 +204,10 @@ class ContractVerifierExtension {
 		closure.call()
 	}
 
+	void contractsProperties(Map<String, String> props) {
+		contractsProperties = props
+	}
+
 	/**
 	 * Is set to true will not provide the default publication task
 	 */
@@ -192,7 +217,7 @@ class ContractVerifierExtension {
 		this.disableStubPublication = disableStubPublication
 	}
 
-	@ToString
+	@ToString(includeNames = true, includePackage = false)
 	static class Dependency {
 		String groupId
 		String artifactId

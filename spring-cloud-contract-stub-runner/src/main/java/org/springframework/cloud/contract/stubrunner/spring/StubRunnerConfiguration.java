@@ -30,7 +30,6 @@ import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubDownloaderBuilderProvider;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
-import org.springframework.cloud.contract.stubrunner.util.StringUtils;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.context.annotation.Bean;
@@ -39,7 +38,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.io.Resource;
+import org.springframework.util.StringUtils;
 
 /**
  * Configuration that initializes a {@link BatchStubRunner} that runs
@@ -86,8 +85,7 @@ public class StubRunnerConfiguration {
 	private StubRunnerOptionsBuilder builder() throws IOException {
 		return new StubRunnerOptionsBuilder()
 					.withMinMaxPort(this.props.getMinPort(), this.props.getMaxPort())
-					.withStubRepositoryRoot(
-							uriStringOrEmpty(this.props.getRepositoryRoot()))
+					.withStubRepositoryRoot(this.props.getRepositoryRoot())
 					.withStubsMode(this.props.getStubsMode())
 					.withStubsClassifier(this.props.getClassifier())
 					.withStubs(this.props.getIds())
@@ -105,10 +103,6 @@ public class StubRunnerConfiguration {
 			return this.props.getConsumerName();
 		}
 		return this.environment.getProperty("spring.application.name");
-	}
-
-	private String uriStringOrEmpty(Resource stubRepositoryRoot) throws IOException {
-		return stubRepositoryRoot != null ? stubRepositoryRoot.getURI().toString() : "";
 	}
 
 	private void registerPort(RunningStubs runStubs) {

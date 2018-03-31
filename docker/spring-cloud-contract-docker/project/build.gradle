@@ -74,7 +74,7 @@ contracts {
 			delegate.classifier = getProp("EXTERNAL_CONTRACTS_CLASSIFIER") ?: ""
 			delegate.version = getProp("EXTERNAL_CONTRACTS_VERSION") ?: "+"
 		}
-		contractsWorkOffline = Boolean.parseBoolean(getProp("EXTERNAL_CONTRACTS_WORK_OFFLINE")) ?: false
+		contractsMode = Boolean.parseBoolean(getProp("EXTERNAL_CONTRACTS_WORK_OFFLINE")) ? "LOCAL" : "REMOTE"
 	} else {
 		logger.lifecycle("Will use contracts from the mounted [/contracts] folder")
 		// tests - contracts in this repo
@@ -124,7 +124,11 @@ boolean publishEnabled = Boolean.parseBoolean(publishArtifacts)
 publish.setEnabled(publishEnabled)
 
 gradle.taskGraph.whenReady { graph ->
-    graph.allTasks.findAll { it.name.startsWith("publish") }*.setEnabled(publishEnabled)
+    graph.allTasks.findAll { it.name.startsWith("publish") && "publishStubsToScm" != it.name }*.setEnabled(publishEnabled)
+}
+
+if (Boolean.parseBoolean(getProp("PUBLISH_STUBS_TO_SCM"))) {
+	publish.dependsOn("publishStubsToScm")
 }
 
 String getProp(String propName) {

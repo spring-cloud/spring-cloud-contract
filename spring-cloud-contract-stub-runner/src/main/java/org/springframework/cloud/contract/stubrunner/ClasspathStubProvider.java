@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
-import org.springframework.cloud.contract.stubrunner.util.StringUtils;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -168,9 +167,9 @@ public class ClasspathStubProvider implements StubDownloaderBuilder {
 
 	private List<RepoRoot> repoRoot(StubRunnerOptions stubRunnerOptions,
 			StubConfiguration configuration) {
-		if (StringUtils.hasText(stubRunnerOptions.getStubRepositoryRoot())) {
+		if (stubRunnerOptions.getStubRepositoryRoot() != null) {
 			return Collections
-					.singletonList(new RepoRoot(stubRunnerOptions.getStubRepositoryRoot()));
+					.singletonList(new RepoRoot(stubRunnerOptions.getStubRepositoryRootAsString()));
 		}
 		else {
 			String path = "/**/" + configuration.getGroupId() + "/" + configuration.getArtifactId();

@@ -16,6 +16,10 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
+import org.springframework.core.io.ProtocolResolver;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+
 /**
  * Builder for a {@link StubDownloader}. Can't allow direct usage
  * of {@link StubDownloader} cause in order to register instances
@@ -23,13 +27,20 @@ package org.springframework.cloud.contract.stubrunner;
  * one needs a default constructor whereas the {@link StubDownloader}
  * instances need to be constructed from stub related options.
  *
+ * Since {@code 2.0.0} extends {@link ProtocolResolver}. Implementations have
+ * to tell Spring how to parse the repository root String into a resource.
+ *
  * @author Marcin Grzejszczak
  * @since 1.1.0
  */
-public interface StubDownloaderBuilder {
+public interface StubDownloaderBuilder extends ProtocolResolver {
 
 	/**
 	 * @return {@link StubDownloader} instance of {@code null} if current parameters don't allow building the instance
 	 */
 	StubDownloader build(StubRunnerOptions stubRunnerOptions);
+
+	@Override default Resource resolve(String location, ResourceLoader resourceLoader) {
+		return null;
+	}
 }

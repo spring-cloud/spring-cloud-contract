@@ -122,7 +122,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 	@Parameter(property = "skipTests", defaultValue = "false") private boolean skipTests;
 
 	/**
-	 * The URL from which a JAR containing the contracts should get downloaded. If not provided
+	 * The URL from which a contracts should get downloaded. If not provided
 	 * but artifactid / coordinates notation was provided then the current Maven's build repositories will be
 	 * taken into consideration
 	 */
@@ -210,6 +210,12 @@ public class GenerateTestsMojo extends AbstractMojo {
 	@Parameter(property = "deleteStubsAfterTest", defaultValue = "true")
 	private boolean deleteStubsAfterTest;
 
+	/**
+	 * Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
+	 */
+	@Parameter(property = "contractsProperties")
+	private Map<String, String> contractsProperties = new HashMap<>();
+
 	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
 
 	@Inject
@@ -232,7 +238,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 				this.contractsPath, this.contractsRepositoryUrl, this.contractsMode, getLog(),
 				this.contractsRepositoryUsername, this.contractsRepositoryPassword,
 				this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort,
-				this.contractsSnapshotCheckSkip, this.deleteStubsAfterTest).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
+				this.contractsSnapshotCheckSkip, this.deleteStubsAfterTest, this.contractsProperties).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 		setupConfig(config, contractsDirectory);
 		this.project.addTestCompileSourceRoot(this.generatedTestSourcesDir.getAbsolutePath());

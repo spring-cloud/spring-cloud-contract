@@ -1,26 +1,34 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ * Copyright 2013-2017 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *       http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.contract.stubrunner;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
-import org.springframework.cloud.contract.stubrunner.util.StringUtils;
+import org.springframework.core.io.Resource;
+import org.springframework.util.StringUtils;
 
 /**
  * Technical options related to running StubRunner
@@ -30,6 +38,8 @@ import org.springframework.cloud.contract.stubrunner.util.StringUtils;
  * @see StubRunnerOptionsBuilder
  */
 public class StubRunnerOptions {
+
+	private static final Log log = LogFactory.getLog(StubRunnerOptions.class);
 
 	/**
 	 * min port value of the WireMock instance for the given collaborator
@@ -44,7 +54,7 @@ public class StubRunnerOptions {
 	/**
 	 * root URL from where the JAR with stub mappings will be downloaded
 	 */
-	final String stubRepositoryRoot;
+	final Resource stubRepositoryRoot;
 
 	/**
 	 * stub definition classifier
@@ -103,13 +113,19 @@ public class StubRunnerOptions {
 	 */
 	private boolean deleteStubsAfterTest;
 
+	/**
+	 * Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
+	 */
+	private Map<String, String> properties = new HashMap<>();
+
+
 	StubRunnerOptions(Integer minPortValue, Integer maxPortValue,
-			String stubRepositoryRoot, StubRunnerProperties.StubsMode stubsMode, String stubsClassifier,
+			Resource stubRepositoryRoot, StubRunnerProperties.StubsMode stubsMode, String stubsClassifier,
 			Collection<StubConfiguration> dependencies,
 			Map<StubConfiguration, Integer> stubIdsToPortMapping,
 			String username, String password, final StubRunnerProxyOptions stubRunnerProxyOptions,
 			boolean stubsPerConsumer, String consumerName, String mappingsOutputFolder, boolean snapshotCheckSkip,
-			boolean deleteStubsAfterTest) {
+			boolean deleteStubsAfterTest, Map<String, String> properties) {
 		this.minPortValue = minPortValue;
 		this.maxPortValue = maxPortValue;
 		this.stubRepositoryRoot = stubRepositoryRoot;
@@ -125,6 +141,7 @@ public class StubRunnerOptions {
 		this.mappingsOutputFolder = mappingsOutputFolder;
 		this.snapshotCheckSkip = snapshotCheckSkip;
 		this.deleteStubsAfterTest = deleteStubsAfterTest;
+		this.properties = properties;
 	}
 
 	public Integer port(StubConfiguration stubConfiguration) {
@@ -140,7 +157,8 @@ public class StubRunnerOptions {
 		StubRunnerOptionsBuilder builder = new StubRunnerOptionsBuilder()
 				.withMinPort(Integer.valueOf(System.getProperty("stubrunner.port.range.min", "10000")))
 				.withMaxPort(Integer.valueOf(System.getProperty("stubrunner.port.range.max", "15000")))
-				.withStubRepositoryRoot(System.getProperty("stubrunner.repository.root", ""))
+				.withStubRepositoryRoot(ResourceResolver
+						.resource(System.getProperty("stubrunner.repository.root", "")))
 				.withStubsMode(System.getProperty("stubrunner.stubs-mode", "LOCAL"))
 				.withStubsClassifier(System.getProperty("stubrunner.classifier", "stubs"))
 				.withStubs(System.getProperty("stubrunner.ids", ""))
@@ -150,12 +168,26 @@ public class StubRunnerOptions {
 				.withConsumerName(System.getProperty("stubrunner.consumer-name"))
 				.withMappingsOutputFolder(System.getProperty("stubrunner.mappings-output-folder"))
 				.withSnapshotCheckSkip(Boolean.parseBoolean(System.getProperty("stubrunner.snapshot-check-skip", "false")))
-				.withDeleteStubsAfterTest(Boolean.parseBoolean(System.getProperty("stubrunner.delete-stubs-after-test", "true")));
+				.withDeleteStubsAfterTest(Boolean.parseBoolean(System.getProperty("stubrunner.delete-stubs-after-test", "true")))
+				.withProperties(stubRunnerProps());
 		String proxyHost = System.getProperty("stubrunner.proxy.host");
 		if (proxyHost != null) {
 			builder.withProxy(proxyHost, Integer.parseInt(System.getProperty("stubrunner.proxy.port")));
 		}
 		return builder.build();
+	}
+
+	private static Map<String, String> stubRunnerProps() {
+		Map<String, String> map = new HashMap<>();
+		Properties properties = System.getProperties();
+		Set<String> propertyNames = properties.stringPropertyNames();
+		propertyNames
+				.stream()
+				// stubrunner.properties.foo.bar=baz
+				.filter(s -> s.toLowerCase().startsWith("stubrunner.properties"))
+				// foo.bar=baz
+				.forEach(s -> map.put(s.substring("stubrunner.properties".length() + 1), System.getProperty(s)));
+		return map;
 	}
 
 	public Integer getMinPortValue() {
@@ -174,8 +206,23 @@ public class StubRunnerOptions {
 		return this.stubIdsToPortMapping;
 	}
 
-	public String getStubRepositoryRoot() {
+	public Resource getStubRepositoryRoot() {
 		return this.stubRepositoryRoot;
+	}
+
+	public String getStubRepositoryRootAsString() {
+		try {
+			return this.stubRepositoryRoot.getURI().toString();
+		}
+		catch (FileNotFoundException f) {
+			if (log.isDebugEnabled()) {
+				log.debug("File not found", f);
+			}
+			return "";
+		}
+		catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	public StubRunnerProperties.StubsMode getStubsMode() {
@@ -244,6 +291,14 @@ public class StubRunnerOptions {
 
 	public void setDeleteStubsAfterTest(boolean deleteStubsAfterTest) {
 		this.deleteStubsAfterTest = deleteStubsAfterTest;
+	}
+
+	public Map<String, String> getProperties() {
+		return this.properties;
+	}
+
+	public void setProperties(Map<String, String> properties) {
+		this.properties = properties;
 	}
 
 	public static class StubRunnerProxyOptions {

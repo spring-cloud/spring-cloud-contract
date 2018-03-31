@@ -88,8 +88,8 @@ class ContractFileScanner {
 	 */
 	private void appendRecursively(File baseDir, ListMultimap<Path, ContractMetadata> result) {
 		List<ContractConverter> converters = SpringFactoriesLoader.loadFactories(ContractConverter, null)
-		if (log.isDebugEnabled()) {
-			log.debug("Found the following contract converters ${converters}")
+		if (log.isTraceEnabled()) {
+			log.trace("Found the following contract converters ${converters}")
 		}
 		File[] files = baseDir.listFiles()
 		if (!files) {
