@@ -58,10 +58,6 @@ class StubRunnerPropertyUtils {
 			}
 			return value;
 		}
-		String directTry = doGetProp(propName);
-		if (StringUtils.hasText(directTry)) {
-			return directTry;
-		}
 		return doGetProp(appendPrefixIfNecessary(propName));
 	}
 
