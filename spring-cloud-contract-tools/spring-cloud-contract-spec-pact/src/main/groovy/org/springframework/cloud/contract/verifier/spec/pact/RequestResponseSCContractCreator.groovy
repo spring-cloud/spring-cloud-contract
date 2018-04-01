@@ -39,9 +39,12 @@ import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
+
+import java.util.regex.Pattern
 
 /**
  * Creator of {@link Contract} instances
@@ -87,7 +90,7 @@ class RequestResponseSCContractCreator {
 									}
 									MatchingRule rule = ruleGroup.rules[0]
 									if (rule instanceof RegexMatcher) {
-										header(k, new DslProperty(rule.getRegex(), v))
+										header(k, new DslProperty((Object)Pattern.compile(rule.getRegex()), (Object)v))
 									} else {
 										throw new UnsupportedOperationException("Currently only the header matcher of type regex is supported")
 									}
@@ -230,7 +233,7 @@ class RequestResponseSCContractCreator {
 									}
 									MatchingRule rule = ruleGroup.rules[0]
 									if (rule instanceof RegexMatcher) {
-										header(k, new DslProperty(v, rule.getRegex()))
+										header(k, new DslProperty(new DslProperty(v), new NotToEscapePattern(Pattern.compile(rule.getRegex()))))
 									} else {
 										throw new UnsupportedOperationException("Currently only the header matcher of type regex is supported")
 									}
