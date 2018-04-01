@@ -23,6 +23,8 @@ import java.lang.annotation.Annotation;
 import java.net.URI;
 import java.nio.file.Files;
 import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -32,11 +34,13 @@ import au.com.dius.pact.model.PactSpecVersion;
 import au.com.dius.pact.provider.junit.loader.PactBroker;
 import au.com.dius.pact.provider.junit.loader.PactBrokerAuth;
 import au.com.dius.pact.provider.junit.loader.PactBrokerLoader;
+import au.com.dius.pact.provider.junit.sysprops.SystemPropertyResolver;
 import au.com.dius.pact.provider.junit.sysprops.ValueResolver;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
@@ -108,7 +112,6 @@ class PactStubDownloader implements StubDownloader {
 
 	private final StubRunnerOptions stubRunnerOptions;
 	private final boolean deleteStubsAfterTest;
-	private final PactBrokerLoader loader;
 	private final ObjectMapper objectMapper;
 
 	// Preloading class for the shutdown hook not to throw ClassNotFound
@@ -118,30 +121,59 @@ class PactStubDownloader implements StubDownloader {
 		this.stubRunnerOptions = stubRunnerOptions;
 		this.objectMapper = new ObjectMapper();
 		this.deleteStubsAfterTest = stubRunnerOptions.isDeleteStubsAfterTest();
-		String pactBrokerHost = "";
-		String pactBrokerPort = "";
-		String pactBrokerProtocol = "";
-		// TODO: Instantiate the annotation to allow authentication
-		this.loader = new PactBrokerLoader(new PactBroker() {
+		registerShutdownHook();
+	}
+
+	@Override public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
+			StubConfiguration stubConfiguration) {
+		String version = stubConfiguration.version;
+		// TODO: Read from stubrunner props or system props
+		final SystemPropertyResolver resolver = new SystemPropertyResolver();
+		List<String> tags = tags(stubConfiguration, version, resolver);
+		PactBrokerLoader loader = pactBrokerLoader(resolver, tags);
+		try {
+			String providerName = stubConfiguration.getGroupId() + ":" + stubConfiguration.getArtifactId();
+			List<Pact> pacts = loader.load(providerName);
+			if (pacts.isEmpty()) {
+				log.warn("No pact definitions found for provider [" + providerName + "]");
+				return null;
+			}
+			File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage.createTempDir(TEMP_DIR_PREFIX);
+			for (int i = 0; i < pacts.size(); i++) {
+				String json = toJson(pacts.get(i).toMap(PactSpecVersion.V3));
+				File file = new File(tmpDirWhereStubsWillBeUnzipped,
+						providerName.replace(":", "_") + "_pact_" + i + ".json");
+				Files.write(file.toPath(), json.getBytes());
+			}
+			return new AbstractMap.SimpleEntry<>(stubConfiguration, tmpDirWhereStubsWillBeUnzipped);
+		}
+		catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	@NotNull private PactBrokerLoader pactBrokerLoader(SystemPropertyResolver resolver,
+			List<String> tags) {
+		return new PactBrokerLoader(new PactBroker() {
 
 			@Override public Class<? extends Annotation> annotationType() {
 				return PactBroker.class;
 			}
 
 			@Override public String host() {
-				return "test.pact.dius.com.au";
+				return resolver.resolveValue("${pactbroker.host:}");
 			}
 
 			@Override public String port() {
-				return "443";
+				return resolver.resolveValue("${pactbroker.port:}");
 			}
 
 			@Override public String protocol() {
-				return "https";
+				return resolver.resolveValue("${pactbroker.protocol:http}");
 			}
 
 			@Override public String[] tags() {
-				return new String[] {"latest"};
+				return tags.toArray(new String[0]);
 			}
 
 			@Override public boolean failIfNoPactsFound() {
@@ -155,51 +187,32 @@ class PactStubDownloader implements StubDownloader {
 					}
 
 					@Override public String scheme() {
-						return "basic";
+						return resolver.resolveValue("${pactbroker.auth.scheme:basic}");
 					}
 
 					@Override public String username() {
-						return "";
+						return resolver.resolveValue("${pactbroker.auth.username:}");
 					}
 
 					@Override public String password() {
-						return "";
+						return resolver.resolveValue("${pactbroker.auth.password:}");
 					}
 				};
 			}
 
 			@Override public Class<? extends ValueResolver> valueResolver() {
-				return null;
+				return SystemPropertyResolver.class;
 			}
 		});
-		registerShutdownHook();
 	}
 
-	@Override public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
-			StubConfiguration stubConfiguration) {
-		// LATEST tag can be used to fetch version
-		if (StringUtils.isEmpty(stubConfiguration.version) || "+".equals(stubConfiguration.version)) {
-			throw new IllegalStateException("Concrete version wasn't passed for [" + stubConfiguration.toColonSeparatedDependencyNotation() + "]");
-		}
-		String providerName = "bobby";
-		try {
-			List<Pact> pacts = this.loader.load(providerName);
-			if (pacts.isEmpty()) {
-				log.warn("No pact definitions found for provider [" + providerName + "]");
-				return null;
-			}
-			File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage.createTempDir(TEMP_DIR_PREFIX);
-			for (int i = 0; i < pacts.size(); i++) {
-				String json = toJson(pacts.get(i).toMap(PactSpecVersion.V3));
-				File file = new File(tmpDirWhereStubsWillBeUnzipped,
-						providerName + "_pact_" + i + ".json");
-				Files.write(file.toPath(), json.getBytes());
-			}
-			return new AbstractMap.SimpleEntry<>(stubConfiguration, tmpDirWhereStubsWillBeUnzipped);
-		}
-		catch (IOException e) {
-			throw new IllegalStateException(e);
-		}
+	@NotNull private List<String> tags(StubConfiguration stubConfiguration,
+			String version, SystemPropertyResolver resolver) {
+		String defaultTag = StubConfiguration.DEFAULT_VERSION.equals(version)
+				? "latest" : version;
+		return new ArrayList<>(Arrays.asList(StringUtils
+				.commaDelimitedListToStringArray(
+						resolver.resolveValue("${pactbroker.tags:" + defaultTag + "}"))));
 	}
 
 	private String toJson(Map map) {

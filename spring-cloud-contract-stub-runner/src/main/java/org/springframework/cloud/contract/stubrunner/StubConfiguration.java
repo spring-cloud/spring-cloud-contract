@@ -24,7 +24,7 @@ import org.springframework.util.StringUtils;
  */
 public class StubConfiguration {
 	private static final String STUB_COLON_DELIMITER = ":";
-	private static final String DEFAULT_VERSION = "+";
+	static final String DEFAULT_VERSION = "+";
 	public static final String DEFAULT_CLASSIFIER = "stubs";
 
 	final String groupId;
