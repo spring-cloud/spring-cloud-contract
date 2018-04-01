@@ -114,4 +114,10 @@ public @interface AutoConfigureStubRunner {
 	 * JAR was downloaded from a remote location or a local one
 	 */
 	boolean snapshotCheckSkip() default false;
+
+	/**
+	 * Properties in form {@literal key=value}
+	 * @return the properties to add
+	 */
+	String[] properties() default {};
 }

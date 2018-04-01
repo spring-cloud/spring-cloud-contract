@@ -19,10 +19,12 @@ package org.springframework.cloud.contract.stubrunner.spring;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.contract.stubrunner.ResourceResolver;
 import org.springframework.core.io.Resource;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Dave Syer
@@ -259,8 +261,15 @@ public class StubRunnerProperties {
 		return this.properties;
 	}
 
-	public void setProperties(Map<String, String> properties) {
-		this.properties = properties;
+	public void setProperties(String[] properties) {
+		Properties elements = StringUtils
+				.splitArrayElementsIntoProperties(properties, "=");
+		if (elements == null) {
+			return;
+		}
+		for (String key : elements.stringPropertyNames()) {
+			this.properties.put(key, elements.getProperty(key));
+		}
 	}
 
 	@Override public String toString() {
