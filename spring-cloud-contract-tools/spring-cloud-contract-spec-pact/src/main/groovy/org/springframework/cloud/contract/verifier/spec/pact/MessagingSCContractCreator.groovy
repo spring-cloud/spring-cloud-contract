@@ -87,7 +87,7 @@ class MessagingSCContractCreator {
 											} else if (rule instanceof TypeMatcher) {
 												jsonPath(key, byType())
 											} else if (rule instanceof NumberTypeMatcher) {
-												switch(rule.numberType) {
+												switch (rule.numberType) {
 													case NumberTypeMatcher.NumberType.NUMBER:
 														jsonPath(key, byRegex(number()))
 														break

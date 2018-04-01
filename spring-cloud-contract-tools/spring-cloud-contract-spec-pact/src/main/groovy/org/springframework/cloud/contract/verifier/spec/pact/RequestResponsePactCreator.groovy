@@ -12,7 +12,7 @@ import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Body
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
-import org.springframework.cloud.contract.spec.internal.Headers
+import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.Response
@@ -27,9 +27,6 @@ import org.springframework.cloud.contract.spec.internal.Response
 @PackageScope
 class RequestResponsePactCreator {
 
-	private static final Closure requestDslPropertyValueExtractor = { DslProperty property -> property.serverValue }
-	private static final Closure responseDslPropertyValueExtractor = { DslProperty property -> property.clientValue }
-
 	RequestResponsePact createFromContract(Contract contract) {
 		assertNoExecutionProperty(contract)
 		PactDslWithProvider pactDslWithProvider = ConsumerPactBuilder.consumer("Consumer")
@@ -40,8 +37,8 @@ class RequestResponsePactCreator {
 	}
 
 	private void assertNoExecutionProperty(Contract contract) {
-		assertNoExecutionPropertyInBody(contract.request.body, requestDslPropertyValueExtractor)
-		assertNoExecutionPropertyInBody(contract.response.body, responseDslPropertyValueExtractor)
+		assertNoExecutionPropertyInBody(contract.request.body, { Object o -> getDslPropertyServerValue(o) })
+		assertNoExecutionPropertyInBody(contract.response.body, { Object o -> getDslPropertyClientValue(o) })
 	}
 
 	private void assertNoExecutionPropertyInBody(Body body, Closure dslPropertyValueExtractor) {
@@ -75,10 +72,12 @@ class RequestResponsePactCreator {
 			pactDslRequest = pactDslRequest.encodedQuery(query)
 		}
 		if (request.headers) {
-			pactDslRequest = pactDslRequest.headers(headers(request.headers, requestDslPropertyValueExtractor))
+			request.headers.entries.each { Header header ->
+				pactDslRequest = processHeader(pactDslRequest, header)
+			}
 		}
 		if (request.body) {
-			DslPart pactRequestBody = BodyConverter.toPactBody(request.body, requestDslPropertyValueExtractor)
+			DslPart pactRequestBody = BodyConverter.toPactBody(request.body, { DslProperty property -> property.serverValue })
 			if (request.bodyMatchers) {
 				pactRequestBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(request.bodyMatchers))
 			}
@@ -93,10 +92,12 @@ class RequestResponsePactCreator {
 		PactDslResponse pactDslResponse = pactDslRequest.willRespondWith()
 				.status(response.status.clientValue as Integer)
 		if (response.headers) {
-			pactDslResponse = pactDslResponse.headers(headers(response.headers, responseDslPropertyValueExtractor))
+			response.headers.entries.each { Header header ->
+				pactDslResponse = processHeader(pactDslResponse, header)
+			}
 		}
 		if (response.body) {
-			DslPart pactResponseBody = BodyConverter.toPactBody(response.body, responseDslPropertyValueExtractor)
+			DslPart pactResponseBody = BodyConverter.toPactBody(response.body, { DslProperty property -> property.clientValue })
 			if (response.bodyMatchers) {
 				pactResponseBody.setMatchers(MatchingRulesConverter.matchingRulesForBody(response.bodyMatchers))
 			}
@@ -140,11 +141,41 @@ class RequestResponsePactCreator {
 
 	}
 
-	private Map<String, String> headers(Headers headers, Closure dslPropertyValueExtractor) {
-		return headers.entries.collectEntries {
-			String name = it.name
-			String value = dslPropertyValueExtractor(it)
-			return [(name) : value]
+	private PactDslRequestWithPath processHeader(PactDslRequestWithPath pactDslRequest, Header header) {
+		if (header.isSingleValue()) {
+			String value = getDslPropertyServerValue(header).toString()
+			return pactDslRequest.headers(header.name, value)
+		} else {
+			String regex = getDslPropertyClientValue(header).toString()
+			String example = getDslPropertyServerValue(header).toString()
+			return pactDslRequest.matchHeader(header.name, regex, example)
 		}
+	}
+
+	private PactDslResponse processHeader(PactDslResponse pactDslResponse, Header header) {
+		if (header.isSingleValue()) {
+			String value = getDslPropertyClientValue(header).toString()
+			return pactDslResponse.headers([(header.name) : value])
+		} else {
+			String regex = getDslPropertyServerValue(header).toString()
+			String example = getDslPropertyClientValue(header).toString()
+			return pactDslResponse.matchHeader(header.name, regex, example)
+		}
+	}
+
+	private Object getDslPropertyClientValue(Object o) {
+		Object value = o
+		if (value instanceof DslProperty) {
+			value = getDslPropertyClientValue(value.getClientValue())
+		}
+		return value
+	}
+
+	private Object getDslPropertyServerValue(Object o) {
+		Object value = o
+		if (value instanceof DslProperty) {
+			value = getDslPropertyServerValue(value.getServerValue())
+		}
+		return value
 	}
 }

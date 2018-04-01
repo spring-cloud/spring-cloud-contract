@@ -23,6 +23,7 @@ import au.com.dius.pact.model.matchingrules.TypeMatcher
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
@@ -38,7 +39,7 @@ import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 class RequestResponseSCContractCreator {
 
 	private static final String FULL_BODY = '$'
-	private static final RegexPatterns regexPatterns = new RegexPatterns();
+	private static final RegexPatterns regexPatterns = new RegexPatterns()
 
 	Collection<Contract> convertFrom(RequestResponsePact pact) {
 		return pact.interactions.collect { RequestResponseInteraction interaction ->
@@ -61,9 +62,23 @@ class RequestResponseSCContractCreator {
 						url(request.path)
 					}
 					if (request.headers) {
+						Category headerRules = request.matchingRules.rulesForCategory('header')
 						headers {
-							request.headers.each { String key, String value ->
-								header(key, value)
+							request.headers.each { k, v ->
+								if (headerRules.matchingRules.containsKey(k)) {
+									MatchingRuleGroup ruleGroup = headerRules.matchingRules.get(k)
+									if (ruleGroup.rules.size() > 1) {
+										throw new UnsupportedOperationException("Currently only 1 rule at a time for a header is supported")
+									}
+									MatchingRule rule = ruleGroup.rules[0]
+									if (rule instanceof RegexMatcher) {
+										header(k, new DslProperty(rule.getRegex(), v))
+									} else {
+										throw new UnsupportedOperationException("Currently only the header matcher of type regex is supported")
+									}
+								} else {
+									header(k, v)
+								}
 							}
 						}
 					}
@@ -97,7 +112,7 @@ class RequestResponseSCContractCreator {
 									} else if (rule instanceof TimestampMatcher) {
 										jsonPath(key, byTimestamp())
 									} else if (rule instanceof NumberTypeMatcher) {
-										switch(rule.numberType) {
+										switch (rule.numberType) {
 											case NumberTypeMatcher.NumberType.NUMBER:
 												jsonPath(key, byRegex(regexPatterns.number()))
 												break
@@ -170,7 +185,7 @@ class RequestResponseSCContractCreator {
 										} else if (rule instanceof TypeMatcher) {
 											jsonPath(key, byType())
 										} else if (rule instanceof NumberTypeMatcher) {
-											switch(rule.numberType) {
+											switch (rule.numberType) {
 												case NumberTypeMatcher.NumberType.NUMBER:
 													jsonPath(key, byRegex(regexPatterns.number()))
 													break
@@ -181,7 +196,7 @@ class RequestResponseSCContractCreator {
 													jsonPath(key, byRegex(regexPatterns.aDouble()))
 													break
 												default:
-													throw new RuntimeException("Unsupported number type!")
+													throw new UnsupportedOperationException("Unsupported number type!")
 											}
 										}
 									}
@@ -189,9 +204,25 @@ class RequestResponseSCContractCreator {
 							}
 						}
 					}
-					response.headers?.each { String key, String value ->
+					if (response.headers) {
+						Category headerRules = response.matchingRules.rulesForCategory('header')
 						headers {
-							header(key, value)
+							response.headers.forEach({ String k, String v ->
+								if (headerRules.matchingRules.containsKey(k)) {
+									MatchingRuleGroup ruleGroup = headerRules.matchingRules.get(k)
+									if (ruleGroup.rules.size() > 1) {
+										throw new UnsupportedOperationException("Currently only 1 rule at a time for a header is supported")
+									}
+									MatchingRule rule = ruleGroup.rules[0]
+									if (rule instanceof RegexMatcher) {
+										header(k, new DslProperty(v, rule.getRegex()))
+									} else {
+										throw new UnsupportedOperationException("Currently only the header matcher of type regex is supported")
+									}
+								} else {
+									header(k, v)
+								}
+							})
 						}
 					}
 				}

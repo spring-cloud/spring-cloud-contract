@@ -457,11 +457,17 @@ class PactContractConverterSpec extends Specification {
 					request {
 						method(GET())
 						url("/")
+						headers {
+							contentType(applicationJsonUtf8())
+							header("Some-Header", $(c(regex("[a-zA-Z]{9}")), p("someValue")))
+							header("someHeaderWithJsonContent", '{"issue":"#595"}')
+						}
 					}
 					response {
 						status(200)
 						headers {
-							contentType(applicationJson())
+							contentType(applicationJsonUtf8())
+							header("Some-Header", $(c("someValue"), p(regex("[a-zA-Z]{9}"))))
 							header("someHeaderWithJsonContent", '{"issue":"#595"}')
 						}
 						body([

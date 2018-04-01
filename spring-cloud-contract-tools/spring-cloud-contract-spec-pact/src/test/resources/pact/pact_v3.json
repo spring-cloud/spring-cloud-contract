@@ -10,12 +10,30 @@
       "description": "java test interaction with a DSL array body",
       "request": {
         "method": "GET",
-        "path": "/"
+        "path": "/",
+        "headers": {
+          "Content-Type": "application/json; charset=UTF-8",
+          "Some-Header": "someValue",
+          "someHeaderWithJsonContent": "{\"issue\":\"#595\"}"
+        },
+        "matchingRules": {
+          "header": {
+            "Some-Header": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "[a-zA-Z]{9}"
+                }
+              ]
+            }
+          }
+        }
       },
       "response": {
         "status": 200,
         "headers": {
           "Content-Type": "application/json; charset=UTF-8",
+          "Some-Header": "someValue",
           "someHeaderWithJsonContent": "{\"issue\":\"#595\"}"
         },
         "body": [
@@ -45,6 +63,13 @@
           }
         ],
         "matchingRules": {
+          "header": {
+            "Some-Header": {
+              "matchers": [
+                { "match" : "regex", "regex" : "[a-zA-Z]{9}" }
+              ]
+            }
+          },
           "body": {
             "$[0].id": {
               "matchers": [

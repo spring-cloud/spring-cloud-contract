@@ -152,6 +152,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					}
 					headers {
 						contentType(applicationJson())
+						header('Some-Header', $(c('someValue'), p(regex('[a-zA-Z]{9}'))))
 					}
 				}
 			}
