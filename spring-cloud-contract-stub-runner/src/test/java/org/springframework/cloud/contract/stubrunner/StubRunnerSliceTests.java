@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -44,13 +45,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 		},
 		minPort = 10001,
 		maxPort = 10020,
-		mappingsOutputFolder = "target/outputmappings/")
+		mappingsOutputFolder = "target/outputmappings/",
+		properties = {"hello=world", "foo=bar"})
 @DirtiesContext
 @ActiveProfiles("test")
 public class StubRunnerSliceTests {
 
 	@Autowired
 	private StubFinder stubFinder;
+
+	@Autowired
+	private StubRunnerProperties properties;
 
 	@Value("${stubrunner.runningstubs.fraudDetectionServer.port}")
 	private Integer fraudDetectionServerPort;
@@ -81,6 +86,9 @@ public class StubRunnerSliceTests {
 		assertThat(stubFinder.findStubUrl(
 				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"))
 						.isNotNull();
+		assertThat(properties.getProperties())
+				.containsEntry("hello", "world")
+				.containsEntry("foo", "bar");
 	}
 
 	@SpringBootConfiguration
