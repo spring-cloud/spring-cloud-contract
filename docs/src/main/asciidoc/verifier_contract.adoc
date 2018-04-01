@@ -1378,8 +1378,15 @@ org.springframework.cloud.contract.verifier.converter.YamlContractConverter
 ==== Pact Converter
 
 Spring Cloud Contract includes support for https://docs.pact.io/[Pact] representation of
-contracts. Instead of using the Groovy DSL, you can use Pact files. In this section, we
-present how to add Pact support for your project.
+contracts up until v4. Instead of using the Groovy DSL, you can use Pact files. In this section, we
+present how to add Pact support for your project. Note however that not all functionality is supported.
+Starting with v3 you can combine multiple matcher for the same element;
+you can use matchers for the body, headers, request and path; and you can use value generators.
+Spring Cloud Contract currently only supports multiple matchers that are combined using the AND rule logic.
+Next to that the request and path matchers are skipped during the conversion.
+When using a date, time or datetime value generator with a given format,
+the given format will be skipped and the ISO format will be used.
+
 
 ==== Pact Contract
 
@@ -1395,7 +1402,7 @@ The remainder of this section about using Pact refers to the preceding file.
 
 ==== Pact for Producers
 
-On the producer side, you mustadd two additional dependencies to your plugin
+On the producer side, you must add two additional dependencies to your plugin
 configuration. One is the Spring Cloud Contract Pact support, and the other represents
 the current Pact version that you use.
 
@@ -1429,10 +1436,10 @@ test might be as follows:
 
 		// then:
 			assertThat(response.statusCode()).isEqualTo(200);
-			assertThat(response.header("Content-Type")).isEqualTo("application/vnd.fraud.v1+json;charset=UTF-8");
+			assertThat(response.header("Content-Type")).matches("application/vnd\\.fraud\\.v1\\+json.*");
 		// and:
 			DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
-			assertThatJson(parsedJson).field("rejectionReason").isEqualTo("Amount too high");
+			assertThatJson(parsedJson).field("['rejectionReason']").isEqualTo("Amount too high");
 		// and:
 			assertThat(parsedJson.read("$.fraudCheckStatus", String.class)).matches("FRAUD");
 	}
@@ -1443,17 +1450,18 @@ The corresponding generated stub might be as follows:
 [source,javascript,indent=0]
 ----
 {
+  "id" : "996ae5ae-6834-4db6-8fac-358ca187ab62",
   "uuid" : "996ae5ae-6834-4db6-8fac-358ca187ab62",
   "request" : {
     "url" : "/fraudcheck",
     "method" : "PUT",
     "headers" : {
       "Content-Type" : {
-        "equalTo" : "application/vnd.fraud.v1+json"
+        "matches" : "application/vnd\\.fraud\\.v1\\+json.*"
       }
     },
     "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[?(@.loanAmount == 99999)]"
+      "matchesJsonPath" : "$[?(@.['loanAmount'] == 99999)]"
     }, {
       "matchesJsonPath" : "$[?(@.clientId =~ /([0-9]{10})/)]"
     } ]
@@ -1463,8 +1471,9 @@ The corresponding generated stub might be as follows:
     "body" : "{\"fraudCheckStatus\":\"FRAUD\",\"rejectionReason\":\"Amount too high\"}",
     "headers" : {
       "Content-Type" : "application/vnd.fraud.v1+json;charset=UTF-8"
-    }
-  }
+    },
+    "transformers" : [ "response-template" ]
+  },
 }
 ----
 
