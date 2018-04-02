@@ -35,8 +35,7 @@
 		</dependency>
 		<dependency>
 			<groupId>au.com.dius</groupId>
-			<artifactId>pact-jvm-model</artifactId>
-			<optional>true</optional>
+			<artifactId>pact-jvm-consumer-java8_2.12</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.spockframework</groupId>

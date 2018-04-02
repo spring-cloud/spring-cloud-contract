@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2018 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,6 +57,7 @@ import static org.springframework.cloud.contract.verifier.util.ContentUtils.extr
  * Do not change to {@code @CompileStatic} since it's using double dispatch.
  *
  * @author Olga Maciaszek-Sharma, codearte.io
+ * @author Tim Ysewyn
  *
  * @since 1.0.0
  */
@@ -373,7 +374,9 @@ abstract class MethodBodyBuilder {
 			bb.startBlock()
 			// for the rest we'll do JsonPath matching in brute force
 			bodyMatchers.jsonPathMatchers().each {
-				if (MatchingType.regexRelated(it.matchingType()) || it.matchingType() == MatchingType.EQUALITY) {
+				if (it.matchingType() == MatchingType.NULL) {
+					methodForNullCheck(it, bb)
+				} else if (MatchingType.regexRelated(it.matchingType()) || it.matchingType() == MatchingType.EQUALITY) {
 					methodForEqualityCheck(it, bb, copiedBody)
 				} else if (it.matchingType() == MatchingType.COMMAND) {
 					methodForCommandExecution(it, bb, copiedBody)
@@ -450,6 +453,13 @@ abstract class MethodBodyBuilder {
 		retrieveObjectByPath(copiedBody, bodyMatcher.path())
 		ExecutionProperty property = bodyMatcher.value() as ExecutionProperty
 		bb.addLine(postProcessJsonPathCall(property.insertValue("parsedJson.read(${path})")))
+		addColonIfRequired(bb)
+	}
+
+	protected void methodForNullCheck(BodyMatcher bodyMatcher, BlockBuilder bb) {
+		String quotedAndEscaptedPath = quotedAndEscaped(bodyMatcher.path())
+		String method = "assertThat(parsedJson.read(${quotedAndEscaptedPath})).isNull()"
+		bb.addLine(postProcessJsonPathCall(method))
 		addColonIfRequired(bb)
 	}
 

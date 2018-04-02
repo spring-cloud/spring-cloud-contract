@@ -1,3 +1,18 @@
+/*
+ *  Copyright 2013-2018 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.CompileStatic
@@ -7,6 +22,7 @@ import groovy.transform.CompileStatic
  * the body of the request or response.
  *
  * @author Marcin Grzejszczak
+ * @author Tim Ysewyn
  * @since 1.0.3
  */
 @CompileStatic
@@ -42,10 +58,14 @@ enum MatchingType {
 	/**
 	 * The user can provide custom command to execute
 	 */
-	COMMAND
+	COMMAND,
+	/**
+	 * Verification if the value for the given path is null
+	 */
+	NULL
 
 	static boolean regexRelated(MatchingType type) {
-		if (type == EQUALITY || type == TYPE || type == COMMAND ) {
+		if (type == EQUALITY || type == TYPE || type == COMMAND || type == NULL ) {
 			return false
 		}
 		return true

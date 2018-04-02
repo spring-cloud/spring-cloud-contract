@@ -1,0 +1,280 @@
+{
+  "provider": {
+    "name": "Provider"
+  },
+  "consumer": {
+    "name": "Consumer"
+  },
+  "interactions": [
+    {
+      "description": "",
+      "request": {
+        "method": "POST",
+        "path": "/",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "someInteger": 1234567890,
+          "someDecimal": 123.123,
+          "someHex": "DEADC0DE",
+          "someAlphaNumeric": "Some alpha numeric string with 1234567890",
+          "someUUID": "00000000-0000-0000-0000-000000000000",
+          "someDate": "2018-03-26",
+          "someTime": "13:37:00",
+          "someDateTime": "2018-03-26 13:37:00",
+          "someBoolean": "true",
+          "someRegex": 1234567890
+        },
+        "generators": {
+          "body": {
+            "$.someInteger":{
+              "type": "RandomInt",
+              "min": 0,
+              "max": 2147483647
+            },
+            "$.someDecimal":{
+              "type": "RandomDecimal",
+              "digits": 10
+            },
+            "$.someHex":{
+              "type": "RandomHexadecimal",
+              "digits": 10
+            },
+            "$.someAlphaNumeric":{
+              "type": "RandomString",
+              "size": 10
+            },
+            "$.someUUID":{
+              "type": "Uuid"
+            },
+            "$.someDate":{
+              "type": "Date"
+            },
+            "$.someTime":{
+              "type": "Time"
+            },
+            "$.someDateTime":{
+              "type": "DateTime"
+            },
+            "$.someBoolean":{
+              "type": "RandomBoolean"
+            },
+            "$.someRegex":{
+              "type": "Regex",
+              "regex": "[0-9]{10}"
+            }
+          }
+        },
+        "matchingRules":{
+          "header": {
+            "Content-Type":{
+              "matchers":[
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ],
+              "combine":"AND"
+            }
+          },
+          "body":{
+            "$.someHex":{
+              "matchers":[
+                {
+                  "match":"type"
+                }
+              ],
+              "combine":"AND"
+            },
+            "$.someAlphaNumeric":{
+              "matchers":[
+                {
+                  "match":"type"
+                }
+              ],
+              "combine":"AND"
+            },
+            "$.someUUID":{
+              "matchers":[
+                {
+                  "match":"type"
+                }
+              ],
+              "combine":"AND"
+            },
+            "$.someDate":{
+              "matchers":[
+                {
+                  "match":"type"
+                }
+              ],
+              "combine":"AND"
+            },
+            "$.someTime":{
+              "matchers":[
+                {
+                  "match":"type"
+                }
+              ],
+              "combine":"AND"
+            },
+            "$.someDateTime":{
+              "matchers":[
+                {
+                  "match":"type"
+                }
+              ],
+              "combine":"AND"
+            },
+            "$.someBoolean":{
+              "matchers":[
+                {
+                  "match":"type"
+                }
+              ],
+              "combine":"AND"
+            }
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "someInteger": 1234567890,
+          "someDecimal": 123.123,
+          "someHex": "DEADC0DE",
+          "someAlphaNumeric": "Some alpha numeric string with 1234567890",
+          "someUUID": "00000000-0000-0000-0000-000000000000",
+          "someDate": "2018-03-26",
+          "someTime": "13:37:00",
+          "someDateTime": "2018-03-26 13:37:00",
+          "someBoolean": "true",
+          "someRegex": 1234567890
+        },
+        "generators": {
+          "body": {
+            "$.someInteger":{
+              "type": "RandomInt",
+              "min": 0,
+              "max": 2147483647
+            },
+            "$.someDecimal":{
+              "type": "RandomDecimal",
+              "digits": 10
+            },
+            "$.someHex":{
+              "type": "RandomHexadecimal",
+              "digits": 10
+            },
+            "$.someAlphaNumeric":{
+              "type": "RandomString",
+              "size": 10
+            },
+            "$.someUUID":{
+              "type": "Uuid"
+            },
+            "$.someDate":{
+              "type": "Date"
+            },
+            "$.someTime":{
+              "type": "Time"
+            },
+            "$.someDateTime":{
+              "type": "DateTime"
+            },
+            "$.someBoolean":{
+              "type": "RandomBoolean"
+            },
+            "$.someRegex":{
+              "type": "Regex",
+              "regex": "[0-9]{10}"
+            }
+          }
+        },
+        "matchingRules":{
+          "header":{
+            "Content-Type":{
+              "matchers":[
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ],
+              "combine":"AND"
+            }
+          },
+          "body":{
+            "$.someHex":{
+              "matchers":[
+                {
+                  "match":"type"
+                }
+              ],
+              "combine":"AND"
+            },
+            "$.someAlphaNumeric":{
+              "matchers":[
+                {
+                  "match":"type"
+                }
+              ],
+              "combine":"AND"
+            },
+            "$.someUUID":{
+              "matchers":[
+                {
+                  "match":"type"
+                }
+              ],
+              "combine":"AND"
+            },
+            "$.someDate":{
+              "matchers":[
+                {
+                  "match":"type"
+                }
+              ],
+              "combine":"AND"
+            },
+            "$.someTime":{
+              "matchers":[
+                {
+                  "match":"type"
+                }
+              ],
+              "combine":"AND"
+            },
+            "$.someDateTime":{
+              "matchers":[
+                {
+                  "match":"type"
+                }
+              ],
+              "combine":"AND"
+            },
+            "$.someBoolean":{
+              "matchers":[
+                {
+                  "match":"type"
+                }
+              ],
+              "combine":"AND"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pact-specification": {
+      "version": "3.0.0"
+    },
+    "pact-jvm": {
+      "version": "3.5.13"
+    }
+  }
+}

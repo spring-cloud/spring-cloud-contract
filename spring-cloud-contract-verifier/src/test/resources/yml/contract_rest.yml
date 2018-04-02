@@ -30,6 +30,7 @@ response:
   body:
     foo2: bar
     foo3: baz
+    nullValue: null
   matchers:
     body:
       - path: $.foo2
@@ -38,6 +39,9 @@ response:
       - path: $.foo3
         type: by_command
         value: executeMe($it)
+      - path: $.nullValue
+        type: by_null
+        value: null
     headers:
       - key: foo2
         regex: bar

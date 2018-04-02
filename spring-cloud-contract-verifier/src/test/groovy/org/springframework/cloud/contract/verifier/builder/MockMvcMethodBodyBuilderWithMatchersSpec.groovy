@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2018 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 									'complex.key' : 'foo'
 							]
 					])
-					stubMatchers {
+					bodyMatchers {
 						jsonPath('$.duck', byRegex("[0-9]{3}"))
 						jsonPath('$.duck', byEquality())
 						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
@@ -78,6 +78,10 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							duck: 123,
 							alpha: "abc",
 							number: 123,
+							positiveInteger: 1234567890,
+							negativeInteger: -1234567890,
+							positiveDecimalNumber: 123.4567890,
+							negativeDecimalNumber: -123.4567890,
 							aBoolean: true,
 							date: "2017-01-01",
 							dateTime: "2017-01-01T01:23:45",
@@ -97,9 +101,10 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							valueWithMaxEmpty: [],
 							key: [
 							        'complex.key' : 'foo'
-							]
+							],
+							nullValue: null
 					])
-					testMatchers {
+					bodyMatchers {
 						// asserts the jsonpath value against manual regex
 						jsonPath('$.duck', byRegex("[0-9]{3}"))
 						// asserts the jsonpath value against the provided value
@@ -108,6 +113,10 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
 						jsonPath('$.alpha', byEquality())
 						jsonPath('$.number', byRegex(number()))
+						jsonPath('$.positiveInteger', byRegex(anInteger()))
+						jsonPath('$.negativeInteger', byRegex(anInteger()))
+						jsonPath('$.positiveDecimalNumber', byRegex(aDouble()))
+						jsonPath('$.negativeDecimalNumber', byRegex(aDouble()))
 						jsonPath('$.aBoolean', byRegex(anyBoolean()))
 						// asserts vs inbuilt time related regex
 						jsonPath('$.date', byDate())
@@ -139,9 +148,11 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 						// will execute a method `assertThatValueIsANumber`
 						jsonPath('$.duck', byCommand('assertThatValueIsANumber($it)'))
 						jsonPath("\$.['key'].['complex.key']", byEquality())
+						jsonPath('$.nullValue', byNull())
 					}
 					headers {
 						contentType(applicationJson())
+						header('Some-Header', $(c('someValue'), p(regex('[a-zA-Z]{9}'))))
 					}
 				}
 			}
@@ -157,6 +168,10 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.alpha", String.class)).matches("[\\\\p{L}]*")')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.alpha", String.class)).isEqualTo("abc")')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.number", String.class)).matches("-?(\\\\d*\\\\.\\\\d+|\\\\d+)")')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.positiveInteger", String.class)).matches("-?(\\\\d+)")')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.negativeInteger", String.class)).matches("-?(\\\\d+)")')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.positiveDecimalNumber", String.class)).matches("-?(\\\\d*\\\\.\\\\d+)")')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.negativeDecimalNumber", String.class)).matches("-?(\\\\d*\\\\.\\\\d+)")')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.aBoolean", String.class)).matches("(true|false)")')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.date", String.class)).matches("(\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])")')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '.dateTime", String.class)).matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])")')
@@ -174,6 +189,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 			test.contains('assertThat((java.lang.Iterable) parsedJson.read("' + rootElement + '.valueWithMaxEmpty", java.util.Collection.class)).as("' + rootElement + '.valueWithMaxEmpty").hasSizeLessThanOrEqualTo(0)')
 			test.contains('assertThatValueIsANumber(parsedJson.read("' + rootElement + '.duck")')
 			test.contains('assertThat(parsedJson.read("' + rootElement + '''.['key'].['complex.key']", String.class)).isEqualTo("foo")''')
+			test.contains('assertThat(parsedJson.read("' + rootElement + '.nullValue")).isNull()')
 			!test.contains('cursor')
 		and:
 			try {
@@ -224,7 +240,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 									]
 							],
 					])
-					testMatchers {
+					bodyMatchers {
 						jsonPath('$.phoneNumbers', byType {
 							minOccurrence(0)				// min occurrence of 1
 							maxOccurrence(4)				// max occurrence of 3
@@ -276,7 +292,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 								number: "foo"
 						]
 				])
-				testMatchers {
+				bodyMatchers {
 					jsonPath('$.phoneNumbers[*].number', byType {
 						minOccurrence(0)
 						maxOccurrence(4)
@@ -329,7 +345,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							        number: "foo"
 							]
 					])
-					testMatchers {
+					bodyMatchers {
 						jsonPath('$.phoneNumbers[*].number', byCommand('foo($it)'))
 					}
 				}
@@ -364,7 +380,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 							        number: "foo"
 							]
 					])
-					testMatchers {
+					bodyMatchers {
 						jsonPath('$.nonExistingPhoneNumbers[*].number', byCommand('foo($it)'))
 					}
 				}
@@ -401,7 +417,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 					headers {
 						contentType(applicationJson())
 					}
-					testMatchers {
+					bodyMatchers {
 						jsonPath('''$[0][0].access_token''', byEquality())
 					}
 				}
@@ -445,7 +461,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 								]
 							}
 						""")
-					testMatchers {
+					bodyMatchers {
 						jsonPath('$.items[*].id', byRegex(nonBlank()))
 						jsonPath('$.items[*].title', byRegex(nonBlank()))
 						jsonPath('$.items[*]', byType { minOccurrence(2); maxOccurrence(2) })
@@ -488,7 +504,7 @@ class MockMvcMethodBodyBuilderWithMatchersSpec extends Specification implements 
 									"title": "lorem ipsum"
 							]
 					])
-					testMatchers {
+					bodyMatchers {
 						jsonPath('$.items[*].id', byRegex(nonBlank()))
 						jsonPath('$.items[*].title', byRegex(nonBlank()))
 						jsonPath('$.items[*]', byType { minOccurrence(2); maxOccurrence(2) })

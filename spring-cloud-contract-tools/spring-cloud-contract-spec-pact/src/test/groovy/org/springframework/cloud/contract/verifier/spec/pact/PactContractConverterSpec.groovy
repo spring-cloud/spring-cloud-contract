@@ -1,3 +1,18 @@
+/*
+ *  Copyright 2013-2018 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.springframework.cloud.contract.verifier.spec.pact
 
 import au.com.dius.pact.model.Pact
@@ -11,13 +26,19 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.Subject
+
 /**
  * @author Marcin Grzejszczak
+ * @author Tim Ysewyn
  */
 class PactContractConverterSpec extends Specification {
 
 	File pactJson = new File(PactContractConverterSpec.getResource("/pact/pact.json").toURI())
 	File pact509Json = new File(PactContractConverterSpec.getResource("/pact/pact_509.json").toURI())
+	File pactv2Json = new File(PactContractConverterSpec.getResource("/pact/pact_v2.json").toURI())
+	File pactv3Json = new File(PactContractConverterSpec.getResource("/pact/pact_v3.json").toURI())
+	File pactv3MessagingJson = new File(PactContractConverterSpec.getResource("/pact/pact_v3_messaging.json").toURI())
+	File pactv3UnsupportedRuleLogicJson = new File(PactContractConverterSpec.getResource("/pact/pact_v3_unsupported_rule_logic.json").toURI())
 	@Subject PactContractConverter converter = new PactContractConverter()
 
 	def "should accept json files that are pact files"() {
@@ -48,7 +69,7 @@ class PactContractConverterSpec extends Specification {
 						contentType(applicationJson())
 					}
 					body(id: "123", method: "create")
-					stubMatchers {
+					bodyMatchers {
 						jsonPath('$.id', byRegex("[0-9]{3}"))
 					}
 				}
@@ -62,7 +83,7 @@ class PactContractConverterSpec extends Specification {
 							id: "eb0f8c17-c06a-479e-9204-14f7c95b63a6",
 							userName: "AJQrokEGPAVdOHprQpKP"]
 						]])
-					testMatchers {
+					bodyMatchers {
 						jsonPath('$[0][*].email', byType())
 						jsonPath('$[0][*].id', byRegex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
 						jsonPath('$[0]', byType() {
@@ -97,7 +118,7 @@ class PactContractConverterSpec extends Specification {
 						contentType(applicationJson())
 					}
 					body(id: 42, firstName: "Arthur", lastName: "Dent")
-					testMatchers {
+					bodyMatchers {
 						jsonPath('''$.['id']''', byType())
 						jsonPath('''$.['lastName']''', byType())
 						jsonPath('''$.['firstName']''', byType())
@@ -131,7 +152,7 @@ class PactContractConverterSpec extends Specification {
 									method: $(stub(regex("[0][1][2]"))),
 									something: "foo"
 							)
-							stubMatchers {
+							bodyMatchers {
 								jsonPath('$.id', byRegex("[0-9]{3}"))
 								jsonPath('$.something', byEquality())
 							}
@@ -145,18 +166,29 @@ class PactContractConverterSpec extends Specification {
 										  [email: "rddtGwwWMEhnkAPEmsyE",
 										   id: "eb0f8c17-c06a-479e-9204-14f7c95b63a6",
 										   number: $(producer(regex("[0-9]{3}")), consumer(923)),
+										   positiveInteger: 1234567890,
+										   negativeInteger: -1234567890,
+										   positiveDecimalNumber: 123.4567890,
+										   negativeDecimalNumber: -123.4567890,
 										   something: "foo",
-										   userName: "AJQrokEGPAVdOHprQpKP"]
+										   userName: "AJQrokEGPAVdOHprQpKP",
+										   nullValue: null]
 								  ]])
-							testMatchers {
+							bodyMatchers {
 								jsonPath('$[0][*].email', byType())
 								jsonPath('$[0][*].id', byRegex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
 								jsonPath('$[0]', byType() {
 									minOccurrence(1)
 									maxOccurrence(5)
 								})
+								jsonPath('$[0][*].number', byRegex(number()))
+								jsonPath('$[0][*].positiveInteger', byRegex(anInteger()))
+								jsonPath('$[0][*].negativeInteger', byRegex(anInteger()))
+								jsonPath('$[0][*].positiveDecimalNumber', byRegex(aDouble()))
+								jsonPath('$[0][*].negativeDecimalNumber', byRegex(aDouble()))
 								jsonPath('$[0][*].userName', byType())
 								jsonPath('$[0][*].something', byEquality())
+								jsonPath('$[0][*].nullValue', byNull())
 							}
 						}
 					}
@@ -175,7 +207,10 @@ class PactContractConverterSpec extends Specification {
       "request": {
         "method": "GET",
         "path": "\\/mallory",
-        "query": "name=ron&status=good",
+        "query": {
+        	"name": ["ron"],
+        	"status": ["good"]
+        },
         "headers": {
           "Content-Type": "application\\/json"
         },
@@ -185,12 +220,18 @@ class PactContractConverterSpec extends Specification {
           "something": "foo"
         },
         "matchingRules": {
-          "$.body.id": {
-            "match": "regex",
-            "regex": "[0-9]{3}"
-          },
-          "$.body.something": {
-            "match": "equality"
+          "body": {
+            "$.id": {
+              "matchers": [{
+                "match": "regex",
+                "regex": "[0-9]{3}"
+              }]
+            },
+            "$.something": {
+              "matchers": [{
+                "match": "equality"
+              }]
+            }
           }
         }
       },
@@ -205,28 +246,76 @@ class PactContractConverterSpec extends Specification {
               "email": "rddtGwwWMEhnkAPEmsyE",
               "id": "eb0f8c17-c06a-479e-9204-14f7c95b63a6",
               "number": 923,
-              "userName": "AJQrokEGPAVdOHprQpKP"
+              "positiveInteger": 1234567890,
+              "negativeInteger": -1234567890,
+              "positiveDecimalNumber": 123.4567890,
+              "negativeDecimalNumber": -123.4567890,
+              "userName": "AJQrokEGPAVdOHprQpKP",
+              "something": "foo",
+              "nullValue": null
             }
           ]
         ],
         "matchingRules": {
-          "$.body[0][*].email": {
-            "match": "type"
-          },
-          "$.body[0][*].id": {
-            "match": "regex",
-            "regex": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
-          },
-          "$.body[0]": {
-            "match": "type",
-            "min": 1,
-            "max": 5
-          },
-          "$.body[0][*].userName": {
-            "match": "type"
-          },
-          "$.body[0][*].something": {
-            "match": "equality"
+          "body": {
+            "$[0][*].email": {
+              "matchers": [{
+                "match": "type"
+              }]
+            },
+            "$[0][*].id": {
+              "matchers": [{
+                "match": "regex",
+                "regex": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+              }]
+            },
+            "$[0]": {
+              "matchers": [{
+                "match": "type",
+                "min": 1,
+                "max": 5
+              }]
+            },
+            "$[0][*].number": {
+              "matchers": [{
+                "match": "number"
+              }]
+            },
+            "$[0][*].positiveInteger": {
+              "matchers": [{
+                "match": "integer"
+              }]
+            },
+            "$[0][*].negativeInteger": {
+              "matchers": [{
+                "match": "integer"
+              }]
+            },
+            "$[0][*].positiveDecimalNumber": {
+              "matchers": [{
+                "match": "decimal"
+              }]
+            },
+            "$[0][*].negativeDecimalNumber": {
+              "matchers": [{
+                "match": "decimal"
+              }]
+            },
+            "$[0][*].userName": {
+              "matchers": [{
+                "match": "type"
+              }]
+            },
+            "$[0][*].something": {
+              "matchers": [{
+                "match": "equality"
+              }]
+            },
+            "$[0][*].nullValue": {
+              "matchers": [{
+                "match": "null"
+              }]
+            }
           }
         }
       }
@@ -234,18 +323,18 @@ class PactContractConverterSpec extends Specification {
   ],
   "metadata": {
     "pact-specification": {
-      "version": "2.0.0"
+      "version": "3.0.0"
     },
     "pact-jvm": {
-      "version": "2.4.18"
+      "version": "3.5.13"
     }
   }
 }
 '''
 		when:
-			Pact pact = converter.convertTo(inputContracts)
+			Pact pact = converter.convertTo(inputContracts).get(0)
 		then:
-			String actual = JsonOutput.toJson(pact.toMap(PactSpecVersion.V2))
+			String actual = JsonOutput.toJson(pact.toMap(PactSpecVersion.V3))
 			JSONAssert.assertEquals(expectedJson, actual, false)
 	}
 
@@ -303,14 +392,266 @@ class PactContractConverterSpec extends Specification {
 			Map<String, Collection<Contract>> contracts = contractResources.collectEntries { [(it.filename) : ContractVerifierDslConverter.convertAsCollection(new File("/"), it.file)] }
 			Map<String, String> jsonPacts = pactResources.collectEntries { [(it.filename) : it.file.text] }
 		when:
-			Map<String, Pact> pacts = contracts.entrySet().collectEntries { [(it.key) : converter.convertTo(it.value)] }
+			Map<String, Collection<Pact>> pacts = contracts.entrySet().collectEntries { [(it.key) : converter.convertTo(it.value)] }
 		then:
 			pacts.entrySet().each {
-				String convertedPactAsText = JsonOutput.toJson(it.value.toMap(PactSpecVersion.V2))
+				String convertedPactAsText = JsonOutput.toJson(it.value[0].toMap(PactSpecVersion.V3))
 				String pactFileName = it.key.replace("groovy", "json")
 				println "File name [${it.key}]"
-				JSONAssert.assertEquals(jsonPacts.get(pactFileName), convertedPactAsText, false)
+				JSONAssert.assertEquals(jsonPacts.get(pactFileName), convertedPactAsText, true)
 			}
+	}
+
+	def "should convert from pact v2 to two SC contracts"() {
+		given:
+			Collection<Contract> expectedContracts = [
+				Contract.make {
+					description("get all users for max a user with an id named 'user' exists")
+					request {
+						method(GET())
+						url("/idm/user")
+					}
+					response {
+						status(200)
+						headers {
+							contentType(applicationJson())
+						}
+						body([[
+								[email: "rddtGwwWMEhnkAPEmsyE",
+								id: "eb0f8c17-c06a-479e-9204-14f7c95b63a6",
+								userName: "AJQrokEGPAVdOHprQpKP"]
+						]])
+						bodyMatchers {
+							jsonPath('$[0][*].email', byType())
+							jsonPath('$[0][*].id', byRegex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
+							jsonPath('$[0]', byType() {
+								maxOccurrence(5)
+							})
+							jsonPath('$[0][*].userName', byType())
+						}
+					}
+				},
+				Contract.make {
+					description("get all users for min a user with an id named 'user' exists")
+					request {
+						method(GET())
+						url("/idm/user")
+					}
+					response {
+						status(200)
+						headers {
+							contentType(applicationJson())
+						}
+						body([[
+								[email: "DPvAfkCZpOBZWzKYiDMC",
+								id: "95d0371b-bf30-4943-90a8-8bb1967c4cb2",
+								userName: "GIUlVKoiLdHLYNKGbcSy"]
+						]])
+						bodyMatchers {
+							jsonPath('$[0][*].email', byType())
+							jsonPath('$[0][*].id', byRegex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
+							jsonPath('$[0]', byType() {
+								minOccurrence(5)
+							})
+							jsonPath('$[0][*].userName', byType())
+						}
+					}
+				}
+			]
+		when:
+			Collection<Contract> contracts = converter.convertFrom(pactv2Json)
+		then:
+			contracts == expectedContracts
+	}
+
+	def "should convert from pact v3 to three SC contracts"() {
+		given:
+			Collection<Contract> expectedContracts = [
+				Contract.make {
+					description("java test interaction with a DSL array body")
+					request {
+						method(GET())
+						url("/")
+						headers {
+							contentType(applicationJsonUtf8())
+							header("Some-Header", $(c(regex("[a-zA-Z]{9}")), p("someValue")))
+							header("someHeaderWithJsonContent", '{"issue":"#595"}')
+						}
+					}
+					response {
+						status(200)
+						headers {
+							contentType(applicationJsonUtf8())
+							header("Some-Header", $(c("someValue"), p(regex("[a-zA-Z]{9}"))))
+							header("someHeaderWithJsonContent", '{"issue":"#595"}')
+						}
+						body([
+							[
+								"dob": "07/19/2016",
+								"id": 8958464620,
+								"name": "Rogger the Dogger",
+								"timestamp": "2016-07-19T12:14:39",
+								"nullValue": null,
+								"aNumber": 1234567890,
+								"positiveInteger": 1234567890,
+								"negativeInteger": -1234567890,
+								"positiveDecimalNumber": 123.4567890,
+								"negativeDecimalNumber": -123.4567890
+							],
+							[
+								"dob": "07/19/2016",
+								"id": 4143398442,
+								"name": "Cat in the Hat",
+								"timestamp": "2016-07-19T12:14:39",
+								"nullValue": null,
+								"aNumber": 1234567890,
+								"positiveInteger": 1234567890,
+								"negativeInteger": -1234567890,
+								"positiveDecimalNumber": 123.4567890,
+								"negativeDecimalNumber": -123.4567890
+							]
+					  	])
+						bodyMatchers {
+							jsonPath('$[0].id', byType())
+							jsonPath('$[1].id', byType())
+							jsonPath('$[*].nullValue', byNull())
+							jsonPath('$[*].aNumber', byRegex(number()))
+							jsonPath('$[*].positiveInteger', byRegex(anInteger()))
+							jsonPath('$[*].negativeInteger', byRegex(anInteger()))
+							jsonPath('$[*].positiveDecimalNumber', byRegex(aDouble()))
+							jsonPath('$[*].negativeDecimalNumber', byRegex(aDouble()))
+						}
+					}
+				},
+				Contract.make {
+					description("test interaction with a array body with templates")
+					request {
+						method(GET())
+						url("/")
+					}
+					response {
+						status(200)
+						headers {
+							contentType(applicationJsonUtf8())
+						}
+						body([
+							[
+								"dob": "2016-07-19",
+								"id": 1943791933,
+								"name": "ZSAICmTmiwgFFInuEuiK"
+							],
+							[
+								"dob": "2016-07-19",
+								"id": 1943791933,
+								"name": "ZSAICmTmiwgFFInuEuiK"
+							],
+							[
+									"dob": "2016-07-19",
+									"id": 1943791933,
+									"name": "ZSAICmTmiwgFFInuEuiK"
+							]
+					  	])
+						bodyMatchers {
+							jsonPath('$[2].name', byType())
+							jsonPath('$[0].id', byType())
+							jsonPath('$[1].id', byType())
+							jsonPath('$[2].id', byType())
+							jsonPath('$[1].name', byType())
+							jsonPath('$[0].name', byType())
+							jsonPath('$[0].dob', byDate())
+						}
+					}
+				},
+				Contract.make {
+					description("test interaction with an array like matcher")
+					request {
+						method(GET())
+						url("/")
+					}
+					response {
+						status(200)
+						headers {
+							contentType(applicationJsonUtf8())
+						}
+						body([
+						    "data": [
+								"array1": [[
+									"dob": "2016-07-19",
+									"id": 1600309982,
+									"name": "FVsWAGZTFGPLhWjLuBOd"
+								]],
+								"array2": [[
+									"address": "127.0.0.1",
+									"name": "jvxrzduZnwwxpFYrQnpd"
+								]],
+								"array3": [[
+									[
+										"itemCount": 652571349
+									]
+								]]
+							],
+							"id": 7183997828
+					  	])
+						bodyMatchers {
+							jsonPath('$.data.array3[0]', byType() {
+								maxOccurrence(5)
+							})
+							jsonPath('$.data.array1', byType() {
+								minOccurrence(0)
+							})
+							jsonPath('$.data.array2', byType() {
+								minOccurrence(1)
+							})
+							jsonPath('$.id', byType())
+							jsonPath('$.data.array2[*].name', byType())
+							jsonPath('$.data.array2[*].address', byRegex("(\\d{1,3}\\.)+\\d{1,3}"))
+							jsonPath('$.data.array1[*].name', byType())
+							jsonPath('$.data.array1[*].id', byType())
+						}
+					}
+				}
+			]
+		when:
+			Collection<Contract> contracts = converter.convertFrom(pactv3Json)
+		then:
+			contracts == expectedContracts
+	}
+
+	def "should convert from pact v3 messaging to one SC message contract"() {
+
+		given:
+			Collection<Contract> expectedContracts = [
+					Contract.make {
+						label 'message sent to activemq:output'
+						input {
+							triggeredBy('bookReturnedTriggered()')
+						}
+						outputMessage {
+							body([
+								bookName: "foo"
+							])
+							headers {
+								header('BOOK-NAME', 'foo')
+								messagingContentType(applicationJson())
+							}
+							bodyMatchers {
+								jsonPath('$.bookName', byType())
+							}
+						}
+					}
+			]
+		when:
+			Collection<Contract> contracts = converter.convertFrom(pactv3MessagingJson)
+		then:
+			contracts == expectedContracts
+	}
+
+	def "should fail to convert a pact v3 contract with unsupported rule logic"() {
+		when:
+			converter.convertFrom(pactv3UnsupportedRuleLogicJson)
+		then:
+			def e = thrown(UnsupportedOperationException)
+			e.message.contains("Currently only the AND combination rule logic is supported")
 	}
 }
 
@@ -319,6 +660,6 @@ class PactContractConverterSpec extends Specification {
 // file creator
 /*
 pacts.entrySet().each {
-	new File("target/${it.key.replace("groovy", "json")}").text = JsonOutput.toJson(it.value.toMap(PactSpecVersion.V2))
+	new File("target/${it.key.replace("groovy", "json")}").text = JsonOutput.toJson(it.value.toMap(PactSpecVersion.V3))
 }
  */

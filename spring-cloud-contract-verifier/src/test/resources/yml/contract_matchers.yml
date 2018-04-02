@@ -13,6 +13,7 @@ request:
     valueWithTypeMatch: "string"
     key:
       "complex.key": 'foo'
+    nullValue: null
   matchers:
     headers:
       - key: Content-Type
@@ -42,6 +43,8 @@ request:
         type: by_time
       - path: "$.['key'].['complex.key']"
         type: by_equality
+      - path: $.nullvalue
+        type: by_null
   headers:
     Content-Type: application/json
 response:
@@ -72,6 +75,7 @@ response:
     valueWithMaxEmpty: []
     key:
       'complex.key' : 'foo'
+    nulValue: null
   matchers:
     headers:
       - key: Content-Type
@@ -120,5 +124,8 @@ response:
       - path: $.duck
         type: by_command
         value: assertThatValueIsANumber($it)
+      - path: $.nullValue
+        type: by_null
+        value: null
   headers:
     Content-Type: application/json

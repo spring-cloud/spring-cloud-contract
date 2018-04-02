@@ -1,0 +1,44 @@
+{
+  "consumer":{
+    "name":"Consumer"
+  },
+  "provider":{
+    "name":"Provider"
+  },
+  "messages":[
+    {
+      "description":"message sent to jms:output",
+      "metaData":{
+        "BOOK-NAME":"foo"
+      },
+      "contents":{
+        "bookName":"foo"
+      },
+      "providerStates":[
+        {
+          "name":"received message from jms:input"
+        }
+      ],
+      "matchingRules":{
+        "body":{
+          "$.bookName":{
+            "matchers":[
+              {
+                "match":"type"
+              }
+            ],
+            "combine":"AND"
+          }
+        }
+      }
+    }
+  ],
+  "metadata":{
+    "pact-specification":{
+      "version":"3.0.0"
+    },
+    "pact-jvm":{
+      "version":"3.5.13"
+    }
+  }
+}

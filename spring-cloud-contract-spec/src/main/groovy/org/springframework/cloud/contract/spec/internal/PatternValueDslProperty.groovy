@@ -1,11 +1,28 @@
+/*
+ *  Copyright 2013-2018 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+import org.apache.commons.lang3.RandomStringUtils
 
 import java.util.regex.Pattern
 /**
  * @author Marcin Grzejszczak
+ * @author Tim Ysewyn
  */
 @PackageScope
 @CompileStatic
@@ -40,8 +57,17 @@ abstract class PatternValueDslProperty<T extends DslProperty> {
 				RandomStringGenerator.randomString(20))
 	}
 
+	T anyAlphaNumeric() {
+		return createAndValidateProperty(RegexPatterns.ALPHA_NUMERIC,
+				RandomStringUtils.randomAlphanumeric(20))
+	}
+
 	T anyNumber() {
 		return createAndValidateProperty(RegexPatterns.NUMBER, this.random.nextInt())
+	}
+
+	T anyInteger() {
+		return createAndValidateProperty(RegexPatterns.INTEGER, this.random.nextInt())
 	}
 
 	T anyPositiveInt() {
@@ -50,6 +76,11 @@ abstract class PatternValueDslProperty<T extends DslProperty> {
 
 	T anyDouble() {
 		return createAndValidateProperty(RegexPatterns.DOUBLE, this.random.nextInt(100) + this.random.nextDouble())
+	}
+
+	T anyHex() {
+		return createAndValidateProperty(RegexPatterns.HEX,
+				RandomStringUtils.random(10, "0123456789abcdef"))
 	}
 
 	T aBoolean() {

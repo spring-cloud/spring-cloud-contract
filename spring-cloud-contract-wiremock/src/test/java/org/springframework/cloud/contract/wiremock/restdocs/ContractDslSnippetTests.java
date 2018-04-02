@@ -91,7 +91,7 @@ public class ContractDslSnippetTests {
 		then(parsedContract.getRequest().getUrl().getClientValue()).isNotNull();
 		then(parsedContract.getRequest().getUrl().getClientValue().toString()).startsWith("/");
 		then(parsedContract.getRequest().getBody().getClientValue()).isNotNull();
-		then(parsedContract.getRequest().getMatchers().hasMatchers()).isTrue();
+		then(parsedContract.getRequest().getBodyMatchers().hasMatchers()).isTrue();
 		then(parsedContract.getResponse().getStatus().getClientValue()).isNotNull();
 		then(parsedContract.getResponse().getHeaders().getEntries()).isNotEmpty();
 		then(parsedContract.getResponse().getBody().getClientValue()).isNotNull();
@@ -128,7 +128,7 @@ public class ContractDslSnippetTests {
 		then(parsedContract.getRequest().getUrl().getClientValue()).isNotNull();
 		then(parsedContract.getRequest().getUrl().getClientValue().toString()).startsWith("/");
 		then(parsedContract.getRequest().getBody().getClientValue()).isNotNull();
-		then(parsedContract.getRequest().getMatchers().hasMatchers()).isTrue();
+		then(parsedContract.getRequest().getBodyMatchers().hasMatchers()).isTrue();
 		then(parsedContract.getResponse().getStatus().getClientValue()).isNotNull();
 		then(parsedContract.getResponse().getHeaders().getEntries()).isNotEmpty();
 		then(parsedContract.getResponse().getBody().getClientValue()).isNotNull();
@@ -152,7 +152,7 @@ public class ContractDslSnippetTests {
 		then(parsedContract.getResponse().getStatus().getClientValue()).isNotNull();
 		then(parsedContract.getResponse().getHeaders()).isNull();
 		then(parsedContract.getResponse().getBody()).isNull();
-		then(parsedContract.getResponse().getMatchers()).isNull();
+		then(parsedContract.getResponse().getBodyMatchers()).isNull();
 	}
 
 	private Set<String> headerNames(Set<Header> headers) {

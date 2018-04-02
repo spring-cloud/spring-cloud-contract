@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2018 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import com.toomuchcoding.jsonassert.JsonAssertion;
  * Passes through a message that matches the one defined in the DSL
  *
  * @author Marcin Grzejszczak
+ * @author Tim Ysewyn
  */
 class StubRunnerIntegrationMessageSelector implements MessageSelector {
 
@@ -56,7 +57,7 @@ class StubRunnerIntegrationMessageSelector implements MessageSelector {
 			return false;
 		}
 		Object inputMessage = message.getPayload();
-		BodyMatchers matchers = this.groovyDsl.getInput().getMatchers();
+		BodyMatchers matchers = this.groovyDsl.getInput().getBodyMatchers();
 		Object dslBody = MapConverter.getStubSideValues(this.groovyDsl.getInput().getMessageBody());
 		Object matchingInputMessage = JsonToJsonPathsConverter
 				.removeMatchingJsonPaths(dslBody, matchers);

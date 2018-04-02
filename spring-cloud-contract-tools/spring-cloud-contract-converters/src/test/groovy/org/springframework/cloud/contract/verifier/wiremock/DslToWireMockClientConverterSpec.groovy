@@ -1,11 +1,11 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2018 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *	   http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -583,7 +583,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 								]
 							]
 					])
-					stubMatchers {
+					bodyMatchers {
 						jsonPath('$.duck', byRegex("[0-9]{3}"))
 						jsonPath('$.duck', byEquality())
 						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
@@ -621,7 +621,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 								1,2,3
 							],
 					])
-					testMatchers {
+					bodyMatchers {
 						// asserts the jsonpath value against manual regex
 						jsonPath('$.duck', byRegex("[0-9]{3}"))
 						jsonPath('$.duck', byEquality())
@@ -789,7 +789,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 							email: 'abc@abc.com',
 							callback_url: 'http://partners.com'
 						)
-						stubMatchers {
+						bodyMatchers {
 							jsonPath('$.[\\'email\\']', byRegex(email()))
 							jsonPath('$.[\\'callback_url\\']', byRegex(hostname()))
 						}
@@ -803,7 +803,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 							code: "123123",
 							message: "User not found by email == [not.existing@user.com]"
 						)
-						testMatchers {
+						bodyMatchers {
 							jsonPath('$.code', byRegex("123123"))
 							jsonPath('$.message', byRegex("User not found by email == ${email()}"))
 						}
@@ -875,7 +875,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 							email: 'abc@abc.com',
 							callback_url: 'http://partners.com'
 						)
-						stubMatchers {
+						bodyMatchers {
 							jsonPath('$.[\\'email\\']', byRegex(email()))
 							jsonPath('$.[\\'callback_url\\']', byRegex(hostname()))
 						}

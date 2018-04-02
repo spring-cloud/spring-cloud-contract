@@ -1,0 +1,29 @@
+{
+  "consumer":{
+    "name":"Consumer"
+  },
+  "provider":{
+    "name":"Provider"
+  },
+  "messages":[
+    {
+      "description":"assert that bookWasDeleted()",
+      "metaData":{
+
+      },
+      "providerStates":[
+        {
+          "name":"received message from jms:delete"
+        }
+      ]
+    }
+  ],
+  "metadata":{
+    "pact-specification":{
+      "version":"3.0.0"
+    },
+    "pact-jvm":{
+      "version":"3.5.13"
+    }
+  }
+}

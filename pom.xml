@@ -24,6 +24,7 @@
 
 	<properties>
 		<checkstyle.version>2.17</checkstyle.version>
+		<pact.version>3.5.13</pact.version>
 		<jsch-agent.version>0.0.9</jsch-agent.version>
 		<spring-cloud-build.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-build.version>
 		<spring-cloud-zookeeper.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-zookeeper.version>
@@ -113,8 +114,25 @@
 			</dependency>
 			<dependency>
 				<groupId>au.com.dius</groupId>
+				<artifactId>pact-jvm-consumer-java8_2.12</artifactId>
+				<version>${pact.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.codehaus.groovy</groupId>
+						<artifactId>groovy-all</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>au.com.dius</groupId>
 				<artifactId>pact-jvm-model</artifactId>
-				<version>2.4.18</version>
+				<version>${pact.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.codehaus.groovy</groupId>
+						<artifactId>groovy-all</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>com.github.jknack</groupId>
