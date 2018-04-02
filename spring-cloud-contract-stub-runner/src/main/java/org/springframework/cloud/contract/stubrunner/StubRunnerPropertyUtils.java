@@ -47,6 +47,15 @@ class StubRunnerPropertyUtils {
 	}
 
 	/**
+	 * For options, system props and env vars returns {@code true}
+	 * when property is set
+	 */
+	static boolean hasProperty(Map<String, String> options, String propName) {
+		String value = getProperty(options, propName);
+		return StringUtils.hasText(value);
+	}
+
+	/**
 	 * Tries to pick a value from options, for Env vars takes the prop name, converts
 	 * dots to underscores and applies upper case
 	 */

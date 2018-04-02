@@ -82,6 +82,34 @@ class StubRunnerPropertyUtilsSpec extends Specification {
 			"foo.bar-baz" | null                   | ""             | "bc"        | "bc"           | "stubrunner.properties.foo.bar-baz" | "STUBRUNNER_PROPERTIES_FOO_BAR_BAZ"
 	}
 
+	@RestoreSystemProperties
+	def "should return [#expectedResult] when prop is set for [#queriedProp] and system is [#systemProperty] and env [#envVariable]"() {
+		given:
+			def sysProp = systemProperty
+			def envVar = envVariable
+			PropertyFetcher fetcher = new PropertyFetcher() {
+				@Override
+				String systemProp(String prop) {
+					return sysProp
+				}
+
+				@Override
+				String envVar(String prop) {
+					return envVar
+				}
+			}
+			StubRunnerPropertyUtils.FETCHER = fetcher
+		expect:
+			expectedResult == StubRunnerPropertyUtils.hasProperty(map, queriedProp)
+		where:
+			queriedProp   | map                    | systemProperty | envVariable | expectedResult
+			"foo.bar-baz" | ["foo.bar-baz": "faz"] | "ab"           | "bc"        | true
+			"foo.bar-baz" | [:]                    | "ab"           | "bc"        | true
+			"foo.bar-baz" | [:]                    | ""             | "bc"        | true
+			"foo.bar-baz" | null                   | ""             | "bc"        | true
+			"foo.bar-baz" | null                   | null           | null        | false          
+	}
+
 	def cleanupSpec() {
 		StubRunnerPropertyUtils.FETCHER = new PropertyFetcher()
 	}

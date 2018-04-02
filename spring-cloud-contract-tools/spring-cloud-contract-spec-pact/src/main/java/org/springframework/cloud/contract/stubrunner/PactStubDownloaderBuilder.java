@@ -34,6 +34,7 @@ import au.com.dius.pact.model.PactSpecVersion;
 import au.com.dius.pact.provider.junit.loader.PactBroker;
 import au.com.dius.pact.provider.junit.loader.PactBrokerAuth;
 import au.com.dius.pact.provider.junit.loader.PactBrokerLoader;
+import au.com.dius.pact.provider.junit.loader.PactLoader;
 import au.com.dius.pact.provider.junit.sysprops.SystemPropertyResolver;
 import au.com.dius.pact.provider.junit.sysprops.ValueResolver;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -48,7 +49,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.StringUtils;
 
 /**
- * Allows downloading of Pact files from the Pact Broker
+ * Allows downloading of Pact files from the Pact Broker.
  *
  * @author Marcin Grzejszczak
  * @since 2.0.0
@@ -61,7 +62,7 @@ class PactStubDownloaderBuilder implements StubDownloaderBuilder {
 	 * Does any of the accepted protocols matches the URL of the repository
 	 * @param url - of the repository
 	 */
-	public static boolean isProtocolAccepted(String url) {
+	private static boolean isProtocolAccepted(String url) {
 		return ACCEPTABLE_PROTOCOLS.stream().anyMatch(url::startsWith);
 	}
 
@@ -97,11 +98,11 @@ class PactResource extends AbstractResource {
 		return this.rawLocation;
 	}
 
-	@Override public InputStream getInputStream() throws IOException {
+	@Override public InputStream getInputStream() {
 		return null;
 	}
 
-	@Override public URI getURI() throws IOException {
+	@Override public URI getURI() {
 		return URI.create(this.rawLocation);
 	}
 }
@@ -110,12 +111,14 @@ class PactStubDownloader implements StubDownloader {
 	private static final String TEMP_DIR_PREFIX = "pact";
 	private static final Log log = LogFactory.getLog(PactStubDownloader.class);
 
+	// Preloading class for the shutdown hook not to throw ClassNotFound
+	private static final Class CLAZZ = TemporaryFileStorage.class;
+
 	private final StubRunnerOptions stubRunnerOptions;
 	private final boolean deleteStubsAfterTest;
 	private final ObjectMapper objectMapper;
 
-	// Preloading class for the shutdown hook not to throw ClassNotFound
-	private static final Class CLAZZ = TemporaryFileStorage.class;
+	private static final String PROVIDER_NAME_WITH_GROUP_ID = "pactbroker.provider-name-with-group-id";
 
 	PactStubDownloader(StubRunnerOptions stubRunnerOptions) {
 		this.stubRunnerOptions = stubRunnerOptions;
@@ -128,11 +131,11 @@ class PactStubDownloader implements StubDownloader {
 			StubConfiguration stubConfiguration) {
 		String version = stubConfiguration.version;
 		// TODO: Read from stubrunner props or system props
-		final SystemPropertyResolver resolver = new SystemPropertyResolver();
-		List<String> tags = tags(stubConfiguration, version, resolver);
-		PactBrokerLoader loader = pactBrokerLoader(resolver, tags);
+		final FromPropsThenFromSysEnv resolver = new FromPropsThenFromSysEnv(this.stubRunnerOptions);
+		List<String> tags = tags(version, resolver);
+		PactLoader loader = pactBrokerLoader(resolver, tags);
 		try {
-			String providerName = stubConfiguration.getGroupId() + ":" + stubConfiguration.getArtifactId();
+			String providerName = providerName(stubConfiguration);
 			List<Pact> pacts = loader.load(providerName);
 			if (pacts.isEmpty()) {
 				log.warn("No pact definitions found for provider [" + providerName + "]");
@@ -152,7 +155,17 @@ class PactStubDownloader implements StubDownloader {
 		}
 	}
 
-	@NotNull private PactBrokerLoader pactBrokerLoader(SystemPropertyResolver resolver,
+	private String providerName(StubConfiguration stubConfiguration) {
+		boolean providerNameWithGroupId = Boolean.parseBoolean(
+				StubRunnerPropertyUtils.getProperty(this.stubRunnerOptions.getProperties(),
+				PROVIDER_NAME_WITH_GROUP_ID));
+		if (providerNameWithGroupId) {
+			return stubConfiguration.getGroupId() + ":" + stubConfiguration.getArtifactId();
+		}
+		return stubConfiguration.getArtifactId();
+	}
+
+	@NotNull PactLoader pactBrokerLoader(ValueResolver resolver,
 			List<String> tags) {
 		return new PactBrokerLoader(new PactBroker() {
 
@@ -161,15 +174,15 @@ class PactStubDownloader implements StubDownloader {
 			}
 
 			@Override public String host() {
-				return resolver.resolveValue("${pactbroker.host:}");
+				return resolver.resolveValue("pactbroker.host:");
 			}
 
 			@Override public String port() {
-				return resolver.resolveValue("${pactbroker.port:}");
+				return resolver.resolveValue("pactbroker.port:");
 			}
 
 			@Override public String protocol() {
-				return resolver.resolveValue("${pactbroker.protocol:http}");
+				return resolver.resolveValue("pactbroker.protocol:http");
 			}
 
 			@Override public String[] tags() {
@@ -187,15 +200,15 @@ class PactStubDownloader implements StubDownloader {
 					}
 
 					@Override public String scheme() {
-						return resolver.resolveValue("${pactbroker.auth.scheme:basic}");
+						return resolver.resolveValue("pactbroker.auth.scheme:basic");
 					}
 
 					@Override public String username() {
-						return resolver.resolveValue("${pactbroker.auth.username:}");
+						return resolver.resolveValue("pactbroker.auth.username:");
 					}
 
 					@Override public String password() {
-						return resolver.resolveValue("${pactbroker.auth.password:}");
+						return resolver.resolveValue("pactbroker.auth.password:");
 					}
 				};
 			}
@@ -206,13 +219,12 @@ class PactStubDownloader implements StubDownloader {
 		});
 	}
 
-	@NotNull private List<String> tags(StubConfiguration stubConfiguration,
-			String version, SystemPropertyResolver resolver) {
+	@NotNull private List<String> tags(String version, ValueResolver resolver) {
 		String defaultTag = StubConfiguration.DEFAULT_VERSION.equals(version)
 				? "latest" : version;
 		return new ArrayList<>(Arrays.asList(StringUtils
 				.commaDelimitedListToStringArray(
-						resolver.resolveValue("${pactbroker.tags:" + defaultTag + "}"))));
+						resolver.resolveValue("pactbroker.tags:" + defaultTag + ""))));
 	}
 
 	private String toJson(Map map) {
@@ -227,5 +239,59 @@ class PactStubDownloader implements StubDownloader {
 	private void registerShutdownHook() {
 		Runtime.getRuntime().addShutdownHook(new Thread(
 				() -> TemporaryFileStorage.cleanup(PactStubDownloader.this.deleteStubsAfterTest)));
+	}
+}
+
+class FromPropsThenFromSysEnv implements ValueResolver {
+
+	final SystemPropertyResolver resolver = new SystemPropertyResolver();
+	StubRunnerOptions options;
+
+	FromPropsThenFromSysEnv(StubRunnerOptions options) {
+		this.options = options;
+	}
+
+	@Override public String resolveValue(String expression) {
+		PropertyValueTuple tuple = new PropertyValueTuple(expression).invoke();
+		String propertyName = tuple.getPropertyName();
+		String property = StubRunnerPropertyUtils
+				.getProperty(this.options.getProperties(), propertyName);
+		if (StringUtils.hasText(property)) {
+			return property;
+		}
+		return this.resolver.resolveValue(expression);
+	}
+
+	@Override public boolean propertyDefined(String property) {
+		PropertyValueTuple tuple = new PropertyValueTuple(property).invoke();
+		String propertyName = tuple.getPropertyName();
+		boolean hasProperty = StubRunnerPropertyUtils
+				.hasProperty(this.options.getProperties(), propertyName);
+		if (hasProperty) {
+			return true;
+		}
+		return this.resolver.propertyDefined(property);
+	}
+}
+
+// taken from pact
+class PropertyValueTuple {
+	private String propertyName;
+
+	PropertyValueTuple(String property) {
+		this.propertyName = property;
+	}
+
+	String getPropertyName() {
+		return propertyName;
+	}
+
+	PropertyValueTuple invoke() {
+		if (this.propertyName.contains(":")) {
+			String[] kv = org.apache.commons.lang3.StringUtils
+					.splitPreserveAllTokens(this.propertyName, ':');
+			this.propertyName = kv[0];
+		}
+		return this;
 	}
 }
