@@ -49,14 +49,14 @@ class PactContractConverter implements ContractConverter<Collection<Pact>> {
 	@Override
 	Collection<Pact> convertTo(Collection<Contract> contracts) {
 		List<Pact> pactContracts = new ArrayList<>()
-		contracts.collect({ Contract contract ->
+		contracts.each { Contract contract ->
 			if (contract.request) {
 				pactContracts.add(requestResponsePactCreator.createFromContract(contract))
 			}
 			if (contract.input) {
 				pactContracts.add(messagePactCreator.createFromContract(contract))
 			}
-		})
+		}
 		return pactContracts
 	}
 }

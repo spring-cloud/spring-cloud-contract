@@ -8,14 +8,18 @@
 		<version>2.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<artifactId>spring-cloud-contract-spec-pact</artifactId>
+	<artifactId>spring-cloud-contract-pact</artifactId>
 	<packaging>jar</packaging>
-	<name>Spring Cloud Contract Spec Pact</name>
-	<description>Spring Cloud Contract Spec Pact</description>
+	<name>Spring Cloud Contract Pact</name>
+	<description>Spring Cloud Contract Pact</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-contract-converters</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -71,8 +75,13 @@
 					<execution>
 						<goals>
 							<goal>addSources</goal>
+							<goal>addTestSources</goal>
+							<goal>generateStubs</goal>
 							<goal>compile</goal>
+							<goal>testGenerateStubs</goal>
 							<goal>testCompile</goal>
+							<goal>removeStubs</goal>
+							<goal>removeTestStubs</goal>
 						</goals>
 					</execution>
 				</executions>
