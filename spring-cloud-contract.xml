@@ -9186,36 +9186,36 @@ properties</simpara>
 </row>
 <row>
 <entry align="left" valign="top"><simpara>* <literal>git.branch</literal> (plugin prop)
-* <literal>stubrunner.properties.git.branch</literal> (system prop)
-* <literal>STUBRUNNER_PROPERTIES_GIT_BRANCH</literal> (env prop)</simpara></entry>
+</simpara><simpara>* <literal>stubrunner.properties.git.branch</literal> (system prop)
+</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_GIT_BRANCH</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"><simpara>master</simpara></entry>
 <entry align="left" valign="top"><simpara>Which branch to checkout</simpara></entry>
 </row>
 <row>
 <entry align="left" valign="top"><simpara>* <literal>git.username</literal> (plugin prop)
-* <literal>stubrunner.properties.git.username</literal> (system prop)
-* <literal>STUBRUNNER_PROPERTIES_GIT_USERNAME</literal> (env prop)</simpara></entry>
+</simpara><simpara>* <literal>stubrunner.properties.git.username</literal> (system prop)
+</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_GIT_USERNAME</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"></entry>
 <entry align="left" valign="top"><simpara>Git clone username</simpara></entry>
 </row>
 <row>
 <entry align="left" valign="top"><simpara>* <literal>git.password</literal> (plugin prop)
-* <literal>stubrunner.properties.git.password</literal> (system prop)
-* <literal>STUBRUNNER_PROPERTIES_GIT_PASSWORD</literal> (env prop)</simpara></entry>
+</simpara><simpara>* <literal>stubrunner.properties.git.password</literal> (system prop)
+</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_GIT_PASSWORD</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"></entry>
 <entry align="left" valign="top"><simpara>Git clone password</simpara></entry>
 </row>
 <row>
 <entry align="left" valign="top"><simpara>* <literal>git.no-of-attempts</literal> (plugin prop)
-* <literal>stubrunner.properties.git.no-of-attempts</literal> (system prop)
-* <literal>STUBRUNNER_PROPERTIES_GIT_NO_OF_ATTEMPTS</literal> (env prop)</simpara></entry>
+</simpara><simpara>* <literal>stubrunner.properties.git.no-of-attempts</literal> (system prop)
+</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_GIT_NO_OF_ATTEMPTS</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"><simpara>10</simpara></entry>
 <entry align="left" valign="top"><simpara>Number of attempts to push the commits to <literal>origin</literal></simpara></entry>
 </row>
 <row>
 <entry align="left" valign="top"><simpara>* <literal>git.wait-between-attempts</literal> (Plugin prop)
-* <literal>stubrunner.properties.git.wait-between-attempts</literal>  (system prop)
-* <literal>STUBRUNNER_PROPERTIES_GIT_WAIT_BETWEEN_ATTEMPTS</literal>  (env prop)</simpara></entry>
+</simpara><simpara>* <literal>stubrunner.properties.git.wait-between-attempts</literal>  (system prop)
+</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_GIT_WAIT_BETWEEN_ATTEMPTS</literal>  (env prop)</simpara></entry>
 <entry align="left" valign="top"><simpara>1000</simpara></entry>
 <entry align="left" valign="top"><simpara>Number of millis to wait between attempts to push the commits to <literal>origin</literal></simpara></entry>
 </row>
@@ -9247,57 +9247,57 @@ properties</simpara>
 </row>
 <row>
 <entry align="left" valign="top"><simpara>* <literal>pactbroker.host</literal> (plugin prop)
-* <literal>stubrunner.properties.pactbroker.host</literal> (system prop)
-* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_HOST</literal> (env prop)</simpara></entry>
+</simpara><simpara>* <literal>stubrunner.properties.pactbroker.host</literal> (system prop)
+</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_HOST</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"><simpara>Host from URL passed to <literal>repositoryRoot</literal></simpara></entry>
 <entry align="left" valign="top"><simpara>What is the URL of Pact Broker</simpara></entry>
 </row>
 <row>
 <entry align="left" valign="top"><simpara>* <literal>pactbroker.port</literal> (plugin prop)
-* <literal>stubrunner.properties.pactbroker.port</literal> (system prop)
-* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_PORT</literal> (env prop)</simpara></entry>
+</simpara><simpara>* <literal>stubrunner.properties.pactbroker.port</literal> (system prop)
+</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_PORT</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"><simpara>Port from URL passed to <literal>repositoryRoot</literal></simpara></entry>
 <entry align="left" valign="top"><simpara>What is the port of Pact Broker</simpara></entry>
 </row>
 <row>
 <entry align="left" valign="top"><simpara>* <literal>pactbroker.protocol</literal> (plugin prop)
-* <literal>stubrunner.properties.pactbroker.protocol</literal> (system prop)
-* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_PROTOCOL</literal> (env prop)</simpara></entry>
+</simpara><simpara>* <literal>stubrunner.properties.pactbroker.protocol</literal> (system prop)
+</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_PROTOCOL</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"><simpara>Protocol from URL passed to <literal>repositoryRoot</literal></simpara></entry>
 <entry align="left" valign="top"><simpara>What is the protocol of Pact Broker</simpara></entry>
 </row>
 <row>
 <entry align="left" valign="top"><simpara>* <literal>pactbroker.tags</literal> (plugin prop)
-* <literal>stubrunner.properties.pactbroker.tags</literal> (system prop)
-* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_TAGS</literal> (env prop)</simpara></entry>
+</simpara><simpara>* <literal>stubrunner.properties.pactbroker.tags</literal> (system prop)
+</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_TAGS</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"><simpara>Version of the stub, or <literal>latest</literal> if version is <literal>+</literal></simpara></entry>
 <entry align="left" valign="top"><simpara>What tags should be used to fetch the stub</simpara></entry>
 </row>
 <row>
 <entry align="left" valign="top"><simpara>* <literal>pactbroker.auth.scheme</literal> (plugin prop)
-* <literal>stubrunner.properties.pactbroker.auth.scheme</literal> (system prop)
-* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_SCHEME</literal> (env prop)</simpara></entry>
+</simpara><simpara>* <literal>stubrunner.properties.pactbroker.auth.scheme</literal> (system prop)
+</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_SCHEME</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"><simpara><literal>Basic</literal></simpara></entry>
 <entry align="left" valign="top"><simpara>What kind of authentication should be used to connect to the Pact Broker</simpara></entry>
 </row>
 <row>
 <entry align="left" valign="top"><simpara>* <literal>pactbroker.auth.username</literal> (plugin prop)
-* <literal>stubrunner.properties.pactbroker.auth.username</literal> (system prop)
-* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_USERNAME</literal> (env prop)</simpara></entry>
+</simpara><simpara>* <literal>stubrunner.properties.pactbroker.auth.username</literal> (system prop)
+</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_USERNAME</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"></entry>
 <entry align="left" valign="top"><simpara>Username used to connect to the Pact Broker</simpara></entry>
 </row>
 <row>
 <entry align="left" valign="top"><simpara>* <literal>pactbroker.auth.password</literal> (plugin prop)
-* <literal>stubrunner.properties.pactbroker.auth.password</literal> (system prop)
-* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_PASSWORD</literal> (env prop)</simpara></entry>
+</simpara><simpara>* <literal>stubrunner.properties.pactbroker.auth.password</literal> (system prop)
+</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_PASSWORD</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"></entry>
 <entry align="left" valign="top"><simpara>Password used to connect to the Pact Broker</simpara></entry>
 </row>
 <row>
 <entry align="left" valign="top"><simpara>* <literal>pactbroker.provider-name-with-group-id</literal> (plugin prop)
-* <literal>stubrunner.properties.pactbroker.provider-name-with-group-id</literal> (system prop)
-* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_PROVIDER_NAME_WITH_GROUP_ID</literal> (env prop)</simpara></entry>
+</simpara><simpara>* <literal>stubrunner.properties.pactbroker.provider-name-with-group-id</literal> (system prop)
+</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_PROVIDER_NAME_WITH_GROUP_ID</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"><simpara>false</simpara></entry>
 <entry align="left" valign="top"><simpara>When <literal>true</literal>, the provider name will be a combination of <literal>groupId:artifactId</literal>. If <literal>false</literal>, just <literal>artifactId</literal> is used</simpara></entry>
 </row>
