@@ -119,9 +119,7 @@ class RequestResponseSCContractCreator {
 								}
 
 								ruleGroup.rules.each { MatchingRule rule ->
-									if (rule instanceof NullMatcher) {
-										jsonPath(key, byNull())
-									} else if (rule instanceof RegexMatcher) {
+									if (rule instanceof RegexMatcher) {
 										jsonPath(key, byRegex(rule.regex))
 									} else if (rule instanceof DateMatcher) {
 										jsonPath(key, byDate())

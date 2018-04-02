@@ -31,7 +31,6 @@ org.springframework.cloud.contract.spec.Contract.make {
 			jsonPath('$.someTime', byTime())
 			jsonPath('$.someDateTime', byTimestamp())
 			jsonPath('$.someBoolean', byRegex(anyBoolean()))
-			jsonPath('$.someNullValue', byNull())
 		}
 	}
 	response {

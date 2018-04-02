@@ -73,10 +73,6 @@ class BodyMatchers {
 		return new MatchingTypeValue(MatchingType.EQUALITY, null)
 	}
 
-	MatchingTypeValue byNull() {
-		return new MatchingTypeValue(MatchingType.NULL, null)
-	}
-
 	boolean equals(o) {
 		if (this.is(o)) return true
 		if (this.getClass() != o.class) return false

@@ -52,8 +52,8 @@ class RequestResponsePactCreator {
 	}
 
 	private void assertNoExecutionProperty(Contract contract) {
-		assertNoExecutionPropertyInBody(contract.request.body, { Object o -> getDslPropertyServerValue(o) })
-		assertNoExecutionPropertyInBody(contract.response.body, { Object o -> getDslPropertyClientValue(o) })
+		assertNoExecutionPropertyInBody(contract.request.body, { DslProperty dslProperty -> dslProperty.serverValue })
+		assertNoExecutionPropertyInBody(contract.response.body, { DslProperty dslProperty -> dslProperty.clientValue })
 	}
 
 	private void assertNoExecutionPropertyInBody(Body body, Closure dslPropertyValueExtractor) {

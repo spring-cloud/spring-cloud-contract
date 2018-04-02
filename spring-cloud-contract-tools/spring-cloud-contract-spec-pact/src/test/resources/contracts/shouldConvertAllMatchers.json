@@ -128,14 +128,6 @@
                 }
               ],
               "combine": "AND"
-            },
-            "$.someNullValue": {
-              "matchers": [
-                {
-                  "match": "null"
-                }
-              ],
-              "combine": "AND"
             }
           }
         }

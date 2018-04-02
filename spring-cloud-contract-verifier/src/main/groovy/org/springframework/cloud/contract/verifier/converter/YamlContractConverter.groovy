@@ -191,9 +191,6 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 										case StubMatcherType.by_equality:
 											value = byEquality()
 											break
-										case StubMatcherType.by_null:
-											value = byNull()
-											break
 									}
 									jsonPath(matcher.path, value)
 								}
@@ -291,9 +288,6 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 											break
 										case StubMatcherType.by_equality:
 											value = byEquality()
-											break
-										case StubMatcherType.by_null:
-											value = byNull()
 											break
 									}
 									jsonPath(matcher.path, value)
