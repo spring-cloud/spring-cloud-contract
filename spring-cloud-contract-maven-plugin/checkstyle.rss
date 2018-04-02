@@ -46,7 +46,7 @@ under the License.
           <tbody>
                           <tr>
                 <td>
-                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.MavenContractsDownloader.java">org/springframework/cloud/contract/maven/verifier/MavenContractsDownloader.java</a>
+                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.GenerateTestsMojo.java">org/springframework/cloud/contract/maven/verifier/GenerateTestsMojo.java</a>
                 </td>
                 <td>
                   0
@@ -60,7 +60,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.GenerateTestsMojo.java">org/springframework/cloud/contract/maven/verifier/GenerateTestsMojo.java</a>
+                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.MavenContractsDownloader.java">org/springframework/cloud/contract/maven/verifier/MavenContractsDownloader.java</a>
                 </td>
                 <td>
                   0
@@ -144,7 +144,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.RunMojo.java">org/springframework/cloud/contract/maven/verifier/RunMojo.java</a>
+                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.CopyContracts.java">org/springframework/cloud/contract/maven/verifier/CopyContracts.java</a>
                 </td>
                 <td>
                   0
@@ -158,7 +158,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.CopyContracts.java">org/springframework/cloud/contract/maven/verifier/CopyContracts.java</a>
+                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.RunMojo.java">org/springframework/cloud/contract/maven/verifier/RunMojo.java</a>
                 </td>
                 <td>
                   0
