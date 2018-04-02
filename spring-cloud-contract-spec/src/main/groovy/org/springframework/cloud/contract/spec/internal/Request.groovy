@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2018 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
+import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringEscapeUtils
 
 import org.springframework.cloud.contract.spec.util.RegexpUtils
@@ -33,6 +34,7 @@ import java.util.regex.Pattern
  * @author Tim Ysewyn
  * @since 1.0.0
  */
+@Slf4j
 @TypeChecked
 @EqualsAndHashCode
 @ToString(includePackage = false, includeNames = true)
@@ -47,7 +49,7 @@ class Request extends Common {
 	Headers headers
 	Body body
 	Multipart multipart
-	StubMatchers matchers
+	BodyMatchers bodyMatchers
 
 	Request() {
 	}
@@ -209,9 +211,18 @@ class Request extends Common {
 		return value(client)
 	}
 
-	void stubMatchers(@DelegatesTo(StubMatchers) Closure closure) {
-		this.matchers = new StubMatchers()
-		closure.delegate = this.matchers
+	/**
+	 * @deprecated Deprecated in favor of bodyMatchers to support other future bodyMatchers too
+	 */
+	@Deprecated
+	void stubMatchers(@DelegatesTo(BodyMatchers) Closure closure) {
+		log.warn("stubMatchers method is deprecated. Please use bodyMatchers instead")
+		bodyMatchers(closure)
+	}
+
+	void bodyMatchers(@DelegatesTo(BodyMatchers) Closure closure) {
+		this.bodyMatchers = new BodyMatchers()
+		closure.delegate = this.bodyMatchers
 		closure()
 	}
 

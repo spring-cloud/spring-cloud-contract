@@ -1,3 +1,18 @@
+/*
+ *  Copyright 2013-2018 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.springframework.cloud.contract.verifier.spec.pact
 
 import au.com.dius.pact.model.OptionalBody
@@ -23,9 +38,13 @@ import au.com.dius.pact.model.matchingrules.TypeMatcher
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.DslProperty
+import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.verifier.util.JsonPaths
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
+
+import java.util.regex.Pattern
 
 /**
  * Creator of {@link Contract} instances
@@ -38,7 +57,7 @@ import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 class RequestResponseSCContractCreator {
 
 	private static final String FULL_BODY = '$'
-	private static final RegexPatterns regexPatterns = new RegexPatterns();
+	private static final RegexPatterns regexPatterns = new RegexPatterns()
 
 	Collection<Contract> convertFrom(RequestResponsePact pact) {
 		return pact.interactions.collect { RequestResponseInteraction interaction ->
@@ -61,9 +80,23 @@ class RequestResponseSCContractCreator {
 						url(request.path)
 					}
 					if (request.headers) {
+						Category headerRules = request.matchingRules.rulesForCategory('header')
 						headers {
-							request.headers.each { String key, String value ->
-								header(key, value)
+							request.headers.each { k, v ->
+								if (headerRules.matchingRules.containsKey(k)) {
+									MatchingRuleGroup ruleGroup = headerRules.matchingRules.get(k)
+									if (ruleGroup.rules.size() > 1) {
+										throw new UnsupportedOperationException("Currently only 1 rule at a time for a header is supported")
+									}
+									MatchingRule rule = ruleGroup.rules[0]
+									if (rule instanceof RegexMatcher) {
+										header(k, new DslProperty((Object)Pattern.compile(rule.getRegex()), (Object)v))
+									} else {
+										throw new UnsupportedOperationException("Currently only the header matcher of type regex is supported")
+									}
+								} else {
+									header(k, v)
+								}
 							}
 						}
 					}
@@ -79,38 +112,36 @@ class RequestResponseSCContractCreator {
 					}
 					Category bodyRules = request.matchingRules.rulesForCategory('body')
 					if (bodyRules && !bodyRules.matchingRules.isEmpty()) {
-						stubMatchers {
-							bodyMatchers {
-								bodyRules.matchingRules.each { String key, MatchingRuleGroup ruleGroup ->
-									if (ruleGroup.ruleLogic != RuleLogic.AND) {
-										throw new UnsupportedOperationException("Currently only the AND combination rule logic is supported")
-									}
+						bodyMatchers {
+							bodyRules.matchingRules.each { String key, MatchingRuleGroup ruleGroup ->
+								if (ruleGroup.ruleLogic != RuleLogic.AND) {
+									throw new UnsupportedOperationException("Currently only the AND combination rule logic is supported")
+								}
 
-									ruleGroup.rules.each { MatchingRule rule ->
-										if (rule instanceof NullMatcher) {
-											jsonPath(key, byNull())
-										} else if (rule instanceof RegexMatcher) {
-											jsonPath(key, byRegex(rule.regex))
-										} else if (rule instanceof DateMatcher) {
-											jsonPath(key, byDate())
-										} else if (rule instanceof TimeMatcher) {
-											jsonPath(key, byTime())
-										} else if (rule instanceof TimestampMatcher) {
-											jsonPath(key, byTimestamp())
-										} else if (rule instanceof NumberTypeMatcher) {
-											switch (rule.numberType) {
-												case NumberTypeMatcher.NumberType.NUMBER:
-													jsonPath(key, byRegex(regexPatterns.number()))
-													break
-												case NumberTypeMatcher.NumberType.INTEGER:
-													jsonPath(key, byRegex(regexPatterns.anInteger()))
-													break
-												case NumberTypeMatcher.NumberType.DECIMAL:
-													jsonPath(key, byRegex(regexPatterns.aDouble()))
-													break
-												default:
-													throw new RuntimeException("Unsupported number type!")
-											}
+								ruleGroup.rules.each { MatchingRule rule ->
+									if (rule instanceof NullMatcher) {
+										jsonPath(key, byNull())
+									} else if (rule instanceof RegexMatcher) {
+										jsonPath(key, byRegex(rule.regex))
+									} else if (rule instanceof DateMatcher) {
+										jsonPath(key, byDate())
+									} else if (rule instanceof TimeMatcher) {
+										jsonPath(key, byTime())
+									} else if (rule instanceof TimestampMatcher) {
+										jsonPath(key, byTimestamp())
+									} else if (rule instanceof NumberTypeMatcher) {
+										switch (rule.numberType) {
+											case NumberTypeMatcher.NumberType.NUMBER:
+												jsonPath(key, byRegex(regexPatterns.number()))
+												break
+											case NumberTypeMatcher.NumberType.INTEGER:
+												jsonPath(key, byRegex(regexPatterns.anInteger()))
+												break
+											case NumberTypeMatcher.NumberType.DECIMAL:
+												jsonPath(key, byRegex(regexPatterns.aDouble()))
+												break
+											default:
+												throw new RuntimeException("Unsupported number type!")
 										}
 									}
 								}
@@ -133,70 +164,83 @@ class RequestResponseSCContractCreator {
 					}
 					Category bodyRules = response.matchingRules.rulesForCategory('body')
 					if (bodyRules && !bodyRules.matchingRules.isEmpty()) {
-						testMatchers {
-							bodyMatchers {
-								bodyRules.matchingRules.each { String key, MatchingRuleGroup ruleGroup ->
-									if (ruleGroup.ruleLogic != RuleLogic.AND) {
-										throw new UnsupportedOperationException("Currently only the AND combination rule logic is supported")
-									}
+						bodyMatchers {
+							bodyRules.matchingRules.each { String key, MatchingRuleGroup ruleGroup ->
+								if (ruleGroup.ruleLogic != RuleLogic.AND) {
+									throw new UnsupportedOperationException("Currently only the AND combination rule logic is supported")
+								}
 
-									if (FULL_BODY.equals(key)) {
-										JsonPaths jsonPaths = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(response.body.value)
-										jsonPaths.each {
-											jsonPath(it.keyBeforeChecking(), byType())
-										}
-									} else {
-										ruleGroup.rules.each { MatchingRule rule ->
-											if (rule instanceof NullMatcher) {
-												jsonPath(key, byNull())
-											} else if (rule instanceof RegexMatcher) {
-												jsonPath(key, byRegex(rule.regex))
-											} else if (rule instanceof DateMatcher) {
-												jsonPath(key, byDate())
-											} else if (rule instanceof TimeMatcher) {
-												jsonPath(key, byTime())
-											} else if (rule instanceof TimestampMatcher) {
-												jsonPath(key, byTimestamp())
-											} else if (rule instanceof MinTypeMatcher) {
-												jsonPath(key, byType() {
-													minOccurrence((rule as MinTypeMatcher).min)
-												})
-											} else if (rule instanceof MinMaxTypeMatcher) {
-												jsonPath(key, byType() {
-													minOccurrence((rule as MinMaxTypeMatcher).min)
-													maxOccurrence((rule as MinMaxTypeMatcher).max)
-												})
-											} else if (rule instanceof MaxTypeMatcher) {
-												jsonPath(key, byType() {
-													maxOccurrence((rule as MaxTypeMatcher).max)
-												})
-											} else if (rule instanceof TypeMatcher) {
-												jsonPath(key, byType())
-											} else if (rule instanceof NumberTypeMatcher) {
-												switch (rule.numberType) {
-													case NumberTypeMatcher.NumberType.NUMBER:
-														jsonPath(key, byRegex(regexPatterns.number()))
-														break
-													case NumberTypeMatcher.NumberType.INTEGER:
-														jsonPath(key, byRegex(regexPatterns.anInteger()))
-														break
-													case NumberTypeMatcher.NumberType.DECIMAL:
-														jsonPath(key, byRegex(regexPatterns.aDouble()))
-														break
-													default:
-														throw new RuntimeException("Unsupported number type!")
-												}
+								if (FULL_BODY.equals(key)) {
+									JsonPaths jsonPaths = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(response.body.value)
+									jsonPaths.each {
+										jsonPath(it.keyBeforeChecking(), byType())
+									}
+								} else {
+									ruleGroup.rules.each { MatchingRule rule ->
+										if (rule instanceof NullMatcher) {
+											jsonPath(key, byNull())
+										} else if (rule instanceof RegexMatcher) {
+											jsonPath(key, byRegex(rule.regex))
+										} else if (rule instanceof DateMatcher) {
+											jsonPath(key, byDate())
+										} else if (rule instanceof TimeMatcher) {
+											jsonPath(key, byTime())
+										} else if (rule instanceof TimestampMatcher) {
+											jsonPath(key, byTimestamp())
+										} else if (rule instanceof MinTypeMatcher) {
+											jsonPath(key, byType() {
+												minOccurrence((rule as MinTypeMatcher).min)
+											})
+										} else if (rule instanceof MinMaxTypeMatcher) {
+											jsonPath(key, byType() {
+												minOccurrence((rule as MinMaxTypeMatcher).min)
+												maxOccurrence((rule as MinMaxTypeMatcher).max)
+											})
+										} else if (rule instanceof MaxTypeMatcher) {
+											jsonPath(key, byType() {
+												maxOccurrence((rule as MaxTypeMatcher).max)
+											})
+										} else if (rule instanceof TypeMatcher) {
+											jsonPath(key, byType())
+										} else if (rule instanceof NumberTypeMatcher) {
+											switch (rule.numberType) {
+												case NumberTypeMatcher.NumberType.NUMBER:
+													jsonPath(key, byRegex(regexPatterns.number()))
+													break
+												case NumberTypeMatcher.NumberType.INTEGER:
+													jsonPath(key, byRegex(regexPatterns.anInteger()))
+													break
+												case NumberTypeMatcher.NumberType.DECIMAL:
+													jsonPath(key, byRegex(regexPatterns.aDouble()))
+													break
+												default:
+													throw new UnsupportedOperationException("Unsupported number type!")
 											}
 										}
 									}
-
 								}
 							}
 						}
 					}
-					response.headers?.each { String key, String value ->
+					if (response.headers) {
+						Category headerRules = response.matchingRules.rulesForCategory('header')
 						headers {
-							header(key, value)
+							response.headers.forEach({ String k, String v ->
+								if (headerRules.matchingRules.containsKey(k)) {
+									MatchingRuleGroup ruleGroup = headerRules.matchingRules.get(k)
+									if (ruleGroup.rules.size() > 1) {
+										throw new UnsupportedOperationException("Currently only 1 rule at a time for a header is supported")
+									}
+									MatchingRule rule = ruleGroup.rules[0]
+									if (rule instanceof RegexMatcher) {
+										header(k, new DslProperty(new DslProperty(v), new NotToEscapePattern(Pattern.compile(rule.getRegex()))))
+									} else {
+										throw new UnsupportedOperationException("Currently only the header matcher of type regex is supported")
+									}
+								} else {
+									header(k, v)
+								}
+							})
 						}
 					}
 				}

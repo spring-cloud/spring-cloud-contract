@@ -67,6 +67,17 @@
           }
         },
         "matchingRules":{
+          "header": {
+            "Content-Type":{
+              "matchers":[
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ],
+              "combine":"AND"
+            }
+          },
           "body":{
             "$.someHex":{
               "matchers":[
@@ -185,6 +196,17 @@
           }
         },
         "matchingRules":{
+          "header":{
+            "Content-Type":{
+              "matchers":[
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ],
+              "combine":"AND"
+            }
+          },
           "body":{
             "$.someHex":{
               "matchers":[

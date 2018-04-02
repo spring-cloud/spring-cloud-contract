@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2016 the original author or authors.
+ *  Copyright 2013-2018 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -168,36 +168,34 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 								}
 								multipart(multipartMap)
 							}
-							stubMatchers {
-								bodyMatchers {
-									yamlContract.request.matchers?.body?.each { BodyStubMatcher matcher ->
-										MatchingTypeValue value = null
-										switch (matcher.type) {
-											case StubMatcherType.by_date:
-												value = byDate()
-												break
-											case StubMatcherType.by_time:
-												value = byTime()
-												break
-											case StubMatcherType.by_timestamp:
-												value = byTimestamp()
-												break
-											case StubMatcherType.by_regex:
-												String regex = matcher.value
-												if (matcher.predefined) {
-													regex = predefinedToPattern(matcher.predefined).pattern()
-												}
-												value = byRegex(regex)
-												break
-											case StubMatcherType.by_equality:
-												value = byEquality()
-												break
-											case StubMatcherType.by_null:
-												value = byNull()
-												break
-										}
-										jsonPath(matcher.path, value)
+							bodyMatchers {
+								yamlContract.request.matchers?.body?.each { BodyStubMatcher matcher ->
+									MatchingTypeValue value = null
+									switch (matcher.type) {
+										case StubMatcherType.by_date:
+											value = byDate()
+											break
+										case StubMatcherType.by_time:
+											value = byTime()
+											break
+										case StubMatcherType.by_timestamp:
+											value = byTimestamp()
+											break
+										case StubMatcherType.by_regex:
+											String regex = matcher.value
+											if (matcher.predefined) {
+												regex = predefinedToPattern(matcher.predefined).pattern()
+											}
+											value = byRegex(regex)
+											break
+										case StubMatcherType.by_equality:
+											value = byEquality()
+											break
+										case StubMatcherType.by_null:
+											value = byNull()
+											break
 									}
+									jsonPath(matcher.path, value)
 								}
 							}
 						}
@@ -220,45 +218,43 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 							if (yamlContract.response.body) body(yamlContract.response.body)
 							if (yamlContract.response.bodyFromFile) body(file(yamlContract.response.bodyFromFile))
 							if (yamlContract.response.async) async()
-							testMatchers {
-								bodyMatchers {
-									yamlContract.response?.matchers?.body?.each { BodyTestMatcher testMatcher ->
-										MatchingTypeValue value = null
-										switch (testMatcher.type) {
-											case TestMatcherType.by_date:
-												value = byDate()
-												break
-											case TestMatcherType.by_time:
-												value = byTime()
-												break
-											case TestMatcherType.by_timestamp:
-												value = byTimestamp()
-												break
-											case TestMatcherType.by_regex:
-												String regex = testMatcher.value
-												if (testMatcher.predefined) {
-													regex = predefinedToPattern(testMatcher.predefined).pattern()
-												}
-												value = byRegex(regex)
-												break
-											case TestMatcherType.by_equality:
-												value = byEquality()
-												break
-											case TestMatcherType.by_type:
-												value = byType() {
-													if (testMatcher.minOccurrence != null) minOccurrence(testMatcher.minOccurrence)
-													if (testMatcher.maxOccurrence != null) maxOccurrence(testMatcher.maxOccurrence)
-												}
-												break
-											case TestMatcherType.by_command:
-												value = byCommand(testMatcher.value)
-												break
-											case TestMatcherType.by_null:
-												value = byNull()
-												break
-										}
-										jsonPath(testMatcher.path, value)
+							bodyMatchers {
+								yamlContract.response?.matchers?.body?.each { BodyTestMatcher testMatcher ->
+									MatchingTypeValue value = null
+									switch (testMatcher.type) {
+										case TestMatcherType.by_date:
+											value = byDate()
+											break
+										case TestMatcherType.by_time:
+											value = byTime()
+											break
+										case TestMatcherType.by_timestamp:
+											value = byTimestamp()
+											break
+										case TestMatcherType.by_regex:
+											String regex = testMatcher.value
+											if (testMatcher.predefined) {
+												regex = predefinedToPattern(testMatcher.predefined).pattern()
+											}
+											value = byRegex(regex)
+											break
+										case TestMatcherType.by_equality:
+											value = byEquality()
+											break
+										case TestMatcherType.by_type:
+											value = byType() {
+												if (testMatcher.minOccurrence != null) minOccurrence(testMatcher.minOccurrence)
+												if (testMatcher.maxOccurrence != null) maxOccurrence(testMatcher.maxOccurrence)
+											}
+											break
+										case TestMatcherType.by_command:
+											value = byCommand(testMatcher.value)
+											break
+										case TestMatcherType.by_null:
+											value = byNull()
+											break
 									}
+									jsonPath(testMatcher.path, value)
 								}
 							}
 						}
@@ -277,32 +273,30 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 							}
 							if (yamlContract.input.messageBody) messageBody(yamlContract.input.messageBody)
 							if (yamlContract.input.messageBodyFromFile) messageBody(file(yamlContract.input.messageBodyFromFile))
-							stubMatchers {
-								bodyMatchers {
-									yamlContract.input.matchers.body?.each { BodyStubMatcher matcher ->
-										MatchingTypeValue value = null
-										switch (matcher.type) {
-											case StubMatcherType.by_date:
-												value = byDate()
-												break
-											case StubMatcherType.by_time:
-												value = byTime()
-												break
-											case StubMatcherType.by_timestamp:
-												value = byTimestamp()
-												break
-											case StubMatcherType.by_regex:
-												value = byRegex(matcher.value)
-												break
-											case StubMatcherType.by_equality:
-												value = byEquality()
-												break
-											case StubMatcherType.by_null:
-												value = byNull()
-												break
-										}
-										jsonPath(matcher.path, value)
+							bodyMatchers {
+								yamlContract.input.matchers.body?.each { BodyStubMatcher matcher ->
+									MatchingTypeValue value = null
+									switch (matcher.type) {
+										case StubMatcherType.by_date:
+											value = byDate()
+											break
+										case StubMatcherType.by_time:
+											value = byTime()
+											break
+										case StubMatcherType.by_timestamp:
+											value = byTimestamp()
+											break
+										case StubMatcherType.by_regex:
+											value = byRegex(matcher.value)
+											break
+										case StubMatcherType.by_equality:
+											value = byEquality()
+											break
+										case StubMatcherType.by_null:
+											value = byNull()
+											break
 									}
+									jsonPath(matcher.path, value)
 								}
 							}
 						}
@@ -322,41 +316,39 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 							if (outputMsg.body) body(outputMsg.body)
 							if (outputMsg.bodyFromFile) body(file(outputMsg.bodyFromFile))
 							if (outputMsg.matchers) {
-								testMatchers {
-									bodyMatchers {
-										yamlContract.outputMessage?.matchers?.body?.each { BodyTestMatcher testMatcher ->
-											MatchingTypeValue value = null
-											switch (testMatcher.type) {
-												case TestMatcherType.by_date:
-													value = byDate()
-													break
-												case TestMatcherType.by_time:
-													value = byTime()
-													break
-												case TestMatcherType.by_timestamp:
-													value = byTimestamp()
-													break
-												case TestMatcherType.by_regex:
-													value = byRegex(testMatcher.value)
-													break
-												case TestMatcherType.by_equality:
-													value = byEquality()
-													break
-												case TestMatcherType.by_type:
-													value = byType() {
-														if (testMatcher.minOccurrence != null) minOccurrence(testMatcher.minOccurrence)
-														if (testMatcher.maxOccurrence != null) maxOccurrence(testMatcher.maxOccurrence)
-													}
-													break
-												case TestMatcherType.by_command:
-													value = byCommand(testMatcher.value)
-													break
-												case TestMatcherType.by_null:
-													value = byNull()
-													break
-											}
-											jsonPath(testMatcher.path, value)
+								bodyMatchers {
+									yamlContract.outputMessage?.matchers?.body?.each { BodyTestMatcher testMatcher ->
+										MatchingTypeValue value = null
+										switch (testMatcher.type) {
+											case TestMatcherType.by_date:
+												value = byDate()
+												break
+											case TestMatcherType.by_time:
+												value = byTime()
+												break
+											case TestMatcherType.by_timestamp:
+												value = byTimestamp()
+												break
+											case TestMatcherType.by_regex:
+												value = byRegex(testMatcher.value)
+												break
+											case TestMatcherType.by_equality:
+												value = byEquality()
+												break
+											case TestMatcherType.by_type:
+												value = byType() {
+													if (testMatcher.minOccurrence != null) minOccurrence(testMatcher.minOccurrence)
+													if (testMatcher.maxOccurrence != null) maxOccurrence(testMatcher.maxOccurrence)
+												}
+												break
+											case TestMatcherType.by_command:
+												value = byCommand(testMatcher.value)
+												break
+											case TestMatcherType.by_null:
+												value = byNull()
+												break
 										}
+										jsonPath(testMatcher.path, value)
 									}
 								}
 							}
@@ -477,7 +469,7 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 					headers = (contract?.request?.headers as Headers)?.asTestSideMap()
 					body = MapConverter.getTestSideValues(contract?.request?.body)
 					matchers = new StubMatchers()
-					contract?.request?.matchers?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
+					contract?.request?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
 						matchers.body << new BodyStubMatcher(
 								path: matcher.path(),
 								type: stubMatcherType(matcher.matchingType()),
@@ -490,7 +482,7 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 					status = contract?.response?.status?.clientValue as Integer
 					headers = (contract?.response?.headers as Headers)?.asStubSideMap()
 					body = MapConverter.getStubSideValues(contract?.response?.body)
-					contract?.response?.matchers?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
+					contract?.response?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
 						matchers.body << new BodyTestMatcher(
 								path: matcher.path(),
 								type: testMatcherType(matcher.matchingType()),
@@ -509,7 +501,7 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 				yamlContract.input.messageBody = MapConverter.getTestSideValues(contract?.input?.messageBody)
 				yamlContract.input.messageFrom = contract?.input?.messageFrom?.serverValue
 				yamlContract.input.matchers.body.each {
-					contract?.input?.matchers?.bodyMatchers.jsonPathMatchers()?.each { BodyMatcher matcher ->
+					contract?.input?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
 						yamlContract.input.matchers.body << new BodyStubMatcher(
 								path: matcher.path(),
 								type: stubMatcherType(matcher.matchingType()),
@@ -523,7 +515,7 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 				yamlContract.outputMessage.headers = (contract?.outputMessage?.headers as Headers)?.asStubSideMap()
 				yamlContract.outputMessage.body = MapConverter.getStubSideValues(contract?.outputMessage?.body)
 				yamlContract.outputMessage.matchers.body.each {
-					contract?.input?.matchers?.bodyMatchers.jsonPathMatchers()?.each { BodyMatcher matcher ->
+					contract?.input?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
 						yamlContract.outputMessage.matchers.body << new BodyTestMatcher(
 								path: matcher.path(),
 								type: testMatcherType(matcher.matchingType()),

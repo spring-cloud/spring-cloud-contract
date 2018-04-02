@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 the original author or authors.
+ *  Copyright 2013-2018 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 package org.springframework.cloud.contract.spec.internal
+
+import groovy.util.logging.Slf4j
 
 import java.util.regex.Pattern
 
@@ -32,6 +34,7 @@ import org.springframework.cloud.contract.spec.util.RegexpUtils
  * @author Tim Ysewyn
  * @since 1.0.0
  */
+@Slf4j
 @TypeChecked
 @EqualsAndHashCode
 @ToString(includePackage = false, includeFields = true)
@@ -45,7 +48,7 @@ class Response extends Common {
 	Headers headers
 	Body body
 	boolean async
-	TestMatchers matchers
+	ResponseBodyMatchers bodyMatchers
 
 	Response() {
 	}
@@ -116,9 +119,18 @@ class Response extends Common {
 		return value(server)
 	}
 
-	void testMatchers(@DelegatesTo(TestMatchers) Closure closure) {
-		this.matchers = new TestMatchers()
-		closure.delegate = this.matchers
+	/**
+	 * @deprecated Deprecated in favor of bodyMatchers to support other future bodyMatchers too
+	 */
+	@Deprecated
+	void testMatchers(@DelegatesTo(ResponseBodyMatchers) Closure closure) {
+		log.warn("testMatchers method is deprecated. Please use bodyMatchers instead")
+		bodyMatchers(closure)
+	}
+
+	void bodyMatchers(@DelegatesTo(ResponseBodyMatchers) Closure closure) {
+		this.bodyMatchers = new ResponseBodyMatchers()
+		closure.delegate = this.bodyMatchers
 		closure()
 	}
 

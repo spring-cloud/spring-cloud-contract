@@ -18,10 +18,36 @@
           "clientId": "1234567890",
           "loanAmount": 99999
         },
+        "generators": {
+          "body": {
+            "$.clientId": {
+              "type": "Regex",
+              "regex": "[0-9]{10}"
+            }
+          }
+        },
         "matchingRules": {
-          "$.body.clientId": {
-            "match": "regex",
-            "regex": "[0-9]{10}"
+          "header": {
+            "Content-Type": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/vnd\\.fraud\\.v1\\+json.*"
+                }
+              ],
+              "combine": "AND"
+            }
+          },
+          "body" : {
+            "$.clientId": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "[0-9]{10}"
+                }
+              ],
+              "combine": "AND"
+            }
           }
         }
       },
@@ -35,9 +61,27 @@
           "rejectionReason": "Amount too high"
         },
         "matchingRules": {
-          "$.body.fraudCheckStatus": {
-            "match": "regex",
-            "regex": "FRAUD"
+          "header": {
+            "Content-Type": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/vnd\\.fraud\\.v1\\+json.*"
+                }
+              ],
+              "combine": "AND"
+            }
+          },
+          "body": {
+            "$.fraudCheckStatus": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "FRAUD"
+                }
+              ],
+              "combine": "AND"
+            }
           }
         }
       }
@@ -45,10 +89,10 @@
   ],
   "metadata": {
     "pact-specification": {
-      "version": "2.0.0"
+      "version": "3.0.0"
     },
     "pact-jvm": {
-      "version": "2.4.18"
+      "version": "3.5.13"
     }
   }
 }

@@ -27,6 +27,17 @@
           }
         },
         "matchingRules":{
+          "header":{
+            "Content-Type":{
+              "matchers":[
+                {
+                  "match":"regex",
+                  "regex":"application/vnd\\.fraud\\.v1\\+json.*"
+                }
+              ],
+              "combine":"AND"
+            }
+          },
           "body":{
             "$.clientId":{
               "matchers":[
@@ -49,6 +60,17 @@
           "rejectionReason": null
         },
         "matchingRules":{
+          "header":{
+            "Content-Type":{
+              "matchers":[
+                {
+                  "match":"regex",
+                  "regex":"application/vnd\\.fraud\\.v1\\+json.*"
+                }
+              ],
+              "combine":"AND"
+            }
+          },
           "body":{
             "$.fraudCheckStatus":{
               "matchers":[
