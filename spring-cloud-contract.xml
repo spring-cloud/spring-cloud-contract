@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2018-04-02</date>
+<date>2018-03-31</date>
 </info>
 <preface>
 <title></title>
@@ -1555,7 +1555,7 @@ one to one to the contents of the repo.</simpara>
 	&lt;parent&gt;
 		&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
 		&lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
-		&lt;version&gt;2.0.0.BUILD-SNAPSHOT&lt;/version&gt;
+		&lt;version&gt;2.0.0.RELEASE&lt;/version&gt;
 		&lt;relativePath /&gt;
 	&lt;/parent&gt;
 
@@ -2136,6 +2136,200 @@ to find stub definitions and contracts. E.g. for <literal>com.example:foo:1.0.0<
 <simpara>Messaging definitions will be read and used in the messaging tests</simpara>
 </listitem>
 </itemizedlist>
+</section>
+</section>
+<section xml:id="_can_i_use_the_pact_broker">
+<title>Can I use the Pact Broker?</title>
+<simpara>When using <link xl:href="http://pact.io/">Pact</link> you can use the <link xl:href="https://github.com/pact-foundation/pact_broker">Pact Broker</link>
+to store and share Pact definitions. Starting from Spring Cloud Contract
+2.0.0 one can fetch Pact files from the Pact Broker to generate
+tests and stubs.</simpara>
+<simpara>As a prerequisite the Pact Converter and Pact Stub Downloader
+are required. You have to add it via the <literal>spring-cloud-contract-pact</literal> dependency.
+You can read more about it in the <xref linkend="pact-converter"/> section.</simpara>
+<important>
+<simpara>Pact follows the Consumer Contract convention. That means
+that the Consumer creates the Pact definitions first, then
+shares the files with the Producer. Those expectations are generated
+from the Consumer&#8217;s code and can break the Producer if the expectation
+is not met.</simpara>
+</important>
+<section xml:id="_pact_consumer">
+<title>Pact Consumer</title>
+<simpara>The consumer uses Pact framework to generate Pact files. The
+Pact files are sent to the Pact Broker. An example of such
+setup can be found <link xl:href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.0.x/consumer_pact">here</link>.</simpara>
+</section>
+<section xml:id="_producer_3">
+<title>Producer</title>
+<simpara>For the producer, to use the Pact files from the Pact Broker, we can reuse the
+same mechanism we use for external contracts. We route Spring Cloud Contract
+to use the Pact implementation via the URL that contains
+the <literal>pact://</literal> protocol. It&#8217;s enough to pass the URL to the
+Pact Broker.</simpara>
+<formalpara>
+<title>Maven</title>
+<para>
+<programlisting language="xml" linenumbering="unnumbered">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+    &lt;configuration&gt;
+        &lt;!-- Base class mappings etc. --&gt;
+
+        &lt;!-- We want to pick contracts from a Git repository --&gt;
+        &lt;contractsRepositoryUrl&gt;pact://http://localhost:8085&lt;/contractsRepositoryUrl&gt;
+
+        &lt;!-- We reuse the contract dependency section to set up the path
+        to the folder that contains the contract definitions. In our case the
+        path will be /groupId/artifactId/version/contracts --&gt;
+        &lt;contractDependency&gt;
+            &lt;groupId&gt;${project.groupId}&lt;/groupId&gt;
+            &lt;artifactId&gt;${project.artifactId}&lt;/artifactId&gt;
+            &lt;!-- When + is passed, a latest tag will be applied when fetching pacts --&gt;
+            &lt;version&gt;+&lt;/version&gt;
+        &lt;/contractDependency&gt;
+
+        &lt;!-- The contracts mode can't be classpath --&gt;
+        &lt;contractsMode&gt;REMOTE&lt;/contractsMode&gt;
+    &lt;/configuration&gt;
+    &lt;!-- Don't forget to add spring-cloud-contract-pact to the classpath! --&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-contract-pact&lt;/artifactId&gt;
+            &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/plugin&gt;</programlisting>
+</para>
+</formalpara>
+<formalpara>
+<title>Gradle</title>
+<para>
+<programlisting language="gradle" linenumbering="unnumbered">buildscript {
+	repositories {
+		//...
+	}
+
+	dependencies {
+		// ...
+		// Don't forget to add spring-cloud-contract-pact to the classpath!
+		classpath "org.springframework.cloud:spring-cloud-contract-pact:${contractVersion}"
+	}
+}
+
+contracts {
+	// When + is passed, a latest tag will be applied when fetching pacts
+	contractDependency {
+		stringNotation = "${project.group}:${project.name}:+"
+	}
+	contractRepository {
+		repositoryUrl = "pact://http://localhost:8085"
+	}
+	// The mode can't be classpath
+	contractsMode = "REMOTE"
+	// Base class mappings etc.
+}</programlisting>
+</para>
+</formalpara>
+<simpara>With such a setup:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Pact files will be downloaded from the Pact Broker</simpara>
+</listitem>
+<listitem>
+<simpara>Spring Cloud Contract will convert the Pact files into tests and stubs</simpara>
+</listitem>
+<listitem>
+<simpara>The JAR with the stubs gets automatically created as usual</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="_pact_consumer_producer_contract_approach">
+<title>Pact Consumer (Producer Contract approach)</title>
+<simpara>In the scenario where you don&#8217;t want to do Consumer Contract approach
+(for every single consumer define the expectations) but you&#8217;d prefer
+to do Producer Contracts (the producer provides the contracts and
+publishes stubs), it&#8217;s enough to use Spring Cloud Contract with
+Stub Runner option.</simpara>
+<simpara>First, remember to add Stub Runner and Spring Cloud Contract Pact module
+as test dependencies.</simpara>
+<formalpara>
+<title>Maven</title>
+<para>
+<programlisting language="xml" linenumbering="unnumbered">&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
+            &lt;version&gt;${spring-cloud.version}&lt;/version&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;
+
+&lt;!-- Don't forget to add spring-cloud-contract-pact to the classpath! --&gt;
+&lt;dependencies&gt;
+    &lt;!-- ... --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-cloud-starter-contract-stub-runner&lt;/artifactId&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-cloud-contract-pact&lt;/artifactId&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</programlisting>
+</para>
+</formalpara>
+<formalpara>
+<title>Gradle</title>
+<para>
+<programlisting language="gradle" linenumbering="unnumbered">dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+dependencies {
+    //...
+    testCompile("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
+    // Don't forget to add spring-cloud-contract-pact to the classpath!
+    testCompile("org.springframework.cloud:spring-cloud-contract-pact")
+}</programlisting>
+</para>
+</formalpara>
+<simpara>Next, just pass the URL of the Pact Broker to <literal>repositoryRoot</literal>, prefixed
+with <literal>pact://</literal> protocol. E.g. <literal>pact://http://localhost:8085</literal></simpara>
+<programlisting language="java" linenumbering="unnumbered">@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureStubRunner(stubsMode = StubRunnerProperties.StubsMode.REMOTE,
+		ids = "com.example:beer-api-producer-pact",
+		repositoryRoot = "pact://http://localhost:8085")
+public class BeerControllerTest {
+    //Inject the port of the running stub
+    @StubRunnerPort("beer-api-producer-pact") int producerPort;
+    //...
+}</programlisting>
+<simpara>With such a setup:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Pact files will be downloaded from the Pact Broker</simpara>
+</listitem>
+<listitem>
+<simpara>Spring Cloud Contract will convert the Pact files into stub definitions</simpara>
+</listitem>
+<listitem>
+<simpara>The stub servers will be started and fed with stubs</simpara>
+</listitem>
+</itemizedlist>
+<simpara>For more information about Pact support you can go to
+the <xref linkend="pact-stub-downloader"/> section.</simpara>
 </section>
 </section>
 <section xml:id="_how_can_i_debug_the_request_response_being_sent_by_the_generated_tests_client">
@@ -8518,7 +8712,7 @@ implementation.</simpara>
 <simpara>The following example shows a typical <literal>spring.factories</literal> file:</simpara>
 <screen>org.springframework.cloud.contract.spec.ContractConverter=\
 org.springframework.cloud.contract.verifier.converter.YamlContractConverter</screen>
-<section xml:id="_pact_converter">
+<section xml:id="pact-converter">
 <title>Pact Converter</title>
 <simpara>Spring Cloud Contract includes support for <link xl:href="https://docs.pact.io/">Pact</link> representation of
 contracts up until v4. Instead of using the Groovy DSL, you can use Pact files. In this section, we
@@ -8653,7 +8847,7 @@ the current Pact version that you use.</simpara>
 	&lt;dependencies&gt;
 		&lt;dependency&gt;
 			&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-			&lt;artifactId&gt;spring-cloud-contract-spec-pact&lt;/artifactId&gt;
+			&lt;artifactId&gt;spring-cloud-contract-pact&lt;/artifactId&gt;
 			&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
 		&lt;/dependency&gt;
 		&lt;dependency&gt;
@@ -8668,7 +8862,7 @@ the current Pact version that you use.</simpara>
 <formalpara role="secondary">
 <title>Gradle</title>
 <para>
-<programlisting language="groovy" linenumbering="unnumbered">classpath "org.springframework.cloud:spring-cloud-contract-spec-pact:${findProperty('verifierVersion') ?: verifierVersion}"
+<programlisting language="groovy" linenumbering="unnumbered">classpath "org.springframework.cloud:spring-cloud-contract-pact:${findProperty('verifierVersion') ?: verifierVersion}"
 classpath 'au.com.dius:pact-jvm-model:3.5.13'</programlisting>
 </para>
 </formalpara>
@@ -8732,7 +8926,7 @@ current Pact version that you use.</simpara>
 <para>
 <programlisting language="xml" linenumbering="unnumbered">&lt;dependency&gt;
 	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-	&lt;artifactId&gt;spring-cloud-contract-spec-pact&lt;/artifactId&gt;
+	&lt;artifactId&gt;spring-cloud-contract-pact&lt;/artifactId&gt;
 	&lt;scope&gt;test&lt;/scope&gt;
 &lt;/dependency&gt;
 &lt;dependency&gt;
@@ -8746,7 +8940,7 @@ current Pact version that you use.</simpara>
 <formalpara role="secondary">
 <title>Gradle</title>
 <para>
-<programlisting language="groovy" linenumbering="unnumbered">testCompile "org.springframework.cloud:spring-cloud-contract-spec-pact"
+<programlisting language="groovy" linenumbering="unnumbered">testCompile "org.springframework.cloud:spring-cloud-contract-pact"
 testCompile 'au.com.dius:pact-jvm-model:3.5.13'</programlisting>
 </para>
 </formalpara>
@@ -9037,6 +9231,88 @@ properties</simpara>
 * <literal>STUBRUNNER_PROPERTIES_GIT_WAIT_BETWEEN_ATTEMPTS</literal>  (env prop)</simpara></entry>
 <entry align="left" valign="top"><simpara>1000</simpara></entry>
 <entry align="left" valign="top"><simpara>Number of millis to wait between attempts to push the commits to <literal>origin</literal></simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</section>
+<section xml:id="pact-stub-downloader">
+<title>Using the Pact Stub Downloader</title>
+<simpara>Whenever the <literal>repositoryRoot</literal> starts with a Pact protocol
+(starts with <literal>pact://</literal>), the stub downloader will try
+to fetch the Pact contract definitions from the Pact Broker.
+Whatever is set after <literal>pact://</literal> will be parsed as the Pact Broker URL.</simpara>
+<simpara>Either via environment variables, system properties, properties set
+inside the plugin or contracts repository configuration you can
+tweak the downloader&#8217;s behaviour. Below you can find the list of
+properties</simpara>
+<table frame="all" rowsep="1" colsep="1">
+<title>SCM Stub Downloader properties</title>
+<tgroup cols="3">
+<colspec colname="col_1" colwidth="33.3333*"/>
+<colspec colname="col_2" colwidth="33.3333*"/>
+<colspec colname="col_3" colwidth="33.3334*"/>
+<tbody>
+<row>
+<entry align="left" valign="top"><simpara>Type of a property</simpara></entry>
+<entry align="left" valign="top"><simpara>Name of the property</simpara></entry>
+<entry align="left" valign="top"><simpara>Description</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>* <literal>pactbroker.host</literal> (plugin prop)
+* <literal>stubrunner.properties.pactbroker.host</literal> (system prop)
+* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_HOST</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara>Host from URL passed to <literal>repositoryRoot</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>What is the URL of Pact Broker</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>* <literal>pactbroker.port</literal> (plugin prop)
+* <literal>stubrunner.properties.pactbroker.port</literal> (system prop)
+* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_PORT</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara>Port from URL passed to <literal>repositoryRoot</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>What is the port of Pact Broker</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>* <literal>pactbroker.protocol</literal> (plugin prop)
+* <literal>stubrunner.properties.pactbroker.protocol</literal> (system prop)
+* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_PROTOCOL</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara>Protocol from URL passed to <literal>repositoryRoot</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>What is the protocol of Pact Broker</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>* <literal>pactbroker.tags</literal> (plugin prop)
+* <literal>stubrunner.properties.pactbroker.tags</literal> (system prop)
+* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_TAGS</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara>Version of the stub, or <literal>latest</literal> if version is <literal>+</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>What tags should be used to fetch the stub</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>* <literal>pactbroker.auth.scheme</literal> (plugin prop)
+* <literal>stubrunner.properties.pactbroker.auth.scheme</literal> (system prop)
+* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_SCHEME</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>Basic</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>What kind of authentication should be used to connect to the Pact Broker</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>* <literal>pactbroker.auth.username</literal> (plugin prop)
+* <literal>stubrunner.properties.pactbroker.auth.username</literal> (system prop)
+* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_USERNAME</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"></entry>
+<entry align="left" valign="top"><simpara>Username used to connect to the Pact Broker</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>* <literal>pactbroker.auth.password</literal> (plugin prop)
+* <literal>stubrunner.properties.pactbroker.auth.password</literal> (system prop)
+* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_PASSWORD</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"></entry>
+<entry align="left" valign="top"><simpara>Password used to connect to the Pact Broker</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>* <literal>pactbroker.provider-name-with-group-id</literal> (plugin prop)
+* <literal>stubrunner.properties.pactbroker.provider-name-with-group-id</literal> (system prop)
+* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_PROVIDER_NAME_WITH_GROUP_ID</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara>false</simpara></entry>
+<entry align="left" valign="top"><simpara>When <literal>true</literal>, the provider name will be a combination of <literal>groupId:artifactId</literal>. If <literal>false</literal>, just <literal>artifactId</literal> is used</simpara></entry>
 </row>
 </tbody>
 </tgroup>

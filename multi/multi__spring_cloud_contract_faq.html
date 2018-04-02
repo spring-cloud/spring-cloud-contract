@@ -115,7 +115,7 @@ one to one to the contents of the repo.</p><p>Example of a <code class="literal"
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;parent&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.boot<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-boot-starter-parent<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>2.0.0.BUILD-SNAPSHOT<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>2.0.0.RELEASE<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;relativePath /&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/parent&gt;</span>
 
@@ -504,11 +504,141 @@ SCM repository, prefixed with the protocol. For example</p><pre class="programli
     ids=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example:bookstore:0.0.1.RELEASE"</span>
 )</pre><p>With such a setup:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Git project will be cloned to a temporary directory</li><li class="listitem">The SCM stub downloader will go to <code class="literal">META-INF/groupId/artifactId/version/</code> folder
 to find stub definitions and contracts. E.g. for <code class="literal">com.example:foo:1.0.0</code> the path would be
-<code class="literal">META-INF/com.example/foo/1.0.0/</code></li><li class="listitem">Stub servers will be started and fed with mappings</li><li class="listitem">Messaging definitions will be read and used in the messaging tests</li></ul></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_how_can_i_debug_the_request_response_being_sent_by_the_generated_tests_client" href="#_how_can_i_debug_the_request_response_being_sent_by_the_generated_tests_client"></a>3.7&nbsp;How can I debug the request/response being sent by the generated tests client?</h2></div></div></div><p>The generated tests all boil down to RestAssured in some form or fashion which relies on <a class="link" href="https://hc.apache.org/httpcomponents-client-ga/" target="_top">Apache HttpClient</a>.  HttpClient has a facility called <a class="link" href="https://hc.apache.org/httpcomponents-client-ga/logging.html#Wire_Logging" target="_top">wire logging</a> which logs the entire request and response to HttpClient.  Spring Boot has a logging <a class="link" href="https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html" target="_top">common application property</a> for doing this sort of thing, just add this to your application properties</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">logging.level.org.apache.http.wire</span>=DEBUG</pre><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_how_can_i_debug_the_mapping_request_response_being_sent_by_wiremock" href="#_how_can_i_debug_the_mapping_request_response_being_sent_by_wiremock"></a>3.7.1&nbsp;How can I debug the mapping/request/response being sent by WireMock?</h3></div></div></div><p>Starting from version <code class="literal">1.2.0</code> we turn on WireMock logging to
+<code class="literal">META-INF/com.example/foo/1.0.0/</code></li><li class="listitem">Stub servers will be started and fed with mappings</li><li class="listitem">Messaging definitions will be read and used in the messaging tests</li></ul></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_can_i_use_the_pact_broker" href="#_can_i_use_the_pact_broker"></a>3.7&nbsp;Can I use the Pact Broker?</h2></div></div></div><p>When using <a class="link" href="http://pact.io/" target="_top">Pact</a> you can use the <a class="link" href="https://github.com/pact-foundation/pact_broker" target="_top">Pact Broker</a>
+to store and share Pact definitions. Starting from Spring Cloud Contract
+2.0.0 one can fetch Pact files from the Pact Broker to generate
+tests and stubs.</p><p>As a prerequisite the Pact Converter and Pact Stub Downloader
+are required. You have to add it via the <code class="literal">spring-cloud-contract-pact</code> dependency.
+You can read more about it in the <a class="xref" href="multi__using_the_pluggable_architecture.html#pact-converter" title="10.1.1&nbsp;Pact Converter">Section&nbsp;10.1.1, &#8220;Pact Converter&#8221;</a> section.</p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>Pact follows the Consumer Contract convention. That means
+that the Consumer creates the Pact definitions first, then
+shares the files with the Producer. Those expectations are generated
+from the Consumer&#8217;s code and can break the Producer if the expectation
+is not met.</p></td></tr></table></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_consumer" href="#_pact_consumer"></a>3.7.1&nbsp;Pact Consumer</h3></div></div></div><p>The consumer uses Pact framework to generate Pact files. The
+Pact files are sent to the Pact Broker. An example of such
+setup can be found <a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.0.x/consumer_pact" target="_top">here</a>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_producer_3" href="#_producer_3"></a>3.7.2&nbsp;Producer</h3></div></div></div><p>For the producer, to use the Pact files from the Pact Broker, we can reuse the
+same mechanism we use for external contracts. We route Spring Cloud Contract
+to use the Pact implementation via the URL that contains
+the <code class="literal">pact://</code> protocol. It&#8217;s enough to pass the URL to the
+Pact Broker.</p><p><b>Maven.&nbsp;</b>
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>${spring-cloud-contract.version}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;extensions&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/extensions&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- Base class mappings etc. --&gt;</span>
+
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- We want to pick contracts from a Git repository --&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractsRepositoryUrl&gt;</span>pact://http://localhost:8085<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractsRepositoryUrl&gt;</span>
+
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- We reuse the contract dependency section to set up the path
+        to the folder that contains the contract definitions. In our case the
+        path will be /groupId/artifactId/version/contracts --&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractDependency&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>${project.groupId}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>${project.artifactId}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- When + is passed, a latest tag will be applied when fetching pacts --&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractDependency&gt;</span>
+
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- The contracts mode can't be classpath --&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractsMode&gt;</span>REMOTE<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractsMode&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- Don't forget to add spring-cloud-contract-pact to the classpath! --&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependencies&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-pact<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>${spring-cloud-contract.version}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependencies&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><p>
+</p><p><b>Gradle.&nbsp;</b>
+</p><pre class="programlisting">buildscript {
+	repositories {
+		//...
+	}
+
+	dependencies {
+		// ...
+		// Don't forget to add spring-cloud-contract-pact to the classpath!
+		classpath "org.springframework.cloud:spring-cloud-contract-pact:${contractVersion}"
+	}
+}
+
+contracts {
+	// When + is passed, a latest tag will be applied when fetching pacts
+	contractDependency {
+		stringNotation = "${project.group}:${project.name}:+"
+	}
+	contractRepository {
+		repositoryUrl = "pact://http://localhost:8085"
+	}
+	// The mode can't be classpath
+	contractsMode = "REMOTE"
+	// Base class mappings etc.
+}</pre><p>
+</p><p>With such a setup:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Pact files will be downloaded from the Pact Broker</li><li class="listitem">Spring Cloud Contract will convert the Pact files into tests and stubs</li><li class="listitem">The JAR with the stubs gets automatically created as usual</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_consumer_producer_contract_approach" href="#_pact_consumer_producer_contract_approach"></a>3.7.3&nbsp;Pact Consumer (Producer Contract approach)</h3></div></div></div><p>In the scenario where you don&#8217;t want to do Consumer Contract approach
+(for every single consumer define the expectations) but you&#8217;d prefer
+to do Producer Contracts (the producer provides the contracts and
+publishes stubs), it&#8217;s enough to use Spring Cloud Contract with
+Stub Runner option.</p><p>First, remember to add Stub Runner and Spring Cloud Contract Pact module
+as test dependencies.</p><p><b>Maven.&nbsp;</b>
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependencyManagement&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependencies&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-dependencies<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>${spring-cloud.version}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;type&gt;</span>pom<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/type&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;scope&gt;</span>import<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/scope&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependencies&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependencyManagement&gt;</span>
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- Don't forget to add spring-cloud-contract-pact to the classpath! --&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependencies&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- ... --&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-starter-contract-stub-runner<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;scope&gt;</span>test<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/scope&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-pact<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;scope&gt;</span>test<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/scope&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependencies&gt;</span></pre><p>
+</p><p><b>Gradle.&nbsp;</b>
+</p><pre class="programlisting">dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+dependencies {
+    //...
+    testCompile("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
+    // Don't forget to add spring-cloud-contract-pact to the classpath!
+    testCompile("org.springframework.cloud:spring-cloud-contract-pact")
+}</pre><p>
+</p><p>Next, just pass the URL of the Pact Broker to <code class="literal">repositoryRoot</code>, prefixed
+with <code class="literal">pact://</code> protocol. E.g. <code class="literal">pact://http://localhost:8085</code></p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
+<em><span class="hl-annotation" style="color: gray">@SpringBootTest</span></em>
+<em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(stubsMode = StubRunnerProperties.StubsMode.REMOTE,
+		ids = "com.example:beer-api-producer-pact",
+		repositoryRoot = "pact://http://localhost:8085")</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> BeerControllerTest {
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//Inject the port of the running stub</span>
+    <em><span class="hl-annotation" style="color: gray">@StubRunnerPort("beer-api-producer-pact")</span></em> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">int</span> producerPort;
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
+}</pre><p>With such a setup:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Pact files will be downloaded from the Pact Broker</li><li class="listitem">Spring Cloud Contract will convert the Pact files into stub definitions</li><li class="listitem">The stub servers will be started and fed with stubs</li></ul></div><p>For more information about Pact support you can go to
+the <a class="xref" href="multi__using_the_pluggable_architecture.html#pact-stub-downloader" title="10.7&nbsp;Using the Pact Stub Downloader">Section&nbsp;10.7, &#8220;Using the Pact Stub Downloader&#8221;</a> section.</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_how_can_i_debug_the_request_response_being_sent_by_the_generated_tests_client" href="#_how_can_i_debug_the_request_response_being_sent_by_the_generated_tests_client"></a>3.8&nbsp;How can I debug the request/response being sent by the generated tests client?</h2></div></div></div><p>The generated tests all boil down to RestAssured in some form or fashion which relies on <a class="link" href="https://hc.apache.org/httpcomponents-client-ga/" target="_top">Apache HttpClient</a>.  HttpClient has a facility called <a class="link" href="https://hc.apache.org/httpcomponents-client-ga/logging.html#Wire_Logging" target="_top">wire logging</a> which logs the entire request and response to HttpClient.  Spring Boot has a logging <a class="link" href="https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html" target="_top">common application property</a> for doing this sort of thing, just add this to your application properties</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">logging.level.org.apache.http.wire</span>=DEBUG</pre><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_how_can_i_debug_the_mapping_request_response_being_sent_by_wiremock" href="#_how_can_i_debug_the_mapping_request_response_being_sent_by_wiremock"></a>3.8.1&nbsp;How can I debug the mapping/request/response being sent by WireMock?</h3></div></div></div><p>Starting from version <code class="literal">1.2.0</code> we turn on WireMock logging to
 info and the WireMock notifier to being verbose. Now you will
 exactly know what request was received by WireMock server and which
-matching response definition was picked.</p><p>To turn off this feature just bump WireMock logging to <code class="literal">ERROR</code></p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">logging.level.com.github.tomakehurst.wiremock</span>=ERROR</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_how_can_i_see_what_got_registered_in_the_http_server_stub" href="#_how_can_i_see_what_got_registered_in_the_http_server_stub"></a>3.7.2&nbsp;How can I see what got registered in the HTTP server stub?</h3></div></div></div><p>You can use the <code class="literal">mappingsOutputFolder</code> property on <code class="literal">@AutoConfigureStubRunner</code> or <code class="literal">StubRunnerRule</code>
+matching response definition was picked.</p><p>To turn off this feature just bump WireMock logging to <code class="literal">ERROR</code></p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">logging.level.com.github.tomakehurst.wiremock</span>=ERROR</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_how_can_i_see_what_got_registered_in_the_http_server_stub" href="#_how_can_i_see_what_got_registered_in_the_http_server_stub"></a>3.8.2&nbsp;How can I see what got registered in the HTTP server stub?</h3></div></div></div><p>You can use the <code class="literal">mappingsOutputFolder</code> property on <code class="literal">@AutoConfigureStubRunner</code> or <code class="literal">StubRunnerRule</code>
 to dump all mappings per artifact id. Also the port at which the given stub server was
-started will be attached.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_can_i_reference_text_from_file" href="#_can_i_reference_text_from_file"></a>3.7.3&nbsp;Can I reference text from file?</h3></div></div></div><p>Yes! With version 1.2.0 we&#8217;ve added such a possibility. It&#8217;s enough to call <code class="literal">file(&#8230;&#8203;)</code> method in the
+started will be attached.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_can_i_reference_text_from_file" href="#_can_i_reference_text_from_file"></a>3.8.3&nbsp;Can I reference text from file?</h3></div></div></div><p>Yes! With version 1.2.0 we&#8217;ve added such a possibility. It&#8217;s enough to call <code class="literal">file(&#8230;&#8203;)</code> method in the
 DSL and provide a path relative to where the contract lays.
 If you&#8217;re using YAML just use the <code class="literal">bodyFromFile</code> property.</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="multi__spring_cloud_contract_verifier_introduction.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="multi__spring_cloud_contract_verifier_setup.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">2.&nbsp;Spring Cloud Contract Verifier Introduction&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="multi_spring-cloud-contract.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;4.&nbsp;Spring Cloud Contract Verifier Setup</td></tr></table></div></body></html>
