@@ -8850,11 +8850,6 @@ the current Pact version that you use.</simpara>
 			&lt;artifactId&gt;spring-cloud-contract-pact&lt;/artifactId&gt;
 			&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
 		&lt;/dependency&gt;
-		&lt;dependency&gt;
-			&lt;groupId&gt;au.com.dius&lt;/groupId&gt;
-			&lt;artifactId&gt;pact-jvm-model&lt;/artifactId&gt;
-			&lt;version&gt;3.5.13&lt;/version&gt;
-		&lt;/dependency&gt;
 	&lt;/dependencies&gt;
 &lt;/plugin&gt;</programlisting>
 </para>
@@ -8862,8 +8857,7 @@ the current Pact version that you use.</simpara>
 <formalpara role="secondary">
 <title>Gradle</title>
 <para>
-<programlisting language="groovy" linenumbering="unnumbered">classpath "org.springframework.cloud:spring-cloud-contract-pact:${findProperty('verifierVersion') ?: verifierVersion}"
-classpath 'au.com.dius:pact-jvm-model:3.5.13'</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">classpath "org.springframework.cloud:spring-cloud-contract-pact:${findProperty('verifierVersion') ?: verifierVersion}"</programlisting>
 </para>
 </formalpara>
 <simpara>When you execute the build of your application, a test will be generated. The generated
@@ -8928,20 +8922,13 @@ current Pact version that you use.</simpara>
 	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 	&lt;artifactId&gt;spring-cloud-contract-pact&lt;/artifactId&gt;
 	&lt;scope&gt;test&lt;/scope&gt;
-&lt;/dependency&gt;
-&lt;dependency&gt;
-	&lt;groupId&gt;au.com.dius&lt;/groupId&gt;
-	&lt;artifactId&gt;pact-jvm-model&lt;/artifactId&gt;
-	&lt;version&gt;3.5.13&lt;/version&gt;
-	&lt;scope&gt;test&lt;/scope&gt;
 &lt;/dependency&gt;</programlisting>
 </para>
 </formalpara>
 <formalpara role="secondary">
 <title>Gradle</title>
 <para>
-<programlisting language="groovy" linenumbering="unnumbered">testCompile "org.springframework.cloud:spring-cloud-contract-pact"
-testCompile 'au.com.dius:pact-jvm-model:3.5.13'</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">testCompile "org.springframework.cloud:spring-cloud-contract-pact"</programlisting>
 </para>
 </formalpara>
 </section>
