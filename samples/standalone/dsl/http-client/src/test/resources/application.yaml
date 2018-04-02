@@ -1,2 +1,3 @@
 server:
   port: 6565
+logging.level.org.springframework.cloud.contract: DEBUG

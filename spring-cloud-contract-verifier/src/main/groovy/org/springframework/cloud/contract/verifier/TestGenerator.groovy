@@ -21,6 +21,8 @@ import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicInteger
 
 import groovy.transform.PackageScope
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import wiremock.com.google.common.collect.ListMultimap
 
 import org.springframework.cloud.contract.spec.ContractVerifierException
@@ -42,6 +44,7 @@ import static org.springframework.cloud.contract.verifier.util.NamesUtil.toLastD
  */
 class TestGenerator {
 
+	private static final Log log = LogFactory.getLog(TestGenerator)
 	private static final String DEFAULT_CLASS_PREFIX = "ContractVerifier"
 	private static final String DEFAULT_TEST_PACKAGE = "org.springframework.cloud.contract.verifier.tests"
 
@@ -111,6 +114,9 @@ class TestGenerator {
 
 	private void processIncludedDirectory(
 			final String includedDirectoryRelativePath, Collection<ContractMetadata> contracts, final String basePackageNameForClass) {
+		if (log.isDebugEnabled()) {
+			log.debug("Collected contracts with metadata ${contracts}")
+		}
 		if (contracts.size()) {
 			def className = afterLast(includedDirectoryRelativePath.toString(), File.separator) + resolveNameSuffix()
 			def convertedClassName = convertIllegalPackageChars(className)

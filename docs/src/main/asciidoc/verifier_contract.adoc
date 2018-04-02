@@ -1382,6 +1382,7 @@ org.springframework.cloud.contract.spec.ContractConverter=\
 org.springframework.cloud.contract.verifier.converter.YamlContractConverter
 ----
 
+[[pact-converter]]
 ==== Pact Converter
 
 Spring Cloud Contract includes support for https://docs.pact.io/[Pact] representation of
@@ -1674,4 +1675,77 @@ properties
 * `STUBRUNNER_PROPERTIES_GIT_WAIT_BETWEEN_ATTEMPTS`  (env prop)
 |1000
 |Number of millis to wait between attempts to push the commits to `origin`
+|===
+
+[[pact-stub-downloader]]
+=== Using the Pact Stub Downloader
+
+Whenever the `repositoryRoot` starts with a Pact protocol
+(starts with `pact://`), the stub downloader will try
+to fetch the Pact contract definitions from the Pact Broker.
+Whatever is set after `pact://` will be parsed as the Pact Broker URL.
+
+Either via environment variables, system properties, properties set
+inside the plugin or contracts repository configuration you can
+tweak the downloader's behaviour. Below you can find the list of
+properties
+
+.SCM Stub Downloader properties
+|===
+|Type of a property |Name of the property | Description
+|
+* `pactbroker.host` (plugin prop)
+* `stubrunner.properties.pactbroker.host` (system prop)
+* `STUBRUNNER_PROPERTIES_PACTBROKER_HOST` (env prop)
+|Host from URL passed to `repositoryRoot`
+|What is the URL of Pact Broker
+
+|
+* `pactbroker.port` (plugin prop)
+* `stubrunner.properties.pactbroker.port` (system prop)
+* `STUBRUNNER_PROPERTIES_PACTBROKER_PORT` (env prop)
+|Port from URL passed to `repositoryRoot`
+|What is the port of Pact Broker
+
+|
+* `pactbroker.protocol` (plugin prop)
+* `stubrunner.properties.pactbroker.protocol` (system prop)
+* `STUBRUNNER_PROPERTIES_PACTBROKER_PROTOCOL` (env prop)
+|Protocol from URL passed to `repositoryRoot`
+|What is the protocol of Pact Broker
+
+|
+* `pactbroker.tags` (plugin prop)
+* `stubrunner.properties.pactbroker.tags` (system prop)
+* `STUBRUNNER_PROPERTIES_PACTBROKER_TAGS` (env prop)
+|Version of the stub, or `latest` if version is `+`
+|What tags should be used to fetch the stub
+
+|
+* `pactbroker.auth.scheme` (plugin prop)
+* `stubrunner.properties.pactbroker.auth.scheme` (system prop)
+* `STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_SCHEME` (env prop)
+|`Basic`
+|What kind of authentication should be used to connect to the Pact Broker
+
+|
+* `pactbroker.auth.username` (plugin prop)
+* `stubrunner.properties.pactbroker.auth.username` (system prop)
+* `STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_USERNAME` (env prop)
+|
+|Username used to connect to the Pact Broker
+
+|
+* `pactbroker.auth.password` (plugin prop)
+* `stubrunner.properties.pactbroker.auth.password` (system prop)
+* `STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_PASSWORD` (env prop)
+|
+|Password used to connect to the Pact Broker
+
+|
+* `pactbroker.provider-name-with-group-id` (plugin prop)
+* `stubrunner.properties.pactbroker.provider-name-with-group-id` (system prop)
+* `STUBRUNNER_PROPERTIES_PACTBROKER_PROVIDER_NAME_WITH_GROUP_ID` (env prop)
+|false
+|When `true`, the provider name will be a combination of `groupId:artifactId`. If `false`, just `artifactId` is used
 |===

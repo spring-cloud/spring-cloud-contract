@@ -90,7 +90,7 @@ class MavenContractsDownloader {
 			contractDownloader().updatePropertiesWithInclusion(downloadedContractsDir, config);
 			return downloadedContractsDir;
 		} else if (shouldDownloadContracts()) {
-			this.log.info("Download dependency is provided - will download contract jars");
+			this.log.info("Download dependency is provided - will retrieve contracts from a remote location");
 			File downloadedContracts = contractDownloader().unpackedDownloadedContracts(config);
 			this.project.getProperties().setProperty(CONTRACTS_DIRECTORY_PROP, downloadedContracts.getAbsolutePath());
 			return downloadedContracts;

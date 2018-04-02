@@ -125,6 +125,17 @@
 			</dependency>
 			<dependency>
 				<groupId>au.com.dius</groupId>
+				<artifactId>pact-jvm-provider-junit_2.12</artifactId>
+				<version>${pact.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.codehaus.groovy</groupId>
+						<artifactId>groovy-all</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>au.com.dius</groupId>
 				<artifactId>pact-jvm-model</artifactId>
 				<version>${pact.version}</version>
 				<exclusions>

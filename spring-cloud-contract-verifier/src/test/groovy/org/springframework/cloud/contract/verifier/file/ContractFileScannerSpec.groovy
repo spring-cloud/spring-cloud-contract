@@ -21,6 +21,9 @@ import spock.lang.Specification
 
 import java.nio.file.Path
 
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.ContractConverter
+
 /**
  * @author Jakub Kubrynski, codearte.io
  */
@@ -77,7 +80,27 @@ class ContractFileScannerSpec extends Specification {
 	def "should find contract files with converters"() {
 		given:
 			File baseDir = new File(this.getClass().getResource("/directory/with/mixed").toURI())
-			ContractFileScanner scanner = new ContractFileScanner(baseDir, null, null)
+			ContractFileScanner scanner = new ContractFileScanner(baseDir, null, null) {
+				@Override
+				protected List<ContractConverter> converters() {
+					return [new ContractConverter() {
+						@Override
+						boolean isAccepted(File file) {
+							return file.name.endsWith(".json")
+						}
+
+						@Override
+						Collection<Contract> convertFrom(File file) {
+							throw new RuntimeException("boom")
+						}
+
+						@Override
+						Object convertTo(Collection contract) {
+							throw new RuntimeException("boom")
+						}
+					}]
+				}
+			}
 		when:
 			ListMultimap<Path, ContractMetadata> result = scanner.findContracts()
 		then:

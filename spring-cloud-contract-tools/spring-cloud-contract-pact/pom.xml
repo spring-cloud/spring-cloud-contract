@@ -8,10 +8,10 @@
 		<version>2.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<artifactId>spring-cloud-contract-spec-pact</artifactId>
+	<artifactId>spring-cloud-contract-pact</artifactId>
 	<packaging>jar</packaging>
-	<name>Spring Cloud Contract Spec Pact</name>
-	<description>Spring Cloud Contract Spec Pact</description>
+	<name>Spring Cloud Contract Pact</name>
+	<description>Spring Cloud Contract Pact</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -19,7 +19,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-contract-verifier</artifactId>
+			<artifactId>spring-cloud-contract-converters</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-contract-stub-runner</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -38,6 +42,10 @@
 			<artifactId>pact-jvm-consumer-java8_2.12</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>au.com.dius</groupId>
+			<artifactId>pact-jvm-provider-junit_2.12</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.spockframework</groupId>
 			<artifactId>spock-core</artifactId>
 			<scope>test</scope>
@@ -52,6 +60,11 @@
 			<artifactId>spock-global-unroll</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-contract-wiremock</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -62,8 +75,13 @@
 					<execution>
 						<goals>
 							<goal>addSources</goal>
+							<goal>addTestSources</goal>
+							<goal>generateStubs</goal>
 							<goal>compile</goal>
+							<goal>testGenerateStubs</goal>
 							<goal>testCompile</goal>
+							<goal>removeStubs</goal>
+							<goal>removeTestStubs</goal>
 						</goals>
 					</execution>
 				</executions>

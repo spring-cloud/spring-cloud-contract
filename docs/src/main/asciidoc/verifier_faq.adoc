@@ -1,6 +1,5 @@
 :introduction_url: https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/{branch}
 :samples_branch: 2.0.x
-:samples_branch: 2.0.x
 
 == Spring Cloud Contract FAQ
 
@@ -706,6 +705,195 @@ to find stub definitions and contracts. E.g. for `com.example:foo:1.0.0` the pat
 `META-INF/com.example/foo/1.0.0/`
 * Stub servers will be started and fed with mappings
 * Messaging definitions will be read and used in the messaging tests
+
+=== Can I use the Pact Broker?
+
+When using http://pact.io/[Pact] you can use the https://github.com/pact-foundation/pact_broker[Pact Broker]
+to store and share Pact definitions. Starting from Spring Cloud Contract
+2.0.0 one can fetch Pact files from the Pact Broker to generate
+tests and stubs.
+
+As a prerequisite the Pact Converter and Pact Stub Downloader
+are required. You have to add it via the `spring-cloud-contract-pact` dependency.
+You can read more about it in the <<pact-converter>> section.
+
+IMPORTANT: Pact follows the Consumer Contract convention. That means
+that the Consumer creates the Pact definitions first, then
+shares the files with the Producer. Those expectations are generated
+from the Consumer's code and can break the Producer if the expectation
+is not met.
+
+==== Pact Consumer
+
+The consumer uses Pact framework to generate Pact files. The
+Pact files are sent to the Pact Broker. An example of such
+setup can be found https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}/consumer_pact[here].
+
+==== Producer
+
+For the producer, to use the Pact files from the Pact Broker, we can reuse the
+same mechanism we use for external contracts. We route Spring Cloud Contract
+to use the Pact implementation via the URL that contains
+the `pact://` protocol. It's enough to pass the URL to the
+Pact Broker.
+
+.Maven
+[source,xml,indent=0]
+----
+<plugin>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+    <version>${spring-cloud-contract.version}</version>
+    <extensions>true</extensions>
+    <configuration>
+        <!-- Base class mappings etc. -->
+
+        <!-- We want to pick contracts from a Git repository -->
+        <contractsRepositoryUrl>pact://http://localhost:8085</contractsRepositoryUrl>
+
+        <!-- We reuse the contract dependency section to set up the path
+        to the folder that contains the contract definitions. In our case the
+        path will be /groupId/artifactId/version/contracts -->
+        <contractDependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>${project.artifactId}</artifactId>
+            <!-- When + is passed, a latest tag will be applied when fetching pacts -->
+            <version>+</version>
+        </contractDependency>
+
+        <!-- The contracts mode can't be classpath -->
+        <contractsMode>REMOTE</contractsMode>
+    </configuration>
+    <!-- Don't forget to add spring-cloud-contract-pact to the classpath! -->
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-contract-pact</artifactId>
+            <version>${spring-cloud-contract.version}</version>
+        </dependency>
+    </dependencies>
+</plugin>
+----
+
+.Gradle
+[source,gradle,indent=0]
+----
+buildscript {
+	repositories {
+		//...
+	}
+
+	dependencies {
+		// ...
+		// Don't forget to add spring-cloud-contract-pact to the classpath!
+		classpath "org.springframework.cloud:spring-cloud-contract-pact:${contractVersion}"
+	}
+}
+
+contracts {
+	// When + is passed, a latest tag will be applied when fetching pacts
+	contractDependency {
+		stringNotation = "${project.group}:${project.name}:+"
+	}
+	contractRepository {
+		repositoryUrl = "pact://http://localhost:8085"
+	}
+	// The mode can't be classpath
+	contractsMode = "REMOTE"
+	// Base class mappings etc.
+}
+----
+
+With such a setup:
+
+* Pact files will be downloaded from the Pact Broker
+* Spring Cloud Contract will convert the Pact files into tests and stubs
+* The JAR with the stubs gets automatically created as usual
+
+==== Pact Consumer (Producer Contract approach)
+
+In the scenario where you don't want to do Consumer Contract approach
+(for every single consumer define the expectations) but you'd prefer
+to do Producer Contracts (the producer provides the contracts and
+publishes stubs), it's enough to use Spring Cloud Contract with
+Stub Runner option.
+
+First, remember to add Stub Runner and Spring Cloud Contract Pact module
+as test dependencies.
+
+.Maven
+[source,xml,indent=0]
+----
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-dependencies</artifactId>
+            <version>${spring-cloud.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+<!-- Don't forget to add spring-cloud-contract-pact to the classpath! -->
+<dependencies>
+    <!-- ... -->
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-contract-pact</artifactId>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+----
+
+.Gradle
+[source,gradle,indent=0]
+----
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+dependencies {
+    //...
+    testCompile("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
+    // Don't forget to add spring-cloud-contract-pact to the classpath!
+    testCompile("org.springframework.cloud:spring-cloud-contract-pact")
+}
+----
+
+Next, just pass the URL of the Pact Broker to `repositoryRoot`, prefixed
+with `pact://` protocol. E.g. `pact://http://localhost:8085`
+
+[source,java,indent=0]
+----
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureStubRunner(stubsMode = StubRunnerProperties.StubsMode.REMOTE,
+		ids = "com.example:beer-api-producer-pact",
+		repositoryRoot = "pact://http://localhost:8085")
+public class BeerControllerTest {
+    //Inject the port of the running stub
+    @StubRunnerPort("beer-api-producer-pact") int producerPort;
+    //...
+}
+----
+
+With such a setup:
+
+* Pact files will be downloaded from the Pact Broker
+* Spring Cloud Contract will convert the Pact files into stub definitions
+* The stub servers will be started and fed with stubs
+
+For more information about Pact support you can go to
+the <<pact-stub-downloader>> section.
 
 === How can I debug the request/response being sent by the generated tests client?
 

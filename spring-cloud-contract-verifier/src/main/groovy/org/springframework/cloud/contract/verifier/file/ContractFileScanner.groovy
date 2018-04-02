@@ -87,7 +87,7 @@ class ContractFileScanner {
 	 * and try to convert via pluggable Contract Converters any possible contracts
 	 */
 	private void appendRecursively(File baseDir, ListMultimap<Path, ContractMetadata> result) {
-		List<ContractConverter> converters = SpringFactoriesLoader.loadFactories(ContractConverter, null)
+		List<ContractConverter> converters = converters()
 		if (log.isTraceEnabled()) {
 			log.trace("Found the following contract converters ${converters}")
 		}
@@ -122,13 +122,18 @@ class ContractFileScanner {
 		}
 	}
 
+	protected List<ContractConverter> converters() {
+		return SpringFactoriesLoader.loadFactories(ContractConverter, null)
+	}
+
 	private void addContractToTestGeneration(List<ContractConverter> converters, ListMultimap<Path, ContractMetadata> result,
 											File[] files, File file, int index) {
 		boolean converted = false
 		if (!file.isDirectory()) {
 			for (ContractConverter converter : converters) {
-				if (converter.isAccepted(file)) {
-					addContractToTestGeneration(result, files, file, index, converter.convertFrom(file))
+				Collection<Contract> contracts = tryConvert(converter, file)
+				if (contracts) {
+					addContractToTestGeneration(result, files, file, index, contracts)
 					converted = true
 					break
 				}
@@ -139,6 +144,21 @@ class ContractFileScanner {
 			if (log.isDebugEnabled()) {
 				log.debug("File [$file] wasn't ignored but no converter was applicable. The file is a directory [${file.isDirectory()}]")
 			}
+		}
+	}
+
+	private Collection<Contract> tryConvert(ContractConverter converter, File file) {
+		boolean accepted = converter.isAccepted(file)
+		if (!accepted) {
+			return null
+		}
+		try {
+			return converter.convertFrom(file)
+		} catch (Exception e) {
+			if (log.isDebugEnabled()) {
+				log.debug("Exception occurred while trying to convert the file", e)
+			}
+			return null
 		}
 	}
 
@@ -154,6 +174,9 @@ class ContractFileScanner {
 				files.size(), order, convertedContract)
 		if (log.isDebugEnabled()) {
 			log.debug("Creating a contract entry for path [" + path + "] and metadata [" + metadata + "]")
+		}
+		if (convertedContract) {
+
 		}
 		result.put(parent, metadata)
 	}

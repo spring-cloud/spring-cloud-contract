@@ -81,11 +81,17 @@ public class ContractDownloader {
 		} else {
 			log.info("Will pick a pattern from group id and artifact id");
 			if (hasGavInPath(contractsDirectory)) {
+				if (log.isDebugEnabled()) {
+					log.debug("Group & artifact in path");
+				}
 				contractsDirectory = contractsSubDirIfPresent(contractsDirectory);
-				// we're already under proper folder (for the given version)
+				// we're already under proper folder (for the given group and artifact)
 				pattern = fileToPattern(contractsDirectory);
 				includedAntPattern = "**/";
 			} else {
+				if (log.isDebugEnabled()) {
+					log.debug("No group & artifact in path");
+				}
 				pattern = groupArtifactToPattern(contractsDirectory);
 				includedAntPattern = wrapWithAntPattern(slashSeparatedGroupId() + "/" + this.projectArtifactId);
 			}

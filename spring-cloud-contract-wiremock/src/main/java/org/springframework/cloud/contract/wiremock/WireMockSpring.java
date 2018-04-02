@@ -66,8 +66,7 @@ public abstract class WireMockSpring {
 			}
 			initialized = true;
 		}
-		WireMockConfiguration config = new WireMockConfiguration();
-		return config;
+		return new WireMockConfiguration();
 	}
 
 }
