@@ -1643,35 +1643,45 @@ properties
 |Type of a property |Name of the property | Description
 |
 * `git.branch` (plugin prop)
+
 * `stubrunner.properties.git.branch` (system prop)
+
 * `STUBRUNNER_PROPERTIES_GIT_BRANCH` (env prop)
 |master
 |Which branch to checkout
 
 |
 * `git.username` (plugin prop)
+
 * `stubrunner.properties.git.username` (system prop)
+
 * `STUBRUNNER_PROPERTIES_GIT_USERNAME` (env prop)
 |
 |Git clone username
 
 |
 * `git.password` (plugin prop)
+
 * `stubrunner.properties.git.password` (system prop)
+
 * `STUBRUNNER_PROPERTIES_GIT_PASSWORD` (env prop)
 |
 |Git clone password
 
 |
 * `git.no-of-attempts` (plugin prop)
+
 * `stubrunner.properties.git.no-of-attempts` (system prop)
+
 * `STUBRUNNER_PROPERTIES_GIT_NO_OF_ATTEMPTS` (env prop)
 |10
 |Number of attempts to push the commits to `origin`
 
 |
 * `git.wait-between-attempts` (Plugin prop)
+
 * `stubrunner.properties.git.wait-between-attempts`  (system prop)
+
 * `STUBRUNNER_PROPERTIES_GIT_WAIT_BETWEEN_ATTEMPTS`  (env prop)
 |1000
 |Number of millis to wait between attempts to push the commits to `origin`
@@ -1695,56 +1705,72 @@ properties
 |Type of a property |Name of the property | Description
 |
 * `pactbroker.host` (plugin prop)
+
 * `stubrunner.properties.pactbroker.host` (system prop)
+
 * `STUBRUNNER_PROPERTIES_PACTBROKER_HOST` (env prop)
 |Host from URL passed to `repositoryRoot`
 |What is the URL of Pact Broker
 
 |
 * `pactbroker.port` (plugin prop)
+
 * `stubrunner.properties.pactbroker.port` (system prop)
+
 * `STUBRUNNER_PROPERTIES_PACTBROKER_PORT` (env prop)
 |Port from URL passed to `repositoryRoot`
 |What is the port of Pact Broker
 
 |
 * `pactbroker.protocol` (plugin prop)
+
 * `stubrunner.properties.pactbroker.protocol` (system prop)
+
 * `STUBRUNNER_PROPERTIES_PACTBROKER_PROTOCOL` (env prop)
 |Protocol from URL passed to `repositoryRoot`
 |What is the protocol of Pact Broker
 
 |
 * `pactbroker.tags` (plugin prop)
+
 * `stubrunner.properties.pactbroker.tags` (system prop)
+
 * `STUBRUNNER_PROPERTIES_PACTBROKER_TAGS` (env prop)
 |Version of the stub, or `latest` if version is `+`
 |What tags should be used to fetch the stub
 
 |
 * `pactbroker.auth.scheme` (plugin prop)
+
 * `stubrunner.properties.pactbroker.auth.scheme` (system prop)
+
 * `STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_SCHEME` (env prop)
 |`Basic`
 |What kind of authentication should be used to connect to the Pact Broker
 
 |
 * `pactbroker.auth.username` (plugin prop)
+
 * `stubrunner.properties.pactbroker.auth.username` (system prop)
+
 * `STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_USERNAME` (env prop)
 |
 |Username used to connect to the Pact Broker
 
 |
 * `pactbroker.auth.password` (plugin prop)
+
 * `stubrunner.properties.pactbroker.auth.password` (system prop)
+
 * `STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_PASSWORD` (env prop)
 |
 |Password used to connect to the Pact Broker
 
 |
 * `pactbroker.provider-name-with-group-id` (plugin prop)
+
 * `stubrunner.properties.pactbroker.provider-name-with-group-id` (system prop)
+
 * `STUBRUNNER_PROPERTIES_PACTBROKER_PROVIDER_NAME_WITH_GROUP_ID` (env prop)
 |false
 |When `true`, the provider name will be a combination of `groupId:artifactId`. If `false`, just `artifactId` is used
