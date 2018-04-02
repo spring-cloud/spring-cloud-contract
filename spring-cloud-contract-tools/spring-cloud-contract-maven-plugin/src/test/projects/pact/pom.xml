@@ -49,11 +49,6 @@
 						<artifactId>spring-cloud-contract-pact</artifactId>
 						<version>${spring.cloud.contract.version}</version>
 					</dependency>
-					<dependency>
-						<groupId>au.com.dius</groupId>
-						<artifactId>pact-jvm-model</artifactId>
-						<version>3.5.13</version>
-					</dependency>
 				</dependencies>
 			</plugin>
 		</plugins>

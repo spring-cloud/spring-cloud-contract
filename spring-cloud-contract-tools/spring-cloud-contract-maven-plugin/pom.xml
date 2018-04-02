@@ -418,11 +418,6 @@
 			<artifactId>spring-cloud-contract-pact</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>au.com.dius</groupId>
-			<artifactId>pact-jvm-model</artifactId>
-			<scope>test</scope>
-		</dependency>
 
 	</dependencies>
 
