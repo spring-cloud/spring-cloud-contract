@@ -5749,6 +5749,7 @@ response:
   body:
     foo2: bar
     foo3: baz
+    nullValue: null
   matchers:
     body:
       - path: $.foo2
@@ -5757,6 +5758,9 @@ response:
       - path: $.foo3
         type: by_command
         value: executeMe($it)
+      - path: $.nullValue
+        type: by_null
+        value: null
     headers:
       - key: foo2
         regex: bar
@@ -5858,6 +5862,7 @@ response:
   body:
     foo2: bar
     foo3: baz
+    nullValue: null
   matchers:
     body:
       - path: $.foo2
@@ -5866,6 +5871,9 @@ response:
       - path: $.foo3
         type: by_command
         value: executeMe($it)
+      - path: $.nullValue
+        type: by_null
+        value: null
     headers:
       - key: foo2
         regex: bar
@@ -6156,6 +6164,7 @@ response:
   body:
     foo2: bar
     foo3: baz
+    nullValue: null
   matchers:
     body:
       - path: $.foo2
@@ -6164,6 +6173,9 @@ response:
       - path: $.foo3
         type: by_command
         value: executeMe($it)
+      - path: $.nullValue
+        type: by_null
+        value: null
     headers:
       - key: foo2
         regex: bar
@@ -6438,8 +6450,12 @@ methods to provide a meaningful status instead of a digit. E.g. you can call
 want to force the consumers to stub their clocks to always return the same value of time
 so that it gets matched by the stub.</simpara>
 <simpara>For Groovy DSL you can provide the dynamic parts in your contracts
-in two ways: pass them directly in the body or set them in separate sections called
-<literal>testMatchers</literal> and <literal>stubMatchers</literal>.</simpara>
+in two ways: pass them directly in the body or set them in a separate section called
+<literal>bodyMatchers</literal>.</simpara>
+<note>
+<simpara>Before 2.0.0 these were set using <literal>testMatchers</literal> and <literal>stubMatchers</literal>,
+check out the <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/wiki/Spring-Cloud-Contract-2.0-Migration-Guide">migration guide</link> for more information.</simpara>
+</note>
 <simpara>For YAML you can only use the <literal>matchers</literal> section.</simpara>
 <section xml:id="_dynamic_properties_inside_the_body">
 <title>Dynamic properties inside the body</title>
@@ -6526,10 +6542,13 @@ generated for request and response.</simpara>
 <simpara>Spring Cloud Contract comes with a series of predefined regular expressions that you can
 use in your contracts, as shown in the following example:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">protected static final Pattern TRUE_OR_FALSE = Pattern.compile(/(true|false)/)
+protected static final Pattern ALPHA_NUMERIC = Pattern.compile('[a-zA-Z0-9]+')
 protected static final Pattern ONLY_ALPHA_UNICODE = Pattern.compile(/[\p{L}]*/)
 protected static final Pattern NUMBER = Pattern.compile('-?(\\d*\\.\\d+|\\d+)')
+protected static final Pattern INTEGER = Pattern.compile('-?(\\d+)')
 protected static final Pattern POSITIVE_INT = Pattern.compile('([1-9]\\d*)')
 protected static final Pattern DOUBLE = Pattern.compile('-?(\\d*\\.\\d+)')
+protected static final Pattern HEX = Pattern.compile('[a-fA-F0-9]+')
 protected static final Pattern IP_ADDRESS = Pattern.compile('([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])')
 protected static final Pattern HOSTNAME_PATTERN = Pattern.compile('((http[s]?|ftp):/)/?([^:/\\s]+)(:[0-9]{1,5})?')
 protected static final Pattern EMAIL = Pattern.compile('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}')
@@ -6551,6 +6570,10 @@ Pattern onlyAlphaUnicode() {
 	return ONLY_ALPHA_UNICODE
 }
 
+Pattern alphaNumeric() {
+	return ALPHA_NUMERIC
+}
+
 Pattern number() {
 	return NUMBER
 }
@@ -6561,6 +6584,10 @@ Pattern positiveInt() {
 
 Pattern anyBoolean() {
 	return TRUE_OR_FALSE
+}
+
+Pattern anInteger() {
+	return INTEGER
 }
 
 Pattern aDouble() {
@@ -7117,14 +7144,15 @@ want the transformation to be applied only for a mapping that explicitly require
 <simpara>If you work with <link xl:href="https://docs.pact.io/">Pact</link>, the following discussion may seem familiar.
 Quite a few users are used to having a separation between the body and setting the
 dynamic parts of a contract.</simpara>
-<simpara>You can use two separate sections:</simpara>
+<simpara>You can use the <literal>bodyMatchers</literal> section for two reasons:</simpara>
 <itemizedlist>
 <listitem>
-<simpara><literal>stubMatchers</literal>, which lets you define the dynamic values that should end up in a stub.
+<simpara>Define the dynamic values that should end up in a stub.
 You can set it in the <literal>request</literal> or <literal>inputMessage</literal> part of your contract.</simpara>
 </listitem>
 <listitem>
-<simpara><literal>testMatchers</literal>, which is present in the <literal>response</literal> or <literal>outputMessage</literal> side of the
+<simpara>Verify the result of your test.
+This section is present in the <literal>response</literal> or <literal>outputMessage</literal> side of the
 contract.</simpara>
 </listitem>
 </itemizedlist>
@@ -7133,7 +7161,7 @@ following matching possibilities:</simpara>
 <itemizedlist>
 <title>Groovy DSL</title>
 <listitem>
-<simpara>For <literal>stubMatchers</literal>:</simpara>
+<simpara>For the stubs:</simpara>
 <itemizedlist>
 <listitem>
 <simpara><literal>byEquality()</literal>: The value taken from the response via the provided JSON Path must be
@@ -7158,7 +7186,7 @@ match the regex for an ISO Time value.</simpara>
 </itemizedlist>
 </listitem>
 <listitem>
-<simpara>For <literal>testMatchers</literal>:</simpara>
+<simpara>For the verification:</simpara>
 <itemizedlist>
 <listitem>
 <simpara><literal>byEquality()</literal>: The value taken from the response via the provided JSON Path must be
@@ -7210,6 +7238,9 @@ following, depending on the JSON path:</simpara>
 <simpara><literal>Boolean</literal>: If you point to a <literal>Boolean</literal>.</simpara>
 </listitem>
 </itemizedlist>
+</listitem>
+<listitem>
+<simpara><literal>byNull()</literal>: The value taken from the response via the provided JSON Path must be null</simpara>
 </listitem>
 </itemizedlist>
 </listitem>
@@ -7280,6 +7311,9 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 <listitem>
 <simpara><literal>by_command</literal></simpara>
 </listitem>
+<listitem>
+<simpara><literal>by_null</literal></simpara>
+</listitem>
 </itemizedlist>
 </listitem>
 </itemizedlist>
@@ -7305,7 +7339,7 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 						'complex.key' : 'foo'
 				]
 		])
-		stubMatchers {
+		bodyMatchers {
 			jsonPath('$.duck', byRegex("[0-9]{3}"))
 			jsonPath('$.duck', byEquality())
 			jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
@@ -7327,6 +7361,10 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 				duck: 123,
 				alpha: "abc",
 				number: 123,
+				positiveInteger: 1234567890,
+				negativeInteger: -1234567890,
+				positiveDecimalNumber: 123.4567890,
+				negativeDecimalNumber: -123.4567890,
 				aBoolean: true,
 				date: "2017-01-01",
 				dateTime: "2017-01-01T01:23:45",
@@ -7346,9 +7384,10 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 				valueWithMaxEmpty: [],
 				key: [
 				        'complex.key' : 'foo'
-				]
+				],
+				nullValue: null
 		])
-		testMatchers {
+		bodyMatchers {
 			// asserts the jsonpath value against manual regex
 			jsonPath('$.duck', byRegex("[0-9]{3}"))
 			// asserts the jsonpath value against the provided value
@@ -7357,6 +7396,10 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 			jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
 			jsonPath('$.alpha', byEquality())
 			jsonPath('$.number', byRegex(number()))
+			jsonPath('$.positiveInteger', byRegex(anInteger()))
+			jsonPath('$.negativeInteger', byRegex(anInteger()))
+			jsonPath('$.positiveDecimalNumber', byRegex(aDouble()))
+			jsonPath('$.negativeDecimalNumber', byRegex(aDouble()))
 			jsonPath('$.aBoolean', byRegex(anyBoolean()))
 			// asserts vs inbuilt time related regex
 			jsonPath('$.date', byDate())
@@ -7388,9 +7431,11 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 			// will execute a method `assertThatValueIsANumber`
 			jsonPath('$.duck', byCommand('assertThatValueIsANumber($it)'))
 			jsonPath("\$.['key'].['complex.key']", byEquality())
+			jsonPath('$.nullValue', byNull())
 		}
 		headers {
 			contentType(applicationJson())
+			header('Some-Header', $(c('someValue'), p(regex('[a-zA-Z]{9}'))))
 		}
 	}
 }</programlisting>
@@ -7414,6 +7459,7 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
     valueWithTypeMatch: "string"
     key:
       "complex.key": 'foo'
+    nullValue: null
   matchers:
     headers:
       - key: Content-Type
@@ -7443,6 +7489,8 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
         type: by_time
       - path: "$.['key'].['complex.key']"
         type: by_equality
+      - path: $.nullvalue
+        type: by_null
   headers:
     Content-Type: application/json
 response:
@@ -7473,6 +7521,7 @@ response:
     valueWithMaxEmpty: []
     key:
       'complex.key' : 'foo'
+    nulValue: null
   matchers:
     headers:
       - key: Content-Type
@@ -7521,6 +7570,9 @@ response:
       - path: $.duck
         type: by_command
         value: assertThatValueIsANumber($it)
+      - path: $.nullValue
+        type: by_null
+        value: null
   headers:
     Content-Type: application/json</programlisting>
 </para>
@@ -7531,7 +7583,7 @@ response:
 contain are explicitly set. For the <literal>valueWithoutAMatcher</literal>, the verification takes place
 in the same way as without the use of matchers. In that case, the test performs an
 equality check.</simpara>
-<simpara>For the response side in the <literal>testMatchers</literal> section, we define the dynamic parts in a
+<simpara>For the response side in the <literal>bodyMatchers</literal> section, we define the dynamic parts in a
 similar manner. The only difference is that the <literal>byType</literal> matchers are also present. The
 verifier engine checks four fields to verify whether the response from the test
 has a value for which the JSON path matches the given field, is of the same type as the one
@@ -7558,7 +7610,7 @@ separates the autogenerated assertions and the assertion from matchers):</simpar
 <programlisting language="java" linenumbering="unnumbered">// given:
  MockMvcRequestSpecification request = given()
    .header("Content-Type", "application/json")
-   .body("{\"duck\":123,\"alpha\":\"abc\",\"number\":123,\"aBoolean\":true,\"date\":\"2017-01-01\",\"dateTime\":\"2017-01-01T01:23:45\",\"time\":\"01:02:34\",\"valueWithoutAMatcher\":\"foo\",\"valueWithTypeMatch\":\"string\"}");
+   .body("{\"duck\":123,\"alpha\":\"abc\",\"number\":123,\"aBoolean\":true,\"date\":\"2017-01-01\",\"dateTime\":\"2017-01-01T01:23:45\",\"time\":\"01:02:34\",\"valueWithoutAMatcher\":\"foo\",\"valueWithTypeMatch\":\"string\",\"key\":{\"complex.key\":\"foo\"}}");
 
 // when:
  ResponseOptions response = given().spec(request)
@@ -7569,29 +7621,30 @@ separates the autogenerated assertions and the assertion from matchers):</simpar
  assertThat(response.header("Content-Type")).matches("application/json.*");
 // and:
  DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
- assertThatJson(parsedJson).field("valueWithoutAMatcher").isEqualTo("foo");
+ assertThatJson(parsedJson).field("['valueWithoutAMatcher']").isEqualTo("foo");
 // and:
  assertThat(parsedJson.read("$.duck", String.class)).matches("[0-9]{3}");
  assertThat(parsedJson.read("$.duck", Integer.class)).isEqualTo(123);
  assertThat(parsedJson.read("$.alpha", String.class)).matches("[\\p{L}]*");
  assertThat(parsedJson.read("$.alpha", String.class)).isEqualTo("abc");
- assertThat(parsedJson.read("$.number", String.class)).matches("-?\\d*(\\.\\d+)?");
+ assertThat(parsedJson.read("$.number", String.class)).matches("-?(\\d*\\.\\d+|\\d+)");
  assertThat(parsedJson.read("$.aBoolean", String.class)).matches("(true|false)");
  assertThat(parsedJson.read("$.date", String.class)).matches("(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])");
  assertThat(parsedJson.read("$.dateTime", String.class)).matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
  assertThat(parsedJson.read("$.time", String.class)).matches("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
  assertThat((Object) parsedJson.read("$.valueWithTypeMatch")).isInstanceOf(java.lang.String.class);
  assertThat((Object) parsedJson.read("$.valueWithMin")).isInstanceOf(java.util.List.class);
- assertThat((java.lang.Iterable) parsedJson.read("$.valueWithMin", java.util.Collection.class)).hasSizeGreaterThanOrEqualTo(1);
+ assertThat((java.lang.Iterable) parsedJson.read("$.valueWithMin", java.util.Collection.class)).as("$.valueWithMin").hasSizeGreaterThanOrEqualTo(1);
  assertThat((Object) parsedJson.read("$.valueWithMax")).isInstanceOf(java.util.List.class);
- assertThat((java.lang.Iterable) parsedJson.read("$.valueWithMax", java.util.Collection.class)).hasSizeLessThanOrEqualTo(3);
+ assertThat((java.lang.Iterable) parsedJson.read("$.valueWithMax", java.util.Collection.class)).as("$.valueWithMax").hasSizeLessThanOrEqualTo(3);
  assertThat((Object) parsedJson.read("$.valueWithMinMax")).isInstanceOf(java.util.List.class);
- assertThat((java.lang.Iterable) parsedJson.read("$.valueWithMinMax", java.util.Collection.class)).hasSizeBetween(1, 3);
+ assertThat((java.lang.Iterable) parsedJson.read("$.valueWithMinMax", java.util.Collection.class)).as("$.valueWithMinMax").hasSizeBetween(1, 3);
  assertThat((Object) parsedJson.read("$.valueWithMinEmpty")).isInstanceOf(java.util.List.class);
- assertThat((java.lang.Iterable) parsedJson.read("$.valueWithMinEmpty", java.util.Collection.class)).hasSizeGreaterThanOrEqualTo(0);
+ assertThat((java.lang.Iterable) parsedJson.read("$.valueWithMinEmpty", java.util.Collection.class)).as("$.valueWithMinEmpty").hasSizeGreaterThanOrEqualTo(0);
  assertThat((Object) parsedJson.read("$.valueWithMaxEmpty")).isInstanceOf(java.util.List.class);
- assertThat((java.lang.Iterable) parsedJson.read("$.valueWithMaxEmpty", java.util.Collection.class)).hasSizeLessThanOrEqualTo(0);
- assertThatValueIsANumber(parsedJson.read("$.duck"));</programlisting>
+ assertThat((java.lang.Iterable) parsedJson.read("$.valueWithMaxEmpty", java.util.Collection.class)).as("$.valueWithMaxEmpty").hasSizeLessThanOrEqualTo(0);
+ assertThatValueIsANumber(parsedJson.read("$.duck"));
+ assertThat(parsedJson.read("$.['key'].['complex.key']", String.class)).isEqualTo("foo");</programlisting>
 <important>
 <simpara>Notice that, for the <literal>byCommand</literal> method, the example calls the
 <literal>assertThatValueIsANumber</literal>. This method must be defined in the test base class or be
@@ -7652,7 +7705,7 @@ the method name and passed the proper JSON path as a parameter to it.</simpara>
 }
 '''</programlisting>
 <important>
-<simpara>If you use a <literal>matcher</literal>, then the part of the request aned response that the
+<simpara>If you use a <literal>matcher</literal>, then the part of the request and response that the
 <literal>matcher</literal> addresses with the JSON Path gets removed from the assertion. In the case of
 verifying a collection, you must create matchers for <emphasis role="strong">all</emphasis> the elements of the
 collection.</simpara>
@@ -7676,7 +7729,7 @@ collection.</simpara>
                          ]
                 ]
         )
-        testMatchers {
+        bodyMatchers {
             jsonPath('$.events[0].operation', byRegex('.+'))
             jsonPath('$.events[0].eventId', byRegex('^([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})$'))
             jsonPath('$.events[0].status', byRegex('.+'))
@@ -7737,7 +7790,7 @@ content type set. Otherwise, the default of <literal>application/octet-stream</l
 <title>Async Support</title>
 <simpara>If you&#8217;re using asynchronous communication on the server side (your controllers are
 returning <literal>Callable</literal>, <literal>DeferredResult</literal>, and so on), then, inside your contract, you must
-provide a <literal>sync()</literal> method in the <literal>response</literal> section. The following code shows an example:</simpara>
+provide an <literal>async()</literal> method in the <literal>response</literal> section. The following code shows an example:</simpara>
 <formalpara>
 <title>Groovy DSL</title>
 <para>
@@ -8468,8 +8521,14 @@ org.springframework.cloud.contract.verifier.converter.YamlContractConverter</scr
 <section xml:id="_pact_converter">
 <title>Pact Converter</title>
 <simpara>Spring Cloud Contract includes support for <link xl:href="https://docs.pact.io/">Pact</link> representation of
-contracts. Instead of using the Groovy DSL, you can use Pact files. In this section, we
-present how to add Pact support for your project.</simpara>
+contracts up until v4. Instead of using the Groovy DSL, you can use Pact files. In this section, we
+present how to add Pact support for your project. Note however that not all functionality is supported.
+Starting with v3 you can combine multiple matcher for the same element;
+you can use matchers for the body, headers, request and path; and you can use value generators.
+Spring Cloud Contract currently only supports multiple matchers that are combined using the AND rule logic.
+Next to that the request and path matchers are skipped during the conversion.
+When using a date, time or datetime value generator with a given format,
+the given format will be skipped and the ISO format will be used.</simpara>
 </section>
 <section xml:id="_pact_contract">
 <title>Pact Contract</title>
@@ -8495,10 +8554,36 @@ present how to add Pact support for your project.</simpara>
           "clientId": "1234567890",
           "loanAmount": 99999
         },
+        "generators": {
+          "body": {
+            "$.clientId": {
+              "type": "Regex",
+              "regex": "[0-9]{10}"
+            }
+          }
+        },
         "matchingRules": {
-          "$.body.clientId": {
-            "match": "regex",
-            "regex": "[0-9]{10}"
+          "header": {
+            "Content-Type": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/vnd\\.fraud\\.v1\\+json.*"
+                }
+              ],
+              "combine": "AND"
+            }
+          },
+          "body" : {
+            "$.clientId": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "[0-9]{10}"
+                }
+              ],
+              "combine": "AND"
+            }
           }
         }
       },
@@ -8512,9 +8597,27 @@ present how to add Pact support for your project.</simpara>
           "rejectionReason": "Amount too high"
         },
         "matchingRules": {
-          "$.body.fraudCheckStatus": {
-            "match": "regex",
-            "regex": "FRAUD"
+          "header": {
+            "Content-Type": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/vnd\\.fraud\\.v1\\+json.*"
+                }
+              ],
+              "combine": "AND"
+            }
+          },
+          "body": {
+            "$.fraudCheckStatus": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "FRAUD"
+                }
+              ],
+              "combine": "AND"
+            }
           }
         }
       }
@@ -8522,10 +8625,10 @@ present how to add Pact support for your project.</simpara>
   ],
   "metadata": {
     "pact-specification": {
-      "version": "2.0.0"
+      "version": "3.0.0"
     },
     "pact-jvm": {
-      "version": "2.4.18"
+      "version": "3.5.13"
     }
   }
 }</programlisting>
@@ -8533,7 +8636,7 @@ present how to add Pact support for your project.</simpara>
 </section>
 <section xml:id="_pact_for_producers">
 <title>Pact for Producers</title>
-<simpara>On the producer side, you mustadd two additional dependencies to your plugin
+<simpara>On the producer side, you must add two additional dependencies to your plugin
 configuration. One is the Spring Cloud Contract Pact support, and the other represents
 the current Pact version that you use.</simpara>
 <formalpara role="primary">
@@ -8556,7 +8659,7 @@ the current Pact version that you use.</simpara>
 		&lt;dependency&gt;
 			&lt;groupId&gt;au.com.dius&lt;/groupId&gt;
 			&lt;artifactId&gt;pact-jvm-model&lt;/artifactId&gt;
-			&lt;version&gt;2.4.18&lt;/version&gt;
+			&lt;version&gt;3.5.13&lt;/version&gt;
 		&lt;/dependency&gt;
 	&lt;/dependencies&gt;
 &lt;/plugin&gt;</programlisting>
@@ -8566,7 +8669,7 @@ the current Pact version that you use.</simpara>
 <title>Gradle</title>
 <para>
 <programlisting language="groovy" linenumbering="unnumbered">classpath "org.springframework.cloud:spring-cloud-contract-spec-pact:${findProperty('verifierVersion') ?: verifierVersion}"
-classpath 'au.com.dius:pact-jvm-model:2.4.18'</programlisting>
+classpath 'au.com.dius:pact-jvm-model:3.5.13'</programlisting>
 </para>
 </formalpara>
 <simpara>When you execute the build of your application, a test will be generated. The generated
@@ -8584,26 +8687,27 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
 
 	// then:
 		assertThat(response.statusCode()).isEqualTo(200);
-		assertThat(response.header("Content-Type")).isEqualTo("application/vnd.fraud.v1+json;charset=UTF-8");
+		assertThat(response.header("Content-Type")).matches("application/vnd\\.fraud\\.v1\\+json.*");
 	// and:
 		DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
-		assertThatJson(parsedJson).field("rejectionReason").isEqualTo("Amount too high");
+		assertThatJson(parsedJson).field("['rejectionReason']").isEqualTo("Amount too high");
 	// and:
 		assertThat(parsedJson.read("$.fraudCheckStatus", String.class)).matches("FRAUD");
 }</programlisting>
 <simpara>The corresponding generated stub might be as follows:</simpara>
 <programlisting language="javascript" linenumbering="unnumbered">{
+  "id" : "996ae5ae-6834-4db6-8fac-358ca187ab62",
   "uuid" : "996ae5ae-6834-4db6-8fac-358ca187ab62",
   "request" : {
     "url" : "/fraudcheck",
     "method" : "PUT",
     "headers" : {
       "Content-Type" : {
-        "equalTo" : "application/vnd.fraud.v1+json"
+        "matches" : "application/vnd\\.fraud\\.v1\\+json.*"
       }
     },
     "bodyPatterns" : [ {
-      "matchesJsonPath" : "$[?(@.loanAmount == 99999)]"
+      "matchesJsonPath" : "$[?(@.['loanAmount'] == 99999)]"
     }, {
       "matchesJsonPath" : "$[?(@.clientId =~ /([0-9]{10})/)]"
     } ]
@@ -8613,8 +8717,9 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
     "body" : "{\"fraudCheckStatus\":\"FRAUD\",\"rejectionReason\":\"Amount too high\"}",
     "headers" : {
       "Content-Type" : "application/vnd.fraud.v1+json;charset=UTF-8"
-    }
-  }
+    },
+    "transformers" : [ "response-template" ]
+  },
 }</programlisting>
 </section>
 <section xml:id="_pact_for_consumers">
@@ -8633,7 +8738,7 @@ current Pact version that you use.</simpara>
 &lt;dependency&gt;
 	&lt;groupId&gt;au.com.dius&lt;/groupId&gt;
 	&lt;artifactId&gt;pact-jvm-model&lt;/artifactId&gt;
-	&lt;version&gt;2.4.18&lt;/version&gt;
+	&lt;version&gt;3.5.13&lt;/version&gt;
 	&lt;scope&gt;test&lt;/scope&gt;
 &lt;/dependency&gt;</programlisting>
 </para>
@@ -8642,7 +8747,7 @@ current Pact version that you use.</simpara>
 <title>Gradle</title>
 <para>
 <programlisting language="groovy" linenumbering="unnumbered">testCompile "org.springframework.cloud:spring-cloud-contract-spec-pact"
-testCompile 'au.com.dius:pact-jvm-model:2.4.18'</programlisting>
+testCompile 'au.com.dius:pact-jvm-model:3.5.13'</programlisting>
 </para>
 </formalpara>
 </section>

@@ -3351,6 +3351,7 @@ response:
   body:
     foo2: bar
     foo3: baz
+    nullValue: null
   matchers:
     body:
       - path: $.foo2
@@ -3359,6 +3360,9 @@ response:
       - path: $.foo3
         type: by_command
         value: executeMe($it)
+      - path: $.nullValue
+        type: by_null
+        value: null
     headers:
       - key: foo2
         regex: bar
@@ -3415,6 +3419,7 @@ response:
   body:
     foo2: bar
     foo3: baz
+    nullValue: null
   matchers:
     body:
       - path: $.foo2
@@ -3423,6 +3428,9 @@ response:
       - path: $.foo3
         type: by_command
         value: executeMe($it)
+      - path: $.nullValue
+        type: by_null
+        value: null
     headers:
       - key: foo2
         regex: bar
@@ -3620,6 +3628,7 @@ response:
   body:
     foo2: bar
     foo3: baz
+    nullValue: null
   matchers:
     body:
       - path: $.foo2
@@ -3628,6 +3637,9 @@ response:
       - path: $.foo3
         type: by_command
         value: executeMe($it)
+      - path: $.nullValue
+        type: by_null
+        value: null
     headers:
       - key: foo2
         regex: bar
@@ -3819,8 +3831,9 @@ methods to provide a meaningful status instead of a digit. E.g. you can call
 <code class="literal">OK()</code> for a status <code class="literal">200</code> or <code class="literal">BAD_REQUEST()</code> for <code class="literal">400</code>.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_dynamic_properties" href="#_dynamic_properties"></a>8.5&nbsp;Dynamic properties</h2></div></div></div><p>The contract can contain some dynamic properties: timestamps, IDs, and so on. You do not
 want to force the consumers to stub their clocks to always return the same value of time
 so that it gets matched by the stub.</p><p>For Groovy DSL you can provide the dynamic parts in your contracts
-in two ways: pass them directly in the body or set them in separate sections called
-<code class="literal">testMatchers</code> and <code class="literal">stubMatchers</code>.</p><p>For YAML you can only use the <code class="literal">matchers</code> section.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_dynamic_properties_inside_the_body" href="#_dynamic_properties_inside_the_body"></a>8.5.1&nbsp;Dynamic properties inside the body</h3></div></div></div><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>This section is valid only for Groovy DSL. Check out the
+in two ways: pass them directly in the body or set them in a separate section called
+<code class="literal">bodyMatchers</code>.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>Before 2.0.0 these were set using <code class="literal">testMatchers</code> and <code class="literal">stubMatchers</code>,
+check out the <a class="link" href="https://github.com/spring-cloud/spring-cloud-contract/wiki/Spring-Cloud-Contract-2.0-Migration-Guide" target="_top">migration guide</a> for more information.</p></td></tr></table></div><p>For YAML you can only use the <code class="literal">matchers</code> section.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_dynamic_properties_inside_the_body" href="#_dynamic_properties_inside_the_body"></a>8.5.1&nbsp;Dynamic properties inside the body</h3></div></div></div><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>This section is valid only for Groovy DSL. Check out the
 <a class="xref" href="#contract-matchers" title="8.5.7&nbsp;Dynamic Properties in the Matchers Sections">Section&nbsp;8.5.7, &#8220;Dynamic Properties in the Matchers Sections&#8221;</a> section for YAML examples of a similar feature.</p></td></tr></table></div><p>You can set the properties inside the body either with the <code class="literal">value</code> method or, if you use
 the Groovy map notation, with <code class="literal">$()</code>. The following example shows how to set dynamic
 properties with the value method:</p><pre class="programlisting">value(consumer(...), producer(...))
@@ -3882,10 +3895,13 @@ the provided regular expression. The following code shows an example:</p><pre cl
 }</pre><p>In the preceding example, the opposite side of the communication has the respective data
 generated for request and response.</p><p>Spring Cloud Contract comes with a series of predefined regular expressions that you can
 use in your contracts, as shown in the following example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern TRUE_OR_FALSE = Pattern.compile(/(true|false)/)
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern ALPHA_NUMERIC = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[a-zA-Z0-9]+'</span>)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern ONLY_ALPHA_UNICODE = Pattern.compile(/[\p{L}]*/)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern NUMBER = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'-?(\\d*\\.\\d+|\\d+)'</span>)
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern INTEGER = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'-?(\\d+)'</span>)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern POSITIVE_INT = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'([1-9]\\d*)'</span>)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern DOUBLE = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'-?(\\d*\\.\\d+)'</span>)
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern HEX = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[a-fA-F0-9]+'</span>)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern IP_ADDRESS = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])'</span>)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern HOSTNAME_PATTERN = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'((http[s]?|ftp):/)/?([^:/\\s]+)(:[0-9]{1,5})?'</span>)
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> Pattern EMAIL = Pattern.compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}'</span>)
@@ -3907,6 +3923,10 @@ Pattern onlyAlphaUnicode() {
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> ONLY_ALPHA_UNICODE
 }
 
+Pattern alphaNumeric() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> ALPHA_NUMERIC
+}
+
 Pattern number() {
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> NUMBER
 }
@@ -3917,6 +3937,10 @@ Pattern positiveInt() {
 
 Pattern anyBoolean() {
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> TRUE_OR_FALSE
+}
+
+Pattern anInteger() {
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> INTEGER
 }
 
 Pattern aDouble() {
@@ -4304,15 +4328,16 @@ org.springframework.cloud.contract.stubrunner.provider.wiremock.TestWireMockExte
 </p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>Remember to override the <code class="literal">applyGlobally()</code> method and set it to <code class="literal">false</code> if you
 want the transformation to be applied only for a mapping that explicitly requires it.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="contract-matchers" href="#contract-matchers"></a>8.5.7&nbsp;Dynamic Properties in the Matchers Sections</h3></div></div></div><p>If you work with <a class="link" href="https://docs.pact.io/" target="_top">Pact</a>, the following discussion may seem familiar.
 Quite a few users are used to having a separation between the body and setting the
-dynamic parts of a contract.</p><p>You can use two separate sections:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="literal">stubMatchers</code>, which lets you define the dynamic values that should end up in a stub.
-You can set it in the <code class="literal">request</code> or <code class="literal">inputMessage</code> part of your contract.</li><li class="listitem"><code class="literal">testMatchers</code>, which is present in the <code class="literal">response</code> or <code class="literal">outputMessage</code> side of the
+dynamic parts of a contract.</p><p>You can use the <code class="literal">bodyMatchers</code> section for two reasons:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Define the dynamic values that should end up in a stub.
+You can set it in the <code class="literal">request</code> or <code class="literal">inputMessage</code> part of your contract.</li><li class="listitem">Verify the result of your test.
+This section is present in the <code class="literal">response</code> or <code class="literal">outputMessage</code> side of the
 contract.</li></ul></div><p>Currently, Spring Cloud Contract Verifier supports only JSON Path-based matchers with the
-following matching possibilities:</p><div class="itemizedlist"><p class="title"><b>Groovy DSL</b></p><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">For <code class="literal">stubMatchers</code>:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">byEquality()</code>: The value taken from the response via the provided JSON Path must be
+following matching possibilities:</p><div class="itemizedlist"><p class="title"><b>Groovy DSL</b></p><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">For the stubs:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">byEquality()</code>: The value taken from the response via the provided JSON Path must be
 equal to the value provided in the contract.</li><li class="listitem"><code class="literal">byRegex(&#8230;&#8203;)</code>: The value taken from the response via the provided JSON Path must
 match the regex.</li><li class="listitem"><code class="literal">byDate()</code>: The value taken from the response via the provided JSON Path must
 match the regex for an ISO Date value.</li><li class="listitem"><code class="literal">byTimestamp()</code>: The value taken from the response via the provided JSON Path must
 match the regex for an ISO DateTime value.</li><li class="listitem"><code class="literal">byTime()</code>: The value taken from the response via the provided JSON Path must
-match the regex for an ISO Time value.</li></ul></div></li><li class="listitem"><p class="simpara">For <code class="literal">testMatchers</code>:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">byEquality()</code>: The value taken from the response via the provided JSON Path must be
+match the regex for an ISO Time value.</li></ul></div></li><li class="listitem"><p class="simpara">For the verification:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">byEquality()</code>: The value taken from the response via the provided JSON Path must be
 equal to the provided value in the contract.</li><li class="listitem"><code class="literal">byRegex(&#8230;&#8203;)</code>: The value taken from the response via the provided JSON Path must
 match the regex.</li><li class="listitem"><code class="literal">byDate()</code>: The value taken from the response via the provided JSON Path must match
 the regex for an ISO Date value.</li><li class="listitem"><code class="literal">byTimestamp()</code>: The value taken from the response via the provided JSON Path must
@@ -4325,14 +4350,14 @@ unflattened collection, use a custom method with the <code class="literal">byCom
 passed as an input to the custom method that you provide. For example,
 <code class="literal">byCommand('foo($it)')</code> results in calling a <code class="literal">foo</code> method to which the value matching the
 JSON Path gets passed. The type of the object read from the JSON can be one of the
-following, depending on the JSON path:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: square; "><li class="listitem"><code class="literal">String</code>: If you point to a <code class="literal">String</code> value.</li><li class="listitem"><code class="literal">JSONArray</code>: If you point to a <code class="literal">List</code>.</li><li class="listitem"><code class="literal">Map</code>: If you point to a <code class="literal">Map</code>.</li><li class="listitem"><code class="literal">Number</code>: If you point to <code class="literal">Integer</code>, <code class="literal">Double</code>, or other kind of number.</li><li class="listitem"><code class="literal">Boolean</code>: If you point to a <code class="literal">Boolean</code>.</li></ul></div></li></ul></div></li></ul></div><p><b>YAML.&nbsp;</b><span class="emphasis"><em>Please read the Groovy section for detailed explanation of
+following, depending on the JSON path:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: square; "><li class="listitem"><code class="literal">String</code>: If you point to a <code class="literal">String</code> value.</li><li class="listitem"><code class="literal">JSONArray</code>: If you point to a <code class="literal">List</code>.</li><li class="listitem"><code class="literal">Map</code>: If you point to a <code class="literal">Map</code>.</li><li class="listitem"><code class="literal">Number</code>: If you point to <code class="literal">Integer</code>, <code class="literal">Double</code>, or other kind of number.</li><li class="listitem"><code class="literal">Boolean</code>: If you point to a <code class="literal">Boolean</code>.</li></ul></div></li><li class="listitem"><code class="literal">byNull()</code>: The value taken from the response via the provided JSON Path must be null</li></ul></div></li></ul></div><p><b>YAML.&nbsp;</b><span class="emphasis"><em>Please read the Groovy section for detailed explanation of
 what the types mean</em></span></p><p>For YAML the structure of a matcher looks like this</p><pre class="programlisting">- path: $.foo
   type: by_regex
   value: bar</pre><p>Or if you want to use one of the predefined regular expressions
 <code class="literal">[only_alpha_unicode, number, any_boolean, ip_address, hostname,
 email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_empty, non_blank]</code>:</p><pre class="programlisting">- path: $.foo
   type: by_regex
-  predefined: only_alpha_unicode</pre><p>Below you can find the allowed list of `type`s.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">For <code class="literal">stubMatchers</code>:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">by_equality</code></li><li class="listitem"><code class="literal">by_regex</code></li><li class="listitem"><code class="literal">by_date</code></li><li class="listitem"><code class="literal">by_timestamp</code></li><li class="listitem"><code class="literal">by_time</code></li></ul></div></li><li class="listitem"><p class="simpara">For <code class="literal">testMatchers</code>:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">by_equality</code></li><li class="listitem"><code class="literal">by_regex</code></li><li class="listitem"><code class="literal">by_date</code></li><li class="listitem"><code class="literal">by_timestamp</code></li><li class="listitem"><code class="literal">by_time</code></li><li class="listitem"><p class="simpara"><code class="literal">by_type</code></p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: square; "><li class="listitem">there are 2 additional fields accepted: <code class="literal">minOccurrence</code> and <code class="literal">maxOccurrence</code>.</li></ul></div></li><li class="listitem"><code class="literal">by_command</code></li></ul></div></li></ul></div><p>Consider the following example:</p><p><b>Groovy DSL.&nbsp;</b>
+  predefined: only_alpha_unicode</pre><p>Below you can find the allowed list of `type`s.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">For <code class="literal">stubMatchers</code>:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">by_equality</code></li><li class="listitem"><code class="literal">by_regex</code></li><li class="listitem"><code class="literal">by_date</code></li><li class="listitem"><code class="literal">by_timestamp</code></li><li class="listitem"><code class="literal">by_time</code></li></ul></div></li><li class="listitem"><p class="simpara">For <code class="literal">testMatchers</code>:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">by_equality</code></li><li class="listitem"><code class="literal">by_regex</code></li><li class="listitem"><code class="literal">by_date</code></li><li class="listitem"><code class="literal">by_timestamp</code></li><li class="listitem"><code class="literal">by_time</code></li><li class="listitem"><p class="simpara"><code class="literal">by_type</code></p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: square; "><li class="listitem">there are 2 additional fields accepted: <code class="literal">minOccurrence</code> and <code class="literal">maxOccurrence</code>.</li></ul></div></li><li class="listitem"><code class="literal">by_command</code></li><li class="listitem"><code class="literal">by_null</code></li></ul></div></li></ul></div><p>Consider the following example:</p><p><b>Groovy DSL.&nbsp;</b>
 </p><pre class="programlisting">Contract contractDsl = Contract.make {
 	request {
 		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'GET'</span>
@@ -4351,7 +4376,7 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 						<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'complex.key'</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
 				]
 		])
-		stubMatchers {
+		bodyMatchers {
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byRegex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{3}"</span>))
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byEquality())
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byRegex(onlyAlphaUnicode()))
@@ -4373,6 +4398,10 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 				duck: <span class="hl-number">123</span>,
 				alpha: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"abc"</span>,
 				number: <span class="hl-number">123</span>,
+				positiveInteger: <span class="hl-number">1234567890</span>,
+				negativeInteger: -<span class="hl-number">1234567890</span>,
+				positiveDecimalNumber: <span class="hl-number">123.4567890</span>,
+				negativeDecimalNumber: -<span class="hl-number">123.4567890</span>,
 				aBoolean: true,
 				date: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"2017-01-01"</span>,
 				dateTime: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"2017-01-01T01:23:45"</span>,
@@ -4392,9 +4421,10 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 				valueWithMaxEmpty: [],
 				key: [
 				        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'complex.key'</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
-				]
+				],
+				nullValue: null
 		])
-		testMatchers {
+		bodyMatchers {
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts the jsonpath value against manual regex</span>
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byRegex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{3}"</span>))
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts the jsonpath value against the provided value</span>
@@ -4403,6 +4433,10 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byRegex(onlyAlphaUnicode()))
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.alpha'</span>, byEquality())
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.number'</span>, byRegex(number()))
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.positiveInteger'</span>, byRegex(anInteger()))
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.negativeInteger'</span>, byRegex(anInteger()))
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.positiveDecimalNumber'</span>, byRegex(aDouble()))
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.negativeDecimalNumber'</span>, byRegex(aDouble()))
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.aBoolean'</span>, byRegex(anyBoolean()))
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// asserts vs inbuilt time related regex</span>
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.date'</span>, byDate())
@@ -4434,9 +4468,11 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// will execute a method `assertThatValueIsANumber`</span>
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.duck'</span>, byCommand(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'assertThatValueIsANumber($it)'</span>))
 			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"\$.['key'].['complex.key']"</span>, byEquality())
+			jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.nullValue'</span>, byNull())
 		}
 		headers {
 			contentType(applicationJson())
+			header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Some-Header'</span>, $(c(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'someValue'</span>), p(regex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'[a-zA-Z]{9}'</span>))))
 		}
 	}
 }</pre><p>
@@ -4456,6 +4492,7 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
     valueWithTypeMatch: "string"
     key:
       "complex.key": 'foo'
+    nullValue: null
   matchers:
     headers:
       - key: Content-Type
@@ -4485,6 +4522,8 @@ email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_e
         type: by_time
       - path: "$.['key'].['complex.key']"
         type: by_equality
+      - path: $.nullvalue
+        type: by_null
   headers:
     Content-Type: application/json
 response:
@@ -4515,6 +4554,7 @@ response:
     valueWithMaxEmpty: []
     key:
       'complex.key' : 'foo'
+    nulValue: null
   matchers:
     headers:
       - key: Content-Type
@@ -4563,6 +4603,9 @@ response:
       - path: $.duck
         type: by_command
         value: assertThatValueIsANumber($it)
+      - path: $.nullValue
+        type: by_null
+        value: null
   headers:
     Content-Type: application/json</pre><p>
 </p><p>In the preceding example, you can see the dynamic portions of the contract in the
@@ -4570,7 +4613,7 @@ response:
 <code class="literal">valueWithoutAMatcher</code>, the values of the regular expressions that the stub should
 contain are explicitly set. For the <code class="literal">valueWithoutAMatcher</code>, the verification takes place
 in the same way as without the use of matchers. In that case, the test performs an
-equality check.</p><p>For the response side in the <code class="literal">testMatchers</code> section, we define the dynamic parts in a
+equality check.</p><p>For the response side in the <code class="literal">bodyMatchers</code> section, we define the dynamic parts in a
 similar manner. The only difference is that the <code class="literal">byType</code> matchers are also present. The
 verifier engine checks four fields to verify whether the response from the test
 has a value for which the JSON path matches the given field, is of the same type as the one
@@ -4581,7 +4624,7 @@ between the min and maximum occurrence.</li></ul></div><p>The resulting test wou
 separates the autogenerated assertions and the assertion from matchers):</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// given:</span>
  MockMvcRequestSpecification request = given()
    .header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/json"</span>)
-   .body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\"duck\":123,\"alpha\":\"abc\",\"number\":123,\"aBoolean\":true,\"date\":\"2017-01-01\",\"dateTime\":\"2017-01-01T01:23:45\",\"time\":\"01:02:34\",\"valueWithoutAMatcher\":\"foo\",\"valueWithTypeMatch\":\"string\"}"</span>);
+   .body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\"duck\":123,\"alpha\":\"abc\",\"number\":123,\"aBoolean\":true,\"date\":\"2017-01-01\",\"dateTime\":\"2017-01-01T01:23:45\",\"time\":\"01:02:34\",\"valueWithoutAMatcher\":\"foo\",\"valueWithTypeMatch\":\"string\",\"key\":{\"complex.key\":\"foo\"}}"</span>);
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// when:</span>
  ResponseOptions response = given().spec(request)
@@ -4592,29 +4635,30 @@ separates the autogenerated assertions and the assertion from matchers):</p><pre
  assertThat(response.header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/json.*"</span>);
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
  DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
- assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"valueWithoutAMatcher"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>);
+ assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"['valueWithoutAMatcher']"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>);
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
  assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.duck"</span>, String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{3}"</span>);
  assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.duck"</span>, Integer.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).isEqualTo(<span class="hl-number">123</span>);
  assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.alpha"</span>, String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[\\p{L}]*"</span>);
  assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.alpha"</span>, String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"abc"</span>);
- assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.number"</span>, String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"-?\\d*(\\.\\d+)?"</span>);
+ assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.number"</span>, String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"-?(\\d*\\.\\d+|\\d+)"</span>);
  assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.aBoolean"</span>, String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"(true|false)"</span>);
  assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.date"</span>, String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])"</span>);
  assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.dateTime"</span>, String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])"</span>);
  assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.time"</span>, String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])"</span>);
  assertThat((Object) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithTypeMatch"</span>)).isInstanceOf(java.lang.String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);
  assertThat((Object) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMin"</span>)).isInstanceOf(java.util.List.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);
- assertThat((java.lang.Iterable) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMin"</span>, java.util.Collection.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).hasSizeGreaterThanOrEqualTo(<span class="hl-number">1</span>);
+ assertThat((java.lang.Iterable) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMin"</span>, java.util.Collection.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).as(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMin"</span>).hasSizeGreaterThanOrEqualTo(<span class="hl-number">1</span>);
  assertThat((Object) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMax"</span>)).isInstanceOf(java.util.List.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);
- assertThat((java.lang.Iterable) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMax"</span>, java.util.Collection.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).hasSizeLessThanOrEqualTo(<span class="hl-number">3</span>);
+ assertThat((java.lang.Iterable) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMax"</span>, java.util.Collection.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).as(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMax"</span>).hasSizeLessThanOrEqualTo(<span class="hl-number">3</span>);
  assertThat((Object) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMinMax"</span>)).isInstanceOf(java.util.List.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);
- assertThat((java.lang.Iterable) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMinMax"</span>, java.util.Collection.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).hasSizeBetween(<span class="hl-number">1</span>, <span class="hl-number">3</span>);
+ assertThat((java.lang.Iterable) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMinMax"</span>, java.util.Collection.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).as(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMinMax"</span>).hasSizeBetween(<span class="hl-number">1</span>, <span class="hl-number">3</span>);
  assertThat((Object) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMinEmpty"</span>)).isInstanceOf(java.util.List.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);
- assertThat((java.lang.Iterable) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMinEmpty"</span>, java.util.Collection.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).hasSizeGreaterThanOrEqualTo(<span class="hl-number">0</span>);
+ assertThat((java.lang.Iterable) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMinEmpty"</span>, java.util.Collection.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).as(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMinEmpty"</span>).hasSizeGreaterThanOrEqualTo(<span class="hl-number">0</span>);
  assertThat((Object) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMaxEmpty"</span>)).isInstanceOf(java.util.List.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>);
- assertThat((java.lang.Iterable) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMaxEmpty"</span>, java.util.Collection.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).hasSizeLessThanOrEqualTo(<span class="hl-number">0</span>);
- assertThatValueIsANumber(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.duck"</span>));</pre><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>Notice that, for the <code class="literal">byCommand</code> method, the example calls the
+ assertThat((java.lang.Iterable) parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMaxEmpty"</span>, java.util.Collection.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).as(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.valueWithMaxEmpty"</span>).hasSizeLessThanOrEqualTo(<span class="hl-number">0</span>);
+ assertThatValueIsANumber(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.duck"</span>));
+ assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.['key'].['complex.key']"</span>, String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>);</pre><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>Notice that, for the <code class="literal">byCommand</code> method, the example calls the
 <code class="literal">assertThatValueIsANumber</code>. This method must be defined in the test base class or be
 statically imported to your tests. Notice that the <code class="literal">byCommand</code> call was converted to
 <code class="literal">assertThatValueIsANumber(parsedJson.read("$.duck"));</code>. That means that the engine took
@@ -4668,7 +4712,7 @@ the method name and passed the proper JSON path as a parameter to it.</p></td></
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span>
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">}</span>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'</span></pre><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>If you use a <code class="literal">matcher</code>, then the part of the request aned response that the
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'</span></pre><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>If you use a <code class="literal">matcher</code>, then the part of the request and response that the
 <code class="literal">matcher</code> addresses with the JSON Path gets removed from the assertion. In the case of
 verifying a collection, you must create matchers for <span class="strong"><strong>all</strong></span> the elements of the
 collection.</p></td></tr></table></div><p>Consider the following example:</p><pre class="programlisting">Contract.make {
@@ -4689,7 +4733,7 @@ collection.</p></td></tr></table></div><p>Consider the following example:</p><pr
                          ]
                 ]
         )
-        testMatchers {
+        bodyMatchers {
             jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.events[0].operation'</span>, byRegex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'.+'</span>))
             jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.events[0].eventId'</span>, byRegex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'^([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})$'</span>))
             jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.events[0].status'</span>, byRegex(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'.+'</span>))
@@ -4734,7 +4778,7 @@ content type set. Otherwise, the default of <code class="literal">application/oc
   assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"['property1']"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"a"</span>);
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'</span></pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_async_support" href="#_async_support"></a>8.7&nbsp;Async Support</h2></div></div></div><p>If you&#8217;re using asynchronous communication on the server side (your controllers are
 returning <code class="literal">Callable</code>, <code class="literal">DeferredResult</code>, and so on), then, inside your contract, you must
-provide a <code class="literal">sync()</code> method in the <code class="literal">response</code> section. The following code shows an example:</p><p><b>Groovy DSL.&nbsp;</b>
+provide an <code class="literal">async()</code> method in the <code class="literal">response</code> section. The following code shows an example:</p><p><b>Groovy DSL.&nbsp;</b>
 </p><pre class="programlisting">org.springframework.cloud.contract.spec.Contract.make {
     request {
         method GET()
@@ -5270,8 +5314,14 @@ conversion. Also, you must define how to perform that conversion in both directi
 <code class="literal">/META-INF/spring.factories</code> file in which you provide the fully qualified name of your
 implementation.</p></td></tr></table></div><p>The following example shows a typical <code class="literal">spring.factories</code> file:</p><pre class="screen">org.springframework.cloud.contract.spec.ContractConverter=\
 org.springframework.cloud.contract.verifier.converter.YamlContractConverter</pre><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_converter" href="#_pact_converter"></a>10.1.1&nbsp;Pact Converter</h3></div></div></div><p>Spring Cloud Contract includes support for <a class="link" href="https://docs.pact.io/" target="_top">Pact</a> representation of
-contracts. Instead of using the Groovy DSL, you can use Pact files. In this section, we
-present how to add Pact support for your project.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_contract" href="#_pact_contract"></a>10.1.2&nbsp;Pact Contract</h3></div></div></div><p>Consider following example of a Pact contract, which is a file under the
+contracts up until v4. Instead of using the Groovy DSL, you can use Pact files. In this section, we
+present how to add Pact support for your project. Note however that not all functionality is supported.
+Starting with v3 you can combine multiple matcher for the same element;
+you can use matchers for the body, headers, request and path; and you can use value generators.
+Spring Cloud Contract currently only supports multiple matchers that are combined using the AND rule logic.
+Next to that the request and path matchers are skipped during the conversion.
+When using a date, time or datetime value generator with a given format,
+the given format will be skipped and the ISO format will be used.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_contract" href="#_pact_contract"></a>10.1.2&nbsp;Pact Contract</h3></div></div></div><p>Consider following example of a Pact contract, which is a file under the
 <code class="literal">src/test/resources/contracts</code> folder.</p><pre class="programlisting">{
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"provider"</span>: {
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"name"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Provider"</span>
@@ -5292,10 +5342,36 @@ present how to add Pact support for your project.</p></div><div class="section">
           <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"clientId"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"1234567890"</span>,
           <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanAmount"</span>: <span class="hl-number">99999</span>
         },
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"generators"</span>: {
+          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span>: {
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.clientId"</span>: {
+              <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"type"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Regex"</span>,
+              <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{10}"</span>
+            }
+          }
+        },
         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchingRules"</span>: {
-          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.body.clientId"</span>: {
-            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"match"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>,
-            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{10}"</span>
+          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"header"</span>: {
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>: {
+              <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchers"</span>: [
+                {
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"match"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>,
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd\\.fraud\\.v1\\+json.*"</span>
+                }
+              ],
+              <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"combine"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"AND"</span>
+            }
+          },
+          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span> : {
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.clientId"</span>: {
+              <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchers"</span>: [
+                {
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"match"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>,
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{10}"</span>
+                }
+              ],
+              <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"combine"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"AND"</span>
+            }
           }
         }
       },
@@ -5309,9 +5385,27 @@ present how to add Pact support for your project.</p></div><div class="section">
           <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"rejectionReason"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Amount too high"</span>
         },
         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchingRules"</span>: {
-          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.body.fraudCheckStatus"</span>: {
-            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"match"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>,
-            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"FRAUD"</span>
+          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"header"</span>: {
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>: {
+              <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchers"</span>: [
+                {
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"match"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>,
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd\\.fraud\\.v1\\+json.*"</span>
+                }
+              ],
+              <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"combine"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"AND"</span>
+            }
+          },
+          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span>: {
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.fraudCheckStatus"</span>: {
+              <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchers"</span>: [
+                {
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"match"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>,
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"FRAUD"</span>
+                }
+              ],
+              <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"combine"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"AND"</span>
+            }
           }
         }
       }
@@ -5319,13 +5413,13 @@ present how to add Pact support for your project.</p></div><div class="section">
   ],
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"metadata"</span>: {
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"pact-specification"</span>: {
-      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"version"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"2.0.0"</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"version"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"3.0.0"</span>
     },
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"pact-jvm"</span>: {
-      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"version"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"2.4.18"</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"version"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"3.5.13"</span>
     }
   }
-}</pre><p>The remainder of this section about using Pact refers to the preceding file.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_for_producers" href="#_pact_for_producers"></a>10.1.3&nbsp;Pact for Producers</h3></div></div></div><p>On the producer side, you mustadd two additional dependencies to your plugin
+}</pre><p>The remainder of this section about using Pact refers to the preceding file.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_for_producers" href="#_pact_for_producers"></a>10.1.3&nbsp;Pact for Producers</h3></div></div></div><p>On the producer side, you must add two additional dependencies to your plugin
 configuration. One is the Spring Cloud Contract Pact support, and the other represents
 the current Pact version that you use.</p><p class="primary"><b>Maven.&nbsp;</b>
 </p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
@@ -5345,13 +5439,13 @@ the current Pact version that you use.</p><p class="primary"><b>Maven.&nbsp;</b>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>au.com.dius<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>pact-jvm-model<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>2.4.18<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>3.5.13<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependencies&gt;</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><p class="primary">
 </p><p class="secondary"><b>Gradle.&nbsp;</b>
 </p><pre class="programlisting">classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud:spring-cloud-contract-spec-pact:${findProperty('verifierVersion') ?: verifierVersion}"</span>
-classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'au.com.dius:pact-jvm-model:2.4.18'</span></pre><p class="secondary">
+classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'au.com.dius:pact-jvm-model:3.5.13'</span></pre><p class="secondary">
 </p><p>When you execute the build of your application, a test will be generated. The generated
 test might be as follows:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Test</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> validate_shouldMarkClientAsFraud() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
@@ -5366,24 +5460,25 @@ test might be as follows:</p><pre class="programlisting"><em><span class="hl-ann
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// then:</span>
 		assertThat(response.statusCode()).isEqualTo(<span class="hl-number">200</span>);
-		assertThat(response.header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>)).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd.fraud.v1+json;charset=UTF-8"</span>);
+		assertThat(response.header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd\\.fraud\\.v1\\+json.*"</span>);
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
 		DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
-		assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"rejectionReason"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Amount too high"</span>);
+		assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"['rejectionReason']"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Amount too high"</span>);
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
 		assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.fraudCheckStatus"</span>, String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"FRAUD"</span>);
 }</pre><p>The corresponding generated stub might be as follows:</p><pre class="programlisting">{
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"id"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"996ae5ae-6834-4db6-8fac-358ca187ab62"</span>,
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"uuid"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"996ae5ae-6834-4db6-8fac-358ca187ab62"</span>,
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"request"</span> : {
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"url"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/fraudcheck"</span>,
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"method"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"PUT"</span>,
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"headers"</span> : {
       <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span> : {
-        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"equalTo"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd.fraud.v1+json"</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matches"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd\\.fraud\\.v1\\+json.*"</span>
       }
     },
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bodyPatterns"</span> : [ {
-      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.loanAmount == 99999)]"</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.['loanAmount'] == 99999)]"</span>
     }, {
       <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.clientId =~ /([0-9]{10})/)]"</span>
     } ]
@@ -5393,8 +5488,9 @@ test might be as follows:</p><pre class="programlisting"><em><span class="hl-ann
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\"fraudCheckStatus\":\"FRAUD\",\"rejectionReason\":\"Amount too high\"}"</span>,
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"headers"</span> : {
       <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd.fraud.v1+json;charset=UTF-8"</span>
-    }
-  }
+    },
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"transformers"</span> : [ <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"response-template"</span> ]
+  },
 }</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_for_consumers" href="#_pact_for_consumers"></a>10.1.4&nbsp;Pact for Consumers</h3></div></div></div><p>On the producer side, you must add two additional dependencies to your project
 dependencies. One is the Spring Cloud Contract Pact support, and the other represents the
 current Pact version that you use.</p><p class="primary"><b>Maven.&nbsp;</b>
@@ -5406,12 +5502,12 @@ current Pact version that you use.</p><p class="primary"><b>Maven.&nbsp;</b>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>au.com.dius<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>pact-jvm-model<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>2.4.18<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>3.5.13<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;scope&gt;</span>test<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/scope&gt;</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span></pre><p class="primary">
 </p><p class="secondary"><b>Gradle.&nbsp;</b>
 </p><pre class="programlisting">testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud:spring-cloud-contract-spec-pact"</span>
-testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'au.com.dius:pact-jvm-model:2.4.18'</span></pre><p class="secondary">
+testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'au.com.dius:pact-jvm-model:3.5.13'</span></pre><p class="secondary">
 </p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_using_the_custom_test_generator" href="#_using_the_custom_test_generator"></a>10.2&nbsp;Using the Custom Test Generator</h2></div></div></div><p>If you want to generate tests for languages other than Java or you are not happy with the
 way the verifier builds Java tests, you can register your own implementation.</p><p>The <code class="literal">SingleTestGenerator</code> interface lets you register your own implementation.  The
 following code listing shows the <code class="literal">SingleTestGenerator</code> interface:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.springframework.cloud.contract.verifier.builder
@@ -5604,7 +5700,7 @@ to clone the repository and use it as a source of contracts
 to generate tests or stubs.</p><p>Either via environment variables, system properties, properties set
 inside the plugin or contracts repository configuration you can
 tweak the downloader&#8217;s behaviour. Below you can find the list of
-properties</p><div class="table"><a name="d0e7143" href="#d0e7143"></a><p class="title"><b>Table&nbsp;10.1.&nbsp;SCM Stub Downloader properties</b></p><div class="table-contents"><table summary="SCM Stub Downloader properties" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Type of a property</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Name of the property</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Description</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>* <code class="literal">git.branch</code> (plugin prop)
+properties</p><div class="table"><a name="d0e7154" href="#d0e7154"></a><p class="title"><b>Table&nbsp;10.1.&nbsp;SCM Stub Downloader properties</b></p><div class="table-contents"><table summary="SCM Stub Downloader properties" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Type of a property</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Name of the property</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Description</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>* <code class="literal">git.branch</code> (plugin prop)
 * <code class="literal">stubrunner.properties.git.branch</code> (system prop)
 * <code class="literal">STUBRUNNER_PROPERTIES_GIT_BRANCH</code> (env prop)</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>master</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Which branch to checkout</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>* <code class="literal">git.username</code> (plugin prop)
 * <code class="literal">stubrunner.properties.git.username</code> (system prop)

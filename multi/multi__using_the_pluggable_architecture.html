@@ -48,8 +48,14 @@ conversion. Also, you must define how to perform that conversion in both directi
 <code class="literal">/META-INF/spring.factories</code> file in which you provide the fully qualified name of your
 implementation.</p></td></tr></table></div><p>The following example shows a typical <code class="literal">spring.factories</code> file:</p><pre class="screen">org.springframework.cloud.contract.spec.ContractConverter=\
 org.springframework.cloud.contract.verifier.converter.YamlContractConverter</pre><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_converter" href="#_pact_converter"></a>10.1.1&nbsp;Pact Converter</h3></div></div></div><p>Spring Cloud Contract includes support for <a class="link" href="https://docs.pact.io/" target="_top">Pact</a> representation of
-contracts. Instead of using the Groovy DSL, you can use Pact files. In this section, we
-present how to add Pact support for your project.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_contract" href="#_pact_contract"></a>10.1.2&nbsp;Pact Contract</h3></div></div></div><p>Consider following example of a Pact contract, which is a file under the
+contracts up until v4. Instead of using the Groovy DSL, you can use Pact files. In this section, we
+present how to add Pact support for your project. Note however that not all functionality is supported.
+Starting with v3 you can combine multiple matcher for the same element;
+you can use matchers for the body, headers, request and path; and you can use value generators.
+Spring Cloud Contract currently only supports multiple matchers that are combined using the AND rule logic.
+Next to that the request and path matchers are skipped during the conversion.
+When using a date, time or datetime value generator with a given format,
+the given format will be skipped and the ISO format will be used.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_contract" href="#_pact_contract"></a>10.1.2&nbsp;Pact Contract</h3></div></div></div><p>Consider following example of a Pact contract, which is a file under the
 <code class="literal">src/test/resources/contracts</code> folder.</p><pre class="programlisting">{
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"provider"</span>: {
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"name"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Provider"</span>
@@ -70,10 +76,36 @@ present how to add Pact support for your project.</p></div><div class="section">
           <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"clientId"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"1234567890"</span>,
           <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loanAmount"</span>: <span class="hl-number">99999</span>
         },
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"generators"</span>: {
+          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span>: {
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.clientId"</span>: {
+              <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"type"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Regex"</span>,
+              <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{10}"</span>
+            }
+          }
+        },
         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchingRules"</span>: {
-          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.body.clientId"</span>: {
-            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"match"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>,
-            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{10}"</span>
+          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"header"</span>: {
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>: {
+              <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchers"</span>: [
+                {
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"match"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>,
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd\\.fraud\\.v1\\+json.*"</span>
+                }
+              ],
+              <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"combine"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"AND"</span>
+            }
+          },
+          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span> : {
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.clientId"</span>: {
+              <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchers"</span>: [
+                {
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"match"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>,
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"[0-9]{10}"</span>
+                }
+              ],
+              <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"combine"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"AND"</span>
+            }
           }
         }
       },
@@ -87,9 +119,27 @@ present how to add Pact support for your project.</p></div><div class="section">
           <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"rejectionReason"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Amount too high"</span>
         },
         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchingRules"</span>: {
-          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.body.fraudCheckStatus"</span>: {
-            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"match"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>,
-            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"FRAUD"</span>
+          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"header"</span>: {
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>: {
+              <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchers"</span>: [
+                {
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"match"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>,
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd\\.fraud\\.v1\\+json.*"</span>
+                }
+              ],
+              <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"combine"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"AND"</span>
+            }
+          },
+          <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span>: {
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.fraudCheckStatus"</span>: {
+              <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchers"</span>: [
+                {
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"match"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>,
+                  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"regex"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"FRAUD"</span>
+                }
+              ],
+              <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"combine"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"AND"</span>
+            }
           }
         }
       }
@@ -97,13 +147,13 @@ present how to add Pact support for your project.</p></div><div class="section">
   ],
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"metadata"</span>: {
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"pact-specification"</span>: {
-      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"version"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"2.0.0"</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"version"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"3.0.0"</span>
     },
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"pact-jvm"</span>: {
-      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"version"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"2.4.18"</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"version"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"3.5.13"</span>
     }
   }
-}</pre><p>The remainder of this section about using Pact refers to the preceding file.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_for_producers" href="#_pact_for_producers"></a>10.1.3&nbsp;Pact for Producers</h3></div></div></div><p>On the producer side, you mustadd two additional dependencies to your plugin
+}</pre><p>The remainder of this section about using Pact refers to the preceding file.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_for_producers" href="#_pact_for_producers"></a>10.1.3&nbsp;Pact for Producers</h3></div></div></div><p>On the producer side, you must add two additional dependencies to your plugin
 configuration. One is the Spring Cloud Contract Pact support, and the other represents
 the current Pact version that you use.</p><p class="primary"><b>Maven.&nbsp;</b>
 </p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
@@ -123,13 +173,13 @@ the current Pact version that you use.</p><p class="primary"><b>Maven.&nbsp;</b>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>au.com.dius<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>pact-jvm-model<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>2.4.18<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>3.5.13<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependencies&gt;</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><p class="primary">
 </p><p class="secondary"><b>Gradle.&nbsp;</b>
 </p><pre class="programlisting">classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud:spring-cloud-contract-spec-pact:${findProperty('verifierVersion') ?: verifierVersion}"</span>
-classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'au.com.dius:pact-jvm-model:2.4.18'</span></pre><p class="secondary">
+classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'au.com.dius:pact-jvm-model:3.5.13'</span></pre><p class="secondary">
 </p><p>When you execute the build of your application, a test will be generated. The generated
 test might be as follows:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Test</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> validate_shouldMarkClientAsFraud() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
@@ -144,24 +194,25 @@ test might be as follows:</p><pre class="programlisting"><em><span class="hl-ann
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// then:</span>
 		assertThat(response.statusCode()).isEqualTo(<span class="hl-number">200</span>);
-		assertThat(response.header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>)).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd.fraud.v1+json;charset=UTF-8"</span>);
+		assertThat(response.header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd\\.fraud\\.v1\\+json.*"</span>);
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
 		DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
-		assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"rejectionReason"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Amount too high"</span>);
+		assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"['rejectionReason']"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Amount too high"</span>);
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// and:</span>
 		assertThat(parsedJson.read(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$.fraudCheckStatus"</span>, String.<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span>)).matches(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"FRAUD"</span>);
 }</pre><p>The corresponding generated stub might be as follows:</p><pre class="programlisting">{
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"id"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"996ae5ae-6834-4db6-8fac-358ca187ab62"</span>,
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"uuid"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"996ae5ae-6834-4db6-8fac-358ca187ab62"</span>,
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"request"</span> : {
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"url"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/fraudcheck"</span>,
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"method"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"PUT"</span>,
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"headers"</span> : {
       <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span> : {
-        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"equalTo"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd.fraud.v1+json"</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matches"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd\\.fraud\\.v1\\+json.*"</span>
       }
     },
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bodyPatterns"</span> : [ {
-      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.loanAmount == 99999)]"</span>
+      <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.['loanAmount'] == 99999)]"</span>
     }, {
       <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"matchesJsonPath"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.clientId =~ /([0-9]{10})/)]"</span>
     } ]
@@ -171,8 +222,9 @@ test might be as follows:</p><pre class="programlisting"><em><span class="hl-ann
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"body"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\"fraudCheckStatus\":\"FRAUD\",\"rejectionReason\":\"Amount too high\"}"</span>,
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"headers"</span> : {
       <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span> : <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/vnd.fraud.v1+json;charset=UTF-8"</span>
-    }
-  }
+    },
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"transformers"</span> : [ <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"response-template"</span> ]
+  },
 }</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_for_consumers" href="#_pact_for_consumers"></a>10.1.4&nbsp;Pact for Consumers</h3></div></div></div><p>On the producer side, you must add two additional dependencies to your project
 dependencies. One is the Spring Cloud Contract Pact support, and the other represents the
 current Pact version that you use.</p><p class="primary"><b>Maven.&nbsp;</b>
@@ -184,12 +236,12 @@ current Pact version that you use.</p><p class="primary"><b>Maven.&nbsp;</b>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>au.com.dius<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>pact-jvm-model<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>2.4.18<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>3.5.13<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;scope&gt;</span>test<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/scope&gt;</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span></pre><p class="primary">
 </p><p class="secondary"><b>Gradle.&nbsp;</b>
 </p><pre class="programlisting">testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"org.springframework.cloud:spring-cloud-contract-spec-pact"</span>
-testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'au.com.dius:pact-jvm-model:2.4.18'</span></pre><p class="secondary">
+testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'au.com.dius:pact-jvm-model:3.5.13'</span></pre><p class="secondary">
 </p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_using_the_custom_test_generator" href="#_using_the_custom_test_generator"></a>10.2&nbsp;Using the Custom Test Generator</h2></div></div></div><p>If you want to generate tests for languages other than Java or you are not happy with the
 way the verifier builds Java tests, you can register your own implementation.</p><p>The <code class="literal">SingleTestGenerator</code> interface lets you register your own implementation.  The
 following code listing shows the <code class="literal">SingleTestGenerator</code> interface:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.springframework.cloud.contract.verifier.builder
@@ -382,7 +434,7 @@ to clone the repository and use it as a source of contracts
 to generate tests or stubs.</p><p>Either via environment variables, system properties, properties set
 inside the plugin or contracts repository configuration you can
 tweak the downloader&#8217;s behaviour. Below you can find the list of
-properties</p><div class="table"><a name="d0e7143" href="#d0e7143"></a><p class="title"><b>Table&nbsp;10.1.&nbsp;SCM Stub Downloader properties</b></p><div class="table-contents"><table summary="SCM Stub Downloader properties" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Type of a property</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Name of the property</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Description</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>* <code class="literal">git.branch</code> (plugin prop)
+properties</p><div class="table"><a name="d0e7154" href="#d0e7154"></a><p class="title"><b>Table&nbsp;10.1.&nbsp;SCM Stub Downloader properties</b></p><div class="table-contents"><table summary="SCM Stub Downloader properties" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Type of a property</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Name of the property</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Description</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>* <code class="literal">git.branch</code> (plugin prop)
 * <code class="literal">stubrunner.properties.git.branch</code> (system prop)
 * <code class="literal">STUBRUNNER_PROPERTIES_GIT_BRANCH</code> (env prop)</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>master</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Which branch to checkout</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>* <code class="literal">git.username</code> (plugin prop)
 * <code class="literal">stubrunner.properties.git.username</code> (system prop)
