@@ -1,13 +1,13 @@
 // We need to be in the same package as the Contract to be able to instantiate it.
 package org.springframework.cloud.contract.spec
 
-import org.springframework.cloud.contract.spec.internal.Body
 import org.springframework.cloud.contract.spec.internal.DslProperty
-import org.springframework.cloud.contract.spec.internal.Headers
+import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Input
+import org.springframework.cloud.contract.spec.internal.OptionalProperty
 import org.springframework.cloud.contract.spec.internal.OutputMessage
-import org.springframework.cloud.contract.spec.internal.Request
-import org.springframework.cloud.contract.spec.internal.Response
+import org.springframework.cloud.contract.verifier.spec.kotlin.Request
+import org.springframework.cloud.contract.verifier.spec.kotlin.Response
 import java.util.regex.Pattern
 
 /**
@@ -36,7 +36,19 @@ open class ContractDsl @JvmOverloads constructor(val contract: Contract = Contra
 
     fun ignored() = contract.ignored()
 
-    fun dynamic(consumer: Pattern? = null, producer: String? = null) = DslProperty(consumer, producer)
+    fun regex(regex: String): Pattern {
+        return Pattern.compile(regex)
+    }
+
+    fun optional(optional: Any): OptionalProperty {
+        return OptionalProperty(optional)
+    }
+
+    fun execute(commandToExecute: String): ExecutionProperty {
+        return ExecutionProperty(commandToExecute)
+    }
+
+    fun dynamic(consumer: Any? = null, producer: Any? = null) = DslProperty(consumer, producer)
 
     fun ContractDsl.input(init: Input.() -> Unit) {
         contract.input = Input().apply(init)
@@ -47,30 +59,12 @@ open class ContractDsl @JvmOverloads constructor(val contract: Contract = Contra
     }
 
     fun ContractDsl.request(init: Request.() -> Unit) {
-        val request = Request()
-        contract.request = request
+        val request = Request(contract.request)
         request.init()
     }
 
     fun ContractDsl.response(init: Response.() -> Unit) {
-        val response = Response()
-        contract.response = response
+        val response = Response(contract.response)
         response.init()
-    }
-
-    fun Request.body(vararg pairs: Pair<String, Any>) {
-        contract.request.body = Body(convertObjectsToDslProperties(pairs.toMap()))
-    }
-
-    fun Response.body(vararg pairs: Pair<String, Any>) {
-        contract.response.body = Body(convertObjectsToDslProperties(pairs.toMap()))
-    }
-
-    fun Request.headers(init: Headers.() -> Unit) {
-        this.headers = Headers().also(init)
-    }
-
-    fun Response.headers(init: Headers.() -> Unit) {
-        this.headers = Headers().apply(init)
     }
 }

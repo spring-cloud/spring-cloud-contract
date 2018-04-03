@@ -1,10 +1,11 @@
 package contracts.fraudname
 
 import org.springframework.cloud.contract.spec.contract
+import org.springframework.cloud.contract.spec.internal.HttpHeaders
 
 contract {
 	request {
-		method( PUT())
+		method("PUT")
 		url ("/frauds/name")
 		body(
 			   "name" to anyAlphaUnicode()
@@ -19,7 +20,7 @@ contract {
 				"result" to  "Don't worry ${fromRequest().body("$.name")} you're not a fraud"
 		)
 		headers {
-			header(contentType(), "${fromRequest().header(contentType())};charset=UTF-8")
+			header(HttpHeaders().contentType(), "${fromRequest().header(contentType())};charset=UTF-8")
 		}
 	}
 }

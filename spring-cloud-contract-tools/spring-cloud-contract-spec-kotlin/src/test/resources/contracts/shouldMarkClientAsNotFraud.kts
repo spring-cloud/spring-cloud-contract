@@ -8,7 +8,7 @@ contract {
         url("/fraudcheck")
         body("""
 						{
-						"clientId":"${value(consumer(regex("[0-9]{10}")), producer("1234567890"))}",
+						"clientId":"${dynamic(consumer = regex("[0-9]{10}"), producer = "1234567890")}",
 						"loanAmount":123.123
 						}
 					"""
@@ -22,7 +22,7 @@ contract {
         status(200)
         body(
                 "fraudCheckStatus" to "OK",
-                "rejectionReason" to listOf(consumer(null), producer(execute("assertThatRejectionReasonIsNull(\$it)")))
+                "rejectionReason" to listOf(dynamic(producer = execute("assertThatRejectionReasonIsNull(\$it)")))
         )
         headers {
             contentType("application/vnd.fraud.v1+json")

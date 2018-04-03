@@ -6,7 +6,7 @@ contract {
 	// highest priority
 	priority(1)
 	request {
-		method (PUT())
+		method ("PUT")
 		url ("/frauds/name")
 		body(
 			   "name" to "fraud"
