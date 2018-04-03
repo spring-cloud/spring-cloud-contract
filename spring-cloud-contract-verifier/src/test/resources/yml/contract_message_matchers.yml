@@ -1,0 +1,125 @@
+label: card_rejected
+input:
+  messageFrom: input
+  messageBody:
+    duck: 123
+    alpha: "abc"
+    number: 123
+    aBoolean: true
+    date: "2017-01-01"
+    dateTime: "2017-01-01T01:23:45"
+    time: "01:02:34"
+    valueWithoutAMatcher: "foo"
+    valueWithTypeMatch: "string"
+    key:
+      "complex.key": 'foo'
+  messageHeaders:
+    sample: 'header'
+    contentType: application/json
+  matchers:
+    headers:
+      - key: contentType
+        regex: "application/json.*"
+    body:
+      - path: $.duck
+        type: by_regex
+        value: "[0-9]{3}"
+      - path: $.duck
+        type: by_equality
+      - path: $.alpha
+        type: by_regex
+        predefined: only_alpha_unicode
+      - path: $.alpha
+        type: by_equality
+      - path: $.number
+        type: by_regex
+        predefined: number
+      - path: $.aBoolean
+        type: by_regex
+        predefined: any_boolean
+      - path: $.date
+        type: by_date
+      - path: $.dateTime
+        type: by_timestamp
+      - path: $.time
+        type: by_time
+      - path: "$.['key'].['complex.key']"
+        type: by_equality
+outputMessage:
+  sentTo: channel
+  body:
+    duck: 123
+    alpha: "abc"
+    number: 123
+    aBoolean: true
+    date: "2017-01-01"
+    dateTime: "2017-01-01T01:23:45"
+    time: "01:02:34"
+    valueWithoutAMatcher: "foo"
+    valueWithTypeMatch: "string"
+    valueWithMin:
+      - 1
+      - 2
+      - 3
+    valueWithMax:
+      - 1
+      - 2
+      - 3
+    valueWithMinMax:
+      - 1
+      - 2
+      - 3
+    valueWithMinEmpty: []
+    valueWithMaxEmpty: []
+    key:
+      'complex.key' : 'foo'
+  matchers:
+    headers:
+      - key: Content-Type
+        regex: "application/json.*"
+    body:
+      - path: $.duck
+        type: by_regex
+        value: "[0-9]{3}"
+      - path: $.duck
+        type: by_equality
+      - path: $.alpha
+        type: by_regex
+        predefined: only_alpha_unicode
+      - path: $.alpha
+        type: by_equality
+      - path: $.number
+        type: by_regex
+        predefined: number
+      - path: $.aBoolean
+        type: by_regex
+        predefined: any_boolean
+      - path: $.date
+        type: by_date
+      - path: $.dateTime
+        type: by_timestamp
+      - path: $.time
+        type: by_time
+      - path: $.valueWithTypeMatch
+        type: by_type
+      - path: $.valueWithMin
+        type: by_type
+        minOccurrence: 1
+      - path: $.valueWithMax
+        type: by_type
+        maxOccurrence: 3
+      - path: $.valueWithMinMax
+        type: by_type
+        minOccurrence: 1
+        maxOccurrence: 3
+      - path: $.valueWithMinEmpty
+        type: by_type
+        minOccurrence: 0
+      - path: $.valueWithMaxEmpty
+        type: by_type
+        maxOccurrence: 0
+      - path: $.duck
+        type: by_command
+        value: assertThatValueIsANumber($it)
+  headers:
+    contentType: application/json

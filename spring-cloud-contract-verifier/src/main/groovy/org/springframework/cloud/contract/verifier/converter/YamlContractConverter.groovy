@@ -284,7 +284,11 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 											value = byTimestamp()
 											break
 										case StubMatcherType.by_regex:
-											value = byRegex(matcher.value)
+											String regex = matcher.value
+											if (matcher.predefined) {
+												regex = predefinedToPattern(matcher.predefined).pattern()
+											}
+											value = byRegex(regex)
 											break
 										case StubMatcherType.by_equality:
 											value = byEquality()
@@ -324,7 +328,11 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 												value = byTimestamp()
 												break
 											case TestMatcherType.by_regex:
-												value = byRegex(testMatcher.value)
+												String regex = testMatcher.value
+												if (testMatcher.predefined) {
+													regex = predefinedToPattern(testMatcher.predefined).pattern()
+												}
+												value = byRegex(regex)
 												break
 											case TestMatcherType.by_equality:
 												value = byEquality()
