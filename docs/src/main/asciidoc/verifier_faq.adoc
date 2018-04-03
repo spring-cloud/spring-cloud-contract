@@ -735,7 +735,7 @@ For the producer, to use the Pact files from the Pact Broker, we can reuse the
 same mechanism we use for external contracts. We route Spring Cloud Contract
 to use the Pact implementation via the URL that contains
 the `pact://` protocol. It's enough to pass the URL to the
-Pact Broker.
+Pact Broker. An example of such setup can be found https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}/producer_pact[here].
 
 .Maven
 [source,xml,indent=0]
@@ -816,7 +816,7 @@ In the scenario where you don't want to do Consumer Contract approach
 (for every single consumer define the expectations) but you'd prefer
 to do Producer Contracts (the producer provides the contracts and
 publishes stubs), it's enough to use Spring Cloud Contract with
-Stub Runner option.
+Stub Runner option. An example of such setup can be found https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}/consumer_pact_stubrunner[here].
 
 First, remember to add Stub Runner and Spring Cloud Contract Pact module
 as test dependencies.
