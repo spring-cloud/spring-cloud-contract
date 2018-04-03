@@ -16,21 +16,24 @@
 
 package org.springframework.cloud.contract.wiremock.file;
 
+import com.github.tomakehurst.wiremock.common.BinaryFile;
+import com.github.tomakehurst.wiremock.common.ClasspathFileSource;
+import com.github.tomakehurst.wiremock.common.FileSource;
+import com.github.tomakehurst.wiremock.common.SingleRootFileSource;
+import com.github.tomakehurst.wiremock.common.TextFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.tomakehurst.wiremock.common.BinaryFile;
-import com.github.tomakehurst.wiremock.common.ClasspathFileSource;
-import com.github.tomakehurst.wiremock.common.FileSource;
-import com.github.tomakehurst.wiremock.common.SingleRootFileSource;
-import com.github.tomakehurst.wiremock.common.TextFile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+
+import static java.util.Arrays.asList;
 
 /**
  * @author Dave Syer
@@ -61,8 +64,7 @@ public class ResourcesFileSource implements FileSource {
 				sources[i] = new SingleRootFileSource(files.getFile());
 			}
 			else if (resource instanceof UrlResource) {
-				UrlResource files = (UrlResource) resource;
-				sources[i] = new SingleRootFileSource(getFile(files));
+				sources[i] = fileOrFallbackToClasspath(resource);
 			}
 			else {
 				throw new IllegalArgumentException("Unsupported resource type for file source: " + resource.getClass());
@@ -71,9 +73,31 @@ public class ResourcesFileSource implements FileSource {
 		return sources;
 	}
 
-	private static File getFile(UrlResource files) {
+	private static FileSource fileOrFallbackToClasspath(Resource resource) {
+		UrlResource file = (UrlResource) resource;
 		try {
-			return files.getFile();
+			URI uri = file.getURI();
+			if (compressedResource(uri)) {
+				return new ClasspathFileSource(pathFromCompressed(uri));
+			}
+			return new SingleRootFileSource(getFile(file));
+		} catch (IOException e) {
+				throw new IllegalStateException(e);
+		}
+	}
+
+	private static String pathFromCompressed(URI pathUri) {
+		String path = pathUri.getSchemeSpecificPart().split("!")[1];
+		return path.startsWith("/") ? path.substring(1) : path;
+	}
+
+	private static boolean compressedResource(URI pathUri) {
+		return asList("jar", "war", "ear", "zip").contains(pathUri.getScheme());
+	}
+
+	private static File getFile(UrlResource file) {
+		try {
+			return file.getFile();
 		}
 		catch (IOException e) {
 			throw new IllegalStateException(e);
