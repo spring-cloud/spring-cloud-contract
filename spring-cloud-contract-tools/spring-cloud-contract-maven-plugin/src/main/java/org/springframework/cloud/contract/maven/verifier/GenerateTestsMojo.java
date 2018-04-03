@@ -246,8 +246,9 @@ public class GenerateTestsMojo extends AbstractMojo {
 			getLog().info(
 					"Test Source directory: " + this.generatedTestSourcesDir.getAbsolutePath()
 							+ " added.");
-			getLog().info("Using " + config.getBaseClassForTests()
-					+ " as base class for test classes");
+			getLog().info("Using [" + config.getBaseClassForTests()
+					+ "] as base class for test classes, [" + config.getBasePackageForTests() + "] as base "
+					+ "package for tests, [" + config.getPackageWithBaseClasses() + "] as package with base classes");
 		}
 		try {
 			TestGenerator generator = new TestGenerator(config);
