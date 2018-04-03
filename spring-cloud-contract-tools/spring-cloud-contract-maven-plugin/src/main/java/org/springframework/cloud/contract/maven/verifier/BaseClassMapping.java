@@ -50,4 +50,9 @@ public class BaseClassMapping {
 		result = 31 * result + (this.baseClassFQN != null ? this.baseClassFQN.hashCode() : 0);
 		return result;
 	}
+
+	@Override public String toString() {
+		return "BaseClassMapping{" + "contractPackageRegex='" + this.contractPackageRegex
+				+ '\'' + ", baseClassFQN='" + this.baseClassFQN + '\'' + '}';
+	}
 }

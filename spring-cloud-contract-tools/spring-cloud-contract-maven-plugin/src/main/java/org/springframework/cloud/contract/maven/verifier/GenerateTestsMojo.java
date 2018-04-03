@@ -248,7 +248,8 @@ public class GenerateTestsMojo extends AbstractMojo {
 							+ " added.");
 			getLog().info("Using [" + config.getBaseClassForTests()
 					+ "] as base class for test classes, [" + config.getBasePackageForTests() + "] as base "
-					+ "package for tests, [" + config.getPackageWithBaseClasses() + "] as package with base classes");
+					+ "package for tests, [" + config.getPackageWithBaseClasses() + "] as package with "
+					+ "base classes, base class mappings " + this.baseClassMappings);
 		}
 		try {
 			TestGenerator generator = new TestGenerator(config);

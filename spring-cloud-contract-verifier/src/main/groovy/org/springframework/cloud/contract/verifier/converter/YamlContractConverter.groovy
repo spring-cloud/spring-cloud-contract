@@ -293,6 +293,8 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 										case StubMatcherType.by_equality:
 											value = byEquality()
 											break
+										default:
+											throw new UnsupportedOperationException("The type [" + matcher.type + "] is unsupported. Hint: If you're using <predefined> remember to pass <type: by_regex>")
 									}
 									jsonPath(matcher.path, value)
 								}
@@ -349,6 +351,8 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 											case TestMatcherType.by_null:
 												value = byNull()
 												break
+											default:
+												throw new UnsupportedOperationException("The type [" + testMatcher.type + "] is unsupported. Hint: If you're using <predefined> remember to pass <type: by_regex>")
 										}
 										jsonPath(testMatcher.path, value)
 									}
