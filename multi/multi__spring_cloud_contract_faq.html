@@ -519,7 +519,7 @@ setup can be found <a class="link" href="https://github.com/spring-cloud-samples
 same mechanism we use for external contracts. We route Spring Cloud Contract
 to use the Pact implementation via the URL that contains
 the <code class="literal">pact://</code> protocol. It&#8217;s enough to pass the URL to the
-Pact Broker.</p><p><b>Maven.&nbsp;</b>
+Pact Broker. An example of such setup can be found <a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.0.x/producer_pact" target="_top">here</a>.</p><p><b>Maven.&nbsp;</b>
 </p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
@@ -582,7 +582,7 @@ contracts {
 (for every single consumer define the expectations) but you&#8217;d prefer
 to do Producer Contracts (the producer provides the contracts and
 publishes stubs), it&#8217;s enough to use Spring Cloud Contract with
-Stub Runner option.</p><p>First, remember to add Stub Runner and Spring Cloud Contract Pact module
+Stub Runner option. An example of such setup can be found <a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.0.x/consumer_pact_stubrunner" target="_top">here</a>.</p><p>First, remember to add Stub Runner and Spring Cloud Contract Pact module
 as test dependencies.</p><p><b>Maven.&nbsp;</b>
 </p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependencyManagement&gt;</span>
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependencies&gt;</span>
