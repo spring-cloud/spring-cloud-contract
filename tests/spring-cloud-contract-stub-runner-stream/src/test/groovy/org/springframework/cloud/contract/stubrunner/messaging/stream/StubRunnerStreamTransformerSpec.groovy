@@ -59,7 +59,7 @@ class StubRunnerStreamTransformerSpec extends Specification {
 		when:
 			def result = streamTransformer.transform(message)
 		then:
-			result.payload == '{"responseId":"123"}'
+			result.payload == '{"responseId":"123"}'.bytes
 	}
 
 	def dslWithRegexInGString = Contract.make {
@@ -90,7 +90,7 @@ class StubRunnerStreamTransformerSpec extends Specification {
 		when:
 			def result = streamTransformer.transform(message)
 		then:
-			result.payload == '''{"id":"99","temperature":"123.45"}'''
+			result.payload == '''{"id":"99","temperature":"123.45"}'''.bytes
 	}
 
 	def 'should parse dsl without DslProperty'() {
@@ -126,7 +126,7 @@ class StubRunnerStreamTransformerSpec extends Specification {
 		when:
 			def result = streamTransformer.transform(message)
 		then:
-			result.payload == '''{"orderId":"40058c70-891c-4176-a033-f70bad0c5f77","description":"This is the order description"}'''
+			result.payload == '''{"orderId":"40058c70-891c-4176-a033-f70bad0c5f77","description":"This is the order description"}'''.bytes
 	}
 
 }

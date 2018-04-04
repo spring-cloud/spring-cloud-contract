@@ -28,7 +28,11 @@ import org.springframework.messaging.support.MessageBuilder;
 class ContractVerifierStreamMessageBuilder {
 
 	public <T> Message<?> create(T payload, Map<String, Object> headers) {
-		return MessageBuilder.createMessage(payload, new MessageHeaders(headers));
+		Object payloadToSend = payload;
+		if (payload instanceof String) {
+			payloadToSend = ((String) payload).getBytes();
+		}
+		return MessageBuilder.createMessage(payloadToSend, new MessageHeaders(headers));
 	}
 
 }

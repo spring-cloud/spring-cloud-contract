@@ -40,7 +40,7 @@ class StubRunnerIntegrationTransformer implements GenericTransformer<Message<?>,
 
 	@Override
 	public Message<?> transform(Message<?> source) {
-		if (this.groovyDsl.getOutputMessage()==null) {
+		if (this.groovyDsl.getOutputMessage() == null) {
 			return source;
 		}
 		String payload = BodyExtractor.extractStubValueFrom(this.groovyDsl.getOutputMessage().getBody());
