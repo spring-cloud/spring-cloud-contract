@@ -183,7 +183,7 @@ class JavaTestGenerator implements SingleTestGenerator {
 
 class ClassPresenceChecker {
 
-	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass())
+	private static final Log log = LogFactory.getLog(ClassPresenceChecker)
 
 	boolean isClassPresent(String className) {
 		try {

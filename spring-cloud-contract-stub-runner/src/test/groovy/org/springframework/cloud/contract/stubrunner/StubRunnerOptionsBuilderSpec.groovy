@@ -41,6 +41,18 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 		options.getStubRepositoryRootAsString().endsWith("logback.xml")
 	}
 
+	def shouldReturnOriginalUriString() {
+
+		given:
+		builder.withStubRepositoryRoot("classpath:/logback.xml")
+
+		when:
+		StubRunnerOptions options = builder.build()
+
+		then:
+		options.getOriginalRepositoryRoot() == "classpath:/logback.xml"
+	}
+
 	def shouldReturnURIOfAResourceFromResource() {
 
 		given:
@@ -229,8 +241,8 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 	@Issue("#466")
 	def shouldSetAllDependenciesFromOptions() {
 		given:
-			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, new FileSystemResource("root"), StubRunnerProperties.StubsMode.LOCAL,
-					"classifier", [new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "foo", "bar",
+			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, new FileSystemResource("root"), "root",
+					StubRunnerProperties.StubsMode.LOCAL, "classifier", [new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "foo", "bar",
 					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", true, false, [foo: "bar"]))
 			builder.withStubs("foo:bar:baz")
 		when:
@@ -239,6 +251,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			options.minPortValue == 1
 			options.maxPortValue == 2
 			options.stubRepositoryRoot == new FileSystemResource("root")
+			options.originalRepositoryRoot == "root"
 			options.stubsMode == StubRunnerProperties.StubsMode.LOCAL
 			options.stubsClassifier == "classifier"
 			options.dependencies == [new StubConfiguration("a:b:c"), new StubConfiguration("foo:bar:baz:classifier")]
@@ -258,7 +271,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 	def shouldNotPrintUsernameAndPassword() {
 		given:
 			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, new FileSystemResource("root"),
-					StubRunnerProperties.StubsMode.CLASSPATH, "classifier",
+					"root", StubRunnerProperties.StubsMode.CLASSPATH, "classifier",
 					[new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "username123", "password123",
 					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", true, false, [:]))
 			builder.withStubs("foo:bar:baz")
@@ -296,6 +309,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 		then:
 			options.minPortValue == 1
 			options.maxPortValue == 2
+			options.originalRepositoryRoot == "root"
 			options.stubRepositoryRoot == new ClassPathResource("root")
 			options.stubsMode == StubRunnerProperties.StubsMode.LOCAL
 			options.stubsClassifier == "classifier"

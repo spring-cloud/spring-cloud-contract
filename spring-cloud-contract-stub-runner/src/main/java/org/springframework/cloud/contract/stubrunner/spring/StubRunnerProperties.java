@@ -49,6 +49,11 @@ public class StubRunnerProperties {
 	private Resource repositoryRoot;
 
 	/**
+	 * The string representation of repository root, before it got modified to a Resource
+	 */
+	private String originalRepositoryRoot;
+
+	/**
 	 * The ids of the stubs to run in "ivy" notation ([groupId]:artifactId:[version]:[classifier][:port]).
 	 * {@code groupId}, {@code classifier}, {@code version} and {@code port} can be optional.
 	 */
@@ -158,7 +163,13 @@ public class StubRunnerProperties {
 	}
 
 	public void setRepositoryRoot(String repositoryRoot) {
+		this.originalRepositoryRoot = repositoryRoot;
 		this.repositoryRoot = ResourceResolver.resource(repositoryRoot);
+	}
+
+	public String getOriginalRepositoryRoot() {
+		return StringUtils.hasText(this.originalRepositoryRoot) ?
+				this.originalRepositoryRoot : "";
 	}
 
 	public String getUsername() {

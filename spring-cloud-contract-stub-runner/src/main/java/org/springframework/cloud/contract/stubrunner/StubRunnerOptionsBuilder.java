@@ -40,6 +40,7 @@ public class StubRunnerOptionsBuilder {
 	private Integer minPortValue = 10000;
 	private Integer maxPortValue = 15000;
 	private Resource stubRepositoryRoot;
+	private String stringStubRepositoryRoot;
 	private String stubsClassifier = "stubs";
 	private String username;
 	private String password;
@@ -92,8 +93,14 @@ public class StubRunnerOptionsBuilder {
 		return this;
 	}
 
+	public StubRunnerOptionsBuilder withStringStubRepositoryRoot(String stubRepositoryRoot) {
+		this.stringStubRepositoryRoot = stubRepositoryRoot;
+		return this;
+	}
+
 	public StubRunnerOptionsBuilder withStubRepositoryRoot(String stubRepositoryRoot) {
 		if (StringUtils.hasText(stubRepositoryRoot)) {
+			this.stringStubRepositoryRoot = stubRepositoryRoot;
 			this.stubRepositoryRoot = ResourceResolver.resource(stubRepositoryRoot);
 		}
 		return this;
@@ -123,6 +130,7 @@ public class StubRunnerOptionsBuilder {
 	public StubRunnerOptionsBuilder withOptions(StubRunnerOptions options) {
 		this.minPortValue = options.minPortValue;
 		this.maxPortValue = options.maxPortValue;
+		this.stringStubRepositoryRoot = options.originalRepositoryRoot;
 		this.stubRepositoryRoot = options.stubRepositoryRoot;
 		this.stubsMode = options.stubsMode;
 		this.stubsClassifier = options.stubsClassifier;
@@ -133,9 +141,9 @@ public class StubRunnerOptionsBuilder {
 		this.consumerName = options.getConsumerName();
 		this.mappingsOutputFolder = options.getMappingsOutputFolder();
 		this.stubConfigurations = options.dependencies != null ?
-				options.dependencies : new ArrayList<StubConfiguration>();
+				options.dependencies : new ArrayList<>();
 		this.stubIdsToPortMapping = options.stubIdsToPortMapping != null ?
-				options.stubIdsToPortMapping : new LinkedHashMap<StubConfiguration, Integer>();
+				options.stubIdsToPortMapping : new LinkedHashMap<>();
 		this.snapshotCheckSkip = options.isSnapshotCheckSkip();
 		this.deleteStubsAfterTest = options.isDeleteStubsAfterTest();
 		this.properties = options.getProperties();
@@ -163,7 +171,7 @@ public class StubRunnerOptionsBuilder {
 	}
 
 	public StubRunnerOptions build() {
-		return new StubRunnerOptions(this.minPortValue, this.maxPortValue, this.stubRepositoryRoot,
+		return new StubRunnerOptions(this.minPortValue, this.maxPortValue, this.stubRepositoryRoot, this.stringStubRepositoryRoot,
 				this.stubsMode, this.stubsClassifier, buildDependencies(), this.stubIdsToPortMapping,
 				this.username, this.password, this.stubRunnerProxyOptions, this.stubsPerConsumer, this.consumerName,
 				this.mappingsOutputFolder, this.snapshotCheckSkip, this.deleteStubsAfterTest, this.properties);

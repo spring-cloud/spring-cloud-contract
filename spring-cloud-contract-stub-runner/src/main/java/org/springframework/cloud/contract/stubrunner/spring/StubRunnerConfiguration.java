@@ -85,6 +85,7 @@ public class StubRunnerConfiguration {
 	private StubRunnerOptionsBuilder builder() throws IOException {
 		return new StubRunnerOptionsBuilder()
 					.withMinMaxPort(this.props.getMinPort(), this.props.getMaxPort())
+					.withStringStubRepositoryRoot(this.props.getOriginalRepositoryRoot())
 					.withStubRepositoryRoot(this.props.getRepositoryRoot())
 					.withStubsMode(this.props.getStubsMode())
 					.withStubsClassifier(this.props.getClassifier())

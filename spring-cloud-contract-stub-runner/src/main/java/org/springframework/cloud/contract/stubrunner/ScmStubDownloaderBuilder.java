@@ -157,6 +157,11 @@ class GitStubDownloader implements StubDownloader {
 		registerShutdownHook();
 	}
 
+	private void registerShutdownHook() {
+		Runtime.getRuntime().addShutdownHook(new Thread(
+				() -> TemporaryFileStorage.cleanup(GitStubDownloader.this.deleteStubsAfterTest)));
+	}
+
 	@Override public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
 			StubConfiguration stubConfiguration) {
 		if (StringUtils.isEmpty(stubConfiguration.version) || "+".equals(stubConfiguration.version)) {
@@ -181,11 +186,6 @@ class GitStubDownloader implements StubDownloader {
 			log.debug("No matching contracts were found in the repo for [" + stubConfiguration.toColonSeparatedDependencyNotation() + "]. Returning null");
 		}
 		return null;
-	}
-
-	private void registerShutdownHook() {
-		Runtime.getRuntime().addShutdownHook(new Thread(
-				() -> TemporaryFileStorage.cleanup(GitStubDownloader.this.deleteStubsAfterTest)));
 	}
 }
 

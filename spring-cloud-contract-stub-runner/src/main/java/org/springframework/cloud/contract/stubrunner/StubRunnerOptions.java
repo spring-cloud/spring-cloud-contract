@@ -57,6 +57,11 @@ public class StubRunnerOptions {
 	final Resource stubRepositoryRoot;
 
 	/**
+	 * The string representation of repository root, before it got modified to a Resource
+	 */
+	final String originalRepositoryRoot;
+
+	/**
 	 * stub definition classifier
 	 */
 	final String stubsClassifier;
@@ -120,7 +125,8 @@ public class StubRunnerOptions {
 
 
 	StubRunnerOptions(Integer minPortValue, Integer maxPortValue,
-			Resource stubRepositoryRoot, StubRunnerProperties.StubsMode stubsMode, String stubsClassifier,
+			Resource stubRepositoryRoot, String stringStubRepositoryRoot,
+			StubRunnerProperties.StubsMode stubsMode, String stubsClassifier,
 			Collection<StubConfiguration> dependencies,
 			Map<StubConfiguration, Integer> stubIdsToPortMapping,
 			String username, String password, final StubRunnerProxyOptions stubRunnerProxyOptions,
@@ -129,6 +135,7 @@ public class StubRunnerOptions {
 		this.minPortValue = minPortValue;
 		this.maxPortValue = maxPortValue;
 		this.stubRepositoryRoot = stubRepositoryRoot;
+		this.originalRepositoryRoot = stringStubRepositoryRoot;
 		this.stubsMode = stubsMode != null ? stubsMode : StubRunnerProperties.StubsMode.CLASSPATH;
 		this.stubsClassifier = stubsClassifier;
 		this.dependencies = dependencies;
@@ -157,8 +164,7 @@ public class StubRunnerOptions {
 		StubRunnerOptionsBuilder builder = new StubRunnerOptionsBuilder()
 				.withMinPort(Integer.valueOf(System.getProperty("stubrunner.port.range.min", "10000")))
 				.withMaxPort(Integer.valueOf(System.getProperty("stubrunner.port.range.max", "15000")))
-				.withStubRepositoryRoot(ResourceResolver
-						.resource(System.getProperty("stubrunner.repository.root", "")))
+				.withStubRepositoryRoot(System.getProperty("stubrunner.repository.root", ""))
 				.withStubsMode(System.getProperty("stubrunner.stubs-mode", "LOCAL"))
 				.withStubsClassifier(System.getProperty("stubrunner.classifier", "stubs"))
 				.withStubs(System.getProperty("stubrunner.ids", ""))
@@ -208,6 +214,10 @@ public class StubRunnerOptions {
 
 	public Resource getStubRepositoryRoot() {
 		return this.stubRepositoryRoot;
+	}
+
+	public String getOriginalRepositoryRoot() {
+		return this.originalRepositoryRoot;
 	}
 
 	public String getStubRepositoryRootAsString() {
