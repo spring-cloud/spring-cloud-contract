@@ -78,6 +78,14 @@ class FromRequest {
 	}
 
 	/**
+	 * Retruns the tempalte for retrieving the first value of a cookie with certain key
+	 * @param key
+	 */
+	DslProperty cookie(String key) {
+		return new DslProperty(template.cookie(key))
+	}
+
+	/**
 	 * Request body text (avoid for non-text bodies)
 	 */
 	DslProperty body() {

@@ -1,0 +1,49 @@
+/*
+ *  Copyright 2013-2017 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+package org.springframework.cloud.contract.spec.internal
+import groovy.transform.CompileStatic
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
+
+/**
+ * Represents a http cookie
+ *
+ * @author Alex Xandra Albert Sim
+ * @since 1.3.8
+ */
+@EqualsAndHashCode(includeFields = true, callSuper = true)
+@ToString(includePackage = false, includeFields = true, ignoreNulls = true, includeNames = true, includeSuper = true)
+@CompileStatic
+class Cookie extends DslProperty {
+
+    String key
+
+    Cookie(String key, DslProperty dslProperty) {
+        super(dslProperty.clientValue, dslProperty.serverValue)
+        this.key = key
+    }
+
+    Cookie(String key, MatchingStrategy value) {
+        super(value)
+        this.key = key
+    }
+
+    Cookie(String key, Object value) {
+        super(value)
+        this.key = key
+    }
+}

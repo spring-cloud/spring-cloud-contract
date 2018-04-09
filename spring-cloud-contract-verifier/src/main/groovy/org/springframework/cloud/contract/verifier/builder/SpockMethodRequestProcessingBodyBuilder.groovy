@@ -20,6 +20,7 @@ import groovy.json.StringEscapeUtils
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.Request
@@ -123,6 +124,11 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 	}
 
 	@Override
+	protected String getCookieString(Cookie cookie) {
+		return ".cookie(${getTestSideValue(cookie.key)}, ${getTestSideValue(cookie.serverValue)})"
+	}
+
+	@Override
 	protected String getBodyString(Object body) {
 		String value
 		if (body instanceof ExecutionProperty) {
@@ -149,12 +155,26 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 		processHeaderElement(blockBuilder, property, gstringValue)
 	}
 
+	@Override
+	protected void processCookieElement(BlockBuilder blockBuilder, String key, GString value) {
+		String gStringValue = ContentUtils.extractValueForGString(value, ContentUtils.GET_TEST_SIDE).toString()
+		processCookieElement(blockBuilder, key, gStringValue)
+	}
+
 	protected String convertHeaderComparison(String headerValue) {
 		return " == '$headerValue'"
 	}
 
 	protected String convertHeaderComparison(Pattern headerValue) {
 		return patternComparison(headerValue)
+	}
+
+	protected String convertCookieComparison(String cookieValue) {
+		return "== '$cookieValue'"
+	}
+
+	protected String convertCookieComparison(Pattern cookieValue) {
+		return patternComparison(cookieValue)
 	}
 
 	protected String patternComparison(Pattern pattern) {

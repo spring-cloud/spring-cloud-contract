@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.builder
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
@@ -54,6 +55,15 @@ class MockMvcSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestP
 	}
 
 	@Override
+	protected void validateResponseCookiesBlock(BlockBuilder bb) {
+		response.cookies?.executeForEachCookie { Cookie cookie ->
+			processCookieElement(bb, cookie.key, cookie.serverValue instanceof NotToEscapePattern ?
+					cookie.serverValue :
+					MapConverter.getTestSideValues(cookie.serverValue))
+		}
+	}
+
+	@Override
 	protected String getResponseAsString() {
 		return 'response.body.asString()'
 	}
@@ -66,6 +76,16 @@ class MockMvcSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestP
 		} else {
 			// fallback
 			processHeaderElement(blockBuilder, property, value.toString())
+		}
+	}
+
+	@Override
+	protected void processCookieElement(BlockBuilder blockBuilder, String key, Object value) {
+		if (value instanceof NotToEscapePattern) {
+			blockBuilder.addLine("response.cookie('$key') " +
+					"${patternComparison(((NotToEscapePattern) value).serverValue.pattern().replace("\\", "\\\\"))}")
+		} else {
+			processCookieElement(blockBuilder, key, value.toString())
 		}
 	}
 
@@ -87,6 +107,18 @@ class MockMvcSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestP
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Pattern value) {
 		blockBuilder.addLine("response.header('$property') ${convertHeaderComparison(value)}")
+	}
+
+	@Override
+	protected void processCookieElement(BlockBuilder blockBuilder, String key, Pattern pattern) {
+		blockBuilder.addLine("response.cookie('$key') != null")
+		blockBuilder.addLine("response.cookie('$key') ${convertCookieComparison(pattern)}")
+	}
+
+	@Override
+	protected void processCookieElement(BlockBuilder blockBuilder, String key, String value) {
+		blockBuilder.addLine("response.cookie('$key') != null")
+		blockBuilder.addLine("response.cookie('$key') ${convertCookieComparison(value)}")
 	}
 
 	// #273 - should escape $ for Groovy since it will try to make it a GString
