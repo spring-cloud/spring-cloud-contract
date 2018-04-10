@@ -16,9 +16,9 @@
 package org.springframework.cloud.contract.stubrunner.messaging.stream
 
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.http.MediaType
 import org.springframework.messaging.Message
 import spock.lang.Specification
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -101,15 +101,20 @@ class StubRunnerStreamMessageSelectorSpec extends Specification {
 					messageFrom "foo"
 					messageHeaders {
 						header("foo", 123)
+						header("bar", "bar")
+						messagingContentType(applicationJsonUtf8())
+						header("regex", regex("234"))
 					}
 					messageBody(foo: $(c(regex("[0-9]{3}")), p(123)))
-
 				}
 			}
 		and:
 			StubRunnerStreamMessageSelector predicate = new StubRunnerStreamMessageSelector(dsl)
 			message.headers >> [
-					foo: 123
+					foo: 123,
+					bar: "bar",
+					contentType: MediaType.APPLICATION_JSON_UTF8,
+					regex: 234
 			]
 			message.payload >> [
 					foo: 123
