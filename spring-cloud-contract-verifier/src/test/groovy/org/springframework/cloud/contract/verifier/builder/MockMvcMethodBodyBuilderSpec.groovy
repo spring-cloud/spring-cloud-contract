@@ -2472,6 +2472,8 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			test.contains('''.cookie("cookie-key", "cookie-value")''')
 			test.contains('''assertThat(response.getCookie("cookie-key")).isNotNull();''')
 			test.contains('''assertThat(response.getCookie("cookie-key")).isEqualTo("new-cookie-value");''')
+		and:
+			SyntaxChecker.tryToCompile("MockMvcJUnitMethodBodyBuilder", blockBuilder.toString())
 	}
 
 	def "should generate JUnit assertions with cookies pattern"() {
@@ -2485,6 +2487,8 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			test.contains('''.cookie("cookie-key", "[A-Za-z]+")''')
 			test.contains('''assertThat(response.getCookie("cookie-key")).isNotNull();''')
 			test.contains('''assertThat(response.getCookie("cookie-key")).matches("[A-Za-z]+");''')
+		and:
+			SyntaxChecker.tryToCompile("MockMvcJUnitMethodBodyBuilder", blockBuilder.toString())
 	}
 
 	def "should generate spock assertions with cookies"() {
@@ -2498,6 +2502,8 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			test.contains('''.cookie("cookie-key", "cookie-value")''')
 			test.contains('''response.cookie('cookie-key') != null''')
 			test.contains('''response.cookie('cookie-key') == 'new-cookie-value''')
+		and:
+			SyntaxChecker.tryToCompile("MockMvcSpockMethodRequestProcessingBodyBuilder", blockBuilder.toString())
 	}
 
 	def "should generate spock assertions with cookies pattern"() {
@@ -2511,6 +2517,8 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			test.contains('''.cookie("cookie-key", "[A-Za-z]+")''')
 			test.contains('''response.cookie('cookie-key') != null''')
 			test.contains('''response.cookie('cookie-key') ==~ java.util.regex.Pattern.compile('[A-Za-z]+')''')
+		and:
+			SyntaxChecker.tryToCompile("MockMvcSpockMethodRequestProcessingBodyBuilder", blockBuilder.toString())
 	}
 
 }

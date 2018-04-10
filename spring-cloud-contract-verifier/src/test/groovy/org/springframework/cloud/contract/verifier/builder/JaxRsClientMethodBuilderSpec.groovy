@@ -1267,6 +1267,8 @@ DATA
 			test.contains('''.cookie("cookie-key", "cookie-value")''')
 			test.contains('''assertThat(response.getCookies().get("cookie-key")).isNotNull();''')
 			test.contains('''assertThat(response.getCookies().get("cookie-key").getValue()).isEqualTo("new-cookie-value");''')
+		and:
+			SyntaxChecker.tryToCompile("JaxRsClientJUnitMethodBodyBuilder", blockBuilder.toString())
 	}
 
 	def "should generate test for cookies with pattern in JAX-RS JUnit test"() {
@@ -1280,6 +1282,8 @@ DATA
 			test.contains('''.cookie("cookie-key", "[A-Za-z]+")''')
 			test.contains('''assertThat(response.getCookies().get("cookie-key")).isNotNull();''')
 			test.contains('''assertThat(response.getCookies().get("cookie-key").getValue()).matches("[A-Za-z]+");''')
+		and:
+			SyntaxChecker.tryToCompile("JaxRsClientJUnitMethodBodyBuilder", blockBuilder.toString())
 	}
 
 	def "should generate test for cookies with string value in JAX-RS Spock test"() {
@@ -1293,6 +1297,8 @@ DATA
 			test.contains('''.cookie('cookie-key', 'cookie-value')''')
 			test.contains('''response.getCookies().get('cookie-key') != null''')
 			test.contains("response.getCookies().get('cookie-key').getValue() == 'new-cookie-value'")
+		and:
+			SyntaxChecker.tryToCompile("JaxRsClientSpockMethodRequestProcessingBodyBuilder", blockBuilder.toString())
 	}
 
 	def "should generate test for cookies with pattern in JAX-RS Spock test"() {
@@ -1306,5 +1312,7 @@ DATA
 			test.contains('''.cookie('cookie-key', '[A-Za-z]+')''')
 			test.contains('''response.getCookies().get('cookie-key') != null''')
 			test.contains('''response.getCookies().get('cookie-key').getValue() ==~ java.util.regex.Pattern.compile('[A-Za-z]+')''')
+		and:
+			SyntaxChecker.tryToCompile("JaxRsClientSpockMethodRequestProcessingBodyBuilder", blockBuilder.toString())
 	}
 }
