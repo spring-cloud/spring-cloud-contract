@@ -32,5 +32,5 @@
                 <baseClassForTests>com.example.MvcTest</baseClassForTests>
             </configuration>
         </plugin>
-    <plugins>
+    </plugins>
 </build>
