@@ -16,17 +16,21 @@
 
 package org.springframework.cloud.contract.stubrunner.messaging.stream;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.BodyMatcher;
 import org.springframework.cloud.contract.spec.internal.BodyMatchers;
 import org.springframework.cloud.contract.spec.internal.Header;
-import org.springframework.cloud.contract.verifier.util.MapConverter;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
 import org.springframework.cloud.contract.verifier.util.JsonPaths;
 import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter;
+import org.springframework.cloud.contract.verifier.util.MapConverter;
 import org.springframework.cloud.contract.verifier.util.MethodBufferingJsonVerifiable;
 import org.springframework.integration.core.MessageSelector;
 import org.springframework.messaging.Message;
@@ -43,6 +47,8 @@ import com.toomuchcoding.jsonassert.JsonAssertion;
  */
 class StubRunnerStreamMessageSelector implements MessageSelector {
 
+	private static final Log log = LogFactory.getLog(StubRunnerStreamMessageSelector.class);
+
 	private final Contract groovyDsl;
 	private final ContractVerifierObjectMapper objectMapper = new ContractVerifierObjectMapper();
 
@@ -52,7 +58,11 @@ class StubRunnerStreamMessageSelector implements MessageSelector {
 
 	@Override
 	public boolean accept(Message<?> message) {
-		if (!headersMatch(message)) {
+		List<String> unmatchedHeaders = headersMatch(message);
+		if (!unmatchedHeaders.isEmpty()) {
+			if (log.isDebugEnabled()) {
+				log.debug("Contract [" + this.groovyDsl + "] hasn't matched the following headers " + unmatchedHeaders);
+			}
 			return false;
 		}
 		Object inputMessage = message.getPayload();
@@ -70,29 +80,37 @@ class StubRunnerStreamMessageSelector implements MessageSelector {
 		catch (JsonProcessingException e) {
 			throw new IllegalStateException("Cannot serialize to JSON", e);
 		}
+		List<String> unmatchedJsonPath = new ArrayList<>();
 		boolean matches = true;
 		for (MethodBufferingJsonVerifiable path : jsonPaths) {
-			matches &= matchesJsonPath(parsedJson, path.jsonPath());
+			matches &= matchesJsonPath(unmatchedJsonPath, parsedJson, path.jsonPath());
 		}
 		if (matchers != null && matchers.hasMatchers()) {
 			for (BodyMatcher matcher : matchers.jsonPathMatchers()) {
 				String jsonPath = JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher, dslBody);
-				matches &= matchesJsonPath(parsedJson, jsonPath);
+				matches &= matchesJsonPath(unmatchedJsonPath, parsedJson, jsonPath);
+			}
+		}
+		if (!unmatchedJsonPath.isEmpty()) {
+			if (log.isDebugEnabled()) {
+				log.debug("Contract [" + this.groovyDsl + "] didn't much the body due to " + unmatchedJsonPath);
 			}
 		}
 		return matches;
 	}
 
-	private boolean matchesJsonPath(DocumentContext parsedJson, String jsonPath) {
+	private boolean matchesJsonPath(List<String> unmatchedJsonPath, DocumentContext parsedJson, String jsonPath) {
 		try {
 			JsonAssertion.assertThat(parsedJson).matchesJsonPath(jsonPath);
 			return true;
 		} catch (Exception e) {
+			unmatchedJsonPath.add(e.getLocalizedMessage());
 			return false;
 		}
 	}
 
-	private boolean headersMatch(Message<?> message) {
+	private List<String> headersMatch(Message<?> message) {
+		List<String> unmatchedHeaders = new ArrayList<>();
 		Map<String, Object> headers = message.getHeaders();
 		for (Header it : this.groovyDsl.getInput().getMessageHeaders().getEntries()) {
 			String name = it.getName();
@@ -103,12 +121,19 @@ class StubRunnerStreamMessageSelector implements MessageSelector {
 				Pattern pattern = (Pattern) value;
 				matches = pattern.matcher(valueInHeader.toString()).matches();
 			} else {
-				matches = valueInHeader!=null && valueInHeader.equals(value);
+				matches = valueInHeader != null && valueInHeader.toString().equals(value.toString());
 			}
 			if (!matches) {
-				return false;
+				unmatchedHeaders.add("Header with name [" + name + "] was supposed to " +
+				unmatchedText(value) + " but the value is [" + (valueInHeader != null ?
+						valueInHeader.toString() : "null") + "]");
 			}
 		}
-		return true;
+		return unmatchedHeaders;
+	}
+
+	private String unmatchedText(Object expectedValue) {
+		return expectedValue instanceof Pattern ? "match pattern [" + ((Pattern) expectedValue).pattern() + "]" :
+				"be equal to [" + expectedValue + "]";
 	}
 }
