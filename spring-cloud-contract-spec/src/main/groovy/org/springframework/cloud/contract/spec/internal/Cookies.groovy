@@ -24,7 +24,7 @@ import groovy.transform.TypeChecked
  * Represents a set of http cookies
  *
  * @author Alex Xandra Albert Sim
- * @since 1.3.8
+ * @since 1.2.5
  */
 @EqualsAndHashCode(includeFields = true)
 @ToString(includePackage = false, includeFields = true, ignoreNulls = true, includeNames = true)
