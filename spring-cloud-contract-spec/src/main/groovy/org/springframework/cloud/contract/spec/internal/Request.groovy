@@ -43,6 +43,7 @@ class Request extends Common {
 	Url url
 	UrlPath urlPath
 	Headers headers
+	Cookies cookies
 	Body body
 	Multipart multipart
 	BodyMatchers matchers
@@ -55,6 +56,7 @@ class Request extends Common {
 		this.url = request.url
 		this.urlPath = request.urlPath
 		this.headers = request.headers
+		this.cookies = request.cookies
 		this.body = request.body
 		this.multipart = request.multipart
 	}
@@ -114,6 +116,12 @@ class Request extends Common {
 	void headers(@DelegatesTo(RequestHeaders) Closure closure) {
 		this.headers = new RequestHeaders()
 		closure.delegate = headers
+		closure()
+	}
+
+	void cookies(@DelegatesTo(RequestCookies) Closure closure) {
+		this.cookies = new RequestCookies()
+		closure.delegate = cookies
 		closure()
 	}
 
@@ -251,6 +259,18 @@ class Request extends Common {
 	@EqualsAndHashCode(includeFields = true)
 	@ToString(includePackage = false)
 	private class RequestHeaders extends Headers {
+
+		@Override
+		DslProperty matching(String value) {
+			return $(c(regex("${RegexpUtils.escapeSpecialRegexWithSingleEscape(value)}.*")),
+					p(value))
+		}
+	}
+
+	@CompileStatic
+	@EqualsAndHashCode(includeFields = true)
+	@ToString(includePackage = false)
+	private class RequestCookies extends Cookies {
 
 		@Override
 		DslProperty matching(String value) {

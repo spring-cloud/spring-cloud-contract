@@ -58,7 +58,33 @@ class YamlContractConverterSpec extends Specification {
 	File ymlMultiple = new File(ymlMultipleFile.toURI())
 	URL ymlMessagingMatchersFile = YamlContractConverterSpec.getResource("/yml/contract_message_matchers.yml")
 	File ymlMessagingMatchers = new File(ymlMessagingMatchersFile.toURI())
+	URL ymlCookiesUrl = YamlContractConverterSpec.getResource("/yml/contract_cookies.yml")
+	File ymlCookies = new File(ymlCookiesUrl.toURI())
 	YamlContractConverter converter = new YamlContractConverter()
+
+	def "should convert YAML with Cookies to DSL"() {
+		given:
+			assert converter.isAccepted(ymlCookies)
+		when:
+			Collection<Contract> contracts = converter.convertFrom(ymlCookies)
+		then:
+			contracts.size() == 1
+			Contract contract = contracts.first()
+			contract.description == "Contract with cookies"
+			contract.name == "cookies-contract"
+			contract.priority == 1
+			contract.ignored == true
+			contract.request.method.clientValue == "PUT"
+			contract.request.url.clientValue == "/foo"
+			contract.request.cookies.entries.find { it.key == "foo" && it.serverValue == "bar" }
+			contract.request.cookies.entries.find { it.key == "fooRegex" && ((Pattern) it.clientValue).pattern == "reg" && it.serverValue == "reg" }
+		and:
+			contract.response.status.clientValue == 200
+			contract.response.cookies.entries.find { it.key == "foo" && it.clientValue == "baz" }
+			contract.response.cookies.entries.find { it.key == "fooRegex" && ((Pattern) it.serverValue).pattern == "[0-9]+" && it.clientValue == 123 }
+			contract.response.cookies.entries.find { it.key == "source" && ((Pattern) it.serverValue).pattern == "ip_address" && it.clientValue == "ip_address" }
+			contract.response.body.clientValue == ["status": "OK"]
+	}
 
 	def "should convert YAML with REST to DSL for [#yamlFile]"() {
 		given:

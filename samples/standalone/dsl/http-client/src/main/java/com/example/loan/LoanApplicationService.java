@@ -86,6 +86,17 @@ public class LoanApplicationService {
 		return response.getBody().getCount();
 	}
 
+	public String getCookies() {
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.add("Cookie", "name=foo");
+		httpHeaders.add("Cookie", "name2=bar");
+		ResponseEntity<String> response =
+				restTemplate.exchange("http://localhost:" + port + "/frauds/name", HttpMethod.GET,
+						new HttpEntity<>(httpHeaders),
+						String.class);
+		return response.getBody();
+	}
+
 	public void setPort(int port) {
 		this.port = port;
 	}

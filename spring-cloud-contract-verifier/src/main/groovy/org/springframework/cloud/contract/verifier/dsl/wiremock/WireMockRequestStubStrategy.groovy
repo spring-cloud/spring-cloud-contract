@@ -23,6 +23,7 @@ import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
 import com.github.tomakehurst.wiremock.matching.StringValuePattern
 import com.github.tomakehurst.wiremock.matching.UrlPattern
 import groovy.json.JsonOutput
+import groovy.transform.CompileDynamic
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
@@ -72,6 +73,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 		RequestPatternBuilder requestPatternBuilder = appendMethodAndUrl()
 		appendHeaders(requestPatternBuilder)
+		appendCookies(requestPatternBuilder)
 		appendQueryParameters(requestPatternBuilder)
 		appendBody(requestPatternBuilder)
 		appendMultipart(requestPatternBuilder)
@@ -145,6 +147,15 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		}
 		request.headers.entries.each {
 			requestPattern.withHeader(it.name, convertToValuePattern(it.clientValue))
+		}
+	}
+
+	private void appendCookies(RequestPatternBuilder requestPattern) {
+		if(!request.cookies) {
+			return
+		}
+		request.cookies.entries.each {
+			requestPattern.withCookie(it.key, convertToValuePattern(it.clientValue))
 		}
 	}
 
@@ -293,6 +304,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		return containsPattern(map.entrySet())
 	}
 
+	@CompileDynamic
 	private boolean containsPattern(Collection collection) {
 		return collection.collect(this.&containsPattern).inject('') { a, b -> a || b }
 	}

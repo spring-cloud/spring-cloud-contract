@@ -22,6 +22,7 @@ import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.BodyMatchers
+import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
@@ -100,6 +101,14 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 			}
 			bb.addLine(getHeaderString(header))
 		}
+
+		request.cookies?.executeForEachCookie { Cookie cookie ->
+			if (cookieOfAbsentType(cookie)) {
+				return
+			}
+			bb.addLine(getCookieString(cookie))
+		}
+
 		if (request.body) {
 			Object body = request.body?.serverValue instanceof ExecutionProperty ?
 					request.body?.serverValue : bodyAsString
@@ -113,6 +122,11 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	protected boolean headerOfAbsentType(Header header) {
 		return header.serverValue instanceof MatchingStrategy &&
 				((MatchingStrategy) header.serverValue).type == MatchingStrategy.Type.ABSENT
+	}
+
+	protected boolean cookieOfAbsentType(Cookie cookie) {
+		return cookie.serverValue instanceof MatchingStrategy &&
+				((MatchingStrategy) cookie.serverValue).type == MatchingStrategy.Type.ABSENT
 	}
 
 	@Override
@@ -168,6 +182,9 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 		if (response.headers) {
 			validateResponseHeadersBlock(bb)
 		}
+		if (response.cookies) {
+			validateResponseCookiesBlock(bb)
+		}
 		if (response.body) {
 			bb.endBlock()
 			bb.addLine(addCommentSignIfRequired('and:')).startBlock()
@@ -186,6 +203,12 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, GString value) {
 		String gstringValue = ContentUtils.extractValueForGString(value, ContentUtils.GET_TEST_SIDE).toString()
 		processHeaderElement(blockBuilder, property, gstringValue)
+	}
+
+	@Override
+	protected void processCookieElement(BlockBuilder blockBuilder, String key, GString value) {
+		String gStringValue = ContentUtils.extractValueForGString(value, ContentUtils.GET_TEST_SIDE).toString()
+		processCookieElement(blockBuilder, key, gStringValue)
 	}
 
 	@Override

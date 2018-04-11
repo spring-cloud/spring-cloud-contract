@@ -34,6 +34,7 @@ class OutputMessage extends Common {
 
 	DslProperty<String> sentTo
 	Headers headers
+	Cookies cookies
 	DslProperty body
 	ExecutionProperty assertThat
 	ResponseBodyMatchers matchers
@@ -43,6 +44,7 @@ class OutputMessage extends Common {
 	OutputMessage(OutputMessage outputMessage) {
 		this.sentTo = outputMessage.sentTo
 		this.headers = outputMessage.headers
+		this.cookies = outputMessage.cookies
 		this.body = outputMessage.body
 	}
 
@@ -65,6 +67,12 @@ class OutputMessage extends Common {
 	void headers(@DelegatesTo(Headers) Closure closure) {
 		this.headers = new Headers()
 		closure.delegate = headers
+		closure()
+	}
+
+	void cookies(@DelegatesTo(Cookies) Closure closure) {
+		this.cookies = new Cookies()
+		closure.delegate = cookies
 		closure()
 	}
 

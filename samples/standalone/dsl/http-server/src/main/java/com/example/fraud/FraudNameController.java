@@ -1,5 +1,7 @@
 package com.example.fraud;
 
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +25,12 @@ class FraudNameController {
 			return new NameResponse("Sorry " + request.getName() + " but you're a fraud");
 		}
 		return new NameResponse("Don't worry " + request.getName() + " you're not a fraud");
+	}
+
+	@GetMapping(value = "/frauds/name")
+	public String checkByName(@CookieValue("name") String value,
+			@CookieValue("name2") String value2) {
+		return value + " " + value2;
 	}
 }
 

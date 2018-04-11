@@ -1750,6 +1750,9 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					header(authorization(), "secret")
 					header(authorization(), "secret2")
 				}
+				cookies {
+					cookie("foo", "bar")
+				}
 				body(foo: "bar", baz: 5)
 			}
 			response {
@@ -1783,6 +1786,11 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						"headers" : {
 						  "Authorization" : {
 							"equalTo" : "secret2"
+						  }
+						},
+						"cookies" : {
+						  "foo" : {
+							"equalTo" : "bar"
 						  }
 						},
 						"queryParameters" : {
@@ -2017,6 +2025,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				RequestEntity.post(URI.create("http://localhost:" + port + "/api/v1/xxxx?foo=bar&foo=bar2"))
 						.header("Authorization", "secret")
 						.header("Authorization", "secret2")
+						.header("Cookie", "foo=bar")
 						.body("{\"foo\":\"bar\",\"baz\":5}"), String.class)
 	}
 }
