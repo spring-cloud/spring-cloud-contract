@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.builder
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
@@ -62,6 +63,7 @@ class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequ
 		appendUrlPathAndQueryParameters(bb)
 		appendRequestWithRequiredResponseContentType(bb)
 		appendHeaders(bb)
+		appendCookies(bb)
 		appendMethodAndBody(bb)
 
 		bb.unindent()
@@ -128,6 +130,16 @@ class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequ
 		}
 	}
 
+	protected appendCookies(BlockBuilder bb) {
+		request.cookies?.executeForEachCookie { Cookie cookie ->
+			if (cookieOfAbsentType(cookie)) {
+				return
+			}
+
+			bb.addLine(".cookie('${cookie.key}', '${cookie.serverValue}')")
+		}
+	}
+
 	protected String getHeader(String name) {
 		return request.headers?.entries?.find { it.name == name }?.serverValue
 	}
@@ -143,6 +155,15 @@ class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequ
 			processHeaderElement(bb, header.name, header.serverValue instanceof NotToEscapePattern ?
 					header.serverValue :
 					MapConverter.getTestSideValues(header.serverValue))
+		}
+	}
+
+	@Override
+	protected void validateResponseCookiesBlock(BlockBuilder bb) {
+		response.cookies?.executeForEachCookie { Cookie cookie ->
+			processCookieElement(bb, cookie.key, cookie.serverValue instanceof NotToEscapePattern ?
+					cookie.serverValue :
+					MapConverter.getTestSideValues(cookie.serverValue))
 		}
 	}
 
@@ -179,6 +200,18 @@ class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequ
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Pattern value) {
 		blockBuilder.addLine("response.getHeaderString('$property') ${convertHeaderComparison(value)}")
+	}
+
+	@Override
+	protected void processCookieElement(BlockBuilder blockBuilder, String key, Pattern pattern) {
+		blockBuilder.addLine("response.getCookies().get('$key') != null")
+		blockBuilder.addLine("response.getCookies().get('$key').getValue() ${convertCookieComparison(pattern)}")
+	}
+
+	@Override
+	protected void processCookieElement(BlockBuilder blockBuilder, String key, String value) {
+		blockBuilder.addLine("response.getCookies().get('$key') != null")
+		blockBuilder.addLine("response.getCookies().get('$key').getValue() ${convertCookieComparison(value)}")
 	}
 
 	@Override

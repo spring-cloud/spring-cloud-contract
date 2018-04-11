@@ -27,6 +27,11 @@ request:
     foo: bar
     fooReq: baz
 #end::headers[]
+#tag::cookies[]
+  cookies:
+    foo: bar
+    fooReq: baz
+#end::cookies[]
 #tag::body[]
   body:
     foo: bar
@@ -71,3 +76,8 @@ response:
         regex: bar
       - key: foo3
         command: andMeToo($it)
+    cookies:
+      - key: foo2
+        regex: bar
+      - key: foo3
+        predefined:

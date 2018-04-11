@@ -20,6 +20,7 @@ import groovy.json.StringEscapeUtils
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.Input
@@ -114,6 +115,19 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	}
 
 	@Override
+	protected void processCookieElement(BlockBuilder blockBuilder, String key, String value) {
+	}
+
+	@Override
+	protected void processCookieElement(BlockBuilder blockBuilder, String key, GString value) {
+
+	}
+
+	@Override
+	protected void processCookieElement(BlockBuilder blockBuilder, String key, Pattern pattern) {
+	}
+
+	@Override
 	protected void validateResponseCodeBlock(BlockBuilder bb) {
 
 	}
@@ -127,6 +141,10 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 					header.serverValue :
 					MapConverter.getTestSideValues(header.serverValue))
 		}
+	}
+
+	@Override
+	protected void validateResponseCookiesBlock(BlockBuilder bb) {
 	}
 
 	private String sentToValue(Object sentTo) {
@@ -190,6 +208,11 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	@Override
 	protected String getHeaderString(Header header) {
 		return ".header(${getTestSideValue(header.name)}, ${getTestSideValue(header.serverValue)})"
+	}
+
+	@Override
+	protected String getCookieString(Cookie cookie) {
+		return ""
 	}
 
 	@Override

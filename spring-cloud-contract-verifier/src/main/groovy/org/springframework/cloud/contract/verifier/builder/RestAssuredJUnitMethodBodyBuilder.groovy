@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.builder
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
@@ -52,6 +53,15 @@ class RestAssuredJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 			processHeaderElement(bb, header.name, header.serverValue instanceof NotToEscapePattern ?
 					header.serverValue :
 					MapConverter.getTestSideValues(header.serverValue))
+		}
+	}
+
+	@Override
+	protected void validateResponseCookiesBlock(BlockBuilder bb) {
+		response.cookies?.executeForEachCookie { Cookie cookie ->
+			processCookieElement(bb, cookie.key, cookie.serverValue instanceof NotToEscapePattern ?
+					cookie.serverValue :
+					MapConverter.getTestSideValues(cookie.serverValue))
 		}
 	}
 
@@ -96,4 +106,15 @@ class RestAssuredJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 		blockBuilder.addLine("${exec.insertValue("response.header(\"$property\")")};")
 	}
 
+	@Override
+	protected void processCookieElement(BlockBuilder blockBuilder, String key, Pattern pattern) {
+		blockBuilder.addLine("assertThat(response.getCookie(\"$key\")).isNotNull();")
+		blockBuilder.addLine("assertThat(response.getCookie(\"$key\")).${createCookieComparison(pattern)}")
+	}
+
+	@Override
+	protected void processCookieElement(BlockBuilder blockBuilder, String key, String value) {
+		blockBuilder.addLine("assertThat(response.getCookie(\"$key\")).isNotNull();")
+		blockBuilder.addLine("assertThat(response.getCookie(\"$key\")).${createCookieComparison(value)}")
+	}
 }

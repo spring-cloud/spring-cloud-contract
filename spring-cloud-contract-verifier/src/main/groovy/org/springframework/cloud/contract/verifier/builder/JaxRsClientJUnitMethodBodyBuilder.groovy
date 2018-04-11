@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.builder
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
@@ -65,6 +66,7 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 		appendUrlPathAndQueryParameters(bb)
 		appendRequestWithRequiredResponseContentType(bb)
 		appendHeaders(bb)
+		appendCookies(bb)
 		appendMethodAndBody(bb)
 		bb.addAtTheEnd(JUNIT.lineSuffix)
 
@@ -123,6 +125,16 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 		}
 	}
 
+	protected appendCookies(BlockBuilder bb) {
+		request.cookies?.executeForEachCookie { Cookie cookie ->
+			if (cookieOfAbsentType(cookie)) {
+				return
+			}
+
+			bb.addLine(".cookie(\"${cookie.key}\", \"${cookie.serverValue}\")")
+		}
+	}
+
 	protected void appendRequestWithRequiredResponseContentType(BlockBuilder bb) {
 		String acceptHeader = getHeader("Accept")
 		if (acceptHeader) {
@@ -143,6 +155,15 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 			processHeaderElement(bb, header.name, header.serverValue instanceof NotToEscapePattern ?
 					header.serverValue :
 					MapConverter.getTestSideValues(header.serverValue))
+		}
+	}
+
+	@Override
+	protected void validateResponseCookiesBlock(BlockBuilder bb) {
+		response.cookies?.executeForEachCookie { Cookie cookie ->
+			processCookieElement(bb, cookie.key, cookie.serverValue instanceof NotToEscapePattern ?
+					cookie.serverValue :
+					MapConverter.getTestSideValues(cookie.serverValue))
 		}
 	}
 
@@ -183,6 +204,18 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
 		blockBuilder.addLine("${exec.insertValue("response.getHeaderString(\"$property\")")};")
+	}
+
+	@Override
+	protected void processCookieElement(BlockBuilder blockBuilder, String key, Pattern pattern) {
+		blockBuilder.addLine("assertThat(response.getCookies().get(\"$key\")).isNotNull();")
+		blockBuilder.addLine("assertThat(response.getCookies().get(\"$key\").getValue()).${createCookieComparison(pattern)}")
+	}
+
+	@Override
+	protected void processCookieElement(BlockBuilder blockBuilder, String key, String value) {
+		blockBuilder.addLine("assertThat(response.getCookies().get(\"$key\")).isNotNull();")
+		blockBuilder.addLine("assertThat(response.getCookies().get(\"$key\").getValue()).${createCookieComparison(value)}")
 	}
 
 }

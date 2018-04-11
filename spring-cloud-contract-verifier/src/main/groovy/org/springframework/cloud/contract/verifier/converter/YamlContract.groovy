@@ -44,6 +44,7 @@ class YamlContract {
 		public String urlPath
 		public Map<String, Object> queryParameters = [:]
 		public Map<String, Object> headers = [:]
+		public Map<String, Object> cookies = [:]
 		public Object body
 		public String bodyFromFile
 		public StubMatchers matchers = new StubMatchers()
@@ -67,6 +68,7 @@ class YamlContract {
 	static class StubMatchers {
 		public List<BodyStubMatcher> body = []
 		public List<KeyValueMatcher> headers = []
+		public List<KeyValueMatcher> cookies = []
 		public MultipartStubMatcher multipart
 	}
 
@@ -123,6 +125,14 @@ class YamlContract {
 	}
 
 	@CompileStatic
+	static class TestCookieMatcher {
+		public String key
+		public String regex
+		public String command
+		public PredefinedRegex predefined
+	}
+
+	@CompileStatic
 	static enum PredefinedRegex {
 		only_alpha_unicode, number, any_double, any_boolean, ip_address, hostname,
 		email, url, uuid, iso_date, iso_date_time, iso_time,
@@ -143,6 +153,7 @@ class YamlContract {
 	static class Response {
 		public int status
 		public Map<String, Object> headers = [:]
+		public Map<String, Object> cookies = [:]
 		public Object body
 		public String bodyFromFile
 		public TestMatchers matchers = new TestMatchers()
@@ -153,6 +164,7 @@ class YamlContract {
 	static class TestMatchers {
 		public List<BodyTestMatcher> body = []
 		public List<TestHeaderMatcher> headers = []
+		public List<TestCookieMatcher> cookies = []
 	}
 
 	@CompileStatic

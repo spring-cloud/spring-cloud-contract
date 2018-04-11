@@ -73,4 +73,12 @@ public class LoanApplicationServiceTests {
 		assertThat(count).isEqualTo(100);
 	}
 
+	@Test
+	public void shouldSuccessfullyGetCookies() {
+		// when:
+		String cookies = service.getCookies();
+		// then:
+		assertThat(cookies).isEqualTo("foo bar");
+	}
+
 }

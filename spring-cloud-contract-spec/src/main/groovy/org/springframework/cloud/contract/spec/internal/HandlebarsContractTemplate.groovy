@@ -59,6 +59,11 @@ class HandlebarsContractTemplate implements ContractTemplate {
 	}
 
 	@Override
+	String cookie(String key) {
+		return wrapped("request.cookies.${key}")
+	}
+
+	@Override
 	String body() {
 		return wrapped("request.body")
 	}

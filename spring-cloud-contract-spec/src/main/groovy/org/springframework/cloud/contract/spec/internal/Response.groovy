@@ -46,6 +46,7 @@ class Response extends Common {
 	DslProperty status
 	DslProperty delay
 	Headers headers
+	Cookies cookies
 	Body body
 	boolean async
 	ResponseBodyMatchers bodyMatchers
@@ -56,6 +57,7 @@ class Response extends Common {
 	Response(Response response) {
 		this.status = response.status
 		this.headers = response.headers
+		this.cookies = response.cookies
 		this.body = response.body
 	}
 
@@ -70,6 +72,12 @@ class Response extends Common {
 	void headers(@DelegatesTo(ResponseHeaders) Closure closure) {
 		this.headers = new ResponseHeaders()
 		closure.delegate = headers
+		closure()
+	}
+
+	void cookies(@DelegatesTo(ResponseCookies) Closure closure) {
+		this.cookies = new ResponseCookies()
+		closure.delegate = cookies
 		closure()
 	}
 
@@ -181,6 +189,17 @@ class Response extends Common {
 		DslProperty matching(String value) {
 			return $(p(notEscaped(Pattern.compile("${RegexpUtils.escapeSpecialRegexWithSingleEscape(value)}.*"))),
 					c(value))
+		}
+	}
+
+	@CompileStatic
+	@EqualsAndHashCode(includeFields = true)
+	@ToString(includePackage = false)
+	private class ResponseCookies extends Cookies {
+
+		@Override
+		DslProperty matching(String value) {
+			return $(p(regex("${RegexpUtils.escapeSpecialRegexWithSingleEscape(value)}.*")), c(value))
 		}
 	}
 

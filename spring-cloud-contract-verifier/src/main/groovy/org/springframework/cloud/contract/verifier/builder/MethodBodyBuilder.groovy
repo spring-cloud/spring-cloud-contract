@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+import org.springframework.cloud.contract.spec.internal.Cookie
+
 import java.util.regex.Pattern
 
 import com.jayway.jsonpath.DocumentContext
@@ -101,6 +103,11 @@ abstract class MethodBodyBuilder {
 	protected abstract void validateResponseHeadersBlock(BlockBuilder bb)
 
 	/**
+	 * Builds the response cookies validation code block
+	 */
+	protected abstract void validateResponseCookiesBlock(BlockBuilder bb)
+
+	/**
 	 * Builds the code that returns response in the string format
 	 */
 	protected abstract String getResponseAsString()
@@ -175,6 +182,21 @@ abstract class MethodBodyBuilder {
 	protected abstract void processHeaderElement(BlockBuilder blockBuilder, String property, Number value)
 
 	/**
+	 * Appends to the {@link BlockBuilder} the assertion for the given cookie path
+	 */
+	protected abstract void processCookieElement(BlockBuilder blockBuilder, String key, Pattern pattern)
+
+	/**
+	 * Appends to the {@link BlockBuilder} the assertion for the given cookie path
+	 */
+	protected abstract void processCookieElement(BlockBuilder blockBuilder, String key, String value)
+
+	/**
+	 * Appends to the {@link BlockBuilder} the assertion for the given cookie path
+	 */
+	protected abstract void processCookieElement(BlockBuilder blockBuilder, String key, GString value)
+
+	/**
 	 * Appends to the {@link BlockBuilder} the code to retrieve a value for a property
 	 * from the list with the given index
 	 */
@@ -202,6 +224,11 @@ abstract class MethodBodyBuilder {
 	 * Builds the code to append a header to the request / message
 	 */
 	protected abstract String getHeaderString(Header header)
+
+	/**
+	 * Builds the code to append a cookie to the request / message
+	 */
+	protected abstract String getCookieString(Cookie cookie)
 
 	/**
 	 * Builds the code to append body to the request / message
@@ -609,6 +636,12 @@ abstract class MethodBodyBuilder {
 	 * Appends to the {@link BlockBuilder} the assertion for the given header path
 	 */
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, Object value) {
+	}
+
+	/**
+	 * Appends to the {@link BlockBuilder} the assertion for the given cookie
+	 */
+	protected void processCookieElement(BlockBuilder blockBuilder, String key, Object value) {
 	}
 
 	/**

@@ -153,6 +153,28 @@ class ContractHttpDocsSpec extends Specification {
 		}
 		// end::headers[]
 
+	org.springframework.cloud.contract.spec.Contract cookies  =
+		// tag::cookies[]
+		org.springframework.cloud.contract.spec.Contract.make {
+			request {
+				//...
+
+				// Each Cookies is added in form `'Cookie-Key' : 'Cookie-Value'`.
+				// there are also some helper methods
+				cookies {
+					cookie 'key': 'value'
+					cookie('another_key', 'another_value')
+				}
+
+				//...
+			}
+
+			response {
+				//...
+			}
+		}
+		// end::cookies[]
+
 	org.springframework.cloud.contract.spec.Contract body  =
 		// tag::body[]
 		org.springframework.cloud.contract.spec.Contract.make {

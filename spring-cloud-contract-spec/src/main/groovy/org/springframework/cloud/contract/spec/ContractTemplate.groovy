@@ -65,6 +65,12 @@ interface ContractTemplate {
 	String header(String key, int index)
 
 	/**
+	 * Retruns the tempalte for retrieving the first value of a cookie with certain key
+	 * @param key
+	 */
+	String cookie(String key)
+
+	/**
 	 * Request body text (avoid for non-text bodies) e.g. {{{ request.body }}} . The body will not be escaped
 	 * so you won't be able to directly embed it in a JSON for example.
 	 */

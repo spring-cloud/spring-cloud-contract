@@ -24,6 +24,11 @@ response:
     fooRes: baz
   body:
     foo2: bar
+  cookies:
+    foo: baz
+    fooRegex: 123
+    source: ip_address
+    fooPredefinedRegex: true
   matchers:
     body:
       - path: $.foo2
@@ -32,3 +37,10 @@ response:
     headers:
       - key: foo2
         regex: bar
+    cookies:
+      - key: fooRegex
+        regex: "[0-9]+"
+      - key: source
+        regex: ip_address
+      - key: fooPredefinedRegex
+        predefined: any_boolean

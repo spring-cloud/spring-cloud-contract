@@ -26,6 +26,7 @@ import org.yaml.snakeyaml.Yaml
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
 import org.springframework.cloud.contract.spec.internal.BodyMatcher
+import org.springframework.cloud.contract.spec.internal.Cookies
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Headers
@@ -45,6 +46,7 @@ import org.springframework.cloud.contract.verifier.converter.YamlContract.KeyVal
 import org.springframework.cloud.contract.verifier.converter.YamlContract.StubMatcherType
 import org.springframework.cloud.contract.verifier.converter.YamlContract.StubMatchers
 import org.springframework.cloud.contract.verifier.converter.YamlContract.TestHeaderMatcher
+import org.springframework.cloud.contract.verifier.converter.YamlContract.TestCookieMatcher
 import org.springframework.cloud.contract.verifier.converter.YamlContract.TestMatcherType
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
@@ -133,6 +135,16 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 									}
 								}
 							}
+							if (yamlContract.request?.cookies) {
+								cookies {
+									yamlContract.request?.cookies?.each { String key, Object value ->
+										KeyValueMatcher matcher = yamlContract.request.matchers.cookies.find { it.key == key }
+										Object clientValue = clientValue(value, matcher, key)
+
+										cookie(key, new DslProperty(clientValue, value))
+									}
+								}
+							}
 							if (yamlContract.request.body) body(yamlContract.request.body)
 							if (yamlContract.request.bodyFromFile) body(file(yamlContract.request.bodyFromFile))
 							if (yamlContract.request.multipart) {
@@ -209,6 +221,16 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 									} else {
 										Object serverValue = serverValue(value, matcher, key)
 										header(key, new DslProperty(value, serverValue))
+									}
+								}
+							}
+							if (yamlContract.response?.cookies) {
+								cookies {
+									yamlContract.response?.cookies?.each { String key, Object value ->
+										TestCookieMatcher matcher = yamlContract.response.matchers.cookies.find { it.key == key }
+										Object serverValue = serverCookieValue(value, matcher, key)
+
+										cookie(key, new DslProperty(value, serverValue))
 									}
 								}
 							}
@@ -392,6 +414,20 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 		return serverValue
 	}
 
+	protected Object serverCookieValue(Object value, TestCookieMatcher matcher, String key) {
+		Object serverValue = value
+		if (matcher?.regex) {
+			serverValue = Pattern.compile(matcher.regex)
+			Pattern pattern = (Pattern) serverValue
+			assertPatternMatched(pattern, value, key)
+		} else if (matcher?.predefined) {
+			Pattern pattern = predefinedToPattern(matcher.predefined)
+			serverValue = pattern
+			assertPatternMatched(pattern, value, key)
+		}
+		return serverValue
+	}
+
 	protected Object clientValue(Object value, KeyValueMatcher matcher, String key) {
 		Object clientValue = value
 		if (matcher?.regex) {
@@ -473,6 +509,7 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 					method = contract?.request?.method?.clientValue
 					url = contract?.request?.url?.clientValue
 					headers = (contract?.request?.headers as Headers)?.asTestSideMap()
+					cookies = (contract?.request?.cookies as Cookies)?.asTestSideMap()
 					body = MapConverter.getTestSideValues(contract?.request?.body)
 					matchers = new StubMatchers()
 					contract?.request?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
@@ -487,6 +524,7 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 				yamlContract.response.with {
 					status = contract?.response?.status?.clientValue as Integer
 					headers = (contract?.response?.headers as Headers)?.asStubSideMap()
+					cookies = (contract?.response?.cookies as Cookies)?.asStubSideMap()
 					body = MapConverter.getStubSideValues(contract?.response?.body)
 					contract?.response?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
 						matchers.body << new BodyTestMatcher(

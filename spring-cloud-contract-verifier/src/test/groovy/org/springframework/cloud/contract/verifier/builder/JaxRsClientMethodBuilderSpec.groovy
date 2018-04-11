@@ -34,6 +34,71 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 
 	@Shared ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(assertJsonSize: true)
 
+	@Shared
+	// tag::contract_with_cookies[]
+	Contract contractDslWithCookiesValue = Contract.make {
+		request {
+			method "GET"
+			url "/foo"
+			headers {
+				header 'Accept': 'application/json'
+			}
+			cookies {
+				cookie 'cookie-key': 'cookie-value'
+			}
+		}
+		response {
+			status 200
+			headers {
+				header 'Content-Type': 'application/json'
+			}
+			cookies {
+				cookie 'cookie-key': 'new-cookie-value'
+			}
+			body([status: 'OK'])
+		}
+	}
+	// end::contract_with_cookies[]
+
+	@Shared
+	Contract contractDslWithCookiesPattern = Contract.make {
+		request {
+			method "GET"
+			url "/foo"
+			headers {
+				header 'Accept': 'application/json'
+			}
+			cookies {
+				cookie 'cookie-key': regex('[A-Za-z]+')
+			}
+		}
+		response {
+			status 200
+			headers {
+				header 'Content-Type': 'application/json'
+			}
+			cookies {
+				cookie 'cookie-key': regex('[A-Za-z]+')
+			}
+			body([status: 'OK'])
+		}
+	}
+
+	@Shared
+	Contract contractDslWithAbsentCookies = Contract.make {
+		request {
+			method "GET"
+			url "/foo"
+			cookies {
+				cookie 'cookie-key': absent()
+			}
+		}
+		response {
+			status 200
+			body([status: 'OK'])
+		}
+	}
+
 	def "should generate assertions for simple response body with #methodBuilderName"() {
 		given:
 			Contract contractDsl = Contract.make {
@@ -1213,5 +1278,91 @@ DATA
 		where:
 			methodBuilderName                                    | methodBuilder
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
+	def "should generate test for cookies with string value in JAX-RS JUnit test"() {
+		given:
+			MethodBodyBuilder builder = new JaxRsClientJUnitMethodBodyBuilder(contractDslWithCookiesValue, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('''.cookie("cookie-key", "cookie-value")''')
+			test.contains('''assertThat(response.getCookies().get("cookie-key")).isNotNull();''')
+			test.contains('''assertThat(response.getCookies().get("cookie-key").getValue()).isEqualTo("new-cookie-value");''')
+		and:
+			SyntaxChecker.tryToCompile("JaxRsClientJUnitMethodBodyBuilder", blockBuilder.toString())
+	}
+
+	def "should generate test for cookies with pattern in JAX-RS JUnit test"() {
+		given:
+			MethodBodyBuilder builder = new JaxRsClientJUnitMethodBodyBuilder(contractDslWithCookiesPattern, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('''.cookie("cookie-key", "[A-Za-z]+")''')
+			test.contains('''assertThat(response.getCookies().get("cookie-key")).isNotNull();''')
+			test.contains('''assertThat(response.getCookies().get("cookie-key").getValue()).matches("[A-Za-z]+");''')
+		and:
+			SyntaxChecker.tryToCompile("JaxRsClientJUnitMethodBodyBuilder", blockBuilder.toString())
+	}
+
+	def "should not generate cookie assertions with absent value in JAX-RS JUnit test"() {
+		given:
+			MethodBodyBuilder builder = new JaxRsClientJUnitMethodBodyBuilder(contractDslWithAbsentCookies, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			!test.contains("cookie")
+		and:
+			SyntaxChecker.tryToCompile("JaxRsClientJunitMethodBodyBuilder", blockBuilder.toString())
+	}
+
+	def "should generate test for cookies with string value in JAX-RS Spock test"() {
+		given:
+			MethodBodyBuilder builder = new JaxRsClientSpockMethodRequestProcessingBodyBuilder(contractDslWithCookiesValue, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('''.cookie('cookie-key', 'cookie-value')''')
+			test.contains('''response.getCookies().get('cookie-key') != null''')
+			test.contains("response.getCookies().get('cookie-key').getValue() == 'new-cookie-value'")
+		and:
+			SyntaxChecker.tryToCompile("JaxRsClientSpockMethodRequestProcessingBodyBuilder", blockBuilder.toString())
+	}
+
+	def "should generate test for cookies with pattern in JAX-RS Spock test"() {
+		given:
+			MethodBodyBuilder builder = new JaxRsClientSpockMethodRequestProcessingBodyBuilder(contractDslWithCookiesPattern, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('''.cookie('cookie-key', '[A-Za-z]+')''')
+			test.contains('''response.getCookies().get('cookie-key') != null''')
+			test.contains('''response.getCookies().get('cookie-key').getValue() ==~ java.util.regex.Pattern.compile('[A-Za-z]+')''')
+		and:
+			SyntaxChecker.tryToCompile("JaxRsClientSpockMethodRequestProcessingBodyBuilder", blockBuilder.toString())
+	}
+
+	def "should not generate cookie assertions with absent value in JAX-RS Spock test"() {
+		given:
+			MethodBodyBuilder builder = new JaxRsClientSpockMethodRequestProcessingBodyBuilder(contractDslWithAbsentCookies, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			!test.contains("cookie")
+		and:
+			SyntaxChecker.tryToCompile("JaxRsClientSpockMethodRequestProcessingBodyBuilder", blockBuilder.toString())
 	}
 }

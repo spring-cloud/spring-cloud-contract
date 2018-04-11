@@ -20,6 +20,7 @@ import groovy.json.StringEscapeUtils
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.NamedProperty
@@ -148,6 +149,11 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 	}
 
 	@Override
+	protected String getCookieString(Cookie cookie) {
+		return ".cookie(${getTestSideValue(cookie.key)}, ${getTestSideValue(cookie.serverValue)})"
+	}
+
+	@Override
 	protected String getBodyString(Object body) {
 		String value
 		if (body instanceof ExecutionProperty) {
@@ -175,6 +181,15 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 
 	protected String createHeaderComparison(Pattern headerValue) {
 		return buildEscapedMatchesMethod(headerValue) + ";"
+	}
+
+	protected String createCookieComparison(Object cookieValue) {
+        String escapedCookie = convertUnicodeEscapesIfRequired("$cookieValue")
+		return "isEqualTo(\"$escapedCookie\");"
+	}
+
+	protected String createCookieComparison(Pattern cookieValue) {
+		return buildEscapedMatchesMethod(cookieValue) + ";"
 	}
 
 	private String buildEscapedMatchesMethod(Pattern escapedValue) {

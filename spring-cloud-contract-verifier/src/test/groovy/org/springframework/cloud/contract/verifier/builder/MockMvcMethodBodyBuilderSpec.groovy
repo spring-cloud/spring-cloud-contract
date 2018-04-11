@@ -43,6 +43,69 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 	)
 
 	@Shared
+	Contract contractDslWithCookiesValue = Contract.make {
+		request {
+			method "GET"
+			url "/foo"
+			headers {
+				header 'Accept': 'application/json'
+			}
+			cookies {
+				cookie 'cookie-key': 'cookie-value'
+			}
+		}
+		response {
+			status 200
+			headers {
+				header 'Content-Type': 'application/json'
+			}
+			cookies {
+				cookie 'cookie-key': 'new-cookie-value'
+			}
+			body([status: 'OK'])
+		}
+	}
+
+	@Shared
+	Contract contractDslWithCookiesPattern = Contract.make {
+		request {
+			method "GET"
+			url "/foo"
+			headers {
+				header 'Accept': 'application/json'
+			}
+			cookies {
+				cookie 'cookie-key': regex('[A-Za-z]+')
+			}
+		}
+		response {
+			status 200
+			headers {
+				header 'Content-Type': 'application/json'
+			}
+			cookies {
+				cookie 'cookie-key': regex('[A-Za-z]+')
+			}
+			body([status: 'OK'])
+		}
+	}
+
+    @Shared
+    Contract contractDslWithAbsentCookies = Contract.make {
+        request {
+            method "GET"
+            url "/foo"
+            cookies {
+                cookie 'cookie-key': absent()
+            }
+        }
+        response {
+            status 200
+            body([status: 'OK'])
+        }
+    }
+
+	@Shared
 	// tag::contract_with_regex[]
 	Contract dslWithOptionalsInString = Contract.make {
 		priority 1
@@ -2512,4 +2575,91 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String body -> body.contains("response.getHeaderString('Authorization')  == 'foo secret bar'") }
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String body -> body.contains('assertThat(response.getHeaderString("Authorization")).isEqualTo("foo secret bar");') }
 	}
+
+	def "should generate JUnit assertions with cookies"() {
+		given:
+			MethodBodyBuilder builder = new MockMvcJUnitMethodBodyBuilder(contractDslWithCookiesValue, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('''.cookie("cookie-key", "cookie-value")''')
+			test.contains('''assertThat(response.getCookie("cookie-key")).isNotNull();''')
+			test.contains('''assertThat(response.getCookie("cookie-key")).isEqualTo("new-cookie-value");''')
+		and:
+			SyntaxChecker.tryToCompile("MockMvcJUnitMethodBodyBuilder", blockBuilder.toString())
+	}
+
+	def "should generate JUnit assertions with cookies pattern"() {
+		given:
+			MethodBodyBuilder builder = new MockMvcJUnitMethodBodyBuilder(contractDslWithCookiesPattern, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('''.cookie("cookie-key", "[A-Za-z]+")''')
+			test.contains('''assertThat(response.getCookie("cookie-key")).isNotNull();''')
+			test.contains('''assertThat(response.getCookie("cookie-key")).matches("[A-Za-z]+");''')
+		and:
+			SyntaxChecker.tryToCompile("MockMvcJUnitMethodBodyBuilder", blockBuilder.toString())
+	}
+
+	def "should not generate JUnit cookie assertion with absent cookie"() {
+		given:
+			MethodBodyBuilder builder = new MockMvcJUnitMethodBodyBuilder(contractDslWithAbsentCookies, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			!test.contains("cookie")
+		and:
+			SyntaxChecker.tryToCompile("MockMvcJUnitMethodBodyBuilder", blockBuilder.toString())
+	}
+
+	def "should generate spock assertions with cookies"() {
+		given:
+			MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDslWithCookiesValue, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('''.cookie("cookie-key", "cookie-value")''')
+			test.contains('''response.cookie('cookie-key') != null''')
+			test.contains('''response.cookie('cookie-key') == 'new-cookie-value''')
+		and:
+			SyntaxChecker.tryToCompile("MockMvcSpockMethodRequestProcessingBodyBuilder", blockBuilder.toString())
+	}
+
+	def "should generate spock assertions with cookies pattern"() {
+		given:
+			MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDslWithCookiesPattern, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			test.contains('''.cookie("cookie-key", "[A-Za-z]+")''')
+			test.contains('''response.cookie('cookie-key') != null''')
+			test.contains('''response.cookie('cookie-key') ==~ java.util.regex.Pattern.compile('[A-Za-z]+')''')
+		and:
+			SyntaxChecker.tryToCompile("MockMvcSpockMethodRequestProcessingBodyBuilder", blockBuilder.toString())
+	}
+
+	def "should not generate spock cookie assertion with absent cookie"() {
+		given:
+			MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDslWithAbsentCookies, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			!test.contains("cookie")
+		and:
+			SyntaxChecker.tryToCompile("MockMvcSpockMethodRequestProcessingBodyBuilder", blockBuilder.toString())
+	}
+
 }
