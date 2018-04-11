@@ -14,6 +14,7 @@
 		<maven>3.2.5</maven>
 	</prerequisites>
 
+	<groupId>com.gdn.custom</groupId>
 	<artifactId>spring-cloud-contract-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
 
@@ -35,6 +36,19 @@
 
 	<version>1.2.5.BUILD-SNAPSHOT</version>
 	<inceptionYear>2016</inceptionYear>
+
+	<distributionManagement>
+		<repository>
+			<id>libs-releases-local.artifactory.gdn-app.com</id>
+			<name>libs-releases-local.artifactory.gdn-app.com</name>
+			<url>https://artifactory.gdn-app.com/artifactory/libs-releases-local</url>
+		</repository>
+		<snapshotRepository>
+			<id>libs-snapshots-local.artifactory.gdn-app.com</id>
+			<name>libs-snapshots-local.artifactory.gdn-app.com</name>
+			<url>https://artifactory.gdn-app.com/artifactory/libs-snapshots-local</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 	<build>
 		<plugins>
@@ -187,39 +201,39 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-checkstyle-plugin</artifactId>
-			<version>${checkstyle.version}</version>
-			<dependencies>
-				<dependency>
-					<groupId>org.springframework.cloud</groupId>
-					<artifactId>spring-cloud-build-tools</artifactId>
-					<version>${spring-cloud-build.version}</version>
-				</dependency>
-			</dependencies>
-			<executions>
-				<execution>
-					<id>validate</id>
-					<phase>validate</phase>
-					<configuration>
-						<configLocation>checkstyle.xml</configLocation>
-						<headerLocation>LICENSE.txt</headerLocation>
-						<consoleOutput>true</consoleOutput>
-						<failsOnError>true</failsOnError>
-						<sourceDirectories>
-							${project.basedir}/src/main/java,${project.basedir}/src/main/groovy
-						</sourceDirectories>
-						<testSourceDirectories>
-							${project.basedir}/src/test/java,${project.basedir}/src/test/groovy
-						</testSourceDirectories>
-					</configuration>
-					<goals>
-						<goal>check</goal>
-					</goals>
-				</execution>
-			</executions>
-		</plugin>
+			<!--<plugin>-->
+			<!--<groupId>org.apache.maven.plugins</groupId>-->
+			<!--<artifactId>maven-checkstyle-plugin</artifactId>-->
+			<!--<version>${checkstyle.version}</version>-->
+			<!--<dependencies>-->
+				<!--<dependency>-->
+					<!--<groupId>org.springframework.cloud</groupId>-->
+					<!--<artifactId>spring-cloud-build-tools</artifactId>-->
+					<!--<version>${spring-cloud-build.version}</version>-->
+				<!--</dependency>-->
+			<!--</dependencies>-->
+			<!--<executions>-->
+				<!--<execution>-->
+					<!--<id>validate</id>-->
+					<!--<phase>validate</phase>-->
+					<!--<configuration>-->
+						<!--<configLocation>checkstyle.xml</configLocation>-->
+						<!--<headerLocation>LICENSE.txt</headerLocation>-->
+						<!--<consoleOutput>true</consoleOutput>-->
+						<!--<failsOnError>true</failsOnError>-->
+						<!--<sourceDirectories>-->
+							<!--<sourceDirectory>${project.basedir}/src/main/java,${project.basedir}/src/main/groovy</sourceDirectory>-->
+						<!--</sourceDirectories>-->
+						<!--<testSourceDirectories>-->
+							<!--<sourceDirectory>${project.basedir}/src/test/java,${project.basedir}/src/test/groovy</sourceDirectory>-->
+						<!--</testSourceDirectories>-->
+					<!--</configuration>-->
+					<!--<goals>-->
+						<!--<goal>check</goal>-->
+					<!--</goals>-->
+				<!--</execution>-->
+			<!--</executions>-->
+		<!--</plugin>-->
 		</plugins>
 	</build>
 

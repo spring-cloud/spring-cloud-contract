@@ -25,6 +25,8 @@ import java.util.regex.Pattern
 /**
  * Contains most common regular expression patterns
  *
+ * @author Marcin Grzejszczak
+ * @author Tim Ysewyn
  * @since 1.0.0
  */
 @CompileStatic
@@ -114,8 +116,18 @@ class RegexPatterns {
 		return ".*--(.*)\r\nContent-Disposition: form-data; name=\"$name\"\r\n(Content-Type: .*\r\n)?(Content-Length: \\d+\r\n)?\r\n$value\r\n--\\1.*"
 	}
 
-	static String multipartFile(Object name, Object filename, Object content) {
-		return ".*--(.*)\r\nContent-Disposition: form-data; name=\"$name\"; filename=\"$filename\"\r\n(Content-Type: .*\r\n)?(Content-Length: \\d+\r\n)?\r\n$content\r\n--\\1.*";
+	static String multipartFile(Object name, Object filename, Object content, Object contentType) {
+		return ".*--(.*)\r\nContent-Disposition: form-data; name=\"$name\"; filename=\"$filename\"\r\n(Content-Type: ${toContentType(contentType)}\r\n)?(Content-Length: \\d+\r\n)?\r\n$content\r\n--\\1.*";
+	}
+
+	private static String toContentType(Object contentType) {
+		if (contentType == null) {
+			return '.*'
+		}
+		if (contentType instanceof Pattern) {
+			return contentType.pattern()
+		}
+		return contentType.toString()
 	}
 }
 

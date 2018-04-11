@@ -388,11 +388,13 @@ class ContentUtils {
 	}
 
 	static String getGroovyMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
-		return "'$propertyName', ${namedPropertyName(propertyValue, "'")}, ${namedPropertyValue(propertyValue, "'")}.bytes"
+		return "'$propertyName', ${namedPropertyName(propertyValue, "'")}, " +
+				"${namedPropertyValue(propertyValue, "'")}.bytes" + namedContentTypeNameIfPresent(propertyValue, "'")
 	}
 
 	static String getJavaMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
-		return """"${escapeJava(propertyName)}", ${namedPropertyName(propertyValue, '"')}, ${namedPropertyValue(propertyValue, '"')}.getBytes()"""
+		return """"${escapeJava(propertyName)}", ${namedPropertyName(propertyValue, '"')}, """ +
+				"""${javaNamedPropertyValue(propertyValue, '"')}${namedContentTypeNameIfPresent(propertyValue, '"')}"""
 	}
 
 	static String namedPropertyName(NamedProperty property, String quote) {
@@ -400,9 +402,27 @@ class ContentUtils {
 				property.name.serverValue.toString() : quote + escapeJava(property.name.serverValue.toString()) + quote
 	}
 
+	static String namedContentTypeNameIfPresent(NamedProperty property, String quote) {
+		if (!property.contentType) {
+			return ""
+		}
+		String contentType = property.contentType.serverValue instanceof ExecutionProperty ?
+				property.contentType.serverValue.toString() : quote + escapeJava(property.contentType.serverValue.toString()) + quote
+		return ", " + contentType
+	}
+
 	static String namedPropertyValue(NamedProperty property, String quote) {
 		return property.value.serverValue instanceof ExecutionProperty ?
 				property.value.serverValue.toString() : quote + escapeJava(property.value.serverValue.toString()) + quote
 	}
 
+	static String javaNamedPropertyValue(NamedProperty property, String quote) {
+		if (property.value.serverValue instanceof ExecutionProperty) {
+			return property.value.serverValue.toString()
+		} else if (property.value.serverValue instanceof byte[]) {
+			byte[] bytes = (byte[]) property.value.serverValue
+			return "new byte[] {" + bytes.collect { it }.join(", ") + "}"
+		}
+		return  quote + escapeJava(property.value.serverValue.toString()) + quote + ".getBytes()"
+	}
 }
