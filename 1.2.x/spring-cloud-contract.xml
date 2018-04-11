@@ -5355,6 +5355,9 @@ the recommended way, as doing so makes the tests <emphasis role="strong">host-in
   headers:
     foo: bar
     fooReq: baz
+  cookies:
+    foo: bar
+    fooReq: baz
   body:
     foo: bar
   matchers:
@@ -5386,7 +5389,12 @@ response:
       - key: foo2
         regex: bar
       - key: foo3
-        command: andMeToo($it)</programlisting>
+        command: andMeToo($it)
+    cookies:
+      - key: foo2
+        regex: bar
+      - key: foo3
+        predefined:</programlisting>
 </para>
 </formalpara>
 <simpara><literal>request</literal> may contain additional <emphasis role="strong">request headers</emphasis>, as shown in the following example:</simpara>
@@ -5419,6 +5427,40 @@ response:
 <programlisting language="yml" linenumbering="unnumbered">request:
 ...
 headers:
+  foo: bar
+  fooReq: baz</programlisting>
+</para>
+</formalpara>
+<simpara><literal>request</literal> may contain additional <emphasis role="strong">request cookies</emphasis>, as shown in the following example:</simpara>
+<formalpara>
+<title>Groovy DSL</title>
+<para>
+<programlisting language="groovy" linenumbering="unnumbered">org.springframework.cloud.contract.spec.Contract.make {
+	request {
+		//...
+
+		// Each Cookies is added in form `'Cookie-Key' : 'Cookie-Value'`.
+		// there are also some helper methods
+		cookies {
+			cookie 'key': 'value'
+			cookie('another_key', 'another_value')
+		}
+
+		//...
+	}
+
+	response {
+		//...
+	}
+}</programlisting>
+</para>
+</formalpara>
+<formalpara>
+<title>YAML</title>
+<para>
+<programlisting language="yml" linenumbering="unnumbered">request:
+...
+cookies:
   foo: bar
   fooReq: baz</programlisting>
 </para>
@@ -5624,7 +5666,7 @@ following code shows an example:</simpara>
 status: 200</programlisting>
 </para>
 </formalpara>
-<simpara>Besides status, the response may contain <emphasis role="strong">headers</emphasis> and a <emphasis role="strong">body</emphasis>, both of which are
+<simpara>Besides status, the response may contain <emphasis role="strong">headers</emphasis>, <emphasis role="strong">cookies</emphasis> and a <emphasis role="strong">body</emphasis>, both of which are
 specified the same way as in the request (see the previous paragraph).</simpara>
 </section>
 <section xml:id="_dynamic_properties">
