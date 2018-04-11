@@ -1,5 +1,10 @@
 package com.example.loan;
 
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import io.restassured.RestAssured;
+import io.restassured.response.ResponseOptions;
+import io.restassured.specification.RequestSpecification;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +26,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 
 // tag::autoconfigure_stubrunner[]
@@ -89,34 +95,24 @@ public class LoanApplicationServiceTests {
 
 	@Test
 	public void shouldSuccessfullyWorkWithMultipart() {
-		MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-		parameters.add("file1", new ByteArrayResource(("content").getBytes()) {
-			@Override
-			public String getFilename() {
-				return "file1";
-			}
-		});
-		parameters.add("file2", new ByteArrayResource(("content").getBytes()) {
-			@Override
-			public String getFilename() {
-				return "file2";
-			}
-		});
-		parameters.add("test", new ByteArrayResource(("{\n  \"status\": \"test\"\n}").getBytes()) {
-			@Override
-			public String getFilename() {
-				return "test";
-			}
-		});
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Content-Type", "multipart/form-data");
-		headers.set("Accept", "text/plain");
-		String result = new RestTemplate().postForObject(
-				"http://localhost:6565/tests",
-				new HttpEntity<MultiValueMap<String, Object>>(parameters, headers),
-				String.class);
+		// given:
+		RequestSpecification request = RestAssured.given()
+				.baseUri("http://localhost:6565/")
+				.header("Content-Type", "multipart/form-data")
+				.multiPart("file1", "filename1", "content1".getBytes())
+				.multiPart("file2", "filename1", "content2".getBytes())
+				.multiPart("test", "filename1", "{\n  \"status\": \"test\"\n}".getBytes(), "application/json");
 
-		assertThat(result).isEqualTo("{\"status\":\"ok\"}");
+		// when:
+		ResponseOptions response = RestAssured.given().spec(request)
+				.post("/tests");
+
+		// then:
+		assertThat(response.statusCode()).isEqualTo(200);
+		assertThat(response.header("Content-Type")).matches("application/json.*");
+		// and:
+		DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+		assertThatJson(parsedJson).field("['status']").isEqualTo("ok");
 	}
 
 }
