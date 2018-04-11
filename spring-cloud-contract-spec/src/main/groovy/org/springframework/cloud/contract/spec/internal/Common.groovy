@@ -71,6 +71,10 @@ class Common {
 		return new NamedProperty(name, value)
 	}
 
+	NamedProperty named(DslProperty name, DslProperty value, DslProperty contentType) {
+		return new NamedProperty(name, value, contentType)
+	}
+
 	NamedProperty named(Map<String, DslProperty> namedMap){
 		return new NamedProperty(namedMap)
 	}

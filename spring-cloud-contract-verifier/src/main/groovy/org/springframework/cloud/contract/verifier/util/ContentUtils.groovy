@@ -399,16 +399,27 @@ class ContentUtils {
 	}
 
 	static String getGroovyMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
-		return "'$propertyName', ${namedPropertyName(propertyValue, "'")}, ${groovyNamedPropertyValue(propertyValue, "'")}"
+		return "'$propertyName', ${namedPropertyName(propertyValue, "'")}, " +
+				"${groovyNamedPropertyValue(propertyValue, "'")}" + namedContentTypeNameIfPresent(propertyValue, "'")
 	}
 
 	static String getJavaMultipartFileParameterContent(String propertyName, NamedProperty propertyValue) {
-		return """"${escapeJava(propertyName)}", ${namedPropertyName(propertyValue, '"')}, ${javaNamedPropertyValue(propertyValue, '"')}"""
+		return """"${escapeJava(propertyName)}", ${namedPropertyName(propertyValue, '"')}, """ +
+				"""${javaNamedPropertyValue(propertyValue, '"')}${namedContentTypeNameIfPresent(propertyValue, '"')}"""
 	}
 
 	static String namedPropertyName(NamedProperty property, String quote) {
 		return property.name.serverValue instanceof ExecutionProperty ?
 				property.name.serverValue.toString() : quote + escapeJava(property.name.serverValue.toString()) + quote
+	}
+
+	static String namedContentTypeNameIfPresent(NamedProperty property, String quote) {
+		if (!property.contentType) {
+			return ""
+		}
+		String contentType = property.contentType.serverValue instanceof ExecutionProperty ?
+				property.contentType.serverValue.toString() : quote + escapeJava(property.contentType.serverValue.toString()) + quote
+		return ", " + contentType
 	}
 
 	static String groovyNamedPropertyValue(NamedProperty property, String quote) {

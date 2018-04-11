@@ -125,10 +125,10 @@ class DslToWireMockClientConverterSpec extends Specification {
 			wireMockRule.addStubMapping(mapping)
 		and:
 			MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<String, Object>()
-			parameters.add("file", new ByteArrayResource([100, 117, 100, 97] as byte[]) {
+			parameters.add("test", new ByteArrayResource([100, 117, 100, 97] as byte[]) {
 				@Override
-				public String getFilename(){
-					return "file"
+				String getFilename(){
+					return "test"
 				}
 			})
 			org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders()

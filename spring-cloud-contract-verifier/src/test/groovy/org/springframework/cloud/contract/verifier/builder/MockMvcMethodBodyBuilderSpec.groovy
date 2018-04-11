@@ -1295,7 +1295,9 @@ World.'''"""
 								// name of the file
 								name: $(c(regex(nonEmpty())), p('filename.csv')),
 								// content of the file
-								content: $(c(regex(nonEmpty())), p('file content')))
+								content: $(c(regex(nonEmpty())), p('file content')),
+								// content type for the part
+								contentType: $(c(regex(nonEmpty())), p('application/json')))
 				)
 			}
 			response {
@@ -1303,6 +1305,56 @@ World.'''"""
 			}
 		}
 		// end::multipartdsl[]
+		MethodBodyBuilder builder = methodBuilder(contractDsl)
+		BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+		builder.appendTo(blockBuilder)
+		def test = blockBuilder.toString()
+		then:
+		for (String requestString : requestStrings) {
+			assert test.contains(requestString)
+		}
+		and:
+		SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
+		where:
+		methodBuilderName           | methodBuilder                                                               | requestStrings
+		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
+																													 """.param('formParameter', '"formParameterValue"'""",
+																													 """.param('someBooleanParameter', 'true')""",
+																													 """.multiPart('file', 'filename.csv', 'file content'.bytes, 'application/json')"""]
+		"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
+																													 '.param("formParameter", "\\"formParameterValue\\"")',
+																													 '.param("someBooleanParameter", "true")',
+																													 '.multiPart("file", "filename.csv", "file content".getBytes(), "application/json");']
+	}
+
+	@Issue('180')
+	def "should generate proper test code when having multipart parameters without content type with #methodBuilderName"() {
+		given:
+		org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
+			request {
+				method "PUT"
+				url "/multipart"
+				headers {
+					contentType('multipart/form-data;boundary=AaB03x')
+				}
+				multipart(
+						// key (parameter name), value (parameter value) pair
+						formParameter: $(c(regex('".+"')), p('"formParameterValue"')),
+						someBooleanParameter: $(c(regex(anyBoolean())), p('true')),
+						// a named parameter (e.g. with `file` name) that represents file with
+						// `name` and `content`. You can also call `named("fileName", "fileContent")`
+						file: named(
+								// name of the file
+								name: $(c(regex(nonEmpty())), p('filename.csv')),
+								// content of the file
+								content: $(c(regex(nonEmpty())), p('file content')))
+				)
+			}
+			response {
+				status OK()
+			}
+		}
 		MethodBodyBuilder builder = methodBuilder(contractDsl)
 		BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:

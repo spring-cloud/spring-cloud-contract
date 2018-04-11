@@ -7,6 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -14,6 +17,9 @@ import com.example.loan.model.Client;
 import com.example.loan.model.LoanApplication;
 import com.example.loan.model.LoanApplicationResult;
 import com.example.loan.model.LoanApplicationStatus;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -79,6 +85,38 @@ public class LoanApplicationServiceTests {
 		String cookies = service.getCookies();
 		// then:
 		assertThat(cookies).isEqualTo("foo bar");
+	}
+
+	@Test
+	public void shouldSuccessfullyWorkWithMultipart() {
+		MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+		parameters.add("file1", new ByteArrayResource(("content").getBytes()) {
+			@Override
+			public String getFilename() {
+				return "file1";
+			}
+		});
+		parameters.add("file2", new ByteArrayResource(("content").getBytes()) {
+			@Override
+			public String getFilename() {
+				return "file2";
+			}
+		});
+		parameters.add("test", new ByteArrayResource(("{\n  \"status\": \"test\"\n}").getBytes()) {
+			@Override
+			public String getFilename() {
+				return "test";
+			}
+		});
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "multipart/form-data");
+		headers.set("Accept", "text/plain");
+		String result = new RestTemplate().postForObject(
+				"http://localhost:6565/tests",
+				new HttpEntity<MultiValueMap<String, Object>>(parameters, headers),
+				String.class);
+
+		assertThat(result).isEqualTo("{\"status\":\"ok\"}");
 	}
 
 }

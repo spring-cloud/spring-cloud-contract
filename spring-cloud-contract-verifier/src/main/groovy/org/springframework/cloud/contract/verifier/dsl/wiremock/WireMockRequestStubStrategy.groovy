@@ -136,7 +136,9 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 		if (request.multipart.clientValue instanceof Map) {
 			List<StringValuePattern> multipartPatterns = (request.multipart.clientValue as Map).collect {
 				(it.value instanceof NamedProperty
-				? WireMock.matching(RegexPatterns.multipartFile(it.key, (it.value as NamedProperty).name.clientValue, (it.value as NamedProperty).value.clientValue))
+				? WireMock.matching(RegexPatterns.multipartFile(it.key, (it.value as NamedProperty).name.clientValue,
+						(it.value as NamedProperty).value.clientValue,
+						(it.value as NamedProperty).contentType?.clientValue))
 				: WireMock.matching(RegexPatterns.multipartParam(it.key, it.value)) )
 			}
 			multipartPatterns.each {
