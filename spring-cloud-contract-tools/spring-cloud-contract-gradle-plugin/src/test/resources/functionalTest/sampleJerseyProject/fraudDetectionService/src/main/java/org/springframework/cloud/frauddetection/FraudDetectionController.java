@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.*;
 import java.math.BigDecimal;
 
 import static org.springframework.cloud.frauddetection.model.FraudCheckStatus.FRAUD;
@@ -29,6 +30,13 @@ public class FraudDetectionController {
 			return new FraudCheckResult(FRAUD, AMOUNT_TOO_HIGH);
 		}
 		return new FraudCheckResult(OK, NO_REASON);
+	}
+
+	@GET
+	@Path("/frauds/name")
+	public String cookie(@CookieParam("name") Cookie name,
+			@CookieParam("name2") Cookie name2) {
+		return name.getValue() + " " + name2.getValue();
 	}
 
 	private boolean amountGreaterThanThreshold(FraudCheck fraudCheck) {
