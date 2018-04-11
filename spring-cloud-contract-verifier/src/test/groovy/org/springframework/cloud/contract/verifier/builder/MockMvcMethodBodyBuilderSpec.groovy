@@ -88,6 +88,21 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		}
 	}
 
+    @Shared
+    Contract contractDslWithAbsentCookies = Contract.make {
+        request {
+            method "GET"
+            url "/foo"
+            cookies {
+                cookie 'cookie-key': absent()
+            }
+        }
+        response {
+            status 200
+            body([status: 'OK'])
+        }
+    }
+
 	@Shared
 	// tag::contract_with_regex[]
 	Contract dslWithOptionalsInString = Contract.make {
@@ -2491,6 +2506,19 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			SyntaxChecker.tryToCompile("MockMvcJUnitMethodBodyBuilder", blockBuilder.toString())
 	}
 
+	def "should not generate JUnit cookie assertion with absent cookie"() {
+		given:
+			MethodBodyBuilder builder = new MockMvcJUnitMethodBodyBuilder(contractDslWithAbsentCookies, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			!test.contains("cookie")
+		and:
+			SyntaxChecker.tryToCompile("MockMvcJUnitMethodBodyBuilder", blockBuilder.toString())
+	}
+
 	def "should generate spock assertions with cookies"() {
 		given:
 			MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDslWithCookiesValue, properties)
@@ -2517,6 +2545,19 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			test.contains('''.cookie("cookie-key", "[A-Za-z]+")''')
 			test.contains('''response.cookie('cookie-key') != null''')
 			test.contains('''response.cookie('cookie-key') ==~ java.util.regex.Pattern.compile('[A-Za-z]+')''')
+		and:
+			SyntaxChecker.tryToCompile("MockMvcSpockMethodRequestProcessingBodyBuilder", blockBuilder.toString())
+	}
+
+	def "should not generate spock cookie assertion with absent cookie"() {
+		given:
+			MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDslWithAbsentCookies, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			!test.contains("cookie")
 		and:
 			SyntaxChecker.tryToCompile("MockMvcSpockMethodRequestProcessingBodyBuilder", blockBuilder.toString())
 	}

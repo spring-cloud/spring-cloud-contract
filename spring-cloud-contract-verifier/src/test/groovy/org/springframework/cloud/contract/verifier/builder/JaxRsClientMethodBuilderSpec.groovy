@@ -84,6 +84,21 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		}
 	}
 
+	@Shared
+	Contract contractDslWithAbsentCookies = Contract.make {
+		request {
+			method "GET"
+			url "/foo"
+			cookies {
+				cookie 'cookie-key': absent()
+			}
+		}
+		response {
+			status 200
+			body([status: 'OK'])
+		}
+	}
+
 	def "should generate assertions for simple response body with #methodBuilderName"() {
 		given:
 			Contract contractDsl = Contract.make {
@@ -1286,6 +1301,19 @@ DATA
 			SyntaxChecker.tryToCompile("JaxRsClientJUnitMethodBodyBuilder", blockBuilder.toString())
 	}
 
+	def "should not generate cookie assertions with absent value in JAX-RS JUnit test"() {
+		given:
+			MethodBodyBuilder builder = new JaxRsClientJUnitMethodBodyBuilder(contractDslWithAbsentCookies, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			!test.contains("cookie")
+		and:
+			SyntaxChecker.tryToCompile("JaxRsClientJunitMethodBodyBuilder", blockBuilder.toString())
+	}
+
 	def "should generate test for cookies with string value in JAX-RS Spock test"() {
 		given:
 			MethodBodyBuilder builder = new JaxRsClientSpockMethodRequestProcessingBodyBuilder(contractDslWithCookiesValue, properties)
@@ -1312,6 +1340,19 @@ DATA
 			test.contains('''.cookie('cookie-key', '[A-Za-z]+')''')
 			test.contains('''response.getCookies().get('cookie-key') != null''')
 			test.contains('''response.getCookies().get('cookie-key').getValue() ==~ java.util.regex.Pattern.compile('[A-Za-z]+')''')
+		and:
+			SyntaxChecker.tryToCompile("JaxRsClientSpockMethodRequestProcessingBodyBuilder", blockBuilder.toString())
+	}
+
+	def "should not generate cookie assertions with absent value in JAX-RS Spock test"() {
+		given:
+			MethodBodyBuilder builder = new JaxRsClientSpockMethodRequestProcessingBodyBuilder(contractDslWithAbsentCookies, properties)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			!test.contains("cookie")
 		and:
 			SyntaxChecker.tryToCompile("JaxRsClientSpockMethodRequestProcessingBodyBuilder", blockBuilder.toString())
 	}
