@@ -8,16 +8,20 @@ request:
   cookies:
     foo: bar
     fooRegex: reg
+    fooPredefinedRegex: true
   matchers:
     cookies:
       - key: fooRegex
         regex: reg
+      - key: fooPredefinedRegex
+        predefined: any_boolean
 response:
   status: 200
   cookies:
     foo: baz
     fooRegex: 123
     source: ip_address
+    fooPredefinedRegex: true
   body:
     status: OK
   matchers:
@@ -26,3 +30,5 @@ response:
         regex: "[0-9]+"
       - key: source
         regex: ip_address
+      - key: fooPredefinedRegex
+        predefined: any_boolean

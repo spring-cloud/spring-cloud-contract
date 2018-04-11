@@ -63,4 +63,28 @@ class Cookies {
     int hashCode() {
         return entries.hashCode()
     }
+
+    /**
+     * Converts the headers into their stub side representations and returns as
+     * a map of String key => Object value.
+     */
+    Map<String , Object> asStubSideMap() {
+        def acc = [:].withDefault { [] as Collection<Object> }
+        return entries.inject(acc as Map<String, Object>) { Map<String, Object> map, Cookie cookie ->
+            map[cookie.key] = cookie.clientValue
+            return map
+        } as Map<String , Object>
+    }
+
+    /**
+     * Converts the headers into their stub side representations and returns as
+     * a map of String key => Object value.
+     */
+    Map<String , Object> asTestSideMap() {
+        def acc = [:].withDefault { [] as Collection<Object> }
+        return entries.inject(acc as Map<String, Object>) { Map<String, Object> map, Cookie cookie ->
+            map[cookie.key] = cookie.serverValue
+            return map
+        } as Map<String , Object>
+    }
 }

@@ -26,6 +26,7 @@ import org.yaml.snakeyaml.Yaml
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
 import org.springframework.cloud.contract.spec.internal.BodyMatcher
+import org.springframework.cloud.contract.spec.internal.Cookies
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Headers
@@ -495,6 +496,7 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 					method = contract?.request?.method?.clientValue
 					url = contract?.request?.url?.clientValue
 					headers = (contract?.request?.headers as Headers)?.asTestSideMap()
+					cookies = (contract?.request?.cookies as Cookies)?.asTestSideMap()
 					body = MapConverter.getTestSideValues(contract?.request?.body)
 					matchers = new StubMatchers()
 					contract?.request?.matchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
@@ -509,6 +511,7 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 				yamlContract.response.with {
 					status = contract?.response?.status?.clientValue as Integer
 					headers = (contract?.response?.headers as Headers)?.asStubSideMap()
+					cookies = (contract?.response?.cookies as Cookies)?.asStubSideMap()
 					body = MapConverter.getStubSideValues(contract?.response?.body)
 					contract?.response?.matchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
 						matchers.body << new BodyTestMatcher(

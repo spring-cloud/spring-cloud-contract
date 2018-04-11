@@ -78,11 +78,13 @@ class YamlContractConverterSpec extends Specification {
 			contract.request.url.clientValue == "/foo"
 			contract.request.cookies.entries.find { it.key == "foo" && it.serverValue == "bar" }
 			contract.request.cookies.entries.find { it.key == "fooRegex" && ((Pattern) it.clientValue).pattern == "reg" && it.serverValue == "reg" }
+			contract.request.cookies.entries.find { it.key == "fooPredefinedRegex" && ((Pattern) it.clientValue).pattern == "(true|false)" && it.serverValue == true }
 		and:
 			contract.response.status.clientValue == 200
 			contract.response.cookies.entries.find { it.key == "foo" && it.clientValue == "baz" }
 			contract.response.cookies.entries.find { it.key == "fooRegex" && ((Pattern) it.serverValue).pattern == "[0-9]+" && it.clientValue == 123 }
 			contract.response.cookies.entries.find { it.key == "source" && ((Pattern) it.serverValue).pattern == "ip_address" && it.clientValue == "ip_address" }
+			contract.response.cookies.entries.find { it.key == "fooPredefinedRegex" && ((Pattern) it.serverValue).pattern == "(true|false)" && it.clientValue == true }
 			contract.response.body.clientValue == ["status": "OK"]
 	}
 
@@ -524,12 +526,20 @@ class YamlContractConverterSpec extends Specification {
 					headers {
 						header("foo", "bar")
 					}
+					cookies {
+						cookie(foo: value(c("client"), p("server")))
+						cookie("bar", value(c("client"), p("server")))
+					}
 					body([foo: "bar"])
 				}
 				response {
 					status(200)
 					headers {
 						header("foo2", "bar")
+					}
+					cookies {
+						cookie(foo: value(c("client"), p("server")))
+						cookie("bar", value(c("client"), p("server")))
 					}
 					body([foo2: "bar"])
 				}
@@ -542,9 +552,13 @@ class YamlContractConverterSpec extends Specification {
 			yamlContract.request.url == "/foo"
 			yamlContract.request.method == "PUT"
 			yamlContract.request.headers.find { it.key == "foo" && it.value == "bar" }
+			yamlContract.request.cookies.find { it.key == "bar" && it.value == "server" }
+			yamlContract.request.cookies.find { it.key == "foo" && it.value == "server" }
 			yamlContract.request.body == [foo: "bar"]
 			yamlContract.response.status == 200
 			yamlContract.response.headers.find { it.key == "foo2" && it.value == "bar" }
 			yamlContract.response.body == [foo2: "bar"]
+			yamlContract.response.cookies.find { it.key == "foo" && it.value == "client" }
+			yamlContract.response.cookies.find { it.key == "bar" && it.value == "client" }
 	}
 }
