@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.Json;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
@@ -133,7 +134,21 @@ public class WireMockSnippet implements Snippet {
 	}
 
 	private MappingBuilder request(Operation operation) {
-		return requestHeaders(requestBuilder(operation), operation);
+		return queryParams(
+				requestHeaders(requestBuilder(operation), operation)
+				, operation);
+	}
+
+	private MappingBuilder queryParams(MappingBuilder request, Operation operation) {
+		String rawQuery = operation.getRequest().getUri().getRawQuery();
+		if (StringUtils.isEmpty(rawQuery)) {
+			return request;
+		}
+		for (String queryPair : rawQuery.split("&")) {
+			String[] splitQueryPair = queryPair.split("=");
+			request = request.withQueryParam(splitQueryPair[0], WireMock.equalTo(splitQueryPair[1]));
+		}
+		return request;
 	}
 
 	private MappingBuilder requestHeaders(MappingBuilder request, Operation operation) {
