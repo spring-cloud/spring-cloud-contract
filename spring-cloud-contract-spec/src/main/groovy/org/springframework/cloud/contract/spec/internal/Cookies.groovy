@@ -31,19 +31,19 @@ import groovy.transform.TypeChecked
 @TypeChecked
 class Cookies {
 
-    Set<Cookie> cookies = []
+    Set<Cookie> entries = []
 
     void cookie(Map<String, Object> singleCookie) {
         Map.Entry<String, Object> first = singleCookie.entrySet().first()
-        cookies << new Cookie(first?.key, first?.value)
+        entries << new Cookie(first?.key, first?.value)
     }
 
     void cookie(String cookieKey, Object cookieValue) {
-        cookies << new Cookie(cookieKey, cookieValue)
+        entries << new Cookie(cookieKey, cookieValue)
     }
 
     void executeForEachCookie(Closure closure) {
-        cookies?.each {
+        entries?.each {
             cookie -> closure(cookie)
         }
     }
@@ -56,11 +56,11 @@ class Cookies {
         if (this.is(o)) return true
         if (getClass() != o.class) return false
         Cookies cookies = (Cookies) o
-        if (cookies != cookies.cookies) return false
+        if (cookies != cookies.entries) return false
         return true
     }
 
     int hashCode() {
-        return cookies.hashCode()
+        return entries.hashCode()
     }
 }
