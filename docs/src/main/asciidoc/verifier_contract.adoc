@@ -257,6 +257,22 @@ include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=request,i
 include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=headers,indent=0]
 ----
 
+`request` may contain additional **request cookies**, as shown in the following example:
+
+.Groovy DSL
+[source,groovy,indent=0]
+----
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=cookies,indent=0]
+----
+
+.YAML
+[source,yml,indent=0]
+----
+include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=request,indent=0]
+...
+include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=cookies,indent=0]
+----
+
 `request` may contain a **request body**:
 
 .Groovy DSL
@@ -357,8 +373,7 @@ include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=response,
 include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=response_obligatory,indent=0]
 ----
 
-
-Besides status, the response may contain **headers** and a **body**, both of which are
+Besides status, the response may contain **headers**, **cookies** and a **body**, both of which are
 specified the same way as in the request (see the previous paragraph).
 
 === Dynamic properties
