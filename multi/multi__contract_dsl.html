@@ -339,6 +339,9 @@ the recommended way, as doing so makes the tests <span class="strong"><strong>ho
   headers:
     foo: bar
     fooReq: baz
+  cookies:
+    foo: bar
+    fooReq: baz
   body:
     foo: bar
   matchers:
@@ -374,7 +377,12 @@ response:
       - key: foo2
         regex: bar
       - key: foo3
-        command: andMeToo($it)</pre><p>
+        command: andMeToo($it)
+    cookies:
+      - key: foo2
+        regex: bar
+      - key: foo3
+        predefined:</pre><p>
 </p><p><code class="literal">request</code> may contain additional <span class="strong"><strong>request headers</strong></span>, as shown in the following example:</p><p><b>Groovy DSL.&nbsp;</b>
 </p><pre class="programlisting">org.springframework.cloud.contract.spec.Contract.make {
 	request {
@@ -398,6 +406,31 @@ response:
 </p><pre class="programlisting">request:
 ...
 headers:
+  foo: bar
+  fooReq: baz</pre><p>
+</p><p><code class="literal">request</code> may contain additional <span class="strong"><strong>request cookies</strong></span>, as shown in the following example:</p><p><b>Groovy DSL.&nbsp;</b>
+</p><pre class="programlisting">org.springframework.cloud.contract.spec.Contract.make {
+	request {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
+
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Each Cookies is added in form `'Cookie-Key' : 'Cookie-Value'`.</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// there are also some helper methods</span>
+		cookies {
+			cookie <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'key'</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'value'</span>
+			cookie(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'another_key'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'another_value'</span>)
+		}
+
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
+	}
+
+	response {
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//...</span>
+	}
+}</pre><p>
+</p><p><b>YAML.&nbsp;</b>
+</p><pre class="programlisting">request:
+...
+cookies:
   foo: bar
   fooReq: baz</pre><p>
 </p><p><code class="literal">request</code> may contain a <span class="strong"><strong>request body</strong></span>:</p><p><b>Groovy DSL.&nbsp;</b>
@@ -438,7 +471,9 @@ body:
 						<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// name of the file</span>
 						name: $(c(regex(nonEmpty())), p(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'filename.csv'</span>)),
 						<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// content of the file</span>
-						content: $(c(regex(nonEmpty())), p(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'file content'</span>)))
+						content: $(c(regex(nonEmpty())), p(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'file content'</span>)),
+						<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// content type for the part</span>
+						contentType: $(c(regex(nonEmpty())), p(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'application/json'</span>)))
 		)
 	}
 	response {
@@ -555,7 +590,7 @@ following code shows an example:</p><p><b>Groovy DSL.&nbsp;</b>
 </p><pre class="programlisting">response:
 ...
 status: 200</pre><p>
-</p><p>Besides status, the response may contain <span class="strong"><strong>headers</strong></span> and a <span class="strong"><strong>body</strong></span>, both of which are
+</p><p>Besides status, the response may contain <span class="strong"><strong>headers</strong></span>, <span class="strong"><strong>cookies</strong></span> and a <span class="strong"><strong>body</strong></span>, both of which are
 specified the same way as in the request (see the previous paragraph).</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>Via the Groovy DSL you can reference the <code class="literal">org.springframework.cloud.contract.spec.internal.HttpStatus</code>
 methods to provide a meaningful status instead of a digit. E.g. you can call
 <code class="literal">OK()</code> for a status <code class="literal">200</code> or <code class="literal">BAD_REQUEST()</code> for <code class="literal">400</code>.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_dynamic_properties" href="#_dynamic_properties"></a>8.5&nbsp;Dynamic properties</h2></div></div></div><p>The contract can contain some dynamic properties: timestamps, IDs, and so on. You do not
