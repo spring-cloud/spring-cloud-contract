@@ -45,6 +45,7 @@ import org.springframework.cloud.contract.verifier.converter.YamlContract.KeyVal
 import org.springframework.cloud.contract.verifier.converter.YamlContract.StubMatcherType
 import org.springframework.cloud.contract.verifier.converter.YamlContract.StubMatchers
 import org.springframework.cloud.contract.verifier.converter.YamlContract.TestHeaderMatcher
+import org.springframework.cloud.contract.verifier.converter.YamlContract.TestCookieMatcher
 import org.springframework.cloud.contract.verifier.converter.YamlContract.TestMatcherType
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
@@ -132,6 +133,16 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 									}
 								}
 							}
+							if (yamlContract.request?.cookies) {
+								cookies {
+									yamlContract.request?.cookies?.each { String key, Object value ->
+										KeyValueMatcher matcher = yamlContract.request.matchers.cookies.find { it.key == key }
+										Object clientValue = clientValue(value, matcher, key)
+
+										cookie(key, new DslProperty(clientValue, value))
+									}
+								}
+							}
 							if (yamlContract.request.body) body(yamlContract.request.body)
 							if (yamlContract.request.bodyFromFile) body(file(yamlContract.request.bodyFromFile))
 							if (yamlContract.request.multipart) {
@@ -208,6 +219,16 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 									} else {
 										Object serverValue = serverValue(value, matcher, key)
 										header(key, new DslProperty(value, serverValue))
+									}
+								}
+							}
+							if (yamlContract.response?.cookies) {
+								cookies {
+									yamlContract.response?.cookies?.each { String key, Object value ->
+										TestCookieMatcher matcher = yamlContract.response.matchers.cookies.find { it.key == key }
+										Object serverValue = serverCookieValue(value, matcher, key)
+
+										cookie(key, new DslProperty(value, serverValue))
 									}
 								}
 							}
@@ -377,6 +398,20 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 			assertPatternMatched(pattern, value, key)
 		} else if (matcher?.command) {
 			serverValue = new ExecutionProperty(matcher.command)
+		}
+		return serverValue
+	}
+
+	protected Object serverCookieValue(Object value, TestCookieMatcher matcher, String key) {
+		Object serverValue = value
+		if (matcher?.regex) {
+			serverValue = Pattern.compile(matcher.regex)
+			Pattern pattern = (Pattern) serverValue
+			assertPatternMatched(pattern, value, key)
+		} else if (matcher?.predefined) {
+			Pattern pattern = predefinedToPattern(matcher.predefined)
+			serverValue = pattern
+			assertPatternMatched(pattern, value, key)
 		}
 		return serverValue
 	}

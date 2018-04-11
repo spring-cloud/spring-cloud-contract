@@ -1,0 +1,28 @@
+description: Contract with cookies
+name: cookies-contract
+priority: 1
+ignored: true
+request:
+  method: PUT
+  url: /foo
+  cookies:
+    foo: bar
+    fooRegex: reg
+  matchers:
+    cookies:
+      - key: fooRegex
+        regex: reg
+response:
+  status: 200
+  cookies:
+    foo: baz
+    fooRegex: 123
+    source: ip_address
+  body:
+    status: OK
+  matchers:
+    cookies:
+      - key: fooRegex
+        regex: "[0-9]+"
+      - key: source
+        regex: ip_address
