@@ -38,6 +38,7 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-actuator")
 
 	testCompile "org.springframework.cloud:spring-cloud-starter-contract-stub-runner"
+	testCompile "org.springframework.cloud:spring-cloud-starter-contract-verifier"
 }
 
 test {
