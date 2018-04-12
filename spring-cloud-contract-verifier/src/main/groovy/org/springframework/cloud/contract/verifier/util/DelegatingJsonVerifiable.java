@@ -340,23 +340,13 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
-
 		DelegatingJsonVerifiable that = (DelegatingJsonVerifiable) o;
-
-		if (this.delegate != null ? !this.delegate.equals(that.delegate) : that.delegate != null)
-			return false;
-		if (this.delegate == null) {
-			return false;
-		}
-		if (this.delegate.jsonPath() == null && that.delegate.jsonPath() == null)
-			return true;
-		return this.delegate.jsonPath().equals(that.delegate.jsonPath());
-
+		return this.methodsBuffer.toString().equals(that.methodsBuffer.toString());
 	}
 
 	@Override
 	public int hashCode() {
-		int result = this.delegate != null ? this.delegate.jsonPath().hashCode() : 0;
+		int result = this.methodsBuffer.toString().hashCode();
 		return 31 * result;
 	}
 

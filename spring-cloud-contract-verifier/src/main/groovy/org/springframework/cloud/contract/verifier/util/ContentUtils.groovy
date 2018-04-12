@@ -21,6 +21,7 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.transform.TypeChecked
 import groovy.util.logging.Slf4j
+import org.apache.commons.lang3.StringEscapeUtils
 import org.codehaus.groovy.runtime.GStringImpl
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
@@ -35,6 +36,7 @@ import java.util.regex.Pattern
 import static org.apache.commons.text.StringEscapeUtils.escapeJava
 import static org.apache.commons.text.StringEscapeUtils.escapeJson
 import static org.apache.commons.text.StringEscapeUtils.escapeXml11
+import static org.apache.commons.text.StringEscapeUtils.unescapeXml
 
 /**
  * A utility class that can operate on a message body basing on the provided Content Type.
@@ -208,7 +210,7 @@ class ContentUtils {
 	}
 
 	private static String transformXMLStringValue(Object obj, Closure valueProvider) {
-		return escapeXml11(obj.toString())
+		return escapeXml11(unescapeXml(obj.toString()))
 	}
 
 	private static String transformXMLStringValue(DslProperty dslProperty, Closure valueProvider) {

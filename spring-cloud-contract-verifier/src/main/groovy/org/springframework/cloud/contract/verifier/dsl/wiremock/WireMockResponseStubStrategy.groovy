@@ -28,6 +28,7 @@ import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.Response
 import org.springframework.cloud.contract.verifier.util.ContentType
+import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.MapConverter
 import org.springframework.core.io.support.SpringFactoriesLoader
 
@@ -84,7 +85,7 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 
 	private void appendBody(ResponseDefinitionBuilder builder) {
 		if (response.body) {
-			Object body = response.body.clientValue
+			Object body = MapConverter.getStubSideValues(response.body)
 			ContentType contentType = recognizeContentTypeFromHeader(response.headers)
 			if (contentType == ContentType.UNKNOWN) {
 				contentType = recognizeContentTypeFromContent(body)
