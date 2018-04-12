@@ -673,20 +673,25 @@ class JsonToJsonPathsConverterSpec extends Specification {
 		when:
 		JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
 		then:
+		DocumentContext context = JsonPath.parse(json)
+		pathAndValues.each {
+			assert context.read(it.jsonPath(), JSONArray)
+		}
+		and:
 		pathAndValues.find {
-			it.method()== """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().arrayField().isEqualTo(38.995548)""" &&
+			it.method()== """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().array().arrayField().isEqualTo(38.995548)""" &&
 			it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == 38.995548)]"""
 		}
 		pathAndValues.find {
-			it.method()== """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().arrayField().isEqualTo(-77.119759)""" &&
+			it.method()== """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().array().arrayField().isEqualTo(-77.119759)""" &&
 			it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == -77.119759)]"""
 		}
 		pathAndValues.find {
-			it.method()== """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().arrayField().isEqualTo(-76.909393)""" &&
+			it.method()== """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().array().arrayField().isEqualTo(-76.909393)""" &&
 			it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == -76.909393)]"""
 		}
 		pathAndValues.find {
-			it.method()== """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().arrayField().isEqualTo(38.791645)""" &&
+			it.method()== """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().array().arrayField().isEqualTo(38.791645)""" &&
 			it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == 38.791645)]"""
 		}
 		and:
@@ -700,8 +705,8 @@ class JsonToJsonPathsConverterSpec extends Specification {
 	@RestoreSystemProperties
 	def "should manage to parse a double array with array size check"() {
 		given:
-		System.setProperty('spring.cloud.contract.verifier.assert.size', 'true')
-		String json = '''
+			System.setProperty('spring.cloud.contract.verifier.assert.size', 'true')
+			String json = '''
 						[{
 							"place":
 							{
@@ -717,38 +722,46 @@ class JsonToJsonPathsConverterSpec extends Specification {
 						}]
 					'''
 		when:
-		JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
+			JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
 		then:
-		pathAndValues.find {
-			it.method()== """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().arrayField().isEqualTo(38.995548)""" &&
-			it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == 38.995548)]"""
-		}
-		pathAndValues.find {
-			it.method()== """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().arrayField().isEqualTo(-77.119759)""" &&
-			it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == -77.119759)]"""
-		}
-		pathAndValues.find {
-			it.method()== """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().arrayField().isEqualTo(-76.909393)""" &&
-			it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == -76.909393)]"""
-		}
-		pathAndValues.find {
-			it.method()== """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().arrayField().isEqualTo(38.791645)""" &&
-			it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == 38.791645)]"""
-		}
-		pathAndValues.find {
-			it.method()== """.hasSize(1)""" &&
-			it.jsonPath() == """\$"""
-		}
-		pathAndValues.find {
-			it.method()== """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().hasSize(2)""" &&
-			it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*][*]"""
-		}
-		pathAndValues.find {
-			it.method()== """.array().field("['place']").field("['bounding_box']").array("['coordinates']").hasSize(1)""" &&
-			it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*]"""
-		}
+			DocumentContext context = JsonPath.parse(json)
+			pathAndValues.each {
+				assert context.read(it.jsonPath(), JSONArray)
+			}
+			pathAndValues.find {
+				it.method() == """.hasSize(1)""" &&
+						it.jsonPath() == """\$"""
+			}
+			pathAndValues.find {
+				it.method() == """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().array().arrayField().isEqualTo(-77.119759)""" &&
+						it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == -77.119759)]"""
+			}
+			pathAndValues.find {
+				it.method() == """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().array().arrayField().isEqualTo(38.995548)""" &&
+						it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == 38.995548)]"""
+			}
+			pathAndValues.find {
+				it.method() == """.array().field("['place']").field("['bounding_box']").array("['coordinates']").hasSize(1)""" &&
+						it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*]"""
+			}
+			pathAndValues.find {
+				it.method() == """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().hasSize(2)""" &&
+						it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*][*]"""
+			}
+			pathAndValues.find {
+				it.method() == """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().array().arrayField().isEqualTo(38.791645)""" &&
+						it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == 38.791645)]"""
+			}
+			pathAndValues.find {
+				it.method() == """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().array().hasSize(2)""" &&
+						it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*][*]"""
+			}
+			pathAndValues.find {
+				it.method() == """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().array().arrayField().isEqualTo(-76.909393)""" &&
+						it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == -76.909393)]"""
+			}
 		and:
-			pathAndValues.size() == 7
+			pathAndValues.size() == 8
 		and:
 			pathAndValues.each {
 				JsonAssertion.assertThat(json).matchesJsonPath(it.jsonPath())

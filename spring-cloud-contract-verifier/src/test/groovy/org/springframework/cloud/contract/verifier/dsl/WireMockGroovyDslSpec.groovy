@@ -20,6 +20,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer
 import groovy.json.JsonBuilder
+import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.cloud.contract.spec.Contract
@@ -1916,6 +1917,76 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			stubMappingIsValidWireMockStub(json)
 	}
 
+	@Issue('#266')
+	def "should work with array of arrays"() {
+		given:
+		org.springframework.cloud.contract.spec.Contract groovyDsl = Contract.make {
+			request {
+				method 'POST'
+				urlPath '/api/categories'
+				body([["Programming", "Java"], ["Programming", "Java", "Spring", "Boot"]])
+				headers {
+					header('Content-Type': 'application/json;charset=UTF-8')
+				}
+			}
+			response {
+				status 200
+				body([["Programming", "Java"], ["Programming", "Java", "Spring", "Boot"]])
+				headers {
+					header('Content-Type': 'application/json;charset=UTF-8')
+				}
+			}
+		}
+		when:
+			def json = toWireMockClientJsonStub(groovyDsl)
+		then:
+			AssertionUtil.assertThatJsonsAreEqual(('''
+					{
+					  "request" : {
+						"urlPath" : "/api/categories",
+						"method" : "POST",
+						"headers" : {
+						  "Content-Type" : {
+							"equalTo" : "application/json;charset=UTF-8"
+						  }
+						},
+						"bodyPatterns" : [ {
+						  "matchesJsonPath" : "$[*][?(@ == 'Spring')]"
+						}, {
+						  "matchesJsonPath" : "$[*][?(@ == 'Boot')]"
+						}, {
+						  "matchesJsonPath" : "$[*][?(@ == 'Programming')]"
+						}, {
+						  "matchesJsonPath" : "$[*][?(@ == 'Java')]"
+						} ]
+					  },
+					  "response" : {
+						"status" : 200,
+						"body" : "[\\"[\\\\\\"Programming\\\\\\",\\\\\\"Java\\\\\\"]\\",\\"[\\\\\\"Programming\\\\\\",\\\\\\"Java\\\\\\",\\\\\\"Spring\\\\\\",\\\\\\"Boot\\\\\\"]\\"]",
+						"headers" : {
+						  "Content-Type" : "application/json;charset=UTF-8"
+						},
+						"transformers" : [ "response-template", "foo-transformer" ]
+					  }
+					}
+					'''), json)
+		and:
+			stubMappingIsValidWireMockStub(json)
+		and:
+			int port = SocketUtils.findAvailableTcpPort()
+			WireMockServer server = new WireMockServer(config().port(port))
+			server.start()
+			server.addStubMapping(WireMockStubMapping.buildFrom(json))
+		then:
+			String entity = callApiCategories(port)
+		and:
+			AssertionUtil.assertThatJsonsAreEqual(('''
+				["[\\"Programming\\",\\"Java\\"]","[\\"Programming\\",\\"Java\\",\\"Spring\\",\\"Boot\\"]"]
+				'''), entity)
+		cleanup:
+			server?.shutdown()
+	}
+
 	@Issue('#269')
 	def "should create a stub for dot separated keys"() {
 		given:
@@ -2101,5 +2172,12 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						.header("Authorization", "secret2")
 						.header("Cookie", "foo=bar")
 						.body("{\"foo\":\"bar\",\"baz\":5}"), String.class)
+	}
+
+	String callApiCategories(int port) {
+		return new TestRestTemplate().exchange(
+				RequestEntity.post(URI.create("http://localhost:" + port + "/api/categories"))
+						.header("Content-Type", "application/json;charset=UTF-8")
+						.body(JsonOutput.toJson([["Programming", "Java"], ["Programming", "Java", "Spring", "Boot"]])), String.class).body
 	}
 }

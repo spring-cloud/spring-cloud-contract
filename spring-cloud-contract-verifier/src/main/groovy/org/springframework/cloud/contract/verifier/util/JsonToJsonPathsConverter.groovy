@@ -274,7 +274,7 @@ class JsonToJsonPathsConverter {
 		String systemPropValue = System.getProperty(SIZE_ASSERTION_SYSTEM_PROP)
 		Boolean configPropValue = configProperties.assertJsonSize
 		if ((systemPropValue != null && Boolean.parseBoolean(systemPropValue)) ||
-				configPropValue) {
+				configPropValue && listContainsOnlyPrimitives(value)) {
 			addArraySizeCheck(key, value, closure)
 		} else {
 			if (log.isDebugEnabled()) {
@@ -323,6 +323,10 @@ class JsonToJsonPathsConverter {
 				return jsonPathVerifiable.matches((object as Pattern).pattern())
 			}
 			return jsonPathVerifiable.contains(object)
+		} else if (element instanceof List) {
+			if (listContainsOnlyPrimitives(element)) {
+				return jsonPathVerifiable.array()
+			}
 		}
 		return jsonPathVerifiable
 	}
@@ -367,6 +371,7 @@ class JsonToJsonPathsConverter {
 			}
 		}
 	}
+
 	private boolean isAnEntryWithLists(def value) {
 		if (!(value instanceof Iterable)) {
 			return false

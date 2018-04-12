@@ -33,7 +33,7 @@ import org.springframework.cloud.contract.verifier.util.ContentType
 import org.springframework.cloud.contract.verifier.util.ContentUtils
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
-import static ContentUtils.extractValue
+import static org.springframework.cloud.contract.verifier.util.ContentUtils.extractValue
 import static org.springframework.cloud.contract.verifier.util.MapConverter.transformValues
 /**
  * Common abstraction over WireMock Request / Response conversion implementations
@@ -53,12 +53,12 @@ abstract class BaseWireMockStubStrategy {
 	protected final Contract contract
 
 	protected BaseWireMockStubStrategy(Contract contract) {
-		this.processor = processor()
+		this.processor = templateProcessor()
 		this.template = contractTemplate()
 		this.contract = contract
 	}
 
-	private TemplateProcessor processor() {
+	private TemplateProcessor templateProcessor() {
 		return new HandlebarsTemplateProcessor()
 	}
 
@@ -154,7 +154,7 @@ abstract class BaseWireMockStubStrategy {
 	 * For the given {@link ContentType} returns the String version of the body
 	 */
 	String parseBody(GString value, ContentType contentType) {
-		Object processedValue = extractValue(value, contentType, { Object o -> o instanceof DslProperty ? o.clientValue : o })
+ 		Object processedValue = extractValue(value, contentType, { Object o -> o instanceof DslProperty ? o.clientValue : o })
 		if (processedValue instanceof GString) {
 			return parseBody(processedValue.toString(), contentType)
 		}

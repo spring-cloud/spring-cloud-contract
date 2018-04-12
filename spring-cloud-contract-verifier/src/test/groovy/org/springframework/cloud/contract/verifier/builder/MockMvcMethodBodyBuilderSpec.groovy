@@ -1737,10 +1737,10 @@ World.'''"""
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('assertThatJson(parsedJson).array().arrayField().isEqualTo("Programming").value()')
-			test.contains('assertThatJson(parsedJson).array().arrayField().isEqualTo("Java").value()')
-			test.contains('assertThatJson(parsedJson).array().arrayField().isEqualTo("Spring").value()')
-			test.contains('assertThatJson(parsedJson).array().arrayField().isEqualTo("Boot").value()')
+			test.contains('assertThatJson(parsedJson).array().array().arrayField().isEqualTo("Programming").value()')
+			test.contains('assertThatJson(parsedJson).array().array().arrayField().isEqualTo("Java").value()')
+			test.contains('assertThatJson(parsedJson).array().array().arrayField().isEqualTo("Spring").value()')
+			test.contains('assertThatJson(parsedJson).array().array().arrayField().isEqualTo("Boot").value()')
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
