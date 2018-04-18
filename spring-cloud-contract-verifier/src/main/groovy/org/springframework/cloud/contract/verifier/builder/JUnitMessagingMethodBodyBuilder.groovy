@@ -244,11 +244,7 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	}
 
 	protected String createHeaderComparison(Pattern headerValue) {
-		String escapedJavaHeader = escapeJava(headerValue.toString())
+		String escapedJavaHeader = escapeJava(headerValue.pattern())
 		return "matches(\"$escapedJavaHeader\");"
-	}
-
-	private String patternText(Pattern value) {
-		return "==~ java.util.regex.Pattern.compile('$value')"
 	}
 }

@@ -30,6 +30,9 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.cloud.contract.verifier.util.MapConverter
 
 import java.util.regex.Pattern
+
+import static org.apache.commons.text.StringEscapeUtils.escapeJava
+
 /**
  * @author Jakub Kubrynski, codearte.io
  */
@@ -226,7 +229,8 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	}
 
 	protected String convertHeaderComparison(Pattern headerValue) {
-		return "==~ java.util.regex.Pattern.compile('$headerValue')"
+		String converted = escapeJava(convertUnicodeEscapesIfRequired(headerValue.pattern()))
+		return "==~ java.util.regex.Pattern.compile('${converted}')"
 	}
 
 	// #273 - should escape $ for Groovy since it will try to make it a GString
