@@ -824,4 +824,63 @@ Contract.make {
 			stripped(test) == stripped(expectedMsg)
 	}
 
+	@Issue('#620')
+	def "should generate tests with message headers containing regular expression which compile for [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				label 'shouldPublishMessage'
+				// input to the contract
+				input {
+					// the contract will be triggered by a method
+					triggeredBy('foo()')
+				}
+				// output message of the contract
+				outputMessage {
+					// destination to which the output message will be sent
+					sentTo('messageExchange')
+					// the body of the output message
+					body([
+							"field": "value"
+					])
+					headers {
+						header('Authorization', value(regex('Bearer [A-Za-z0-9\\-\\._~\\+\\/]+=*')))
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			!test.contains('cursor')
+			!test.contains('REGEXP>>')
+			test == expectedTest
+		where:
+			methodBuilderName                 | methodBuilder                                                            | expectedTest
+			"SpockMessagingMethodBodyBuilder" | { Contract dsl -> new SpockMessagingMethodBodyBuilder(dsl, properties) } | ''' when:
+  foo()
+
+ then:
+  ContractVerifierMessage response = contractVerifierMessaging.receive('messageExchange')
+  assert response != null
+  response.getHeader('Authorization')?.toString() ==~ java.util.regex.Pattern.compile('Bearer [A-Za-z0-9-._~+/]+=*')
+ and:
+  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
+  assertThatJson(parsedJson).field("['field']").isEqualTo("value")
+'''
+			"JUnitMessagingMethodBodyBuilder" | { Contract dsl -> new JUnitMessagingMethodBodyBuilder(dsl, properties) } | ''' // when:
+  foo();
+
+ // then:
+  ContractVerifierMessage response = contractVerifierMessaging.receive("messageExchange");
+  assertThat(response).isNotNull();
+  assertThat(response.getHeader("Authorization")).isNotNull();
+  assertThat(response.getHeader("Authorization").toString()).matches("Bearer [A-Za-z0-9\\\\-\\\\._~\\\\+\\\\/]+=*");
+ // and:
+  DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()));
+  assertThatJson(parsedJson).field("['field']").isEqualTo("value");
+'''
+	}
+
 }
