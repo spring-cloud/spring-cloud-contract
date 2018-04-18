@@ -97,6 +97,10 @@ class OutputMessage extends Common {
 		return new DslProperty(value, server.serverValue)
 	}
 
+	DslProperty $(ServerDslProperty server) {
+		return value(server)
+	}
+
 	/**
 	 * @deprecated Deprecated in favor of bodyMatchers to support other future bodyMatchers too
 	 */
