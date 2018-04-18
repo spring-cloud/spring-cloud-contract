@@ -41,6 +41,7 @@ import static org.springframework.cloud.contract.verifier.config.TestFramework.J
  *
  * @author Marcin Grzejszczak
  * @author Jakub Kubrynski, codearte.io
+ * @author Tim Ysewyn
  *
  * @since 1.0.0
  */
@@ -244,8 +245,7 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	}
 
 	protected String createHeaderComparison(Pattern headerValue) {
-		String escapedHeader = convertUnicodeEscapesIfRequired("$headerValue")
-		String escapedJavaHeader = escapeJava(escapedHeader)
+		String escapedJavaHeader = escapeJava(headerValue.pattern())
 		return "matches(\"$escapedJavaHeader\");"
 	}
 
