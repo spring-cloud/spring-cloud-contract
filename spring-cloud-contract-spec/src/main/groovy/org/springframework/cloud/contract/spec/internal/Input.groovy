@@ -90,6 +90,10 @@ class Input extends Common {
 		return new DslProperty(client.clientValue, clientValue)
 	}
 
+	DslProperty $(ClientDslProperty client) {
+		return value(client)
+	}
+
 	@EqualsAndHashCode(includeFields = true, callSuper = true)
 	@ToString(includeSuper = true)
 	static class BodyType extends DslProperty {
