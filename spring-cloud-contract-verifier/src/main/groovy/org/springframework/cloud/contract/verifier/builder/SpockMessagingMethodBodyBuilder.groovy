@@ -35,6 +35,7 @@ import static org.apache.commons.text.StringEscapeUtils.escapeJava
 
 /**
  * @author Jakub Kubrynski, codearte.io
+ * @author Tim Ysewyn
  */
 @PackageScope
 @TypeChecked
