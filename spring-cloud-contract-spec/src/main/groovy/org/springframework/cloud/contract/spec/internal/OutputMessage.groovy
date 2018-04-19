@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringEscapeUtils
 import repackaged.nl.flotsam.xeger.Xeger
 
 import java.util.regex.Pattern
+
 /**
  * Represents an output for messaging. Used for verifying
  * the body and headers that are sent.
