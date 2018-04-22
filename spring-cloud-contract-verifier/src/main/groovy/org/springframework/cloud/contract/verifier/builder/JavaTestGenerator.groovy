@@ -48,42 +48,35 @@ class JavaTestGenerator implements SingleTestGenerator {
 	@Override
 	String buildClass(ContractVerifierConfigProperties configProperties, Collection<ContractMetadata> listOfFiles, String className, String classPackage, String includedDirectoryRelativePath) {
 		ClassBuilder clazz = ClassBuilder.createClass(capitalize(className), classPackage, configProperties, includedDirectoryRelativePath)
-
 		if (configProperties.imports) {
 			configProperties.imports.each {
 				clazz.addImport(it)
 			}
 		}
-
 		if (configProperties.staticImports) {
 			configProperties.staticImports.each {
 				clazz.addStaticImport(it)
 			}
 		}
-
 		if (isScenarioClass(listOfFiles)) {
 			clazz.addImport(configProperties.targetFramework.getOrderAnnotationImport())
 			clazz.addClassLevelAnnotation(configProperties.targetFramework.getOrderAnnotation())
 		}
-
 		addJsonPathRelatedImports(clazz)
+		processContractFiles(listOfFiles, configProperties, clazz)
+		return clazz.build()
+	}
 
+	private void processContractFiles(Collection<ContractMetadata> listOfFiles, ContractVerifierConfigProperties configProperties, ClassBuilder clazz) {
 		Map<ParsedDsl, TestType> contracts = mapContractsToTheirTestTypes(listOfFiles)
-		boolean restAssured2Present = this.checker.isClassPresent(REST_ASSURED_2_0_CLASS)
-		String restAssuredPackage = restAssured2Present ? 'com.jayway.restassured' : 'io.restassured'
-		if (log.isDebugEnabled()) {
-			log.debug("Rest Assured version 2.x found [${restAssured2Present}]")
-		}
+		String restAssuredPackage = getRestAssuredPackage()
 		boolean conditionalImportsAdded = false
-		boolean toIgnore = listOfFiles.ignored.find { it }
-		contracts.each { ParsedDsl key, TestType value ->
+		boolean toIgnore = listOfFiles.ignored.find {it}
+		contracts.each {ParsedDsl key, TestType value ->
 			if (!conditionalImportsAdded) {
 				if (contracts.values().contains(TestType.HTTP)) {
 					if (configProperties.testMode == TestMode.JAXRSCLIENT) {
-						clazz.addStaticImport('javax.ws.rs.client.Entity.*')
-						if (configProperties.targetFramework == TestFramework.JUNIT) {
-							clazz.addImport('javax.ws.rs.core.Response')
-						}
+						addJaxRsClientImports(configProperties, clazz)
 					} else if (configProperties.testMode == TestMode.MOCKMVC) {
 						clazz.addStaticImport("${restAssuredPackage}.module.mockmvc.RestAssuredMockMvc.*")
 					} else {
@@ -91,14 +84,7 @@ class JavaTestGenerator implements SingleTestGenerator {
 					}
 				}
 				if (configProperties.targetFramework == TestFramework.JUNIT) {
-					if (contracts.values().contains(TestType.HTTP) && configProperties.testMode == TestMode.MOCKMVC) {
-						clazz.addImport("${restAssuredPackage}.module.mockmvc.specification.MockMvcRequestSpecification")
-						clazz.addImport("${restAssuredPackage}.response.ResponseOptions")
-					} else if (contracts.values().contains(TestType.HTTP) && configProperties.testMode == TestMode.EXPLICIT) {
-						clazz.addImport("${restAssuredPackage}.specification.RequestSpecification")
-						clazz.addImport("${restAssuredPackage}.response.Response")
-					}
-					clazz.addImport('org.junit.Test')
+					addJUnitImports(contracts, configProperties, restAssuredPackage, clazz)
 				}
 				clazz.addStaticImport('org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat')
 				if (configProperties.ruleClassForTests) {
@@ -116,8 +102,15 @@ class JavaTestGenerator implements SingleTestGenerator {
 		if (toIgnore) {
 			clazz.addImport(configProperties.targetFramework.getIgnoreClass())
 		}
+	}
 
-		return clazz.build()
+	private String getRestAssuredPackage() {
+		boolean restAssured2Present = this.checker.isClassPresent(REST_ASSURED_2_0_CLASS)
+		String restAssuredPackage = restAssured2Present ? 'com.jayway.restassured' : 'io.restassured'
+		if (log.isDebugEnabled()) {
+			log.debug("Rest Assured version 2.x found [${restAssured2Present}]")
+		}
+		restAssuredPackage
 	}
 
 	@Override
@@ -169,16 +162,35 @@ class JavaTestGenerator implements SingleTestGenerator {
 
 	private void addMessagingRelatedEntries(ClassBuilder clazz) {
 		clazz.addField(['@Inject ContractVerifierMessaging contractVerifierMessaging',
-						'@Inject ContractVerifierObjectMapper contractVerifierObjectMapper'
+		                '@Inject ContractVerifierObjectMapper contractVerifierObjectMapper'
 		])
 		clazz.addImport([ 'javax.inject.Inject',
-						  'org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper',
-						  'org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage',
-						  'org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging',
+		                  'org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper',
+		                  'org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage',
+		                  'org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging',
 		])
 		clazz.addStaticImport('org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers')
 	}
 
+	private
+	static void addJUnitImports(Map<ParsedDsl, TestType> contracts, ContractVerifierConfigProperties configProperties,
+	                            String restAssuredPackage, ClassBuilder clazz) {
+		if (contracts.values().contains(TestType.HTTP) && configProperties.testMode == TestMode.MOCKMVC) {
+			clazz.addImport("${restAssuredPackage}.module.mockmvc.specification.MockMvcRequestSpecification")
+			clazz.addImport("${restAssuredPackage}.response.ResponseOptions")
+		} else if (contracts.values().contains(TestType.HTTP) && configProperties.testMode == TestMode.EXPLICIT) {
+			clazz.addImport("${restAssuredPackage}.specification.RequestSpecification")
+			clazz.addImport("${restAssuredPackage}.response.Response")
+		}
+		clazz.addImport('org.junit.Test')
+	}
+
+	private static void addJaxRsClientImports(ContractVerifierConfigProperties configProperties, ClassBuilder clazz) {
+		clazz.addStaticImport('javax.ws.rs.client.Entity.*')
+		if (configProperties.targetFramework == TestFramework.JUNIT) {
+			clazz.addImport('javax.ws.rs.core.Response')
+		}
+	}
 }
 
 class ClassPresenceChecker {
