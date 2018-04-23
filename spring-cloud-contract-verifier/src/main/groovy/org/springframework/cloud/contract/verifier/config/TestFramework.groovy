@@ -20,13 +20,20 @@ package org.springframework.cloud.contract.verifier.config
  * Contains main building blocks for a test class for the given framework
  *
  * @author Jakub Kubrynski, codearte.io
+ * @author Olga Maciaszek-Sharma
  *
  * @since 1.0.0
  */
 enum TestFramework {
-	JUNIT("public ", "public void ", ";", ".java", "Test", "org.junit.Ignore", ["org.junit.FixMethodOrder", "org.junit.runners.MethodSorters"], "@FixMethodOrder(MethodSorters.NAME_ASCENDING)"),
-	SPOCK("", "def ", "", ".groovy", "Spec", "spock.lang.Ignore", ["spock.lang.Stepwise"], "@Stepwise"),
-	CUSTOM("", "", "", "", "", "", [], "")
+
+	JUNIT('public ', 'public void ', ';', '.java', 'Test',
+			'org.junit.Ignore', ['org.junit.FixMethodOrder', 'org.junit.runners.MethodSorters'],
+			'@FixMethodOrder(MethodSorters.NAME_ASCENDING)'),
+	JUNIT5('public ', 'public void ', ';', '.java', 'Test',
+			'org.junit.Ignore', [], ''),
+	SPOCK('', 'def ', '', '.groovy', 'Spec',
+			'spock.lang.Ignore', ['spock.lang.Stepwise'], '@Stepwise'),
+	CUSTOM('', '', '', '', '', '', [], '')
 
 	private final String classModifier
 	private final String methodModifier

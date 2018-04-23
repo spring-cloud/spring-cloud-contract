@@ -104,7 +104,7 @@ class ClassBuilder {
 		return this
 	}
 
-	ClassBuilder addImport(List<String> importsToAdd) {
+	ClassBuilder addImports(List<String> importsToAdd) {
 		imports.addAll(importsToAdd)
 		return this
 	}

@@ -59,7 +59,7 @@ class JavaTestGenerator implements SingleTestGenerator {
 			}
 		}
 		if (isScenarioClass(listOfFiles)) {
-			clazz.addImport(configProperties.targetFramework.getOrderAnnotationImport())
+			clazz.addImports(configProperties.targetFramework.getOrderAnnotationImport())
 			clazz.addClassLevelAnnotation(configProperties.targetFramework.getOrderAnnotation())
 		}
 		addJsonPathRelatedImports(clazz)
@@ -74,19 +74,22 @@ class JavaTestGenerator implements SingleTestGenerator {
 		boolean toIgnore = listOfFiles.ignored.find {it}
 		contracts.each {ParsedDsl key, TestType value ->
 			if (!conditionalImportsAdded) {
-				if (contracts.values().contains(TestType.HTTP)) {
-					if (configProperties.testMode == TestMode.JAXRSCLIENT) {
-						addJaxRsClientImports(configProperties, clazz)
-					} else if (configProperties.testMode == TestMode.MOCKMVC) {
-						clazz.addStaticImport("${restAssuredPackage}.module.mockmvc.RestAssuredMockMvc.*")
-					} else {
-						clazz.addStaticImport("${restAssuredPackage}.RestAssured.*")
-					}
-				}
-				if (configProperties.targetFramework == TestFramework.JUNIT) {
-					addJUnitImports(contracts, configProperties, restAssuredPackage, clazz)
-				}
-				clazz.addStaticImport('org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat')
+				// TODO: BaseImportProvider.getImports(), BaseImportProvider.getStaticImports()
+				// TODO: TypeSpecificImportProvider.getImports(), TypeSpecificImportProvider.getStaticImports()
+
+//				if (contracts.values().contains(TestType.HTTP)) {
+//					if (configProperties.testMode == TestMode.JAXRSCLIENT) {
+//						addJaxRsClientImports(configProperties, clazz)
+//					} else if (configProperties.testMode == TestMode.MOCKMVC) {
+//						clazz.addStaticImport("${restAssuredPackage}.module.mockmvc.RestAssuredMockMvc.*")
+//					} else {
+//						clazz.addStaticImport("${restAssuredPackage}.RestAssured.*")
+//					}
+//				}
+//				if (configProperties.targetFramework == TestFramework.JUNIT) {
+//					addJUnitImports(contracts, configProperties, restAssuredPackage, clazz)
+//				}
+//				clazz.addStaticImport('org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat')
 				if (configProperties.ruleClassForTests) {
 					clazz.addImport('org.junit.Rule').addRule(configProperties.ruleClassForTests)
 				}
@@ -176,21 +179,21 @@ class JavaTestGenerator implements SingleTestGenerator {
 	static void addJUnitImports(Map<ParsedDsl, TestType> contracts, ContractVerifierConfigProperties configProperties,
 	                            String restAssuredPackage, ClassBuilder clazz) {
 		if (contracts.values().contains(TestType.HTTP) && configProperties.testMode == TestMode.MOCKMVC) {
-			clazz.addImport("${restAssuredPackage}.module.mockmvc.specification.MockMvcRequestSpecification")
-			clazz.addImport("${restAssuredPackage}.response.ResponseOptions")
+//			clazz.addImport("${restAssuredPackage}.module.mockmvc.specification.MockMvcRequestSpecification")
+//			clazz.addImport("${restAssuredPackage}.response.ResponseOptions")
 		} else if (contracts.values().contains(TestType.HTTP) && configProperties.testMode == TestMode.EXPLICIT) {
-			clazz.addImport("${restAssuredPackage}.specification.RequestSpecification")
-			clazz.addImport("${restAssuredPackage}.response.Response")
+//			clazz.addImport("${restAssuredPackage}.specification.RequestSpecification")
+//			clazz.addImport("${restAssuredPackage}.response.Response")
 		}
-		clazz.addImport('org.junit.Test')
+//		clazz.addImport('org.junit.Test')
 	}
-
-	private static void addJaxRsClientImports(ContractVerifierConfigProperties configProperties, ClassBuilder clazz) {
-		clazz.addStaticImport('javax.ws.rs.client.Entity.*')
-		if (configProperties.targetFramework == TestFramework.JUNIT) {
-			clazz.addImport('javax.ws.rs.core.Response')
-		}
-	}
+//
+//	private static void addJaxRsClientImports(ContractVerifierConfigProperties configProperties, ClassBuilder clazz) {
+//		clazz.addStaticImport('javax.ws.rs.client.Entity.*')
+//		if (configProperties.targetFramework == TestFramework.JUNIT) {
+//			clazz.addImport('javax.ws.rs.core.Response')
+//		}
+//	}
 }
 
 class ClassPresenceChecker {
