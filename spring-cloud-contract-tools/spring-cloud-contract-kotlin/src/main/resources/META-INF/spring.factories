@@ -1,0 +1,2 @@
+org.springframework.cloud.contract.spec.ContractConverter=\
+org.springframework.cloud.contract.verifier.spec.kotlin.ContractDslConverter
