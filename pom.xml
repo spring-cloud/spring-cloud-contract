@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-build</artifactId>
-		<version>2.0.0.BUILD-SNAPSHOT</version>
+		<version>2.0.1.BUILD-SNAPSHOT</version>
 		<relativePath/>
 	</parent>
 
@@ -40,7 +40,8 @@
 		<hoverfly-junit.version>0.2.2</hoverfly-junit.version>
 		<commons-text.version>1.1</commons-text.version>
 		<handlebars.version>4.0.6</handlebars.version>
-		<org.eclipse.jgit.version>4.6.0.201612231935-r</org.eclipse.jgit.version>
+		<jgit.version>4.6.0.201612231935-r</jgit.version>
+		<javax-inject.version>1</javax-inject.version>
 	</properties>
 
 	<modules>
@@ -139,12 +140,17 @@
 				<artifactId>handlebars</artifactId>
 				<version>${handlebars.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>javax.inject</groupId>
+				<artifactId>javax.inject</artifactId>
+				<version>${javax-inject.version}</version>
+			</dependency>
 
 			<!-- Git Stub Downloader-->
 			<dependency>
 				<groupId>org.eclipse.jgit</groupId>
 				<artifactId>org.eclipse.jgit</artifactId>
-				<version>${org.eclipse.jgit.version}</version>
+				<version>${jgit.version}</version>
 			</dependency>
 			<!-- a proxy to ssh-agent and Pageant in Java -->
 			<dependency>
