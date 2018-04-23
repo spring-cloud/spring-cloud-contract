@@ -332,14 +332,14 @@ The following example shows a Camel messaging contract expressed in Groovy DSL:
 
 [source,groovy]
 ----
-Unresolved directive in verifier_introduction.adoc - include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_no_output_dsl]
+include::spring-cloud-contract-verifier/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_no_output_dsl]
 ----
 
 The following example shows the same contract expressed in YAML:
 
 [source,yml,indent=0]
 ----
-Unresolved directive in verifier_introduction.adoc - include::{verifier_core_path}/src/test/resources/yml/contract_message_scenario3.yml[indent=0]
+include::spring-cloud-contract-verifier/src/test/resources/yml/contract_message_scenario3.yml[indent=0]
 ----
 
 Then you can add Spring Cloud Contract Verifier dependency and plugin to your build file,
