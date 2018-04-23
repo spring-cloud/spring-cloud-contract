@@ -84,7 +84,7 @@
 			<artifactId>spring-cloud-contract-verifier</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>io.spring.initializr</groupId>
 			<artifactId>initializr-web</artifactId>
 			<version>0.4.0.BUILD-SNAPSHOT</version>
@@ -96,6 +96,6 @@
 					<groupId>*</groupId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency>-->
 	</dependencies>
 </project>
