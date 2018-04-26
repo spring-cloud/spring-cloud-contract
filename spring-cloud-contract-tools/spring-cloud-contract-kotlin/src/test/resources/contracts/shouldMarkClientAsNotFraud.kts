@@ -22,7 +22,7 @@ contract {
         status(200)
         body(
                 "fraudCheckStatus" to "OK",
-                "rejectionReason" to listOf(dynamic(producer = execute("assertThatRejectionReasonIsNull(\$it)")))
+                "rejectionReason" to listOf(dynamic(producer = execute("assertThatRejectionReasonIsNull(#it)")))
         )
         headers {
             contentType("application/vnd.fraud.v1+json")

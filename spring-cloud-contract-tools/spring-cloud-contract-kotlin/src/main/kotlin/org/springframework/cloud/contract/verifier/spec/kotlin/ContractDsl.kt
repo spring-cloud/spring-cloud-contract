@@ -1,11 +1,10 @@
 // We need to be in the same package as the Contract to be able to instantiate it.
 package org.springframework.cloud.contract.spec
 
-import org.springframework.cloud.contract.spec.internal.DslProperty
-import org.springframework.cloud.contract.spec.internal.ExecutionProperty
-import org.springframework.cloud.contract.spec.internal.Input
-import org.springframework.cloud.contract.spec.internal.OptionalProperty
-import org.springframework.cloud.contract.spec.internal.OutputMessage
+import org.springframework.cloud.contract.verifier.spec.kotlin.DslProperty
+import org.springframework.cloud.contract.verifier.spec.kotlin.ExecutionProperty
+import org.springframework.cloud.contract.verifier.spec.kotlin.Input
+import org.springframework.cloud.contract.verifier.spec.kotlin.OutputMessage
 import org.springframework.cloud.contract.verifier.spec.kotlin.Request
 import org.springframework.cloud.contract.verifier.spec.kotlin.Response
 import java.util.regex.Pattern
@@ -40,10 +39,6 @@ open class ContractDsl @JvmOverloads constructor(val contract: Contract = Contra
         return Pattern.compile(regex)
     }
 
-    fun optional(optional: Any): OptionalProperty {
-        return OptionalProperty(optional)
-    }
-
     fun execute(commandToExecute: String): ExecutionProperty {
         return ExecutionProperty(commandToExecute)
     }
@@ -51,20 +46,22 @@ open class ContractDsl @JvmOverloads constructor(val contract: Contract = Contra
     fun dynamic(consumer: Any? = null, producer: Any? = null) = DslProperty(consumer, producer)
 
     fun ContractDsl.input(init: Input.() -> Unit) {
-        contract.input = Input().apply(init)
+        val input = Input(contract)
+        input.init()
     }
 
     fun ContractDsl.outputMessage(init: OutputMessage.() -> Unit) {
-        contract.outputMessage = OutputMessage().apply(init)
+        val outputMessage = OutputMessage(contract)
+        outputMessage.init()
     }
 
     fun ContractDsl.request(init: Request.() -> Unit) {
-        val request = Request(contract.request)
+        val request = Request(contract)
         request.init()
     }
 
     fun ContractDsl.response(init: Response.() -> Unit) {
-        val response = Response(contract.response)
+        val response = Response(contract)
         response.init()
     }
 }

@@ -1,17 +1,22 @@
 package org.springframework.cloud.contract.verifier.spec.kotlin
 
+import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Body
 import org.springframework.cloud.contract.spec.internal.HttpMethods.HttpMethod
 import org.springframework.cloud.contract.spec.internal.Url
 import org.springframework.cloud.contract.spec.internal.Request as DelegateRequest
 
 
-open class Request(val delegate: DelegateRequest) {
+open class Request(val contract: Contract) {
+
+    init {
+        contract.request = DelegateRequest()
+    }
 
     var headers = Headers()
 
     fun method(value: String) {
-        delegate.method(value)
+        contract.request.method(value)
     }
 
     fun method(httpMethod: HttpMethod) {
@@ -19,19 +24,19 @@ open class Request(val delegate: DelegateRequest) {
     }
 
     fun url(url: String) {
-        delegate.url = Url(url)
+        contract.request.url = Url(url)
     }
 
     fun body(vararg pairs: Pair<String, Any>) {
-        delegate.body = Body(delegate.convertObjectsToDslProperties(pairs.toMap()))
+        contract.request.body = Body(contract.request.convertObjectsToDslProperties(pairs.toMap()))
     }
 
     fun body(pair: Pair<String, Any>) {
-        delegate.body = Body(delegate.convertObjectsToDslProperties(mapOf(pair)))
+        contract.request.body = Body(contract.request.convertObjectsToDslProperties(mapOf(pair)))
     }
 
     fun body(value: String) {
-        delegate.body = Body(value)
+        contract.request.body = Body(value)
     }
 
     //    fun url(Object url, @DelegatesTo(UrlPath) Closure closure) {
