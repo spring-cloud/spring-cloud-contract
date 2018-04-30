@@ -69,7 +69,9 @@ class JaxRsClientSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequ
 		bb.unindent()
 
 		bb.addEmptyLine()
-		bb.addLine("String responseAsString = response.readEntity(String)")
+		if (expectsResponseBody()) {
+			bb.addLine("String responseAsString = response.readEntity(String)")
+		}
 	}
 
 	protected void appendRequestWithRequiredResponseContentType(BlockBuilder bb) {

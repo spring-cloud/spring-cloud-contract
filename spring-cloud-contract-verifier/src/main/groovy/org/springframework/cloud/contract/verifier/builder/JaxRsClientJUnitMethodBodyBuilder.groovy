@@ -73,7 +73,9 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 		bb.unindent()
 
 		bb.addEmptyLine()
-		bb.addLine("String responseAsString = response.readEntity(String.class);")
+		if (expectsResponseBody()) {
+			bb.addLine("String responseAsString = response.readEntity(String.class);")
+		}
 	}
 
 	protected void appendUrlPathAndQueryParameters(BlockBuilder bb) {
