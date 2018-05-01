@@ -74,6 +74,13 @@ abstract class RequestProcessingMethodBodyBuilder extends MethodBodyBuilder {
 	}
 
 	/**
+	 * Returns {@code true} if a response body is expected
+	 */
+	protected boolean expectsResponseBody() {
+		return response.body != null;
+	}
+
+	/**
 	 * Returns {@code true} if the query parameter is allowed
 	 */
 	protected boolean allowedQueryParameter(QueryParameter param) {
