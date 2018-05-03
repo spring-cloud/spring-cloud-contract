@@ -261,7 +261,7 @@ closure to set it up.
 * *contractsMode*: Specifies the mode of downloading contracts (whether the
 JAR is available offline, remotely etc.)
 * *contractsSnapshotCheckSkip*: If set to `true` will not assert whether the
-downloaded stubs / contract JAR was downloaded from a remote location or a local one
+downloaded stubs / contract JAR was downloaded from a remote location or a local one(only applicable to Maven repos, not Git or Pact).
 * *deleteStubsAfterTest*: If set to `false` will not remove any downloaded
 contracts from temporary directories
 
