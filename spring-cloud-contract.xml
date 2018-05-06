@@ -9285,8 +9285,8 @@ properties</simpara>
 <colspec colname="col_3" colwidth="33.3334*"/>
 <tbody>
 <row>
-<entry align="left" valign="top"><simpara>Type of a property</simpara></entry>
-<entry align="left" valign="top"><simpara>Name of the property</simpara></entry>
+<entry align="left" valign="top"><simpara>Name of a property</simpara></entry>
+<entry align="left" valign="top"><simpara>Default</simpara></entry>
 <entry align="left" valign="top"><simpara>Description</simpara></entry>
 </row>
 <row>
@@ -9328,14 +9328,14 @@ properties</simpara>
 <entry align="left" valign="top"><simpara>* <literal>pactbroker.auth.username</literal> (plugin prop)
 </simpara><simpara>* <literal>stubrunner.properties.pactbroker.auth.username</literal> (system prop)
 </simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_USERNAME</literal> (env prop)</simpara></entry>
-<entry align="left" valign="top"></entry>
+<entry align="left" valign="top"><simpara>The username passed to <literal>contractsRepositoryUsername</literal> (maven) or <literal>contractRepository.username</literal> (gradle)</simpara></entry>
 <entry align="left" valign="top"><simpara>Username used to connect to the Pact Broker</simpara></entry>
 </row>
 <row>
 <entry align="left" valign="top"><simpara>* <literal>pactbroker.auth.password</literal> (plugin prop)
 </simpara><simpara>* <literal>stubrunner.properties.pactbroker.auth.password</literal> (system prop)
 </simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_PASSWORD</literal> (env prop)</simpara></entry>
-<entry align="left" valign="top"></entry>
+<entry align="left" valign="top"><simpara>The password passed to <literal>contractsRepositoryPassword</literal> (maven) or <literal>contractRepository.password</literal> (gradle)</simpara></entry>
 <entry align="left" valign="top"><simpara>Password used to connect to the Pact Broker</simpara></entry>
 </row>
 <row>
