@@ -902,7 +902,7 @@ In order to fix this issue, provide the following section in your `pom.xml`:
 
 === Stubs and Transitive Dependencies
 
-The Maven and Gradle plugin that add the tasks that create the stubs jar for you. One
+The Maven or Gradle plugin should be used to add the tasks that create the stubs jar for you. One
 problem that arises is that, when reusing the stubs, you can mistakenly import all of
 that stub's dependencies. When building a Maven artifact, even though you have a couple
 of different jars, all of them share one pom:
@@ -919,6 +919,8 @@ of different jars, all of them share one pom:
 ├── ...
 └── ...
 ----
+NOTE: Stub Runner will not load transitive dependencies by default, so if you are not
+adding stubs directly, you have nothing to worry about.
 
 There are three possibilities of working with those dependencies so as not to have any
 issues with transitive dependencies:
@@ -930,8 +932,7 @@ issues with transitive dependencies:
 *Mark all application dependencies as optional*
 
 If, in the `github-webhook` application, you mark all of your dependencies as optional,
-when you include the `github-webhook` stubs in another application (or when that
-dependency gets downloaded by Stub Runner) then, since all of the dependencies are
+when you include the `github-webhook` stubs in another application then, since all of the dependencies are
 optional, they will not get downloaded.
 
 *Create a separate `artifactid` for the stubs*
