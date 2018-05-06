@@ -238,6 +238,8 @@ class PactStubDownloader implements StubDownloader {
 		Resource repo = this.stubRunnerOptions.getStubRepositoryRoot();
 		String schemeSpecificPart = schemeSpecificPart(repo.getURI());
 		URI pactBrokerUrl = URI.create(schemeSpecificPart);
+		String stubRunnerUsername = this.stubRunnerOptions.getUsername();
+		String stubRunnerPassword = this.stubRunnerOptions.getPassword();
 		return new PactBrokerLoader(new PactBroker() {
 
 			@Override public Class<? extends Annotation> annotationType() {
@@ -271,15 +273,15 @@ class PactStubDownloader implements StubDownloader {
 					}
 
 					@Override public String scheme() {
-						return resolver.resolveValue("pactbroker.auth.scheme:basic");
+						return resolver.resolveValue("pactbroker.auth.scheme:Basic");
 					}
 
 					@Override public String username() {
-						return resolver.resolveValue("pactbroker.auth.username:");
+						return resolver.resolveValue("pactbroker.auth.username:" + stubRunnerUsername);
 					}
 
 					@Override public String password() {
-						return resolver.resolveValue("pactbroker.auth.password:");
+						return resolver.resolveValue("pactbroker.auth.password:" + stubRunnerPassword);
 					}
 				};
 			}

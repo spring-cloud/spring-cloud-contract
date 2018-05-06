@@ -1718,7 +1718,7 @@ properties
 
 .SCM Stub Downloader properties
 |===
-|Type of a property |Name of the property | Description
+|Name of a property |Default | Description
 |
 * `pactbroker.host` (plugin prop)
 
@@ -1770,7 +1770,7 @@ properties
 * `stubrunner.properties.pactbroker.auth.username` (system prop)
 
 * `STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_USERNAME` (env prop)
-|
+|The username passed to `contractsRepositoryUsername` (maven) or `contractRepository.username` (gradle)
 |Username used to connect to the Pact Broker
 
 |
@@ -1779,7 +1779,7 @@ properties
 * `stubrunner.properties.pactbroker.auth.password` (system prop)
 
 * `STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_PASSWORD` (env prop)
-|
+|The password passed to `contractsRepositoryPassword` (maven) or `contractRepository.password` (gradle)
 |Password used to connect to the Pact Broker
 
 |
