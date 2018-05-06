@@ -59,6 +59,7 @@ import org.springframework.util.StringUtils;
  * Allows downloading of Pact files from the Pact Broker.
  *
  * @author Marcin Grzejszczak
+ * @author Tim Ysewyn
  * @since 2.0.0
  */
 public final class PactStubDownloaderBuilder implements StubDownloaderBuilder {
