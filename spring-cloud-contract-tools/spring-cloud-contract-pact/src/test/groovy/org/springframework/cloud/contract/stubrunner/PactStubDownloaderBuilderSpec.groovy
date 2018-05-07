@@ -8,7 +8,7 @@ import au.com.dius.pact.provider.junit.loader.PactLoader
 import au.com.dius.pact.provider.junit.sysprops.ValueResolver
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.jetbrains.annotations.NotNull
-import org.junit.Ignore
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import org.springframework.cloud.contract.spec.Contract
