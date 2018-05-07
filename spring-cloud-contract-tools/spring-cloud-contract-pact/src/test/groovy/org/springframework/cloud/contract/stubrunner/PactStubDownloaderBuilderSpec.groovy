@@ -18,9 +18,9 @@ import org.springframework.cloud.contract.verifier.spec.pact.PactContractConvert
  * @author Marcin Grzejszczak
  * @author Tim Ysewyn
  */
+@Ignore("Flakey")
 class PactStubDownloaderBuilderSpec extends Specification {
 
-	@Ignore("Flakey")
 	def "should retrieve pacts from broker"() throws IOException {
 		given:
 			Collection<Pact> pacts = new PactContractConverter().convertTo([Contract.make {
