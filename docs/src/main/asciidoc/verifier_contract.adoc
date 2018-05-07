@@ -764,34 +764,34 @@ following matching possibilities:
 
 .Groovy DSL
 
-* For the stubs:
-** `byEquality()`: The value taken from the response via the provided JSON Path must be
+* For the stubs(in tests on the Consumer's side):
+** `byEquality()`: The value taken from the consumer's request via the provided JSON Path must be
 equal to the value provided in the contract.
-** `byRegex(...)`: The value taken from the response via the provided JSON Path must
+** `byRegex(...)`: The value taken from the consumer's request via the provided JSON Path must
 match the regex.
-** `byDate()`: The value taken from the response via the provided JSON Path must
+** `byDate()`: The value taken from the consumer's request via the provided JSON Path must
 match the regex for an ISO Date value.
-** `byTimestamp()`: The value taken from the response via the provided JSON Path must
+** `byTimestamp()`: The value taken from the consumer's request via the provided JSON Path must
 match the regex for an ISO DateTime value.
-** `byTime()`: The value taken from the response via the provided JSON Path must
+** `byTime()`: The value taken from the consumer's request via the provided JSON Path must
 match the regex for an ISO Time value.
-* For the verification:
-** `byEquality()`: The value taken from the response via the provided JSON Path must be
+* For the verification(in generated tests on the Producer's side):
+** `byEquality()`: The value taken from the producer's response via the provided JSON Path must be
 equal to the provided value in the contract.
-** `byRegex(...)`: The value taken from the response via the provided JSON Path must
+** `byRegex(...)`: The value taken from the producer's response via the provided JSON Path must
 match the regex.
-** `byDate()`: The value taken from the response via the provided JSON Path must match
+** `byDate()`: The value taken from the producer's response via the provided JSON Path must match
 the regex for an ISO Date value.
-** `byTimestamp()`: The value taken from the response via the provided JSON Path must
+** `byTimestamp()`: The value taken from the producer's response via the provided JSON Path must
 match the regex for an ISO DateTime value.
-** `byTime()`: The value taken from the response via the provided JSON Path must match
+** `byTime()`: The value taken from the producer's response via the provided JSON Path must match
 the regex for an ISO Time value.
-** `byType()`: The value taken from the response via the provided JSON Path needs to be
+** `byType()`: The value taken from the producer's response via the provided JSON Path needs to be
 of the same type as the type defined in the body of the response in the contract.
 `byType` can take a closure, in which you can set `minOccurrence` and `maxOccurrence`.
 That way, you can assert the size of the flattened collection. To check the size of an
 unflattened collection, use a custom method with the `byCommand(...)` testMatcher.
-** `byCommand(...)`: The value taken from the response via the provided JSON Path is
+** `byCommand(...)`: The value taken from the producer's response via the provided JSON Path is
 passed as an input to the custom method that you provide. For example,
 `byCommand('foo($it)')` results in calling a `foo` method to which the value matching the
 JSON Path gets passed. The type of the object read from the JSON can be one of the
