@@ -1,6 +1,7 @@
 package org.springframework.cloud.contract.wiremock.restdocs;
 
 import com.github.tomakehurst.wiremock.matching.EqualToJsonPattern;
+import com.github.tomakehurst.wiremock.matching.EqualToXmlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import org.junit.Before;
 import org.junit.Rule;
@@ -113,6 +114,25 @@ public class WireMockSnippetTests {
 	}
 
 	@Test
+	public void should_use_equal_to_xml_pattern_for_body_when_request_content_type_is_xml_when_generating_stub()
+			throws Exception {
+		given(this.operation.getName()).willReturn("foo");
+		WireMockSnippet snippet = new WireMockSnippet();
+		given(this.operation.getRequest()).willReturn(requestPostWithXmlContentType());
+
+		snippet.document(this.operation);
+
+		File stub = new File(this.outputFolder, "stubs/foo.json");
+		assertThat(stub).exists();
+		StubMapping stubMapping = WireMockStubMapping
+				.buildFrom(new String(Files.readAllBytes(stub.toPath())));
+		assertThat(stubMapping.getRequest().getBodyPatterns().get(0))
+				.isInstanceOf(EqualToXmlPattern.class);
+		assertThat(stubMapping.getRequest().getBodyPatterns().get(0).getValue())
+				.isEqualTo("<name>foo</name>");
+	}
+
+	@Test
 	public void should_handle_empty_request_body() throws IOException {
 		given(this.operation.getName()).willReturn("foo");
 		WireMockSnippet snippet = new WireMockSnippet();
@@ -127,7 +147,6 @@ public class WireMockSnippetTests {
 		assertThat(stubMapping.getRequest().getBodyPatterns()).isNullOrEmpty();
 		assertThat(stubMapping.getResponse().getStatus())
 				.isEqualTo(HttpStatus.ACCEPTED.value());
-
 	}
 
 	private OperationResponse response() {
@@ -244,6 +263,49 @@ public class WireMockSnippetTests {
 			@Override
 			public Collection<RequestCookie> getCookies() {
 				return Collections.emptySet();
+			}
+		};
+	}
+
+	private OperationRequest requestPostWithXmlContentType() {
+		return new OperationRequest() {
+
+			@Override
+			public byte[] getContent() {
+				String content = "<name>foo</name>";
+				return content.getBytes(Charset.forName("UTF-8"));
+			}
+
+			@Override
+			public String getContentAsString() {
+				return "<name>foo</name>";
+			}
+
+			@Override
+			public HttpHeaders getHeaders() {
+				HttpHeaders httpHeaders = new HttpHeaders();
+				httpHeaders.add("Content-Type", MediaType.APPLICATION_XML_VALUE);
+				return httpHeaders;
+			}
+
+			@Override
+			public HttpMethod getMethod() {
+				return HttpMethod.POST;
+			}
+
+			@Override
+			public Parameters getParameters() {
+				return null;
+			}
+
+			@Override
+			public Collection<OperationRequestPart> getParts() {
+				return null;
+			}
+
+			@Override
+			public URI getUri() {
+				return URI.create("http://foo/bar");
 			}
 		};
 	}

@@ -41,6 +41,7 @@ dependencyManagement {
 dependencies {
 	compile("org.springframework.boot:spring-boot-starter-web")
 	compile("org.springframework.boot:spring-boot-starter-actuator")
+	compile("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
 
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
 	testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'
