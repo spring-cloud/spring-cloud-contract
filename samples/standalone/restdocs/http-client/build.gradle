@@ -36,7 +36,8 @@ dependencyManagement {
 dependencies {
 	compile("org.springframework.boot:spring-boot-starter-web")
 	compile("org.springframework.boot:spring-boot-starter-actuator")
-
+	compile("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
+	
 	testCompile 'org.springframework.cloud:spring-cloud-contract-wiremock'
 	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
 	testCompile "org.springframework.boot:spring-boot-starter-test"

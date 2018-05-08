@@ -46,6 +46,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToXml;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.head;
 import static com.github.tomakehurst.wiremock.client.WireMock.matching;
@@ -71,6 +72,7 @@ public class WireMockSnippet implements Snippet {
 	private StubMapping stubMapping;
 
 	private boolean hasJsonBodyRequestToMatch = false;
+	private boolean hasXmlBodyRequestToMatch = false;
 
 	private final PropertyPlaceholderHelper propertyPlaceholderHelper = new PropertyPlaceholderHelper(
 			"{", "}");
@@ -121,13 +123,22 @@ public class WireMockSnippet implements Snippet {
 				.get("contract.contentType");
 		if (this.contentType == null) {
 			this.hasJsonBodyRequestToMatch = hasJsonContentType(operation);
+			this.hasXmlBodyRequestToMatch = hasXmlContentType(operation);
 		}
 	}
 
 	private boolean hasJsonContentType(Operation operation) {
+		return hasContentType(operation, MediaType.APPLICATION_JSON);
+	}
+
+	private boolean hasXmlContentType(Operation operation) {
+		return hasContentType(operation, MediaType.APPLICATION_XML);
+	}
+
+	private boolean hasContentType(Operation operation, MediaType mediaType) {
 		return operation.getRequest().getHeaders().getContentType() != null
 				&& (operation.getRequest().getHeaders().getContentType()
-						.isCompatibleWith(MediaType.APPLICATION_JSON));
+				.isCompatibleWith(mediaType));
 	}
 
 	private ResponseDefinitionBuilder response(Operation operation) {
@@ -195,6 +206,9 @@ public class WireMockSnippet implements Snippet {
 		else if (!StringUtils.isEmpty(content)) {
 			if (this.hasJsonBodyRequestToMatch) {
 				builder.withRequestBody(equalToJson(content));
+			}
+			else if (this.hasXmlBodyRequestToMatch) {
+				builder.withRequestBody(equalToXml(content));
 			}
 			else {
 				builder.withRequestBody(equalTo(content));
