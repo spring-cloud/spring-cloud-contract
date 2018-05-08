@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2018-05-04</date>
+<date>2018-04-24</date>
 </info>
 <preface>
 <title></title>
@@ -1194,7 +1194,7 @@ one to one to the contents of the repo.</simpara>
 	&lt;parent&gt;
 		&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
 		&lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
-		&lt;version&gt;1.5.10.RELEASE&lt;/version&gt;
+		&lt;version&gt;1.5.12.RELEASE&lt;/version&gt;
 		&lt;relativePath /&gt;
 	&lt;/parent&gt;
 
