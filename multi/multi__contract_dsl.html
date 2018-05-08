@@ -1097,21 +1097,21 @@ dynamic parts of a contract.</p><p>You can use the <code class="literal">bodyMat
 You can set it in the <code class="literal">request</code> or <code class="literal">inputMessage</code> part of your contract.</li><li class="listitem">Verify the result of your test.
 This section is present in the <code class="literal">response</code> or <code class="literal">outputMessage</code> side of the
 contract.</li></ul></div><p>Currently, Spring Cloud Contract Verifier supports only JSON Path-based matchers with the
-following matching possibilities:</p><div class="itemizedlist"><p class="title"><b>Groovy DSL</b></p><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">For the stubs:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">byEquality()</code>: The value taken from the response via the provided JSON Path must be
-equal to the value provided in the contract.</li><li class="listitem"><code class="literal">byRegex(&#8230;&#8203;)</code>: The value taken from the response via the provided JSON Path must
-match the regex.</li><li class="listitem"><code class="literal">byDate()</code>: The value taken from the response via the provided JSON Path must
-match the regex for an ISO Date value.</li><li class="listitem"><code class="literal">byTimestamp()</code>: The value taken from the response via the provided JSON Path must
-match the regex for an ISO DateTime value.</li><li class="listitem"><code class="literal">byTime()</code>: The value taken from the response via the provided JSON Path must
-match the regex for an ISO Time value.</li></ul></div></li><li class="listitem"><p class="simpara">For the verification:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">byEquality()</code>: The value taken from the response via the provided JSON Path must be
-equal to the provided value in the contract.</li><li class="listitem"><code class="literal">byRegex(&#8230;&#8203;)</code>: The value taken from the response via the provided JSON Path must
-match the regex.</li><li class="listitem"><code class="literal">byDate()</code>: The value taken from the response via the provided JSON Path must match
-the regex for an ISO Date value.</li><li class="listitem"><code class="literal">byTimestamp()</code>: The value taken from the response via the provided JSON Path must
-match the regex for an ISO DateTime value.</li><li class="listitem"><code class="literal">byTime()</code>: The value taken from the response via the provided JSON Path must match
-the regex for an ISO Time value.</li><li class="listitem"><code class="literal">byType()</code>: The value taken from the response via the provided JSON Path needs to be
+following matching possibilities:</p><div class="itemizedlist"><p class="title"><b>Groovy DSL</b></p><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">For the stubs(in tests on the Consumer&#8217;s side):</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">byEquality()</code>: The value taken from the consumer&#8217;s request via the provided JSON Path must be
+equal to the value provided in the contract.</li><li class="listitem"><code class="literal">byRegex(&#8230;&#8203;)</code>: The value taken from the consumer&#8217;s request via the provided JSON Path must
+match the regex.</li><li class="listitem"><code class="literal">byDate()</code>: The value taken from the consumer&#8217;s request via the provided JSON Path must
+match the regex for an ISO Date value.</li><li class="listitem"><code class="literal">byTimestamp()</code>: The value taken from the consumer&#8217;s request via the provided JSON Path must
+match the regex for an ISO DateTime value.</li><li class="listitem"><code class="literal">byTime()</code>: The value taken from the consumer&#8217;s request via the provided JSON Path must
+match the regex for an ISO Time value.</li></ul></div></li><li class="listitem"><p class="simpara">For the verification(in generated tests on the Producer&#8217;s side):</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><code class="literal">byEquality()</code>: The value taken from the producer&#8217;s response via the provided JSON Path must be
+equal to the provided value in the contract.</li><li class="listitem"><code class="literal">byRegex(&#8230;&#8203;)</code>: The value taken from the producer&#8217;s response via the provided JSON Path must
+match the regex.</li><li class="listitem"><code class="literal">byDate()</code>: The value taken from the producer&#8217;s response via the provided JSON Path must match
+the regex for an ISO Date value.</li><li class="listitem"><code class="literal">byTimestamp()</code>: The value taken from the producer&#8217;s response via the provided JSON Path must
+match the regex for an ISO DateTime value.</li><li class="listitem"><code class="literal">byTime()</code>: The value taken from the producer&#8217;s response via the provided JSON Path must match
+the regex for an ISO Time value.</li><li class="listitem"><code class="literal">byType()</code>: The value taken from the producer&#8217;s response via the provided JSON Path needs to be
 of the same type as the type defined in the body of the response in the contract.
 <code class="literal">byType</code> can take a closure, in which you can set <code class="literal">minOccurrence</code> and <code class="literal">maxOccurrence</code>.
 That way, you can assert the size of the flattened collection. To check the size of an
-unflattened collection, use a custom method with the <code class="literal">byCommand(&#8230;&#8203;)</code> testMatcher.</li><li class="listitem"><p class="simpara"><code class="literal">byCommand(&#8230;&#8203;)</code>: The value taken from the response via the provided JSON Path is
+unflattened collection, use a custom method with the <code class="literal">byCommand(&#8230;&#8203;)</code> testMatcher.</li><li class="listitem"><p class="simpara"><code class="literal">byCommand(&#8230;&#8203;)</code>: The value taken from the producer&#8217;s response via the provided JSON Path is
 passed as an input to the custom method that you provide. For example,
 <code class="literal">byCommand('foo($it)')</code> results in calling a <code class="literal">foo</code> method to which the value matching the
 JSON Path gets passed. The type of the object read from the JSON can be one of the

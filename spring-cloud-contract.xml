@@ -7399,62 +7399,62 @@ following matching possibilities:</simpara>
 <itemizedlist>
 <title>Groovy DSL</title>
 <listitem>
-<simpara>For the stubs:</simpara>
+<simpara>For the stubs(in tests on the Consumer&#8217;s side):</simpara>
 <itemizedlist>
 <listitem>
-<simpara><literal>byEquality()</literal>: The value taken from the response via the provided JSON Path must be
+<simpara><literal>byEquality()</literal>: The value taken from the consumer&#8217;s request via the provided JSON Path must be
 equal to the value provided in the contract.</simpara>
 </listitem>
 <listitem>
-<simpara><literal>byRegex(&#8230;&#8203;)</literal>: The value taken from the response via the provided JSON Path must
+<simpara><literal>byRegex(&#8230;&#8203;)</literal>: The value taken from the consumer&#8217;s request via the provided JSON Path must
 match the regex.</simpara>
 </listitem>
 <listitem>
-<simpara><literal>byDate()</literal>: The value taken from the response via the provided JSON Path must
+<simpara><literal>byDate()</literal>: The value taken from the consumer&#8217;s request via the provided JSON Path must
 match the regex for an ISO Date value.</simpara>
 </listitem>
 <listitem>
-<simpara><literal>byTimestamp()</literal>: The value taken from the response via the provided JSON Path must
+<simpara><literal>byTimestamp()</literal>: The value taken from the consumer&#8217;s request via the provided JSON Path must
 match the regex for an ISO DateTime value.</simpara>
 </listitem>
 <listitem>
-<simpara><literal>byTime()</literal>: The value taken from the response via the provided JSON Path must
+<simpara><literal>byTime()</literal>: The value taken from the consumer&#8217;s request via the provided JSON Path must
 match the regex for an ISO Time value.</simpara>
 </listitem>
 </itemizedlist>
 </listitem>
 <listitem>
-<simpara>For the verification:</simpara>
+<simpara>For the verification(in generated tests on the Producer&#8217;s side):</simpara>
 <itemizedlist>
 <listitem>
-<simpara><literal>byEquality()</literal>: The value taken from the response via the provided JSON Path must be
+<simpara><literal>byEquality()</literal>: The value taken from the producer&#8217;s response via the provided JSON Path must be
 equal to the provided value in the contract.</simpara>
 </listitem>
 <listitem>
-<simpara><literal>byRegex(&#8230;&#8203;)</literal>: The value taken from the response via the provided JSON Path must
+<simpara><literal>byRegex(&#8230;&#8203;)</literal>: The value taken from the producer&#8217;s response via the provided JSON Path must
 match the regex.</simpara>
 </listitem>
 <listitem>
-<simpara><literal>byDate()</literal>: The value taken from the response via the provided JSON Path must match
+<simpara><literal>byDate()</literal>: The value taken from the producer&#8217;s response via the provided JSON Path must match
 the regex for an ISO Date value.</simpara>
 </listitem>
 <listitem>
-<simpara><literal>byTimestamp()</literal>: The value taken from the response via the provided JSON Path must
+<simpara><literal>byTimestamp()</literal>: The value taken from the producer&#8217;s response via the provided JSON Path must
 match the regex for an ISO DateTime value.</simpara>
 </listitem>
 <listitem>
-<simpara><literal>byTime()</literal>: The value taken from the response via the provided JSON Path must match
+<simpara><literal>byTime()</literal>: The value taken from the producer&#8217;s response via the provided JSON Path must match
 the regex for an ISO Time value.</simpara>
 </listitem>
 <listitem>
-<simpara><literal>byType()</literal>: The value taken from the response via the provided JSON Path needs to be
+<simpara><literal>byType()</literal>: The value taken from the producer&#8217;s response via the provided JSON Path needs to be
 of the same type as the type defined in the body of the response in the contract.
 <literal>byType</literal> can take a closure, in which you can set <literal>minOccurrence</literal> and <literal>maxOccurrence</literal>.
 That way, you can assert the size of the flattened collection. To check the size of an
 unflattened collection, use a custom method with the <literal>byCommand(&#8230;&#8203;)</literal> testMatcher.</simpara>
 </listitem>
 <listitem>
-<simpara><literal>byCommand(&#8230;&#8203;)</literal>: The value taken from the response via the provided JSON Path is
+<simpara><literal>byCommand(&#8230;&#8203;)</literal>: The value taken from the producer&#8217;s response via the provided JSON Path is
 passed as an input to the custom method that you provide. For example,
 <literal>byCommand('foo($it)')</literal> results in calling a <literal>foo</literal> method to which the value matching the
 JSON Path gets passed. The type of the object read from the JSON can be one of the
