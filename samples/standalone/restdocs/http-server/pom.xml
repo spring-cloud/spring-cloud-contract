@@ -21,6 +21,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 		<spring-cloud-contract.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-contract.version>
+		<spring.cloud.contract.verifier.skip>true</spring.cloud.contract.verifier.skip>
 	</properties>
 
 	<dependencies>

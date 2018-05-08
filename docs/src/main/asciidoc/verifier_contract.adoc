@@ -1276,9 +1276,16 @@ When you want to include the requests and responses of your API using Spring RES
 you only need to make some minor changes to your setup if you are using MockMvc and RestAssuredMockMvc.
 Simply include the following dependencies if you haven't already.
 
-[source,maven,indent=0]
+[source,xml,indent=0]
+.Maven
 ----
 include::{standalone_restdocs_path}/http-server/pom.xml[tags=dependencies,indent=0]
+----
+
+[source,groovy,indent=0]
+.Gradle
+----
+include::{standalone_restdocs_path}/http-server/build.gradle[tags=dependencies,indent=0]
 ----
 
 Next you need to make some changes to your base class like the following example.
@@ -1294,6 +1301,8 @@ In case you are using the standalone setup, you can set up RestAssuredMockMvc li
 ----
 include::{standalone_restdocs_path}/http-server/src/test/java/com/example/fraud/FraudBaseWithStandaloneSetup.java[tags=base_class,indent=0]
 ----
+
+TIP: You don't need to specify the output directory for the generated snippets since version 1.2.0.RELEASE of Spring REST Docs.
 
 == Customization
 
