@@ -1817,4 +1817,92 @@ index of the contract in the list.</p><p>The generated stubs is shown in the fol
 1_WithList.json</pre><p>As you can see, the first file got the <code class="literal">name</code> parameter from the contract. The second
 got the name of the contract file (<code class="literal">WithList.groovy</code>) prefixed with the index (in this
 case, the contract had an index of <code class="literal">1</code> in the list of contracts in the file).</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>As you can see, it iss much better if you name your contracts because doing so makes
-your tests far more meaningful.</p></td></tr></table></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="multi__stub_runner_for_messaging.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="multi__customization.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">7.&nbsp;Stub Runner for Messaging&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="multi_spring-cloud-contract.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;9.&nbsp;Customization</td></tr></table></div></body></html>
+your tests far more meaningful.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_generating_spring_rest_docs_snippets_from_the_contracts" href="#_generating_spring_rest_docs_snippets_from_the_contracts"></a>8.11&nbsp;Generating Spring REST Docs snippets from the contracts</h2></div></div></div><p>When you want to include the requests and responses of your API using Spring REST Docs,
+you only need to make some minor changes to your setup if you are using MockMvc and RestAssuredMockMvc.
+Simply include the following dependencies if you haven&#8217;t already.</p><p><b>Maven.&nbsp;</b>
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-starter-contract-verifier<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;scope&gt;</span>test<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/scope&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.restdocs<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-restdocs-mockmvc<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;optional&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/optional&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span></pre><p>
+</p><p><b>Gradle.&nbsp;</b>
+</p><pre class="programlisting">testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud:spring-cloud-starter-contract-verifier'</span>
+testCompile <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.restdocs:spring-restdocs-mockmvc'</span></pre><p>
+</p><p>Next you need to make some changes to your base class like the following example.</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> com.example.fraud;
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> io.restassured.module.mockmvc.RestAssuredMockMvc;
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.Before;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.Rule;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.rules.TestName;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.runner.RunWith;
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.beans.factory.annotation.Autowired;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.boot.test.context.SpringBootTest;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.restdocs.JUnitRestDocumentation;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.test.context.junit4.SpringRunner;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.test.web.servlet.setup.MockMvcBuilders;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.web.context.WebApplicationContext;
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+
+<em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
+<em><span class="hl-annotation" style="color: gray">@SpringBootTest(classes = Application.class)</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">abstract</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> FraudBaseWithWebAppSetup {
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> String OUTPUT = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"target/generated-snippets"</span>;
+
+	<em><span class="hl-annotation" style="color: gray">@Rule</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> JUnitRestDocumentation restDocumentation = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> JUnitRestDocumentation(OUTPUT);
+
+	<em><span class="hl-annotation" style="color: gray">@Rule</span></em> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> TestName testName = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> TestName();
+
+	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> WebApplicationContext context;
+
+	<em><span class="hl-annotation" style="color: gray">@Before</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setup() {
+	RestAssuredMockMvc.mockMvc(MockMvcBuilders.webAppContextSetup(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.context)
+			.apply(documentationConfiguration(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.restDocumentation))
+			.alwaysDo(document(getClass().getSimpleName() + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"_"</span> + testName.getMethodName()))
+			.build());
+	}
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">protected</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> assertThatRejectionReasonIsNull(Object rejectionReason) {
+		assert rejectionReason == null;
+	}
+}</pre><p>In case you are using the standalone setup, you can set up RestAssuredMockMvc like this:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> com.example.fraud;
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> io.restassured.module.mockmvc.RestAssuredMockMvc;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.Before;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.Rule;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.junit.rules.TestName;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.restdocs.JUnitRestDocumentation;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">abstract</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> FraudBaseWithStandaloneSetup {
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">final</span> String OUTPUT = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"target/generated-snippets"</span>;
+
+	<em><span class="hl-annotation" style="color: gray">@Rule</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> JUnitRestDocumentation restDocumentation = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> JUnitRestDocumentation(OUTPUT);
+
+	<em><span class="hl-annotation" style="color: gray">@Rule</span></em> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> TestName testName = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> TestName();
+
+	<em><span class="hl-annotation" style="color: gray">@Before</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> setup() {
+		RestAssuredMockMvc.standaloneSetup(MockMvcBuilders.standaloneSetup(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> FraudDetectionController())
+				.apply(documentationConfiguration(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.restDocumentation))
+				.alwaysDo(document(getClass().getSimpleName() + <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"_"</span> + testName.getMethodName())));
+	}
+
+}</pre><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>You don&#8217;t need to specify the output directory for the generated snippets since version 1.2.0.RELEASE of Spring REST Docs.</p></td></tr></table></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="multi__stub_runner_for_messaging.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="multi__customization.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">7.&nbsp;Stub Runner for Messaging&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="multi_spring-cloud-contract.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;9.&nbsp;Customization</td></tr></table></div></body></html>

@@ -8418,6 +8418,113 @@ case, the contract had an index of <literal>1</literal> in the list of contracts
 your tests far more meaningful.</simpara>
 </tip>
 </section>
+<section xml:id="_generating_spring_rest_docs_snippets_from_the_contracts">
+<title>Generating Spring REST Docs snippets from the contracts</title>
+<simpara>When you want to include the requests and responses of your API using Spring REST Docs,
+you only need to make some minor changes to your setup if you are using MockMvc and RestAssuredMockMvc.
+Simply include the following dependencies if you haven&#8217;t already.</simpara>
+<formalpara>
+<title>Maven</title>
+<para>
+<programlisting language="xml" linenumbering="unnumbered">&lt;dependency&gt;
+	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+	&lt;artifactId&gt;spring-cloud-starter-contract-verifier&lt;/artifactId&gt;
+	&lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+	&lt;groupId&gt;org.springframework.restdocs&lt;/groupId&gt;
+	&lt;artifactId&gt;spring-restdocs-mockmvc&lt;/artifactId&gt;
+	&lt;optional&gt;true&lt;/optional&gt;
+&lt;/dependency&gt;</programlisting>
+</para>
+</formalpara>
+<formalpara>
+<title>Gradle</title>
+<para>
+<programlisting language="groovy" linenumbering="unnumbered">testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'</programlisting>
+</para>
+</formalpara>
+<simpara>Next you need to make some changes to your base class like the following example.</simpara>
+<programlisting language="java" linenumbering="unnumbered">package com.example.fraud;
+
+import io.restassured.module.mockmvc.RestAssuredMockMvc;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestName;
+import org.junit.runner.RunWith;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = Application.class)
+public abstract class FraudBaseWithWebAppSetup {
+
+	private static final String OUTPUT = "target/generated-snippets";
+
+	@Rule
+	public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation(OUTPUT);
+
+	@Rule public TestName testName = new TestName();
+
+	@Autowired
+	private WebApplicationContext context;
+
+	@Before
+	public void setup() {
+	RestAssuredMockMvc.mockMvc(MockMvcBuilders.webAppContextSetup(this.context)
+			.apply(documentationConfiguration(this.restDocumentation))
+			.alwaysDo(document(getClass().getSimpleName() + "_" + testName.getMethodName()))
+			.build());
+	}
+
+	protected void assertThatRejectionReasonIsNull(Object rejectionReason) {
+		assert rejectionReason == null;
+	}
+}</programlisting>
+<simpara>In case you are using the standalone setup, you can set up RestAssuredMockMvc like this:</simpara>
+<programlisting language="java" linenumbering="unnumbered">package com.example.fraud;
+
+import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestName;
+import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+
+public abstract class FraudBaseWithStandaloneSetup {
+
+	private static final String OUTPUT = "target/generated-snippets";
+
+	@Rule
+	public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation(OUTPUT);
+
+	@Rule public TestName testName = new TestName();
+
+	@Before
+	public void setup() {
+		RestAssuredMockMvc.standaloneSetup(MockMvcBuilders.standaloneSetup(new FraudDetectionController())
+				.apply(documentationConfiguration(this.restDocumentation))
+				.alwaysDo(document(getClass().getSimpleName() + "_" + testName.getMethodName())));
+	}
+
+}</programlisting>
+<tip>
+<simpara>You don&#8217;t need to specify the output directory for the generated snippets since version 1.2.0.RELEASE of Spring REST Docs.</simpara>
+</tip>
+</section>
 </chapter>
 <chapter xml:id="_customization">
 <title>Customization</title>
