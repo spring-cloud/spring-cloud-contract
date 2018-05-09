@@ -307,6 +307,10 @@ public class WireMockSnippetTests {
 			public URI getUri() {
 				return URI.create("http://foo/bar");
 			}
+
+			@Override public Collection<RequestCookie> getCookies() {
+				return Collections.emptySet();
+			}
 		};
 	}
 
