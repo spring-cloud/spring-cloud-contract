@@ -2714,4 +2714,37 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			SyntaxChecker.tryToCompile("MockMvcSpockMethodRequestProcessingBodyBuilder", blockBuilder.toString())
 	}
 
+	@Issue("#628")
+	def "should execute method in response header [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					urlPath '/whatever'
+					headers {
+						header 'My-UUID': value(test(execute('property("my-uuid")')), stub('76c53386-ad9b-11e6-92dc-0370ae47c3b2'))
+					}
+				}
+				response {
+					status 200
+					headers {
+						header 'My-UUID': value(test(execute('property("my-uuid")')), stub('76c53386-ad9b-11e6-92dc-0370ae47c3b2'))
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			String test = blockBuilder.toString()
+		then:
+			responseAssertion(test)
+		where:
+			methodBuilderName                                    | methodBuilder                                                                               | responseAssertion
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | { String body -> body.contains("response.header('My-UUID') == property(\"my-uuid\")") }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | { String body -> body.contains('assertThat(response.header("My-UUID")).isEqualTo(property("my-uuid"));') }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String body -> body.contains("response.getHeaderString('My-UUID') == property(\"my-uuid\")") }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String body -> body.contains('assertThat(response.getHeaderString("My-UUID")).isEqualTo(property("my-uuid"));') }
+	}
+
 }

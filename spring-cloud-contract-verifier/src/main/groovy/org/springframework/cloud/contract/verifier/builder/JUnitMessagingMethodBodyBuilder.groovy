@@ -112,7 +112,7 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
 		blockBuilder.addLine("assertThat(response.getHeader(\"$property\")).isNotNull();")
-		blockBuilder.addLine("${exec.insertValue("response.getHeader(\"$property\").toString()")};")
+		blockBuilder.addLine("assertThat(response.getHeader(\"$property\")).isEqualTo(${exec.insertValue("response.getHeader(\"$property\").toString()")});")
 	}
 
 	@Override

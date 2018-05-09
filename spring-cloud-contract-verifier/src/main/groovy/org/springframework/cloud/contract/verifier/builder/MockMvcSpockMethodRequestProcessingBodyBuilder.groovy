@@ -96,7 +96,7 @@ class MockMvcSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestP
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
-		blockBuilder.addLine("${exec.insertValue("response.header(\'$property\')")}")
+		blockBuilder.addLine("response.header(\'$property\') == ${exec.insertValue("response.header(\'$property\')")}")
 	}
 
 	@Override
