@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2018-05-08</date>
+<date>2018-05-09</date>
 </info>
 <preface>
 <title></title>
@@ -8414,7 +8414,7 @@ index of the contract in the list.</simpara>
 got the name of the contract file (<literal>WithList.groovy</literal>) prefixed with the index (in this
 case, the contract had an index of <literal>1</literal> in the list of contracts in the file).</simpara>
 <tip>
-<simpara>As you can see, it iss much better if you name your contracts because doing so makes
+<simpara>As you can see, it is much better if you name your contracts because doing so makes
 your tests far more meaningful.</simpara>
 </tip>
 </section>
