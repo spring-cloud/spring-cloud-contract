@@ -11,6 +11,7 @@ buildscript {
 	}
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.0.1.RELEASE"
+		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${project.findProperty('verifierVersion') ?: verifierVersion}"
 	}
 }
 
@@ -30,6 +31,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'maven-publish'
 apply plugin: 'maven'
+apply plugin: 'spring-cloud-contract'
 
 dependencyManagement {
 	imports {
@@ -44,8 +46,11 @@ dependencies {
 	compile("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
 
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
-	testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
+	// tag::dependencies[]
+	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+	testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	// end::dependencies[]
 }
 
 test {
@@ -54,6 +59,15 @@ test {
 		exceptionFormat = 'full'
 	}
 }
+
+contracts {
+	baseClassMappings {
+		baseClassMapping('.*standalone.*', 'com.example.fraud.FraudBaseWithStandaloneSetup')
+		baseClassMapping('.*webapp.*', 'com.example.fraud.FraudBaseWithWebAppSetup')
+	}
+}
+
+generateClientStubs.enabled = false
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.0.2'

@@ -21,6 +21,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 		<spring-cloud-contract.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-contract.version>
+		<spring.cloud.contract.verifier.skip>true</spring.cloud.contract.verifier.skip>
 	</properties>
 
 	<dependencies>
@@ -44,15 +45,22 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.springframework.restdocs</groupId>
-			<artifactId>spring-restdocs-mockmvc</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- tag::dependencies[] -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-contract-verifier</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.restdocs</groupId>
+			<artifactId>spring-restdocs-mockmvc</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<!-- end::dependencies[] -->
 	</dependencies>
 
 	<dependencyManagement>
@@ -113,6 +121,26 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- tag::plugin[] -->
+			<plugin>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-contract-maven-plugin</artifactId>
+				<version>${spring-cloud-contract.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<baseClassMappings>
+						<baseClassMapping>
+							<contractPackageRegex>.*standalone.*</contractPackageRegex>
+							<baseClassFQN>com.example.fraud.FraudBaseWithStandaloneSetup</baseClassFQN>
+						</baseClassMapping>
+						<baseClassMapping>
+							<contractPackageRegex>.*webapp.*</contractPackageRegex>
+							<baseClassFQN>com.example.fraud.FraudBaseWithWebAppSetup</baseClassFQN>
+						</baseClassMapping>
+					</baseClassMappings>
+				</configuration>
+			</plugin>
+			<!-- end::plugin[] -->
 		</plugins>
 	</build>
 

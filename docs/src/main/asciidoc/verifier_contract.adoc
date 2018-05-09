@@ -1270,6 +1270,40 @@ case, the contract had an index of `1` in the list of contracts in the file).
 TIP: As you can see, it iss much better if you name your contracts because doing so makes
 your tests far more meaningful.
 
+=== Generating Spring REST Docs snippets from the contracts
+
+When you want to include the requests and responses of your API using Spring REST Docs,
+you only need to make some minor changes to your setup if you are using MockMvc and RestAssuredMockMvc.
+Simply include the following dependencies if you haven't already.
+
+[source,xml,indent=0]
+.Maven
+----
+include::{standalone_restdocs_path}/http-server/pom.xml[tags=dependencies,indent=0]
+----
+
+[source,groovy,indent=0]
+.Gradle
+----
+include::{standalone_restdocs_path}/http-server/build.gradle[tags=dependencies,indent=0]
+----
+
+Next you need to make some changes to your base class like the following example.
+
+[source,java,indent=0]
+----
+include::{standalone_restdocs_path}/http-server/src/test/java/com/example/fraud/FraudBaseWithWebAppSetup.java[tags=base_class,indent=0]
+----
+
+In case you are using the standalone setup, you can set up RestAssuredMockMvc like this:
+
+[source,java,indent=0]
+----
+include::{standalone_restdocs_path}/http-server/src/test/java/com/example/fraud/FraudBaseWithStandaloneSetup.java[tags=base_class,indent=0]
+----
+
+TIP: You don't need to specify the output directory for the generated snippets since version 1.2.0.RELEASE of Spring REST Docs.
+
 == Customization
 
 IMPORTANT: This section is valid only for Groovy DSL
