@@ -205,7 +205,7 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
-		blockBuilder.addLine("${exec.insertValue("response.getHeaderString(\"$property\")")};")
+		blockBuilder.addLine("assertThat(response.getHeaderString(\"$property\")).isEqualTo(${exec.insertValue("response.getHeaderString(\"$property\")")});")
 	}
 
 	@Override

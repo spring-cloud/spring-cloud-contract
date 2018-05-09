@@ -80,7 +80,7 @@ class SpockMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
-		blockBuilder.addLine("${exec.insertValue("response.getHeader(\'$property\')?.toString()")}")
+		blockBuilder.addLine("response.getHeader('$property') == ${exec.insertValue("response.getHeader(\'$property\')?.toString()")}")
 	}
 
 	@Override
