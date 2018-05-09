@@ -853,4 +853,40 @@ Contract.make {
 '''
 	}
 
+	@Issue("#628")
+	def "should execute method in response header [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				label 'shouldPublishMessage'
+				// input to the contract
+				input {
+					// the contract will be triggered by a method
+					triggeredBy('foo()')
+				}
+				// output message of the contract
+				outputMessage {
+					// destination to which the output message will be sent
+					sentTo('messageExchange')
+					// the body of the output message
+					body([
+							"field": "value"
+					])
+					headers {
+						header 'My-UUID': value(test(execute('property("my-uuid")')), stub('76c53386-ad9b-11e6-92dc-0370ae47c3b2'))
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			String test = blockBuilder.toString()
+		then:
+			responseAssertion(test)
+		where:
+			methodBuilderName                 | methodBuilder                                                            | responseAssertion
+			"SpockMessagingMethodBodyBuilder" | { Contract dsl -> new SpockMessagingMethodBodyBuilder(dsl, properties) } | { String body -> body.contains("response.getHeader('My-UUID') == property(\"my-uuid\")") }
+			"JUnitMessagingMethodBodyBuilder" | { Contract dsl -> new JUnitMessagingMethodBodyBuilder(dsl, properties) } | { String body -> body.contains('assertThat(response.getHeader("My-UUID")).isEqualTo(property("my-uuid"));') }
+	}
+
 }
