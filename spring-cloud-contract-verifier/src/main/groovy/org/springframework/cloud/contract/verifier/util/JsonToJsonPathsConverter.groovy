@@ -38,6 +38,7 @@ import java.util.regex.Pattern
  * JSON Paths together with methods needed to be called to build them.
  *
  * @author Marcin Grzejszczak
+ * @author Tim Ysewyn
  */
 @Slf4j
 class JsonToJsonPathsConverter {
@@ -232,8 +233,10 @@ class JsonToJsonPathsConverter {
 			return convertWithKey(List, key, value as Map, closure)
 		} else if (isAnEntryWithoutNestedStructures(value)) {
 			return convertWithKey(List, key, value as Map, closure)
-		} else if (value instanceof Map) {
+		} else if (value instanceof Map && !value.isEmpty()) {
 			return convertWithKey(Map, key, value as Map, closure)
+		} else if (value instanceof Map && value.isEmpty()) {
+			return runClosure(closure, key.isEmpty(), value)
 			// JSON with a list of primitives ["a", "b", "c"] in root issue #266
 		} else if (key.isIteratingOverNamelessArray() && value instanceof List && listContainsOnlyPrimitives(value)) {
 			addSizeVerificationForListWithPrimitives(key, closure, value)
@@ -356,6 +359,9 @@ class JsonToJsonPathsConverter {
 			return false
 		}
 		Map valueAsMap = ((Map) value)
+		if (valueAsMap.isEmpty()) {
+			return false
+		}
 		return valueAsMap.entrySet().every { Map.Entry entry ->
 			[String, Number, Boolean].any { it.isAssignableFrom(entry.value.getClass()) }
 		}
