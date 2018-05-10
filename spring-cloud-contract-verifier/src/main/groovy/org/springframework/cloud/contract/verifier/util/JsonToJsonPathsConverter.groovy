@@ -38,6 +38,7 @@ import java.util.regex.Pattern
  * JSON Paths together with methods needed to be called to build them.
  *
  * @author Marcin Grzejszczak
+ * @author Tim Ysewyn
  */
 @Slf4j
 class JsonToJsonPathsConverter {
