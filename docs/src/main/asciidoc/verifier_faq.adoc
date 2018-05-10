@@ -381,6 +381,7 @@ allows us to do that. Also ```contractsPath``` need to be specified since the de
       </includedFiles>
    </configuration>
 </plugin>
+----
 
 ===== For Gradle Project
 
