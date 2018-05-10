@@ -97,6 +97,12 @@ public class GenerateTestsMojo extends AbstractMojo {
 	private List<String> excludedFiles;
 
 	/**
+	 * Patterns that should be taken into account for processing
+	 */
+	@Parameter(property = "includedFiles")
+	private List<String> includedFiles;
+
+	/**
 	 * Incubating feature. You can check the size of JSON arrays. If not turned on
 	 * explicitly will be disabled.
 	 */
@@ -277,6 +283,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 		config.setStaticImports(this.staticImports);
 		config.setIgnoredFiles(this.ignoredFiles);
 		config.setExcludedFiles(this.excludedFiles);
+		config.setIncludedFiles(this.includedFiles);
 		config.setAssertJsonSize(this.assertJsonSize);
 		config.setPackageWithBaseClasses(this.packageWithBaseClasses);
 		if (this.baseClassMappings != null) {

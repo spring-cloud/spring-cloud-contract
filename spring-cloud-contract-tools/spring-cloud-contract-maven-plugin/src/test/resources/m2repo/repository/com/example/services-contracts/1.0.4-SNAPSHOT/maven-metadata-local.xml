@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata modelVersion="1.1.0">
+	<groupId>com.example</groupId>
+    <artifactId>services-contracts</artifactId>
+    <version>1.0.4-SNAPSHOT</version>
+	<versioning>
+		<snapshot>
+			<localCopy>true</localCopy>
+		</snapshot>
+		<lastUpdated>20160916125313</lastUpdated>
+		<snapshotVersions>
+			<snapshotVersion>
+				<extension>jar</extension>
+                <version>1.0.4-SNAPSHOT</version>
+				<updated>20160916125313</updated>
+			</snapshotVersion>
+			<snapshotVersion>
+				<extension>pom</extension>
+                <version>1.0.4-SNAPSHOT</version>
+				<updated>20160916125313</updated>
+			</snapshotVersion>
+		</snapshotVersions>
+	</versioning>
+</metadata>

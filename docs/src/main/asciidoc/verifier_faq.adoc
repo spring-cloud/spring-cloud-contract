@@ -344,84 +344,10 @@ contracts in the folder per topic.
 
 ===== For Maven Project
 
-To make it possible to work on the producer side we could do the following things (all via Maven plugins):
+To make it possible to work on the producer side we should specify an inclusion pattern for
+filtering common repository jar by messaging topics we are interested in. ```includedFiles``` property of ```Maven Spring Cloud Contract plugin```
+allows us to do that. Also ```contractsPath``` need to be specified since the default path would be the common repository ```groupid/artifactid```.
 
-- Add common repo dependency to your classpath:
-
-[source,xml,indent=0]
-----
-<dependency>
-   <groupId>com.example</groupId>
-   <artifactId>common-repo</artifactId>
-   <version>${common-repo.version}</version>
-</dependency>
-----
-
-- Download the JAR with the contracts and unpack the JAR to target:
-
-[source,xml,indent=0]
-----
-<plugin>
-   <groupId>org.apache.maven.plugins</groupId>
-   <artifactId>maven-dependency-plugin</artifactId>
-   <version>3.0.0</version>
-   <executions>
-      <execution>
-         <id>unpack-dependencies</id>
-         <phase>process-resources</phase>
-         <goals>
-            <goal>unpack</goal>
-         </goals>
-         <configuration>
-            <artifactItems>
-               <artifactItem>
-                  <groupId>com.example</groupId>
-                  <artifactId>common-repo</artifactId>
-                  <type>jar</type>
-                  <overWrite>false</overWrite>
-                  <outputDirectory>${project.build.directory}/contracts</outputDirectory>
-               </artifactItem>
-            </artifactItems>
-         </configuration>
-      </execution>
-   </executions>
-</plugin>
-----
-
-- Rip out all the folders we're not interested in:
-
-[source,xml,indent=0]
-----
-<plugin>
-   <groupId>org.apache.maven.plugins</groupId>
-   <artifactId>maven-antrun-plugin</artifactId>
-   <version>1.8</version>
-   <executions>
-      <execution>
-         <phase>process-resources</phase>
-         <goals>
-            <goal>run</goal>
-         </goals>
-         <configuration>
-            <tasks>
-               <delete includeemptydirs="true">
-                  <fileset dir="${project.build.directory}/contracts">
-                     <include name="**/*" />
-                     <!--Producer artifactId-->
-                     <exclude name="**/${project.artifactId}/**" />
-                     <!--List of the supported topics-->
-                     <exclude name="**/${first-topic}/**" />
-                     <exclude name="**/${second-topic}/**" />
-                  </fileset>
-               </delete>
-            </tasks>
-         </configuration>
-      </execution>
-   </executions>
-</plugin>
-----
-
-- Run the contract plugin by pointing to the contracts to the folder under target:
 
 [source,xml,indent=0]
 ----
@@ -429,19 +355,32 @@ To make it possible to work on the producer side we could do the following thing
    <groupId>org.springframework.cloud</groupId>
    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
    <version>${spring-cloud-contract.version}</version>
-   <extensions>true</extensions>
    <configuration>
-      <packageWithBaseClasses>com.example</packageWithBaseClasses>
+      <contractsMode>REMOTE</contractsMode>
+      <contractsRepositoryUrl>http://link/to/your/nexus/or/artifactory/or/sth</contractsRepositoryUrl>
+      <contractDependency>
+         <groupId>com.example</groupId>
+         <artifactId>common-repo-with-contracts</artifactId>
+         <version>+</version>
+      </contractDependency>
+      <contractsPath>/</contractsPath>
       <baseClassMappings>
          <baseClassMapping>
-            <contractPackageRegex>.*intoxication.*</contractPackageRegex>
-            <baseClassFQN>com.example.intoxication.BeerIntoxicationBase</baseClassFQN>
+            <contractPackageRegex>.*messaging.*</contractPackageRegex>
+            <baseClassFQN>com.example.services.MessagingBase</baseClassFQN>
+         </baseClassMapping>
+         <baseClassMapping>
+            <contractPackageRegex>.*rest.*</contractPackageRegex>
+            <baseClassFQN>com.example.services.TestBase</baseClassFQN>
          </baseClassMapping>
       </baseClassMappings>
-      <contractsDirectory>${project.build.directory}/contracts</contractsDirectory>
+      <includedFiles>
+         <includedFile>**/${project.artifactId}/**</includedFile>
+         <includedFile>**/${first-topic}/**</includedFile>
+         <includedFile>**/${second-topic}/**</includedFile>
+      </includedFiles>
    </configuration>
 </plugin>
-----
 
 ===== For Gradle Project
 

@@ -305,4 +305,19 @@ public class PluginUnitTest {
 
 		then(this.capture.toString()).contains("Skipping pushing stubs to scm since your");
 	}
+
+	@Test
+	public void shouldGenerateContractTestsForIncludedFilesPattern() throws Exception {
+		File basedir = this.resources.getBasedir("complex-common-repo-with-messaging");
+
+		this.maven.executeMojo(basedir, "generateTests", defaultPackageForTests(),
+				newParameter("contractsRepositoryUrl",
+						"file://" + PluginUnitTest.class.getClassLoader()
+								.getResource("m2repo/repository").getFile()
+								.replace("/", File.separator)));
+		assertFilesPresent(basedir,
+				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/common_repo_with_inclusion/kafka_topics/coupon_sent/src/main/resources/contracts/rule_engine_daemon/MessagingTest.java");
+		assertFilesPresent(basedir,
+				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/common_repo_with_inclusion/reward_rules/src/main/resources/contracts/reward_rules/rest/admin/V1Test.java");
+	}
 }

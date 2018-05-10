@@ -60,6 +60,11 @@ class ContractVerifierConfigProperties {
 	 */
 	List<String> excludedFiles = []
 
+    /**
+     * Patterns that should be taken into account for processing
+     */
+    List<String> includedFiles = []
+
 	/**
 	 * Patterns for which generated tests should be @Ignored
 	 */

@@ -34,7 +34,7 @@ class ContractFileScannerSpec extends Specification {
 			File baseDir = new File(this.getClass().getResource("/directory/with/stubs").toURI())
 			Set<String> excluded = ["package/**"] as Set
 			Set<String> ignored = ["other/different/**"] as Set
-			ContractFileScanner scanner = new ContractFileScanner(baseDir, excluded, ignored)
+			ContractFileScanner scanner = new ContractFileScanner(baseDir, excluded, ignored, [] as Set)
 		when:
 			ListMultimap<Path, ContractMetadata> result = scanner.findContracts()
 		then:
@@ -52,7 +52,7 @@ class ContractFileScannerSpec extends Specification {
 			File baseDir = new File(this.getClass().getResource("/strange_[3.3.3]_directory").toURI())
 			Set<String> excluded = ["foo/**"] as Set
 			Set<String> ignored = ["bar/**"] as Set
-			ContractFileScanner scanner = new ContractFileScanner(baseDir, excluded, ignored)
+			ContractFileScanner scanner = new ContractFileScanner(baseDir, excluded, ignored, [] as Set)
 		when:
 			ListMultimap<Path, ContractMetadata> result = scanner.findContracts()
 		then:
@@ -66,7 +66,7 @@ class ContractFileScannerSpec extends Specification {
 	def "should find contracts group in scenario"() {
 		given:
 			File baseDir = new File(this.getClass().getResource("/directory/with/scenario").toURI())
-			ContractFileScanner scanner = new ContractFileScanner(baseDir, [] as Set, [] as Set)
+			ContractFileScanner scanner = new ContractFileScanner(baseDir, [] as Set, [] as Set, [] as Set)
 		when:
 			ListMultimap<Path, ContractMetadata> contracts = scanner.findContracts()
 		then:
@@ -80,7 +80,7 @@ class ContractFileScannerSpec extends Specification {
 	def "should find contract files with converters"() {
 		given:
 			File baseDir = new File(this.getClass().getResource("/directory/with/mixed").toURI())
-			ContractFileScanner scanner = new ContractFileScanner(baseDir, null, null) {
+			ContractFileScanner scanner = new ContractFileScanner(baseDir, null, null, null) {
 				@Override
 				protected List<ContractConverter> converters() {
 					return [new ContractConverter() {
@@ -108,4 +108,22 @@ class ContractFileScannerSpec extends Specification {
 			result.entries().every { it.value.convertedContract }
 			result.entries().find { it.value.convertedContract.any { it.request.method.clientValue == "PUT" } }
 	}
+
+    def "should find contracts for include pattern"() {
+        given:
+            File baseDir = new File(this.getClass().getResource("/directory/with/common-messaging").toURI())
+            Set<String> included = ["social-service/**","**/coupon-collected/**/*V1*"] as Set
+            ContractFileScanner scanner = new ContractFileScanner(baseDir, [] as Set, [] as Set, included)
+        when:
+            ListMultimap<Path, ContractMetadata> result = scanner.findContracts()
+        then:
+            result.keySet().size() == 3
+            result.values().find { (it.path.fileName.toString() == 'couponCollectedEventV1.groovy') }.groupSize==2
+            result.values().find { (it.convertedContract.first().label == 'couponCollectedV1') }
+            result.values().findAll { (it.path.fileName.toString() == 'couponCollectedEventV2.groovy') }.isEmpty()
+            result.values().find { (it.path.fileName.toString() == 'shouldUpdateUserInfo.groovy') }.groupSize==1
+            result.values().find { (it.path.fileName.toString() == 'shouldReturnEmptyFriendsWhenGetFriends.groovy') }.groupSize==1
+            result.get(baseDir.toPath().resolve("coupon-sent")).size() == 0
+            result.get(baseDir.toPath().resolve("reward-rules")).size() == 0
+    }
 }

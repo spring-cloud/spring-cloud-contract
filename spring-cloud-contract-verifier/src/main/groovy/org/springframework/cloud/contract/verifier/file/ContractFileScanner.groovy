@@ -52,12 +52,14 @@ class ContractFileScanner {
 	private final File baseDir
 	private final Set<PathMatcher> excludeMatchers
 	private final Set<PathMatcher> ignoreMatchers
+	private final Set<PathMatcher> includeMatchers
 	private final String includeMatcher
 
-	ContractFileScanner(File baseDir, Set<String> excluded, Set<String> ignored, String includeMatcher = "") {
+    ContractFileScanner(File baseDir, Set<String> excluded, Set<String> ignored, Set<String> included, String includeMatcher = "") {
 		this.baseDir = baseDir
 		this.excludeMatchers = processPatterns(excluded ?: [] as Set<String>)
 		this.ignoreMatchers = processPatterns(ignored ?: [] as Set<String>)
+		this.includeMatchers = processPatterns(included ?: [] as Set<String>)
 		this.includeMatcher = includeMatcher
 	}
 
@@ -101,7 +103,8 @@ class ContractFileScanner {
 			boolean excluded = matchesPattern(file, excludeMatchers)
 			if (!excluded) {
 				boolean contractFile = isContractFile(file)
-				boolean included = includeMatcher ? file.absolutePath.matches(includeMatcher) : true
+                boolean included = includeMatcher ? file.absolutePath.matches(includeMatcher) : true
+                included = includeMatchers ? matchesPattern(file, includeMatchers) : included
 				if (contractFile && included) {
 					addContractToTestGeneration(result, files, file, i, ContractVerifierDslConverter.convertAsCollection(baseDir, file))
 				} else if (YamlContractConverter.INSTANCE.isAccepted(file) && included) {
