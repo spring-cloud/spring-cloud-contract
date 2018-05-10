@@ -2771,7 +2771,6 @@ DocumentContext parsedJson = JsonPath.parse(json);
 		when:
 			SyntaxChecker.tryToRun(methodBuilderName, test.join("\n"))
 		then:
-			println test
 			test.contains('''assertThatJson(parsedJson).field("['aMap']").field("['foo']").isEqualTo("bar")''')
 			test.contains('''assertThatJson(parsedJson).field("['anEmptyMap']").isEmpty()''')
 		where:
