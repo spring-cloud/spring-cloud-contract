@@ -314,49 +314,6 @@ public class WireMockSnippetTests {
 		};
 	}
 
-	private OperationRequest requestPostWithXmlContentType() {
-		return new OperationRequest() {
-
-			@Override
-			public byte[] getContent() {
-				String content = "<name>foo</name>";
-				return content.getBytes(Charset.forName("UTF-8"));
-			}
-
-			@Override
-			public String getContentAsString() {
-				return "<name>foo</name>";
-			}
-
-			@Override
-			public HttpHeaders getHeaders() {
-				HttpHeaders httpHeaders = new HttpHeaders();
-				httpHeaders.add("Content-Type", MediaType.APPLICATION_XML_VALUE);
-				return httpHeaders;
-			}
-
-			@Override
-			public HttpMethod getMethod() {
-				return HttpMethod.POST;
-			}
-
-			@Override
-			public Parameters getParameters() {
-				return null;
-			}
-
-			@Override
-			public Collection<OperationRequestPart> getParts() {
-				return null;
-			}
-
-			@Override
-			public URI getUri() {
-				return URI.create("http://foo/bar");
-			}
-		};
-	}
-
 	private OperationRequest requestPostWithEmptyBody() {
 		return new OperationRequest() {
 			@Override
