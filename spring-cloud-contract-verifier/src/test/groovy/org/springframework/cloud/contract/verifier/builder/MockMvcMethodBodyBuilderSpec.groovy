@@ -2747,38 +2747,4 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String body -> body.contains('assertThat(response.getHeaderString("My-UUID")).isEqualTo(property("my-uuid"));') }
 	}
 
-	@Issue('#554')
-	def "should create an assertion for an empty map or Object for [#methodBuilderName]"() {
-		given:
-			Contract contractDsl = Contract.make {
-				request {
-					method 'GET'
-					url '/api/v1/xxxx'
-				}
-				response {
-					status OK()
-					body([
-							aMap: ["foo": "bar"],
-							anEmptyMap: [:]
-					])
-				}
-			}
-			MethodBodyBuilder builder = methodBuilder(contractDsl)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
-		and:
-			builder.appendTo(blockBuilder)
-			String test = blockBuilder.toString()
-		when:
-			SyntaxChecker.tryToRun(methodBuilderName, test.join("\n"))
-		then:
-			test.contains('''assertThatJson(parsedJson).field("['aMap']").field("['foo']").isEqualTo("bar")''')
-			test.contains('''assertThatJson(parsedJson).field("['anEmptyMap']").isEmpty()''')
-		where:
-			methodBuilderName                                    | methodBuilder
-			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
-	}
-
 }
