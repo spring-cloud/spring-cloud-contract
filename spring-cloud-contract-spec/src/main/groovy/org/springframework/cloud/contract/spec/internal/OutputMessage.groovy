@@ -90,16 +90,26 @@ class OutputMessage extends Common {
 		this.assertThat = new ExecutionProperty(assertThat)
 	}
 
-	DslProperty value(ServerDslProperty server) {
-		Object value = server.clientValue
-		if (server.clientValue instanceof Pattern) {
-			value = StringEscapeUtils.escapeJava(new Xeger(((Pattern)server.clientValue).pattern()).generate())
+	DslProperty value(ClientDslProperty clientDslProperty) {
+		Object clientValue = clientDslProperty.clientValue
+		// for the output messages ran via stub runner,
+		// entries have to have fixed values
+		if (clientDslProperty.clientValue instanceof Pattern) {
+			clientValue = StringEscapeUtils.escapeJava(new Xeger(((Pattern)clientDslProperty.clientValue).pattern()).generate())
 		}
-		return new DslProperty(value, server.serverValue)
+		return new DslProperty(clientValue, clientDslProperty.clientValue)
 	}
 
-	DslProperty $(ServerDslProperty server) {
-		return value(server)
+	DslProperty $(ClientDslProperty client) {
+		return value(client)
+	}
+
+	DslProperty $(Pattern pattern) {
+		return value(client(pattern))
+	}
+
+	DslProperty $(OptionalProperty property) {
+		return value(client(property.optionalPatternValue()))
 	}
 
 	/**
