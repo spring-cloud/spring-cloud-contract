@@ -4,9 +4,9 @@
 
    mvn org.springframework.cloud:spring-cloud-contract-maven-plugin:convert
 
-or shortly footnoteref:[prefix,Additional configuration inside `~/.m2/settings.xml` is required: `<pluginGroups><pluginGroup> org.springframework.cloud:spring-cloud-contract-maven-plugin</pluginGroup></pluginGroups>`.]
+or shortly footnoteref:[prefix,Additional configuration inside `~/.m2/settings.xml` is required: `<pluginGroups><pluginGroup>org.springframework.cloud</pluginGroup></pluginGroups>`.]
 
-    mvn spring-cloud-contract-verifier:convert
+    mvn spring-cloud-contract:convert
 
 For more information please go to the Spring Cloud Contract Wiki or Plugin Documentation Site.
 
@@ -18,13 +18,16 @@ Run stubs mappings from current directory:
 
 or shortly footnoteref:[prefix]
 
-    mvn spring-cloud-contract-verifier:run
+    mvn spring-cloud-contract:run
 
 == Running stubs from repository
 
-    mvn spring-cloud-contract-verifier:run -Dstubs="org.springframework:gs-rest-service"
+    mvn spring-cloud-contract:run -Dstubs="org.springframework:gs-rest-service"
 
 where `org.springframework:gs-rest-service` is artifact with stubs classifier contains WireMock mappings.
+
+In order for the goal to be executed correctly, `target/stubs` subdirectory should be added in the directory from which
+the command will be executed.
 
 == Project configuration
 
