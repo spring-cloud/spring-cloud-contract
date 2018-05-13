@@ -268,7 +268,7 @@
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>mvn spring-cloud-contract-verifier:convert</pre>
+<pre>mvn spring-cloud-contract:convert</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -292,7 +292,7 @@
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>mvn spring-cloud-contract-verifier:run</pre>
+<pre>mvn spring-cloud-contract:run</pre>
 </div>
 </div>
 </div>
@@ -302,11 +302,15 @@
 <div class="sectionbody">
 <div class="literalblock">
 <div class="content">
-<pre>mvn spring-cloud-contract-verifier:run -Dstubs="org.springframework:gs-rest-service"</pre>
+<pre>mvn spring-cloud-contract:run -Dstubs="org.springframework:gs-rest-service"</pre>
 </div>
 </div>
 <div class="paragraph">
 <p>where <code>org.springframework:gs-rest-service</code> is artifact with stubs classifier contains WireMock mappings.</p>
+</div>
+<div class="paragraph">
+<p>In order for the goal to be executed correctly, <code>target/stubs</code> subdirectory should be added in the directory from which
+the command will be executed.</p>
 </div>
 </div>
 </div>
@@ -331,7 +335,7 @@
 <div id="footnotes">
 <hr/>
 <div class="footnote" id="_footnote_1">
-<a href="#_footnoteref_1">1</a>. Additional configuration inside <code>~/.m2/settings.xml</code> is required: <code>&lt;pluginGroups&gt;&lt;pluginGroup&gt; org.springframework.cloud:spring-cloud-contract-maven-plugin&lt;/pluginGroup&gt;&lt;/pluginGroups&gt;</code>.
+<a href="#_footnoteref_1">1</a>. Additional configuration inside <code>~/.m2/settings.xml</code> is required: <code>&lt;pluginGroups&gt;&lt;pluginGroup&gt;org.springframework.cloud&lt;/pluginGroup&gt;&lt;/pluginGroups&gt;</code>.
 </div>
 </div>
                   </div>
