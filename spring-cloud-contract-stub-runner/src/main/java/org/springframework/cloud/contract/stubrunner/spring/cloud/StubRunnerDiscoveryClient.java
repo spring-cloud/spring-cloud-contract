@@ -138,6 +138,11 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 		}
 		return new ArrayList<>();
 	}
+
+	@Override
+	public int getOrder() {
+		return this.delegate.getOrder();
+	}
 }
 
 class StubRunnerNoOpDiscoveryClient implements DiscoveryClient {
