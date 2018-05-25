@@ -7,13 +7,13 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-build</artifactId>
-		<version>2.0.0.BUILD-SNAPSHOT</version>
+		<version>2.0.1.RELEASE</version>
 		<relativePath/>
 	</parent>
 
 	<artifactId>spring-cloud-contract-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>2.0.0.BUILD-SNAPSHOT</version>
+	<version>2.0.0.RC2</version>
 
 	<name>Spring Cloud Contract</name>
 	<description>Spring Cloud Contract</description>
@@ -26,12 +26,12 @@
 		<checkstyle.version>2.17</checkstyle.version>
 		<pact.version>3.5.13</pact.version>
 		<jsch-agent.version>0.0.9</jsch-agent.version>
-		<spring-cloud-build.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-build.version>
-		<spring-cloud-zookeeper.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-zookeeper.version>
-		<spring-cloud-stream.version>Elmhurst.BUILD-SNAPSHOT</spring-cloud-stream.version>
-		<spring-cloud-netflix.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-netflix.version>
-		<spring-cloud-consul.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-consul.version>
-		<spring-cloud-commons.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-commons.version>
+		<spring-cloud-build.version>2.0.1.RELEASE</spring-cloud-build.version>
+		<spring-cloud-zookeeper.version>2.0.0.RC1</spring-cloud-zookeeper.version>
+		<spring-cloud-stream.version>Elmhurst.RELEASE</spring-cloud-stream.version>
+		<spring-cloud-netflix.version>2.0.0.RC2</spring-cloud-netflix.version>
+		<spring-cloud-consul.version>2.0.0.RC2</spring-cloud-consul.version>
+		<spring-cloud-commons.version>2.0.0.RC2</spring-cloud-commons.version>
 		<jopt-simple.version>5.0.3</jopt-simple.version>
 		<cglib.version>3.2.4</cglib.version>
 		<spock-spring.version>1.0-groovy-2.4</spock-spring.version>
