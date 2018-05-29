@@ -7,6 +7,7 @@ import java.util.UUID;
 import com.github.tomakehurst.wiremock.client.BasicCredentials;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.ScenarioMappingBuilder;
+import com.github.tomakehurst.wiremock.common.Metadata;
 import com.github.tomakehurst.wiremock.extension.Parameters;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
@@ -140,6 +141,18 @@ class BasicMappingBuilder implements ScenarioMappingBuilder {
 				Parameters.of(parameters);
 		this.postServeActions.put(extensionName, params);
 		return this;
+	}
+
+	@Override public ScenarioMappingBuilder withMetadata(Map<String, ?> map) {
+		throw new UnsupportedOperationException("Metadata not supported");
+	}
+
+	@Override public ScenarioMappingBuilder withMetadata(Metadata metadata) {
+		throw new UnsupportedOperationException("Metadata not supported");
+	}
+
+	@Override public ScenarioMappingBuilder withMetadata(Metadata.Builder builder) {
+		throw new UnsupportedOperationException("Metadata not supported");
 	}
 
 	@Override public StubMapping build() {
