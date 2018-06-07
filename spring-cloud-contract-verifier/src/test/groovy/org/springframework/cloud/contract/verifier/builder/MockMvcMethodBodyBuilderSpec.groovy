@@ -1306,7 +1306,7 @@ World.'''"""
 				)
 			}
 			response {
-				status OK()
+				status 200
 			}
 		}
 		MethodBodyBuilder builder = methodBuilder(contractDsl)
