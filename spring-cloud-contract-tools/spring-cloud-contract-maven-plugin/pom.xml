@@ -14,7 +14,6 @@
 		<maven>3.2.5</maven>
 	</prerequisites>
 
-	<groupId>com.gdn.custom</groupId>
 	<artifactId>spring-cloud-contract-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
 
@@ -36,19 +35,6 @@
 
 	<version>1.2.5.BUILD-SNAPSHOT</version>
 	<inceptionYear>2016</inceptionYear>
-
-	<distributionManagement>
-		<repository>
-			<id>libs-releases-local.artifactory.gdn-app.com</id>
-			<name>libs-releases-local.artifactory.gdn-app.com</name>
-			<url>https://artifactory.gdn-app.com/artifactory/libs-releases-local</url>
-		</repository>
-		<snapshotRepository>
-			<id>libs-snapshots-local.artifactory.gdn-app.com</id>
-			<name>libs-snapshots-local.artifactory.gdn-app.com</name>
-			<url>https://artifactory.gdn-app.com/artifactory/libs-snapshots-local</url>
-		</snapshotRepository>
-	</distributionManagement>
 
 	<build>
 		<plugins>
