@@ -89,6 +89,7 @@ public class LoanApplicationServiceTests {
 	@Test
 	public void shouldSuccessfullyWorkWithMultipart() {
 		MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+
 		parameters.add("file1", new ByteArrayResource(("content1").getBytes()) {
 			@Override
 			public String getFilename() {
@@ -101,15 +102,20 @@ public class LoanApplicationServiceTests {
 				return "filename2";
 			}
 		});
-		parameters.add("test", new ByteArrayResource(("{\n  \"status\": \"test\"\n}").getBytes()) {
+
+		HttpHeaders jsonHeader = new HttpHeaders();
+		jsonHeader.set("Content-Type", "application/json");
+		parameters.add("test", new HttpEntity<>(new ByteArrayResource(("{\n  \"status\": \"test\"\n}").getBytes()) {
 			@Override
 			public String getFilename() {
 				return "filename3";
 			}
-		});
+		}, jsonHeader));
+
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "multipart/form-data");
 		headers.set("Accept", "text/plain");
+
 		String result = new RestTemplate().postForObject(
 				"http://localhost:6565/tests",
 				new HttpEntity<MultiValueMap<String, Object>>(parameters, headers),
