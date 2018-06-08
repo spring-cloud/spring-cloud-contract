@@ -89,22 +89,22 @@ public class LoanApplicationServiceTests {
 	@Test
 	public void shouldSuccessfullyWorkWithMultipart() {
 		MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-		parameters.add("file1", new ByteArrayResource(("content").getBytes()) {
+		parameters.add("file1", new ByteArrayResource(("content1").getBytes()) {
 			@Override
 			public String getFilename() {
-				return "file1";
+				return "filename1";
 			}
 		});
-		parameters.add("file2", new ByteArrayResource(("content").getBytes()) {
+		parameters.add("file2", new ByteArrayResource(("content2").getBytes()) {
 			@Override
 			public String getFilename() {
-				return "file2";
+				return "filename2";
 			}
 		});
 		parameters.add("test", new ByteArrayResource(("{\n  \"status\": \"test\"\n}").getBytes()) {
 			@Override
 			public String getFilename() {
-				return "test";
+				return "filename3";
 			}
 		});
 		HttpHeaders headers = new HttpHeaders();

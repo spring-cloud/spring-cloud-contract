@@ -5,18 +5,16 @@ Contract.make {
 		method 'POST'
 		url '/tests'
 		multipart(
-				[
-						file1: named(
-								name: value(consumer(regex(nonEmpty())), producer('filename1')),
-								content: value(consumer(regex(nonEmpty())), producer('content1'))),
-						file2: named(
-								name: value(consumer(regex(nonEmpty())), producer('filename1')),
-								content: value(c(regex(nonEmpty())), producer('content2'))),
-						test : named(
-								name: value(consumer(regex(nonEmpty())), producer('filename1')),
-								content: value(c(regex(nonEmpty())), producer(file("test.json"))),
-								contentType: "application/json")
-				]
+				file1: named(
+						name: value(consumer(regex(nonEmpty())), producer('filename1')),
+						content: value(consumer(regex(nonEmpty())), producer('content1'))),
+				file2: named(
+						name: value(consumer(regex(nonEmpty())), producer('filename2')),
+						content: value(c(regex(nonEmpty())), producer('content2'))),
+				test : named(
+						name: value(consumer(regex(nonEmpty())), producer('filename3')),
+						content: value(c(regex(nonEmpty())), producer(file("test.json"))),
+						contentType: "application/json")
 		)
 
 		headers {
@@ -25,9 +23,9 @@ Contract.make {
 	}
 	response {
 		status 200
-		body([
-				status: 'ok'
-		])
+		body('''\
+				{"status":"ok"}
+		''')
 		headers {
 			contentType('application/json')
 		}
