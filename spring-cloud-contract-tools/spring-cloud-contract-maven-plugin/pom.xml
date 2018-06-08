@@ -208,10 +208,10 @@
 						<consoleOutput>true</consoleOutput>
 						<failsOnError>true</failsOnError>
 						<sourceDirectories>
-							${project.basedir}/src/main/java,${project.basedir}/src/main/groovy
+							<sourceDirectory>${project.basedir}/src/main/java,${project.basedir}/src/main/groovy</sourceDirectory>
 						</sourceDirectories>
 						<testSourceDirectories>
-							${project.basedir}/src/test/java,${project.basedir}/src/test/groovy
+							<sourceDirectory>${project.basedir}/src/test/java,${project.basedir}/src/test/groovy</sourceDirectory>
 						</testSourceDirectories>
 					</configuration>
 					<goals>

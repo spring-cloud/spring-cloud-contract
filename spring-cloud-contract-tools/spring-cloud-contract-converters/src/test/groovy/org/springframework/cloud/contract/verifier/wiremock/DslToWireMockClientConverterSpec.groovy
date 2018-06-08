@@ -28,7 +28,11 @@ import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubMapp
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
+import org.springframework.core.io.ByteArrayResource
+import org.springframework.http.HttpEntity
 import org.springframework.http.RequestEntity
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.util.MultiValueMap
 import org.springframework.util.SocketUtils
 import spock.lang.Issue
 import spock.lang.Specification
