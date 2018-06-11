@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2018-05-18</date>
+<date>2018-06-11</date>
 </info>
 <preface>
 <title></title>
@@ -5515,7 +5515,9 @@ body:
 						// name of the file
 						name: $(c(regex(nonEmpty())), p('filename.csv')),
 						// content of the file
-						content: $(c(regex(nonEmpty())), p('file content')))
+						content: $(c(regex(nonEmpty())), p('file content')),
+						// content type for the part
+						contentType: $(c(regex(nonEmpty())), p('application/json')))
 		)
 	}
 	response {
