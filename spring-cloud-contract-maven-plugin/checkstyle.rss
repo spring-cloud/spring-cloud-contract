@@ -130,7 +130,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.CopyContracts.java">org/springframework/cloud/contract/maven/verifier/CopyContracts.java</a>
+                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.RunMojo.java">org/springframework/cloud/contract/maven/verifier/RunMojo.java</a>
                 </td>
                 <td>
                   0
@@ -144,7 +144,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.RunMojo.java">org/springframework/cloud/contract/maven/verifier/RunMojo.java</a>
+                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.CopyContracts.java">org/springframework/cloud/contract/maven/verifier/CopyContracts.java</a>
                 </td>
                 <td>
                   0
@@ -172,7 +172,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.ManifestCreator.java">org/springframework/cloud/contract/maven/verifier/ManifestCreator.java</a>
+                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.stubrunner.LocalStubRunner.java">org/springframework/cloud/contract/maven/verifier/stubrunner/LocalStubRunner.java</a>
                 </td>
                 <td>
                   0
@@ -186,7 +186,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.stubrunner.LocalStubRunner.java">org/springframework/cloud/contract/maven/verifier/stubrunner/LocalStubRunner.java</a>
+                  <a href="https://github.com/spring-cloud/spring-cloud-contract/checkstyle.html#org.springframework.cloud.contract.maven.verifier.ManifestCreator.java">org/springframework/cloud/contract/maven/verifier/ManifestCreator.java</a>
                 </td>
                 <td>
                   0
