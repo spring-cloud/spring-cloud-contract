@@ -1,20 +1,26 @@
 package org.springframework.cloud.contract.verifier.builder.imports
-
-import org.springframework.cloud.contract.verifier.config.TestFramework
-import org.springframework.cloud.contract.verifier.config.TestMode
-
 /**
  * @author Olga Maciaszek-Sharma
  */
-class MessagingImportProvider implements TestTypeSpecificImportProvider {
+class MessagingImportProvider {
 
-	@Override
-	List<String> getImports(TestFramework testFramework, TestMode testMode) {
-		throw new UnsupportedOperationException("Please, implement me.")
+	/**
+	 * Returns list of imports for messaging test contracts.
+	 * @return list of imports
+	 */
+	static List<String> getImports() {
+		return ['javax.inject.Inject',
+		        'org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper',
+		        'org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage',
+		        'org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging',
+		]
 	}
 
-	@Override
-	List<String> getStaticImports(TestFramework testFramework, TestMode testMode) {
-		throw new UnsupportedOperationException("Please, implement me.")
+	/**
+	 * Returns list of static imports for messaging test contracts.
+	 * @return list of static imports
+	 */
+	static List<String> getStaticImports() {
+		return ['org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers']
 	}
 }

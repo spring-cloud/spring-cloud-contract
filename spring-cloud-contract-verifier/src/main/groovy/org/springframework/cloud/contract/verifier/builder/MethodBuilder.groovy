@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.builder
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import groovy.util.logging.Slf4j
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
@@ -57,7 +58,7 @@ class MethodBuilder {
 		if (log.isDebugEnabled()) {
 			log.debug("Stub content Groovy DSL [$stubContent]")
 		}
-		String methodName = methodName(contract, stubsFile, stubContent)
+		String methodName = MethodBuilder.methodName(contract, stubsFile, stubContent)
 		return new MethodBuilder(methodName, stubContent, configProperties, contract.ignored || stubContent.ignored)
 	}
 

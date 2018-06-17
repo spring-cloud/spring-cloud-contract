@@ -18,9 +18,10 @@ package org.springframework.cloud.contract.verifier.builder
 
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
 import org.springframework.cloud.contract.verifier.util.NamesUtil
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 /**
  * Builds a class. Adds all the imports, static imports etc.
@@ -106,6 +107,11 @@ class ClassBuilder {
 
 	ClassBuilder addImports(List<String> importsToAdd) {
 		imports.addAll(importsToAdd)
+		return this
+	}
+
+	ClassBuilder addStaticImports(List<String> importsToAdd) {
+		staticImports.addAll(importsToAdd)
 		return this
 	}
 
