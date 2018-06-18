@@ -4187,7 +4187,9 @@ it if you want to.</simpara>
 			&lt;inherited&gt;false&lt;/inherited&gt;
 			&lt;configuration&gt;
 				&lt;attach&gt;true&lt;/attach&gt;
-				&lt;descriptor&gt;${basedir}/src/assembly/stub.xml&lt;/descriptor&gt;
+				&lt;descriptors&gt;
+					${basedir}/src/assembly/stub.xml
+				&lt;/descriptors&gt;
 			&lt;/configuration&gt;
 		&lt;/execution&gt;
 	&lt;/executions&gt;
