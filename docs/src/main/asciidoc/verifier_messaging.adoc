@@ -87,7 +87,7 @@ it is resolved as a channel name. For *Camel*, that's a certain component (for e
 
 ==== Scenario 1: No Input Message
 
-Here is an example for Camel. For the given contract:
+For the given contract:
 
 .Groovy DSL
 [source,groovy]
@@ -117,7 +117,7 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 
 ==== Scenario 2: Output Triggered by Input
 
-Here is an example for Camel. For the given contract:
+For the given contract:
 
 .Groovy DSL
 [source,groovy]
@@ -147,7 +147,7 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 
 ==== Scenario 3: No Output Message
 
-Here is an example for Camel. For the given contract:
+For the given contract:
 
 .Groovy DSL
 [source,groovy]
