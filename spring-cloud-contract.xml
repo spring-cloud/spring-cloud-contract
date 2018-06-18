@@ -3789,7 +3789,7 @@ it is resolved as a channel name. For <emphasis role="strong">Camel</emphasis>, 
 </important>
 <section xml:id="_scenario_1_no_input_message">
 <title>Scenario 1: No Input Message</title>
-<simpara>Here is an example for Camel. For the given contract:</simpara>
+<simpara>For the given contract:</simpara>
 <formalpara>
 <title>Groovy DSL</title>
 <para>
@@ -3858,7 +3858,7 @@ outputMessage:
 </section>
 <section xml:id="_scenario_2_output_triggered_by_input">
 <title>Scenario 2: Output Triggered by Input</title>
-<simpara>Here is an example for Camel. For the given contract:</simpara>
+<simpara>For the given contract:</simpara>
 <formalpara>
 <title>Groovy DSL</title>
 <para>
@@ -3945,7 +3945,7 @@ and:
 </section>
 <section xml:id="_scenario_3_no_output_message">
 <title>Scenario 3: No Output Message</title>
-<simpara>Here is an example for Camel. For the given contract:</simpara>
+<simpara>For the given contract:</simpara>
 <formalpara>
 <title>Groovy DSL</title>
 <para>

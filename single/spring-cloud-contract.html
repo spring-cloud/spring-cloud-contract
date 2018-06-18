@@ -2151,7 +2151,7 @@ message  is triggered by a component inside the application (for example, schedu
 meanings for different messaging implementations. For <span class="strong"><strong>Stream</strong></span> and <span class="strong"><strong>Integration</strong></span> it is
 first resolved as a <code class="literal">destination</code> of a channel. Then, if there is no such <code class="literal">destination</code>
 it is resolved as a channel name. For <span class="strong"><strong>Camel</strong></span>, that&#8217;s a certain component (for example,
-<code class="literal">jms</code>).</p></td></tr></table></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_scenario_1_no_input_message" href="#_scenario_1_no_input_message"></a>5.3.1&nbsp;Scenario 1: No Input Message</h3></div></div></div><p>Here is an example for Camel. For the given contract:</p><p><b>Groovy DSL.&nbsp;</b>
+<code class="literal">jms</code>).</p></td></tr></table></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_scenario_1_no_input_message" href="#_scenario_1_no_input_message"></a>5.3.1&nbsp;Scenario 1: No Input Message</h3></div></div></div><p>For the given contract:</p><p><b>Groovy DSL.&nbsp;</b>
 </p><pre class="programlisting">def contractDsl = Contract.make {
 	label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'some_label'</span>
 	input {
@@ -2204,7 +2204,7 @@ outputMessage:
   DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
   assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bookName"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>)
 
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'</span></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_scenario_2_output_triggered_by_input" href="#_scenario_2_output_triggered_by_input"></a>5.3.2&nbsp;Scenario 2: Output Triggered by Input</h3></div></div></div><p>Here is an example for Camel. For the given contract:</p><p><b>Groovy DSL.&nbsp;</b>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'</span></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_scenario_2_output_triggered_by_input" href="#_scenario_2_output_triggered_by_input"></a>5.3.2&nbsp;Scenario 2: Output Triggered by Input</h3></div></div></div><p>For the given contract:</p><p><b>Groovy DSL.&nbsp;</b>
 </p><pre class="programlisting">def contractDsl = Contract.make {
 	label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'some_label'</span>
 	input {
@@ -2275,7 +2275,7 @@ then:
 and:
    DocumentContext parsedJson = JsonPath.parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
    assertThatJson(parsedJson).field(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bookName"</span>).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>)
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"</span></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_scenario_3_no_output_message" href="#_scenario_3_no_output_message"></a>5.3.3&nbsp;Scenario 3: No Output Message</h3></div></div></div><p>Here is an example for Camel. For the given contract:</p><p><b>Groovy DSL.&nbsp;</b>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"</span></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_scenario_3_no_output_message" href="#_scenario_3_no_output_message"></a>5.3.3&nbsp;Scenario 3: No Output Message</h3></div></div></div><p>For the given contract:</p><p><b>Groovy DSL.&nbsp;</b>
 </p><pre class="programlisting">def contractDsl = Contract.make {
 	label <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'some_label'</span>
 	input {
