@@ -20,17 +20,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ServerList;
+import org.springframework.context.annotation.Role;
 
 @Configuration
+@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 class StubRunnerRibbonConfiguration {
 	@Bean
-	StubRunnerRibbonBeanPostProcessor stubRunnerRibbonBeanPostProcessor(BeanFactory beanFactory) {
+	static StubRunnerRibbonBeanPostProcessor stubRunnerRibbonBeanPostProcessor(BeanFactory beanFactory) {
 		return new StubRunnerRibbonBeanPostProcessor(beanFactory);
 	}
 

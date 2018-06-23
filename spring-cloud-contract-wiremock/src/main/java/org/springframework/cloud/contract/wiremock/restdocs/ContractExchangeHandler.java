@@ -131,6 +131,18 @@ class WireMockHttpRequestAdapter implements Request {
 		return new RequestMethod(this.result.getMethod().name());
 	}
 
+	@Override public String getScheme() {
+		return this.result.getUrl().getScheme();
+	}
+
+	@Override public String getHost() {
+		return this.result.getUrl().getHost();
+	}
+
+	@Override public int getPort() {
+		return this.result.getUrl().getPort();
+	}
+
 	@Override public String getClientIp() {
 		return "127.0.0.1";
 	}

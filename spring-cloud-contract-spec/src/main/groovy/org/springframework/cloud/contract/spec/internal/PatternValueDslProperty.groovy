@@ -37,7 +37,7 @@ abstract class PatternValueDslProperty<T extends DslProperty> {
 			if (!matches) {
 				throw new IllegalStateException("The generated value [${generatedValue}] doesn't match the pattern [${pattern.pattern()}]")
 			}
-			return createProperty(pattern, generatedValue)
+			return createProperty(pattern, object)
 		}
 		return createProperty(pattern, object)
 	}

@@ -687,6 +687,34 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                                   | 'entity("", "application/octet-stream"'
 	}
 
+	def "should not parse the response body if there is no response body specified in the contract"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method "HEAD"
+					url "head"
+				}
+				response {
+					status OK()
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			!test.contains(bodyParsingString)
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
+		where:
+			methodBuilderName                   | methodBuilder                                                                                                                                    | bodyParsingString
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | "String responseAsString = response.readEntity(String)"
+			"JaxRsClientJUnitMethodBodyBuilder" | { org.springframework.cloud.contract.spec.Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                                   | "String responseAsString = response.readEntity(String.class);"
+	}
+
 	def "should generate test for String in response body with #methodBodyName"() {
 		given:
 			Contract contractDsl = Contract.make {

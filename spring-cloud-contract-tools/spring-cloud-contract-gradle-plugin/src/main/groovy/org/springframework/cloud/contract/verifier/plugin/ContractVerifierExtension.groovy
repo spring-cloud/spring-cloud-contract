@@ -174,7 +174,7 @@ class ContractVerifierExtension {
 
 	/**
 	 * If set to {@code true} will not assert whether the downloaded stubs / contract
-	 * JAR was downloaded from a remote location or a local one
+	 * JAR was downloaded from a remote location or a local one(only applicable to Maven repos, not Git or Pact)
 	 */
 	boolean contractsSnapshotCheckSkip = false
 

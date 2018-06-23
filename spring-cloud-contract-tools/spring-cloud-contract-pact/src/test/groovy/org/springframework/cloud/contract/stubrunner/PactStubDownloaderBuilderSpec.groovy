@@ -8,6 +8,7 @@ import au.com.dius.pact.provider.junit.loader.PactLoader
 import au.com.dius.pact.provider.junit.sysprops.ValueResolver
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.jetbrains.annotations.NotNull
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import org.springframework.cloud.contract.spec.Contract
@@ -15,7 +16,9 @@ import org.springframework.cloud.contract.verifier.spec.pact.PactContractConvert
 
 /**
  * @author Marcin Grzejszczak
+ * @author Tim Ysewyn
  */
+@Ignore("Flakey")
 class PactStubDownloaderBuilderSpec extends Specification {
 
 	def "should retrieve pacts from broker"() throws IOException {
@@ -111,4 +114,28 @@ class PactStubDownloaderBuilderSpec extends Specification {
 	//			throw new RuntimeException(e)
 	//		}
 	//	}
+
+	def "should retrieve pacts from broker using stubrunner options"() throws IOException {
+		given:
+			StubRunnerOptions options = new StubRunnerOptionsBuilder()
+					.withStubRepositoryRoot("pact://https://test.pact.dius.com.au:443")
+					.withUsername("dXfltyFMgNOFZAxr8io9wJ37iUpY42M")
+					.withPassword("O5AIZWxelWbLvqMd8PkAVycBJh2Psyg1")
+					.build()
+			PactStubDownloader downloader = new PactStubDownloader(options)
+		when:
+			Map.Entry<StubConfiguration, File> entry = downloader
+					.downloadAndUnpackStubJar(new StubConfiguration("com.example:bobby:+:classifier"))
+		then:
+			entry != null
+			entry.getValue().exists()
+			File contracts = new File(entry.getValue(), "com/example/bobby/contracts")
+			contracts.exists()
+			contracts.list() != null
+			contracts.list().size() > 0
+			File mappings = new File(entry.getValue(), "com/example/bobby/mappings")
+			mappings.exists()
+			mappings.list() != null
+			mappings.list().size() > 0
+	}
 }

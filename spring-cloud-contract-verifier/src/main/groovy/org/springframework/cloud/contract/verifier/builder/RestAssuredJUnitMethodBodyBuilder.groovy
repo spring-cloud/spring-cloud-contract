@@ -103,7 +103,7 @@ class RestAssuredJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
-		blockBuilder.addLine("${exec.insertValue("response.header(\"$property\")")};")
+		blockBuilder.addLine("assertThat(response.header(\"$property\")).isEqualTo(${exec.insertValue("response.header(\"$property\")")});")
 	}
 
 	@Override

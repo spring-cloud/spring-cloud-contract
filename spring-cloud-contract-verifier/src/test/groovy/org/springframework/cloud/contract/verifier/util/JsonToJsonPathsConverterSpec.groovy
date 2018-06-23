@@ -842,6 +842,48 @@ class JsonToJsonPathsConverterSpec extends Specification {
 			e.message.contains("not found")
 	}
 
+	def "should generate assertion for empty map"() {
+		given:
+			Map json = [
+				aMap: ["foo": "bar"],
+				anEmptyMap: [:]
+			]
+		when:
+			JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(json)
+		then:
+			pathAndValues.find {
+				it.method() == """.field("['aMap']").field("['foo']").isEqualTo("bar")""" &&
+						it.jsonPath() == """\$.['aMap'][?(@.['foo'] == 'bar')]"""
+			}
+			pathAndValues.find {
+				it.method()== """.field("['anEmptyMap']").isEmpty()""" &&
+						it.jsonPath() == """\$.['anEmptyMap']"""
+			}
+		and:
+			pathAndValues.size() == 2
+	}
+
+	def "should generate assertion for empty object"() {
+		given:
+			String json =  """{
+			"aMap": {"foo": "bar"},
+			"anEmptyMap": {}
+		}"""
+		when:
+			JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
+		then:
+			pathAndValues.find {
+				it.method()== """.field("['aMap']").field("['foo']").isEqualTo("bar")""" &&
+						it.jsonPath() == """\$.['aMap'][?(@.['foo'] == 'bar')]"""
+			}
+			pathAndValues.find {
+				it.method() == """.field("['anEmptyMap']").isEmpty()""" &&
+						it.jsonPath() == """\$.['anEmptyMap']"""
+			}
+		and:
+			pathAndValues.size() == 2
+	}
+
 	private BodyMatcher matcher(final MatchingType matchingType, final String jsonPath, final Object value) {
 		return new BodyMatcher() {
 			@Override

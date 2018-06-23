@@ -73,7 +73,9 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 		bb.unindent()
 
 		bb.addEmptyLine()
-		bb.addLine("String responseAsString = response.readEntity(String.class);")
+		if (expectsResponseBody()) {
+			bb.addLine("String responseAsString = response.readEntity(String.class);")
+		}
 	}
 
 	protected void appendUrlPathAndQueryParameters(BlockBuilder bb) {
@@ -203,7 +205,7 @@ class JaxRsClientJUnitMethodBodyBuilder extends JUnitMethodBodyBuilder {
 
 	@Override
 	protected void processHeaderElement(BlockBuilder blockBuilder, String property, ExecutionProperty exec) {
-		blockBuilder.addLine("${exec.insertValue("response.getHeaderString(\"$property\")")};")
+		blockBuilder.addLine("assertThat(response.getHeaderString(\"$property\")).isEqualTo(${exec.insertValue("response.getHeaderString(\"$property\")")});")
 	}
 
 	@Override

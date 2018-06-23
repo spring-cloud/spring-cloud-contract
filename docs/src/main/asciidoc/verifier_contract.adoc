@@ -764,34 +764,34 @@ following matching possibilities:
 
 .Groovy DSL
 
-* For the stubs:
-** `byEquality()`: The value taken from the response via the provided JSON Path must be
+* For the stubs(in tests on the Consumer's side):
+** `byEquality()`: The value taken from the consumer's request via the provided JSON Path must be
 equal to the value provided in the contract.
-** `byRegex(...)`: The value taken from the response via the provided JSON Path must
+** `byRegex(...)`: The value taken from the consumer's request via the provided JSON Path must
 match the regex.
-** `byDate()`: The value taken from the response via the provided JSON Path must
+** `byDate()`: The value taken from the consumer's request via the provided JSON Path must
 match the regex for an ISO Date value.
-** `byTimestamp()`: The value taken from the response via the provided JSON Path must
+** `byTimestamp()`: The value taken from the consumer's request via the provided JSON Path must
 match the regex for an ISO DateTime value.
-** `byTime()`: The value taken from the response via the provided JSON Path must
+** `byTime()`: The value taken from the consumer's request via the provided JSON Path must
 match the regex for an ISO Time value.
-* For the verification:
-** `byEquality()`: The value taken from the response via the provided JSON Path must be
+* For the verification(in generated tests on the Producer's side):
+** `byEquality()`: The value taken from the producer's response via the provided JSON Path must be
 equal to the provided value in the contract.
-** `byRegex(...)`: The value taken from the response via the provided JSON Path must
+** `byRegex(...)`: The value taken from the producer's response via the provided JSON Path must
 match the regex.
-** `byDate()`: The value taken from the response via the provided JSON Path must match
+** `byDate()`: The value taken from the producer's response via the provided JSON Path must match
 the regex for an ISO Date value.
-** `byTimestamp()`: The value taken from the response via the provided JSON Path must
+** `byTimestamp()`: The value taken from the producer's response via the provided JSON Path must
 match the regex for an ISO DateTime value.
-** `byTime()`: The value taken from the response via the provided JSON Path must match
+** `byTime()`: The value taken from the producer's response via the provided JSON Path must match
 the regex for an ISO Time value.
-** `byType()`: The value taken from the response via the provided JSON Path needs to be
+** `byType()`: The value taken from the producer's response via the provided JSON Path needs to be
 of the same type as the type defined in the body of the response in the contract.
 `byType` can take a closure, in which you can set `minOccurrence` and `maxOccurrence`.
 That way, you can assert the size of the flattened collection. To check the size of an
 unflattened collection, use a custom method with the `byCommand(...)` testMatcher.
-** `byCommand(...)`: The value taken from the response via the provided JSON Path is
+** `byCommand(...)`: The value taken from the producer's response via the provided JSON Path is
 passed as an input to the custom method that you provide. For example,
 `byCommand('foo($it)')` results in calling a `foo` method to which the value matching the
 JSON Path gets passed. The type of the object read from the JSON can be one of the
@@ -1267,8 +1267,42 @@ As you can see, the first file got the `name` parameter from the contract. The s
 got the name of the contract file (`WithList.groovy`) prefixed with the index (in this
 case, the contract had an index of `1` in the list of contracts in the file).
 
-TIP: As you can see, it iss much better if you name your contracts because doing so makes
+TIP: As you can see, it is much better if you name your contracts because doing so makes
 your tests far more meaningful.
+
+=== Generating Spring REST Docs snippets from the contracts
+
+When you want to include the requests and responses of your API using Spring REST Docs,
+you only need to make some minor changes to your setup if you are using MockMvc and RestAssuredMockMvc.
+Simply include the following dependencies if you haven't already.
+
+[source,xml,indent=0]
+.Maven
+----
+include::{standalone_restdocs_path}/http-server/pom.xml[tags=dependencies,indent=0]
+----
+
+[source,groovy,indent=0]
+.Gradle
+----
+include::{standalone_restdocs_path}/http-server/build.gradle[tags=dependencies,indent=0]
+----
+
+Next you need to make some changes to your base class like the following example.
+
+[source,java,indent=0]
+----
+include::{standalone_restdocs_path}/http-server/src/test/java/com/example/fraud/FraudBaseWithWebAppSetup.java[tags=base_class,indent=0]
+----
+
+In case you are using the standalone setup, you can set up RestAssuredMockMvc like this:
+
+[source,java,indent=0]
+----
+include::{standalone_restdocs_path}/http-server/src/test/java/com/example/fraud/FraudBaseWithStandaloneSetup.java[tags=base_class,indent=0]
+----
+
+TIP: You don't need to specify the output directory for the generated snippets since version 1.2.0.RELEASE of Spring REST Docs.
 
 == Customization
 
@@ -1718,7 +1752,7 @@ properties
 
 .SCM Stub Downloader properties
 |===
-|Type of a property |Name of the property | Description
+|Name of a property |Default | Description
 |
 * `pactbroker.host` (plugin prop)
 
@@ -1770,7 +1804,7 @@ properties
 * `stubrunner.properties.pactbroker.auth.username` (system prop)
 
 * `STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_USERNAME` (env prop)
-|
+|The username passed to `contractsRepositoryUsername` (maven) or `contractRepository.username` (gradle)
 |Username used to connect to the Pact Broker
 
 |
@@ -1779,7 +1813,7 @@ properties
 * `stubrunner.properties.pactbroker.auth.password` (system prop)
 
 * `STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_PASSWORD` (env prop)
-|
+|The password passed to `contractsRepositoryPassword` (maven) or `contractRepository.password` (gradle)
 |Password used to connect to the Pact Broker
 
 |

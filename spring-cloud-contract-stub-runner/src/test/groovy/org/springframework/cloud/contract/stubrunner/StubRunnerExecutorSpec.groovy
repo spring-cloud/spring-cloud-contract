@@ -147,6 +147,27 @@ class StubRunnerExecutorSpec extends Specification {
 			executor.shutdown()
 	}
 
+	def 'should generate regex values when message is to be set and it contains regex'() {
+		given:
+			MessageVerifier messageVerifier = Mock(MessageVerifier)
+			StubRunnerExecutor executor = new StubRunnerExecutor(portScanner, messageVerifier, [])
+		when:
+			def stubConf = new StubConfiguration('asd', 'asd', 'asd', '')
+			executor.runStubs(stubRunnerOptions,
+					new StubRepository(new File('src/test/resources/messages'),
+							[], new StubRunnerOptionsBuilder().build()), stubConf)
+			boolean triggered = executor.trigger("trigger")
+		then:
+			triggered
+			1 * messageVerifier.send({ it ->
+				!it.toString().contains("cursor")
+			}, { Map map ->
+				!map.values().any { it.toString().contains("cursor")}
+			}, _)
+		cleanup:
+			executor.shutdown()
+	}
+
 	Map<StubConfiguration, Integer> stubIdsWithPortsFromString(String stubIdsToPortMapping) {
 		return stubIdsToPortMapping.split(',').collectEntries { String entry ->
 			return StubsParser.fromStringWithPort(entry)
