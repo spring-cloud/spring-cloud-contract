@@ -997,8 +997,7 @@ of an identifier or a timestamp, you need not hardcode a value. You want to allo
 different ranges of values. To enable ranges of values, you can set regular expressions
 matching those values for the consumer side. You can provide the body by means of either
 a map notation or String with interpolations.
-<link xl:href="https://cloud.spring.io/spring-cloud-contract/single/spring-cloud-contract.html#_contract_dsl">Consult the docs
-for more information.</link> We highly recommend using the map notation!</simpara>
+Consult the <xref linkend="contract_dsl"/> section for more information. We highly recommend using the map notation!</simpara>
 <tip>
 <simpara>You must understand the map notation in order to set up contracts. Please read the
 <link xl:href="http://groovy-lang.org/json.html">Groovy docs regarding JSON</link>.</simpara>
@@ -1426,7 +1425,7 @@ value(client(...), server(...))</programlisting>
 <programlisting language="groovy" linenumbering="unnumbered">$(consumer(...), producer(...))
 $(stub(...), test(...))
 $(client(...), server(...))</programlisting>
-<simpara>You can read more about this in the <link xl:href="https://cloud.spring.io/spring-cloud-contract/single/spring-cloud-contract.html#_contract_dsl">Contract DSL section</link>.</simpara>
+<simpara>You can read more about this in the <xref linkend="contract-dsl"/> section.</simpara>
 <simpara>Calling <literal>value()</literal> or <literal>$()</literal> tells Spring Cloud Contract that you will be passing a dynamic value.
 Inside the <literal>consumer()</literal> method you pass the value that should be used on the consumer side (in the generated stub).
 Inside the <literal>producer()</literal> method you pass the value that should be used on the producer side (in the generated test).</simpara>
@@ -2849,8 +2848,8 @@ following sections:</simpara>
 	&lt;/configuration&gt;
 &lt;/plugin&gt;</programlisting>
 <simpara>You can read more in the
-<link xl:href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/">Spring
-Cloud Contract Maven Plugin Documentation</link>.</simpara>
+<link xl:href="https://cloud.spring.io/spring-cloud-static/spring-cloud-contract/2.0.0.RELEASE/spring-cloud-contract-maven-plugin/">Spring
+Cloud Contract Maven Plugin Documentation (example for <literal>2.0.0.RELEASE</literal> version)</link>.</simpara>
 </section>
 <section xml:id="maven-rest-assured">
 <title>Maven and Rest Assured 2.0</title>
@@ -4012,9 +4011,7 @@ then:
 <title>Consumer Stub Generation</title>
 <simpara>Unlike the HTTP part, in messaging, we need to publish the Groovy DSL inside the JAR with
 a stub. Then it is parsed on the consumer side and proper stubbed routes are created.</simpara>
-<simpara>For more information, see
-<link xl:href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/#stub-runner-for-messaging">the
-Stub Runner Messaging sections</link>.</simpara>
+<simpara>For more information, see <xref linkend="stub-runner-for-messaging"/> section.</simpara>
 <formalpara role="primary">
 <title>Maven</title>
 <para>
@@ -4157,7 +4154,7 @@ versions, which are automatically uploaded after every successful build:</simpar
 </para>
 </formalpara>
 </section>
-<section xml:id="_publishing_stubs_as_jars">
+<section xml:id="publishing-stubs-as-jars">
 <title>Publishing Stubs as JARs</title>
 <simpara>The easiest approach would be to centralize the way stubs are kept. For example, you can
 keep them as jars in a Maven repository.</simpara>
@@ -9794,8 +9791,7 @@ methods to create request matchers, but you can&#8217;t use both approaches.</si
 </note>
 <simpara>On the consumer side, you can make the <literal>resource.json</literal> generated earlier in this section
 available on the classpath (by
-<link xl:href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_publishing_stubs_as_jars">publishing
-stubs as JARs</link>, for example). After that, you can create a stub using WireMock in a
+&lt;&lt;publishing-stubs-as-jars], for example). After that, you can create a stub using WireMock in a
 number of different ways, including by using
 <literal>@AutoConfigureWireMock(stubs="classpath:resource.json")</literal>, as described earlier in this
 document.</simpara>
@@ -10043,7 +10039,7 @@ gets fixed</simpara>
 </chapter>
 <chapter xml:id="_links">
 <title>Links</title>
-<simpara>The following links may be helpful when working with Spring Cloud Contract Verifier:</simpara>
+<simpara>The following links may be helpful when working with Spring Cloud Contract:</simpara>
 <itemizedlist>
 <listitem>
 <simpara><link xl:href="https://github.com/spring-cloud/spring-cloud-contract/">Spring Cloud Contract Github
@@ -10054,27 +10050,7 @@ Repository</link></simpara>
 Contract Samples</link></simpara>
 </listitem>
 <listitem>
-<simpara><link xl:href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html">Spring Cloud
-Contract Documentation</link></simpara>
-</listitem>
-<listitem>
-<simpara><link xl:href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/deprecated">Accurest
-Legacy Documentation</link></simpara>
-</listitem>
-<listitem>
-<simpara><link xl:href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/#spring-cloud-contract-stub-runner">Spring
-Cloud Contract Stub Runner Documentation</link></simpara>
-</listitem>
-<listitem>
-<simpara><link xl:href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html/#stub-runner-for-messaging">Spring
-Cloud Contract Stub Runner Messaging Documentation</link></simpara>
-</listitem>
-<listitem>
 <simpara><link xl:href="https://gitter.im/spring-cloud/spring-cloud-contract">Spring Cloud Contract Gitter</link></simpara>
-</listitem>
-<listitem>
-<simpara><link xl:href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/">Spring
-Cloud Contract Maven Plugin</link></simpara>
 </listitem>
 <listitem>
 <simpara><link xl:href="https://www.youtube.com/watch?v=sAAklvxmPmk">Spring Cloud Contract WJUG Presentation by

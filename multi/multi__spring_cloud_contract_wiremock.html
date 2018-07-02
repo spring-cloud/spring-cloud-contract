@@ -252,8 +252,7 @@ range of parameters. The above example generates a stub resembling the following
 </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>You can use either the <code class="literal">wiremock()</code> method or the <code class="literal">jsonPath()</code> and <code class="literal">contentType()</code>
 methods to create request matchers, but you can&#8217;t use both approaches.</p></td></tr></table></div><p>On the consumer side, you can make the <code class="literal">resource.json</code> generated earlier in this section
 available on the classpath (by
-<a class="link" href="https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_publishing_stubs_as_jars" target="_top">publishing
-stubs as JARs</a>, for example). After that, you can create a stub using WireMock in a
+&lt;&lt;publishing-stubs-as-jars], for example). After that, you can create a stub using WireMock in a
 number of different ways, including by using
 <code class="literal">@AutoConfigureWireMock(stubs="classpath:resource.json")</code>, as described earlier in this
 document.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_generating_contracts_by_using_rest_docs" href="#_generating_contracts_by_using_rest_docs"></a>11.8&nbsp;Generating Contracts by Using REST Docs</h2></div></div></div><p>You can also generate Spring Cloud Contract DSL files and documentation with Spring REST
