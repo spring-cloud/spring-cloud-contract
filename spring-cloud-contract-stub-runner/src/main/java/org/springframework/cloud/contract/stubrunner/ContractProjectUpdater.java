@@ -63,8 +63,10 @@ public class ContractProjectUpdater {
 	public void updateContractProject(String projectName, Path rootStubsFolder) {
 		File clonedRepo = this.gitContractsRepo
 				.clonedRepo(this.stubRunnerOptions.stubRepositoryRoot);
+		GitStubDownloaderProperties properties = new GitStubDownloaderProperties(
+				this.stubRunnerOptions.stubRepositoryRoot, this.stubRunnerOptions);
 		copyStubs(projectName, rootStubsFolder, clonedRepo);
-		GitRepo gitRepo = new GitRepo(clonedRepo);
+		GitRepo gitRepo = new GitRepo(clonedRepo, properties);
 		String msg = StubRunnerPropertyUtils.getProperty(this.stubRunnerOptions.getProperties(),
 				GIT_COMMIT_MESSAGE);
 		GitRepo.CommitResult commit = gitRepo
