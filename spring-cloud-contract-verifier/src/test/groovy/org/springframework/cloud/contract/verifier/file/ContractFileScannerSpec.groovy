@@ -108,4 +108,42 @@ class ContractFileScannerSpec extends Specification {
 			result.entries().every { it.value.convertedContract }
 			result.entries().find { it.value.convertedContract.any { it.request.method.clientValue == "PUT" } }
 	}
+
+	def "should prefer custom yaml converter over standard yaml converter"() {
+		given:
+			File baseDir = new File(this.getClass().getResource("/directory/with/custom/yml").toURI())
+			ContractFileScanner scanner = new ContractFileScanner(baseDir, null, null) {
+				@Override
+				protected List<ContractConverter> converters() {
+					return [new ContractConverter() {
+						@Override
+						boolean isAccepted(File file) {
+							if (!file.name.endsWith(".yml") && !file.name.endsWith(".yaml")) {
+								return false
+							}
+							String line
+							file.withReader {
+								line = it.readLine()
+							}
+							return line != null && line.startsWith("custom_format: 1.0")
+						}
+
+						@Override
+						Collection<Contract> convertFrom(File file) {
+							return Collections.singleton(Contract.newInstance())
+						}
+
+						@Override
+						Object convertTo(Collection contract) {
+							return new Object()
+						}
+					}]
+				}
+			}
+		when:
+			ListMultimap<Path, ContractMetadata> result = scanner.findContracts()
+		then:
+			result.keySet().size() == 1
+			result.entries().every { it.value.convertedContract }
+	}
 }

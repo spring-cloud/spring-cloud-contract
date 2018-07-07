@@ -88,6 +88,7 @@ class ContractFileScanner {
 	 */
 	private void appendRecursively(File baseDir, ListMultimap<Path, ContractMetadata> result) {
 		List<ContractConverter> converters = converters()
+		converters.add(YamlContractConverter.INSTANCE)
 		if (log.isTraceEnabled()) {
 			log.trace("Found the following contract converters ${converters}")
 		}
@@ -104,8 +105,6 @@ class ContractFileScanner {
 				boolean included = includeMatcher ? file.absolutePath.matches(includeMatcher) : true
 				if (contractFile && included) {
 					addContractToTestGeneration(result, files, file, i, ContractVerifierDslConverter.convertAsCollection(baseDir, file))
-				} else if (YamlContractConverter.INSTANCE.isAccepted(file) && included) {
-					addContractToTestGeneration(result, files, file, i, YamlContractConverter.INSTANCE.convertFrom(file))
 				} else if (!contractFile && included) {
 					addContractToTestGeneration(converters, result, files, file, i)
 				} else {
