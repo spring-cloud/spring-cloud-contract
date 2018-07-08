@@ -130,13 +130,6 @@ class ClassBuilder {
 		return this
 	}
 
-	private String appendColonIfJUniTest(String field) {
-		if (lang == TestFramework.JUNIT && !field.endsWith(';')) {
-			return "$field;"
-		}
-		return field
-	}
-
 	ClassBuilder addField(List<String> fieldsToAdd) {
 		fields.addAll(fieldsToAdd.collect { appendColonIfJUniTest(it) })
 		return this
@@ -207,5 +200,16 @@ class ClassBuilder {
 
 	void addClassLevelAnnotation(String annotation) {
 		classLevelAnnotations << annotation
+	}
+
+	private String appendColonIfJUniTest(String field) {
+		if (isJUnitType(field)) {
+			return "$field;"
+		}
+		return field
+	}
+
+	private boolean isJUnitType(String field) {
+		TestFramework.JUNIT == lang || TestFramework.JUNIT5 == lang && !field.endsWith(';')
 	}
 }

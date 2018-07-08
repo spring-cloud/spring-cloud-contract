@@ -64,7 +64,7 @@ class JavaTestGenerator implements SingleTestGenerator {
 			}
 		}
 		if (isScenarioClass(listOfFiles)) {
-			clazz.addImports(configProperties.targetFramework.getOrderAnnotationImport())
+			clazz.addImports(configProperties.targetFramework.getOrderAnnotationImports())
 			clazz.addClassLevelAnnotation(configProperties.targetFramework.getOrderAnnotation())
 		}
 		addJsonPathRelatedImports(clazz)

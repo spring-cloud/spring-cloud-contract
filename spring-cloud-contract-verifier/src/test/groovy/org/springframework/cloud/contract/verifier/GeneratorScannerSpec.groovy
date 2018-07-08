@@ -16,10 +16,12 @@
 
 package org.springframework.cloud.contract.verifier
 
+import spock.lang.Specification
+
 import org.springframework.cloud.contract.verifier.builder.JavaTestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
-import org.springframework.cloud.contract.verifier.config.TestFramework
-import spock.lang.Specification
+
+import static org.springframework.cloud.contract.verifier.config.TestFramework.SPOCK
 
 class GeneratorScannerSpec extends Specification {
 
@@ -39,7 +41,7 @@ class GeneratorScannerSpec extends Specification {
 
 	def "should create class with full package"() {
 		given:
-			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(targetFramework: TestFramework.SPOCK)
+			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(targetFramework: SPOCK)
 			properties.contractsDslDir = new File(this.getClass().getResource("/directory/with/stubs/package").toURI())
 			TestGenerator testGenerator = new TestGenerator(properties, classGenerator, Stub(FileSaver))
 		when:

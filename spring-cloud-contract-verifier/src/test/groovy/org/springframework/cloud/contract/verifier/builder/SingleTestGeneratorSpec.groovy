@@ -27,8 +27,6 @@ import org.springframework.util.StringUtils
 import spock.lang.Issue
 import spock.lang.Specification
 
-import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
-import static org.springframework.cloud.contract.verifier.config.TestFramework.SPOCK
 import static org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter.convertAsCollection
 
 class SingleTestGeneratorSpec extends Specification {

@@ -16,9 +16,12 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+import java.util.regex.Pattern
+
 import groovy.json.StringEscapeUtils
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Cookie
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
@@ -28,8 +31,6 @@ import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.MapConverter
-
-import java.util.regex.Pattern
 
 import static groovy.json.StringEscapeUtils.escapeJava
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
@@ -195,7 +196,7 @@ class JUnitMessagingMethodBodyBuilder extends MessagingMethodBodyBuilder {
 	protected String getInputString() {
 		String request = 'ContractVerifierMessage inputMessage = contractVerifierMessaging.create('
 		if (inputMessage.messageBody) {
-			request = "${request}\n\t\t\t\t\"${StringEscapeUtils.escapeJava(bodyAsString)}\"\n"
+			request = "${request}\n\t\t\t\t\"${escapeJava(bodyAsString)}\"\n"
 		}
 		if (inputMessage.messageHeaders) {
 			request = "${request}\t\t\t\t, headers()"

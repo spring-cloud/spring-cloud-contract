@@ -9,6 +9,7 @@ import static org.springframework.cloud.contract.verifier.config.TestFramework.J
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT5
 import static org.springframework.cloud.contract.verifier.config.TestFramework.SPOCK
 
+
 /**
  * @author Olga Maciaszek-Sharma
  */
@@ -25,6 +26,14 @@ class BaseImportProvider {
 			(JUNIT5): new ImportDefinitions(['org.junit.jupiter.api.Test']),
 			(SPOCK) : new ImportDefinitions([]),
 			(CUSTOM): new ImportDefinitions([])]
+
+	private static final Map<TestFramework, String> RULE_IMPORT = [
+			(JUNIT) : 'org.junit.Rule',
+			(JUNIT5): 'org.junit.jupiter.api.extension.ExtendWith',
+			(SPOCK) : 'org.junit.Rule',
+			(CUSTOM): 'org.junit.Rule'
+	]
+
 	/**
 	 * Returns list of imports for provided test framework.
 	 * @param testFramework
@@ -47,8 +56,8 @@ class BaseImportProvider {
 	 * Returns jUnit rule import.
 	 * @return jUnit rule import
 	 */
-	static String getRuleImport() {
-		return 'org.junit.Rule'
+	static String getRuleImport(TestFramework testFramework) {
+		return RULE_IMPORT.get(testFramework)
 	}
 }
 
