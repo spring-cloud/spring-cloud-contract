@@ -12,6 +12,8 @@ import static org.springframework.cloud.contract.verifier.config.TestMode.JAXRSC
 import static org.springframework.cloud.contract.verifier.config.TestMode.MOCKMVC
 
 /**
+ * Provides imports based on test framework and test mode.
+ *
  * @author Olga Maciaszek-Sharma
  */
 class HttpImportProvider {

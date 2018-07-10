@@ -11,6 +11,8 @@ import static org.springframework.cloud.contract.verifier.config.TestFramework.S
 
 
 /**
+ * Provides imports based on test framework.
+ *
  * @author Olga Maciaszek-Sharma
  */
 @CompileStatic

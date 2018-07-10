@@ -1,5 +1,8 @@
 package org.springframework.cloud.contract.verifier.builder.imports
+
 /**
+ * Provides imports based on test framework and test mode.
+ *
  * @author Olga Maciaszek-Sharma
  */
 class MessagingImportProvider {
