@@ -24,4 +24,8 @@ interface TestFrameworkDefinition {
 	String getOrderAnnotation()
 
 	String getIgnoreAnnotation()
+
+	boolean annotationLevelRules()
+
+	String getRuleAnnotation(String annotationValue)
 }

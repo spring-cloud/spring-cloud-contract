@@ -51,4 +51,14 @@ class JUnit5Definition implements TestFrameworkDefinition {
 	String getIgnoreAnnotation() {
 		return '@Disabled'
 	}
+
+	@Override
+	boolean annotationLevelRules() {
+		return true
+	}
+
+	@Override
+	String getRuleAnnotation(String annotationValue) {
+		return ("@ExtendWith(${annotationValue}.class)")
+	}
 }

@@ -51,4 +51,14 @@ class SpockDefinition implements TestFrameworkDefinition {
 	String getIgnoreAnnotation() {
 		return '@Ignore'
 	}
+
+	@Override
+	boolean annotationLevelRules() {
+		return false
+	}
+
+	@Override
+	String getRuleAnnotation(String annotationValue) {
+		throw new UnsupportedOperationException('Not available in Spock.')
+	}
 }

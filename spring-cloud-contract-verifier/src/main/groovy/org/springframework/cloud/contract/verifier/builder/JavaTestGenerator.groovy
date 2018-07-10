@@ -85,7 +85,7 @@ class JavaTestGenerator implements SingleTestGenerator {
 					addHttpRelatedEntries(clazz, configProperties)
 				}
 				if (configProperties.ruleClassForTests) {
-					clazz.addImport(getRuleImport()).addRule(configProperties.ruleClassForTests)
+					addRule(configProperties, clazz)
 				}
 				if (contracts.values().contains(TestType.MESSAGING)) {
 					addMessagingRelatedEntries(clazz)
@@ -98,6 +98,16 @@ class JavaTestGenerator implements SingleTestGenerator {
 
 		if (toIgnore) {
 			clazz.addImport(configProperties.targetFramework.getIgnoreClass())
+		}
+	}
+
+	private void addRule(ContractVerifierConfigProperties configProperties, ClassBuilder clazz) {
+		clazz.addImport(getRuleImport())
+		if (configProperties.targetFramework.annotationLevelRules()) {
+			clazz.addClassLevelAnnotation(configProperties.targetFramework
+					.getRuleAnnotation(configProperties.ruleClassForTests))
+		} else {
+			clazz.addRule(configProperties.ruleClassForTests)
 		}
 	}
 
