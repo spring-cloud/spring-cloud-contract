@@ -37,7 +37,7 @@ class Contract {
 	/**
 	 * You can set the level of priority of this contract. If there are two contracts
 	 * mapped for example to the same endpoint, then the one with greater priority should
-	 * take precedence
+	 * take precedence. A priority of 1 is highest and takes precedence over a priority of 2.
 	 */
 	Integer priority
 	/**

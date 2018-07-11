@@ -17,13 +17,17 @@
 package org.springframework.cloud.contract.stubrunner;
 
 import java.io.File;
+import java.util.HashMap;
 
 import org.assertj.core.api.BDDAssertions;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 
 import static org.assertj.core.api.BDDAssertions.then;
@@ -37,6 +41,8 @@ public class ContractProjectUpdaterTest extends AbstractGitTest {
 	ContractProjectUpdater updater;
 	GitRepo gitRepo;
 	File origin;
+
+	@Rule public OutputCapture outputCapture = new OutputCapture();
 
 	@Before
 	public void setup() throws Exception {
@@ -69,6 +75,60 @@ public class ContractProjectUpdaterTest extends AbstractGitTest {
 			git.reset().setMode(ResetCommand.ResetType.HARD).call();
 		}
 		BDDAssertions.then(new File(this.project, "META-INF/com.example/hello-world/0.0.2/mappings/someMapping.json")).exists();
+		BDDAssertions.then(gitRepo.gitFactory.provider).isNull();
+		BDDAssertions.then(outputCapture.toString()).contains("No custom credentials provider will be set");
+	}
+
+	@Test
+	public void should_push_changes_to_current_branch_using_credentials() throws Exception {
+		StubRunnerOptions options = new StubRunnerOptionsBuilder()
+				.withStubRepositoryRoot("file://" + this.project.getAbsolutePath() + "/")
+				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
+				.withProperties(new HashMap<String, String>() {
+					{
+						put("git.username", "foo");
+						put("git.password", "bar");
+					}
+				} )
+				.build();
+		ContractProjectUpdater updater = new ContractProjectUpdater(options);
+		File stubs = new File(GitRepoTests.class.getResource("/git_samples/sample_stubs").toURI());
+
+		updater.updateContractProject("hello-world", stubs.toPath());
+
+		// project, not origin, cause we're making one more clone of the local copy
+		try(Git git = openGitProject(this.project)) {
+			RevCommit revCommit = git.log().call().iterator().next();
+			then(revCommit.getShortMessage()).isEqualTo("Updating project [hello-world] with stubs");
+			// I have no idea but the file gets deleted after pushing
+			git.reset().setMode(ResetCommand.ResetType.HARD).call();
+		}
+		BDDAssertions.then(new File(this.project, "META-INF/com.example/hello-world/0.0.2/mappings/someMapping.json")).exists();
+		BDDAssertions.then(outputCapture.toString()).contains("Passed username and password - will set a custom credentials provider");
+	}
+
+	@Test
+	public void should_push_changes_to_current_branch_using_root_credentials() throws Exception {
+		StubRunnerOptions options = new StubRunnerOptionsBuilder()
+				.withStubRepositoryRoot("file://" + this.project.getAbsolutePath() + "/")
+				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
+				.withUsername("foo")
+				.withPassword("bar")
+				.build();
+		ContractProjectUpdater updater = new ContractProjectUpdater(options);
+		File stubs = new File(GitRepoTests.class.getResource("/git_samples/sample_stubs").toURI());
+
+		updater.updateContractProject("hello-world", stubs.toPath());
+
+		// project, not origin, cause we're making one more clone of the local copy
+		try(Git git = openGitProject(this.project)) {
+			RevCommit revCommit = git.log().call().iterator().next();
+			then(revCommit.getShortMessage()).isEqualTo("Updating project [hello-world] with stubs");
+			// I have no idea but the file gets deleted after pushing
+			git.reset().setMode(ResetCommand.ResetType.HARD).call();
+		}
+		BDDAssertions.then(new File(this.project, "META-INF/com.example/hello-world/0.0.2/mappings/someMapping.json")).exists();
+		BDDAssertions.then(outputCapture.toString()).contains("Passed username and password - will set a custom credentials provider");
 	}
 
 	@Test
