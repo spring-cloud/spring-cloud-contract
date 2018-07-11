@@ -7345,7 +7345,9 @@ provide your own extensions, you can register an implementation of the
 Since we use the spring.factories extension approach, you can create an entry in
 <literal>META-INF/spring.factories</literal> file similar to the following:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions=\
-org.springframework.cloud.contract.stubrunner.provider.wiremock.TestWireMockExtensions</programlisting>
+org.springframework.cloud.contract.stubrunner.provider.wiremock.TestWireMockExtensions
+org.springframework.cloud.contract.spec.ContractConverter=\
+org.springframework.cloud.contract.stubrunner.TestCustomYamlContractConverter</programlisting>
 <simpara>The following is an example of a custom extension:</simpara>
 <formalpara>
 <title>TestWireMockExtensions.groovy</title>

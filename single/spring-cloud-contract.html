@@ -4466,7 +4466,9 @@ provide your own extensions, you can register an implementation of the
 <code class="literal">org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions</code> interface.
 Since we use the spring.factories extension approach, you can create an entry in
 <code class="literal">META-INF/spring.factories</code> file similar to the following:</p><pre class="programlisting">org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions=\
-org.springframework.cloud.contract.stubrunner.provider.wiremock.TestWireMockExtensions</pre><p>The following is an example of a custom extension:</p><p><b>TestWireMockExtensions.groovy.&nbsp;</b>
+org.springframework.cloud.contract.stubrunner.provider.wiremock.TestWireMockExtensions
+org.springframework.cloud.contract.spec.ContractConverter=\
+org.springframework.cloud.contract.stubrunner.TestCustomYamlContractConverter</pre><p>The following is an example of a custom extension:</p><p><b>TestWireMockExtensions.groovy.&nbsp;</b>
 </p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> org.springframework.cloud.contract.verifier.dsl.wiremock
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> com.github.tomakehurst.wiremock.extension.Extension
