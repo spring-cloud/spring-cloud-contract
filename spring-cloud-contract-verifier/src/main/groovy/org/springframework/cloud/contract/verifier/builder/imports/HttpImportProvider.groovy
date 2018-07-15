@@ -22,6 +22,7 @@ class HttpImportProvider {
 			(JAXRSCLIENT): new ImportDefinitions([], ['javax.ws.rs.client.Entity.*']),
 			(MOCKMVC)    : new ImportDefinitions([], ["${restAssuredPackage}.module.mockmvc.RestAssuredMockMvc.*"]),
 			(EXPLICIT)   : new ImportDefinitions([], ["${restAssuredPackage}.RestAssured.*"])]
+
 	private final Map<Tuple2<TestFramework, TestMode>, ImportDefinitions> FRAMEWORK_AND_TEST_MODE_SPECIFIC_IMPORTS = [
 			(new Tuple2(JUNIT, JAXRSCLIENT)) : new ImportDefinitions(['javax.ws.rs.core.Response']),
 			(new Tuple2(JUNIT5, JAXRSCLIENT)): new ImportDefinitions(['javax.ws.rs.core.Response']),
