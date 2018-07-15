@@ -140,7 +140,6 @@ public class EurekaStubsRegistrar implements StubsRegistrar {
 	public void close() throws Exception {
 		for (EurekaRegistration registration : this.registrations) {
 			this.serviceRegistry.deregister(registration);
-			registration.close();
 		}
 	}
 }

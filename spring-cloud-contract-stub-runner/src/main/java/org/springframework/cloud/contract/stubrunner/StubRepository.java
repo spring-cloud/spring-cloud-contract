@@ -169,10 +169,10 @@ class StubRepository {
 								if (isContractDescriptor(file)) {
 									contractDescriptors
 											.addAll(ContractVerifierDslConverter.convertAsCollection(file.getParentFile(), file));
+								} else if (converter != null && converter.isAccepted(file)) {
+									contractDescriptors.addAll(converter.convertFrom(file));
 								} else if (YamlContractConverter.INSTANCE.isAccepted(file)) {
 									contractDescriptors.addAll(YamlContractConverter.INSTANCE.convertFrom(file));
-								} else if (converter != null) {
-									contractDescriptors.addAll(converter.convertFrom(file));
 								}
 							}
 							return super.visitFile(path, attrs);

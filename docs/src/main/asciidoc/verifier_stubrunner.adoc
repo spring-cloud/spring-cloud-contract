@@ -25,6 +25,7 @@ include::{standalone_samples_path}/http-server/pom.xml[tags=repos,indent=0]
 include::{standalone_samples_path}/http-server/build.gradle[tags=repos,indent=0]
 ----
 
+[[publishing-stubs-as-jars]]
 === Publishing Stubs as JARs
 
 The easiest approach would be to centralize the way stubs are kept. For example, you can

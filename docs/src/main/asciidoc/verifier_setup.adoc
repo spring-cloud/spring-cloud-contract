@@ -438,8 +438,8 @@ include::{standalone_samples_path}/http-server/pom.xml[tags=contract_maven_plugi
 ----
 
 You can read more in the
-https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/[Spring
-Cloud Contract Maven Plugin Documentation].
+https://cloud.spring.io/spring-cloud-static/spring-cloud-contract/2.0.0.RELEASE/spring-cloud-contract-maven-plugin/[Spring
+Cloud Contract Maven Plugin Documentation (example for `2.0.0.RELEASE` version)].
 
 [[maven-rest-assured]]
 ==== Maven and Rest Assured 2.0

@@ -69,7 +69,7 @@ class GitRepo {
 
 	private static final Logger log = LoggerFactory.getLogger(GitRepo.class);
 
-	private final JGitFactory gitFactory;
+	final JGitFactory gitFactory;
 
 	private final File basedir;
 
@@ -79,12 +79,14 @@ class GitRepo {
 	}
 
 	// for tests
+	@Deprecated
 	GitRepo(File basedir) {
 		this.basedir = basedir;
 		this.gitFactory = new JGitFactory();
 	}
 
 	// for tests
+	@Deprecated
 	GitRepo(File basedir, JGitFactory factory) {
 		this.basedir = basedir;
 		this.gitFactory = factory;
@@ -330,7 +332,7 @@ class GitRepo {
 			}
 		};
 
-		private final CredentialsProvider provider;
+		final CredentialsProvider provider;
 
 		JGitFactory(GitStubDownloaderProperties properties) {
 			if (org.springframework.util.StringUtils.hasText(properties.username)) {
