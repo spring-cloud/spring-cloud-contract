@@ -28,7 +28,7 @@ import static ContentType.*
 import static ContentUtils.extractValue
 
 /**
- * Useful utility methods to work with regular expresisons
+ * Useful utility methods to work with regular expressions
  *
  * Do not change to {@code @CompileStatic} since it's using double dispatch.
  *

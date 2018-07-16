@@ -716,4 +716,34 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
 
+	def "should not escape a regex pattern when matching raw body value [#methodBuilderName]"() {
+		def pattern = "\\d+\\w?"
+		def escapedPattern = "\\\\d+\\\\w?"
+
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url '/api/arbitrary-url'
+				}
+				response {
+					status OK()
+					body(value(stub("1"), test(regex(pattern))))
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			String test = blockBuilder.toString()
+			test.contains(escapedPattern)
+		where:
+			methodBuilderName           						 | methodBuilder
+			"MockMvcSpockMethodBuilder" 						 | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder" 						 | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
 }
