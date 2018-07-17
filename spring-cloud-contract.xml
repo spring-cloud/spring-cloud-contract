@@ -8132,6 +8132,46 @@ that information (for example, in the stubs, you have to call <literal>/my-conte
 </listitem>
 </itemizedlist>
 </section>
+<section xml:id="_working_with_web_flux">
+<title>Working with Web Flux</title>
+<simpara>Spring Cloud Contract requires the usage of <literal>EXPLICIT</literal> mode in your generated tests
+to work with Web Flux.</simpara>
+<formalpara role="primary">
+<title>Maven</title>
+<para>
+<programlisting language="xml" linenumbering="unnumbered">&lt;plugin&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
+    &lt;extensions&gt;true&lt;/extensions&gt;
+    &lt;configuration&gt;
+        &lt;testMode&gt;EXPLICIT&lt;/testMode&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</programlisting>
+</para>
+</formalpara>
+<formalpara role="secondary">
+<title>Gradle</title>
+<para>
+<programlisting language="groovy" linenumbering="unnumbered">contracts {
+		testMode = 'EXPLICIT'
+}</programlisting>
+</para>
+</formalpara>
+<simpara>The following example shows how to set up a base class and Rest Assured for Web Flux:</simpara>
+<programlisting language="groovy" linenumbering="unnumbered">@RunWith(SpringRunner.class)
+@SpringBootTest(classes = BeerRestBase.Config.class,
+		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+		properties = "server.port=0")
+public abstract class BeerRestBase {
+
+    // your tests go here
+
+    // in this config class you define all controllers and mocked services
+    include::{samples_url}/producer_webflux/src/test/java/com/example/BeerRestBase.java[tags=config,indent=0]
+
+}</programlisting>
+</section>
 <section xml:id="_messaging_top_level_elements">
 <title>Messaging Top-Level Elements</title>
 <simpara>The DSL for messaging looks a little bit different than the one that focuses on HTTP. The
