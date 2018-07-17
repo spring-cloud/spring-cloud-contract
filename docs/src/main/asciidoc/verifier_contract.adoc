@@ -1103,6 +1103,47 @@ context path included (for example, `/my-context-path/url`).
 * Your contracts reflect that you have a context path. Your generated stubs also have
 that information (for example, in the stubs, you have to call `/my-context-path/url`).
 
+=== Working with Web Flux
+
+Spring Cloud Contract requires the usage of `EXPLICIT` mode in your generated tests
+to work with Web Flux.
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+<plugin>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+    <version>${spring-cloud-contract.version}</version>
+    <extensions>true</extensions>
+    <configuration>
+        <testMode>EXPLICIT</testMode>
+    </configuration>
+</plugin>
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
+----
+contracts {
+		testMode = 'EXPLICIT'
+}
+----
+
+The following example shows how to set up a base class and Rest Assured for Web Flux:
+
+[source,groovy,indent=0]
+----
+include::{samples_url}/producer_webflux/src/test/java/com/example/BeerRestBase.java[tags=annotations,indent=0]
+
+    // your tests go here
+
+    // in this config class you define all controllers and mocked services
+    include::{samples_url}/producer_webflux/src/test/java/com/example/BeerRestBase.java[tags=config,indent=0]
+
+}
+----
+
 === Messaging Top-Level Elements
 
 The DSL for messaging looks a little bit different than the one that focuses on HTTP. The
