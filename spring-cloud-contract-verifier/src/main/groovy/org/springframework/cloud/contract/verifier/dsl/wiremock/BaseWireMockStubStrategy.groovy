@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.dsl.wiremock
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import groovy.json.JsonBuilder
@@ -47,6 +48,7 @@ import static org.springframework.cloud.contract.verifier.util.MapConverter.tran
 abstract class BaseWireMockStubStrategy {
 
 	private static final String WRAPPER = "UNQUOTE_ME"
+	private final ObjectMapper mapper = new ObjectMapper()
 
 	protected final TemplateProcessor processor
 	protected final ContractTemplate template
@@ -159,14 +161,14 @@ abstract class BaseWireMockStubStrategy {
 		return value
 	}
 
-	private static String toJson(Object value) {
+	private String toJson(Object value) {
 		if (value instanceof Map) {
 			Map convertedMap = MapConverter.transformValues(value) {
 				it instanceof GString ? it.toString() : it
 			} as Map
-			return new JSONObject(new JsonBuilder(convertedMap).toString())
+			return this.mapper.writeValueAsString(convertedMap)
 		}
-		return new JsonBuilder(value).toString()
+		return this.mapper.writeValueAsString(value).toString()
 	}
 
 	/**
