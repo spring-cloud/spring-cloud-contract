@@ -1,10 +1,15 @@
 package org.springframework.cloud.contract.verifier.config.framework
 
+import groovy.transform.CompileStatic
+
 /**
  * Defines elements characteristic of JUnit test framework to be used during test class construction.
  *
  * @author Olga Maciaszek-Sharma
+ *
+ * @since 2.1.0
  */
+@CompileStatic
 class JUnitDefinition implements TestFrameworkDefinition {
 
 	@Override

@@ -1,15 +1,19 @@
 package org.springframework.cloud.contract.verifier.builder.imports
 
+import groovy.transform.CompileStatic
+
 /**
  * Provides imports based on test framework and test mode.
  *
  * @author Olga Maciaszek-Sharma
+ *
+ * @since 2.1.0
  */
+@CompileStatic
 class MessagingImportProvider {
 
 	/**
-	 * Returns list of imports for messaging test contracts.
-	 * @return list of imports
+	 * @return list of imports for messaging test contracts.
 	 */
 	static List<String> getImports() {
 		return ['javax.inject.Inject',
@@ -20,8 +24,7 @@ class MessagingImportProvider {
 	}
 
 	/**
-	 * Returns list of static imports for messaging test contracts.
-	 * @return list of static imports
+	 * @return list of static imports for messaging test contracts.
 	 */
 	static List<String> getStaticImports() {
 		return ['org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers']

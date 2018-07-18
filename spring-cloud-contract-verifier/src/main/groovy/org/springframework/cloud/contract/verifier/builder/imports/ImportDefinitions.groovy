@@ -1,9 +1,15 @@
 package org.springframework.cloud.contract.verifier.builder.imports
 
+import groovy.transform.CompileStatic
+import groovy.transform.PackageScope
+
 /**
  * @author Olga Maciaszek-Sharma
+ *
+ * @since 2.1.0
  */
-
+@CompileStatic
+@PackageScope
 class ImportDefinitions {
 
 	final List<String> imports

@@ -131,6 +131,6 @@ class MethodBuilder {
 	}
 
 	private boolean isJUnitType() {
-		JUNIT == configProperties.targetFramework || JUNIT5 == configProperties.targetFramework
+		return JUNIT == configProperties.targetFramework || JUNIT5 == configProperties.targetFramework
 	}
 }

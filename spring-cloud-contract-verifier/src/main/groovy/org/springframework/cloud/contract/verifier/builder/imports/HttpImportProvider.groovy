@@ -15,6 +15,8 @@ import static org.springframework.cloud.contract.verifier.config.TestMode.MOCKMV
  * Provides imports based on test framework and test mode.
  *
  * @author Olga Maciaszek-Sharma
+ *
+ * @since 2.1.0
  */
 class HttpImportProvider {
 

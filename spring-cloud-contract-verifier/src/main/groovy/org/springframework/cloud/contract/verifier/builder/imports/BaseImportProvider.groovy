@@ -9,11 +9,12 @@ import static org.springframework.cloud.contract.verifier.config.TestFramework.J
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT5
 import static org.springframework.cloud.contract.verifier.config.TestFramework.SPOCK
 
-
 /**
  * Provides imports based on test framework.
  *
  * @author Olga Maciaszek-Sharma
+ *
+ * @since 2.1.0
  */
 @CompileStatic
 class BaseImportProvider {
@@ -54,10 +55,6 @@ class BaseImportProvider {
 		return GENERAL_IMPORTS.staticImports + TEST_FRAMEWORK_SPECIFIC_IMPORTS.get(testFramework).staticImports
 	}
 
-	/**
-	 * Returns jUnit rule import.
-	 * @return jUnit rule import
-	 */
 	static String getRuleImport(TestFramework testFramework) {
 		return RULE_IMPORT.get(testFramework)
 	}
