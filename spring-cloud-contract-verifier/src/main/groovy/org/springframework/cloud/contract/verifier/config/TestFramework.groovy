@@ -16,68 +16,105 @@
 
 package org.springframework.cloud.contract.verifier.config
 
+import org.springframework.cloud.contract.verifier.config.framework.CustomDefinition
+import org.springframework.cloud.contract.verifier.config.framework.JUnit5Definition
+import org.springframework.cloud.contract.verifier.config.framework.JUnitDefinition
+import org.springframework.cloud.contract.verifier.config.framework.SpockDefinition
+import org.springframework.cloud.contract.verifier.config.framework.TestFrameworkDefinition
+
 /**
  * Contains main building blocks for a test class for the given framework
  *
  * @author Jakub Kubrynski, codearte.io
+ * @author Olga Maciaszek-Sharma
  *
  * @since 1.0.0
  */
 enum TestFramework {
-	JUNIT("public ", "public void ", ";", ".java", "Test", "org.junit.Ignore", ["org.junit.FixMethodOrder", "org.junit.runners.MethodSorters"], "@FixMethodOrder(MethodSorters.NAME_ASCENDING)"),
-	SPOCK("", "def ", "", ".groovy", "Spec", "spock.lang.Ignore", ["spock.lang.Stepwise"], "@Stepwise"),
-	CUSTOM("", "", "", "", "", "", [], "")
 
-	private final String classModifier
-	private final String methodModifier
-	private final String lineSuffix
-	private final String classExtension
-	private final String classNameSuffix
-	private final String ignoreClass
-	private final List<String> orderAnnotationImports
-	private final String orderAnnotation
+	SPOCK(new SpockDefinition()),
+	JUNIT(new JUnitDefinition()),
+	JUNIT5(new JUnit5Definition()),
+	CUSTOM(new CustomDefinition())
 
+	@Delegate
+	private final TestFrameworkDefinition testFrameworkDefinition
+
+
+	TestFramework(TestFrameworkDefinition testFrameworkDefinition) {
+		this.testFrameworkDefinition = testFrameworkDefinition
+	}
+
+	/**
+	 * @deprecated use {@link #TestFramework(TestFrameworkDefinition)}
+	 * @param classModifier
+	 * @param methodModifier
+	 * @param lineSuffix
+	 * @param classExtension
+	 * @param classNameSuffix
+	 * @param ignoreClass
+	 * @param orderAnnotationImports
+	 * @param orderAnnotation
+	 */
+	@Deprecated
 	TestFramework(String classModifier, String methodModifier, String lineSuffix, String classExtension, String classNameSuffix,
 	              String ignoreClass, List<String> orderAnnotationImports, String orderAnnotation) {
-		this.classModifier = classModifier
-		this.lineSuffix = lineSuffix
-		this.methodModifier = methodModifier
-		this.classExtension = classExtension
-		this.classNameSuffix = classNameSuffix
-		this.ignoreClass = ignoreClass
-		this.orderAnnotationImports = orderAnnotationImports
-		this.orderAnnotation = orderAnnotation
-	}
+		testFrameworkDefinition = new TestFrameworkDefinition() {
 
-	String getClassModifier() {
-		return classModifier
-	}
+			@Override
+			String getClassModifier() {
+				return classModifier
+			}
 
-	String getMethodModifier() {
-		return methodModifier
-	}
+			@Override
+			String getMethodModifier() {
+				return methodModifier
+			}
 
-	String getLineSuffix() {
-		return lineSuffix
-	}
+			@Override
+			String getLineSuffix() {
+				return lineSuffix
+			}
 
-	String getClassExtension() {
-		return classExtension
-	}
+			@Override
+			String getClassExtension() {
+				return classExtension
+			}
 
-	String getClassNameSuffix() {
-		return classNameSuffix
-	}
+			@Override
+			String getClassNameSuffix() {
+				return classNameSuffix
+			}
 
-	String getIgnoreClass() {
-		return ignoreClass
-	}
+			@Override
+			String getIgnoreClass() {
+				return ignoreClass
+			}
 
-	List<String> getOrderAnnotationImport() {
-		return orderAnnotationImports
-	}
+			@Override
+			List<String> getOrderAnnotationImports() {
+				return orderAnnotationImports
+			}
 
-	String getOrderAnnotation() {
-		return orderAnnotation
+			@Override
+			String getOrderAnnotation() {
+				return orderAnnotation
+			}
+
+			@Override
+			String getIgnoreAnnotation() {
+				return '@Ignore'
+			}
+
+			@Override
+			boolean annotationLevelRules() {
+				return false
+			}
+
+			@Override
+			String getRuleAnnotation(String annotationValue) {
+				throw new UnsupportedOperationException('Not available in framework.')
+			}
+		}
 	}
 }

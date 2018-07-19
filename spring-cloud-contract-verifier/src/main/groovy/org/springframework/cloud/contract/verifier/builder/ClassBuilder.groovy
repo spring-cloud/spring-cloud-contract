@@ -18,9 +18,10 @@ package org.springframework.cloud.contract.verifier.builder
 
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
 import org.springframework.cloud.contract.verifier.util.NamesUtil
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 /**
  * Builds a class. Adds all the imports, static imports etc.
@@ -104,8 +105,13 @@ class ClassBuilder {
 		return this
 	}
 
-	ClassBuilder addImport(List<String> importsToAdd) {
+	ClassBuilder addImports(List<String> importsToAdd) {
 		imports.addAll(importsToAdd)
+		return this
+	}
+
+	ClassBuilder addStaticImports(List<String> importsToAdd) {
+		staticImports.addAll(importsToAdd)
 		return this
 	}
 
@@ -122,13 +128,6 @@ class ClassBuilder {
 	ClassBuilder addField(String fieldToAdd) {
 		fields << appendColonIfJUniTest(fieldToAdd)
 		return this
-	}
-
-	private String appendColonIfJUniTest(String field) {
-		if (lang == TestFramework.JUNIT && !field.endsWith(';')) {
-			return "$field;"
-		}
-		return field
 	}
 
 	ClassBuilder addField(List<String> fieldsToAdd) {
@@ -201,5 +200,16 @@ class ClassBuilder {
 
 	void addClassLevelAnnotation(String annotation) {
 		classLevelAnnotations << annotation
+	}
+
+	private String appendColonIfJUniTest(String field) {
+		if (isJUnitType(field)) {
+			return "$field;"
+		}
+		return field
+	}
+
+	private boolean isJUnitType(String field) {
+		TestFramework.JUNIT == lang || TestFramework.JUNIT5 == lang && !field.endsWith(';')
 	}
 }
