@@ -962,7 +962,7 @@ For such cases we're introducing the property and plugin setup mechanism:
 if either of these values is set to `true`, then the stub downloader will not
 verify the origin of the downloaded JAR.
 
-For the plugins you need to set the `contractsSnapshotSkipCheck` property
+For the plugins you need to set the `contractsSnapshotCheckSkip` property
 to `true`.
 
 === Scenarios
