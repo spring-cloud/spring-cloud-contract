@@ -6,4 +6,4 @@ FOLDER=`pwd`
 
 set -e
 
-./mvnw clean install -DskipTests -Pfast
+./mvnw clean install -DskipTests -Pfast -fae
