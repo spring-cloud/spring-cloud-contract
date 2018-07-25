@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2018-07-24</date>
+<date>2018-07-19</date>
 </info>
 <preface>
 <title></title>
@@ -8168,7 +8168,20 @@ public abstract class BeerRestBase {
     // your tests go here
 
     // in this config class you define all controllers and mocked services
-    include::{samples_url}/producer_webflux/src/test/java/com/example/BeerRestBase.java[tags=config,indent=0]
+@Configuration
+@EnableAutoConfiguration
+static class Config {
+
+	@Bean
+	PersonCheckingService personCheckingService()  {
+		return personToCheck -&gt; personToCheck.age &gt;= 20;
+	}
+
+	@Bean
+	ProducerController producerController() {
+		return new ProducerController(personCheckingService());
+	}
+}
 
 }</programlisting>
 </section>
