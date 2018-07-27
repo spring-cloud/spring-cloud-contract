@@ -77,6 +77,7 @@ class TestGenerator {
 		contractFileScanner = new ContractFileScanner(configProperties.contractsDslDir,
 				configProperties.excludedFiles as Set,
 				configProperties.ignoredFiles as Set,
+				configProperties.includedFiles as Set,
 				this.configProperties.includedContracts)
 	}
 
