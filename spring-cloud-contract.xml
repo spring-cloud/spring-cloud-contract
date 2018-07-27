@@ -5682,6 +5682,8 @@ Spring AMQP stub runner integration looks for bindings on the application contex
 match this exchange. Then it collects the queues from the Spring exchanges and tries to
 find message listeners bound to these queues. The message is triggered for all matching
 message listeners.</simpara>
+<simpara>If you need to work with routing keys, it&#8217;s enough to pass them via the <literal>amqp_receivedRoutingKey</literal>
+messaging header.</simpara>
 <section xml:id="_adding_the_runner_to_the_project_3">
 <title>Adding the Runner to the Project</title>
 <simpara>You can have both Spring AMQP and Spring Cloud Contract Stub Runner on the classpath and

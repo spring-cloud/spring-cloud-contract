@@ -217,7 +217,8 @@ queues. Bindings connect an exchange to a queue. If message contracts are trigge
 Spring AMQP stub runner integration looks for bindings on the application context that
 match this exchange. Then it collects the queues from the Spring exchanges and tries to
 find message listeners bound to these queues. The message is triggered for all matching
-message listeners.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_adding_the_runner_to_the_project_3" href="#_adding_the_runner_to_the_project_3"></a>7.4.1&nbsp;Adding the Runner to the Project</h3></div></div></div><p>You can have both Spring AMQP and Spring Cloud Contract Stub Runner on the classpath and
+message listeners.</p><p>If you need to work with routing keys, it&#8217;s enough to pass them via the <code class="literal">amqp_receivedRoutingKey</code>
+messaging header.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_adding_the_runner_to_the_project_3" href="#_adding_the_runner_to_the_project_3"></a>7.4.1&nbsp;Adding the Runner to the Project</h3></div></div></div><p>You can have both Spring AMQP and Spring Cloud Contract Stub Runner on the classpath and
 set the property <code class="literal">stubrunner.amqp.enabled=true</code>. Remember to annotate your test class
 with <code class="literal">@AutoConfigureStubRunner</code>.</p><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>If you already have Stream and Integration on the classpath, you need
 to disable them explicitly by setting the  <code class="literal">stubrunner.stream.enabled=false</code> and
