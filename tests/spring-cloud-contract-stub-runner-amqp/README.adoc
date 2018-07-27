@@ -20,6 +20,9 @@ match this exchange. Then it collects the queues from the Spring exchanges and t
 find message listeners bound to these queues. The message is triggered for all matching
 message listeners.
 
+If you need to work with routing keys, it's enough to pass them via the `amqp_receivedRoutingKey`
+messaging header.
+
 ==== Adding the Runner to the Project
 
 You can have both Spring AMQP and Spring Cloud Contract Stub Runner on the classpath and
