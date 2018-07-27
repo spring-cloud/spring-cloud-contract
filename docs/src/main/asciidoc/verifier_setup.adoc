@@ -252,6 +252,7 @@ components. Those properties might be used by e.g. inbuilt or custom Stub Downlo
 
 The following properties are used when you want to specify the location of the JAR
 containing the contracts:
+
 * *contractDependency*: Specifies the Dependency that provides
 `groupid:artifactid:version:classifier` coordinates. You can use the `contractDependency`
 closure to set it up.
