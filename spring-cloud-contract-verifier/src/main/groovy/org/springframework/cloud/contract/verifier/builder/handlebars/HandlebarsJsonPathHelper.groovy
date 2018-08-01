@@ -40,7 +40,11 @@ class HandlebarsJsonPathHelper implements Helper<Map<String, Object>> {
 	private Object returnObjectForTest(Object model, String jsonPath) {
 		String body = removeSurroundingQuotes(((TestSideRequestTemplateModel) model).rawBody).replace('\\"', '"')
 		DocumentContext documentContext = JsonPath.parse(body)
-		return documentContext.read(jsonPath)
+		Object value = documentContext.read(jsonPath)
+		if (value instanceof Long) {
+			return String.valueOf(value) + "L"
+		}
+		return value
 	}
 
 	private String removeSurroundingQuotes(String body) {

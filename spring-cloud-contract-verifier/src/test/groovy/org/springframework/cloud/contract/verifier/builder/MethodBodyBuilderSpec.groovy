@@ -491,6 +491,58 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
 
+	@Issue("#702")
+	def "should generate proper type for large numbers [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'PUT'
+					urlPath '/example/create'
+					headers {
+						contentType applicationJson()
+					}
+					body(
+							[
+									"name"      : $(consumer(~/.+/), producer("string-1")),
+									"updatedTs" : $(consumer(~/\d{13}/), producer(1531916906000L)),
+									"isDisabled": $(consumer(regex(anyBoolean())), producer(true))
+							]
+					)
+				}
+
+				response {
+					status 200
+					headers {
+						contentType applicationJsonUtf8()
+					}
+					body(
+							[
+									"id"        : $(consumer(2222L), producer(~/\d+/)),
+									"name"      : fromRequest().body("name"),
+									"updatedTs" : fromRequest().body("updatedTs"),
+									"isDisabled": fromRequest().body("isDisabled")
+							]
+					)
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			String test = blockBuilder.toString()
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+			test.contains('''assertThatJson(parsedJson).field("['updatedTs']").isEqualTo(1531916906000L)''')
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
 	@Issue("#465")
 	def "should work for '/' url for [#methodBuilderName]"() {
 		given:
