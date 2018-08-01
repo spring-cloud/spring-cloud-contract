@@ -1068,7 +1068,7 @@ First, add the `Spring Cloud Contract` BOM.
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-dependencies</artifactId>
-            <version>${spring-cloud-dependencies.version}</version>
+            <version>${spring-cloud-release.version}</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -1149,7 +1149,7 @@ Add the `Spring Cloud Contract` BOM:
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-dependencies</artifactId>
-            <version>${spring-cloud-dependencies.version}</version>
+            <version>${spring-cloud-release.version}</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
