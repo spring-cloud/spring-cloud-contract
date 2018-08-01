@@ -22,10 +22,6 @@ that a contract is kept by producers and consumers.</simpara>
 </chapter>
 <chapter xml:id="_spring_cloud_contract_verifier_introduction">
 <title>Spring Cloud Contract Verifier Introduction</title>
-<tip>
-<simpara>The Accurest project was initially started by Marcin Grzejszczak and Jakub Kubrynski
-(<link xl:href="http://codearte.io">codearte.io</link>)</simpara>
-</tip>
 <simpara>Spring Cloud Contract Verifier enables Consumer Driven Contract (CDC) development of
 JVM-based applications. It moves TDD to the level of software architecture.</simpara>
 <simpara>Spring Cloud Contract Verifier ships with <emphasis>Contract Definition Language</emphasis> (CDL). Contract
@@ -47,6 +43,13 @@ of the API is compliant with the contract (<emphasis>server tests</emphasis>). A
 Spring Cloud Contract Verifier.</simpara>
 </listitem>
 </itemizedlist>
+<section xml:id="_history">
+<title>History</title>
+<simpara>Before becoming Spring Cloud Contract, this project was called <link xl:href="https://github.com/Codearte/accurest">Accurest</link>.
+It was created by <link xl:href="https://twitter.com/mgrzejszczak">Marcin Grzejszczak</link> and <link xl:href="https://twitter.com/jkubrynski">Jakub Kubrynski</link>
+from (<link xl:href="http://codearte.io">codearte.io</link>.</simpara>
+<simpara>The <literal>0.1.0</literal> release took place on 26 Jan 2015 and it became stable with <literal>1.0.0</literal> release on 29 Feb 2016.</simpara>
+</section>
 <section xml:id="_why_a_contract_verifier">
 <title>Why a Contract Verifier?</title>
 <simpara>Assume that we have a system consisting of multiple microservices:</simpara>
@@ -1102,7 +1105,7 @@ Application service</literal>):</simpara>
 		&lt;dependency&gt;
 			&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 			&lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
-			&lt;version&gt;${spring-cloud-dependencies.version}&lt;/version&gt;
+			&lt;version&gt;${spring-cloud-release-train.version}&lt;/version&gt;
 			&lt;type&gt;pom&lt;/type&gt;
 			&lt;scope&gt;import&lt;/scope&gt;
 		&lt;/dependency&gt;
@@ -1562,7 +1565,7 @@ one to one to the contents of the repo.</simpara>
 		&lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
 		&lt;java.version&gt;1.8&lt;/java.version&gt;
 		&lt;spring-cloud-contract.version&gt;2.1.0.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
-		&lt;spring-cloud-dependencies.version&gt;Finchley.BUILD-SNAPSHOT&lt;/spring-cloud-dependencies.version&gt;
+		&lt;spring-cloud-release.version&gt;Finchley.BUILD-SNAPSHOT&lt;/spring-cloud-release.version&gt;
 		&lt;excludeBuildFolders&gt;true&lt;/excludeBuildFolders&gt;
 	&lt;/properties&gt;
 
@@ -1571,7 +1574,7 @@ one to one to the contents of the repo.</simpara>
 			&lt;dependency&gt;
 				&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 				&lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
-				&lt;version&gt;${spring-cloud-dependencies.version}&lt;/version&gt;
+				&lt;version&gt;${spring-cloud-release.version}&lt;/version&gt;
 				&lt;type&gt;pom&lt;/type&gt;
 				&lt;scope&gt;import&lt;/scope&gt;
 			&lt;/dependency&gt;
@@ -8121,7 +8124,20 @@ public abstract class BeerRestBase {
     // your tests go here
 
     // in this config class you define all controllers and mocked services
-    include::{samples_url}/producer_webflux/src/test/java/com/example/BeerRestBase.java[tags=config,indent=0]
+@Configuration
+@EnableAutoConfiguration
+static class Config {
+
+	@Bean
+	PersonCheckingService personCheckingService()  {
+		return personToCheck -&gt; personToCheck.age &gt;= 20;
+	}
+
+	@Bean
+	ProducerController producerController() {
+		return new ProducerController(personCheckingService());
+	}
+}
 
 }</programlisting>
 </section>
