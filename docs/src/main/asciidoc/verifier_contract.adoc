@@ -1139,7 +1139,7 @@ include::{samples_url}/producer_webflux/src/test/java/com/example/BeerRestBase.j
     // your tests go here
 
     // in this config class you define all controllers and mocked services
-    include::{samples_url}/producer_webflux/src/test/java/com/example/BeerRestBase.java[tags=config,indent=0]
+include::{samples_url}/producer_webflux/src/test/java/com/example/BeerRestBase.java[tags=config,indent=0]
 
 }
 ----
