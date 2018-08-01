@@ -20,7 +20,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<spring-cloud-dependencies.version>Finchley.BUILD-SNAPSHOT</spring-cloud-dependencies.version>
+		<spring-cloud-release.version>Finchley.BUILD-SNAPSHOT</spring-cloud-release.version>
 	</properties>
 
 	<dependencies>
@@ -52,7 +52,7 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>${spring-cloud-dependencies.version}</version>
+				<version>${spring-cloud-release.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
