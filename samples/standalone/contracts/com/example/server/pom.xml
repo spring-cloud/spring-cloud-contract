@@ -21,7 +21,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 		<spring-cloud-contract.version>2.0.2.BUILD-SNAPSHOT</spring-cloud-contract.version>
-		<spring-cloud-dependencies.version>2.0.3.RELEASE</spring-cloud-dependencies.version>
+		<spring-cloud-release.version>Finchley.BUILD-SNAPSHOT</spring-cloud-release.version>
 		<excludeBuildFolders>true</excludeBuildFolders>
 	</properties>
 
