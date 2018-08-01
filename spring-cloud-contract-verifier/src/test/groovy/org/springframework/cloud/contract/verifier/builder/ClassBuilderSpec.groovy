@@ -1,5 +1,7 @@
 package org.springframework.cloud.contract.verifier.builder
 
+import spock.lang.Issue
+
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import spock.lang.Specification
 
@@ -45,6 +47,16 @@ class ClassBuilderSpec extends Specification {
 					packageWithBaseClasses: 'com.example.base',
 					baseClassMappings: ['.*' : 'com.example.base.SuperClass'])
 			String contractRelativeFolder = 'superpackage'
+		expect:
+			ClassBuilder.retrieveBaseClass(props, contractRelativeFolder) == 'com.example.base.SuperClass'
+	}
+
+	@Issue("701")
+	def "should match base class when mapping regex has multiple folders"() {
+		given:
+			ContractVerifierConfigProperties props = new ContractVerifierConfigProperties(
+					baseClassMappings: ['.*bar.baz.some.*' : 'com.example.base.SuperClass'])
+			String contractRelativeFolder = 'foo/bar/baz/some/package'.split("/").join(File.separator)
 		expect:
 			ClassBuilder.retrieveBaseClass(props, contractRelativeFolder) == 'com.example.base.SuperClass'
 	}

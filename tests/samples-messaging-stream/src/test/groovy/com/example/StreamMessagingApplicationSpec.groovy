@@ -40,7 +40,7 @@ import javax.inject.Inject
 @DirtiesContext
 @SpringBootTest(properties = "debug=true")
 @AutoConfigureMessageVerifier
-public class StreamMessagingApplicationSpec extends Specification {
+class StreamMessagingApplicationSpec extends Specification {
 
 	// ALL CASES
 	@Inject MessageVerifier<Message<?>> contractVerifierMessaging
