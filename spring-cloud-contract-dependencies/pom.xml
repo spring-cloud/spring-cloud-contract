@@ -5,13 +5,8 @@
 	<parent>
 		<artifactId>spring-cloud-dependencies-parent</artifactId>
 		<groupId>org.springframework.cloud</groupId>
-<<<<<<< HEAD
-		<version>2.0.2.BUILD-SNAPSHOT</version>
-        <relativePath/>
-=======
 		<version>2.0.4.BUILD-SNAPSHOT</version>
-    <relativePath/>
->>>>>>> 2.0.x
+        <relativePath/>
 	</parent>
 	<artifactId>spring-cloud-contract-dependencies</artifactId>
 	<version>2.1.0.BUILD-SNAPSHOT</version>
