@@ -20,6 +20,9 @@ import groovy.json.JsonSlurper
 import org.springframework.cloud.contract.spec.internal.DslProperty
 import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor
 import org.springframework.cloud.contract.verifier.template.TemplateProcessor
+
+import static org.springframework.cloud.contract.verifier.util.ContentUtils.getClientContentType
+
 /**
  * Converts an object into either client or server side representation.
  * Iterates over the structure of an object (depending on whether it's an
