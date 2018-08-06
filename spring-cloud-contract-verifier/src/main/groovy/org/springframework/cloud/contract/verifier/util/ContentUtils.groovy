@@ -184,10 +184,13 @@ class ContentUtils {
 	}
 
 	private static GStringImpl extractValueForXML(GString bodyAsValue, Closure valueProvider) {
-		return new GStringImpl(
+		GStringImpl impl = new GStringImpl(
 				bodyAsValue.values.collect { transformXMLStringValue(it, valueProvider) } as String[],
 				bodyAsValue.strings.clone() as String[]
 		)
+		// try to convert it to XML
+		new XmlSlurper().parseText(impl.toString())
+		return impl
 	}
 
 	protected static Object transformJSONStringValue(Object obj, Closure valueProvider) {

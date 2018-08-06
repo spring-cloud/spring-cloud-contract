@@ -2155,6 +2155,79 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	}
 
+	@Issue('#493')
+	def "should not escape &"() {
+		given:
+			Contract groovyDsl = Contract.make {
+				request {
+					method POST()
+					urlPath('/oauth/token')
+					headers {
+						header(authorization(), anyNonBlankString())
+						header(contentType(), 'application/x-www-form-urlencoded; charset=UTF-8')
+						header(accept(), anyNonBlankString())
+					}
+					body('username=user&password=password&grant_type=password')
+				}
+				response {
+					status 200
+					headers {
+						header(contentType(), applicationJsonUtf8())
+					}
+					body([
+							refresh_token: 'RANDOM_REFRESH_TOKEN',
+							access_token : 'RANDOM_ACCESS_TOKEN',
+							token_type   : 'bearer',
+							expires_in   : 3600,
+							scope        : ['task'],
+							user         : [
+									id      : 1,
+									username: 'user',
+									name    : 'User'
+							]
+					])
+				}
+			}
+		when:
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
+		then:
+			!wireMockStub.contains("&amp;")
+		and:
+			AssertionUtil.assertThatJsonsAreEqual('''
+				{
+				  "request" : {
+					"urlPath" : "/oauth/token",
+					"method" : "POST",
+					"headers" : {
+					  "Authorization" : {
+						"matches" : "^\\\\s*\\\\S[\\\\S\\\\s]*"
+					  },
+					  "Content-Type" : {
+						"equalTo" : "application/x-www-form-urlencoded; charset=UTF-8"
+					  },
+					  "Accept" : {
+						"matches" : "^\\\\s*\\\\S[\\\\S\\\\s]*"
+					  }
+					},
+					"bodyPatterns" : [ {
+					  "equalTo" : "username=user&password=password&grant_type=password"
+					} ]
+				  },
+				  "response" : {
+					"status" : 200,
+					"body" : "{\\"access_token\\":\\"RANDOM_ACCESS_TOKEN\\",\\"refresh_token\\":\\"RANDOM_REFRESH_TOKEN\\",\\"scope\\":[\\"task\\"],\\"token_type\\":\\"bearer\\",\\"expires_in\\":3600,\\"user\\":{\\"name\\":\\"User\\",\\"id\\":1,\\"username\\":\\"user\\"}}",
+					"headers" : {
+					  "Content-Type" : "application/json;charset=UTF-8"
+					},
+					"transformers" : [ "response-template", "foo-transformer" ]
+				  }
+				}
+				''', wireMockStub)
+		and:
+			stubMappingIsValidWireMockStub(wireMockStub)
+
+	}
+
 	WireMockConfiguration config() {
 		return new WireMockConfiguration().extensions(responseTemplateTransformer())
 	}
