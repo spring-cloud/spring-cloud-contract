@@ -30,7 +30,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import org.springframework.http.ResponseEntity
 import org.springframework.messaging.Message
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
@@ -43,7 +42,6 @@ import spock.lang.Specification
 @AutoConfigureStubRunner(ids = "org.springframework.cloud.contract.verifier.stubs:producerWithMultipleConsumers",
 		repositoryRoot = "classpath:m2repo/repository/",
 		stubsPerConsumer = true)
-@DirtiesContext
 class StubRunnerStubsPerConsumerSpec extends Specification {
 // end::test[]
 

@@ -10,7 +10,6 @@ import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.example.loan.model.Client;
@@ -27,7 +26,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"}, workOffline = true)
-@DirtiesContext
 public class LoanApplicationServiceTests {
 // end::autoconfigure_stubrunner[]
 

@@ -19,7 +19,6 @@ import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties="app.baseUrl=http://localhost:6063", webEnvironment=WebEnvironment.NONE)
-@DirtiesContext
 public class WiremockServerApplicationTests {
 
 	@ClassRule

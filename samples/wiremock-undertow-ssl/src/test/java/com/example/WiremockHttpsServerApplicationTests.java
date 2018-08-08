@@ -22,7 +22,6 @@ import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest("app.baseUrl=https://localhost:7443")
-@DirtiesContext
 @ActiveProfiles("ssl")
 public class WiremockHttpsServerApplicationTests {
 

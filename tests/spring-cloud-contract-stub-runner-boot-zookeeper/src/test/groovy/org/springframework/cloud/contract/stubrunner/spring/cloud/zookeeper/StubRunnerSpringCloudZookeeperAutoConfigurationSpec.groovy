@@ -31,7 +31,6 @@ import org.springframework.cloud.zookeeper.ZookeeperProperties
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.util.SocketUtils
 import org.springframework.web.client.RestTemplate
@@ -50,7 +49,6 @@ import spock.lang.Specification
 		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
 		"org.springframework.cloud.contract.verifier.stubs:bootService"],
 		repositoryRoot = "classpath:m2repo/repository/")
-@DirtiesContext
 class StubRunnerSpringCloudZookeeperAutoConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder

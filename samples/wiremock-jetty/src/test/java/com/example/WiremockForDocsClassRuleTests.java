@@ -20,7 +20,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 
 @ActiveProfiles("classrule")
-@DirtiesContext
 //tag::wiremock_test1[]
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)

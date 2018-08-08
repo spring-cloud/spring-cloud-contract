@@ -30,7 +30,6 @@ import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration
 import org.springframework.cloud.zookeeper.discovery.RibbonZookeeperAutoConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.RestTemplate
@@ -48,7 +47,6 @@ import spock.lang.Specification
 		"org.springframework.cloud.contract.verifier.stubs:bootService"],
 		repositoryRoot = "classpath:m2repo/repository/")
 // end::autoconfigure[]
-@DirtiesContext
 class StubRunnerSpringCloudAutoConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
