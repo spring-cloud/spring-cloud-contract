@@ -309,7 +309,6 @@ You would like to feed that instance with a proper stub definition.</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"}, workOffline = true)
-@DirtiesContext
 public class LoanApplicationServiceTests {</programlisting>
 <simpara>After that, during the tests, Spring Cloud Contract automatically finds the stubs
 (simulating the real service) in the Maven repository and exposes them on a configured
@@ -768,7 +767,6 @@ can also provide the offline work switch.</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"}, workOffline = true)
-@DirtiesContext
 public class LoanApplicationServiceTests {</programlisting>
 <simpara>Now, when you run your tests, you see something like this:</simpara>
 <programlisting language="bash" linenumbering="unnumbered">2016-07-19 14:22:25.403  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Desired version is + - will try to resolve the latest version
@@ -3347,16 +3345,6 @@ HTTP stubs without the need to download artifacts.</simpara>
 </section>
 <section xml:id="_running_stubs">
 <title>Running stubs</title>
-<section xml:id="_limitations">
-<title>Limitations</title>
-<important>
-<simpara>There might be a problem with StubRunner shutting down ports between tests. You might
- have a situation in which you get port conflicts. As long as you use the same context across tests
- everything works fine. But when the context are different (e.g. different stubs or different profiles)
- then you have to either use <literal>@DirtiesContext</literal> to shut down the stub servers, or else run them on
- different ports per test.</simpara>
-</important>
-</section>
 <section xml:id="_running_using_main_app">
 <title>Running using main app</title>
 <simpara>You can set the following options to the main class:</simpara>
@@ -3602,7 +3590,6 @@ its methods as presented below:</simpara>
 		"stubrunner.camel.enabled=false",
 		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}'])
 @AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/")
-@DirtiesContext
 @ActiveProfiles("test")
 class StubRunnerConfigurationSpec extends Specification {
 
@@ -4041,7 +4028,6 @@ Or set the test as follows:</simpara>
 @AutoConfigureStubRunner(ids = "org.springframework.cloud.contract.verifier.stubs:producerWithMultipleConsumers",
 		repositoryRoot = "classpath:m2repo/repository/",
 		stubsPerConsumer = true)
-@DirtiesContext
 class StubRunnerStubsPerConsumerSpec extends Specification {
 ...
 }</programlisting>
@@ -4054,7 +4040,6 @@ class StubRunnerStubsPerConsumerSpec extends Specification {
 		repositoryRoot = "classpath:m2repo/repository/",
 		consumerName = "foo-consumer",
 		stubsPerConsumer = true)
-@DirtiesContext
 class StubRunnerStubsPerConsumerWithConsumerNameSpec extends Specification {
 ...
 }</programlisting>
@@ -4986,7 +4971,7 @@ response:
 <simpara>You can compile contracts to stubs mapping using standalone maven command:
 <literal>mvn org.springframework.cloud:spring-cloud-contract-maven-plugin:convert</literal></simpara>
 </tip>
-<section xml:id="_limitations_2">
+<section xml:id="_limitations">
 <title>Limitations</title>
 <warning>
 <simpara>Spring Cloud Contract Verifier does not properly support XML. Please use JSON or

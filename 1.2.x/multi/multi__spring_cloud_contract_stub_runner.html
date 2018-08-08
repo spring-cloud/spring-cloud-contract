@@ -220,11 +220,7 @@ structure in your stubs jar.</p><pre class="programlisting">&#9492;&#9472;&#9472
              &nbsp;&nbsp; &#9474;       &#9492;&#9472;&#9472; contract2.groovy
              &nbsp;&nbsp; &#9492;&#9472;&#9472; mappings
              &nbsp;&nbsp;     &#9492;&#9472;&#9472; mapping.json</pre><p>By maintaining this structure classpath gets scanned and you can profit from the messaging /
-HTTP stubs without the need to download artifacts.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_running_stubs" href="#_running_stubs"></a>6.3.2&nbsp;Running stubs</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_limitations" href="#_limitations"></a>Limitations</h4></div></div></div><div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top"><p>There might be a problem with StubRunner shutting down ports between tests. You might
- have a situation in which you get port conflicts. As long as you use the same context across tests
- everything works fine. But when the context are different (e.g. different stubs or different profiles)
- then you have to either use <code class="literal">@DirtiesContext</code> to shut down the stub servers, or else run them on
- different ports per test.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_running_using_main_app" href="#_running_using_main_app"></a>Running using main app</h4></div></div></div><p>You can set the following options to the main class:</p><pre class="programlisting">-c, --classifier                Suffix <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">for</span> the jar containing stubs (e.
+HTTP stubs without the need to download artifacts.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_running_stubs" href="#_running_stubs"></a>6.3.2&nbsp;Running stubs</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_running_using_main_app" href="#_running_using_main_app"></a>Running using main app</h4></div></div></div><p>You can set the following options to the main class:</p><pre class="programlisting">-c, --classifier                Suffix <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">for</span> the jar containing stubs (e.
                                   g. <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'stubs'</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">if</span> the stub jar would
                                   have a <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'stubs'</span> classifier <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">for</span> stubs:
                                   foobar-stubs ). Defaults to <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'stubs'</span>
@@ -384,7 +380,6 @@ its methods as presented below:</p><pre class="programlisting"><em><span class="
 		"stubrunner.camel.enabled=false",
 		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}'])</span></em>
 <em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/")</span></em>
-<em><span class="hl-annotation" style="color: gray">@DirtiesContext</span></em>
 <em><span class="hl-annotation" style="color: gray">@ActiveProfiles("test")</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> StubRunnerConfigurationSpec <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> Specification {
 
@@ -662,7 +657,6 @@ Or set the test as follows:</p><pre class="programlisting"><em><span class="hl-a
 <em><span class="hl-annotation" style="color: gray">@AutoConfigureStubRunner(ids = "org.springframework.cloud.contract.verifier.stubs:producerWithMultipleConsumers",
 		repositoryRoot = "classpath:m2repo/repository/",
 		stubsPerConsumer = true)</span></em>
-<em><span class="hl-annotation" style="color: gray">@DirtiesContext</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> StubRunnerStubsPerConsumerSpec <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> Specification {
 ...
 }</pre><p>Then only the stubs registered under a path that contains the <code class="literal">bar-consumer</code> in its name (i.e. those from the
@@ -672,7 +666,6 @@ Or set the test as follows:</p><pre class="programlisting"><em><span class="hl-a
 		repositoryRoot = "classpath:m2repo/repository/",
 		consumerName = "foo-consumer",
 		stubsPerConsumer = true)</span></em>
-<em><span class="hl-annotation" style="color: gray">@DirtiesContext</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> StubRunnerStubsPerConsumerWithConsumerNameSpec <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> Specification {
 ...
 }</pre><p>Then only the stubs registered under a path that contains the <code class="literal">foo-consumer</code> in its name (i.e. those from the
