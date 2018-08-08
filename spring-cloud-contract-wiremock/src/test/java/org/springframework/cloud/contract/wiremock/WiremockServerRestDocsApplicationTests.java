@@ -39,7 +39,6 @@ import wiremock.org.eclipse.jetty.http.HttpStatus;
 @SpringBootTest(classes = TestConfiguration.class)
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 @AutoConfigureMockMvc
-@DirtiesContext
 public class WiremockServerRestDocsApplicationTests {
 
 	@Autowired private MockMvc mockMvc;

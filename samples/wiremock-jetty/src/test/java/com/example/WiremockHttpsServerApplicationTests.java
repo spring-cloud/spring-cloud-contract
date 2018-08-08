@@ -21,7 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest("app.baseUrl=https://localhost:8443")
-@DirtiesContext
 @AutoConfigureHttpClient
 public class WiremockHttpsServerApplicationTests {
 

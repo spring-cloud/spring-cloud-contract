@@ -15,7 +15,6 @@ import org.springframework.web.client.RestTemplate;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.NONE)
-@DirtiesContext
 public class WiremockMockServerApplicationTests {
 
 	@Autowired

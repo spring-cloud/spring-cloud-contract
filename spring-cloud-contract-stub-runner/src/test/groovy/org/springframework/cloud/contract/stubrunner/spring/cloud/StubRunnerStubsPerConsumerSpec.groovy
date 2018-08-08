@@ -33,7 +33,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import org.springframework.http.ResponseEntity
 import org.springframework.messaging.Message
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 /**
  * @author Marcin Grzejszczak
@@ -45,7 +44,6 @@ import org.springframework.test.context.ContextConfiguration
 		repositoryRoot = "classpath:m2repo/repository/",
 		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 		stubsPerConsumer = true)
-@DirtiesContext
 class StubRunnerStubsPerConsumerSpec extends Specification {
 // end::test[]
 

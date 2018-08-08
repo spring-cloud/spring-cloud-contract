@@ -33,7 +33,6 @@ import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRun
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 
 import static org.mockito.BDDMockito.then
@@ -58,7 +57,6 @@ import static org.mockito.Mockito.mock
 		"org.springframework.cloud.contract.verifier.stubs:bootService"],
 		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 		repositoryRoot = "classpath:m2repo/repository/")
-@DirtiesContext
 class StubRunnerSpringCloudConsulAutoConfigurationSpec extends Specification {
 
 	@Autowired ConsulClient client

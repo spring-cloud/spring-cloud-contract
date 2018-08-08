@@ -29,7 +29,6 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties="app.baseUrl=http://localhost:6067", webEnvironment=WebEnvironment.NONE)
-@DirtiesContext
 public class WiremockServerApplicationTests {
 
 	@ClassRule

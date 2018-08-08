@@ -25,8 +25,7 @@ import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
-import org.springframework.messaging.Message;
-import org.springframework.test.annotation.DirtiesContext
+import org.springframework.messaging.Message
 import org.springframework.test.context.ContextConfiguration
 
 import spock.lang.Specification
@@ -40,9 +39,8 @@ import com.toomuchcoding.jsonassert.JsonAssertion
  */
 // Context configuration would end up in base class
 @ContextConfiguration(classes = [SpringMessagingApplication], loader = SpringBootContextLoader)
-@DirtiesContext
 @AutoConfigureMessageVerifier
-public class SpringApplicationSpec extends Specification {
+class SpringApplicationSpec extends Specification {
 
 	// ALL CASES
 	@Inject MessageVerifier<Message<?>> contractVerifierMessaging

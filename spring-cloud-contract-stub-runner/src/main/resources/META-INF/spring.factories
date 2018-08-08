@@ -9,3 +9,7 @@ org.springframework.cloud.contract.stubrunner.spring.cloud.zookeeper.StubRunnerS
 org.springframework.cloud.contract.stubrunner.spring.cloud.eureka.StubRunnerSpringCloudEurekaAutoConfiguration,\
 org.springframework.cloud.contract.stubrunner.spring.cloud.consul.StubRunnerSpringCloudConsulAutoConfiguration,\
 org.springframework.cloud.contract.stubrunner.messaging.StubRunnerStreamsIntegrationAutoConfiguration
+
+# Test Execution Listeners
+org.springframework.test.context.TestExecutionListener=\
+org.springframework.cloud.contract.stubrunner.provider.wiremock.StubRunnerWireMockTestExecutionListener

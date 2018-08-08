@@ -21,7 +21,6 @@ import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest("app.baseUrl=https://localhost:6443")
-@DirtiesContext
 @AutoConfigureHttpClient
 public class WiremockHttpsServerApplicationTests {
 

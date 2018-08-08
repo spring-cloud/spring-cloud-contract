@@ -21,7 +21,6 @@ import com.example.loan.model.LoanApplicationStatus;
 @SpringBootTest(webEnvironment=WebEnvironment.NONE, properties="server.context-path=/app")
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
 		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
-@DirtiesContext
 public class LoanApplicationServiceContextPathTests {
 
 	@Autowired
