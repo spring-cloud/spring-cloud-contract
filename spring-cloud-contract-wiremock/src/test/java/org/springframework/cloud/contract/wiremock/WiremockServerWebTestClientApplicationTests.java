@@ -10,7 +10,6 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.cloud.contract.wiremock.WiremockServerWebTestClientApplicationTests.TestConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;

@@ -24,7 +24,6 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
