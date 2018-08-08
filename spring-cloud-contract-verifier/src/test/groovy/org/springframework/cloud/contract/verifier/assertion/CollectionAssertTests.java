@@ -34,6 +34,18 @@ public class CollectionAssertTests {
 	}
 
 	@Test
+	public void should_throw_an_exception_when_element_is_null() {
+		Collection collection = collectionWithNulls();
+
+		try {
+			SpringCloudContractAssertions.assertThat(collection).allElementsMatch("[0-9]");
+			Assertions.fail("should throw exception");
+		} catch (AssertionError e) {
+			Assertions.assertThat(e).hasMessageContaining("The value <null> doesn't match the regex <[0-9]>");
+		}
+	}
+
+	@Test
 	public void should_throw_an_exception_when_collection_is_null() {
 		Collection collection = null;
 
@@ -274,6 +286,12 @@ public class CollectionAssertTests {
 		list.add("a");
 		list.add("b");
 		list.add("c");
+		return list;
+	}
+
+	private Collection<String> collectionWithNulls() {
+		List<String> list = new ArrayList<>();
+		list.add(null);
 		return list;
 	}
 
