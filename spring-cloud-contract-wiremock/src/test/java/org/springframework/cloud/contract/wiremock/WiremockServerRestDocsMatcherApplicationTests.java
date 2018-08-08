@@ -30,7 +30,6 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 @SpringBootTest(classes = TestConfiguration.class)
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 @AutoConfigureMockMvc
-@DirtiesContext
 public class WiremockServerRestDocsMatcherApplicationTests {
 
 	@Autowired

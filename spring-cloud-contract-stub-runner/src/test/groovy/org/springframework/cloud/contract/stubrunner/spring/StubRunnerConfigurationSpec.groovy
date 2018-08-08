@@ -27,7 +27,6 @@ import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.StubNotFoundException
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
@@ -42,7 +41,6 @@ import spock.lang.Specification
 		"stubrunner.camel.enabled=false",
 		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}'])
 @AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/")
-@DirtiesContext
 @ActiveProfiles("test")
 class StubRunnerConfigurationSpec extends Specification {
 

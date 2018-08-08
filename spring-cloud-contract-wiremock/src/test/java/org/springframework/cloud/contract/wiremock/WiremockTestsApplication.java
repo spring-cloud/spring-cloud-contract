@@ -46,7 +46,7 @@ class Controller {
 class Service {
 
 	@Value("${app.baseUrl:http://example.org}")
-	private String base;
+	String base;
 
 	private RestTemplate restTemplate;
 
@@ -56,6 +56,10 @@ class Service {
 
 	public String go() {
 		return this.restTemplate.getForEntity(this.base + "/test", String.class).getBody();
+	}
+
+	public String go2() {
+		return this.restTemplate.getForEntity(this.base + "/test2", String.class).getBody();
 	}
 
 	public void setBase(String base) {

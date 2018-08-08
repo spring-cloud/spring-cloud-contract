@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import groovy.json.JsonOutput;
 import org.slf4j.Logger;
@@ -38,11 +39,14 @@ import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockH
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.cloud.contract.verifier.util.BodyExtractor;
+import wiremock.org.eclipse.jetty.util.ConcurrentHashSet;
 
 /**
  * Runs stubs for a particular {@link StubServer}
  */
 class StubRunnerExecutor implements StubFinder {
+
+	static final Set<StubServer> STUB_SERVERS = new ConcurrentHashSet<>();
 
 	private static final Logger log = LoggerFactory.getLogger(StubRunnerExecutor.class);
 	private final AvailablePortScanner portScanner;
@@ -261,6 +265,7 @@ class StubRunnerExecutor implements StubFinder {
 				}
 			});
 		}
+		STUB_SERVERS.add(this.stubServer);
 	}
 
 	private boolean hasRequest(Collection<Contract> contracts) {

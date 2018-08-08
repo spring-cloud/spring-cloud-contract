@@ -31,7 +31,6 @@ import org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
@@ -57,7 +56,6 @@ import static org.mockito.Mockito.mock
 		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
 		"org.springframework.cloud.contract.verifier.stubs:bootService"],
 		repositoryRoot = "classpath:m2repo/repository/")
-@DirtiesContext
 class StubRunnerSpringCloudConsulAutoConfigurationSpec extends Specification {
 
 	@Autowired ConsulClient client
