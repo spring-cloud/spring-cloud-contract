@@ -20,6 +20,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +60,14 @@ class StubServer {
 		return this;
 	}
 
+	public boolean isRunning() {
+		return this.httpServerStub.isRunning();
+	}
+
 	public void stop() {
+		if (log.isDebugEnabled()) {
+			log.debug("Stopping the server at port [" + this.getPort() + "]");
+		}
 		this.httpServerStub.stop();
 	}
 
@@ -95,4 +103,22 @@ class StubServer {
 		return this.httpServerStub.registeredMappings();
 	}
 
+	@Override public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		StubServer that = (StubServer) o;
+		return Objects.equals(this.stubConfiguration, that.stubConfiguration) && Objects
+				.equals(this.contracts, that.contracts);
+	}
+
+	@Override public int hashCode() {
+		return Objects.hash(this.stubConfiguration, this.contracts);
+	}
+
+	@Override public String toString() {
+		return "StubServer{" + "stubConfiguration=" + this.stubConfiguration + ", mappingsSize="
+				+ this.mappings.size() + '}';
+	}
 }

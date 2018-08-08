@@ -28,7 +28,6 @@ import static org.springframework.cloud.contract.wiremock.restdocs.WireMockWebTe
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 @AutoConfigureWebTestClient
 @AutoConfigureJsonTesters
-@DirtiesContext
 public class StubGeneratorTests {
 
 	@Autowired

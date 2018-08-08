@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.example.loan.model.Client;
@@ -22,7 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment=WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {"com.example:http-server-yml:+:stubs:6569"},
 		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
-@DirtiesContext
 public class LoanApplicationServiceTests {
 // end::autoconfigure_stubrunner[]
 

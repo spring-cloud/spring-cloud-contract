@@ -28,7 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
-@DirtiesContext
 public class StubGeneratorTests {
 
 	@Autowired

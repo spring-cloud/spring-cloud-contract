@@ -234,7 +234,6 @@ run the collaborators' stubs for you, as shown in the following example:
 @SpringBootTest(webEnvironment=WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
 		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
-@DirtiesContext
 public class LoanApplicationServiceTests {
 ----
 
@@ -519,7 +518,6 @@ the collaborators' stubs for you, as shown in the following example:
 @SpringBootTest(webEnvironment=WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
 		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
-@DirtiesContext
 public class LoanApplicationServiceTests {
 ----
 
@@ -693,7 +691,6 @@ Annotate your test class with `@AutoConfigureStubRunner`. In the annotation prov
 @SpringBootTest(webEnvironment=WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
 		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
-@DirtiesContext
 public class LoanApplicationServiceTests {
 ----
 
@@ -1179,7 +1176,6 @@ can also provide the offline work switch (`StubRunnerProperties.StubsMode.LOCAL`
 @SpringBootTest(webEnvironment=WebEnvironment.NONE)
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
 		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
-@DirtiesContext
 public class LoanApplicationServiceTests {
 ----
 

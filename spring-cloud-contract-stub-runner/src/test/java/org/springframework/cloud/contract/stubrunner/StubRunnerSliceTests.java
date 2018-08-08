@@ -47,7 +47,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 		maxPort = 10020,
 		mappingsOutputFolder = "target/outputmappings/",
 		properties = {"hello=world", "foo=bar"})
-@DirtiesContext
 @ActiveProfiles("test")
 public class StubRunnerSliceTests {
 

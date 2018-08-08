@@ -26,7 +26,6 @@ import wiremock.org.eclipse.jetty.http.HttpStatus;
 @ContextConfiguration(classes = TestConfiguration.class)
 @AutoConfigureRestDocs(outputDir = "target/snippets/webtestclient")
 @AutoConfigureWebTestClient
-@DirtiesContext
 public class WiremockServerWebTestClientApplicationTests {
 
 	@Autowired

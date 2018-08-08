@@ -18,7 +18,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = { "app.baseUrl=http://localhost:6066",
 		"server.context-path=/app" }, webEnvironment = WebEnvironment.NONE)
-@DirtiesContext
 @AutoConfigureWireMock(port = 6066)
 public class WiremockImportContextPathApplicationTests {
 

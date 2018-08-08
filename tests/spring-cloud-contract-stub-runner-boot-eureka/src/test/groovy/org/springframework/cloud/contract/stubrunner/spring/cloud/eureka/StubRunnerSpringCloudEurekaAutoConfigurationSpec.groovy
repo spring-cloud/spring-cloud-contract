@@ -32,7 +32,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
 import org.springframework.http.client.ClientHttpResponse
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.*
 import spock.lang.AutoCleanup
@@ -58,7 +57,6 @@ import spock.util.concurrent.PollingConditions
 				"org.springframework.cloud.contract.verifier.stubs:bootService"],
 		repositoryRoot = "classpath:m2repo/repository/",
 		stubsMode = StubRunnerProperties.StubsMode.REMOTE)
-@DirtiesContext
 class StubRunnerSpringCloudEurekaAutoConfigurationSpec extends Specification {
 
 	@Autowired StubFinder stubFinder
