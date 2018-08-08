@@ -30,12 +30,19 @@ public class CollectionAssert<ELEMENT> extends IterableAssert<ELEMENT> {
 		isNotNull();
 		isNotEmpty();
 		for (Object anActual : this.actual) {
+			if (anActual == null) {
+				failWithMessageRelatedToRegex(regex, anActual);
+			}
 			String value = anActual.toString();
 			if (!value.matches(regex)) {
-				failWithMessage("The value <%s> doesn't match the regex <%s>", value, regex);
+				failWithMessageRelatedToRegex(regex, value);
 			}
 		}
 		return this;
+	}
+
+	private void failWithMessageRelatedToRegex(String regex, Object value) {
+		failWithMessage("The value <%s> doesn't match the regex <%s>", value, regex);
 	}
 
 	/**
