@@ -190,7 +190,13 @@ class StubRepository {
 			return true;
 		}
 		String consumerName = this.options.getConsumerName();
-		return file.getAbsolutePath().contains(File.separator + consumerName + File.separator);
+		String searchedConsumerName = File.separator + consumerName + File.separator;
+		String absolutePath = file.getAbsolutePath();
+		boolean stubPerConsumerMatching = absolutePath.contains(searchedConsumerName);
+		if (log.isDebugEnabled()) {
+			log.debug("Absolute path [" + absolutePath + "] contains [" + searchedConsumerName + "] in its path [" + stubPerConsumerMatching + "]");
+		}
+		return stubPerConsumerMatching;
 	}
 
 	private static boolean isContractDescriptor(File file) {
