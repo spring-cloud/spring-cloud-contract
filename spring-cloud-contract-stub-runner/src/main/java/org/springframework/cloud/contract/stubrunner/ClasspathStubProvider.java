@@ -138,7 +138,7 @@ public class ClasspathStubProvider implements StubDownloaderBuilder {
 				if (groupAndArtifactMatcher.matches()) {
 					MatchResult groupAndArtifactResult = groupAndArtifactMatcher
 							.toMatchResult();
-					return groupAndArtifactResult.group(2) + File.separator
+					return groupAndArtifactResult.group(2)
 							+ groupAndArtifactResult.group(3);
 				}
 				else {
