@@ -90,7 +90,8 @@ public class ClasspathStubProvider implements StubDownloaderBuilder {
 						if (log.isDebugEnabled()) {
 							log.debug("Relative path for resource is [" + relativePath + "]");
 						}
-						int lastIndexOf = relativePath.lastIndexOf(File.separator);
+						// the relative path is OS agnostic and contains / only
+						int lastIndexOf = relativePath.lastIndexOf("/");
 						String relativePathWithoutFile = lastIndexOf > -1 ?
 								relativePath.substring(0, lastIndexOf) :
 								relativePath;
