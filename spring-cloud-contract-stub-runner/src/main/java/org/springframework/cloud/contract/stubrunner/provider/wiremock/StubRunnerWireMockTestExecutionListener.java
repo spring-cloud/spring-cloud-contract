@@ -45,6 +45,14 @@ public final class StubRunnerWireMockTestExecutionListener extends AbstractTestE
 				}
 				entry.getKey().start(entry.getValue().port);
 				entry.getKey().registerDescriptors(mappings);
+				/*
+				Thanks to Tom Akehurst:
+				I looked at tcpdump while running the failing test. HttpUrlConnection is doing something weird - it's creating a connection in a
+				previous test case, which works fine, then the usual fin -> fin ack etc. etc. ending handshake happens. But it seems it
+				isn't discarded, but reused after that. Because the server thinks (rightly) that the connection is closed, it just sends a RST packet.
+				Calling the admin endpoint just happened to remove the dead connection from the pool.
+				This also fixes the problem (which using the Java HTTP client): System.setProperty("http.keepAlive", "false");
+				 */
 				Assert.isTrue(new RestTemplate().getForEntity("http://localhost:" + entry.getValue().port + "/__admin/mappings", String.class)
 						.getStatusCode().is2xxSuccessful(), "__admin/mappings endpoint wasn't accessible");
 			}
