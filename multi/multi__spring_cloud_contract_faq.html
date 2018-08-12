@@ -100,14 +100,194 @@ consumer will you break with your local changes.</p><div class="section"><div cl
         &#9492;&#9472;&#9472; contracts.xml</pre><p>As you can see the under the slash-delimited groupid <code class="literal">/</code> artifact id folder (<code class="literal">com/example/server</code>) you have
 expectations of the 3 consumers (<code class="literal">client1</code>, <code class="literal">client2</code> and <code class="literal">client3</code>). Expectations are the standard Groovy DSL
 contract files as described throughout this documentation. This repository has to produce a JAR file that maps
-one to one to the contents of the repo.</p><p>Example of a <code class="literal">pom.xml</code> inside the <code class="literal">server</code> folder.</p><pre class="programlisting">Unresolved directive in verifier_faq.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/standalone/contracts/com/example/server/pom.xml[indent=0]</pre><p>As you can see there are no dependencies other than the Spring Cloud Contract Maven Plugin.
+one to one to the contents of the repo.</p><p>Example of a <code class="literal">pom.xml</code> inside the <code class="literal">server</code> folder.</p><pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;project</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/POM/4.0.0"</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns:xsi</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xsi:schemaLocation</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;modelVersion&gt;</span>4.0.0<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/modelVersion&gt;</span>
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>com.example<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>server<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>0.0.1-SNAPSHOT<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;name&gt;</span>Server Stubs<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/name&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;description&gt;</span>POM used to install locally stubs for consumer side<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/description&gt;</span>
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;parent&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.boot<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-boot-starter-parent<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>2.0.3.RELEASE<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;relativePath /&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/parent&gt;</span>
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;properties&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/project.build.sourceEncoding&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;java.version&gt;</span>1.8<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/java.version&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;spring-cloud-contract.version&gt;</span>2.1.0.BUILD-SNAPSHOT<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/spring-cloud-contract.version&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;spring-cloud-release.version&gt;</span>Finchley.BUILD-SNAPSHOT<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/spring-cloud-release.version&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;excludeBuildFolders&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/excludeBuildFolders&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/properties&gt;</span>
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependencyManagement&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependencies&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-dependencies<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>${spring-cloud-release.version}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;type&gt;</span>pom<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/type&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;scope&gt;</span>import<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/scope&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependencies&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependencyManagement&gt;</span>
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;build&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugins&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>${spring-cloud-contract.version}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;extensions&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/extensions&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- By default it would search under src/test/resources/ --&gt;</span>
+					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractsDirectory&gt;</span>${project.basedir}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractsDirectory&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugins&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/build&gt;</span>
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;repositories&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;repository&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>spring-snapshots<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;name&gt;</span>Spring Snapshots<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/name&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;url&gt;</span>https://repo.spring.io/snapshot<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/url&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;snapshots&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;enabled&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/enabled&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/snapshots&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/repository&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;repository&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>spring-milestones<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;name&gt;</span>Spring Milestones<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/name&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;url&gt;</span>https://repo.spring.io/milestone<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/url&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;snapshots&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;enabled&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/enabled&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/snapshots&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/repository&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;repository&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>spring-releases<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;name&gt;</span>Spring Releases<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/name&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;url&gt;</span>https://repo.spring.io/release<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/url&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;snapshots&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;enabled&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/enabled&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/snapshots&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/repository&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/repositories&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;pluginRepositories&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;pluginRepository&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>spring-snapshots<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;name&gt;</span>Spring Snapshots<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/name&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;url&gt;</span>https://repo.spring.io/snapshot<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/url&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;snapshots&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;enabled&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/enabled&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/snapshots&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/pluginRepository&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;pluginRepository&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>spring-milestones<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;name&gt;</span>Spring Milestones<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/name&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;url&gt;</span>https://repo.spring.io/milestone<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/url&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;snapshots&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;enabled&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/enabled&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/snapshots&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/pluginRepository&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;pluginRepository&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>spring-releases<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;name&gt;</span>Spring Releases<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/name&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;url&gt;</span>https://repo.spring.io/release<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/url&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;snapshots&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;enabled&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/enabled&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/snapshots&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/pluginRepository&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/pluginRepositories&gt;</span>
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/project&gt;</span></pre><p>As you can see there are no dependencies other than the Spring Cloud Contract Maven Plugin.
 Those poms are necessary for the consumer side to run <code class="literal">mvn clean install -DskipTests</code> to locally install
- stubs of the producer project.</p><p>The <code class="literal">pom.xml</code> in the root folder can look like this:</p><pre class="programlisting">Unresolved directive in verifier_faq.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/standalone/contracts/pom.xml[indent=0]</pre><p>It&#8217;s using the assembly plugin in order to build the JAR with all the contracts. Example of such setup is here:</p><pre class="programlisting">Unresolved directive in verifier_faq.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/standalone/contracts/src/assembly/contracts.xml[indent=0]</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_workflow" href="#_workflow"></a>3.5.2&nbsp;Workflow</h3></div></div></div><p>The workflow would look similar to the one presented in the <code class="literal">Step by step guide to CDC</code>. The only difference
+ stubs of the producer project.</p><p>The <code class="literal">pom.xml</code> in the root folder can look like this:</p><pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;project</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/POM/4.0.0"</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns:xsi</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+		 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xsi:schemaLocation</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;modelVersion&gt;</span>4.0.0<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/modelVersion&gt;</span>
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>com.example.standalone<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>contracts<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>0.0.1-SNAPSHOT<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;name&gt;</span>Contracts<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/name&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;description&gt;</span>Contains all the Spring Cloud Contracts, well, contracts. JAR used by the producers to generate tests and stubs<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/description&gt;</span>
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;properties&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/project.build.sourceEncoding&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/properties&gt;</span>
+
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;build&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugins&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.apache.maven.plugins<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>maven-assembly-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;executions&gt;</span>
+					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;execution&gt;</span>
+						<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>contracts<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+						<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;phase&gt;</span>prepare-package<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/phase&gt;</span>
+						<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goals&gt;</span>
+							<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goal&gt;</span>single<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goal&gt;</span>
+						<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goals&gt;</span>
+						<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+							<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;attach&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/attach&gt;</span>
+							<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;descriptor&gt;</span>${basedir}/src/assembly/contracts.xml<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/descriptor&gt;</span>
+							<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- If you want an explicit classifier remove the following line --&gt;</span>
+							<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;appendAssemblyId&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/appendAssemblyId&gt;</span>
+						<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/execution&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/executions&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugins&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/build&gt;</span>
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/project&gt;</span></pre><p>It&#8217;s using the assembly plugin in order to build the JAR with all the contracts. Example of such setup is here:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;assembly</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"</span>
+		  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns:xsi</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+		  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xsi:schemaLocation</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>project<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;formats&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;format&gt;</span>jar<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/format&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/formats&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;includeBaseDirectory&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/includeBaseDirectory&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;fileSets&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;fileSet&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;directory&gt;</span>${project.basedir}<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/directory&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;outputDirectory&gt;</span>/<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/outputDirectory&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;useDefaultExcludes&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/useDefaultExcludes&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;excludes&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;exclude&gt;</span>**/${project.build.directory}/**<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/exclude&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;exclude&gt;</span>mvnw<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/exclude&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;exclude&gt;</span>mvnw.cmd<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/exclude&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;exclude&gt;</span>.mvn/**<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/exclude&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;exclude&gt;</span>src/**<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/exclude&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/excludes&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/fileSet&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/fileSets&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/assembly&gt;</span></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_workflow" href="#_workflow"></a>3.5.2&nbsp;Workflow</h3></div></div></div><p>The workflow would look similar to the one presented in the <code class="literal">Step by step guide to CDC</code>. The only difference
  is that the producer doesn&#8217;t own the contracts anymore. So the consumer and the producer have to work on
  common contracts in a common repository.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_consumer" href="#_consumer"></a>3.5.3&nbsp;Consumer</h3></div></div></div><p>When the <span class="strong"><strong>consumer</strong></span> wants to work on the contracts offline, instead of cloning the producer code, the
 consumer team clones the common repository, goes to the required producer&#8217;s folder (e.g. <code class="literal">com/example/server</code>)
 and runs <code class="literal">mvn clean install -DskipTests</code> to install locally the stubs converted from the contracts.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>You need to have <a class="link" href="http://maven.apache.org/download.cgi" target="_top">Maven installed locally</a></p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_producer" href="#_producer"></a>3.5.4&nbsp;Producer</h3></div></div></div><p>As a <span class="strong"><strong>producer</strong></span> it&#8217;s enough to alter the Spring Cloud Contract Verifier to provide the URL and the dependency
-of the JAR containing the contracts:</p><pre class="programlisting">Unresolved directive in verifier_faq.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/spring-cloud-contract-tools/spring-cloud-contract-maven-plugin/src/test/projects/basic-remote-contracts/pom-with-repo.xml[tags=remote_config,indent=0]</pre><p>With this setup the JAR with groupid <code class="literal">com.example.standalone</code> and artifactid <code class="literal">contracts</code> will be downloaded
+of the JAR containing the contracts:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractsMode&gt;</span>REMOTE<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractsMode&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractsRepositoryUrl&gt;</span>http://link/to/your/nexus/or/artifactory/or/sth<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractsRepositoryUrl&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;contractDependency&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>com.example.standalone<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>contracts<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/contractDependency&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><p>With this setup the JAR with groupid <code class="literal">com.example.standalone</code> and artifactid <code class="literal">contracts</code> will be downloaded
 from <code class="literal"><a class="link" href="http://link/to/your/nexus/or/artifactory/or/sth" target="_top">http://link/to/your/nexus/or/artifactory/or/sth</a></code>. It will be then unpacked in a local temporary folder
 and contracts present under the <code class="literal">com/example/server</code> will be picked as the ones used to generate the
 tests and the stubs. Due to this convention the producer team will know which consumer teams will be broken
