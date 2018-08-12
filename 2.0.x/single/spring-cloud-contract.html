@@ -2439,10 +2439,31 @@ versions, which are automatically uploaded after every successful build:</p><p c
 keep them as jars in a Maven repository.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>For both Maven and Gradle, the setup comes ready to work. However, you can customize
 it if you want to.</p></td></tr></table></div><p class="primary"><b>Maven.&nbsp;</b>
 </p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- First disable the default jar setup in the properties section --&gt;</span>
-Unresolved directive in verifier_stubrunner.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer_with_restdocs/pom.xml[tags=skip_jar,indent=0]
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- we don't want the verifier to do a jar for us --&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;spring.cloud.contract.verifier.skip&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/spring.cloud.contract.verifier.skip&gt;</span>
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- Next add the assembly plugin to your build --&gt;</span>
-Unresolved directive in verifier_stubrunner.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer_with_restdocs/pom.xml[tags=assembly,indent=0]
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- we want the assembly plugin to generate the JAR --&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.apache.maven.plugins<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>maven-assembly-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;executions&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;execution&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>stub<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;phase&gt;</span>prepare-package<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/phase&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goals&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goal&gt;</span>single<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goal&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goals&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;inherited&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/inherited&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;attach&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/attach&gt;</span>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;descriptors&gt;</span>
+					${basedir}/src/assembly/stub.xml
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/descriptors&gt;</span>
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/execution&gt;</span>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/executions&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span>
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- Finally setup your assembly. Below you can find the contents of src/main/assembly/stub.xml --&gt;</span>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;assembly</span>
@@ -5488,7 +5509,48 @@ following example:</p><p class="primary"><b>Maven.&nbsp;</b>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><p class="primary">
 </p><p class="secondary"><b>Gradle.&nbsp;</b>
 </p><pre class="programlisting">classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example:beer-common:0.0.1-SNAPSHOT"</span></pre><p class="secondary">
-</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_referencing_classes_in_dsls" href="#_referencing_classes_in_dsls"></a>9.1.5&nbsp;Referencing classes in DSLs</h3></div></div></div><p>You can now reference your classes in your DSL, as shown in the following example:</p><pre class="programlisting">Unresolved directive in verifier_contract.adoc - include::https:<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer/src/test/resources/contracts/beer/rest/shouldGrantABeerIfOldEnough.groovy[indent=0]</span></pre></div></div></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="_using_the_pluggable_architecture" href="#_using_the_pluggable_architecture"></a>10.&nbsp;Using the Pluggable Architecture</h1></div></div></div><p>You may encounter cases where you have your contracts have been defined in other formats,
+</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_referencing_classes_in_dsls" href="#_referencing_classes_in_dsls"></a>9.1.5&nbsp;Referencing classes in DSLs</h3></div></div></div><p>You can now reference your classes in your DSL, as shown in the following example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> contracts.beer.rest
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> com.example.ConsumerUtils
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> com.example.ProducerUtils
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.Contract
+
+Contract.make {
+	description(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"
+</span>Represents a successful scenario of getting a beer
+
+```
+given:
+	client is old enough
+when:
+	he applies <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">for</span> a beer
+then:
+	we<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'ll grant him the beer
+</span>```
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">")
+</span>	request {
+		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'POST'</span>
+		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/check'</span>
+		body(
+				age: $(ConsumerUtils.oldEnough())
+		)
+		headers {
+			contentType(applicationJson())
+		}
+	}
+	response {
+		status <span class="hl-number">200</span>
+		body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"
+</span>			{
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${value(ProducerUtils.ok())}"</span>
+			}
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">")
+</span>		headers {
+			contentType(applicationJson())
+		}
+	}
+}</pre></div></div></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="_using_the_pluggable_architecture" href="#_using_the_pluggable_architecture"></a>10.&nbsp;Using the Pluggable Architecture</h1></div></div></div><p>You may encounter cases where you have your contracts have been defined in other formats,
 such as YAML, RAML or PACT. In those cases, you still want to benefit from the automatic
 generation of tests and stubs. You can add your own implementation for generating both
 tests and stubs. Also, you can customize the way tests are generated (for example, you

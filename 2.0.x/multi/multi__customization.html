@@ -173,4 +173,45 @@ following example:</p><p class="primary"><b>Maven.&nbsp;</b>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span></pre><p class="primary">
 </p><p class="secondary"><b>Gradle.&nbsp;</b>
 </p><pre class="programlisting">classpath <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"com.example:beer-common:0.0.1-SNAPSHOT"</span></pre><p class="secondary">
-</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_referencing_classes_in_dsls" href="#_referencing_classes_in_dsls"></a>9.1.5&nbsp;Referencing classes in DSLs</h3></div></div></div><p>You can now reference your classes in your DSL, as shown in the following example:</p><pre class="programlisting">Unresolved directive in verifier_contract.adoc - include::https:<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer/src/test/resources/contracts/beer/rest/shouldGrantABeerIfOldEnough.groovy[indent=0]</span></pre></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="multi__contract_dsl.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="multi__using_the_pluggable_architecture.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">8.&nbsp;Contract DSL&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="multi_spring-cloud-contract.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;10.&nbsp;Using the Pluggable Architecture</td></tr></table></div></body></html>
+</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_referencing_classes_in_dsls" href="#_referencing_classes_in_dsls"></a>9.1.5&nbsp;Referencing classes in DSLs</h3></div></div></div><p>You can now reference your classes in your DSL, as shown in the following example:</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">package</span> contracts.beer.rest
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> com.example.ConsumerUtils
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> com.example.ProducerUtils
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.Contract
+
+Contract.make {
+	description(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"
+</span>Represents a successful scenario of getting a beer
+
+```
+given:
+	client is old enough
+when:
+	he applies <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">for</span> a beer
+then:
+	we<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'ll grant him the beer
+</span>```
+
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">")
+</span>	request {
+		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'POST'</span>
+		url <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/check'</span>
+		body(
+				age: $(ConsumerUtils.oldEnough())
+		)
+		headers {
+			contentType(applicationJson())
+		}
+	}
+	response {
+		status <span class="hl-number">200</span>
+		body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"
+</span>			{
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"status"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"${value(ProducerUtils.ok())}"</span>
+			}
+			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">")
+</span>		headers {
+			contentType(applicationJson())
+		}
+	}
+}</pre></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="multi__contract_dsl.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="multi__using_the_pluggable_architecture.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">8.&nbsp;Contract DSL&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="multi_spring-cloud-contract.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;10.&nbsp;Using the Pluggable Architecture</td></tr></table></div></body></html>
