@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2018-08-11</date>
+<date>2018-08-12</date>
 </info>
 <preface>
 <title></title>
@@ -4162,31 +4162,10 @@ it if you want to.</simpara>
 <title>Maven</title>
 <para>
 <programlisting language="xml" linenumbering="unnumbered">&lt;!-- First disable the default jar setup in the properties section --&gt;
-&lt;!-- we don't want the verifier to do a jar for us --&gt;
-&lt;spring.cloud.contract.verifier.skip&gt;true&lt;/spring.cloud.contract.verifier.skip&gt;
+Unresolved directive in verifier_stubrunner.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer_with_restdocs/pom.xml[tags=skip_jar,indent=0]
 
 &lt;!-- Next add the assembly plugin to your build --&gt;
-&lt;!-- we want the assembly plugin to generate the JAR --&gt;
-&lt;plugin&gt;
-	&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-	&lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
-	&lt;executions&gt;
-		&lt;execution&gt;
-			&lt;id&gt;stub&lt;/id&gt;
-			&lt;phase&gt;prepare-package&lt;/phase&gt;
-			&lt;goals&gt;
-				&lt;goal&gt;single&lt;/goal&gt;
-			&lt;/goals&gt;
-			&lt;inherited&gt;false&lt;/inherited&gt;
-			&lt;configuration&gt;
-				&lt;attach&gt;true&lt;/attach&gt;
-				&lt;descriptors&gt;
-					${basedir}/src/assembly/stub.xml
-				&lt;/descriptors&gt;
-			&lt;/configuration&gt;
-		&lt;/execution&gt;
-	&lt;/executions&gt;
-&lt;/plugin&gt;
+Unresolved directive in verifier_stubrunner.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer_with_restdocs/pom.xml[tags=assembly,indent=0]
 
 &lt;!-- Finally setup your assembly. Below you can find the contents of src/main/assembly/stub.xml --&gt;
 &lt;assembly
@@ -8800,48 +8779,7 @@ following example:</simpara>
 <section xml:id="_referencing_classes_in_dsls">
 <title>Referencing classes in DSLs</title>
 <simpara>You can now reference your classes in your DSL, as shown in the following example:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">package contracts.beer.rest
-
-import com.example.ConsumerUtils
-import com.example.ProducerUtils
-import org.springframework.cloud.contract.spec.Contract
-
-Contract.make {
-	description("""
-Represents a successful scenario of getting a beer
-
-```
-given:
-	client is old enough
-when:
-	he applies for a beer
-then:
-	we'll grant him the beer
-```
-
-""")
-	request {
-		method 'POST'
-		url '/check'
-		body(
-				age: $(ConsumerUtils.oldEnough())
-		)
-		headers {
-			contentType(applicationJson())
-		}
-	}
-	response {
-		status 200
-		body("""
-			{
-				"status": "${value(ProducerUtils.ok())}"
-			}
-			""")
-		headers {
-			contentType(applicationJson())
-		}
-	}
-}</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">Unresolved directive in verifier_contract.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer/src/test/resources/contracts/beer/rest/shouldGrantABeerIfOldEnough.groovy[indent=0]</programlisting>
 </section>
 </section>
 </chapter>
