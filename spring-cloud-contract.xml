@@ -247,9 +247,7 @@ in place yet, so the automatically-generated contract tests fail.</simpara>
 <simpara>By getting already-existing producer service stubs from a remote repository. To do so,
 pass the stub artifact IDs and artifact repository URL as <literal>Spring Cloud Contract
 Stub Runner</literal> properties, as shown in the following example:</simpara>
-<programlisting language="yaml" linenumbering="unnumbered">stubrunner:
-  ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot</programlisting>
+<programlisting language="yaml" linenumbering="unnumbered">Unresolved directive in verifier_introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]</programlisting>
 </listitem>
 </itemizedlist>
 <simpara>Now you can annotate your test class with <literal>@AutoConfigureStubRunner</literal>. In the annotation,
@@ -493,9 +491,7 @@ in place, so the automatically-generated contract tests fail.</simpara>
 <simpara>Getting already existing producer service stubs from a remote repository. To do so,
 pass the stub artifact IDs and artifact repository URl as <literal>Spring Cloud Contract Stub
 Runner</literal> properties, as shown in the following example:</simpara>
-<programlisting language="yaml" linenumbering="unnumbered">stubrunner:
-  ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot</programlisting>
+<programlisting language="yaml" linenumbering="unnumbered">Unresolved directive in verifier_introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]</programlisting>
 </listitem>
 </itemizedlist>
 <simpara>Now you can annotate your test class with <literal>@AutoConfigureStubRunner</literal>. In the annotation,
@@ -1277,9 +1273,7 @@ where the repository with your stubs is located. At this moment the stubs of the
 side are automatically downloaded from Nexus/Artifactory. You can set the value of
 <literal>stubsMode</literal> to <literal>REMOTE</literal>. The following code shows an example of
 achieving the same thing by changing the properties.</simpara>
-<programlisting language="yaml" linenumbering="unnumbered">stubrunner:
-  ids: 'com.example:http-server-dsl:+:stubs:8080'
-  repositoryRoot: http://repo.spring.io/libs-snapshot</programlisting>
+<programlisting language="yaml" linenumbering="unnumbered">Unresolved directive in verifier_introduction.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]</programlisting>
 <simpara>That&#8217;s it!</simpara>
 </section>
 </section>
@@ -1538,183 +1532,14 @@ expectations of the 3 consumers (<literal>client1</literal>, <literal>client2</l
 contract files as described throughout this documentation. This repository has to produce a JAR file that maps
 one to one to the contents of the repo.</simpara>
 <simpara>Example of a <literal>pom.xml</literal> inside the <literal>server</literal> folder.</simpara>
-<programlisting language="xml" linenumbering="unnumbered">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
-	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-
-	&lt;groupId&gt;com.example&lt;/groupId&gt;
-	&lt;artifactId&gt;server&lt;/artifactId&gt;
-	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
-
-	&lt;name&gt;Server Stubs&lt;/name&gt;
-	&lt;description&gt;POM used to install locally stubs for consumer side&lt;/description&gt;
-
-	&lt;parent&gt;
-		&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-		&lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
-		&lt;version&gt;2.0.3.RELEASE&lt;/version&gt;
-		&lt;relativePath /&gt;
-	&lt;/parent&gt;
-
-	&lt;properties&gt;
-		&lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
-		&lt;java.version&gt;1.8&lt;/java.version&gt;
-		&lt;spring-cloud-contract.version&gt;2.1.0.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
-		&lt;spring-cloud-release.version&gt;Finchley.BUILD-SNAPSHOT&lt;/spring-cloud-release.version&gt;
-		&lt;excludeBuildFolders&gt;true&lt;/excludeBuildFolders&gt;
-	&lt;/properties&gt;
-
-	&lt;dependencyManagement&gt;
-		&lt;dependencies&gt;
-			&lt;dependency&gt;
-				&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-				&lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
-				&lt;version&gt;${spring-cloud-release.version}&lt;/version&gt;
-				&lt;type&gt;pom&lt;/type&gt;
-				&lt;scope&gt;import&lt;/scope&gt;
-			&lt;/dependency&gt;
-		&lt;/dependencies&gt;
-	&lt;/dependencyManagement&gt;
-
-	&lt;build&gt;
-		&lt;plugins&gt;
-			&lt;plugin&gt;
-				&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-				&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
-				&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
-				&lt;extensions&gt;true&lt;/extensions&gt;
-				&lt;configuration&gt;
-					&lt;!-- By default it would search under src/test/resources/ --&gt;
-					&lt;contractsDirectory&gt;${project.basedir}&lt;/contractsDirectory&gt;
-				&lt;/configuration&gt;
-			&lt;/plugin&gt;
-		&lt;/plugins&gt;
-	&lt;/build&gt;
-
-	&lt;repositories&gt;
-		&lt;repository&gt;
-			&lt;id&gt;spring-snapshots&lt;/id&gt;
-			&lt;name&gt;Spring Snapshots&lt;/name&gt;
-			&lt;url&gt;https://repo.spring.io/snapshot&lt;/url&gt;
-			&lt;snapshots&gt;
-				&lt;enabled&gt;true&lt;/enabled&gt;
-			&lt;/snapshots&gt;
-		&lt;/repository&gt;
-		&lt;repository&gt;
-			&lt;id&gt;spring-milestones&lt;/id&gt;
-			&lt;name&gt;Spring Milestones&lt;/name&gt;
-			&lt;url&gt;https://repo.spring.io/milestone&lt;/url&gt;
-			&lt;snapshots&gt;
-				&lt;enabled&gt;false&lt;/enabled&gt;
-			&lt;/snapshots&gt;
-		&lt;/repository&gt;
-		&lt;repository&gt;
-			&lt;id&gt;spring-releases&lt;/id&gt;
-			&lt;name&gt;Spring Releases&lt;/name&gt;
-			&lt;url&gt;https://repo.spring.io/release&lt;/url&gt;
-			&lt;snapshots&gt;
-				&lt;enabled&gt;false&lt;/enabled&gt;
-			&lt;/snapshots&gt;
-		&lt;/repository&gt;
-	&lt;/repositories&gt;
-	&lt;pluginRepositories&gt;
-		&lt;pluginRepository&gt;
-			&lt;id&gt;spring-snapshots&lt;/id&gt;
-			&lt;name&gt;Spring Snapshots&lt;/name&gt;
-			&lt;url&gt;https://repo.spring.io/snapshot&lt;/url&gt;
-			&lt;snapshots&gt;
-				&lt;enabled&gt;true&lt;/enabled&gt;
-			&lt;/snapshots&gt;
-		&lt;/pluginRepository&gt;
-		&lt;pluginRepository&gt;
-			&lt;id&gt;spring-milestones&lt;/id&gt;
-			&lt;name&gt;Spring Milestones&lt;/name&gt;
-			&lt;url&gt;https://repo.spring.io/milestone&lt;/url&gt;
-			&lt;snapshots&gt;
-				&lt;enabled&gt;false&lt;/enabled&gt;
-			&lt;/snapshots&gt;
-		&lt;/pluginRepository&gt;
-		&lt;pluginRepository&gt;
-			&lt;id&gt;spring-releases&lt;/id&gt;
-			&lt;name&gt;Spring Releases&lt;/name&gt;
-			&lt;url&gt;https://repo.spring.io/release&lt;/url&gt;
-			&lt;snapshots&gt;
-				&lt;enabled&gt;false&lt;/enabled&gt;
-			&lt;/snapshots&gt;
-		&lt;/pluginRepository&gt;
-	&lt;/pluginRepositories&gt;
-
-&lt;/project&gt;</programlisting>
+<programlisting language="xml" linenumbering="unnumbered">Unresolved directive in verifier_faq.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/standalone/contracts/com/example/server/pom.xml[indent=0]</programlisting>
 <simpara>As you can see there are no dependencies other than the Spring Cloud Contract Maven Plugin.
 Those poms are necessary for the consumer side to run <literal>mvn clean install -DskipTests</literal> to locally install
  stubs of the producer project.</simpara>
 <simpara>The <literal>pom.xml</literal> in the root folder can look like this:</simpara>
-<programlisting language="xml" linenumbering="unnumbered">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
-	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-
-	&lt;groupId&gt;com.example.standalone&lt;/groupId&gt;
-	&lt;artifactId&gt;contracts&lt;/artifactId&gt;
-	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
-
-	&lt;name&gt;Contracts&lt;/name&gt;
-	&lt;description&gt;Contains all the Spring Cloud Contracts, well, contracts. JAR used by the producers to generate tests and stubs&lt;/description&gt;
-
-	&lt;properties&gt;
-		&lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
-	&lt;/properties&gt;
-
-	&lt;build&gt;
-		&lt;plugins&gt;
-			&lt;plugin&gt;
-				&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-				&lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
-				&lt;executions&gt;
-					&lt;execution&gt;
-						&lt;id&gt;contracts&lt;/id&gt;
-						&lt;phase&gt;prepare-package&lt;/phase&gt;
-						&lt;goals&gt;
-							&lt;goal&gt;single&lt;/goal&gt;
-						&lt;/goals&gt;
-						&lt;configuration&gt;
-							&lt;attach&gt;true&lt;/attach&gt;
-							&lt;descriptor&gt;${basedir}/src/assembly/contracts.xml&lt;/descriptor&gt;
-							&lt;!-- If you want an explicit classifier remove the following line --&gt;
-							&lt;appendAssemblyId&gt;false&lt;/appendAssemblyId&gt;
-						&lt;/configuration&gt;
-					&lt;/execution&gt;
-				&lt;/executions&gt;
-			&lt;/plugin&gt;
-		&lt;/plugins&gt;
-	&lt;/build&gt;
-
-&lt;/project&gt;</programlisting>
+<programlisting language="xml" linenumbering="unnumbered">Unresolved directive in verifier_faq.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/standalone/contracts/pom.xml[indent=0]</programlisting>
 <simpara>It&#8217;s using the assembly plugin in order to build the JAR with all the contracts. Example of such setup is here:</simpara>
-<programlisting language="xml" linenumbering="unnumbered">&lt;assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
-		  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
-	&lt;id&gt;project&lt;/id&gt;
-	&lt;formats&gt;
-		&lt;format&gt;jar&lt;/format&gt;
-	&lt;/formats&gt;
-	&lt;includeBaseDirectory&gt;false&lt;/includeBaseDirectory&gt;
-	&lt;fileSets&gt;
-		&lt;fileSet&gt;
-			&lt;directory&gt;${project.basedir}&lt;/directory&gt;
-			&lt;outputDirectory&gt;/&lt;/outputDirectory&gt;
-			&lt;useDefaultExcludes&gt;true&lt;/useDefaultExcludes&gt;
-			&lt;excludes&gt;
-				&lt;exclude&gt;**/${project.build.directory}/**&lt;/exclude&gt;
-				&lt;exclude&gt;mvnw&lt;/exclude&gt;
-				&lt;exclude&gt;mvnw.cmd&lt;/exclude&gt;
-				&lt;exclude&gt;.mvn/**&lt;/exclude&gt;
-				&lt;exclude&gt;src/**&lt;/exclude&gt;
-			&lt;/excludes&gt;
-		&lt;/fileSet&gt;
-	&lt;/fileSets&gt;
-&lt;/assembly&gt;</programlisting>
+<programlisting language="xml" linenumbering="unnumbered">Unresolved directive in verifier_faq.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/samples/standalone/contracts/src/assembly/contracts.xml[indent=0]</programlisting>
 </section>
 <section xml:id="_workflow">
 <title>Workflow</title>
@@ -1735,18 +1560,7 @@ and runs <literal>mvn clean install -DskipTests</literal> to install locally the
 <title>Producer</title>
 <simpara>As a <emphasis role="strong">producer</emphasis> it&#8217;s enough to alter the Spring Cloud Contract Verifier to provide the URL and the dependency
 of the JAR containing the contracts:</simpara>
-<programlisting language="xml" linenumbering="unnumbered">&lt;plugin&gt;
-	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-	&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
-	&lt;configuration&gt;
-		&lt;contractsMode&gt;REMOTE&lt;/contractsMode&gt;
-		&lt;contractsRepositoryUrl&gt;http://link/to/your/nexus/or/artifactory/or/sth&lt;/contractsRepositoryUrl&gt;
-		&lt;contractDependency&gt;
-			&lt;groupId&gt;com.example.standalone&lt;/groupId&gt;
-			&lt;artifactId&gt;contracts&lt;/artifactId&gt;
-		&lt;/contractDependency&gt;
-	&lt;/configuration&gt;
-&lt;/plugin&gt;</programlisting>
+<programlisting language="xml" linenumbering="unnumbered">Unresolved directive in verifier_faq.adoc - include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/spring-cloud-contract-tools/spring-cloud-contract-maven-plugin/src/test/projects/basic-remote-contracts/pom-with-repo.xml[tags=remote_config,indent=0]</programlisting>
 <simpara>With this setup the JAR with groupid <literal>com.example.standalone</literal> and artifactid <literal>contracts</literal> will be downloaded
 from <literal><link xl:href="http://link/to/your/nexus/or/artifactory/or/sth">http://link/to/your/nexus/or/artifactory/or/sth</link></literal>. It will be then unpacked in a local temporary folder
 and contracts present under the <literal>com/example/server</literal> will be picked as the ones used to generate the
@@ -4116,73 +3930,13 @@ it if you want to.</simpara>
 <title>Maven</title>
 <para>
 <programlisting language="xml" linenumbering="unnumbered">&lt;!-- First disable the default jar setup in the properties section --&gt;
-&lt;!-- we don't want the verifier to do a jar for us --&gt;
-&lt;spring.cloud.contract.verifier.skip&gt;true&lt;/spring.cloud.contract.verifier.skip&gt;
+Unresolved directive in verifier_stubrunner.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer_with_restdocs/pom.xml[tags=skip_jar,indent=0]
 
 &lt;!-- Next add the assembly plugin to your build --&gt;
-&lt;!-- we want the assembly plugin to generate the JAR --&gt;
-&lt;plugin&gt;
-	&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-	&lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
-	&lt;executions&gt;
-		&lt;execution&gt;
-			&lt;id&gt;stub&lt;/id&gt;
-			&lt;phase&gt;prepare-package&lt;/phase&gt;
-			&lt;goals&gt;
-				&lt;goal&gt;single&lt;/goal&gt;
-			&lt;/goals&gt;
-			&lt;inherited&gt;false&lt;/inherited&gt;
-			&lt;configuration&gt;
-				&lt;attach&gt;true&lt;/attach&gt;
-				&lt;descriptors&gt;
-					${basedir}/src/assembly/stub.xml
-				&lt;/descriptors&gt;
-			&lt;/configuration&gt;
-		&lt;/execution&gt;
-	&lt;/executions&gt;
-&lt;/plugin&gt;
+Unresolved directive in verifier_stubrunner.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer_with_restdocs/pom.xml[tags=assembly,indent=0]
 
 &lt;!-- Finally setup your assembly. Below you can find the contents of src/main/assembly/stub.xml --&gt;
-&lt;assembly
-	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd"&gt;
-	&lt;id&gt;stubs&lt;/id&gt;
-	&lt;formats&gt;
-		&lt;format&gt;jar&lt;/format&gt;
-	&lt;/formats&gt;
-	&lt;includeBaseDirectory&gt;false&lt;/includeBaseDirectory&gt;
-	&lt;fileSets&gt;
-		&lt;fileSet&gt;
-			&lt;directory&gt;src/main/java&lt;/directory&gt;
-			&lt;outputDirectory&gt;/&lt;/outputDirectory&gt;
-			&lt;includes&gt;
-				&lt;include&gt;**com/example/model/*.*&lt;/include&gt;
-			&lt;/includes&gt;
-		&lt;/fileSet&gt;
-		&lt;fileSet&gt;
-			&lt;directory&gt;${project.build.directory}/classes&lt;/directory&gt;
-			&lt;outputDirectory&gt;/&lt;/outputDirectory&gt;
-			&lt;includes&gt;
-				&lt;include&gt;**com/example/model/*.*&lt;/include&gt;
-			&lt;/includes&gt;
-		&lt;/fileSet&gt;
-		&lt;fileSet&gt;
-			&lt;directory&gt;${project.build.directory}/snippets/stubs&lt;/directory&gt;
-			&lt;outputDirectory&gt;META-INF/${project.groupId}/${project.artifactId}/${project.version}/mappings&lt;/outputDirectory&gt;
-			&lt;includes&gt;
-				&lt;include&gt;**/*&lt;/include&gt;
-			&lt;/includes&gt;
-		&lt;/fileSet&gt;
-		&lt;fileSet&gt;
-			&lt;directory&gt;${basedir}/src/test/resources/contracts&lt;/directory&gt;
-			&lt;outputDirectory&gt;META-INF/${project.groupId}/${project.artifactId}/${project.version}/contracts&lt;/outputDirectory&gt;
-			&lt;includes&gt;
-				&lt;include&gt;**/*.groovy&lt;/include&gt;
-			&lt;/includes&gt;
-		&lt;/fileSet&gt;
-	&lt;/fileSets&gt;
-&lt;/assembly&gt;</programlisting>
+Unresolved directive in verifier_stubrunner.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer_with_restdocs/src/assembly/stub.xml[indent=0]</programlisting>
 </para>
 </formalpara>
 <formalpara role="secondary">
@@ -8098,29 +7852,12 @@ to work with Web Flux.</simpara>
 </para>
 </formalpara>
 <simpara>The following example shows how to set up a base class and Rest Assured for Web Flux:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">@RunWith(SpringRunner.class)
-@SpringBootTest(classes = BeerRestBase.Config.class,
-		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = "server.port=0")
-public abstract class BeerRestBase {
+<programlisting language="groovy" linenumbering="unnumbered">Unresolved directive in verifier_contract.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer_webflux/src/test/java/com/example/BeerRestBase.java[tags=annotations,indent=0]
 
     // your tests go here
 
     // in this config class you define all controllers and mocked services
-@Configuration
-@EnableAutoConfiguration
-static class Config {
-
-	@Bean
-	PersonCheckingService personCheckingService()  {
-		return personToCheck -&gt; personToCheck.age &gt;= 20;
-	}
-
-	@Bean
-	ProducerController producerController() {
-		return new ProducerController(personCheckingService());
-	}
-}
+Unresolved directive in verifier_contract.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer_webflux/src/test/java/com/example/BeerRestBase.java[tags=config,indent=0]
 
 }</programlisting>
 </section>
@@ -8549,142 +8286,11 @@ maintain the static compatibility. Later in this document, you can see examples 
 <title>Common JAR</title>
 <simpara>The following examples show three classes that can be reused in the DSLs.</simpara>
 <simpara><emphasis role="strong">PatternUtils</emphasis> contains functions used by both the <emphasis role="strong">consumer</emphasis> and the <emphasis role="strong">producer</emphasis>.</simpara>
-<programlisting language="java" linenumbering="unnumbered">package com.example;
-
-import java.util.regex.Pattern;
-
-/**
- * If you want to use {@link Pattern} directly in your tests
- * then you can create a class resembling this one. It can
- * contain all the {@link Pattern} you want to use in the DSL.
- *
- * &lt;pre&gt;
- * {@code
- * request {
- *     body(
- *         [ age: $(c(PatternUtils.oldEnough()))]
- *     )
- * }
- * &lt;/pre&gt;
- *
- * Notice that we're using both {@code $()} for dynamic values
- * and {@code c()} for the consumer side.
- *
- * @author Marcin Grzejszczak
- */
-//tag::impl[]
-public class PatternUtils {
-
-	public static String tooYoung() {
-		//remove::start[]
-		return "[0-1][0-9]";
-		//remove::end[return]
-	}
-
-	public static Pattern oldEnough() {
-		//remove::start[]
-		return Pattern.compile("[2-9][0-9]");
-		//remove::end[return]
-	}
-
-	/**
-	 * Makes little sense but it's just an example ;)
-	 */
-	public static Pattern ok() {
-		//remove::start[]
-		return Pattern.compile("OK");
-		//remove::end[return]
-	}
-}
-//end::impl[]</programlisting>
+<programlisting language="java" linenumbering="unnumbered">Unresolved directive in verifier_contract.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/common/src/main/java/com/example/PatternUtils.java[]</programlisting>
 <simpara><emphasis role="strong">ConsumerUtils</emphasis> contains functions used by the <emphasis role="strong">consumer</emphasis>.</simpara>
-<programlisting language="java" linenumbering="unnumbered">package com.example;
-
-import org.springframework.cloud.contract.spec.internal.ClientDslProperty;
-
-/**
- * DSL Properties passed to the DSL from the consumer's perspective.
- * That means that on the input side {@code Request} for HTTP
- * or {@code Input} for messaging you can have a regular expression.
- * On the {@code Response} for HTTP or {@code Output} for messaging
- * you have to have a concrete value.
- *
- * @author Marcin Grzejszczak
- */
-//tag::impl[]
-public class ConsumerUtils {
-	/**
-	 * Consumer side property. By using the {@link ClientDslProperty}
-	 * you can omit most of boilerplate code from the perspective
-	 * of dynamic values. Example
-	 *
-	 * &lt;pre&gt;
-	 * {@code
-	 * request {
-	 *     body(
-	 *         [ age: $(ConsumerUtils.oldEnough())]
-	 *     )
-	 * }
-	 * &lt;/pre&gt;
-	 *
-	 * That way it's in the implementation that we decide what value we will pass to the consumer
-	 * and which one to the producer.
-	 *
-	 * @author Marcin Grzejszczak
-	 */
-	public static ClientDslProperty oldEnough() {
-		//remove::start[]
-		// this example is not the best one and
-		// theoretically you could just pass the regex instead of `ServerDslProperty` but
-		// it's just to show some new tricks :)
-		return new ClientDslProperty(PatternUtils.oldEnough(), 40);
-		//remove::end[return]
-	}
-
-}
-//end::impl[]</programlisting>
+<programlisting language="java" linenumbering="unnumbered">Unresolved directive in verifier_contract.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/common/src/main/java/com/example/ConsumerUtils.java[]</programlisting>
 <simpara><emphasis role="strong">ProducerUtils</emphasis> contains functions used by the <emphasis role="strong">producer</emphasis>.</simpara>
-<programlisting language="java" linenumbering="unnumbered">package com.example;
-
-import org.springframework.cloud.contract.spec.internal.ServerDslProperty;
-
-/**
- * DSL Properties passed to the DSL from the producer's perspective.
- * That means that on the input side {@code Request} for HTTP
- * or {@code Input} for messaging you have to have a concrete value.
- * On the {@code Response} for HTTP or {@code Output} for messaging
- * you can have a regular expression.
- *
- * @author Marcin Grzejszczak
- */
-//tag::impl[]
-public class ProducerUtils {
-
-	/**
-	 * Producer side property. By using the {@link ProducerUtils}
-	 * you can omit most of boilerplate code from the perspective
-	 * of dynamic values. Example
-	 *
-	 * &lt;pre&gt;
-	 * {@code
-	 * response {
-	 *     body(
-	 *         [ status: $(ProducerUtils.ok())]
-	 *     )
-	 * }
-	 * &lt;/pre&gt;
-	 *
-	 * That way it's in the implementation that we decide what value we will pass to the consumer
-	 * and which one to the producer.
-	 */
-	public static ServerDslProperty ok() {
-		// this example is not the best one and
-		// theoretically you could just pass the regex instead of `ServerDslProperty` but
-		// it's just to show some new tricks :)
-		return new ServerDslProperty( PatternUtils.ok(), "OK");
-	}
-}
-//end::impl[]</programlisting>
+<programlisting language="java" linenumbering="unnumbered">Unresolved directive in verifier_contract.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/common/src/main/java/com/example/ProducerUtils.java[]</programlisting>
 </section>
 <section xml:id="_adding_the_dependency_to_the_project">
 <title>Adding the Dependency to the Project</title>
@@ -8699,18 +8305,13 @@ visible in your Groovy files. The following examples show how to test the depend
 <formalpara role="primary">
 <title>Maven</title>
 <para>
-<programlisting language="xml" linenumbering="unnumbered">&lt;dependency&gt;
-	&lt;groupId&gt;com.example&lt;/groupId&gt;
-	&lt;artifactId&gt;beer-common&lt;/artifactId&gt;
-	&lt;version&gt;${project.version}&lt;/version&gt;
-	&lt;scope&gt;test&lt;/scope&gt;
-&lt;/dependency&gt;</programlisting>
+<programlisting language="xml" linenumbering="unnumbered">Unresolved directive in verifier_contract.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer/pom.xml[tags=test_dep,indent=0]</programlisting>
 </para>
 </formalpara>
 <formalpara role="secondary">
 <title>Gradle</title>
 <para>
-<programlisting language="groovy" linenumbering="unnumbered">testCompile("com.example:beer-common:0.0.1-SNAPSHOT")</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">Unresolved directive in verifier_contract.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer/build.gradle[tags=test_dep,indent=0]</programlisting>
 </para>
 </formalpara>
 </section>
@@ -8721,83 +8322,20 @@ following example:</simpara>
 <formalpara role="primary">
 <title>Maven</title>
 <para>
-<programlisting language="xml" linenumbering="unnumbered">&lt;plugin&gt;
-	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-	&lt;artifactId&gt;spring-cloud-contract-maven-plugin&lt;/artifactId&gt;
-	&lt;version&gt;${spring-cloud-contract.version}&lt;/version&gt;
-	&lt;extensions&gt;true&lt;/extensions&gt;
-	&lt;configuration&gt;
-		&lt;packageWithBaseClasses&gt;com.example&lt;/packageWithBaseClasses&gt;
-		&lt;baseClassMappings&gt;
-			&lt;baseClassMapping&gt;
-				&lt;contractPackageRegex&gt;.*intoxication.*&lt;/contractPackageRegex&gt;
-				&lt;baseClassFQN&gt;com.example.intoxication.BeerIntoxicationBase&lt;/baseClassFQN&gt;
-			&lt;/baseClassMapping&gt;
-		&lt;/baseClassMappings&gt;
-	&lt;/configuration&gt;
-	&lt;dependencies&gt;
-		&lt;dependency&gt;
-			&lt;groupId&gt;com.example&lt;/groupId&gt;
-			&lt;artifactId&gt;beer-common&lt;/artifactId&gt;
-			&lt;version&gt;${project.version}&lt;/version&gt;
-			&lt;scope&gt;compile&lt;/scope&gt;
-		&lt;/dependency&gt;
-	&lt;/dependencies&gt;
-&lt;/plugin&gt;</programlisting>
+<programlisting language="xml" linenumbering="unnumbered">Unresolved directive in verifier_contract.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer/pom.xml[tags=test_dep_in_plugin,indent=0]</programlisting>
 </para>
 </formalpara>
 <formalpara role="secondary">
 <title>Gradle</title>
 <para>
-<programlisting language="groovy" linenumbering="unnumbered">classpath "com.example:beer-common:0.0.1-SNAPSHOT"</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">Unresolved directive in verifier_contract.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer/build.gradle[tags=test_dep_in_plugin,indent=0]</programlisting>
 </para>
 </formalpara>
 </section>
 <section xml:id="_referencing_classes_in_dsls">
 <title>Referencing classes in DSLs</title>
 <simpara>You can now reference your classes in your DSL, as shown in the following example:</simpara>
-<programlisting language="groovy" linenumbering="unnumbered">package contracts.beer.rest
-
-import com.example.ConsumerUtils
-import com.example.ProducerUtils
-import org.springframework.cloud.contract.spec.Contract
-
-Contract.make {
-	description("""
-Represents a successful scenario of getting a beer
-
-```
-given:
-	client is old enough
-when:
-	he applies for a beer
-then:
-	we'll grant him the beer
-```
-
-""")
-	request {
-		method 'POST'
-		url '/check'
-		body(
-				age: $(ConsumerUtils.oldEnough())
-		)
-		headers {
-			contentType(applicationJson())
-		}
-	}
-	response {
-		status 200
-		body("""
-			{
-				"status": "${value(ProducerUtils.ok())}"
-			}
-			""")
-		headers {
-			contentType(applicationJson())
-		}
-	}
-}</programlisting>
+<programlisting language="groovy" linenumbering="unnumbered">Unresolved directive in verifier_contract.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer/src/test/resources/contracts/beer/rest/shouldGrantABeerIfOldEnough.groovy[indent=0]</programlisting>
 </section>
 </section>
 </chapter>

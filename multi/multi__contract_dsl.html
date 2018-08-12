@@ -1619,29 +1619,12 @@ to work with Web Flux.</p><p class="primary"><b>Maven.&nbsp;</b>
 </p><pre class="programlisting">contracts {
 		testMode = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'EXPLICIT'</span>
 }</pre><p class="secondary">
-</p><p>The following example shows how to set up a base class and Rest Assured for Web Flux:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RunWith(SpringRunner.class)</span></em>
-<em><span class="hl-annotation" style="color: gray">@SpringBootTest(classes = BeerRestBase.Config.class,
-		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = "server.port=0")</span></em>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">abstract</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> BeerRestBase {
+</p><p>The following example shows how to set up a base class and Rest Assured for Web Flux:</p><pre class="programlisting">Unresolved directive in verifier_contract.adoc - include::https:<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer_webflux/src/test/java/com/example/BeerRestBase.java[tags=annotations,indent=0]</span>
 
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// your tests go here</span>
 
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// in this config class you define all controllers and mocked services</span>
-<em><span class="hl-annotation" style="color: gray">@Configuration</span></em>
-<em><span class="hl-annotation" style="color: gray">@EnableAutoConfiguration</span></em>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> Config {
-
-	<em><span class="hl-annotation" style="color: gray">@Bean</span></em>
-	PersonCheckingService personCheckingService()  {
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> personToCheck -&gt; personToCheck.age &gt;= <span class="hl-number">20</span>;
-	}
-
-	<em><span class="hl-annotation" style="color: gray">@Bean</span></em>
-	ProducerController producerController() {
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> ProducerController(personCheckingService());
-	}
-}
+Unresolved directive in verifier_contract.adoc - include::https:<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer_webflux/src/test/java/com/example/BeerRestBase.java[tags=config,indent=0]</span>
 
 }</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_messaging_top_level_elements" href="#_messaging_top_level_elements"></a>8.10&nbsp;Messaging Top-Level Elements</h2></div></div></div><p>The DSL for messaging looks a little bit different than the one that focuses on HTTP. The
 following sections explain the differences:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a class="xref" href="multi__contract_dsl.html#contract-dsl-output-triggered-method" title="8.10.1&nbsp;Output Triggered by a Method">Section&nbsp;8.10.1, &#8220;Output Triggered by a Method&#8221;</a></li><li class="listitem"><a class="xref" href="multi__contract_dsl.html#contract-dsl-output-triggered-message" title="8.10.2&nbsp;Output Triggered by a Message">Section&nbsp;8.10.2, &#8220;Output Triggered by a Message&#8221;</a></li><li class="listitem"><a class="xref" href="multi__contract_dsl.html#contract-dsl-consumer-producer" title="8.10.3&nbsp;Consumer/Producer">Section&nbsp;8.10.3, &#8220;Consumer/Producer&#8221;</a></li><li class="listitem"><a class="xref" href="multi__contract_dsl.html#contract-dsl-common" title="8.10.4&nbsp;Common">Section&nbsp;8.10.4, &#8220;Common&#8221;</a></li></ul></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="contract-dsl-output-triggered-method" href="#contract-dsl-output-triggered-method"></a>8.10.1&nbsp;Output Triggered by a Method</h3></div></div></div><p>The output message can be triggered by calling a method (such as a <code class="literal">Scheduler</code> when a was

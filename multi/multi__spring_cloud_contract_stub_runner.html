@@ -71,73 +71,13 @@ versions, which are automatically uploaded after every successful build:</p><p c
 keep them as jars in a Maven repository.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>For both Maven and Gradle, the setup comes ready to work. However, you can customize
 it if you want to.</p></td></tr></table></div><p class="primary"><b>Maven.&nbsp;</b>
 </p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- First disable the default jar setup in the properties section --&gt;</span>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- we don't want the verifier to do a jar for us --&gt;</span>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;spring.cloud.contract.verifier.skip&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/spring.cloud.contract.verifier.skip&gt;</span>
+Unresolved directive in verifier_stubrunner.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer_with_restdocs/pom.xml[tags=skip_jar,indent=0]
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- Next add the assembly plugin to your build --&gt;</span>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- we want the assembly plugin to generate the JAR --&gt;</span>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.apache.maven.plugins<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>maven-assembly-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;executions&gt;</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;execution&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>stub<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;phase&gt;</span>prepare-package<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/phase&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goals&gt;</span>
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;goal&gt;</span>single<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goal&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/goals&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;inherited&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/inherited&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;configuration&gt;</span>
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;attach&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/attach&gt;</span>
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;descriptors&gt;</span>
-					${basedir}/src/assembly/stub.xml
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/descriptors&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/configuration&gt;</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/execution&gt;</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/executions&gt;</span>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/plugin&gt;</span>
+Unresolved directive in verifier_stubrunner.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer_with_restdocs/pom.xml[tags=assembly,indent=0]
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">&lt;!-- Finally setup your assembly. Below you can find the contents of src/main/assembly/stub.xml --&gt;</span>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;assembly</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xmlns:xsi</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-attribute">xsi:schemaLocation</span>=<span xmlns:d="http://docbook.org/ns/docbook" class="hl-value">"http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd"</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&gt;</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;id&gt;</span>stubs<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/id&gt;</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;formats&gt;</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;format&gt;</span>jar<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/format&gt;</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/formats&gt;</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;includeBaseDirectory&gt;</span>false<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/includeBaseDirectory&gt;</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;fileSets&gt;</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;fileSet&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;directory&gt;</span>src/main/java<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/directory&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;outputDirectory&gt;</span>/<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/outputDirectory&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;includes&gt;</span>
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;include&gt;</span>**com/example/model/*.*<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/include&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/includes&gt;</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/fileSet&gt;</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;fileSet&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;directory&gt;</span>${project.build.directory}/classes<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/directory&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;outputDirectory&gt;</span>/<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/outputDirectory&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;includes&gt;</span>
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;include&gt;</span>**com/example/model/*.*<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/include&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/includes&gt;</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/fileSet&gt;</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;fileSet&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;directory&gt;</span>${project.build.directory}/snippets/stubs<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/directory&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;outputDirectory&gt;</span>META-INF/${project.groupId}/${project.artifactId}/${project.version}/mappings<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/outputDirectory&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;includes&gt;</span>
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;include&gt;</span>**/*<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/include&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/includes&gt;</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/fileSet&gt;</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;fileSet&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;directory&gt;</span>${basedir}/src/test/resources/contracts<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/directory&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;outputDirectory&gt;</span>META-INF/${project.groupId}/${project.artifactId}/${project.version}/contracts<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/outputDirectory&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;includes&gt;</span>
-				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;include&gt;</span>**/*.groovy<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/include&gt;</span>
-			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/includes&gt;</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/fileSet&gt;</span>
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/fileSets&gt;</span>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/assembly&gt;</span></pre><p class="primary">
+Unresolved directive in verifier_stubrunner.adoc - include::https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/master/producer_with_restdocs/src/assembly/stub.xml[indent=0]</pre><p class="primary">
 </p><p class="secondary"><b>Gradle.&nbsp;</b>
 </p><pre class="programlisting">ext {
 	contractsDir = file(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"mappings"</span>)
