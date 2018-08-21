@@ -83,7 +83,7 @@ contracts {
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '4.4.1'
+	gradleVersion = '4.9'
 }
 
 task cleanOutput(type: Delete) {
