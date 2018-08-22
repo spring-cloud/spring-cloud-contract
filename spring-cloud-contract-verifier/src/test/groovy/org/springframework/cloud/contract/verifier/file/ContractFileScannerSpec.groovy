@@ -102,11 +102,11 @@ class ContractFileScannerSpec extends Specification {
 				}
 			}
 		when:
-			ListMultimap<Path, ContractMetadata> result = scanner.findContracts()
+			scanner.findContracts()
 		then:
-			result.keySet().size() == 1
-			result.entries().every { it.value.convertedContract }
-			result.entries().find { it.value.convertedContract.any { it.request.method.clientValue == "PUT" } }
+			IllegalStateException e = thrown(IllegalStateException)
+			e.cause.message == "boom"
+			e.message.matches(".*Failed to convert file .*invalid.json.*")
 	}
 
 	def "should prefer custom yaml converter over standard yaml converter"() {

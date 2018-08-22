@@ -31,6 +31,7 @@ import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.PathMatcher
 import java.util.regex.Pattern
+
 /**
  * Scans the provided file path for the DSLs. There's a possibility to provide
  * inclusion and exclusion filters.
@@ -55,7 +56,7 @@ class ContractFileScanner {
 	private final Set<PathMatcher> includeMatchers
 	private final String includeMatcher
 
-    ContractFileScanner(File baseDir, Set<String> excluded, Set<String> ignored,
+	ContractFileScanner(File baseDir, Set<String> excluded, Set<String> ignored,
 						Set<String> included = [],
 						String includeMatcher = "") {
 		this.baseDir = baseDir
@@ -106,8 +107,8 @@ class ContractFileScanner {
 			boolean excluded = matchesPattern(file, excludeMatchers)
 			if (!excluded) {
 				boolean contractFile = isContractFile(file)
-                boolean included = includeMatcher ? file.absolutePath.matches(includeMatcher) : true
-                included = includeMatchers ? matchesPattern(file, includeMatchers) : included
+				boolean included = includeMatcher ? file.absolutePath.matches(includeMatcher) : true
+				included = includeMatchers ? matchesPattern(file, includeMatchers) : included
 				if (contractFile && included) {
 					addContractToTestGeneration(result, files, file, i, ContractVerifierDslConverter.convertAsCollection(baseDir, file))
 				} else if (!contractFile && included) {
@@ -131,7 +132,7 @@ class ContractFileScanner {
 	}
 
 	private void addContractToTestGeneration(List<ContractConverter> converters, ListMultimap<Path, ContractMetadata> result,
-											File[] files, File file, int index) {
+											 File[] files, File file, int index) {
 		boolean converted = false
 		if (!file.isDirectory()) {
 			for (ContractConverter converter : converters) {
@@ -159,15 +160,12 @@ class ContractFileScanner {
 		try {
 			return converter.convertFrom(file)
 		} catch (Exception e) {
-			if (log.isDebugEnabled()) {
-				log.debug("Exception occurred while trying to convert the file", e)
-			}
-			return null
+			throw new IllegalStateException("Failed to convert file [" + file + "]", e)
 		}
 	}
 
 	private void addContractToTestGeneration(ListMultimap<Path, ContractMetadata> result, File[] files, File file,
-											int index, Collection<Contract> convertedContract) {
+											 int index, Collection<Contract> convertedContract) {
 		Path path = file.toPath()
 		Integer order = null
 		if (hasScenarioFilenamePattern(path)) {
@@ -202,7 +200,7 @@ class ContractFileScanner {
 	private boolean isContractFile(File file) {
 		return file.isFile() && getFilenameExtension(file.toString())?.equalsIgnoreCase("groovy")
 	}
-	
+
 	private static String getFilenameExtension(String path) {
 		if (path == null) {
 			return null
