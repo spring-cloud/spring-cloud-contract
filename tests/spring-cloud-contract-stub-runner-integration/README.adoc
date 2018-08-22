@@ -102,7 +102,7 @@ The received message would pass the following assertions:
 include::src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/integration/IntegrationStubRunnerSpec.groovy[tags=client_trigger_message,indent=0]
 ----
 
-[[integration-scenario-1]]
+[[integration-scenario-2]]
 ===== Scenario 2 (output triggered by input)
 
 Since the route is set for you, you can send a message to the `{output_name}`

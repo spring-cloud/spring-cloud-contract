@@ -5,7 +5,7 @@
 :numbered:
 :icons: font
 :sectlinks: true
-:branch: master
+:branch: 2.0.x
 
 = Spring Cloud Contract
 

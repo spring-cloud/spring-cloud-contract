@@ -990,7 +990,7 @@ name of `scenario1` and the three following steps:
 . logout marked as `Step2` which will close the scenario.
 
 More details about WireMock scenarios can be found at
-http://wiremock.org/stateful-behaviour.html[http://wiremock.org/stateful-behaviour.html]
+http://wiremock.org/docs/stateful-behaviour/[http://wiremock.org/docs/stateful-behaviour/]
 
 Spring Cloud Contract Verifier also generates tests with a guaranteed order of execution.
 

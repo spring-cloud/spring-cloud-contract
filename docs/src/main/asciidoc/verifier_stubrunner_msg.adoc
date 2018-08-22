@@ -1,3 +1,4 @@
+[[stub-runner-for-messaging]]
 == Stub Runner for Messaging
 
 Stub Runner can run the published stubs in memory. It can integrate with the following
