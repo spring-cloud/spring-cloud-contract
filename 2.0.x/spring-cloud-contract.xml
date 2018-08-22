@@ -53,7 +53,7 @@ Spring Cloud Contract Verifier.</simpara>
 <informalfigure>
 <mediaobject>
 <imageobject>
-<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/Deps.png"/>
+<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/2.0.x/docs/src/main/asciidoc/images/Deps.png"/>
 </imageobject>
 <textobject><phrase>Microservices Architecture</phrase></textobject>
 </mediaobject>
@@ -128,7 +128,7 @@ are those that your application directly uses.</simpara>
 <informalfigure>
 <mediaobject>
 <imageobject>
-<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/Stubs2.png"/>
+<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/2.0.x/docs/src/main/asciidoc/images/Stubs2.png"/>
 </imageobject>
 <textobject><phrase>Stubbed Services</phrase></textobject>
 </mediaobject>
@@ -707,8 +707,8 @@ we mark the client as a fraud.</simpara>
 Issuance has an artifact-id of <literal>http-client</literal>, and both have a <literal>group-id</literal> of <literal>com.example</literal>.</simpara>
 <simpara>Social remark - both client and server development teams need to communicate directly and
 discuss changes while going through the process. CDC is all about communication.</simpara>
-<simpara>The <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-server">server
-side code is available here</link> and <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/dsl/http-client">the
+<simpara>The <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/2.0.x/samples/standalone/dsl/http-server">server
+side code is available here</link> and <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/2.0.x/samples/standalone/dsl/http-client">the
 client code here</link>.</simpara>
 <tip>
 <simpara>In this case, the producer owns the contracts. Physically, all the contract are
@@ -994,7 +994,7 @@ of an identifier or a timestamp, you need not hardcode a value. You want to allo
 different ranges of values. To enable ranges of values, you can set regular expressions
 matching those values for the consumer side. You can provide the body by means of either
 a map notation or String with interpolations.
-Consult the <xref linkend="contract_dsl"/> section for more information. We highly recommend using the map notation!</simpara>
+Consult the <xref linkend="contract-dsl"/> section for more information. We highly recommend using the map notation!</simpara>
 <tip>
 <simpara>You must understand the map notation in order to set up contracts. Please read the
 <link xl:href="http://groovy-lang.org/json.html">Groovy docs regarding JSON</link>.</simpara>
@@ -1513,7 +1513,7 @@ consumer will you break with your local changes.</simpara>
 <title>Repo structure</title>
 <simpara>Let&#8217;s assume that we have a producer with coordinates <literal>com.example:server</literal> and 3 consumers: <literal>client1</literal>,
 <literal>client2</literal>, <literal>client3</literal>. Then in the repository with common contracts you would have the following setup
-(which you can checkout <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/contracts">here</link>):</simpara>
+(which you can checkout <link xl:href="https://github.com/spring-cloud/spring-cloud-contract/tree/2.0.x/samples/standalone/contracts">here</link>):</simpara>
 <programlisting language="bash" linenumbering="unnumbered">├── com
 │   └── example
 │       └── server
@@ -1550,14 +1550,14 @@ one to one to the contents of the repo.</simpara>
 	&lt;parent&gt;
 		&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
 		&lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
-		&lt;version&gt;2.0.3.RELEASE&lt;/version&gt;
+		&lt;version&gt;2.0.4.RELEASE&lt;/version&gt;
 		&lt;relativePath /&gt;
 	&lt;/parent&gt;
 
 	&lt;properties&gt;
 		&lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
 		&lt;java.version&gt;1.8&lt;/java.version&gt;
-		&lt;spring-cloud-contract.version&gt;2.1.0.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
+		&lt;spring-cloud-contract.version&gt;2.0.2.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
 		&lt;spring-cloud-release.version&gt;Finchley.BUILD-SNAPSHOT&lt;/spring-cloud-release.version&gt;
 		&lt;excludeBuildFolders&gt;true&lt;/excludeBuildFolders&gt;
 	&lt;/properties&gt;
@@ -1940,7 +1940,7 @@ Artifactory or Nexus. Starting from Spring Cloud Contract version 2.0.0 we provi
 mechanisms to store contracts and stubs in a SCM repository. Currently the
 only supported SCM is Git.</simpara>
 <simpara>The repository would have to the following setup
-(which you can checkout <link xl:href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.0.x/contracts_git/">here</link>):</simpara>
+(which you can checkout <link xl:href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/master/contracts_git/">here</link>):</simpara>
 <screen>.
 └── META-INF
     └── com.example
@@ -2153,7 +2153,7 @@ is not met.</simpara>
 <title>Pact Consumer</title>
 <simpara>The consumer uses Pact framework to generate Pact files. The
 Pact files are sent to the Pact Broker. An example of such
-setup can be found <link xl:href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.0.x/consumer_pact">here</link>.</simpara>
+setup can be found <link xl:href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/master/consumer_pact">here</link>.</simpara>
 </section>
 <section xml:id="_producer_3">
 <title>Producer</title>
@@ -2161,7 +2161,7 @@ setup can be found <link xl:href="https://github.com/spring-cloud-samples/spring
 same mechanism we use for external contracts. We route Spring Cloud Contract
 to use the Pact implementation via the URL that contains
 the <literal>pact://</literal> protocol. It&#8217;s enough to pass the URL to the
-Pact Broker. An example of such setup can be found <link xl:href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.0.x/producer_pact">here</link>.</simpara>
+Pact Broker. An example of such setup can be found <link xl:href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/master/producer_pact">here</link>.</simpara>
 <formalpara>
 <title>Maven</title>
 <para>
@@ -2248,7 +2248,7 @@ contracts {
 (for every single consumer define the expectations) but you&#8217;d prefer
 to do Producer Contracts (the producer provides the contracts and
 publishes stubs), it&#8217;s enough to use Spring Cloud Contract with
-Stub Runner option. An example of such setup can be found <link xl:href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.0.x/consumer_pact_stubrunner">here</link>.</simpara>
+Stub Runner option. An example of such setup can be found <link xl:href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/master/consumer_pact_stubrunner">here</link>.</simpara>
 <simpara>First, remember to add Stub Runner and Spring Cloud Contract Pact module
 as test dependencies.</simpara>
 <formalpara>
@@ -3304,7 +3304,7 @@ or an environment variable.</simpara>
 <informalfigure>
 <mediaobject>
 <imageobject>
-<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/master/docs/src/main/asciidoc/images/sts_exception.png"/>
+<imagedata fileref="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/2.0.x/docs/src/main/asciidoc/images/sts_exception.png"/>
 </imageobject>
 <textobject><phrase>STS Exception</phrase></textobject>
 </mediaobject>
@@ -3440,7 +3440,7 @@ name of <literal>scenario1</literal> and the three following steps:</simpara>
 </listitem>
 </orderedlist>
 <simpara>More details about WireMock scenarios can be found at
-<link xl:href="http://wiremock.org/stateful-behaviour.html">http://wiremock.org/stateful-behaviour.html</link></simpara>
+<link xl:href="http://wiremock.org/docs/stateful-behaviour/">http://wiremock.org/docs/stateful-behaviour/</link></simpara>
 <simpara>Spring Cloud Contract Verifier also generates tests with a guaranteed order of execution.</simpara>
 </section>
 <section xml:id="docker-project">
@@ -5320,7 +5320,7 @@ the volume of your local m2 <literal>-v "${HOME}/.m2/:/root/.m2:ro"</literal></s
 </section>
 </section>
 </chapter>
-<chapter xml:id="_stub_runner_for_messaging">
+<chapter xml:id="stub-runner-for-messaging">
 <title>Stub Runner for Messaging</title>
 <simpara>Stub Runner can run the published stubs in memory. It can integrate with the following
 frameworks:</simpara>
@@ -5537,7 +5537,7 @@ follows:</simpara>
 assertJsons(receivedMessage.payload)
 receivedMessage.headers.get('BOOK-NAME') == 'foo'</programlisting>
 </section>
-<section xml:id="integration-scenario-1">
+<section xml:id="integration-scenario-2">
 <title>Scenario 2 (output triggered by input)</title>
 <simpara>Since the route is set for you, you can send a message to the <literal>output</literal>
 destination:</simpara>
@@ -5836,7 +5836,7 @@ configure a mock <literal>ConnectionFactory</literal>.</simpara>
 </section>
 </section>
 </chapter>
-<chapter xml:id="_contract_dsl">
+<chapter xml:id="contract-dsl">
 <title>Contract DSL</title>
 <simpara>Spring Cloud Contract supports out of the box 2 types of DSL. One written in
 <literal>Groovy</literal> and one written in <literal>YAML</literal>.</simpara>

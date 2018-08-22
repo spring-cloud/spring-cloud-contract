@@ -45,7 +45,7 @@ sides of the communication. You can pass the values:</p><p>Either via the <code 
 value(stub(...), test(...))
 value(client(...), server(...))</pre><p>or using the <code class="literal">$()</code> method</p><pre class="programlisting">$(consumer(...), producer(...))
 $(stub(...), test(...))
-$(client(...), server(...))</pre><p>You can read more about this in the <a class="xref" href="">???</a> section.</p><p>Calling <code class="literal">value()</code> or <code class="literal">$()</code> tells Spring Cloud Contract that you will be passing a dynamic value.
+$(client(...), server(...))</pre><p>You can read more about this in the <a class="xref" href="multi_contract-dsl.html" title="8.&nbsp;Contract DSL">Chapter&nbsp;8, <i>Contract DSL</i></a> section.</p><p>Calling <code class="literal">value()</code> or <code class="literal">$()</code> tells Spring Cloud Contract that you will be passing a dynamic value.
 Inside the <code class="literal">consumer()</code> method you pass the value that should be used on the consumer side (in the generated stub).
 Inside the <code class="literal">producer()</code> method you pass the value that should be used on the producer side (in the generated test).</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>If on one side you have passed the regular expression and you haven&#8217;t passed the other, then the
 other side will get auto-generated.</p></td></tr></table></div><p>Most often you will use that method together with the <code class="literal">regex</code> helper method. E.g. <code class="literal">consumer(regex('[0-9]{10}'))</code>.</p><p>To sum it up the contract for the aforementioned scenario would look more or less like this (the regular expression
@@ -82,7 +82,7 @@ It can be related to security issues where the consumers can&#8217;t clone the p
 contracts in a single place then you, as a producer, will know how many consumers you have and which
 consumer will you break with your local changes.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_repo_structure" href="#_repo_structure"></a>3.5.1&nbsp;Repo structure</h3></div></div></div><p>Let&#8217;s assume that we have a producer with coordinates <code class="literal">com.example:server</code> and 3 consumers: <code class="literal">client1</code>,
 <code class="literal">client2</code>, <code class="literal">client3</code>. Then in the repository with common contracts you would have the following setup
-(which you can checkout <a class="link" href="https://github.com/spring-cloud/spring-cloud-contract/tree/master/samples/standalone/contracts" target="_top">here</a>):</p><pre class="programlisting">&#9500;&#9472;&#9472; com
+(which you can checkout <a class="link" href="https://github.com/spring-cloud/spring-cloud-contract/tree/2.0.x/samples/standalone/contracts" target="_top">here</a>):</p><pre class="programlisting">&#9500;&#9472;&#9472; com
 &#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; example
 &#9474;&nbsp;&nbsp;     &#9492;&#9472;&#9472; server
 &#9474;&nbsp;&nbsp;         &#9500;&#9472;&#9472; client1
@@ -115,14 +115,14 @@ one to one to the contents of the repo.</p><p>Example of a <code class="literal"
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;parent&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.boot<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-boot-starter-parent<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>2.0.3.RELEASE<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>2.0.4.RELEASE<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;relativePath /&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/parent&gt;</span>
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;properties&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/project.build.sourceEncoding&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;java.version&gt;</span>1.8<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/java.version&gt;</span>
-		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;spring-cloud-contract.version&gt;</span>2.1.0.BUILD-SNAPSHOT<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/spring-cloud-contract.version&gt;</span>
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;spring-cloud-contract.version&gt;</span>2.0.2.BUILD-SNAPSHOT<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/spring-cloud-contract.version&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;spring-cloud-release.version&gt;</span>Finchley.BUILD-SNAPSHOT<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/spring-cloud-release.version&gt;</span>
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;excludeBuildFolders&gt;</span>true<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/excludeBuildFolders&gt;</span>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/properties&gt;</span>
@@ -399,7 +399,7 @@ build.dependsOn(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">
 Artifactory or Nexus. Starting from Spring Cloud Contract version 2.0.0 we provide
 mechanisms to store contracts and stubs in a SCM repository. Currently the
 only supported SCM is Git.</p><p>The repository would have to the following setup
-(which you can checkout <a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.0.x/contracts_git/" target="_top">here</a>):</p><pre class="screen">.
+(which you can checkout <a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/master/contracts_git/" target="_top">here</a>):</p><pre class="screen">.
 &#9492;&#9472;&#9472; META-INF
     &#9492;&#9472;&#9472; com.example
         &#9492;&#9472;&#9472; beer-api-producer-git
@@ -515,11 +515,11 @@ shares the files with the Producer. Those expectations are generated
 from the Consumer&#8217;s code and can break the Producer if the expectation
 is not met.</p></td></tr></table></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_pact_consumer" href="#_pact_consumer"></a>3.7.1&nbsp;Pact Consumer</h3></div></div></div><p>The consumer uses Pact framework to generate Pact files. The
 Pact files are sent to the Pact Broker. An example of such
-setup can be found <a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.0.x/consumer_pact" target="_top">here</a>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_producer_3" href="#_producer_3"></a>3.7.2&nbsp;Producer</h3></div></div></div><p>For the producer, to use the Pact files from the Pact Broker, we can reuse the
+setup can be found <a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/master/consumer_pact" target="_top">here</a>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_producer_3" href="#_producer_3"></a>3.7.2&nbsp;Producer</h3></div></div></div><p>For the producer, to use the Pact files from the Pact Broker, we can reuse the
 same mechanism we use for external contracts. We route Spring Cloud Contract
 to use the Pact implementation via the URL that contains
 the <code class="literal">pact://</code> protocol. It&#8217;s enough to pass the URL to the
-Pact Broker. An example of such setup can be found <a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.0.x/producer_pact" target="_top">here</a>.</p><p><b>Maven.&nbsp;</b>
+Pact Broker. An example of such setup can be found <a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/master/producer_pact" target="_top">here</a>.</p><p><b>Maven.&nbsp;</b>
 </p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;plugin&gt;</span>
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-contract-maven-plugin<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
@@ -582,7 +582,7 @@ contracts {
 (for every single consumer define the expectations) but you&#8217;d prefer
 to do Producer Contracts (the producer provides the contracts and
 publishes stubs), it&#8217;s enough to use Spring Cloud Contract with
-Stub Runner option. An example of such setup can be found <a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/2.0.x/consumer_pact_stubrunner" target="_top">here</a>.</p><p>First, remember to add Stub Runner and Spring Cloud Contract Pact module
+Stub Runner option. An example of such setup can be found <a class="link" href="https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/master/consumer_pact_stubrunner" target="_top">here</a>.</p><p>First, remember to add Stub Runner and Spring Cloud Contract Pact module
 as test dependencies.</p><p><b>Maven.&nbsp;</b>
 </p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependencyManagement&gt;</span>
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependencies&gt;</span>
