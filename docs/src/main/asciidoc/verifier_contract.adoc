@@ -1,3 +1,4 @@
+[[contract-dsl]]
 == Contract DSL
 
 Spring Cloud Contract supports out of the box 2 types of DSL. One written in
