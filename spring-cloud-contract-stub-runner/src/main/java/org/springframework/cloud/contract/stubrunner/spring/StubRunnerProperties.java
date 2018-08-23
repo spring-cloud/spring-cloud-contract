@@ -100,12 +100,6 @@ public class StubRunnerProperties {
 	private StubsMode stubsMode;
 
 	/**
-	 * If set to {@code true} will not assert whether the downloaded stubs / contract
-	 * JAR was downloaded from a remote location or a local one(only applicable to Maven repos, not Git or Pact)
-	 */
-	private boolean snapshotCheckSkip;
-
-	/**
 	 * If set to {@code false} will NOT delete stubs from a temporary
 	 * folder after running tests
 	 */
@@ -241,14 +235,6 @@ public class StubRunnerProperties {
 		this.stubsMode = stubsMode;
 	}
 
-	public boolean isSnapshotCheckSkip() {
-		return this.snapshotCheckSkip;
-	}
-
-	public void setSnapshotCheckSkip(boolean snapshotCheckSkip) {
-		this.snapshotCheckSkip = snapshotCheckSkip;
-	}
-
 	public boolean isDeleteStubsAfterTest() {
 		return this.deleteStubsAfterTest;
 	}
@@ -278,7 +264,6 @@ public class StubRunnerProperties {
 				+ ", ids=" + Arrays.toString(this.ids) + ", classifier='" + this.classifier + '\''
 				+ ", setStubsPerConsumer='" + this.stubsPerConsumer + "', consumerName='" + this.consumerName + '\''
 				+ ", stubsMode='" + this.stubsMode + '\''
-				+ ", snapshotCheckSkip='" + this.snapshotCheckSkip + '\''
 				+ ", size of properties=" + this.properties.size()
 				+ '}';
 	}

@@ -54,7 +54,6 @@ class MavenContractsDownloader {
 	private final String repositoryPassword;
 	private final String repositoryProxyHost;
 	private final Integer repositoryProxyPort;
-	private final boolean contractsSnapshotCheckSkip;
 	private final boolean deleteStubsAfterTest;
 	private final Map<String, String> contractsProperties;
 
@@ -62,8 +61,8 @@ class MavenContractsDownloader {
 			String contractsPath, String contractsRepositoryUrl,
 			StubRunnerProperties.StubsMode stubsMode, Log log, String repositoryUsername,
 			String repositoryPassword, String repositoryProxyHost,
-			Integer repositoryProxyPort, boolean contractsSnapshotCheckSkip,
-			boolean deleteStubsAfterTest, Map<String, String> contractsProperties) {
+			Integer repositoryProxyPort, boolean deleteStubsAfterTest,
+			Map<String, String> contractsProperties) {
 		this.project = project;
 		this.contractDependency = contractDependency;
 		this.contractsPath = contractsPath;
@@ -75,7 +74,6 @@ class MavenContractsDownloader {
 		this.repositoryProxyHost = repositoryProxyHost;
 		this.repositoryProxyPort = repositoryProxyPort;
 		this.stubDownloaderBuilderProvider = new StubDownloaderBuilderProvider();
-		this.contractsSnapshotCheckSkip = contractsSnapshotCheckSkip;
 		this.deleteStubsAfterTest = deleteStubsAfterTest;
 		this.contractsProperties = contractsProperties;
 	}
@@ -122,7 +120,6 @@ class MavenContractsDownloader {
 				.withStubsMode(this.stubsMode)
 				.withUsername(this.repositoryUsername)
 				.withPassword(this.repositoryPassword)
-				.withSnapshotCheckSkip(this.contractsSnapshotCheckSkip)
 				.withDeleteStubsAfterTest(this.deleteStubsAfterTest)
 				.withProperties(this.contractsProperties);
 		if (StringUtils.hasText(this.contractsRepositoryUrl)) {

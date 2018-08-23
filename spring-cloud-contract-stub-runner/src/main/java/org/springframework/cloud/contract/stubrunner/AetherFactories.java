@@ -17,7 +17,12 @@
 package org.springframework.cloud.contract.stubrunner;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Random;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
@@ -41,9 +46,13 @@ import shaded.org.eclipse.aether.transport.http.HttpTransporterFactory;
 
 class AetherFactories {
 
+	private static final Log log = LogFactory.getLog(AetherFactories.class);
+
 	private static final String MAVEN_LOCAL_REPOSITORY_LOCATION = "maven.repo.local";
 	private static final String MAVEN_USER_SETTINGS_LOCATION = "org.apache.maven.user-settings";
 	private static final String MAVEN_GLOBAL_SETTINGS_LOCATION = "org.apache.maven.global-settings";
+
+	private static final Random RANDOM = new Random();
 
 	public static RepositorySystem newRepositorySystem() {
 		DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
@@ -60,14 +69,34 @@ class AetherFactories {
 			session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_ALWAYS);
 		}
 		session.setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_WARN);
-		LocalRepository localRepo = new LocalRepository(localRepositoryDirectory());
+		String localRepositoryDirectory = localRepositoryDirectory(workOffline);
+		if (log.isDebugEnabled()) {
+			log.debug("Local Repository Directory set to [" + localRepositoryDirectory + "]. Work offline: [" + workOffline + "]");
+		}
+		LocalRepository localRepo = new LocalRepository(localRepositoryDirectory);
 		session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
 		return session;
 	}
 
-	private static String localRepositoryDirectory() {
+	protected static String localRepositoryDirectory(boolean workOffline) {
 		String localRepoLocationFromSettings = settings().getLocalRepository();
-		return readPropertyFromSystemProps(localRepoLocationFromSettings);
+		String currentLocalRepo = readPropertyFromSystemProps(localRepoLocationFromSettings);
+		if (workOffline) {
+			return currentLocalRepo;
+		}
+		return temporaryDirectory();
+	}
+
+	private static String temporaryDirectory() {
+		try {
+			return Files.createTempDirectory("aether-local").toString();
+		}
+		catch (IOException e) {
+			if (log.isDebugEnabled()) {
+				log.debug("Failed to create a new temporary directory, will generate a new one under temp dir");
+			}
+			return System.getProperty("java.io.tmpdir") + File.separator + RANDOM.nextInt();
+		}
 	}
 
 	private static String readPropertyFromSystemProps(
@@ -87,16 +116,19 @@ class AetherFactories {
 		return System.getenv(prop);
 	}
 
+	private static File userSettings() {
+		String user = fromSystemPropOrEnv(MAVEN_USER_SETTINGS_LOCATION);
+		if (user == null) {
+			return new File(new File(System.getProperty("user.home")).getAbsoluteFile(),
+					File.separator + ".m2" + File.separator + "settings.xml");
+		}
+		return new File(user);
+	}
+
 	private static Settings settings() {
 		SettingsBuilder builder = new DefaultSettingsBuilderFactory().newInstance();
 		SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
-		String user = fromSystemPropOrEnv(MAVEN_USER_SETTINGS_LOCATION);
-		if (user == null) {
-			request.setUserSettingsFile(new File(new File(System.getProperty("user.home")).getAbsoluteFile(),
-					File.separator + ".m2" + File.separator + "settings.xml"));
-		} else {
-			request.setUserSettingsFile(new File(user));
-		}
+		request.setUserSettingsFile(userSettings());
 		String global = fromSystemPropOrEnv(MAVEN_GLOBAL_SETTINGS_LOCATION);
 		if (global != null) {
 			request.setGlobalSettingsFile(new File(global));

@@ -102,12 +102,6 @@ public class StubRunnerOptions {
 	final StubRunnerProperties.StubsMode stubsMode;
 
 	/**
-	 * If set to {@code true} will not assert whether the downloaded stubs / contract
-	 * JAR was downloaded from a remote location or a local one(only applicable to Maven repos, not Git or Pact)
-	 */
-	private boolean snapshotCheckSkip;
-
-	/**
 	 * If set to {@code false} will NOT delete stubs from a temporary
 	 * folder after running tests
 	 */
@@ -118,13 +112,12 @@ public class StubRunnerOptions {
 	 */
 	private Map<String, String> properties = new HashMap<>();
 
-
 	StubRunnerOptions(Integer minPortValue, Integer maxPortValue,
 			Resource stubRepositoryRoot, StubRunnerProperties.StubsMode stubsMode, String stubsClassifier,
 			Collection<StubConfiguration> dependencies,
 			Map<StubConfiguration, Integer> stubIdsToPortMapping,
 			String username, String password, final StubRunnerProxyOptions stubRunnerProxyOptions,
-			boolean stubsPerConsumer, String consumerName, String mappingsOutputFolder, boolean snapshotCheckSkip,
+			boolean stubsPerConsumer, String consumerName, String mappingsOutputFolder,
 			boolean deleteStubsAfterTest, Map<String, String> properties) {
 		this.minPortValue = minPortValue;
 		this.maxPortValue = maxPortValue;
@@ -139,7 +132,6 @@ public class StubRunnerOptions {
 		this.stubsPerConsumer = stubsPerConsumer;
 		this.consumerName = consumerName;
 		this.mappingsOutputFolder = mappingsOutputFolder;
-		this.snapshotCheckSkip = snapshotCheckSkip;
 		this.deleteStubsAfterTest = deleteStubsAfterTest;
 		this.properties = properties;
 	}
@@ -167,7 +159,6 @@ public class StubRunnerOptions {
 				.withStubPerConsumer(Boolean.parseBoolean(System.getProperty("stubrunner.stubs-per-consumer", "false")))
 				.withConsumerName(System.getProperty("stubrunner.consumer-name"))
 				.withMappingsOutputFolder(System.getProperty("stubrunner.mappings-output-folder"))
-				.withSnapshotCheckSkip(Boolean.parseBoolean(System.getProperty("stubrunner.snapshot-check-skip", "false")))
 				.withDeleteStubsAfterTest(Boolean.parseBoolean(System.getProperty("stubrunner.delete-stubs-after-test", "true")))
 				.withProperties(stubRunnerProps());
 		String proxyHost = System.getProperty("stubrunner.proxy.host");
@@ -275,14 +266,6 @@ public class StubRunnerOptions {
 
 	public void setMappingsOutputFolder(String mappingsOutputFolder) {
 		this.mappingsOutputFolder = mappingsOutputFolder;
-	}
-
-	public boolean isSnapshotCheckSkip() {
-		return this.snapshotCheckSkip;
-	}
-
-	public void setSnapshotCheckSkip(boolean snapshotCheckSkip) {
-		this.snapshotCheckSkip = snapshotCheckSkip;
 	}
 
 	public boolean isDeleteStubsAfterTest() {

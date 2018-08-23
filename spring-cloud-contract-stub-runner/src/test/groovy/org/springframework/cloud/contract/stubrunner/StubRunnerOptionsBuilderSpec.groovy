@@ -231,7 +231,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 		given:
 			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, new FileSystemResource("root"), StubRunnerProperties.StubsMode.LOCAL,
 					"classifier", [new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "foo", "bar",
-					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", true, false, [foo: "bar"]))
+					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", false, [foo: "bar"]))
 			builder.withStubs("foo:bar:baz")
 		when:
 			StubRunnerOptions options = builder.build()
@@ -250,7 +250,6 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			options.stubsPerConsumer == true
 			options.consumerName == "consumer"
 			options.mappingsOutputFolder == "folder"
-			options.snapshotCheckSkip == true
 			options.deleteStubsAfterTest == false
 			options.properties == [foo: "bar"]
 	}
@@ -260,7 +259,7 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			StubRunnerOptionsBuilder builder = builder.withOptions(new StubRunnerOptions(1, 2, new FileSystemResource("root"),
 					StubRunnerProperties.StubsMode.CLASSPATH, "classifier",
 					[new StubConfiguration("a:b:c")], [(new StubConfiguration("a:b:c")): 3], "username123", "password123",
-					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", true, false, [:]))
+					new StubRunnerOptions.StubRunnerProxyOptions("host", 4), true, "consumer", "folder", false, [:]))
 			builder.withStubs("foo:bar:baz")
 		when:
 			String options = builder.build().toString()
@@ -287,7 +286,6 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			System.setProperty("stubrunner.proxy.host", "host")
 			System.setProperty("stubrunner.proxy.port", "4")
 			System.setProperty("stubrunner.mappings-output-folder", "folder")
-			System.setProperty("stubrunner.snapshot-check-skip", "true")
 			System.setProperty("stubrunner.properties.foo-bar", "bar")
 			System.setProperty("stubrunner.properties.foo-baz", "baz")
 			System.setProperty("stubrunner.properties.bar.bar", "foo")
@@ -307,7 +305,6 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 			options.stubsPerConsumer == true
 			options.consumerName == "consumer"
 			options.mappingsOutputFolder == "folder"
-			options.snapshotCheckSkip == true
 			options.properties == ["foo-bar": "bar", "foo-baz": "baz", "bar.bar": "foo"]
 	}
 }
