@@ -1515,8 +1515,7 @@ World.'''"""
 				method "GET"
 				urlPath('/auth/oauth/check_token') {
 					queryParameters {
-						parameter 'token':
-								value(
+						parameter 'token': value(
 										consumer(regex('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}')),
 										producer('6973b31d-7140-402a-bca6-1cdb954e03a7')
 								)
@@ -1551,8 +1550,7 @@ World.'''"""
 				method "GET"
 				urlPath('/auth/oauth/check_token') {
 					queryParameters {
-						parameter 'token':
-								value(
+						parameter 'token': value(
 										consumer(regex('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}')),
 										producer('6973b31d-7140-402a-bca6-1cdb954e03a7')
 								)
@@ -2594,7 +2592,17 @@ DocumentContext parsedJson = JsonPath.parse(json);
 							fullBody: fromRequest().body(),
 							responseFoo: fromRequest().body('$.foo'),
 							responseBaz: fromRequest().body('$.baz'),
-							responseBaz2: "Bla bla ${fromRequest().body('$.foo')} bla bla"
+							responseBaz2: "Bla bla ${fromRequest().body('$.foo')} bla bla",
+							rawUrl: fromRequest().rawUrl(),
+							rawPath: fromRequest().rawPath(),
+							rawPathIndex: fromRequest().rawPath(1),
+							rawParam: fromRequest().rawQuery("foo"),
+							rawParamIndex: fromRequest().rawQuery("foo", 1),
+							rawAuthorization: fromRequest().rawHeader("Authorization"),
+							rawAuthorization2: fromRequest().rawHeader("Authorization", 1),
+							rawResponseFoo: fromRequest().rawBody('$.foo'),
+							rawResponseBaz: fromRequest().rawBody('$.baz'),
+							rawResponseBaz2: "Bla bla ${fromRequest().rawBody('$.foo')} bla bla"
 					)
 				}
 			}
@@ -2608,6 +2616,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
 		then:
 			!test.contains('''DslProperty''')
+			!test.contains('''ERROR: ''')
 			test.contains('''assertThatJson(parsedJson).field("['url']").isEqualTo("/api/v1/xxxx?foo=bar&foo=bar2")''')
 			test.contains('''assertThatJson(parsedJson).field("['path']").isEqualTo("/api/v1/xxxx")''')
 			test.contains('''assertThatJson(parsedJson).field("['pathIndex']").isEqualTo("v1")''')
@@ -2619,6 +2628,16 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			test.contains('''assertThatJson(parsedJson).field("['responseBaz']").isEqualTo(5)''')
 			test.contains('''assertThatJson(parsedJson).field("['responseBaz2']").isEqualTo("Bla bla bar bla bla")''')
 			test.contains('''assertThatJson(parsedJson).field("['param']").isEqualTo("bar")''')
+			test.contains('''assertThatJson(parsedJson).field("['rawUrl']").isEqualTo("/api/v1/xxxx?foo=bar&foo=bar2")''')
+			test.contains('''assertThatJson(parsedJson).field("['rawPath']").isEqualTo("/api/v1/xxxx")''')
+			test.contains('''assertThatJson(parsedJson).field("['rawPathIndex']").isEqualTo("v1")''')
+			test.contains('''assertThatJson(parsedJson).field("['rawParamIndex']").isEqualTo("bar2")''')
+			test.contains('''assertThatJson(parsedJson).field("['rawResponseFoo']").isEqualTo("bar")''')
+			test.contains('''assertThatJson(parsedJson).field("['rawAuthorization']").isEqualTo("secret")''')
+			test.contains('''assertThatJson(parsedJson).field("['rawAuthorization2']").isEqualTo("secret2")''')
+			test.contains('''assertThatJson(parsedJson).field("['rawResponseBaz']").isEqualTo(5)''')
+			test.contains('''assertThatJson(parsedJson).field("['rawResponseBaz2']").isEqualTo("Bla bla bar bla bla")''')
+			test.contains('''assertThatJson(parsedJson).field("['rawParam']").isEqualTo("bar")''')
 			responseAssertion(test)
 		where:
 			methodBuilderName                                    | methodBuilder                                                                               | responseAssertion

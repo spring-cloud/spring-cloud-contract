@@ -26,14 +26,14 @@ interface TemplateProcessor {
 
 	/**
 	 * Returns {@code true} if the current line contains template related entry for json path processing.
-	 * E.g. for Handlebars if a line contains {{{jsonpath ...}}} then
+	 * E.g. for Handlebars if a line contains {{{jsonpath ...}}} or {{{jsonPath ...}}} then
 	 * it's considered to contain template related entry for json path processing
 	 */
 	boolean containsJsonPathTemplateEntry(String line)
 
 	/**
 	 * Returns the json path entry from the current line that contains template related entry for json path processing.
-	 * E.g. for Handlebars if a line contains {{{jsonpath this '$.a.b.c'}}} then
+	 * E.g. for Handlebars if a line contains {{{jsonpath this '$.a.b.c'}}} or {{{jsonPath request.body ...}}} then
 	 * the te method would return {@code $.a.b.c}. Returns empty string if there's no matching
 	 * json path entry
 	 */

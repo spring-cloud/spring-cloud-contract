@@ -1,6 +1,8 @@
 package org.springframework.cloud.contract.spec.internal
 
 import groovy.transform.CompileStatic
+import groovy.transform.PackageScope
+
 import org.springframework.cloud.contract.spec.ContractTemplate
 
 /**
@@ -9,27 +11,20 @@ import org.springframework.cloud.contract.spec.ContractTemplate
  *
  * @author Marcin Grzejszczak
  * @since 1.1.0
+ *
+ * @deprecated use {@link HandlebarsContractTemplate}
  */
 @CompileStatic
-class HandlebarsContractTemplate implements ContractTemplate {
+@PackageScope
+class CustomHandlebarsContractTemplate implements ContractTemplate {
 
 	@Override
 	String openingTemplate() {
-		return "{{"
-	}
-
-	@Override
-	String closingTemplate() {
-		return "}}"
-	}
-
-	@Override
-	String escapedOpeningTemplate() {
 		return "{{{"
 	}
 
 	@Override
-	String escapedClosingTemplate() {
+	String closingTemplate() {
 		return "}}}"
 	}
 
@@ -80,64 +75,20 @@ class HandlebarsContractTemplate implements ContractTemplate {
 
 	@Override
 	String escapedBody() {
-		return escapedWrapped("request.body")
+		return wrapped("escapejsonbody")
 	}
 
 	@Override
 	String escapedBody(String jsonPath) {
-		return escapedWrapped("jsonPath request.body '${jsonPath}'")
+		return body(jsonPath)
 	}
 
 	@Override
 	String body(String jsonPath) {
-		return wrapped("jsonPath request.body '${jsonPath}'")
-	}
-
-	@Override
-	String escapedUrl() {
-		return escapedWrapped("request.url")
-	}
-
-	@Override
-	String escapedQuery(String key) {
-		return escapedQuery(key, 0)
-	}
-
-	@Override
-	String escapedQuery(String key, int index) {
-		return escapedWrapped("request.query.${key}.[${index}]")
-	}
-
-	@Override
-	String escapedPath() {
-		return escapedWrapped("request.path")
-	}
-
-	@Override
-	String escapedPath(int index) {
-		return escapedWrapped("request.path.[${index}]")
-	}
-
-	@Override
-	String escapedHeader(String key) {
-		return escapedHeader(key, 0)
-	}
-
-	@Override
-	String escapedHeader(String key, int index) {
-		return escapedWrapped("request.headers.${key}.[${index}]")
-	}
-
-	@Override
-	String escapedCookie(String key) {
-		return escapedWrapped("request.cookies.${key}")
+		return wrapped("jsonpath this '${jsonPath}'")
 	}
 
 	private String wrapped(String text) {
 		return openingTemplate() + text + closingTemplate()
-	}
-
-	private String escapedWrapped(String text) {
-		return escapedOpeningTemplate() + text + escapedClosingTemplate()
 	}
 }

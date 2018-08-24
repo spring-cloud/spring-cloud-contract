@@ -1736,7 +1736,73 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	}
 
 	@Issue('#237')
-	def "should generate a stub with response template"() {
+	def "should work with legacy mappings"() {
+		given:
+			def oldJsonMapping = '''
+					{
+					  "request" : {
+						"urlPath" : "/api/v1/xxxx",
+						"method" : "POST",
+						"headers" : {
+						  "Authorization" : {
+							"equalTo" : "secret2"
+						  }
+						},
+						"cookies" : {
+						  "foo" : {
+							"equalTo" : "bar"
+						  }
+						},
+						"queryParameters" : {
+						  "foo" : {
+							"equalTo" : "bar2"
+						  }
+						},
+						"bodyPatterns" : [ {
+						  "matchesJsonPath" : "$[?(@.['baz'] == 5)]"
+						}, {
+						  "matchesJsonPath" : "$[?(@.['foo'] == 'bar')]"
+						} ]
+					  },
+					  "response" : {
+						"status" : 200,
+						"body" : "{\\"authorization\\":\\"{{{request.headers.Authorization.[0]}}}\\",\\"path\\":\\"{{{request.path}}}\\",\\"responseBaz\\":{{{jsonpath this '$.baz'}}} ,\\"param\\":\\"{{{request.query.foo.[0]}}}\\",\\"pathIndex\\":\\"{{{request.path.[1]}}}\\",\\"responseBaz2\\":\\"Bla bla {{{jsonpath this '$.foo'}}} bla bla\\",\\"responseFoo\\":\\"{{{jsonpath this '$.foo'}}}\\",\\"authorization2\\":\\"{{{request.headers.Authorization.[1]}}}\\",\\"fullBody\\":\\"{{{escapejsonbody}}}\\",\\"url\\":\\"{{{request.url}}}\\",\\"paramIndex\\":\\"{{{request.query.foo.[1]}}}\\"}",
+						"headers" : {
+						  "Authorization" : "{{{request.headers.Authorization.[0]}}};foo"
+						},
+						"transformers" : [ "response-template", "foo-transformer" ]
+					  }
+					}
+					'''
+		and:
+			int port = SocketUtils.findAvailableTcpPort()
+			WireMockServer server = new WireMockServer(config().port(port))
+			server.start()
+		and:
+			server.addStubMapping(WireMockStubMapping.buildFrom(oldJsonMapping))
+		when:
+			ResponseEntity<String> entity = call(port)
+		then:
+			entity.headers.find { it.key == "Authorization" && it.value.contains("secret;foo") }
+			AssertionUtil.assertThatJsonsAreEqual(('''
+				{
+				  "url" : "/api/v1/xxxx?foo=bar&foo=bar2",
+				  "param" : "bar",
+				  "paramIndex" : "bar2",
+				  "authorization" : "secret",
+				  "authorization2" : "secret2",
+				  "fullBody" : "{\\"foo\\":\\"bar\\",\\"baz\\":5}",
+				  "responseFoo" : "bar",
+				  "responseBaz" : 5,
+				  "responseBaz2" : "Bla bla bar bla bla"
+				}
+				'''), entity.body)
+		cleanup:
+			server?.shutdown()
+	}
+
+	@Issue('#540')
+	def "should generate a stub with standard WireMock request template"() {
 		given:
 		org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
 			request {
@@ -1772,7 +1838,17 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						fullBody: fromRequest().body(),
 						responseFoo: fromRequest().body('$.foo'),
 						responseBaz: fromRequest().body('$.baz'),
-						responseBaz2: "Bla bla ${fromRequest().body('$.foo')} bla bla"
+						responseBaz2: "Bla bla ${fromRequest().body('$.foo')} bla bla",
+						rawUrl: fromRequest().rawUrl(),
+						rawPath: fromRequest().rawPath(),
+						rawPathIndex: fromRequest().rawPath(1),
+						rawParam: fromRequest().rawQuery("foo"),
+						rawParamIndex: fromRequest().rawQuery("foo", 1),
+						rawAuthorization: fromRequest().rawHeader("Authorization"),
+						rawAuthorization2: fromRequest().rawHeader("Authorization", 1),
+						rawResponseFoo: fromRequest().rawBody('$.foo'),
+						rawResponseBaz: fromRequest().rawBody('$.baz'),
+						rawResponseBaz2: "Bla bla ${fromRequest().rawBody('$.foo')} bla bla"
 				)
 			}
 		}
@@ -1807,7 +1883,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					  },
 					  "response" : {
 						"status" : 200,
-						"body" : "{\\"authorization\\":\\"{{{request.headers.Authorization.[0]}}}\\",\\"path\\":\\"{{{request.path}}}\\",\\"responseBaz\\":{{{jsonpath this '$.baz'}}} ,\\"param\\":\\"{{{request.query.foo.[0]}}}\\",\\"pathIndex\\":\\"{{{request.path.[1]}}}\\",\\"responseBaz2\\":\\"Bla bla {{{jsonpath this '$.foo'}}} bla bla\\",\\"responseFoo\\":\\"{{{jsonpath this '$.foo'}}}\\",\\"authorization2\\":\\"{{{request.headers.Authorization.[1]}}}\\",\\"fullBody\\":\\"{{{escapejsonbody}}}\\",\\"url\\":\\"{{{request.url}}}\\",\\"paramIndex\\":\\"{{{request.query.foo.[1]}}}\\"}",
+						"body" : "{\\"rawAuthorization2\\":\\"{{request.headers.Authorization.[1]}}\\",\\"responseBaz\\":{{{jsonPath request.body '$.baz'}}} ,\\"pathIndex\\":\\"{{{request.path.[1]}}}\\",\\"rawAuthorization\\":\\"{{request.headers.Authorization.[0]}}\\",\\"authorization2\\":\\"{{{request.headers.Authorization.[1]}}}\\",\\"rawParam\\":\\"{{request.query.foo.[0]}}\\",\\"url\\":\\"{{{request.url}}}\\",\\"paramIndex\\":\\"{{{request.query.foo.[1]}}}\\",\\"authorization\\":\\"{{{request.headers.Authorization.[0]}}}\\",\\"path\\":\\"{{{request.path}}}\\",\\"rawUrl\\":\\"{{request.url}}\\",\\"rawPath\\":\\"{{request.path}}\\",\\"rawResponseBaz2\\":\\"Bla bla {{jsonPath request.body '$.foo'}} bla bla\\",\\"param\\":\\"{{{request.query.foo.[0]}}}\\",\\"rawResponseBaz\\":{{jsonPath request.body '$.baz'}} ,\\"responseBaz2\\":\\"Bla bla {{{jsonPath request.body '$.foo'}}} bla bla\\",\\"rawResponseFoo\\":\\"{{jsonPath request.body '$.foo'}}\\",\\"responseFoo\\":\\"{{{jsonPath request.body '$.foo'}}}\\",\\"rawPathIndex\\":\\"{{request.path.[1]}}\\",\\"fullBody\\":\\"{{{escapejsonbody}}}\\",\\"rawParamIndex\\":\\"{{request.query.foo.[1]}}\\"}",
 						"headers" : {
 						  "Authorization" : "{{{request.headers.Authorization.[0]}}};foo"
 						},
@@ -1827,16 +1903,28 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			entity.headers.find { it.key == "Authorization" && it.value.contains("secret;foo") }
 		and:
 			AssertionUtil.assertThatJsonsAreEqual(('''
-				{
-				  "url" : "/api/v1/xxxx?foo=bar&foo=bar2",
-				  "param" : "bar",
-				  "paramIndex" : "bar2",
-				  "authorization" : "secret",
-				  "authorization2" : "secret2",
-				  "fullBody" : "{\\"foo\\":\\"bar\\",\\"baz\\":5}",
-				  "responseFoo" : "bar",
-				  "responseBaz" : 5,
-				  "responseBaz2" : "Bla bla bar bla bla"
+				{  
+				   "rawAuthorization2":"secret2",
+				   "responseBaz":5,
+				   "pathIndex":"v1",
+				   "rawAuthorization":"secret",
+				   "authorization2":"secret2",
+				   "rawParam":"bar",
+				   "url":"/api/v1/xxxx?foo=bar&foo=bar2",
+				   "paramIndex":"bar2",
+				   "authorization":"secret",
+				   "path":"/api/v1/xxxx",
+				   "rawUrl":"/api/v1/xxxx?foo&#x3D;bar&amp;foo&#x3D;bar2",
+				   "rawPath":"/api/v1/xxxx",
+				   "rawResponseBaz2":"Bla bla bar bla bla",
+				   "param":"bar",
+				   "rawResponseBaz":5,
+				   "responseBaz2":"Bla bla bar bla bla",
+				   "rawResponseFoo":"bar",
+				   "responseFoo":"bar",
+				   "rawPathIndex":"v1",
+				   "fullBody":"{\\"foo\\":\\"bar\\",\\"baz\\":5}",
+				   "rawParamIndex":"bar2"
 				}
 				'''), entity.body)
 		cleanup:

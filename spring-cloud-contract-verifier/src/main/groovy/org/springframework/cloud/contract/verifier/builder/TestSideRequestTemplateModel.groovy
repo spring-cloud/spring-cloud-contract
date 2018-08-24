@@ -41,14 +41,14 @@ class TestSideRequestTemplateModel {
 	final Map<String, List<String>> headers
 
 	/**
-	 * Escaped request body that can be put into test
+	 * Request body as it would be sent to the controller
 	 */
 	final String body
 
 	/**
-	 * Request body as it would be sent to the controller
+	 * Escaped request body that can be put into test
 	 */
-	final String rawBody
+	final String escapedBody
 
 	static TestSideRequestTemplateModel from(final Request request) {
 		String url = MapConverter.getTestSideValues(request.url ?: request.urlPath)
@@ -65,9 +65,9 @@ class TestSideRequestTemplateModel {
 		}?.collectEntries {
 			[(it.key): it.value.collect {  MapConverter.getTestSideValues(it) }]
 		})
-		String body = trimmedAndEscapedBody(request.body)
-		String rawBody = getBodyAsRawJson(request.body)
-		return new TestSideRequestTemplateModel(fullUrl, query, paths, headers, body, rawBody)
+		String escapedBody = trimmedAndEscapedBody(request.body)
+		String body = getBodyAsRawJson(request.body)
+		return new TestSideRequestTemplateModel(fullUrl, query, paths, headers, body, escapedBody)
 	}
 
 	private static List<String> buildPathsFromUrl(String url) {
@@ -86,6 +86,9 @@ class TestSideRequestTemplateModel {
 
 	private static String getBodyAsRawJson(Object body) {
 		Object bodyValue = extractServerValueFromBody(body)
+		if (bodyValue instanceof GString || bodyValue instanceof String) {
+			return bodyValue.toString()
+		}
 		return bodyValue != null ? new JsonOutput().toJson(bodyValue) : bodyValue
 	}
 

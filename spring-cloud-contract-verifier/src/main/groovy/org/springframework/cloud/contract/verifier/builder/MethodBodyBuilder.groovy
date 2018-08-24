@@ -69,7 +69,7 @@ abstract class MethodBodyBuilder {
 
 	private static final Closure GET_SERVER_VALUE = { it instanceof DslProperty ? it.serverValue : it }
 	private static final String FROM_REQUEST_PREFIX = "request."
-	private static final String FROM_REQUEST_BODY = "body"
+	private static final String FROM_REQUEST_BODY = "escapejsonbody"
 	private static final String FROM_REQUEST_PATH = "path"
 
 	protected final ContractVerifierConfigProperties configProperties
@@ -422,11 +422,15 @@ abstract class MethodBodyBuilder {
 			String entryAsString = (String) entry
 			if (templateProcessor.containsTemplateEntry(entryAsString) &&
 					!templateProcessor.containsJsonPathTemplateEntry(entryAsString)) {
-				String justEntry = entryAsString - contractTemplate.openingTemplate() -
+				// TODO: HANDLEBARS LEAKING VIA request.
+				String justEntry = entryAsString - contractTemplate.escapedOpeningTemplate() -
+						contractTemplate.openingTemplate() -
+						contractTemplate.escapedClosingTemplate() -
 						contractTemplate.closingTemplate() - FROM_REQUEST_PREFIX
 				if (justEntry == FROM_REQUEST_BODY) {
 					// the body should be transformed by standard mechanism
-					return entry
+					return contractTemplate.escapedOpeningTemplate() + FROM_REQUEST_PREFIX +
+							"escapedBody" + contractTemplate.escapedClosingTemplate()
 				}
 				try {
 					Object result = new PropertyUtilsBean().getProperty(templateModel, justEntry)
@@ -451,6 +455,8 @@ abstract class MethodBodyBuilder {
 			Object object = parsedRequestBody.read(jsonPathEntry)
 			if (!(object instanceof String)) {
 				return method
+						.replace('"' + contractTemplate.escapedOpeningTemplate(), contractTemplate.escapedOpeningTemplate())
+						.replace(contractTemplate.escapedClosingTemplate() + '"', contractTemplate.escapedClosingTemplate())
 						.replace('"' + contractTemplate.openingTemplate(), contractTemplate.openingTemplate())
 						.replace(contractTemplate.closingTemplate() + '"', contractTemplate.closingTemplate())
 			}

@@ -117,7 +117,7 @@ abstract class BaseWireMockStubStrategy {
 		return processEntriesForTemplating(transformedMap, context)
 	}
 
-	private Object processEntriesForTemplating(transformedMap, DocumentContext context) {
+	private Object processEntriesForTemplating(Object transformedMap, DocumentContext context) {
 		return transformValues(transformedMap, {
 			if (it instanceof String && processor.containsJsonPathTemplateEntry(it)) {
 				String jsonPath = processor.jsonPathFromTemplateEntry(it)
@@ -129,7 +129,8 @@ abstract class BaseWireMockStubStrategy {
 					return it
 				}
 				return "${WRAPPER}${it}${WRAPPER}"
-			} else if (it instanceof String && processor.containsTemplateEntry(it) && template.body() == it) {
+			} else if (it instanceof String && processor.containsTemplateEntry(it) &&
+					template.escapedBody() == it) {
 				return template.escapedBody()
 			}
 			return it
