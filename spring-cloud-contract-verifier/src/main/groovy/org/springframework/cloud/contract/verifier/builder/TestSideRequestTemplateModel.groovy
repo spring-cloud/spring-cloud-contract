@@ -17,7 +17,6 @@ import org.springframework.cloud.contract.verifier.util.MapConverter
  * @author Marcin Grzejszczak
  * @since 1.1.0
  */
-@Immutable
 @CompileStatic
 class TestSideRequestTemplateModel {
 	/**
@@ -49,6 +48,15 @@ class TestSideRequestTemplateModel {
 	 * Escaped request body that can be put into test
 	 */
 	final String escapedBody
+
+	private TestSideRequestTemplateModel(String url, Map<String, List<String>> query, Path path, Map<String, List<String>> headers, String body, String escapedBody) {
+		this.url = url
+		this.query = query
+		this.path = path
+		this.headers = headers
+		this.body = body
+		this.escapedBody = escapedBody
+	}
 
 	static TestSideRequestTemplateModel from(final Request request) {
 		String url = MapConverter.getTestSideValues(request.url ?: request.urlPath)
@@ -94,7 +102,7 @@ class TestSideRequestTemplateModel {
 
 	protected static Object extractServerValueFromBody(bodyValue) {
 		if (bodyValue instanceof GString) {
-			bodyValue = ContentUtils.extractValue(bodyValue, { DslProperty dslProperty -> dslProperty.serverValue })
+			bodyValue = ContentUtils.extractValue(bodyValue, { DslProperty dslProperty -> dslProperty.serverValue } as Closure)
 		} else {
 			bodyValue = MapConverter.transformValues(bodyValue, {
 				it instanceof DslProperty ? it.serverValue : it

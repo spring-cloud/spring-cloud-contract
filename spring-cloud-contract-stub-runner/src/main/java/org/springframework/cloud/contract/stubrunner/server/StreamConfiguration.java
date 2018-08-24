@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Primary;
  *
  * @since 1.0.0
  */
-@Configuration
+//@Configuration
 class StreamConfiguration {
 
 	@Bean
