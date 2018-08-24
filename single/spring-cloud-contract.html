@@ -4292,7 +4292,17 @@ matches the JSON Path. E.g. for json path <code class="literal">$.foo</code> - <
 				fullBody: fromRequest().body(),
 				responseFoo: fromRequest().body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.foo'</span>),
 				responseBaz: fromRequest().body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.baz'</span>),
-				responseBaz2: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Bla bla ${fromRequest().body('$.foo')} bla bla"</span>
+				responseBaz2: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Bla bla ${fromRequest().body('$.foo')} bla bla"</span>,
+				rawUrl: fromRequest().rawUrl(),
+				rawPath: fromRequest().rawPath(),
+				rawPathIndex: fromRequest().rawPath(<span class="hl-number">1</span>),
+				rawParam: fromRequest().rawQuery(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>),
+				rawParamIndex: fromRequest().rawQuery(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>, <span class="hl-number">1</span>),
+				rawAuthorization: fromRequest().rawHeader(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Authorization"</span>),
+				rawAuthorization2: fromRequest().rawHeader(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Authorization"</span>, <span class="hl-number">1</span>),
+				rawResponseFoo: fromRequest().rawBody(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.foo'</span>),
+				rawResponseBaz: fromRequest().rawBody(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.baz'</span>),
+				rawResponseBaz2: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Bla bla ${fromRequest().rawBody('$.foo')} bla bla"</span>
 		)
 	}
 }</pre><p>

@@ -7113,7 +7113,17 @@ matches the JSON Path. E.g. for json path <literal>$.foo</literal> - <literal>{{
 				fullBody: fromRequest().body(),
 				responseFoo: fromRequest().body('$.foo'),
 				responseBaz: fromRequest().body('$.baz'),
-				responseBaz2: "Bla bla ${fromRequest().body('$.foo')} bla bla"
+				responseBaz2: "Bla bla ${fromRequest().body('$.foo')} bla bla",
+				rawUrl: fromRequest().rawUrl(),
+				rawPath: fromRequest().rawPath(),
+				rawPathIndex: fromRequest().rawPath(1),
+				rawParam: fromRequest().rawQuery("foo"),
+				rawParamIndex: fromRequest().rawQuery("foo", 1),
+				rawAuthorization: fromRequest().rawHeader("Authorization"),
+				rawAuthorization2: fromRequest().rawHeader("Authorization", 1),
+				rawResponseFoo: fromRequest().rawBody('$.foo'),
+				rawResponseBaz: fromRequest().rawBody('$.baz'),
+				rawResponseBaz2: "Bla bla ${fromRequest().rawBody('$.foo')} bla bla"
 		)
 	}
 }</programlisting>
