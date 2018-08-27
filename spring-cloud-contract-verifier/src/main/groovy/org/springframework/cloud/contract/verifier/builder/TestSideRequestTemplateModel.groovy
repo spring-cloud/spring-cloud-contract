@@ -17,7 +17,6 @@ import org.springframework.cloud.contract.verifier.util.MapConverter
  * @author Marcin Grzejszczak
  * @since 1.1.0
  */
-@Immutable
 @CompileStatic
 class TestSideRequestTemplateModel {
 	/**
@@ -50,6 +49,15 @@ class TestSideRequestTemplateModel {
 	 */
 	final String escapedBody
 
+	private TestSideRequestTemplateModel(String url, Map<String, List<String>> query, Path path, Map<String, List<String>> headers, String body, String escapedBody) {
+		this.url = url
+		this.query = query
+		this.path = path
+		this.headers = headers
+		this.body = body
+		this.escapedBody = escapedBody
+	}
+
 	static TestSideRequestTemplateModel from(final Request request) {
 		String url = MapConverter.getTestSideValues(request.url ?: request.urlPath)
 		Path paths = new Path(buildPathsFromUrl(url))
@@ -63,7 +71,11 @@ class TestSideRequestTemplateModel {
 		Map<String, List<String>> headers = (Map<String, List<String>>) (request.headers?.entries?.groupBy {
 			it.name
 		}?.collectEntries {
-			[(it.key): it.value.collect {  MapConverter.getTestSideValues(it) }]
+			List<Object> headerValues = []
+			for (Object value : it.value) {
+				headerValues.add(MapConverter.getTestSideValues(value))
+			}
+			[(it.key): headerValues]
 		})
 		String escapedBody = trimmedAndEscapedBody(request.body)
 		String body = getBodyAsRawJson(request.body)
@@ -94,7 +106,7 @@ class TestSideRequestTemplateModel {
 
 	protected static Object extractServerValueFromBody(bodyValue) {
 		if (bodyValue instanceof GString) {
-			bodyValue = ContentUtils.extractValue(bodyValue, { DslProperty dslProperty -> dslProperty.serverValue })
+			bodyValue = ContentUtils.extractValue(bodyValue, { DslProperty dslProperty -> dslProperty.serverValue } as Closure)
 		} else {
 			bodyValue = MapConverter.transformValues(bodyValue, {
 				it instanceof DslProperty ? it.serverValue : it

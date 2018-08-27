@@ -26,17 +26,17 @@
 		<checkstyle.version>2.17</checkstyle.version>
 		<pact.version>3.5.13</pact.version>
 		<jsch-agent.version>0.0.9</jsch-agent.version>
-		<spring-cloud-build.version>2.0.4.BUILD-SNAPSHOT</spring-cloud-build.version>
-		<spring-cloud-zookeeper.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-zookeeper.version>
-		<spring-cloud-stream.version>Elmhurst.BUILD-SNAPSHOT</spring-cloud-stream.version>
-		<spring-cloud-netflix.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-netflix.version>
-		<spring-cloud-consul.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-consul.version>
-		<spring-cloud-commons.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-commons.version>
+		<spring-cloud-build.version>2.1.0.BUILD-SNAPSHOT</spring-cloud-build.version>
+		<spring-cloud-zookeeper.version>2.1.0.BUILD-SNAPSHOT</spring-cloud-zookeeper.version>
+		<spring-cloud-stream.version>Fishtown.BUILD-SNAPSHOT</spring-cloud-stream.version>
+		<spring-cloud-netflix.version>2.1.0.BUILD-SNAPSHOT</spring-cloud-netflix.version>
+		<spring-cloud-consul.version>2.1.0.BUILD-SNAPSHOT</spring-cloud-consul.version>
+		<spring-cloud-commons.version>2.1.0.BUILD-SNAPSHOT</spring-cloud-commons.version>
 		<jopt-simple.version>5.0.3</jopt-simple.version>
 		<cglib.version>3.2.4</cglib.version>
 		<spock-spring.version>1.0-groovy-2.4</spock-spring.version>
 		<spock-global-unroll.version>0.5.1</spock-global-unroll.version>
-		<spring-rabbit.version>2.0.0.RELEASE</spring-rabbit.version>
+		<spring-rabbit.version>2.1.0.M2</spring-rabbit.version>
 		<hoverfly-junit.version>0.2.2</hoverfly-junit.version>
 		<commons-text.version>1.1</commons-text.version>
 		<handlebars.version>4.0.6</handlebars.version>
@@ -83,11 +83,31 @@
 				<groupId>org.spockframework</groupId>
 				<artifactId>spock-spring</artifactId>
 				<version>${spock-spring.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.codehaus.groovy</groupId>
+						<artifactId>groovy-all</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.codehaus.groovy</groupId>
+						<artifactId>groovy</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.spockframework</groupId>
 				<artifactId>spock-core</artifactId>
 				<version>${spock-spring.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.codehaus.groovy</groupId>
+						<artifactId>groovy-all</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.codehaus.groovy</groupId>
+						<artifactId>groovy</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>info.solidsoft.spock</groupId>
@@ -118,6 +138,10 @@
 						<groupId>org.codehaus.groovy</groupId>
 						<artifactId>groovy-all</artifactId>
 					</exclusion>
+					<exclusion>
+						<groupId>org.codehaus.groovy</groupId>
+						<artifactId>groovy</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -128,6 +152,10 @@
 					<exclusion>
 						<groupId>org.codehaus.groovy</groupId>
 						<artifactId>groovy-all</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.codehaus.groovy</groupId>
+						<artifactId>groovy</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>

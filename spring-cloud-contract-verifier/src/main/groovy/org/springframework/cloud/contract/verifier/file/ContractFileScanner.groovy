@@ -68,14 +68,16 @@ class ContractFileScanner {
 
 	private Set<PathMatcher> processPatterns(Set<String> patterns) {
 		FileSystem fileSystem = FileSystems.getDefault()
-		return patterns.collect({
-			String syntaxAndPattern = MATCH_PREFIX + '**' + File.separator + it
+		Set<PathMatcher> pathMatchers = new HashSet<PathMatcher>()
+		for (String pattern : patterns) {
+			String syntaxAndPattern = MATCH_PREFIX + '**' + File.separator + pattern
 			// FIXME: This looks strange, need to be checked on windows
 			if (IS_OS_WINDOWS) {
 				syntaxAndPattern = syntaxAndPattern.replace("\\", "\\\\")
 			}
-			fileSystem.getPathMatcher(syntaxAndPattern)
-		}) as Set
+			pathMatchers.add(fileSystem.getPathMatcher(syntaxAndPattern))
+		}
+		return pathMatchers
 	}
 
 	/**

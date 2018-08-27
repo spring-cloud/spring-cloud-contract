@@ -36,7 +36,9 @@ dependencies {
 
 	testCompile "com.github.tomakehurst:wiremock:${wiremockVersion}"
 	testCompile "com.toomuchcoding.jsonassert:jsonassert:${jsonAssertVersion}"
-	testCompile "org.spockframework:spock-spring:1.0-groovy-2.4"
+	testCompile("org.spockframework:spock-spring:1.0-groovy-2.4") {
+		exclude(group: 'org.codehaus.groovy')
+	}
 	testCompile "io.restassured:rest-assured:$restAssuredVersion"
 	testCompile "io.restassured:spring-mock-mvc:$restAssuredVersion"
 	testCompile "ch.qos.logback:logback-classic:1.1.2"

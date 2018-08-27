@@ -58,7 +58,7 @@ class Url extends DslProperty {
 					url.values.collect { it instanceof Pattern ?
 							new Xeger(it.pattern()).generate() : it
 					} as String[],
-					url.strings.clone() as String[]
+					Arrays.copyOf(url.strings, url.strings.length) as String[]
 			).toString()
 			return new Url(newUrl)
 		}

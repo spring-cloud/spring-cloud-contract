@@ -70,8 +70,8 @@ public abstract class WireMockVerifyHelper<T, S extends WireMockVerifyHelper<T, 
 		if (this.builder != null) {
 			this.builder.willReturn(getResponseDefinition(result));
 			StubMapping stubMapping = this.builder.build();
-			MatchResult match = stubMapping.getRequest()
-					.match(getWireMockRequest(result));
+			Request request = getWireMockRequest(result);
+			MatchResult match = stubMapping.getRequest().match(request);
 			assertThat(match.isExactMatch()).as("wiremock did not match request")
 					.isTrue();
 			configuration.put("contract.stubMapping", stubMapping);

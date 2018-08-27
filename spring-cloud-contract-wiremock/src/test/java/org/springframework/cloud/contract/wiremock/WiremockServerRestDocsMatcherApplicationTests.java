@@ -50,7 +50,7 @@ public class WiremockServerRestDocsMatcherApplicationTests {
 
 	@Test
 	public void doesNotMatch() throws Exception {
-		this.expected.expect(ComparisonFailure.class);
+		this.expected.expect(AssertionError.class);
 		this.expected.expectMessage("wiremock did not match");
 		this.mockMvc.perform(MockMvcRequestBuilders.post("/resource").content("greeting")
 				.contentType(MediaType.TEXT_PLAIN))

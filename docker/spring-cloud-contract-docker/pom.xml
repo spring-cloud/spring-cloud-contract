@@ -20,7 +20,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-all</artifactId>
+			<artifactId>groovy</artifactId>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

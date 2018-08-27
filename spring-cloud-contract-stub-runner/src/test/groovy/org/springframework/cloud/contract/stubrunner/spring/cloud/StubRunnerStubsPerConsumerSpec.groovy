@@ -29,6 +29,7 @@ import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.messaging.Sink
+import org.springframework.cloud.stream.messaging.Source
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import org.springframework.http.ResponseEntity
@@ -86,6 +87,6 @@ class StubRunnerStubsPerConsumerSpec extends Specification {
 
 	@Configuration
 	@EnableAutoConfiguration
-	@EnableBinding(Sink)
+	@EnableBinding([Sink, Source])
 	static class Config {}
 }

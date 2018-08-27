@@ -52,7 +52,9 @@ subprojects {
 
 	dependencies {
 		testCompile 'org.codehaus.groovy:groovy-all:2.5.0-beta-1'
-		testCompile "org.spockframework:spock-core:$spockVersion"
+		testCompile("org.spockframework:spock-core:$spockVersion") {
+			exclude(group: 'org.codehaus.groovy')
+		}
 		testCompile 'junit:junit:4.12'
 		testCompile "com.github.tomakehurst:wiremock:${wiremockVersion}"
 		testCompile "com.toomuchcoding.jsonassert:jsonassert:${jsonAssertVersion}"
@@ -81,7 +83,9 @@ configure([project(':fraudDetectionService'), project(':loanApplicationService')
 		compile 'org.springframework.boot:spring-boot-starter-jersey'
 		compile 'org.springframework.boot:spring-boot-starter-jetty'
 
-		testRuntime "org.spockframework:spock-spring:$spockVersion"
+		testRuntime("org.spockframework:spock-spring:$spockVersion") {
+			exclude(group: 'org.codehaus.groovy')
+		}
 
 		testCompile "org.mockito:mockito-core"
 		testCompile "org.springframework:spring-test"
