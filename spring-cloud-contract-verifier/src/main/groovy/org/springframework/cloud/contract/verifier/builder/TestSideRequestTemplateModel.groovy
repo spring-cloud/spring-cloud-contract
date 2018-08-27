@@ -71,7 +71,11 @@ class TestSideRequestTemplateModel {
 		Map<String, List<String>> headers = (Map<String, List<String>>) (request.headers?.entries?.groupBy {
 			it.name
 		}?.collectEntries {
-			[(it.key): it.value.collect {  MapConverter.getTestSideValues(it) }]
+			List<Object> headerValues = []
+			for (Object value : it.value) {
+				headerValues.add(MapConverter.getTestSideValues(value))
+			}
+			[(it.key): headerValues]
 		})
 		String escapedBody = trimmedAndEscapedBody(request.body)
 		String body = getBodyAsRawJson(request.body)
