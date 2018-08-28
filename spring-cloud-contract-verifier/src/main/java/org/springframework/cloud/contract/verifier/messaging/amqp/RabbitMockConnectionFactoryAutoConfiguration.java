@@ -1,5 +1,6 @@
 package org.springframework.cloud.contract.verifier.messaging.amqp;
 
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 
@@ -32,7 +33,7 @@ public class RabbitMockConnectionFactoryAutoConfiguration {
 	@Bean
 	public ConnectionFactory connectionFactory() {
 		final Connection mockConnection = mock(Connection.class);
-		final Channel mockChannel = mock(Channel.class);
+		final AMQP.Queue.DeclareOk mockDeclareOk = mock(AMQP.Queue.DeclareOk.class);
 		com.rabbitmq.client.ConnectionFactory mockConnectionFactory = mock(com.rabbitmq.client.ConnectionFactory.class, new Answer() {
 			@Override public Object answer(InvocationOnMock invocationOnMock)
 					throws Throwable {
@@ -44,12 +45,20 @@ public class RabbitMockConnectionFactoryAutoConfiguration {
 			}
 		});
 		try {
+			final Channel mockChannel = mock(Channel.class, invocationOnMock -> {
+				if ("queueDeclare".equals(invocationOnMock.getMethod().getName())) {
+					return mockDeclareOk;
+				}
+				return Mockito.RETURNS_DEFAULTS.answer(invocationOnMock);
+			});
 			when(mockConnection.isOpen()).thenReturn(true);
 			when(mockConnection.createChannel()).thenReturn(mockChannel);
 			when(mockConnection.createChannel(Mockito.anyInt())).thenReturn(mockChannel);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		return new CachingConnectionFactory(mockConnectionFactory);
+		return new CachingConnectionFactory(mockConnectionFactory) {
+
+		};
 	}
 }

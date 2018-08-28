@@ -29,6 +29,7 @@ import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.core.MessagePropertiesBuilder;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
+import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
@@ -97,8 +98,18 @@ public class SpringAmqpStubMessages implements
 			throw new IllegalStateException("no listeners found for destination " + destination);
 		}
 		for (SimpleMessageListenerContainer listenerContainer : listenerContainers) {
-			MessageListener messageListener = (MessageListener) listenerContainer.getMessageListener();
-			messageListener.onMessage(message);
+			Object messageListener = listenerContainer.getMessageListener();
+			if (messageListener instanceof ChannelAwareMessageListener && listenerContainer.getConnectionFactory() != null) {
+				try {
+					((ChannelAwareMessageListener) messageListener).onMessage(message,
+							listenerContainer.getConnectionFactory().createConnection().createChannel(true));
+				}
+				catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			} else {
+				((MessageListener) messageListener).onMessage(message);
+			}
 		}
 	}
 

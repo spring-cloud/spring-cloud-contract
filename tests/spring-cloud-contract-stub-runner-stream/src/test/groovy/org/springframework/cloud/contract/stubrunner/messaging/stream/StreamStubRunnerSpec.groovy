@@ -58,107 +58,107 @@ class StreamStubRunnerSpec extends Specification {
 
 	def 'should download the stub and register a route for it'() {
 		when:
-		// tag::client_send[]
-		messaging.send(new BookReturned('foo'), [sample: 'header'], 'bookStorage')
-		// end::client_send[]
+			// tag::client_send[]
+			messaging.send(new BookReturned('foo'), [sample: 'header'], 'bookStorage')
+			// end::client_send[]
 		then:
-		// tag::client_receive[]
-		Message<?> receivedMessage = messaging.receive('returnBook')
-		// end::client_receive[]
+			// tag::client_receive[]
+			Message<?> receivedMessage = messaging.receive('returnBook')
+			// end::client_receive[]
 		and:
-		// tag::client_receive_message[]
-		receivedMessage != null
-		assertJsons(receivedMessage.payload)
-		receivedMessage.headers.get('BOOK-NAME') == 'foo'
-		// end::client_receive_message[]
+			// tag::client_receive_message[]
+			receivedMessage != null
+			assertJsons(receivedMessage.payload)
+			receivedMessage.headers.get('BOOK-NAME') == 'foo'
+			// end::client_receive_message[]
 	}
 
 	def 'should trigger a message by label'() {
 		when:
-		// tag::client_trigger[]
-		stubFinder.trigger('return_book_1')
-		// end::client_trigger[]
+			// tag::client_trigger[]
+			stubFinder.trigger('return_book_1')
+			// end::client_trigger[]
 		then:
-		// tag::client_trigger_receive[]
-		Message<?> receivedMessage = messaging.receive('returnBook')
-		// end::client_trigger_receive[]
+			// tag::client_trigger_receive[]
+			Message<?> receivedMessage = messaging.receive('returnBook')
+			// end::client_trigger_receive[]
 		and:
-		// tag::client_trigger_message[]
-		receivedMessage != null
-		assertJsons(receivedMessage.payload)
-		receivedMessage.headers.get('BOOK-NAME') == 'foo'
-		// end::client_trigger_message[]
+			// tag::client_trigger_message[]
+			receivedMessage != null
+			assertJsons(receivedMessage.payload)
+			receivedMessage.headers.get('BOOK-NAME') == 'foo'
+			// end::client_trigger_message[]
 	}
 
 	def 'should trigger a label for the existing groupId:artifactId'() {
 		when:
-		// tag::trigger_group_artifact[]
-		stubFinder.trigger('org.springframework.cloud.contract.verifier.stubs:streamService', 'return_book_1')
-		// end::trigger_group_artifact[]
+			// tag::trigger_group_artifact[]
+			stubFinder.trigger('org.springframework.cloud.contract.verifier.stubs:streamService', 'return_book_1')
+			// end::trigger_group_artifact[]
 		then:
-		Message<?> receivedMessage = messaging.receive('returnBook')
+			Message<?> receivedMessage = messaging.receive('returnBook')
 		and:
-		receivedMessage != null
-		assertJsons(receivedMessage.payload)
-		receivedMessage.headers.get('BOOK-NAME') == 'foo'
+			receivedMessage != null
+			assertJsons(receivedMessage.payload)
+			receivedMessage.headers.get('BOOK-NAME') == 'foo'
 	}
 
 	def 'should trigger a label for the existing artifactId'() {
 		when:
-		// tag::trigger_artifact[]
-		stubFinder.trigger('streamService', 'return_book_1')
-		// end::trigger_artifact[]
+			// tag::trigger_artifact[]
+			stubFinder.trigger('streamService', 'return_book_1')
+			// end::trigger_artifact[]
 		then:
-		Message<?> receivedMessage = messaging.receive('returnBook')
+			Message<?> receivedMessage = messaging.receive('returnBook')
 		and:
-		receivedMessage != null
-		assertJsons(receivedMessage.payload)
-		receivedMessage.headers.get('BOOK-NAME') == 'foo'
+			receivedMessage != null
+			assertJsons(receivedMessage.payload)
+			receivedMessage.headers.get('BOOK-NAME') == 'foo'
 	}
 
 	def 'should throw exception when missing label is passed'() {
 		when:
-		stubFinder.trigger('missing label')
+			stubFinder.trigger('missing label')
 		then:
-		thrown(IllegalArgumentException)
+			thrown(IllegalArgumentException)
 	}
 
 	def 'should throw exception when missing label and artifactid is passed'() {
 		when:
-		stubFinder.trigger('some:service', 'return_book_1')
+			stubFinder.trigger('some:service', 'return_book_1')
 		then:
-		thrown(IllegalArgumentException)
+			thrown(IllegalArgumentException)
 	}
 
 	def 'should trigger messages by running all triggers'() {
 		when:
-		// tag::trigger_all[]
-		stubFinder.trigger()
-		// end::trigger_all[]
+			// tag::trigger_all[]
+			stubFinder.trigger()
+			// end::trigger_all[]
 		then:
-		Message<?> receivedMessage = messaging.receive('returnBook')
+			Message<?> receivedMessage = messaging.receive('returnBook')
 		and:
-		receivedMessage != null
-		assertJsons(receivedMessage.payload)
-		receivedMessage.headers.get('BOOK-NAME') == 'foo'
+			receivedMessage != null
+			assertJsons(receivedMessage.payload)
+			receivedMessage.headers.get('BOOK-NAME') == 'foo'
 	}
 
 	def 'should trigger a label with no output message'() {
 		when:
-		// tag::trigger_no_output[]
-		messaging.send(new BookReturned('foo'), [sample: 'header'], 'delete')
-		// end::trigger_no_output[]
+			// tag::trigger_no_output[]
+			messaging.send(new BookReturned('foo'), [sample: 'header'], 'delete')
+			// end::trigger_no_output[]
 		then:
-		noExceptionThrown()
+			noExceptionThrown()
 	}
 
 	def 'should not trigger a message that does not match input'() {
 		when:
-		messaging.send(new BookReturned('not_matching'), [wrong: 'header_value'], 'bookStorage')
+			messaging.send(new BookReturned('not_matching'), [wrong: 'header_value'], 'bookStorage')
 		then:
-		Message<?> receivedMessage = messaging.receive('returnBook', 100, TimeUnit.MILLISECONDS)
+			Message<?> receivedMessage = messaging.receive('returnBook', 100, TimeUnit.MILLISECONDS)
 		and:
-		receivedMessage == null
+			receivedMessage == null
 	}
 
 	private boolean assertJsons(Object payload) {
@@ -170,52 +170,52 @@ class StreamStubRunnerSpec extends Specification {
 	}
 
 	Contract dsl =
-	// tag::sample_dsl[]
-	Contract.make {
-		label 'return_book_1'
-		input { triggeredBy('bookReturnedTriggered()') }
-		outputMessage {
-			sentTo('returnBook')
-			body('''{ "bookName" : "foo" }''')
-			headers { header('BOOK-NAME', 'foo') }
-		}
-	}
+			// tag::sample_dsl[]
+			Contract.make {
+				label 'return_book_1'
+				input { triggeredBy('bookReturnedTriggered()') }
+				outputMessage {
+					sentTo('returnBook')
+					body('''{ "bookName" : "foo" }''')
+					headers { header('BOOK-NAME', 'foo') }
+				}
+			}
 	// end::sample_dsl[]
 
 	Contract dsl2 =
-	// tag::sample_dsl_2[]
-	Contract.make {
-		label 'return_book_2'
-		input {
-			messageFrom('bookStorage')
-			messageBody([
-				bookName: 'foo'
-			])
-			messageHeaders { header('sample', 'header') }
-		}
-		outputMessage {
-			sentTo('returnBook')
-			body([
-				bookName: 'foo'
-			])
-			headers { header('BOOK-NAME', 'foo') }
-		}
-	}
+			// tag::sample_dsl_2[]
+			Contract.make {
+				label 'return_book_2'
+				input {
+					messageFrom('bookStorage')
+					messageBody([
+							bookName: 'foo'
+					])
+					messageHeaders { header('sample', 'header') }
+				}
+				outputMessage {
+					sentTo('returnBook')
+					body([
+							bookName: 'foo'
+					])
+					headers { header('BOOK-NAME', 'foo') }
+				}
+			}
 	// end::sample_dsl_2[]
 
 	Contract dsl3 =
-	// tag::sample_dsl_3[]
-	Contract.make {
-		label 'delete_book'
-		input {
-			messageFrom('delete')
-			messageBody([
-				bookName: 'foo'
-			])
-			messageHeaders { header('sample', 'header') }
-			assertThat('bookWasDeleted()')
-		}
-	}
+			// tag::sample_dsl_3[]
+			Contract.make {
+				label 'delete_book'
+				input {
+					messageFrom('delete')
+					messageBody([
+							bookName: 'foo'
+					])
+					messageHeaders { header('sample', 'header') }
+					assertThat('bookWasDeleted()')
+				}
+			}
 	// end::sample_dsl_3[]
 
 
