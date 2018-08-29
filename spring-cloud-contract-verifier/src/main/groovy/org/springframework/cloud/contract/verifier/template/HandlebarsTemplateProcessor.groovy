@@ -1,6 +1,5 @@
 package org.springframework.cloud.contract.verifier.template
 
-import com.github.tomakehurst.wiremock.extension.responsetemplating.helpers.WireMockHelpers
 import com.github.tomakehurst.wiremock.extension.responsetemplating.helpers.WiremockHelpers
 import wiremock.com.github.jknack.handlebars.Handlebars
 import wiremock.com.github.jknack.handlebars.Template
