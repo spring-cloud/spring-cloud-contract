@@ -246,6 +246,193 @@ class RequestResponseSCContractCreator {
 		}
 	}
 
+	protected Closure<Contract> process() {
+		return { RequestResponseInteraction interaction ->
+			Contract.make {
+				description(buildDescription(interaction))
+				request {
+					Request request = interaction.request
+					method(request.method)
+					if (request.query) {
+						url(request.path) {
+							queryParameters {
+								request.query.each { String key, List<String> value ->
+									value.each { String singleValue ->
+										parameter(key, singleValue)
+									}
+								}
+							}
+						}
+					} else {
+						url(request.path)
+					}
+					if (request.headers) {
+						Category headerRules = request.matchingRules.rulesForCategory('header')
+						headers {
+							request.headers.each { k, v ->
+								if (headerRules.matchingRules.containsKey(k)) {
+									MatchingRuleGroup ruleGroup = headerRules.matchingRules.get(k)
+									if (ruleGroup.rules.size() > 1) {
+										throw new UnsupportedOperationException("Currently only 1 rule at a time for a header is supported")
+									}
+									MatchingRule rule = ruleGroup.rules[0]
+									if (rule instanceof RegexMatcher) {
+										header(k, new DslProperty((Object)Pattern.compile(rule.getRegex()), (Object)v))
+									} else {
+										throw new UnsupportedOperationException("Currently only the header matcher of type regex is supported")
+									}
+								} else {
+									header(k, v)
+								}
+							}
+						}
+					}
+					if (request.body.state == OptionalBody.State.PRESENT) {
+						def parsedBody = BodyConverter.toSCCBody(request)
+						if (parsedBody instanceof Map) {
+							body(parsedBody as Map)
+						} else if (parsedBody instanceof List) {
+							body(parsedBody as List)
+						} else {
+							body(parsedBody.toString())
+						}
+					}
+					Category bodyRules = request.matchingRules.rulesForCategory('body')
+					if (bodyRules && !bodyRules.matchingRules.isEmpty()) {
+						bodyMatchers {
+							bodyRules.matchingRules.each { String key, MatchingRuleGroup ruleGroup ->
+								if (ruleGroup.ruleLogic != RuleLogic.AND) {
+									throw new UnsupportedOperationException("Currently only the AND combination rule logic is supported")
+								}
+
+								ruleGroup.rules.each { MatchingRule rule ->
+									if (rule instanceof RegexMatcher) {
+										jsonPath(key, byRegex(rule.regex))
+									} else if (rule instanceof DateMatcher) {
+										jsonPath(key, byDate())
+									} else if (rule instanceof TimeMatcher) {
+										jsonPath(key, byTime())
+									} else if (rule instanceof TimestampMatcher) {
+										jsonPath(key, byTimestamp())
+									} else if (rule instanceof NumberTypeMatcher) {
+										switch (rule.numberType) {
+											case NumberTypeMatcher.NumberType.NUMBER:
+												jsonPath(key, byRegex(regexPatterns.number()))
+												break
+											case NumberTypeMatcher.NumberType.INTEGER:
+												jsonPath(key, byRegex(regexPatterns.anInteger()))
+												break
+											case NumberTypeMatcher.NumberType.DECIMAL:
+												jsonPath(key, byRegex(regexPatterns.aDouble()))
+												break
+											default:
+												throw new RuntimeException("Unsupported number type!")
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				response {
+					Response response = interaction.response
+					status(response.status)
+					if (response.body.present) {
+						def parsedBody = BodyConverter.toSCCBody(response)
+						if (parsedBody instanceof Map) {
+							body(parsedBody as Map)
+						} else if (parsedBody instanceof List) {
+							body(parsedBody as List)
+						} else {
+							body(parsedBody.toString())
+						}
+					}
+					Category bodyRules = response.matchingRules.rulesForCategory('body')
+					if (bodyRules && !bodyRules.matchingRules.isEmpty()) {
+						bodyMatchers {
+							bodyRules.matchingRules.each { String key, MatchingRuleGroup ruleGroup ->
+								if (ruleGroup.ruleLogic != RuleLogic.AND) {
+									throw new UnsupportedOperationException("Currently only the AND combination rule logic is supported")
+								}
+
+								if (FULL_BODY.equals(key)) {
+									JsonPaths jsonPaths = JsonToJsonPathsConverter.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(response.body.value)
+									jsonPaths.each {
+										jsonPath(it.keyBeforeChecking(), byType())
+									}
+								} else {
+									ruleGroup.rules.each { MatchingRule rule ->
+										if (rule instanceof NullMatcher) {
+											jsonPath(key, byNull())
+										} else if (rule instanceof RegexMatcher) {
+											jsonPath(key, byRegex(rule.regex))
+										} else if (rule instanceof DateMatcher) {
+											jsonPath(key, byDate())
+										} else if (rule instanceof TimeMatcher) {
+											jsonPath(key, byTime())
+										} else if (rule instanceof TimestampMatcher) {
+											jsonPath(key, byTimestamp())
+										} else if (rule instanceof MinTypeMatcher) {
+											jsonPath(key, byType() {
+												minOccurrence((rule as MinTypeMatcher).min)
+											})
+										} else if (rule instanceof MinMaxTypeMatcher) {
+											jsonPath(key, byType() {
+												minOccurrence((rule as MinMaxTypeMatcher).min)
+												maxOccurrence((rule as MinMaxTypeMatcher).max)
+											})
+										} else if (rule instanceof MaxTypeMatcher) {
+											jsonPath(key, byType() {
+												maxOccurrence((rule as MaxTypeMatcher).max)
+											})
+										} else if (rule instanceof TypeMatcher) {
+											jsonPath(key, byType())
+										} else if (rule instanceof NumberTypeMatcher) {
+											switch (rule.numberType) {
+												case NumberTypeMatcher.NumberType.NUMBER:
+													jsonPath(key, byRegex(regexPatterns.number()))
+													break
+												case NumberTypeMatcher.NumberType.INTEGER:
+													jsonPath(key, byRegex(regexPatterns.anInteger()))
+													break
+												case NumberTypeMatcher.NumberType.DECIMAL:
+													jsonPath(key, byRegex(regexPatterns.aDouble()))
+													break
+												default:
+													throw new UnsupportedOperationException("Unsupported number type!")
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					if (response.headers) {
+						Category headerRules = response.matchingRules.rulesForCategory('header')
+						headers {
+							response.headers.forEach({ String k, String v ->
+								if (headerRules.matchingRules.containsKey(k)) {
+									MatchingRuleGroup ruleGroup = headerRules.matchingRules.get(k)
+									if (ruleGroup.rules.size() > 1) {
+										throw new UnsupportedOperationException("Currently only 1 rule at a time for a header is supported")
+									}
+									MatchingRule rule = ruleGroup.rules[0]
+									if (rule instanceof RegexMatcher) {
+										header(k, new DslProperty(new DslProperty(v), new NotToEscapePattern(Pattern.compile(rule.getRegex()))))
+									} else {
+										throw new UnsupportedOperationException("Currently only the header matcher of type regex is supported")
+									}
+								} else {
+									header(k, v)
+								}
+							})
+						}
+					}
+				}
+			}
+		}
+	}
+
 	private String buildDescription(RequestResponseInteraction interaction) {
 		String description = "$interaction.description"
 		interaction.providerStates.forEach({ ProviderState it ->

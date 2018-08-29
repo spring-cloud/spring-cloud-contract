@@ -10,7 +10,7 @@ buildscript {
 		maven { url "http://repo.spring.io/plugins-staging-local/" }
 	}
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.0.1.RELEASE"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.1.0.M2"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${project.findProperty('verifierVersion') ?: verifierVersion}"
 	}
 }
@@ -70,7 +70,7 @@ contracts {
 generateClientStubs.enabled = false
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.0.2'
+    gradleVersion = '4.10'
 }
 
 task stubsJar(type: Jar, dependsOn: ['copySnippets', 'copySources', 'copyClasses']) {

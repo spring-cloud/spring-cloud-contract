@@ -33,6 +33,7 @@ hs_err_pid*
 .gradle/
 target/
 build/
+out/
 
 hs_err_pid*
 .DS_Store

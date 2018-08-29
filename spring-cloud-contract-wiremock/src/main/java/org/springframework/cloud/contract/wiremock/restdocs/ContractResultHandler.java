@@ -48,7 +48,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultHandler;
-import org.springframework.util.StreamUtils;
 import wiremock.com.google.common.base.Function;
 import wiremock.com.google.common.base.Joiner;
 import wiremock.com.google.common.base.Optional;
@@ -123,12 +122,7 @@ public class ContractResultHandler
 	}
 
 	@Override protected byte[] getRequestBodyContent(MvcResult result) {
-		try {
-			return StreamUtils.copyToByteArray(result.getRequest().getInputStream());
-		}
-		catch (IOException e) {
-			throw new IllegalStateException("Cannot create request body", e);
-		}
+		return new WireMockHttpServletRequestAdapter(result.getRequest()).getBody();
 	}
 
 }
