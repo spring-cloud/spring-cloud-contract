@@ -1,5 +1,6 @@
 package org.springframework.cloud.contract.verifier.template
 
+import com.github.tomakehurst.wiremock.extension.responsetemplating.helpers.WireMockHelpers
 import wiremock.com.github.jknack.handlebars.Handlebars
 import wiremock.com.github.jknack.handlebars.Template
 import groovy.transform.CompileStatic
@@ -71,6 +72,12 @@ class HandlebarsTemplateProcessor implements TemplateProcessor, ContractTemplate
 		try {
 			Handlebars handlebars = new Handlebars()
 			handlebars.registerHelper(HandlebarsJsonPathHelper.NAME, new HandlebarsJsonPathHelper())
+			handlebars.registerHelper(WireMockHelpers.jsonPath.name(), new HandlebarsJsonPathHelper())
+			WireMockHelpers.values()
+					.findAll { it != WireMockHelpers.jsonPath}
+					.each { WireMockHelpers helper ->
+				handlebars.registerHelper(helper.name(), helper)
+			}
 			return handlebars.compileInline(content)
 		} catch (IOException e) {
 			throw new RuntimeException(e)
