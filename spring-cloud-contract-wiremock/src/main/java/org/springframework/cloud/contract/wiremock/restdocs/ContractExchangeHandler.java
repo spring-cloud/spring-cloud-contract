@@ -194,7 +194,11 @@ class WireMockHttpRequestAdapter implements Request {
 			return null;
 		}
 		List<String> values = new ArrayList<>();
-		for (String name : StringUtils.split(query, "&")) {
+		String[] strings = StringUtils.split(query, "&");
+		if (strings == null) {
+			return null;
+		}
+		for (String name : strings) {
 			if (name.equals(key)) {
 				values.add("");
 			}
