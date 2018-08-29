@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2018-08-27</date>
+<date>2018-08-11</date>
 </info>
 <preface>
 <title></title>
@@ -1553,7 +1553,7 @@ one to one to the contents of the repo.</simpara>
 	&lt;parent&gt;
 		&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
 		&lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
-		&lt;version&gt;2.0.3.RELEASE&lt;/version&gt;
+		&lt;version&gt;2.1.0.M2&lt;/version&gt;
 		&lt;relativePath /&gt;
 	&lt;/parent&gt;
 
@@ -1561,7 +1561,7 @@ one to one to the contents of the repo.</simpara>
 		&lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
 		&lt;java.version&gt;1.8&lt;/java.version&gt;
 		&lt;spring-cloud-contract.version&gt;2.1.0.BUILD-SNAPSHOT&lt;/spring-cloud-contract.version&gt;
-		&lt;spring-cloud-release.version&gt;Finchley.BUILD-SNAPSHOT&lt;/spring-cloud-release.version&gt;
+		&lt;spring-cloud-release.version&gt;Greenwich.BUILD-SNAPSHOT&lt;/spring-cloud-release.version&gt;
 		&lt;excludeBuildFolders&gt;true&lt;/excludeBuildFolders&gt;
 	&lt;/properties&gt;
 
@@ -3957,7 +3957,7 @@ a stub. Then it is parsed on the consumer side and proper stubbed routes are cre
 		&lt;dependency&gt;
 			&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
 			&lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
-			&lt;version&gt;Finchley.BUILD-SNAPSHOT&lt;/version&gt;
+			&lt;version&gt;Greenwich.BUILD-SNAPSHOT&lt;/version&gt;
 			&lt;type&gt;pom&lt;/type&gt;
 			&lt;scope&gt;import&lt;/scope&gt;
 		&lt;/dependency&gt;
@@ -5557,14 +5557,14 @@ property.</simpara>
 	input {
 		messageFrom('bookStorage')
 		messageBody([
-			bookName: 'foo'
+				bookName: 'foo'
 		])
 		messageHeaders { header('sample', 'header') }
 	}
 	outputMessage {
 		sentTo('returnBook')
 		body([
-			bookName: 'foo'
+				bookName: 'foo'
 		])
 		headers { header('BOOK-NAME', 'foo') }
 	}

@@ -171,14 +171,14 @@ property.</p><p>Assume that you have the following Maven repository with a deplo
 	input {
 		messageFrom(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'bookStorage'</span>)
 		messageBody([
-			bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+				bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
 		])
 		messageHeaders { header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sample'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'header'</span>) }
 	}
 	outputMessage {
 		sentTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'returnBook'</span>)
 		body([
-			bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
+				bookName: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>
 		])
 		headers { header(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'BOOK-NAME'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'foo'</span>) }
 	}
