@@ -245,7 +245,7 @@ class RequestResponseSCContractCreator {
 			}
 		}
 	}
-	
+
 	private String buildDescription(RequestResponseInteraction interaction) {
 		String description = "$interaction.description"
 		interaction.providerStates.forEach({ ProviderState it ->
