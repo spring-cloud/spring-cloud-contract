@@ -1,6 +1,7 @@
 package org.springframework.cloud.contract.verifier.builder.handlebars
 
 import com.github.tomakehurst.wiremock.extension.responsetemplating.helpers.WireMockHelpers
+import com.github.tomakehurst.wiremock.extension.responsetemplating.helpers.WiremockHelpers
 import wiremock.com.github.jknack.handlebars.Helper
 import wiremock.com.github.jknack.handlebars.Options
 import com.github.tomakehurst.wiremock.extension.responsetemplating.RequestTemplateModel
@@ -35,7 +36,7 @@ class HandlebarsJsonPathHelper implements Helper<Map<String, Object>> {
 			}
 			throw new IllegalArgumentException("Unsupported model")
 		} else if (context instanceof String) {
-			Object value = WireMockHelpers.jsonPath.apply(context, options)
+			Object value = WiremockHelpers.jsonPath.apply(context, options)
 			if (testSideModel(options)) {
 				return processTestResponseValue(value)
 			}
