@@ -16,13 +16,13 @@ import org.springframework.cloud.contract.verifier.builder.TestSideRequestTempla
  * @since 1.1.0
  */
 @CompileStatic
-class HandlebarsJsonPathHelper implements Helper<Map<String, Object>> {
+class HandlebarsJsonPathHelper implements Helper<Object> {
 
 	public static final String NAME = "jsonpath"
 	public static final String REQUEST_MODEL_NAME = "request"
 
 	@Override
-	Object apply(Map<String, Object> context, Options options) throws IOException {
+	Object apply(Object context, Options options) throws IOException {
 		if (context instanceof Map<String, Object>) {
 			// legacy
 			Map<String, Object> oldContext = (Map<String, Object>) context
