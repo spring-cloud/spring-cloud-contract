@@ -69,6 +69,8 @@ class MapConverter {
 				def json = new JsonSlurper().parseText(value)
 				if (json instanceof Map) {
 					return convert(json, closure)
+				} else if (json instanceof List) {
+					return transformValues(json, closure)
 				}
 			} catch (Exception ignore) {
 			}

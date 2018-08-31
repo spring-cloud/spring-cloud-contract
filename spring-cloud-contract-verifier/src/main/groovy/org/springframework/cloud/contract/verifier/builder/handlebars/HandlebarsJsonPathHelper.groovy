@@ -1,6 +1,8 @@
 package org.springframework.cloud.contract.verifier.builder.handlebars
 
 import com.github.tomakehurst.wiremock.extension.responsetemplating.helpers.WireMockHelpers
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import wiremock.com.github.jknack.handlebars.Helper
 import wiremock.com.github.jknack.handlebars.Options
 import com.github.tomakehurst.wiremock.extension.responsetemplating.RequestTemplateModel
@@ -18,12 +20,17 @@ import org.springframework.cloud.contract.verifier.builder.TestSideRequestTempla
 @CompileStatic
 class HandlebarsJsonPathHelper implements Helper<Object> {
 
+	private static final Log log = LogFactory.getLog(HandlebarsJsonPathHelper)
+
 	public static final String NAME = "jsonpath"
 	public static final String REQUEST_MODEL_NAME = "request"
 
 	@Override
 	Object apply(Object context, Options options) throws IOException {
 		if (context instanceof Map<String, Object>) {
+			if (log.isTraceEnabled()) {
+				log.trace("Will apply the legacy [jsonpath this] handlebars function")
+			}
 			// legacy
 			Map<String, Object> oldContext = (Map<String, Object>) context
 			String jsonPath = options.param(0)
@@ -35,7 +42,10 @@ class HandlebarsJsonPathHelper implements Helper<Object> {
 			}
 			throw new IllegalArgumentException("Unsupported model")
 		} else if (context instanceof String) {
-			Object value = WireMockHelpers.jsonPath.apply(context, options)
+			if (log.isTraceEnabled()) {
+				log.trace("Will apply the native WireMock [jsonPath request.body] handlebars function")
+			}
+			Object value = WireMockHelpers.jsonPath.apply(prepareForJsonPathCheck(context), options)
 			if (testSideModel(options)) {
 				return processTestResponseValue(value)
 			}
@@ -59,10 +69,14 @@ class HandlebarsJsonPathHelper implements Helper<Object> {
 	}
 
 	private Object returnObjectForTest(TestSideRequestTemplateModel model, String jsonPath) {
-		String body = removeSurroundingQuotes(model.rawBody).replace('\\"', '"')
+		String body = prepareForJsonPathCheck(model.rawBody)
 		DocumentContext documentContext = JsonPath.parse(body)
 		Object value = documentContext.read(jsonPath)
 		return processTestResponseValue(value)
+	}
+
+	protected String prepareForJsonPathCheck(String body) {
+		return removeSurroundingQuotes(body).replace('\\"', '"')
 	}
 
 	private Object processTestResponseValue(Object value) {
