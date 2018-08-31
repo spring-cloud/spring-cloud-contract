@@ -7126,6 +7126,35 @@ matches the JSON Path. E.g. for json path <literal>$.foo</literal> - <literal>{{
 				rawResponseBaz2: "Bla bla ${fromRequest().rawBody('$.foo')} bla bla"
 		)
 	}
+}
+Contract contractDsl = Contract.make {
+	request {
+		method 'GET'
+		url('/api/v1/xxxx') {
+			queryParameters {
+				parameter("foo", "bar")
+				parameter("foo", "bar2")
+			}
+		}
+		headers {
+			header(authorization(), "secret")
+			header(authorization(), "secret2")
+		}
+		body(foo: "bar", baz: 5)
+	}
+	response {
+		status OK()
+		headers {
+			contentType(applicationJson())
+		}
+		body('''
+				{
+					"responseFoo": "{{{ jsonPath request.body '$.foo' }}}",
+					"responseBaz": {{{ jsonPath request.body '$.baz' }}},
+					"responseBaz2": "Bla bla {{{ jsonPath request.body '$.foo' }}} bla bla"
+				}
+		'''.toString())
+	}
 }</programlisting>
 </para>
 </formalpara>
