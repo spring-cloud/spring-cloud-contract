@@ -23,7 +23,7 @@ ext {
 	]
 }
 
-project.version = findProperty('verifierVersion') ?: '2.1.0.BUILD-SNAPSHOT'
+project.version = findProperty('verifierVersion')
 apply plugin: 'groovy'
 apply from: "$rootDir/gradle/release.gradle"
 apply plugin: 'eclipse'
@@ -32,8 +32,8 @@ apply plugin: 'checkstyle'
 
 group = 'org.springframework.cloud'
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
 	mavenLocal()
@@ -75,7 +75,7 @@ dependencies {
 	}
 	testCompile 'info.solidsoft.spock:spock-global-unroll:0.5.0'
 	testCompile gradleTestKit()
-	checkstyle 'org.springframework.cloud:spring-cloud-build:1.0.2.RELEASE'
+	checkstyle 'org.springframework.cloud:spring-cloud-build:2.0.3.RELEASE'
 
 }
 

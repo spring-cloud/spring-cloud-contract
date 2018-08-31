@@ -447,7 +447,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
 	}
 
-		def "should generate assertions for array inside response body element with #methodBuilderName"() {
+	def "should generate assertions for array inside response body element with #methodBuilderName"() {
 		given:
 		Contract contractDsl = Contract.make {
 			request {
@@ -2645,6 +2645,60 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | { String body -> body.contains('assertThat(response.header("Authorization")).isEqualTo("foo secret bar");') }
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String body -> body.contains("response.getHeaderString('Authorization')  == 'foo secret bar'") }
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String body -> body.contains('assertThat(response.getHeaderString("Authorization")).isEqualTo("foo secret bar");') }
+	}
+
+	@Issue("#230")
+	def "should manage to reference request in response via WireMock native entries [#methodBuilderName]"() {
+		given:
+			//tag::template_contract[]
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url('/api/v1/xxxx') {
+						queryParameters {
+							parameter("foo", "bar")
+							parameter("foo", "bar2")
+						}
+					}
+					headers {
+						header(authorization(), "secret")
+						header(authorization(), "secret2")
+					}
+					body(foo: "bar", baz: 5)
+				}
+				response {
+					status OK()
+					headers {
+						contentType(applicationJson())
+					}
+					body(''' 
+							{
+								"responseFoo": "{{{ jsonPath request.body '$.foo' }}}",
+								"responseBaz": {{{ jsonPath request.body '$.baz' }}},
+								"responseBaz2": "Bla bla {{{ jsonPath request.body '$.foo' }}} bla bla"
+							}
+					'''.toString())
+				}
+			}
+			//end::template_contract[]
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		and:
+			builder.appendTo(blockBuilder)
+			String test = blockBuilder.toString()
+		when:
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+		then:
+			!test.contains('''DslProperty''')
+			test.contains('''assertThatJson(parsedJson).field("['responseFoo']").isEqualTo("bar")''')
+			test.contains('''assertThatJson(parsedJson).field("['responseBaz']").isEqualTo(5)''')
+			test.contains('''assertThatJson(parsedJson).field("['responseBaz2']").isEqualTo("Bla bla bar bla bla")''')
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
 
 	def "should generate JUnit assertions with cookies"() {

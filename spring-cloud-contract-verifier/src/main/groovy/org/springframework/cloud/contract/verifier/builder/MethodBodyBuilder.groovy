@@ -367,6 +367,14 @@ abstract class MethodBodyBuilder {
 	
 	private void addJsonResponseBodyCheck(BlockBuilder bb, convertedResponseBody, BodyMatchers bodyMatchers) {
 		appendJsonPath(bb, getResponseAsString())
+		DocumentContext parsedRequestBody
+		if (contract.request?.body) {
+			def testSideRequestBody = MapConverter.getTestSideValues(contract.request.body)
+			parsedRequestBody = JsonPath.parse(testSideRequestBody)
+			if (convertedResponseBody instanceof String && !textContainsJsonPathTemplate(convertedResponseBody)) {
+				convertedResponseBody = templateProcessor.transform(contract.request, convertedResponseBody.toString())
+			}
+		}
 		Object copiedBody = cloneBody(convertedResponseBody)
 		convertedResponseBody = JsonToJsonPathsConverter.removeMatchingJsonPaths(convertedResponseBody, bodyMatchers)
 		// remove quotes from fromRequest objects before picking json paths
@@ -374,11 +382,6 @@ abstract class MethodBodyBuilder {
 				TestSideRequestTemplateModel.from(contract.request) : null
 		convertedResponseBody = MapConverter.transformValues(convertedResponseBody, returnReferencedEntries(templateModel))
 		JsonPaths jsonPaths = new JsonToJsonPathsConverter(configProperties).transformToJsonPathWithTestsSideValues(convertedResponseBody)
-		DocumentContext parsedRequestBody
-		if (contract.request?.body) {
-			def requestBody = MapConverter.getTestSideValues(contract.request.body)
-			parsedRequestBody = JsonPath.parse(requestBody)
-		}
 		jsonPaths.each {
 			String method = it.method()
 			method = processIfTemplateIsPresent(method, parsedRequestBody)
@@ -448,8 +451,7 @@ abstract class MethodBodyBuilder {
 	}
 
 	protected String processIfTemplateIsPresent(String method, DocumentContext parsedRequestBody) {
-		if (templateProcessor.containsTemplateEntry(method) &&
-				templateProcessor.containsJsonPathTemplateEntry(method) && contract.request?.body) {
+		if (textContainsJsonPathTemplate(method) && contract.request?.body) {
 			// Unquoting the values of non strings
 			String jsonPathEntry = templateProcessor.jsonPathFromTemplateEntry(method)
 			Object object = parsedRequestBody.read(jsonPathEntry)
@@ -462,6 +464,11 @@ abstract class MethodBodyBuilder {
 			}
 		}
 		return method
+	}
+
+	protected boolean textContainsJsonPathTemplate(String method) {
+		return templateProcessor.containsTemplateEntry(method) &&
+				templateProcessor.containsJsonPathTemplateEntry(method)
 	}
 
 	protected void methodForEqualityCheck(BodyMatcher bodyMatcher, BlockBuilder bb, Object copiedBody) {
