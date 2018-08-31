@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2018-08-31</date>
+<date>2018-08-30</date>
 </info>
 <preface>
 <title></title>
@@ -7190,6 +7190,35 @@ matches the JSON Path. E.g. for json path <literal>$.foo</literal> - <literal>{{
 				responseBaz: fromRequest().body('$.baz'),
 				responseBaz2: "Bla bla ${fromRequest().body('$.foo')} bla bla"
 		)
+	}
+}
+Contract contractDsl = Contract.make {
+	request {
+		method 'GET'
+		url('/api/v1/xxxx') {
+			queryParameters {
+				parameter("foo", "bar")
+				parameter("foo", "bar2")
+			}
+		}
+		headers {
+			header(authorization(), "secret")
+			header(authorization(), "secret2")
+		}
+		body(foo: "bar", baz: 5)
+	}
+	response {
+		status OK()
+		headers {
+			contentType(applicationJson())
+		}
+		body('''
+				{
+					"responseFoo": "{{{ jsonPath request.body '$.foo' }}}",
+					"responseBaz": {{{ jsonPath request.body '$.baz' }}},
+					"responseBaz2": "Bla bla {{{ jsonPath request.body '$.foo' }}} bla bla"
+				}
+		'''.toString())
 	}
 }</programlisting>
 </para>

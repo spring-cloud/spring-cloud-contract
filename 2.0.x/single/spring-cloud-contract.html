@@ -4346,6 +4346,35 @@ matches the JSON Path. E.g. for json path <code class="literal">$.foo</code> - <
 				responseBaz2: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Bla bla ${fromRequest().body('$.foo')} bla bla"</span>
 		)
 	}
+}
+Contract contractDsl = Contract.make {
+	request {
+		method <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'GET'</span>
+		url(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/api/v1/xxxx'</span>) {
+			queryParameters {
+				parameter(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar"</span>)
+				parameter(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"foo"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar2"</span>)
+			}
+		}
+		headers {
+			header(authorization(), <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"secret"</span>)
+			header(authorization(), <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"secret2"</span>)
+		}
+		body(foo: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar"</span>, baz: <span class="hl-number">5</span>)
+	}
+	response {
+		status OK()
+		headers {
+			contentType(applicationJson())
+		}
+		body(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'
+</span>				{
+					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"responseFoo"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{{{ jsonPath request.body '$.foo' }}}"</span>,
+					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"responseBaz"</span>: {{{ jsonPath request.body <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'$.baz'</span> }}},
+					<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"responseBaz2"</span>: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Bla bla {{{ jsonPath request.body '$.foo' }}} bla bla"</span>
+				}
+		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span><span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'.toString())
+</span>	}
 }</pre><p>
 </p><p><b>YAML.&nbsp;</b>
 </p><pre class="programlisting">request:
