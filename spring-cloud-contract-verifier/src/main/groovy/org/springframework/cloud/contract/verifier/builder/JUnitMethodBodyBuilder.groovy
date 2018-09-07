@@ -26,12 +26,14 @@ import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.util.RegexpBuilders
 
 import java.util.regex.Pattern
 
 import static groovy.json.StringEscapeUtils.escapeJava
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
 import static org.springframework.cloud.contract.verifier.util.ContentUtils.getJavaMultipartFileParameterContent
+
 /**
  * Root class for JUnit method building
  *
@@ -78,7 +80,7 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 
 	@Override
 	protected String getResponseBodyPropertyComparisonString(String property, Pattern value) {
-		return "assertThat(responseBody${property}).${buildEscapedMatchesMethod(value)}"
+		return "assertThat(responseBody${property}).${createBodyComparison(value)}"
 	}
 
 	@Override
@@ -183,6 +185,11 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 		return buildEscapedMatchesMethod(headerValue) + ";"
 	}
 
+	protected String createBodyComparison(Pattern bodyValue) {
+		String patternAsString = bodyValue.pattern()
+		return createMatchesMethod(RegexpBuilders.buildGStringRegexpForTestSide(patternAsString)) + ";"
+	}
+
 	protected String createCookieComparison(Object cookieValue) {
         String escapedCookie = convertUnicodeEscapesIfRequired("$cookieValue")
 		return "isEqualTo(\"$escapedCookie\");"
@@ -197,8 +204,7 @@ abstract class JUnitMethodBodyBuilder extends RequestProcessingMethodBodyBuilder
 		return createMatchesMethod(escapedHeader)
 	}
 
-	protected String createMatchesMethod(String escapedHeader) {
-		return "matches(\"$escapedHeader\")"
+	protected String createMatchesMethod(String pattern) {
+		return "matches(\"$pattern\")"
 	}
-
 }

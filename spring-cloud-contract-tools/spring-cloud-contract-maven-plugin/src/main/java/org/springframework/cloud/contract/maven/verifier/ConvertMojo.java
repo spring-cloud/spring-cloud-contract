@@ -145,8 +145,11 @@ public class  ConvertMojo extends AbstractMojo {
 	/**
 	 * If {@code true} then will not assert whether a stub / contract
 	 * JAR was downloaded from local or remote location
+	 *
+	 * @deprecated - with 2.1.0 this option is redundant
 	 */
 	@Parameter(property = "contractsSnapshotCheckSkip", defaultValue = "false")
+	@Deprecated
 	private boolean contractsSnapshotCheckSkip;
 
 
@@ -230,7 +233,7 @@ public class  ConvertMojo extends AbstractMojo {
 					this.contractsPath, this.contractsRepositoryUrl, this.contractsMode, getLog(),
 					this.contractsRepositoryUsername, this.contractsRepositoryPassword,
 					this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort,
-					this.contractsSnapshotCheckSkip, this.deleteStubsAfterTest, this.contractsProperties)
+					this.deleteStubsAfterTest, this.contractsProperties)
 					.downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
 	}
 

@@ -31,6 +31,7 @@ import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.PathMatcher
 import java.util.regex.Pattern
+
 /**
  * Scans the provided file path for the DSLs. There's a possibility to provide
  * inclusion and exclusion filters.
@@ -52,25 +53,31 @@ class ContractFileScanner {
 	private final File baseDir
 	private final Set<PathMatcher> excludeMatchers
 	private final Set<PathMatcher> ignoreMatchers
+	private final Set<PathMatcher> includeMatchers
 	private final String includeMatcher
 
-	ContractFileScanner(File baseDir, Set<String> excluded, Set<String> ignored, String includeMatcher = "") {
+	ContractFileScanner(File baseDir, Set<String> excluded, Set<String> ignored,
+						Set<String> included = [],
+						String includeMatcher = "") {
 		this.baseDir = baseDir
 		this.excludeMatchers = processPatterns(excluded ?: [] as Set<String>)
 		this.ignoreMatchers = processPatterns(ignored ?: [] as Set<String>)
+		this.includeMatchers = processPatterns(included ?: [] as Set<String>)
 		this.includeMatcher = includeMatcher
 	}
 
 	private Set<PathMatcher> processPatterns(Set<String> patterns) {
 		FileSystem fileSystem = FileSystems.getDefault()
-		return patterns.collect({
-			String syntaxAndPattern = MATCH_PREFIX + '**' + File.separator + it
+		Set<PathMatcher> pathMatchers = new HashSet<PathMatcher>()
+		for (String pattern : patterns) {
+			String syntaxAndPattern = MATCH_PREFIX + '**' + File.separator + pattern
 			// FIXME: This looks strange, need to be checked on windows
 			if (IS_OS_WINDOWS) {
 				syntaxAndPattern = syntaxAndPattern.replace("\\", "\\\\")
 			}
-			fileSystem.getPathMatcher(syntaxAndPattern)
-		}) as Set
+			pathMatchers.add(fileSystem.getPathMatcher(syntaxAndPattern))
+		}
+		return pathMatchers
 	}
 
 	/**
@@ -88,6 +95,7 @@ class ContractFileScanner {
 	 */
 	private void appendRecursively(File baseDir, ListMultimap<Path, ContractMetadata> result) {
 		List<ContractConverter> converters = converters()
+		converters.add(YamlContractConverter.INSTANCE)
 		if (log.isTraceEnabled()) {
 			log.trace("Found the following contract converters ${converters}")
 		}
@@ -102,10 +110,9 @@ class ContractFileScanner {
 			if (!excluded) {
 				boolean contractFile = isContractFile(file)
 				boolean included = includeMatcher ? file.absolutePath.matches(includeMatcher) : true
+				included = includeMatchers ? matchesPattern(file, includeMatchers) : included
 				if (contractFile && included) {
 					addContractToTestGeneration(result, files, file, i, ContractVerifierDslConverter.convertAsCollection(baseDir, file))
-				} else if (YamlContractConverter.INSTANCE.isAccepted(file) && included) {
-					addContractToTestGeneration(result, files, file, i, YamlContractConverter.INSTANCE.convertFrom(file))
 				} else if (!contractFile && included) {
 					addContractToTestGeneration(converters, result, files, file, i)
 				} else {
@@ -127,7 +134,7 @@ class ContractFileScanner {
 	}
 
 	private void addContractToTestGeneration(List<ContractConverter> converters, ListMultimap<Path, ContractMetadata> result,
-											File[] files, File file, int index) {
+											 File[] files, File file, int index) {
 		boolean converted = false
 		if (!file.isDirectory()) {
 			for (ContractConverter converter : converters) {
@@ -155,15 +162,12 @@ class ContractFileScanner {
 		try {
 			return converter.convertFrom(file)
 		} catch (Exception e) {
-			if (log.isDebugEnabled()) {
-				log.debug("Exception occurred while trying to convert the file", e)
-			}
-			return null
+			throw new IllegalStateException("Failed to convert file [" + file + "]", e)
 		}
 	}
 
 	private void addContractToTestGeneration(ListMultimap<Path, ContractMetadata> result, File[] files, File file,
-											int index, Collection<Contract> convertedContract) {
+											 int index, Collection<Contract> convertedContract) {
 		Path path = file.toPath()
 		Integer order = null
 		if (hasScenarioFilenamePattern(path)) {
@@ -198,7 +202,7 @@ class ContractFileScanner {
 	private boolean isContractFile(File file) {
 		return file.isFile() && getFilenameExtension(file.toString())?.equalsIgnoreCase("groovy")
 	}
-	
+
 	private static String getFilenameExtension(String path) {
 		if (path == null) {
 			return null

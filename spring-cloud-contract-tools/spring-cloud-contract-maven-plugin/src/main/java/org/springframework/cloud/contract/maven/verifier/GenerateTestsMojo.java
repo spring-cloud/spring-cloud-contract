@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.apache.maven.model.Dependency;
@@ -33,6 +34,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.RepositorySystemSession;
+
 import org.springframework.cloud.contract.maven.verifier.stubrunner.AetherStubDownloaderFactory;
 import org.springframework.cloud.contract.spec.ContractVerifierException;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
@@ -95,6 +97,12 @@ public class GenerateTestsMojo extends AbstractMojo {
 	 */
 	@Parameter
 	private List<String> excludedFiles;
+
+	/**
+	 * Patterns that should be taken into account for processing
+	 */
+	@Parameter(property = "includedFiles")
+	private List<String> includedFiles;
 
 	/**
 	 * Incubating feature. You can check the size of JSON arrays. If not turned on
@@ -199,8 +207,11 @@ public class GenerateTestsMojo extends AbstractMojo {
 	/**
 	 * If {@code true} then will not assert whether a stub / contract
 	 * JAR was downloaded from local or remote location
+	 *
+	 * @deprecated - with 2.1.0 this option is redundant
 	 */
 	@Parameter(property = "contractsSnapshotCheckSkip", defaultValue = "false")
+	@Deprecated
 	private boolean contractsSnapshotCheckSkip;
 
 	/**
@@ -238,7 +249,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 				this.contractsPath, this.contractsRepositoryUrl, this.contractsMode, getLog(),
 				this.contractsRepositoryUsername, this.contractsRepositoryPassword,
 				this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort,
-				this.contractsSnapshotCheckSkip, this.deleteStubsAfterTest, this.contractsProperties).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
+				this.deleteStubsAfterTest, this.contractsProperties).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 		setupConfig(config, contractsDirectory);
 		this.project.addTestCompileSourceRoot(this.generatedTestSourcesDir.getAbsolutePath());
@@ -277,6 +288,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 		config.setStaticImports(this.staticImports);
 		config.setIgnoredFiles(this.ignoredFiles);
 		config.setExcludedFiles(this.excludedFiles);
+		config.setIncludedFiles(this.includedFiles);
 		config.setAssertJsonSize(this.assertJsonSize);
 		config.setPackageWithBaseClasses(this.packageWithBaseClasses);
 		if (this.baseClassMappings != null) {

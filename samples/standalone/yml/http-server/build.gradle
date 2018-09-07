@@ -9,7 +9,7 @@ buildscript {
 	}
 // end::repos[]
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.0.1.RELEASE"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.1.0.M2"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
 	}
 }
@@ -59,7 +59,7 @@ test {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.4.1'
+    gradleVersion = '4.10'
 }
 
 clean.doFirst {

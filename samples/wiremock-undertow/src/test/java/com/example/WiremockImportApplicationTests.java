@@ -12,13 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties="app.baseUrl=http://localhost:7070", webEnvironment=WebEnvironment.NONE)
-@DirtiesContext
 @AutoConfigureWireMock(port = 7070)
 public class WiremockImportApplicationTests {
 

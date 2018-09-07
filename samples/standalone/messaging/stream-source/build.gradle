@@ -7,10 +7,11 @@ buildscript {
 		maven { url "http://repo.spring.io/release" }
 	}
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.0.1.RELEASE"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.1.0.M2"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${findProperty('verifierVersion') ?: verifierVersion}"
-		classpath "com.jayway.restassured:rest-assured:2.9.0"
-		classpath "com.jayway.restassured:spring-mock-mvc:2.9.0"
+// Example of using Rest Assured 3.x. If you don't add this section Rest Assured 2.9.0 will be used
+//		classpath "com.jayway.restassured:rest-assured:2.9.0"
+//		classpath "com.jayway.restassured:spring-mock-mvc:2.9.0"
 	}
 }
 
@@ -55,8 +56,9 @@ dependencies {
 
 	testCompile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
 	testCompile "org.springframework.cloud:spring-cloud-stream-test-support"
-	testCompile "com.jayway.restassured:rest-assured:2.9.0"
-	testCompile "com.jayway.restassured:spring-mock-mvc:2.9.0"
+	// Example of using Rest Assured 3.x. If you don't add this section Rest Assured 2.9.0 will be used
+	// testCompile "com.jayway.restassured:rest-assured:2.9.0"
+	// testCompile "com.jayway.restassured:spring-mock-mvc:2.9.0"
 }
 
 task stubsJar(type: Jar, dependsOn: "generateClientStubs") {

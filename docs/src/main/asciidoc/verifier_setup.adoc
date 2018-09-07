@@ -245,13 +245,14 @@ from the Groovy DSL should be placed. By default its value is
 `$buildDir/generated-test-sources/contractVerifier`.
 * *stubsOutputDir*: Specifies the directory where the generated WireMock stubs from
 the Groovy DSL should be placed.
-* *targetFramework*: Specifies the target test framework to be used. Currently, Spock and
-JUnit are supported with JUnit being the default framework.
+* *targetFramework*: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (`TestFramework.JUNIT` and
+JUnit 5 are supported with JUnit 4 being the default framework.
 * *contractsProperties*: a map containing properties to be passed to Spring Cloud Contract
 components. Those properties might be used by e.g. inbuilt or custom Stub Downloaders.
 
 The following properties are used when you want to specify the location of the JAR
 containing the contracts:
+
 * *contractDependency*: Specifies the Dependency that provides
 `groupid:artifactid:version:classifier` coordinates. You can use the `contractDependency`
 closure to set it up.
@@ -260,8 +261,6 @@ closure to set it up.
  separated. Otherwise, it scans contracts under the provided directory.
 * *contractsMode*: Specifies the mode of downloading contracts (whether the
 JAR is available offline, remotely etc.)
-* *contractsSnapshotCheckSkip*: If set to `true` will not assert whether the
-downloaded stubs / contract JAR was downloaded from a remote location or a local one(only applicable to Maven repos, not Git or Pact).
 * *deleteStubsAfterTest*: If set to `false` will not remove any downloaded
 contracts from temporary directories
 
@@ -438,8 +437,8 @@ include::{standalone_samples_path}/http-server/pom.xml[tags=contract_maven_plugi
 ----
 
 You can read more in the
-https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract-maven-plugin/[Spring
-Cloud Contract Maven Plugin Documentation].
+https://cloud.spring.io/spring-cloud-static/spring-cloud-contract/2.0.0.RELEASE/spring-cloud-contract-maven-plugin/[Spring
+Cloud Contract Maven Plugin Documentation (example for `2.0.0.RELEASE` version)].
 
 [[maven-rest-assured]]
 ==== Maven and Rest Assured 2.0
@@ -582,8 +581,8 @@ classes.
 use Spock classes, the class is `spock.lang.Specification`.
 * *contractsDirectory*: Specifies a directory containing contracts written with the
 GroovyDSL. The default directory is `/src/test/resources/contracts`.
-* *testFramework*: Specifies the target test framework to be used. Currently, Spock and
-JUnit are supported with JUnit being the default framework
+* *testFramework*: Specifies the target test framework to be used. Currently, Spock, JUnit 4 (`TestFramework.JUNIT` and
+6JUnit 5 are supported with JUnit 4 being the default framework.
 * *packageWithBaseClasses*: Defines a package where all the base classes reside. This
 setting takes precedence over *baseClassForTests*. The convention is such that, if you
 have a contract under (for example) `src/test/resources/contract/foo/bar/baz/` and set
@@ -609,8 +608,6 @@ the following options:
 * *contractsPath*: The path to the concrete contracts in the JAR with packaged contracts.
 Defaults to `groupid/artifactid` where `gropuid` is slash separated.
 * *contractsMode*: Picks the mode in which stubs will be found and registered
-* *contractsSnapshotCheckSkip*: If `true` then will not assert whether a stub / contract
-JAR was downloaded from local or remote location
 * *deleteStubsAfterTest*: If set to `false` will not remove any downloaded
 contracts from temporary directories
 * *contractsRepositoryUrl*: URL to a repo with the artifacts that have contracts. If it is not provided,
@@ -944,27 +941,6 @@ For example, you might decide to have no dependencies at all.
 As a consumer, if you add the stub dependency to your classpath, you can explicitly
 exclude the unwanted dependencies.
 
-=== CI Server setup
-
-When fetching stubs / contracts in a CI, shared environment, what might happen is that
-both the producer and the consumer reuse the same local Maven repository. Due to this,
-the framework, responsible for downloading a stub JAR from remote location,
-can't decide which JAR should be picked, local or remote one. That caused
-the `"The artifact was found in the local repository but you have explicitly
-stated that it should be downloaded from a remote one"` exception
-and failed the build.
-
-For such cases we're introducing the property and plugin setup mechanism:
-
-- via `stubrunner.snapshot-check-skip` system property
-- via `STUBRUNNER_SNAPSHOT_CHECK_SKIP` environment variable
-
-if either of these values is set to `true`, then the stub downloader will not
-verify the origin of the downloaded JAR.
-
-For the plugins you need to set the `contractsSnapshotSkipCheck` property
-to `true`.
-
 === Scenarios
 
 You can handle scenarios with Spring Cloud Contract Verifier. All you need to do is to
@@ -989,7 +965,7 @@ name of `scenario1` and the three following steps:
 . logout marked as `Step2` which will close the scenario.
 
 More details about WireMock scenarios can be found at
-http://wiremock.org/stateful-behaviour.html[http://wiremock.org/stateful-behaviour.html]
+http://wiremock.org/docs/stateful-behaviour/[http://wiremock.org/docs/stateful-behaviour/]
 
 Spring Cloud Contract Verifier also generates tests with a guaranteed order of execution.
 

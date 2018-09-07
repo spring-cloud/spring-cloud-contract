@@ -11,12 +11,10 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=WiremockTestsApplication.class, properties="app.baseUrl=https://localhost:${wiremock.server.https-port}", webEnvironment=WebEnvironment.NONE)
-@DirtiesContext
 @AutoConfigureWireMock(port=0, httpsPort=0)
 public class AutoConfigureWireMockRandomPortHttpsApplicationTests {
 

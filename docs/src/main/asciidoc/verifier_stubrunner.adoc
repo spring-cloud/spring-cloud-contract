@@ -25,6 +25,7 @@ include::{standalone_samples_path}/http-server/pom.xml[tags=repos,indent=0]
 include::{standalone_samples_path}/http-server/build.gradle[tags=repos,indent=0]
 ----
 
+[[publishing-stubs-as-jars]]
 === Publishing Stubs as JARs
 
 The easiest approach would be to centralize the way stubs are kept. For example, you can
@@ -154,7 +155,7 @@ $ STUBRUNNER_PORT="8083"
 $ STUBRUNNER_IDS="com.example:bookstore:0.0.1.RELEASE:stubs:9876"
 $ STUBRUNNER_REPOSITORY_ROOT="http://${APP_IP}:8081/artifactory/libs-release-local"
 # Run the docker with Stub Runner Boot
-$ docker run  --rm -e "STUBRUNNER_IDS=${STUBRUNNER_IDS}" -e "STUBRUNNER_REPOSITORY_ROOT=${STUBRUNNER_REPOSITORY_ROOT}" -p "${STUBRUNNER_PORT}:${STUBRUNNER_PORT}" -p "9876:9876" springcloud/spring-cloud-contract-stub-runner:"${SC_CONTRACT_DOCKER_VERSION}"
+$ docker run  --rm -e "STUBRUNNER_IDS=${STUBRUNNER_IDS}" -e "STUBRUNNER_REPOSITORY_ROOT=${STUBRUNNER_REPOSITORY_ROOT}" -e "STUBRUNNER_STUBS_MODE=REMOTE" -p "${STUBRUNNER_PORT}:${STUBRUNNER_PORT}" -p "9876:9876" springcloud/spring-cloud-contract-stub-runner:"${SC_CONTRACT_DOCKER_VERSION}"
 ```
 
 What's happening is that
@@ -175,3 +176,7 @@ $ curl -H "Content-Type:application/json" -X POST --data '{ "title" : "Title", "
 $ curl -X GET http://localhost:9876/api/books
 # You will receive contents of the JSON
 ```
+
+IMPORTANT: If you want use the stubs that you have built locally, on your host,
+then you should pass the environment variable `-e STUBRUNNER_STUBS_MODE=LOCAL` and mount
+the volume of your local m2 `-v "${HOME}/.m2/:/root/.m2:ro"`

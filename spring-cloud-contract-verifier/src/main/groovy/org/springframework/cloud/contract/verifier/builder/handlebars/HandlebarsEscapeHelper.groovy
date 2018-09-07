@@ -34,7 +34,7 @@ class HandlebarsEscapeHelper implements Helper<Map<String, Object>> {
 	}
 
 	private Object returnObjectForTest(Object model) {
-		return ((TestSideRequestTemplateModel) model).rawBody
+		return ((TestSideRequestTemplateModel) model).escapedBody
 	}
 
 }

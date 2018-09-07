@@ -13,7 +13,6 @@ import org.springframework.cloud.contract.wiremock.WiremockServerRestDocsMatcher
 import org.springframework.cloud.contract.wiremock.restdocs.WireMockRestDocs;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -30,7 +29,6 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 @SpringBootTest(classes = TestConfiguration.class)
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 @AutoConfigureMockMvc
-@DirtiesContext
 public class WiremockServerRestDocsMatcherApplicationTests {
 
 	@Autowired
@@ -52,7 +50,7 @@ public class WiremockServerRestDocsMatcherApplicationTests {
 
 	@Test
 	public void doesNotMatch() throws Exception {
-		this.expected.expect(ComparisonFailure.class);
+		this.expected.expect(AssertionError.class);
 		this.expected.expectMessage("wiremock did not match");
 		this.mockMvc.perform(MockMvcRequestBuilders.post("/resource").content("greeting")
 				.contentType(MediaType.TEXT_PLAIN))

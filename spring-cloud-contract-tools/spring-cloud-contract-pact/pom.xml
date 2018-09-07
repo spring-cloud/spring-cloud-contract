@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-tools</artifactId>
-		<version>2.0.0.BUILD-SNAPSHOT</version>
+		<version>2.1.0.BUILD-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>spring-cloud-contract-pact</artifactId>
@@ -44,6 +44,11 @@
 		<dependency>
 			<groupId>au.com.dius</groupId>
 			<artifactId>pact-jvm-provider-junit_2.12</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure-processor</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.spockframework</groupId>

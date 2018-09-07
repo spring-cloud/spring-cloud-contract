@@ -57,7 +57,6 @@ public class AetherStubDownloader implements StubDownloader {
 	private static final String ARTIFACT_EXTENSION = "jar";
 	private static final String LATEST_ARTIFACT_VERSION = "(,]";
 	private static final String LATEST_VERSION_IN_IVY = "+";
-	private static final String STUBRUNNER_SNAPSHOT_CHECK_SKIP_SYSTEM_PROP = "stubrunner.snapshot-check-skip";
 	// Preloading class for the shutdown hook not to throw ClassNotFound
 	private static final Class CLAZZ = TemporaryFileStorage.class;
 
@@ -65,7 +64,6 @@ public class AetherStubDownloader implements StubDownloader {
 	private final RepositorySystem repositorySystem;
 	private final RepositorySystemSession session;
 	private final boolean workOffline;
-	private final boolean snapshotCheckSkip;
 	private final boolean deleteStubsAfterTest;
 
 	public AetherStubDownloader(StubRunnerOptions stubRunnerOptions) {
@@ -92,8 +90,6 @@ public class AetherStubDownloader implements StubDownloader {
 		this.repositorySystem = newRepositorySystem();
 		this.workOffline = stubRunnerOptions.stubsMode == StubRunnerProperties.StubsMode.LOCAL;
 		this.session = newSession(this.repositorySystem, this.workOffline);
-		this.snapshotCheckSkip =
-				stubRunnerOptions.isSnapshotCheckSkip() || skipSnapshotCheck();
 		registerShutdownHook();
 	}
 
@@ -118,7 +114,6 @@ public class AetherStubDownloader implements StubDownloader {
 			log.error("Remote repositories for stubs are not specified and work offline flag wasn't passed");
 		}
 		this.workOffline = false;
-		this.snapshotCheckSkip = skipSnapshotCheck();
 		registerShutdownHook();
 	}
 
@@ -150,28 +145,24 @@ public class AetherStubDownloader implements StubDownloader {
 
 	private File unpackedJar(String resolvedVersion, String stubsGroup,
 			String stubsModule, String classifier) {
-		log.info("Resolved version is [" + resolvedVersion + "]");
-		if (StringUtils.isEmpty(resolvedVersion)) {
-			log.warn("Stub for group [" + stubsGroup + "] module [" + stubsModule
-					+ "] and classifier [" + classifier + "] not found in "
-					+ this.remoteRepos);
-			return null;
-		}
-		Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier,
-				ARTIFACT_EXTENSION, resolvedVersion);
-		ArtifactRequest request = new ArtifactRequest(artifact, this.remoteRepos, null);
-		if (log.isDebugEnabled()) {
-			log.debug("Resolving artifact [" + artifact
-					+ "] using remote repositories " + this.remoteRepos);
-		}
 		try {
+			log.info("Resolved version is [" + resolvedVersion + "]");
+			if (StringUtils.isEmpty(resolvedVersion)) {
+				log.warn("Stub for group [" + stubsGroup + "] module [" + stubsModule
+						+ "] and classifier [" + classifier + "] not found in "
+						+ this.remoteRepos);
+				return null;
+			}
+			Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier,
+					ARTIFACT_EXTENSION, resolvedVersion);
+			ArtifactRequest request = new ArtifactRequest(artifact, this.remoteRepos, null);
+			if (log.isDebugEnabled()) {
+				log.debug("Resolving artifact [" + artifact
+						+ "] using remote repositories " + this.remoteRepos);
+			}
 			ArtifactResult result = this.repositorySystem.resolveArtifact(this.session, request);
 			log.info("Resolved artifact [" + artifact + "] to "
 					+ result.getArtifact().getFile());
-			if (!this.snapshotCheckSkip && resolvedFromLocalRepo(result) && shouldDownloadFromRemote()) {
-				throw new IllegalStateException("The artifact was found in the local repository "
-						+ "but you have explicitly stated that it should be downloaded from a remote one");
-			}
 			File temporaryFile = unpackStubJarToATemporaryFolder(
 					result.getArtifact().getFile().toURI());
 			log.info("Unpacked file to [" + temporaryFile + "]");
@@ -187,10 +178,6 @@ public class AetherStubDownloader implements StubDownloader {
 							+ "] and classifier [" + classifier + "] in " + this.remoteRepos,
 					e);
 		}
-	}
-
-	private boolean skipSnapshotCheck() {
-		return StubRunnerPropertyUtils.isPropertySet(STUBRUNNER_SNAPSHOT_CHECK_SKIP_SYSTEM_PROP);
 	}
 
 	private boolean resolvedFromLocalRepo(ArtifactResult result) {

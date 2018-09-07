@@ -18,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.WiremockServerRestDocsApplicationTests.TestConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -39,7 +38,6 @@ import wiremock.org.eclipse.jetty.http.HttpStatus;
 @SpringBootTest(classes = TestConfiguration.class)
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 @AutoConfigureMockMvc
-@DirtiesContext
 public class WiremockServerRestDocsApplicationTests {
 
 	@Autowired private MockMvc mockMvc;

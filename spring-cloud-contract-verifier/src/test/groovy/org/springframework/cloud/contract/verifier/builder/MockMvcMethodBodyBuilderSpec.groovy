@@ -447,7 +447,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
 	}
 
-		def "should generate assertions for array inside response body element with #methodBuilderName"() {
+	def "should generate assertions for array inside response body element with #methodBuilderName"() {
 		given:
 		Contract contractDsl = Contract.make {
 			request {
@@ -1515,8 +1515,7 @@ World.'''"""
 				method "GET"
 				urlPath('/auth/oauth/check_token') {
 					queryParameters {
-						parameter 'token':
-								value(
+						parameter 'token': value(
 										consumer(regex('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}')),
 										producer('6973b31d-7140-402a-bca6-1cdb954e03a7')
 								)
@@ -1551,8 +1550,7 @@ World.'''"""
 				method "GET"
 				urlPath('/auth/oauth/check_token') {
 					queryParameters {
-						parameter 'token':
-								value(
+						parameter 'token': value(
 										consumer(regex('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}')),
 										producer('6973b31d-7140-402a-bca6-1cdb954e03a7')
 								)
@@ -2594,7 +2592,17 @@ DocumentContext parsedJson = JsonPath.parse(json);
 							fullBody: fromRequest().body(),
 							responseFoo: fromRequest().body('$.foo'),
 							responseBaz: fromRequest().body('$.baz'),
-							responseBaz2: "Bla bla ${fromRequest().body('$.foo')} bla bla"
+							responseBaz2: "Bla bla ${fromRequest().body('$.foo')} bla bla",
+							rawUrl: fromRequest().rawUrl(),
+							rawPath: fromRequest().rawPath(),
+							rawPathIndex: fromRequest().rawPath(1),
+							rawParam: fromRequest().rawQuery("foo"),
+							rawParamIndex: fromRequest().rawQuery("foo", 1),
+							rawAuthorization: fromRequest().rawHeader("Authorization"),
+							rawAuthorization2: fromRequest().rawHeader("Authorization", 1),
+							rawResponseFoo: fromRequest().rawBody('$.foo'),
+							rawResponseBaz: fromRequest().rawBody('$.baz'),
+							rawResponseBaz2: "Bla bla ${fromRequest().rawBody('$.foo')} bla bla"
 					)
 				}
 			}
@@ -2608,6 +2616,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
 		then:
 			!test.contains('''DslProperty''')
+			!test.contains('''ERROR: ''')
 			test.contains('''assertThatJson(parsedJson).field("['url']").isEqualTo("/api/v1/xxxx?foo=bar&foo=bar2")''')
 			test.contains('''assertThatJson(parsedJson).field("['path']").isEqualTo("/api/v1/xxxx")''')
 			test.contains('''assertThatJson(parsedJson).field("['pathIndex']").isEqualTo("v1")''')
@@ -2619,6 +2628,16 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			test.contains('''assertThatJson(parsedJson).field("['responseBaz']").isEqualTo(5)''')
 			test.contains('''assertThatJson(parsedJson).field("['responseBaz2']").isEqualTo("Bla bla bar bla bla")''')
 			test.contains('''assertThatJson(parsedJson).field("['param']").isEqualTo("bar")''')
+			test.contains('''assertThatJson(parsedJson).field("['rawUrl']").isEqualTo("/api/v1/xxxx?foo=bar&foo=bar2")''')
+			test.contains('''assertThatJson(parsedJson).field("['rawPath']").isEqualTo("/api/v1/xxxx")''')
+			test.contains('''assertThatJson(parsedJson).field("['rawPathIndex']").isEqualTo("v1")''')
+			test.contains('''assertThatJson(parsedJson).field("['rawParamIndex']").isEqualTo("bar2")''')
+			test.contains('''assertThatJson(parsedJson).field("['rawResponseFoo']").isEqualTo("bar")''')
+			test.contains('''assertThatJson(parsedJson).field("['rawAuthorization']").isEqualTo("secret")''')
+			test.contains('''assertThatJson(parsedJson).field("['rawAuthorization2']").isEqualTo("secret2")''')
+			test.contains('''assertThatJson(parsedJson).field("['rawResponseBaz']").isEqualTo(5)''')
+			test.contains('''assertThatJson(parsedJson).field("['rawResponseBaz2']").isEqualTo("Bla bla bar bla bla")''')
+			test.contains('''assertThatJson(parsedJson).field("['rawParam']").isEqualTo("bar")''')
 			responseAssertion(test)
 		where:
 			methodBuilderName                                    | methodBuilder                                                                               | responseAssertion
@@ -2626,6 +2645,60 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | { String body -> body.contains('assertThat(response.header("Authorization")).isEqualTo("foo secret bar");') }
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String body -> body.contains("response.getHeaderString('Authorization')  == 'foo secret bar'") }
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String body -> body.contains('assertThat(response.getHeaderString("Authorization")).isEqualTo("foo secret bar");') }
+	}
+
+	@Issue("#230")
+	def "should manage to reference request in response via WireMock native entries [#methodBuilderName]"() {
+		given:
+			//tag::template_contract[]
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url('/api/v1/xxxx') {
+						queryParameters {
+							parameter("foo", "bar")
+							parameter("foo", "bar2")
+						}
+					}
+					headers {
+						header(authorization(), "secret")
+						header(authorization(), "secret2")
+					}
+					body(foo: "bar", baz: 5)
+				}
+				response {
+					status OK()
+					headers {
+						contentType(applicationJson())
+					}
+					body(''' 
+							{
+								"responseFoo": "{{{ jsonPath request.body '$.foo' }}}",
+								"responseBaz": {{{ jsonPath request.body '$.baz' }}},
+								"responseBaz2": "Bla bla {{{ jsonPath request.body '$.foo' }}} bla bla"
+							}
+					'''.toString())
+				}
+			}
+			//end::template_contract[]
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		and:
+			builder.appendTo(blockBuilder)
+			String test = blockBuilder.toString()
+		when:
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+		then:
+			!test.contains('''DslProperty''')
+			test.contains('''assertThatJson(parsedJson).field("['responseFoo']").isEqualTo("bar")''')
+			test.contains('''assertThatJson(parsedJson).field("['responseBaz']").isEqualTo(5)''')
+			test.contains('''assertThatJson(parsedJson).field("['responseBaz2']").isEqualTo("Bla bla bar bla bla")''')
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
 
 	def "should generate JUnit assertions with cookies"() {

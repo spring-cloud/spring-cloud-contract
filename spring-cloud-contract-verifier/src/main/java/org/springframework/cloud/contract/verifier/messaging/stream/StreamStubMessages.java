@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.messaging.stream;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -28,6 +29,7 @@ import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Marcin Grzejszczak
@@ -54,7 +56,7 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 	public void send(Message<?> message, String destination) {
 		try {
 			MessageChannel messageChannel = this.context
-					.getBean(resolvedDestination(destination), MessageChannel.class);
+					.getBean(resolvedDestination(destination, DefaultChannels.OUTPUT), MessageChannel.class);
 			messageChannel.send(message);
 		}
 		catch (Exception e) {
@@ -68,7 +70,7 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 	public Message<?> receive(String destination, long timeout, TimeUnit timeUnit) {
 		try {
 			MessageChannel messageChannel = this.context
-					.getBean(resolvedDestination(destination), MessageChannel.class);
+					.getBean(resolvedDestination(destination, DefaultChannels.INPUT), MessageChannel.class);
 			return this.messageCollector.forChannel(messageChannel).poll(timeout, timeUnit);
 		}
 		catch (Exception e) {
@@ -78,10 +80,11 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 		}
 	}
 
-	private String resolvedDestination(String destination) {
+	private String resolvedDestination(String destination, DefaultChannels defaultChannel) {
 		try {
 			BindingServiceProperties channelBindingServiceProperties = this.context
 					.getBean(BindingServiceProperties.class);
+			Map<String, String> channels = new HashMap<>();
 			for (Map.Entry<String, BindingProperties> entry : channelBindingServiceProperties
 					.getBindings().entrySet()) {
 				if (destination.equals(entry.getValue().getDestination())) {
@@ -89,8 +92,23 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 						log.debug("Found a channel named [{}] with destination [{}]",
 								entry.getKey(), destination);
 					}
-					return entry.getKey();
+					channels.put(entry.getKey().toLowerCase(), destination);
 				}
+			}
+			if (channels.size() == 1) {
+				return channels.keySet().iterator().next();
+			} else if (channels.size() > 0) {
+				if (log.isDebugEnabled()) {
+					log.debug("Found following channels [{}] for destination [{}]. "
+									+ "Will pick the one that matches the default channel name or the first one if none is matching",
+							channels, destination);
+				}
+				String defaultChannelName = channels.get(defaultChannel.name().toLowerCase());
+				String matchingChannelName = StringUtils.hasText(defaultChannelName) ? defaultChannel.name().toLowerCase() : channels.keySet().iterator().next();
+				if (log.isDebugEnabled()) {
+					log.debug("Picked channel name is [{}]", matchingChannelName);
+				}
+				return matchingChannelName;
 			}
 		} catch (Exception e) {
 			log.error("Exception took place while trying to resolve the destination. Will assume the name [" + destination + "]", e);
@@ -108,4 +126,9 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 		return receive(destination, 5, TimeUnit.SECONDS);
 	}
 
+}
+
+
+enum DefaultChannels {
+	INPUT, OUTPUT
 }

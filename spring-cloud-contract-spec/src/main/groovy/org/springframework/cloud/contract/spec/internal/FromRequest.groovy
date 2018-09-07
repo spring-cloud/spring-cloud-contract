@@ -19,14 +19,14 @@ class FromRequest {
 	}
 
 	private ContractTemplate template() {
-		return new HandlebarsContractTemplate()
+		return new CompositeContractTemplate()
 	}
 
 	/**
 	 * URL path and query
 	 */
 	DslProperty url() {
-		return new DslProperty(template.url())
+		return new DslProperty(template.escapedUrl())
 	}
 
 	/**
@@ -34,7 +34,7 @@ class FromRequest {
 	 * @param key
 	 */
 	DslProperty query(String key) {
-		return new DslProperty(template.query(key))
+		return new DslProperty(template.escapedQuery(key))
 	}
 
 	/**
@@ -43,14 +43,14 @@ class FromRequest {
 	 * @param index
 	 */
 	DslProperty query(String key, int index) {
-		return new DslProperty(template.query(key, index))
+		return new DslProperty(template.escapedQuery(key, index))
 	}
 
 	/**
 	 * URL path
 	 */
 	DslProperty path() {
-		return new DslProperty(template.path())
+		return new DslProperty(template.escapedPath())
 	}
 
 	/**
@@ -58,7 +58,7 @@ class FromRequest {
 	 * @param index
 	 */
 	DslProperty path(int index) {
-		return new DslProperty(template.path(index))
+		return new DslProperty(template.escapedPath(index))
 	}
 
 	/**
@@ -66,7 +66,7 @@ class FromRequest {
 	 * @param key
 	 */
 	DslProperty header(String key) {
-		return new DslProperty(template.header(key))
+		return new DslProperty(template.escapedHeader(key))
 	}
 
 	/**
@@ -74,7 +74,7 @@ class FromRequest {
 	 * @param key
 	 */
 	DslProperty header(String key, int index) {
-		return new DslProperty(template.header(key, index))
+		return new DslProperty(template.escapedHeader(key, index))
 	}
 
 	/**
@@ -82,20 +82,97 @@ class FromRequest {
 	 * @param key
 	 */
 	DslProperty cookie(String key) {
-		return new DslProperty(template.cookie(key))
+		return new DslProperty(template.escapedCookie(key))
 	}
 
 	/**
 	 * Request body text (avoid for non-text bodies)
 	 */
 	DslProperty body() {
-		return new DslProperty(template.body())
+		return new DslProperty(template.escapedBody())
 	}
 
 	/**
 	 * Request body text for the given JsonPath
 	 */
 	DslProperty body(String jsonPath) {
+		return new DslProperty(template.escapedBody(jsonPath))
+	}
+
+	/**
+	 * Unescaped URL path and query
+	 */
+	DslProperty rawUrl() {
+		return new DslProperty(template.url())
+	}
+
+	/**
+	 * Unescaped First value of a query parameter e.g. request.query.search
+	 * @param key
+	 */
+	DslProperty rawQuery(String key) {
+		return new DslProperty(template.query(key))
+	}
+
+	/**
+	 * Unescaped nth value of a query parameter (zero indexed) e.g. request.query.search.[5]
+	 * @param key
+	 * @param index
+	 */
+	DslProperty rawQuery(String key, int index) {
+		return new DslProperty(template.query(key, index))
+	}
+
+	/**
+	 * Unescaped URL path
+	 */
+	DslProperty rawPath() {
+		return new DslProperty(template.path())
+	}
+
+	/**
+	 * Unescaped nth value of a URL path (zero indexed) e.g. {{{ request.path.[2] }}}
+	 * @param index
+	 */
+	DslProperty rawPath(int index) {
+		return new DslProperty(template.path(index))
+	}
+
+	/**
+	 * Unescaped First value of a request header e.g. request.headers.X-Request-Id
+	 * @param key
+	 */
+	DslProperty rawHeader(String key) {
+		return new DslProperty(template.header(key))
+	}
+
+	/**
+	 * Unescaped nth value of a request header (zero indexed) e.g. request.headers.X-Request-Id
+	 * @param key
+	 */
+	DslProperty rawHeader(String key, int index) {
+		return new DslProperty(template.header(key, index))
+	}
+
+	/**
+	 * Unescaped Retruns the tempalte for retrieving the first value of a cookie with certain key
+	 * @param key
+	 */
+	DslProperty rawCookie(String key) {
+		return new DslProperty(template.cookie(key))
+	}
+
+	/**
+	 * Unescaped Request body text (avoid for non-text bodies)
+	 */
+	DslProperty rawBody() {
+		return new DslProperty(template.body())
+	}
+
+	/**
+	 * Unescaped Request body text for the given JsonPath
+	 */
+	DslProperty rawBody(String jsonPath) {
 		return new DslProperty(template.body(jsonPath))
 	}
 

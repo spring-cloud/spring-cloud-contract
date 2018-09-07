@@ -27,6 +27,7 @@ import org.springframework.cloud.contract.spec.internal.Request
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.util.ContentUtils
+import org.springframework.cloud.contract.verifier.util.RegexpBuilders
 
 import java.util.regex.Pattern
 
@@ -60,7 +61,7 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 
 	@Override
 	protected String getResponseBodyPropertyComparisonString(String property, Pattern value) {
-		return "responseBody$property ${patternComparison(value)}"
+		return "responseBody$property ${createBodyComparison(value)}"
 	}
 
 	@Override
@@ -171,6 +172,11 @@ abstract class SpockMethodRequestProcessingBodyBuilder extends RequestProcessing
 
 	protected String convertCookieComparison(String cookieValue) {
 		return "== '$cookieValue'"
+	}
+
+	protected String createBodyComparison(Pattern bodyValue) {
+		String patternAsString = bodyValue.pattern()
+		return patternComparison(RegexpBuilders.buildGStringRegexpForTestSide(patternAsString)) + ";"
 	}
 
 	protected String convertCookieComparison(Pattern cookieValue) {

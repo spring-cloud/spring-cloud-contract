@@ -27,7 +27,6 @@ import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.messaging.Message
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
@@ -37,10 +36,9 @@ import javax.inject.Inject
  */
 // Context configuration would end up in base class
 @ContextConfiguration(classes = [StreamMessagingApplication], loader = SpringBootContextLoader)
-@DirtiesContext
 @SpringBootTest(properties = "debug=true")
 @AutoConfigureMessageVerifier
-public class StreamMessagingApplicationSpec extends Specification {
+class StreamMessagingApplicationSpec extends Specification {
 
 	// ALL CASES
 	@Inject MessageVerifier<Message<?>> contractVerifierMessaging

@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicInteger
 
+import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -39,14 +40,16 @@ import static org.springframework.cloud.contract.verifier.util.NamesUtil.beforeL
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.convertIllegalPackageChars
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.directoryToPackage
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.toLastDot
+
 /**
  * @author Jakub Kubrynski, codearte.io
  */
+@CompileStatic
 class TestGenerator {
 
-	private static final Log log = LogFactory.getLog(TestGenerator)
 	private static final String DEFAULT_CLASS_PREFIX = "ContractVerifier"
 	private static final String DEFAULT_TEST_PACKAGE = "org.springframework.cloud.contract.verifier.tests"
+	private static final Log log = LogFactory.getLog(TestGenerator)
 
 	private final ContractVerifierConfigProperties configProperties
 	private AtomicInteger counter = new AtomicInteger()
@@ -77,6 +80,7 @@ class TestGenerator {
 		contractFileScanner = new ContractFileScanner(configProperties.contractsDslDir,
 				configProperties.excludedFiles as Set,
 				configProperties.ignoredFiles as Set,
+				configProperties.includedFiles as Set,
 				this.configProperties.includedContracts)
 	}
 
@@ -104,7 +108,7 @@ class TestGenerator {
 		}
 	}
 
-	private String relativizeContractPath(Map.Entry<Path, Collection<Path>> entry) {
+	private String relativizeContractPath(Map.Entry<Path, Collection<ContractMetadata>> entry) {
 		Path relativePath = configProperties.contractsDslDir.toPath().relativize(entry.getKey())
 		if (StringUtils.isEmpty(relativePath.toString())) {
 			return DEFAULT_CLASS_PREFIX
@@ -115,7 +119,7 @@ class TestGenerator {
 	private void processIncludedDirectory(
 			final String includedDirectoryRelativePath, Collection<ContractMetadata> contracts, final String basePackageNameForClass) {
 		if (log.isDebugEnabled()) {
-			log.debug("Collected contracts with metadata ${contracts}")
+			log.debug("Collected contracts with metadata ${contracts} relative path is [${includedDirectoryRelativePath}]")
 		}
 		if (contracts.size()) {
 			def className = afterLast(includedDirectoryRelativePath.toString(), File.separator) + resolveNameSuffix()

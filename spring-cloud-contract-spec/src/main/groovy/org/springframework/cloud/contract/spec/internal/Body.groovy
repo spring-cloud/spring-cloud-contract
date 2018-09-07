@@ -53,6 +53,10 @@ class Body extends DslProperty {
 		super(bodyAsValue)
 	}
 
+	Body(String bodyAsValue) {
+		super(bodyAsValue, bodyAsValue)
+	}
+
 	Body(GString bodyAsValue) {
 		super(bodyAsValue, bodyAsValue)
 	}

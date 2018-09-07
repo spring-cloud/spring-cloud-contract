@@ -148,14 +148,6 @@ HTTP stubs without the need to download artifacts.
 
 ==== Running stubs
 
-===== Limitations
-
-IMPORTANT: There might be a problem with StubRunner shutting down ports between tests. You might
- have a situation in which you get port conflicts. As long as you use the same context across tests
- everything works fine. But when the context are different (e.g. different stubs or different profiles)
- then you have to either use `@DirtiesContext` to shut down the stub servers, or else run them on
- different ports per test.
-
 ===== Running using main app
 
 You can set the following options to the main class:
@@ -498,11 +490,11 @@ For the properties check the *Stub Runner Spring* section.
 
 ===== Stub Runner Server Fat Jar
 
-You can download a standalone JAR from Maven (for example, for version 1.2.3.RELEASE), as follows:
+You can download a standalone JAR from Maven (e.g. for version 2.0.1.RELEASE), as follows:
 
 [source,bash,indent=0]
 ----
-$ wget -O stub-runner.jar 'https://search.maven.org/remote_content?g=org.springframework.cloud&a=spring-cloud-contract-stub-runner-boot&v=1.2.3.RELEASE'
+$ wget -O stub-runner.jar 'https://search.maven.org/remotecontent?filepath=org/springframework/cloud/spring-cloud-contract-stub-runner-boot/2.0.1.RELEASE/spring-cloud-contract-stub-runner-boot-2.0.1.RELEASE.jar'
 $ java -jar stub-runner.jar --stubrunner.ids=... --stubrunner.repositoryRoot=...
 ----
 

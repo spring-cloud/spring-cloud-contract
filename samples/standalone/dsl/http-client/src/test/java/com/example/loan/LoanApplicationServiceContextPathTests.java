@@ -1,7 +1,5 @@
 package com.example.loan;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.example.loan.model.Client;
@@ -17,11 +14,12 @@ import com.example.loan.model.LoanApplication;
 import com.example.loan.model.LoanApplicationResult;
 import com.example.loan.model.LoanApplicationStatus;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.NONE, properties="server.context-path=/app")
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
 		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
-@DirtiesContext
 public class LoanApplicationServiceContextPathTests {
 
 	@Autowired

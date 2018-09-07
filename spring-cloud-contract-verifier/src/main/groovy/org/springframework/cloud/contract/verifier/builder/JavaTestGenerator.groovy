@@ -16,20 +16,25 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+import java.lang.invoke.MethodHandles
+
 import groovy.transform.Canonical
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.PackageScope
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.verifier.builder.imports.HttpImportProvider
+import org.springframework.cloud.contract.verifier.builder.imports.MessagingImportProvider
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
-import org.springframework.cloud.contract.verifier.config.TestFramework
-import org.springframework.cloud.contract.verifier.config.TestMode
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 
-import java.lang.invoke.MethodHandles
-
+import static org.springframework.cloud.contract.verifier.builder.imports.BaseImportProvider.getImports
+import static org.springframework.cloud.contract.verifier.builder.imports.BaseImportProvider.getRuleImport
+import static org.springframework.cloud.contract.verifier.builder.imports.BaseImportProvider.getStaticImports
 import static org.springframework.cloud.contract.verifier.util.NamesUtil.capitalize
+
 /**
  * Builds a single test for the given {@link ContractVerifierConfigProperties properties}
  *
@@ -48,61 +53,39 @@ class JavaTestGenerator implements SingleTestGenerator {
 	@Override
 	String buildClass(ContractVerifierConfigProperties configProperties, Collection<ContractMetadata> listOfFiles, String className, String classPackage, String includedDirectoryRelativePath) {
 		ClassBuilder clazz = ClassBuilder.createClass(capitalize(className), classPackage, configProperties, includedDirectoryRelativePath)
-
 		if (configProperties.imports) {
 			configProperties.imports.each {
 				clazz.addImport(it)
 			}
 		}
-
 		if (configProperties.staticImports) {
 			configProperties.staticImports.each {
 				clazz.addStaticImport(it)
 			}
 		}
-
 		if (isScenarioClass(listOfFiles)) {
-			clazz.addImport(configProperties.targetFramework.getOrderAnnotationImport())
+			clazz.addImports(configProperties.targetFramework.getOrderAnnotationImports())
 			clazz.addClassLevelAnnotation(configProperties.targetFramework.getOrderAnnotation())
 		}
-
 		addJsonPathRelatedImports(clazz)
+		processContractFiles(listOfFiles, configProperties, clazz)
+		return clazz.build()
+	}
 
+	private void processContractFiles(Collection<ContractMetadata> listOfFiles,
+	                                  ContractVerifierConfigProperties configProperties, ClassBuilder clazz) {
 		Map<ParsedDsl, TestType> contracts = mapContractsToTheirTestTypes(listOfFiles)
-		boolean restAssured2Present = this.checker.isClassPresent(REST_ASSURED_2_0_CLASS)
-		String restAssuredPackage = restAssured2Present ? 'com.jayway.restassured' : 'io.restassured'
-		if (log.isDebugEnabled()) {
-			log.debug("Rest Assured version 2.x found [${restAssured2Present}]")
-		}
 		boolean conditionalImportsAdded = false
-		boolean toIgnore = listOfFiles.ignored.find { it }
-		contracts.each { ParsedDsl key, TestType value ->
+		boolean toIgnore = listOfFiles.ignored.find {it}
+		contracts.each {ParsedDsl key, TestType value ->
 			if (!conditionalImportsAdded) {
+				clazz.addImports(getImports(configProperties.targetFramework))
+				clazz.addStaticImports(getStaticImports(configProperties.targetFramework))
 				if (contracts.values().contains(TestType.HTTP)) {
-					if (configProperties.testMode == TestMode.JAXRSCLIENT) {
-						clazz.addStaticImport('javax.ws.rs.client.Entity.*')
-						if (configProperties.targetFramework == TestFramework.JUNIT) {
-							clazz.addImport('javax.ws.rs.core.Response')
-						}
-					} else if (configProperties.testMode == TestMode.MOCKMVC) {
-						clazz.addStaticImport("${restAssuredPackage}.module.mockmvc.RestAssuredMockMvc.*")
-					} else {
-						clazz.addStaticImport("${restAssuredPackage}.RestAssured.*")
-					}
+					addHttpRelatedEntries(clazz, configProperties)
 				}
-				if (configProperties.targetFramework == TestFramework.JUNIT) {
-					if (contracts.values().contains(TestType.HTTP) && configProperties.testMode == TestMode.MOCKMVC) {
-						clazz.addImport("${restAssuredPackage}.module.mockmvc.specification.MockMvcRequestSpecification")
-						clazz.addImport("${restAssuredPackage}.response.ResponseOptions")
-					} else if (contracts.values().contains(TestType.HTTP) && configProperties.testMode == TestMode.EXPLICIT) {
-						clazz.addImport("${restAssuredPackage}.specification.RequestSpecification")
-						clazz.addImport("${restAssuredPackage}.response.Response")
-					}
-					clazz.addImport('org.junit.Test')
-				}
-				clazz.addStaticImport('org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat')
 				if (configProperties.ruleClassForTests) {
-					clazz.addImport('org.junit.Rule').addRule(configProperties.ruleClassForTests)
+					addRule(configProperties, clazz)
 				}
 				if (contracts.values().contains(TestType.MESSAGING)) {
 					addMessagingRelatedEntries(clazz)
@@ -116,8 +99,31 @@ class JavaTestGenerator implements SingleTestGenerator {
 		if (toIgnore) {
 			clazz.addImport(configProperties.targetFramework.getIgnoreClass())
 		}
+	}
 
-		return clazz.build()
+	private void addRule(ContractVerifierConfigProperties configProperties, ClassBuilder clazz) {
+		clazz.addImport(getRuleImport())
+		if (configProperties.targetFramework.annotationLevelRules()) {
+			clazz.addClassLevelAnnotation(configProperties.targetFramework
+					.getRuleAnnotation(configProperties.ruleClassForTests))
+		} else {
+			clazz.addRule(configProperties.ruleClassForTests)
+		}
+	}
+
+	private void addHttpRelatedEntries(ClassBuilder clazz, ContractVerifierConfigProperties configProperties) {
+		HttpImportProvider httpImportProvider = new HttpImportProvider(getRestAssuredPackage())
+		clazz.addImports(httpImportProvider.getImports(configProperties.targetFramework, configProperties.testMode))
+		clazz.addStaticImports(httpImportProvider.getStaticImports(configProperties.targetFramework, configProperties.testMode))
+	}
+
+	private String getRestAssuredPackage() {
+		boolean restAssured2Present = this.checker.isClassPresent(REST_ASSURED_2_0_CLASS)
+		String restAssuredPackage = restAssured2Present ? 'com.jayway.restassured' : 'io.restassured'
+		if (log.isDebugEnabled()) {
+			log.debug("Rest Assured version 2.x found [${restAssured2Present}]")
+		}
+		return restAssuredPackage
 	}
 
 	@Override
@@ -159,8 +165,8 @@ class JavaTestGenerator implements SingleTestGenerator {
 	}
 
 	private void addJsonPathRelatedImports(ClassBuilder clazz) {
-		clazz.addImport(['com.jayway.jsonpath.DocumentContext',
-		                 'com.jayway.jsonpath.JsonPath',
+		clazz.addImports(['com.jayway.jsonpath.DocumentContext',
+		                  'com.jayway.jsonpath.JsonPath',
 		])
 		if (this.checker.isClassPresent(JSON_ASSERT_CLASS)) {
 			clazz.addStaticImport(JSON_ASSERT_STATIC_IMPORT)
@@ -169,16 +175,11 @@ class JavaTestGenerator implements SingleTestGenerator {
 
 	private void addMessagingRelatedEntries(ClassBuilder clazz) {
 		clazz.addField(['@Inject ContractVerifierMessaging contractVerifierMessaging',
-						'@Inject ContractVerifierObjectMapper contractVerifierObjectMapper'
+		                '@Inject ContractVerifierObjectMapper contractVerifierObjectMapper'
 		])
-		clazz.addImport([ 'javax.inject.Inject',
-						  'org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper',
-						  'org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage',
-						  'org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging',
-		])
-		clazz.addStaticImport('org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers')
+		clazz.addImports(MessagingImportProvider.getImports())
+		clazz.addStaticImports(MessagingImportProvider.getStaticImports())
 	}
-
 }
 
 class ClassPresenceChecker {
@@ -189,7 +190,7 @@ class ClassPresenceChecker {
 		try {
 			Class.forName(className)
 			return true
-		} catch (ClassNotFoundException e) {
+		} catch (ClassNotFoundException ignored) {
 			if (log.isDebugEnabled()) {
 				log.debug("[${className}] is not present on classpath. Will not add a static import.")
 			}

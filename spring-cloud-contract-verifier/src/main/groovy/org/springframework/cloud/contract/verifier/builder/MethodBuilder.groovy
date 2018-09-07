@@ -19,12 +19,16 @@ package org.springframework.cloud.contract.verifier.builder
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import groovy.util.logging.Slf4j
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
-import org.springframework.cloud.contract.verifier.config.TestFramework
 import org.springframework.cloud.contract.verifier.config.TestMode
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.NamesUtil
+
+import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
+import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT5
+import static org.springframework.cloud.contract.verifier.config.TestFramework.SPOCK
 
 /**
  * Builds a test method. Adds an ignore annotation on a method if necessary.
@@ -57,7 +61,7 @@ class MethodBuilder {
 		if (log.isDebugEnabled()) {
 			log.debug("Stub content Groovy DSL [$stubContent]")
 		}
-		String methodName = methodName(contract, stubsFile, stubContent)
+		String methodName = MethodBuilder.methodName(contract, stubsFile, stubContent)
 		return new MethodBuilder(methodName, stubContent, configProperties, contract.ignored || stubContent.ignored)
 	}
 
@@ -91,11 +95,11 @@ class MethodBuilder {
 	 * Appends to the {@link BlockBuilder} the contents of the test
 	 */
 	void appendTo(BlockBuilder blockBuilder) {
-		if (configProperties.targetFramework == TestFramework.JUNIT) {
+		if (isJUnitType()) {
 			blockBuilder.addLine('@Test')
 		}
 		if (ignored) {
-			blockBuilder.addLine('@Ignore')
+			blockBuilder.addLine(configProperties.targetFramework.ignoreAnnotation)
 		}
 		blockBuilder.addLine(configProperties.targetFramework.methodModifier + "validate_$methodName() throws Exception {")
 		getMethodBodyBuilder().appendTo(blockBuilder)
@@ -104,26 +108,29 @@ class MethodBuilder {
 
 	private MethodBodyBuilder getMethodBodyBuilder() {
 		if (stubContent.input || stubContent.outputMessage) {
-			if (configProperties.targetFramework == TestFramework.JUNIT) {
+			if (isJUnitType()) {
 				return new JUnitMessagingMethodBodyBuilder(stubContent, configProperties)
 			}
 			return new SpockMessagingMethodBodyBuilder(stubContent, configProperties)
 		}
 		if (configProperties.testMode == TestMode.JAXRSCLIENT) {
-			if (configProperties.targetFramework == TestFramework.JUNIT) {
+			if (isJUnitType()) {
 				return new JaxRsClientJUnitMethodBodyBuilder(stubContent, configProperties)
 			}
 			return new JaxRsClientSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties)
 		} else if (configProperties.testMode == TestMode.EXPLICIT) {
-			if (configProperties.targetFramework == TestFramework.JUNIT) {
+			if (isJUnitType()) {
 				return new ExplicitJUnitMethodBodyBuilder(stubContent, configProperties)
 			}
 			// in Groovy we're using def so we don't have to update the imports
 			return new MockMvcSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties)
-		} else if (configProperties.targetFramework == TestFramework.SPOCK) {
+		} else if (configProperties.targetFramework == SPOCK) {
 			return new MockMvcSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties)
 		}
 		return new MockMvcJUnitMethodBodyBuilder(stubContent, configProperties)
 	}
 
+	private boolean isJUnitType() {
+		return JUNIT == configProperties.targetFramework || JUNIT5 == configProperties.targetFramework
+	}
 }

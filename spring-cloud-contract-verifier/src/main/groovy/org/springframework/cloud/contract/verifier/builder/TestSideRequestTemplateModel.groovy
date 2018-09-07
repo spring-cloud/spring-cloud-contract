@@ -17,7 +17,6 @@ import org.springframework.cloud.contract.verifier.util.MapConverter
  * @author Marcin Grzejszczak
  * @since 1.1.0
  */
-@Immutable
 @CompileStatic
 class TestSideRequestTemplateModel {
 	/**
@@ -41,14 +40,23 @@ class TestSideRequestTemplateModel {
 	final Map<String, List<String>> headers
 
 	/**
-	 * Escaped request body that can be put into test
+	 * Request body as it would be sent to the controller
 	 */
 	final String body
 
 	/**
-	 * Request body as it would be sent to the controller
+	 * Escaped request body that can be put into test
 	 */
-	final String rawBody
+	final String escapedBody
+
+	private TestSideRequestTemplateModel(String url, Map<String, List<String>> query, Path path, Map<String, List<String>> headers, String body, String escapedBody) {
+		this.url = url
+		this.query = query
+		this.path = path
+		this.headers = headers
+		this.body = body
+		this.escapedBody = escapedBody
+	}
 
 	static TestSideRequestTemplateModel from(final Request request) {
 		String url = MapConverter.getTestSideValues(request.url ?: request.urlPath)
@@ -63,11 +71,15 @@ class TestSideRequestTemplateModel {
 		Map<String, List<String>> headers = (Map<String, List<String>>) (request.headers?.entries?.groupBy {
 			it.name
 		}?.collectEntries {
-			[(it.key): it.value.collect {  MapConverter.getTestSideValues(it) }]
+			List<Object> headerValues = []
+			for (Object value : it.value) {
+				headerValues.add(MapConverter.getTestSideValues(value))
+			}
+			[(it.key): headerValues]
 		})
-		String body = trimmedAndEscapedBody(request.body)
-		String rawBody = getBodyAsRawJson(request.body)
-		return new TestSideRequestTemplateModel(fullUrl, query, paths, headers, body, rawBody)
+		String escapedBody = trimmedAndEscapedBody(request.body)
+		String body = getBodyAsRawJson(request.body)
+		return new TestSideRequestTemplateModel(fullUrl, query, paths, headers, body, escapedBody)
 	}
 
 	private static List<String> buildPathsFromUrl(String url) {
@@ -86,12 +98,15 @@ class TestSideRequestTemplateModel {
 
 	private static String getBodyAsRawJson(Object body) {
 		Object bodyValue = extractServerValueFromBody(body)
+		if (bodyValue instanceof GString || bodyValue instanceof String) {
+			return bodyValue.toString()
+		}
 		return bodyValue != null ? new JsonOutput().toJson(bodyValue) : bodyValue
 	}
 
 	protected static Object extractServerValueFromBody(bodyValue) {
 		if (bodyValue instanceof GString) {
-			bodyValue = ContentUtils.extractValue(bodyValue, { DslProperty dslProperty -> dslProperty.serverValue })
+			bodyValue = ContentUtils.extractValue(bodyValue, { DslProperty dslProperty -> dslProperty.serverValue } as Closure)
 		} else {
 			bodyValue = MapConverter.transformValues(bodyValue, {
 				it instanceof DslProperty ? it.serverValue : it

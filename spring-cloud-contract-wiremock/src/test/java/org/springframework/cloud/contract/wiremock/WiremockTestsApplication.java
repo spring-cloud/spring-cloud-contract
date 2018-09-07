@@ -51,7 +51,7 @@ class Controller {
 class Service {
 
 	@Value("${app.baseUrl:http://example.org}")
-	private String base;
+	String base;
 
 	private RestTemplate restTemplate;
 
@@ -74,6 +74,10 @@ class Service {
 				.of("text/plain", "text/plain", "application/json", "application/json",
 						"application/*+json", "application/*+json", "*/*", "*/*")
 				.map(MediaType::valueOf).toArray(MediaType[]::new);
+	}
+
+	public String go2() {
+		return this.restTemplate.getForEntity(this.base + "/test2", String.class).getBody();
 	}
 
 	public void setBase(String base) {

@@ -73,172 +73,295 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 		ClassLoader classLoader = YamlContractConverter.getClassLoader()
 		ObjectMapper mapper = new ObjectMapper()
 		try {
-			return new Yaml().loadAll(Files.newInputStream(contractFile.toPath())).collect {
-				YamlContract yamlContract = mapper.convertValue(it, YamlContract.class);
-				Thread.currentThread().setContextClassLoader(updatedClassLoader(contractFile.getParentFile(), classLoader))
-				return Contract.make {
-					if (yamlContract.description) description(yamlContract.description)
-					if (yamlContract.label) label(yamlContract.label)
-					if (yamlContract.name) name(yamlContract.name)
-					if (yamlContract.priority) priority(yamlContract.priority)
-					if (yamlContract.ignored) ignored()
-					if (yamlContract.request?.method) {
-						request {
-							method(yamlContract.request?.method)
-							if (yamlContract.request?.url) {
-								url(yamlContract.request?.url) {
-									if (yamlContract.request.queryParameters) {
-										queryParameters {
-											yamlContract.request.queryParameters.each { String key, Object value ->
-												if (value instanceof List) {
-													((List) value).each {
-														parameter(key, it)
-													}
-												} else {
-													parameter(key, value)
-												}
-											}
-										}
-									}
-								}
-							}
-							if (yamlContract.request?.urlPath) {
-								urlPath(yamlContract.request?.urlPath) {
-									if (yamlContract.request.queryParameters) {
-										queryParameters {
-											yamlContract.request.queryParameters.each { String key, Object value ->
-												if (value instanceof List) {
-													((List) value).each {
-														parameter(key, it)
-													}
-												} else {
-													parameter(key, value)
-												}
-											}
-										}
-									}
-								}
-							}
-							if (yamlContract.request?.headers) {
-								headers {
-									yamlContract.request?.headers?.each { String key, Object value ->
-										KeyValueMatcher matcher = yamlContract.request.matchers.headers.find { it.key == key }
-										if (value instanceof List) {
-											((List) value).each {
-												Object clientValue = clientValue(it, matcher, key)
-												header(key, new DslProperty(clientValue, it))
-											}
-										} else {
-											Object clientValue = clientValue(value, matcher, key)
-											header(key, new DslProperty(clientValue, value))
-										}
-									}
-								}
-							}
-							if (yamlContract.request?.cookies) {
-								cookies {
-									yamlContract.request?.cookies?.each { String key, Object value ->
-										KeyValueMatcher matcher = yamlContract.request.matchers.cookies.find { it.key == key }
-										Object clientValue = clientValue(value, matcher, key)
+			Iterable<Object> iterables = new Yaml().loadAll(Files.newInputStream(contractFile.toPath()))
+			Collection<Contract> contracts = []
+			for (Object o : iterables) {
+				Closure<Contract> processYaml = processYaml(mapper, classLoader, contractFile)
+				contracts.add(processYaml(o))
+			}
+			return contracts
+		}
+		catch (FileNotFoundException e) {
+			throw new IllegalStateException(e)
+		}
+		catch (IllegalStateException ise) {
+			throw ise
+		}
+		catch (Exception e1) {
+			throw new IllegalStateException("Exception occurred while processing the file [" + contractFile + "]", e1)
+		} finally {
+			Thread.currentThread().setContextClassLoader(classLoader)
+		}
+	}
 
-										cookie(key, new DslProperty(clientValue, value))
-									}
-								}
-							}
-							if (yamlContract.request.body) body(yamlContract.request.body)
-							if (yamlContract.request.bodyFromFile) body(file(yamlContract.request.bodyFromFile))
-							if (yamlContract.request.multipart) {
-								Map multipartMap = [:]
-								Map<String, DslProperty> multiPartParams = yamlContract.request.multipart.params.collectEntries { String paramKey, String paramValue ->
-									KeyValueMatcher matcher = yamlContract.request.matchers.multipart.params.find {
-										it.key == paramKey
-									}
-									Object value = paramValue
-									if (matcher) {
-										value = matcher.regex ? Pattern.compile(matcher.regex) :
-												predefinedToPattern(matcher.predefined)
-									}
-									return [(paramKey), new DslProperty<>(value, paramValue)]
-								} as Map<String, DslProperty>
-								multipartMap.putAll(multiPartParams)
-								yamlContract.request.multipart.named.each { Named namedParam ->
-									YamlContract.MultipartNamedStubMatcher matcher = yamlContract.request.matchers.multipart.named.find {
-										it.paramName == namedParam.paramName
-									}
-									Object fileNameValue = namedParam.fileName
-									Object fileContentValue = namedParam.fileContent
-									if (matcher && matcher.fileName) {
-										fileNameValue = matcher.fileName.regex ? Pattern.compile(matcher.fileName.regex) :
-												predefinedToPattern(matcher.fileName.predefined)
-									}
-									if (matcher && matcher.fileContent) {
-										fileContentValue = matcher.fileContent.regex ? Pattern.compile(matcher.fileContent.regex) :
-												predefinedToPattern(matcher.fileContent.predefined)
-									}
-									multipartMap.put(namedParam.paramName, new NamedProperty(new DslProperty<>(fileNameValue, namedParam.fileName),
-											new DslProperty<>(fileContentValue, namedParam.fileContent)))
-								}
-								multipart(multipartMap)
-							}
-							bodyMatchers {
-								yamlContract.request.matchers?.body?.each { BodyStubMatcher matcher ->
-									MatchingTypeValue value = null
-									switch (matcher.type) {
-										case StubMatcherType.by_date:
-											value = byDate()
-											break
-										case StubMatcherType.by_time:
-											value = byTime()
-											break
-										case StubMatcherType.by_timestamp:
-											value = byTimestamp()
-											break
-										case StubMatcherType.by_regex:
-											String regex = matcher.value
-											if (matcher.predefined) {
-												regex = predefinedToPattern(matcher.predefined).pattern()
+	protected Closure<Contract> processYaml(ObjectMapper mapper, ClassLoader classLoader, File contractFile) {
+		return {
+			YamlContract yamlContract = mapper.convertValue(it, YamlContract.class)
+			Thread.currentThread().setContextClassLoader(updatedClassLoader(contractFile.getParentFile(), classLoader))
+			return Contract.make {
+				if (yamlContract.description) description(yamlContract.description)
+				if (yamlContract.label) label(yamlContract.label)
+				if (yamlContract.name) name(yamlContract.name)
+				if (yamlContract.priority) priority(yamlContract.priority)
+				if (yamlContract.ignored) ignored()
+				if (yamlContract.request?.method) {
+					request {
+						method(yamlContract.request?.method)
+						if (yamlContract.request?.url) {
+							url(yamlContract.request?.url) {
+								if (yamlContract.request.queryParameters) {
+									queryParameters {
+										yamlContract.request.queryParameters.each { String key, Object value ->
+											if (value instanceof List) {
+												((List) value).each {
+													parameter(key, it)
+												}
+											} else {
+												parameter(key, value)
 											}
-											value = byRegex(regex)
-											break
-										case StubMatcherType.by_equality:
-											value = byEquality()
-											break
+										}
 									}
-									jsonPath(matcher.path, value)
 								}
 							}
 						}
-						response {
-							status(yamlContract.response.status)
+						if (yamlContract.request?.urlPath) {
+							urlPath(yamlContract.request?.urlPath) {
+								if (yamlContract.request.queryParameters) {
+									queryParameters {
+										yamlContract.request.queryParameters.each { String key, Object value ->
+											if (value instanceof List) {
+												((List) value).each {
+													parameter(key, it)
+												}
+											} else {
+												parameter(key, value)
+											}
+										}
+									}
+								}
+							}
+						}
+						if (yamlContract.request?.headers) {
 							headers {
-								yamlContract.response?.headers?.each { String key, Object value ->
-									TestHeaderMatcher matcher = yamlContract.response.matchers.headers.find { it.key == key }
+								yamlContract.request?.headers?.each { String key, Object value ->
+									KeyValueMatcher matcher = yamlContract.request.matchers.headers.find { it.key == key }
 									if (value instanceof List) {
 										((List) value).each {
-											Object serverValue = serverValue(it, matcher, key)
-											header(key, new DslProperty(it, serverValue))
+											Object clientValue = clientValue(it, matcher, key)
+											header(key, new DslProperty(clientValue, it))
 										}
 									} else {
-										Object serverValue = serverValue(value, matcher, key)
-										header(key, new DslProperty(value, serverValue))
+										Object clientValue = clientValue(value, matcher, key)
+										header(key, new DslProperty(clientValue, value))
 									}
 								}
 							}
-							if (yamlContract.response?.cookies) {
-								cookies {
-									yamlContract.response?.cookies?.each { String key, Object value ->
-										TestCookieMatcher matcher = yamlContract.response.matchers.cookies.find { it.key == key }
-										Object serverValue = serverCookieValue(value, matcher, key)
+						}
+						if (yamlContract.request?.cookies) {
+							cookies {
+								yamlContract.request?.cookies?.each { String key, Object value ->
+									KeyValueMatcher matcher = yamlContract.request.matchers.cookies.find { it.key == key }
+									Object clientValue = clientValue(value, matcher, key)
 
-										cookie(key, new DslProperty(value, serverValue))
-									}
+									cookie(key, new DslProperty(clientValue, value))
 								}
 							}
-							if (yamlContract.response.body) body(yamlContract.response.body)
-							if (yamlContract.response.bodyFromFile) body(file(yamlContract.response.bodyFromFile))
-							if (yamlContract.response.async) async()
+						}
+						if (yamlContract.request.body) body(yamlContract.request.body)
+						if (yamlContract.request.bodyFromFile) body(file(yamlContract.request.bodyFromFile))
+						if (yamlContract.request.multipart) {
+							Map multipartMap = [:]
+							Map<String, DslProperty> multiPartParams = yamlContract.request.multipart.params.collectEntries { String paramKey, String paramValue ->
+								KeyValueMatcher matcher = yamlContract.request.matchers.multipart.params.find {
+									it.key == paramKey
+								}
+								Object value = paramValue
+								if (matcher) {
+									value = matcher.regex ? Pattern.compile(matcher.regex) :
+											predefinedToPattern(matcher.predefined)
+								}
+								return [(paramKey), new DslProperty<>(value, paramValue)]
+							} as Map<String, DslProperty>
+							multipartMap.putAll(multiPartParams)
+							yamlContract.request.multipart.named.each { Named namedParam ->
+								YamlContract.MultipartNamedStubMatcher matcher = yamlContract.request.matchers.multipart.named.find {
+									it.paramName == namedParam.paramName
+								}
+								Object fileNameValue = namedParam.fileName
+								Object fileContentValue = namedParam.fileContent
+								if (matcher && matcher.fileName) {
+									fileNameValue = matcher.fileName.regex ? Pattern.compile(matcher.fileName.regex) :
+											predefinedToPattern(matcher.fileName.predefined)
+								}
+								if (matcher && matcher.fileContent) {
+									fileContentValue = matcher.fileContent.regex ? Pattern.compile(matcher.fileContent.regex) :
+											predefinedToPattern(matcher.fileContent.predefined)
+								}
+								multipartMap.put(namedParam.paramName, new NamedProperty(new DslProperty<>(fileNameValue, namedParam.fileName),
+										new DslProperty<>(fileContentValue, namedParam.fileContent)))
+							}
+							multipart(multipartMap)
+						}
+						bodyMatchers {
+							yamlContract.request.matchers?.body?.each { BodyStubMatcher matcher ->
+								MatchingTypeValue value = null
+								switch (matcher.type) {
+									case StubMatcherType.by_date:
+										value = byDate()
+										break
+									case StubMatcherType.by_time:
+										value = byTime()
+										break
+									case StubMatcherType.by_timestamp:
+										value = byTimestamp()
+										break
+									case StubMatcherType.by_regex:
+										String regex = matcher.value
+										if (matcher.predefined) {
+											regex = predefinedToPattern(matcher.predefined).pattern()
+										}
+										value = byRegex(regex)
+										break
+									case StubMatcherType.by_equality:
+										value = byEquality()
+										break
+								}
+								jsonPath(matcher.path, value)
+							}
+						}
+					}
+					response {
+						status(yamlContract.response.status)
+						headers {
+							yamlContract.response?.headers?.each { String key, Object value ->
+								TestHeaderMatcher matcher = yamlContract.response.matchers.headers.find { it.key == key }
+								if (value instanceof List) {
+									((List) value).each {
+										Object serverValue = serverValue(it, matcher, key)
+										header(key, new DslProperty(it, serverValue))
+									}
+								} else {
+									Object serverValue = serverValue(value, matcher, key)
+									header(key, new DslProperty(value, serverValue))
+								}
+							}
+						}
+						if (yamlContract.response?.cookies) {
+							cookies {
+								yamlContract.response?.cookies?.each { String key, Object value ->
+									TestCookieMatcher matcher = yamlContract.response.matchers.cookies.find { it.key == key }
+									Object serverValue = serverCookieValue(value, matcher, key)
+
+									cookie(key, new DslProperty(value, serverValue))
+								}
+							}
+						}
+						if (yamlContract.response.body) body(yamlContract.response.body)
+						if (yamlContract.response.bodyFromFile) body(file(yamlContract.response.bodyFromFile))
+						if (yamlContract.response.async) async()
+						bodyMatchers {
+							yamlContract.response?.matchers?.body?.each { BodyTestMatcher testMatcher ->
+								MatchingTypeValue value = null
+								switch (testMatcher.type) {
+									case TestMatcherType.by_date:
+										value = byDate()
+										break
+									case TestMatcherType.by_time:
+										value = byTime()
+										break
+									case TestMatcherType.by_timestamp:
+										value = byTimestamp()
+										break
+									case TestMatcherType.by_regex:
+										String regex = testMatcher.value
+										if (testMatcher.predefined) {
+											regex = predefinedToPattern(testMatcher.predefined).pattern()
+										}
+										value = byRegex(regex)
+										break
+									case TestMatcherType.by_equality:
+										value = byEquality()
+										break
+									case TestMatcherType.by_type:
+										value = byType() {
+											if (testMatcher.minOccurrence != null) minOccurrence(testMatcher.minOccurrence)
+											if (testMatcher.maxOccurrence != null) maxOccurrence(testMatcher.maxOccurrence)
+										}
+										break
+									case TestMatcherType.by_command:
+										value = byCommand(testMatcher.value)
+										break
+									case TestMatcherType.by_null:
+										value = byNull()
+										break
+								}
+								jsonPath(testMatcher.path, value)
+							}
+						}
+					}
+				}
+				if (yamlContract.input) {
+					input {
+						if (yamlContract.input.messageFrom) messageFrom(yamlContract.input.messageFrom)
+						if (yamlContract.input.assertThat) assertThat(yamlContract.input.assertThat)
+						if (yamlContract.input.triggeredBy) triggeredBy(yamlContract.input.triggeredBy)
+						messageHeaders {
+							yamlContract.input?.messageHeaders?.each { String key, Object value ->
+								KeyValueMatcher matcher = yamlContract.input.matchers?.headers?.find { it.key == key }
+								Object clientValue = clientValue(value, matcher, key)
+								header(key, new DslProperty(clientValue, value))
+							}
+						}
+						if (yamlContract.input.messageBody) messageBody(yamlContract.input.messageBody)
+						if (yamlContract.input.messageBodyFromFile) messageBody(file(yamlContract.input.messageBodyFromFile))
+						bodyMatchers {
+							yamlContract.input.matchers.body?.each { BodyStubMatcher matcher ->
+								MatchingTypeValue value = null
+								switch (matcher.type) {
+									case StubMatcherType.by_date:
+										value = byDate()
+										break
+									case StubMatcherType.by_time:
+										value = byTime()
+										break
+									case StubMatcherType.by_timestamp:
+										value = byTimestamp()
+										break
+									case StubMatcherType.by_regex:
+										String regex = matcher.value
+										if (matcher.predefined) {
+											regex = predefinedToPattern(matcher.predefined).pattern()
+										}
+										value = byRegex(regex)
+										break
+									case StubMatcherType.by_equality:
+										value = byEquality()
+										break
+									default:
+										throw new UnsupportedOperationException("The type [" + matcher.type + "] is unsupported. Hint: If you're using <predefined> remember to pass <type: by_regex>")
+								}
+								jsonPath(matcher.path, value)
+							}
+						}
+					}
+				}
+				OutputMessage outputMsg = yamlContract.outputMessage
+				if (outputMsg) {
+					outputMessage {
+						if (outputMsg.assertThat) assertThat(outputMsg.assertThat)
+						if (outputMsg.sentTo) sentTo(outputMsg.sentTo)
+						headers {
+							outputMsg.headers?.each { String key, Object value ->
+								TestHeaderMatcher matcher = outputMsg.matchers?.headers?.find { it.key == key }
+								Object serverValue = serverValue(value, matcher, key)
+								header(key, new DslProperty(value, serverValue))
+							}
+						}
+						if (outputMsg.body) body(outputMsg.body)
+						if (outputMsg.bodyFromFile) body(file(outputMsg.bodyFromFile))
+						if (outputMsg.matchers) {
 							bodyMatchers {
-								yamlContract.response?.matchers?.body?.each { BodyTestMatcher testMatcher ->
+								yamlContract.outputMessage?.matchers?.body?.each { BodyTestMatcher testMatcher ->
 									MatchingTypeValue value = null
 									switch (testMatcher.type) {
 										case TestMatcherType.by_date:
@@ -272,129 +395,16 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 										case TestMatcherType.by_null:
 											value = byNull()
 											break
+										default:
+											throw new UnsupportedOperationException("The type [" + testMatcher.type + "] is unsupported. Hint: If you're using <predefined> remember to pass <type: by_regex>")
 									}
 									jsonPath(testMatcher.path, value)
 								}
 							}
 						}
 					}
-					if (yamlContract.input) {
-						input {
-							if (yamlContract.input.messageFrom) messageFrom(yamlContract.input.messageFrom)
-							if (yamlContract.input.assertThat) assertThat(yamlContract.input.assertThat)
-							if (yamlContract.input.triggeredBy) triggeredBy(yamlContract.input.triggeredBy)
-							messageHeaders {
-								yamlContract.input?.messageHeaders?.each { String key, Object value ->
-									KeyValueMatcher matcher = yamlContract.input.matchers?.headers?.find { it.key == key }
-									Object clientValue = clientValue(value, matcher, key)
-									header(key, new DslProperty(clientValue, value))
-								}
-							}
-							if (yamlContract.input.messageBody) messageBody(yamlContract.input.messageBody)
-							if (yamlContract.input.messageBodyFromFile) messageBody(file(yamlContract.input.messageBodyFromFile))
-							bodyMatchers {
-								yamlContract.input.matchers.body?.each { BodyStubMatcher matcher ->
-									MatchingTypeValue value = null
-									switch (matcher.type) {
-										case StubMatcherType.by_date:
-											value = byDate()
-											break
-										case StubMatcherType.by_time:
-											value = byTime()
-											break
-										case StubMatcherType.by_timestamp:
-											value = byTimestamp()
-											break
-										case StubMatcherType.by_regex:
-											String regex = matcher.value
-											if (matcher.predefined) {
-												regex = predefinedToPattern(matcher.predefined).pattern()
-											}
-											value = byRegex(regex)
-											break
-										case StubMatcherType.by_equality:
-											value = byEquality()
-											break
-										default:
-											throw new UnsupportedOperationException("The type [" + matcher.type + "] is unsupported. Hint: If you're using <predefined> remember to pass <type: by_regex>")
-									}
-									jsonPath(matcher.path, value)
-								}
-							}
-						}
-					}
-					OutputMessage outputMsg = yamlContract.outputMessage
-					if (outputMsg) {
-						outputMessage {
-							if (outputMsg.assertThat) assertThat(outputMsg.assertThat)
-							if (outputMsg.sentTo) sentTo(outputMsg.sentTo)
-							headers {
-								outputMsg.headers?.each { String key, Object value ->
-									TestHeaderMatcher matcher = outputMsg.matchers?.headers?.find { it.key == key }
-									Object serverValue = serverValue(value, matcher, key)
-									header(key, new DslProperty(value, serverValue))
-								}
-							}
-							if (outputMsg.body) body(outputMsg.body)
-							if (outputMsg.bodyFromFile) body(file(outputMsg.bodyFromFile))
-							if (outputMsg.matchers) {
-								bodyMatchers {
-									yamlContract.outputMessage?.matchers?.body?.each { BodyTestMatcher testMatcher ->
-										MatchingTypeValue value = null
-										switch (testMatcher.type) {
-											case TestMatcherType.by_date:
-												value = byDate()
-												break
-											case TestMatcherType.by_time:
-												value = byTime()
-												break
-											case TestMatcherType.by_timestamp:
-												value = byTimestamp()
-												break
-											case TestMatcherType.by_regex:
-												String regex = testMatcher.value
-												if (testMatcher.predefined) {
-													regex = predefinedToPattern(testMatcher.predefined).pattern()
-												}
-												value = byRegex(regex)
-												break
-											case TestMatcherType.by_equality:
-												value = byEquality()
-												break
-											case TestMatcherType.by_type:
-												value = byType() {
-													if (testMatcher.minOccurrence != null) minOccurrence(testMatcher.minOccurrence)
-													if (testMatcher.maxOccurrence != null) maxOccurrence(testMatcher.maxOccurrence)
-												}
-												break
-											case TestMatcherType.by_command:
-												value = byCommand(testMatcher.value)
-												break
-											case TestMatcherType.by_null:
-												value = byNull()
-												break
-											default:
-												throw new UnsupportedOperationException("The type [" + testMatcher.type + "] is unsupported. Hint: If you're using <predefined> remember to pass <type: by_regex>")
-										}
-										jsonPath(testMatcher.path, value)
-									}
-								}
-							}
-						}
-					}
 				}
 			}
-		}
-		catch (FileNotFoundException e) {
-			throw new IllegalStateException(e)
-		}
-		catch (IllegalStateException ise) {
-			throw ise
-		}
-		catch (Exception e1) {
-			throw new IllegalStateException("Exception occurred while processing the file [" + contractFile + "]", e1)
-		} finally {
-			Thread.currentThread().setContextClassLoader(classLoader)
 		}
 	}
 

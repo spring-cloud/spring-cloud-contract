@@ -10,7 +10,7 @@ buildscript {
 	}
 
 	dependencies {
-		classpath "io.spring.gradle:dependency-management-plugin:1.0.4.RELEASE"
+		classpath "io.spring.gradle:dependency-management-plugin:1.0.6.RELEASE"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifierVersion}"
 	}
 }
@@ -83,7 +83,7 @@ contracts {
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '4.4.1'
+	gradleVersion = '4.9'
 }
 
 task cleanOutput(type: Delete) {

@@ -169,10 +169,10 @@ class StubRepository {
 								if (isContractDescriptor(file)) {
 									contractDescriptors
 											.addAll(ContractVerifierDslConverter.convertAsCollection(file.getParentFile(), file));
+								} else if (converter != null && converter.isAccepted(file)) {
+									contractDescriptors.addAll(converter.convertFrom(file));
 								} else if (YamlContractConverter.INSTANCE.isAccepted(file)) {
 									contractDescriptors.addAll(YamlContractConverter.INSTANCE.convertFrom(file));
-								} else if (converter != null) {
-									contractDescriptors.addAll(converter.convertFrom(file));
 								}
 							}
 							return super.visitFile(path, attrs);
@@ -190,7 +190,13 @@ class StubRepository {
 			return true;
 		}
 		String consumerName = this.options.getConsumerName();
-		return file.getAbsolutePath().contains(File.separator + consumerName + File.separator);
+		String searchedConsumerName = File.separator + consumerName + File.separator;
+		String absolutePath = file.getAbsolutePath();
+		boolean stubPerConsumerMatching = absolutePath.contains(searchedConsumerName);
+		if (log.isDebugEnabled()) {
+			log.debug("Absolute path [" + absolutePath + "] contains [" + searchedConsumerName + "] in its path [" + stubPerConsumerMatching + "]");
+		}
+		return stubPerConsumerMatching;
 	}
 
 	private static boolean isContractDescriptor(File file) {

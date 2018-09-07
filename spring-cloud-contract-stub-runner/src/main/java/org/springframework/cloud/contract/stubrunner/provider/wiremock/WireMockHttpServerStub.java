@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -42,6 +43,8 @@ public class WireMockHttpServerStub implements HttpServerStub {
 
 	private static final Logger log = LoggerFactory.getLogger(WireMockHttpServerStub.class);
 	private static final int INVALID_PORT = -1;
+
+	static final Map<WireMockHttpServerStub, PortAndMappings> SERVERS = new ConcurrentHashMap<>();
 
 	private WireMockServer wireMockServer;
 
@@ -107,6 +110,12 @@ public class WireMockHttpServerStub implements HttpServerStub {
 		this.wireMockServer = new WireMockServer(config().port(port)
 				.notifier(new Slf4jNotifier(true)));
 		this.wireMockServer.start();
+		if (log.isDebugEnabled()) {
+			log.debug("Started WireMock at port [" + port + "]");
+		}
+		if (!SERVERS.containsKey(this)) {
+			SERVERS.put(this, new PortAndMappings(port, new ArrayList<StubMapping>()));
+		}
 		return this;
 	}
 
@@ -159,9 +168,13 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	}
 
 	private void registerStubMappings(Collection<File> stubFiles) {
-		WireMock wireMock = new WireMock("localhost", port(), "");
+		WireMock wireMock = wireMock();
 		registerDefaultHealthChecks(wireMock);
 		registerStubs(stubFiles, wireMock);
+	}
+
+	private WireMock wireMock() {
+		return new WireMock("localhost", port(), "");
 	}
 
 	private void registerDefaultHealthChecks(WireMock wireMock) {
@@ -170,9 +183,10 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	}
 
 	private void registerStubs(Collection<File> sortedMappings, WireMock wireMock) {
+		List<StubMapping> stubMappings = new ArrayList<>();
 		for (File mappingDescriptor : sortedMappings) {
 			try {
-				wireMock.register(getMapping(mappingDescriptor));
+				stubMappings.add(registerDescriptor(wireMock, mappingDescriptor));
 				if (log.isDebugEnabled()) {
 					log.debug("Registered stub mappings from [" + mappingDescriptor + "]");
 				}
@@ -183,6 +197,23 @@ public class WireMockHttpServerStub implements HttpServerStub {
 				}
 			}
 		}
+		PortAndMappings portAndMappings = SERVERS.get(this);
+		SERVERS.put(this, new PortAndMappings(portAndMappings.port, stubMappings));
+	}
+
+	private StubMapping registerDescriptor(WireMock wireMock, File mappingDescriptor) {
+		StubMapping mapping = getMapping(mappingDescriptor);
+		wireMock.register(mapping);
+		return mapping;
+	}
+
+	void registerDescriptors(List<StubMapping> stubMappings) {
+		if (log.isDebugEnabled()) {
+			log.debug("Registering stub mappings size [" + stubMappings.size() + "] at port [" + port() + "]");
+		}
+		for (StubMapping mapping : stubMappings) {
+			wireMock().register(mapping);
+		}
 	}
 
 	private void registerHealthCheck(WireMock wireMock, String url) {
@@ -192,5 +223,19 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	private void registerHealthCheck(WireMock wireMock, String url, String body) {
 		wireMock.register(
 				WireMock.get(WireMock.urlEqualTo(url)).willReturn(WireMock.aResponse().withBody(body).withStatus(200)));
+	}
+}
+
+class PortAndMappings {
+	final Integer port;
+	final List<StubMapping> mappings;
+
+	PortAndMappings(Integer port, List<StubMapping> mappings) {
+		this.port = port;
+		this.mappings = mappings;
+	}
+
+	@Override public String toString() {
+		return "PortAndMappings{" + "port=" + this.port + ", mappings=" + this.mappings.size() + '}';
 	}
 }

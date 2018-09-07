@@ -87,10 +87,17 @@ public class ClasspathStubProvider implements StubDownloaderBuilder {
 				for (Resource resource : resources) {
 					try {
 						String relativePath = relativePathPicker(resource, groupAndArtifactPattern);
-						int lastIndexOf = relativePath.lastIndexOf(File.separator);
+						if (log.isDebugEnabled()) {
+							log.debug("Relative path for resource is [" + relativePath + "]");
+						}
+						// the relative path is OS agnostic and contains / only
+						int lastIndexOf = relativePath.lastIndexOf("/");
 						String relativePathWithoutFile = lastIndexOf > -1 ?
 								relativePath.substring(0, lastIndexOf) :
 								relativePath;
+						if (log.isDebugEnabled()) {
+							log.debug("Relative path without file name is [" + relativePathWithoutFile + "]");
+						}
 						Path directory = Files.createDirectories(
 								new File(tmp, relativePathWithoutFile).toPath());
 						File newFile = new File(directory.toFile(), resource.getFilename());
@@ -132,7 +139,7 @@ public class ClasspathStubProvider implements StubDownloaderBuilder {
 				if (groupAndArtifactMatcher.matches()) {
 					MatchResult groupAndArtifactResult = groupAndArtifactMatcher
 							.toMatchResult();
-					return groupAndArtifactResult.group(2) + File.separator
+					return groupAndArtifactResult.group(2)
 							+ groupAndArtifactResult.group(3);
 				}
 				else {

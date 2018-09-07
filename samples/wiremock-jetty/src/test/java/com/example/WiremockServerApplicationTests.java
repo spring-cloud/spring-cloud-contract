@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.contract.wiremock.WireMockSpring;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -28,7 +27,6 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties="app.baseUrl=http://localhost:6061", webEnvironment=WebEnvironment.NONE)
-@DirtiesContext
 public class WiremockServerApplicationTests {
 
 	@ClassRule

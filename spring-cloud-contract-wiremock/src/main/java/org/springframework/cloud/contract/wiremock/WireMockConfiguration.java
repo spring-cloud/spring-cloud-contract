@@ -16,17 +16,18 @@
 
 package org.springframework.cloud.contract.wiremock;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
-import com.github.tomakehurst.wiremock.core.Options;
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
+import com.github.tomakehurst.wiremock.core.Options;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -37,8 +38,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.util.Assert;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Configuration and lifecycle for a Spring Application context that wants to run a
@@ -54,6 +57,10 @@ import org.springframework.util.StringUtils;
 @Configuration
 @EnableConfigurationProperties(WireMockProperties.class)
 public class WireMockConfiguration implements SmartLifecycle {
+
+	private static final Log log = LogFactory.getLog(WireMockConfiguration.class);
+
+	static final String WIREMOCK_SERVER_BEAN_NAME = "wireMockServer";
 
 	private volatile boolean running;
 
@@ -91,10 +98,15 @@ public class WireMockConfiguration implements SmartLifecycle {
 				this.customizer.customize(factory);
 			}
 		}
-		this.server = new WireMockServer(this.options);
+		if (this.server == null) {
+			this.server = new WireMockServer(this.options);
+		}
 		registerStubs();
-		if (!this.beanFactory.containsBean("wireMockServer")) {
-			this.beanFactory.registerSingleton("wireMockServer", this.server);
+		if (log.isDebugEnabled()) {
+			log.debug("WireMock server has [" + this.server.getStubMappings().size() + "] registered");
+		}
+		if (!this.beanFactory.containsBean(WIREMOCK_SERVER_BEAN_NAME)) {
+			this.beanFactory.registerSingleton(WIREMOCK_SERVER_BEAN_NAME, this.server);
 		}
 	}
 
@@ -116,6 +128,10 @@ public class WireMockConfiguration implements SmartLifecycle {
 				}
 			}
 		}
+	}
+
+	void reset() {
+		this.server.resetAll();
 	}
 
 	private void registerFiles(com.github.tomakehurst.wiremock.core.WireMockConfiguration factory) throws IOException {
@@ -142,6 +158,19 @@ public class WireMockConfiguration implements SmartLifecycle {
 		this.server.start();
 		WireMock.configureFor("localhost", this.server.port());
 		this.running = true;
+		if (log.isDebugEnabled()) {
+			log.debug("Started WireMock at port [" + this.server.port() + "]. It has [" + this.server.getStubMappings().size() + "] mappings registered");
+		}
+		/*
+		Thanks to Tom Akehurst:
+		I looked at tcpdump while running the failing test. HttpUrlConnection is doing something weird - it's creating a connection in a
+		previous test case, which works fine, then the usual fin -> fin ack etc. etc. ending handshake happens. But it seems it
+		isn't discarded, but reused after that. Because the server thinks (rightly) that the connection is closed, it just sends a RST packet.
+		Calling the admin endpoint just happened to remove the dead connection from the pool.
+		This also fixes the problem (which using the Java HTTP client): System.setProperty("http.keepAlive", "false");
+		 */
+		Assert.isTrue(new RestTemplate().getForEntity("http://localhost:" + this.server.port() + "/__admin/mappings", String.class)
+				.getStatusCode().is2xxSuccessful(), "__admin/mappings endpoint wasn't accessible");
 	}
 
 	@Override
@@ -149,6 +178,9 @@ public class WireMockConfiguration implements SmartLifecycle {
 		if (this.running) {
 			this.server.stop();
 			this.running = false;
+			if (log.isDebugEnabled()) {
+				log.debug("Stopped WireMock instance");
+			}
 		}
 	}
 

@@ -29,5 +29,12 @@
 				<include>**/*</include>
 			</includes>
 		</fileSet>
+		<fileSet>
+			<directory>${project.build.directory}/stubs</directory>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>**/*</include>
+			</includes>
+		</fileSet>
 	</fileSets>
 </assembly>

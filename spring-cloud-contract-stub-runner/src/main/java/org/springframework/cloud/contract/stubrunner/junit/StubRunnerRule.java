@@ -154,11 +154,6 @@ public class StubRunnerRule implements TestRule, StubFinder, StubRunnerRuleOptio
 		return this.delegate;
 	}
 
-	@Override public StubRunnerRule withSnapshotCheckSkip(boolean snapshotCheckSkip) {
-		builder().withSnapshotCheckSkip(snapshotCheckSkip);
-		return this.delegate;
-	}
-
 	@Override public StubRunnerRule withDeleteStubsAfterTest(
 			boolean deleteStubsAfterTest) {
 		builder().withDeleteStubsAfterTest(deleteStubsAfterTest);

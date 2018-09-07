@@ -48,7 +48,6 @@ public class StubRunnerOptionsBuilder {
 	private String consumerName;
 	private String mappingsOutputFolder;
 	private StubRunnerProperties.StubsMode stubsMode;
-	private boolean snapshotCheckSkip = false;
 	private boolean deleteStubsAfterTest = true;
 	private Map<String, String> properties = new HashMap<>();
 
@@ -133,10 +132,9 @@ public class StubRunnerOptionsBuilder {
 		this.consumerName = options.getConsumerName();
 		this.mappingsOutputFolder = options.getMappingsOutputFolder();
 		this.stubConfigurations = options.dependencies != null ?
-				options.dependencies : new ArrayList<StubConfiguration>();
+				options.dependencies : new ArrayList<>();
 		this.stubIdsToPortMapping = options.stubIdsToPortMapping != null ?
-				options.stubIdsToPortMapping : new LinkedHashMap<StubConfiguration, Integer>();
-		this.snapshotCheckSkip = options.isSnapshotCheckSkip();
+				options.stubIdsToPortMapping : new LinkedHashMap<>();
 		this.deleteStubsAfterTest = options.isDeleteStubsAfterTest();
 		this.properties = options.getProperties();
 		return this;
@@ -144,11 +142,6 @@ public class StubRunnerOptionsBuilder {
 
 	public StubRunnerOptionsBuilder withMappingsOutputFolder(String mappingsOutputFolder) {
 		this.mappingsOutputFolder = mappingsOutputFolder;
-		return this;
-	}
-
-	public StubRunnerOptionsBuilder withSnapshotCheckSkip(boolean snapshotCheckSkip) {
-		this.snapshotCheckSkip = snapshotCheckSkip;
 		return this;
 	}
 
@@ -166,7 +159,7 @@ public class StubRunnerOptionsBuilder {
 		return new StubRunnerOptions(this.minPortValue, this.maxPortValue, this.stubRepositoryRoot,
 				this.stubsMode, this.stubsClassifier, buildDependencies(), this.stubIdsToPortMapping,
 				this.username, this.password, this.stubRunnerProxyOptions, this.stubsPerConsumer, this.consumerName,
-				this.mappingsOutputFolder, this.snapshotCheckSkip, this.deleteStubsAfterTest, this.properties);
+				this.mappingsOutputFolder, this.deleteStubsAfterTest, this.properties);
 	}
 
 	private Collection<StubConfiguration> buildDependencies() {

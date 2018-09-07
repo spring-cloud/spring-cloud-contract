@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,7 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 		AutoConfigureWireMockConfigurationCustomizerTests.Config.class},
 		properties="app.baseUrl=http://localhost:${wiremock.server.port}",
 		webEnvironment=WebEnvironment.NONE)
-@DirtiesContext
 @AutoConfigureWireMock(port=0, stubs="file:src/test/resources/io.stubs/mappings")
 public class AutoConfigureWireMockConfigurationCustomizerTests {
 

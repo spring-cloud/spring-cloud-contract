@@ -491,6 +491,58 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
 
+	@Issue("#702")
+	def "should generate proper type for large numbers [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'PUT'
+					urlPath '/example/create'
+					headers {
+						contentType applicationJson()
+					}
+					body(
+							[
+									"name"      : $(consumer(~/.+/), producer("string-1")),
+									"updatedTs" : $(consumer(~/\d{13}/), producer(1531916906000L)),
+									"isDisabled": $(consumer(regex(anyBoolean())), producer(true))
+							]
+					)
+				}
+
+				response {
+					status 200
+					headers {
+						contentType applicationJsonUtf8()
+					}
+					body(
+							[
+									"id"        : $(consumer(2222L), producer(~/\d+/)),
+									"name"      : fromRequest().body("name"),
+									"updatedTs" : fromRequest().body("updatedTs"),
+									"isDisabled": fromRequest().body("isDisabled")
+							]
+					)
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			String test = blockBuilder.toString()
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+			test.contains('''assertThatJson(parsedJson).field("['updatedTs']").isEqualTo(1531916906000L)''')
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
 	@Issue("#465")
 	def "should work for '/' url for [#methodBuilderName]"() {
 		given:
@@ -653,6 +705,57 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
 
+	@Issue("#493")
+	def "should not escape a form URL encoded request body another try [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method POST()
+					urlPath('/oauth/token')
+					headers {
+						header(authorization(), anyNonBlankString())
+						header(contentType(), 'application/x-www-form-urlencoded; charset=UTF-8')
+						header(accept(), anyNonBlankString())
+					}
+					body('username=user&password=password&grant_type=password')
+				}
+				response {
+					status 200
+					headers {
+						header(contentType(), applicationJsonUtf8())
+					}
+					body([
+							refresh_token: 'RANDOM_REFRESH_TOKEN',
+							access_token : 'RANDOM_ACCESS_TOKEN',
+							token_type   : 'bearer',
+							expires_in   : 3600,
+							scope        : ['task'],
+							user         : [
+									id      : 1,
+									username: 'user',
+									name    : 'User'
+							]
+					])
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			String test = blockBuilder.toString()
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+			!test.contains("&amp;")
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName                                    | methodBuilder
+			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
 	@Issue("#509")
 	def "classToCheck() should return class of object"() {
 		given:
@@ -708,6 +811,36 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName           						 | methodBuilder
+			"MockMvcSpockMethodBuilder" 						 | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"MockMvcJUnitMethodBuilder" 						 | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
+	}
+
+	def "should not escape a regex pattern when matching raw body value [#methodBuilderName]"() {
+		def pattern = "\\d+\\w?"
+		def escapedPattern = "\\\\d+\\\\w?"
+
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url '/api/arbitrary-url'
+				}
+				response {
+					status OK()
+					body(value(stub("1"), test(regex(pattern))))
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+		then:
+			String test = blockBuilder.toString()
+			test.contains(escapedPattern)
 		where:
 			methodBuilderName           						 | methodBuilder
 			"MockMvcSpockMethodBuilder" 						 | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }

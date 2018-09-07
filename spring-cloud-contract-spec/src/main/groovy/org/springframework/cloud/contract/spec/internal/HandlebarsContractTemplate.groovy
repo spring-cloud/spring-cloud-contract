@@ -15,11 +15,21 @@ class HandlebarsContractTemplate implements ContractTemplate {
 
 	@Override
 	String openingTemplate() {
-		return "{{{"
+		return "{{"
 	}
 
 	@Override
 	String closingTemplate() {
+		return "}}"
+	}
+
+	@Override
+	String escapedOpeningTemplate() {
+		return "{{{"
+	}
+
+	@Override
+	String escapedClosingTemplate() {
 		return "}}}"
 	}
 
@@ -70,15 +80,64 @@ class HandlebarsContractTemplate implements ContractTemplate {
 
 	@Override
 	String escapedBody() {
-		return wrapped("escapejsonbody")
+		return escapedWrapped("request.body")
+	}
+
+	@Override
+	String escapedBody(String jsonPath) {
+		return escapedWrapped("jsonPath request.body '${jsonPath}'")
 	}
 
 	@Override
 	String body(String jsonPath) {
-		return wrapped("jsonpath this '${jsonPath}'")
+		return wrapped("jsonPath request.body '${jsonPath}'")
+	}
+
+	@Override
+	String escapedUrl() {
+		return escapedWrapped("request.url")
+	}
+
+	@Override
+	String escapedQuery(String key) {
+		return escapedQuery(key, 0)
+	}
+
+	@Override
+	String escapedQuery(String key, int index) {
+		return escapedWrapped("request.query.${key}.[${index}]")
+	}
+
+	@Override
+	String escapedPath() {
+		return escapedWrapped("request.path")
+	}
+
+	@Override
+	String escapedPath(int index) {
+		return escapedWrapped("request.path.[${index}]")
+	}
+
+	@Override
+	String escapedHeader(String key) {
+		return escapedHeader(key, 0)
+	}
+
+	@Override
+	String escapedHeader(String key, int index) {
+		return escapedWrapped("request.headers.${key}.[${index}]")
+	}
+
+	@Override
+	String escapedCookie(String key) {
+		return escapedWrapped("request.cookies.${key}")
 	}
 
 	private String wrapped(String text) {
 		return openingTemplate() + text + closingTemplate()
+	}
+
+	private String escapedWrapped(String text) {
+		return escapedOpeningTemplate() + text + escapedClosingTemplate()
 	}
 }
