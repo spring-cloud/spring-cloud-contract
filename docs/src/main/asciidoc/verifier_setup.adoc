@@ -897,6 +897,30 @@ In order to fix this issue, provide the following section in your `pom.xml`:
 </build>
 ----
 
+==== Maven Plugin with Spock Tests
+
+You can select the http://spockframework.org/[Spock Framework] for creating and executing the auto-generated contract
+verification tests with both Maven and Gradle plugin. However, whereas with Gradle its really straightforward,
+in Maven you will require some additional setup in order to make the tests compile and execute properly.
+
+First of all, you will have to use a plugin, such as https://github.com/groovy/GMavenPlus[GMavenPlus] plugin,
+to add Groovy to your project. In GMavenPlus plugin, you will need to explicitly set test sources, including both the
+path where your base test classes are defined and the path were the generated contract tests are added.
+Please refer to the example below:
+
+[source,xml,indent=0]
+----
+include::{samples_url}/producer_with_spock/pom.xml[tags=gmavenplus-setup,indent=0]
+----
+
+If you uphold to the Spock convention of ending the test class names with `Spec`, you will also need to adjust your Maven
+Surefire plugin setup, like in the following example:
+
+[source,xml,indent=0]
+----
+include::{samples_url}/producer_with_spock/pom.xml[tags=pock-surefire-setup,indent=0]
+----
+
 === Stubs and Transitive Dependencies
 
 The Maven and Gradle plugin that add the tasks that create the stubs jar for you. One
