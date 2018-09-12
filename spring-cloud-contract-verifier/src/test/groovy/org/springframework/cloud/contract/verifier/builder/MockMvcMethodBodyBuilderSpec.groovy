@@ -179,7 +179,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status OK()
+				status 200
 				body """{
 	"property1": "a",
 	"property2": "b"
@@ -212,7 +212,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status OK()
+				status 200
 				body """{
 	"property1": "true",
 	"property2": null,
@@ -247,7 +247,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status OK()
+				status 200
 				body(
 						property1: 'a',
 						property2: [
@@ -286,7 +286,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status OK()
+				status 200
 				body(
 						property1: 'a',
 						property2: [
@@ -327,7 +327,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				)
 			}
 			response {
-				status OK()
+				status 200
 			}
 		}
 		MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -358,7 +358,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				)
 			}
 			response {
-				status OK()
+				status 200
 			}
 		}
 		MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -386,7 +386,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status OK()
+				status 200
 				body(
 						property: [
 								14: 0.0,
@@ -420,7 +420,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status OK()
+				status 200
 				body """[
 {
 	"property1": "a"
@@ -455,7 +455,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status OK()
+				status 200
 				body """{
 	"property1": [
 	{ "property2": "test1"},
@@ -489,7 +489,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status OK()
+				status 200
 				body '''\
 {
 	"property1": "a",
@@ -523,7 +523,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status OK()
+				status 200
 				body(
 						property1: "a",
 						property2: value(
@@ -561,7 +561,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status OK()
+				status 200
 				body("""{"property1":"a","property2":"${
 					value(consumer('123'), producer(regex('[0-9]{3}')))
 				}"}""")
@@ -596,7 +596,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status OK()
+				status 200
 				body("""{"property":"  ${
 					value(consumer('123'), producer(regex('\\d+')))
 				}"}""")
@@ -642,7 +642,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				}
 			}
 			response {
-				status OK()
+				status 200
 				body """
 					{
 						"property1": "a",
@@ -700,7 +700,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				}
 			}
 			response {
-				status OK()
+				status 200
 				body """
 					{
 						"property1": "a",
@@ -773,7 +773,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				url "test"
 			}
 			response {
-				status OK()
+				status 200
 				body "test"
 			}
 		}
@@ -896,7 +896,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 			}
 
 			response {
-				status OK()
+				status 200
 				body(errors: [
 						[property: "bank_account_number", message: "incorrect_format"]
 				])
@@ -1059,7 +1059,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 
 			}
 			response {
-				status OK()
+				status 200
 				body("""{
     "fraudCheckStatus": "OK",
     "rejectionReason": ${
@@ -1136,7 +1136,7 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 				)
 			}
 			response {
-				status OK()
+				status 200
 				headers {
 					contentType(applicationJson())
 				}
@@ -1153,50 +1153,6 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		!test.contains("cursor")
 		and:
 		SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
-		where:
-		methodBuilderName           | methodBuilder                                                               | bodyString
-		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '"street":"Light Street"'
-		"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | '\\"street\\":\\"Light Street\\"'
-
-	}
-
-		def "should work with optional fields that have null #methodBuilderName"() {
-		given:
-		Contract contractDsl = Contract.make {
-			request {
-				method "PUT"
-				url "/v1/payments/e86df6f693de4b35ae648464c5b0dc09/client_data"
-				headers {
-					contentType(applicationJson())
-				}
-			}
-			response {
-				status OK()
-				headers {
-					contentType(applicationJson())
-				}
-				body(
-						code: $(optional(regex("123123")))
-				)
-			}
-		}
-		MethodBodyBuilder builder = methodBuilder(contractDsl)
-		BlockBuilder blockBuilder = new BlockBuilder(" ")
-		when:
-		builder.appendTo(blockBuilder)
-		def test = blockBuilder.toString()
-		then:
-		SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
-		and:
-		String jsonSample = '''\
-String json = "{\\"code\\":null}";
-DocumentContext parsedJson = JsonPath.parse(json);
-'''
-		and:
-		LinkedList<String> lines = [] as LinkedList<String>
-		test.eachLine { if (it.contains("assertThatJson")) lines << it else it }
-		lines.addFirst(jsonSample)
-		SyntaxChecker.tryToRun(methodBuilderName, lines.join("\n"))
 		where:
 		methodBuilderName           | methodBuilder                                                               | bodyString
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '"street":"Light Street"'
@@ -1223,7 +1179,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 				)
 			}
 			response {
-				status OK()
+				status 200
 				headers {
 					contentType(applicationJson())
 				}
@@ -1255,7 +1211,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 World.''')
 			}
 			response {
-				status OK()
+				status 200
 			}
 		}
 		MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -1301,7 +1257,7 @@ World.'''"""
 				)
 			}
 			response {
-				status OK()
+				status 200
 			}
 		}
 			// end::multipartdsl[]
@@ -1352,7 +1308,7 @@ World.'''"""
 				)
 			}
 			response {
-				status OK()
+				status 200
 			}
 		}
 		MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -1378,48 +1334,6 @@ World.'''"""
 																													 '.multiPart("file", "filename.csv", "file content".getBytes());']
 	}
 
-	@Issue('546')
-	def "should generate test code when having multipart parameters with byte array #methodBuilderName"() {
-		given:
-		// tag::multipartdsl[]
-		org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
-			request {
-				method "PUT"
-				url "/multipart"
-				headers {
-					contentType('multipart/form-data;boundary=AaB03x')
-				}
-				multipart(
-						file: named(
-								name: value(stub(regex('.+')), test('file')),
-								content: value(stub(regex('.+')), test([100, 117, 100, 97] as byte[]))
-						)
-				)
-			}
-			response {
-				status 200
-			}
-		}
-		// end::multipartdsl[]
-		MethodBodyBuilder builder = methodBuilder(contractDsl)
-		BlockBuilder blockBuilder = new BlockBuilder(" ")
-		when:
-		builder.appendTo(blockBuilder)
-		def test = blockBuilder.toString()
-		then:
-		for (String requestString : requestStrings) {
-			assert test.contains(requestString)
-		}
-		and:
-		SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
-		where:
-		methodBuilderName           | methodBuilder                                                               | requestStrings
-		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
-																													 """.multiPart('file', 'file', [100, 117, 100, 97] as byte[])"""]
-		"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
-																													 '.multiPart("file", "file", new byte[] {100, 117, 100, 97});']
-	}
-
 	@Issue('541')
 	def "should generate proper test code when having multipart parameters that use execute with #methodBuilderName"() {
 		given:
@@ -1439,7 +1353,7 @@ World.'''"""
 					)
 				}
 				response {
-					status OK()
+					status 200
 				}
 			}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -1489,7 +1403,7 @@ World.'''"""
 				)
 			}
 			response {
-				status OK()
+				status 200
 			}
 		}
 		MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -1515,7 +1429,8 @@ World.'''"""
 				method "GET"
 				urlPath('/auth/oauth/check_token') {
 					queryParameters {
-						parameter 'token': value(
+						parameter 'token':
+								value(
 										consumer(regex('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}')),
 										producer('6973b31d-7140-402a-bca6-1cdb954e03a7')
 								)
@@ -1523,7 +1438,7 @@ World.'''"""
 				}
 			}
 			response {
-				status OK()
+				status 200
 				body(
 						authorities: [
 								value(consumer('ROLE_ADMIN'), producer(regex('^[a-zA-Z0-9_\\- ]+$')))
@@ -1550,7 +1465,8 @@ World.'''"""
 				method "GET"
 				urlPath('/auth/oauth/check_token') {
 					queryParameters {
-						parameter 'token': value(
+						parameter 'token':
+								value(
 										consumer(regex('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}')),
 										producer('6973b31d-7140-402a-bca6-1cdb954e03a7')
 								)
@@ -1558,7 +1474,7 @@ World.'''"""
 				}
 			}
 			response {
-				status OK()
+				status 200
 				body(
 						authorities: [
 								value(consumer('ROLE_ADMIN'), producer(regex('^[a-zA-Z0-9_\\- ]+$')))
@@ -1585,7 +1501,7 @@ World.'''"""
 				url '/fraudcheck'
 			}
 			response {
-				status OK()
+				status 200
 				body(
 						fraudCheckStatus: "OK",
 						rejectionReason: $(consumer(null), producer(execute('assertThatRejectionReasonIsNull($it)')))
@@ -1616,7 +1532,7 @@ World.'''"""
 					urlPath '/foos'
 				}
 				response {
-					status OK()
+					status 200
 					body([[id: value(
 							consumer('123'),
 							producer(regex('[0-9]+'))
@@ -1649,7 +1565,7 @@ World.'''"""
 					urlPath '/api/tags'
 				}
 				response {
-					status OK()
+					status 200
 					body(["Java", "Java8", "Spring", "SpringBoot", "Stream"])
 					headers {
 						header('Content-Type': 'application/json;charset=UTF-8')
@@ -1686,7 +1602,7 @@ World.'''"""
 					urlPath '/api/tags'
 				}
 				response {
-					status OK()
+					status 200
 					body(["Java", "Java8", "Spring", "SpringBoot", "Stream"])
 					headers {
 						header('Content-Type': 'application/json;charset=UTF-8')
@@ -1722,7 +1638,7 @@ World.'''"""
 					urlPath '/api/categories'
 				}
 				response {
-					status OK()
+					status 200
 					body([["Programming", "Java"], ["Programming", "Java", "Spring", "Boot"]])
 					headers {
 						header('Content-Type': 'application/json;charset=UTF-8')
@@ -1756,7 +1672,7 @@ World.'''"""
 				url '/test'
 			}
 			response {
-				status OK()
+				status 200
 				async()
 			}
 		}
@@ -1790,7 +1706,7 @@ World.'''"""
 					}
 				}
 				response {
-					status OK()
+					status 200
 					async()
 				}
 			}
@@ -1820,7 +1736,7 @@ World.'''"""
 					urlPath '/api/tags'
 				}
 				response {
-					status OK()
+					status 200
 					body('''{
 							  "partners":[
 								  {
@@ -1856,7 +1772,7 @@ World.'''"""
 					urlPath '/get'
 				}
 				response {
-					status OK()
+					status 200
 					body( code: 9, message: $(consumer('Wrong credentials'), producer(regex('^(?!\\s*$).+'))) )
 				}
 			}
@@ -1912,7 +1828,7 @@ World.'''"""
 			'''
 			}
 			response {
-				status OK()
+				status 200
 			}
 		}
 		// end::dsl_example[]
@@ -1931,7 +1847,7 @@ World.'''"""
 				}
 			}
 			response {
-				status OK()
+				status 200
 				body([
 					responseElement: $(producer(regex('[0-9]{7}')))
 				])
@@ -1972,7 +1888,7 @@ World.'''"""
 				urlPath '/get'
 			}
 			response {
-				status OK()
+				status 200
 				body([
 					fraudCheckStatus: "OK",
 					rejectionReason : [
@@ -2004,7 +1920,7 @@ World.'''"""
 				urlPath '/get'
 			}
 			response {
-				status OK()
+				status 200
 				body([
 					[
 							name: $(consumer("userName 1"), producer(execute('assertThatUserNameIsNotNull($it)')))
@@ -2034,7 +1950,7 @@ World.'''"""
 				urlPath '/get'
 			}
 			response {
-				status OK()
+				status 200
 				body([
 					[
 							name: $(consumer("userName 1"), producer(execute('assertThatUserNameIsNotNull($it)')))
@@ -2067,7 +1983,7 @@ World.'''"""
 				}
 			}
 			response {
-				status OK()
+				status 200
 				body([
 						fraudCheckStatus: "OK",
 						rejectionReason : [
@@ -2099,7 +2015,7 @@ World.'''"""
 				url '/get'
 			}
 			response {
-				status OK()
+				status 200
 				body(value(stub("HELLO FROM STUB"), server(regex(".*"))))
 			}
 		}
@@ -2123,7 +2039,7 @@ World.'''"""
 				url '/get'
 			}
 			response {
-				status OK()
+				status 200
 				body(value(stub("HELLO FROM STUB"), server(execute('foo($it)'))))
 			}
 		}
@@ -2153,7 +2069,7 @@ World.'''"""
 				}
 			}
 			response {
-				status OK()
+				status 200
 				body([
 						fraudCheckStatus: "OK",
 						rejectionReason : [
@@ -2187,15 +2103,11 @@ World.'''"""
 						duck: $(regex("[0-9]")),
 						alpha: $(anyAlphaUnicode()),
 				        number: $(anyNumber()),
-						anInteger: $(anyInteger()),
-						positiveInt: $(positiveInt()),
-						aDouble: $(anyDouble()),
 						aBoolean: $(aBoolean()),
 						ip: $(anyIpAddress()),
 						hostname: $(anyHostname()),
 						email: $(anyEmail()),
 						url: $(anyUrl()),
-						httpsUrl: $(anyHttpsUrl()),
 						uuid: $(anyUuid()),
 						date: $(anyDate()),
 						dateTime: $(anyDateTime()),
@@ -2210,19 +2122,15 @@ World.'''"""
 				}
 			}
 			response {
-				status OK()
+				status 200
 				body([
 						alpha: $(anyAlphaUnicode()),
 						number: $(anyNumber()),
-						anInteger: $(anyInteger()),
-						positiveInt: $(positiveInt()),
-						aDouble: $(anyDouble()),
 						aBoolean: $(aBoolean()),
 						ip: $(anyIpAddress()),
 						hostname: $(anyHostname()),
 						email: $(anyEmail()),
 						url: $(anyUrl()),
-						httpsUrl: $(anyHttpsUrl()),
 						uuid: $(anyUuid()),
 						date: $(anyDate()),
 						dateTime: $(anyDateTime()),
@@ -2246,14 +2154,10 @@ World.'''"""
 			test.contains('assertThatJson(parsedJson).field("[\'aBoolean\']").matches("(true|false)")')
 			test.contains('assertThatJson(parsedJson).field("[\'alpha\']").matches("[\\\\p{L}]*")')
 			test.contains('assertThatJson(parsedJson).field("[\'hostname\']").matches("((http[s]?|ftp):/)/?([^:/\\\\s]+)(:[0-9]{1,5})?")')
+			test.contains('assertThatJson(parsedJson).field("[\'url\']").matches("^(?:(?:[A-Za-z][+-.\\\\w^_]*:/{2})?(?:\\\\S+(?::\\\\S*)?@)?(?:(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|(?:(?:[a-z\\\\u00a1-\\\\uffff0-9]-*)*[a-z\\\\u00a1-\\\\uffff0-9]+)(?:\\\\.(?:[a-z\\\\u00a1-\\\\uffff0-9]-*)*[a-z\\\\u00a1-\\\\uffff0-9]+)*(?:\\\\.(?:[a-z\\\\u00a1-\\\\uffff]{2,})))(?::\\\\d{2,5})?(?:/\\\\S*)?)')
 			test.contains('assertThatJson(parsedJson).field("[\'number\']").matches("-?(\\\\d*\\\\.\\\\d+|\\\\d+)")')
-			test.contains('assertThatJson(parsedJson).field("[\'anInteger\']").matches("-?(\\\\d+)")')
-			test.contains('assertThatJson(parsedJson).field("[\'positiveInt\']").matches("([1-9]\\\\d*)")')
-			test.contains('assertThatJson(parsedJson).field("[\'aDouble\']").matches("-?(\\\\d*\\\\.\\\\d+)")')
 			test.contains('assertThatJson(parsedJson).field("[\'email\']").matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,6}")')
 			test.contains('assertThatJson(parsedJson).field("[\'ip\']").matches("([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])")')
-			test.contains('assertThatJson(parsedJson).field("[\'url\']").matches("^(?:(?:[A-Za-z][+-.\\\\w^_]*:/{2})?(?:\\\\S+(?::\\\\S*)?@)?(?:(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|(?:(?:[a-z\\\\u00a1-\\\\uffff0-9]-*)*[a-z\\\\u00a1-\\\\uffff0-9]+)(?:\\\\.(?:[a-z\\\\u00a1-\\\\uffff0-9]-*)*[a-z\\\\u00a1-\\\\uffff0-9]+)*(?:\\\\.(?:[a-z\\\\u00a1-\\\\uffff]{2,})))(?::\\\\d{2,5})?(?:/\\\\S*)?)')
-			test.contains('assertThatJson(parsedJson).field("[\'httpsUrl\']").matches("^(?:https:/{2}(?:\\\\S+(?::\\\\S*)?@)?(?:(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|(?:(?:[a-z\\\\u00a1-\\\\uffff0-9]-*)*[a-z\\\\u00a1-\\\\uffff0-9]+)(?:\\\\.(?:[a-z\\\\u00a1-\\\\uffff0-9]-*)*[a-z\\\\u00a1-\\\\uffff0-9]+)*(?:\\\\.(?:[a-z\\\\u00a1-\\\\uffff]{2,})))(?::\\\\d{2,5})?(?:/\\\\S*)?)')
 			test.contains('assertThatJson(parsedJson).field("[\'uuid\']").matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}")')
 			test.contains('assertThatJson(parsedJson).field("[\'date\']").matches("(\\\\d\\\\d\\\\d\\\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])')
 			test.contains('assertThatJson(parsedJson).field("[\'dateTime\']").matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])')
@@ -2268,7 +2172,7 @@ World.'''"""
 			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		and:
 			String jsonSample = '''\
-String json = "{\\"duck\\":\\"8\\",\\"alpha\\":\\"YAJEOWYGMFBEWPMEMAZI\\",\\"number\\":-2095030871,\\"anInteger\\":1780305902,\\"positiveInt\\":345,\\"aDouble\\":42.345,\\"aBoolean\\":true,\\"ip\\":\\"129.168.99.100\\",\\"hostname\\":\\"http://foo389886219.com\\",\\"email\\":\\"foo@bar1367573183.com\\",\\"url\\":\\"http://foo-597104692.com\\",\\"httpsUrl\\":\\"https://baz-486093581.com\\",\\"uuid\\":\\"e436b817-b764-49a2-908e-967f2f99eb9f\\",\\"date\\":\\"2014-04-14\\",\\"dateTime\\":\\"2011-01-11T12:23:34\\",\\"time\\":\\"12:20:30\\",\\"iso8601WithOffset\\":\\"2015-05-15T12:23:34.123Z\\",\\"nonBlankString\\":\\"EPZWVIRHSUAPBJMMQSFO\\",\\"nonEmptyString\\":\\"RVMFDSEQFHRQFVUVQPIA\\",\\"anyOf\\":\\"foo\\"}";
+String json = "{\\"duck\\":\\"8\\",\\"alpha\\":\\"YAJEOWYGMFBEWPMEMAZI\\",\\"number\\":-2095030871,\\"aBoolean\\":true,\\"ip\\":\\"129.168.99.100\\",\\"hostname\\":\\"http://foo389886219.com\\",\\"email\\":\\"foo@bar1367573183.com\\",\\"url\\":\\"http://foo-597104692.com\\",\\"uuid\\":\\"e436b817-b764-49a2-908e-967f2f99eb9f\\",\\"date\\":\\"2014-04-14\\",\\"dateTime\\":\\"2011-01-11T12:23:34\\",\\"time\\":\\"12:20:30\\",\\"iso8601WithOffset\\":\\"2015-05-15T12:23:34.123Z\\",\\"nonBlankString\\":\\"EPZWVIRHSUAPBJMMQSFO\\",\\"nonEmptyString\\":\\"RVMFDSEQFHRQFVUVQPIA\\",\\"anyOf\\":\\"foo\\"}";
 DocumentContext parsedJson = JsonPath.parse(json);
 '''
 		and:
@@ -2294,7 +2198,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 				}
 			}
 			response {
-				status OK()
+				status 200
 				headers {
 					contentType("application/vnd.fraud.v1+json")
 				}
@@ -2394,7 +2298,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					url '/foo'
 				}
 				response {
-					status OK()
+					status 200
 					headers {
 						contentType(applicationJsonUtf8())
 					}
@@ -2433,7 +2337,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					headers { header('Content-Type', 'application/json;charset=UTF-8') }
 				}
 				response {
-					status OK()
+					status 200
 					body(
 							bar: $(producer(regex('some value \u0022with quote\u0022|bar')))
 					)
@@ -2465,7 +2369,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					url $(c("foo"), p(execute("executedMethod()")))
 				}
 				response {
-					status OK()
+					status 200
 				}
 			}
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -2499,7 +2403,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					url '/api/v1/xxxx'
 				}
 				response {
-					status OK()
+					status 200
 					body([
 							status: '200',
 							list: [],
@@ -2535,7 +2439,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					body(12000)
 				}
 				response {
-					status OK()
+					status 200
 					body(12000)
 				}
 			}
@@ -2577,7 +2481,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 					body(foo: "bar", baz: 5)
 				}
 				response {
-					status OK()
+					status 200
 					headers {
 						header(authorization(), "foo ${fromRequest().header(authorization())} bar")
 					}
@@ -2592,17 +2496,7 @@ DocumentContext parsedJson = JsonPath.parse(json);
 							fullBody: fromRequest().body(),
 							responseFoo: fromRequest().body('$.foo'),
 							responseBaz: fromRequest().body('$.baz'),
-							responseBaz2: "Bla bla ${fromRequest().body('$.foo')} bla bla",
-							rawUrl: fromRequest().rawUrl(),
-							rawPath: fromRequest().rawPath(),
-							rawPathIndex: fromRequest().rawPath(1),
-							rawParam: fromRequest().rawQuery("foo"),
-							rawParamIndex: fromRequest().rawQuery("foo", 1),
-							rawAuthorization: fromRequest().rawHeader("Authorization"),
-							rawAuthorization2: fromRequest().rawHeader("Authorization", 1),
-							rawResponseFoo: fromRequest().rawBody('$.foo'),
-							rawResponseBaz: fromRequest().rawBody('$.baz'),
-							rawResponseBaz2: "Bla bla ${fromRequest().rawBody('$.foo')} bla bla"
+							responseBaz2: "Bla bla ${fromRequest().body('$.foo')} bla bla"
 					)
 				}
 			}
@@ -2616,7 +2510,6 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
 		then:
 			!test.contains('''DslProperty''')
-			!test.contains('''ERROR: ''')
 			test.contains('''assertThatJson(parsedJson).field("['url']").isEqualTo("/api/v1/xxxx?foo=bar&foo=bar2")''')
 			test.contains('''assertThatJson(parsedJson).field("['path']").isEqualTo("/api/v1/xxxx")''')
 			test.contains('''assertThatJson(parsedJson).field("['pathIndex']").isEqualTo("v1")''')
@@ -2628,16 +2521,6 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			test.contains('''assertThatJson(parsedJson).field("['responseBaz']").isEqualTo(5)''')
 			test.contains('''assertThatJson(parsedJson).field("['responseBaz2']").isEqualTo("Bla bla bar bla bla")''')
 			test.contains('''assertThatJson(parsedJson).field("['param']").isEqualTo("bar")''')
-			test.contains('''assertThatJson(parsedJson).field("['rawUrl']").isEqualTo("/api/v1/xxxx?foo=bar&foo=bar2")''')
-			test.contains('''assertThatJson(parsedJson).field("['rawPath']").isEqualTo("/api/v1/xxxx")''')
-			test.contains('''assertThatJson(parsedJson).field("['rawPathIndex']").isEqualTo("v1")''')
-			test.contains('''assertThatJson(parsedJson).field("['rawParamIndex']").isEqualTo("bar2")''')
-			test.contains('''assertThatJson(parsedJson).field("['rawResponseFoo']").isEqualTo("bar")''')
-			test.contains('''assertThatJson(parsedJson).field("['rawAuthorization']").isEqualTo("secret")''')
-			test.contains('''assertThatJson(parsedJson).field("['rawAuthorization2']").isEqualTo("secret2")''')
-			test.contains('''assertThatJson(parsedJson).field("['rawResponseBaz']").isEqualTo(5)''')
-			test.contains('''assertThatJson(parsedJson).field("['rawResponseBaz2']").isEqualTo("Bla bla bar bla bla")''')
-			test.contains('''assertThatJson(parsedJson).field("['rawParam']").isEqualTo("bar")''')
 			responseAssertion(test)
 		where:
 			methodBuilderName                                    | methodBuilder                                                                               | responseAssertion
@@ -2645,60 +2528,6 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | { String body -> body.contains('assertThat(response.header("Authorization")).isEqualTo("foo secret bar");') }
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String body -> body.contains("response.getHeaderString('Authorization')  == 'foo secret bar'") }
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String body -> body.contains('assertThat(response.getHeaderString("Authorization")).isEqualTo("foo secret bar");') }
-	}
-
-	@Issue("#230")
-	def "should manage to reference request in response via WireMock native entries [#methodBuilderName]"() {
-		given:
-			//tag::template_contract[]
-			Contract contractDsl = Contract.make {
-				request {
-					method 'GET'
-					url('/api/v1/xxxx') {
-						queryParameters {
-							parameter("foo", "bar")
-							parameter("foo", "bar2")
-						}
-					}
-					headers {
-						header(authorization(), "secret")
-						header(authorization(), "secret2")
-					}
-					body(foo: "bar", baz: 5)
-				}
-				response {
-					status OK()
-					headers {
-						contentType(applicationJson())
-					}
-					body(''' 
-							{
-								"responseFoo": "{{{ jsonPath request.body '$.foo' }}}",
-								"responseBaz": {{{ jsonPath request.body '$.baz' }}},
-								"responseBaz2": "Bla bla {{{ jsonPath request.body '$.foo' }}} bla bla"
-							}
-					'''.toString())
-				}
-			}
-			//end::template_contract[]
-			MethodBodyBuilder builder = methodBuilder(contractDsl)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
-		and:
-			builder.appendTo(blockBuilder)
-			String test = blockBuilder.toString()
-		when:
-			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
-		then:
-			!test.contains('''DslProperty''')
-			test.contains('''assertThatJson(parsedJson).field("['responseFoo']").isEqualTo("bar")''')
-			test.contains('''assertThatJson(parsedJson).field("['responseBaz']").isEqualTo(5)''')
-			test.contains('''assertThatJson(parsedJson).field("['responseBaz2']").isEqualTo("Bla bla bar bla bla")''')
-		where:
-			methodBuilderName                                    | methodBuilder
-			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
 
 	def "should generate JUnit assertions with cookies"() {
