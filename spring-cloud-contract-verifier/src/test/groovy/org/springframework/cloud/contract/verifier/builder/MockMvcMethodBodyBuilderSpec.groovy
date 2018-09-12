@@ -1304,39 +1304,39 @@ World.'''"""
 				status OK()
 			}
 		}
-		// end::multipartdsl[]
-		MethodBodyBuilder builder = methodBuilder(contractDsl)
-		BlockBuilder blockBuilder = new BlockBuilder(" ")
+			// end::multipartdsl[]
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
 		when:
-		builder.appendTo(blockBuilder)
-		def test = blockBuilder.toString()
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
 		then:
-		for (String requestString : requestStrings) {
-			assert test.contains(requestString)
-		}
+			for (String requestString : requestStrings) {
+				assert test.contains(requestString)
+			}
 		and:
-		SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
+			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
-		methodBuilderName           | methodBuilder                                                               | requestStrings
-		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
-																													 """.param('formParameter', '"formParameterValue"'""",
-																													 """.param('someBooleanParameter', 'true')""",
-																													 """.multiPart('file', 'filename.csv', 'file content'.bytes, 'application/json')"""]
-		"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
-																													 '.param("formParameter", "\\"formParameterValue\\"")',
-																													 '.param("someBooleanParameter", "true")',
-																													 '.multiPart("file", "filename.csv", "file content".getBytes(), "application/json");']
+			methodBuilderName           | methodBuilder                                                                         | requestStrings
+			"MockMvcSpockMethodBuilder" | {Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties)} | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
+			                                                                                                                       """.param('formParameter', '"formParameterValue"'""",
+			                                                                                                                       """.param('someBooleanParameter', 'true')""",
+			                                                                                                                       """.multiPart('file', 'filename.csv', 'file content'.bytes, 'application/json')"""]
+			"MockMvcJUnitMethodBuilder" | {Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties)}                  | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
+			                                                                                                                       '.param("formParameter", "\\"formParameterValue\\"")',
+			                                                                                                                       '.param("someBooleanParameter", "true")',
+			                                                                                                                       '.multiPart("file", "filename.csv", "file content".getBytes(), "application/json");']
 	}
 
 	@Issue('180')
 	def "should generate proper test code when having multipart parameters without content type with #methodBuilderName"() {
 		given:
-		org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
-			request {
-				method "PUT"
-				url "/multipart"
-				headers {
-					contentType('multipart/form-data;boundary=AaB03x')
+			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
+				request {
+					method "PUT"
+					url "/multipart"
+					headers {
+						contentType('multipart/form-data;boundary=AaB03x')
 				}
 				multipart(
 						// key (parameter name), value (parameter value) pair
@@ -2787,39 +2787,6 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			SyntaxChecker.tryToCompile("MockMvcSpockMethodRequestProcessingBodyBuilder", blockBuilder.toString())
 	}
 
-	@Issue("#628")
-	def "should execute method in response header [#methodBuilderName]"() {
-		given:
-			Contract contractDsl = Contract.make {
-				request {
-					method 'GET'
-					urlPath '/whatever'
-					headers {
-						header 'My-UUID': value(test(execute('property("my-uuid")')), stub('76c53386-ad9b-11e6-92dc-0370ae47c3b2'))
-					}
-				}
-				response {
-					status 200
-					headers {
-						header 'My-UUID': value(test(execute('property("my-uuid")')), stub('76c53386-ad9b-11e6-92dc-0370ae47c3b2'))
-					}
-				}
-			}
-			MethodBodyBuilder builder = methodBuilder(contractDsl)
-			BlockBuilder blockBuilder = new BlockBuilder(" ")
-		when:
-			builder.appendTo(blockBuilder)
-			String test = blockBuilder.toString()
-		then:
-			responseAssertion(test)
-		where:
-			methodBuilderName                                    | methodBuilder                                                                               | responseAssertion
-			"MockMvcSpockMethodBuilder"                          | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }     | { String body -> body.contains("response.header('My-UUID') == property(\"my-uuid\")") }
-			"MockMvcJUnitMethodBuilder"                          | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                      | { String body -> body.contains('assertThat(response.header("My-UUID")).isEqualTo(property("my-uuid"));') }
-			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String body -> body.contains("response.getHeaderString('My-UUID') == property(\"my-uuid\")") }
-			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }                  | { String body -> body.contains('assertThat(response.getHeaderString("My-UUID")).isEqualTo(property("my-uuid"));') }
-	}
-
 	@Issue('#554')
 	def "should create an assertion for an empty map or Object for [#methodBuilderName]"() {
 		given:
@@ -2853,6 +2820,4 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			"JaxRsClientSpockMethodRequestProcessingBodyBuilder" | { Contract dsl -> new JaxRsClientSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
 			"JaxRsClientJUnitMethodBodyBuilder"                  | { Contract dsl -> new JaxRsClientJUnitMethodBodyBuilder(dsl, properties) }
 	}
-
-
 }
