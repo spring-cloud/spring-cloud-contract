@@ -519,7 +519,7 @@ class YamlContractConverterSpec extends Specification {
 			}
 	}
 
-	def "should convert DSL to YAML"() {
+	def "should convert HTTP DSL to YAML"() {
 		given:
 			assert converter.isAccepted(ymlWithRest)
 		and:
@@ -564,5 +564,422 @@ class YamlContractConverterSpec extends Specification {
 			yamlContract.response.body == [foo2: "bar"]
 			yamlContract.response.cookies.find { it.key == "foo" && it.value == "client" }
 			yamlContract.response.cookies.find { it.key == "bar" && it.value == "client" }
+	}
+
+	def "should convert multiple messaging DSLs to YAML"() {
+		given:
+			assert converter.isAccepted(ymlMessagingMethod)
+		and:
+			List<Contract> contracts = [Contract.make {
+				input {
+					description("Some description")
+					label("some_label")
+					triggeredBy("bookReturnedTriggered()")
+				}
+				outputMessage {
+					sentTo("output")
+					body([bookName: "foo"])
+					headers {
+						header("BOOK-NAME", "foo")
+					}
+				}
+			},Contract.make {
+				input {
+					description("Some description2")
+					label("some_label2")
+					triggeredBy("bookReturnedTriggered()2")
+				}
+				outputMessage {
+					sentTo("output2")
+					body([bookName2: "foo"])
+					headers {
+						header("BOOK-NAME2", "foo")
+					}
+				}
+			}]
+		when:
+			Collection<YamlContract> yamlContracts = converter.convertTo(contracts)
+		then:
+			yamlContracts.size() == 2
+			YamlContract yamlContract = yamlContracts.first()
+			yamlContract.description == "Some description"
+			yamlContract.label == "some_label"
+			yamlContract.input.triggeredBy == "bookReturnedTriggered()"
+			yamlContract.outputMessage.sentTo == "output"
+			yamlContract.outputMessage.body == [bookName: "foo"]
+			yamlContract.outputMessage.headers == ["BOOK-NAME": "foo"]
+		and:
+			YamlContract yamlContract2 = yamlContracts.last()
+			yamlContract2.description == "Some description2"
+			yamlContract2.label == "some_label2"
+			yamlContract2.input.triggeredBy == "bookReturnedTriggered()2"
+			yamlContract2.outputMessage.sentTo == "output2"
+			yamlContract2.outputMessage.body == [bookName2: "foo"]
+			yamlContract2.outputMessage.headers == ["BOOK-NAME2": "foo"]
+	}
+
+	def "should convert Messaging DSL with input triggered by method to YAML"() {
+		given:
+			assert converter.isAccepted(ymlMessagingMethod)
+		and:
+			List<Contract> contracts = [Contract.make {
+				input {
+					description("Some description")
+					label("some_label")
+					triggeredBy("bookReturnedTriggered()")
+				}
+				outputMessage {
+					sentTo("output")
+					body([bookName: "foo"])
+					headers {
+						header("BOOK-NAME", "foo")
+					}
+				}
+			}]
+		when:
+			Collection<YamlContract> yamlContracts = converter.convertTo(contracts)
+		then:
+			yamlContracts.size() == 1
+			YamlContract yamlContract = yamlContracts.first()
+			yamlContract.description == "Some description"
+			yamlContract.label == "some_label"
+			yamlContract.input.triggeredBy == "bookReturnedTriggered()"
+			yamlContract.outputMessage.sentTo == "output"
+			yamlContract.outputMessage.body == [bookName: "foo"]
+			yamlContract.outputMessage.headers == ["BOOK-NAME": "foo"]
+	}
+
+	def "should convert Messaging DSL with input and output message to YAML"() {
+		given:
+			List<Contract> contracts = [Contract.make {
+				input {
+					messageFrom("jms:input")
+					messageBody([bookName: 'foo'])
+					messageHeaders {
+						header("sample", "header")
+					}
+				}
+				outputMessage {
+					sentTo("output")
+					body([bookName: "foo"])
+					headers {
+						header("BOOK-NAME", "foo")
+					}
+				}
+			}]
+		when:
+			Collection<YamlContract> yamlContracts = converter.convertTo(contracts)
+		then:
+			yamlContracts.size() == 1
+			YamlContract yamlContract = yamlContracts.first()
+			yamlContract.input.messageFrom == "jms:input"
+			yamlContract.input.messageBody == [bookName: 'foo']
+			yamlContract.input.messageHeaders == ["sample": "header"]
+			yamlContract.outputMessage.sentTo == "output"
+			yamlContract.outputMessage.body == [bookName: "foo"]
+			yamlContract.outputMessage.headers == ["BOOK-NAME": "foo"]
+	}
+
+	def "should convert Messaging DSL with only input message to YAML"() {
+		given:
+			List<Contract> contracts = [Contract.make {
+				input {
+					messageFrom("jms:input")
+					messageBody([bookName: 'foo'])
+					messageHeaders {
+						header("sample", "header")
+					}
+					assertThat("bookWasDeleted()")
+				}
+			}]
+		when:
+			Collection<YamlContract> yamlContracts = converter.convertTo(contracts)
+		then:
+			yamlContracts.size() == 1
+			YamlContract yamlContract = yamlContracts.first()
+			yamlContract.input.messageFrom == "jms:input"
+			yamlContract.input.messageBody == [bookName: 'foo']
+			yamlContract.input.messageHeaders == ["sample": "header"]
+			yamlContract.input.assertThat == "bookWasDeleted()"
+	}
+
+	def "should convert Messaging with a message DSL to YAML"() {
+		given:
+			assert converter.isAccepted(ymlMessagingMatchers)
+		and:
+			List<Contract> contracts = [Contract.make {
+				label("card_rejected")
+				input {
+					messageFrom("input")
+					messageBody([
+							duck: 123,
+							alpha: "abc",
+							number: 123,
+							aBoolean: true,
+							date: "2017-01-01",
+							dateTime: "2017-01-01T01:23:45",
+							time: "01:02:34",
+							valueWithoutAMatcher: "foo",
+							valueWithTypeMatch: "string",
+							key: ["complex.key": 'foo']
+					])
+					bodyMatchers {
+						jsonPath('$.duck', byRegex("[0-9]{3}"))
+						jsonPath('$.duck', byEquality())
+						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+						jsonPath('$.alpha', byEquality())
+						jsonPath('$.number', byRegex(number()))
+						jsonPath('$.aBoolean', byRegex(anyBoolean()))
+						jsonPath('$.date', byDate())
+						jsonPath('$.dateTime', byTimestamp())
+						jsonPath('$.time', byTime())
+						jsonPath("\$.['key'].['complex.key']", byEquality())
+					}
+					messageHeaders {
+						header("sample", $(c(regex("foo.*")), p("foo")))
+						messagingContentType(applicationJson())
+					}
+				}
+				outputMessage {
+					sentTo("channel")
+					body([duck: 123,
+						  alpha: "abc",
+						  number: 123,
+						  aBoolean: true,
+						  date: "2017-01-01",
+						  dateTime: "2017-01-01T01:23:45",
+						  time: "01:02:34",
+						  valueWithoutAMatcher: "foo",
+						  valueWithTypeMatch: "string",
+						  valueWithMin: [1, 2, 3],
+						  valueWithMax: [1, 2, 3],
+						  valueWithMinMax: [1, 2, 3],
+						  valueWithMinEmpty: [],
+						  valueWithMaxEmpty: [],
+						  key: ['complex.key' : 'foo'],
+						  nullValue: null
+					])
+					bodyMatchers {
+						// asserts the jsonpath value against manual regex
+						jsonPath('$.duck', byRegex("[0-9]{3}"))
+						// asserts the jsonpath value against the provided value
+						jsonPath('$.duck', byEquality())
+						// asserts the jsonpath value against some default regex
+						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
+						jsonPath('$.alpha', byEquality())
+						jsonPath('$.number', byRegex(number()))
+						jsonPath('$.positiveInteger', byRegex(positiveInt()))
+						jsonPath('$.integer', byRegex(anInteger()))
+						jsonPath('$.double', byRegex(aDouble()))
+						jsonPath('$.aBoolean', byRegex(anyBoolean()))
+						// asserts vs inbuilt time related regex
+						jsonPath('$.date', byDate())
+						jsonPath('$.dateTime', byTimestamp())
+						jsonPath('$.time', byTime())
+						// asserts that the resulting type is the same as in response body
+						jsonPath('$.valueWithTypeMatch', byType())
+						jsonPath('$.valueWithMin', byType {
+							// results in verification of size of array (min 1)
+							minOccurrence(1)
+						})
+						jsonPath('$.valueWithMax', byType {
+							// results in verification of size of array (max 3)
+							maxOccurrence(3)
+						})
+						jsonPath('$.valueWithMinMax', byType {
+							// results in verification of size of array (min 1 & max 3)
+							minOccurrence(1)
+							maxOccurrence(3)
+						})
+						jsonPath('$.valueWithMinEmpty', byType {
+							// results in verification of size of array (min 0)
+							minOccurrence(0)
+						})
+						jsonPath('$.valueWithMaxEmpty', byType {
+							// results in verification of size of array (max 0)
+							maxOccurrence(0)
+						})
+						// will execute a method `assertThatValueIsANumber`
+						jsonPath('$.duck', byCommand('assertThatValueIsANumber($it)'))
+						jsonPath("\$.['key'].['complex.key']", byEquality())
+						jsonPath('$.nullValue', byNull())
+					}
+					headers {
+						messagingContentType(applicationJson())
+						header('Some-Header', $(c('someValue'), p(regex('[a-zA-Z]{9}'))))
+					}
+				}
+			}]
+		when:
+			Collection<YamlContract> yamlContracts = converter.convertTo(contracts)
+		then:
+			yamlContracts.size() == 1
+			YamlContract yamlContract = yamlContracts.first()
+			yamlContract.label == "card_rejected"
+			yamlContract.input.messageFrom == "input"
+			yamlContract.input.messageBody == [
+					duck: 123,
+					alpha: "abc",
+					number: 123,
+					aBoolean: true,
+					date: "2017-01-01",
+					dateTime: "2017-01-01T01:23:45",
+					time: "01:02:34",
+					valueWithoutAMatcher: "foo",
+					valueWithTypeMatch: "string",
+					key: ["complex.key": 'foo']
+			]
+			yamlContract.input.messageHeaders == [
+					sample: 'foo',
+					contentType: "application/json"
+			]
+			yamlContract.input.matchers.headers == [
+			        new YamlContract.KeyValueMatcher(
+							key: "sample", regex: "foo.*")
+			]
+			yamlContract.input.matchers.body == [
+					new YamlContract.BodyStubMatcher(
+							path: '$.duck',
+							type: YamlContract.StubMatcherType.by_regex,
+							value: "[0-9]{3}"),
+					new YamlContract.BodyStubMatcher(
+							path: '$.duck',
+							type: YamlContract.StubMatcherType.by_equality),
+					new YamlContract.BodyStubMatcher(
+							path: '$.alpha',
+							type: YamlContract.StubMatcherType.by_regex,
+							predefined: YamlContract.PredefinedRegex.only_alpha_unicode),
+					new YamlContract.BodyStubMatcher(
+							path: '$.alpha',
+							type: YamlContract.StubMatcherType.by_equality),
+					new YamlContract.BodyStubMatcher(
+							path: '$.number',
+							type: YamlContract.StubMatcherType.by_regex,
+							predefined: YamlContract.PredefinedRegex.number),
+					new YamlContract.BodyStubMatcher(
+							path: '$.aBoolean',
+							type: YamlContract.StubMatcherType.by_regex,
+							predefined: YamlContract.PredefinedRegex.any_boolean),
+					new YamlContract.BodyStubMatcher(
+							path: '$.date',
+							type: YamlContract.StubMatcherType.by_date),
+					new YamlContract.BodyStubMatcher(
+							path: '$.dateTime',
+							type: YamlContract.StubMatcherType.by_timestamp),
+					new YamlContract.BodyStubMatcher(
+							path: '$.time',
+							type: YamlContract.StubMatcherType.by_time),
+					new YamlContract.BodyStubMatcher(
+							path: "\$.['key'].['complex.key']",
+							type: YamlContract.StubMatcherType.by_equality),
+			]
+			yamlContract.outputMessage.sentTo == "channel"
+			yamlContract.outputMessage.body == [duck: 123,
+												alpha: "abc",
+												number: 123,
+												aBoolean: true,
+												date: "2017-01-01",
+												dateTime: "2017-01-01T01:23:45",
+												time: "01:02:34",
+												valueWithoutAMatcher: "foo",
+												valueWithTypeMatch: "string",
+												valueWithMin: [1, 2, 3],
+												valueWithMax: [1, 2, 3],
+												valueWithMinMax: [1, 2, 3],
+												valueWithMinEmpty: [],
+												valueWithMaxEmpty: [],
+												key: ['complex.key' : 'foo'],
+												nullValue: null
+												]
+			yamlContract.outputMessage.headers == [
+					"contentType": "application/json",
+					"Some-Header": "someValue"
+			]
+			yamlContract.outputMessage.matchers.headers == [
+					new YamlContract.TestHeaderMatcher(
+							key: "Content-Type", regex: "application/json.*")
+			]
+			yamlContract.outputMessage.matchers.body == [
+					new YamlContract.BodyTestMatcher(
+							path: '$.duck',
+							type: YamlContract.TestMatcherType.by_regex,
+							value: "[0-9]{3}"),
+					new YamlContract.BodyTestMatcher(
+							path: '$.duck',
+							type: YamlContract.TestMatcherType.by_equality),
+					new YamlContract.BodyTestMatcher(
+							path: '$.alpha',
+							type: YamlContract.TestMatcherType.by_regex,
+							value: '[\\p{L}]*'),
+					new YamlContract.BodyTestMatcher(
+							path: '$.alpha',
+							type: YamlContract.TestMatcherType.by_equality),
+					new YamlContract.BodyTestMatcher(
+							path: '$.number',
+							type: YamlContract.TestMatcherType.by_regex,
+							value: '-?(\\d*\\.\\d+|\\d+)'),
+					new YamlContract.BodyTestMatcher(
+							path: '$.positiveInteger',
+							type: YamlContract.TestMatcherType.by_regex,
+							value: '([1-9]\\d*)'),
+					new YamlContract.BodyTestMatcher(
+							path: '$.integer',
+							type: YamlContract.TestMatcherType.by_regex,
+							value: '-?(\\d+)'),
+					new YamlContract.BodyTestMatcher(
+							path: '$.double',
+							type: YamlContract.TestMatcherType.by_regex,
+							value: '-?(\\d*\\.\\d+)'),
+					new YamlContract.BodyTestMatcher(
+							path: '$.aBoolean',
+							type: YamlContract.TestMatcherType.by_regex,
+							value: '(true|false)'),
+					new YamlContract.BodyTestMatcher(
+							path: '$.date',
+							type: YamlContract.TestMatcherType.by_regex,
+							value: '(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])'),
+					new YamlContract.BodyTestMatcher(
+							path: '$.dateTime',
+							type: YamlContract.TestMatcherType.by_regex,
+							value: '([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])'),
+					new YamlContract.BodyTestMatcher(
+							path: '$.time',
+							type: YamlContract.TestMatcherType.by_regex,
+							value: '(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])'),
+					new YamlContract.BodyTestMatcher(
+							path: '$.valueWithTypeMatch',
+							type: YamlContract.TestMatcherType.by_type),
+					new YamlContract.BodyTestMatcher(
+							path: '$.valueWithMin',
+							type: YamlContract.TestMatcherType.by_type,
+							minOccurrence: 1),
+					new YamlContract.BodyTestMatcher(
+							path: '$.valueWithMax',
+							type: YamlContract.TestMatcherType.by_type,
+							maxOccurrence: 3),
+					new YamlContract.BodyTestMatcher(
+							path: '$.valueWithMinMax',
+							type: YamlContract.TestMatcherType.by_type,
+							minOccurrence: 1,
+							maxOccurrence: 3),
+					new YamlContract.BodyTestMatcher(
+							path: '$.valueWithMinEmpty',
+							type: YamlContract.TestMatcherType.by_type,
+							minOccurrence: 0),
+					new YamlContract.BodyTestMatcher(
+							path: '$.valueWithMaxEmpty',
+							type: YamlContract.TestMatcherType.by_type,
+							maxOccurrence: 0),
+					new YamlContract.BodyTestMatcher(
+							path: '$.duck',
+							type: YamlContract.TestMatcherType.by_command,
+							value: 'assertThatValueIsANumber($it)'),
+					new YamlContract.BodyTestMatcher(
+							path: "\$.['key'].['complex.key']",
+							type: YamlContract.TestMatcherType.by_equality),
+					new YamlContract.BodyTestMatcher(
+							path: '$.nullValue',
+							type: YamlContract.TestMatcherType.by_null),
+			]
 	}
 }

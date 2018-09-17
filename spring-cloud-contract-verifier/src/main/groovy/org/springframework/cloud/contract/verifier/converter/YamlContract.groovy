@@ -17,6 +17,8 @@
 package org.springframework.cloud.contract.verifier.converter
 
 import groovy.transform.CompileStatic
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
 /**
  * YAML representation of a {@link org.springframework.cloud.contract.spec.Contract}
@@ -38,6 +40,8 @@ class YamlContract {
 	public boolean ignored
 
 	@CompileStatic
+	@ToString(includeFields = true)
+	@EqualsAndHashCode
 	static class Request {
 		public String method
 		public String url
@@ -52,12 +56,16 @@ class YamlContract {
 	}
 
 	@CompileStatic
+	@ToString(includeFields = true)
+	@EqualsAndHashCode
 	static class Multipart {
 		public Map<String, String> params = [:]
 		public List<Named> named = []
 	}
 
 	@CompileStatic
+	@ToString(includeFields = true)
+	@EqualsAndHashCode
 	static class Named {
 		public String paramName
 		public String fileName
@@ -65,7 +73,10 @@ class YamlContract {
 	}
 
 	@CompileStatic
+	@ToString(includeFields = true)
+	@EqualsAndHashCode
 	static class StubMatchers {
+		// TODO: Add URL matching
 		public List<BodyStubMatcher> body = []
 		public List<KeyValueMatcher> headers = []
 		public List<KeyValueMatcher> cookies = []
@@ -73,6 +84,8 @@ class YamlContract {
 	}
 
 	@CompileStatic
+	@ToString(includeFields = true)
+	@EqualsAndHashCode
 	static class BodyStubMatcher {
 		public String path
 		public StubMatcherType type
@@ -81,12 +94,16 @@ class YamlContract {
 	}
 
 	@CompileStatic
+	@ToString(includeFields = true)
+	@EqualsAndHashCode
 	static class MultipartStubMatcher {
 		public List<KeyValueMatcher> params = []
 		public List<MultipartNamedStubMatcher> named = []
 	}
 
 	@CompileStatic
+	@ToString(includeFields = true)
+	@EqualsAndHashCode
 	static class MultipartNamedStubMatcher {
 		public String paramName
 		public ValueMatcher fileName
@@ -94,12 +111,16 @@ class YamlContract {
 	}
 
 	@CompileStatic
+	@ToString(includeFields = true)
+	@EqualsAndHashCode
 	static class ValueMatcher {
 		public String regex
 		public PredefinedRegex predefined
 	}
 
 	@CompileStatic
+	@ToString(includeFields = true)
+	@EqualsAndHashCode
 	static class BodyTestMatcher {
 		public String path
 		public TestMatcherType type
@@ -110,6 +131,8 @@ class YamlContract {
 	}
 
 	@CompileStatic
+	@ToString(includeFields = true)
+	@EqualsAndHashCode
 	static class KeyValueMatcher {
 		public String key
 		public String regex
@@ -117,6 +140,8 @@ class YamlContract {
 	}
 
 	@CompileStatic
+	@ToString(includeFields = true)
+	@EqualsAndHashCode
 	static class TestHeaderMatcher {
 		public String key
 		public String regex
@@ -125,6 +150,8 @@ class YamlContract {
 	}
 
 	@CompileStatic
+	@ToString(includeFields = true)
+	@EqualsAndHashCode
 	static class TestCookieMatcher {
 		public String key
 		public String regex
@@ -150,6 +177,8 @@ class YamlContract {
 	}
 
 	@CompileStatic
+	@ToString(includeFields = true)
+	@EqualsAndHashCode
 	static class Response {
 		public int status
 		public Map<String, Object> headers = [:]
@@ -161,6 +190,8 @@ class YamlContract {
 	}
 
 	@CompileStatic
+	@ToString(includeFields = true)
+	@EqualsAndHashCode
 	static class TestMatchers {
 		public List<BodyTestMatcher> body = []
 		public List<TestHeaderMatcher> headers = []
@@ -168,6 +199,8 @@ class YamlContract {
 	}
 
 	@CompileStatic
+	@ToString(includeFields = true)
+	@EqualsAndHashCode
 	static class Input {
 		public String messageFrom
 		public String triggeredBy
@@ -179,6 +212,8 @@ class YamlContract {
 	}
 
 	@CompileStatic
+	@ToString(includeFields = true)
+	@EqualsAndHashCode
 	static class OutputMessage {
 		public String sentTo
 		public Map<String, Object> headers = [:]
