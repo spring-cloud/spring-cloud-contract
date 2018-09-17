@@ -16,11 +16,13 @@
 
 package org.springframework.cloud.contract.spec.internal
 
+import java.util.regex.Pattern
+
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
-
-import java.util.regex.Pattern
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.SimpleType
 
 /**
  * Represents a set of headers of a request / response or a message
@@ -80,13 +82,16 @@ class Headers {
 	}
 
 	/**
-	 * Converts the headers into their stub side representations and returns as
-	 * a map of String key => Object value.
+	 * Converts the headers via the provided closure
 	 */
-	Map<String , Object> asStubSideMap() {
+	Map<String , Object> asMap(@ClosureParams(value = SimpleType.class,
+			options = [
+					"java.lang.String",
+					"org.springframework.cloud.contract.spec.internal.DslProperty"
+			]) Closure closure) {
 		def acc = [:].withDefault { [] as Collection<Object> }
 		return entries.inject(acc as Map<String, Object>) { Map<String, Object> map, Header header ->
-			map[header.name] = header.clientValue
+			map[header.name] = closure(header.name, header)
 			return map
 		} as Map<String , Object>
 	}
@@ -95,12 +100,16 @@ class Headers {
 	 * Converts the headers into their stub side representations and returns as
 	 * a map of String key => Object value.
 	 */
+	Map<String , Object> asStubSideMap() {
+		return asMap({ String headerName, DslProperty prop -> prop.clientValue })
+	}
+
+	/**
+	 * Converts the headers into their stub side representations and returns as
+	 * a map of String key => Object value.
+	 */
 	Map<String , Object> asTestSideMap() {
-		def acc = [:].withDefault { [] as Collection<Object> }
-		return entries.inject(acc as Map<String, Object>) { Map<String, Object> map, Header header ->
-			map[header.name] = header.serverValue
-			return map
-		} as Map<String , Object>
+		return asMap({ String headerName, DslProperty prop -> prop.serverValue })
 	}
 
 	boolean equals(o) {
