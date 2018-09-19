@@ -16,27 +16,26 @@
 
 package org.springframework.cloud.contract.verifier.file
 
+import java.nio.file.FileSystem
+import java.nio.file.FileSystems
 import java.nio.file.Files
-import java.nio.file.Paths
+import java.nio.file.Path
+import java.nio.file.PathMatcher
+import java.util.regex.Pattern
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
+import groovy.transform.CompileStatic
+import groovy.util.logging.Commons
 import wiremock.com.google.common.collect.ArrayListMultimap
 import wiremock.com.google.common.collect.ListMultimap
-import groovy.transform.CompileStatic
-import groovy.util.logging.Slf4j
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
 import org.springframework.cloud.contract.verifier.converter.YamlContract
 import org.springframework.cloud.contract.verifier.converter.YamlContractConverter
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 import org.springframework.core.io.support.SpringFactoriesLoader
-
-import java.nio.file.FileSystem
-import java.nio.file.FileSystems
-import java.nio.file.Path
-import java.nio.file.PathMatcher
-import java.util.regex.Pattern
-
 /**
  * Scans the provided file path for the DSLs. There's a possibility to provide
  * inclusion and exclusion filters.
@@ -46,7 +45,7 @@ import java.util.regex.Pattern
  * @since 1.0.0
  */
 @CompileStatic
-@Slf4j
+@Commons
 class ContractFileScanner {
 
 	private static final String OS_NAME = System.getProperty("os.name");
@@ -56,28 +55,24 @@ class ContractFileScanner {
 	private static final String MATCH_PREFIX = "glob:"
 	private static final Pattern SCENARIO_STEP_FILENAME_PATTERN = Pattern.compile("[0-9]+_.*")
 	private final File baseDir
-	private final File originalBaseDir
 	private final Set<PathMatcher> excludeMatchers
 	private final Set<PathMatcher> ignoreMatchers
 	private final Set<PathMatcher> includeMatchers
 	private final String includeMatcher
-	private final ObjectMapper mapper = new ObjectMapper()
+	private final ProjectSide projectSide
+	private final YAMLMapper mapper = new YAMLMapper()
 
 	ContractFileScanner(File baseDir, Set<String> excluded, Set<String> ignored,
 						Set<String> included = [],
-						String includeMatcher = "") {
+						String includeMatcher = "",
+						ProjectSide projectSide) {
 		this.baseDir = baseDir
-		this.originalBaseDir = original(baseDir)
 		this.excludeMatchers = processPatterns(excluded ?: [] as Set<String>)
 		this.ignoreMatchers = processPatterns(ignored ?: [] as Set<String>)
 		this.includeMatchers = processPatterns(included ?: [] as Set<String>)
 		this.includeMatcher = includeMatcher
-	}
-
-	private File original(File baseDir) {
-		File original = new File(baseDir.parentFile, "original")
-		original.mkdirs()
-		return original
+		this.projectSide = projectSide
+		this.mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
 	}
 
 	private Set<PathMatcher> processPatterns(Set<String> patterns) {
@@ -108,8 +103,7 @@ class ContractFileScanner {
 	 * and try to convert via pluggable Contract Converters any possible contracts
 	 */
 	private void appendRecursively(File baseDir, ListMultimap<Path, ContractMetadata> result) {
-		List<ContractConverter> converters = converters()
-		converters.add(YamlContractConverter.INSTANCE)
+		List<ContractConverter> converters = convertersWithYml()
 		if (log.isTraceEnabled()) {
 			log.trace("Found the following contract converters ${converters}")
 		}
@@ -126,9 +120,13 @@ class ContractFileScanner {
 				boolean included = includeMatcher ? file.absolutePath.matches(includeMatcher) : true
 				included = includeMatchers ? matchesPattern(file, includeMatchers) : included
 				if (contractFile && included) {
-					File ymlContractVersion = replaceGroovyContractWithYaml(baseDir, file)
-					file = ymlContractVersion
-					contractFile = false
+					if (projectSide == ProjectSide.STUB) {
+						File ymlContractVersion = replaceGroovyContractWithYaml(baseDir, file)
+						file = ymlContractVersion
+						contractFile = false
+					} else {
+						addContractToTestGeneration(result, files, file, i, ContractVerifierDslConverter.convertAsCollection(baseDir, file))
+					}
 				}
 				if (!contractFile && included) {
 					addContractToTestGeneration(converters, result, files, file, i)
@@ -146,6 +144,12 @@ class ContractFileScanner {
 		}
 	}
 
+	protected List<ContractConverter> convertersWithYml() {
+		List<ContractConverter> converters = converters()
+		converters.add(YamlContractConverter.INSTANCE)
+		return converters
+	}
+
 	/**
 	 * If a contract ends with [.groovy] we will move it to the [original]
 	 * folder, convert the [.groovy] version to [.yml] and store it instead
@@ -157,18 +161,12 @@ class ContractFileScanner {
 	 * @return
 	 */
 	private File replaceGroovyContractWithYaml(File baseDir, File file) {
+		// base dir: target/copied_contracts/contracts/
 		// target/copied_contracts/contracts/foo/baz/bar.groovy
 		Collection<Contract> collection = ContractVerifierDslConverter.convertAsCollection(baseDir, file)
 		List<YamlContract> yamls = new YamlContractConverter().convertTo(collection)
-		// target/copied_contracts/contracts/foo/baz/bar.groovy -> // foo/baz
-		Path relativePath = Paths.get(this.baseDir.toURI()).relativize(file.parentFile.toPath())
-		// foo/baz/ -> // target/copied_contracts/original/foo/baz/
-		File relativeFolderInOriginal = new File(originalBaseDir, relativePath.toString())
-		relativeFolderInOriginal.mkdirs()
-		// target/copied_contracts/original/foo/baz/bar.groovy
-		File relativeFileInOriginal = new File(relativeFolderInOriginal, file.getName())
-		// move from [contracts/foo/baz/bar.groovy] to [original/copied_contracts/original/foo/baz/]
-		Files.move(file.toPath(), relativeFileInOriginal.toPath())
+		// rm target/copied_contracts/contracts/foo/baz/bar.groovy
+		file.delete()
 		// [contracts/foo/baz/bar.groovy] -> [contracts/foo/baz/bar.yml]
 		File ymlContractVersion = new File(file.parentFile, file.name.replace(".groovy", ".yml"))
 		// store the YMLs instead of groovy files
@@ -238,7 +236,7 @@ class ContractFileScanner {
 			if (matcher.matches(file.toPath())) {
 				return true
 			}
-			log.debug("Path [{}] doesn't match the pattern [{}]", file.toPath(), matcher)
+			log.debug("Path [${file.toPath()}] doesn't match the pattern [${matcher}]")
 		}
 		return false
 	}

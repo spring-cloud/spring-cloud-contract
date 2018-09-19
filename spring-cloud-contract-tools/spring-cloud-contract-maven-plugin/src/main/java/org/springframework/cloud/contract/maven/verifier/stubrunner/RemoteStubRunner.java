@@ -15,13 +15,12 @@
  */
 package org.springframework.cloud.contract.maven.verifier.stubrunner;
 
-import java.lang.invoke.MethodHandles;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.aether.RepositorySystemSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunnerFactory;
 import org.springframework.cloud.contract.stubrunner.RunningStubs;
@@ -30,7 +29,8 @@ import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 
 @Named
 public class RemoteStubRunner {
-	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	private static final Log log = LogFactory.getLog(RemoteStubRunner.class);
+
 	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
 
 	@Inject

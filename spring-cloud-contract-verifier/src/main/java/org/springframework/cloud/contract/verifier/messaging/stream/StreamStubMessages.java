@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.stream.config.BindingProperties;
 import org.springframework.cloud.stream.config.BindingServiceProperties;
@@ -36,7 +36,7 @@ import org.springframework.util.StringUtils;
  */
 public class StreamStubMessages implements MessageVerifier<Message<?>> {
 
-	private static final Logger log = LoggerFactory.getLogger(StreamStubMessages.class);
+	private static final Log log = LogFactory.getLog(StreamStubMessages.class);
 
 	private final ApplicationContext context;
 	private final MessageCollector messageCollector;
@@ -89,8 +89,8 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 					.getBindings().entrySet()) {
 				if (destination.equals(entry.getValue().getDestination())) {
 					if (log.isDebugEnabled()) {
-						log.debug("Found a channel named [{}] with destination [{}]",
-								entry.getKey(), destination);
+						log.debug("Found a channel named [" +
+								entry.getKey() + "] with destination [" + destination + "]");
 					}
 					channels.put(entry.getKey().toLowerCase(), destination);
 				}
@@ -99,14 +99,13 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 				return channels.keySet().iterator().next();
 			} else if (channels.size() > 0) {
 				if (log.isDebugEnabled()) {
-					log.debug("Found following channels [{}] for destination [{}]. "
-									+ "Will pick the one that matches the default channel name or the first one if none is matching",
-							channels, destination);
+					log.debug("Found following channels [" + channels + "] for destination [" + destination + "]. "
+									+ "Will pick the one that matches the default channel name or the first one if none is matching");
 				}
 				String defaultChannelName = channels.get(defaultChannel.name().toLowerCase());
 				String matchingChannelName = StringUtils.hasText(defaultChannelName) ? defaultChannel.name().toLowerCase() : channels.keySet().iterator().next();
 				if (log.isDebugEnabled()) {
-					log.debug("Picked channel name is [{}]", matchingChannelName);
+					log.debug("Picked channel name is [" + matchingChannelName + "]");
 				}
 				return matchingChannelName;
 			}
@@ -115,8 +114,7 @@ public class StreamStubMessages implements MessageVerifier<Message<?>> {
 		}
 		if (log.isDebugEnabled()) {
 			log.debug(
-					"No destination named [" + destination + "] was found. Assuming that the destination equals the channel name",
-					destination);
+					"No destination named [" + destination + "] was found. Assuming that the destination equals the channel name");
 		}
 		return destination;
 	}

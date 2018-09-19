@@ -20,7 +20,7 @@ import groovy.json.JsonException
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.transform.TypeChecked
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Commons
 import org.apache.commons.lang3.StringEscapeUtils
 import org.codehaus.groovy.runtime.GStringImpl
 import org.springframework.cloud.contract.spec.internal.DslProperty
@@ -45,7 +45,7 @@ import static org.apache.commons.text.StringEscapeUtils.unescapeXml
  * @since 1.0.0
  */
 @TypeChecked
-@Slf4j
+@Commons
 class ContentUtils {
 
 	public static final Closure GET_STUB_SIDE = {

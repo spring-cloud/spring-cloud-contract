@@ -31,7 +31,9 @@ import org.springframework.cloud.contract.verifier.builder.JavaTestGenerator
 import org.springframework.cloud.contract.verifier.builder.SingleTestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.file.ContractFileScanner
+import org.springframework.cloud.contract.verifier.file.ContractFileScannerBuilder
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
+import org.springframework.cloud.contract.verifier.file.ProjectSide
 import org.springframework.core.io.support.SpringFactoriesLoader
 import org.springframework.util.StringUtils
 
@@ -77,11 +79,14 @@ class TestGenerator {
 		}
 		this.generator = generator
 		this.saver = saver
-		contractFileScanner = new ContractFileScanner(configProperties.contractsDslDir,
-				configProperties.excludedFiles as Set,
-				configProperties.ignoredFiles as Set,
-				configProperties.includedFiles as Set,
-				this.configProperties.includedContracts)
+		contractFileScanner = new ContractFileScannerBuilder()
+				.baseDir(configProperties.contractsDslDir)
+				.excluded(configProperties.excludedFiles as Set)
+				.ignored(configProperties.ignoredFiles as Set)
+				.included(configProperties.includedFiles as Set)
+				.includeMatcher(this.configProperties.includedContracts)
+				.projectSide(ProjectSide.TEST)
+				.build()
 	}
 
 	int generate() {

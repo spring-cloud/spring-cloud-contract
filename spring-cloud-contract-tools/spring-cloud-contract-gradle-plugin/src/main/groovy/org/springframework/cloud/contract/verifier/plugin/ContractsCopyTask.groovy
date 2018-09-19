@@ -16,10 +16,13 @@
 
 package org.springframework.cloud.contract.verifier.plugin
 
+import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.WorkResult
+
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
 /**
@@ -45,12 +48,16 @@ class ContractsCopyTask extends ConventionTask {
 		String slashSeparatedAntPattern = antPattern.replace(slashSeparatedGroupId, project.group.toString())
 		String root = OutputFolderBuilder.buildRootPath(project)
 		ext.contractVerifierConfigProperties = props
-		File outputContractsFolder = getExtension().stubsOutputDir != null ?
-				project.file("${getExtension().stubsOutputDir}/${root}/contracts") :
-				project.file("${project.buildDir}/stubs/${root}/contracts")
+		File outputContractsFolder = outputFolder(root, "contracts")
 		ext.contractsDslDir = outputContractsFolder
 		project.logger.info("Downloading and unpacking files from [$file] to [$outputContractsFolder]. The inclusion ant patterns are [${antPattern}] and [${slashSeparatedAntPattern}]")
-		project.copy {
+		copy(file, antPattern, slashSeparatedAntPattern, props, outputContractsFolder)
+		File originalContracts = outputFolder(root, "original")
+		copy(file, antPattern, slashSeparatedAntPattern, props, originalContracts)
+	}
+
+	protected WorkResult copy(File file, String antPattern, String slashSeparatedAntPattern, props, File outputContractsFolder) {
+		return project.copy {
 			from(file)
 			// by default group id is slash separated...
 			include(antPattern)
@@ -63,6 +70,14 @@ class ContractsCopyTask extends ConventionTask {
 		}
 	}
 
+	@CompileStatic
+	private File outputFolder(String root, String suffix) {
+		return getExtension().stubsOutputDir != null ?
+				project.file("${getExtension().stubsOutputDir}/${root}/${suffix}") :
+				project.file("${project.buildDir}/stubs/${root}/${suffix}")
+	}
+
+	@CompileStatic
 	private File contractsSubDirIfPresent(Logger logger, File contractsDirectory) {
 		File contracts = new File(contractsDirectory, "contracts")
 		if (contracts.exists()) {

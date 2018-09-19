@@ -18,7 +18,7 @@ package org.springframework.cloud.contract.verifier
 
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Commons
 import org.springframework.cloud.contract.verifier.builder.SingleTestGenerator
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
@@ -33,7 +33,7 @@ import static org.springframework.cloud.contract.verifier.util.NamesUtil.package
 
 @CompileStatic
 @PackageScope
-@Slf4j
+@Commons
 class FileSaver {
 
 	private final File targetDirectory

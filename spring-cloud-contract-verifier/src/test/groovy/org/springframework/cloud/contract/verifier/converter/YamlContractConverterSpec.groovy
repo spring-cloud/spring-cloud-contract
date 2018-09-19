@@ -708,7 +708,9 @@ class YamlContractConverterSpec extends Specification {
 			assert converter.isAccepted(ymlMessagingMatchers)
 		and:
 			List<Contract> contracts = [Contract.make {
+				name("fooo")
 				label("card_rejected")
+				ignored()
 				input {
 					messageFrom("input")
 					messageBody([
@@ -815,6 +817,8 @@ class YamlContractConverterSpec extends Specification {
 		then:
 			yamlContracts.size() == 1
 			YamlContract yamlContract = yamlContracts.first()
+			yamlContract.name == "fooo"
+			yamlContract.ignored == true
 			yamlContract.label == "card_rejected"
 			yamlContract.input.messageFrom == "input"
 			yamlContract.input.messageBody == [

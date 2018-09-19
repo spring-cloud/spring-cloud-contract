@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Issue
@@ -27,6 +28,7 @@ import org.springframework.cloud.contract.verifier.config.TestFramework
 import org.springframework.cloud.contract.verifier.config.TestMode
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.SyntaxChecker
+import org.springframework.util.FileSystemUtils
 import org.springframework.util.StringUtils
 
 import static org.springframework.cloud.contract.verifier.config.TestFramework.JUNIT
@@ -42,6 +44,7 @@ class SingleTestGeneratorSpec extends Specification {
 	@Rule
 	TemporaryFolder tmpFolder = new TemporaryFolder()
 	File file
+	File tmp
 
 	private static final List<String> mockMvcJUnitRestAssured2ClassStrings = ['import com.jayway.jsonpath.DocumentContext;', 'import com.jayway.jsonpath.JsonPath;',
 																			  'import org.junit.FixMethodOrder;', 'import org.junit.Ignore;', 'import org.junit.Test;', 'import org.junit.runners.MethodSorters;',
@@ -146,6 +149,9 @@ class SingleTestGeneratorSpec extends Specification {
 	def setup() {
 		file = tmpFolder.newFile()
 		writeContract(file)
+		tmp = tmpFolder.newFolder()
+		File classpath = new File(SingleTestGeneratorSpec.class.getResource('/classpath/').toURI())
+		FileSystemUtils.copyRecursively(classpath, tmp)
 	}
 
 	private writeContract(File file) {
@@ -589,7 +595,8 @@ class SingleTestGeneratorSpec extends Specification {
 	@Issue('#359')
 	def 'should generate tests from a contract that references a file for [#testFramework]'() {
 		given:
-			File contractLocation = new File(SingleTestGeneratorSpec.class.getResource('/classpath/readFromFile.groovy').toURI())
+			File output = new File(tmp, 'readFromFile.groovy')
+			File contractLocation = output
 			File temp = tmpFolder.newFolder()
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
@@ -613,7 +620,8 @@ class SingleTestGeneratorSpec extends Specification {
 	@Issue('#260')
 	def 'should generate tests in a folder taken from basePackageForTests when it is set for [#testFramework]'() {
 		given:
-			File contractLocation = new File(SingleTestGeneratorSpec.class.getResource('/classpath/readFromFile.groovy').toURI())
+			File output = new File(tmp, 'readFromFile.groovy')
+			File contractLocation = output
 			File temp = tmpFolder.newFolder()
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
@@ -636,7 +644,8 @@ class SingleTestGeneratorSpec extends Specification {
 	@Issue('#260')
 	def "should generate tests in a folder taken from baseClassForTests's package when it is set for [#testFramework]"() {
 		given:
-			File contractLocation = new File(SingleTestGeneratorSpec.class.getResource('/classpath/readFromFile.groovy').toURI())
+			File output = new File(tmp, 'readFromFile.groovy')
+			File contractLocation = output
 			File temp = tmpFolder.newFolder()
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
@@ -659,7 +668,8 @@ class SingleTestGeneratorSpec extends Specification {
 	@Issue('#260')
 	def 'should generate tests in a folder taken from packageWithBaseClasses when it is set for [#testFramework]'() {
 		given:
-			File contractLocation = new File(SingleTestGeneratorSpec.class.getResource('/classpath/readFromFile.groovy').toURI())
+			File output = new File(tmp, 'readFromFile.groovy')
+			File contractLocation = output
 			File temp = tmpFolder.newFolder()
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
@@ -682,7 +692,8 @@ class SingleTestGeneratorSpec extends Specification {
 	@Issue('#260')
 	def 'should generate tests in a default folder when no property was passed for [#testFramework]'() {
 		given:
-			File contractLocation = new File(SingleTestGeneratorSpec.class.getResource('/classpath/readFromFile.groovy').toURI())
+			File output = new File(tmp, 'readFromFile.groovy')
+			File contractLocation = output
 			File temp = tmpFolder.newFolder()
 		and:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(

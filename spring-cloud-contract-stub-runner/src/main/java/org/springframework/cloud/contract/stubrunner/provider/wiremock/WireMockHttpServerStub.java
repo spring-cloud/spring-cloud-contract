@@ -18,8 +18,8 @@ import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.extension.Extension;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.stubrunner.HttpServerStub;
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsEscapeHelper;
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsJsonPathHelper;
@@ -41,7 +41,8 @@ import wiremock.com.github.jknack.handlebars.Helper;
  */
 public class WireMockHttpServerStub implements HttpServerStub {
 
-	private static final Logger log = LoggerFactory.getLogger(WireMockHttpServerStub.class);
+	private static final Log log = LogFactory.getLog(WireMockHttpServerStub.class);
+
 	private static final int INVALID_PORT = -1;
 
 	static final Map<WireMockHttpServerStub, PortAndMappings> SERVERS = new ConcurrentHashMap<>();

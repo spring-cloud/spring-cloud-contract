@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.spec.internal
 
+import groovy.util.logging.Commons
 import groovy.util.logging.Slf4j
 
 import java.util.regex.Pattern
@@ -34,7 +35,7 @@ import org.springframework.cloud.contract.spec.util.RegexpUtils
  * @author Tim Ysewyn
  * @since 1.0.0
  */
-@Slf4j
+@Commons
 @TypeChecked
 @EqualsAndHashCode
 @ToString(includePackage = false, includeFields = true)

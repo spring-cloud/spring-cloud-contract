@@ -19,12 +19,11 @@ package org.springframework.cloud.contract.stubrunner;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 
 /**
@@ -35,7 +34,7 @@ import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 @Deprecated
 public class StubRunnerMain {
 
-	private static final Logger log = LoggerFactory.getLogger(StubRunnerMain.class);
+	private static final Log log = LogFactory.getLog(StubRunnerMain.class);
 
 	private final Arguments arguments;
 

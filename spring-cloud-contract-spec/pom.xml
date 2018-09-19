@@ -39,8 +39,8 @@
 			<artifactId>commons-text</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jcl</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.spockframework</groupId>

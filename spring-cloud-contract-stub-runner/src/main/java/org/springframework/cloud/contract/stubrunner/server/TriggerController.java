@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.stubrunner.StubFinder;
 import org.springframework.http.MediaType;
@@ -38,8 +38,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/triggers", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TriggerController {
-	
-	private static final Logger log = LoggerFactory.getLogger(TriggerController.class);
+
+	private static final Log log = LogFactory.getLog(TriggerController.class);
 
 	private final StubFinder stubFinder;
 

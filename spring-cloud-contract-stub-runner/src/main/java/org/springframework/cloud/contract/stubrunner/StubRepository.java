@@ -29,8 +29,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.ContractConverter;
 import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStub;
@@ -43,7 +43,7 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
  */
 class StubRepository {
 
-	private static final Logger log = LoggerFactory.getLogger(StubRepository.class);
+	private static final Log log = LogFactory.getLog(StubRepository.class);
 
 	private final File path;
 	final List<File> stubs;
