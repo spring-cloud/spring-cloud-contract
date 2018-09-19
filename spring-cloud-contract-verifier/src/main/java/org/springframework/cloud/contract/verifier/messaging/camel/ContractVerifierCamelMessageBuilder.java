@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.verifier.messaging.camel;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
 
@@ -26,8 +27,8 @@ import org.apache.camel.impl.DefaultMessage;
  */
 class ContractVerifierCamelMessageBuilder {
 
-	public <T> Message create(T payload, Map<String, Object> headers) {
-		DefaultMessage message = new DefaultMessage();
+	public <T> Message create(CamelContext camelContext, T payload, Map<String, Object> headers) {
+		DefaultMessage message = new DefaultMessage(camelContext);
 		message.setBody(payload);
 		message.setHeaders(headers);
 		return message;

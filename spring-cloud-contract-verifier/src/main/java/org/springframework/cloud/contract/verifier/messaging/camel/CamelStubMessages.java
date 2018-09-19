@@ -64,7 +64,7 @@ public class CamelStubMessages implements MessageVerifier<Message> {
 
 	@Override
 	public <T> void send(T payload, Map<String, Object> headers, String destination) {
-		send(this.builder.create(payload, headers), destination);
+		send(this.builder.create(this.context, payload, headers), destination);
 	}
 
 	@Override
