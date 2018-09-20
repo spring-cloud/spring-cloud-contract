@@ -34,6 +34,7 @@ import org.eclipse.aether.RepositorySystemSession;
 import org.springframework.cloud.contract.maven.verifier.stubrunner.AetherStubDownloaderFactory;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
+import org.springframework.cloud.contract.verifier.converter.GroovyToYamlConverter;
 import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter;
 
 /**
@@ -48,7 +49,7 @@ public class  ConvertMojo extends AbstractMojo {
 	static final String DEFAULT_STUBS_DIR = "${project.build.directory}/stubs/";
 	static final String MAPPINGS_PATH = "/mappings";
 	static final String CONTRACTS_PATH = "/contracts";
-	static final String ORIGINALS_PATH = "/originals";
+	static final String ORIGINAL_PATH = "/original";
 
 	@Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
 	private RepositorySystemSession repoSession;
@@ -198,6 +199,8 @@ public class  ConvertMojo extends AbstractMojo {
 		contractsDirectory = copyContracts(rootPath, config, contractsDirectory);
 		File contractsDslDir = contractsDslDir(contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDslDir + "]");
+		GroovyToYamlConverter.replaceGroovyContractWithYaml(contractsDslDir);
+		getLog().info("Replaced Groovy DSL files with their YML representation");
 		config.setContractsDslDir(contractsDslDir);
 		config.setStubsOutputDir(stubsOutputDir(rootPath));
 		logSetup(config, contractsDslDir);
@@ -207,7 +210,7 @@ public class  ConvertMojo extends AbstractMojo {
 
 	private void copyOriginals(String rootPath, ContractVerifierConfigProperties config,
 			File contractsDirectory) throws MojoExecutionException {
-		File outputFolderWithOriginals = new File(this.stubsDirectory, rootPath + ORIGINALS_PATH);
+		File outputFolderWithOriginals = new File(this.stubsDirectory, rootPath + ORIGINAL_PATH);
 		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering, config)
 				.copy(contractsDirectory, outputFolderWithOriginals, rootPath);
 	}

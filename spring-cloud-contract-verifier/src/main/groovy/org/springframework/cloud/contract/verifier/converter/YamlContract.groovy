@@ -70,6 +70,7 @@ class YamlContract {
 		public String paramName
 		public String fileName
 		public String fileContent
+		public String contentType
 	}
 
 	@CompileStatic
@@ -108,6 +109,7 @@ class YamlContract {
 		public String paramName
 		public ValueMatcher fileName
 		public ValueMatcher fileContent
+		public ValueMatcher contentType
 	}
 
 	@CompileStatic

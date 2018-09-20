@@ -35,6 +35,8 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
  */
 @PackageScope
 class ContractsCopyTask extends ConventionTask {
+	private static final String ORIGINAL_PATH = "original"
+
 	ContractVerifierExtension extension
 	GradleContractsDownloader downloader
 
@@ -52,7 +54,7 @@ class ContractsCopyTask extends ConventionTask {
 		ext.contractsDslDir = outputContractsFolder
 		project.logger.info("Downloading and unpacking files from [$file] to [$outputContractsFolder]. The inclusion ant patterns are [${antPattern}] and [${slashSeparatedAntPattern}]")
 		copy(file, antPattern, slashSeparatedAntPattern, props, outputContractsFolder)
-		File originalContracts = outputFolder(root, "original")
+		File originalContracts = outputFolder(root, ORIGINAL_PATH)
 		copy(file, antPattern, slashSeparatedAntPattern, props, originalContracts)
 	}
 

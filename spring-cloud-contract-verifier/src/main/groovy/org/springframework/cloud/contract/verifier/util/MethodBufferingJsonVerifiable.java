@@ -73,6 +73,8 @@ public interface MethodBufferingJsonVerifiable
 
 	String keyBeforeChecking();
 
+	Object valueBeforeChecking();
+
 	boolean assertsSize();
 
 	boolean assertsConcreteValue();

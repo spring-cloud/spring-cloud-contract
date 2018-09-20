@@ -33,7 +33,9 @@ import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.MatchingTypeValue
+import org.springframework.cloud.contract.spec.internal.Multipart
 import org.springframework.cloud.contract.spec.internal.NamedProperty
+import org.springframework.cloud.contract.spec.internal.NotToEscapePattern
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.verifier.converter.YamlContract.BodyStubMatcher
 import org.springframework.cloud.contract.verifier.converter.YamlContract.BodyTestMatcher
@@ -49,6 +51,8 @@ import org.springframework.cloud.contract.verifier.converter.YamlContract.StubMa
 import org.springframework.cloud.contract.verifier.converter.YamlContract.TestCookieMatcher
 import org.springframework.cloud.contract.verifier.converter.YamlContract.TestHeaderMatcher
 import org.springframework.cloud.contract.verifier.converter.YamlContract.TestMatcherType
+import org.springframework.cloud.contract.verifier.util.JsonPaths
+import org.springframework.cloud.contract.verifier.util.JsonToJsonPathsConverter
 import org.springframework.cloud.contract.verifier.util.MapConverter
 /**
  * Simple converter from and to a {@link YamlContract} to a collection of {@link Contract}
@@ -190,6 +194,7 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 									}
 									Object fileNameValue = namedParam.fileName
 									Object fileContentValue = namedParam.fileContent
+									Object contentTypeValue = namedParam.contentType
 									if (matcher && matcher.fileName) {
 										fileNameValue = matcher.fileName.regex ? Pattern.compile(matcher.fileName.regex) :
 												predefinedToPattern(matcher.fileName.predefined)
@@ -198,8 +203,13 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 										fileContentValue = matcher.fileContent.regex ? Pattern.compile(matcher.fileContent.regex) :
 												predefinedToPattern(matcher.fileContent.predefined)
 									}
+									if (matcher && matcher.contentType) {
+										contentTypeValue = matcher.contentType.regex ? Pattern.compile(matcher.contentType.regex) :
+												predefinedToPattern(matcher.contentType.predefined)
+									}
 									multipartMap.put(namedParam.paramName, new NamedProperty(new DslProperty<>(fileNameValue, namedParam.fileName),
-											new DslProperty<>(fileContentValue, namedParam.fileContent)))
+											new DslProperty<>(fileContentValue, namedParam.fileContent),
+											new DslProperty(contentTypeValue, namedParam.contentType)))
 								}
 								multipart(multipartMap)
 							}
@@ -529,84 +539,171 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 			yamlContract.name = contract.name
 			yamlContract.ignored = contract.ignored
 			yamlContract.description = contract.description
-			if (contract.request?.method) {
-				yamlContract.request = new Request()
-				yamlContract.request.with { Request request ->
-					request.method = contract.request?.method?.clientValue
-					request.url = contract.request?.url?.clientValue
-					request.urlPath = contract.request?.urlPath?.clientValue
-					request.headers = (contract.request?.headers as Headers)?.asTestSideMap()
-					request.cookies = (contract.request?.cookies as Cookies)?.asTestSideMap()
-					request.body = MapConverter.getTestSideValues(contract.request?.body)
-					request.matchers = new StubMatchers()
-					contract.request?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
-						request.matchers.body << new BodyStubMatcher(
-								path: matcher.path(),
-								type: stubMatcherType(matcher.matchingType()),
-								value: matcher.value()?.toString()
-						)
-					}
-					if (contract.request.multipart) {
-
-					}
-					yamlContract.request.multipart
-					setInputHeadersMatchers(contract.request?.headers as Headers, yamlContract.request.matchers.headers)
-				}
-				yamlContract.response = new Response()
-				yamlContract.response.with { Response response ->
-					response.status = contract.response?.status?.clientValue as Integer
-					response.headers = (contract.response?.headers as Headers)?.asMap {
-						String headerName, DslProperty prop ->
-							MapConverter.getStubSideValues(prop.clientValue).toString()
-					}
-					response.cookies = (contract.response?.cookies as Cookies)?.asStubSideMap()
-					response.body = MapConverter.getStubSideValues(contract.response?.body)
-					contract.response?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
-						response.matchers.body << new BodyTestMatcher(
-								path: matcher.path(),
-								type: testMatcherType(matcher.matchingType()),
-								value: matcher.value()?.toString(),
-								minOccurrence: matcher.minTypeOccurrence(),
-								maxOccurrence: matcher.maxTypeOccurrence()
-						)
-					}
-					setOutputHeadersMatchers(contract.response?.headers, yamlContract.response.matchers.headers)
-				}
-			}
 			yamlContract.label = contract.label
-			if (contract.input) {
-				yamlContract.input = new Input()
-				yamlContract.input.assertThat = MapConverter.getTestSideValues(contract.input?.assertThat?.toString())
-				yamlContract.input.triggeredBy = MapConverter.getTestSideValues(contract.input?.triggeredBy?.toString())
-				yamlContract.input.messageHeaders = (contract.input?.messageHeaders as Headers)?.asTestSideMap()
-				yamlContract.input.messageBody = MapConverter.getTestSideValues(contract.input?.messageBody)
-				yamlContract.input.messageFrom = MapConverter.getTestSideValues(contract.input?.messageFrom)
-				contract.input?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
-					yamlContract.input.matchers.body << new BodyStubMatcher(
+			request(contract, yamlContract)
+			response(yamlContract, contract)
+			input(contract, yamlContract)
+			output(contract, yamlContract)
+			return yamlContract
+		}
+	}
+
+	protected void output(Contract contract, YamlContract yamlContract) {
+		if (contract.outputMessage) {
+			yamlContract.outputMessage = new OutputMessage()
+			yamlContract.outputMessage.sentTo = MapConverter.getStubSideValues(contract.outputMessage.sentTo)
+			yamlContract.outputMessage.headers = (contract.outputMessage?.headers as Headers)?.asStubSideMap()
+			yamlContract.outputMessage.body = MapConverter.getStubSideValues(contract.outputMessage?.body)
+			contract.outputMessage?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
+				yamlContract.outputMessage.matchers.body << new BodyTestMatcher(
+						path: matcher.path(),
+						type: testMatcherType(matcher.matchingType()),
+						value: matcher.value()?.toString(),
+						minOccurrence: matcher.minTypeOccurrence(),
+						maxOccurrence: matcher.maxTypeOccurrence()
+				)
+			}
+			setOutputBodyMatchers(contract.outputMessage?.body, yamlContract.outputMessage.matchers.body)
+			setOutputHeadersMatchers(contract.outputMessage?.headers, yamlContract.outputMessage.matchers.headers)
+		}
+	}
+
+	protected void input(Contract contract, YamlContract yamlContract) {
+		if (contract.input) {
+			yamlContract.input = new Input()
+			yamlContract.input.assertThat = MapConverter.getTestSideValues(contract.input?.assertThat?.toString())
+			yamlContract.input.triggeredBy = MapConverter.getTestSideValues(contract.input?.triggeredBy?.toString())
+			yamlContract.input.messageHeaders = (contract.input?.messageHeaders as Headers)?.asTestSideMap()
+			yamlContract.input.messageBody = MapConverter.getTestSideValues(contract.input?.messageBody)
+			yamlContract.input.messageFrom = MapConverter.getTestSideValues(contract.input?.messageFrom)
+			contract.input?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
+				yamlContract.input.matchers.body << new BodyStubMatcher(
+						path: matcher.path(),
+						type: stubMatcherType(matcher.matchingType()),
+						value: matcher.value()?.toString()
+				)
+			}
+			setInputBodyMatchers(contract.input?.messageBody, yamlContract.input.matchers.body)
+			setInputHeadersMatchers(contract.input?.messageHeaders as Headers, yamlContract.input.matchers.headers)
+		}
+	}
+
+	protected void request(Contract contract, YamlContract yamlContract) {
+		if (contract.request?.method) {
+			yamlContract.request = new Request()
+			yamlContract.request.with { Request request ->
+				request.method = contract.request?.method?.serverValue
+				// TODO: Url Matcher
+				request.url = contract.request?.url?.serverValue
+				request.urlPath = contract.request?.urlPath?.serverValue
+				request.headers = (contract.request?.headers as Headers)?.asMap {
+					String headerName, DslProperty prop ->
+						MapConverter.getTestSideValues(prop).toString()
+				}
+				request.cookies = (contract.request?.cookies as Cookies)?.asTestSideMap()
+				request.body = MapConverter.getTestSideValues(contract.request?.body)
+				Multipart multipart = contract.request.multipart
+				if (multipart) {
+					request.multipart = new YamlContract.Multipart()
+					Map<String, Object> map = (Map<String, Object>) MapConverter.getTestSideValues(multipart)
+					map.each { String key, Object value ->
+						if (value instanceof NamedProperty) {
+							request.multipart.named << new Named(paramName: key,
+									fileName: value.name?.serverValue as String,
+									fileContent: value.value?.serverValue as String,
+									contentType: value.contentType?.serverValue as String)
+						} else {
+							request.multipart.params.put(key, value != null ? value.toString() : null)
+						}
+					}
+				}
+				request.matchers = new StubMatchers()
+				contract.request?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
+					request.matchers.body << new BodyStubMatcher(
 							path: matcher.path(),
 							type: stubMatcherType(matcher.matchingType()),
 							value: matcher.value()?.toString()
 					)
 				}
-				setInputHeadersMatchers(contract.input?.messageHeaders as Headers, yamlContract.input.matchers.headers)
-			}
-			if (contract.outputMessage) {
-				yamlContract.outputMessage = new OutputMessage()
-				yamlContract.outputMessage.sentTo = MapConverter.getStubSideValues(contract.outputMessage.sentTo)
-				yamlContract.outputMessage.headers = (contract.outputMessage?.headers as Headers)?.asStubSideMap()
-				yamlContract.outputMessage.body = MapConverter.getStubSideValues(contract.outputMessage?.body)
-				contract.outputMessage?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
-					yamlContract.outputMessage.matchers.body << new BodyTestMatcher(
-							path: matcher.path(),
-							type: testMatcherType(matcher.matchingType()),
-							value: matcher.value()?.toString(),
-							minOccurrence: matcher.minTypeOccurrence(),
-							maxOccurrence: matcher.maxTypeOccurrence()
-					)
+				if (multipart) {
+					request.matchers.multipart = new YamlContract.MultipartStubMatcher()
+					Map<String, Object> map = (Map<String, Object>) MapConverter.getStubSideValues(multipart)
+					map.each { String key, Object value ->
+						if (value instanceof NamedProperty) {
+							Object fileName = value.name?.clientValue
+							Object fileContent = value.value?.clientValue
+							Object contentType = value.contentType?.clientValue
+							if (fileName instanceof Pattern ||
+									fileContent instanceof Pattern ||
+									contentType instanceof Pattern) {
+								request.matchers.multipart.named << new YamlContract.MultipartNamedStubMatcher(
+										paramName: key,
+										fileName: valueMatcher(fileName),
+										fileContent: valueMatcher(fileContent),
+										contentType: valueMatcher(contentType),
+								)
+							}
+						} else if (value instanceof Pattern) {
+							request.matchers.multipart.params.add(new KeyValueMatcher(
+									key: key,
+									regex: value.pattern()
+							))
+						}
+					}
 				}
-				setOutputHeadersMatchers(contract.outputMessage?.headers, yamlContract.outputMessage.matchers.headers)
+				setInputBodyMatchers(contract.request?.body, request.matchers.body)
+				setInputHeadersMatchers(contract.request?.headers as Headers, yamlContract.request.matchers.headers)
 			}
-			return yamlContract
+		}
+	}
+
+	protected YamlContract.ValueMatcher valueMatcher(Object o) {
+		return o instanceof Pattern ? new YamlContract.ValueMatcher(regex: o.pattern()) : null
+	}
+
+	protected void setInputBodyMatchers(DslProperty body, List<BodyStubMatcher> bodyMatchers) {
+		JsonPaths paths = new JsonToJsonPathsConverter().transformToJsonPathWithStubsSideValues(body)
+		paths?.findAll { it.valueBeforeChecking() instanceof Pattern }?.each {
+			bodyMatchers << new BodyStubMatcher(
+					path: it.keyBeforeChecking(),
+					type: StubMatcherType.by_regex,
+					value: (it.valueBeforeChecking() as Pattern).pattern()
+			)
+		}
+	}
+
+	protected void setOutputBodyMatchers(DslProperty body, List<BodyTestMatcher> bodyMatchers) {
+		JsonPaths paths = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(body)
+		paths?.findAll { it.valueBeforeChecking() instanceof Pattern }?.each {
+			bodyMatchers << new BodyTestMatcher(
+					path: it.keyBeforeChecking(),
+					type: TestMatcherType.by_regex,
+					value: (it.valueBeforeChecking() as Pattern).pattern()
+			)
+		}
+	}
+
+	protected void response(YamlContract yamlContract, Contract contract) {
+		yamlContract.response = new Response()
+		yamlContract.response.with { Response response ->
+			response.status = contract.response?.status?.clientValue as Integer
+			response.headers = (contract.response?.headers as Headers)?.asMap {
+				String headerName, DslProperty prop ->
+					MapConverter.getStubSideValues(prop).toString()
+			}
+			response.cookies = (contract.response?.cookies as Cookies)?.asStubSideMap()
+			response.body = MapConverter.getStubSideValues(contract.response?.body)
+			contract.response?.bodyMatchers?.jsonPathMatchers()?.each { BodyMatcher matcher ->
+				response.matchers.body << new BodyTestMatcher(
+						path: matcher.path(),
+						type: testMatcherType(matcher.matchingType()),
+						value: matcher.value()?.toString(),
+						minOccurrence: matcher.minTypeOccurrence(),
+						maxOccurrence: matcher.maxTypeOccurrence()
+				)
+			}
+			setOutputBodyMatchers(contract.response?.body, yamlContract.response.matchers.body)
+			setOutputHeadersMatchers(contract.response?.headers, yamlContract.response.matchers.headers)
 		}
 	}
 
@@ -632,6 +729,11 @@ class YamlContractConverter implements ContractConverter<List<YamlContract>> {
 				headerMatchers << new TestHeaderMatcher(
 						key: key,
 						command: value.executionCommand,
+				)
+			} else if (value instanceof NotToEscapePattern) {
+				headerMatchers << new TestHeaderMatcher(
+						key: key,
+						regex: value.serverValue.pattern(),
 				)
 			}
 		}

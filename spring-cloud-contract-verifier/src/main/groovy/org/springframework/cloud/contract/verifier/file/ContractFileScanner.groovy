@@ -120,13 +120,7 @@ class ContractFileScanner {
 				boolean included = includeMatcher ? file.absolutePath.matches(includeMatcher) : true
 				included = includeMatchers ? matchesPattern(file, includeMatchers) : included
 				if (contractFile && included) {
-					if (projectSide == ProjectSide.STUB) {
-						File ymlContractVersion = replaceGroovyContractWithYaml(baseDir, file)
-						file = ymlContractVersion
-						contractFile = false
-					} else {
-						addContractToTestGeneration(result, files, file, i, ContractVerifierDslConverter.convertAsCollection(baseDir, file))
-					}
+					addContractToTestGeneration(result, files, file, i, ContractVerifierDslConverter.convertAsCollection(baseDir, file))
 				}
 				if (!contractFile && included) {
 					addContractToTestGeneration(converters, result, files, file, i)
