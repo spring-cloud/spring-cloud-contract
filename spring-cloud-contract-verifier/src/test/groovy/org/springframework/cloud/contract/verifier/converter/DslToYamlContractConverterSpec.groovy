@@ -19,8 +19,7 @@ package org.springframework.cloud.contract.verifier.converter
 
 import spock.lang.Specification
 
-import org.springframework.cloud.contract.spec.Contract
-
+import org.springframework.cloud.contract.spec.Contract 
 /**
  * @author Marcin Grzejszczak
  * @author Tim Ysewyn
@@ -36,17 +35,17 @@ class DslToYamlContractConverterSpec extends Specification {
 					method 'GET'
 					urlPath '/get'
 					body([
-							duck: 123,
-							alpha: "abc",
-							number: 123,
-							aBoolean: true,
-							date: "2017-01-01",
-							dateTime: "2017-01-01T01:23:45",
-							time: "01:02:34",
+							duck                : 123,
+							alpha               : "abc",
+							number              : 123,
+							aBoolean            : true,
+							date                : "2017-01-01",
+							dateTime            : "2017-01-01T01:23:45",
+							time                : "01:02:34",
 							valueWithoutAMatcher: "foo",
-							valueWithTypeMatch: "string",
-							key: [
-									'complex.key' : 'foo'
+							valueWithTypeMatch  : "string",
+							key                 : [
+									'complex.key': 'foo'
 							]
 					])
 					bodyMatchers {
@@ -69,34 +68,34 @@ class DslToYamlContractConverterSpec extends Specification {
 				response {
 					status OK()
 					body([
-							duck: 123,
-							alpha: "abc",
-							number: 123,
-							positiveInteger: 1234567890,
-							negativeInteger: -1234567890,
+							duck                 : 123,
+							alpha                : "abc",
+							number               : 123,
+							positiveInteger      : 1234567890,
+							negativeInteger      : -1234567890,
 							positiveDecimalNumber: 123.4567890,
 							negativeDecimalNumber: -123.4567890,
-							aBoolean: true,
-							date: "2017-01-01",
-							dateTime: "2017-01-01T01:23:45",
-							time: "01:02:34",
-							valueWithoutAMatcher: "foo",
-							valueWithTypeMatch: "string",
-							valueWithMin: [
-									1,2,3
+							aBoolean             : true,
+							date                 : "2017-01-01",
+							dateTime             : "2017-01-01T01:23:45",
+							time                 : "01:02:34",
+							valueWithoutAMatcher : "foo",
+							valueWithTypeMatch   : "string",
+							valueWithMin         : [
+									1, 2, 3
 							],
-							valueWithMax: [
-									1,2,3
+							valueWithMax         : [
+									1, 2, 3
 							],
-							valueWithMinMax: [
-									1,2,3
+							valueWithMinMax      : [
+									1, 2, 3
 							],
-							valueWithMinEmpty: [],
-							valueWithMaxEmpty: [],
-							key: [
-									'complex.key' : 'foo'
+							valueWithMinEmpty    : [],
+							valueWithMaxEmpty    : [],
+							key                  : [
+									'complex.key': 'foo'
 							],
-							nullValue: null
+							nullValue            : null
 					])
 					bodyMatchers {
 						// asserts the jsonpath value against manual regex
@@ -157,23 +156,23 @@ class DslToYamlContractConverterSpec extends Specification {
 			yamlContract.request.method == "GET"
 			yamlContract.request.urlPath == "/get"
 			yamlContract.request.body == [
-					duck: 123,
-					alpha: "abc",
-					number: 123,
-					aBoolean: true,
-					date: "2017-01-01",
-					dateTime: "2017-01-01T01:23:45",
-					time: "01:02:34",
+					duck                : 123,
+					alpha               : "abc",
+					number              : 123,
+					aBoolean            : true,
+					date                : "2017-01-01",
+					dateTime            : "2017-01-01T01:23:45",
+					time                : "01:02:34",
 					valueWithoutAMatcher: "foo",
-					valueWithTypeMatch: "string",
-					key: ["complex.key": 'foo']
+					valueWithTypeMatch  : "string",
+					key                 : ["complex.key": 'foo']
 			]
 			yamlContract.request.headers == [
-					sample: 'foo',
+					sample        : 'foo',
 					"Content-Type": "application/json"
 			]
 			yamlContract.request.matchers.headers == [
-			        new YamlContract.KeyValueMatcher(
+					new YamlContract.KeyValueMatcher(
 							key: "sample", regex: "foo.*")
 			]
 			yamlContract.request.matchers.body == [
@@ -213,30 +212,30 @@ class DslToYamlContractConverterSpec extends Specification {
 							type: YamlContract.StubMatcherType.by_equality),
 			]
 			yamlContract.response.status == 200
-			yamlContract.response.body == [duck: 123,
-												alpha: "abc",
-												number: 123,
-												aBoolean: true,
-												date: "2017-01-01",
-												dateTime: "2017-01-01T01:23:45",
-												time: "01:02:34",
-												positiveInteger: 1234567890,
-												negativeInteger: -1234567890,
-												positiveDecimalNumber: 123.4567890,
-												negativeDecimalNumber: -123.4567890,
-												valueWithoutAMatcher: "foo",
-												valueWithTypeMatch: "string",
-												valueWithMin: [1, 2, 3],
-												valueWithMax: [1, 2, 3],
-												valueWithMinMax: [1, 2, 3],
-												valueWithMinEmpty: [],
-												valueWithMaxEmpty: [],
-												key: ['complex.key' : 'foo'],
-												nullValue: null
-												]
+			yamlContract.response.body == [duck                 : 123,
+										   alpha                : "abc",
+										   number               : 123,
+										   aBoolean             : true,
+										   date                 : "2017-01-01",
+										   dateTime             : "2017-01-01T01:23:45",
+										   time                 : "01:02:34",
+										   positiveInteger      : 1234567890,
+										   negativeInteger      : -1234567890,
+										   positiveDecimalNumber: 123.4567890,
+										   negativeDecimalNumber: -123.4567890,
+										   valueWithoutAMatcher : "foo",
+										   valueWithTypeMatch   : "string",
+										   valueWithMin         : [1, 2, 3],
+										   valueWithMax         : [1, 2, 3],
+										   valueWithMinMax      : [1, 2, 3],
+										   valueWithMinEmpty    : [],
+										   valueWithMaxEmpty    : [],
+										   key                  : ['complex.key': 'foo'],
+										   nullValue            : null
+			]
 			yamlContract.response.headers == [
 					"Content-Type": "application/json",
-					"Some-Header": "someValue"
+					"Some-Header" : "someValue"
 			]
 			yamlContract.response.matchers.headers == [
 					new YamlContract.TestHeaderMatcher(
@@ -336,7 +335,7 @@ class DslToYamlContractConverterSpec extends Specification {
 					url '/fraudcheck' // (3)
 					body([ // (4)
 						   "client.id": $(regex('[0-9]{10}')),
-						   loanAmount: 99999
+						   loanAmount : 99999
 					])
 					headers { // (5)
 						contentType('application/json')
@@ -345,7 +344,7 @@ class DslToYamlContractConverterSpec extends Specification {
 				response { // (6)
 					status OK() // (7)
 					body([ // (8)
-						   fraudCheckStatus: "${value(regex("FRAUD"))}",
+						   fraudCheckStatus  : "${value(regex("FRAUD"))}",
 						   "rejection.reason": "Amount too high"
 					])
 					headers { // (9)
@@ -366,7 +365,7 @@ class DslToYamlContractConverterSpec extends Specification {
 					"Content-Type": "application/json"
 			]
 			yamlContract.request.matchers.headers == [
-			        new YamlContract.KeyValueMatcher(
+					new YamlContract.KeyValueMatcher(
 							key: "Content-Type", regex: "application/json.*")
 			]
 			yamlContract.request.matchers.body == [
@@ -376,7 +375,7 @@ class DslToYamlContractConverterSpec extends Specification {
 							value: "[0-9]{3}"),
 			]
 			yamlContract.response.status == 200
-			yamlContract.response.body == [fraudCheckStatus: "FRAUD",
+			yamlContract.response.body == [fraudCheckStatus  : "FRAUD",
 										   "rejection.reason": "Amount too high"]
 			yamlContract.response.headers == [
 					"Content-Type": "application/json"
@@ -430,8 +429,8 @@ class DslToYamlContractConverterSpec extends Specification {
 			yamlContract.request.url == "/multipart"
 			yamlContract.request.multipart == new YamlContract.Multipart(
 					params: [
-							formParameter : '"formParameterValue"',
-							someBooleanParameter : 'true',
+							formParameter       : '"formParameterValue"',
+							someBooleanParameter: 'true',
 					],
 					named: [new YamlContract.Named(paramName: "file",
 							fileName: 'filename.csv',
@@ -452,19 +451,19 @@ class DslToYamlContractConverterSpec extends Specification {
 					)
 			]
 			yamlContract.request.matchers.multipart.named == [
-							new YamlContract.MultipartNamedStubMatcher(
-									paramName: "file",
-									fileName: new YamlContract.ValueMatcher(
-											regex: "[\\S\\s]+"
-									),
-									fileContent: new YamlContract.ValueMatcher(
-											regex: "[\\S\\s]+"
-									),
-									contentType: new YamlContract.ValueMatcher(
-											regex: "[\\S\\s]+"
-									)
+					new YamlContract.MultipartNamedStubMatcher(
+							paramName: "file",
+							fileName: new YamlContract.ValueMatcher(
+									regex: "[\\S\\s]+"
+							),
+							fileContent: new YamlContract.ValueMatcher(
+									regex: "[\\S\\s]+"
+							),
+							contentType: new YamlContract.ValueMatcher(
+									regex: "[\\S\\s]+"
 							)
-					]
+					)
+			]
 			yamlContract.response.status == 200
 	}
 }

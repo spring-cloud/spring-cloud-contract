@@ -70,18 +70,29 @@ class YamlContract {
 		public String paramName
 		public String fileName
 		public String fileContent
+		public byte[] fileContentAsBytes
 		public String contentType
+		public String fileNameCommand
+		public String fileContentCommand
+		public String contentTypeCommand
 	}
 
 	@CompileStatic
 	@ToString(includeFields = true)
 	@EqualsAndHashCode
 	static class StubMatchers {
-		// TODO: Add URL matching
+		public KeyValueMatcher url
 		public List<BodyStubMatcher> body = []
 		public List<KeyValueMatcher> headers = []
+		public List<QueryParameterMatcher> queryParameters = []
 		public List<KeyValueMatcher> cookies = []
 		public MultipartStubMatcher multipart
+	}
+
+	@CompileStatic
+	enum MatchingType {
+		equal_to, containing, matching, not_matching, equal_to_json,
+		equal_to_xml, absent
 	}
 
 	@CompileStatic
@@ -139,6 +150,23 @@ class YamlContract {
 		public String key
 		public String regex
 		public PredefinedRegex predefined
+		public String command
+	}
+
+	@CompileStatic
+	@ToString(includeFields = true)
+	@EqualsAndHashCode
+	static class HeadersMatcher extends KeyValueMatcher {
+
+	}
+
+	@CompileStatic
+	@ToString(includeFields = true)
+	@EqualsAndHashCode
+	static class QueryParameterMatcher {
+		public String key
+		public MatchingType type
+		public Object value
 	}
 
 	@CompileStatic
