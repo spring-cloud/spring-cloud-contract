@@ -59,19 +59,16 @@ class ContractFileScanner {
 	private final Set<PathMatcher> ignoreMatchers
 	private final Set<PathMatcher> includeMatchers
 	private final String includeMatcher
-	private final ProjectSide projectSide
 	private final YAMLMapper mapper = new YAMLMapper()
 
 	ContractFileScanner(File baseDir, Set<String> excluded, Set<String> ignored,
 						Set<String> included = [],
-						String includeMatcher = "",
-						ProjectSide projectSide) {
+						String includeMatcher = "") {
 		this.baseDir = baseDir
 		this.excludeMatchers = processPatterns(excluded ?: [] as Set<String>)
 		this.ignoreMatchers = processPatterns(ignored ?: [] as Set<String>)
 		this.includeMatchers = processPatterns(included ?: [] as Set<String>)
 		this.includeMatcher = includeMatcher
-		this.projectSide = projectSide
 		this.mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
 	}
 

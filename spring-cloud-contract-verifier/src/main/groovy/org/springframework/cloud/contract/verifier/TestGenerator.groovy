@@ -33,7 +33,6 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.cloud.contract.verifier.file.ContractFileScanner
 import org.springframework.cloud.contract.verifier.file.ContractFileScannerBuilder
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
-import org.springframework.cloud.contract.verifier.file.ProjectSide
 import org.springframework.core.io.support.SpringFactoriesLoader
 import org.springframework.util.StringUtils
 
@@ -85,7 +84,6 @@ class TestGenerator {
 				.ignored(configProperties.ignoredFiles as Set)
 				.included(configProperties.includedFiles as Set)
 				.includeMatcher(this.configProperties.includedContracts)
-				.projectSide(ProjectSide.TEST)
 				.build()
 	}
 

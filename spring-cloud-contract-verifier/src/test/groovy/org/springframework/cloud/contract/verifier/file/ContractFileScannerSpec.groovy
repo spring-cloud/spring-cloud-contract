@@ -185,20 +185,19 @@ class ContractFileScannerSpec extends Specification {
 		then:
 			result.keySet().size() == 3
 			result.values().find {
-				// groovy converted to yaml
-				(it.path.fileName.toString() == 'couponCollectedEventV1.yml')
+				(it.path.fileName.toString() == 'couponCollectedEventV1.groovy')
 			}.groupSize == 2
 			result.values().find {
 				(it.convertedContract.first().label == 'couponCollectedV1')
 			}
 			result.values().findAll {
-				(it.path.fileName.toString() == 'couponCollectedEventV2.yml')
+				(it.path.fileName.toString() == 'couponCollectedEventV2.groovy')
 			}.isEmpty()
 			result.values().find {
-				(it.path.fileName.toString() == 'shouldUpdateUserInfo.yml')
+				(it.path.fileName.toString() == 'shouldUpdateUserInfo.groovy')
 			}.groupSize == 1
 			result.values().find {
-				(it.path.fileName.toString() == 'shouldReturnEmptyFriendsWhenGetFriends.yml')
+				(it.path.fileName.toString() == 'shouldReturnEmptyFriendsWhenGetFriends.groovy')
 			}.groupSize == 1
 			result.get(baseDir.toPath().resolve("coupon-sent")).size() == 0
 			result.get(baseDir.toPath().resolve("reward-rules")).size() == 0

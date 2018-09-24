@@ -34,7 +34,6 @@ class ContractFileScannerBuilder {
 	private Set<String> ignored
 	private Set<String> included = []
 	private String includeMatcher = ""
-	private ProjectSide projectSide
 
 	ContractFileScannerBuilder baseDir(File baseDir) {
 		this.baseDir = baseDir
@@ -61,18 +60,12 @@ class ContractFileScannerBuilder {
 		return this
 	}
 
-	ContractFileScannerBuilder projectSide(ProjectSide projectSide) {
-		this.projectSide = projectSide
-		return this
-	}
-
 	ContractFileScanner build() {
 		return new ContractFileScanner(this.baseDir,
 		this.excluded,
 		this.ignored,
 		this.included,
-		this.includeMatcher,
-		this.projectSide)
+		this.includeMatcher)
 	}
 }
 
