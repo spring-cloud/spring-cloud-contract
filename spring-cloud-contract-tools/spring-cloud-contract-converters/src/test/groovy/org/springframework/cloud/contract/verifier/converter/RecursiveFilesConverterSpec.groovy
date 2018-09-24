@@ -96,7 +96,7 @@ class RecursiveFilesConverterSpec extends Specification {
 			recursiveFilesConverter.processFiles()
 		then:
 			def e = thrown(ConversionContractVerifierException)
-			e.message?.contains(sourceFile.name.replace(".groovy", ".yml"))
+			e.message?.contains(sourceFile.name)
 			e.cause?.message == "Test conversion error"
 	}
 

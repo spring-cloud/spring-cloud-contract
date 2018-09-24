@@ -34,7 +34,6 @@ import org.eclipse.aether.RepositorySystemSession;
 import org.springframework.cloud.contract.maven.verifier.stubrunner.AetherStubDownloaderFactory;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
-import org.springframework.cloud.contract.verifier.converter.GroovyToYamlConverter;
 import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter;
 
 /**
@@ -195,12 +194,12 @@ public class  ConvertMojo extends AbstractMojo {
 		config.setExcludeBuildFolders(this.excludeBuildFolders);
 		File contractsDirectory = locationOfContracts(config);
 		contractsDirectory = contractSubfolderIfPresent(contractsDirectory);
-		copyOriginals(rootPath, config, contractsDirectory);
-		contractsDirectory = copyContracts(rootPath, config, contractsDirectory);
+//		copyOriginals(rootPath, config, contractsDirectory);
+		copyContracts(rootPath, config, contractsDirectory);
 		File contractsDslDir = contractsDslDir(contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDslDir + "]");
-		GroovyToYamlConverter.replaceGroovyContractWithYaml(contractsDslDir);
-		getLog().info("Replaced Groovy DSL files with their YML representation");
+//		GroovyToYamlConverter.replaceGroovyContractWithYaml(contractsDslDir);
+//		getLog().info("Replaced Groovy DSL files with their YML representation");
 		config.setContractsDslDir(contractsDslDir);
 		config.setStubsOutputDir(stubsOutputDir(rootPath));
 		logSetup(config, contractsDslDir);

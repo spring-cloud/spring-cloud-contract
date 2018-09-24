@@ -30,7 +30,6 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.cloud.contract.verifier.file.ContractFileScanner
 import org.springframework.cloud.contract.verifier.file.ContractFileScannerBuilder
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
-import org.springframework.cloud.contract.verifier.file.ProjectSide
 import org.springframework.cloud.contract.verifier.util.NamesUtil
 import org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverter
 /**
@@ -63,7 +62,6 @@ class RecursiveFilesConverter {
 				.excluded(props.excludedFiles as Set)
 				.ignored([] as Set).included([] as Set)
 				.includeMatcher(props.includedContracts)
-				.projectSide(ProjectSide.STUB)
 				.build()
 		ListMultimap<Path, ContractMetadata> contracts = scanner.findContracts()
 		if (log.isDebugEnabled()) {

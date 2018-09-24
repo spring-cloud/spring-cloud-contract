@@ -98,8 +98,9 @@ class YamlToContracts {
 							}
 							if (yamlContract.request?.headers) {
 								headers {
-									yamlContract.request?.headers?.each { String key, Object value ->
-										List<YamlContract.KeyValueMatcher> matchers = yamlContract.request.matchers.headers.findAll { it.key == key }
+									yamlContract.request.headers.each { String key, Object value ->
+										List<YamlContract.KeyValueMatcher> matchers =
+												yamlContract.request.matchers.headers.findAll { it.key == key }
 										matchers.each { YamlContract.KeyValueMatcher matcher ->
 											if (value instanceof List) {
 												((List) value).each {
@@ -111,6 +112,9 @@ class YamlToContracts {
 												Object clientValue = clientValue(value, matcher, key)
 												header(key, new DslProperty(clientValue, serverValue(value, matcher)))
 											}
+										}
+										if (!matchers) {
+											header(key, value)
 										}
 									}
 								}

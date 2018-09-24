@@ -255,7 +255,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 				this.contractsRepositoryUsername, this.contractsRepositoryPassword,
 				this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort,
 				this.deleteStubsAfterTest, this.contractsProperties).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
-		contractsDirectory = copyContractsToATempDirectory(contractsDirectory);
+//		contractsDirectory = copyContractsToATempDirectory(contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 		setupConfig(config, contractsDirectory);
 		this.project.addTestCompileSourceRoot(this.generatedTestSourcesDir.getAbsolutePath());

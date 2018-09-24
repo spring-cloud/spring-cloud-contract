@@ -155,7 +155,7 @@ class YamlContractConverterSpec extends Specification {
 			url.queryParameters.parameters[1].serverValue == "bar2"
 			contract.request.method.clientValue == "GET"
 			contract.request.headers.entries.findAll { it.name == "Authorization" }
-					.collect { it.clientValue } == ["secret", "secret2"]
+					.collect { it.clientValue }.flatten() == ["secret", "secret2"]
 			contract.request.body.clientValue == [foo: "bar", baz: 5]
 		and:
 			contract.response.status.clientValue == 200
