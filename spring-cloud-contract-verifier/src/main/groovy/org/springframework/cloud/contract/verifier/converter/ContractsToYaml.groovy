@@ -113,7 +113,7 @@ class ContractsToYaml {
 						request.multipart.named << new YamlContract.Named(paramName: key,
 								fileName: fileName instanceof String ? value.name?.serverValue as String : null,
 								fileContent: fileContent instanceof String ? fileContent as String : null,
-								fileContentAsBytes: fileContent instanceof byte[] ? fileContent as byte[] : null,
+								fileContentAsBytes: fileContent instanceof String ? fileContent as String : null,
 								contentType: contentType instanceof String ? contentType as String : null,
 								fileNameCommand: fileName instanceof ExecutionProperty ? fileName.toString() : null,
 								fileContentCommand: fileContent instanceof ExecutionProperty ? fileContent.toString() : null,

@@ -16,15 +16,13 @@
 
 package org.springframework.cloud.contract.spec.internal
 
-import groovy.util.logging.Commons
-import groovy.util.logging.Slf4j
-
 import java.util.regex.Pattern
 
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
+import groovy.util.logging.Commons
 import repackaged.nl.flotsam.xeger.Xeger
 
 import org.springframework.cloud.contract.spec.util.RegexpUtils
@@ -91,7 +89,11 @@ class Response extends Common {
 	}
 
 	void body(Object bodyAsValue) {
-		this.body = new Body(bodyAsValue)
+		if (bodyAsValue instanceof List) {
+			body(bodyAsValue as List)
+		} else {
+			this.body = new Body(bodyAsValue)
+		}
 	}
 
 	void fixedDelayMilliseconds(int timeInMilliseconds) {

@@ -216,7 +216,7 @@ request:
 response:
   status: 200
   body:
-    "property1": "a"
+    "property1": "true"
     "property2": null
     "property3": false
 """
@@ -252,8 +252,8 @@ response:
   body:
     "property1": "a"
     "property2":
-      "a" : "sth"
-      "b" : "sthElse"
+      - "a" : "sth"
+      - "b" : "sthElse"
 """
 			Contract contractDsl = fromYaml(contract)
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -289,8 +289,8 @@ response:
   body:
     "property1": "a"
     "property2":
-      "a" : "sth"
-      "b" : "sthElse"
+      - "a" : "sth"
+      - "b" : "sthElse"
 """
 			Contract contractDsl = fromYaml(contract)
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -375,7 +375,7 @@ response:
 	@Issue("185")
 	def "should generate assertions for a response body containing map with integers as keys with #methodBuilderName"() {
 		given:
-
+			// YAML CAN'T HAVE INTEGER KEYS
 			String contract = """\
 ---
 request:
@@ -394,8 +394,8 @@ response:
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property']").field(7).isEqualTo(0.0)""")
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property']").field(14).isEqualTo(0.0)""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property']").field("['7']").isEqualTo(0.0)""")
+			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property']").field("['14']").isEqualTo(0.0)""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -451,6 +451,8 @@ response:
 request:
   method: "GET"
   url: "test"
+response:
+  status: 200
   body: '
     {
       "property1": [
@@ -458,8 +460,6 @@ request:
         { "property3": "test2"}
       ]
     }'
-response:
-  status: 200
 """
 			Contract contractDsl = fromYaml(contract)
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -536,12 +536,12 @@ response:
 		when:
 			builder.appendTo(blockBuilder)
 		then:
-			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property2']").matches("[0-9]{3}")""")
+			blockBuilder.toString().contains("""\$.property2", String.class)).matches("[0-9]{3}")""")
 			blockBuilder.toString().contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		and:
-			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
 		where:
 			methodBuilderName           | methodBuilder
 			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -554,9 +554,9 @@ response:
 ---
 request:
   method: "GET"
-  urlPath: "/user"
+  urlPath: "/users"
   queryParameters:
-    'limit': "20"
+    'limit': "10"
     'offset': "20"
     'filter': "email"
     'sort': "name"
@@ -568,7 +568,7 @@ request:
     queryParameters:
       - key: limit
         type: equal_to
-        value: "20"
+        value: "10"
       - key: offset
         type: containing
         value: "20"
@@ -580,10 +580,10 @@ request:
         value: "^/[0-9]{2}$"
       - key: age
         type: not_matching
-        value: "^\\w*$"
+        value: '^\\w*$'
       - key: name
-        type: regex
-        value: "Denis.*"
+        type: matching
+        value: 'Denis.*'
       - key: hello
         type: absent
 response:
@@ -629,7 +629,7 @@ request:
   method: "GET"
   urlPath: "/foo/123456"
   queryParameters:
-    'limit': "20"
+    'limit': "10"
     'offset': "20"
     'filter': "email"
     'sort': "name"
@@ -643,7 +643,7 @@ request:
     queryParameters:
       - key: limit
         type: equal_to
-        value: "20"
+        value: "10"
       - key: offset
         type: containing
         value: "20"
@@ -655,10 +655,10 @@ request:
         value: "^/[0-9]{2}$"
       - key: age
         type: not_matching
-        value: "^\\w*$"
+        value: '^\\w*$'
       - key: name
-        type: regex
-        value: "Denis.*"
+        type: matching
+        value: 'Denis.*'
       - key: hello
         type: absent
 response:
@@ -783,8 +783,9 @@ response:
   headers:
     "Location": "http://localhost/partners/1000/users/1001"
   matchers:
-    - key: 'Location'
-      regex: 'http://localhost/partners/[0-9]+/users/[0-9]+'
+    headers:
+      - key: 'Location'
+        regex: 'http://localhost/partners/[0-9]+/users/[0-9]+'
 '''
 			Contract contractDsl = fromYaml(contract)
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -864,7 +865,13 @@ response:
   status: 201
   headers:
     "Location": null
-  matches:
+  body:
+    rejectionReason: "foo"
+  matchers:
+    body:
+      - path: "$.rejectionReason"
+        type: by_command
+        value: assertThatRejectionReasonIsNull($it)
     headers:
       - key: "Location"
         command: assertThatLocationIsNull($it)
@@ -881,7 +888,7 @@ response:
 			}
 		where:
 			methodBuilderName           | methodBuilder                                                                           | assertionStrings
-			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ['''assertThatRejectionReasonIsNull(parsedJson.read(\'\'\'$.rejectionReason\'\'\'))''', '''assertThatLocationIsNull(response.header('Location'))''']
+			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ['''assertThatRejectionReasonIsNull(parsedJson.read("\\\$.rejectionReason"))''', '''assertThatLocationIsNull(response.header('Location'))''']
 			"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | ['''assertThatRejectionReasonIsNull(parsedJson.read("$.rejectionReason"))''', '''assertThatLocationIsNull(response.header("Location"))''']
 	}
 	def "shouldn't generate unicode escape characters with #methodBuilderName"() {
@@ -905,10 +912,10 @@ request:
     body:
       - path: $.first_name
         type: by_regex
-        value: "[\\p{L}]*"
+        value: '[\\p{L}]*'
       - path: $.last_name
         type: by_regex
-        value: "[\\p{L}]*"
+        value: '[\\p{L}]*'
 response:
   status: 201
   matchers:
@@ -943,20 +950,19 @@ request:
   headers:
     "Content-Type": 'multipart/form-data;boundary=AaB03x'
   multipart:
-  params: 
-    formParameter: '"formParameterValue"',
-    someBooleanParameter: 'true'
-  named: 
-    - paramName: "file"
-      fileName: 'filename.csv'
-      fileContent: 'file content'
-      contentType: 'application/json'
+    params: 
+      formParameter: '"formParameterValue"'
+      someBooleanParameter: 'true'
+    named: 
+      - paramName: "file"
+        fileName: 'filename.csv'
+        fileContent: 'file content'
+        contentType: 'application/json'
   matchers:
     headers:
       - key: 'Content-Type'
         regex: 'multipart/form-data;boundary=AaB03x.*'
     multipart:
-      multipart:
       params:
         - key: formParameter
           regex: ".+"
@@ -1012,20 +1018,19 @@ request:
   headers:
     "Content-Type": 'multipart/form-data;boundary=AaB03x'
   multipart:
-  params: 
-    formParameter: '"formParameterValue"',
-    someBooleanParameter: 'true'
-  named: 
-    - paramName: "file"
-      fileName: 'filename.csv'
-      fileContentAsBytes: [100, 117, 100, 97]
-      contentType: 'application/json'
+    params: 
+      formParameter: '"formParameterValue"'
+      someBooleanParameter: 'true'
+    named: 
+      - paramName: "file"
+        fileName: 'filename.csv'
+        fileContent: "file content"
+        contentType: 'application/json'
   matchers:
     headers:
       - key: 'Content-Type'
         regex: 'multipart/form-data;boundary=AaB03x.*'
     multipart:
-      multipart:
       params:
         - key: formParameter
           regex: ".+"
@@ -1061,9 +1066,9 @@ response:
 		where:
 			methodBuilderName           | methodBuilder                                                                           | requestStrings
 			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
-																																	 """.multiPart('file', 'file', [100, 117, 100, 97] as byte[])"""]
+																																	 """.multiPart('file', 'filename.csv', 'file content'.bytes, 'application/json')"""]
 			"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
-																																	 '.multiPart("file", "file", new byte[] {100, 117, 100, 97});']
+																																	 '.multiPart("file", "filename.csv", "file content".getBytes(), "application/json");']
 	}
 
 	@Issue('541')
@@ -1078,12 +1083,12 @@ request:
     "Content-Type": 'multipart/form-data;boundary=AaB03x'
   multipart:
     params: 
-      formParameter: '"formParameterValue"',
+      formParameter: '"formParameterValue"'
       someBooleanParameter: 'true'
     named: 
-      - paramName: "file",
-        fileNameCommand: 'toString()',
-        command: 'file content',
+      - paramName: "file"
+        fileNameCommand: 'toString()'
+        fileContentAsBytes: 'file content'
         contentType: 'application/json'
   matchers:
     headers:
@@ -1127,11 +1132,11 @@ response:
 			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 																																	 """.param('formParameter', '"formParameterValue"'""",
 																																	 """.param('someBooleanParameter', 'true')""",
-																																	 """.multiPart('file', toString(), 'file content'.bytes)"""]
+																																	 """.multiPart('file', toString(), 'file content'.bytes, 'application/json')"""]
 			"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | ['"Content-Type", "multipart/form-data;boundary=AaB03x"',
 																																	 '.param("formParameter", "\\"formParameterValue\\"")',
 																																	 '.param("someBooleanParameter", "true")',
-																																	 '.multiPart("file", toString(), "file content".getBytes());']
+																																	 '.multiPart("file", toString(), "file content".getBytes(), "application/json");']
 	}
 
 	@Issue('#216')
@@ -1151,7 +1156,7 @@ response:
     body:
       - path: $.authorities[0]
         type: by_regex
-        value: "^[a-zA-Z0-9_\\- ]+$"
+        value: '^[a-zA-Z0-9_\\- ]+$'
 '''
 			Contract contractDsl = fromYaml(contract)
 			MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
@@ -1160,9 +1165,9 @@ response:
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('''assertThatJson(parsedJson).array("[\'authorities']").arrayField().matches("^[a-zA-Z0-9_\\\\- ]+\\$").value()''')
+			test.contains('''assertThat(parsedJson.read("\\$.authorities[0]", String.class)).matches("^[a-zA-Z0-9_\\\\- ]+\\$")''')
 		and:
-			SyntaxChecker.tryToCompileGroovy(blockBuilder.toString())
+			SyntaxChecker.tryToCompileWithoutCompileStatic("spock", blockBuilder.toString())
 	}
 
 	@Issue('#216')
@@ -1182,7 +1187,7 @@ response:
     body:
       - path: $.authorities[0]
         type: by_regex
-        value: "^[a-zA-Z0-9_\\- ]+$"
+        value: '^[a-zA-Z0-9_\\- ]+$'
 '''
 			Contract contractDsl = fromYaml(contract)
 			MethodBodyBuilder builder = new MockMvcJUnitMethodBodyBuilder(contractDsl, properties)
@@ -1191,7 +1196,7 @@ response:
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('''assertThatJson(parsedJson).array("[\'authorities']").arrayField().matches("^[a-zA-Z0-9_\\\\- ]+$").value()''')
+			test.contains('''assertThat(parsedJson.read("$.authorities[0]", String.class)).matches("^[a-zA-Z0-9_\\\\- ]+$")''')
 		and:
 			SyntaxChecker.tryToCompileJava(blockBuilder.toString())
 	}
@@ -1210,7 +1215,7 @@ response:
     rejectionReason: null
   matchers:
     body:
-      - path: $.authorities[0]
+      - path: $.rejectionReason
         type: by_command
         value: "assertThatRejectionReasonIsNull($it)"
 '''
@@ -1260,9 +1265,10 @@ response:
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('assertThatJson(parsedJson).array().contains("[\'id\']").matches("[0-9]+")')
+			test.contains('assertThat(parsedJson.read("\\$[0].id", String.class)).matches("[0-9]+")')
+			test.contains('assertThat(parsedJson.read("\\$[1].id", String.class)).matches("[0-9]+")')
 		and:
-			SyntaxChecker.tryToCompileGroovy(blockBuilder.toString())
+			SyntaxChecker.tryToCompileWithoutCompileStatic("spock", blockBuilder.toString())
 	}
 
 	@Issue('266')
@@ -1275,7 +1281,12 @@ request:
   url: "/api/tags"
 response:
   status: 200
-  body: ["Java", "Java8", "Spring", "SpringBoot", "Stream"]
+  body: 
+    - "Java"
+    - "Java8"
+    - "Spring"
+    - "SpringBoot"
+    - "Stream"
   headers:
     "Content-Type": "application/json;charset=UTF-8"
 '''
@@ -1406,7 +1417,7 @@ response:
 ---
 request:
   method: "GET"
-  url: "test"
+  url: "/test"
   queryParameters:
     param: value
 response:
@@ -1442,10 +1453,10 @@ request:
 response:
   status: 200
   body:
-    partners:
-      payment_methods: 
-        - BANK
-        - CASH
+    - partners:
+        payment_methods: 
+          - BANK
+          - CASH
 '''
 			Contract contractDsl = fromYaml(contract)
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -1454,8 +1465,8 @@ response:
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('assertThatJson(parsedJson).array("[\'partners\']").array("[\'payment_methods\']").arrayField().isEqualTo("BANK").value()')
-			test.contains('assertThatJson(parsedJson).array("[\'partners\']").array("[\'payment_methods\']").arrayField().isEqualTo("CASH").value()')
+			test.contains('assertThatJson(parsedJson).array().field("[\'partners\']").array("[\'payment_methods\']").arrayField().isEqualTo("BANK").value()')
+			test.contains('assertThatJson(parsedJson).array().field("[\'partners\']").array("[\'payment_methods\']").arrayField().isEqualTo("CASH").value()')
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
@@ -1481,7 +1492,7 @@ response:
     body:
       - path: $.message
         type: by_regex
-        value: "^(?!\\s*$).+"
+        value: '^(?!\\s*$).+'
 '''
 			Contract contractDsl = fromYaml(contract)
 			MethodBodyBuilder builder = new MockMvcSpockMethodRequestProcessingBodyBuilder(contractDsl, properties)
@@ -1490,7 +1501,7 @@ response:
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('assertThatJson(parsedJson).field("[\'message\']").matches("^(?!\\\\s*\\$).+")')
+			test.contains('assertThat(parsedJson.read("\\$.message", String.class)).matches("^(?!\\\\s*\\$).+")')
 		and:
 			SyntaxChecker.tryToCompileGroovy(blockBuilder.toString(), false)
 	}
@@ -1522,7 +1533,7 @@ response:
 			builder.then(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('assertThatRejectionReasonIsNull(parsedJson.read(\'\'\'$.rejectionReason.title\'\'\'))')
+			test.contains('assertThatRejectionReasonIsNull(parsedJson.read("\\\$.rejectionReason.title"))')
 		when:
 			SyntaxChecker.tryToCompileGroovy(blockBuilder.toString())
 		then:
@@ -1559,8 +1570,8 @@ response:
 			builder.then(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('''assertThatUserNameIsNotNull(parsedJson.read(\'\'\'$.[0].name\'\'\')''')
-			test.contains('''assertThatUserNameIsNotNull(parsedJson.read(\'\'\'$.[1].name\'\'\')''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("\\$[0].name"))''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("\\$[1].name"))''')
 	}
 
 	@Issue('#85')
@@ -1592,8 +1603,8 @@ response:
 			builder.then(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$.[0].name")''')
-			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$.[1].name")''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$[0].name")''')
+			test.contains('''assertThatUserNameIsNotNull(parsedJson.read("$[1].name")''')
 	}
 
 	@Issue('#111')
@@ -1700,7 +1711,7 @@ request:
   matchers:
     headers:
       - key: 'Content-Type'
-        regex: 'application/vnd.fraud.v1+json.*'
+        regex: 'application.vnd.fraud.v1.json.*'
 response:
   status: 200
   headers:
@@ -1708,7 +1719,7 @@ response:
   matchers:
     headers:
       - key: 'Content-Type'
-        regex: 'application/vnd.fraud.v1+json.*'
+        regex: 'application.vnd.fraud.v1.json.*'
 '''
 			Contract contractDsl = fromYaml(contract)
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -1717,13 +1728,13 @@ response:
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('application/vnd\\\\.fraud\\\\.v1\\\\+json.*')
+			matcher(test)
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
 		where:
-			methodBuilderName           | methodBuilder
-			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
-			"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
+			methodBuilderName           | methodBuilder                                                                           | matcher
+			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | { String s -> 'assertThat(response.header("Content-Type")).matches("application.vnd.fraud.v1.json.*")' }
+			"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | { String s -> "response.header('Content-Type') ==~ java.util.regex.Pattern.compile('application.vnd.fraud.v1.json.*')" }
 	}
 
 	@Issue('#172')
@@ -1736,7 +1747,9 @@ request:
   url: "/foo"
 response:
   status: 200
-  body: '{"a":1}\n{"a":2}'
+  body: |
+    {"a":1}
+    {"a":2}
   headers:
     "Content-Type": "text/plain"
   matchers:
@@ -1758,7 +1771,7 @@ response:
 		where:
 			//order is inverted cause Intellij didn't parse this properly
 			methodBuilderName           | methodBuilder                                                                           | expectedAssertion
-			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '''responseBody == "{\\"a\\":1}\\n{\\"a\\":2}"'''
+			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '''responseBody == "{\\"a\\":1}\\n{\\"a\\":2}'''
 			"MockMvcJUnitMethodBuilder" | { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }                  | '''assertThat(responseBody).isEqualTo("{\\"a\\":1}\\n{\\"a\\":2}'''
 	}
 
@@ -1776,6 +1789,9 @@ response:
   headers:
     "Content-Type": "application/json;charset=utf-8"
   matchers:
+    body:
+      - type: by_regex
+        value: 'true|false'
     headers:
       - key: 'Content-Type'
         regex: 'application/json;charset=utf-8.*'
@@ -1812,14 +1828,14 @@ request:
     "Content-Type": "application/json;charset=utf-8"
 response:
   status: 200
-  body: 'some value \\u0022with quote\\u0022|bar'
+  body: '{ "bar": "some value \\u0022with quote\\u0022" }'
   headers:
     "Content-Type": "application/json;charset=utf-8"
   matchers:
     body:
-      - key: $.bar
+      - path: $.bar
         type: by_regex
-        value: 'some value \\u0022with quote\\u0022|bar'
+        value: 'some value "with quote"|bar'
 '''
 			Contract contractDsl = fromYaml(contract)
 			MethodBodyBuilder builder = methodBuilder(contractDsl)
@@ -1828,9 +1844,9 @@ response:
 			builder.appendTo(blockBuilder)
 			def test = blockBuilder.toString()
 		then:
-			test.contains('assertThatJson(parsedJson).field("[\'bar\']").matches("some value \\"with quote\\"|bar")')
+			test.contains('.matches("some value \\"with quote\\"|bar")')
 		and:
-			SyntaxChecker.tryToCompile(methodBuilderName, blockBuilder.toString())
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, blockBuilder.toString())
 		where:
 			//order is inverted cause Intellij didn't parse this properly
 			methodBuilderName           | methodBuilder                                                                           | expectedAssertion

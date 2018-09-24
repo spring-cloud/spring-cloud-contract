@@ -109,8 +109,7 @@ class YamlToContracts {
 												}
 											} else {
 												Object clientValue = clientValue(value, matcher, key)
-												header(key, new DslProperty(clientValue,
-														it instanceof DslProperty ? it.serverValue : it))
+												header(key, new DslProperty(clientValue, serverValue(value, matcher)))
 											}
 										}
 									}
@@ -121,17 +120,18 @@ class YamlToContracts {
 									yamlContract.request?.cookies?.each { String key, Object value ->
 										YamlContract.KeyValueMatcher matcher = yamlContract.request.matchers.cookies.find { it.key == key }
 										Object clientValue = clientValue(value, matcher, key)
-
 										cookie(key, new DslProperty(clientValue, value))
 									}
 								}
 							}
-							if (yamlContract.request.body) body(yamlContract.request.body)
-							if (yamlContract.request.bodyFromFile) body(file(yamlContract.request.bodyFromFile))
+							if (yamlContract.request.body != null) body(yamlContract.request.body)
+							if (yamlContract.request.bodyFromFile != null) body(file(yamlContract.request.bodyFromFile))
 							if (yamlContract.request.multipart) {
 								Map multipartMap = [:]
-								Map<String, DslProperty> multiPartParams = yamlContract.request.multipart.params.collectEntries { String paramKey, String paramValue ->
-									YamlContract.KeyValueMatcher matcher = yamlContract.request.matchers.multipart.params.find {
+								Map<String, DslProperty> multiPartParams = yamlContract.request
+										.multipart.params.collectEntries { String paramKey, String paramValue ->
+									YamlContract.KeyValueMatcher matcher = yamlContract.request.matchers
+											.multipart.params.find {
 										it.key == paramKey
 									}
 									Object value = paramValue
@@ -148,10 +148,10 @@ class YamlToContracts {
 									}
 									Object fileNameValue = namedParam.fileName
 									Object fileContentValue = namedParam.fileContent
-									byte[] fileContentValueAsBytes = namedParam.fileContentAsBytes
+									String fileContentValueAsBytes = namedParam.fileContentAsBytes
 									String contentTypeCommand = namedParam.contentTypeCommand
 									String fileContentCommand = namedParam.fileContentCommand
-									String fileName = namedParam.fileNameCommand
+									String fileNameCommand = namedParam.fileNameCommand
 									Object contentTypeValue = namedParam.contentType
 									if (matcher && matcher.fileName) {
 										fileNameValue = matcher.fileName.regex ? Pattern.compile(matcher.fileName.regex) :
@@ -166,9 +166,12 @@ class YamlToContracts {
 												predefinedToPattern(matcher.contentType.predefined)
 									}
 									multipartMap.put(namedParam.paramName, new NamedProperty(
-											new DslProperty<>(fileNameValue ?: new ExecutionProperty(fileName), namedParam.fileName),
-											new DslProperty<>(fileContentValue, namedParam.fileContent ?: fileContentValueAsBytes ?: new ExecutionProperty(fileContentCommand)),
-											new DslProperty(contentTypeValue ?: new ExecutionProperty(contentTypeCommand), namedParam.contentType)))
+											new DslProperty<>(fileNameValue, fileNameCommand ? new ExecutionProperty(fileNameCommand)
+													: namedParam.fileName),
+											new DslProperty<>(fileContentValue, namedParam.fileContent ?: fileContentValueAsBytes
+													?: new ExecutionProperty(fileContentCommand)),
+											new DslProperty(contentTypeValue, contentTypeCommand ? new ExecutionProperty(contentTypeCommand)
+													: namedParam.contentType)))
 								}
 								multipart(multipartMap)
 							}
@@ -221,12 +224,11 @@ class YamlToContracts {
 									yamlContract.response?.cookies?.each { String key, Object value ->
 										YamlContract.TestCookieMatcher matcher = yamlContract.response.matchers.cookies.find { it.key == key }
 										Object serverValue = serverCookieValue(value, matcher, key)
-
 										cookie(key, new DslProperty(value, serverValue))
 									}
 								}
 							}
-							if (yamlContract.response.body) {
+							if (yamlContract.response.body != null) {
 								YamlContract.BodyTestMatcher bodyTestMatcher = yamlContract.response?.matchers?.body?.find {
 									it.path == null && (it.type == YamlContract.TestMatcherType.by_regex ||
 											it.type == YamlContract.TestMatcherType.by_command)
@@ -277,7 +279,9 @@ class YamlToContracts {
 											value = byNull()
 											break
 									}
-									jsonPath(testMatcher.path, value)
+									if (testMatcher.path) {
+										jsonPath(testMatcher.path, value)
+									}
 								}
 							}
 						}
@@ -430,7 +434,7 @@ class YamlToContracts {
 	}
 
 	protected Object clientValue(Object value, YamlContract.KeyValueMatcher matcher, String key) {
-		Object clientValue = value
+		Object clientValue = value instanceof DslProperty ? value.clientValue : value
 		if (matcher?.regex) {
 			clientValue = Pattern.compile(matcher.regex)
 			Pattern pattern = (Pattern) clientValue
@@ -441,6 +445,15 @@ class YamlToContracts {
 			assertPatternMatched(pattern, value, key)
 		}
 		return clientValue
+	}
+
+	protected Object serverValue(Object value, YamlContract.KeyValueMatcher matcher) {
+		Object serverValue = value
+		if (matcher?.command) {
+			return new ExecutionProperty(matcher.command)
+		}
+		return serverValue instanceof DslProperty ?
+				((DslProperty) serverValue).serverValue : serverValue
 	}
 
 	private void assertPatternMatched(Pattern pattern, value, String key) {
