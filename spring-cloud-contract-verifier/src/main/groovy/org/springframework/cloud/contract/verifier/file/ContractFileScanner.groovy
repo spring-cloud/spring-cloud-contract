@@ -18,13 +18,10 @@ package org.springframework.cloud.contract.verifier.file
 
 import java.nio.file.FileSystem
 import java.nio.file.FileSystems
-import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.PathMatcher
 import java.util.regex.Pattern
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import groovy.transform.CompileStatic
 import groovy.util.logging.Commons
 import wiremock.com.google.common.collect.ArrayListMultimap
@@ -32,10 +29,10 @@ import wiremock.com.google.common.collect.ListMultimap
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
-import org.springframework.cloud.contract.verifier.converter.YamlContract
 import org.springframework.cloud.contract.verifier.converter.YamlContractConverter
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
 import org.springframework.core.io.support.SpringFactoriesLoader
+
 /**
  * Scans the provided file path for the DSLs. There's a possibility to provide
  * inclusion and exclusion filters.
@@ -59,7 +56,6 @@ class ContractFileScanner {
 	private final Set<PathMatcher> ignoreMatchers
 	private final Set<PathMatcher> includeMatchers
 	private final String includeMatcher
-	private final YAMLMapper mapper = new YAMLMapper()
 
 	ContractFileScanner(File baseDir, Set<String> excluded, Set<String> ignored,
 						Set<String> included = [],
@@ -69,7 +65,6 @@ class ContractFileScanner {
 		this.ignoreMatchers = processPatterns(ignored ?: [] as Set<String>)
 		this.includeMatchers = processPatterns(included ?: [] as Set<String>)
 		this.includeMatcher = includeMatcher
-		this.mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
 	}
 
 	private Set<PathMatcher> processPatterns(Set<String> patterns) {
@@ -118,8 +113,7 @@ class ContractFileScanner {
 				included = includeMatchers ? matchesPattern(file, includeMatchers) : included
 				if (contractFile && included) {
 					addContractToTestGeneration(result, files, file, i, ContractVerifierDslConverter.convertAsCollection(baseDir, file))
-				}
-				if (!contractFile && included) {
+				} else if (!contractFile && included) {
 					addContractToTestGeneration(converters, result, files, file, i)
 				} else {
 					appendRecursively(file, result)
@@ -139,30 +133,6 @@ class ContractFileScanner {
 		List<ContractConverter> converters = converters()
 		converters.add(YamlContractConverter.INSTANCE)
 		return converters
-	}
-
-	/**
-	 * If a contract ends with [.groovy] we will move it to the [original]
-	 * folder, convert the [.groovy] version to [.yml] and store it instead
-	 * of the Groovy file. From that we will continue processing as if
-	 * from the very beginning there was only a [.yml] file
-	 *
-	 * @param baseDir
-	 * @param file
-	 * @return
-	 */
-	private File replaceGroovyContractWithYaml(File baseDir, File file) {
-		// base dir: target/copied_contracts/contracts/
-		// target/copied_contracts/contracts/foo/baz/bar.groovy
-		Collection<Contract> collection = ContractVerifierDslConverter.convertAsCollection(baseDir, file)
-		List<YamlContract> yamls = new YamlContractConverter().convertTo(collection)
-		// rm target/copied_contracts/contracts/foo/baz/bar.groovy
-		file.delete()
-		// [contracts/foo/baz/bar.groovy] -> [contracts/foo/baz/bar.yml]
-		File ymlContractVersion = new File(file.parentFile, file.name.replace(".groovy", ".yml"))
-		// store the YMLs instead of groovy files
-		Files.write(ymlContractVersion.toPath(), mapper.writeValueAsBytes(yamls))
-		return ymlContractVersion
 	}
 
 	protected List<ContractConverter> converters() {

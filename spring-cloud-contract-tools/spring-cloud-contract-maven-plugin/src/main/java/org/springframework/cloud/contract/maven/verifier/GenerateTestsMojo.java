@@ -16,11 +16,8 @@
 package org.springframework.cloud.contract.maven.verifier;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,8 +42,6 @@ import org.springframework.cloud.contract.verifier.TestGenerator;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
 import org.springframework.cloud.contract.verifier.config.TestMode;
-import org.springframework.cloud.contract.verifier.converter.GroovyToYamlConverter;
-import org.springframework.util.FileSystemUtils;
 
 /**
  * From the provided directory with contracts generates the acceptance
@@ -255,7 +250,6 @@ public class GenerateTestsMojo extends AbstractMojo {
 				this.contractsRepositoryUsername, this.contractsRepositoryPassword,
 				this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort,
 				this.deleteStubsAfterTest, this.contractsProperties).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
-//		contractsDirectory = copyContractsToATempDirectory(contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 		setupConfig(config, contractsDirectory);
 		this.project.addTestCompileSourceRoot(this.generatedTestSourcesDir.getAbsolutePath());
@@ -277,20 +271,6 @@ public class GenerateTestsMojo extends AbstractMojo {
 			throw new MojoExecutionException(
 					String.format("Spring Cloud Contract Verifier Plugin exception: %s",
 							e.getMessage()), e);
-		}
-	}
-
-	private File copyContractsToATempDirectory(File contractsDirectory) {
-		try {
-			Path tmp = Files.createTempDirectory("contracts");
-			tmp.toFile().deleteOnExit();
-			FileSystemUtils.copyRecursively(contractsDirectory.toPath(), tmp);
-			GroovyToYamlConverter.replaceGroovyContractWithYaml(tmp.toFile());
-			contractsDirectory = tmp.toFile();
-			return contractsDirectory;
-		}
-		catch (IOException e) {
-			throw new IllegalStateException(e);
 		}
 	}
 

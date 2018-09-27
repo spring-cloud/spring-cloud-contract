@@ -18,8 +18,6 @@ package org.springframework.cloud.contract.maven.verifier;
 import java.io.File;
 import java.util.Collections;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -27,11 +25,13 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 
 class CopyContracts {
-	private static final Log log = LogFactory.getLog(CopyContracts.class);
-
+	private static final Logger log = LoggerFactory.getLogger(CopyContracts.class);
+	private static final String CONTRACTS_PATH = "/contracts";
 	private final MavenProject project;
 	private final MavenSession mavenSession;
 	private final MavenResourcesFiltering mavenResourcesFiltering;
@@ -48,7 +48,8 @@ class CopyContracts {
 
 	public void copy(File contractsDirectory, File outputDirectory, String rootPath)
 			throws MojoExecutionException {
-		File outputFolderWithContracts = outputDirectory;
+		File outputFolderWithContracts = outputDirectory.getPath().endsWith("contracts") ?
+				outputDirectory : new File(outputDirectory, rootPath + CONTRACTS_PATH);
 		log.info("Copying Spring Cloud Contract Verifier contracts to ["+ outputFolderWithContracts + "]"
 				+ ". Only files matching [" + this.config.getIncludedContracts() + "] pattern will end up in "
 				+ "the final JAR with stubs.");
