@@ -2044,6 +2044,14 @@ to find contracts. E.g. for <literal>com.example:foo:1.0.0</literal> the path wo
 <simpara>Finally, a push will be done to that repo&#8217;s <literal>origin</literal></simpara>
 </listitem>
 </itemizedlist>
+<section xml:id="_keeping_contracts_with_the_producer_and_stubs_in_an_external_repository">
+<title>Keeping contracts with the producer and stubs in an external repository</title>
+<simpara>It is also possible to keep the contracts in the producer repository, but keep the stubs in an external git repo.
+This is most useful when you want to use the base consumer-producer collaboration flow, but do not have a possibility to
+use an artifact repository for storing the stubs.</simpara>
+<simpara>In order to do that, use the usual producer setup, and then add the <literal>pushStubsToScm</literal> goal and set
+<literal>contractsRepositoryUrl</literal> to the repository where you want to keep the stubs.</simpara>
+</section>
 </section>
 <section xml:id="_consumer_2">
 <title>Consumer</title>
