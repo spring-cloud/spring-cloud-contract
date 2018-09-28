@@ -681,6 +681,15 @@ to find contracts. E.g. for `com.example:foo:1.0.0` the path would be
 * Once the tests pass, the stubs will be committed in the cloned repository
 * Finally, a push will be done to that repo's `origin`
 
+===== Keeping contracts with the producer and stubs in an external repository
+
+It is also possible to keep the contracts in the producer repository, but keep the stubs in an external git repo.
+This is most useful when you want to use the base consumer-producer collaboration flow, but do not have a possibility to
+use an artifact repository for storing the stubs.
+
+In order to do that, use the usual producer setup, and then add the `pushStubsToScm` goal and set
+`contractsRepositoryUrl` to the repository where you want to keep the stubs.
+
 ==== Consumer
 
 On the consumer side when passing the `repositoryRoot` parameter,
