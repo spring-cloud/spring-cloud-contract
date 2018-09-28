@@ -5897,11 +5897,12 @@ HTTP Stub server implementation, which might resemble the following example:</p>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> com.github.dreamhead.moco.bootstrap.arg.HttpArgs
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> com.github.dreamhead.moco.runner.JsonRunner
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> com.github.dreamhead.moco.runner.RunnerSetting
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> groovy.util.logging.Slf4j
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> groovy.util.logging.Commons
+
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.stubrunner.HttpServerStub
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.util.SocketUtils
 
-<em><span class="hl-annotation" style="color: gray">@Slf4j</span></em>
+<em><span class="hl-annotation" style="color: gray">@Commons</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> MocoHttpServerStub <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">implements</span> HttpServerStub {
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> started
@@ -5945,11 +5946,11 @@ HTTP Stub server implementation, which might resemble the following example:</p>
 	HttpServerStub registerMappings(Collection&lt;File&gt; stubFiles) {
 		List&lt;RunnerSetting&gt; settings = stubFiles.findAll { it.name.endsWith(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"json"</span>) }
 				.collect {
-			log.info(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Trying to parse [{}]"</span>, it.name)
+			log.info(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Trying to parse [${it.name}]"</span>)
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">try</span> {
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> RunnerSetting.aRunnerSetting().withStream(it.newInputStream()).build()
 			} <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">catch</span> (Exception e) {
-				log.warn(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Exception occurred while trying to parse file [{}]"</span>, it.name, e)
+				log.warn(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Exception occurred while trying to parse file [${it.name}]"</span>, e)
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> null
 			}
 		}.findAll { it }
