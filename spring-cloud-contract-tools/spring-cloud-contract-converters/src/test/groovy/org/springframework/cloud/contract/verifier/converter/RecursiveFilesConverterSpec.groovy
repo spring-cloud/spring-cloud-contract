@@ -54,8 +54,8 @@ class RecursiveFilesConverterSpec extends Specification {
 			Collection<File> createdFiles = [] as List
 			properties.stubsOutputDir.eachFileRecurse(FileType.FILES) {it -> createdFiles << it}
 			Set<String> relativizedCreatedFiles = getRelativePathsForFilesInDirectory(createdFiles, properties.stubsOutputDir)
-			EXPECTED_TARGET_FILES == relativizedCreatedFiles
-		and:
+			relativizedCreatedFiles == EXPECTED_TARGET_FILES
+					and:
 			createdFiles.each { assert it.text.contains("uuid") }
 	}
 

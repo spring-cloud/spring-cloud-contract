@@ -38,6 +38,12 @@ class FinishedDelegatingJsonVerifiable extends DelegatingJsonVerifiable {
 		this.keyBeforeChecking = keyBeforeChecking;
 	}
 
+	FinishedDelegatingJsonVerifiable(String keyBeforeChecking, JsonVerifiable delegate,
+			LinkedList<String> methodsBuffer, Object value) {
+		super(delegate, methodsBuffer, value);
+		this.keyBeforeChecking = keyBeforeChecking;
+	}
+
 	FinishedDelegatingJsonVerifiable(JsonVerifiable delegate,
 			LinkedList<String> methodsBuffer) {
 		super(delegate, methodsBuffer);

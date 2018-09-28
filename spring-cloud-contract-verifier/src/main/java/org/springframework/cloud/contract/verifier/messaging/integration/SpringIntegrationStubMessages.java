@@ -19,8 +19,8 @@ package org.springframework.cloud.contract.verifier.messaging.integration;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.context.ApplicationContext;
@@ -34,8 +34,7 @@ import org.springframework.messaging.PollableChannel;
 public class SpringIntegrationStubMessages implements
 		MessageVerifier<Message<?>> {
 
-	private static final Logger log = LoggerFactory.getLogger(
-			SpringIntegrationStubMessages.class);
+	private static final Log log = LogFactory.getLog(SpringIntegrationStubMessages.class);
 
 	private final ApplicationContext context;
 	private final ContractVerifierIntegrationMessageBuilder builder = new ContractVerifierIntegrationMessageBuilder();

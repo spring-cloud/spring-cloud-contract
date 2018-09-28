@@ -16,21 +16,22 @@
 
 package org.springframework.cloud.contract.verifier.file
 
-import wiremock.com.google.common.collect.ArrayListMultimap
-import wiremock.com.google.common.collect.ListMultimap
-import groovy.transform.CompileStatic
-import groovy.util.logging.Slf4j
-import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.spec.ContractConverter
-import org.springframework.cloud.contract.verifier.converter.YamlContractConverter
-import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
-import org.springframework.core.io.support.SpringFactoriesLoader
-
 import java.nio.file.FileSystem
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.PathMatcher
 import java.util.regex.Pattern
+
+import groovy.transform.CompileStatic
+import groovy.util.logging.Commons
+import wiremock.com.google.common.collect.ArrayListMultimap
+import wiremock.com.google.common.collect.ListMultimap
+
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.ContractConverter
+import org.springframework.cloud.contract.verifier.converter.YamlContractConverter
+import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
+import org.springframework.core.io.support.SpringFactoriesLoader
 
 /**
  * Scans the provided file path for the DSLs. There's a possibility to provide
@@ -41,7 +42,7 @@ import java.util.regex.Pattern
  * @since 1.0.0
  */
 @CompileStatic
-@Slf4j
+@Commons
 class ContractFileScanner {
 
 	private static final String OS_NAME = System.getProperty("os.name");
@@ -94,8 +95,7 @@ class ContractFileScanner {
 	 * and try to convert via pluggable Contract Converters any possible contracts
 	 */
 	private void appendRecursively(File baseDir, ListMultimap<Path, ContractMetadata> result) {
-		List<ContractConverter> converters = converters()
-		converters.add(YamlContractConverter.INSTANCE)
+		List<ContractConverter> converters = convertersWithYml()
 		if (log.isTraceEnabled()) {
 			log.trace("Found the following contract converters ${converters}")
 		}
@@ -127,6 +127,12 @@ class ContractFileScanner {
 				}
 			}
 		}
+	}
+
+	protected List<ContractConverter> convertersWithYml() {
+		List<ContractConverter> converters = converters()
+		converters.add(YamlContractConverter.INSTANCE)
+		return converters
 	}
 
 	protected List<ContractConverter> converters() {
@@ -179,9 +185,6 @@ class ContractFileScanner {
 		if (log.isDebugEnabled()) {
 			log.debug("Creating a contract entry for path [" + path + "] and metadata [" + metadata + "]")
 		}
-		if (convertedContract) {
-
-		}
 		result.put(parent, metadata)
 	}
 
@@ -194,7 +197,7 @@ class ContractFileScanner {
 			if (matcher.matches(file.toPath())) {
 				return true
 			}
-			log.debug("Path [{}] doesn't match the pattern [{}]", file.toPath(), matcher)
+			log.debug("Path [${file.toPath()}] doesn't match the pattern [${matcher}]")
 		}
 		return false
 	}

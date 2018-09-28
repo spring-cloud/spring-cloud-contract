@@ -16,49 +16,53 @@
 
 package org.springframework.cloud.contract.verifier.converter
 
-import wiremock.com.google.common.collect.ListMultimap
-import groovy.transform.CompileStatic
-import groovy.util.logging.Slf4j
-import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
-import org.springframework.cloud.contract.verifier.file.ContractFileScanner
-import org.springframework.cloud.contract.verifier.file.ContractMetadata
-import org.springframework.cloud.contract.verifier.util.NamesUtil
-import org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverter
-
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
+import groovy.transform.CompileStatic
+import groovy.util.logging.Commons
+import wiremock.com.google.common.collect.ListMultimap
+
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
+import org.springframework.cloud.contract.verifier.file.ContractFileScanner
+import org.springframework.cloud.contract.verifier.file.ContractFileScannerBuilder
+import org.springframework.cloud.contract.verifier.file.ContractMetadata
+import org.springframework.cloud.contract.verifier.util.NamesUtil
+import org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverter
 /**
  * Recursively converts contracts into their stub representations
  *
  * @since 1.1.0
  */
-@Slf4j
+@Commons
 @CompileStatic
 class RecursiveFilesConverter {
 
 	private final StubGeneratorProvider holder
-	private final ContractVerifierConfigProperties properties
+	private final ContractVerifierConfigProperties props
 	private final File outMappingsDir
 
-	RecursiveFilesConverter(ContractVerifierConfigProperties properties, StubGeneratorProvider holder = null) {
-		this.properties = properties
-		this.outMappingsDir = properties.stubsOutputDir
+	RecursiveFilesConverter(ContractVerifierConfigProperties props, StubGeneratorProvider holder = null) {
+		this.props = props
+		this.outMappingsDir = props.stubsOutputDir
 		this.holder = holder ?: new StubGeneratorProvider()
 	}
 
-	RecursiveFilesConverter(ContractVerifierConfigProperties properties, File outMappingsDir, StubGeneratorProvider holder = null) {
-		this.properties = properties
+	RecursiveFilesConverter(ContractVerifierConfigProperties props, File outMappingsDir, StubGeneratorProvider holder = null) {
+		this.props = props
 		this.outMappingsDir = outMappingsDir
 		this.holder = holder ?: new StubGeneratorProvider()
 	}
 
 	void processFiles() {
-		ContractFileScanner scanner = new ContractFileScanner(properties.contractsDslDir,
-				properties.excludedFiles as Set, [] as Set, [] as Set, properties.includedContracts)
+		ContractFileScanner scanner = new ContractFileScannerBuilder().baseDir(props.contractsDslDir)
+				.excluded(props.excludedFiles as Set)
+				.ignored([] as Set).included([] as Set)
+				.includeMatcher(props.includedContracts)
+				.build()
 		ListMultimap<Path, ContractMetadata> contracts = scanner.findContracts()
 		if (log.isDebugEnabled()) {
 			log.debug("Found the following contracts $contracts")
@@ -73,7 +77,7 @@ class RecursiveFilesConverter {
 						holder.converterForName(sourceFile.name)
 				try {
 					String path = sourceFile.path
-					if (properties.isExcludeBuildFolders() && (matchesPath(path, "target") || matchesPath(path, "build"))) {
+					if (props.isExcludeBuildFolders() && (matchesPath(path, "target") || matchesPath(path, "build"))) {
 						if (log.isDebugEnabled()) {
 							log.debug("Exclude build folder is set. Path [${path}] contains [target] or [build] in its path")
 						}
@@ -115,7 +119,7 @@ class RecursiveFilesConverter {
 	}
 
 	private Path createAndReturnTargetDirectory(File sourceFile) {
-		Path relativePath = Paths.get(properties.contractsDslDir.toURI()).relativize(sourceFile.parentFile.toPath())
+		Path relativePath = Paths.get(props.contractsDslDir.toURI()).relativize(sourceFile.parentFile.toPath())
 		Path absoluteTargetPath = outMappingsDir.toPath().resolve(relativePath)
 		Files.createDirectories(absoluteTargetPath)
 		return absoluteTargetPath

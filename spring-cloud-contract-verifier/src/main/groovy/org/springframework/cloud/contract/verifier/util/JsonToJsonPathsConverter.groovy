@@ -22,7 +22,7 @@ import com.jayway.jsonpath.PathNotFoundException
 import com.toomuchcoding.jsonassert.JsonAssertion
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Commons
 import org.springframework.cloud.contract.spec.internal.BodyMatcher
 import org.springframework.cloud.contract.spec.internal.BodyMatchers
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
@@ -40,7 +40,7 @@ import java.util.regex.Pattern
  * @author Marcin Grzejszczak
  * @author Tim Ysewyn
  */
-@Slf4j
+@Commons
 class JsonToJsonPathsConverter {
 
 	/**

@@ -22,13 +22,13 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Objects;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.spec.Contract;
 
 class StubServer {
 
-	private static final Logger log = LoggerFactory.getLogger(StubServer.class);
+	private static final Log log = LogFactory.getLog(StubServer.class);
 
 	private final HttpServerStub httpServerStub;
 	final StubConfiguration stubConfiguration;

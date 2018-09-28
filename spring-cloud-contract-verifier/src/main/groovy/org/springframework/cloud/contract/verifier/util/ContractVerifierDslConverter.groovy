@@ -17,7 +17,7 @@
 package org.springframework.cloud.contract.verifier.util
 
 import groovy.transform.CompileStatic
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Commons
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.springframework.cloud.contract.spec.Contract
 
@@ -29,7 +29,7 @@ import org.springframework.cloud.contract.spec.Contract
  * @since 1.0.0
  */
 @CompileStatic
-@Slf4j
+@Commons
 class ContractVerifierDslConverter {
 
 	/**

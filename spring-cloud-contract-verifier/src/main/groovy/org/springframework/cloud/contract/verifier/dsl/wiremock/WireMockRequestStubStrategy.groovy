@@ -28,7 +28,7 @@ import groovy.transform.CompileDynamic
 import groovy.transform.PackageScope
 import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Commons
 
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.Body
@@ -59,7 +59,7 @@ import static org.springframework.cloud.contract.verifier.util.RegexpBuilders.bu
  */
 @TypeChecked
 @PackageScope
-@Slf4j
+@Commons
 class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 
 	private final Request request

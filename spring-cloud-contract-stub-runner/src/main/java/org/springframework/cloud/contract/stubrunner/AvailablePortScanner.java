@@ -20,15 +20,15 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.Random;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Tries to execute a closure with an available port from the given range
  */
 class AvailablePortScanner {
 
-	private static final Logger log = LoggerFactory.getLogger(AvailablePortScanner.class);
+	private static final Log log = LogFactory.getLog(AvailablePortScanner.class);
 
 	private static final int MAX_RETRY_COUNT = 1000;
 

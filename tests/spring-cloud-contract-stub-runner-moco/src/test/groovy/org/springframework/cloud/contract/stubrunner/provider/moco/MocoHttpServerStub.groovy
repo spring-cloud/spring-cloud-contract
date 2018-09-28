@@ -19,11 +19,12 @@ package org.springframework.cloud.contract.stubrunner.provider.moco
 import com.github.dreamhead.moco.bootstrap.arg.HttpArgs
 import com.github.dreamhead.moco.runner.JsonRunner
 import com.github.dreamhead.moco.runner.RunnerSetting
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Commons
+
 import org.springframework.cloud.contract.stubrunner.HttpServerStub
 import org.springframework.util.SocketUtils
 
-@Slf4j
+@Commons
 class MocoHttpServerStub implements HttpServerStub {
 
 	private boolean started
@@ -67,11 +68,11 @@ class MocoHttpServerStub implements HttpServerStub {
 	HttpServerStub registerMappings(Collection<File> stubFiles) {
 		List<RunnerSetting> settings = stubFiles.findAll { it.name.endsWith("json") }
 				.collect {
-			log.info("Trying to parse [{}]", it.name)
+			log.info("Trying to parse [${it.name}]")
 			try {
 				return RunnerSetting.aRunnerSetting().withStream(it.newInputStream()).build()
 			} catch (Exception e) {
-				log.warn("Exception occurred while trying to parse file [{}]", it.name, e)
+				log.warn("Exception occurred while trying to parse file [${it.name}]", e)
 				return null
 			}
 		}.findAll { it }

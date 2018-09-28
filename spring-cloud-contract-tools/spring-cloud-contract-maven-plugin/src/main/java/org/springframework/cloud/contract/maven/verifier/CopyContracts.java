@@ -16,7 +16,6 @@
 package org.springframework.cloud.contract.maven.verifier;
 
 import java.io.File;
-import java.lang.invoke.MethodHandles;
 import java.util.Collections;
 
 import org.apache.maven.execution.MavenSession;
@@ -31,7 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 
 class CopyContracts {
-	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	private static final Logger log = LoggerFactory.getLogger(CopyContracts.class);
 	private static final String CONTRACTS_PATH = "/contracts";
 	private final MavenProject project;
 	private final MavenSession mavenSession;
