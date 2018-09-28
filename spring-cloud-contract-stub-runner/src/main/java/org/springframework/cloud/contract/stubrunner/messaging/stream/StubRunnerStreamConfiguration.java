@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -60,8 +60,7 @@ import org.springframework.util.StringUtils;
 @AutoConfigureBefore(StubRunnerIntegrationConfiguration.class)
 public class StubRunnerStreamConfiguration {
 
-	private static final Logger log = LoggerFactory
-			.getLogger(StubRunnerStreamConfiguration.class);
+	private static final Log log = LogFactory.getLog(StubRunnerStreamConfiguration.class);
 
 	@Bean
 	@ConditionalOnMissingBean(name="stubFlowRegistrar")
@@ -134,16 +133,14 @@ public class StubRunnerStreamConfiguration {
 		for (Map.Entry<String, BindingProperties> entry : bindings.entrySet()) {
 			if (destination.equals(entry.getValue().getDestination())) {
 				if (log.isDebugEnabled()) {
-					log.debug("Found a channel named [{}] with destination [{}]",
-							entry.getKey(), destination);
+					log.debug("Found a channel named [" + entry.getKey() + "] with destination [" + destination + "]");
 				}
 				return entry.getKey();
 			}
 		}
 		if (log.isDebugEnabled()) {
 			log.debug(
-					"No destination named [{}] was found. Assuming that the destination equals the channel name",
-					destination);
+					"No destination named [" + destination + "] was found. Assuming that the destination equals the channel name");
 		}
 		return destination;
 	}

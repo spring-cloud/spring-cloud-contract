@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.springframework.cloud.contract.verifier.TestGenerator
@@ -23,6 +24,7 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.cloud.contract.verifier.config.TestMode
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.SyntaxChecker
+import org.springframework.util.FileSystemUtils
 import org.springframework.util.StringUtils
 import spock.lang.Issue
 import spock.lang.Specification
@@ -36,6 +38,7 @@ class SingleTestGeneratorSpec extends Specification {
 	@Rule
 	TemporaryFolder tmpFolder = new TemporaryFolder()
 	File file
+	File tmp
 
 	private static final List<String> mockMvcJUnitRestAssured2ClassStrings = ['import com.jayway.jsonpath.DocumentContext;', 'import com.jayway.jsonpath.JsonPath;',
 																			  'import org.junit.FixMethodOrder;', 'import org.junit.Ignore;', 'import org.junit.Test;', 'import org.junit.runners.MethodSorters;',

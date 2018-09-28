@@ -33,6 +33,8 @@ import com.jcraft.jsch.agentproxy.RemoteIdentityRepository;
 import com.jcraft.jsch.agentproxy.USocketFactory;
 import com.jcraft.jsch.agentproxy.connector.SSHAgentConnector;
 import com.jcraft.jsch.agentproxy.usocket.JNAUSocketFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.CreateBranchCommand;
@@ -67,7 +69,7 @@ import org.springframework.util.ResourceUtils;
  */
 class GitRepo {
 
-	private static final Logger log = LoggerFactory.getLogger(GitRepo.class);
+	private static final Log log = LogFactory.getLog(GitRepo.class);
 
 	final JGitFactory gitFactory;
 
@@ -99,13 +101,13 @@ class GitRepo {
 	 */
 	File cloneProject(URI projectUri) {
 		try {
-			log.info("Cloning repo from [{}] to [{}]", projectUri, this.basedir);
+			log.info("Cloning repo from [" +  projectUri + "] to [" + this.basedir + "]");
 			Git git = cloneToBasedir(projectUri, this.basedir);
 			if (git != null) {
 				git.close();
 			}
 			File clonedRepo = git.getRepository().getWorkTree();
-			log.info("Cloned repo to [{}]", clonedRepo);
+			log.info("Cloned repo to [" + clonedRepo + "]");
 			return clonedRepo;
 		}
 		catch (Exception e) {
@@ -125,9 +127,9 @@ class GitRepo {
 				log.info("Won't check out the same branch. Skipping");
 				return;
 			}
-			log.info("Checking out branch [{}]", branch);
+			log.info("Checking out branch [" + branch + "]");
 			checkoutBranch(project, branch);
-			log.info("Successfully checked out the branch [{}]", branch);
+			log.info("Successfully checked out the branch [" + branch + "]");
 		}
 		catch (Exception e) {
 			throw new IllegalStateException(e);

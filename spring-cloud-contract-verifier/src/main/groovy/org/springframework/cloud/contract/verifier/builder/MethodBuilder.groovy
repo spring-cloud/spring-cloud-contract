@@ -18,7 +18,8 @@ package org.springframework.cloud.contract.verifier.builder
 
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Commons
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestFramework
@@ -33,7 +34,7 @@ import org.springframework.cloud.contract.verifier.util.NamesUtil
  *
  * @since 1.0.0
  */
-@Slf4j
+@Commons
 @CompileStatic
 @PackageScope
 class MethodBuilder {

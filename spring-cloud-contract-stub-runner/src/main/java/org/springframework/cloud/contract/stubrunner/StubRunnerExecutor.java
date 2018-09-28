@@ -28,8 +28,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import groovy.json.JsonOutput;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.DslProperty;
 import org.springframework.cloud.contract.spec.internal.Headers;
@@ -46,9 +46,10 @@ import wiremock.org.eclipse.jetty.util.ConcurrentHashSet;
  */
 class StubRunnerExecutor implements StubFinder {
 
+	private static final Log log = LogFactory.getLog(StubRunnerExecutor.class);
+
 	static final Set<StubServer> STUB_SERVERS = new ConcurrentHashSet<>();
 
-	private static final Logger log = LoggerFactory.getLogger(StubRunnerExecutor.class);
 	private final AvailablePortScanner portScanner;
 	private final MessageVerifier<?> contractVerifierMessaging;
 	private StubServer stubServer;

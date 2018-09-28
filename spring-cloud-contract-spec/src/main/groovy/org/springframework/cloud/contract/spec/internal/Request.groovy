@@ -16,17 +16,17 @@
 
 package org.springframework.cloud.contract.spec.internal
 
+import java.util.regex.Pattern
+
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import groovy.transform.TypeChecked
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Commons
 import org.apache.commons.lang3.StringEscapeUtils
-
-import org.springframework.cloud.contract.spec.util.RegexpUtils
 import repackaged.nl.flotsam.xeger.Xeger
 
-import java.util.regex.Pattern
+import org.springframework.cloud.contract.spec.util.RegexpUtils
 /**
  * Represents the request side of the HTTP communication
  *
@@ -34,7 +34,7 @@ import java.util.regex.Pattern
  * @author Tim Ysewyn
  * @since 1.0.0
  */
-@Slf4j
+@Commons
 @TypeChecked
 @EqualsAndHashCode
 @ToString(includePackage = false, includeNames = true)

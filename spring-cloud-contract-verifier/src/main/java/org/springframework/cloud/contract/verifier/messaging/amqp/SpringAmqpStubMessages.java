@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.core.MessagePropertiesBuilder;
@@ -55,7 +55,7 @@ import static org.springframework.amqp.support.converter.DefaultClassMapper.DEFA
 public class SpringAmqpStubMessages implements
 		MessageVerifier<Message> {
 
-	private static final Logger log = LoggerFactory.getLogger(SpringAmqpStubMessages.class);
+	private static final Log log = LogFactory.getLog(SpringAmqpStubMessages.class);
 
 	private final RabbitTemplate rabbitTemplate;
 
@@ -109,19 +109,19 @@ public class SpringAmqpStubMessages implements
 		verify(this.rabbitTemplate, atLeastOnce()).send(eq(destination), routingKeyCaptor.capture(),
 				messageCaptor.capture(), ArgumentMatchers.any());
 		if (messageCaptor.getAllValues().isEmpty()) {
-			log.info("no messages found on destination {}", destination);
+			log.info("no messages found on destination [" + destination + "]");
 			return null;
 		} else if (messageCaptor.getAllValues().size() > 1) {
-			log.info("multiple messages found on destination {} returning last one - {}", destination);
+			log.info("multiple messages found on destination [" + destination + "] returning last one");
 			return messageCaptor.getValue();
 		}
 		Message message = messageCaptor.getValue();
 		if (message == null) {
-			log.info("no messages found on destination {}", destination);
+			log.info("no messages found on destination [" + destination + "]");
 			return null;
 		}
 		if (!routingKeyCaptor.getValue().isEmpty()) {
-			log.info("routing key passed  {}", routingKeyCaptor.getValue());
+			log.info("routing key passed [" + routingKeyCaptor.getValue() + "]");
 			message.getMessageProperties()
 					.setReceivedRoutingKey(routingKeyCaptor.getValue());
 		}

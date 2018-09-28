@@ -155,7 +155,7 @@ class YamlContractConverterSpec extends Specification {
 			url.queryParameters.parameters[1].serverValue == "bar2"
 			contract.request.method.clientValue == "GET"
 			contract.request.headers.entries.findAll { it.name == "Authorization" }
-					.collect { it.clientValue } == ["secret", "secret2"]
+					.collect { it.clientValue }.flatten() == ["secret", "secret2"]
 			contract.request.body.clientValue == [foo: "bar", baz: 5]
 		and:
 			contract.response.status.clientValue == 200
@@ -708,7 +708,9 @@ class YamlContractConverterSpec extends Specification {
 			assert converter.isAccepted(ymlMessagingMatchers)
 		and:
 			List<Contract> contracts = [Contract.make {
+				name("fooo")
 				label("card_rejected")
+				ignored()
 				input {
 					messageFrom("input")
 					messageBody([
@@ -815,6 +817,8 @@ class YamlContractConverterSpec extends Specification {
 		then:
 			yamlContracts.size() == 1
 			YamlContract yamlContract = yamlContracts.first()
+			yamlContract.name == "fooo"
+			yamlContract.ignored == true
 			yamlContract.label == "card_rejected"
 			yamlContract.input.messageFrom == "input"
 			yamlContract.input.messageBody == [

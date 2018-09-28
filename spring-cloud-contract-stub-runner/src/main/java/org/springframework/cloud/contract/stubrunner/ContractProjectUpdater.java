@@ -26,8 +26,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 /**
@@ -38,7 +36,8 @@ import org.springframework.util.StringUtils;
  */
 public class ContractProjectUpdater {
 
-	private static final Logger log = LoggerFactory.getLogger(ContractProjectUpdater.class);
+	private static final Log log = LogFactory.getLog(ContractProjectUpdater.class);
+
 	private static final int DEFAULT_ATTEMPTS_NO = 10;
 	private static final long DEFAULT_WAIT_BETWEEN_ATTEMPTS = 1000;
 	// TODO: Add this to the documentation

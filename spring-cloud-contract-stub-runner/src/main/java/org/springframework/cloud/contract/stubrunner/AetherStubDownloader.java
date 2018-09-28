@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
@@ -36,8 +38,6 @@ import org.eclipse.aether.resolution.VersionRangeRequest;
 import org.eclipse.aether.resolution.VersionRangeResolutionException;
 import org.eclipse.aether.resolution.VersionRangeResult;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions.StubRunnerProxyOptions;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.util.StringUtils;
@@ -51,7 +51,7 @@ import static org.springframework.cloud.contract.stubrunner.util.ZipCategory.unz
  */
 public class AetherStubDownloader implements StubDownloader {
 
-	private static final Logger log = LoggerFactory.getLogger(AetherStubDownloader.class);
+	private static final Log log = LogFactory.getLog(AetherStubDownloader.class);
 
 	private static final String TEMP_DIR_PREFIX = "contracts";
 	private static final String ARTIFACT_EXTENSION = "jar";

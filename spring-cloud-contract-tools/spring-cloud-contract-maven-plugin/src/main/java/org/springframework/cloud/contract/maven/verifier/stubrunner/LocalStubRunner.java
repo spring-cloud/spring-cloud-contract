@@ -15,18 +15,17 @@
  */
 package org.springframework.cloud.contract.maven.verifier.stubrunner;
 
-import java.lang.invoke.MethodHandles;
 import javax.inject.Named;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubRunner;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 
 @Named
 public class LocalStubRunner {
-	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	private static final Log log = LogFactory.getLog(LocalStubRunner.class);
 
 	public StubRunner run(final String contractsDir, StubRunnerOptions options) {
 		log.info("Launching StubRunner with contracts from " + contractsDir);

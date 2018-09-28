@@ -16,22 +16,38 @@
 
 package org.springframework.cloud.contract.verifier.file
 
-import wiremock.com.google.common.collect.ListMultimap
-import spock.lang.Specification
 
 import java.nio.file.Path
 
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
+import spock.lang.Specification
+import wiremock.com.google.common.collect.ListMultimap
+
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.ContractConverter
+import org.springframework.util.FileSystemUtils
 
 /**
  * @author Jakub Kubrynski, codearte.io
  */
 class ContractFileScannerSpec extends Specification {
 
+	@Rule
+	TemporaryFolder tmp = new TemporaryFolder()
+	File tmpFolder
+
+	def setup() {
+		tmpFolder = new File(tmp.newFolder(), "contracts")
+	}
+
 	def "should find contract files"() {
 		given:
-			File baseDir = new File(this.getClass().getResource("/directory/with/stubs").toURI())
+			FileSystemUtils.copyRecursively(
+					new File(this.getClass().getResource("/directory/with/stubs").toURI()),
+					tmpFolder)
+		and:
+			File baseDir = tmpFolder
 			Set<String> excluded = ["package/**"] as Set
 			Set<String> ignored = ["other/different/**"] as Set
 			ContractFileScanner scanner = new ContractFileScanner(baseDir, excluded, ignored)
@@ -71,10 +87,18 @@ class ContractFileScannerSpec extends Specification {
 			ListMultimap<Path, ContractMetadata> contracts = scanner.findContracts()
 		then:
 			contracts.values().size() == 3
-			contracts.values().find { it.path.fileName.toString().startsWith('01') }.groupSize == 3
-			contracts.values().find { it.path.fileName.toString().startsWith('01') }.order == 0
-			contracts.values().find { it.path.fileName.toString().startsWith('02') }.order == 1
-			contracts.values().find { it.path.fileName.toString().startsWith('03') }.order == 2
+			contracts.values().find {
+				it.path.fileName.toString().startsWith('01')
+			}.groupSize == 3
+			contracts.values().find {
+				it.path.fileName.toString().startsWith('01')
+			}.order == 0
+			contracts.values().find {
+				it.path.fileName.toString().startsWith('02')
+			}.order == 1
+			contracts.values().find {
+				it.path.fileName.toString().startsWith('03')
+			}.order == 2
 	}
 
 	def "should find contract files with converters"() {

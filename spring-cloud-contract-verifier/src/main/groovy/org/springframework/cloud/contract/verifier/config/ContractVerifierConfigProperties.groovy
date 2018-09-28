@@ -76,17 +76,17 @@ class ContractVerifierConfigProperties {
 	String[] staticImports = []
 
 	/**
-	 * Directory containing contracts written using the GroovyDSL
+	 * Directory containing contracts
 	 */
 	File contractsDslDir
 
 	/**
-	 * Test source directory where tests generated from Groovy DSL should be placed
+	 * Test source directory where tests generated
 	 */
 	File generatedTestSourcesDir
 
 	/**
-	 * Dir where the generated WireMock stubs from Groovy DSL should be placed.
+	 * Dir where the generated stubs from the contracts should be placed.
 	 * You can then mention them in your packaging task to create jar with stubs
 	 */
 	File stubsOutputDir
