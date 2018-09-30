@@ -75,7 +75,7 @@ dependencies {
 	}
 	testCompile 'info.solidsoft.spock:spock-global-unroll:0.5.0'
 	testCompile gradleTestKit()
-	checkstyle 'org.springframework.cloud:spring-cloud-build:2.0.3.RELEASE'
+	checkstyle 'org.springframework.cloud:spring-cloud-build:2.1.0.BUILD-SNAPSHOT'
 
 }
 
