@@ -23,7 +23,6 @@
 	<inceptionYear>2016</inceptionYear>
 
 	<properties>
-		<checkstyle.version>2.17</checkstyle.version>
 		<pact.version>3.5.13</pact.version>
 		<jsch-agent.version>0.0.9</jsch-agent.version>
 		<spring-cloud-build.version>2.1.0.BUILD-SNAPSHOT</spring-cloud-build.version>
