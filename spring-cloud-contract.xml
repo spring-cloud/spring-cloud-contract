@@ -1357,11 +1357,11 @@ Spring Cloud Contract Verifier stand out on the "market" of Consumer Driven Cont
 </listitem>
 </itemizedlist>
 </section>
-<section xml:id="_i_don_t_want_to_write_a_contract_in_groovy">
+<section xml:id="_i_dont_want_to_write_a_contract_in_groovy">
 <title>I don&#8217;t want to write a contract in Groovy!</title>
 <simpara>No problem. You can write a contract in YAML!</simpara>
 </section>
-<section xml:id="_what_is_this_value_consumer_producer">
+<section xml:id="_what_is_this_valueconsumer_producer">
 <title>What is this value(consumer(), producer()) ?</title>
 <simpara>One of the biggest challenges related to stubs is their reusability. Only if they can be vastly used, will they serve their purpose.
 What typically makes that difficult are the hard-coded values of request / response elements. For example dates or ids.
@@ -1875,7 +1875,7 @@ build.dependsOn("deleteUnwantedContracts")</programlisting>
 </section>
 </section>
 </section>
-<section xml:id="_do_i_need_a_binary_storage_can_t_i_use_git">
+<section xml:id="_do_i_need_a_binary_storage_cant_i_use_git">
 <title>Do I need a Binary Storage? Can&#8217;t I use Git?</title>
 <simpara>In the polyglot world, there are languages that don&#8217;t use binary storages like
 Artifactory or Nexus. Starting from Spring Cloud Contract version 2.0.0 we provide
@@ -2277,11 +2277,11 @@ public class BeerControllerTest {
 the <xref linkend="pact-stub-downloader"/> section.</simpara>
 </section>
 </section>
-<section xml:id="_how_can_i_debug_the_request_response_being_sent_by_the_generated_tests_client">
+<section xml:id="_how_can_i_debug_the_requestresponse_being_sent_by_the_generated_tests_client">
 <title>How can I debug the request/response being sent by the generated tests client?</title>
 <simpara>The generated tests all boil down to RestAssured in some form or fashion which relies on <link xl:href="https://hc.apache.org/httpcomponents-client-ga/">Apache HttpClient</link>.  HttpClient has a facility called <link xl:href="https://hc.apache.org/httpcomponents-client-ga/logging.html#Wire_Logging">wire logging</link> which logs the entire request and response to HttpClient.  Spring Boot has a logging <link xl:href="https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html">common application property</link> for doing this sort of thing, just add this to your application properties</simpara>
 <programlisting language="properties" linenumbering="unnumbered">logging.level.org.apache.http.wire=DEBUG</programlisting>
-<section xml:id="_how_can_i_debug_the_mapping_request_response_being_sent_by_wiremock">
+<section xml:id="_how_can_i_debug_the_mappingrequestresponse_being_sent_by_wiremock">
 <title>How can I debug the mapping/request/response being sent by WireMock?</title>
 <simpara>Starting from version <literal>1.2.0</literal> we turn on WireMock logging to
 info and the WireMock notifier to being verbose. Now you will
@@ -3314,46 +3314,7 @@ in Maven you will require some additional setup in order to make the tests compi
 to add Groovy to your project. In GMavenPlus plugin, you will need to explicitly set test sources, including both the
 path where your base test classes are defined and the path were the generated contract tests are added.
 Please refer to the example below:</simpara>
-<programlisting language="xml" linenumbering="unnumbered">&lt;plugin&gt;
-    &lt;groupId&gt;org.codehaus.gmavenplus&lt;/groupId&gt;
-    &lt;artifactId&gt;gmavenplus-plugin&lt;/artifactId&gt;
-    &lt;version&gt;1.6.1&lt;/version&gt;
-    &lt;executions&gt;
-        &lt;execution&gt;
-            &lt;goals&gt;
-                &lt;goal&gt;compileTests&lt;/goal&gt;
-                &lt;goal&gt;addTestSources&lt;/goal&gt;
-            &lt;/goals&gt;
-        &lt;/execution&gt;
-    &lt;/executions&gt;
-    &lt;configuration&gt;
-        &lt;testSources&gt;
-            &lt;testSource&gt;
-                &lt;directory&gt;${project.basedir}/src/test/groovy&lt;/directory&gt;
-                &lt;includes&gt;
-                    &lt;include&gt;**/*.groovy&lt;/include&gt;
-                &lt;/includes&gt;
-            &lt;/testSource&gt;
-            &lt;testSource&gt;
-                &lt;directory&gt;
-                    ${project.basedir}/target/generated-test-sources/contracts/com/example/beer
-                &lt;/directory&gt;
-                &lt;includes&gt;
-                    &lt;include&gt;**/*.groovy&lt;/include&gt;
-                    &lt;include&gt;**/*.gvy&lt;/include&gt;
-                &lt;/includes&gt;
-            &lt;/testSource&gt;
-        &lt;/testSources&gt;
-    &lt;/configuration&gt;
-    &lt;dependencies&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.codehaus.groovy&lt;/groupId&gt;
-            &lt;artifactId&gt;groovy-all&lt;/artifactId&gt;
-            &lt;version&gt;2.4.15&lt;/version&gt;
-            &lt;scope&gt;runtime&lt;/scope&gt;
-            &lt;type&gt;pom&lt;/type&gt;
-        &lt;/dependency&gt;
-    &lt;/dependencies&gt;</programlisting>
+<programlisting language="xml" linenumbering="unnumbered"></programlisting>
 <simpara>If you uphold to the Spock convention of ending the test class names with <literal>Spec</literal>, you will also need to adjust your Maven
 Surefire plugin setup, like in the following example:</simpara>
 <programlisting language="xml" linenumbering="unnumbered"></programlisting>
@@ -4718,7 +4679,8 @@ class StubRunnerConfigurationSpec extends Specification {
 	@Configuration
 	@EnableAutoConfiguration
 	static class Config {}
-}</programlisting>
+}
+// end::test[]</programlisting>
 <simpara>for the following configuration file:</simpara>
 <programlisting language="yml" linenumbering="unnumbered">stubrunner:
   repositoryRoot: classpath:m2repo/repository/
@@ -4801,7 +4763,8 @@ or <literal>DiscoveryClient</literal> directly, to call those stubbed servers in
 <programlisting language="yml" linenumbering="unnumbered">stubrunner:
   idsToServiceIds:
     ivyNotation: someValueInsideYourCode
-    fraudDetectionServer: someNameThatShouldMapFraudDetectionServer</programlisting>
+    fraudDetectionServer: someNameThatShouldMapFraudDetectionServer
+# end::ids[]</programlisting>
 <section xml:id="_test_profiles_and_service_discovery">
 <title>Test profiles and service discovery</title>
 <simpara>In your integration tests you typically don&#8217;t want to call neither a discovery service (e.g. Eureka)
@@ -8557,7 +8520,8 @@ public abstract class FraudBaseWithWebAppSetup {
 	protected void assertThatRejectionReasonIsNull(Object rejectionReason) {
 		assert rejectionReason == null;
 	}
-}</programlisting>
+}
+// end::base_class[]</programlisting>
 <simpara>In case you are using the standalone setup, you can set up RestAssuredMockMvc like this:</simpara>
 <programlisting language="java" linenumbering="unnumbered">package com.example.fraud;
 
@@ -8587,7 +8551,8 @@ public abstract class FraudBaseWithStandaloneSetup {
 				.alwaysDo(document(getClass().getSimpleName() + "_" + testName.getMethodName())));
 	}
 
-}</programlisting>
+}
+// end::base_class[]</programlisting>
 <tip>
 <simpara>You don&#8217;t need to specify the output directory for the generated snippets since version 1.2.0.RELEASE of Spring REST Docs.</simpara>
 </tip>
@@ -8760,7 +8725,7 @@ public class ProducerUtils {
 <simpara>In order for the plugins and IDE to be able to reference the common JAR classes, you need
 to pass the dependency to your project.</simpara>
 </section>
-<section xml:id="_test_the_dependency_in_the_project_s_dependencies">
+<section xml:id="_test_the_dependency_in_the_projects_dependencies">
 <title>Test the Dependency in the Project&#8217;s Dependencies</title>
 <simpara>First, add the common jar dependency as a test dependency. Because your contracts files
 are available on the test resources path,  the common jar classes automatically become
@@ -8783,7 +8748,7 @@ visible in your Groovy files. The following examples show how to test the depend
 </para>
 </formalpara>
 </section>
-<section xml:id="_test_a_dependency_in_the_plugin_s_dependencies">
+<section xml:id="_test_a_dependency_in_the_plugins_dependencies">
 <title>Test a Dependency in the Plugin&#8217;s Dependencies</title>
 <simpara>Now, you must add the dependency for the plugin to reuse at runtime, as shown in the
 following example:</simpara>
@@ -9404,37 +9369,27 @@ properties</simpara>
 <entry align="left" valign="top"><simpara>Description</simpara></entry>
 </row>
 <row>
-<entry align="left" valign="top"><simpara>* <literal>git.branch</literal> (plugin prop)
-</simpara><simpara>* <literal>stubrunner.properties.git.branch</literal> (system prop)
-</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_GIT_BRANCH</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara>* <literal>git.branch</literal> (plugin prop)</simpara><simpara>* <literal>stubrunner.properties.git.branch</literal> (system prop)</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_GIT_BRANCH</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"><simpara>master</simpara></entry>
 <entry align="left" valign="top"><simpara>Which branch to checkout</simpara></entry>
 </row>
 <row>
-<entry align="left" valign="top"><simpara>* <literal>git.username</literal> (plugin prop)
-</simpara><simpara>* <literal>stubrunner.properties.git.username</literal> (system prop)
-</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_GIT_USERNAME</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara>* <literal>git.username</literal> (plugin prop)</simpara><simpara>* <literal>stubrunner.properties.git.username</literal> (system prop)</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_GIT_USERNAME</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"></entry>
 <entry align="left" valign="top"><simpara>Git clone username</simpara></entry>
 </row>
 <row>
-<entry align="left" valign="top"><simpara>* <literal>git.password</literal> (plugin prop)
-</simpara><simpara>* <literal>stubrunner.properties.git.password</literal> (system prop)
-</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_GIT_PASSWORD</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara>* <literal>git.password</literal> (plugin prop)</simpara><simpara>* <literal>stubrunner.properties.git.password</literal> (system prop)</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_GIT_PASSWORD</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"></entry>
 <entry align="left" valign="top"><simpara>Git clone password</simpara></entry>
 </row>
 <row>
-<entry align="left" valign="top"><simpara>* <literal>git.no-of-attempts</literal> (plugin prop)
-</simpara><simpara>* <literal>stubrunner.properties.git.no-of-attempts</literal> (system prop)
-</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_GIT_NO_OF_ATTEMPTS</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara>* <literal>git.no-of-attempts</literal> (plugin prop)</simpara><simpara>* <literal>stubrunner.properties.git.no-of-attempts</literal> (system prop)</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_GIT_NO_OF_ATTEMPTS</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"><simpara>10</simpara></entry>
 <entry align="left" valign="top"><simpara>Number of attempts to push the commits to <literal>origin</literal></simpara></entry>
 </row>
 <row>
-<entry align="left" valign="top"><simpara>* <literal>git.wait-between-attempts</literal> (Plugin prop)
-</simpara><simpara>* <literal>stubrunner.properties.git.wait-between-attempts</literal>  (system prop)
-</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_GIT_WAIT_BETWEEN_ATTEMPTS</literal>  (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara>* <literal>git.wait-between-attempts</literal> (Plugin prop)</simpara><simpara>* <literal>stubrunner.properties.git.wait-between-attempts</literal>  (system prop)</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_GIT_WAIT_BETWEEN_ATTEMPTS</literal>  (env prop)</simpara></entry>
 <entry align="left" valign="top"><simpara>1000</simpara></entry>
 <entry align="left" valign="top"><simpara>Number of millis to wait between attempts to push the commits to <literal>origin</literal></simpara></entry>
 </row>
@@ -9465,58 +9420,42 @@ properties</simpara>
 <entry align="left" valign="top"><simpara>Description</simpara></entry>
 </row>
 <row>
-<entry align="left" valign="top"><simpara>* <literal>pactbroker.host</literal> (plugin prop)
-</simpara><simpara>* <literal>stubrunner.properties.pactbroker.host</literal> (system prop)
-</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_HOST</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara>* <literal>pactbroker.host</literal> (plugin prop)</simpara><simpara>* <literal>stubrunner.properties.pactbroker.host</literal> (system prop)</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_HOST</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"><simpara>Host from URL passed to <literal>repositoryRoot</literal></simpara></entry>
 <entry align="left" valign="top"><simpara>What is the URL of Pact Broker</simpara></entry>
 </row>
 <row>
-<entry align="left" valign="top"><simpara>* <literal>pactbroker.port</literal> (plugin prop)
-</simpara><simpara>* <literal>stubrunner.properties.pactbroker.port</literal> (system prop)
-</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_PORT</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara>* <literal>pactbroker.port</literal> (plugin prop)</simpara><simpara>* <literal>stubrunner.properties.pactbroker.port</literal> (system prop)</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_PORT</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"><simpara>Port from URL passed to <literal>repositoryRoot</literal></simpara></entry>
 <entry align="left" valign="top"><simpara>What is the port of Pact Broker</simpara></entry>
 </row>
 <row>
-<entry align="left" valign="top"><simpara>* <literal>pactbroker.protocol</literal> (plugin prop)
-</simpara><simpara>* <literal>stubrunner.properties.pactbroker.protocol</literal> (system prop)
-</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_PROTOCOL</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara>* <literal>pactbroker.protocol</literal> (plugin prop)</simpara><simpara>* <literal>stubrunner.properties.pactbroker.protocol</literal> (system prop)</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_PROTOCOL</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"><simpara>Protocol from URL passed to <literal>repositoryRoot</literal></simpara></entry>
 <entry align="left" valign="top"><simpara>What is the protocol of Pact Broker</simpara></entry>
 </row>
 <row>
-<entry align="left" valign="top"><simpara>* <literal>pactbroker.tags</literal> (plugin prop)
-</simpara><simpara>* <literal>stubrunner.properties.pactbroker.tags</literal> (system prop)
-</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_TAGS</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara>* <literal>pactbroker.tags</literal> (plugin prop)</simpara><simpara>* <literal>stubrunner.properties.pactbroker.tags</literal> (system prop)</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_TAGS</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"><simpara>Version of the stub, or <literal>latest</literal> if version is <literal>+</literal></simpara></entry>
 <entry align="left" valign="top"><simpara>What tags should be used to fetch the stub</simpara></entry>
 </row>
 <row>
-<entry align="left" valign="top"><simpara>* <literal>pactbroker.auth.scheme</literal> (plugin prop)
-</simpara><simpara>* <literal>stubrunner.properties.pactbroker.auth.scheme</literal> (system prop)
-</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_SCHEME</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara>* <literal>pactbroker.auth.scheme</literal> (plugin prop)</simpara><simpara>* <literal>stubrunner.properties.pactbroker.auth.scheme</literal> (system prop)</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_SCHEME</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"><simpara><literal>Basic</literal></simpara></entry>
 <entry align="left" valign="top"><simpara>What kind of authentication should be used to connect to the Pact Broker</simpara></entry>
 </row>
 <row>
-<entry align="left" valign="top"><simpara>* <literal>pactbroker.auth.username</literal> (plugin prop)
-</simpara><simpara>* <literal>stubrunner.properties.pactbroker.auth.username</literal> (system prop)
-</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_USERNAME</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara>* <literal>pactbroker.auth.username</literal> (plugin prop)</simpara><simpara>* <literal>stubrunner.properties.pactbroker.auth.username</literal> (system prop)</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_USERNAME</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"><simpara>The username passed to <literal>contractsRepositoryUsername</literal> (maven) or <literal>contractRepository.username</literal> (gradle)</simpara></entry>
 <entry align="left" valign="top"><simpara>Username used to connect to the Pact Broker</simpara></entry>
 </row>
 <row>
-<entry align="left" valign="top"><simpara>* <literal>pactbroker.auth.password</literal> (plugin prop)
-</simpara><simpara>* <literal>stubrunner.properties.pactbroker.auth.password</literal> (system prop)
-</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_PASSWORD</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara>* <literal>pactbroker.auth.password</literal> (plugin prop)</simpara><simpara>* <literal>stubrunner.properties.pactbroker.auth.password</literal> (system prop)</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_AUTH_PASSWORD</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"><simpara>The password passed to <literal>contractsRepositoryPassword</literal> (maven) or <literal>contractRepository.password</literal> (gradle)</simpara></entry>
 <entry align="left" valign="top"><simpara>Password used to connect to the Pact Broker</simpara></entry>
 </row>
 <row>
-<entry align="left" valign="top"><simpara>* <literal>pactbroker.provider-name-with-group-id</literal> (plugin prop)
-</simpara><simpara>* <literal>stubrunner.properties.pactbroker.provider-name-with-group-id</literal> (system prop)
-</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_PROVIDER_NAME_WITH_GROUP_ID</literal> (env prop)</simpara></entry>
+<entry align="left" valign="top"><simpara>* <literal>pactbroker.provider-name-with-group-id</literal> (plugin prop)</simpara><simpara>* <literal>stubrunner.properties.pactbroker.provider-name-with-group-id</literal> (system prop)</simpara><simpara>* <literal>STUBRUNNER_PROPERTIES_PACTBROKER_PROVIDER_NAME_WITH_GROUP_ID</literal> (env prop)</simpara></entry>
 <entry align="left" valign="top"><simpara>false</simpara></entry>
 <entry align="left" valign="top"><simpara>When <literal>true</literal>, the provider name will be a combination of <literal>groupId:artifactId</literal>. If <literal>false</literal>, just <literal>artifactId</literal> is used</simpara></entry>
 </row>
@@ -9554,7 +9493,8 @@ public class WiremockForDocsTests {
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 	}
 
-}</programlisting>
+}
+//end::wiremock_test2[]</programlisting>
 <simpara>To start the stub server on a different port use (for example),
 <literal>@AutoConfigureWireMock(port=9999)</literal>. For a random port, use a value of <literal>0</literal>. The stub
 server port can be bound in the test application context with the "wiremock.server.port"
@@ -9634,7 +9574,8 @@ public class WiremockForDocsClassRuleTests {
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 	}
 
-}</programlisting>
+}
+//end::wiremock_test2[]</programlisting>
 <simpara>The <literal>@ClassRule</literal> means that the server shuts down after all the methods in this class
 have been run.</simpara>
 </section>
@@ -10034,7 +9975,7 @@ structure presented in the previous snippet.</simpara>
 <section xml:id="cloud-verifier-1.1-1.2">
 <title>1.1.x &#8594; 1.2.x</title>
 <simpara>This section covers upgrading from version 1.1 to version 1.2.</simpara>
-<section xml:id="_custom_literal_httpserverstub_literal">
+<section xml:id="_custom_httpserverstub">
 <title>Custom <literal>HttpServerStub</literal></title>
 <simpara><literal>HttpServerStub</literal> includes a method that was not in version 1.1. The method is
 <literal>String registeredMappings()</literal> If you have classes that implement <literal>HttpServerStub</literal>, you
