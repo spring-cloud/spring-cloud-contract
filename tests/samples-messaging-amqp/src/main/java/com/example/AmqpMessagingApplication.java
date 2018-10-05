@@ -1,6 +1,6 @@
 package com.example;
 
-import static org.springframework.amqp.core.MessageProperties.CONTENT_TYPE_JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.TopicExchange;
@@ -13,7 +13,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.springframework.amqp.core.MessageProperties.CONTENT_TYPE_JSON;
 
 @SpringBootApplication
 public class AmqpMessagingApplication {
@@ -23,9 +23,9 @@ public class AmqpMessagingApplication {
 	}
 
 	@Bean
-	public MessageConverter messageConverter(ObjectMapper objectMapper) {
+	public MessageConverter messageConverter() {
 		final Jackson2JsonMessageConverter jsonMessageConverter = new Jackson2JsonMessageConverter(
-				objectMapper);
+				new ObjectMapper());
 		jsonMessageConverter.setCreateMessageIds(true);
 		final ContentTypeDelegatingMessageConverter messageConverter = new ContentTypeDelegatingMessageConverter(
 				jsonMessageConverter);

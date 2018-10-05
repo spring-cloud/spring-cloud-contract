@@ -42,6 +42,8 @@
 		<javax-inject.version>1</javax-inject.version>
 		<!-- We need to have compatibility with Gradle -->
 		<groovy.version>2.4.15</groovy.version>
+		<!-- For Takari plugin -->
+		<maven.version>3.2.1</maven.version>
 	</properties>
 
 	<modules>
@@ -314,6 +316,16 @@
 				<artifactId>groovy-xml</artifactId>
 				<version>${groovy.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.apache.maven</groupId>
+				<artifactId>maven-aether-provider</artifactId>
+				<version>${maven.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.maven</groupId>
+				<artifactId>maven-settings-builder</artifactId>
+				<version>${maven.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -367,7 +379,6 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.20</version>
 					<configuration>
 						<includes>
 							<include>**/*Spec.*</include>
@@ -375,31 +386,23 @@
 							<include>**/*Test.*</include>
 						</includes>
 						<reportFormat>plain</reportFormat>
+						<failIfNoTests>true</failIfNoTests>
 					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-component-metadata</artifactId>
-					<version>1.6</version>
-				</plugin>
-				<plugin>
-					<artifactId>maven-plugin-plugin</artifactId>
-					<version>${maven.plugin.plugin.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>io.takari.maven.plugins</groupId>
-					<artifactId>takari-lifecycle-plugin</artifactId>
-					<version>1.12.0</version>
-				</plugin>
-				<plugin>
-					<groupId>org.eluder.coveralls</groupId>
-					<artifactId>coveralls-maven-plugin</artifactId>
-					<version>4.1.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.gmavenplus</groupId>
 					<artifactId>gmavenplus-plugin</artifactId>
-					<version>1.5</version>
+					<version>1.6.1</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>addSources</goal>
+								<goal>addTestSources</goal>
+								<goal>compile</goal>
+								<goal>compileTests</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -529,7 +532,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.20</version>
 						<configuration>
 							<!-- Sets the VM argument line used when unit tests are run. -->
 							<argLine>${surefireArgLine}</argLine>

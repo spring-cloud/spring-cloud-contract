@@ -23,12 +23,12 @@ buildscript {
 		maven { url "http://repo.spring.io/release" }
 	}
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.0.BUILD-SNAPSHOT")
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${bootVersion}")
 	}
 }
 
 ext {
-	restAssuredVersion = '3.0.2'
+	restAssuredVersion = '3.0.7'
 	spockVersion = '1.0-groovy-2.4'
 
 	contractVerifierStubsBaseDirectory = 'src/test/resources/stubs'
@@ -39,6 +39,9 @@ group = 'org.springframework.cloud.testprojects'
 subprojects {
 	apply plugin: 'groovy'
 
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
+
 	repositories {
 		mavenCentral()
 		mavenLocal()
@@ -48,9 +51,7 @@ subprojects {
 	}
 
 	dependencies {
-		testCompile("org.codehaus.groovy:groovy-all:2.5.0-beta-1") {
-			exclude(group: 'org.codehaus.groovy')
-		}
+		testCompile("org.codehaus.groovy:groovy")
 		testCompile "org.spockframework:spock-core:$spockVersion"
 		testCompile("junit:junit:4.12")
 		testCompile "com.github.tomakehurst:wiremock:${wiremockVersion}"
@@ -130,5 +131,5 @@ configure(project(':loanApplicationService')) {
 }
 
 wrapper {
-	gradleVersion '3.5'
+	gradleVersion '4.10.2'
 }

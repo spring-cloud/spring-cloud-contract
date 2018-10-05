@@ -1,2 +1,4 @@
-spring.cloud.stream.bindings.input.destination: inputDestination
+spring.cloud.stream.bindings.myinput.destination: inputDestination
+spring.cloud.stream.bindings.myinput.contentType: application/json
 spring.cloud.stream.bindings.output.destination: sentTo
+spring.cloud.stream.bindings.output.contentType: application/json

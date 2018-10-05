@@ -71,7 +71,7 @@
 				<executions>
 					<execution>
 						<goals>
-							<goal>testCompile</goal>
+							<goal>compileTests</goal>
 						</goals>
 					</execution>
 				</executions>

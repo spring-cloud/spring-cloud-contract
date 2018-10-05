@@ -32,7 +32,7 @@ import io.takari.maven.testing.executor.junit.MavenJUnitTestRunner;
 import org.springframework.util.SocketUtils;
 
 @RunWith(MavenJUnitTestRunner.class)
-@MavenVersions({ "3.3.3" })
+@MavenVersions({ "3.5.0" })
 public class PluginIT {
 
 	@Rule

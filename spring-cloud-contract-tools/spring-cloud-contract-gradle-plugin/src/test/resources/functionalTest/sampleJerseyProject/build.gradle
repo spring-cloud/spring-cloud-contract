@@ -23,7 +23,7 @@ buildscript {
 		maven { url "http://repo.spring.io/release" }
 	}
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.0.BUILD-SNAPSHOT")
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${bootVersion}")
 	}
 }
 
@@ -42,6 +42,9 @@ ext {
 subprojects {
 	apply plugin: 'groovy'
 
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
+
 	repositories {
 		mavenCentral()
 		mavenLocal()
@@ -51,7 +54,7 @@ subprojects {
 	}
 
 	dependencies {
-		testCompile 'org.codehaus.groovy:groovy-all:2.5.0-beta-1'
+		testCompile "org.codehaus.groovy:groovy"
 		testCompile("org.spockframework:spock-core:$spockVersion") {
 			exclude(group: 'org.codehaus.groovy')
 		}
@@ -148,5 +151,5 @@ configure(project(':loanApplicationService')) {
 }
 
 wrapper {
-	gradleVersion '4.0.2'
+	gradleVersion '4.10.2'
 }

@@ -18,16 +18,23 @@ package com.example;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 @SuppressWarnings("serial")
 public class BookDeleted implements Serializable {
 
-	public final String bookName;
+	public String bookName;
 
-	@JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
 	public BookDeleted(String bookName) {
 		this.bookName = bookName;
 	}
 
+	public BookDeleted() {
+	}
+
+	public String getBookName() {
+		return this.bookName;
+	}
+
+	void setBookName(String bookName) {
+		this.bookName = bookName;
+	}
 }
