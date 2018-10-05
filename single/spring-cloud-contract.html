@@ -2619,19 +2619,20 @@ Check their <a class="link" href="https://wiki.eclipse.org/Aether" target="_top"
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.Contract;
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">interface</span> StubFinder <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> StubTrigger {
+
 	<strong class="hl-tag" style="color: blue">/**
-	 * For the given groupId and artifactId tries to find the matching
-	 * URL of the running stub.
-	 *
-	 * @param groupId - might be null. In that case a search only via artifactId takes place
+	 * For the given groupId and artifactId tries to find the matching URL of the running
+	 * stub.
+	 * @param groupId - might be null. In that case a search only via artifactId takes
+	 * place
 	 * @return URL of a running stub or throws exception if not found
 	 */</strong>
 	URL findStubUrl(String groupId, String artifactId) <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> StubNotFoundException;
 
 	<strong class="hl-tag" style="color: blue">/**
-	 * For the given Ivy notation {@code [groupId]:artifactId:[version]:[classifier]} tries to
-	 * find the matching URL of the running stub. You can also pass only {@code artifactId}.
-	 *
+	 * For the given Ivy notation {@code [groupId]:artifactId:[version]:[classifier]}
+	 * tries to find the matching URL of the running stub. You can also pass only
+	 * {@code artifactId}.
 	 * @param ivyNotation - Ivy representation of the Maven artifact
 	 * @return URL of a running stub or throws exception if not found
 	 */</strong>
@@ -2646,6 +2647,7 @@ Check their <a class="link" href="https://wiki.eclipse.org/Aether" target="_top"
 	 * Returns the list of Contracts
 	 */</strong>
 	Map&lt;StubConfiguration, Collection&lt;Contract&gt;&gt; getContracts();
+
 }</pre><p>Example of usage in Spock tests:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@ClassRule</span></em> <em><span class="hl-annotation" style="color: gray">@Shared</span></em> StubRunnerRule rule = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> StubRunnerRule()
 		.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
 		.repoRoot(StubRunnerRuleSpec.getResource(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/m2repo/repository"</span>).toURI().toString())
@@ -3071,10 +3073,10 @@ That way the only remaining framework is Spring AMQP.</p></td></tr></table></div
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">interface</span> StubTrigger {
 
 	<strong class="hl-tag" style="color: blue">/**
-	 * Triggers an event by a given label for a given {@code groupid:artifactid} notation. You can use only {@code artifactId} too.
+	 * Triggers an event by a given label for a given {@code groupid:artifactid} notation.
+	 * You can use only {@code artifactId} too.
 	 *
 	 * Feature related to messaging.
-	 *
 	 * @return true - if managed to run a trigger
 	 */</strong>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> trigger(String ivyNotation, String labelName);
@@ -3083,7 +3085,6 @@ That way the only remaining framework is Spring AMQP.</p></td></tr></table></div
 	 * Triggers an event by a given label.
 	 *
 	 * Feature related to messaging.
-	 *
 	 * @return true - if managed to run a trigger
 	 */</strong>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> trigger(String labelName);
@@ -3092,7 +3093,6 @@ That way the only remaining framework is Spring AMQP.</p></td></tr></table></div
 	 * Triggers all possible events.
 	 *
 	 * Feature related to messaging.
-	 *
 	 * @return true - if managed to run a trigger
 	 */</strong>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> trigger();
@@ -3103,6 +3103,7 @@ That way the only remaining framework is Spring AMQP.</p></td></tr></table></div
 	 * Feature related to messaging.
 	 */</strong>
 	Map&lt;String, Collection&lt;String&gt;&gt; labels();
+
 }</pre><p>For convenience, the <code class="literal">StubFinder</code> interface extends <code class="literal">StubTrigger</code>, so you only need one
 or the other in your tests.</p><p><code class="literal">StubTrigger</code> gives you the following options to trigger a message:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a class="xref" href="#trigger-label" title="7.1.1&nbsp;Trigger by Label">Section&nbsp;7.1.1, &#8220;Trigger by Label&#8221;</a></li><li class="listitem"><a class="xref" href="#trigger-group-artifact-ids" title="7.1.2&nbsp;Trigger by Group and Artifact Ids">Section&nbsp;7.1.2, &#8220;Trigger by Group and Artifact Ids&#8221;</a></li><li class="listitem"><a class="xref" href="#trigger-artifact-ids" title="7.1.3&nbsp;Trigger by Artifact Ids">Section&nbsp;7.1.3, &#8220;Trigger by Artifact Ids&#8221;</a></li><li class="listitem"><a class="xref" href="#trigger-all-messages" title="7.1.4&nbsp;Trigger All Messages">Section&nbsp;7.1.4, &#8220;Trigger All Messages&#8221;</a></li></ul></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="trigger-label" href="#trigger-label"></a>7.1.1&nbsp;Trigger by Label</h3></div></div></div><pre class="programlisting">stubFinder.trigger(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'return_book_1'</span>)</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="trigger-group-artifact-ids" href="#trigger-group-artifact-ids"></a>7.1.2&nbsp;Trigger by Group and Artifact Ids</h3></div></div></div><pre class="programlisting">stubFinder.trigger(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:streamService'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'return_book_1'</span>)</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="trigger-artifact-ids" href="#trigger-artifact-ids"></a>7.1.3&nbsp;Trigger by Artifact Ids</h3></div></div></div><pre class="programlisting">stubFinder.trigger(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'streamService'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'return_book_1'</span>)</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="trigger-all-messages" href="#trigger-all-messages"></a>7.1.4&nbsp;Trigger All Messages</h3></div></div></div><pre class="programlisting">stubFinder.trigger()</pre></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stub_runner_integration" href="#_stub_runner_integration"></a>7.2&nbsp;Stub Runner Integration</h2></div></div></div><p>Spring Cloud Contract Verifier Stub Runner&#8217;s messaging module gives you an easy way to
 integrate with Spring Integration. For the provided artifacts, it automatically downloads
@@ -3329,20 +3330,20 @@ to disable them explicitly by setting the  <code class="literal">stubrunner.stre
 follows:</p><pre class="programlisting">stubTrigger.trigger(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"contract-test.person.created.event"</span>)</pre><p>The message has a destination of <code class="literal">contract-test.exchange</code>, so the Spring AMQP stub runner
 integration looks for bindings related to this exchange.</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Bean</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> Binding binding() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> BindingBuilder.bind(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> Queue(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"test.queue"</span>)).to(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> DirectExchange(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"contract-test.exchange"</span>)).with(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"#"</span>);
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> BindingBuilder.bind(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> Queue(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"test.queue"</span>))
+			.to(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> DirectExchange(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"contract-test.exchange"</span>)).with(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"#"</span>);
 }</pre><p>The binding definition binds the queue <code class="literal">test.queue</code>. As a result, the following listener
 definition is matched and invoked with the contract message.</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Bean</span></em>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> SimpleMessageListenerContainer simpleMessageListenerContainer(ConnectionFactory connectionFactory,
-																		MessageListenerAdapter listenerAdapter) {
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> SimpleMessageListenerContainer simpleMessageListenerContainer(
+		ConnectionFactory connectionFactory,
+		MessageListenerAdapter listenerAdapter) {
 	SimpleMessageListenerContainer container = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> SimpleMessageListenerContainer();
 	container.setConnectionFactory(connectionFactory);
 	container.setQueueNames(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"test.queue"</span>);
 	container.setMessageListener(listenerAdapter);
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> container;
-}</pre><p>Also, the following annotated listener matches and is invoked:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RabbitListener(bindings = @QueueBinding(
-		value = @Queue(value = "test.queue"),
-		exchange = @Exchange(value = "contract-test.exchange", ignoreDeclarationExceptions = "true")))</span></em>
+}</pre><p>Also, the following annotated listener matches and is invoked:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RabbitListener(bindings = @QueueBinding(value = @Queue(value = "test.queue"), exchange = @Exchange(value = "contract-test.exchange", ignoreDeclarationExceptions = "true")))</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> handlePerson(Person person) {
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.person = person;
 }</pre><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>The message is directly handed over to the <code class="literal">onMessage</code> method of the
@@ -5991,21 +5992,23 @@ your test. The following code shows an example:</p><pre class="programlisting"><
 <em><span class="hl-annotation" style="color: gray">@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)</span></em>
 <em><span class="hl-annotation" style="color: gray">@AutoConfigureWireMock(port = 0)</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> WiremockForDocsTests {
+
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// A service that calls out over HTTP</span>
-	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> Service service;
+	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> Service service;
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Using the WireMock APIs in the normal way:</span>
 	<em><span class="hl-annotation" style="color: gray">@Test</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> contextLoads() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Stubbing WireMock</span>
-		stubFor(get(urlEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/resource"</span>))
-				.willReturn(aResponse().withHeader(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"text/plain"</span>).withBody(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World!"</span>)));
+		stubFor(get(urlEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/resource"</span>)).willReturn(aResponse()
+				.withHeader(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"text/plain"</span>).withBody(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World!"</span>)));
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// We're asserting if WireMock responded properly</span>
 		assertThat(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.service.go()).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World!"</span>);
 	}
 
 }
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//end::wiremock_test2[]</span></pre><p>To start the stub server on a different port use (for example),
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// end::wiremock_test2[]</span></pre><p>To start the stub server on a different port use (for example),
 <code class="literal">@AutoConfigureWireMock(port=9999)</code>. For a random port, use a value of <code class="literal">0</code>. The stub
 server port can be bound in the test application context with the "wiremock.server.port"
 property. Using <code class="literal">@AutoConfigureWireMock</code> adds a bean of type <code class="literal">WiremockConfiguration</code> to
@@ -6051,6 +6054,7 @@ instance, as shown in the following example:</p><pre class="programlisting"><em>
 	<em><span class="hl-annotation" style="color: gray">@ClassRule</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> WireMockClassRule wiremock = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> WireMockClassRule(
 			WireMockSpring.options().dynamicPort());
+
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// A service that calls out over HTTP to localhost:${wiremock.port}</span>
 	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> Service service;
@@ -6059,14 +6063,14 @@ instance, as shown in the following example:</p><pre class="programlisting"><em>
 	<em><span class="hl-annotation" style="color: gray">@Test</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> contextLoads() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Stubbing WireMock</span>
-		wiremock.stubFor(get(urlEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/resource"</span>))
-				.willReturn(aResponse().withHeader(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"text/plain"</span>).withBody(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World!"</span>)));
+		wiremock.stubFor(get(urlEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/resource"</span>)).willReturn(aResponse()
+				.withHeader(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"text/plain"</span>).withBody(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World!"</span>)));
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// We're asserting if WireMock responded properly</span>
 		assertThat(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.service.go()).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World!"</span>);
 	}
 
 }
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//end::wiremock_test2[]</span></pre><p>The <code class="literal">@ClassRule</code> means that the server shuts down after all the methods in this class
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// end::wiremock_test2[]</span></pre><p>The <code class="literal">@ClassRule</code> means that the server shuts down after all the methods in this class
 have been run.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_relaxed_ssl_validation_for_rest_template" href="#_relaxed_ssl_validation_for_rest_template"></a>11.4&nbsp;Relaxed SSL Validation for Rest Template</h2></div></div></div><p>WireMock lets you stub a "secure" server with an "https" URL protocol. If your
 application wants to contact that stub server in an integration test, it will find that
 the SSL certificates are not valid (the usual problem with self-installed certificates).
@@ -6115,6 +6119,7 @@ a Spring <code class="literal">MockRestServiceServer</code>. The following code 
 		assertThat(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.service.go()).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World"</span>);
 		server.verify();
 	}
+
 }</pre><p>The <code class="literal">baseUrl</code> value is prepended to all mock calls, and the <code class="literal">stubs()</code> method takes a stub
 path resource pattern as an argument. In the preceding example, the stub defined at
 <code class="literal">/stubs/resource.json</code> is loaded into the mock server. If the <code class="literal">RestTemplate</code> is asked to
@@ -6127,9 +6132,11 @@ Spring Boot embedded servers, and Wiremock itself has "native" support for a par
 version of Jetty (currently 9.2). To use the native Jetty, you need to add the native
 Wiremock dependencies and exclude the Spring Boot container (if there is one).</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_customization_of_wiremock_configuration" href="#_customization_of_wiremock_configuration"></a>11.6&nbsp;Customization of WireMock configuration</h2></div></div></div><p>You can register a bean of <code class="literal">org.springframework.cloud.contract.wiremock.WireMockConfigurationCustomizer</code> type
 in order to customize the WireMock configuration (e.g. add custom transformers).
-Example:</p><pre class="programlisting">		<em><span class="hl-annotation" style="color: gray">@Bean</span></em> WireMockConfigurationCustomizer optionsCustomizer() {
+Example:</p><pre class="programlisting">		<em><span class="hl-annotation" style="color: gray">@Bean</span></em>
+		WireMockConfigurationCustomizer optionsCustomizer() {
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> WireMockConfigurationCustomizer() {
-				<em><span class="hl-annotation" style="color: gray">@Override</span></em> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> customize(WireMockConfiguration options) {
+				<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> customize(WireMockConfiguration options) {
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// perform your customization here</span>
 				}
 			};
@@ -6243,16 +6250,14 @@ about a situation in which they would like to move to DSL-based contract definit
 but they already have a lot of Spring MVC tests. Using this feature lets you generate
 the contract files that you can later modify and move to folders (defined in your
 configuration) so that the plugin finds them.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>You might wonder why this functionality is in the WireMock module. The functionality
-is there because it makes sense to generate both the contracts and the stubs.</p></td></tr></table></div><p>Consider the following test:</p><pre class="programlisting">		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.mockMvc.perform(post(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/foo"</span>)
-					.accept(MediaType.APPLICATION_PDF)
-					.accept(MediaType.APPLICATION_JSON)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\"foo\": 23, \"bar\" : \"baz\" }"</span>))
-				.andExpect(status().isOk())
-				.andExpect(content().string(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar"</span>))
+is there because it makes sense to generate both the contracts and the stubs.</p></td></tr></table></div><p>Consider the following test:</p><pre class="programlisting">		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.mockMvc
+				.perform(post(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/foo"</span>).accept(MediaType.APPLICATION_PDF)
+						.accept(MediaType.APPLICATION_JSON)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\"foo\": 23, \"bar\" : \"baz\" }"</span>))
+				.andExpect(status().isOk()).andExpect(content().string(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar"</span>))
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// first WireMock</span>
-				.andDo(WireMockRestDocs.verify()
-						.jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.foo &gt;= 20)]"</span>)
+				.andDo(WireMockRestDocs.verify().jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.foo &gt;= 20)]"</span>)
 						.jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.bar in ['baz','bazz','bazzz'])]"</span>)
 						.contentType(MediaType.valueOf(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/json"</span>))
 						.stub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"shouldGrantABeerIfOldEnough"</span>))

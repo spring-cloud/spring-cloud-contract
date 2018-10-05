@@ -12,10 +12,10 @@ That way the only remaining framework is Spring AMQP.</p></td></tr></table></div
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">interface</span> StubTrigger {
 
 	<strong class="hl-tag" style="color: blue">/**
-	 * Triggers an event by a given label for a given {@code groupid:artifactid} notation. You can use only {@code artifactId} too.
+	 * Triggers an event by a given label for a given {@code groupid:artifactid} notation.
+	 * You can use only {@code artifactId} too.
 	 *
 	 * Feature related to messaging.
-	 *
 	 * @return true - if managed to run a trigger
 	 */</strong>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> trigger(String ivyNotation, String labelName);
@@ -24,7 +24,6 @@ That way the only remaining framework is Spring AMQP.</p></td></tr></table></div
 	 * Triggers an event by a given label.
 	 *
 	 * Feature related to messaging.
-	 *
 	 * @return true - if managed to run a trigger
 	 */</strong>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> trigger(String labelName);
@@ -33,7 +32,6 @@ That way the only remaining framework is Spring AMQP.</p></td></tr></table></div
 	 * Triggers all possible events.
 	 *
 	 * Feature related to messaging.
-	 *
 	 * @return true - if managed to run a trigger
 	 */</strong>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">boolean</span> trigger();
@@ -44,6 +42,7 @@ That way the only remaining framework is Spring AMQP.</p></td></tr></table></div
 	 * Feature related to messaging.
 	 */</strong>
 	Map&lt;String, Collection&lt;String&gt;&gt; labels();
+
 }</pre><p>For convenience, the <code class="literal">StubFinder</code> interface extends <code class="literal">StubTrigger</code>, so you only need one
 or the other in your tests.</p><p><code class="literal">StubTrigger</code> gives you the following options to trigger a message:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a class="xref" href="multi_stub-runner-for-messaging.html#trigger-label" title="7.1.1&nbsp;Trigger by Label">Section&nbsp;7.1.1, &#8220;Trigger by Label&#8221;</a></li><li class="listitem"><a class="xref" href="multi_stub-runner-for-messaging.html#trigger-group-artifact-ids" title="7.1.2&nbsp;Trigger by Group and Artifact Ids">Section&nbsp;7.1.2, &#8220;Trigger by Group and Artifact Ids&#8221;</a></li><li class="listitem"><a class="xref" href="multi_stub-runner-for-messaging.html#trigger-artifact-ids" title="7.1.3&nbsp;Trigger by Artifact Ids">Section&nbsp;7.1.3, &#8220;Trigger by Artifact Ids&#8221;</a></li><li class="listitem"><a class="xref" href="multi_stub-runner-for-messaging.html#trigger-all-messages" title="7.1.4&nbsp;Trigger All Messages">Section&nbsp;7.1.4, &#8220;Trigger All Messages&#8221;</a></li></ul></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="trigger-label" href="#trigger-label"></a>7.1.1&nbsp;Trigger by Label</h3></div></div></div><pre class="programlisting">stubFinder.trigger(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'return_book_1'</span>)</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="trigger-group-artifact-ids" href="#trigger-group-artifact-ids"></a>7.1.2&nbsp;Trigger by Group and Artifact Ids</h3></div></div></div><pre class="programlisting">stubFinder.trigger(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud.contract.verifier.stubs:streamService'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'return_book_1'</span>)</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="trigger-artifact-ids" href="#trigger-artifact-ids"></a>7.1.3&nbsp;Trigger by Artifact Ids</h3></div></div></div><pre class="programlisting">stubFinder.trigger(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'streamService'</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'return_book_1'</span>)</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="trigger-all-messages" href="#trigger-all-messages"></a>7.1.4&nbsp;Trigger All Messages</h3></div></div></div><pre class="programlisting">stubFinder.trigger()</pre></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_stub_runner_integration" href="#_stub_runner_integration"></a>7.2&nbsp;Stub Runner Integration</h2></div></div></div><p>Spring Cloud Contract Verifier Stub Runner&#8217;s messaging module gives you an easy way to
 integrate with Spring Integration. For the provided artifacts, it automatically downloads
@@ -270,20 +269,20 @@ to disable them explicitly by setting the  <code class="literal">stubrunner.stre
 follows:</p><pre class="programlisting">stubTrigger.trigger(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"contract-test.person.created.event"</span>)</pre><p>The message has a destination of <code class="literal">contract-test.exchange</code>, so the Spring AMQP stub runner
 integration looks for bindings related to this exchange.</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Bean</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> Binding binding() {
-	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> BindingBuilder.bind(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> Queue(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"test.queue"</span>)).to(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> DirectExchange(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"contract-test.exchange"</span>)).with(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"#"</span>);
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> BindingBuilder.bind(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> Queue(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"test.queue"</span>))
+			.to(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> DirectExchange(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"contract-test.exchange"</span>)).with(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"#"</span>);
 }</pre><p>The binding definition binds the queue <code class="literal">test.queue</code>. As a result, the following listener
 definition is matched and invoked with the contract message.</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Bean</span></em>
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> SimpleMessageListenerContainer simpleMessageListenerContainer(ConnectionFactory connectionFactory,
-																		MessageListenerAdapter listenerAdapter) {
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> SimpleMessageListenerContainer simpleMessageListenerContainer(
+		ConnectionFactory connectionFactory,
+		MessageListenerAdapter listenerAdapter) {
 	SimpleMessageListenerContainer container = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> SimpleMessageListenerContainer();
 	container.setConnectionFactory(connectionFactory);
 	container.setQueueNames(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"test.queue"</span>);
 	container.setMessageListener(listenerAdapter);
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> container;
-}</pre><p>Also, the following annotated listener matches and is invoked:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RabbitListener(bindings = @QueueBinding(
-		value = @Queue(value = "test.queue"),
-		exchange = @Exchange(value = "contract-test.exchange", ignoreDeclarationExceptions = "true")))</span></em>
+}</pre><p>Also, the following annotated listener matches and is invoked:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RabbitListener(bindings = @QueueBinding(value = @Queue(value = "test.queue"), exchange = @Exchange(value = "contract-test.exchange", ignoreDeclarationExceptions = "true")))</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> handlePerson(Person person) {
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.person = person;
 }</pre><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>The message is directly handed over to the <code class="literal">onMessage</code> method of the

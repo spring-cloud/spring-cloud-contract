@@ -294,19 +294,20 @@ Check their <a class="link" href="https://wiki.eclipse.org/Aether" target="_top"
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> org.springframework.cloud.contract.spec.Contract;
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">interface</span> StubFinder <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">extends</span> StubTrigger {
+
 	<strong class="hl-tag" style="color: blue">/**
-	 * For the given groupId and artifactId tries to find the matching
-	 * URL of the running stub.
-	 *
-	 * @param groupId - might be null. In that case a search only via artifactId takes place
+	 * For the given groupId and artifactId tries to find the matching URL of the running
+	 * stub.
+	 * @param groupId - might be null. In that case a search only via artifactId takes
+	 * place
 	 * @return URL of a running stub or throws exception if not found
 	 */</strong>
 	URL findStubUrl(String groupId, String artifactId) <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> StubNotFoundException;
 
 	<strong class="hl-tag" style="color: blue">/**
-	 * For the given Ivy notation {@code [groupId]:artifactId:[version]:[classifier]} tries to
-	 * find the matching URL of the running stub. You can also pass only {@code artifactId}.
-	 *
+	 * For the given Ivy notation {@code [groupId]:artifactId:[version]:[classifier]}
+	 * tries to find the matching URL of the running stub. You can also pass only
+	 * {@code artifactId}.
 	 * @param ivyNotation - Ivy representation of the Maven artifact
 	 * @return URL of a running stub or throws exception if not found
 	 */</strong>
@@ -321,6 +322,7 @@ Check their <a class="link" href="https://wiki.eclipse.org/Aether" target="_top"
 	 * Returns the list of Contracts
 	 */</strong>
 	Map&lt;StubConfiguration, Collection&lt;Contract&gt;&gt; getContracts();
+
 }</pre><p>Example of usage in Spock tests:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@ClassRule</span></em> <em><span class="hl-annotation" style="color: gray">@Shared</span></em> StubRunnerRule rule = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> StubRunnerRule()
 		.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
 		.repoRoot(StubRunnerRuleSpec.getResource(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/m2repo/repository"</span>).toURI().toString())

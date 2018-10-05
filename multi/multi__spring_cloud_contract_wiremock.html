@@ -12,21 +12,23 @@ your test. The following code shows an example:</p><pre class="programlisting"><
 <em><span class="hl-annotation" style="color: gray">@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)</span></em>
 <em><span class="hl-annotation" style="color: gray">@AutoConfigureWireMock(port = 0)</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> WiremockForDocsTests {
+
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// A service that calls out over HTTP</span>
-	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> Service service;
+	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> Service service;
 
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Using the WireMock APIs in the normal way:</span>
 	<em><span class="hl-annotation" style="color: gray">@Test</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> contextLoads() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Stubbing WireMock</span>
-		stubFor(get(urlEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/resource"</span>))
-				.willReturn(aResponse().withHeader(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"text/plain"</span>).withBody(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World!"</span>)));
+		stubFor(get(urlEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/resource"</span>)).willReturn(aResponse()
+				.withHeader(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"text/plain"</span>).withBody(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World!"</span>)));
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// We're asserting if WireMock responded properly</span>
 		assertThat(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.service.go()).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World!"</span>);
 	}
 
 }
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//end::wiremock_test2[]</span></pre><p>To start the stub server on a different port use (for example),
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// end::wiremock_test2[]</span></pre><p>To start the stub server on a different port use (for example),
 <code class="literal">@AutoConfigureWireMock(port=9999)</code>. For a random port, use a value of <code class="literal">0</code>. The stub
 server port can be bound in the test application context with the "wiremock.server.port"
 property. Using <code class="literal">@AutoConfigureWireMock</code> adds a bean of type <code class="literal">WiremockConfiguration</code> to
@@ -72,6 +74,7 @@ instance, as shown in the following example:</p><pre class="programlisting"><em>
 	<em><span class="hl-annotation" style="color: gray">@ClassRule</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">static</span> WireMockClassRule wiremock = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> WireMockClassRule(
 			WireMockSpring.options().dynamicPort());
+
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// A service that calls out over HTTP to localhost:${wiremock.port}</span>
 	<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> Service service;
@@ -80,14 +83,14 @@ instance, as shown in the following example:</p><pre class="programlisting"><em>
 	<em><span class="hl-annotation" style="color: gray">@Test</span></em>
 	<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> contextLoads() <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">throws</span> Exception {
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Stubbing WireMock</span>
-		wiremock.stubFor(get(urlEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/resource"</span>))
-				.willReturn(aResponse().withHeader(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"text/plain"</span>).withBody(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World!"</span>)));
+		wiremock.stubFor(get(urlEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/resource"</span>)).willReturn(aResponse()
+				.withHeader(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Content-Type"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"text/plain"</span>).withBody(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World!"</span>)));
 		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// We're asserting if WireMock responded properly</span>
 		assertThat(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.service.go()).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World!"</span>);
 	}
 
 }
-<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//end::wiremock_test2[]</span></pre><p>The <code class="literal">@ClassRule</code> means that the server shuts down after all the methods in this class
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// end::wiremock_test2[]</span></pre><p>The <code class="literal">@ClassRule</code> means that the server shuts down after all the methods in this class
 have been run.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_relaxed_ssl_validation_for_rest_template" href="#_relaxed_ssl_validation_for_rest_template"></a>11.4&nbsp;Relaxed SSL Validation for Rest Template</h2></div></div></div><p>WireMock lets you stub a "secure" server with an "https" URL protocol. If your
 application wants to contact that stub server in an integration test, it will find that
 the SSL certificates are not valid (the usual problem with self-installed certificates).
@@ -136,6 +139,7 @@ a Spring <code class="literal">MockRestServiceServer</code>. The following code 
 		assertThat(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.service.go()).isEqualTo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello World"</span>);
 		server.verify();
 	}
+
 }</pre><p>The <code class="literal">baseUrl</code> value is prepended to all mock calls, and the <code class="literal">stubs()</code> method takes a stub
 path resource pattern as an argument. In the preceding example, the stub defined at
 <code class="literal">/stubs/resource.json</code> is loaded into the mock server. If the <code class="literal">RestTemplate</code> is asked to
@@ -148,9 +152,11 @@ Spring Boot embedded servers, and Wiremock itself has "native" support for a par
 version of Jetty (currently 9.2). To use the native Jetty, you need to add the native
 Wiremock dependencies and exclude the Spring Boot container (if there is one).</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_customization_of_wiremock_configuration" href="#_customization_of_wiremock_configuration"></a>11.6&nbsp;Customization of WireMock configuration</h2></div></div></div><p>You can register a bean of <code class="literal">org.springframework.cloud.contract.wiremock.WireMockConfigurationCustomizer</code> type
 in order to customize the WireMock configuration (e.g. add custom transformers).
-Example:</p><pre class="programlisting">		<em><span class="hl-annotation" style="color: gray">@Bean</span></em> WireMockConfigurationCustomizer optionsCustomizer() {
+Example:</p><pre class="programlisting">		<em><span class="hl-annotation" style="color: gray">@Bean</span></em>
+		WireMockConfigurationCustomizer optionsCustomizer() {
 			<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> WireMockConfigurationCustomizer() {
-				<em><span class="hl-annotation" style="color: gray">@Override</span></em> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> customize(WireMockConfiguration options) {
+				<em><span class="hl-annotation" style="color: gray">@Override</span></em>
+				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">void</span> customize(WireMockConfiguration options) {
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// perform your customization here</span>
 				}
 			};
@@ -264,16 +270,14 @@ about a situation in which they would like to move to DSL-based contract definit
 but they already have a lot of Spring MVC tests. Using this feature lets you generate
 the contract files that you can later modify and move to folders (defined in your
 configuration) so that the plugin finds them.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>You might wonder why this functionality is in the WireMock module. The functionality
-is there because it makes sense to generate both the contracts and the stubs.</p></td></tr></table></div><p>Consider the following test:</p><pre class="programlisting">		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.mockMvc.perform(post(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/foo"</span>)
-					.accept(MediaType.APPLICATION_PDF)
-					.accept(MediaType.APPLICATION_JSON)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\"foo\": 23, \"bar\" : \"baz\" }"</span>))
-				.andExpect(status().isOk())
-				.andExpect(content().string(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar"</span>))
+is there because it makes sense to generate both the contracts and the stubs.</p></td></tr></table></div><p>Consider the following test:</p><pre class="programlisting">		<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">this</span>.mockMvc
+				.perform(post(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"/foo"</span>).accept(MediaType.APPLICATION_PDF)
+						.accept(MediaType.APPLICATION_JSON)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"{\"foo\": 23, \"bar\" : \"baz\" }"</span>))
+				.andExpect(status().isOk()).andExpect(content().string(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"bar"</span>))
 				<span xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// first WireMock</span>
-				.andDo(WireMockRestDocs.verify()
-						.jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.foo &gt;= 20)]"</span>)
+				.andDo(WireMockRestDocs.verify().jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.foo &gt;= 20)]"</span>)
 						.jsonPath(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"$[?(@.bar in ['baz','bazz','bazzz'])]"</span>)
 						.contentType(MediaType.valueOf(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"application/json"</span>))
 						.stub(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"shouldGrantABeerIfOldEnough"</span>))

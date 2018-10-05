@@ -4479,19 +4479,20 @@ import java.util.Map;
 import org.springframework.cloud.contract.spec.Contract;
 
 public interface StubFinder extends StubTrigger {
+
 	/**
-	 * For the given groupId and artifactId tries to find the matching
-	 * URL of the running stub.
-	 *
-	 * @param groupId - might be null. In that case a search only via artifactId takes place
+	 * For the given groupId and artifactId tries to find the matching URL of the running
+	 * stub.
+	 * @param groupId - might be null. In that case a search only via artifactId takes
+	 * place
 	 * @return URL of a running stub or throws exception if not found
 	 */
 	URL findStubUrl(String groupId, String artifactId) throws StubNotFoundException;
 
 	/**
-	 * For the given Ivy notation {@code [groupId]:artifactId:[version]:[classifier]} tries to
-	 * find the matching URL of the running stub. You can also pass only {@code artifactId}.
-	 *
+	 * For the given Ivy notation {@code [groupId]:artifactId:[version]:[classifier]}
+	 * tries to find the matching URL of the running stub. You can also pass only
+	 * {@code artifactId}.
 	 * @param ivyNotation - Ivy representation of the Maven artifact
 	 * @return URL of a running stub or throws exception if not found
 	 */
@@ -4506,6 +4507,7 @@ public interface StubFinder extends StubTrigger {
 	 * Returns the list of Contracts
 	 */
 	Map&lt;StubConfiguration, Collection&lt;Contract&gt;&gt; getContracts();
+
 }</programlisting>
 <simpara>Example of usage in Spock tests:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">@ClassRule @Shared StubRunnerRule rule = new StubRunnerRule()
@@ -5300,10 +5302,10 @@ import java.util.Map;
 public interface StubTrigger {
 
 	/**
-	 * Triggers an event by a given label for a given {@code groupid:artifactid} notation. You can use only {@code artifactId} too.
+	 * Triggers an event by a given label for a given {@code groupid:artifactid} notation.
+	 * You can use only {@code artifactId} too.
 	 *
 	 * Feature related to messaging.
-	 *
 	 * @return true - if managed to run a trigger
 	 */
 	boolean trigger(String ivyNotation, String labelName);
@@ -5312,7 +5314,6 @@ public interface StubTrigger {
 	 * Triggers an event by a given label.
 	 *
 	 * Feature related to messaging.
-	 *
 	 * @return true - if managed to run a trigger
 	 */
 	boolean trigger(String labelName);
@@ -5321,7 +5322,6 @@ public interface StubTrigger {
 	 * Triggers all possible events.
 	 *
 	 * Feature related to messaging.
-	 *
 	 * @return true - if managed to run a trigger
 	 */
 	boolean trigger();
@@ -5332,6 +5332,7 @@ public interface StubTrigger {
 	 * Feature related to messaging.
 	 */
 	Map&lt;String, Collection&lt;String&gt;&gt; labels();
+
 }</programlisting>
 <simpara>For convenience, the <literal>StubFinder</literal> interface extends <literal>StubTrigger</literal>, so you only need one
 or the other in your tests.</simpara>
@@ -5746,13 +5747,15 @@ follows:</simpara>
 integration looks for bindings related to this exchange.</simpara>
 <programlisting language="java" linenumbering="unnumbered">@Bean
 public Binding binding() {
-	return BindingBuilder.bind(new Queue("test.queue")).to(new DirectExchange("contract-test.exchange")).with("#");
+	return BindingBuilder.bind(new Queue("test.queue"))
+			.to(new DirectExchange("contract-test.exchange")).with("#");
 }</programlisting>
 <simpara>The binding definition binds the queue <literal>test.queue</literal>. As a result, the following listener
 definition is matched and invoked with the contract message.</simpara>
 <programlisting language="java" linenumbering="unnumbered">@Bean
-public SimpleMessageListenerContainer simpleMessageListenerContainer(ConnectionFactory connectionFactory,
-																		MessageListenerAdapter listenerAdapter) {
+public SimpleMessageListenerContainer simpleMessageListenerContainer(
+		ConnectionFactory connectionFactory,
+		MessageListenerAdapter listenerAdapter) {
 	SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
 	container.setConnectionFactory(connectionFactory);
 	container.setQueueNames("test.queue");
@@ -5761,9 +5764,7 @@ public SimpleMessageListenerContainer simpleMessageListenerContainer(ConnectionF
 	return container;
 }</programlisting>
 <simpara>Also, the following annotated listener matches and is invoked:</simpara>
-<programlisting language="java" linenumbering="unnumbered">@RabbitListener(bindings = @QueueBinding(
-		value = @Queue(value = "test.queue"),
-		exchange = @Exchange(value = "contract-test.exchange", ignoreDeclarationExceptions = "true")))
+<programlisting language="java" linenumbering="unnumbered">@RabbitListener(bindings = @QueueBinding(value = @Queue(value = "test.queue"), exchange = @Exchange(value = "contract-test.exchange", ignoreDeclarationExceptions = "true")))
 public void handlePerson(Person person) {
 	this.person = person;
 }</programlisting>
@@ -9480,21 +9481,23 @@ your test. The following code shows an example:</simpara>
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureWireMock(port = 0)
 public class WiremockForDocsTests {
+
 	// A service that calls out over HTTP
-	@Autowired private Service service;
+	@Autowired
+	private Service service;
 
 	// Using the WireMock APIs in the normal way:
 	@Test
 	public void contextLoads() throws Exception {
 		// Stubbing WireMock
-		stubFor(get(urlEqualTo("/resource"))
-				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
+		stubFor(get(urlEqualTo("/resource")).willReturn(aResponse()
+				.withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 		// We're asserting if WireMock responded properly
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 	}
 
 }
-//end::wiremock_test2[]</programlisting>
+// end::wiremock_test2[]</programlisting>
 <simpara>To start the stub server on a different port use (for example),
 <literal>@AutoConfigureWireMock(port=9999)</literal>. For a random port, use a value of <literal>0</literal>. The stub
 server port can be bound in the test application context with the "wiremock.server.port"
@@ -9560,6 +9563,7 @@ public class WiremockForDocsClassRuleTests {
 	@ClassRule
 	public static WireMockClassRule wiremock = new WireMockClassRule(
 			WireMockSpring.options().dynamicPort());
+
 	// A service that calls out over HTTP to localhost:${wiremock.port}
 	@Autowired
 	private Service service;
@@ -9568,14 +9572,14 @@ public class WiremockForDocsClassRuleTests {
 	@Test
 	public void contextLoads() throws Exception {
 		// Stubbing WireMock
-		wiremock.stubFor(get(urlEqualTo("/resource"))
-				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
+		wiremock.stubFor(get(urlEqualTo("/resource")).willReturn(aResponse()
+				.withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 		// We're asserting if WireMock responded properly
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 	}
 
 }
-//end::wiremock_test2[]</programlisting>
+// end::wiremock_test2[]</programlisting>
 <simpara>The <literal>@ClassRule</literal> means that the server shuts down after all the methods in this class
 have been run.</simpara>
 </section>
@@ -9640,6 +9644,7 @@ public class WiremockForDocsMockServerApplicationTests {
 		assertThat(this.service.go()).isEqualTo("Hello World");
 		server.verify();
 	}
+
 }</programlisting>
 <simpara>The <literal>baseUrl</literal> value is prepended to all mock calls, and the <literal>stubs()</literal> method takes a stub
 path resource pattern as an argument. In the preceding example, the stub defined at
@@ -9659,9 +9664,11 @@ Wiremock dependencies and exclude the Spring Boot container (if there is one).</
 <simpara>You can register a bean of <literal>org.springframework.cloud.contract.wiremock.WireMockConfigurationCustomizer</literal> type
 in order to customize the WireMock configuration (e.g. add custom transformers).
 Example:</simpara>
-<programlisting language="java" linenumbering="unnumbered">		@Bean WireMockConfigurationCustomizer optionsCustomizer() {
+<programlisting language="java" linenumbering="unnumbered">		@Bean
+		WireMockConfigurationCustomizer optionsCustomizer() {
 			return new WireMockConfigurationCustomizer() {
-				@Override public void customize(WireMockConfiguration options) {
+				@Override
+				public void customize(WireMockConfiguration options) {
 // perform your customization here
 				}
 			};
@@ -9816,16 +9823,14 @@ configuration) so that the plugin finds them.</simpara>
 is there because it makes sense to generate both the contracts and the stubs.</simpara>
 </tip>
 <simpara>Consider the following test:</simpara>
-<programlisting language="java" linenumbering="unnumbered">		this.mockMvc.perform(post("/foo")
-					.accept(MediaType.APPLICATION_PDF)
-					.accept(MediaType.APPLICATION_JSON)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content("{\"foo\": 23, \"bar\" : \"baz\" }"))
-				.andExpect(status().isOk())
-				.andExpect(content().string("bar"))
+<programlisting language="java" linenumbering="unnumbered">		this.mockMvc
+				.perform(post("/foo").accept(MediaType.APPLICATION_PDF)
+						.accept(MediaType.APPLICATION_JSON)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("{\"foo\": 23, \"bar\" : \"baz\" }"))
+				.andExpect(status().isOk()).andExpect(content().string("bar"))
 				// first WireMock
-				.andDo(WireMockRestDocs.verify()
-						.jsonPath("$[?(@.foo &gt;= 20)]")
+				.andDo(WireMockRestDocs.verify().jsonPath("$[?(@.foo &gt;= 20)]")
 						.jsonPath("$[?(@.bar in ['baz','bazz','bazzz'])]")
 						.contentType(MediaType.valueOf("application/json"))
 						.stub("shouldGrantABeerIfOldEnough"))
