@@ -15,6 +15,6 @@ class InputSpec extends Specification {
 				property = $(consumer(regex("[0-9]{5}")))
 			}
 		then:
-			(property.serverValue.toString()).matches(/[0-9]{5}/)
+			(property.serverValue as String).matches(/[0-9]{5}/)
 	}
 }
