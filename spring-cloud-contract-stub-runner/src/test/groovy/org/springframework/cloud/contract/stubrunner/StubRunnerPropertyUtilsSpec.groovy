@@ -22,7 +22,7 @@ import spock.util.environment.RestoreSystemProperties
 class StubRunnerPropertyUtilsSpec extends Specification {
 
 	@RestoreSystemProperties
-	def "should return [#expectedResult] when checking if [#queriedProp] is set, and system is [#systemProperty] and env [#envVariable]"() {
+	def "should return [#expectedResult] when checking if queried prop is set, and system is [#systemProperty] and env [#envVariable]"() {
 		given:
 			def sysProp = systemProperty
 			def envVar = envVariable
@@ -52,7 +52,7 @@ class StubRunnerPropertyUtilsSpec extends Specification {
 	}
 
 	@RestoreSystemProperties
-	def "should return [#expectedResult] when queried for [#queriedProp] and system is [#systemProperty] and env [#envVariable]"() {
+	def "should return [#expectedResult] when queried for queried prop and system is [#systemProperty] and env [#envVariable]"() {
 		given:
 			def sysProp = systemProperty
 			def envVar = envVariable
@@ -83,7 +83,7 @@ class StubRunnerPropertyUtilsSpec extends Specification {
 	}
 
 	@RestoreSystemProperties
-	def "should return [#expectedResult] when prop is set for [#queriedProp] and system is [#systemProperty] and env [#envVariable]"() {
+	def "should return [#expectedResult] when prop is set for queried prop and system is [#systemProperty] and env [#envVariable]"() {
 		given:
 			def sysProp = systemProperty
 			def envVar = envVariable

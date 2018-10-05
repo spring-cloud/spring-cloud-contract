@@ -35,7 +35,7 @@ class GitStubDownloaderPropertiesSpec extends Specification {
 			props.url == URI.create("https://foo.com")
 	}
 
-	def "should return the whole address if it starts with git@ but doesn't finish with .git"() {
+	def "should return the whole address if it starts with git@ but doesn't finish with dot git"() {
 		given:
 			Resource resource = resource("git://git@foo.com/foo")
 		when:

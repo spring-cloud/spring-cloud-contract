@@ -27,7 +27,7 @@ class GeneratorScannerSpec extends Specification {
 
 	private JavaTestGenerator classGenerator = Mock(JavaTestGenerator)
 
-	def "should find all .json files and generate 6 classes for them"() {
+	def "should find all json files and generate 6 classes for them"() {
 		given:
 			File resource = new File(this.getClass().getResource("/directory/with/stubs/stubsRepositoryIndicator").toURI())
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
