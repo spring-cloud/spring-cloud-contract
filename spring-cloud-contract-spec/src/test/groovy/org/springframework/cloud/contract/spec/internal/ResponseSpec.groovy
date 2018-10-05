@@ -35,7 +35,7 @@ class ResponseSpec extends Specification {
 				property = value(producer(regex("[0-9]{5}")))
 			}
 		then:
-			(property.clientValue as String).matches('[0-9]{5}')
+			(property.clientValue as String).matches(/[0-9]{5}/)
 			(property.serverValue as Pattern).pattern() == '[0-9]{5}'
 	}
 }
