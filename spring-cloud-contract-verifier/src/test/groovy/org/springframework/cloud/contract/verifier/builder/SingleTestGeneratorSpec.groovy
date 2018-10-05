@@ -223,7 +223,7 @@ class SingleTestGeneratorSpec extends Specification {
 			SPOCK         | TestMode.EXPLICIT | GROOVY_ASSERTER | 'ContractsSpec.groovy'
 	}
 
-	def 'should build test class for #testFramework with Rest Assured 2.x'() {
+	def 'should build test class for #testFramework with Rest Assured 2x'() {
 		given:
 			ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties()
 			properties.targetFramework = testFramework

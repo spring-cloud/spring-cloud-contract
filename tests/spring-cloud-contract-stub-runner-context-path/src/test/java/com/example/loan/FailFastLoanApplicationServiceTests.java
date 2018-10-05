@@ -35,30 +35,34 @@ public class FailFastLoanApplicationServiceTests {
 	@Test
 	public void shouldFailToStartContextWhenNoStubCanBeFound() {
 		// When
-		final Throwable throwable = catchThrowable(() -> new SpringApplicationBuilder(Application.class, StubRunnerConfiguration.class)
-				.properties(ImmutableMap.of(
-						"stubrunner.stubsMode", "REMOTE",
-						"stubrunner.repositoryRoot", "classpath:m2repo/repository/",
-						"stubrunner.ids", new String[]{"org.springframework.cloud.contract.verifier.stubs:should-not-be-found"}))
-				.run());
+		final Throwable throwable = catchThrowable(() -> new SpringApplicationBuilder(
+				Application.class, StubRunnerConfiguration.class)
+						.properties(ImmutableMap.of("stubrunner.stubsMode", "REMOTE",
+								"stubrunner.repositoryRoot",
+								"classpath:m2repo/repository/", "stubrunner.ids",
+								new String[] {
+										"org.springframework.cloud.contract.verifier.stubs:should-not-be-found" }))
+						.run());
 
 		// Then
 		assertThat(throwable).isInstanceOf(BeanCreationException.class);
 		assertThat(throwable.getCause()).isInstanceOf(BeanInstantiationException.class);
 		assertThat(throwable.getCause().getCause())
-				.isInstanceOf(IllegalArgumentException.class)
-				.hasMessageContaining("For groupId [org.springframework.cloud.contract.verifier.stubs] artifactId [should-not-be-found] "
-						+ "and classifier [stubs] the version was not resolved! The following exceptions took place");
+				.isInstanceOf(IllegalArgumentException.class).hasMessageContaining(
+						"For groupId [org.springframework.cloud.contract.verifier.stubs] artifactId [should-not-be-found] "
+								+ "and classifier [stubs] the version was not resolved! The following exceptions took place");
 	}
 
 	@Test
 	public void shouldNotTryAndWorkOfflineWhenRemoteModeIsOn() {
 		// When
-		final Throwable throwable = catchThrowable(() -> new SpringApplicationBuilder(Application.class, StubRunnerConfiguration.class)
-				.properties(ImmutableMap.of(
-						"stubrunner.stubsMode", "CLASSPATH",
-						"stubrunner.ids", new String[]{"org.springframework.cloud.contract.verifier.stubs:should-not-be-found"}))
-				.run());
+		final Throwable throwable = catchThrowable(() -> new SpringApplicationBuilder(
+				Application.class, StubRunnerConfiguration.class)
+						.properties(ImmutableMap.of("stubrunner.stubsMode", "CLASSPATH",
+								"stubrunner.ids",
+								new String[] {
+										"org.springframework.cloud.contract.verifier.stubs:should-not-be-found" }))
+						.run());
 
 		// Then
 		assertThat(throwable).isInstanceOf(BeanCreationException.class);

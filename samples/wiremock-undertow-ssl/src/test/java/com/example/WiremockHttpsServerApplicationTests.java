@@ -18,23 +18,22 @@ import org.springframework.util.SocketUtils;
 
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 
-
 @RunWith(SpringRunner.class)
 @SpringBootTest("app.baseUrl=https://localhost:7443")
 @ActiveProfiles("ssl")
 public class WiremockHttpsServerApplicationTests {
 
 	@ClassRule
-	public static WireMockClassRule wiremock = new WireMockClassRule(
-			WireMockSpring.options().httpsPort(7443).port(SocketUtils.findAvailableTcpPort()));
+	public static WireMockClassRule wiremock = new WireMockClassRule(WireMockSpring
+			.options().httpsPort(7443).port(SocketUtils.findAvailableTcpPort()));
 
 	@Autowired
 	private Service service;
 
 	@Test
 	public void contextLoads() throws Exception {
-		stubFor(get(urlEqualTo("/resource"))
-				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
+		stubFor(get(urlEqualTo("/resource")).willReturn(aResponse()
+				.withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 	}
 

@@ -3,7 +3,7 @@ package com.example.loan.model;
 public class Client {
 
 	private String clientId;
-	
+
 	public Client() {
 	}
 
@@ -18,4 +18,5 @@ public class Client {
 	public void setClientId(String clientId) {
 		this.clientId = clientId;
 	}
+
 }

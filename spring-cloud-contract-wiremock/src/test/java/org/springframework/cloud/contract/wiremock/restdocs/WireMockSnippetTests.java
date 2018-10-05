@@ -45,14 +45,17 @@ public class WireMockSnippetTests {
 
 	@Mock(answer = Answers.RETURNS_DEEP_STUBS)
 	Operation operation;
+
 	@Rule
 	public TemporaryFolder tmp = new TemporaryFolder();
+
 	private File outputFolder;
 
 	@Before
 	public void setup() throws IOException {
 		this.outputFolder = this.tmp.newFolder();
-		ManualRestDocumentation restDocumentation = new ManualRestDocumentation(this.outputFolder.getAbsolutePath());
+		ManualRestDocumentation restDocumentation = new ManualRestDocumentation(
+				this.outputFolder.getAbsolutePath());
 		restDocumentation.beforeTest(this.getClass(), "method");
 		RestDocumentationContext context = restDocumentation.beforeOperation();
 		given(this.operation.getAttributes().get(anyString())).willReturn(null);
@@ -79,8 +82,7 @@ public class WireMockSnippetTests {
 	}
 
 	@Test
-	public void should_use_placeholders_in_stub_file_name()
-			throws Exception {
+	public void should_use_placeholders_in_stub_file_name() throws Exception {
 		given(this.operation.getName()).willReturn("{method-name}/{step}");
 		WireMockSnippet snippet = new WireMockSnippet();
 
@@ -308,7 +310,8 @@ public class WireMockSnippetTests {
 				return URI.create("http://foo/bar");
 			}
 
-			@Override public Collection<RequestCookie> getCookies() {
+			@Override
+			public Collection<RequestCookie> getCookies() {
 				return Collections.emptySet();
 			}
 		};
@@ -329,7 +332,8 @@ public class WireMockSnippetTests {
 			@Override
 			public HttpHeaders getHeaders() {
 				HttpHeaders httpHeaders = new HttpHeaders();
-				httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+				httpHeaders.add(HttpHeaders.CONTENT_TYPE,
+						MediaType.APPLICATION_JSON_VALUE);
 				return httpHeaders;
 			}
 
@@ -353,9 +357,11 @@ public class WireMockSnippetTests {
 				return URI.create("http://foo/bar");
 			}
 
-			@Override public Collection<RequestCookie> getCookies() {
+			@Override
+			public Collection<RequestCookie> getCookies() {
 				return Collections.emptySet();
 			}
 		};
 	}
+
 }

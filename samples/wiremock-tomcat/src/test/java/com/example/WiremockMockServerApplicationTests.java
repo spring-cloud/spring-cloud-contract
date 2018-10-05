@@ -13,7 +13,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment=WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
 public class WiremockMockServerApplicationTests {
 
 	@Autowired

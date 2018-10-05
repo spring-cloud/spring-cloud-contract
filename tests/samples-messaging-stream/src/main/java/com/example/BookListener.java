@@ -62,4 +62,5 @@ public class BookListener {
 	}
 
 	public AtomicBoolean bookSuccessfulyDeleted = new AtomicBoolean(false);
+
 }

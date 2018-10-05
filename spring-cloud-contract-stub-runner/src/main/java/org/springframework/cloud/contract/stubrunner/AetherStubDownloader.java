@@ -54,28 +54,38 @@ public class AetherStubDownloader implements StubDownloader {
 	private static final Log log = LogFactory.getLog(AetherStubDownloader.class);
 
 	private static final String TEMP_DIR_PREFIX = "contracts";
+
 	private static final String ARTIFACT_EXTENSION = "jar";
+
 	private static final String LATEST_ARTIFACT_VERSION = "(,]";
+
 	private static final String LATEST_VERSION_IN_IVY = "+";
+
 	// Preloading class for the shutdown hook not to throw ClassNotFound
 	private static final Class CLAZZ = TemporaryFileStorage.class;
 
 	private final List<RemoteRepository> remoteRepos;
+
 	private final RepositorySystem repositorySystem;
+
 	private final RepositorySystemSession session;
+
 	private final boolean workOffline;
+
 	private final boolean deleteStubsAfterTest;
 
 	public AetherStubDownloader(StubRunnerOptions stubRunnerOptions) {
 		this.deleteStubsAfterTest = stubRunnerOptions.isDeleteStubsAfterTest();
 		if (log.isDebugEnabled()) {
-			log.debug("Will be resolving versions for the following options: [" + stubRunnerOptions + "]");
+			log.debug("Will be resolving versions for the following options: ["
+					+ stubRunnerOptions + "]");
 		}
 		this.remoteRepos = remoteRepositories(stubRunnerOptions);
 		boolean remoteReposMissing = remoteReposMissing();
 		switch (stubRunnerOptions.stubsMode) {
 		case LOCAL:
-			log.info("Remote repos not passed but the switch to work offline was set. " + "Stubs will be used from your local Maven repository.");
+			log.info("Remote repos not passed but the switch to work offline was set. "
+					+ "Stubs will be used from your local Maven repository.");
 			break;
 		case REMOTE:
 			if (remoteReposMissing) {
@@ -99,7 +109,6 @@ public class AetherStubDownloader implements StubDownloader {
 
 	/**
 	 * Used by the Maven Plugin
-	 *
 	 * @param repositorySystem
 	 * @param remoteRepositories - remote artifact repositories
 	 * @param session
@@ -111,26 +120,29 @@ public class AetherStubDownloader implements StubDownloader {
 		this.repositorySystem = repositorySystem;
 		this.session = session;
 		if (remoteReposMissing()) {
-			log.error("Remote repositories for stubs are not specified and work offline flag wasn't passed");
+			log.error(
+					"Remote repositories for stubs are not specified and work offline flag wasn't passed");
 		}
 		this.workOffline = false;
 		registerShutdownHook();
 	}
 
-	private List<RemoteRepository> remoteRepositories(StubRunnerOptions stubRunnerOptions) {
+	private List<RemoteRepository> remoteRepositories(
+			StubRunnerOptions stubRunnerOptions) {
 		if (stubRunnerOptions.stubRepositoryRoot == null) {
 			return new ArrayList<>();
 		}
-		final String[] repos = stubRunnerOptions.getStubRepositoryRootAsString().split(",");
+		final String[] repos = stubRunnerOptions.getStubRepositoryRootAsString()
+				.split(",");
 		final List<RemoteRepository> remoteRepos = new ArrayList<>();
 		for (int i = 0; i < repos.length; i++) {
-			if(StringUtils.hasText(repos[i])) {
-				final RemoteRepository.Builder builder = new RemoteRepository.Builder("remote" + i, "default", repos[i])
-						.setAuthentication(new AuthenticationBuilder()
-								.addUsername(stubRunnerOptions.username)
-								.addPassword(stubRunnerOptions.password)
-								.build());
-				if(stubRunnerOptions.getProxyOptions() != null) {
+			if (StringUtils.hasText(repos[i])) {
+				final RemoteRepository.Builder builder = new RemoteRepository.Builder(
+						"remote" + i, "default", repos[i])
+								.setAuthentication(new AuthenticationBuilder()
+										.addUsername(stubRunnerOptions.username)
+										.addPassword(stubRunnerOptions.password).build());
+				if (stubRunnerOptions.getProxyOptions() != null) {
 					final StubRunnerProxyOptions p = stubRunnerOptions.getProxyOptions();
 					builder.setProxy(new Proxy(null, p.getProxyHost(), p.getProxyPort()));
 				}
@@ -155,12 +167,14 @@ public class AetherStubDownloader implements StubDownloader {
 			}
 			Artifact artifact = new DefaultArtifact(stubsGroup, stubsModule, classifier,
 					ARTIFACT_EXTENSION, resolvedVersion);
-			ArtifactRequest request = new ArtifactRequest(artifact, this.remoteRepos, null);
+			ArtifactRequest request = new ArtifactRequest(artifact, this.remoteRepos,
+					null);
 			if (log.isDebugEnabled()) {
 				log.debug("Resolving artifact [" + artifact
 						+ "] using remote repositories " + this.remoteRepos);
 			}
-			ArtifactResult result = this.repositorySystem.resolveArtifact(this.session, request);
+			ArtifactResult result = this.repositorySystem.resolveArtifact(this.session,
+					request);
 			log.info("Resolved artifact [" + artifact + "] to "
 					+ result.getArtifact().getFile());
 			File temporaryFile = unpackStubJarToATemporaryFolder(
@@ -175,7 +189,8 @@ public class AetherStubDownloader implements StubDownloader {
 			throw new IllegalStateException(
 					"Exception occurred while trying to download a stub for group ["
 							+ stubsGroup + "] module [" + stubsModule
-							+ "] and classifier [" + classifier + "] in " + this.remoteRepos,
+							+ "] and classifier [" + classifier + "] in "
+							+ this.remoteRepos,
 					e);
 		}
 	}
@@ -193,13 +208,16 @@ public class AetherStubDownloader implements StubDownloader {
 		if (StringUtils.isEmpty(version) || LATEST_VERSION_IN_IVY.equals(version)) {
 			log.info("Desired version is [" + version
 					+ "] - will try to resolve the latest version");
-			return resolveHighestArtifactVersion(stubsGroup, stubsModule, classifier, LATEST_ARTIFACT_VERSION);
+			return resolveHighestArtifactVersion(stubsGroup, stubsModule, classifier,
+					LATEST_ARTIFACT_VERSION);
 		}
-		return resolveHighestArtifactVersion(stubsGroup, stubsModule, classifier, version);
+		return resolveHighestArtifactVersion(stubsGroup, stubsModule, classifier,
+				version);
 	}
 
 	@Override
-	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(StubConfiguration stubConfiguration) {
+	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
+			StubConfiguration stubConfiguration) {
 		String version = getVersion(stubConfiguration.groupId,
 				stubConfiguration.artifactId, stubConfiguration.version,
 				stubConfiguration.classifier);
@@ -211,9 +229,9 @@ public class AetherStubDownloader implements StubDownloader {
 		if (unpackedJar == null) {
 			return null;
 		}
-		return new AbstractMap.SimpleEntry<>(
-				new StubConfiguration(stubConfiguration.groupId, stubConfiguration.artifactId, version,
-						stubConfiguration.classifier), unpackedJar);
+		return new AbstractMap.SimpleEntry<>(new StubConfiguration(
+				stubConfiguration.groupId, stubConfiguration.artifactId, version,
+				stubConfiguration.classifier), unpackedJar);
 	}
 
 	private String resolveHighestArtifactVersion(String stubsGroup, String stubsModule,
@@ -234,15 +252,19 @@ public class AetherStubDownloader implements StubDownloader {
 			throw new IllegalStateException("Cannot resolve version range", e);
 		}
 		if (rangeResult.getHighestVersion() == null) {
-			throw new IllegalArgumentException("For groupId [" + stubsGroup + "] artifactId [" + stubsModule + "] "
-					+ "and classifier [" + classifier + "] the version was not resolved! The following exceptions took place "
+			throw new IllegalArgumentException("For groupId [" + stubsGroup
+					+ "] artifactId [" + stubsModule + "] " + "and classifier ["
+					+ classifier
+					+ "] the version was not resolved! The following exceptions took place "
 					+ rangeResult.getExceptions());
 		}
-		return rangeResult.getHighestVersion() == null ? null : rangeResult.getHighestVersion().toString();
+		return rangeResult.getHighestVersion() == null ? null
+				: rangeResult.getHighestVersion().toString();
 	}
 
 	private static File unpackStubJarToATemporaryFolder(URI stubJarUri) {
-		File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage.createTempDir(TEMP_DIR_PREFIX);
+		File tmpDirWhereStubsWillBeUnzipped = TemporaryFileStorage
+				.createTempDir(TEMP_DIR_PREFIX);
 		log.info("Unpacking stub from JAR [URI: " + stubJarUri + "]");
 		unzipTo(new File(stubJarUri), tmpDirWhereStubsWillBeUnzipped);
 		TemporaryFileStorage.add(tmpDirWhereStubsWillBeUnzipped);
@@ -250,8 +272,8 @@ public class AetherStubDownloader implements StubDownloader {
 	}
 
 	private void registerShutdownHook() {
-		Runtime.getRuntime().addShutdownHook(new Thread(
-				() -> TemporaryFileStorage.cleanup(AetherStubDownloader.this.deleteStubsAfterTest)));
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> TemporaryFileStorage
+				.cleanup(AetherStubDownloader.this.deleteStubsAfterTest)));
 	}
 
 }

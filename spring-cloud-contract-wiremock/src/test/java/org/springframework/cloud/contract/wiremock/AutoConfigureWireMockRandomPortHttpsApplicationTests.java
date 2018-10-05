@@ -14,8 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes=WiremockTestsApplication.class, properties="app.baseUrl=https://localhost:${wiremock.server.https-port}", webEnvironment=WebEnvironment.NONE)
-@AutoConfigureWireMock(port=0, httpsPort=0)
+@SpringBootTest(classes = WiremockTestsApplication.class, properties = "app.baseUrl=https://localhost:${wiremock.server.https-port}", webEnvironment = WebEnvironment.NONE)
+@AutoConfigureWireMock(port = 0, httpsPort = 0)
 public class AutoConfigureWireMockRandomPortHttpsApplicationTests {
 
 	@Autowired
@@ -23,8 +23,8 @@ public class AutoConfigureWireMockRandomPortHttpsApplicationTests {
 
 	@Test
 	public void contextLoads() throws Exception {
-		stubFor(get(urlEqualTo("/test"))
-				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
+		stubFor(get(urlEqualTo("/test")).willReturn(aResponse()
+				.withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 	}
 

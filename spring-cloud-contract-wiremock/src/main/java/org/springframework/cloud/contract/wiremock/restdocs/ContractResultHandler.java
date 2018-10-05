@@ -69,19 +69,19 @@ import static wiremock.com.google.common.collect.FluentIterable.from;
 import static wiremock.com.google.common.collect.Lists.newArrayList;
 import static wiremock.com.google.common.io.ByteStreams.toByteArray;
 
-public class ContractResultHandler
-		extends WireMockVerifyHelper<MvcResult, ContractResultHandler>
-		implements ResultHandler {
+public class ContractResultHandler extends
+		WireMockVerifyHelper<MvcResult, ContractResultHandler> implements ResultHandler {
 
 	static final String ATTRIBUTE_NAME_CONFIGURATION = "org.springframework.restdocs.configuration";
 
-	@Override public void handle(MvcResult result) throws Exception {
+	@Override
+	public void handle(MvcResult result) throws Exception {
 		configure(result);
 		MockMvcRestDocumentation.document(getName()).handle(result);
 	}
 
-	@Override protected ResponseDefinitionBuilder getResponseDefinition(
-			MvcResult result) {
+	@Override
+	protected ResponseDefinitionBuilder getResponseDefinition(MvcResult result) {
 		MockHttpServletResponse response = result.getResponse();
 		ResponseDefinitionBuilder definition;
 		try {
@@ -103,9 +103,11 @@ public class ContractResultHandler
 		}
 	}
 
-	@Override protected Map<String, Object> getConfiguration(MvcResult result) {
-		@SuppressWarnings("unchecked") Map<String, Object> map = (Map<String, Object>) result
-				.getRequest().getAttribute(ATTRIBUTE_NAME_CONFIGURATION);
+	@Override
+	protected Map<String, Object> getConfiguration(MvcResult result) {
+		@SuppressWarnings("unchecked")
+		Map<String, Object> map = (Map<String, Object>) result.getRequest()
+				.getAttribute(ATTRIBUTE_NAME_CONFIGURATION);
 		if (map == null) {
 			map = new HashMap<>();
 			result.getRequest().setAttribute(ATTRIBUTE_NAME_CONFIGURATION, map);
@@ -113,15 +115,18 @@ public class ContractResultHandler
 		return map;
 	}
 
-	@Override protected Request getWireMockRequest(MvcResult result) {
+	@Override
+	protected Request getWireMockRequest(MvcResult result) {
 		return new WireMockHttpServletRequestAdapter(result.getRequest());
 	}
 
-	@Override protected MediaType getContentType(MvcResult result) {
+	@Override
+	protected MediaType getContentType(MvcResult result) {
 		return MediaType.valueOf(result.getRequest().getContentType());
 	}
 
-	@Override protected byte[] getRequestBodyContent(MvcResult result) {
+	@Override
+	protected byte[] getRequestBodyContent(MvcResult result) {
 		return new WireMockHttpServletRequestAdapter(result.getRequest()).getBody();
 	}
 
@@ -133,14 +138,17 @@ class WireMockHttpServletRequestAdapter implements Request {
 	private static final String ORIGINAL_REQUEST_KEY = "wiremock.ORIGINAL_REQUEST";
 
 	private final HttpServletRequest request;
+
 	private byte[] cachedBody;
+
 	private Collection<Part> cachedMultiparts;
 
 	WireMockHttpServletRequestAdapter(HttpServletRequest request) {
 		this.request = request;
 	}
 
-	@Override public String getUrl() {
+	@Override
+	public String getUrl() {
 		String url = this.request.getRequestURI();
 		String contextPath = this.request.getContextPath();
 		if (!isNullOrEmpty(contextPath) && url.startsWith(contextPath)) {
@@ -149,33 +157,38 @@ class WireMockHttpServletRequestAdapter implements Request {
 		return withQueryStringIfPresent(url);
 	}
 
-	@Override public String getAbsoluteUrl() {
+	@Override
+	public String getAbsoluteUrl() {
 		return withQueryStringIfPresent(this.request.getRequestURL().toString());
 	}
 
 	private String withQueryStringIfPresent(String url) {
-		return url + (isNullOrEmpty(this.request.getQueryString()) ?
-				"" :
-				"?" + this.request.getQueryString());
+		return url + (isNullOrEmpty(this.request.getQueryString()) ? ""
+				: "?" + this.request.getQueryString());
 	}
 
-	@Override public RequestMethod getMethod() {
+	@Override
+	public RequestMethod getMethod() {
 		return RequestMethod.fromString(this.request.getMethod().toUpperCase());
 	}
 
-	@Override public String getScheme() {
+	@Override
+	public String getScheme() {
 		return this.request.getScheme();
 	}
 
-	@Override public String getHost() {
+	@Override
+	public String getHost() {
 		return this.request.getServerName();
 	}
 
-	@Override public int getPort() {
+	@Override
+	public int getPort() {
 		return this.request.getServerPort();
 	}
 
-	@Override public String getClientIp() {
+	@Override
+	public String getClientIp() {
 		String forwardedForHeader = this.getHeader("X-Forwarded-For");
 
 		if (forwardedForHeader != null && forwardedForHeader.length() > 0) {
@@ -186,11 +199,13 @@ class WireMockHttpServletRequestAdapter implements Request {
 	}
 
 	// Something's wrong with reading the body from request
-	@Override public byte[] getBody() {
+	@Override
+	public byte[] getBody() {
 		if (this.cachedBody == null || this.cachedBody.length == 0) {
 			try {
 				if (this.request instanceof MockHttpServletRequest) {
-					this.cachedBody = ((MockHttpServletRequest) this.request).getContentAsByteArray();
+					this.cachedBody = ((MockHttpServletRequest) this.request)
+							.getContentAsByteArray();
 					return this.cachedBody;
 				}
 				byte[] body = toByteArray(this.request.getInputStream());
@@ -217,15 +232,19 @@ class WireMockHttpServletRequestAdapter implements Request {
 		return encodingHeader != null && encodingHeader.contains("gzip");
 	}
 
-	@Override public String getBodyAsString() {
+	@Override
+	public String getBodyAsString() {
 		return stringFromBytes(getBody(), encodingFromContentTypeHeaderOrUtf8());
 	}
 
-	@Override public String getBodyAsBase64() {
+	@Override
+	public String getBodyAsBase64() {
 		return encodeBase64(getBody());
 	}
 
-	@SuppressWarnings("unchecked") @Override public String getHeader(String key) {
+	@SuppressWarnings("unchecked")
+	@Override
+	public String getHeader(String key) {
 		List<String> headerNames = list(this.request.getHeaderNames());
 		for (String currentKey : headerNames) {
 			if (currentKey.toLowerCase().equals(key.toLowerCase())) {
@@ -235,7 +254,9 @@ class WireMockHttpServletRequestAdapter implements Request {
 		return null;
 	}
 
-	@Override @SuppressWarnings("unchecked") public HttpHeader header(String key) {
+	@Override
+	@SuppressWarnings("unchecked")
+	public HttpHeader header(String key) {
 		List<String> headerNames = list(this.request.getHeaderNames());
 		for (String currentKey : headerNames) {
 			if (currentKey.toLowerCase().equals(key.toLowerCase())) {
@@ -250,15 +271,18 @@ class WireMockHttpServletRequestAdapter implements Request {
 		return HttpHeader.absent(key);
 	}
 
-	@Override public ContentTypeHeader contentTypeHeader() {
+	@Override
+	public ContentTypeHeader contentTypeHeader() {
 		return getHeaders().getContentTypeHeader();
 	}
 
-	@Override public boolean containsHeader(String key) {
+	@Override
+	public boolean containsHeader(String key) {
 		return header(key).isPresent();
 	}
 
-	@Override public HttpHeaders getHeaders() {
+	@Override
+	public HttpHeaders getHeaders() {
 		List<HttpHeader> headerList = newArrayList();
 		for (String key : getAllHeaderKeys()) {
 			headerList.add(header(key));
@@ -267,17 +291,20 @@ class WireMockHttpServletRequestAdapter implements Request {
 		return new HttpHeaders(headerList);
 	}
 
-	@SuppressWarnings("unchecked") @Override public Set<String> getAllHeaderKeys() {
+	@SuppressWarnings("unchecked")
+	@Override
+	public Set<String> getAllHeaderKeys() {
 		LinkedHashSet<String> headerKeys = new LinkedHashSet<>();
 		for (Enumeration<String> headerNames = this.request.getHeaderNames(); headerNames
-				.hasMoreElements(); ) {
+				.hasMoreElements();) {
 			headerKeys.add(headerNames.nextElement());
 		}
 
 		return headerKeys;
 	}
 
-	@Override public Map<String, Cookie> getCookies() {
+	@Override
+	public Map<String, Cookie> getCookies() {
 		ImmutableMultimap.Builder<String, String> builder = ImmutableMultimap.builder();
 		javax.servlet.http.Cookie[] cookies = firstNonNull(this.request.getCookies(),
 				new javax.servlet.http.Cookie[0]);
@@ -288,19 +315,23 @@ class WireMockHttpServletRequestAdapter implements Request {
 				input -> new Cookie(null, ImmutableList.copyOf(input)));
 	}
 
-	@Override public QueryParameter queryParameter(String key) {
+	@Override
+	public QueryParameter queryParameter(String key) {
 		return firstNonNull((splitQuery(this.request.getQueryString()).get(key)),
 				QueryParameter.absent(key));
 	}
 
-	@Override public boolean isBrowserProxyRequest() {
+	@Override
+	public boolean isBrowserProxyRequest() {
 		if (!isJetty()) {
 			return false;
 		}
 		return false;
 	}
 
-	@Override @SuppressWarnings("unchecked") public Collection<Part> getParts() {
+	@Override
+	@SuppressWarnings("unchecked")
+	public Collection<Part> getParts() {
 		if (!isMultipart()) {
 			return null;
 		}
@@ -311,9 +342,9 @@ class WireMockHttpServletRequestAdapter implements Request {
 				InputStream inputStream = new ByteArrayInputStream(getBody());
 				MultiPartInputStreamParser inputStreamParser = new MultiPartInputStreamParser(
 						inputStream, contentTypeHeaderValue, null, null);
-				this.cachedMultiparts = from(safelyGetRequestParts())
-						.transform(
-								(Function<javax.servlet.http.Part, Part>) WireMockHttpServletMultipartAdapter::from).toList();
+				this.cachedMultiparts = from(safelyGetRequestParts()).transform(
+						(Function<javax.servlet.http.Part, Part>) WireMockHttpServletMultipartAdapter::from)
+						.toList();
 			}
 			catch (IOException | ServletException exception) {
 				return throwUnchecked(exception, Collection.class);
@@ -336,12 +367,14 @@ class WireMockHttpServletRequestAdapter implements Request {
 		}
 	}
 
-	@Override public boolean isMultipart() {
+	@Override
+	public boolean isMultipart() {
 		String header = getHeader("Content-Type");
 		return (header != null && header.contains("multipart"));
 	}
 
-	@Override public Part getPart(final String name) {
+	@Override
+	public Part getPart(final String name) {
 		if (name == null || name.length() == 0) {
 			return null;
 		}
@@ -350,12 +383,14 @@ class WireMockHttpServletRequestAdapter implements Request {
 				return null;
 			}
 		}
-		return from(this.cachedMultiparts).firstMatch(
-				input -> name.equals(input.getName())).get();
+		return from(this.cachedMultiparts)
+				.firstMatch(input -> name.equals(input.getName())).get();
 	}
 
-	@Override public Optional<Request> getOriginalRequest() {
-		Request originalRequest = (Request) this.request.getAttribute(ORIGINAL_REQUEST_KEY);
+	@Override
+	public Optional<Request> getOriginalRequest() {
+		Request originalRequest = (Request) this.request
+				.getAttribute(ORIGINAL_REQUEST_KEY);
 		return Optional.fromNullable(originalRequest);
 	}
 
@@ -371,14 +406,16 @@ class WireMockHttpServletRequestAdapter implements Request {
 
 	private void getClass(String type) throws ClassNotFoundException {
 		ClassLoader contextCL = Thread.currentThread().getContextClassLoader();
-		ClassLoader loader = contextCL == null ?
-				com.github.tomakehurst.wiremock.servlet.WireMockHttpServletRequestAdapter.class
-						.getClassLoader() :
-				contextCL;
+		ClassLoader loader = contextCL == null
+				? com.github.tomakehurst.wiremock.servlet.WireMockHttpServletRequestAdapter.class
+						.getClassLoader()
+				: contextCL;
 		Class.forName(type, false, loader);
 	}
 
-	@Override public String toString() {
+	@Override
+	public String toString() {
 		return this.request.toString() + getBodyAsString();
 	}
+
 }

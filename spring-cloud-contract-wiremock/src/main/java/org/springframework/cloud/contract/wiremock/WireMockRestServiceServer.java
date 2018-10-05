@@ -67,7 +67,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  * Convenience class for loading WireMock stubs into a {@link MockRestServiceServer}. In
  * this way using a {@link RestTemplate} can mock the responses from a server using
  * WireMock JSON DSL instead of the native Java DSL.
- * 
+ *
  * @author Dave Syer
  *
  */
@@ -93,7 +93,6 @@ public class WireMockRestServiceServer {
 
 	/**
 	 * Public factory method for wrapping a rest template into a MockRestServiceServer.
-	 * 
 	 * @param restTemplate the rest template to wrap
 	 * @return a WireMockRestServiceServer
 	 */
@@ -105,7 +104,6 @@ public class WireMockRestServiceServer {
 	 * Flag to tell the MockRestServiceServer to ignore the order of calls when matching
 	 * requests. The default is true because there is an implied ordering in the stubs (by
 	 * url path and with more specific request matchers first).
-	 * 
 	 * @param ignoreExpectOrder flag value (default true)
 	 * @return this
 	 */
@@ -117,7 +115,6 @@ public class WireMockRestServiceServer {
 	/**
 	 * If stub locations are given as a directory, then we search recursively in that
 	 * directory for files with this suffix. Default is ".json".
-	 * 
 	 * @param suffix the suffix to use when creating a resource pattern
 	 * @return this
 	 */
@@ -130,7 +127,6 @@ public class WireMockRestServiceServer {
 	 * Add a base url to all requests. Most WireMock JSON stubs have a path, but no
 	 * protocol or host in the request matcher, so this is useful when your rest template
 	 * is calling to a specific host.
-	 * 
 	 * @param baseUrl a base url to apply
 	 * @return this
 	 */
@@ -145,14 +141,13 @@ public class WireMockRestServiceServer {
 	 * match, or a plain directory name (which will have
 	 * <code>&#42;&#42;/&#42;.json</code> appended, where ".json" is the value of the
 	 * {@link #suffix(String) suffix}). Examples:
-	 * 
+	 *
 	 * <pre>
 	 * classpath:/mappings/foo.json
 	 * classpath:/mappings/*.json
 	 * classpath:META-INF/com.example/stubs/1.0.0/mappings/&#42;&#42;/&#42;.json
 	 * file:src/test/resources/stubs
 	 * </pre>
-	 * 
 	 * @param locations a set of resource locations
 	 * @return this
 	 */
@@ -164,7 +159,6 @@ public class WireMockRestServiceServer {
 	/**
 	 * Add some resource locations for files that represent response bodies. Wiremock
 	 * defaults to "file:src/test/resources/__files".
-	 * 
 	 * @param locations
 	 * @return this
 	 */
@@ -176,7 +170,6 @@ public class WireMockRestServiceServer {
 	/**
 	 * Build a MockRestServiceServer from the configured stubs. The server can later be
 	 * verified (optionally), if you need to check that all expected requests were made.
-	 * 
 	 * @return a MockRestServiceServer
 	 */
 	public MockRestServiceServer build() {
@@ -193,15 +186,18 @@ public class WireMockRestServiceServer {
 				}
 			}
 			catch (IOException e) {
-				throw new IllegalStateException("Cannot load resources for: " + location, e);
+				throw new IllegalStateException("Cannot load resources for: " + location,
+						e);
 			}
 		}
 		if (this.ignoreExpectOrder) {
 			Collections.sort(mappings, new StubMappingComparator());
 		}
 		for (StubMapping mapping : mappings) {
-			ResponseActions expect = server.expect(requestTo(request(mapping.getRequest())));
-			expect.andExpect(method(HttpMethod.valueOf(mapping.getRequest().getMethod().getName())));
+			ResponseActions expect = server
+					.expect(requestTo(request(mapping.getRequest())));
+			expect.andExpect(method(
+					HttpMethod.valueOf(mapping.getRequest().getMethod().getName())));
 			mapping.getRequest().getBodyPatterns();
 			bodyPatterns(expect, mapping.getRequest());
 			requestHeaders(expect, mapping.getRequest());
@@ -216,8 +212,11 @@ public class WireMockRestServiceServer {
 		}
 		for (final ContentPattern<?> pattern : request.getBodyPatterns()) {
 			if (pattern instanceof MatchesJsonPathPattern) {
-				expect.andExpect(MockRestRequestMatchers.jsonPath(((MatchesJsonPathPattern) pattern).getMatchesJsonPath()).exists());
-			} else if (pattern instanceof MatchesXPathPattern) {
+				expect.andExpect(MockRestRequestMatchers
+						.jsonPath(((MatchesJsonPathPattern) pattern).getMatchesJsonPath())
+						.exists());
+			}
+			else if (pattern instanceof MatchesXPathPattern) {
 				expect.andExpect(xpath((MatchesXPathPattern) pattern));
 			}
 			expect.andExpect(matchContents(pattern));
@@ -226,11 +225,15 @@ public class WireMockRestServiceServer {
 
 	private RequestMatcher matchContents(final ContentPattern pattern) {
 		return new RequestMatcher() {
-			@Override public void match(ClientHttpRequest request)
+			@Override
+			public void match(ClientHttpRequest request)
 					throws IOException, AssertionError {
-				MockClientHttpRequest mockRequest = (MockClientHttpRequest) request;;
+				MockClientHttpRequest mockRequest = (MockClientHttpRequest) request;
+				;
 				MatchResult result = pattern.match(mockRequest.getBodyAsString());
-				MatcherAssert.assertThat("Request as string [" + mockRequest.getBodyAsString() + "]", result.isExactMatch());
+				MatcherAssert.assertThat(
+						"Request as string [" + mockRequest.getBodyAsString() + "]",
+						result.isExactMatch());
 			}
 		};
 	}
@@ -238,13 +241,15 @@ public class WireMockRestServiceServer {
 	private RequestMatcher xpath(MatchesXPathPattern pattern) {
 		try {
 			return MockRestRequestMatchers.xpath(pattern.getMatchesXPath()).exists();
-		} catch (XPathExpressionException e) {
+		}
+		catch (XPathExpressionException e) {
 			throw new IllegalStateException(e);
 		}
 	}
 
 	private String request(RequestPattern request) {
-		return this.baseUrl + (request.getUrlPath() == null ? (request.getUrl() == null ? "/" : request.getUrl())
+		return this.baseUrl + (request.getUrlPath() == null
+				? (request.getUrl() == null ? "/" : request.getUrl())
 				: request.getUrlPath());
 	}
 
@@ -259,8 +264,8 @@ public class WireMockRestServiceServer {
 	}
 
 	private StubMapping mapping(Resource resource) throws IOException {
-		return Json.read(StreamUtils.copyToString(resource.getInputStream(), Charset.defaultCharset()),
-				StubMapping.class);
+		return Json.read(StreamUtils.copyToString(resource.getInputStream(),
+				Charset.defaultCharset()), StubMapping.class);
 	}
 
 	private DefaultResponseCreator response(ResponseDefinition response) {
@@ -274,7 +279,8 @@ public class WireMockRestServiceServer {
 		}
 		String file = response.getBodyFileName();
 		if (file != null) {
-			List<String> locations = this.files.isEmpty() ? Arrays.asList("classpath:/__files/") : this.files;
+			List<String> locations = this.files.isEmpty()
+					? Arrays.asList("classpath:/__files/") : this.files;
 			for (String location : locations) {
 				try {
 					if (!location.endsWith("/")) {
@@ -285,12 +291,14 @@ public class WireMockRestServiceServer {
 							try {
 								Resource resource = files.createRelative(file);
 								if (resource.exists()) {
-									return StreamUtils.copyToString(resource.getInputStream(),
+									return StreamUtils.copyToString(
+											resource.getInputStream(),
 											Charset.forName("UTF-8"));
 								}
 							}
 							catch (IOException e) {
-								throw new IllegalStateException("Cannot locate body file: " + file, e);
+								throw new IllegalStateException(
+										"Cannot locate body file: " + file, e);
 							}
 						}
 					}
@@ -311,12 +319,15 @@ public class WireMockRestServiceServer {
 
 					@Override
 					public boolean matches(Object item) {
-						return pattern.match(new MultiValue(header, Arrays.asList((String) item))).isExactMatch();
+						return pattern.match(
+								new MultiValue(header, Arrays.asList((String) item)))
+								.isExactMatch();
 					}
 
 					@Override
 					public void describeTo(Description description) {
-						description.appendText("should match header: " + header + " with ")
+						description
+								.appendText("should match header: " + header + " with ")
 								.appendText(pattern.getExpected());
 					}
 				}));
@@ -384,7 +395,8 @@ public class WireMockRestServiceServer {
 				if (value == 0) {
 					// Same number of header matchers
 					if (two.getPriority() != null) {
-						return one.getPriority() != null ? one.getPriority() - two.getPriority() : 1;
+						return one.getPriority() != null
+								? one.getPriority() - two.getPriority() : 1;
 					}
 					value = (int) (one.getInsertionIndex() - two.getInsertionIndex());
 				}
@@ -393,7 +405,8 @@ public class WireMockRestServiceServer {
 		}
 
 		private String request(RequestPattern request) {
-			return (request.getUrlPath() == null ? (request.getUrl() == null ? "/" : request.getUrl())
+			return (request.getUrlPath() == null
+					? (request.getUrl() == null ? "/" : request.getUrl())
 					: request.getUrlPath());
 		}
 

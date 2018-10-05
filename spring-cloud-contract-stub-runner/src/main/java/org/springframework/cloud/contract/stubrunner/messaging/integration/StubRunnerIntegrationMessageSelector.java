@@ -45,6 +45,7 @@ import com.toomuchcoding.jsonassert.JsonAssertion;
 class StubRunnerIntegrationMessageSelector implements MessageSelector {
 
 	private final Contract groovyDsl;
+
 	private final ContractVerifierObjectMapper objectMapper = new ContractVerifierObjectMapper();
 
 	StubRunnerIntegrationMessageSelector(Contract groovyDsl) {
@@ -58,7 +59,8 @@ class StubRunnerIntegrationMessageSelector implements MessageSelector {
 		}
 		Object inputMessage = message.getPayload();
 		BodyMatchers matchers = this.groovyDsl.getInput().getBodyMatchers();
-		Object dslBody = MapConverter.getStubSideValues(this.groovyDsl.getInput().getMessageBody());
+		Object dslBody = MapConverter
+				.getStubSideValues(this.groovyDsl.getInput().getMessageBody());
 		Object matchingInputMessage = JsonToJsonPathsConverter
 				.removeMatchingJsonPaths(dslBody, matchers);
 		JsonPaths jsonPaths = JsonToJsonPathsConverter
@@ -66,7 +68,8 @@ class StubRunnerIntegrationMessageSelector implements MessageSelector {
 						matchingInputMessage);
 		DocumentContext parsedJson;
 		try {
-			parsedJson = JsonPath.parse(this.objectMapper.writeValueAsString(inputMessage));
+			parsedJson = JsonPath
+					.parse(this.objectMapper.writeValueAsString(inputMessage));
 		}
 		catch (JsonProcessingException e) {
 			throw new IllegalStateException("Cannot serialize to JSON", e);
@@ -77,7 +80,8 @@ class StubRunnerIntegrationMessageSelector implements MessageSelector {
 		}
 		if (matchers != null && matchers.hasMatchers()) {
 			for (BodyMatcher matcher : matchers.jsonPathMatchers()) {
-				String jsonPath = JsonToJsonPathsConverter.convertJsonPathAndRegexToAJsonPath(matcher, dslBody);
+				String jsonPath = JsonToJsonPathsConverter
+						.convertJsonPathAndRegexToAJsonPath(matcher, dslBody);
 				matches &= matchesJsonPath(parsedJson, jsonPath);
 			}
 		}
@@ -86,8 +90,7 @@ class StubRunnerIntegrationMessageSelector implements MessageSelector {
 
 	private boolean matchesJsonPath(DocumentContext parsedJson, String jsonPath) {
 		try {
-			JsonAssertion.assertThat(parsedJson)
-					.matchesJsonPath(jsonPath);
+			JsonAssertion.assertThat(parsedJson).matchesJsonPath(jsonPath);
 			return true;
 		}
 		catch (Exception e) {
@@ -102,10 +105,11 @@ class StubRunnerIntegrationMessageSelector implements MessageSelector {
 			String name = it.getName();
 			Object value = it.getClientValue();
 			Object valueInHeader = headers.get(name);
-			matches &= value instanceof Pattern ?
-					((Pattern) value).matcher(valueInHeader.toString()).matches() :
-					valueInHeader!=null && valueInHeader.equals(value);
+			matches &= value instanceof Pattern
+					? ((Pattern) value).matcher(valueInHeader.toString()).matches()
+					: valueInHeader != null && valueInHeader.equals(value);
 		}
 		return matches;
 	}
+
 }

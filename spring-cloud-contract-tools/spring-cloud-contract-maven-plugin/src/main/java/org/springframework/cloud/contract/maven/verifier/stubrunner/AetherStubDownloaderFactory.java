@@ -34,9 +34,11 @@ import org.springframework.core.io.ResourceLoader;
 @Named
 @Singleton
 public class AetherStubDownloaderFactory {
+
 	private static final Log log = LogFactory.getLog(AetherStubDownloaderFactory.class);
 
 	private final MavenProject project;
+
 	private final RepositorySystem repoSystem;
 
 	@Inject
@@ -48,10 +50,15 @@ public class AetherStubDownloaderFactory {
 
 	public StubDownloaderBuilder build(final RepositorySystemSession repoSession) {
 		return new StubDownloaderBuilder() {
-			@Override public StubDownloader build(StubRunnerOptions stubRunnerOptions) {
-				log.info("Will download contracts using current build's Maven repository setup");
-				return new AetherStubDownloader(AetherStubDownloaderFactory.this.repoSystem,
-						AetherStubDownloaderFactory.this.project.getRemoteProjectRepositories(), repoSession);
+			@Override
+			public StubDownloader build(StubRunnerOptions stubRunnerOptions) {
+				log.info(
+						"Will download contracts using current build's Maven repository setup");
+				return new AetherStubDownloader(
+						AetherStubDownloaderFactory.this.repoSystem,
+						AetherStubDownloaderFactory.this.project
+								.getRemoteProjectRepositories(),
+						repoSession);
 			}
 
 			@Override
@@ -60,4 +67,5 @@ public class AetherStubDownloaderFactory {
 			}
 		};
 	}
+
 }

@@ -32,15 +32,18 @@ public class AmqpMessagingApplication {
 
 	@Bean
 	public MessageConverter messageConverter(ObjectMapper objectMapper) {
-		final Jackson2JsonMessageConverter jsonMessageConverter = new Jackson2JsonMessageConverter(objectMapper);
+		final Jackson2JsonMessageConverter jsonMessageConverter = new Jackson2JsonMessageConverter(
+				objectMapper);
 		jsonMessageConverter.setCreateMessageIds(true);
-		final ContentTypeDelegatingMessageConverter messageConverter = new ContentTypeDelegatingMessageConverter(jsonMessageConverter);
+		final ContentTypeDelegatingMessageConverter messageConverter = new ContentTypeDelegatingMessageConverter(
+				jsonMessageConverter);
 		messageConverter.addDelegate(CONTENT_TYPE_JSON, jsonMessageConverter);
 		return messageConverter;
 	}
 
 	@Bean
-	public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, MessageConverter messageConverter) {
+	public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory,
+			MessageConverter messageConverter) {
 		RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
 		rabbitTemplate.setMessageConverter(messageConverter);
 		return rabbitTemplate;
@@ -51,7 +54,8 @@ public class AmqpMessagingApplication {
 	static class MessageListenerAdapterConfig {
 
 		@Bean
-		public MessageListenerAdapter messageListenerAdapter(MessageSubscriber messageSubscriber, MessageConverter messageConverter) {
+		public MessageListenerAdapter messageListenerAdapter(
+				MessageSubscriber messageSubscriber, MessageConverter messageConverter) {
 			return new MessageListenerAdapter(messageSubscriber, messageConverter);
 		}
 
@@ -59,14 +63,16 @@ public class AmqpMessagingApplication {
 
 		@Bean
 		public Binding binding() {
-			return BindingBuilder.bind(new Queue("test.queue")).to(new DirectExchange("contract-test.exchange")).with("#");
+			return BindingBuilder.bind(new Queue("test.queue"))
+					.to(new DirectExchange("contract-test.exchange")).with("#");
 		}
 		// end::amqp_binding[]
 
 		// tag::amqp_listener[]
 		@Bean
-		public SimpleMessageListenerContainer simpleMessageListenerContainer(ConnectionFactory connectionFactory,
-																				MessageListenerAdapter listenerAdapter) {
+		public SimpleMessageListenerContainer simpleMessageListenerContainer(
+				ConnectionFactory connectionFactory,
+				MessageListenerAdapter listenerAdapter) {
 			SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
 			container.setConnectionFactory(connectionFactory);
 			container.setQueueNames("test.queue");
@@ -80,6 +86,7 @@ public class AmqpMessagingApplication {
 		public MessageSubscriber messageSubscriber() {
 			return new MessageSubscriber();
 		}
+
 	}
 
 	@Configuration
@@ -93,8 +100,8 @@ public class AmqpMessagingApplication {
 		}
 
 		@Bean
-		public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(ConnectionFactory connectionFactory,
-																					MessageConverter messageConverter) {
+		public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
+				ConnectionFactory connectionFactory, MessageConverter messageConverter) {
 			SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
 			factory.setConnectionFactory(connectionFactory);
 			factory.setConcurrentConsumers(3);
@@ -102,5 +109,7 @@ public class AmqpMessagingApplication {
 			factory.setMessageConverter(messageConverter);
 			return factory;
 		}
+
 	}
+
 }

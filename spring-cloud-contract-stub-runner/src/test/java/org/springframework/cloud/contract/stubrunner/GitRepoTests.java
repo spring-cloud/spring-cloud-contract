@@ -31,17 +31,19 @@ import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 
 /**
- * @author Marcin Grzejszczak
- * taken from: https://github.com/spring-cloud/spring-cloud-release-tools
+ * @author Marcin Grzejszczak taken from:
+ * https://github.com/spring-cloud/spring-cloud-release-tools
  */
 public class GitRepoTests extends AbstractGitTest {
 
 	File project;
+
 	GitRepo gitRepo;
 
 	@Before
 	public void setup() throws IOException, URISyntaxException {
-		this.project = new File(GitRepoTests.class.getResource("/git_samples/contract-git").toURI());
+		this.project = new File(
+				GitRepoTests.class.getResource("/git_samples/contract-git").toURI());
 		TestUtils.prepareLocalRepo();
 		this.gitRepo = new GitRepo(this.tmpFolder);
 	}
@@ -54,19 +56,22 @@ public class GitRepoTests extends AbstractGitTest {
 	}
 
 	@Test
-	public void should_throw_exception_when_there_is_no_repo() throws IOException, URISyntaxException {
+	public void should_throw_exception_when_there_is_no_repo()
+			throws IOException, URISyntaxException {
 		thenThrownBy(() -> this.gitRepo
 				.cloneProject(GitRepoTests.class.getResource("/git_samples/").toURI()))
-				.isInstanceOf(IllegalStateException.class)
-				.hasMessageContaining("Exception occurred while cloning repo");
+						.isInstanceOf(IllegalStateException.class)
+						.hasMessageContaining("Exception occurred while cloning repo");
 	}
 
 	@Test
-	public void should_throw_an_exception_when_failed_to_initialize_the_repo() throws IOException {
-		thenThrownBy(() ->  new GitRepo(this.tmpFolder, new ExceptionThrowingJGitFactory()).cloneProject(this.project.toURI()))
-				.isInstanceOf(IllegalStateException.class)
-				.hasMessageContaining("Exception occurred while cloning repo")
-				.hasCauseInstanceOf(CustomException.class);
+	public void should_throw_an_exception_when_failed_to_initialize_the_repo()
+			throws IOException {
+		thenThrownBy(() -> new GitRepo(this.tmpFolder, new ExceptionThrowingJGitFactory())
+				.cloneProject(this.project.toURI()))
+						.isInstanceOf(IllegalStateException.class)
+						.hasMessageContaining("Exception occurred while cloning repo")
+						.hasCauseInstanceOf(CustomException.class);
 	}
 
 	@Test
@@ -79,12 +84,14 @@ public class GitRepoTests extends AbstractGitTest {
 	}
 
 	@Test
-	public void should_throw_an_exception_when_checking_out_nonexisting_branch() throws IOException {
+	public void should_throw_an_exception_when_checking_out_nonexisting_branch()
+			throws IOException {
 		File project = this.gitRepo.cloneProject(this.project.toURI());
 		try {
 			this.gitRepo.checkout(project, "nonExistingBranch");
 			fail("should throw an exception");
-		} catch (IllegalStateException e) {
+		}
+		catch (IllegalStateException e) {
 			then(e).hasMessageContaining("Ref nonExistingBranch can not be resolved");
 		}
 	}
@@ -96,7 +103,7 @@ public class GitRepoTests extends AbstractGitTest {
 
 		this.gitRepo.commit(project, "some message");
 
-		try(Git git = openGitProject(project)) {
+		try (Git git = openGitProject(project)) {
 			RevCommit revCommit = git.log().call().iterator().next();
 			then(revCommit.getShortMessage()).isEqualTo("some message");
 		}
@@ -120,7 +127,7 @@ public class GitRepoTests extends AbstractGitTest {
 
 		this.gitRepo.commit(project, "empty commit");
 
-		try(Git git = openGitProject(project)) {
+		try (Git git = openGitProject(project)) {
 			RevCommit revCommit = git.log().call().iterator().next();
 			then(revCommit.getShortMessage()).isNotEqualTo("empty commit");
 		}
@@ -136,7 +143,7 @@ public class GitRepoTests extends AbstractGitTest {
 
 		this.gitRepo.pushCurrentBranch(project);
 
-		try(Git git = openGitProject(origin)) {
+		try (Git git = openGitProject(origin)) {
 			RevCommit revCommit = git.log().call().iterator().next();
 			then(revCommit.getShortMessage()).isEqualTo("some message");
 		}
@@ -152,21 +159,27 @@ public class GitRepoTests extends AbstractGitTest {
 
 		this.gitRepo.pull(project);
 
-		try(Git git = openGitProject(project)) {
+		try (Git git = openGitProject(project)) {
 			RevCommit revCommit = git.log().call().iterator().next();
 			then(revCommit.getShortMessage()).isEqualTo("some message");
 		}
 	}
+
 }
 
 class ExceptionThrowingJGitFactory extends GitRepo.JGitFactory {
-	@Override CloneCommand getCloneCommandByCloneRepository() {
+
+	@Override
+	CloneCommand getCloneCommandByCloneRepository() {
 		throw new CustomException("foo");
 	}
+
 }
 
 class CustomException extends RuntimeException {
+
 	public CustomException(String message) {
 		super(message);
 	}
+
 }

@@ -40,13 +40,13 @@ import wiremock.org.eclipse.jetty.http.HttpStatus;
 @AutoConfigureMockMvc
 public class WiremockServerRestDocsApplicationTests {
 
-	@Autowired private MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 
 	@Test
 	public void contextLoads() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/resource"))
-				.andExpect(content().string("Hello World"))
-				.andDo(document("resource"));
+				.andExpect(content().string("Hello World")).andDo(document("resource"));
 	}
 
 	@Test
@@ -59,16 +59,16 @@ public class WiremockServerRestDocsApplicationTests {
 
 	@Test
 	public void queryParamsAreFetchedFromStubs() throws Exception {
-		this.mockMvc.perform(
-						MockMvcRequestBuilders
-								.get("/project_metadata/spring-framework?callback=a_function_name&foo=foo&bar=bar"))
+		this.mockMvc.perform(MockMvcRequestBuilders.get(
+				"/project_metadata/spring-framework?callback=a_function_name&foo=foo&bar=bar"))
 				.andExpect(status().isOk())
 				.andExpect(content().string("spring-framework a_function_name foo bar"))
 				.andDo(document("query"));
 
 		File file = new File("target/snippets/stubs", "query.json");
 		BDDAssertions.then(file).exists();
-		StubMapping stubMapping = StubMapping.buildFrom(new String(Files.readAllBytes(file.toPath())));
+		StubMapping stubMapping = StubMapping
+				.buildFrom(new String(Files.readAllBytes(file.toPath())));
 		Map<String, MultiValuePattern> queryParameters = stubMapping.getRequest()
 				.getQueryParameters();
 		BDDAssertions.then(queryParameters.get("callback").getValuePattern())
@@ -99,9 +99,9 @@ public class WiremockServerRestDocsApplicationTests {
 		@RequestMapping("/project_metadata/{projectId}")
 		public ResponseEntity<String> query(@PathVariable("projectId") String projectId,
 				@RequestParam("callback") String callback,
-				@RequestParam("foo") String foo,
-				@RequestParam("bar") String bar) {
-			return ResponseEntity.ok().body(projectId + " " + callback + " " + foo + " " + bar);
+				@RequestParam("foo") String foo, @RequestParam("bar") String bar) {
+			return ResponseEntity.ok()
+					.body(projectId + " " + callback + " " + foo + " " + bar);
 		}
 
 	}

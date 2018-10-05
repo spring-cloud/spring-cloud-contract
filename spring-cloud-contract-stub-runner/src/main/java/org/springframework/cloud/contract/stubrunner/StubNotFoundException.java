@@ -9,10 +9,12 @@ package org.springframework.cloud.contract.stubrunner;
 public class StubNotFoundException extends RuntimeException {
 
 	public StubNotFoundException(String groupId, String artifactId) {
-		super("Stub not found for groupid [" + groupId + "] and artifactid [" + artifactId + "]");
+		super("Stub not found for groupid [" + groupId + "] and artifactid [" + artifactId
+				+ "]");
 	}
 
 	public StubNotFoundException(String ivyNotation) {
 		super("Stub not found for stub with notation [" + ivyNotation + "]");
 	}
+
 }

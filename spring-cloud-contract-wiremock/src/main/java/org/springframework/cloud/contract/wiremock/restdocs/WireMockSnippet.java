@@ -73,6 +73,7 @@ public class WireMockSnippet implements Snippet {
 	private StubMapping stubMapping;
 
 	private boolean hasJsonBodyRequestToMatch = false;
+
 	private boolean hasXmlBodyRequestToMatch = false;
 
 	private static final TemplateFormat TEMPLATE_FORMAT = new TemplateFormat() {
@@ -133,9 +134,8 @@ public class WireMockSnippet implements Snippet {
 	}
 
 	private boolean hasContentType(Operation operation, MediaType mediaType) {
-		return operation.getRequest().getHeaders().getContentType() != null
-				&& (operation.getRequest().getHeaders().getContentType()
-				.isCompatibleWith(mediaType));
+		return operation.getRequest().getHeaders().getContentType() != null && (operation
+				.getRequest().getHeaders().getContentType().isCompatibleWith(mediaType));
 	}
 
 	private ResponseDefinitionBuilder response(Operation operation) {
@@ -145,9 +145,8 @@ public class WireMockSnippet implements Snippet {
 	}
 
 	private MappingBuilder request(Operation operation) {
-		return queryParams(
-				requestHeaders(requestBuilder(operation), operation)
-				, operation);
+		return queryParams(requestHeaders(requestBuilder(operation), operation),
+				operation);
 	}
 
 	private MappingBuilder queryParams(MappingBuilder request, Operation operation) {
@@ -157,7 +156,8 @@ public class WireMockSnippet implements Snippet {
 		}
 		for (String queryPair : rawQuery.split("&")) {
 			String[] splitQueryPair = queryPair.split("=");
-			request = request.withQueryParam(splitQueryPair[0], WireMock.equalTo(splitQueryPair[1]));
+			request = request.withQueryParam(splitQueryPair[0],
+					WireMock.equalTo(splitQueryPair[1]));
 		}
 		return request;
 	}

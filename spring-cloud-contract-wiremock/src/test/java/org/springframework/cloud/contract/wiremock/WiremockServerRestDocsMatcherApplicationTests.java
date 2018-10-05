@@ -33,14 +33,15 @@ public class WiremockServerRestDocsMatcherApplicationTests {
 
 	@Autowired
 	private MockMvc mockMvc;
-	
+
 	@Rule
 	public ExpectedException expected = ExpectedException.none();
 
 	@Test
 	public void matchesRequest() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.post("/resource").content("greeting")
-				.contentType(MediaType.TEXT_PLAIN))
+		this.mockMvc
+				.perform(MockMvcRequestBuilders.post("/resource").content("greeting")
+						.contentType(MediaType.TEXT_PLAIN))
 				.andExpect(MockMvcResultMatchers.content().string("Hello World"))
 				.andDo(WireMockRestDocs.verify()
 						.wiremock(WireMock.post(WireMock.urlPathEqualTo("/resource"))
@@ -52,8 +53,9 @@ public class WiremockServerRestDocsMatcherApplicationTests {
 	public void doesNotMatch() throws Exception {
 		this.expected.expect(AssertionError.class);
 		this.expected.expectMessage("wiremock did not match");
-		this.mockMvc.perform(MockMvcRequestBuilders.post("/resource").content("greeting")
-				.contentType(MediaType.TEXT_PLAIN))
+		this.mockMvc
+				.perform(MockMvcRequestBuilders.post("/resource").content("greeting")
+						.contentType(MediaType.TEXT_PLAIN))
 				.andExpect(MockMvcResultMatchers.content().string("Hello World"))
 				.andDo(WireMockRestDocs.verify()
 						.wiremock(WireMock.post(WireMock.urlPathEqualTo("/resource"))

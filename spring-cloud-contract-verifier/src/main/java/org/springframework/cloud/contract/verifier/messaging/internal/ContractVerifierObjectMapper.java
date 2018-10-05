@@ -20,8 +20,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Wrapper over {@link ObjectMapper} that won't try to parse
- * String but will directly return it.
+ * Wrapper over {@link ObjectMapper} that won't try to parse String but will directly
+ * return it.
  *
  * @author Marcin Grzejszczak
  */
@@ -40,9 +40,11 @@ public class ContractVerifierObjectMapper {
 	public String writeValueAsString(Object payload) throws JsonProcessingException {
 		if (payload instanceof String) {
 			return payload.toString();
-		} else if (payload instanceof byte[]) {
+		}
+		else if (payload instanceof byte[]) {
 			return new String((byte[]) payload);
 		}
 		return this.objectMapper.writeValueAsString(payload);
 	}
+
 }

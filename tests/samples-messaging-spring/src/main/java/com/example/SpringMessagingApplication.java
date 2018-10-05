@@ -27,4 +27,5 @@ class SpringMessagingApplication {
 	static void main(String[] args) {
 		SpringApplication.run(SpringMessagingApplication.class, args);
 	}
+
 }

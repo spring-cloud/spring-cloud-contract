@@ -21,8 +21,9 @@ import java.util.Map;
 import org.springframework.restdocs.snippet.Snippet;
 
 /**
- * Convenience class for setting up RestDocs to generate a {@link org.springframework.restdocs.snippet.Snippet}
- * with Spring Cloud Contract DSL. Example usage:
+ * Convenience class for setting up RestDocs to generate a
+ * {@link org.springframework.restdocs.snippet.Snippet} with Spring Cloud Contract DSL.
+ * Example usage:
  *
  * <pre>
  * &#64;RunWith(SpringRunner.class)
@@ -52,10 +53,10 @@ import org.springframework.restdocs.snippet.Snippet;
  *     .andDo(document("index", SpringCloudContractRestDocs.dslContract()));
  * 	}
  * </pre>
- * 
- * which creates a file "target/snippets/contracts/index.groovy" and a
- * standard documentation entitled `dsl-contract.adoc` containing that contract.
- * 
+ *
+ * which creates a file "target/snippets/contracts/index.groovy" and a standard
+ * documentation entitled `dsl-contract.adoc` containing that contract.
+ *
  * @author Marcin Grzejszczak
  * @since 1.0.4
  */
@@ -66,9 +67,8 @@ public class SpringCloudContractRestDocs {
 	}
 
 	/**
-	 * Returns a new {@code Snippet} that will document Spring Cloud Contract DSL for the API
-	 * operation.
-	 *
+	 * Returns a new {@code Snippet} that will document Spring Cloud Contract DSL for the
+	 * API operation.
 	 * @return the snippet that will document the Spring Cloud Contract DSL
 	 */
 	public static Snippet dslContract() {
@@ -76,10 +76,9 @@ public class SpringCloudContractRestDocs {
 	}
 
 	/**
-	 * Returns a new {@code Snippet} that will document the Spring Cloud Contract DSL for the API
-	 * operation. The given {@code attributes} will be available during snippet
+	 * Returns a new {@code Snippet} that will document the Spring Cloud Contract DSL for
+	 * the API operation. The given {@code attributes} will be available during snippet
 	 * generation.
-	 *
 	 * @param attributes the attributes
 	 * @return the snippet that will document the Spring Cloud Contract DSL
 	 */

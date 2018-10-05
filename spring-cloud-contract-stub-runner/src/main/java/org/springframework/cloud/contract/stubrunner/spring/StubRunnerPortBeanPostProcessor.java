@@ -21,7 +21,8 @@ class StubRunnerPortBeanPostProcessor implements BeanPostProcessor {
 		this.environment = environment;
 	}
 
-	@Override public Object postProcessAfterInitialization(Object bean, String beanName)
+	@Override
+	public Object postProcessAfterInitialization(Object bean, String beanName)
 			throws BeansException {
 		injectStubRunnerPort(bean);
 		return bean;
@@ -29,15 +30,17 @@ class StubRunnerPortBeanPostProcessor implements BeanPostProcessor {
 
 	private void injectStubRunnerPort(Object bean) {
 		Class<?> clazz = bean.getClass();
-		ReflectionUtils.FieldCallback fieldCallback =
-				new StubRunnerPortFieldCallback(this.environment, bean);
+		ReflectionUtils.FieldCallback fieldCallback = new StubRunnerPortFieldCallback(
+				this.environment, bean);
 		ReflectionUtils.doWithFields(clazz, fieldCallback);
 	}
+
 }
 
 class StubRunnerPortFieldCallback implements ReflectionUtils.FieldCallback {
 
 	private final Environment environment;
+
 	private final Object bean;
 
 	StubRunnerPortFieldCallback(Environment environment, Object bean) {
@@ -45,17 +48,20 @@ class StubRunnerPortFieldCallback implements ReflectionUtils.FieldCallback {
 		this.bean = bean;
 	}
 
-	@Override public void doWith(Field field)
+	@Override
+	public void doWith(Field field)
 			throws IllegalArgumentException, IllegalAccessException {
 		if (!field.isAnnotationPresent(StubRunnerPort.class)) {
 			return;
 		}
 		ReflectionUtils.makeAccessible(field);
 		String stub = field.getDeclaredAnnotation(StubRunnerPort.class).value();
-		Integer port = this.environment.getProperty(
-				StubRunnerConfiguration.STUBRUNNER_PREFIX + "." + stub.replace(":", ".") + ".port", Integer.class);
+		Integer port = this.environment
+				.getProperty(StubRunnerConfiguration.STUBRUNNER_PREFIX + "."
+						+ stub.replace(":", ".") + ".port", Integer.class);
 		if (port != null) {
 			field.set(this.bean, port);
 		}
 	}
+
 }

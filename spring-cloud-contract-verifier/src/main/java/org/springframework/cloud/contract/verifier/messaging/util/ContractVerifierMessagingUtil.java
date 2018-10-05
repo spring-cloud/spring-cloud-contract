@@ -110,5 +110,7 @@ public class ContractVerifierMessagingUtil {
 		public int hashCode() {
 			return this.delegate.hashCode();
 		}
+
 	}
+
 }

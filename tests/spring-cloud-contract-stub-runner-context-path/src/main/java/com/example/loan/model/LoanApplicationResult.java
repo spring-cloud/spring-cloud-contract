@@ -9,7 +9,8 @@ public class LoanApplicationResult {
 	public LoanApplicationResult() {
 	}
 
-	public LoanApplicationResult(LoanApplicationStatus loanApplicationStatus, String rejectionReason) {
+	public LoanApplicationResult(LoanApplicationStatus loanApplicationStatus,
+			String rejectionReason) {
 		this.loanApplicationStatus = loanApplicationStatus;
 		this.rejectionReason = rejectionReason;
 	}
@@ -29,4 +30,5 @@ public class LoanApplicationResult {
 	public void setRejectionReason(String rejectionReason) {
 		this.rejectionReason = rejectionReason;
 	}
+
 }

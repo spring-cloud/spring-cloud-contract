@@ -31,4 +31,5 @@ public class FraudServiceRequest {
 	public void setLoanAmount(BigDecimal loanAmount) {
 		this.loanAmount = loanAmount;
 	}
+
 }

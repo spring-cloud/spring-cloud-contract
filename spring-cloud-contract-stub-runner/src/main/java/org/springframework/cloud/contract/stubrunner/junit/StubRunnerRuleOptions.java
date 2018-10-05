@@ -8,10 +8,12 @@ import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 
 interface StubRunnerRuleOptions {
+
 	/**
-	 * Pass the {@link MessageVerifier} that this rule should use.
-	 * If you don't pass anything a {@link StubRunnerRule.ExceptionThrowingMessageVerifier} will be used.
-	 * That means that an exception will be thrown whenever you try to do sth messaging related.
+	 * Pass the {@link MessageVerifier} that this rule should use. If you don't pass
+	 * anything a {@link StubRunnerRule.ExceptionThrowingMessageVerifier} will be used.
+	 * That means that an exception will be thrown whenever you try to do sth messaging
+	 * related.
 	 */
 	StubRunnerRule messageVerifier(MessageVerifier messageVerifier);
 
@@ -45,11 +47,12 @@ interface StubRunnerRuleOptions {
 	/**
 	 * Group Id, artifact Id, version and classifier of a single stub to download
 	 */
-	PortStubRunnerRuleOptions downloadStub(String groupId, String artifactId, String version,
-			String classifier);
+	PortStubRunnerRuleOptions downloadStub(String groupId, String artifactId,
+			String version, String classifier);
 
 	/**
-	 * Group Id, artifact Id and classifier of a single stub to download in the latest version
+	 * Group Id, artifact Id and classifier of a single stub to download in the latest
+	 * version
 	 */
 	PortStubRunnerRuleOptions downloadLatestStub(String groupId, String artifactId,
 			String classifier);
@@ -61,7 +64,8 @@ interface StubRunnerRuleOptions {
 			String version);
 
 	/**
-	 * Group Id, artifact Id of a single stub to download. Default classifier will be picked.
+	 * Group Id, artifact Id of a single stub to download. Default classifier will be
+	 * picked.
 	 */
 	PortStubRunnerRuleOptions downloadStub(String groupId, String artifactId);
 
@@ -96,13 +100,15 @@ interface StubRunnerRuleOptions {
 	StubRunnerRule withMappingsOutputFolder(String mappingsOutputFolder);
 
 	/**
-	 * If set to {@code false} will NOT delete stubs from a temporary
-	 * folder after running tests
+	 * If set to {@code false} will NOT delete stubs from a temporary folder after running
+	 * tests
 	 */
 	StubRunnerRule withDeleteStubsAfterTest(boolean deleteStubsAfterTest);
 
 	/**
-	 * Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
+	 * Map of properties that can be passed to custom
+	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
 	 */
 	StubRunnerRule withProperties(Map<String, String> properties);
+
 }

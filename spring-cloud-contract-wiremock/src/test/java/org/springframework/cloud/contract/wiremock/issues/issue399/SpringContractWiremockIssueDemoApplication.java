@@ -25,11 +25,12 @@ public class SpringContractWiremockIssueDemoApplication {
 	@Profile("bug")
 	public RestTemplateCustomizer someOrderedInterceptorCustomizer() {
 		return new RestTemplateCustomizer() {
-			@Override public void customize(RestTemplate restTemplate) {
+			@Override
+			public void customize(RestTemplate restTemplate) {
 				ClientHttpRequestInterceptor emptyInterceptor = new ClientHttpRequestInterceptor() {
-					@Override public ClientHttpResponse intercept(HttpRequest request,
-							byte[] body, ClientHttpRequestExecution execution)
-							throws IOException {
+					@Override
+					public ClientHttpResponse intercept(HttpRequest request, byte[] body,
+							ClientHttpRequestExecution execution) throws IOException {
 						return execution.execute(request, body);
 					}
 				};
@@ -41,11 +42,12 @@ public class SpringContractWiremockIssueDemoApplication {
 	@Bean
 	public RestTemplateCustomizer someNotOrderedInterceptorCustomizer() {
 		return new RestTemplateCustomizer() {
-			@Override public void customize(RestTemplate restTemplate) {
+			@Override
+			public void customize(RestTemplate restTemplate) {
 				ClientHttpRequestInterceptor emptyInterceptor = new ClientHttpRequestInterceptor() {
-					@Override public ClientHttpResponse intercept(HttpRequest request,
-							byte[] body, ClientHttpRequestExecution execution)
-							throws IOException {
+					@Override
+					public ClientHttpResponse intercept(HttpRequest request, byte[] body,
+							ClientHttpRequestExecution execution) throws IOException {
 						return execution.execute(request, body);
 					}
 				};
@@ -58,11 +60,12 @@ public class SpringContractWiremockIssueDemoApplication {
 	@Order
 	public RestTemplateCustomizer someLowestPrecedenceOrderedInterceptorCustomizer() {
 		return new RestTemplateCustomizer() {
-			@Override public void customize(RestTemplate restTemplate) {
+			@Override
+			public void customize(RestTemplate restTemplate) {
 				ClientHttpRequestInterceptor emptyInterceptor = new ClientHttpRequestInterceptor() {
-					@Override public ClientHttpResponse intercept(HttpRequest request,
-							byte[] body, ClientHttpRequestExecution execution)
-							throws IOException {
+					@Override
+					public ClientHttpResponse intercept(HttpRequest request, byte[] body,
+							ClientHttpRequestExecution execution) throws IOException {
 						return execution.execute(request, body);
 					}
 				};
@@ -70,6 +73,7 @@ public class SpringContractWiremockIssueDemoApplication {
 			}
 		};
 	}
+
 }
 
 class RestTemplateClient {
@@ -84,4 +88,5 @@ class RestTemplateClient {
 
 		return restTemplate.getForObject("/some-url", String.class);
 	}
+
 }

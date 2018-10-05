@@ -30,7 +30,8 @@ import org.springframework.messaging.support.MessageBuilder;
  *
  * @author Marcin Grzejszczak
  */
-class StubRunnerIntegrationTransformer implements GenericTransformer<Message<?>, Message<?>> {
+class StubRunnerIntegrationTransformer
+		implements GenericTransformer<Message<?>, Message<?>> {
 
 	private final Contract groovyDsl;
 
@@ -43,8 +44,11 @@ class StubRunnerIntegrationTransformer implements GenericTransformer<Message<?>,
 		if (this.groovyDsl.getOutputMessage() == null) {
 			return source;
 		}
-		String payload = BodyExtractor.extractStubValueFrom(this.groovyDsl.getOutputMessage().getBody());
-		Map<String, Object> headers = this.groovyDsl.getOutputMessage().getHeaders().asStubSideMap();
+		String payload = BodyExtractor
+				.extractStubValueFrom(this.groovyDsl.getOutputMessage().getBody());
+		Map<String, Object> headers = this.groovyDsl.getOutputMessage().getHeaders()
+				.asStubSideMap();
 		return MessageBuilder.createMessage(payload, new MessageHeaders(headers));
 	}
+
 }

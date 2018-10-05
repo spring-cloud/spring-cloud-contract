@@ -32,27 +32,30 @@ import org.springframework.cloud.contract.stubrunner.StubFinder;
 import org.springframework.util.StringUtils;
 
 /**
- * Custom version of {@link DiscoveryClient} that tries to find an instance
- * in one of the started WireMock servers
+ * Custom version of {@link DiscoveryClient} that tries to find an instance in one of the
+ * started WireMock servers
  *
  * @author Marcin Grzejszczak
- *
  * @since 1.0.0
  */
 class StubRunnerDiscoveryClient implements DiscoveryClient {
 
-	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
+	private static final Log log = LogFactory
+			.getLog(MethodHandles.lookup().lookupClass());
 
 	private final DiscoveryClient delegate;
+
 	private final StubFinder stubFinder;
+
 	private final StubMapperProperties stubMapperProperties;
 
 	public StubRunnerDiscoveryClient(DiscoveryClient delegate, StubFinder stubFinder,
 			StubMapperProperties stubMapperProperties, String springAppName) {
-		this.delegate = delegate instanceof StubRunnerDiscoveryClient ?
-				noOpDiscoveryClient() : delegate;
+		this.delegate = delegate instanceof StubRunnerDiscoveryClient
+				? noOpDiscoveryClient() : delegate;
 		if (log.isDebugEnabled()) {
-			log.debug("Will delegate calls to discovery service [" + this.delegate + "] if a stub is not found");
+			log.debug("Will delegate calls to discovery service [" + this.delegate
+					+ "] if a stub is not found");
 		}
 		this.stubFinder = stubFinder;
 		this.stubMapperProperties = stubMapperProperties;
@@ -62,7 +65,8 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 			StubMapperProperties stubMapperProperties, String springAppName) {
 		this.delegate = noOpDiscoveryClient();
 		if (log.isDebugEnabled()) {
-			log.debug("Will delegate calls to discovery service [" + this.delegate + "] if a stub is not found");
+			log.debug("Will delegate calls to discovery service [" + this.delegate
+					+ "] if a stub is not found");
 		}
 		this.stubFinder = stubFinder;
 		this.stubMapperProperties = stubMapperProperties;
@@ -76,7 +80,8 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 	public String description() {
 		try {
 			return this.delegate.description();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			if (log.isDebugEnabled()) {
 				log.debug("Failed to fetch description from delegate", e);
 			}
@@ -86,23 +91,25 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 
 	@Override
 	public List<ServiceInstance> getInstances(String serviceId) {
-		String ivyNotation = this.stubMapperProperties.fromServiceIdToIvyNotation(serviceId);
+		String ivyNotation = this.stubMapperProperties
+				.fromServiceIdToIvyNotation(serviceId);
 		String serviceToFind = StringUtils.hasText(ivyNotation) ? ivyNotation : serviceId;
 		URL stubUrl = this.stubFinder.findStubUrl(serviceToFind);
-		log.info("Resolved from ivy [" + ivyNotation + "] service to find [" + serviceToFind + "]. "
-				+ "Found stub is available under URL [" + stubUrl + "]");
+		log.info("Resolved from ivy [" + ivyNotation + "] service to find ["
+				+ serviceToFind + "]. " + "Found stub is available under URL [" + stubUrl
+				+ "]");
 		if (stubUrl == null) {
 			return getInstancesFromDelegate(serviceId);
 		}
-		return Collections.<ServiceInstance>singletonList(
-				new StubRunnerServiceInstance(serviceId, stubUrl.getHost(), stubUrl.getPort(), toUri(stubUrl))
-		);
+		return Collections.<ServiceInstance>singletonList(new StubRunnerServiceInstance(
+				serviceId, stubUrl.getHost(), stubUrl.getPort(), toUri(stubUrl)));
 	}
 
 	private List<ServiceInstance> getInstancesFromDelegate(String serviceId) {
 		try {
 			return new ArrayList<>(this.delegate.getInstances(serviceId));
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			if (log.isDebugEnabled()) {
 				log.debug("Failed to fetch instances from delegate", e);
 			}
@@ -113,7 +120,8 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 	private URI toUri(URL url) {
 		try {
 			return url.toURI();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return null;
 		}
 	}
@@ -131,7 +139,8 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 	private List<String> getServicesFromDelegate() {
 		try {
 			return new ArrayList<>(this.delegate.getServices());
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			if (log.isDebugEnabled()) {
 				log.debug("Failed to fetch services from delegate", e);
 			}
@@ -143,6 +152,7 @@ class StubRunnerDiscoveryClient implements DiscoveryClient {
 	public int getOrder() {
 		return this.delegate.getOrder();
 	}
+
 }
 
 class StubRunnerNoOpDiscoveryClient implements DiscoveryClient {
@@ -161,4 +171,5 @@ class StubRunnerNoOpDiscoveryClient implements DiscoveryClient {
 	public List<String> getServices() {
 		return Collections.emptyList();
 	}
+
 }

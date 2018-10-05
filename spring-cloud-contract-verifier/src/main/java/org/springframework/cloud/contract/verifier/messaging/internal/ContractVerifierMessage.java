@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * Yet another message abstraction. Provides generated tests with a layer that is
  * independent of the message provider.
- * 
+ *
  * @author Dave Syer
  *
  */
@@ -53,7 +53,7 @@ public class ContractVerifierMessage {
 	public Map<String, Object> getHeaders() {
 		return this.headers;
 	}
-	
+
 	public Object getHeader(String name) {
 		return this.headers.get(name);
 	}

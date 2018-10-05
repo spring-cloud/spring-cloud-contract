@@ -46,22 +46,24 @@ import org.springframework.messaging.Message;
  */
 @Configuration
 @ConditionalOnClass(IntegrationFlowBuilder.class)
-@ConditionalOnProperty(name="stubrunner.integration.enabled", havingValue="true", matchIfMissing=true)
+@ConditionalOnProperty(name = "stubrunner.integration.enabled", havingValue = "true", matchIfMissing = true)
 public class StubRunnerIntegrationConfiguration {
 
 	@Bean
-	@ConditionalOnMissingBean(name="stubFlowRegistrar")
+	@ConditionalOnMissingBean(name = "stubFlowRegistrar")
 	public FlowRegistrar stubFlowRegistrar(AutowireCapableBeanFactory beanFactory,
 			BatchStubRunner batchStubRunner) {
 		Map<StubConfiguration, Collection<Contract>> contracts = batchStubRunner
 				.getContracts();
-		for (Entry<StubConfiguration, Collection<Contract>> entry : contracts.entrySet()) {
+		for (Entry<StubConfiguration, Collection<Contract>> entry : contracts
+				.entrySet()) {
 			String name = entry.getKey().getGroupId() + "_"
 					+ entry.getKey().getArtifactId();
 			for (Contract dsl : entry.getValue()) {
 				if (dsl.getInput() != null && dsl.getInput().getMessageFrom() != null
 						&& dsl.getInput().getMessageFrom().getClientValue() != null) {
-					final String flowName = name + "_" + dsl.getLabel() + "_" + dsl.hashCode();
+					final String flowName = name + "_" + dsl.getLabel() + "_"
+							+ dsl.hashCode();
 					IntegrationFlowBuilder builder = IntegrationFlows
 							.from(dsl.getInput().getMessageFrom().getClientValue())
 							.filter(new StubRunnerIntegrationMessageSelector(dsl),
@@ -90,18 +92,22 @@ public class StubRunnerIntegrationConfiguration {
 					beanFactory.getBean(flowName + ".filter", Lifecycle.class).start();
 					beanFactory.getBean(flowName + ".transformer", Lifecycle.class)
 							.start();
-				}			
+				}
 			}
 		}
 		return new FlowRegistrar();
 	}
 
 	private static class DummyMessageHandler {
+
 		@SuppressWarnings("unused")
 		public void handle(Message<?> message) {
 		}
+
 	}
 
 	static class FlowRegistrar {
+
 	}
+
 }

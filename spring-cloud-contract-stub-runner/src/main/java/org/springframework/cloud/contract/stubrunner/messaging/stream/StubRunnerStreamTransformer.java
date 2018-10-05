@@ -40,11 +40,15 @@ class StubRunnerStreamTransformer implements GenericTransformer<Message<?>, Mess
 
 	@Override
 	public Message<?> transform(Message<?> source) {
-		if (this.groovyDsl.getOutputMessage()==null) {
+		if (this.groovyDsl.getOutputMessage() == null) {
 			return source;
 		}
-		String payload = BodyExtractor.extractStubValueFrom(this.groovyDsl.getOutputMessage().getBody());
-		Map<String, Object> headers = this.groovyDsl.getOutputMessage().getHeaders().asStubSideMap();
-		return MessageBuilder.createMessage(payload.getBytes(), new MessageHeaders(headers));
+		String payload = BodyExtractor
+				.extractStubValueFrom(this.groovyDsl.getOutputMessage().getBody());
+		Map<String, Object> headers = this.groovyDsl.getOutputMessage().getHeaders()
+				.asStubSideMap();
+		return MessageBuilder.createMessage(payload.getBytes(),
+				new MessageHeaders(headers));
 	}
+
 }

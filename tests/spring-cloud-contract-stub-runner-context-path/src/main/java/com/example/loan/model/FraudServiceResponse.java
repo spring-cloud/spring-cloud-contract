@@ -24,4 +24,5 @@ public class FraudServiceResponse {
 	public void setRejectionReason(String rejectionReason) {
 		this.rejectionReason = rejectionReason;
 	}
+
 }

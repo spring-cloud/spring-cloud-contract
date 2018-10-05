@@ -39,11 +39,11 @@ import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConve
 /**
  * Convert Spring Cloud Contract Verifier contracts into WireMock stubs mappings.
  * <p>
- * This goal allows you to generate `stubs-jar` or execute `spring-cloud-contract:run` with generated WireMock mappings.
+ * This goal allows you to generate `stubs-jar` or execute `spring-cloud-contract:run`
+ * with generated WireMock mappings.
  */
-@Mojo(name = "convert", requiresProject = false,
-		defaultPhase = LifecyclePhase.PROCESS_TEST_RESOURCES)
-public class  ConvertMojo extends AbstractMojo {
+@Mojo(name = "convert", requiresProject = false, defaultPhase = LifecyclePhase.PROCESS_TEST_RESOURCES)
+public class ConvertMojo extends AbstractMojo {
 
 	static final String DEFAULT_STUBS_DIR = "${project.build.directory}/stubs/";
 	static final String MAPPINGS_PATH = "/mappings";
@@ -52,15 +52,15 @@ public class  ConvertMojo extends AbstractMojo {
 	private RepositorySystemSession repoSession;
 
 	/**
-	 * Directory containing Spring Cloud Contract Verifier contracts written using the GroovyDSL
+	 * Directory containing Spring Cloud Contract Verifier contracts written using the
+	 * GroovyDSL
 	 */
-	@Parameter(property = "spring.cloud.contract.verifier.contractsDirectory",
-			defaultValue = "${project.basedir}/src/test/resources/contracts")
+	@Parameter(property = "spring.cloud.contract.verifier.contractsDirectory", defaultValue = "${project.basedir}/src/test/resources/contracts")
 	private File contractsDirectory;
 
 	/**
-	 * Directory where the generated WireMock stubs from Groovy DSL should be placed.
-	 * You can then mention them in your packaging task to create jar with stubs
+	 * Directory where the generated WireMock stubs from Groovy DSL should be placed. You
+	 * can then mention them in your packaging task to create jar with stubs
 	 */
 	@Parameter(defaultValue = DEFAULT_STUBS_DIR)
 	private File stubsDirectory;
@@ -82,12 +82,13 @@ public class  ConvertMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${session}", readonly = true)
 	private MavenSession mavenSession;
 
-	@Parameter(defaultValue = "${project}", readonly = true) private MavenProject project;
+	@Parameter(defaultValue = "${project}", readonly = true)
+	private MavenProject project;
 
 	/**
-	 * The URL from which a JAR containing the contracts should get downloaded. If not provided
-	 * but artifactid / coordinates notation was provided then the current Maven's build repositories will be
-	 * taken into consideration
+	 * The URL from which a JAR containing the contracts should get downloaded. If not
+	 * provided but artifactid / coordinates notation was provided then the current
+	 * Maven's build repositories will be taken into consideration
 	 */
 	@Parameter(property = "contractsRepositoryUrl")
 	private String contractsRepositoryUrl;
@@ -96,11 +97,12 @@ public class  ConvertMojo extends AbstractMojo {
 	private Dependency contractDependency;
 
 	/**
-	 * The path in the JAR with all the contracts where contracts for this particular service lay.
-	 * If not provided will be resolved to {@code groupid/artifactid}. Example:
+	 * The path in the JAR with all the contracts where contracts for this particular
+	 * service lay. If not provided will be resolved to {@code groupid/artifactid}.
+	 * Example:
 	 * </p>
-	 * If {@code groupid} is {@code com.example} and {@code artifactid} is {@code service} then the resolved path will be
-	 * {@code /com/example/artifactid}
+	 * If {@code groupid} is {@code com.example} and {@code artifactid} is {@code service}
+	 * then the resolved path will be {@code /com/example/artifactid}
 	 */
 	@Parameter(property = "contractsPath")
 	private String contractsPath;
@@ -112,8 +114,8 @@ public class  ConvertMojo extends AbstractMojo {
 	private StubRunnerProperties.StubsMode contractsMode;
 
 	/**
-	 * If {@code true} then any file laying in a path that contains {@code build} or {@code target}
-	 * will get excluded in further processing.
+	 * If {@code true} then any file laying in a path that contains {@code build} or
+	 * {@code target} will get excluded in further processing.
 	 */
 	@Parameter(property = "excludeBuildFolders", defaultValue = "false")
 	private boolean excludeBuildFolders;
@@ -143,25 +145,24 @@ public class  ConvertMojo extends AbstractMojo {
 	private Integer contractsRepositoryProxyPort;
 
 	/**
-	 * If {@code true} then will not assert whether a stub / contract
-	 * JAR was downloaded from local or remote location
-	 *
+	 * If {@code true} then will not assert whether a stub / contract JAR was downloaded
+	 * from local or remote location
 	 * @deprecated - with 2.1.0 this option is redundant
 	 */
 	@Parameter(property = "contractsSnapshotCheckSkip", defaultValue = "false")
 	@Deprecated
 	private boolean contractsSnapshotCheckSkip;
 
-
 	/**
-	 * If set to {@code false} will NOT delete stubs from a temporary
-	 * folder after running tests
+	 * If set to {@code false} will NOT delete stubs from a temporary folder after running
+	 * tests
 	 */
 	@Parameter(property = "deleteStubsAfterTest", defaultValue = "true")
 	private boolean deleteStubsAfterTest;
 
 	/**
-	 * Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
+	 * Map of properties that can be passed to custom
+	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
 	 */
 	@Parameter(property = "contractsProperties")
 	private Map<String, String> contractsProperties = new HashMap<>();
@@ -191,10 +192,11 @@ public class  ConvertMojo extends AbstractMojo {
 		ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
 		config.setExcludeBuildFolders(this.excludeBuildFolders);
 		File contractsDirectory = locationOfContracts(config);
-		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
+		getLog().info(
+				"Directory with contract is present at [" + contractsDirectory + "]");
 		contractsDirectory = contractSubfolderIfPresent(contractsDirectory);
-		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering, config)
-				.copy(contractsDirectory, this.stubsDirectory, rootPath);
+		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering,
+				config).copy(contractsDirectory, this.stubsDirectory, rootPath);
 		File contractsDslDir = contractsDslDir(contractsDirectory);
 		config.setContractsDslDir(contractsDslDir);
 		config.setStubsOutputDir(stubsOutputDir(rootPath));
@@ -230,20 +232,21 @@ public class  ConvertMojo extends AbstractMojo {
 
 	private File locationOfContracts(ContractVerifierConfigProperties config) {
 		return new MavenContractsDownloader(this.project, this.contractDependency,
-					this.contractsPath, this.contractsRepositoryUrl, this.contractsMode, getLog(),
-					this.contractsRepositoryUsername, this.contractsRepositoryPassword,
-					this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort,
-					this.deleteStubsAfterTest, this.contractsProperties)
-					.downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
+				this.contractsPath, this.contractsRepositoryUrl, this.contractsMode,
+				getLog(), this.contractsRepositoryUsername,
+				this.contractsRepositoryPassword, this.contractsRepositoryProxyHost,
+				this.contractsRepositoryProxyPort, this.deleteStubsAfterTest,
+				this.contractsProperties).downloadAndUnpackContractsIfRequired(config,
+						this.contractsDirectory);
 	}
 
 	private File stubsOutputDir(String rootPath) {
-		return isInsideProject() ? new File(this.stubsDirectory, rootPath + MAPPINGS_PATH) : this.destination;
+		return isInsideProject() ? new File(this.stubsDirectory, rootPath + MAPPINGS_PATH)
+				: this.destination;
 	}
 
 	private File contractsDslDir(File contractsDirectory) {
-		return isInsideProject() ?
-				contractsDirectory : this.source;
+		return isInsideProject() ? contractsDirectory : this.source;
 	}
 
 	private boolean isInsideProject() {

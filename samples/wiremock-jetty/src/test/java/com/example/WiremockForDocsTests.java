@@ -18,32 +18,37 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("docs")
-//tag::wiremock_test1[]
+// tag::wiremock_test1[]
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureWireMock(port = 0)
 public class WiremockForDocsTests {
-//end::wiremock_test1[]
 
-	@Autowired Environment environment;
+	// end::wiremock_test1[]
+
+	@Autowired
+	Environment environment;
 
 	@Before
 	public void setup() {
-		service.setBase("http://localhost:" + this.environment.getProperty("wiremock.server.port"));
+		service.setBase("http://localhost:"
+				+ this.environment.getProperty("wiremock.server.port"));
 	}
-//tag::wiremock_test2[]
+
+	// tag::wiremock_test2[]
 	// A service that calls out over HTTP
-	@Autowired private Service service;
+	@Autowired
+	private Service service;
 
 	// Using the WireMock APIs in the normal way:
 	@Test
 	public void contextLoads() throws Exception {
 		// Stubbing WireMock
-		stubFor(get(urlEqualTo("/resource"))
-				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
+		stubFor(get(urlEqualTo("/resource")).willReturn(aResponse()
+				.withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 		// We're asserting if WireMock responded properly
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 	}
 
 }
-//end::wiremock_test2[]
+// end::wiremock_test2[]

@@ -3,6 +3,7 @@ package org.springframework.cloud.contract.stubrunner.messaging.amqp;
 public class Person {
 
 	private Integer id;
+
 	private String name;
 
 	public Integer getId() {
@@ -20,4 +21,5 @@ public class Person {
 	public void setName(String name) {
 		this.name = name;
 	}
+
 }

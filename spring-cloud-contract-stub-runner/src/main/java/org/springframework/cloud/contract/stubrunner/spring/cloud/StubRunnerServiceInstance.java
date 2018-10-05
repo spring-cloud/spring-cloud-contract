@@ -26,14 +26,16 @@ import org.springframework.cloud.client.ServiceInstance;
  * {@link ServiceInstance} with a helpful constructor
  *
  * @author Marcin Grzejszczak
- *
  * @since 1.0.0
  */
 class StubRunnerServiceInstance implements ServiceInstance {
 
 	private final String serviceId;
+
 	private final String host;
+
 	private final int port;
+
 	private final URI uri;
 
 	public StubRunnerServiceInstance(String serviceId, String host, int port, URI uri) {
@@ -72,4 +74,5 @@ class StubRunnerServiceInstance implements ServiceInstance {
 	public Map<String, String> getMetadata() {
 		return new HashMap<>();
 	}
+
 }

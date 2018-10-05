@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @EnableAutoConfiguration
-@Import({Service.class, Controller.class})
+@Import({ Service.class, Controller.class })
 public class WiremockTestsApplication {
 
 	@Bean
@@ -29,6 +29,7 @@ public class WiremockTestsApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(WiremockTestsApplication.class, args);
 	}
+
 }
 
 @RestController
@@ -60,13 +61,15 @@ class Service {
 	}
 
 	public String go() {
-		return this.restTemplate.getForEntity(this.base + "/test", String.class).getBody();
+		return this.restTemplate.getForEntity(this.base + "/test", String.class)
+				.getBody();
 	}
 
 	public String pom() {
-		return this.restTemplate.exchange(
-				RequestEntity.get(URI.create(this.base + "/pom.xml"))
-						.accept(mediaTypes()).build(), String.class).getBody();
+		return this.restTemplate
+				.exchange(RequestEntity.get(URI.create(this.base + "/pom.xml"))
+						.accept(mediaTypes()).build(), String.class)
+				.getBody();
 	}
 
 	private MediaType[] mediaTypes() {
@@ -77,10 +80,12 @@ class Service {
 	}
 
 	public String go2() {
-		return this.restTemplate.getForEntity(this.base + "/test2", String.class).getBody();
+		return this.restTemplate.getForEntity(this.base + "/test2", String.class)
+				.getBody();
 	}
 
 	public void setBase(String base) {
 		this.base = base;
 	}
+
 }

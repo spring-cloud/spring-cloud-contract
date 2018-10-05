@@ -32,15 +32,17 @@ import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
  */
 class StubRunnerFactory {
 
-	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
+	private static final Log log = LogFactory
+			.getLog(MethodHandles.lookup().lookupClass());
 
 	private final StubRunnerOptions stubRunnerOptions;
+
 	private final StubDownloader stubDownloader;
+
 	private final MessageVerifier<?> contractVerifierMessaging;
 
 	public StubRunnerFactory(StubRunnerOptions stubRunnerOptions,
-			StubDownloader stubDownloader,
-			MessageVerifier<?> contractVerifierMessaging) {
+			StubDownloader stubDownloader, MessageVerifier<?> contractVerifierMessaging) {
 		this.stubRunnerOptions = stubRunnerOptions;
 		this.stubDownloader = stubDownloader;
 		this.contractVerifierMessaging = contractVerifierMessaging;
@@ -48,18 +50,22 @@ class StubRunnerFactory {
 
 	public Collection<StubRunner> createStubsFromServiceConfiguration() {
 		if (log.isDebugEnabled()) {
-			log.debug("Will download stubs for dependencies " + this.stubRunnerOptions.getDependencies());
+			log.debug("Will download stubs for dependencies "
+					+ this.stubRunnerOptions.getDependencies());
 		}
 		if (this.stubRunnerOptions.getDependencies().isEmpty()) {
-			log.warn("No stubs to download have been passed. Most likely you have forgotten to pass "
-					+ "them either via annotation or a property");
+			log.warn(
+					"No stubs to download have been passed. Most likely you have forgotten to pass "
+							+ "them either via annotation or a property");
 		}
 		Collection<StubRunner> result = new ArrayList<>();
-		for (StubConfiguration stubsConfiguration : this.stubRunnerOptions.getDependencies()) {
+		for (StubConfiguration stubsConfiguration : this.stubRunnerOptions
+				.getDependencies()) {
 			Map.Entry<StubConfiguration, File> entry = this.stubDownloader
 					.downloadAndUnpackStubJar(stubsConfiguration);
 			if (log.isDebugEnabled()) {
-				log.debug("For stub configuration [" + stubsConfiguration + "] the downloaded entry is [" + entry + "]");
+				log.debug("For stub configuration [" + stubsConfiguration
+						+ "] the downloaded entry is [" + entry + "]");
 			}
 			if (entry != null) {
 				result.add(createStubRunner(entry.getKey(), entry.getValue()));
@@ -74,7 +80,8 @@ class StubRunnerFactory {
 		if (unzipedStubDir == null) {
 			return null;
 		}
-		return createStubRunner(unzipedStubDir, stubsConfiguration, this.stubRunnerOptions);
+		return createStubRunner(unzipedStubDir, stubsConfiguration,
+				this.stubRunnerOptions);
 	}
 
 	private StubRunner createStubRunner(File unzippedStubsDir,

@@ -39,7 +39,9 @@ import org.junit.rules.TemporaryFolder;
  */
 public abstract class AbstractGitTest {
 
-	@Rule public TemporaryFolder tmp = new TemporaryFolder();
+	@Rule
+	public TemporaryFolder tmp = new TemporaryFolder();
+
 	File tmpFolder;
 
 	@Before
@@ -53,7 +55,7 @@ public abstract class AbstractGitTest {
 		try (PrintStream out = new PrintStream(new FileOutputStream(newFile))) {
 			out.print("foo");
 		}
-		try(Git git = openGitProject(project)) {
+		try (Git git = openGitProject(project)) {
 			git.add().addFilepattern("newFile").call();
 		}
 		return newFile;
@@ -61,7 +63,7 @@ public abstract class AbstractGitTest {
 
 	void setOriginOnProjectToTmp(File origin, File project, boolean push)
 			throws GitAPIException, IOException, URISyntaxException {
-		try(Git git = openGitProject(project)) {
+		try (Git git = openGitProject(project)) {
 			RemoteRemoveCommand remove = git.remoteRemove();
 			remove.setName("origin");
 			remove.call();
@@ -72,7 +74,8 @@ public abstract class AbstractGitTest {
 			command.call();
 			StoredConfig config = git.getRepository().getConfig();
 			RemoteConfig originConfig = new RemoteConfig(config, "origin");
-			originConfig.addFetchRefSpec(new RefSpec("+refs/heads/*:refs/remotes/origin/*"));
+			originConfig
+					.addFetchRefSpec(new RefSpec("+refs/heads/*:refs/remotes/origin/*"));
 			originConfig.update(config);
 			config.save();
 		}
@@ -87,4 +90,5 @@ public abstract class AbstractGitTest {
 		projectRepo.cloneProject(projectToClone.toURI());
 		return baseDir;
 	}
+
 }

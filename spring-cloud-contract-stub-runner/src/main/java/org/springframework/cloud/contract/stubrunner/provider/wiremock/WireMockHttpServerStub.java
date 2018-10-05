@@ -50,9 +50,9 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	private WireMockServer wireMockServer;
 
 	private WireMockConfiguration config() {
-		if (ClassUtils.isPresent("org.springframework.cloud.contract.wiremock.WireMockSpring", null)) {
-			return WireMockSpring.options()
-					.extensions(responseTransformers());
+		if (ClassUtils.isPresent(
+				"org.springframework.cloud.contract.wiremock.WireMockSpring", null)) {
+			return WireMockSpring.options().extensions(responseTransformers());
 		}
 		return new WireMockConfiguration().extensions(responseTransformers());
 	}
@@ -65,7 +65,8 @@ public class WireMockHttpServerStub implements HttpServerStub {
 			for (WireMockExtensions wireMockExtension : wireMockExtensions) {
 				extensions.addAll(wireMockExtension.extensions());
 			}
-		} else {
+		}
+		else {
 			extensions.add(new DefaultResponseTransformer(false, helpers()));
 		}
 		return extensions.toArray(new Extension[extensions.size()]);
@@ -73,9 +74,8 @@ public class WireMockHttpServerStub implements HttpServerStub {
 
 	/**
 	 * Override this if you want to register your own helpers
-	 *
-	 * @deprecated - please use the {@link WireMockExtensions} mechanism and pass
-	 * the helpers in your implementation
+	 * @deprecated - please use the {@link WireMockExtensions} mechanism and pass the
+	 * helpers in your implementation
 	 */
 	@Deprecated
 	protected Map<String, Helper> helpers() {
@@ -108,8 +108,8 @@ public class WireMockHttpServerStub implements HttpServerStub {
 
 	@Override
 	public HttpServerStub start(int port) {
-		this.wireMockServer = new WireMockServer(config().port(port)
-				.notifier(new Slf4jNotifier(true)));
+		this.wireMockServer = new WireMockServer(
+				config().port(port).notifier(new Slf4jNotifier(true)));
 		this.wireMockServer.start();
 		if (log.isDebugEnabled()) {
 			log.debug("Started WireMock at port [" + port + "]");
@@ -141,7 +141,8 @@ public class WireMockHttpServerStub implements HttpServerStub {
 		return this;
 	}
 
-	@Override public String registeredMappings() {
+	@Override
+	public String registeredMappings() {
 		Collection<String> mappings = new ArrayList<>();
 		for (StubMapping stubMapping : this.wireMockServer.getStubMappings()) {
 			mappings.add(stubMapping.toString());
@@ -189,12 +190,14 @@ public class WireMockHttpServerStub implements HttpServerStub {
 			try {
 				stubMappings.add(registerDescriptor(wireMock, mappingDescriptor));
 				if (log.isDebugEnabled()) {
-					log.debug("Registered stub mappings from [" + mappingDescriptor + "]");
+					log.debug(
+							"Registered stub mappings from [" + mappingDescriptor + "]");
 				}
 			}
 			catch (Exception e) {
 				if (log.isDebugEnabled()) {
-					log.debug("Failed to register the stub mapping [" + mappingDescriptor + "]", e);
+					log.debug("Failed to register the stub mapping [" + mappingDescriptor
+							+ "]", e);
 				}
 			}
 		}
@@ -210,7 +213,8 @@ public class WireMockHttpServerStub implements HttpServerStub {
 
 	void registerDescriptors(List<StubMapping> stubMappings) {
 		if (log.isDebugEnabled()) {
-			log.debug("Registering stub mappings size [" + stubMappings.size() + "] at port [" + port() + "]");
+			log.debug("Registering stub mappings size [" + stubMappings.size()
+					+ "] at port [" + port() + "]");
 		}
 		for (StubMapping mapping : stubMappings) {
 			wireMock().register(mapping);
@@ -222,13 +226,16 @@ public class WireMockHttpServerStub implements HttpServerStub {
 	}
 
 	private void registerHealthCheck(WireMock wireMock, String url, String body) {
-		wireMock.register(
-				WireMock.get(WireMock.urlEqualTo(url)).willReturn(WireMock.aResponse().withBody(body).withStatus(200)));
+		wireMock.register(WireMock.get(WireMock.urlEqualTo(url))
+				.willReturn(WireMock.aResponse().withBody(body).withStatus(200)));
 	}
+
 }
 
 class PortAndMappings {
+
 	final Integer port;
+
 	final List<StubMapping> mappings;
 
 	PortAndMappings(Integer port, List<StubMapping> mappings) {
@@ -236,7 +243,10 @@ class PortAndMappings {
 		this.mappings = mappings;
 	}
 
-	@Override public String toString() {
-		return "PortAndMappings{" + "port=" + this.port + ", mappings=" + this.mappings.size() + '}';
+	@Override
+	public String toString() {
+		return "PortAndMappings{" + "port=" + this.port + ", mappings="
+				+ this.mappings.size() + '}';
 	}
+
 }

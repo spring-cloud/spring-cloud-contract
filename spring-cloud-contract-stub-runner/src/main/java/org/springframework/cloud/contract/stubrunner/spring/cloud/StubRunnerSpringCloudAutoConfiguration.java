@@ -32,8 +32,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 /**
- * Wraps {@link DiscoveryClient} in a Stub Runner implementation that tries to find
- * a corresponding WireMock server for a searched dependency
+ * Wraps {@link DiscoveryClient} in a Stub Runner implementation that tries to find a
+ * corresponding WireMock server for a searched dependency
  *
  * @since 1.0.0
  */
@@ -43,7 +43,8 @@ import org.springframework.core.env.Environment;
 @ConditionalOnProperty(value = "stubrunner.cloud.enabled", matchIfMissing = true)
 public class StubRunnerSpringCloudAutoConfiguration {
 
-	@Autowired BeanFactory beanFactory;
+	@Autowired
+	BeanFactory beanFactory;
 
 	@Bean
 	public StubRunnerDiscoveryClientWrapper stubRunnerDiscoveryClientWrapper() {
@@ -57,7 +58,8 @@ public class StubRunnerSpringCloudAutoConfiguration {
 	public DiscoveryClient noOpStubRunnerDiscoveryClient(StubFinder stubFinder,
 			StubMapperProperties stubMapperProperties,
 			@Value("${spring.application.name:unknown}") String springAppName) {
-		return new StubRunnerDiscoveryClient(stubFinder, stubMapperProperties, springAppName);
+		return new StubRunnerDiscoveryClient(stubFinder, stubMapperProperties,
+				springAppName);
 	}
 
 }
@@ -65,33 +67,43 @@ public class StubRunnerSpringCloudAutoConfiguration {
 class StubRunnerDiscoveryClientWrapper implements BeanPostProcessor {
 
 	private final BeanFactory beanFactory;
+
 	DiscoveryClient discoveryClient;
+
 	StubFinder stubFinder;
+
 	StubMapperProperties stubMapperProperties;
+
 	String springAppName;
+
 	Boolean stubbedDiscoveryEnabled;
+
 	Boolean cloudDelegateEnabled;
 
 	StubRunnerDiscoveryClientWrapper(BeanFactory beanFactory) {
 		this.beanFactory = beanFactory;
 	}
 
-	@Override public Object postProcessBeforeInitialization(Object bean, String beanName)
+	@Override
+	public Object postProcessBeforeInitialization(Object bean, String beanName)
 			throws BeansException {
 		return bean;
 	}
 
-	@Override public Object postProcessAfterInitialization(Object bean, String beanName)
+	@Override
+	public Object postProcessAfterInitialization(Object bean, String beanName)
 			throws BeansException {
-		if (bean instanceof DiscoveryClient && !(bean instanceof StubRunnerDiscoveryClient)) {
+		if (bean instanceof DiscoveryClient
+				&& !(bean instanceof StubRunnerDiscoveryClient)) {
 			if (!isStubbedDiscoveryEnabled()) {
 				return bean;
 			}
 			if (isCloudDelegateEnabled()) {
-				return new StubRunnerDiscoveryClient((DiscoveryClient) bean,
-						stubFinder(), stubMapperProperties(), springAppName());
+				return new StubRunnerDiscoveryClient((DiscoveryClient) bean, stubFinder(),
+						stubMapperProperties(), springAppName());
 			}
-			return new StubRunnerDiscoveryClient(stubFinder(), stubMapperProperties(), springAppName());
+			return new StubRunnerDiscoveryClient(stubFinder(), stubMapperProperties(),
+					springAppName());
 		}
 		return bean;
 	}
@@ -105,7 +117,8 @@ class StubRunnerDiscoveryClientWrapper implements BeanPostProcessor {
 
 	StubMapperProperties stubMapperProperties() {
 		if (this.stubMapperProperties == null) {
-			this.stubMapperProperties = this.beanFactory.getBean(StubMapperProperties.class);
+			this.stubMapperProperties = this.beanFactory
+					.getBean(StubMapperProperties.class);
 		}
 		return this.stubMapperProperties;
 	}
@@ -120,21 +133,20 @@ class StubRunnerDiscoveryClientWrapper implements BeanPostProcessor {
 
 	boolean isStubbedDiscoveryEnabled() {
 		if (this.stubbedDiscoveryEnabled == null) {
-			this.stubbedDiscoveryEnabled = Boolean.valueOf(
-					this.beanFactory.getBean(Environment.class)
-					.getProperty("stubrunner.cloud.stubbed.discovery.enabled", "true")
-			);
+			this.stubbedDiscoveryEnabled = Boolean
+					.valueOf(this.beanFactory.getBean(Environment.class).getProperty(
+							"stubrunner.cloud.stubbed.discovery.enabled", "true"));
 		}
 		return this.stubbedDiscoveryEnabled;
 	}
 
 	boolean isCloudDelegateEnabled() {
 		if (this.cloudDelegateEnabled == null) {
-			this.cloudDelegateEnabled = Boolean.valueOf(
-					this.beanFactory.getBean(Environment.class)
-					.getProperty("stubrunner.cloud.delegate.enabled", "false")
-			);
+			this.cloudDelegateEnabled = Boolean
+					.valueOf(this.beanFactory.getBean(Environment.class)
+							.getProperty("stubrunner.cloud.delegate.enabled", "false"));
 		}
 		return this.cloudDelegateEnabled;
 	}
+
 }

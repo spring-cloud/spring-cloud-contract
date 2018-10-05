@@ -39,7 +39,7 @@ public class BookService {
 	 * a possibility to "trigger" sending of a message to the given messageFrom server
 	 * side: will run the method and await upon receiving message on the output
 	 * messageFrom
-	 * 
+	 *
 	 * Method triggers sending a message to a source
 	 */
 	public void returnBook(final BookReturned bookReturned) {
@@ -54,4 +54,5 @@ public class BookService {
 		};
 		this.jmsTemplate.send("output", messageCreator);
 	}
+
 }

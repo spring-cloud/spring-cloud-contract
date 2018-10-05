@@ -46,10 +46,15 @@ class StubRepository {
 	private static final Log log = LogFactory.getLog(StubRepository.class);
 
 	private final File path;
+
 	final List<File> stubs;
+
 	final Collection<Contract> contracts;
+
 	private final List<ContractConverter> contractConverters;
+
 	private final List<HttpServerStub> httpServerStubs;
+
 	private final StubRunnerOptions options;
 
 	StubRepository(File repository, List<HttpServerStub> httpServerStubs,
@@ -58,9 +63,11 @@ class StubRepository {
 			throw new IllegalArgumentException(
 					"Missing descriptor repository under path [" + repository + "]");
 		}
-		this.contractConverters = SpringFactoriesLoader.loadFactories(ContractConverter.class, null);
+		this.contractConverters = SpringFactoriesLoader
+				.loadFactories(ContractConverter.class, null);
 		if (log.isTraceEnabled()) {
-			log.trace("Found the following contract converters " + this.contractConverters);
+			log.trace(
+					"Found the following contract converters " + this.contractConverters);
 		}
 		this.httpServerStubs = httpServerStubs;
 		this.path = repository;
@@ -107,8 +114,7 @@ class StubRepository {
 				: Collections.<File>emptyList();
 	}
 
-	private List<File> collectMappings(
-			File descriptorsDirectory) {
+	private List<File> collectMappings(File descriptorsDirectory) {
 		final List<File> mappingDescriptors = new ArrayList<>();
 		try {
 			Files.walkFileTree(Paths.get(descriptorsDirectory.toURI()),
@@ -117,7 +123,8 @@ class StubRepository {
 						public FileVisitResult visitFile(Path path,
 								BasicFileAttributes attrs) throws IOException {
 							File file = path.toFile();
-							if (httpServerStubAccepts(file) && isStubPerConsumerPathMatching(file)) {
+							if (httpServerStubAccepts(file)
+									&& isStubPerConsumerPathMatching(file)) {
 								mappingDescriptors.add(file);
 							}
 							return super.visitFile(path, attrs);
@@ -155,7 +162,8 @@ class StubRepository {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Collection<Contract> collectContractDescriptors(final File descriptorsDirectory) {
+	private Collection<Contract> collectContractDescriptors(
+			final File descriptorsDirectory) {
 		final List<Contract> contractDescriptors = new ArrayList<>();
 		try {
 			Files.walkFileTree(Paths.get(descriptorsDirectory.toURI()),
@@ -168,11 +176,20 @@ class StubRepository {
 							if (isStubPerConsumerPathMatching(file)) {
 								if (isContractDescriptor(file)) {
 									contractDescriptors
-											.addAll(ContractVerifierDslConverter.convertAsCollection(file.getParentFile(), file));
-								} else if (converter != null && converter.isAccepted(file)) {
-									contractDescriptors.addAll(converter.convertFrom(file));
-								} else if (YamlContractConverter.INSTANCE.isAccepted(file)) {
-									contractDescriptors.addAll(YamlContractConverter.INSTANCE.convertFrom(file));
+											.addAll(ContractVerifierDslConverter
+													.convertAsCollection(
+															file.getParentFile(), file));
+								}
+								else if (converter != null
+										&& converter.isAccepted(file)) {
+									contractDescriptors
+											.addAll(converter.convertFrom(file));
+								}
+								else if (YamlContractConverter.INSTANCE
+										.isAccepted(file)) {
+									contractDescriptors
+											.addAll(YamlContractConverter.INSTANCE
+													.convertFrom(file));
 								}
 							}
 							return super.visitFile(path, attrs);
@@ -194,7 +211,9 @@ class StubRepository {
 		String absolutePath = file.getAbsolutePath();
 		boolean stubPerConsumerMatching = absolutePath.contains(searchedConsumerName);
 		if (log.isDebugEnabled()) {
-			log.debug("Absolute path [" + absolutePath + "] contains [" + searchedConsumerName + "] in its path [" + stubPerConsumerMatching + "]");
+			log.debug("Absolute path [" + absolutePath + "] contains ["
+					+ searchedConsumerName + "] in its path [" + stubPerConsumerMatching
+					+ "]");
 		}
 		return stubPerConsumerMatching;
 	}

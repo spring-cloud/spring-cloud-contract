@@ -23,21 +23,25 @@ import org.springframework.util.StringUtils;
  * Registers all stubs in Zookeeper Service Discovery
  *
  * @author Marcin Grzejszczak
- *
  * @since 1.0.0
  */
 public class ZookeeperStubsRegistrar implements StubsRegistrar {
 
-	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
+	private static final Log log = LogFactory
+			.getLog(MethodHandles.lookup().lookupClass());
 
 	private final StubRunning stubRunning;
+
 	private final CuratorFramework curatorFramework;
+
 	private final StubMapperProperties stubMapperProperties;
+
 	private final ZookeeperDiscoveryProperties zookeeperDiscoveryProperties;
+
 	private final List<ServiceDiscovery> discoveryList = new LinkedList<>();
 
-	public ZookeeperStubsRegistrar(StubRunning stubRunning, CuratorFramework curatorFramework,
-			StubMapperProperties stubMapperProperties,
+	public ZookeeperStubsRegistrar(StubRunning stubRunning,
+			CuratorFramework curatorFramework, StubMapperProperties stubMapperProperties,
 			ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
 		this.stubRunning = stubRunning;
 		this.curatorFramework = curatorFramework;
@@ -45,30 +49,36 @@ public class ZookeeperStubsRegistrar implements StubsRegistrar {
 		this.zookeeperDiscoveryProperties = zookeeperDiscoveryProperties;
 	}
 
-	@Override public void registerStubs() {
+	@Override
+	public void registerStubs() {
 		Map<StubConfiguration, Integer> activeStubs = this.stubRunning.runStubs()
 				.validNamesAndPorts();
 		for (Map.Entry<StubConfiguration, Integer> entry : activeStubs.entrySet()) {
-			ServiceInstance serviceInstance = serviceInstance(entry.getKey(), entry.getValue());
+			ServiceInstance serviceInstance = serviceInstance(entry.getKey(),
+					entry.getValue());
 			ServiceDiscovery serviceDiscovery = serviceDiscovery(serviceInstance);
 			this.discoveryList.add(serviceDiscovery);
 			try {
 				serviceDiscovery.start();
 				if (log.isDebugEnabled()) {
-					log.debug("Successfully registered stub [" + entry.getKey().toColonSeparatedDependencyNotation()
+					log.debug("Successfully registered stub ["
+							+ entry.getKey().toColonSeparatedDependencyNotation()
 							+ "] in Service Discovery");
 				}
 			}
 			catch (Exception e) {
-				log.warn("Exception occurred while trying to register a stub [" + entry.getKey().toColonSeparatedDependencyNotation()
+				log.warn("Exception occurred while trying to register a stub ["
+						+ entry.getKey().toColonSeparatedDependencyNotation()
 						+ "] in Service Discovery", e);
 			}
 		}
 	}
 
-	protected ServiceInstance serviceInstance(StubConfiguration stubConfiguration, int port) {
+	protected ServiceInstance serviceInstance(StubConfiguration stubConfiguration,
+			int port) {
 		try {
-			return ServiceInstance.builder().uriSpec(new UriSpec(this.zookeeperDiscoveryProperties.getUriSpec()))
+			return ServiceInstance.builder()
+					.uriSpec(new UriSpec(this.zookeeperDiscoveryProperties.getUriSpec()))
 					.address("localhost").port(port).name(name(stubConfiguration))
 					.build();
 		}
@@ -98,4 +108,5 @@ public class ZookeeperStubsRegistrar implements StubsRegistrar {
 			discovery.close();
 		}
 	}
+
 }

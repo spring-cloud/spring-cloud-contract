@@ -43,7 +43,6 @@ public class ZipCategory {
 	/**
 	 * Unzips this file. If the <tt>destination</tt> directory is not provided, it will
 	 * fall back to this file's parent directory.
-	 *
 	 * @param self
 	 * @param destination (optional), the destination directory where this file's content
 	 * will be unzipped to.
@@ -58,8 +57,8 @@ public class ZipCategory {
 		List<File> unzippedFiles = new ArrayList<>();
 		try (InputStream fileInputStream = Files.newInputStream(self.toPath())) {
 			try (ZipInputStream zipInput = new ZipInputStream(fileInputStream)) {
-				for (ZipEntry entry = zipInput.getNextEntry(); entry != null; entry = zipInput
-						.getNextEntry()) {
+				for (ZipEntry entry = zipInput
+						.getNextEntry(); entry != null; entry = zipInput.getNextEntry()) {
 					if (!entry.isDirectory()) {
 						final File file = new File(destination, entry.getName());
 						if (file.getParentFile() != null) {
@@ -77,7 +76,8 @@ public class ZipCategory {
 					}
 				}
 			}
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			throw new IllegalStateException("Cannot unzip archive", e);
 		}
 		return unzippedFiles;
@@ -87,4 +87,5 @@ public class ZipCategory {
 		if (file != null && !file.isDirectory())
 			throw new IllegalArgumentException("'destination' has to be a directory.");
 	}
+
 }

@@ -15,44 +15,55 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 
 	private static final Log log = LogFactory.getLog(WireMockTestExecutionListener.class);
 
-	@Override public void beforeTestClass(TestContext testContext) {
+	@Override
+	public void beforeTestClass(TestContext testContext) {
 		try {
 			if (wireMockConfigMissing(testContext)) {
 				return;
 			}
-			WireMockConfiguration wireMockConfiguration = wireMockConfiguration(testContext);
+			WireMockConfiguration wireMockConfiguration = wireMockConfiguration(
+					testContext);
 			if (log.isDebugEnabled()) {
-				log.debug("WireMock configuration is running [" + wireMockConfiguration.isRunning() + "]");
+				log.debug("WireMock configuration is running ["
+						+ wireMockConfiguration.isRunning() + "]");
 			}
 			if (!wireMockConfiguration.isRunning()) {
 				wireMockConfiguration.reset();
 				wireMockConfiguration.init();
 				wireMockConfiguration.start();
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			if (log.isDebugEnabled()) {
-				log.debug("Exception occurred while trying to init WireMock configuration", e);
+				log.debug(
+						"Exception occurred while trying to init WireMock configuration",
+						e);
 			}
 		}
 	}
 
 	private boolean wireMockConfigMissing(TestContext testContext) {
-		boolean missing = !testContext.getApplicationContext().containsBean(WireMockConfiguration.class.getName());
+		boolean missing = !testContext.getApplicationContext()
+				.containsBean(WireMockConfiguration.class.getName());
 		if (log.isDebugEnabled()) {
 			log.debug("WireMockConfig is missing [" + missing + "]");
 		}
 		return missing;
 	}
 
-	@Override public void afterTestClass(TestContext testContext) {
+	@Override
+	public void afterTestClass(TestContext testContext) {
 		try {
 			if (wireMockConfigMissing(testContext)) {
 				return;
 			}
 			stopWireMockConfiguration(testContext);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			if (log.isDebugEnabled()) {
-				log.debug("Exception occurred while trying to init WireMock configuration", e);
+				log.debug(
+						"Exception occurred while trying to init WireMock configuration",
+						e);
 			}
 		}
 	}
@@ -70,4 +81,5 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 	private WireMockConfiguration wireMockConfiguration(TestContext testContext) {
 		return testContext.getApplicationContext().getBean(WireMockConfiguration.class);
 	}
+
 }

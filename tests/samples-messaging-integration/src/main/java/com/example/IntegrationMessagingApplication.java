@@ -27,4 +27,5 @@ public class IntegrationMessagingApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(IntegrationMessagingApplication.class, args);
 	}
+
 }

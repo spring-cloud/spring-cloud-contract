@@ -32,8 +32,10 @@ import org.springframework.context.annotation.Role;
 @Configuration
 @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 class StubRunnerRibbonConfiguration {
+
 	@Bean
-	static StubRunnerRibbonBeanPostProcessor stubRunnerRibbonBeanPostProcessor(BeanFactory beanFactory) {
+	static StubRunnerRibbonBeanPostProcessor stubRunnerRibbonBeanPostProcessor(
+			BeanFactory beanFactory) {
 		return new StubRunnerRibbonBeanPostProcessor(beanFactory);
 	}
 

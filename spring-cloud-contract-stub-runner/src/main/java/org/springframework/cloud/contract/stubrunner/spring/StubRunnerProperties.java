@@ -49,8 +49,9 @@ public class StubRunnerProperties {
 	private Resource repositoryRoot;
 
 	/**
-	 * The ids of the stubs to run in "ivy" notation ([groupId]:artifactId:[version]:[classifier][:port]).
-	 * {@code groupId}, {@code classifier}, {@code version} and {@code port} can be optional.
+	 * The ids of the stubs to run in "ivy" notation
+	 * ([groupId]:artifactId:[version]:[classifier][:port]). {@code groupId},
+	 * {@code classifier}, {@code version} and {@code port} can be optional.
 	 */
 	private String[] ids = new String[0];
 
@@ -85,7 +86,8 @@ public class StubRunnerProperties {
 	private boolean stubsPerConsumer;
 
 	/**
-	 * You can override the default {@code spring.application.name} of this field by setting a value to this parameter.
+	 * You can override the default {@code spring.application.name} of this field by
+	 * setting a value to this parameter.
 	 */
 	private String consumerName;
 
@@ -100,13 +102,14 @@ public class StubRunnerProperties {
 	private StubsMode stubsMode;
 
 	/**
-	 * If set to {@code false} will NOT delete stubs from a temporary
-	 * folder after running tests
+	 * If set to {@code false} will NOT delete stubs from a temporary folder after running
+	 * tests
 	 */
 	private boolean deleteStubsAfterTest = true;
 
 	/**
-	 * Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
+	 * Map of properties that can be passed to custom
+	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
 	 */
 	private Map<String, String> properties = new HashMap<>();
 
@@ -129,6 +132,7 @@ public class StubRunnerProperties {
 		 * Fetch the stubs from a remote location
 		 */
 		REMOTE,
+
 	}
 
 	public int getMinPort() {
@@ -248,8 +252,8 @@ public class StubRunnerProperties {
 	}
 
 	public void setProperties(String[] properties) {
-		Properties elements = StringUtils
-				.splitArrayElementsIntoProperties(properties, "=");
+		Properties elements = StringUtils.splitArrayElementsIntoProperties(properties,
+				"=");
 		if (elements == null) {
 			return;
 		}
@@ -258,13 +262,14 @@ public class StubRunnerProperties {
 		}
 	}
 
-	@Override public String toString() {
-		return "StubRunnerProperties{" + "minPort=" + this.minPort + ", maxPort=" + this.maxPort
-				+ ", repositoryRoot=" + this.repositoryRoot
-				+ ", ids=" + Arrays.toString(this.ids) + ", classifier='" + this.classifier + '\''
-				+ ", setStubsPerConsumer='" + this.stubsPerConsumer + "', consumerName='" + this.consumerName + '\''
-				+ ", stubsMode='" + this.stubsMode + '\''
-				+ ", size of properties=" + this.properties.size()
-				+ '}';
+	@Override
+	public String toString() {
+		return "StubRunnerProperties{" + "minPort=" + this.minPort + ", maxPort="
+				+ this.maxPort + ", repositoryRoot=" + this.repositoryRoot + ", ids="
+				+ Arrays.toString(this.ids) + ", classifier='" + this.classifier + '\''
+				+ ", setStubsPerConsumer='" + this.stubsPerConsumer + "', consumerName='"
+				+ this.consumerName + '\'' + ", stubsMode='" + this.stubsMode + '\''
+				+ ", size of properties=" + this.properties.size() + '}';
 	}
+
 }

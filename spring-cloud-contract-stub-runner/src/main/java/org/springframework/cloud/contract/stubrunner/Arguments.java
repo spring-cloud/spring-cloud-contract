@@ -22,8 +22,11 @@ package org.springframework.cloud.contract.stubrunner;
  * @see StubRunner
  */
 class Arguments {
+
 	final private StubRunnerOptions stubRunnerOptions;
+
 	final private String repositoryPath;
+
 	final private StubConfiguration stub;
 
 	Arguments(StubRunnerOptions stubRunnerOptions) {
@@ -49,8 +52,11 @@ class Arguments {
 		return this.stub;
 	}
 
-	@Override public String toString() {
+	@Override
+	public String toString() {
 		return "Arguments{" + "stubRunnerOptions=" + this.stubRunnerOptions
-				+ ", repositoryPath='" + this.repositoryPath + '\'' + ", stub=" + this.stub + '}';
+				+ ", repositoryPath='" + this.repositoryPath + '\'' + ", stub="
+				+ this.stub + '}';
 	}
+
 }

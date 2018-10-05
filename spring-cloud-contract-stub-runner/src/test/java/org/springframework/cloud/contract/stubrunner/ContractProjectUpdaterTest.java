@@ -36,18 +36,25 @@ import static org.assertj.core.api.BDDAssertions.then;
  * @author Marcin Grzejszczak
  */
 public class ContractProjectUpdaterTest extends AbstractGitTest {
+
 	File originalProject;
+
 	File project;
+
 	ContractProjectUpdater updater;
+
 	GitRepo gitRepo;
+
 	File origin;
 
-	@Rule public OutputCapture outputCapture = new OutputCapture();
+	@Rule
+	public OutputCapture outputCapture = new OutputCapture();
 
 	@Before
 	public void setup() throws Exception {
 		GitContractsRepo.CACHED_LOCATIONS.clear();
-		this.originalProject = new File(GitRepoTests.class.getResource("/git_samples/contract-git").toURI());
+		this.originalProject = new File(
+				GitRepoTests.class.getResource("/git_samples/contract-git").toURI());
 		TestUtils.prepareLocalRepo();
 		this.gitRepo = new GitRepo(this.tmpFolder);
 		this.origin = clonedProject(this.tmp.newFolder(), this.originalProject);
@@ -56,31 +63,36 @@ public class ContractProjectUpdaterTest extends AbstractGitTest {
 		setOriginOnProjectToTmp(this.origin, this.project, true);
 		StubRunnerOptions options = new StubRunnerOptionsBuilder()
 				.withStubRepositoryRoot("file://" + this.project.getAbsolutePath() + "/")
-				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
-				.build();
+				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE).build();
 		this.updater = new ContractProjectUpdater(options);
 	}
 
 	@Test
 	public void should_push_changes_to_current_branch() throws Exception {
-		File stubs = new File(GitRepoTests.class.getResource("/git_samples/sample_stubs").toURI());
+		File stubs = new File(
+				GitRepoTests.class.getResource("/git_samples/sample_stubs").toURI());
 
 		this.updater.updateContractProject("hello-world", stubs.toPath());
 
 		// project, not origin, cause we're making one more clone of the local copy
-		try(Git git = openGitProject(this.project)) {
+		try (Git git = openGitProject(this.project)) {
 			RevCommit revCommit = git.log().call().iterator().next();
-			then(revCommit.getShortMessage()).isEqualTo("Updating project [hello-world] with stubs");
+			then(revCommit.getShortMessage())
+					.isEqualTo("Updating project [hello-world] with stubs");
 			// I have no idea but the file gets deleted after pushing
 			git.reset().setMode(ResetCommand.ResetType.HARD).call();
 		}
-		BDDAssertions.then(new File(this.project, "META-INF/com.example/hello-world/0.0.2/mappings/someMapping.json")).exists();
+		BDDAssertions.then(new File(this.project,
+				"META-INF/com.example/hello-world/0.0.2/mappings/someMapping.json"))
+				.exists();
 		BDDAssertions.then(gitRepo.gitFactory.provider).isNull();
-		BDDAssertions.then(outputCapture.toString()).contains("No custom credentials provider will be set");
+		BDDAssertions.then(outputCapture.toString())
+				.contains("No custom credentials provider will be set");
 	}
 
 	@Test
-	public void should_push_changes_to_current_branch_using_credentials() throws Exception {
+	public void should_push_changes_to_current_branch_using_credentials()
+			throws Exception {
 		StubRunnerOptions options = new StubRunnerOptionsBuilder()
 				.withStubRepositoryRoot("file://" + this.project.getAbsolutePath() + "/")
 				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
@@ -89,56 +101,68 @@ public class ContractProjectUpdaterTest extends AbstractGitTest {
 						put("git.username", "foo");
 						put("git.password", "bar");
 					}
-				} )
-				.build();
+				}).build();
 		ContractProjectUpdater updater = new ContractProjectUpdater(options);
-		File stubs = new File(GitRepoTests.class.getResource("/git_samples/sample_stubs").toURI());
+		File stubs = new File(
+				GitRepoTests.class.getResource("/git_samples/sample_stubs").toURI());
 
 		updater.updateContractProject("hello-world", stubs.toPath());
 
 		// project, not origin, cause we're making one more clone of the local copy
-		try(Git git = openGitProject(this.project)) {
+		try (Git git = openGitProject(this.project)) {
 			RevCommit revCommit = git.log().call().iterator().next();
-			then(revCommit.getShortMessage()).isEqualTo("Updating project [hello-world] with stubs");
+			then(revCommit.getShortMessage())
+					.isEqualTo("Updating project [hello-world] with stubs");
 			// I have no idea but the file gets deleted after pushing
 			git.reset().setMode(ResetCommand.ResetType.HARD).call();
 		}
-		BDDAssertions.then(new File(this.project, "META-INF/com.example/hello-world/0.0.2/mappings/someMapping.json")).exists();
-		BDDAssertions.then(outputCapture.toString()).contains("Passed username and password - will set a custom credentials provider");
+		BDDAssertions.then(new File(this.project,
+				"META-INF/com.example/hello-world/0.0.2/mappings/someMapping.json"))
+				.exists();
+		BDDAssertions.then(outputCapture.toString()).contains(
+				"Passed username and password - will set a custom credentials provider");
 	}
 
 	@Test
-	public void should_push_changes_to_current_branch_using_root_credentials() throws Exception {
+	public void should_push_changes_to_current_branch_using_root_credentials()
+			throws Exception {
 		StubRunnerOptions options = new StubRunnerOptionsBuilder()
 				.withStubRepositoryRoot("file://" + this.project.getAbsolutePath() + "/")
-				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
-				.withUsername("foo")
-				.withPassword("bar")
-				.build();
+				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE).withUsername("foo")
+				.withPassword("bar").build();
 		ContractProjectUpdater updater = new ContractProjectUpdater(options);
-		File stubs = new File(GitRepoTests.class.getResource("/git_samples/sample_stubs").toURI());
+		File stubs = new File(
+				GitRepoTests.class.getResource("/git_samples/sample_stubs").toURI());
 
 		updater.updateContractProject("hello-world", stubs.toPath());
 
 		// project, not origin, cause we're making one more clone of the local copy
-		try(Git git = openGitProject(this.project)) {
+		try (Git git = openGitProject(this.project)) {
 			RevCommit revCommit = git.log().call().iterator().next();
-			then(revCommit.getShortMessage()).isEqualTo("Updating project [hello-world] with stubs");
+			then(revCommit.getShortMessage())
+					.isEqualTo("Updating project [hello-world] with stubs");
 			// I have no idea but the file gets deleted after pushing
 			git.reset().setMode(ResetCommand.ResetType.HARD).call();
 		}
-		BDDAssertions.then(new File(this.project, "META-INF/com.example/hello-world/0.0.2/mappings/someMapping.json")).exists();
-		BDDAssertions.then(outputCapture.toString()).contains("Passed username and password - will set a custom credentials provider");
+		BDDAssertions.then(new File(this.project,
+				"META-INF/com.example/hello-world/0.0.2/mappings/someMapping.json"))
+				.exists();
+		BDDAssertions.then(outputCapture.toString()).contains(
+				"Passed username and password - will set a custom credentials provider");
 	}
 
 	@Test
-	public void should_not_push_changes_to_current_branch_when_no_changes_were_made() throws Exception {
+	public void should_not_push_changes_to_current_branch_when_no_changes_were_made()
+			throws Exception {
 		this.updater.updateContractProject("hello-world", this.origin.toPath());
 
-		try(Git git = openGitProject(this.project)) {
+		try (Git git = openGitProject(this.project)) {
 			RevCommit revCommit = git.log().call().iterator().next();
 			then(revCommit.getShortMessage()).isEqualTo("Initial commit");
 		}
-		BDDAssertions.then(new File(this.project, "META-INF/com.example/hello-world/0.0.2/mappings/someMapping.json")).doesNotExist();
+		BDDAssertions.then(new File(this.project,
+				"META-INF/com.example/hello-world/0.0.2/mappings/someMapping.json"))
+				.doesNotExist();
 	}
+
 }

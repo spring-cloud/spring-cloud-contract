@@ -44,14 +44,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Configuration setting up {@link MessageVerifier} for use with plain spring-rabbit/spring-amqp
+ * Configuration setting up {@link MessageVerifier} for use with plain
+ * spring-rabbit/spring-amqp
  *
  * @author Mathias Düsterhöft
  * @since 1.0.2
  */
 @Configuration
 @ConditionalOnClass(RabbitTemplate.class)
-@ConditionalOnProperty(name="stubrunner.amqp.enabled", havingValue="true")
+@ConditionalOnProperty(name = "stubrunner.amqp.enabled", havingValue = "true")
 @AutoConfigureBefore(ContractVerifierIntegrationConfiguration.class)
 @AutoConfigureAfter(ContractVerifierStreamAutoConfiguration.class)
 public class ContractVerifierAmqpAutoConfiguration {
@@ -72,31 +73,38 @@ public class ContractVerifierAmqpAutoConfiguration {
 	@ConditionalOnMissingBean
 	public MessageVerifier<Message> contractVerifierMessageExchange() {
 		return new SpringAmqpStubMessages(this.rabbitTemplate,
-				new MessageListenerAccessor(this.rabbitListenerEndpointRegistry, this.simpleMessageListenerContainers, this.bindings));
+				new MessageListenerAccessor(this.rabbitListenerEndpointRegistry,
+						this.simpleMessageListenerContainers, this.bindings));
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
 	public ContractVerifierMessaging<Message> contractVerifierMessaging(
 			MessageVerifier<Message> exchange) {
-		return new ContractVerifierHelper(exchange, this.rabbitTemplate.getMessageConverter());
+		return new ContractVerifierHelper(exchange,
+				this.rabbitTemplate.getMessageConverter());
 	}
+
 }
 
 class ContractVerifierHelper extends ContractVerifierMessaging<Message> {
 
 	private final MessageConverter messageConverter;
 
-	public ContractVerifierHelper(MessageVerifier<Message> exchange, MessageConverter messageConverter) {
+	public ContractVerifierHelper(MessageVerifier<Message> exchange,
+			MessageConverter messageConverter) {
 		super(exchange);
 		this.messageConverter = messageConverter;
 	}
 
 	@Override
 	protected ContractVerifierMessage convert(Message message) {
-		MessagingMessageConverter messageConverter = new MessagingMessageConverter(this.messageConverter, new SimpleAmqpHeaderMapper());
-		org.springframework.messaging.Message<?> messagingMessage = (org.springframework.messaging.Message<?>) messageConverter.fromMessage(message);
-		return new ContractVerifierMessage(messagingMessage.getPayload(), messagingMessage.getHeaders());
+		MessagingMessageConverter messageConverter = new MessagingMessageConverter(
+				this.messageConverter, new SimpleAmqpHeaderMapper());
+		org.springframework.messaging.Message<?> messagingMessage = (org.springframework.messaging.Message<?>) messageConverter
+				.fromMessage(message);
+		return new ContractVerifierMessage(messagingMessage.getPayload(),
+				messagingMessage.getHeaders());
 	}
-}
 
+}

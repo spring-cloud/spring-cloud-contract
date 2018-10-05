@@ -12,11 +12,12 @@ public class SpringCloudContractAssertions extends Assertions {
 
 	/**
 	 * Creates a new instance of <code>{@link CollectionAssert}</code>.
-	 *
 	 * @param actual the actual value.
 	 * @return the created assertion object.
 	 */
-	public static <ELEMENT> CollectionAssert<ELEMENT> assertThat(Iterable<? extends ELEMENT> actual) {
+	public static <ELEMENT> CollectionAssert<ELEMENT> assertThat(
+			Iterable<? extends ELEMENT> actual) {
 		return new CollectionAssert<>(actual);
 	}
+
 }

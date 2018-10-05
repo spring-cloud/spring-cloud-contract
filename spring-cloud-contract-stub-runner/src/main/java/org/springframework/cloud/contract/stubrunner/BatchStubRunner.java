@@ -54,7 +54,9 @@ public class BatchStubRunner implements StubRunning {
 		for (StubRunner stubRunner : this.stubRunners) {
 			try {
 				return stubRunner.findStubUrl(groupId, artifactId);
-			} catch (StubNotFoundException e) {}
+			}
+			catch (StubNotFoundException e) {
+			}
 		}
 		throw new StubNotFoundException(groupId, artifactId);
 	}
@@ -64,7 +66,9 @@ public class BatchStubRunner implements StubRunning {
 		for (StubRunner stubRunner : this.stubRunners) {
 			try {
 				return stubRunner.findStubUrl(ivyNotation);
-			} catch (StubNotFoundException e) {}
+			}
+			catch (StubNotFoundException e) {
+			}
 		}
 		throw new StubNotFoundException(ivyNotation);
 	}
@@ -175,4 +179,5 @@ public class BatchStubRunner implements StubRunning {
 			stubRunner.close();
 		}
 	}
+
 }

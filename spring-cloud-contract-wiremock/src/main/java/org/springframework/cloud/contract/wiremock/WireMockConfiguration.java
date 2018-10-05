@@ -50,7 +50,7 @@ import org.springframework.web.client.RestTemplate;
  * configure the properties of the wiremock server you can use the AutoConfigureWireMock
  * annotation, or add a bean of type {@link Options} (via
  * {@link WireMockSpring#options()}) to your test context.
- * 
+ *
  * @author Dave Syer
  *
  */
@@ -84,7 +84,8 @@ public class WireMockConfiguration implements SmartLifecycle {
 	@PostConstruct
 	public void init() throws IOException {
 		if (this.options == null) {
-			com.github.tomakehurst.wiremock.core.WireMockConfiguration factory = WireMockSpring.options();
+			com.github.tomakehurst.wiremock.core.WireMockConfiguration factory = WireMockSpring
+					.options();
 			if (this.wireMock.getServer().getPort() != 8080) {
 				factory.port(this.wireMock.getServer().getPort());
 			}
@@ -103,7 +104,8 @@ public class WireMockConfiguration implements SmartLifecycle {
 		}
 		registerStubs();
 		if (log.isDebugEnabled()) {
-			log.debug("WireMock server has [" + this.server.getStubMappings().size() + "] registered");
+			log.debug("WireMock server has [" + this.server.getStubMappings().size()
+					+ "] registered");
 		}
 		if (!this.beanFactory.containsBean(WIREMOCK_SERVER_BEAN_NAME)) {
 			this.beanFactory.registerSingleton(WIREMOCK_SERVER_BEAN_NAME, this.server);
@@ -124,7 +126,8 @@ public class WireMockConfiguration implements SmartLifecycle {
 				}
 				for (Resource resource : resolver.getResources(pattern)) {
 					this.server.addStubMapping(WireMockStubMapping
-							.buildFrom(StreamUtils.copyToString(resource.getInputStream(), Charset.forName("UTF-8"))));
+							.buildFrom(StreamUtils.copyToString(resource.getInputStream(),
+									Charset.forName("UTF-8"))));
 				}
 			}
 		}
@@ -134,7 +137,9 @@ public class WireMockConfiguration implements SmartLifecycle {
 		this.server.resetAll();
 	}
 
-	private void registerFiles(com.github.tomakehurst.wiremock.core.WireMockConfiguration factory) throws IOException {
+	private void registerFiles(
+			com.github.tomakehurst.wiremock.core.WireMockConfiguration factory)
+			throws IOException {
 		List<Resource> resources = new ArrayList<>();
 		for (String files : this.wireMock.getServer().getFiles()) {
 			if (StringUtils.hasText(files)) {
@@ -148,7 +153,8 @@ public class WireMockConfiguration implements SmartLifecycle {
 			}
 		}
 		if (!resources.isEmpty()) {
-			ResourcesFileSource fileSource = new ResourcesFileSource(resources.toArray(new Resource[0]));
+			ResourcesFileSource fileSource = new ResourcesFileSource(
+					resources.toArray(new Resource[0]));
 			factory.fileSource(fileSource);
 		}
 	}
@@ -159,18 +165,25 @@ public class WireMockConfiguration implements SmartLifecycle {
 		WireMock.configureFor("localhost", this.server.port());
 		this.running = true;
 		if (log.isDebugEnabled()) {
-			log.debug("Started WireMock at port [" + this.server.port() + "]. It has [" + this.server.getStubMappings().size() + "] mappings registered");
+			log.debug("Started WireMock at port [" + this.server.port() + "]. It has ["
+					+ this.server.getStubMappings().size() + "] mappings registered");
 		}
 		/*
-		Thanks to Tom Akehurst:
-		I looked at tcpdump while running the failing test. HttpUrlConnection is doing something weird - it's creating a connection in a
-		previous test case, which works fine, then the usual fin -> fin ack etc. etc. ending handshake happens. But it seems it
-		isn't discarded, but reused after that. Because the server thinks (rightly) that the connection is closed, it just sends a RST packet.
-		Calling the admin endpoint just happened to remove the dead connection from the pool.
-		This also fixes the problem (which using the Java HTTP client): System.setProperty("http.keepAlive", "false");
+		 * Thanks to Tom Akehurst: I looked at tcpdump while running the failing test.
+		 * HttpUrlConnection is doing something weird - it's creating a connection in a
+		 * previous test case, which works fine, then the usual fin -> fin ack etc. etc.
+		 * ending handshake happens. But it seems it isn't discarded, but reused after
+		 * that. Because the server thinks (rightly) that the connection is closed, it
+		 * just sends a RST packet. Calling the admin endpoint just happened to remove the
+		 * dead connection from the pool. This also fixes the problem (which using the
+		 * Java HTTP client): System.setProperty("http.keepAlive", "false");
 		 */
-		Assert.isTrue(new RestTemplate().getForEntity("http://localhost:" + this.server.port() + "/__admin/mappings", String.class)
-				.getStatusCode().is2xxSuccessful(), "__admin/mappings endpoint wasn't accessible");
+		Assert.isTrue(
+				new RestTemplate()
+						.getForEntity("http://localhost:" + this.server.port()
+								+ "/__admin/mappings", String.class)
+						.getStatusCode().is2xxSuccessful(),
+				"__admin/mappings endpoint wasn't accessible");
 	}
 
 	@Override
@@ -271,6 +284,7 @@ class WireMockProperties {
 		public void setFiles(String[] files) {
 			this.files = files;
 		}
+
 	}
 
 }

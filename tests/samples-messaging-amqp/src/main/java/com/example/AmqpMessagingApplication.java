@@ -24,15 +24,18 @@ public class AmqpMessagingApplication {
 
 	@Bean
 	public MessageConverter messageConverter(ObjectMapper objectMapper) {
-		final Jackson2JsonMessageConverter jsonMessageConverter = new Jackson2JsonMessageConverter(objectMapper);
+		final Jackson2JsonMessageConverter jsonMessageConverter = new Jackson2JsonMessageConverter(
+				objectMapper);
 		jsonMessageConverter.setCreateMessageIds(true);
-		final ContentTypeDelegatingMessageConverter messageConverter = new ContentTypeDelegatingMessageConverter(jsonMessageConverter);
+		final ContentTypeDelegatingMessageConverter messageConverter = new ContentTypeDelegatingMessageConverter(
+				jsonMessageConverter);
 		messageConverter.addDelegate(CONTENT_TYPE_JSON, jsonMessageConverter);
 		return messageConverter;
 	}
 
 	@Bean
-	public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, MessageConverter messageConverter) {
+	public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory,
+			MessageConverter messageConverter) {
 		RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
 		rabbitTemplate.setMessageConverter(messageConverter);
 		return rabbitTemplate;

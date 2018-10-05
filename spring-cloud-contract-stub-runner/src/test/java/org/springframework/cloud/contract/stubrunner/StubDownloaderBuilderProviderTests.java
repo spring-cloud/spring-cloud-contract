@@ -15,13 +15,21 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class StubDownloaderBuilderProviderTests {
 
-	@Mock StubDownloaderBuilder one;
-	@Mock StubDownloaderBuilder two;
-	@Mock StubDownloaderBuilder three;
+	@Mock
+	StubDownloaderBuilder one;
 
-	@Test public void should_get_providers_from_factories_default_and_additional_ones() {
-		StubDownloaderBuilderProvider provider = new StubDownloaderBuilderProvider(Collections.singletonList(one)) {
-			@Override List<StubDownloaderBuilder> defaultStubDownloaderBuilders() {
+	@Mock
+	StubDownloaderBuilder two;
+
+	@Mock
+	StubDownloaderBuilder three;
+
+	@Test
+	public void should_get_providers_from_factories_default_and_additional_ones() {
+		StubDownloaderBuilderProvider provider = new StubDownloaderBuilderProvider(
+				Collections.singletonList(one)) {
+			@Override
+			List<StubDownloaderBuilder> defaultStubDownloaderBuilders() {
 				return Collections.singletonList(two);
 			}
 		};
@@ -34,4 +42,5 @@ public class StubDownloaderBuilderProviderTests {
 		BDDMockito.then(two).should().build(options);
 		BDDMockito.then(three).should().build(options);
 	}
+
 }

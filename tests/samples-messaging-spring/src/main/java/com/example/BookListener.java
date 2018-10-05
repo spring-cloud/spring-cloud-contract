@@ -34,12 +34,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class BookListener {
-	
-	
+
 	private static final Logger log = LoggerFactory.getLogger(BookListener.class);
 
-
 	private @Autowired JmsTemplate jmsTemplate;
+
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	/**
@@ -50,7 +49,8 @@ public class BookListener {
 	 */
 	@JmsListener(destination = "input")
 	public void returnBook(String messageAsString) throws Exception {
-		final BookReturned bookReturned = this.objectMapper.readerFor(BookReturned.class).readValue(messageAsString);
+		final BookReturned bookReturned = this.objectMapper.readerFor(BookReturned.class)
+				.readValue(messageAsString);
 		log.info("Returning book [$bookReturned]");
 		MessageCreator messageCreator = new MessageCreator() {
 			@Override
@@ -64,18 +64,21 @@ public class BookListener {
 	}
 
 	/**
-	   Scenario for "should generate tests triggered by a message":
-	     client side: if sends a message to input.messageFrom then message will be sent to output.messageFrom
-	     server side: will send a message to input, verify the message contents and await upon receiving message on the output messageFrom
+	 * Scenario for "should generate tests triggered by a message": client side: if sends
+	 * a message to input.messageFrom then message will be sent to output.messageFrom
+	 * server side: will send a message to input, verify the message contents and await
+	 * upon receiving message on the output messageFrom
 	 * @throws java.io.IOException
 	 * @throws com.fasterxml.jackson.core.JsonProcessingException
 	 */
 	@JmsListener(destination = "delete")
 	public void bookDeleted(String bookDeletedAsString) throws Exception {
-		BookDeleted bookDeleted = this.objectMapper.readerFor(BookDeleted.class).readValue(bookDeletedAsString);
+		BookDeleted bookDeleted = this.objectMapper.readerFor(BookDeleted.class)
+				.readValue(bookDeletedAsString);
 		log.info("Deleting book " + bookDeleted);
 		this.bookSuccessfulyDeleted.set(true);
 	}
 
 	AtomicBoolean bookSuccessfulyDeleted = new AtomicBoolean(false);
+
 }

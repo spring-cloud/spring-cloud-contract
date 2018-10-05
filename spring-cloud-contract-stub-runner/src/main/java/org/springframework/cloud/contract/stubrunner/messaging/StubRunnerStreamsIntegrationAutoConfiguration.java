@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * {@link org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner} by
  * loading in AutoConfigurations related to Stream and Integration only if the relevant
  * jars are in classpath.
- * 
+ *
  * @author Biju Kunjummen
  */
 @Configuration
@@ -32,4 +32,5 @@ public class StubRunnerStreamsIntegrationAutoConfiguration {
 	static class IntegrationRelatedAutoConfiguration {
 
 	}
+
 }

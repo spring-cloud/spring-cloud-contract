@@ -14,9 +14,11 @@ import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 /**
  * Abstraction hiding details of the different sources of message listeners
  *
- * Needed because {@link org.springframework.amqp.rabbit.annotation.RabbitListenerAnnotationBeanPostProcessor} adds the listeners to the
- * {@link RabbitListenerEndpointRegistry} so that the registry is empty when wired into an auto configuration class
- * so we wrap it in the accessor to access the listeners late at runtime
+ * Needed because
+ * {@link org.springframework.amqp.rabbit.annotation.RabbitListenerAnnotationBeanPostProcessor}
+ * adds the listeners to the {@link RabbitListenerEndpointRegistry} so that the registry
+ * is empty when wired into an auto configuration class so we wrap it in the accessor to
+ * access the listeners late at runtime
  *
  * @author Mathias Düsterhöft
  * @since 1.0.2
@@ -24,28 +26,35 @@ import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 class MessageListenerAccessor {
 
 	private final RabbitListenerEndpointRegistry rabbitListenerEndpointRegistry;
+
 	private final List<SimpleMessageListenerContainer> simpleMessageListenerContainers;
+
 	private final List<Binding> bindings;
 
 	MessageListenerAccessor(RabbitListenerEndpointRegistry rabbitListenerEndpointRegistry,
-									List<SimpleMessageListenerContainer> simpleMessageListenerContainers, List<Binding> bindings) {
+			List<SimpleMessageListenerContainer> simpleMessageListenerContainers,
+			List<Binding> bindings) {
 		this.rabbitListenerEndpointRegistry = rabbitListenerEndpointRegistry;
 		this.simpleMessageListenerContainers = simpleMessageListenerContainers;
 		this.bindings = bindings;
 	}
 
-	List<SimpleMessageListenerContainer> getListenerContainersForDestination(String destination, String routingKey) {
+	List<SimpleMessageListenerContainer> getListenerContainersForDestination(
+			String destination, String routingKey) {
 		List<SimpleMessageListenerContainer> listenerContainers = collectListenerContainers();
-		//we interpret the destination as exchange name and collect all the queues bound to this exchange
+		// we interpret the destination as exchange name and collect all the queues bound
+		// to this exchange
 		Set<String> queueNames = collectQueuesBoundToDestination(destination, routingKey);
 		return getListenersByBoundQueues(listenerContainers, queueNames);
 	}
 
-	private List<SimpleMessageListenerContainer> getListenersByBoundQueues(List<SimpleMessageListenerContainer> listenerContainers, Set<String> queueNames) {
+	private List<SimpleMessageListenerContainer> getListenersByBoundQueues(
+			List<SimpleMessageListenerContainer> listenerContainers,
+			Set<String> queueNames) {
 		List<SimpleMessageListenerContainer> matchingContainers = new ArrayList<>();
 		for (SimpleMessageListenerContainer listenerContainer : listenerContainers) {
 			if (listenerContainer.getQueueNames() != null) {
-				for (String queueName :  listenerContainer.getQueueNames()) {
+				for (String queueName : listenerContainer.getQueueNames()) {
 					if (queueNames.contains(queueName)) {
 						matchingContainers.add(listenerContainer);
 						break;
@@ -56,9 +65,10 @@ class MessageListenerAccessor {
 		return matchingContainers;
 	}
 
-	private Set<String> collectQueuesBoundToDestination(String destination, String routingKey) {
+	private Set<String> collectQueuesBoundToDestination(String destination,
+			String routingKey) {
 		Set<String> queueNames = new HashSet<>();
-		for (Binding binding: this.bindings) {
+		for (Binding binding : this.bindings) {
 			if (destination.equals(binding.getExchange())
 					&& (routingKey == null || routingKey.equals(binding.getRoutingKey()))
 					&& DestinationType.QUEUE.equals(binding.getDestinationType())) {
@@ -74,12 +84,15 @@ class MessageListenerAccessor {
 			listenerContainers.addAll(this.simpleMessageListenerContainers);
 		}
 		if (this.rabbitListenerEndpointRegistry != null) {
-			for (MessageListenerContainer listenerContainer : this.rabbitListenerEndpointRegistry.getListenerContainers()) {
+			for (MessageListenerContainer listenerContainer : this.rabbitListenerEndpointRegistry
+					.getListenerContainers()) {
 				if (listenerContainer instanceof SimpleMessageListenerContainer) {
-					listenerContainers.add((SimpleMessageListenerContainer) listenerContainer);
+					listenerContainers
+							.add((SimpleMessageListenerContainer) listenerContainer);
 				}
 			}
 		}
 		return listenerContainers;
 	}
+
 }

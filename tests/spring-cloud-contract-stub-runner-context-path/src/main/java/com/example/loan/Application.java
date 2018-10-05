@@ -14,11 +14,12 @@ public class Application {
 
 }
 
-
 @RestController
 class CustomController {
+
 	@GetMapping("/foo")
 	String foo() {
 		return "bar";
 	}
+
 }

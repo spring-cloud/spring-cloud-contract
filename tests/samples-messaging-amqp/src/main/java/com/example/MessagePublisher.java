@@ -17,4 +17,5 @@ public class MessagePublisher {
 	public void sendMessage(Book book) {
 		this.rabbitTemplate.convertAndSend(this.exchange.getName(), "routingkey", book);
 	}
+
 }

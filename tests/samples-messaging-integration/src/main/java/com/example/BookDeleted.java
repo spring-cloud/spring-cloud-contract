@@ -22,10 +22,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 @SuppressWarnings("serial")
 public class BookDeleted implements Serializable {
+
 	public final String bookName;
 
 	@JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
 	public BookDeleted(String bookName) {
 		this.bookName = bookName;
 	}
+
 }

@@ -36,12 +36,14 @@ class CompositeStubDownloaderBuilder implements StubDownloaderBuilder {
 		this.builders = builders;
 	}
 
-	@Override public StubDownloader build(StubRunnerOptions stubRunnerOptions) {
+	@Override
+	public StubDownloader build(StubRunnerOptions stubRunnerOptions) {
 		if (this.builders == null) {
 			return null;
 		}
 		return new CompositeStubDownloader(this.builders, stubRunnerOptions);
 	}
+
 }
 
 class CompositeStubDownloader implements StubDownloader {
@@ -49,6 +51,7 @@ class CompositeStubDownloader implements StubDownloader {
 	private static final Log log = LogFactory.getLog(CompositeStubDownloader.class);
 
 	private final List<StubDownloaderBuilder> builders;
+
 	private final StubRunnerOptions stubRunnerOptions;
 
 	CompositeStubDownloader(List<StubDownloaderBuilder> builders,
@@ -56,14 +59,13 @@ class CompositeStubDownloader implements StubDownloader {
 		this.builders = builders;
 		this.stubRunnerOptions = stubRunnerOptions;
 		if (log.isDebugEnabled()) {
-			log.debug("Registered following stub downloaders " + this.builders
-					.stream()
-			.map(b -> b.getClass().getName())
-			.collect(Collectors.toList()));
+			log.debug("Registered following stub downloaders " + this.builders.stream()
+					.map(b -> b.getClass().getName()).collect(Collectors.toList()));
 		}
 	}
 
-	@Override public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
+	@Override
+	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
 			StubConfiguration stubConfiguration) {
 		for (StubDownloaderBuilder builder : this.builders) {
 			StubDownloader downloader = builder.build(this.stubRunnerOptions);
@@ -71,21 +73,27 @@ class CompositeStubDownloader implements StubDownloader {
 				continue;
 			}
 			if (log.isDebugEnabled()) {
-				log.debug("Found a matching stub downloader [" + downloader.getClass().getName() + "]");
+				log.debug("Found a matching stub downloader ["
+						+ downloader.getClass().getName() + "]");
 			}
 			Map.Entry<StubConfiguration, File> entry = downloader
 					.downloadAndUnpackStubJar(stubConfiguration);
 			if (entry != null) {
 				if (log.isDebugEnabled()) {
-					log.debug("Found a matching entry [" + entry + "] by stub downloader [" + downloader.getClass().getName() + "]");
+					log.debug(
+							"Found a matching entry [" + entry + "] by stub downloader ["
+									+ downloader.getClass().getName() + "]");
 				}
 				return entry;
-			} else {
+			}
+			else {
 				log.warn("Stub Downloader [" + downloader.getClass().getName() + "] "
-						+ "failed to find an entry for [" + stubConfiguration.toColonSeparatedDependencyNotation() + "]. "
+						+ "failed to find an entry for ["
+						+ stubConfiguration.toColonSeparatedDependencyNotation() + "]. "
 						+ "Will proceed to the next one");
 			}
 		}
 		return null;
 	}
+
 }

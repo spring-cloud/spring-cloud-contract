@@ -37,12 +37,10 @@ import org.springframework.util.StringUtils;
 @Mojo(name = "pushStubsToScm")
 public class PushStubsToScmMojo extends AbstractMojo {
 
-	@Parameter(defaultValue = "${project.build.directory}", readonly = true,
-			required = true)
+	@Parameter(defaultValue = "${project.build.directory}", readonly = true, required = true)
 	private File projectBuildDirectory;
 
-	@Parameter(property = "stubsDirectory",
-			defaultValue = "${project.build.directory}/stubs")
+	@Parameter(property = "stubsDirectory", defaultValue = "${project.build.directory}/stubs")
 	private File outputDirectory;
 
 	/**
@@ -73,9 +71,9 @@ public class PushStubsToScmMojo extends AbstractMojo {
 	private String contractsRepositoryPassword;
 
 	/**
-	 * The URL from which a contracts should get downloaded. If not provided
-	 * but artifactid / coordinates notation was provided then the current Maven's build repositories will be
-	 * taken into consideration
+	 * The URL from which a contracts should get downloaded. If not provided but
+	 * artifactid / coordinates notation was provided then the current Maven's build
+	 * repositories will be taken into consideration
 	 */
 	@Parameter(property = "contractsRepositoryUrl")
 	private String contractsRepositoryUrl;
@@ -86,16 +84,16 @@ public class PushStubsToScmMojo extends AbstractMojo {
 	@Parameter(property = "contractsMode", defaultValue = "CLASSPATH")
 	private StubRunnerProperties.StubsMode contractsMode;
 
-
 	/**
-	 * If set to {@code false} will NOT delete stubs from a temporary
-	 * folder after running tests
+	 * If set to {@code false} will NOT delete stubs from a temporary folder after running
+	 * tests
 	 */
 	@Parameter(property = "deleteStubsAfterTest", defaultValue = "true")
 	private boolean deleteStubsAfterTest;
 
 	/**
-	 * Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
+	 * Map of properties that can be passed to custom
+	 * {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}
 	 */
 	@Parameter(property = "contractsProperties")
 	private Map<String, String> contractsProperties = new HashMap<>();
@@ -104,17 +102,22 @@ public class PushStubsToScmMojo extends AbstractMojo {
 		if (this.skip || this.taskSkip) {
 			getLog().info(
 					"Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip="
-							+ this.skip + ", spring.cloud.contract.verifier.publish-stubs-to-scm.skip=" + this.taskSkip);
+							+ this.skip
+							+ ", spring.cloud.contract.verifier.publish-stubs-to-scm.skip="
+							+ this.taskSkip);
 			return;
 		}
-		if (StringUtils.isEmpty(this.contractsRepositoryUrl) ||
-				!ScmStubDownloaderBuilder.isProtocolAccepted(this.contractsRepositoryUrl)) {
-			getLog().info("Skipping pushing stubs to scm since your [contractsRepositoryUrl] property doesn't match any of the accepted protocols");
+		if (StringUtils.isEmpty(this.contractsRepositoryUrl) || !ScmStubDownloaderBuilder
+				.isProtocolAccepted(this.contractsRepositoryUrl)) {
+			getLog().info(
+					"Skipping pushing stubs to scm since your [contractsRepositoryUrl] property doesn't match any of the accepted protocols");
 			return;
 		}
-		String projectName = this.project.getGroupId() + ":" + this.project.getArtifactId() + ":" + this.project.getVersion();
+		String projectName = this.project.getGroupId() + ":"
+				+ this.project.getArtifactId() + ":" + this.project.getVersion();
 		getLog().info("Pushing Stubs to SCM for project [" + projectName + "]");
-		new ContractProjectUpdater(buildOptions()).updateContractProject(projectName, this.outputDirectory.toPath());
+		new ContractProjectUpdater(buildOptions()).updateContractProject(projectName,
+				this.outputDirectory.toPath());
 	}
 
 	StubRunnerOptions buildOptions() {

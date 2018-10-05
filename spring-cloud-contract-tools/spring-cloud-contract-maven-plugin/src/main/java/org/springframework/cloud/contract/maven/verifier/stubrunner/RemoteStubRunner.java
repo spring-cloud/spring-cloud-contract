@@ -29,6 +29,7 @@ import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 
 @Named
 public class RemoteStubRunner {
+
 	private static final Log log = LogFactory.getLog(RemoteStubRunner.class);
 
 	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
@@ -38,8 +39,10 @@ public class RemoteStubRunner {
 		this.aetherStubDownloaderFactory = aetherStubDownloaderFactory;
 	}
 
-	public BatchStubRunner run(StubRunnerOptions options, RepositorySystemSession repositorySystemSession) {
-		StubDownloader stubDownloader = this.aetherStubDownloaderFactory.build(repositorySystemSession).build(options);
+	public BatchStubRunner run(StubRunnerOptions options,
+			RepositorySystemSession repositorySystemSession) {
+		StubDownloader stubDownloader = this.aetherStubDownloaderFactory
+				.build(repositorySystemSession).build(options);
 		try {
 			if (log.isDebugEnabled()) {
 				log.debug("Launching StubRunner with args: " + options);
@@ -51,9 +54,11 @@ public class RemoteStubRunner {
 			return stubRunner;
 		}
 		catch (Exception e) {
-			log.error("An exception occurred while trying to execute the stubs: " + e.getMessage());
+			log.error("An exception occurred while trying to execute the stubs: "
+					+ e.getMessage());
 			throw e;
 		}
 
 	}
+
 }

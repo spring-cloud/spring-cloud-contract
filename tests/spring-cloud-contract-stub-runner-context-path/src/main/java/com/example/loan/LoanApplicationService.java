@@ -17,8 +17,7 @@ import com.example.loan.model.LoanApplicationStatus;
 @Service
 public class LoanApplicationService {
 
-	private static final String FRAUD_SERVICE_JSON_VERSION_1 =
-			"application/vnd.fraud.v1+json";
+	private static final String FRAUD_SERVICE_JSON_VERSION_1 = "application/vnd.fraud.v1+json";
 
 	private final RestTemplate restTemplate;
 
@@ -29,11 +28,9 @@ public class LoanApplicationService {
 	}
 
 	public LoanApplicationResult loanApplication(LoanApplication loanApplication) {
-		FraudServiceRequest request =
-				new FraudServiceRequest(loanApplication);
+		FraudServiceRequest request = new FraudServiceRequest(loanApplication);
 
-		FraudServiceResponse response =
-				sendRequestToFraudDetectionService(request);
+		FraudServiceResponse response = sendRequestToFraudDetectionService(request);
 
 		return buildResponseFromFraudResult(response);
 	}
@@ -44,27 +41,30 @@ public class LoanApplicationService {
 		httpHeaders.add(HttpHeaders.CONTENT_TYPE, FRAUD_SERVICE_JSON_VERSION_1);
 
 		// tag::client_call_server[]
-		ResponseEntity<FraudServiceResponse> response =
-				this.restTemplate.exchange(this.fraudUrl + "/fraudcheck", HttpMethod.PUT,
-						new HttpEntity<>(request, httpHeaders),
-						FraudServiceResponse.class);
+		ResponseEntity<FraudServiceResponse> response = this.restTemplate.exchange(
+				this.fraudUrl + "/fraudcheck", HttpMethod.PUT,
+				new HttpEntity<>(request, httpHeaders), FraudServiceResponse.class);
 		// end::client_call_server[]
 
 		return response.getBody();
 	}
 
-	private LoanApplicationResult buildResponseFromFraudResult(FraudServiceResponse response) {
+	private LoanApplicationResult buildResponseFromFraudResult(
+			FraudServiceResponse response) {
 		LoanApplicationStatus applicationStatus = null;
 		if (FraudCheckStatus.OK == response.getFraudCheckStatus()) {
 			applicationStatus = LoanApplicationStatus.LOAN_APPLIED;
-		} else if (FraudCheckStatus.FRAUD == response.getFraudCheckStatus()) {
+		}
+		else if (FraudCheckStatus.FRAUD == response.getFraudCheckStatus()) {
 			applicationStatus = LoanApplicationStatus.LOAN_APPLICATION_REJECTED;
 		}
 
-		return new LoanApplicationResult(applicationStatus, response.getRejectionReason());
+		return new LoanApplicationResult(applicationStatus,
+				response.getRejectionReason());
 	}
 
 	public void setFraudUrl(String fraudUrl) {
 		this.fraudUrl = fraudUrl;
 	}
+
 }

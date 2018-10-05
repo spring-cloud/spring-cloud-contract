@@ -32,20 +32,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Tests that stub runner specific auto-configuration can be loaded up in combination with
  * other slice tests
- * 
+ *
  * @author Biju Kunjummen
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest
-@AutoConfigureStubRunner(
-		ids = {
-				"org.springframework.cloud.contract.verifier.stubs:loanIssuance:+:stubs",
-				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:+:stubs"
-		},
-		minPort = 10001,
-		maxPort = 10020,
-		mappingsOutputFolder = "target/outputmappings/",
-		properties = {"hello=world", "foo=bar"})
+@AutoConfigureStubRunner(ids = {
+		"org.springframework.cloud.contract.verifier.stubs:loanIssuance:+:stubs",
+		"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:+:stubs" }, minPort = 10001, maxPort = 10020, mappingsOutputFolder = "target/outputmappings/", properties = {
+				"hello=world", "foo=bar" })
 @ActiveProfiles("test")
 public class StubRunnerSliceTests {
 
@@ -84,13 +79,13 @@ public class StubRunnerSliceTests {
 		assertThat(stubFinder.findStubUrl(
 				"org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"))
 						.isNotNull();
-		assertThat(properties.getProperties())
-				.containsEntry("hello", "world")
+		assertThat(properties.getProperties()).containsEntry("hello", "world")
 				.containsEntry("foo", "bar");
 	}
 
 	@SpringBootConfiguration
 	static class Config {
+
 	}
 
 }

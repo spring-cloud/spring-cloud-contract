@@ -14,11 +14,14 @@ import org.junit.Test;
  */
 public class CompositeStubDownloaderBuilderTests {
 
-	@Test public void should_delegate_work_to_other_stub_downloaders() {
+	@Test
+	public void should_delegate_work_to_other_stub_downloaders() {
 		EmptyStubDownloaderBuilder emptyStubDownloaderBuilder = new EmptyStubDownloaderBuilder();
 		ImpossibleToBuildStubDownloaderBuilder impossible = new ImpossibleToBuildStubDownloaderBuilder();
-		List<StubDownloaderBuilder> builders = Arrays.asList(emptyStubDownloaderBuilder, impossible, new SomeStubDownloaderBuilder());
-		CompositeStubDownloaderBuilder builder = new CompositeStubDownloaderBuilder(builders);
+		List<StubDownloaderBuilder> builders = Arrays.asList(emptyStubDownloaderBuilder,
+				impossible, new SomeStubDownloaderBuilder());
+		CompositeStubDownloaderBuilder builder = new CompositeStubDownloaderBuilder(
+				builders);
 		StubDownloader downloader = builder.build(new StubRunnerOptionsBuilder().build());
 
 		Map.Entry<StubConfiguration, File> entry = downloader
@@ -29,20 +32,23 @@ public class CompositeStubDownloaderBuilderTests {
 		BDDAssertions.then(impossible.called).isTrue();
 	}
 
-	@Test public void should_return_null_if_no_builders_were_passed() {
+	@Test
+	public void should_return_null_if_no_builders_were_passed() {
 		CompositeStubDownloaderBuilder builder = new CompositeStubDownloaderBuilder(null);
 
 		StubDownloader downloader = builder.build(new StubRunnerOptionsBuilder().build());
 
 		BDDAssertions.then(downloader).isNull();
 	}
+
 }
 
 class EmptyStubDownloaderBuilder implements StubDownloaderBuilder {
 
 	EmptyStubDownloader emptyStubDownloader;
 
-	@Override public StubDownloader build(StubRunnerOptions stubRunnerOptions) {
+	@Override
+	public StubDownloader build(StubRunnerOptions stubRunnerOptions) {
 		this.emptyStubDownloader = new EmptyStubDownloader();
 		return this.emptyStubDownloader;
 	}
@@ -50,13 +56,15 @@ class EmptyStubDownloaderBuilder implements StubDownloaderBuilder {
 	boolean downloaderCalled() {
 		return this.emptyStubDownloader.called;
 	}
+
 }
 
 class ImpossibleToBuildStubDownloaderBuilder implements StubDownloaderBuilder {
 
 	boolean called;
 
-	@Override public StubDownloader build(StubRunnerOptions stubRunnerOptions) {
+	@Override
+	public StubDownloader build(StubRunnerOptions stubRunnerOptions) {
 		this.called = true;
 		return null;
 	}
@@ -64,25 +72,33 @@ class ImpossibleToBuildStubDownloaderBuilder implements StubDownloaderBuilder {
 }
 
 class EmptyStubDownloader implements StubDownloader {
+
 	boolean called;
 
-	@Override public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
+	@Override
+	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
 			StubConfiguration stubConfiguration) {
 		this.called = true;
 		return null;
 	}
+
 }
 
 class SomeStubDownloaderBuilder implements StubDownloaderBuilder {
 
-	@Override public StubDownloader build(StubRunnerOptions stubRunnerOptions) {
+	@Override
+	public StubDownloader build(StubRunnerOptions stubRunnerOptions) {
 		return new SomeStubDownloader();
 	}
+
 }
 
 class SomeStubDownloader implements StubDownloader {
-	@Override public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
+
+	@Override
+	public Map.Entry<StubConfiguration, File> downloadAndUnpackStubJar(
 			StubConfiguration stubConfiguration) {
 		return new AbstractMap.SimpleEntry<>(stubConfiguration, new File("."));
 	}
+
 }

@@ -55,15 +55,15 @@ import org.springframework.util.StringUtils;
  * @author Marcin Grzejszczak
  */
 @Configuration
-@ConditionalOnClass({IntegrationFlows.class, EnableBinding.class})
-@ConditionalOnProperty(name="stubrunner.stream.enabled", havingValue="true", matchIfMissing=true)
+@ConditionalOnClass({ IntegrationFlows.class, EnableBinding.class })
+@ConditionalOnProperty(name = "stubrunner.stream.enabled", havingValue = "true", matchIfMissing = true)
 @AutoConfigureBefore(StubRunnerIntegrationConfiguration.class)
 public class StubRunnerStreamConfiguration {
 
 	private static final Log log = LogFactory.getLog(StubRunnerStreamConfiguration.class);
 
 	@Bean
-	@ConditionalOnMissingBean(name="stubFlowRegistrar")
+	@ConditionalOnMissingBean(name = "stubFlowRegistrar")
 	@ConditionalOnBean(BindingServiceProperties.class)
 	public FlowRegistrar stubFlowRegistrar(AutowireCapableBeanFactory beanFactory,
 			BatchStubRunner batchStubRunner) {
@@ -78,10 +78,9 @@ public class StubRunnerStreamConfiguration {
 				if (dsl == null) {
 					continue;
 				}
-				if (dsl.getInput() != null
-							&& dsl.getInput().getMessageFrom() != null
-							&& StringUtils.hasText(
-									dsl.getInput().getMessageFrom().getClientValue())) {
+				if (dsl.getInput() != null && dsl.getInput().getMessageFrom() != null
+						&& StringUtils.hasText(
+								dsl.getInput().getMessageFrom().getClientValue())) {
 					final String flowName = name + "_" + dsl.getLabel() + "_"
 							+ dsl.hashCode();
 					String from = resolvedDestination(beanFactory,
@@ -111,16 +110,18 @@ public class StubRunnerStreamConfiguration {
 						builder = builder.handle(new DummyMessageHandler(), "handle");
 					}
 					beanFactory.initializeBean(builder.get(), flowName);
-					beanFactory.getBean(flowName + ".filter", Lifecycle.class)
-							.start();
+					beanFactory.getBean(flowName + ".filter", Lifecycle.class).start();
 					beanFactory.getBean(flowName + ".transformer", Lifecycle.class)
 							.start();
-				} else if (dsl.getOutputMessage() != null
+				}
+				else if (dsl.getOutputMessage() != null
 						&& dsl.getOutputMessage().getSentTo() != null
 						&& StringUtils.hasText(
-						dsl.getOutputMessage().getSentTo().getClientValue())) {
-					BinderAwareChannelResolver resolver = beanFactory.getBean(BinderAwareChannelResolver.class);
-					resolver.resolveDestination(dsl.getOutputMessage().getSentTo().getClientValue());
+								dsl.getOutputMessage().getSentTo().getClientValue())) {
+					BinderAwareChannelResolver resolver = beanFactory
+							.getBean(BinderAwareChannelResolver.class);
+					resolver.resolveDestination(
+							dsl.getOutputMessage().getSentTo().getClientValue());
 				}
 			}
 		}
@@ -133,26 +134,33 @@ public class StubRunnerStreamConfiguration {
 		for (Map.Entry<String, BindingProperties> entry : bindings.entrySet()) {
 			if (destination.equals(entry.getValue().getDestination())) {
 				if (log.isDebugEnabled()) {
-					log.debug("Found a channel named [" + entry.getKey() + "] with destination [" + destination + "]");
+					log.debug("Found a channel named [" + entry.getKey()
+							+ "] with destination [" + destination + "]");
 				}
 				return entry.getKey();
 			}
 		}
 		if (log.isDebugEnabled()) {
-			log.debug(
-					"No destination named [" + destination + "] was found. Assuming that the destination equals the channel name");
+			log.debug("No destination named [" + destination
+					+ "] was found. Assuming that the destination equals the channel name");
 		}
 		return destination;
 	}
 
-	private Map<String, BindingProperties> bindingProperties(AutowireCapableBeanFactory context) {
+	private Map<String, BindingProperties> bindingProperties(
+			AutowireCapableBeanFactory context) {
 		return context.getBean(BindingServiceProperties.class).getBindings();
 	}
 
 	private static class DummyMessageHandler {
-		public void handle(Message<?> message) {}
+
+		public void handle(Message<?> message) {
+		}
+
 	}
 
 	static class FlowRegistrar {
+
 	}
+
 }

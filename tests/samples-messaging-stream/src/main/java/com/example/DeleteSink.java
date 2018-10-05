@@ -29,4 +29,5 @@ interface DeleteSink extends Sink {
 
 	@Input(DeleteSink.INPUT)
 	SubscribableChannel delete();
+
 }

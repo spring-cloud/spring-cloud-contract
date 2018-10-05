@@ -32,7 +32,7 @@ import org.springframework.util.SocketUtils;
 /**
  * Listener that prepares the environment so that WireMock will work when it is
  * initialized. For example, by finding free ports for the server to listen on.
- * 
+ *
  * @author Dave Syer
  *
  */
@@ -69,7 +69,8 @@ public class WireMockApplicationListener
 		if (!propertySources.contains("wiremock")) {
 			propertySources.addFirst(
 					new MapPropertySource("wiremock", new HashMap<String, Object>()));
-		} else {
+		}
+		else {
 			// Move it up into first place
 			PropertySource<?> wiremock = propertySources.remove("wiremock");
 			propertySources.addFirst(wiremock);

@@ -41,49 +41,55 @@ public class StubRunnerMain {
 	private StubRunnerMain(String[] args) throws Exception {
 		OptionParser parser = new OptionParser();
 		try {
-			ArgumentAcceptingOptionSpec<Integer> minPortValueOpt = parser
-					.acceptsAll(Arrays.asList("minp", "minPort"),
-							"Minimum port value to be assigned to the WireMock instance. Defaults to 10000")
+			ArgumentAcceptingOptionSpec<Integer> minPortValueOpt = parser.acceptsAll(
+					Arrays.asList("minp", "minPort"),
+					"Minimum port value to be assigned to the WireMock instance. Defaults to 10000")
 					.withRequiredArg().ofType(Integer.class).defaultsTo(10000);
-			ArgumentAcceptingOptionSpec<Integer> maxPortValueOpt = parser
-					.acceptsAll(Arrays.asList("maxp", "maxPort"),
-							"Maximum port value to be assigned to the WireMock instance. Defaults to 15000")
+			ArgumentAcceptingOptionSpec<Integer> maxPortValueOpt = parser.acceptsAll(
+					Arrays.asList("maxp", "maxPort"),
+					"Maximum port value to be assigned to the WireMock instance. Defaults to 15000")
 					.withRequiredArg().ofType(Integer.class).defaultsTo(15000);
-			ArgumentAcceptingOptionSpec<String> stubsOpt = parser
-					.acceptsAll(Arrays.asList("s", "stubs"),
-							"Comma separated list of Ivy representation of jars with stubs. Eg. groupid:artifactid1,groupid2:artifactid2:classifier")
+			ArgumentAcceptingOptionSpec<String> stubsOpt = parser.acceptsAll(
+					Arrays.asList("s", "stubs"),
+					"Comma separated list of Ivy representation of jars with stubs. Eg. groupid:artifactid1,groupid2:artifactid2:classifier")
 					.withRequiredArg();
-			ArgumentAcceptingOptionSpec<String> classifierOpt = parser
-					.acceptsAll(Arrays.asList("c", "classifier"),
-							"Suffix for the jar containing stubs (e.g. 'stubs' if the stub jar would have a 'stubs' classifier for stubs: foobar-stubs ). Defaults to 'stubs'")
+			ArgumentAcceptingOptionSpec<String> classifierOpt = parser.acceptsAll(
+					Arrays.asList("c", "classifier"),
+					"Suffix for the jar containing stubs (e.g. 'stubs' if the stub jar would have a 'stubs' classifier for stubs: foobar-stubs ). Defaults to 'stubs'")
 					.withRequiredArg().defaultsTo("stubs");
-			ArgumentAcceptingOptionSpec<String> rootOpt = parser
-					.acceptsAll(Arrays.asList("r", "root"),"Location of a Jar containing server where you keep your stubs (e.g. http://nexus.net/content/repositories/repository)")
+			ArgumentAcceptingOptionSpec<String> rootOpt = parser.acceptsAll(
+					Arrays.asList("r", "root"),
+					"Location of a Jar containing server where you keep your stubs (e.g. http://nexus.net/content/repositories/repository)")
 					.withRequiredArg();
 			ArgumentAcceptingOptionSpec<String> usernameOpt = parser
-					.acceptsAll(Arrays.asList("u", "username"),"Username to user when connecting to repository")
+					.acceptsAll(Arrays.asList("u", "username"),
+							"Username to user when connecting to repository")
 					.withOptionalArg();
 			ArgumentAcceptingOptionSpec<String> passwordOpt = parser
-					.acceptsAll(Arrays.asList("p", "password"),"Password to user when connecting to repository")
+					.acceptsAll(Arrays.asList("p", "password"),
+							"Password to user when connecting to repository")
 					.withOptionalArg();
 			ArgumentAcceptingOptionSpec<String> proxyHostOpt = parser
-					.acceptsAll(Arrays.asList("phost", "proxyHost"),"Proxy host to use for repository requests")
+					.acceptsAll(Arrays.asList("phost", "proxyHost"),
+							"Proxy host to use for repository requests")
 					.withOptionalArg();
 			ArgumentAcceptingOptionSpec<Integer> proxyPortOpt = parser
-					.acceptsAll(Arrays.asList("pport", "proxyPort"),"Proxy port to use for repository requests")
-					.withOptionalArg()
-					.ofType(Integer.class);
+					.acceptsAll(Arrays.asList("pport", "proxyPort"),
+							"Proxy port to use for repository requests")
+					.withOptionalArg().ofType(Integer.class);
 			ArgumentAcceptingOptionSpec<String> stubsMode = parser
-					.acceptsAll(Arrays.asList("sm", "stubsMode"),"Stubs mode to be used. Acceptable values " + Arrays
-							.toString(StubRunnerProperties.StubsMode.values()))
-					.withRequiredArg().defaultsTo(StubRunnerProperties.StubsMode.CLASSPATH.toString());
+					.acceptsAll(Arrays.asList("sm", "stubsMode"),
+							"Stubs mode to be used. Acceptable values " + Arrays
+									.toString(StubRunnerProperties.StubsMode.values()))
+					.withRequiredArg()
+					.defaultsTo(StubRunnerProperties.StubsMode.CLASSPATH.toString());
 			OptionSet options = parser.parse(args);
 			String stubs = options.valueOf(stubsOpt);
-			StubRunnerProperties.StubsMode stubsModeValue = StubRunnerProperties.StubsMode.valueOf(
-					options.valueOf(stubsMode));
+			StubRunnerProperties.StubsMode stubsModeValue = StubRunnerProperties.StubsMode
+					.valueOf(options.valueOf(stubsMode));
 			Integer minPortValue = options.valueOf(minPortValueOpt);
 			Integer maxPortValue = options.valueOf(maxPortValueOpt);
-			String stubRepositoryRoot= options.valueOf(rootOpt);
+			String stubRepositoryRoot = options.valueOf(rootOpt);
 			String stubsSuffix = options.valueOf(classifierOpt);
 			final String username = options.valueOf(usernameOpt);
 			final String password = options.valueOf(passwordOpt);
@@ -93,9 +99,7 @@ public class StubRunnerMain {
 					.withMinMaxPort(minPortValue, maxPortValue)
 					.withStubRepositoryRoot(stubRepositoryRoot)
 					.withStubsMode(stubsModeValue).withStubsClassifier(stubsSuffix)
-					.withUsername(username)
-					.withPassword(password)
-					.withStubs(stubs);
+					.withUsername(username).withPassword(password).withStubs(stubs);
 			if (proxyHost != null) {
 				builder.withProxy(proxyHost, proxyPort);
 			}

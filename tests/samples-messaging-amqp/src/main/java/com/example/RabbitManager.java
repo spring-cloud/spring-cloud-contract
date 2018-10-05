@@ -16,6 +16,7 @@ import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.stereotype.Component;
 
 interface BookService {
+
 	void sendBook(Book book, String replyTo);
 
 	void newBook(Book book);
@@ -34,65 +35,71 @@ public class RabbitManager {
 	public static final Logger LOG = LoggerFactory.getLogger(RabbitManager.class);
 
 	private BookService service;
+
 	private RabbitTemplate rabbitTemplate;
 
-	@Autowired public RabbitManager(BookService service, RabbitTemplate rabbitTemplate) {
+	@Autowired
+	public RabbitManager(BookService service, RabbitTemplate rabbitTemplate) {
 		this.service = service;
 		this.rabbitTemplate = rabbitTemplate;
 	}
 
-	@RabbitListener(bindings = @QueueBinding(value = @Queue(),
-			exchange = @Exchange(value = "input", durable = "true",
-					autoDelete = "false", type = "topic"), key = "event"))
-	public void newBook(
-			Book book, @Headers Map<String, String> headers) {
+	@RabbitListener(bindings = @QueueBinding(value = @Queue(), exchange = @Exchange(value = "input", durable = "true", autoDelete = "false", type = "topic"), key = "event"))
+	public void newBook(Book book, @Headers Map<String, String> headers) {
 		LOG.info("Received new book with bookname = " + book.getName());
 		LOG.info("Headers = " + headers);
 		this.service.sendBook(book, headers.get("amqp_replyTo"));
 	}
 
-	@RabbitListener(bindings = @QueueBinding(value = @Queue(),
-			exchange = @Exchange(value = "input", durable = "true",
-					autoDelete = "false", type = "topic"), key = "event2"))
-	public void newBook2(
-			Book book, @Headers Map<String, String> headers) {
+	@RabbitListener(bindings = @QueueBinding(value = @Queue(), exchange = @Exchange(value = "input", durable = "true", autoDelete = "false", type = "topic"), key = "event2"))
+	public void newBook2(Book book, @Headers Map<String, String> headers) {
 		LOG.info("newBook2 Received new book with bookname = " + book.getName());
 		LOG.info("newBook2 Headers = " + headers);
 		this.service.sendBook(book, headers.get("amqp_replyTo"));
 	}
+
 }
 
 @Component
 class BookServiceImpl implements BookService {
+
 	public static final Logger LOG = LoggerFactory.getLogger(BookServiceImpl.class);
 
 	private List<Book> books;
+
 	private RabbitTemplate rabbitTemplate;
 
-	@Autowired public BookServiceImpl(RabbitTemplate rabbitTemplate) {
+	@Autowired
+	public BookServiceImpl(RabbitTemplate rabbitTemplate) {
 		this.books = new LinkedList<>();
 		this.rabbitTemplate = rabbitTemplate;
 	}
 
-	@Override public void sendBook(Book book, String replyTo) {
+	@Override
+	public void sendBook(Book book, String replyTo) {
 		LOG.info("Received new book with bookname = " + book.getName());
 		newBook(book);
 		this.rabbitTemplate.convertAndSend("", replyTo, book);
 	}
 
-	@Override public void newBook(Book book) {
+	@Override
+	public void newBook(Book book) {
 		this.books.add(book);
 	}
 
-	@Override public Book getBook(int index) {
+	@Override
+	public Book getBook(int index) {
 		return this.books.get(index);
 	}
 
-	@Override public int noOfBooks() {
+	@Override
+	public int noOfBooks() {
 		return this.books.size();
 	}
 
-	@Override public List<Book> getBooks() {
+	@Override
+	public List<Book> getBooks() {
 		return this.books;
 	}
+
 }
