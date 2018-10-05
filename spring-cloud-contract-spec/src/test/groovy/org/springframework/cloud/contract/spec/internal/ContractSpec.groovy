@@ -108,7 +108,7 @@ class ContractSpec extends Specification {
 				property = value(consumer(regex("[0-9]{5}")))
 			}
 		then:
-			(property.serverValue as String).matches(/[0-9]{5}/)
+			(property.serverValue as String).matches('[0-9]{5}')
 	}
 
 	def 'should set a description'() {
