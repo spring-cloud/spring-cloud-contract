@@ -177,11 +177,11 @@ different approaches.
 - use Hypermedia, links and do not version your API by any means
 - pass versions through headers / urls
 
-I will not try to answer a question which approach is better. Whatever suit your needs and allows you to generate
+I will not try to answer a question which approach is better. Whatever suits your needs and allows you to generate
 business value should be picked.
 
 Let's assume that you do version your API. In that case you should provide as many contracts as many versions you support.
-You can create a subfolder for every version or append it to th contract name - whatever suits you more.
+You can create a subfolder for every version or append it to the contract name - whatever suits you more.
 
 ==== JAR versioning
 
@@ -246,7 +246,7 @@ You can pass those values also via properties from your deployment pipeline.
 Another way of storing contracts other than having them with the producer is keeping them in a common place.
 It can be related to security issues where the consumers can't clone the producer's code. Also if you keep
 contracts in a single place then you, as a producer, will know how many consumers you have and which
-consumer will you break with your local changes.
+consumer you will break with your local changes.
 
 ==== Repo structure
 
@@ -274,7 +274,7 @@ Let's assume that we have a producer with coordinates `com.example:server` and 3
         └── contracts.xml
 ----
 
-As you can see the under the slash-delimited groupid `/` artifact id folder (`com/example/server`) you have
+As you can see under the slash-delimited groupid `/` artifact id folder (`com/example/server`) you have
 expectations of the 3 consumers (`client1`, `client2` and `client3`). Expectations are the standard Groovy DSL
 contract files as described throughout this documentation. This repository has to produce a JAR file that maps
 one to one to the contents of the repo.
@@ -663,14 +663,14 @@ to store and share Pact definitions. Starting from Spring Cloud Contract
 tests and stubs.
 
 As a prerequisite the Pact Converter and Pact Stub Downloader
-are required. You have to add it via the `spring-cloud-contract-pact` dependency.
+are required. You have to add them via the `spring-cloud-contract-pact` dependency.
 You can read more about it in the <<pact-converter>> section.
 
 IMPORTANT: Pact follows the Consumer Contract convention. That means
 that the Consumer creates the Pact definitions first, then
 shares the files with the Producer. Those expectations are generated
-from the Consumer's code and can break the Producer if the expectation
-is not met.
+from the Consumer's code and can break the Producer if the expectations
+are not met.
 
 ==== Pact Consumer
 
