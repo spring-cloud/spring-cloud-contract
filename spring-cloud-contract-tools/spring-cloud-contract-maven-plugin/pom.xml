@@ -40,6 +40,10 @@
 		<maven-plugin-annotations.version>3.5.2</maven-plugin-annotations.version>
 		<maven-archiver.version>3.2.0</maven-archiver.version>
 		<plexus-archiver.version>3.6.0</plexus-archiver.version>
+		<coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
+		<maven-site-plugin.version>3.7.1</maven-site-plugin.version>
+		<plexus-component-metadata.version>1.7.1</plexus-component-metadata.version>
+		<takari-lifecycle-plugin.version>1.13.7</takari-lifecycle-plugin.version>
 	</properties>
 
 	<version>2.1.0.BUILD-SNAPSHOT</version>
@@ -64,6 +68,7 @@
 			<plugin>
 				<groupId>org.codehaus.plexus</groupId>
 				<artifactId>plexus-component-metadata</artifactId>
+				<version>${plexus-component-metadata.version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -76,6 +81,7 @@
 			<plugin>
 				<groupId>io.takari.maven.plugins</groupId>
 				<artifactId>takari-lifecycle-plugin</artifactId>
+				<version>${takari-lifecycle-plugin.version}</version>
 				<extensions>true</extensions>
 				<executions>
 					<execution>
@@ -121,10 +127,12 @@
 			<plugin>
 				<groupId>org.eluder.coveralls</groupId>
 				<artifactId>coveralls-maven-plugin</artifactId>
+				<version>${coveralls-maven-plugin.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
+				<version>${maven-site-plugin.version}</version>
 				<configuration>
 					<skipDeploy>true</skipDeploy><!-- don't deploy site with maven-site-plugin -->
 					<!-- disable generateReports if you don't want to include the built-in reports -->
