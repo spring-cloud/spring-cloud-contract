@@ -24,6 +24,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
+
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.util.StreamUtils;
 
 import static org.assertj.core.api.BDDAssertions.then;
@@ -43,6 +45,7 @@ public class StubRunnerRuleCustomPortJUnitTest {
 	// tag::classrule_with_port[]
 	@ClassRule public static StubRunnerRule rule = new StubRunnerRule()
 			.repoRoot(repoRoot())
+			.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
 			.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")
 			.withPort(12345)
 			.downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:12346");

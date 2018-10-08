@@ -24,6 +24,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
+
+import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.util.StreamUtils;
 
 import static org.assertj.core.api.BDDAssertions.then;
@@ -43,6 +45,7 @@ public class StubRunnerRuleJUnitTest {
 	// tag::classrule[]
 	@ClassRule public static StubRunnerRule rule = new StubRunnerRule()
 			.repoRoot(repoRoot())
+			.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
 			.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")
 			.downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer");
 	// end::classrule[]
