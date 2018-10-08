@@ -1,3 +1,5 @@
+import org.gradle.api.JavaVersion
+
 buildscript {
 	repositories {
 		mavenCentral()
@@ -21,13 +23,9 @@ ext {
 			'contract-gradle-plugin-libs-dir': contractVerifierGradlePluginLibsDir,
 			"WORK_OFFLINE" : gradle.startParameter.isOffline() ? 'TRUE' : 'FALSE'
 	]
-	def javaVer = System.getProperty("java.version")
-	println "Java version is [${javaVer}]"
-	def splitJava = javaVer.split("\\.")
-	javaVersionNumber = Double.parseDouble(splitJava.length > 1 ?
-			(splitJava[0] + "." + splitJava[1]) : splitJava[0])
-	println "Parsed Java version is [${javaVersionNumber}]"
-	incompatibleJdk = javaVersionNumber > 1.8
+	JavaVersion javaVer = JavaVersion.current()
+	println "Current Java version equal to [${javaVer}]"
+	incompatibleJdk = javaVer.ordinal() > 8
 }
 
 project.version = findProperty('verifierVersion')
