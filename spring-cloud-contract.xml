@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2018-10-05</date>
+<date>2018-10-04</date>
 </info>
 <preface>
 <title></title>
@@ -4444,6 +4444,7 @@ mappings available for the given server:</simpara>
 <simpara>Stub Runner comes with a JUnit rule thanks to which you can very easily download and run stubs for given group and artifact id:</simpara>
 <programlisting language="java" linenumbering="unnumbered">@ClassRule public static StubRunnerRule rule = new StubRunnerRule()
 		.repoRoot(repoRoot())
+		.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
 		.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")
 		.downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer");</programlisting>
 <simpara>After that rule gets executed Stub Runner connects to your Maven repository and for the given list of dependencies tries to:</simpara>
@@ -4576,6 +4577,7 @@ JUnit rule.</simpara>
 <simpara>When using the <literal>StubRunnerRule</literal> you can add a stub to download and then pass the port for the last downloaded stub.</simpara>
 <programlisting language="java" linenumbering="unnumbered">@ClassRule public static StubRunnerRule rule = new StubRunnerRule()
 		.repoRoot(repoRoot())
+		.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
 		.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")
 		.withPort(12345)
 		.downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:12346");</programlisting>
