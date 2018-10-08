@@ -122,6 +122,13 @@
 					<username>${env.DOCKER_HUB_USERNAME}</username>
 					<password>${env.DOCKER_HUB_PASSWORD}</password>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.codehaus.plexus</groupId>
+						<artifactId>plexus-archiver</artifactId>
+						<version>3.4</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
