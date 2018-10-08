@@ -21,7 +21,13 @@ ext {
 			'contract-gradle-plugin-libs-dir': contractVerifierGradlePluginLibsDir,
 			"WORK_OFFLINE" : gradle.startParameter.isOffline() ? 'TRUE' : 'FALSE'
 	]
-	javaVersionNumber = Double.parseDouble(System.getProperty("java.version"))
+	def javaVer = System.getProperty("java.version")
+	println "Java version is [${javaVer}]"
+	def splitJava = javaVer.split("\\.")
+	javaVersionNumber = Double.parseDouble(splitJava.length > 1 ?
+			(splitJava[0] + "." + splitJava[1]) : splitJava[0])
+	println "Parsed Java version is [${javaVersionNumber}]"
+	incompatibleJdk = javaVersionNumber > 1.8
 }
 
 project.version = findProperty('verifierVersion')
@@ -88,7 +94,7 @@ task libtest() {
 
 task checkJdkVersion {
 	doLast {
-		if (javaVersionNumber >= 8.0) {
+		if (incompatibleJdk) {
 			logger.warn("Java Version is equal to [${javaVersionNumber}]. The tests will be disabled (due to issues with compilation)")
 		}
 	}
@@ -100,7 +106,7 @@ test {
 	}
 	systemProperties = testSystemProperties
 	dependsOn(checkJdkVersion)
-	enabled = !project.hasProperty('fast') && javaVersionNumber <= 8.0
+	enabled = !project.hasProperty('fast') && !incompatibleJdk
 }
 
 groovydoc {
@@ -114,6 +120,7 @@ dependencies {
 }
 
 task archiveContractVerifierGradlePluginLibsDependencies(type: Sync) {
+	enabled = !incompatibleJdk
 	from configurations.contractVerifierGradlePluginLibs.resolvedConfiguration.resolvedArtifacts.collect { it.file }
 	into contractVerifierGradlePluginLibsDir
 }
