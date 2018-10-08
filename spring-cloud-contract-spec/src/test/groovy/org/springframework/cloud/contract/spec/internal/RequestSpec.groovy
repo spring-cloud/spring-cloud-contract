@@ -31,7 +31,9 @@ class RequestSpec extends Specification {
 			request.with {
 				property = value(consumer(regex("[0-9]{5}")))
 			}
+			def value = Integer.valueOf(property.serverValue as String)
 		then:
-			(property.serverValue as String).matches(/[0-9]{5}/)
+			value >= 0
+			value <= 99_999
 	}
 }

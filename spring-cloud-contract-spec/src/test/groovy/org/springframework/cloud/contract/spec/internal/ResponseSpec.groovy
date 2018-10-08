@@ -34,8 +34,10 @@ class ResponseSpec extends Specification {
 			request.with {
 				property = value(producer(regex("[0-9]{5}")))
 			}
+			def value = Integer.valueOf(property.clientValue as String)
 		then:
-			(property.clientValue as String).matches(/[0-9]{5}/)
+			value >= 0
+			value <= 99_999
 			(property.serverValue as Pattern).pattern() == '[0-9]{5}'
 	}
 }
