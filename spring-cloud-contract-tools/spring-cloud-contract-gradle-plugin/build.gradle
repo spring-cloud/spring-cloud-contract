@@ -25,6 +25,7 @@ ext {
 	]
 	JavaVersion javaVer = JavaVersion.current()
 	println "Current Java version equal to [${javaVer}]"
+	javaVersionNumber = javaVer.toString()
 	incompatibleJdk = javaVer.ordinal() > 8
 }
 
