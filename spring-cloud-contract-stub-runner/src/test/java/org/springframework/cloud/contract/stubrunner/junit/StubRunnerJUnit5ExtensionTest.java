@@ -41,6 +41,7 @@ class StubRunnerJUnit5ExtensionTest {
         System.clearProperty("stubrunner.classifier");
     }
 
+    // tag::extension[]
     // Visible for Junit
     @RegisterExtension
     static StubRunnerExtension stubRunnerExtension = new StubRunnerExtension()
@@ -60,6 +61,7 @@ class StubRunnerJUnit5ExtensionTest {
         assertThat(stubRunnerExtension
                 .findStubUrl("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")).isNotNull();
     }
+    // end::extension[]
 
     @Test
     void should_output_mappings_to_output_folder() {
