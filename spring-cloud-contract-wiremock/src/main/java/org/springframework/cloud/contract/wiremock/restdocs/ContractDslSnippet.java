@@ -82,7 +82,7 @@ public class ContractDslSnippet extends TemplatedSnippet {
 		model.put("response_status", response.getStatus().value());
 		model.put("response_body_present", response.getContent().length > 0);
 		model.put("response_body", response.getContentAsString());
-		Map<String, String> headers = response.getHeaders().toSingleValueMap();
+		Map<String, String> headers = new HashMap<>(response.getHeaders().toSingleValueMap());
 		filterHeaders(headers);
 		model.put("response_headers_present", !headers.isEmpty());
 		model.put("response_headers", headers.entrySet());
@@ -105,7 +105,7 @@ public class ContractDslSnippet extends TemplatedSnippet {
 		model.put("request_url", prepareRequestUrl(request.getUri()));
 		model.put("request_body_present", request.getContent().length > 0);
 		model.put("request_body", request.getContentAsString());
-		Map<String, String> headers = request.getHeaders().toSingleValueMap();
+		Map<String, String> headers = new HashMap<>(request.getHeaders().toSingleValueMap());
 		filterHeaders(headers);
 		model.put("request_headers_present", !headers.isEmpty());
 		model.put("request_headers", headers.entrySet());
