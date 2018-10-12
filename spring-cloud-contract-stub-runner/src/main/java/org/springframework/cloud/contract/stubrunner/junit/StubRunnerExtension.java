@@ -16,10 +16,11 @@
 
 package org.springframework.cloud.contract.stubrunner.junit;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunnerFactory;
@@ -49,8 +50,7 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 
     private static final String DELIMITER = ":";
     private static final String LATEST_VERSION = "+";
-
-    private static org.slf4j.Logger LOG = LoggerFactory.getLogger(StubRunnerExtension.class);
+    private static final Log LOG = LogFactory.getLog(StubRunnerExtension.class);
 
     StubRunnerExtension delegate = this;
     private BatchStubRunner stubFinder;

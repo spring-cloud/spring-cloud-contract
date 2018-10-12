@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author Olga Maciaszek-Sharma
  * @since 2.1.0
  */
-class StubRunnerJUnit5ExtensionCustomMessageVerifierTest {
+class StubRunnerJUnit5ExtensionCustomMessageVerifierTests {
 
     @BeforeAll
     @AfterAll

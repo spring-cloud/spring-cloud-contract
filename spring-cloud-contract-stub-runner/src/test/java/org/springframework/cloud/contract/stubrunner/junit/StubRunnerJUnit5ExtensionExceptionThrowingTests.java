@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author Olga Maciaszek-Sharma
  * @since 2.1.0
  */
-public class StubRunnerJUnit5ExtensionExceptionThrowingTest {
+public class StubRunnerJUnit5ExtensionExceptionThrowingTests {
 
     @RegisterExtension
     static StubRunnerExtension stubRunnerExtension = new StubRunnerExtension()

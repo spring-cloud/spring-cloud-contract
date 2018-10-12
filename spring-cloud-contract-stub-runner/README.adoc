@@ -314,7 +314,7 @@ JUnit 5 Extension example:
 
 [source,java,indent=0]
 ----
-include::src/test/java/org/springframework/cloud/contract/stubrunner/junit/StubRunnerJUnit5ExtensionTest.java[tags=extension]
+include::src/test/java/org/springframework/cloud/contract/stubrunner/junit/StubRunnerJUnit5ExtensionTests.java[tags=extension]
 ----
 
 Check the *Common properties for JUnit and Spring* for more information on how to apply global configuration of Stub Runner.

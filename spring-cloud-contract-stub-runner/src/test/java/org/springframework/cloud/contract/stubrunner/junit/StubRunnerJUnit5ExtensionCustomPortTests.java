@@ -33,7 +33,7 @@ import static org.assertj.core.api.BDDAssertions.then;
  * @author Olga Maciaszek-Sharma
  * @since 2.1.0
  */
-class StubRunnerJUnit5ExtensionCustomPortTest {
+class StubRunnerJUnit5ExtensionCustomPortTests {
 
     @BeforeAll
     @AfterAll
@@ -70,7 +70,7 @@ class StubRunnerJUnit5ExtensionCustomPortTest {
 
     private static String repoRoot() {
         try {
-            return StubRunnerJUnit5ExtensionCustomPortTest.class.getResource("/m2repo/repository/")
+            return StubRunnerJUnit5ExtensionCustomPortTests.class.getResource("/m2repo/repository/")
                     .toURI().toString();
         } catch (Exception e) {
             return "";

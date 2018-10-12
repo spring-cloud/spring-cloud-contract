@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Olga Maciaszek-Sharma
  */
 
-class StubRunnerJUnit5ExtensionTest {
+class StubRunnerJUnit5ExtensionTests {
 
     @BeforeAll
     @AfterAll
