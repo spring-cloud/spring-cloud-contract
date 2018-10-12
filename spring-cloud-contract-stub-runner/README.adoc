@@ -267,7 +267,7 @@ mappings available for the given server:
 
 Depending on the provided Stub Runner dependency and the DSL the messaging routes are automatically set up.
 
-=== Stub Runner JUnit Rule
+=== Stub Runner JUnit Rule and Stub Runner JUnit5 Extension
 
 Stub Runner comes with a JUnit rule thanks to which you can very easily download and run stubs for given group and artifact id:
 
@@ -276,7 +276,8 @@ Stub Runner comes with a JUnit rule thanks to which you can very easily download
 include::src/test/groovy/org/springframework/cloud/contract/stubrunner/junit/StubRunnerRuleJUnitTest.java[tags=classrule]
 ----
 
-After that rule gets executed Stub Runner connects to your Maven repository and for the given list of dependencies tries to:
+There's also a `StubRunnerExtension` available for JUnit 5. `StubRunnerRule` and `StubRunnerExtension` work in a very
+similar fashion. After the rule/ extension is executed, Stub Runner connects to your Maven repository and for the given list of dependencies tries to:
 
 - download them
 - cache them locally
@@ -288,7 +289,7 @@ After that rule gets executed Stub Runner connects to your Maven repository and 
 Stub Runner uses https://wiki.eclipse.org/Aether[Eclipse Aether] mechanism to download the Maven dependencies. 
 Check their https://wiki.eclipse.org/Aether[docs] for more information.
 
-Since the `StubRunnerRule` implements the `StubFinder` it allows you to find the started stubs:
+Since the `StubRunnerRule` and `StubRunnerExtension` implement the `StubFinder` they allow you to find the started stubs:
 
 [source,groovy,indent=0]
 ----
@@ -309,11 +310,18 @@ Example of usage in JUnit tests:
 include::src/test/groovy/org/springframework/cloud/contract/stubrunner/junit/StubRunnerRuleJUnitTest.java[tags=test]
 ----
 
+JUnit 5 Extension example:
+
+[source,java,indent=0]
+----
+include::src/test/java/org/springframework/cloud/contract/stubrunner/junit/StubRunnerJUnit5ExtensionTests.java[tags=extension]
+----
+
 Check the *Common properties for JUnit and Spring* for more information on how to apply global configuration of Stub Runner.
 
-IMPORTANT: To use the JUnit rule together with messaging you have to provide an implementation of the
+IMPORTANT: To use the JUnit rule or JUnit 5 extension together with messaging, you have to provide an implementation of the
 `MessageVerifier` interface to the rule builder (e.g. `rule.messageVerifier(new MyMessageVerifier())`).
-If you don't do this then whenever you try to send a message an exception will be thrown.
+If you don't do this, then whenever you try to send a message an exception will be thrown.
 
 ==== Maven settings
 
@@ -327,7 +335,7 @@ JUnit rule.
 
 ==== Fluent API
 
-When using the `StubRunnerRule` you can add a stub to download and then pass the port for the last downloaded stub.
+When using the `StubRunnerRule` or `StubRunnerExtension` you can add a stub to download and then pass the port for the last downloaded stub.
 
 [source,java,indent=0]
 ----

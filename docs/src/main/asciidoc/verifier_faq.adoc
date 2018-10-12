@@ -634,7 +634,7 @@ In order to do that, use the usual producer setup, and then add the `pushStubsTo
 
 On the consumer side when passing the `repositoryRoot` parameter,
 either from the `@AutoConfigureStubRunner` annotation, the
-JUnit rule or properties, it's enough to pass the URL of the
+JUnit rule, JUnit 5 extension or properties, it's enough to pass the URL of the
 SCM repository, prefixed with the protocol. For example
 
 [source,java,indent=0]
@@ -868,9 +868,9 @@ logging.level.com.github.tomakehurst.wiremock=ERROR
 
 ==== How can I see what got registered in the HTTP server stub?
 
-You can use the `mappingsOutputFolder` property on `@AutoConfigureStubRunner` or `StubRunnerRule`
-to dump all mappings per artifact id. Also the port at which the given stub server was
-started will be attached.
+You can use the `mappingsOutputFolder` property on `@AutoConfigureStubRunner`, `StubRunnerRule` or
+`StubRunnerExtension`to dump all mappings per artifact id. Also the port at which the given stub server
+was started will be attached.
 
 ==== Can I reference text from file?
 

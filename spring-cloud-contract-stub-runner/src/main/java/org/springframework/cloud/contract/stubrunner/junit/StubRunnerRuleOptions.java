@@ -1,17 +1,33 @@
-package org.springframework.cloud.contract.stubrunner.junit;
+/*
+ *  Copyright 2013-2018 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 
-import java.util.List;
-import java.util.Map;
+package org.springframework.cloud.contract.stubrunner.junit;
 
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 
+import java.util.List;
+import java.util.Map;
+
 interface StubRunnerRuleOptions {
 
 	/**
 	 * Pass the {@link MessageVerifier} that this rule should use. If you don't pass
-	 * anything a {@link StubRunnerRule.ExceptionThrowingMessageVerifier} will be used.
+	 * anything a {@link ExceptionThrowingMessageVerifier} will be used.
 	 * That means that an exception will be thrown whenever you try to do sth messaging
 	 * related.
 	 */
@@ -48,20 +64,20 @@ interface StubRunnerRuleOptions {
 	 * Group Id, artifact Id, version and classifier of a single stub to download
 	 */
 	PortStubRunnerRuleOptions downloadStub(String groupId, String artifactId,
-			String version, String classifier);
+										   String version, String classifier);
 
 	/**
 	 * Group Id, artifact Id and classifier of a single stub to download in the latest
 	 * version
 	 */
 	PortStubRunnerRuleOptions downloadLatestStub(String groupId, String artifactId,
-			String classifier);
+												 String classifier);
 
 	/**
 	 * Group Id, artifact Id and version of a single stub to download
 	 */
 	PortStubRunnerRuleOptions downloadStub(String groupId, String artifactId,
-			String version);
+										   String version);
 
 	/**
 	 * Group Id, artifact Id of a single stub to download. Default classifier will be
