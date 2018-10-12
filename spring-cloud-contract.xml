@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Contract</title>
-<date>2018-10-12</date>
+<date>2018-10-08</date>
 </info>
 <preface>
 <title></title>
@@ -2057,7 +2057,7 @@ use an artifact repository for storing the stubs.</simpara>
 <title>Consumer</title>
 <simpara>On the consumer side when passing the <literal>repositoryRoot</literal> parameter,
 either from the <literal>@AutoConfigureStubRunner</literal> annotation, the
-JUnit rule or properties, it&#8217;s enough to pass the URL of the
+JUnit rule, JUnit 5 extension or properties, it&#8217;s enough to pass the URL of the
 SCM repository, prefixed with the protocol. For example</simpara>
 <programlisting language="java" linenumbering="unnumbered">@AutoConfigureStubRunner(
     stubsMode="REMOTE",
@@ -2292,9 +2292,9 @@ matching response definition was picked.</simpara>
 </section>
 <section xml:id="_how_can_i_see_what_got_registered_in_the_http_server_stub">
 <title>How can I see what got registered in the HTTP server stub?</title>
-<simpara>You can use the <literal>mappingsOutputFolder</literal> property on <literal>@AutoConfigureStubRunner</literal> or <literal>StubRunnerRule</literal>
-to dump all mappings per artifact id. Also the port at which the given stub server was
-started will be attached.</simpara>
+<simpara>You can use the <literal>mappingsOutputFolder</literal> property on <literal>@AutoConfigureStubRunner</literal>, <literal>StubRunnerRule</literal> or
+`StubRunnerExtension`to dump all mappings per artifact id. Also the port at which the given stub server
+was started will be attached.</simpara>
 </section>
 <section xml:id="_can_i_reference_text_from_file">
 <title>Can I reference text from file?</title>
@@ -4439,15 +4439,16 @@ mappings available for the given server:</simpara>
 </section>
 </section>
 </section>
-<section xml:id="_stub_runner_junit_rule">
-<title>Stub Runner JUnit Rule</title>
+<section xml:id="_stub_runner_junit_rule_and_stub_runner_junit5_extension">
+<title>Stub Runner JUnit Rule and Stub Runner JUnit5 Extension</title>
 <simpara>Stub Runner comes with a JUnit rule thanks to which you can very easily download and run stubs for given group and artifact id:</simpara>
 <programlisting language="java" linenumbering="unnumbered">@ClassRule public static StubRunnerRule rule = new StubRunnerRule()
 		.repoRoot(repoRoot())
 		.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
 		.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")
 		.downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer");</programlisting>
-<simpara>After that rule gets executed Stub Runner connects to your Maven repository and for the given list of dependencies tries to:</simpara>
+<simpara>There&#8217;s also a <literal>StubRunnerExtension</literal> available for JUnit 5. <literal>StubRunnerRule</literal> and <literal>StubRunnerExtension</literal> work in a very
+similar fashion. After the rule/ extension is executed, Stub Runner connects to your Maven repository and for the given list of dependencies tries to:</simpara>
 <itemizedlist>
 <listitem>
 <simpara>download them</simpara>
@@ -4470,7 +4471,7 @@ mappings available for the given server:</simpara>
 </itemizedlist>
 <simpara>Stub Runner uses <link xl:href="https://wiki.eclipse.org/Aether">Eclipse Aether</link> mechanism to download the Maven dependencies.
 Check their <link xl:href="https://wiki.eclipse.org/Aether">docs</link> for more information.</simpara>
-<simpara>Since the <literal>StubRunnerRule</literal> implements the <literal>StubFinder</literal> it allows you to find the started stubs:</simpara>
+<simpara>Since the <literal>StubRunnerRule</literal> and <literal>StubRunnerExtension</literal> implement the <literal>StubFinder</literal> they allow you to find the started stubs:</simpara>
 <programlisting language="groovy" linenumbering="unnumbered">package org.springframework.cloud.contract.stubrunner;
 
 import java.net.URL;
@@ -4556,11 +4557,31 @@ public void should_start_wiremock_servers() throws Exception {
 		then(httpGet(rule.findStubUrl("loanIssuance").toString() + "/name")).isEqualTo("loanIssuance");
 		then(httpGet(rule.findStubUrl("fraudDetectionServer").toString() + "/name")).isEqualTo("fraudDetectionServer");
 }</programlisting>
+<simpara>JUnit 5 Extension example:</simpara>
+<programlisting language="java" linenumbering="unnumbered">// Visible for Junit
+@RegisterExtension
+static StubRunnerExtension stubRunnerExtension = new StubRunnerExtension()
+        .repoRoot(repoRoot())
+        .stubsMode(StubRunnerProperties.StubsMode.REMOTE)
+        .downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")
+        .downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")
+        .withMappingsOutputFolder("target/outputmappingsforrule");
+
+@Test
+void should_start_WireMock_servers() {
+    assertThat(stubRunnerExtension.findStubUrl("org.springframework.cloud.contract.verifier.stubs",
+            "loanIssuance")).isNotNull();
+    assertThat(stubRunnerExtension.findStubUrl("loanIssuance")).isNotNull();
+    assertThat(stubRunnerExtension.findStubUrl("loanIssuance")).isEqualTo(stubRunnerExtension
+            .findStubUrl("org.springframework.cloud.contract.verifier.stubs", "loanIssuance"));
+    assertThat(stubRunnerExtension
+            .findStubUrl("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")).isNotNull();
+}</programlisting>
 <simpara>Check the <emphasis role="strong">Common properties for JUnit and Spring</emphasis> for more information on how to apply global configuration of Stub Runner.</simpara>
 <important>
-<simpara>To use the JUnit rule together with messaging you have to provide an implementation of the
+<simpara>To use the JUnit rule or JUnit 5 extension together with messaging, you have to provide an implementation of the
 <literal>MessageVerifier</literal> interface to the rule builder (e.g. <literal>rule.messageVerifier(new MyMessageVerifier())</literal>).
-If you don&#8217;t do this then whenever you try to send a message an exception will be thrown.</simpara>
+If you don&#8217;t do this, then whenever you try to send a message an exception will be thrown.</simpara>
 </important>
 <section xml:id="_maven_settings">
 <title>Maven settings</title>
@@ -4574,7 +4595,7 @@ JUnit rule.</simpara>
 </section>
 <section xml:id="_fluent_api">
 <title>Fluent API</title>
-<simpara>When using the <literal>StubRunnerRule</literal> you can add a stub to download and then pass the port for the last downloaded stub.</simpara>
+<simpara>When using the <literal>StubRunnerRule</literal> or <literal>StubRunnerExtension</literal> you can add a stub to download and then pass the port for the last downloaded stub.</simpara>
 <programlisting language="java" linenumbering="unnumbered">@ClassRule public static StubRunnerRule rule = new StubRunnerRule()
 		.repoRoot(repoRoot())
 		.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
