@@ -175,7 +175,8 @@ abstract class BaseWireMockStubStrategy {
 			Map convertedMap = MapConverter.transformValues(value) {
 				it instanceof GString ? it.toString() : it
 			} as Map
-			return new JSONObject(new JsonBuilder(convertedMap).toString())
+			String jsonOutput = new JSONObject(new JsonBuilder(convertedMap).toString()).toString()
+			return jsonOutput.replaceAll("\\\\\\\\\\\\", "\\\\")
 		}
 		return new JsonBuilder(value).toString()
 	}
