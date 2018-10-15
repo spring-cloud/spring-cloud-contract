@@ -2154,6 +2154,50 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	}
 
+	@Issue('#667')
+	def "should not double escape backslashes"() {
+		given:
+		Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
+			priority 1
+			request {
+				method 'GET'
+				urlPath(value(consumer(regex(/\/data\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/)),
+						producer('/data/444d57b2-e309-4576-83cb-5530ee03106a')))
+			}
+			response {
+				status 200
+				headers {
+					header("Content-Type", "application/json;charset=UTF-8")
+				}
+				body([
+						jsonString: '{\\"attribute\\": \\"value\\"}'
+				])
+			}
+		}
+		when:
+		String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).toWireMockClientStub()
+		then:
+		AssertionUtil.assertThatJsonsAreEqual('''
+				{
+					"request" : {
+						"urlPathPattern" : "/data/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+						"method" : "GET"
+					},
+					"response" : {
+						"status" : 200,
+						"body" : "{\\"jsonString\\":\\"{\\\\\\"attribute\\\\\\": \\\\\\"value\\\\\\"}\\"}",
+						"headers" : {
+							"Content-Type" : "application/json;charset=UTF-8"
+					},
+					"transformers" : [ "response-template", "foo-transformer" ]
+					},
+					"priority" : 1
+				}
+				''', wireMockStub)
+		and:
+		stubMappingIsValidWireMockStub(wireMockStub)
+	}
+
 	WireMockConfiguration config() {
 		return new WireMockConfiguration().extensions(responseTemplateTransformer())
 	}
