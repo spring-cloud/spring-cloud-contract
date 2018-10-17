@@ -8,8 +8,7 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 
 /**
  * @author Olga Maciaszek-Sharma
- */
-/**
+ *
  * A {@link JUnitMethodBodyBuilder} implementation that uses WebTestClient to send requests.
  *
  * @author Olga Maciaszek-Sharma

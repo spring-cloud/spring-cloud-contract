@@ -845,7 +845,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		and:
-			SyntaxChecker.tryToCompileJava(blockBuilder.toString())
+			SyntaxChecker.tryToCompileJava(JaxRsClientJUnitMethodBodyBuilder.simpleName, blockBuilder.toString())
 	}
 
 	@Issue('#85')
@@ -974,7 +974,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		then:
 			test.contains("assertThat(responseBody).matches(\".*\");")
 		and:
-			SyntaxChecker.tryToCompileJava(blockBuilder.toString())
+			SyntaxChecker.tryToCompileJava(JaxRsClientJUnitMethodBodyBuilder.simpleName, blockBuilder.toString())
 	}
 
 	@Issue('#150')
@@ -999,7 +999,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		then:
 			test.contains("responseBody ==~ java.util.regex.Pattern.compile('.*')")
 		and:
-			SyntaxChecker.tryToCompileGroovy(blockBuilder.toString())
+			SyntaxChecker.tryToCompileGroovy(JaxRsClientJUnitMethodBodyBuilder.simpleName, blockBuilder.toString())
 	}
 
 	@Issue('#150')
@@ -1048,7 +1048,7 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			test.contains("foo(responseBody)")
 		and:
 			// no static compilation due to bug in Groovy https://issues.apache.org/jira/browse/GROOVY-8055
-			SyntaxChecker.tryToCompileGroovy(blockBuilder.toString(), false)
+			SyntaxChecker.tryToCompileGroovy(JaxRsClientJUnitMethodBodyBuilder.simpleName, blockBuilder.toString(), false)
 	}
 
 	def "should allow c/p version of consumer producer"() {

@@ -1056,7 +1056,7 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
         !test.contains('''OPTIONAL''')
         !test.contains('''OptionalProperty''')
         and:
-        SyntaxChecker.tryToCompileJava(blockBuilder.toString(), MockMvcJUnitMethodBodyBuilder.simpleName)
+        SyntaxChecker.tryToCompileJava(MockMvcJUnitMethodBodyBuilder.simpleName, blockBuilder.toString())
         where:
         contractDsl << [dslWithOptionals, dslWithOptionalsInString]
     }
@@ -1621,7 +1621,7 @@ World.'''"""
         then:
         test.contains('''assertThatJson(parsedJson).array("[\'authorities']").arrayField().matches("^[a-zA-Z0-9_\\\\- ]+$").value()''')
         and:
-        SyntaxChecker.tryToCompileJava(blockBuilder.toString(), MockMvcJUnitMethodBodyBuilder.simpleName)
+        SyntaxChecker.tryToCompileJava(MockMvcJUnitMethodBodyBuilder.simpleName, blockBuilder.toString())
     }
 
     def 'should work with execution property with #methodBuilderName'() {

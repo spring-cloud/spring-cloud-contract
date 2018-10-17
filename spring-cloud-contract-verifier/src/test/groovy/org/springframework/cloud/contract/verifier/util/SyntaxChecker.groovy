@@ -84,7 +84,7 @@ class SyntaxChecker {
 		if (builderName.toLowerCase().contains("spock")) {
 			tryToCompileGroovy(builderName, test)
 		} else {
-			tryToCompileJava(test, builderName)
+			tryToCompileJava(builderName, test)
 		}
 	}
 
@@ -93,7 +93,7 @@ class SyntaxChecker {
 			Script script = tryToCompileGroovy(builderName, test)
 			script.run()
 		} else {
-			Class clazz = tryToCompileJava(test, builderName)
+			Class clazz = tryToCompileJava(builderName, test)
 			Method method = ReflectionUtils.findMethod(clazz, "method")
 			method.invoke(clazz.newInstance())
 		}
@@ -104,7 +104,7 @@ class SyntaxChecker {
 		if (builderName.toLowerCase().contains("spock")) {
 			tryToCompileGroovy(builderName, test, false)
 		} else {
-			tryToCompileJava(test, builderName)
+			tryToCompileJava(builderName, test)
 		}
 	}
 
@@ -133,7 +133,7 @@ class SyntaxChecker {
 		"$STATIC_IMPORTS\n"
 	}
 
-	static Class tryToCompileJava(String test, String builderName) {
+	static Class tryToCompileJava(String builderName, String test) {
 		Random random = new Random()
 		int first = Math.abs(random.nextInt())
 		int hashCode = Math.abs(test.hashCode())

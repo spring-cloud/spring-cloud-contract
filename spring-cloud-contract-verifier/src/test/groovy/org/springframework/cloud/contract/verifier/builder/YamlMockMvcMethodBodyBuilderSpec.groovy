@@ -1229,7 +1229,7 @@ response:
         then:
         test.contains('''assertThat(parsedJson.read("$.authorities[0]", String.class)).matches("^[a-zA-Z0-9_\\\\- ]+$")''')
         and:
-        SyntaxChecker.tryToCompileJava(blockBuilder.toString(), MockMvcJUnitMethodBodyBuilder.simpleName)
+        SyntaxChecker.tryToCompileJava(MockMvcJUnitMethodBodyBuilder.simpleName, blockBuilder.toString())
     }
 
     def 'should work with execution property with #methodBuilderName'() {
