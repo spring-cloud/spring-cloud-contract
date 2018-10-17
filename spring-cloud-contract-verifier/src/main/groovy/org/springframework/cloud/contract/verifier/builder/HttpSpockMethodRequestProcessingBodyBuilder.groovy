@@ -34,9 +34,9 @@ import java.util.regex.Pattern
  */
 @PackageScope
 @TypeChecked
-class MockMvcSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestProcessingBodyBuilder {
+class HttpSpockMethodRequestProcessingBodyBuilder extends SpockMethodRequestProcessingBodyBuilder {
 
-	MockMvcSpockMethodRequestProcessingBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
+	HttpSpockMethodRequestProcessingBodyBuilder(Contract stubDefinition, ContractVerifierConfigProperties configProperties) {
 		super(stubDefinition, configProperties)
 	}
 

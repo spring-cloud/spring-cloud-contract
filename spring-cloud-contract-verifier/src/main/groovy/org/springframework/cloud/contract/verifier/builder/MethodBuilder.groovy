@@ -19,7 +19,6 @@ package org.springframework.cloud.contract.verifier.builder
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import groovy.util.logging.Commons
-
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.config.TestMode
@@ -118,14 +117,19 @@ class MethodBuilder {
 				return new JaxRsClientJUnitMethodBodyBuilder(stubContent, configProperties)
 			}
 			return new JaxRsClientSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties)
+		} else if (configProperties.testMode == TestMode.WEBTESTCLIENT) {
+			if (isJUnitType()) {
+				return new WebTestClientJUnitMethodBodyBuilder(stubContent, configProperties)
+			}
+			return new HttpSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties)
 		} else if (configProperties.testMode == TestMode.EXPLICIT) {
 			if (isJUnitType()) {
 				return new ExplicitJUnitMethodBodyBuilder(stubContent, configProperties)
 			}
 			// in Groovy we're using def so we don't have to update the imports
-			return new MockMvcSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties)
+			return new HttpSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties)
 		} else if (configProperties.targetFramework == SPOCK) {
-			return new MockMvcSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties)
+			return new HttpSpockMethodRequestProcessingBodyBuilder(stubContent, configProperties)
 		}
 		return new MockMvcJUnitMethodBodyBuilder(stubContent, configProperties)
 	}

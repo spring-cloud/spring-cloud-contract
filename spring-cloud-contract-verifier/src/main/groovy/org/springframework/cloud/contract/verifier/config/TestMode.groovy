@@ -37,5 +37,10 @@ enum TestMode {
 	/**
 	 * Uses JAX-RS client
 	 */
-	JAXRSCLIENT
+	JAXRSCLIENT,
+
+	/**
+	 * Uses Spring's reactive WebTestClient
+	 */
+	WEBTESTCLIENT
 }

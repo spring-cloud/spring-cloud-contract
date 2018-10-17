@@ -16,8 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.builder
 
+import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
-import groovy.transform.TypeChecked
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 
@@ -28,7 +28,7 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
  *
  * @since 1.0.0
  */
-@TypeChecked
+@CompileStatic
 @PackageScope
 class MockMvcJUnitMethodBodyBuilder extends RestAssuredJUnitMethodBodyBuilder {
 
@@ -38,12 +38,12 @@ class MockMvcJUnitMethodBodyBuilder extends RestAssuredJUnitMethodBodyBuilder {
 
 	@Override
 	protected String returnedResponseType() {
-		return "ResponseOptions"
+		return 'ResponseOptions'
 	}
 
 	@Override
 	protected String returnedRequestType() {
-		return "MockMvcRequestSpecification"
+		return 'MockMvcRequestSpecification'
 	}
 
 }
