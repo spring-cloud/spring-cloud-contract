@@ -48,6 +48,14 @@ test {
 	testLogging {
 		exceptionFormat = 'full'
 	}
+	afterSuite { desc, result ->
+		if (!desc.parent) {
+			println "Results: (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+			if (result.testCount == 0) {
+				throw new IllegalStateException("No tests were found. Failing the build")
+			}
+		}
+	}
 }
 
 task resolveDependencies {
