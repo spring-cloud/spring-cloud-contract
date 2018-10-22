@@ -180,8 +180,7 @@ include::{wiremock_tests}/src/test/java/org/springframework/cloud/contract/wirem
 
 https://projects.spring.io/spring-restdocs[Spring REST Docs] can be used to generate
 documentation (for example in Asciidoctor format) for an HTTP API with Spring MockMvc
-or `WebTestClient` or
-Rest Assured. At the same time that you generate documentation for your API, you can also
+or `WebTestClient` or Rest Assured. At the same time that you generate documentation for your API, you can also
 generate WireMock stubs by using Spring Cloud Contract WireMock. To do so, write your
 normal REST Docs test cases and use `@AutoConfigureRestDocs` to have stubs be
 automatically generated in the REST Docs output directory. The following code shows an

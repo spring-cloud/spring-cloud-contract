@@ -217,7 +217,7 @@ contracts {
 ==== Configuration Options
 
 * *testMode*: Defines the mode for acceptance tests. By default, the mode is MockMvc,
-which is based on Spring's MockMvc. It can also be changed to *JaxRsClient* or to
+which is based on Spring's MockMvc. It can also be changed to *WebTestClient*, *JaxRsClient* or to
 *Explicit* for real HTTP calls.
 * *imports*: Creates an array with imports that should be included in generated tests
 (for example ['org.myorg.Matchers']). By default, it creates an empty array.
@@ -569,7 +569,7 @@ definition or the `execution` definition, as shown here:
 ==== Configuration Options
 
 * *testMode*: Defines the mode for acceptance tests. By default, the mode is MockMvc,
-which is based on Spring's MockMvc. It can also be changed to *JaxRsClient* or to
+which is based on Spring's MockMvc. It can also be changed to *WebTestClient*, *JaxRsClient* or to
 *Explicit* for real HTTP calls.
 * *basePackageForTests*: Specifies the base package for all generated tests. If not set,
 the value is picked from `baseClassForTests`'s package and from `packageWithBaseClasses`.
