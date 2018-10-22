@@ -93,6 +93,7 @@
 					<excludes>
 						<exclude>**/*GradleTests.java</exclude>
 					</excludes>
+					<failIfNoTests>true</failIfNoTests>
 				</configuration>
 			</plugin>
 			<plugin>

@@ -121,6 +121,12 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<failIfNoTests>true</failIfNoTests>
+				</configuration>
+			</plugin>
 			<!-- tag::plugin[] -->
 			<plugin>
 				<groupId>org.springframework.cloud</groupId>

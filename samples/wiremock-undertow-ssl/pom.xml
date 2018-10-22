@@ -79,6 +79,12 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<failIfNoTests>true</failIfNoTests>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 

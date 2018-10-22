@@ -3,12 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>wiremock-jetty</artifactId>
+	<artifactId>wiremock</artifactId>
 	<version>2.1.0.BUILD-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>wiremock-jetty</name>
-	<description>Demo project for Spring Boot with Wire Mock and Jetty</description>
+	<name>wiremock</name>
+	<description>Demo project for Spring Boot with WireMock</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -31,16 +31,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-tomcat</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-jetty</artifactId>
 		</dependency>
 
 		<dependency>
@@ -52,6 +42,19 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.spring.initializr</groupId>
+			<artifactId>initializr-web</artifactId>
+			<version>0.4.0.BUILD-SNAPSHOT</version>
+			<classifier>stubs</classifier>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>*</artifactId>
+					<groupId>*</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 
@@ -69,10 +72,6 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
 			<plugin>
 				<artifactId>maven-deploy-plugin</artifactId>
 				<configuration>
