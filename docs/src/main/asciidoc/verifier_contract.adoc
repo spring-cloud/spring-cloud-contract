@@ -21,7 +21,7 @@ The following is a complete example of a Groovy contract definition:
 
 [source,groovy,indent=0]
 ----
-include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderSpec.groovy[tags=dsl_example,indent=0]
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MethodBodyBuilderSpec.groovy[tags=dsl_example,indent=0]
 ----
 
 The following is a complete example of a YAML contract definition:
@@ -296,7 +296,7 @@ include::{verifier_core_path}/src/test/resources/yml/contract.yml[tags=body,inde
 .Groovy DSL
 [source,groovy,indent=0]
 ----
-include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderSpec.groovy[tags=multipartdsl,indent=0]
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MethodBodyBuilderSpec.groovy[tags=multipartdsl,indent=0]
 ----
 
 .YAML
@@ -449,7 +449,7 @@ the provided regular expression. The following code shows an example:
 
 [source,groovy,indent=0]
 ----
-include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderSpec.groovy[tags=dsl_one_side_data_generation_example,indent=0]
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MethodBodyBuilderSpec.groovy[tags=dsl_one_side_data_generation_example,indent=0]
 ----
 
 In the preceding example, the opposite side of the communication has the respective data
@@ -467,7 +467,7 @@ In your contract, you can use it as shown in the following example:
 
 [source,groovy,indent=0]
 ----
-include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderSpec.groovy[tags=contract_with_regex,indent=0]
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MethodBodyBuilderSpec.groovy[tags=contract_with_regex,indent=0]
 ----
 
 ==== Passing Optional Parameters
@@ -612,7 +612,7 @@ Consider the following contract:
 .Groovy DSL
 [source,groovy,indent=0]
 ----
-include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderSpec.groovy[tags=template_contract,indent=0]
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MethodBodyBuilderSpec.groovy[tags=template_contract,indent=0]
 ----
 
 .YAML
