@@ -117,6 +117,7 @@ class JavaTestGenerator implements SingleTestGenerator {
 		clazz.addStaticImports(httpImportProvider.getStaticImports(configProperties.targetFramework, configProperties.testMode))
 	}
 
+	// TODO for 2.2: leave only RestAssured 3
 	private String getRestAssuredPackage() {
 		boolean restAssured2Present = this.checker.isClassPresent(REST_ASSURED_2_0_CLASS)
 		String restAssuredPackage = restAssured2Present ? 'com.jayway.restassured' : 'io.restassured'

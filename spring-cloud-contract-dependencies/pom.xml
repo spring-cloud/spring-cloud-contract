@@ -17,7 +17,7 @@
 		<wiremock.version>2.19.0</wiremock.version>
 		<jsonassert.version>0.4.13</jsonassert.version>
 		<aether.version>1.0.2.v20150114</aether.version>
-		<rest-assured.version>3.0.7</rest-assured.version>
+		<rest-assured.version>3.2.0</rest-assured.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -111,6 +111,21 @@
 					</exclusion>
 					<exclusion>
 						<artifactId>spring-test</artifactId>
+						<groupId>org.springframework</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>io.rest-assured</groupId>
+				<artifactId>spring-web-test-client</artifactId>
+				<version>${rest-assured.version}</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>spring-context</artifactId>
+						<groupId>org.springframework</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>spring-webflux</artifactId>
 						<groupId>org.springframework</groupId>
 					</exclusion>
 				</exclusions>

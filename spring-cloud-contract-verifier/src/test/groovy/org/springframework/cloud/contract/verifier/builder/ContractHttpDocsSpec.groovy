@@ -282,7 +282,7 @@ class ContractHttpDocsSpec extends Specification {
 	def 'should convert dsl with optionals to proper Spock test'() {
 		given:
 			BlockBuilder blockBuilder = new BlockBuilder(" ")
-			new MockMvcSpockMethodRequestProcessingBodyBuilder(optionals, properties).appendTo(blockBuilder)
+			new HttpSpockMethodRequestProcessingBodyBuilder(optionals, properties).appendTo(blockBuilder)
 		expect:
 		String expectedTest =
 // tag::optionals_test[]
