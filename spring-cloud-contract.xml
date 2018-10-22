@@ -1473,10 +1473,10 @@ different approaches.</simpara>
 <simpara>pass versions through headers / urls</simpara>
 </listitem>
 </itemizedlist>
-<simpara>I will not try to answer a question which approach is better. Whatever suit your needs and allows you to generate
+<simpara>I will not try to answer a question which approach is better. Whatever suits your needs and allows you to generate
 business value should be picked.</simpara>
 <simpara>Let&#8217;s assume that you do version your API. In that case you should provide as many contracts as many versions you support.
-You can create a subfolder for every version or append it to th contract name - whatever suits you more.</simpara>
+You can create a subfolder for every version or append it to the contract name - whatever suits you more.</simpara>
 </section>
 <section xml:id="_jar_versioning">
 <title>JAR versioning</title>
@@ -1511,7 +1511,7 @@ version. Example for 2.1.1.</simpara>
 <simpara>Another way of storing contracts other than having them with the producer is keeping them in a common place.
 It can be related to security issues where the consumers can&#8217;t clone the producer&#8217;s code. Also if you keep
 contracts in a single place then you, as a producer, will know how many consumers you have and which
-consumer will you break with your local changes.</simpara>
+consumer you will break with your local changes.</simpara>
 <section xml:id="_repo_structure">
 <title>Repo structure</title>
 <simpara>Let&#8217;s assume that we have a producer with coordinates <literal>com.example:server</literal> and 3 consumers: <literal>client1</literal>,
@@ -1533,7 +1533,7 @@ consumer will you break with your local changes.</simpara>
 └── src
     └── assembly
         └── contracts.xml</programlisting>
-<simpara>As you can see the under the slash-delimited groupid <literal>/</literal> artifact id folder (<literal>com/example/server</literal>) you have
+<simpara>As you can see under the slash-delimited groupid <literal>/</literal> artifact id folder (<literal>com/example/server</literal>) you have
 expectations of the 3 consumers (<literal>client1</literal>, <literal>client2</literal> and <literal>client3</literal>). Expectations are the standard Groovy DSL
 contract files as described throughout this documentation. This repository has to produce a JAR file that maps
 one to one to the contents of the repo.</simpara>
@@ -2090,14 +2090,14 @@ to store and share Pact definitions. Starting from Spring Cloud Contract
 2.0.0 one can fetch Pact files from the Pact Broker to generate
 tests and stubs.</simpara>
 <simpara>As a prerequisite the Pact Converter and Pact Stub Downloader
-are required. You have to add it via the <literal>spring-cloud-contract-pact</literal> dependency.
+are required. You have to add them via the <literal>spring-cloud-contract-pact</literal> dependency.
 You can read more about it in the <xref linkend="pact-converter"/> section.</simpara>
 <important>
 <simpara>Pact follows the Consumer Contract convention. That means
 that the Consumer creates the Pact definitions first, then
 shares the files with the Producer. Those expectations are generated
-from the Consumer&#8217;s code and can break the Producer if the expectation
-is not met.</simpara>
+from the Consumer&#8217;s code and can break the Producer if the expectations
+are not met.</simpara>
 </important>
 <section xml:id="_pact_consumer">
 <title>Pact Consumer</title>
