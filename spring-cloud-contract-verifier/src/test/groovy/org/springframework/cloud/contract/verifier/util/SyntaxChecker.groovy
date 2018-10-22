@@ -130,7 +130,7 @@ class SyntaxChecker {
 		if (builderName.toLowerCase().contains('webtestclient')) {
 			return "$WEB_TEST_CLIENT_STATIC_IMPORTS\n"
 		}
-		"$STATIC_IMPORTS\n"
+		return "$STATIC_IMPORTS\n"
 	}
 
 	static Class tryToCompileJava(String builderName, String test) {
